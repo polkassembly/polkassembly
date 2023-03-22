@@ -40,7 +40,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 
 	const strPostId = String(post_id);
 	if (!userPreference.exists) {
-		userPreferenceRef.set({
+		await userPreferenceRef.set({
 			notification_settings: NOTIFICATION_DEFAULTS,
 			post_subscriptions: {
 				[strProposalType]: [strPostId]
@@ -63,12 +63,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 			return res.status(400).json({ message: 'Restricted subscribe to the post because of "Subscribe to post you participate in" is off.' });
 		}
 
-		const post_subscriptions = data?.post_subscriptions;
-		const proposalTypePostSubscriptions = post_subscriptions[strProposalType as keyof typeof data.post_subscriptions] || [];
+		const post_subscriptions = data?.post_subscriptions || {};
+		const proposalTypePostSubscriptions = post_subscriptions?.[strProposalType as keyof typeof data.post_subscriptions] || [];
 		if(proposalTypePostSubscriptions?.some((id) => String(id) === strPostId)) return res.status(400).json({ message: messages.SUBSCRIPTION_ALREADY_EXISTS });
 
 		proposalTypePostSubscriptions.push(strPostId);
-		userPreferenceRef.update({
+		await userPreferenceRef.update({
 			post_subscriptions: {
 				...post_subscriptions,
 				[strProposalType]: proposalTypePostSubscriptions

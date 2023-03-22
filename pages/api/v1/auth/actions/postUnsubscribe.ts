@@ -40,7 +40,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 
 	const strPostId = String(post_id);
 	if (!userPreference.exists) {
-		userPreferenceRef.set({
+		await userPreferenceRef.set({
 			notification_settings: NOTIFICATION_DEFAULTS,
 			post_subscriptions: {
 				[strProposalType]: []
@@ -54,16 +54,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 		});
 	} else {
 		const data = userPreference.data() as IUserPreference;
-		const post_subscriptions = data?.post_subscriptions;
-		const proposalTypePostSubscriptions = post_subscriptions[strProposalType as keyof typeof data.post_subscriptions] || [];
+		const post_subscriptions = data?.post_subscriptions || {};
+		const proposalTypePostSubscriptions = post_subscriptions?.[strProposalType as keyof typeof data.post_subscriptions] || [];
+
 		const index = proposalTypePostSubscriptions.findIndex((id) => String(id) === strPostId);
-		if(index < 0)return res.status(400).json({ message: messages.SUBSCRIPTION_DOES_NOT_EXIST });
+		if(index < 0) return res.status(400).json({ message: messages.SUBSCRIPTION_DOES_NOT_EXIST });
 
 		proposalTypePostSubscriptions.push(strPostId);
-		userPreferenceRef.update({
+		await userPreferenceRef.update({
 			post_subscriptions: {
 				...post_subscriptions,
-				[strProposalType]: proposalTypePostSubscriptions.splice(index, 1)
+				[strProposalType]: proposalTypePostSubscriptions.filter(i => String(i) !== strPostId)
 			}
 		}).then(() => {
 			return res.status(200).json({ message: messages.SUBSCRIPTION_REMOVE_SUCCESSFUL });

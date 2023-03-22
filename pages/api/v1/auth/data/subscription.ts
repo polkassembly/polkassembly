@@ -36,7 +36,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Subscription | 
 	if(!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
 	let subscribed = false;
-	const userPreferenceDoc = await networkDocRef(network).collection('user_preferences').doc(strProposalType).get();
+	const userPreferenceDoc = await networkDocRef(network).collection('user_preferences').doc(String(user.id)).get();
 	if (userPreferenceDoc.exists) {
 		const data = userPreferenceDoc.data() as IUserPreference;
 		if (data) {

@@ -1,0 +1,297 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
+import BN from 'bn.js';
+import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
+import { ApiContext } from 'src/context/ApiContext';
+import { subscanApiHeaders } from 'src/global/apiHeaders';
+import { useFetch } from 'src/hooks';
+import { getFailingThreshold } from 'src/polkassemblyutils';
+import { LoadingStatusType } from 'src/types';
+import GovSidebarCard from 'src/ui-components/GovSidebarCard';
+import Loader from 'src/ui-components/Loader';
+import PassingInfoTag from 'src/ui-components/PassingInfoTag';
+import VoteProgress from 'src/ui-components/VoteProgress';
+import formatBnBalance from 'src/util/formatBnBalance';
+
+import { useNetworkContext } from '~src/context';
+import { VoteType } from '~src/global/proposalType';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import { isSubscanSupport } from 'src/util/subscanCheck';
+import VotersList from './VotersList';
+
+interface Props {
+	className?: string
+	referendumId: number
+}
+
+type VoteInfo = {
+	aye_amount: BN;
+	aye_without_conviction: BN;
+	isPassing: boolean | null;
+	nay_amount: BN;
+	nay_without_conviction: BN;
+	turnout: BN;
+	voteThreshold: string;
+}
+
+const ZERO = new BN(0);
+
+const ReferendumVoteInfo = ({ className, referendumId }: Props) => {
+	const { network } = useNetworkContext();
+
+	const { api, apiReady } = useContext(ApiContext);
+	const [totalIssuance, setTotalIssuance] = useState<BN | null>(null);
+	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message:'Loading votes' });
+	const [voteInfo, setVoteInfo] = useState<VoteInfo | null>(null);
+
+	const { data: voteInfoData, error:voteInfoError } = useFetch<any>(
+		`https://${network == 'kilt' ? 'spiritnet': network}.api.subscan.io/api/scan/democracy/referendum`,
+		{
+			body: JSON.stringify({
+				referendum_index: referendumId
+			}),
+			headers: subscanApiHeaders,
+			method: 'POST'
+		}
+	);
+
+	useEffect(() => {
+		if (!api) {
+			return;
+		}
+
+		if (!apiReady) {
+			return;
+		}
+
+		let unsubscribe: () => void;
+
+		setLoadingStatus({
+			isLoading: true,
+			message: 'Loading Data'
+		});
+
+		if (['equilibrium'].includes(network)){
+			setTotalIssuance(ZERO);
+		}
+		else if(['genshiro'].includes(network)){
+			const { collateral, debt } = api.query.eqAggregates.totalUserGroup('Balances', { '0': 1734700659 }) as any;
+			console.log('collatoral', collateral, 'debt', debt);
+			setTotalIssuance(collateral);
+		}
+		else{
+			api.query.balances.totalIssuance((result) => {
+				setTotalIssuance(result);
+			})
+				.then( unsub => {unsubscribe = unsub;})
+				.catch(console.error);
+		}
+
+		return () => unsubscribe && unsubscribe();
+	},[api, apiReady, network]);
+
+	useEffect(() => {
+		setLoadingStatus({
+			isLoading: true,
+			message: 'Loading Data'
+		});
+
+		if(!voteInfoError && voteInfoData && voteInfoData.data && voteInfoData.data.info) {
+			const info = voteInfoData.data.info;
+
+			const voteInfo: VoteInfo = {
+				aye_amount : ZERO,
+				aye_without_conviction: ZERO,
+				isPassing: null,
+				nay_amount: ZERO,
+				nay_without_conviction: ZERO,
+				turnout: ZERO,
+				voteThreshold: ''
+			};
+
+			voteInfo.aye_amount = new BN(info.aye_amount);
+			voteInfo.aye_without_conviction = new BN(info.aye_without_conviction);
+			voteInfo.nay_amount = new BN(info.nay_amount);
+			voteInfo.nay_without_conviction = new BN(info.nay_without_conviction);
+			voteInfo.turnout = new BN(info.turnout);
+			voteInfo.voteThreshold = info.vote_threshold.split(/(?=[A-Z])/).join(' ');
+
+			if(totalIssuance !== null) {
+				let capitalizedVoteThreshold = info.vote_threshold.toLowerCase();
+				capitalizedVoteThreshold = `${capitalizedVoteThreshold.charAt(0).toUpperCase()}${capitalizedVoteThreshold.slice(1)}`;
+				//nays needed for a referendum to fail
+				const { failingThreshold } = getFailingThreshold({
+					ayes: voteInfo.aye_amount,
+					ayesWithoutConviction: voteInfo.aye_without_conviction,
+					threshold: capitalizedVoteThreshold,
+					totalIssuance: totalIssuance
+				});
+
+				if(failingThreshold){
+					try {
+						if(voteInfo.nay_amount.gte(failingThreshold)) {
+							voteInfo.isPassing = false;
+						} else {
+							voteInfo.isPassing = true;
+						}
+					} catch(e) {
+						console.log('Error calculating Passing state: ', e);
+					}
+				}
+			}
+
+			setVoteInfo(voteInfo);
+		}
+
+		setLoadingStatus({
+			isLoading: false,
+			message: 'Loading Data'
+		});
+	}, [voteInfoData, voteInfoError, totalIssuance]);
+
+	const turnoutPercentage = useMemo(() => {
+		if (!voteInfo || !totalIssuance) {
+			return 0;
+		}
+		if (totalIssuance.isZero()) {
+			return 0;
+		}
+		return voteInfo?.turnout.muln(10000).div(totalIssuance).toNumber()/100;
+	} , [voteInfo, totalIssuance]);
+
+	return (
+		<>
+			{isSubscanSupport(network)? !voteInfo ?
+				<GovSidebarCard className='flex items-center justify-center min-h-[100px]'>
+					<Loader />
+				</GovSidebarCard>
+				:
+				<GovSidebarCard>
+					<Spin spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
+						<div className='flex items-center justify-between gap-x-2'>
+							<h6 className='text-sidebarBlue font-semibold text-[20px] leading-[24px] m-0 p-0'>Voting</h6>
+							<div className='flex items-center justify-center gap-x-2'>
+								<div className={'text-sidebarBlue border-solid border-navBlue border xl:max-w-[120px] 2xl:max-w-[100%] text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min'}>
+									{ voteInfo?.voteThreshold }
+								</div>
+								{voteInfo.isPassing !== null && <PassingInfoTag isPassing={voteInfo?.isPassing}/>}
+							</div>
+						</div>
+						<VoteProgress
+							turnoutPercentage={turnoutPercentage || 0}
+							ayeVotes={voteInfo?.aye_amount}
+							className='vote-progress'
+							nayVotes={voteInfo?.nay_amount}
+						/>
+						<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] -mt-4'>
+							<article className='flex items-center justify-between gap-x-2'>
+								<div className='flex items-center gap-x-1'>
+									<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+										Aye
+									</span>
+								</div>
+								<div
+									className='text-navBlue text-xs font-medium leading-[22px]'
+								>
+									{voteInfo?.aye_amount.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+								</div>
+							</article>
+							<article className='flex items-center justify-between gap-x-2'>
+								<div className='flex items-center gap-x-1'>
+									<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+										Nay
+									</span>
+								</div>
+								<div
+									className='text-navBlue text-xs font-medium leading-[22px]'
+								>
+									{voteInfo?.nay_amount.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+								</div>
+							</article>
+							<article className='flex items-center justify-between gap-x-2'>
+								<div className='flex items-center gap-x-1'>
+									<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+										Turnout
+									</span>
+								</div>
+								<div
+									className='text-navBlue text-xs font-medium leading-[22px]'
+								>
+									{voteInfo?.turnout.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+								</div>
+							</article>
+							{
+								totalIssuance?
+									<article className='flex items-center justify-between gap-x-2'>
+										<div className='flex items-center gap-x-1'>
+											<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+												Issuance
+											</span>
+										</div>
+										<div
+											className='text-navBlue text-xs font-medium leading-[22px]'
+										>
+											{totalIssuance.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(totalIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+										</div>
+									</article>
+									: null
+							}
+						</section>
+					</Spin>
+				</GovSidebarCard>
+				: null
+			}
+
+			<VotersList
+				className={className}
+				referendumId={referendumId}
+				voteType={VoteType.REFERENDUM}
+			/>
+		</>
+	);
+};
+
+export default memo(ReferendumVoteInfo);
+
+{/* <GovSidebarCard className={className}>
+	<Spin spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
+		<div className="flex justify-between mb-7">
+			<h6 className='dashboard-heading text-base whitespace-pre mr-3'>Voting Status</h6>
+			<div className='flex items-center gap-x-2 justify-end'>
+				<div className={'text-sidebarBlue border-navBlue border border-solid xl:max-w-[120px] 2xl:max-w-[100%] text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min'}>
+					{ voteInfo?.voteThreshold }
+				</div>
+				{voteInfo.isPassing !== null && <PassingInfoTag isPassing={voteInfo?.isPassing}/>}
+			</div>
+		</div>
+
+		<div className="flex justify-between">
+			<VoteProgress
+				ayeVotes={voteInfo?.aye_amount}
+				className='vote-progress'
+				nayVotes={voteInfo?.nay_amount}
+			/>
+
+			<div className='flex-1 flex flex-col justify-between ml-4 md:ml-6 2xl:ml-12 py-9'>
+				<div className='mb-auto flex items-center'>
+					<div className='mr-auto text-sidebarBlue font-medium'>Turnout {turnoutPercentage > 0 && <span className='turnoutPercentage'>({turnoutPercentage}%)</span>}</div>
+					<div className='text-navBlue'>{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}</div>
+				</div>
+
+				<div className='mb-auto flex items-center'>
+					<div className='mr-auto text-sidebarBlue font-medium flex items-center'>Aye <HelperTooltip className='ml-2' text='Aye votes without taking conviction into account'/></div>
+					<div className='text-navBlue'>{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}</div>
+				</div>
+
+				<div className='flex items-center'>
+					<div className='mr-auto text-sidebarBlue font-medium flex items-center'>Nay <HelperTooltip className='ml-2' text='Nay votes without taking conviction into account'/></div>
+					<div className='text-navBlue'>{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}</div>
+				</div>
+			</div>
+		</div>
+	</Spin>
+</GovSidebarCard> */}

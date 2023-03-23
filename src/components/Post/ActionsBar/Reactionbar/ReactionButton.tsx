@@ -32,6 +32,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	commentId,
 	reactions,
 	setReactions,
+	reactionsDisabled,
 	setReactionsDisabled,
 	setModalOpen
 }) => {
@@ -56,9 +57,12 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	const handleReact = async () => {
 		if (!id || !username) {
 			setModalOpen && setModalOpen(true);
-			setReactionsDisabled(true);
 			console.error('No user id found. Not logged in?');
-		}else{const actionName  =`${reacted ? 'remove' : 'add'}${commentId ? 'Comment' : 'Post'}Reaction`;
+			return;
+		}else{
+
+			setReactionsDisabled(true);
+			const actionName  =`${reacted ? 'remove' : 'add'}${commentId ? 'Comment' : 'Post'}Reaction`;
 			const { data , error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
 				commentId: commentId || null,
 				postId: postIndex,
@@ -96,6 +100,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 	const button =  <span className={className}>
 		<Button
+			disabled={reactionsDisabled}
 			className={'border-none px-2 shadow-none disabled:opacity-[0.5] disabled:bg-transparent'}
 			onClick={handleReact}
 		>

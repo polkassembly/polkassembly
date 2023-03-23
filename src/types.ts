@@ -78,6 +78,10 @@ export interface ChainProps {
   'rpcEndpoint': string;
   'category': string;
   'subsquidUrl': string;
+  'treasuryProposalBondPercent': string | null;
+  'treasuryProposalMinBond': string | null;
+  'treasuryProposalMaxBond': string | null;
+  'externalLinks': string;
 }
 
 export type ChainLinksType = {
@@ -273,7 +277,7 @@ export interface Post {
   topic_id: number,
   proposer_address: string,
   post_link: PostLink | null,
-  username: string
+  username?: string
 }
 
 export interface CommentReply {

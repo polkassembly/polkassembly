@@ -4,6 +4,7 @@
 
 import React, { FC } from 'react';
 import { useNetworkContext } from '~src/context';
+import { chainProperties } from '~src/global/networkConstants';
 
 import { ProposalType } from '~src/global/proposalType';
 import { isExplorerSupport, isSubscanSupport } from '~src/util/subscanCheck';
@@ -35,7 +36,7 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 	const serviceMap = {
 		[EService.SUBSCAN]: (network: string) => {
 			let url = '';
-			const host = network == 'kilt' ? 'https://spiritnet.subscan.io' : `https://${network}.subscan.io`;
+			const host = chainProperties[network].externalLinks;
 
 			if (proposalType === ProposalType.REFERENDUMS) {
 				url = `${host}/referenda/${onchainId}`;
@@ -65,18 +66,10 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 		},
 		[EService.EXPLORER]: (network: string) => {
 			let url = '';
-			let host = '';
-
-			if(network == 'xx'){
-				host = `https://explorer.${network}.network/blocks`;
-			}
-			else if(network == 'myriad'){
-				host = 'https://explorer.mainnet.oct.network/myriad/blocks';
-			}
+			const host = chainProperties[network].externalLinks + '/blocks';
 
 			if (blockNumber !== undefined && host) {
 				url = `${host}/${blockNumber}`;
-
 			}
 
 			return {

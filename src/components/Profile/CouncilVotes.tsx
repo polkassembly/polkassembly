@@ -15,6 +15,7 @@ import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~sr
 
 import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { getBlockLink } from '~src/util/subscanCheck';
 
 interface ICouncilVotesProps {
 	address: string;
@@ -30,16 +31,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	const [count, setCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
 
-	let url = '';
-	if(network == 'xx'){
-		url = 'https://explorer.xx.network/blocks';
-	}
-	else if(network == 'myriad'){
-		url = 'https://explorer.mainnet.oct.network/myriad/blocks';
-	}
-	else {
-		url = `https://${network == 'kilt' ? 'spiritnet': network}.subscan.io/block`;
-	}
+	const url = getBlockLink(network);
 
 	const columns : ColumnsType<any> = [
 		{

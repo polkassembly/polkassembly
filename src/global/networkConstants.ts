@@ -164,7 +164,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 0,
 		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
 		tokenDecimals: 10,
-		tokenSymbol: tokenSymbol.DOT
+		tokenSymbol: tokenSymbol.DOT,
+		treasuryProposalBondPercent: '5.00%',
+		treasuryProposalMinBond: '100',
+		treasuryProposalMaxBond: '500',
+		externalLinks: 'https://polkadot.subscan.io'
 	},
 	[network.KUSAMA]: {
 		blockTime: 6000,
@@ -175,7 +179,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 2,
 		subsquidUrl: 'https://squid.subsquid.io/kusama-polkassembly/graphql',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.KSM
+		tokenSymbol: tokenSymbol.KSM,
+		treasuryProposalBondPercent: '5.00%',
+		treasuryProposalMinBond: '0.6666',
+		treasuryProposalMaxBond: '33.3333',
+		externalLinks: 'https://kusama.subscan.io'
 	},
 	[network.ACALA]:{
 		blockTime: 12000,
@@ -186,7 +194,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 10,
 		tokenDecimals: 12,
 		subsquidUrl: 'https://squid.subsquid.io/acala-polkassembly/graphql',
-		tokenSymbol: tokenSymbol.ACA
+		tokenSymbol: tokenSymbol.ACA,
+		treasuryProposalBondPercent: '5.00%',
+		treasuryProposalMinBond: '10',
+		treasuryProposalMaxBond: '50',
+		externalLinks: 'https://acala.subscan.io'
 	},
 	[network.ACUITY]: {
 		blockTime: 6000,
@@ -197,7 +209,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 42,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.ACU
+		tokenSymbol: tokenSymbol.ACU,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://acuity.subscan.io'
 	},
 	[network.ALTAIR]: {
 		blockTime: 12000,
@@ -208,7 +224,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 136,
 		subsquidUrl: '',
 		tokenDecimals: 18,
-		tokenSymbol: tokenSymbol.BNC
+		tokenSymbol: tokenSymbol.BNC,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '100',
+		treasuryProposalMaxBond:'500',
+		externalLinks: 'https://altair.subscan.io'
 	},
 	[network.AMPLITUDE]: {
 		blockTime: 12000,
@@ -219,7 +239,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 57,
 		subsquidUrl: 'https://squid.subsquid.io/amplitude-polkassembly/graphql',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.AMPE
+		tokenSymbol: tokenSymbol.AMPE,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '10',
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://amplitude.subscan.io'
 	},
 	[network.ASTAR]: {
 		blockTime: 12000,
@@ -230,7 +254,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 5,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.ASTR
+		tokenSymbol: tokenSymbol.ASTR,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://astar.subscan.io'
 	},
 	[network.AUTOMATA]: {
 		blockTime: 6000,
@@ -241,7 +269,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 88,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.ATA
+		tokenSymbol: tokenSymbol.ATA,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '100',
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://automata.subscan.io'
 	},
 	[network.BASILISK]: {
 		blockTime: 12000,
@@ -252,7 +284,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 10041,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.BSX
+		tokenSymbol: tokenSymbol.BSX,
+		treasuryProposalBondPercent: '3%',
+		treasuryProposalMinBond: '10000',
+		treasuryProposalMaxBond:'50000',
+		externalLinks: 'https://basilisk.subscan.io'
 	},
 	[network.PIONEER]: {
 		blockTime: 12000,
@@ -263,7 +299,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 6,
 		subsquidUrl: '',
 		tokenDecimals: 18,
-		tokenSymbol: tokenSymbol.BNC
+		tokenSymbol: tokenSymbol.BNC,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond:'50',
+		externalLinks: 'https://pioneer.subscan.io'
 	},
 	[network.CALAMARI]: {
 		blockTime: 12000,
@@ -274,7 +314,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 78,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.KMA
+		tokenSymbol: tokenSymbol.KMA,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://calamari.subscan.io'
 	},
 	[network.CENTRIFUGE]: {
 		blockTime: 12000,
@@ -285,7 +329,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 36,
 		subsquidUrl: '',
 		tokenDecimals: 18,
-		tokenSymbol: tokenSymbol.CFG
+		tokenSymbol: tokenSymbol.CFG,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1000',
+		treasuryProposalMaxBond:'5000',
+		externalLinks: 'https://centrifuge.subscan.io'
 	},
 	[network.COMPOSABLE]: {
 		blockTime: 12000,
@@ -296,7 +344,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 49,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.LAYR
+		tokenSymbol: tokenSymbol.LAYR,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '5',
+		treasuryProposalMaxBond:'1000',
+		externalLinks: 'https://composable.subscan.io'
 	},
 	[network.CRUST]: {
 		blockTime: 12000,
@@ -307,7 +359,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 66,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.CRU
+		tokenSymbol: tokenSymbol.CRU,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://crust.subscan.io'
 	},
 	[network.CRUSTSHADOW]: {
 		blockTime: 12000,
@@ -318,7 +374,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 66,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.CSM
+		tokenSymbol: tokenSymbol.CSM,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://crustshadow.subscan.io'
 	},
 	[network.EQUILIBRIUM]: {
 		blockTime: 12000,
@@ -329,7 +389,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 68,
 		tokenDecimals: 9,
 		tokenSymbol: tokenSymbol.TOKEN,
-		subsquidUrl:'https://squid.subsquid.io/equilibrium-polkassembly/graphql'
+		subsquidUrl:'https://squid.subsquid.io/equilibrium-polkassembly/graphql',
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://equilibrium.subscan.io'
 
 	},
 	[network.FREQUENCY]: {
@@ -341,7 +405,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 90,
 		tokenDecimals: 8,
 		tokenSymbol: tokenSymbol.FRQCY,
-		subsquidUrl: ''
+		subsquidUrl: '',
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://frequency.subscan.io'
 	},
 	[network.FREQUENCYROCOCO]: {
 		blockTime: 12000,
@@ -352,7 +420,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 42,
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.UNIT,
-		subsquidUrl: ''
+		subsquidUrl: '',
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://frequency-rococo.subscan.io'
 	},
 	[network.GEAR]: {
 		blockTime: 1000,
@@ -363,7 +435,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 42,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.UNIT
+		tokenSymbol: tokenSymbol.UNIT,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://gear.subscan.io'
 	},
 	[network.GENSHIRO]: {
 		blockTime: 6000,
@@ -374,7 +450,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 67,
 		tokenDecimals: 9,
 		tokenSymbol: tokenSymbol.TOKEN,
-		subsquidUrl: ''
+		subsquidUrl: '',
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://genshiro.subscan.io'
 	},
 	[network.GMORDIE]: {
 		blockTime: 9000,
@@ -385,7 +465,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 42,
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.FREN,
-		subsquidUrl: ''
+		subsquidUrl: '',
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://gmordie.subscan.io'
 	},
 	[network.HEIKO]: {
 		blockTime: 13000,
@@ -396,7 +480,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 63,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.HKO
+		tokenSymbol: tokenSymbol.HKO,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://heiko.subscan.io'
 	},
 	[network.HYDRADX]: {
 		blockTime: 12000,
@@ -407,7 +495,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 63,
 		subsquidUrl: '',
 		tokenDecimals: 18,
-		tokenSymbol: tokenSymbol.HDX
+		tokenSymbol: tokenSymbol.HDX,
+		treasuryProposalBondPercent: '3%',
+		treasuryProposalMinBond: '10000',
+		treasuryProposalMaxBond:'50000',
+		externalLinks: 'https://hydradx.subscan.io'
 	},
 	[network.KARURA]: {
 		blockTime: 12000,
@@ -418,7 +510,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 8,
 		subsquidUrl: '',
 		tokenDecimals: 18,
-		tokenSymbol: tokenSymbol.KAR
+		tokenSymbol: tokenSymbol.KAR,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '5',
+		treasuryProposalMaxBond:'25',
+		externalLinks: 'https://karura.subscan.io'
 	},
 	[network.KYLIN]: {
 		blockTime: 12000,
@@ -429,7 +525,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 42,
 		subsquidUrl: '',
 		tokenDecimals: 18,
-		tokenSymbol: tokenSymbol.KYL
+		tokenSymbol: tokenSymbol.KYL,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://kylin.subscan.io'
 	},
 	[network.KHALA]: {
 		blockTime: 12000,
@@ -440,7 +540,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 30,
 		subsquidUrl: '',
 		tokenDecimals: 18,
-		tokenSymbol: tokenSymbol.KHA
+		tokenSymbol: tokenSymbol.KHA,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://khala.subscan.io'
 	},
 	[network.KILT]: {
 		blockTime: 12000,
@@ -451,7 +555,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 38,
 		subsquidUrl: 'https://squid.subsquid.io/kilt-polkassembly/graphql',
 		tokenDecimals: 15,
-		tokenSymbol: tokenSymbol.KILT
+		tokenSymbol: tokenSymbol.KILT,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '20',
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://spiritnet.subscan.io'
 	},
 	[network.MANTA]: {
 		blockTime: 12000,
@@ -462,7 +570,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 78,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.DOL
+		tokenSymbol: tokenSymbol.DOL,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://manta.subscan.io'
 	},
 	[network.MOONBASE]: {
 		blockTime: 12000,
@@ -473,7 +585,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 0,
 		subsquidUrl: 'https://squid.subsquid.io/moonbase-polkassembly/graphql',
 		tokenDecimals: 18,
-		tokenSymbol: tokenSymbol.DEV
+		tokenSymbol: tokenSymbol.DEV,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://moonbase.subscan.io'
 	},
 	[network.SHIBUYA]: {
 		blockTime: 12000,
@@ -484,7 +600,11 @@ export const chainProperties: types.ChainPropType = {
 		subsquidUrl: '',
 		ss58Format: 5,
 		tokenDecimals: 18,
-		tokenSymbol: tokenSymbol.SBY
+		tokenSymbol: tokenSymbol.SBY,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://shibuya.subscan.io'
 	},
 	[network.MOONBEAM]: {
 		blockTime: 12000,
@@ -495,7 +615,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 1284,
 		subsquidUrl: 'https://squid.subsquid.io/moonbeam-polkassembly/graphql',
 		tokenDecimals: 18,
-		tokenSymbol: tokenSymbol.GLMR
+		tokenSymbol: tokenSymbol.GLMR,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '100',
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://moonbeam.subscan.io'
 	},
 	[network.MOONRIVER]: {
 		blockTime: 12000,
@@ -506,7 +630,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 1285,
 		subsquidUrl: 'https://squid.subsquid.io/moonriver-polkassembly/graphql',
 		tokenDecimals: 18,
-		tokenSymbol: tokenSymbol.MOVR
+		tokenSymbol: tokenSymbol.MOVR,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://moonriver.subscan.io'
 	},
 	[network.MYRIAD]: {
 		blockTime: 6000,
@@ -517,7 +645,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 42,
 		subsquidUrl: 'https://squid.subsquid.io/myriad-polkassembly/graphql',
 		tokenDecimals: 18,
-		tokenSymbol: tokenSymbol.MYRIA
+		tokenSymbol: tokenSymbol.MYRIA,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://explorer.mainnet.oct.network/myriad'
 	},
 	[network.PARALLEL]: {
 		blockTime: 12000,
@@ -528,7 +660,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 172,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.PARA
+		tokenSymbol: tokenSymbol.PARA,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond:'5',
+		externalLinks: 'https://parallel.subscan.io'
 	},
 	[network.PENDULUM]: {
 		blockTime: 12000,
@@ -539,7 +675,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 56,
 		subsquidUrl: 'https://squid.subsquid.io/pendulum-polkassembly/graphql',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.PEN
+		tokenSymbol: tokenSymbol.PEN,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://pendulum.subscan.io'
 	},
 	[network.POLKADEX]: {
 		blockTime: 12000,
@@ -550,7 +690,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 88,
 		subsquidUrl: 'https://squid.subsquid.io/polkadex-polkassembly/graphql',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.PDEX
+		tokenSymbol: tokenSymbol.PDEX,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: '100',
+		externalLinks: 'https://polkadex.subscan.io'
 	},
 	[network.POLYMESH]: {
 		blockTime: 6000,
@@ -561,7 +705,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 12,
 		tokenDecimals: 6,
 		tokenSymbol: tokenSymbol.POLYX,
-		subsquidUrl: ''
+		subsquidUrl: '',
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://polymesh.subscan.io'
 	},
 	[network.POLYMESHTEST]: {
 		blockTime: 6000,
@@ -572,7 +720,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 42,
 		tokenDecimals: 6,
 		tokenSymbol: tokenSymbol.POLYX,
-		subsquidUrl: ''
+		subsquidUrl: '',
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://polymesh-test.subscan.io'
 	},
 	[network.PICASSO]: {
 		blockTime: 12000,
@@ -583,7 +735,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 49,
 		subsquidUrl: 'https://squid.subsquid.io/picasso-polkassembly/graphql',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.PICA
+		tokenSymbol: tokenSymbol.PICA,
+		treasuryProposalBondPercent: '5.00%',
+		treasuryProposalMinBond: '5000',
+		treasuryProposalMaxBond: '10000',
+		externalLinks: 'https://picasso.subscan.io'
 	},
 	[network.PICHIUROCOCO]: {
 		blockTime: 12000,
@@ -594,7 +750,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 42,
 		tokenDecimals: 18,
 		subsquidUrl: '',
-		tokenSymbol: tokenSymbol.PCHU
+		tokenSymbol: tokenSymbol.PCHU,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://pichiu-rococo.subscan.io'
 	},
 	[network.PICHIU]: {
 		blockTime: 12000,
@@ -605,7 +765,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 42,
 		tokenDecimals: 18,
 		subsquidUrl: '',
-		tokenSymbol: tokenSymbol.PCHU
+		tokenSymbol: tokenSymbol.PCHU,
+		treasuryProposalBondPercent: '5.00%',
+		treasuryProposalMinBond: '5',
+		treasuryProposalMaxBond: '25',
+		externalLinks: 'https://pichiu.subscan.io'
 	},
 	[network.ROBONOMICS]: {
 		blockTime: 12000,
@@ -616,7 +780,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 32,
 		subsquidUrl: 'https://squid.subsquid.io/robonomics-polkassembly/graphql',
 		tokenDecimals: 9,
-		tokenSymbol: tokenSymbol.XRT
+		tokenSymbol: tokenSymbol.XRT,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '10',
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://robonomics.subscan.io'
 	},
 	[network.SHIBUYA]: {
 		blockTime: 12000,
@@ -627,7 +795,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 5,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.SBY
+		tokenSymbol: tokenSymbol.SBY,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '100',
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://shibuya.subscan.io'
 	},
 	[network.SHIDEN]: {
 		blockTime: 12000,
@@ -638,7 +810,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 5,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.SDN
+		tokenSymbol: tokenSymbol.SDN,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://shiden.subscan.io'
 	},
 	[network.SNOW]:{
 		blockTime: 12000,
@@ -649,7 +825,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 2207,
 		tokenDecimals: 18,
 		subsquidUrl: 'https://squid.subsquid.io/snow-polkassembly/graphql',
-		tokenSymbol: tokenSymbol.ICZ
+		tokenSymbol: tokenSymbol.ICZ,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://snow.subscan.io'
 	},
 	[network.TANGANIKA]: {
 		blockTime: 12000,
@@ -660,7 +840,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 42,
 		subsquidUrl: '',
 		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.DHX
+		tokenSymbol: tokenSymbol.DHX,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://tanganika.subscan.io'
 	},
 	[network.TIDECHAIN]: {
 		blockTime: 12000,
@@ -671,7 +855,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 7007,
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.TDFY,
-		subsquidUrl: ''
+		subsquidUrl: '',
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://tidechain.subscan.io'
 	},
 	[network.TURING]: {
 		blockTime: 12000,
@@ -682,7 +870,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 51,
 		subsquidUrl: '',
 		tokenDecimals: 10,
-		tokenSymbol: tokenSymbol.TUR
+		tokenSymbol: tokenSymbol.TUR,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: '5',
+		externalLinks: 'https://turing.subscan.io'
 	},
 	[network.VARA]: {
 		blockTime: 2000,
@@ -693,7 +885,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 137,
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.VARA,
-		subsquidUrl: 'https://squid.subsquid.io/vara-polkassembly/graphql'
+		subsquidUrl: 'https://squid.subsquid.io/vara-polkassembly/graphql',
+		treasuryProposalBondPercent: '5.00%',
+		treasuryProposalMinBond: '20',
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://vara.subscan.io'
 	},
 	[network.WESTEND]: {
 		blockTime: 6000,
@@ -704,7 +900,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 0,
 		subsquidUrl: '',
 		tokenDecimals: 10,
-		tokenSymbol: tokenSymbol.WND
+		tokenSymbol: tokenSymbol.WND,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://westend.subscan.io'
 	},
 	[network.XX]: {
 		blockTime: 6000,
@@ -715,7 +915,11 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 55,
 		tokenDecimals: 9,
 		tokenSymbol: tokenSymbol.XX,
-		subsquidUrl: 'https://squid.subsquid.io/xx-polkassembly/graphql'
+		subsquidUrl: 'https://squid.subsquid.io/xx-polkassembly/graphql',
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://explorer.xx.network'
 	}
 };
 

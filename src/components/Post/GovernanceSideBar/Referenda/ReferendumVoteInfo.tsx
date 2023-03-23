@@ -22,6 +22,7 @@ import { VoteType } from '~src/global/proposalType';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { isSubscanSupport } from 'src/util/subscanCheck';
 import VotersList from './VotersList';
+import { chainProperties } from '~src/global/networkConstants';
 
 interface Props {
 	className?: string
@@ -49,7 +50,7 @@ const ReferendumVoteInfo = ({ className, referendumId }: Props) => {
 	const [voteInfo, setVoteInfo] = useState<VoteInfo | null>(null);
 
 	const { data: voteInfoData, error:voteInfoError } = useFetch<any>(
-		`https://${network == 'kilt' ? 'spiritnet': network}.api.subscan.io/api/scan/democracy/referendum`,
+		`${chainProperties[network].externalLinks}/api/scan/democracy/referendum`,
 		{
 			body: JSON.stringify({
 				referendum_index: referendumId

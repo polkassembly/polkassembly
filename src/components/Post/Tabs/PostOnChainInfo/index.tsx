@@ -19,7 +19,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ProposalType } from '~src/global/proposalType';
 import { useCurrentBlock } from '~src/hooks';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
-import { isPolkaholicSupport } from '~src/util/subscanCheck';
+import { getBlockLink, isPolkaholicSupport } from '~src/util/subscanCheck';
 
 import OnchainInfoWrapper from './OnchainInfoWrapper';
 
@@ -134,16 +134,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 		return date;
 	};
 
-	let url = '';
-	if(network == 'xx'){
-		url = 'https://explorer.${network}.network/blocks';
-	}
-	else if(network == 'myriad'){
-		url = 'https://explorer.mainnet.oct.network/myriad/blocks';
-	}
-	else {
-		url = `https://${network == 'kilt' ? 'spiritnet': network}.subscan.io/block`;
-	}
+	const url = getBlockLink(network);
 
 	return (
 		<>

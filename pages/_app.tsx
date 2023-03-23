@@ -20,7 +20,7 @@ import { ModalProvider } from '~src/context/ModalContext';
 import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
 
-const poppins = Poppins({
+export const poppins = Poppins({
 	display: 'swap',
 	style: ['italic', 'normal'],
 	subsets: ['latin'],

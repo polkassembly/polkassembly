@@ -26,10 +26,13 @@ const WalletButtons = dynamic(() => import('./WalletButtons'), {
 });
 
 interface Props {
-  onWalletSelect: (wallet: Wallet) => void;
-  walletError: string | undefined;
+	onWalletSelect: (wallet: Wallet) => void;
+	walletError: string | undefined;
+	isModal:boolean;
+	setLoginOpen:(pre:boolean)=>void
+	setSignupOpen:(pre:boolean)=>void;
 }
-const Web2Login: FC<Props> = ({ walletError, onWalletSelect }) => {
+const Web2Login: FC<Props> = ({ walletError, onWalletSelect,setLoginOpen,isModal,setSignupOpen }) => {
 	const { password, username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
@@ -50,8 +53,21 @@ const Web2Login: FC<Props> = ({ walletError, onWalletSelect }) => {
 
 			if (data?.token) {
 				handleTokenChange(data.token, currentUser);
+				if(isModal){
+					setLoading(false);
+					setLoginOpen(false);
+					return;
+				}
 				router.back();
 			}
+		}
+	};
+	const handleClick=() => {
+		if(isModal && setSignupOpen && setLoginOpen){
+			setSignupOpen(true);
+			setLoginOpen(false);}
+		else{
+			router.push('/signup');
 		}
 	};
 
@@ -149,7 +165,7 @@ const Web2Login: FC<Props> = ({ walletError, onWalletSelect }) => {
 
 				<div className='flex justify-center items-center gap-x-2 font-semibold'>
 					<label className='text-md text-grey_primary'>Don&apos;t have an account?</label>
-					<Link href='/signup' className='text-pink_primary text-md'> Sign Up </Link>
+					<div onClick={handleClick} className='text-pink_primary text-md'> Sign Up </div>
 				</div>
 			</AuthForm>
 		</article>

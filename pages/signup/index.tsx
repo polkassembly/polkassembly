@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Col, Row, Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
@@ -27,16 +26,22 @@ const MetamaskSignup = dynamic(() => import('src/components/Signup/MetamaskSignu
 	ssr: false
 });
 
+interface Props{
+	network:string;
+	isModal?:boolean;
+	setLoginOpen?:(pre:boolean)=>void;
+	setSignupOpen?:(pre:boolean)=>void;
+}
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 	return { props: { network } };
 };
 
-const Signup = (props : { network: string }) => {
+const Signup = ({ network,isModal,setLoginOpen,setSignupOpen }:Props) => {
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -48,9 +53,7 @@ const Signup = (props : { network: string }) => {
 
 	const onWalletSelect = (wallet: Wallet) => {
 		setChosenWallet(wallet);
-
 		setDisplayWeb(3);
-
 	};
 	const [method, setMethod] = useState('');
 
@@ -70,16 +73,18 @@ const Signup = (props : { network: string }) => {
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px]'>
 					{ displayWeb === 2
-						? <Web2Signup onWalletSelect={onWalletSelect} walletError={walletError} /> : null}
+						? <Web2Signup  isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} onWalletSelect={onWalletSelect} walletError={walletError} /> : null}
 
 					{
 						displayWeb === 3 && chosenWallet && <>
 							{
 								chosenWallet === Wallet.METAMASK ?
-									<MetamaskSignup setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
+									<MetamaskSignup isModal={isModal} setSignupOpen={setSignupOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
 									: chosenWallet == Wallet.WALLETCONNECT ?
-										<WalletConnectSignup setMethod={setMethod}/> :
+										<WalletConnectSignup  isModal={isModal} setSignupOpen={setSignupOpen} setMethod={setMethod}/> :
 										<Web3Signup
+											isModal={isModal}
+											setSignupOpen={setSignupOpen}
 											chosenWallet={chosenWallet}
 											setDisplayWeb2={setDisplayWeb2}
 											setWalletError={setWalletError}

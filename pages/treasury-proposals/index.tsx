@@ -19,6 +19,7 @@ import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
+import { isCreationOfTreasuryProposalSupported } from '~src/util/isCreationOfTreasuryProposalSupported';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TreasuryProposalFormButton = dynamic(() => import('src/components/CreateTreasuryProposal/TreasuryProposalFormButton'), {
@@ -81,7 +82,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 
 			<div className='w-full flex flex-col sm:flex-row sm:items-center'>
 				<h1 className='dashboard-heading flex-1 mb-4 sm:mb-0'>On Chain Treasury Proposals</h1>
-				{/* {['kusama', 'polkadot'].includes(network) && <TreasuryProposalFormButton  />} */}
+				{isCreationOfTreasuryProposalSupported(network) && <TreasuryProposalFormButton  />}
 			</div>
 
 			{/* Intro and Create Post Button */}

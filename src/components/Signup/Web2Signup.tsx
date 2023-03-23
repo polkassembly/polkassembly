@@ -1,10 +1,10 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import { CheckOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, Modal, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { IUsernameExistResponse } from 'pages/api/v1/users/username-exist';
 import React, { FC, useState } from 'react';
@@ -29,9 +29,12 @@ const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'
 interface Props {
 	onWalletSelect: (wallet: Wallet) => void;
 	walletError: string | undefined;
+	isModal?:boolean
+	setLoginOpen?:(pre:boolean)=>void;
+	setSignupOpen?:(pre:boolean)=>void;
 }
 
-const Web2Signup: FC<Props> = ({ walletError, onWalletSelect }) => {
+const Web2Signup: FC<Props> = ({ walletError, onWalletSelect ,isModal,setLoginOpen,setSignupOpen }) => {
 	const { password, username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
@@ -69,6 +72,11 @@ const Web2Signup: FC<Props> = ({ walletError, onWalletSelect }) => {
 				if(data) {
 					if (data.token) {
 						handleTokenChange(data.token, currentUser);
+						if(isModal){
+							setLoading(false);
+							setSignupOpen &&  setSignupOpen(false);
+							return;
+						}
 						if (email) {
 							setOpen(true);
 						}
@@ -94,6 +102,15 @@ const Web2Signup: FC<Props> = ({ walletError, onWalletSelect }) => {
 				}
 			}
 			setLoading(false);
+		}
+	};
+
+	const handleClick=() => {
+		if(isModal && setSignupOpen &&setLoginOpen){
+			setSignupOpen(false);
+			setLoginOpen(true);
+		}else{
+			router.push('/login');
 		}
 	};
 
@@ -265,7 +282,7 @@ const Web2Signup: FC<Props> = ({ walletError, onWalletSelect }) => {
 				{error && <FilteredError text={error} />}
 				<div className='flex justify-center items-center gap-x-2 font-semibold'>
 					<label className='text-md text-grey_primary'>Already have an account?</label>
-					<Link href='/login' className='text-pink_primary text-md'>Login</Link>
+					<div onClick={() => handleClick()} className='text-pink_primary text-md'>Login</div>
 				</div>
 			</AuthForm>
 			<Modal
@@ -278,7 +295,7 @@ const Web2Signup: FC<Props> = ({ walletError, onWalletSelect }) => {
 					<div className="w-full flex justify-center" key="got-it">
 						<Button icon={<CheckOutlined />} className='bg-pink_primary text-white outline-none border-none rounded-md px-5 font-medium text-lg leading-none flex items-center justify-center' onClick={() => {
 							setOpen(false);
-							router.back();
+							!isModal && router.back();
 						}}>
 							Got it!
 						</Button>

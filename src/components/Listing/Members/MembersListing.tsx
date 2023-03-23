@@ -15,7 +15,6 @@ interface Props {
 }
 
 const MembersListing = ({ className, data, prime } : Props) => {
-	console.log('data', data);
 	if(!data.length) return <div className={className}><PostEmptyState /></div>;
 
 	return (

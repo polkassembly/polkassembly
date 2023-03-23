@@ -18,7 +18,7 @@ interface IPostsTabProps {
 const PostsTab: FC<IPostsTabProps> = (props) => {
 	const { posts, className } = props;
 	if (!posts) return null;
-	const tabItems = Array.isArray(posts)? []: Object.entries(posts).sort((a, b) => b?.[0]?.length - a?.[0]?.length).map(([key, value]) => {
+	const tabItems = Array.isArray(posts)? []: Object.entries(posts).sort((a, b) => b?.[1].length - a?.[1]?.length).map(([key, value]) => {
 		return {
 			children: (
 				<PostTab posts={value} />

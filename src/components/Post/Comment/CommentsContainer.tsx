@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import { Alert, Anchor } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
@@ -8,6 +9,7 @@ import styled from 'styled-components';
 
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
+// import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 
 import PostCommentForm from '../PostCommentForm';
 import Comments from './Comments';
@@ -51,6 +53,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { postData: { postType, timeline, created_at, comments } } = usePostDataContext();
 	const targetOffset = 10;
 	const [timelines, setTimelines] = useState<ITimeline[]>([]);
+	// const [modalOpen,setModalOpen]=useState<boolean>(false);
 
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 
@@ -144,14 +147,24 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<Comments disableEdit={isGrantClosed} comments={comments} />
 						</>
 				}
-				{ id && <>
+				{ id ? <>
 					{ isGrantClosed ?
 						<Alert message="Grant closed, no comments can be added or edited." type="info" showIcon /> :
 						<PostCommentForm />
 					}
 				</>
+					:<Alert
+						className='p-4'
+						type='info' message="Please Login to Comment" showIcon/>
 				}
 			</div>
+			{/* {modalOpen &&
+			 <ReferendaLoginPrompts
+			  modalOpen={modalOpen}
+			  setModalOpen={setModalOpen}
+			  image="/assets/referenda-comment.png"
+			  title='Join Polkassembly to Comment on this proposal.'
+			  subtitle='Discuss, contribute and get regular updates from Polkassembly.'/>} */}
 		</div>
 	);
 };
@@ -167,7 +180,7 @@ export default React.memo(styled(CommentsContainer)`
 	.ant-anchor-ink {
 		margin-left: 5px;
 	}
-
+	
 	.ant-anchor-link {
 		margin-left: 5px;
 	}

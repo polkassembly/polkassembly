@@ -17,6 +17,7 @@ import Web3 from 'web3';
 import { LoadingStatusType, NotificationStatus } from 'src/types';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 
 export interface SecondProposalProps {
 	className?: string
@@ -31,13 +32,15 @@ const currentNetwork = getNetwork();
 const abi = require('src/moonbeamAbi.json');
 
 const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalProps) => {
-	const { walletConnectProvider, setWalletConnectProvider } = useUserDetailsContext();
+	const { walletConnectProvider, setWalletConnectProvider,id } = useUserDetailsContext();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [address, setAddress] = useState<string>('');
+	const [modalOpen,setModalOpen]=useState(false);
+
 	let web3 = new Web3((window as any).ethereum);
 
 	useEffect(() => {
@@ -176,7 +179,6 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 					source: 'metamask'
 				}
 			};
-
 			return account;
 		}));
 
@@ -251,9 +253,12 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 	};
 
 	const openModal = () => {
-		setShowModal(true);
-		if(accounts.length === 0) {
+		if(!id){
+			setModalOpen(true);
+		}else if(accounts.length === 0) {
 			getAccounts();
+		}else if(id && accounts.length>0){
+			setShowModal(true);
 		}
 	};
 
@@ -285,6 +290,13 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 					/>
 				</Spin>
 			</Modal>
+			{<ReferendaLoginPrompts
+				modalOpen={modalOpen}
+				setModalOpen={setModalOpen}
+				image="/assets/referenda-endorse.png"
+				title="Join Polkassembly to Endorse this proposal."
+				subtitle="Discuss, contribute and get regular updates from Polkassembly."/>}
+
 		</div>
 	);
 };

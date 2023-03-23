@@ -64,21 +64,21 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 										<EmailIcon className='mr-1' />
 										<span>Email</span>
 									</div>
-									<a href={`mailto:${onChainIdentity.email}`} className=' text-[#5E7087] text-sm font-normal mt-1'>{onChainIdentity.email}</a>
+									<a target='_blank' rel="noreferrer" href={`mailto:${onChainIdentity.email}`} className=' text-[#5E7087] text-sm font-normal mt-1'>{onChainIdentity.email}</a>
 								</Col>}
 								{onChainIdentity?.riot && <Col span={8}>
 									<div className='text-[#485F7D] font-medium text-sm'>
 										<RiotIcon className='mr-1' />
 										<span>Riot</span>
 									</div>
-									<p className=' text-[#5E7087] text-sm font-normal mt-1'>{onChainIdentity.riot}</p>
+									<a target='_blank' rel="noreferrer" href={`https://matrix.to/#/${onChainIdentity.riot}`} className=' text-[#5E7087] text-sm font-normal mt-1'>{onChainIdentity.riot}</a>
 								</Col>}
 								{onChainIdentity?.twitter && <Col span={8}>
 									<div className='text-[#485F7D] font-medium text-sm'>
 										<TwitterIcon className='mr-1' />
 										<span>Twitter</span>
 									</div>
-									<a href={`https://twitter.com/${onChainIdentity.twitter.substring(1)}`} className='text-[#5E7087] text-sm font-normal mt-1'>{onChainIdentity.twitter}</a>
+									<a target='_blank' rel="noreferrer" href={`https://twitter.com/${onChainIdentity.twitter.substring(1)}`} className='text-[#5E7087] text-sm font-normal mt-1'>{onChainIdentity.twitter}</a>
 								</Col>}
 								{judgements?.length > 0 && <Col span={8}>
 									<div className='text-[#485F7D] font-medium text-sm'>Judgements</div>

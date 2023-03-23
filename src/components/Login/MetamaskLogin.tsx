@@ -36,6 +36,8 @@ interface Props {
   chosenWallet: Wallet;
   setDisplayWeb2: () => void;
   setWalletError: React.Dispatch<React.SetStateAction<string | undefined>>;
+   isModal:boolean;
+  setLoginOpen:(pre:boolean)=>void;
 }
 
 interface IWalletIconProps {
@@ -63,7 +65,9 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 };
 const MetamaskLogin: FC<Props> = ({
 	chosenWallet,
-	setDisplayWeb2
+	setDisplayWeb2,
+	isModal,
+	setLoginOpen
 }) => {
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
@@ -215,6 +219,11 @@ const MetamaskLogin: FC<Props> = ({
 
 								if(confirmData.token) {
 									handleTokenChange(confirmData.token, currentUser);
+									if(isModal){
+										setLoginOpen(false);
+										setLoading(false);
+										return;
+									}
 									router.push('/');
 								}else {
 									throw new Error('Web3 Login failed');
@@ -231,6 +240,11 @@ const MetamaskLogin: FC<Props> = ({
 				}
 				if(addressLoginData?.token){
 					handleTokenChange(addressLoginData.token, currentUser);
+					if(isModal){
+						setLoginOpen(false);
+						setLoading(false);
+						return;
+					}
 					router.push('/');
 				}
 

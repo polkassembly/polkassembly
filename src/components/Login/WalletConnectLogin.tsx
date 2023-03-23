@@ -23,12 +23,14 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 interface Props {
 	className?: string
 	setDisplayWeb2: () => void
-	setPolkadotWallet: () => void
+	setPolkadotWallet: () => void;
+   isModal:boolean;
+  setLoginOpen:(pre:boolean)=>void;
 }
 
 const NETWORK = getNetwork();
 
-const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet }:Props): JSX.Element => {
+const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isModal,setLoginOpen }:Props): JSX.Element => {
 	const [error, setError] = useState('');
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -255,6 +257,11 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet }:Pro
 
 											if(confirmData.token) {
 												handleTokenChange(confirmData.token, currentUser);
+												if(isModal){
+													setLoginOpen(false);
+													setLoading(false);
+													return;
+												}
 												router.back();
 											}else {
 												throw new Error('Web3 Login failed');
@@ -273,6 +280,11 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet }:Pro
 						if (addressLoginData?.token) {
 							setWalletConnectProvider(provider);
 							handleTokenChange(addressLoginData.token, currentUser);
+							if(isModal){
+								setLoginOpen(false);
+								setLoading(false);
+								return;
+							}
 							router.back();
 						} else {
 							throw new Error('WalletConnect Login failed');

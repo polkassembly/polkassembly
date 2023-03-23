@@ -35,21 +35,6 @@ interface Props {
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const CSSVariables = styled.div`
-	@property --angle {
-		syntax: '<angle>';
-		initial-value: 90deg;
-		inherits: true;
-	}
-
-	--d: 3500ms;
-	--angle: 90deg;
-	--gradX: 100%;
-	--gradY: 50%;
-	--c1: #F696C9;
-	--c2: #ffffff;
-`;
-
 const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
@@ -80,9 +65,9 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 
 				{
 					isOpenGovSupported(network) ?
-						<CSSVariables>
+						<>
 							<GovernanceSwitchButton className='hidden lg:flex' />
-						</CSSVariables> :
+						</> :
 						<div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
 				}
 				<div className="flex items-center justify-between gap-x-2 md:gap-x-4">
@@ -120,7 +105,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 					</button>
 					<Modal
 						wrapClassName={className}
-						open={open}
+						open={!sidedrawer && open}
 						onCancel={() => {
 							setOpen(false);
 						}}
@@ -148,27 +133,34 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 									<p className='m-0 p-0 text-[#485F7D] font-normal text-sm leading-[23px] tracking-[0.02em]'>Node</p>
 									<RPCDropdown isSmallScreen={true} />
 								</div>
-								<Divider className='my-0'/>
-								<div className='flex flex-col gap-y-4'>
-									<button
-										onClick={() => {
-											setOpen(false);
-											router.push('/signup');
-										}}
-										className='rounded-[6px] bg-white flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
-									>
+								{
+									username?
+										null
+										: <>
+											<Divider className='my-0'/>
+											<div className='flex flex-col gap-y-4'>
+												<button
+													onClick={() => {
+														setOpen(false);
+														router.push('/signup');
+													}}
+													className='rounded-[6px] bg-white flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+												>
 										Sign Up
-									</button>
-									<button
-										onClick={() => {
-											setOpen(false);
-											router.push('/login');
-										}}
-										className='rounded-[6px] bg-[#E5007A] flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
-									>
+												</button>
+												<button
+													onClick={() => {
+														setOpen(false);
+														router.push('/login');
+													}}
+													className='rounded-[6px] bg-[#E5007A] flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+												>
 										Log In
-									</button>
-								</div>
+												</button>
+											</div>
+										</>
+								}
+
 							</div>
 						</div>
 					</Modal>
@@ -226,22 +218,4 @@ p {
 margin: 0;
 }
 
-.v2-button-wrapper {
-min-width: min(40rem, 100%);
-}
-
-.v2-box {
-font-family: 'Poppins';
-margin: max(1rem, 3vw);
-border: 0.25px solid;
-padding: 6px 12px;
-border-image: conic-gradient(from var(--angle), var(--c2), var(--c1) 0.1turn, var(--c1) 0.15turn, var(--c2) 0.25turn) 15;
-animation: borderRotate var(--d) linear infinite forwards;
-}
-
-@keyframes borderRotate {
-100% {
-	--angle: 420deg;
-}
-}
 `;

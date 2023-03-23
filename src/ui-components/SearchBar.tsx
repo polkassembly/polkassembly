@@ -24,7 +24,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 			{
 				isSmallScreen?
 					<div className='small-client relative'>
-						<SearchOutlined className='absolute top-2.5 left-2.5 z-50' />
+						<SearchOutlined className='absolute top-[11px] left-2.5 z-50' />
 						<ClientOnly>
 							<Search network={network} />
 						</ClientOnly>

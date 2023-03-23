@@ -68,6 +68,7 @@ const Login = ({ network,setLoginOpen,setSignupOpen,isModal }:Props) => {
 		if (currentUser?.id && !isModal) {
 			router.push('/');
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[currentUser?.id, router]);
 	return (
 		<>

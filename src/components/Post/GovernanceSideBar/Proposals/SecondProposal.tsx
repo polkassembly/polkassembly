@@ -13,6 +13,8 @@ import styled from 'styled-components';
 
 import { LoadingStatusType,NotificationStatus } from '../../../../types';
 import { NetworkContext } from '~src/context/NetworkContext';
+import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import { useUserDetailsContext } from '~src/context';
 
 export interface SecondProposalProps {
 	accounts: InjectedAccount[]
@@ -28,6 +30,8 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useContext(NetworkContext);
+	const [modalOpen,setModalOpen]=useState(false);
+	const { id }=useUserDetailsContext();
 
 	const secondProposal = async () => {
 		if (!proposalId && proposalId !== 0) {
@@ -106,9 +110,12 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 	};
 
 	const openModal = () => {
-		setShowModal(true);
-		if(accounts.length === 0) {
+		if(!id){
+			setModalOpen(true);
+		}else if(accounts.length === 0) {
 			getAccounts();
+		}else if(id && accounts.length>0){
+			setShowModal(true);
 		}
 	};
 
@@ -140,6 +147,12 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 					/>
 				</Spin>
 			</Modal>
+			<ReferendaLoginPrompts
+				modalOpen={modalOpen}
+				setModalOpen={setModalOpen}
+				image="/assets/referenda-endorse.png"
+				title="Join Polkassembly to Endorse this proposal."
+				subtitle="Discuss, contribute and get regular updates from Polkassembly."/>
 		</div>
 	);
 };

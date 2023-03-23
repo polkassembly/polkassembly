@@ -60,6 +60,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 			console.error('No user id found. Not logged in?');
 			return;
 		}else{
+
 			setReactionsDisabled(true);
 			const actionName  =`${reacted ? 'remove' : 'add'}${commentId ? 'Comment' : 'Post'}Reaction`;
 			const { data , error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {

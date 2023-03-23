@@ -18,7 +18,6 @@ const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 
 import { DiscordIcon, EmailIcon, RiotIcon, TelegramIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
-// import OnChainIdentity from './OnChainIdentity';
 import About from './About';
 import GovTab from './GovTab';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
@@ -151,6 +150,52 @@ const Details: FC<IDetailsProps> = (props) => {
 			setProfileDetails(userProfile.data);
 		}
 	}, [userProfile]);
+
+	useEffect(() => {
+		if (onChainIdentity) {
+			const { email, twitter, riot } = onChainIdentity;
+			const social_links = profileDetails.social_links || [];
+			let isEmailAvailable = false;
+			let isTwitterAvailable = false;
+			let isRiotAvailable = false;
+			social_links.forEach((v) => {
+				switch(v.type) {
+				case ESocialType.EMAIL:
+					isEmailAvailable = true;
+					break;
+				case ESocialType.TWITTER:
+					isTwitterAvailable = true;
+					break;
+				case ESocialType.RIOT:
+					isRiotAvailable = true;
+				}
+			});
+			if (email && !isEmailAvailable) {
+				social_links.push({
+					link: email,
+					type: ESocialType.EMAIL
+				});
+			}
+			if (twitter && !isTwitterAvailable) {
+				social_links.push({
+					link: `https://twitter.com/${twitter.substring(1)}`,
+					type: ESocialType.TWITTER
+				});
+			}
+			if (riot && !isRiotAvailable) {
+				social_links.push({
+					link: `https://matrix.to/#/${riot}`,
+					type: ESocialType.RIOT
+				});
+			}
+			setProfileDetails((prev) => {
+				return {
+					...prev,
+					social_links: social_links
+				};
+			});
+		}
+	}, [onChainIdentity, profileDetails]);
 
 	useEffect(() => {
 		if (!api) {

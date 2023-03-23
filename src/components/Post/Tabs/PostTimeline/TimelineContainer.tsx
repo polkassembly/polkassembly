@@ -10,6 +10,7 @@ import StatusTag from 'src/ui-components/StatusTag';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { useNetworkContext } from '~src/context';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
+import { getBlockLink } from '~src/util/subscanCheck';
 
 interface BlockStatus {
 	block: number;
@@ -47,16 +48,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 		);
 	};
 
-	let url = '';
-	if(network == 'xx'){
-		url = 'https://explorer.xx.network/blocks';
-	}
-	else if(network == 'myriad'){
-		url = 'https://explorer.mainnet.oct.network/myriad/blocks';
-	}
-	else {
-		url = `https://${network == 'kilt' ? 'spiritnet': network}.subscan.io/block`;
-	}
+	const url = getBlockLink(network);
 
 	const TimelineItems = (isMobile:boolean) => {
 

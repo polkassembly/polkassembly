@@ -196,7 +196,7 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 
 			try {
 				const response = await fetch(
-					`https://${network === 'kilt' ? 'spiritnet' : network}.api.subscan.io/api/scan/price/history`,
+					`${chainProperties[network].externalLinks}/api/scan/price/history`,
 					{
 						body: JSON.stringify({
 							end: weekAgoDate,

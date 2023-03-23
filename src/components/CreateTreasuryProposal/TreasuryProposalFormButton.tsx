@@ -2,11 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CheckCircleFilled, DownOutlined, UpOutlined, WarningFilled } from '@ant-design/icons';
+import { CheckCircleFilled, DownOutlined, LoadingOutlined, UpOutlined, WarningFilled } from '@ant-design/icons';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import Identicon from '@polkadot/react-identicon';
-import { Button, Divider, Form, Input, Modal, Tooltip } from 'antd';
+import { Button, Divider, Form, Input, Modal, Spin, Tooltip } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 //TODO: import { useAddPolkassemblyProposalMutation } from 'src/generated/graphql';
@@ -14,18 +14,16 @@ import { APPNAME } from 'src/global/appName';
 import { chainProperties } from 'src/global/networkConstants';
 import { LoadingStatusType, NotificationStatus } from 'src/types';
 import BalanceInput from 'src/ui-components/BalanceInput';
-import Card from 'src/ui-components/Card';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
-import Loader from 'src/ui-components/Loader';
 import queueNotification from 'src/ui-components/QueueNotification';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
+import { CreatePostResponseType } from '~src/auth/types';
 
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
-import formatBnBalance from '~src/util/formatBnBalance';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-import { PolkassemblyProposalTypes } from '../../types';
 import AddressComponent from '../../ui-components/Address';
 import ContentForm from '../ContentForm';
 import TitleForm from '../TitleForm';
@@ -61,26 +59,30 @@ const TreasuryProposalFormButton = ({
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
 	// const [addPolkassemblyProposalMutation] = useAddPolkassemblyProposalMutation();
 
-	const [proposalBond, setProposalBond] = useState('5.00%');
 	const [errorsFound, setErrorsFound] = useState<string[]>([]);
+	const [treasuryProposal, setTreasuryProposal] = useState<{
+		bondPercent: null | string;
+		maxBond: null | string;
+		minBond: null | string;
+	}>({
+		bondPercent: '',
+		maxBond: '',
+		minBond: ''
+	});
 
 	const { id } = useUserDetailsContext();
 
 	useEffect(() => {
-		const valueNum = Number(formatBnBalance(value, { numberAfterComma:0, withThousandDelimitor: false, withUnit: false }, network));
-		const fivePercent = valueNum * 0.05;
-
-		const minBond = network === 'kusama' ? 0.6666 : 100;
-		const maxBond = network === 'kusama' ? 33.3333 : 500;
-
-		if (fivePercent <= minBond) {
-			setProposalBond(String(minBond));
-		} else if (fivePercent >= maxBond) {
-			setProposalBond(String(maxBond));
-		} else {
-			setProposalBond(String(fivePercent));
+		const networkChainProperties = chainProperties[network];
+		if (networkChainProperties) {
+			const { treasuryProposalBondPercent, treasuryProposalMaxBond, treasuryProposalMinBond } = networkChainProperties;
+			setTreasuryProposal({
+				bondPercent: treasuryProposalBondPercent,
+				maxBond: treasuryProposalMaxBond,
+				minBond: treasuryProposalMinBond
+			});
 		}
-	}, [network, value]);
+	}, [network]);
 
 	const minimumBond = chainProperties[network]?.tokenSymbol === 'DOT' ? '100.0000 DOT' : '66.66 mKSM';
 
@@ -188,7 +190,7 @@ const TreasuryProposalFormButton = ({
 	const { api, apiReady } = useApiContext();
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const saveProposal = async (userId: number, proposalType: number, title: string, content: string, proposalHash: string, proposerAddress: string) => {
+	const saveProposal = async (userId: number, title: string, content: string, proposerAddress: string) => {
 
 		if (!api || !apiReady) {
 			return;
@@ -197,17 +199,30 @@ const TreasuryProposalFormButton = ({
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const proposalId: number = ((await api.query.treasury.proposalCount()) as any).toNumber();
 
-		// addPolkassemblyProposalMutation({
-		// variables: {
-		//userId,
-		//content,
-		//proposalHash,
-		//proposalId,
-		//proposalType,
-		//proposerAddress,
-		//title
-		//}
-		// }).catch((e) => console.error('Error creating to proposal',e));
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>( 'api/v1/auth/actions/createTreasuryPost', {
+			content,
+			postId: proposalId,
+			proposerAddress,
+			title,
+			userId
+		});
+
+		if(apiError || !data?.post_id) {
+			queueNotification({
+				header: 'Error',
+				message: 'There was an error creating your treasury post.',
+				status: NotificationStatus.ERROR
+			});
+			console.error(apiError);
+		}
+
+		if(data && data.post_id) {
+			queueNotification({
+				header: 'Thanks for sharing!',
+				message: 'Treasury Post created successfully.',
+				status: NotificationStatus.SUCCESS
+			});
+		}
 	};
 
 	const handleSignAndSubmit = async () => {
@@ -229,7 +244,7 @@ const TreasuryProposalFormButton = ({
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
 		try {
 			const proposal = api.tx.treasury.proposeSpend(value.toString(), beneficiaryAccount);
-			proposal.signAndSend(submitWithAccount, ({ status }) => {
+			proposal.signAndSend(submitWithAccount, async ({ status }) => {
 				if (status.isInBlock) {
 					queueNotification({
 						header: 'Success!',
@@ -243,7 +258,7 @@ const TreasuryProposalFormButton = ({
 					if (!userId){
 						return;
 					}
-					saveProposal(userId, PolkassemblyProposalTypes.TreasurySpendProposal, postTitle, postDescription, proposal.hash.toString(), submitWithAccount);
+					await saveProposal(userId, postTitle, postDescription, submitWithAccount);
 				} else {
 					if (status.isBroadcast){
 						setLoadingStatus({ isLoading: true, message: 'Broadcasting the endorsement' });
@@ -275,13 +290,15 @@ const TreasuryProposalFormButton = ({
 		}
 	};
 
-	const triggerBtn = <Button disabled={!id} className='w-full sm:w-auto h-[40px] md:h-[69px] font-medium rounded-md border-1 border-pink_primary border-solid hover:border-none text-pink_primary hover:text-white bg-white hover:bg-gradient-to-r hover:from-[#c40061] hover:to-[#ff88c9] transition-colors duration-300'  onClick={() => setModalOpen(true)}> Add New Proposal</Button>;
-	const triggerBtnLoginDisabled = <Tooltip  color='#E5007A' title='Please signup/login to create treasury proposal'> <Button type='primary' disabled={true} className='w-full sm:w-auto h-[40px] md:h-[69px] rounded-md' > Add New Proposal</Button></Tooltip>;
+	const triggerBtn = <button disabled={!id} className='font-medium text-lg leading-[27px] bg-pink_primary px-[19x] py-6 rounded-[4px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-white border-none outline-none h-[75px] min-w-[226px] cursor-pointer'  onClick={() => setModalOpen(true)}>+ Add New Proposal</button>;
+	const triggerBtnLoginDisabled = <Tooltip  color='#E5007A' title='Please signup/login to create treasury proposal'> <button disabled={true} className='font-medium text-lg leading-[27px] px-[19x] py-6 rounded-[4px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-white border-none outline-none h-[75px] min-w-[226px] cursor-not-allowed bg-grey_secondary'>+ Add New Proposal</button></Tooltip>;
 	return (
 		loadingStatus.isLoading
-			? <Card className={'LoaderWrapper'}>
-				<Loader text={loadingStatus.message}/>
-			</Card>:
+			? <Spin indicator={<LoadingOutlined />} >
+				<div className='font-medium text-sm leading-[27px] px-[19x] py-6 rounded-[4px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-pink_primary border-none outline-none h-[75px] min-w-[226px] cursor-not-allowed bg-white flex items-center justify-center'>
+					{loadingStatus.message}
+				</div>
+			</Spin>:
 			<>
 				{!id ? triggerBtnLoginDisabled : triggerBtn}
 
@@ -399,30 +416,38 @@ const TreasuryProposalFormButton = ({
 									</ div>
 
 									{/* Proposal Bond */}
-									<div className='mb-[1.5em]'>
-										<label className='mb-3 font-bold flex items-center text-sm text-sidebarBlue'>
+									{
+										treasuryProposal.bondPercent?
+											<div className='mb-[1.5em]'>
+												<label className='mb-3 font-bold flex items-center text-sm text-sidebarBlue'>
 													Proposal Bond
-											<HelperTooltip className='ml-2' text='Of the beneficiary amount, at least 5.00% would need to be put up as collateral. The maximum of this and the minimum bond will be used to secure the proposal, refundable if it passes.' />
-										</label>
+													<HelperTooltip className='ml-2' text='Of the beneficiary amount, at least 5.00% would need to be put up as collateral. The maximum of this and the minimum bond will be used to secure the proposal, refundable if it passes.' />
+												</label>
 
-										<Input
-											className=' hide-pointer'
-											value={proposalBond}
-										/>
-									</div>
+												<Input
+													className=' hide-pointer'
+													value={treasuryProposal.bondPercent}
+												/>
+											</div>
+											: null
+									}
 
 									{/* Minimum Bond */}
-									<div className='mb-[1.5em]'>
-										<label className=' mb-3 font-bold flex items-center text-sm text-sidebarBlue'>
+									{
+										treasuryProposal.minBond?
+											<div className='mb-[1.5em]'>
+												<label className=' mb-3 font-bold flex items-center text-sm text-sidebarBlue'>
 												Minimum Bond
-											<HelperTooltip className='ml-2' text='The minimum amount that will be bonded.' />
-										</label>
+													<HelperTooltip className='ml-2' text='The minimum amount that will be bonded.' />
+												</label>
 
-										<Input
-											className=' hide-pointer'
-											value={minimumBond}
-										/>
-									</div>
+												<Input
+													className=' hide-pointer'
+													value={minimumBond}
+												/>
+											</div>
+											: null
+									}
 
 									<p><WarningFilled /> Be aware that once submitted the proposal will be put to a council vote. If the proposal is rejected due to a lack of info, invalid requirements or non-benefit to the network as a whole, the full bond posted (as describe above) will be lost.</p>
 								</div>

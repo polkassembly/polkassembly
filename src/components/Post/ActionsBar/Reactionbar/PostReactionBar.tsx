@@ -6,6 +6,7 @@
 
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useState } from 'react';
+import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 
 import ReactionButton from './ReactionButton';
 
@@ -15,7 +16,8 @@ interface IPostReactionBarProps {
 }
 
 const PostReactionBar: FC<IPostReactionBarProps> = ({ className, post_reactions }) => {
-	const [reactionsDisabled, setReactionsDisabled] = useState(false);
+	const [reactionsDisabled, setReactionsDisabled] = useState<boolean>(false);
+	const [openModal,setModalOpen]=useState<boolean>(false);
 	const [reactions, setReactions] = useState<IReactions>(post_reactions!);
 	if (!post_reactions) {
 		return null;
@@ -24,16 +26,23 @@ const PostReactionBar: FC<IPostReactionBarProps> = ({ className, post_reactions 
 		<div className={`${className} flex items-center`}>
 			{Object.keys(post_reactions).map((reaction) => {
 				return (
-					<ReactionButton
-						key={reaction}
-						reaction={reaction}
-						reactions={reactions}
-						reactionsDisabled={reactionsDisabled}
-						setReactionsDisabled={setReactionsDisabled}
-						setReactions={setReactions}
-					/>
+					<div key={reaction}>
+						<ReactionButton
+							reaction={reaction}
+							reactions={reactions}
+							reactionsDisabled={reactionsDisabled}
+							setReactionsDisabled={setReactionsDisabled}
+							setModalOpen={setModalOpen}
+							setReactions={setReactions}/>
+					</div>
 				);
 			})}
+			{ <ReferendaLoginPrompts
+				modalOpen={openModal}
+				setModalOpen={setModalOpen}
+				image="/assets/referenda-like-dislike.png"
+				title="Join Polkassembly to Like this proposal."
+				subtitle="Discuss, contribute and get regular updates from Polkassembly."/>}
 		</div>
 	);
 };

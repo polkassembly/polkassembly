@@ -20,6 +20,7 @@ export interface IReactionButtonProps {
 	reactionsDisabled: boolean;
 	setReactionsDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 	setReactions: React.Dispatch<React.SetStateAction<IReactions>>
+  setModalOpen?:(pre:boolean)=>void;
 }
 
 type IReaction = '👍' | '👎';
@@ -31,8 +32,8 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	commentId,
 	reactions,
 	setReactions,
-	reactionsDisabled,
-	setReactionsDisabled
+	setReactionsDisabled,
+	setModalOpen
 }) => {
 	const { postData: { postIndex, postType } } = usePostDataContext();
 	const { id, username } = useContext(UserDetailsContext);
@@ -54,54 +55,49 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 	const handleReact = async () => {
 		if (!id || !username) {
+			setModalOpen && setModalOpen(true);
+			setReactionsDisabled(true);
 			console.error('No user id found. Not logged in?');
-			return;
-		}
+		}else{const actionName  =`${reacted ? 'remove' : 'add'}${commentId ? 'Comment' : 'Post'}Reaction`;
+			const { data , error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
+				commentId: commentId || null,
+				postId: postIndex,
+				postType,
+				reaction,
+				userId: id
+			});
 
-		setReactionsDisabled(true);
-
-		const actionName  =`${reacted ? 'remove' : 'add'}${commentId ? 'Comment' : 'Post'}Reaction`;
-
-		const { data , error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
-			commentId: commentId || null,
-			postId: postIndex,
-			postType,
-			reaction,
-			userId: id
-		});
-
-		if (error || !data) {
-			console.error('Error while reacting', error);
-		}
-
-		if(data) {
-			const newReactions = { ...reactions };
-			if(reacted) {
-				newReactions[reaction as IReaction].count--;
-				newReactions[reaction as IReaction].usernames = newReactions[reaction as IReaction].usernames?.filter(name => name !== username);
-			}else {
-				newReactions[reaction as IReaction].count++;
-				newReactions[reaction as IReaction].usernames?.push(username || '');
-
-				//remove username from other reactions
-				Object.keys(newReactions).forEach(key => {
-					if(key !== reaction && newReactions[key as IReaction].usernames?.includes(username)) {
-						newReactions[key as IReaction].count--;
-						newReactions[key as IReaction].usernames = newReactions[key as IReaction].usernames?.filter(name => name !== username);
-					}
-				});
+			if (error || !data) {
+				console.error('Error while reacting', error);
 			}
-			setReactions(newReactions);
-		}
 
-		setReactionsDisabled(false);
-	};
+			if(data) {
+				const newReactions = { ...reactions };
+				if(reacted) {
+					newReactions[reaction as IReaction].count--;
+					newReactions[reaction as IReaction].usernames = newReactions[reaction as IReaction].usernames?.filter(name => name !== username);
+				}else {
+					newReactions[reaction as IReaction].count++;
+					newReactions[reaction as IReaction].usernames?.push(username || '');
+
+					//remove username from other reactions
+					Object.keys(newReactions).forEach(key => {
+						if(key !== reaction && newReactions[key as IReaction].usernames?.includes(username)) {
+							newReactions[key as IReaction].count--;
+							newReactions[key as IReaction].usernames = newReactions[key as IReaction].usernames?.filter(name => name !== username);
+						}
+					});
+				}
+				setReactions(newReactions);
+			}
+
+			setReactionsDisabled(false);
+		}};
 
 	const button =  <span className={className}>
 		<Button
 			className={'border-none px-2 shadow-none disabled:opacity-[0.5] disabled:bg-transparent'}
 			onClick={handleReact}
-			disabled={!id || reactionsDisabled}
 		>
 			<span className="flex items-center text-pink_primary">
 				{getReactionIcon(reaction, reacted)}

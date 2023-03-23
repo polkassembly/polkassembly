@@ -3,10 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { getOffChainPosts } from 'pages/api/v1/listing/off-chain-posts';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-import React, { FC, useContext, useEffect } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -16,6 +16,7 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { OffChainProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
+import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 import { ErrorState } from '~src/ui-components/UIStates';
 
 interface IDiscussionsProps {
@@ -58,6 +59,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 const Discussions: FC<IDiscussionsProps> = (props) => {
 	const { data, error } = props;
 	const { setNetwork } = useNetworkContext();
+	const [openModal,setModalOpen]=useState<boolean>(false);
+	const router=useRouter();
 
 	useEffect(() => {
 		setNetwork(props.network);
@@ -70,6 +73,14 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 	if (!data) return null;
 	const { posts, count } = data;
 
+	const handleClick=() => {
+		if(id){
+			router.push('/post/create');
+		}else{
+			setModalOpen(true);
+		}
+
+	};
 	return (
 		<>
 			<SEOHead title='Discussions' />
@@ -83,12 +94,10 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 						This is the place to discuss all things polkadot. Anyone can start a new discussion.
 					</p>
 				</div>
-				<Link href="/post/create">
-					<button disabled={!id} className={`outline-none border-none h-[59px] w-[174px] px-6 py-4 font-medium text-lg leading-[27px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white ${id? 'bg-pink_primary cursor-pointer': 'bg-grey_secondary cursor-not-allowed'}`}>Add New Post</button>
-				</Link>
+				<button onClick={handleClick} className='outline-none border-none h-[59px] w-[174px] px-6 py-4 font-medium text-lg leading-[27px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer'>Add New Post</button>
 			</div>
-
 			<OffChainPostsContainer proposalType={OffChainProposalType.DISCUSSIONS} posts={posts} count={count} className='mt-7' />
+			{openModal &&<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title="Join Polkassembly to Start a New Discussion." subtitle="Discuss, contribute and get regular updates from Polkassembly."/>}
 		</>
 	);
 };

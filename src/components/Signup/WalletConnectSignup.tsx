@@ -29,9 +29,11 @@ const NETWORK = getNetwork();
 interface Props {
 	className?: string
 	setMethod: React.Dispatch<React.SetStateAction<string>>
+   isModal?:boolean;
+  setSignupOpen?:(pre:boolean)=>void;
 }
 
-const WalletConnectSignup = ({ className, setMethod }: Props): JSX.Element => {
+const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Props): JSX.Element => {
 	const [error, setError] = useState('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [address, setAddress] = useState<string>('');
@@ -221,6 +223,10 @@ const WalletConnectSignup = ({ className, setMethod }: Props): JSX.Element => {
 							content: 'Add an email in settings if you want to be able to recover your account!',
 							title: 'Add optional email'
 						});
+						if(isModal){
+							setSignupOpen && setSignupOpen(false);
+							return;
+						}
 						router.back();
 					} else {
 						setError(confirmError || 'WalletConnect signup failed');

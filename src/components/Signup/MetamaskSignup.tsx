@@ -31,11 +31,15 @@ interface Props {
   chosenWallet: Wallet;
   setDisplayWeb2: () => void;
   setWalletError: React.Dispatch<React.SetStateAction<string | undefined>>;
+  isModal?:boolean;
+  setSignupOpen?:(pre:boolean)=>void;
 }
 
 const MetamaskSignup: FC<Props> = ({
 	chosenWallet,
-	setDisplayWeb2
+	setDisplayWeb2,
+	isModal,
+	setSignupOpen
 }) => {
 	const [error, setErr] = useState('');
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -148,6 +152,10 @@ const MetamaskSignup: FC<Props> = ({
 
 				if(confirmData.token) {
 					handleTokenChange(confirmData.token, currentUser);
+					if(isModal){
+						setSignupOpen && setSignupOpen(false);
+						return;
+					}
 					router.back();
 				}else {
 					throw new Error('Web3 Login failed');

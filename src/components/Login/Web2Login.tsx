@@ -53,7 +53,11 @@ const Web2Login: FC<Props> = ({ walletError, onWalletSelect,setLoginOpen,isModal
 
 			if (data?.token) {
 				handleTokenChange(data.token, currentUser);
-				if(isModal) return;
+				if(isModal){
+					setLoading(false);
+					setLoginOpen(false);
+					return;
+				}
 				router.back();
 			}
 		}

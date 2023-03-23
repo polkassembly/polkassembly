@@ -72,6 +72,11 @@ const Web2Signup: FC<Props> = ({ walletError, onWalletSelect ,isModal,setLoginOp
 				if(data) {
 					if (data.token) {
 						handleTokenChange(data.token, currentUser);
+						if(isModal){
+							setLoading(false);
+							setSignupOpen &&  setSignupOpen(false);
+							return;
+						}
 						if (email) {
 							setOpen(true);
 						}

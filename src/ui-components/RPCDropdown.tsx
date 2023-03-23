@@ -5,15 +5,16 @@
 /* eslint-disable no-tabs */
 import { MenuProps } from 'antd';
 import { Dropdown } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useApiContext, useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
-import { SignalTowerIcon } from './CustomIcons';
+import { ArrowDownIcon, SignalTowerIcon } from './CustomIcons';
 import Loader from './Loader';
 
-interface Props {
+interface IRPCDropdownProps {
 	className?: string
-	setSidebarHiddenFunc?: () => void
+	setSidebarHiddenFunc?: () => void;
+	isSmallScreen?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -68,7 +69,8 @@ const KusamaRPCEndpoints = [
 	}
 ];
 
-const RPCDropdown = ({ className }: Props) => {
+const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
+	const { className, isSmallScreen } = props;
 	const { apiReady, setWsProvider } = useApiContext();
 	const { network } = useNetworkContext();
 	const [endpoint, setEndpoint] = useState<string>(network ? chainProperties?.[network]?.rpcEndpoint : '');
@@ -110,7 +112,6 @@ const RPCDropdown = ({ className }: Props) => {
 		}
 	}, [network]);
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const dropdownLabel = () => {
 		let label = '';
 
@@ -121,7 +122,7 @@ const RPCDropdown = ({ className }: Props) => {
 			}
 		});
 
-		return <span className='min-w-[75px]'>{label}</span>;
+		return label;
 	};
 
 	const handleEndpointChange: MenuProps['onClick'] = ({ key }) => {
@@ -137,9 +138,25 @@ const RPCDropdown = ({ className }: Props) => {
 				menu={{ defaultSelectedKeys: [endpoint], items: RPCOptions, onClick: handleEndpointChange, selectable: true }}
 				className={className}
 			>
-				<span className='flex items-center justify-center border border-solid border-[#D2D8E0] rounded-[2px] md:rounded-[4px] cursor-pointer bg-[rgba(210,216,224,0.2)] p-1 md:p-[8.5px]'>
-					<SignalTowerIcon className='text-xs md:text-sm m-0 p-0' />
-				</span>
+				{
+					isSmallScreen?
+						<span className='flex items-center justify-between gap-x-2 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] h-10 px-[18px]'>
+							<div className='flex items-center gap-x-[6px]'>
+								<SignalTowerIcon className='w-[20px] h-[20px] m-0 p-0' />
+								<span className='font-semibold text-xs leading-[18px] tracking-[0.02em]'>
+									{
+										dropdownLabel()
+									}
+								</span>
+							</div>
+							<span className='text-[#485F7D]'>
+								<ArrowDownIcon />
+							</span>
+						</span>
+						: <span className='flex items-center justify-center border border-solid border-[#D2D8E0] rounded-[2px] md:rounded-[4px] cursor-pointer bg-[rgba(210,216,224,0.2)] p-1 md:p-[8.5px]'>
+							<SignalTowerIcon className='text-xs md:text-sm m-0 p-0' />
+						</span>
+				}
 			</Dropdown> :
 			<Loader />
 	);

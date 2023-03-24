@@ -35,9 +35,9 @@ const ReferendumV2VotingStatus: FC<IReferendumV2VotingStatusProps> = ({ classNam
 	useEffect(() => {
 		if(['confirmed', 'executed', 'timedout', 'cancelled', 'rejected'].includes(status.toLowerCase())){
 			setTallyData({
-				ayes: new BN(tally?.ayes || 0, 'hex'),
-				nays: new BN(tally?.nays || 0, 'hex'),
-				support: new BN(tally?.support || 0, 'hex')
+				ayes: String(tally?.ayes).startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
+				nays: String(tally?.nays).startsWith('0x') ? new BN(tally?.nays || 0, 'hex') : new BN(tally?.nays || 0),
+				support: String(tally?.support).startsWith('0x') ? new BN(tally?.support || 0, 'hex') : new BN(tally?.support || 0)
 			});
 			return;
 		}

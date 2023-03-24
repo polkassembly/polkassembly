@@ -153,13 +153,6 @@ export enum PostTypeEnum {
 
 export type PostType = PostTypeEnum;
 
-export interface CommentCreationHookDataType {
-	user_id: number;
-	content: string;
-	id: string;
-	post_id: number;
-}
-
 export interface HashedPassword {
 	password: string;
 	salt: string;

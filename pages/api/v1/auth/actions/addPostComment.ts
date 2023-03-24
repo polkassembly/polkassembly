@@ -3,10 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isProposalTypeValid } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import getMentionedUsernames from '~src/api-utils/getMentionedUsernames';
+import _sendCommentMentionMail from '~src/api-utils/_sendCommentMentionMail';
+import sendCommentMailToPostSubs from '~src/api-utils/sendCommentMailToPostSubs';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
@@ -38,6 +40,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 
 	const postRef = postsByTypeRef(network, strProposalType as ProposalType)
 		.doc(String(postId));
+
 	const last_comment_at = new Date();
 	const newCommentRef = postRef
 		.collection('comments')
@@ -57,12 +60,16 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	await newCommentRef.set(newComment).then(() => {
 		postRef.update({
 			last_comment_at
-		}).then(() => {});
+		});
+
+		sendCommentMailToPostSubs(network, strProposalType, String(postId), content, newCommentRef.id, user);
+		const mentions = getMentionedUsernames(content).filter((username) => username !== user.username);
+		_sendCommentMentionMail(network, strProposalType, String(postId), content, newCommentRef.id, user, mentions);
+
 		return res.status(200).json({
 			id: newComment.id
 		});
 	}).catch((error) => {
-		// The document probably doesn't exist.
 		console.error('Error saving comment: ', error);
 		return res.status(500).json({ message: 'Error saving comment' });
 	});

@@ -41,10 +41,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if(!replyDoc.exists) return res.status(404).json({ message: 'Reply not found' });
 	if(replyDoc.data()?.user_id !== user.id) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	replyRef.delete().then(() => {
+	await replyRef.delete().then(() => {
 		postRef.update({
 			last_comment_at
-		}).then(() => {});
+		});
 		return res.status(200).json({ message: 'Reply deleted.' });
 	}).catch((error) => {
 		// The document probably doesn't exist.

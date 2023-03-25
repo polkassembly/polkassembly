@@ -208,6 +208,7 @@ const Web3Signup: FC<Props> = ({
 			}
 
 			if(confirmData.token) {
+				currentUser.loginWallet=chosenWallet;
 				handleTokenChange(confirmData.token, currentUser);
 				if(isModal){
 					setSignupOpen && setSignupOpen(false);
@@ -344,3 +345,4 @@ const Web3Signup: FC<Props> = ({
 };
 
 export default Web3Signup;
+

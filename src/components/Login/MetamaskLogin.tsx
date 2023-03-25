@@ -218,7 +218,9 @@ const MetamaskLogin: FC<Props> = ({
 								}
 
 								if(confirmData.token) {
-									handleTokenChange(confirmData.token, currentUser);
+									currentUser.loginWallet=Wallet.METAMASK;
+									console.log(currentUser,'cure');
+									handleTokenChange(confirmData.token,currentUser);
 									if(isModal){
 										setLoginOpen(false);
 										setLoading(false);
@@ -239,6 +241,8 @@ const MetamaskLogin: FC<Props> = ({
 					}
 				}
 				if(addressLoginData?.token){
+					currentUser.loginWallet=Wallet.METAMASK;
+					console.log(currentUser,'cure');
 					handleTokenChange(addressLoginData.token, currentUser);
 					if(isModal){
 						setLoginOpen(false);

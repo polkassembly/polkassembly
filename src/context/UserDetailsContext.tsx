@@ -21,6 +21,7 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	isLoggedOut: (): boolean => {
 		throw new Error('isLoggedIn function must be overridden');
 	},
+	loginWallet:null,
 	picture: null,
 	setUserDetailsContextState : (): void => {
 		throw new Error('setUserDetailsContextState function must be overridden');

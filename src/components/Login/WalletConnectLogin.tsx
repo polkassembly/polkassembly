@@ -18,6 +18,7 @@ import getNetwork from 'src/util/getNetwork';
 import styled from 'styled-components';
 
 import { ChallengeMessage, TokenType } from '~src/auth/types';
+import { Wallet } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
@@ -256,6 +257,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isMod
 											}
 
 											if(confirmData.token) {
+												currentUser.loginWallet=Wallet.WALLETCONNECT;
 												handleTokenChange(confirmData.token, currentUser);
 												if(isModal){
 													setLoginOpen(false);
@@ -279,6 +281,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isMod
 						}
 						if (addressLoginData?.token) {
 							setWalletConnectProvider(provider);
+							currentUser.loginWallet=Wallet.WALLETCONNECT;
 							handleTokenChange(addressLoginData.token, currentUser);
 							if(isModal){
 								setLoginOpen(false);

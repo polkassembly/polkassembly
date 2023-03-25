@@ -71,6 +71,7 @@ export const handleTokenChange = (token: string, currentUser: UserDetailsContext
 					email,
 					email_verified,
 					id: Number(id),
+					loginWallet:currentUser.loginWallet || prevState.loginWallet,
 					username,
 					web3signup
 				};

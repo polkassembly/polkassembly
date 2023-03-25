@@ -40,7 +40,7 @@ const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut } = useUserDetailsContext();
+	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut,loginWallet } = useUserDetailsContext();
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const { apiReady } = useApiContext();
 	const [address, setAddress] = useState<string>('');
@@ -301,6 +301,26 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			await getWalletConnectAccounts();
 		}
 	};
+
+	const handleDefaultWallet=async(wallet:Wallet) => {
+		setWallet(wallet);
+		await getAccounts(wallet);
+		if (walletConnectProvider) {
+			await getWalletConnectAccounts();
+		}
+	};
+	// eslint-disable-next-line react-hooks/rules-of-hooks
+	useEffect(() => {
+		loginWallet!==null && setWallet(loginWallet);
+	},[loginWallet]);
+
+	// eslint-disable-next-line react-hooks/rules-of-hooks
+	useEffect(() => {
+		if(loginWallet !== null){
+			handleDefaultWallet(loginWallet);
+		}
+	},[loginWallet]);
+
 	return (
 		<div className={className}>
 			<Button

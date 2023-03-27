@@ -50,7 +50,7 @@ const ReferendumVoteInfo = ({ className, referendumId }: Props) => {
 	const [voteInfo, setVoteInfo] = useState<VoteInfo | null>(null);
 
 	const { data: voteInfoData, error:voteInfoError } = useFetch<any>(
-		`${chainProperties[network].externalLinks}/api/scan/democracy/referendum`,
+		`${chainProperties[network].subscanAPI}/api/scan/democracy/referendum`,
 		{
 			body: JSON.stringify({
 				referendum_index: referendumId

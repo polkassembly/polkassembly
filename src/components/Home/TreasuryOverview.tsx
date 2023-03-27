@@ -196,7 +196,7 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 
 			try {
 				const response = await fetch(
-					`${chainProperties[network].externalLinks}/api/scan/price/history`,
+					`${chainProperties[network].subscanAPI}/api/scan/price/history`,
 					{
 						body: JSON.stringify({
 							end: weekAgoDate,

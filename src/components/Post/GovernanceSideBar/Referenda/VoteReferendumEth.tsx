@@ -311,16 +311,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	};
 	// eslint-disable-next-line react-hooks/rules-of-hooks
 	useEffect(() => {
-		loginWallet!==null && setWallet(loginWallet);
-	},[loginWallet]);
-
-	// eslint-disable-next-line react-hooks/rules-of-hooks
-	useEffect(() => {
-		if(loginWallet !== null){
+		if(loginWallet!==null){
+			setWallet(loginWallet);
 			handleDefaultWallet(loginWallet);
 		}
 	},[loginWallet]);
-
+  
 	return (
 		<div className={className}>
 			<Button

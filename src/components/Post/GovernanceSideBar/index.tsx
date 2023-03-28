@@ -164,36 +164,37 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		const accountsMapLocal = accountsMap as {[key:string]: string};
 
 		for (const extObj of extensions) {
-			if(extObj.name == 'polkadot-js') {
+		if(loginWallet!==null){	
+      if(['polkadot-js'].includes(loginWallet)) {
 				signersMapLocal['polkadot-js'] = extObj.signer;
 				polakadotJSAccounts = await getWalletAccounts(Wallet.POLKADOT);
-			} else if(extObj.name == 'subwallet-js') {
+			} else if(['subwallet-js'].includes(loginWallet)) {
 				signersMapLocal['subwallet-js'] = extObj.signer;
 				subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
-			} else if(extObj.name == 'talisman') {
+			} else if(['talisman'].includes(loginWallet)) {
 				signersMapLocal['talisman'] = extObj.signer;
 				talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
-			} else if (['polymesh'].includes(network) && extObj.name === 'polywallet') {
+			} else if (['polymesh'].includes(loginWallet) && ['polywallet'].includes(loginWallet)) {
 				signersMapLocal['polywallet'] = extObj.signer;
 				polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
 			}
 		}
 
-		if(polakadotJSAccounts) {
+		if(['polkadot'].includes(network) && polakadotJSAccounts) {
 			accounts = accounts.concat(polakadotJSAccounts);
 			polakadotJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polkadot-js';
 			});
 		}
 
-		if(['polymesh'].includes(network) && polywalletJSAccounts) {
+		if(loginWallet===Wallet.POLYWALLET && polywalletJSAccounts) {
 			accounts = accounts.concat(polywalletJSAccounts);
 			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polywallet';
 			});
 		}
 
-		if(subwalletAccounts) {
+		if(loginWallet===Wallet.SUBWALLET && subwalletAccounts) {
 			accounts = accounts.concat(subwalletAccounts);
 			subwalletAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'subwallet-js';

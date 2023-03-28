@@ -424,7 +424,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://frequency-rococo.api.subscan.io'
+		externalLinks: 'https://api.frequency-rococo.subscan.io'
 	},
 	[network.GEAR]: {
 		blockTime: 1000,
@@ -724,7 +724,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://polymesh-test.api.subscan.io'
+		externalLinks: 'https://api.polymesh-test.subscan.io'
 	},
 	[network.PICASSO]: {
 		blockTime: 12000,
@@ -754,7 +754,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://pichiu-rococo.api.subscan.io'
+		externalLinks: 'https://api.pichiu-rococo.subscan.io'
 	},
 	[network.PICHIU]: {
 		blockTime: 12000,

@@ -9,7 +9,7 @@ import { isGovTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, gov1ProposalTypes, ProposalType } from '~src/global/proposalType';
-import { GET_PROPOSALS_LISTING_BY_TYPE } from '~src/queries';
+import { GET_PROPOSALS_LISTING_BY_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -57,19 +57,25 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 		const subsquidData = subsquidRes?.data;
 		const subsquidPosts: any[] = subsquidData?.proposals || [];
 
+		const parentBounties = new Set<number>();
 		const onChainPostsPromise = subsquidPosts?.map(async (subsquidPost) => {
-			const { createdAt, proposer, preimage, type, index, status, hash, method, origin, trackNumber, curator, description, proposalArguments } = subsquidPost;
+			const { createdAt, proposer, preimage, type, index, status, hash, method, origin, trackNumber, curator, description, proposalArguments, parentBountyIndex } = subsquidPost;
 			const postId = type === 'Tip'? hash: index;
 			const postDocRef = postsByTypeRef(network, getFirestoreProposalType(type) as ProposalType).doc(String(postId));
 			const postDoc = await postDocRef.get();
+			const newProposer = proposer || preimage?.proposer || curator;
+			if (!newProposer && (parentBountyIndex || parentBountyIndex === 0)) {
+				parentBounties.add(parentBountyIndex);
+			}
 			const onChainPost = {
 				created_at: createdAt,
 				description: description || (proposalArguments? proposalArguments?.description: null),
 				hash,
 				method: method || preimage?.method || (proposalArguments? proposalArguments?.method: proposalArguments?.method),
 				origin,
+				parent_bounty_index: parentBountyIndex,
 				post_id: postId,
-				proposer: proposer || preimage?.proposer || curator,
+				proposer: newProposer,
 				status: status,
 				title: '',
 				track_number: trackNumber,
@@ -85,8 +91,35 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			return onChainPost;
 		});
 
-		const onChainPosts = await Promise.all(onChainPostsPromise);
+		let onChainPosts = await Promise.all(onChainPostsPromise);
 		const onChainPostsCount = Number(subsquidData?.proposalsConnection?.totalCount || 0);
+
+		if (parentBounties.size > 0) {
+			const subsquidRes = await fetchSubsquid({
+				network,
+				query: GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
+				variables: {
+					index_in: Array.from(parentBounties),
+					limit: parentBounties.size
+				}
+			});
+			if (subsquidRes && subsquidRes?.data) {
+				const subsquidData = subsquidRes?.data;
+				if (subsquidData.proposals && Array.isArray(subsquidData.proposals) && subsquidData.proposals.length > 0) {
+					const subsquidPosts: any[] = subsquidData?.proposals || [];
+					subsquidPosts.forEach((post) => {
+						onChainPosts = onChainPosts.map((onChainPost) => {
+							if (onChainPost.parent_bounty_index === post.index && post) {
+								onChainPost.proposer = post.proposer || post.curator || (post?.preimage? post?.preimage?.proposer: '');
+							}
+							return {
+								...onChainPost
+							};
+						});
+					});
+				}
+			}
+		}
 
 		const discussionsPostsColRef = postsByTypeRef(network, ProposalType.DISCUSSIONS);
 		const postsSnapshotArr = await discussionsPostsColRef

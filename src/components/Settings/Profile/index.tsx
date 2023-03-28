@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import { Alert, Button, Form, Input, Row } from 'antd';
 import { Rule } from 'antd/lib/form';
 import React, { FC, useState } from 'react';
@@ -11,6 +12,8 @@ import messages from 'src/util/messages';
 import * as validation from 'src/util/validation';
 
 import { MessageType } from '~src/auth/types';
+import { useUserDetailsContext } from '~src/context';
+import { handleTokenChange } from '~src/services/auth.service';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import Header from '../Header';
@@ -20,6 +23,15 @@ interface IPasswordProps {
     placeholder: string;
     rules?: Rule[];
     onChange?: React.ChangeEventHandler<HTMLInputElement>;
+}
+
+interface IEmailProps {
+	value: string;
+	name: string;
+	label: string;
+	rules?: Rule[];
+	disabled: boolean;
+	onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 const Password: FC<IPasswordProps> = ({ name, placeholder, rules, onChange }) => {
@@ -46,60 +58,133 @@ const Password: FC<IPasswordProps> = ({ name, placeholder, rules, onChange }) =>
 	);
 };
 
+const ChangeEmail: FC<IEmailProps> = ({ disabled, value, name, label, rules, onChange }) => {
+	return (
+		<div className='flex flex-col gap-y-2 h-full max-w-[250px]'>
+			<label
+				className="text-sm text-sidebarBlue font-normal leading-6 tracking-wide"
+				htmlFor={name}
+			>
+				{label}
+			</label>
+			<Form.Item
+				name={name}
+				rules={rules}
+			>
+				<Input
+					disabled={disabled}
+					defaultValue={value}
+					value={value}
+					onChange={onChange}
+					placeholder="email@example.com"
+					className="rounded-md py-3 px-4 w-[320px]"
+					id="email"
+					type='email'
+				/>
+			</Form.Item>
+		</div>
+	);
+};
+
+const initialPasswordsState = { new: '', old: '' };
+
 const Profile = () => {
 	const [form] = Form.useForm();
-	const { password } = validation;
-	const [isSave, setIsSave] = useState(false);
+	const { password, email: emailValidation } = validation;
+
+	const currentUser = useUserDetailsContext();
+	const { email: currentEmail } = currentUser;
+
 	const [isChange, setIsChange] = useState(false);
 	const [currentPassword, setCurrentPassword] = useState('');
-	const [passwords, setPasswords] = useState({ new: '', old: '' });
+	const [email, setEmail] = useState(currentEmail);
+	const [passwords, setPasswords] = useState(initialPasswordsState);
 	const [err, setErr] = useState('');
 	const [loading, setLoading] = useState(false);
 
-	const handleSubmit = async (values: any) => {
-		setErr('');
-		if (values?.old_password) {
-			const { old_password } = values;
-			setPasswords((prevState) => ({ ...prevState, old: old_password }));
-			setIsChange(true);
-		} else {
-			const { new_password, confirm_password } = values;
-			if (new_password && confirm_password){
-				setLoading(true);
-				const { data , error } = await nextApiClientFetch<MessageType>( 'api/v1/auth/actions/changePassword', {
-					newPassword: new_password,
-					oldPassword: currentPassword
-				});
+	const isSubmitDisabled = isChange ? (!passwords.old || !passwords.new) : (!currentPassword || currentEmail === email);
 
-				if (error || !data || !data.message) {
-					setErr(error || 'Something went wrong');
-					form.resetFields();
-					form.setFieldValue('old_password', currentPassword);
-					setIsSave(false);
-					setIsChange(false);
+	const handleSubmit = async (values: any) => {
+		try {
+			await form.validateFields();
+		} catch (error) {
+			// validation failed
+			setErr(error);
+			return;
+		}
+
+		//validation is successful
+		setErr('');
+		const { new_password, old_password } = values;
+
+		if(currentEmail !== email && currentPassword){
+			setLoading(true);
+			// nextApiClientFetch<ChangeResponseType | MessageType>
+			const { data , error } = await nextApiClientFetch<any>( 'api/v1/auth/actions/changeEmail', {
+				email: email,
+				password: currentPassword
+			});
+
+			if (error || !data || !data.message) {
+				setErr(error || 'Something went wrong');
+				form.resetFields();
+				setIsChange(false);
+				queueNotification({
+					header: 'Failed!',
+					message: cleanError(error || 'Something went wrong'),
+					status: NotificationStatus.ERROR
+				});
+			}
+
+			if (data && data.message && data.token) {
+				handleTokenChange(data.token, currentUser);
+
+				form.resetFields();
+				setIsChange(false);
+				if (data && data.message) {
 					queueNotification({
-						header: 'Failed!',
-						message: cleanError(error || 'Something went wrong'),
-						status: NotificationStatus.ERROR
+						header: 'Success!',
+						message: data.message,
+						status: NotificationStatus.SUCCESS
 					});
 				}
-
-				if (data && data.message) {
-					form.resetFields();
-					setIsSave(false);
-					setIsChange(false);
-					if (data && data.message) {
-						queueNotification({
-							header: 'Success!',
-							message: data.message,
-							status: NotificationStatus.SUCCESS
-						});
-					}
-				}
-
-				setLoading(false);
 			}
+			setLoading(false);
 		}
+
+		if (new_password && old_password){
+			setLoading(true);
+			const { data , error } = await nextApiClientFetch<MessageType>( 'api/v1/auth/actions/changePassword', {
+				newPassword: new_password,
+				oldPassword: old_password
+			});
+
+			if (error || !data || !data.message) {
+				setErr(error || 'Something went wrong');
+				form.resetFields();
+				setIsChange(false);
+				queueNotification({
+					header: 'Failed!',
+					message: cleanError(error || 'Something went wrong'),
+					status: NotificationStatus.ERROR
+				});
+			}
+
+			if (data && data.message) {
+				form.resetFields();
+				setIsChange(false);
+				if (data && data.message) {
+					queueNotification({
+						header: 'Success!',
+						message: data.message,
+						status: NotificationStatus.SUCCESS
+					});
+				}
+			}
+
+			setLoading(false);
+		}
+
 	};
 
 	return (
@@ -109,18 +194,54 @@ const Profile = () => {
 				{err && <div className='mb-4 flex items-start'>
 					<Alert type='error' message={err} />
 				</div>}
+
+				<article className='w-full flex flex-col md:flex-row gap-x-4'>
+					<ChangeEmail
+						disabled={isChange}
+						value={email || ''}
+						onChange={
+							(e) => {
+								setEmail(e.target.value || '');
+								if (err){
+									setErr('');
+								}
+							}
+						}
+						name='email'
+						label='Email'
+						rules={[
+							{
+								message: messages.VALIDATION_EMAIL_ERROR,
+								pattern: emailValidation.pattern
+							}
+						]}
+					/>
+				</article>
+
 				{
-					isChange
+					isChange // only allow to change password if not changing email
 						? <article className='flex flex-col lg:flex-row gap-x-5'>
 							<Password
 								onChange={
 									(e) => {
-										setPasswords((prev) => ({ ...prev, new: e?.target?.value }));
-										if (passwords.old) {
-											setIsSave(true);
-										}
+										setPasswords((prev) => ({ ...prev, old: e?.target?.value }));
 									}
 								}
+								name='old_password'
+								placeholder='Old Password'
+								rules={[
+									{
+										message: messages.VALIDATION_PASSWORD_ERROR,
+										required: password.required
+									},
+									{
+										message: messages.VALIDATION_PASSWORD_ERROR,
+										min: password.minLength
+									}
+								]}
+							/>
+							<Password
+								onChange={(e) => setPasswords((prev) => ({ ...prev, new: e?.target?.value }))}
 								name='new_password'
 								placeholder='New Password'
 								rules={[
@@ -134,25 +255,16 @@ const Profile = () => {
 									}
 								]}
 							/>
-							<Password
-								onChange={(e) => setPasswords((prev) => ({ ...prev, old: e?.target?.value }))}
-								name='confirm_password'
-								placeholder='Confirm Password'
-								rules={[
-									{
-										message: 'Password don\'t match',
-										validator(rule, value, callback) {
-											if (callback && value !== passwords.new){
-												callback(rule?.message?.toString());
-												setIsSave(false);
-											}else {
-												callback();
-												setIsSave(true);
-											}
-										}
-									}
-								]}
-							/>
+
+							<Button
+								loading={loading}
+								size='small'
+								htmlType='button'
+								onClick={() => { setIsChange(false); setPasswords(initialPasswordsState); }}
+								className='border-none outline-none bg-none flex items-center p-0 m-0 md:mt-10 text-pink_primary text-sm leading-6 tracking-wide'
+							>
+               Cancel Change
+							</Button>
 						</article>
 						: <article className='w-full flex flex-col md:flex-row gap-x-4'>
 							<Password
@@ -164,7 +276,7 @@ const Profile = () => {
 										}
 									}
 								}
-								name='old_password'
+								name='current_password'
 								placeholder='Password'
 								rules={[
 									{
@@ -178,23 +290,24 @@ const Profile = () => {
 								]}
 							/>
 							<Button
-								loading={loading}
 								size='small'
-								htmlType='submit'
+								htmlType='button'
+								onClick={() => {setIsChange(true); setCurrentPassword('');}}
 								className='border-none outline-none bg-none flex items-center p-0 m-0 md:mt-10 text-pink_primary text-sm leading-6 tracking-wide'
 							>
-                                Change
+               Change
 							</Button>
 						</article>
 				}
+
 				<Button
 					loading={loading}
-					disabled={!isSave}
+					disabled={isSubmitDisabled}
 					size='large'
 					htmlType='submit'
-					className={`mt-5 rounded-lg font-semibold text-lg leading-7 text-white py-3 outline-none border-none px-14 flex items-center justify-center ${isSave?'bg-pink_primary':'bg-icon_grey'}`}
+					className={`${!isSubmitDisabled ? 'bg-pink_primary': 'bg-icon_grey'} mt-5 rounded-lg font-semibold text-lg leading-7 text-white py-3 outline-none border-none px-14 flex items-center justify-center bg-pink_primary`}
 				>
-                    Save
+					Save
 				</Button>
 			</Form>
 		</Row>

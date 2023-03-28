@@ -39,10 +39,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if(!commentDoc.exists) return res.status(404).json({ message: 'Comment not found' });
 	if(commentDoc.data()?.user_id !== user.id) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	commentRef.delete().then(() => {
+	await commentRef.delete().then(() => {
 		postRef.update({
 			last_comment_at
-		}).then(() => {});
+		});
 		return res.status(200).json({ message: 'Comment saved.' });
 	}).catch((error) => {
 		// The document probably doesn't exist.

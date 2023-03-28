@@ -7,6 +7,7 @@ import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isProposalTypeValid } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import _sendCommentReplyMail from '~src/api-utils/_sendCommentReplyMail';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
@@ -58,7 +59,10 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 	await newReplyRef.set(newReply).then(() => {
 		postRef.update({
 			last_comment_at
-		}).then(() => {});
+		});
+
+		_sendCommentReplyMail(network, strProposalType, String(postId), content, String(commentId), user);
+
 		return res.status(200).json({
 			id: newReply.id
 		});

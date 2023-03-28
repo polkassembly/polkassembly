@@ -68,6 +68,7 @@ const Login = ({ network,setLoginOpen,setSignupOpen,isModal }:Props) => {
 		if (currentUser?.id && !isModal) {
 			router.push('/');
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[currentUser?.id, router]);
 	return (
 		<>
@@ -82,10 +83,11 @@ const Login = ({ network,setLoginOpen,setSignupOpen,isModal }:Props) => {
 						displayWeb === 3 && chosenWallet && <>
 							{
 								chosenWallet === Wallet.METAMASK ?
-									<MetamaskLogin setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
+									<MetamaskLogin isModal={isModal} setLoginOpen={setLoginOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
 									: chosenWallet == Wallet.WALLETCONNECT ?
-										<WalletConnectLogin setDisplayWeb2={setDisplayWeb2} setPolkadotWallet={setPolkadotWallet} /> :
+										<WalletConnectLogin isModal={isModal} setLoginOpen={setLoginOpen} setDisplayWeb2={setDisplayWeb2} setPolkadotWallet={setPolkadotWallet} /> :
 										<Web3Login
+											isModal={isModal} setLoginOpen={setLoginOpen}
 											chosenWallet={chosenWallet}
 											setDisplayWeb2={setDisplayWeb2}
 											setWalletError={setWalletError}

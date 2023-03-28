@@ -6,9 +6,10 @@ import sgMail from '@sendgrid/mail';
 import ejs from 'ejs';
 import MarkdownIt from 'markdown-it';
 
-import { CommentCreationHookDataType, PostType, PostTypeEnum } from '~src/auth/types';
+import { PostType, PostTypeEnum } from '~src/auth/types';
 import {
 	commentMentionEmailTemplate,
+	commentReplyEmailTemplate,
 	newGovernanceV2CreatedEmailTemplate,
 	newProposalCreatedEmailTemplate,
 	ownGovernanceV2ReferendaCreatedEmailTemplate,
@@ -74,8 +75,8 @@ export const sendResetPasswordEmail = (user: User, token: string, network: strin
 		console.error('Password reset email not sent', e));
 };
 
-// TODO: trigger on comment for all subscribers of the post
-export const sendPostSubscriptionMail = (user: User, author: User, comment: CommentCreationHookDataType, postUrl: string, network:string): void => {
+// triggered on a new comment on a post
+export const sendPostSubscriptionMail = (user: User, author: User, content: string, postId: string, commentUrl: string, network:string): void => {
 	if (!apiKey) {
 		console.warn('Post Subscription Email not sent due to missing API key');
 		return;
@@ -88,16 +89,16 @@ export const sendPostSubscriptionMail = (user: User, author: User, comment: Comm
 	const md = new MarkdownIt();
 	const text = ejs.render(postSubscriptionMailTemplate, {
 		authorUsername: author.username,
-		content: md.render(comment.content),
+		commentUrl,
+		content: md.render(content),
 		domain: `https://${network}.polkassembly.io`,
-		postUrl,
 		username: user.username || ''
 	});
 
 	const msg = {
 		from: FROM,
 		html: text,
-		subject: `Update on post #${comment.post_id}: ${comment.content.substring(0, 40)} ...`,
+		subject: `Update on post #${postId}: ${content.substring(0, 40)} ...`,
 		text,
 		to: user.email
 	};
@@ -106,7 +107,38 @@ export const sendPostSubscriptionMail = (user: User, author: User, comment: Comm
 		console.error('Post subscription email not sent', e));
 };
 
-export const sendCommentMentionMail = (user: User, author: User, comment: CommentCreationHookDataType, postUrl: string, network: string): void => {
+export const sendCommentReplyMail = (user: User, author: User, content: string, postId: string, commentUrl: string, network:string): void => {
+	if (!apiKey) {
+		console.warn('Comment reply email not sent due to missing API key');
+		return;
+	}
+
+	if (!user.email_verified) {
+		return;
+	}
+
+	const md = new MarkdownIt();
+	const text = ejs.render(commentReplyEmailTemplate, {
+		authorUsername: author.username,
+		commentUrl,
+		content: md.render(content),
+		domain: `https://${network}.polkassembly.io`,
+		username: user.username || ''
+	});
+
+	const msg = {
+		from: FROM,
+		html: text,
+		subject: `Reply on your comment on post #${postId}: ${content.substring(0, 40)} ...`,
+		text,
+		to: user.email
+	};
+
+	sgMail.send(msg).catch(e =>
+		console.error('Comment reply email not sent', e));
+};
+
+export const sendCommentMentionMail = (user: User, author: User, content: string, postId: string, commentUrl: string, network: string): void => {
 	if (!apiKey) {
 		console.warn('Comment Mention Email not sent due to missing API key');
 		return;
@@ -119,16 +151,16 @@ export const sendCommentMentionMail = (user: User, author: User, comment: Commen
 	const md = new MarkdownIt();
 	const text = ejs.render(commentMentionEmailTemplate, {
 		authorUsername: author.username,
-		content: md.render(comment.content),
+		commentUrl,
+		content: md.render(content),
 		domain: `https://${network}.polkassembly.io`,
-		postUrl,
 		username: user.username || ''
 	});
 
 	const msg = {
 		from: FROM,
 		html: text,
-		subject: `You are mentioned in post #${comment.post_id} comment`,
+		subject: `You are mentioned in post #${postId} comment`,
 		text,
 		to: user.email
 	};
@@ -162,6 +194,7 @@ export const sendUndoEmailChangeEmail = (user: User, undoToken: UndoEmailChangeT
 		console.error('Email undo email not sent', e));
 };
 
+// Below two should be done triggred in subsquid subscription server
 export const sendOwnProposalCreatedEmail = (user: User, type: PostType, url: string, id: number | string, network: string): void => {
 	if (!apiKey) {
 		console.warn('Own proposal created email not sent due to missing API key');
@@ -228,6 +261,7 @@ export const sendNewProposalCreatedEmail = (user: User, type: PostType, url: str
 		console.error('Proposal created email not sent', e));
 };
 
+// TODO: check when to send
 export const sendReportContentEmail = (username: string, network: string, reportType: string, contentId: string, reason: string, comments: string): void => {
 	if (!apiKey) {
 		console.warn('Report Content Email not sent due to missing API key');

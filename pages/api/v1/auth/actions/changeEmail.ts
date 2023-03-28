@@ -18,10 +18,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) res.status(400).json({ message: 'Invalid network in request header' });
 
-	const body = JSON.parse(req.body);
-	const { email, password } = body;
+	const { email, password } = req.body;
 
-	if(!body || !email || !password) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if(!email || !password) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
 	if(!token) return res.status(400).json({ message: 'Invalid token' });

@@ -79,10 +79,12 @@ const Signup = ({ network,isModal,setLoginOpen,setSignupOpen }:Props) => {
 						displayWeb === 3 && chosenWallet && <>
 							{
 								chosenWallet === Wallet.METAMASK ?
-									<MetamaskSignup setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
+									<MetamaskSignup isModal={isModal} setSignupOpen={setSignupOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
 									: chosenWallet == Wallet.WALLETCONNECT ?
-										<WalletConnectSignup setMethod={setMethod}/> :
+										<WalletConnectSignup  isModal={isModal} setSignupOpen={setSignupOpen} setMethod={setMethod}/> :
 										<Web3Signup
+											isModal={isModal}
+											setSignupOpen={setSignupOpen}
 											chosenWallet={chosenWallet}
 											setDisplayWeb2={setDisplayWeb2}
 											setWalletError={setWalletError}

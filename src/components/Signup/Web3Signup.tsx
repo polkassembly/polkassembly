@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import { CheckOutlined } from '@ant-design/icons';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import {
@@ -34,12 +35,16 @@ interface Props {
   chosenWallet: Wallet;
   setDisplayWeb2: () => void;
   setWalletError: React.Dispatch<React.SetStateAction<string | undefined>>;
+   isModal?:boolean;
+  setSignupOpen?:(pre:boolean)=>void;
 }
 
 const Web3Signup: FC<Props> = ({
 	chosenWallet,
 	setDisplayWeb2,
-	setWalletError
+	setWalletError,
+	isModal,
+	setSignupOpen
 }) => {
 	const { network } = useNetworkContext();
 
@@ -58,13 +63,10 @@ const Web3Signup: FC<Props> = ({
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
 
-		let wallet = isWeb3Injected
+		const wallet = isWeb3Injected
 			? injectedWindow.injectedWeb3[chosenWallet]
 			: null;
 
-		if (!wallet) {
-			wallet = Object.values(injectedWindow.injectedWeb3)[0];
-		}
 		if (!wallet) {
 			setExtensionNotFound(true);
 			setIsAccountLoading(false);
@@ -207,6 +209,10 @@ const Web3Signup: FC<Props> = ({
 
 			if(confirmData.token) {
 				handleTokenChange(confirmData.token, currentUser);
+				if(isModal){
+					setSignupOpen && setSignupOpen(false);
+					return;
+				}
 				router.back();
 			}else {
 				throw new Error('Web3 Login failed');

@@ -45,7 +45,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const { apiReady } = useApiContext();
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
-	const [isAccountLoading, setIsAccountLoading] = useState(true);
+	const [isAccountLoading, setIsAccountLoading] = useState(false);
 	const { setPostData } = usePostDataContext();
 	const { network } = useNetworkContext();
 	const [fetchAccountsInfo, setFetchAccountsInfo] = useState(true);
@@ -81,18 +81,18 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		const ethereum = wallet === Wallet.TALISMAN? (window as any).talismanEth : (window as any).ethereum;
 
 		if (!ethereum) {
+			setIsAccountLoading(false);
 			return;
 		}
 
-		if (wallet === Wallet.METAMASK) {
-			try {
-				await addEthereumChain({
-					ethereum,
-					network
-				});
-			} catch (error) {
-				return;
-			}
+		try {
+			await addEthereumChain({
+				ethereum,
+				network
+			});
+		} catch (error) {
+			setIsAccountLoading(false);
+			return;
 		}
 
 		const addresses = await ethereum.request({ method: 'eth_requestAccounts' });

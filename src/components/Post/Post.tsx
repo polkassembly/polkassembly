@@ -115,9 +115,10 @@ const Post: FC<IPostProps> = (props) => {
 
 	useEffect(() => {
 		if (post && post.timeline && Array.isArray(post.timeline)) {
-			const index = post.timeline.findIndex((obj) => obj && obj.index === post.post_id && obj.type === post.type);
-			if (index >= 0 && ((index + 1) < post.timeline.length)) {
-				const nextPost = post.timeline[index + 1];
+			const currIndex = post.timeline.findIndex((obj) => obj && obj.index === post.post_id && obj.type === post.type);
+			const index = post.timeline.findIndex((obj, i) => obj && i > currIndex && obj.type !== post.type);
+			if (index >= 0 && (index < post.timeline.length)) {
+				const nextPost = post.timeline[index];
 				const proposalType = getFirestoreProposalType(nextPost.type) as ProposalType;
 				const link = getSinglePostLinkFromProposalType(proposalType);
 				setRedirection({

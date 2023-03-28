@@ -26,7 +26,10 @@ import shortenHash from '~src/auth/utils/shortenHash';
 import { UndoEmailChangeToken, User } from './types';
 
 const apiKey = process.env.SENDGRID_API_KEY;
-const FROM = 'noreply@polkassembly.io';
+const FROM = {
+	email: 'noreply@polkassembly.io',
+	name: 'Polkassembly'
+};
 const REPORT = 'contact@premiurly.in';
 
 if (apiKey) {

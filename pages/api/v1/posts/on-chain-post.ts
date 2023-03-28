@@ -8,7 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE } from '~src/queries';
+import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -515,6 +515,29 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const proposalArguments = postData?.proposalArguments;
 		const proposedCall = preimage?.proposedCall;
 		const status = postData?.status;
+		let proposer = postData?.proposer || preimage?.proposer || postData?.curator;
+		if (!proposer && (postData?.parentBountyIndex || postData?.parentBountyIndex === 0)) {
+			const subsquidRes = await fetchSubsquid({
+				network,
+				query: GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
+				variables: {
+					index_in: [postData?.parentBountyIndex],
+					limit: 1
+				}
+			});
+			if (subsquidRes && subsquidRes?.data) {
+				const subsquidData = subsquidRes?.data;
+				if (subsquidData.proposals && Array.isArray(subsquidData.proposals) && subsquidData.proposals.length > 0) {
+					const subsquidPosts: any[] = subsquidData?.proposals || [];
+					subsquidPosts.forEach((post) => {
+						if (postData?.parentBountyIndex === post.index && post) {
+							proposer = post.proposer || post.curator || (post?.preimage? post?.preimage?.proposer: '');
+						}
+					});
+				}
+			}
+
+		}
 		const post: IPostResponse = {
 			bond: postData?.bond,
 			comments: [],
@@ -544,7 +567,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			post_reactions: getDefaultReactionObj(),
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,
-			proposer: postData?.proposer || preimage?.proposer || postData?.curator,
+			proposer,
 			requested: proposedCall?.args?.amount,
 			reward: postData?.reward,
 			status,

@@ -10,7 +10,7 @@ import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
-import {  GET_PROPOSALS_LISTING_BY_TYPE } from '~src/queries';
+import {  GET_PROPOSALS_LISTING_BY_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -28,6 +28,7 @@ export interface IPostListing {
 	hash?: string;
 	post_id: string | number;
 	description?: string;
+	parent_bounty_index?: number,
 	post_reactions: {
 		'👍': number;
 		'👎': number;
@@ -167,8 +168,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 		const subsquidData = subsquidRes?.data;
 		const subsquidPosts: any[] = subsquidData?.proposals;
 
+		const parentBounties = new Set<number>();
+
 		const postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-			const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator } = subsquidPost;
+			const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex } = subsquidPost;
 			let otherPostProposer = '';
 			if (group?.proposals?.length) {
 				group.proposals.forEach((obj: any) => {
@@ -194,12 +197,16 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 
 			const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
 			const postDoc = await postDocRef.get();
+			const newProposer = proposer || preimage?.proposer || otherPostProposer || curator || null;
 			if (postDoc && postDoc.exists) {
 				const data = postDoc.data();
 				if (data) {
 					const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 					const topic = data?.topic;
 					const topic_id = data?.topic_id;
+					if (!(newProposer || proposer_address) && (parentBountyIndex || parentBountyIndex === 0)) {
+						parentBounties.add(parentBountyIndex);
+					}
 					return {
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: createdAt,
@@ -208,9 +215,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 						end,
 						hash,
 						method: preimage?.method,
+						parent_bounty_index: parentBountyIndex,
 						post_id: postId,
 						post_reactions,
-						proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
+						proposer: newProposer || proposer_address,
 						status,
 						title: data?.title || null,
 						topic: topic? topic: isTopicIdValid(topic_id)? {
@@ -222,6 +230,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 					};
 				}
 			}
+			if (!newProposer && (parentBountyIndex || parentBountyIndex === 0)) {
+				parentBounties.add(parentBountyIndex);
+			}
 
 			return {
 				comments_count: commentsQuerySnapshot.data()?.count || 0,
@@ -231,9 +242,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 				end: end,
 				hash: hash || null,
 				method: preimage?.method,
+				parent_bounty_index: parentBountyIndex,
 				post_id: postId,
 				post_reactions,
-				proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
+				proposer: newProposer,
 				status: status,
 				title: '',
 				topic: topicFromType,
@@ -242,7 +254,34 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 			};
 		});
 
-		const posts = await Promise.all(postsPromise);
+		let posts = await Promise.all(postsPromise);
+
+		if (parentBounties.size > 0) {
+			const subsquidRes = await fetchSubsquid({
+				network,
+				query: GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
+				variables: {
+					index_in: Array.from(parentBounties),
+					limit: parentBounties.size
+				}
+			});
+			if (subsquidRes && subsquidRes?.data) {
+				const subsquidData = subsquidRes?.data;
+				if (subsquidData.proposals && Array.isArray(subsquidData.proposals) && subsquidData.proposals.length > 0) {
+					const subsquidPosts: any[] = subsquidData?.proposals || [];
+					subsquidPosts.forEach((post) => {
+						posts = posts.map((onChainPost) => {
+							if (onChainPost.parent_bounty_index === post.index && post) {
+								onChainPost.proposer = post.proposer || post.curator || (post?.preimage? post?.preimage?.proposer: '');
+							}
+							return {
+								...onChainPost
+							};
+						});
+					});
+				}
+			}
+		}
 
 		const data: IPostsListingResponse = {
 			count: Number(subsquidData?.proposalsConnection?.totalCount || 0),

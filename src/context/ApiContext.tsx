@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-/* eslint-disable no-tabs */
 import '@polkadot/api-augment';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
@@ -12,10 +11,13 @@ import { chainProperties } from 'src/global/networkConstants';
 import { typesBundleGenshiro } from '../typesBundle/typeBundleGenshiro';
 import { typesBundleCrust } from '../typesBundle/typesBundleCrust';
 import { typesBundleEquilibrium } from '../typesBundle/typesBundleEquilibrium';
+import queueNotification from '~src/ui-components/QueueNotification';
+import { NotificationStatus } from '~src/types';
 
 export interface ApiContextType {
 	api: ApiPromise | undefined;
 	apiReady: boolean;
+	isApiLoading: boolean;
 	wsProvider: string;
 	setWsProvider: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -35,44 +37,75 @@ export function ApiContextProvider(
 	const { children = null } = props;
 	const [api, setApi] = useState<ApiPromise>();
 	const [apiReady, setApiReady] = useState(false);
+	const [isApiLoading, setIsApiLoading] = useState(false);
 	const [wsProvider, setWsProvider] = useState<string>(props.network ? chainProperties?.[props.network]?.rpcEndpoint : '');
 
 	useEffect(() => {
 		if(!wsProvider && !props.network) return;
 		const provider = new WsProvider(wsProvider || chainProperties?.[props.network!]?.rpcEndpoint);
-
 		setApiReady(false);
 		setApi(undefined);
+		let api = undefined;
 		if (props.network == 'genshiro'){
-			setApi(new ApiPromise({ provider, typesBundle: typesBundleGenshiro }));
+			api = new ApiPromise({ provider, typesBundle: typesBundleGenshiro });
 		}
 		if (props.network == 'crust'){
-			setApi(new ApiPromise({ provider, typesBundle: typesBundleCrust }));
-
+			api = new ApiPromise({ provider, typesBundle: typesBundleCrust });
 		}
 		if (props.network == 'equilibrium'){
-			setApi(new ApiPromise({ provider, typesBundle: typesBundleEquilibrium }));
-
+			api = new ApiPromise({ provider, typesBundle: typesBundleEquilibrium });
 		}
 		else{
-			setApi(new ApiPromise({ provider }));
+			api = new ApiPromise({ provider });
 		}
+		setApi(api);
 	},[props.network, wsProvider]);
 
 	useEffect(() => {
-		if(api){
+		if(api) {
+			setIsApiLoading(true);
+			const timer = setTimeout(async () => {
+				queueNotification({
+					header: 'Error!',
+					message: 'RPC connection Timeout.',
+					status: NotificationStatus.ERROR
+				});
+				setIsApiLoading(false);
+				await api.disconnect();
+			}, 60000);
+			api.on('error', async () => {
+				clearTimeout(timer);
+				queueNotification({
+					header: 'Error!',
+					message: 'Unable to connect the RPC.',
+					status: NotificationStatus.ERROR
+				});
+				setIsApiLoading(false);
+				await api.disconnect();
+			});
 			api.isReady.then(() => {
+				clearTimeout(timer);
+				setIsApiLoading(false);
 				setApiReady(true);
 				console.log('API ready');
 			})
-				.catch((error) => {
+				.catch(async (error) => {
+					clearTimeout(timer);
+					queueNotification({
+						header: 'Error!',
+						message: 'RPC connection error.',
+						status: NotificationStatus.ERROR
+					});
+					setIsApiLoading(false);
+					await api.disconnect();
 					console.error(error);
 				});
+			return () => clearTimeout(timer);
 		}
 	}, [api]);
 
 	return (
-		<ApiContext.Provider value={{ api, apiReady, setWsProvider, wsProvider }}>
+		<ApiContext.Provider value={{ api, apiReady, isApiLoading, setWsProvider, wsProvider }}>
 			{children}
 		</ApiContext.Provider>
 	);

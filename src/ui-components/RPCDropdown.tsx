@@ -71,7 +71,7 @@ const KusamaRPCEndpoints = [
 
 const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 	const { className, isSmallScreen } = props;
-	const { apiReady, setWsProvider } = useApiContext();
+	const { isApiLoading, setWsProvider } = useApiContext();
 	const { network } = useNetworkContext();
 	const [endpoint, setEndpoint] = useState<string>(network ? chainProperties?.[network]?.rpcEndpoint : '');
 	const [RPCOptions, setRPCOptions] = useState<MenuProps['items']>([]);
@@ -132,7 +132,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 	};
 
 	return (
-		apiReady ?
+		!isApiLoading ?
 			<Dropdown
 				trigger={['click']}
 				menu={{ defaultSelectedKeys: [endpoint], items: RPCOptions, onClick: handleEndpointChange, selectable: true }}

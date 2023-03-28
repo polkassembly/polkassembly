@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { sendPostSubscriptionMail } from '~src/auth/email';
-import { User } from '~src/auth/types';
+import { IUserPreference, User } from '~src/auth/types';
 import { getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 
@@ -29,6 +29,17 @@ export default async function sendCommentMailToPostSubs(
 	for (const doc of postSubsQuerySnaphsot.docs) {
 		const user = (await firestore_db.collection('users').doc(doc.id).get()).data() as User;
 		if(!user || Number(user.id)  === commentAuthor.id) continue; //skip if comment author
+
+		// user preference check
+		const userPreferenceDoc = await firestore_db.collection('networks').doc(network).collection('user_preferences').doc(String(user.id)).get();
+
+		// userPreference won't exist for new user and post_participated is considered true by default
+		if(userPreferenceDoc.exists) {
+			const userPreference = userPreferenceDoc.data() as IUserPreference;
+
+			if(!userPreference?.notification_settings?.post_participated) continue;
+		}
+
 		sendPostSubscriptionMail(user, commentAuthor, content, String(postId), commentUrl, network);
 	}
 

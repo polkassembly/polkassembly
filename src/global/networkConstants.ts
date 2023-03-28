@@ -168,7 +168,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: '500',
-		externalLinks: 'https://polkadot.subscan.io'
+		externalLinks: 'https://polkadot.api.subscan.io'
 	},
 	[network.KUSAMA]: {
 		blockTime: 6000,
@@ -183,7 +183,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '0.6666',
 		treasuryProposalMaxBond: '33.3333',
-		externalLinks: 'https://kusama.subscan.io'
+		externalLinks: 'https://kusama.api.subscan.io'
 	},
 	[network.ACALA]:{
 		blockTime: 12000,
@@ -198,7 +198,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '10',
 		treasuryProposalMaxBond: '50',
-		externalLinks: 'https://acala.subscan.io'
+		externalLinks: 'https://acala.api.subscan.io'
 	},
 	[network.ACUITY]: {
 		blockTime: 6000,
@@ -213,7 +213,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://acuity.subscan.io'
+		externalLinks: 'https://acuity.api.subscan.io'
 	},
 	[network.ALTAIR]: {
 		blockTime: 12000,
@@ -228,7 +228,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond:'500',
-		externalLinks: 'https://altair.subscan.io'
+		externalLinks: 'https://altair.api.subscan.io'
 	},
 	[network.AMPLITUDE]: {
 		blockTime: 12000,
@@ -243,7 +243,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '10',
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://amplitude.subscan.io'
+		externalLinks: 'https://amplitude.api.subscan.io'
 	},
 	[network.ASTAR]: {
 		blockTime: 12000,
@@ -258,7 +258,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://astar.subscan.io'
+		externalLinks: 'https://astar.api.subscan.io'
 	},
 	[network.AUTOMATA]: {
 		blockTime: 6000,
@@ -273,7 +273,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://automata.subscan.io'
+		externalLinks: 'https://automata.api.subscan.io'
 	},
 	[network.BASILISK]: {
 		blockTime: 12000,
@@ -288,7 +288,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '3%',
 		treasuryProposalMinBond: '10000',
 		treasuryProposalMaxBond:'50000',
-		externalLinks: 'https://basilisk.subscan.io'
+		externalLinks: 'https://basilisk.api.subscan.io'
 	},
 	[network.PIONEER]: {
 		blockTime: 12000,
@@ -303,7 +303,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond:'50',
-		externalLinks: 'https://pioneer.subscan.io'
+		externalLinks: 'https://pioneer.api.subscan.io'
 	},
 	[network.CALAMARI]: {
 		blockTime: 12000,
@@ -318,7 +318,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://calamari.subscan.io'
+		externalLinks: 'https://calamari.api.subscan.io'
 	},
 	[network.CENTRIFUGE]: {
 		blockTime: 12000,
@@ -333,7 +333,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1000',
 		treasuryProposalMaxBond:'5000',
-		externalLinks: 'https://centrifuge.subscan.io'
+		externalLinks: 'https://centrifuge.api.subscan.io'
 	},
 	[network.COMPOSABLE]: {
 		blockTime: 12000,
@@ -348,7 +348,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '5',
 		treasuryProposalMaxBond:'1000',
-		externalLinks: 'https://composable.subscan.io'
+		externalLinks: 'https://composable.api.subscan.io'
 	},
 	[network.CRUST]: {
 		blockTime: 12000,
@@ -363,7 +363,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://crust.subscan.io'
+		externalLinks: 'https://crust.api.subscan.io'
 	},
 	[network.CRUSTSHADOW]: {
 		blockTime: 12000,
@@ -378,7 +378,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://crustshadow.subscan.io'
+		externalLinks: 'https://crustshadow.api.subscan.io'
 	},
 	[network.EQUILIBRIUM]: {
 		blockTime: 12000,
@@ -393,7 +393,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://equilibrium.subscan.io'
+		externalLinks: 'https://equilibrium.api.subscan.io'
 
 	},
 	[network.FREQUENCY]: {
@@ -409,7 +409,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://frequency.subscan.io'
+		externalLinks: 'https://frequency.api.subscan.io'
 	},
 	[network.FREQUENCYROCOCO]: {
 		blockTime: 12000,
@@ -424,7 +424,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://frequency-rococo.subscan.io'
+		externalLinks: 'https://frequency-rococo.api.subscan.io'
 	},
 	[network.GEAR]: {
 		blockTime: 1000,
@@ -439,7 +439,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://gear.subscan.io'
+		externalLinks: 'https://gear.api.subscan.io'
 	},
 	[network.GENSHIRO]: {
 		blockTime: 6000,
@@ -454,7 +454,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://genshiro.subscan.io'
+		externalLinks: 'https://genshiro.api.subscan.io'
 	},
 	[network.GMORDIE]: {
 		blockTime: 9000,
@@ -469,7 +469,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://gmordie.subscan.io'
+		externalLinks: 'https://gmordie.api.subscan.io'
 	},
 	[network.HEIKO]: {
 		blockTime: 13000,
@@ -484,7 +484,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://heiko.subscan.io'
+		externalLinks: 'https://heiko.api.subscan.io'
 	},
 	[network.HYDRADX]: {
 		blockTime: 12000,
@@ -499,7 +499,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '3%',
 		treasuryProposalMinBond: '10000',
 		treasuryProposalMaxBond:'50000',
-		externalLinks: 'https://hydradx.subscan.io'
+		externalLinks: 'https://hydradx.api.subscan.io'
 	},
 	[network.KARURA]: {
 		blockTime: 12000,
@@ -514,7 +514,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '5',
 		treasuryProposalMaxBond:'25',
-		externalLinks: 'https://karura.subscan.io'
+		externalLinks: 'https://karura.api.subscan.io'
 	},
 	[network.KYLIN]: {
 		blockTime: 12000,
@@ -529,7 +529,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://kylin.subscan.io'
+		externalLinks: 'https://kylin.api.subscan.io'
 	},
 	[network.KHALA]: {
 		blockTime: 12000,
@@ -544,7 +544,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://khala.subscan.io'
+		externalLinks: 'https://khala.api.subscan.io'
 	},
 	[network.KILT]: {
 		blockTime: 12000,
@@ -559,7 +559,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '20',
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://spiritnet.subscan.io'
+		externalLinks: 'https://spiritnet.api.subscan.io'
 	},
 	[network.MANTA]: {
 		blockTime: 12000,
@@ -574,7 +574,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://manta.subscan.io'
+		externalLinks: 'https://manta.api.subscan.io'
 	},
 	[network.MOONBASE]: {
 		blockTime: 12000,
@@ -589,7 +589,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://moonbase.subscan.io'
+		externalLinks: 'https://moonbase.api.subscan.io'
 	},
 	[network.SHIBUYA]: {
 		blockTime: 12000,
@@ -604,7 +604,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://shibuya.subscan.io'
+		externalLinks: 'https://shibuya.api.subscan.io'
 	},
 	[network.MOONBEAM]: {
 		blockTime: 12000,
@@ -619,7 +619,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://moonbeam.subscan.io'
+		externalLinks: 'https://moonbeam.api.subscan.io'
 	},
 	[network.MOONRIVER]: {
 		blockTime: 12000,
@@ -634,7 +634,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://moonriver.subscan.io'
+		externalLinks: 'https://moonriver.api.subscan.io'
 	},
 	[network.MYRIAD]: {
 		blockTime: 6000,
@@ -664,7 +664,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond:'5',
-		externalLinks: 'https://parallel.subscan.io'
+		externalLinks: 'https://parallel.api.subscan.io'
 	},
 	[network.PENDULUM]: {
 		blockTime: 12000,
@@ -679,7 +679,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://pendulum.subscan.io'
+		externalLinks: 'https://pendulum.api.subscan.io'
 	},
 	[network.POLKADEX]: {
 		blockTime: 12000,
@@ -694,7 +694,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: '100',
-		externalLinks: 'https://polkadex.subscan.io'
+		externalLinks: 'https://polkadex.api.subscan.io'
 	},
 	[network.POLYMESH]: {
 		blockTime: 6000,
@@ -709,7 +709,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://polymesh.subscan.io'
+		externalLinks: 'https://polymesh.api.subscan.io'
 	},
 	[network.POLYMESHTEST]: {
 		blockTime: 6000,
@@ -724,7 +724,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://polymesh-test.subscan.io'
+		externalLinks: 'https://polymesh-test.api.subscan.io'
 	},
 	[network.PICASSO]: {
 		blockTime: 12000,
@@ -739,7 +739,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '5000',
 		treasuryProposalMaxBond: '10000',
-		externalLinks: 'https://picasso.subscan.io'
+		externalLinks: 'https://picasso.api.subscan.io'
 	},
 	[network.PICHIUROCOCO]: {
 		blockTime: 12000,
@@ -754,7 +754,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://pichiu-rococo.subscan.io'
+		externalLinks: 'https://pichiu-rococo.api.subscan.io'
 	},
 	[network.PICHIU]: {
 		blockTime: 12000,
@@ -769,7 +769,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '5',
 		treasuryProposalMaxBond: '25',
-		externalLinks: 'https://pichiu.subscan.io'
+		externalLinks: 'https://pichiu.api.subscan.io'
 	},
 	[network.ROBONOMICS]: {
 		blockTime: 12000,
@@ -784,7 +784,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '10',
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://robonomics.subscan.io'
+		externalLinks: 'https://robonomics.api.subscan.io'
 	},
 	[network.SHIBUYA]: {
 		blockTime: 12000,
@@ -799,7 +799,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://shibuya.subscan.io'
+		externalLinks: 'https://shibuya.api.subscan.io'
 	},
 	[network.SHIDEN]: {
 		blockTime: 12000,
@@ -814,7 +814,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://shiden.subscan.io'
+		externalLinks: 'https://shiden.api.subscan.io'
 	},
 	[network.SNOW]:{
 		blockTime: 12000,
@@ -829,7 +829,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://snow.subscan.io'
+		externalLinks: 'https://snow.api.subscan.io'
 	},
 	[network.TANGANIKA]: {
 		blockTime: 12000,
@@ -844,7 +844,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://tanganika.subscan.io'
+		externalLinks: 'https://tanganika.api.subscan.io'
 	},
 	[network.TIDECHAIN]: {
 		blockTime: 12000,
@@ -859,7 +859,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://tidechain.subscan.io'
+		externalLinks: 'https://tidechain.api.subscan.io'
 	},
 	[network.TURING]: {
 		blockTime: 12000,
@@ -874,7 +874,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: '5',
-		externalLinks: 'https://turing.subscan.io'
+		externalLinks: 'https://turing.api.subscan.io'
 	},
 	[network.VARA]: {
 		blockTime: 2000,
@@ -889,7 +889,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '20',
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://vara.subscan.io'
+		externalLinks: 'https://vara.api.subscan.io'
 	},
 	[network.WESTEND]: {
 		blockTime: 6000,
@@ -904,7 +904,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://westend.subscan.io'
+		externalLinks: 'https://westend.api.subscan.io'
 	},
 	[network.XX]: {
 		blockTime: 6000,
@@ -925,7 +925,7 @@ export const chainProperties: types.ChainPropType = {
 
 export const chainLinks: types.ChainLinksType = {
 	[network.POLKADOT]: {
-		blockExplorer: 'https://polkadot.subscan.io/',
+		blockExplorer: 'https://polkadot.api.subscan.io/',
 		discord: 'https://discord.gg/wGUDt2p',
 		github: 'https://github.com/paritytech/polkadot',
 		homepage: 'https://polkadot.network/',
@@ -935,7 +935,7 @@ export const chainLinks: types.ChainLinksType = {
 		youtube: 'https://www.youtube.com/channel/UCB7PbjuZLEba_znc7mEGNgw'
 	},
 	[network.KUSAMA]: {
-		blockExplorer: 'https://kusama.subscan.io/',
+		blockExplorer: 'https://kusama.api.subscan.io/',
 		discord: 'https://discord.gg/9AWjTf8wSk',
 		github: 'https://github.com/paritytech/polkadot',
 		homepage: 'https://kusama.network/',

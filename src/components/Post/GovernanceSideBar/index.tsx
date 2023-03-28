@@ -5,7 +5,7 @@
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
+import { Injected, InjectedAccount, InjectedAccounts, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Form } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
@@ -57,6 +57,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
 	const [accountsMap, setAccountsMap] = useState<{[key:string]:string}>({});
 	const [signersMap, setSignersMap] = useState<{[key:string]: Signer}>({});
+  const [accountNetwork,setAccountNetwork]=useState<InjectedAccount[] | undefined>();
 
 	const { api, apiReady } = useApiContext();
 	const [lastVote, setLastVote] = useState<string | null | undefined>(undefined);
@@ -166,11 +167,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		for (const extObj of extensions) {
 			if(loginWallet!==null) {
 				signersMapLocal[loginWallet] = extObj.signer;
-				polakadotJSAccounts = await getWalletAccounts(loginWallet);
+				const data = await getWalletAccounts(loginWallet);
+        setAccountNetwork(data);
 			}
 		}
-
-		if(polakadotJSAccounts) {
+if(accountNetwork){
+		if(['polkadot'].includes(network) && polakadotJSAccounts) {
 			accounts = accounts.concat(polakadotJSAccounts);
 			polakadotJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polkadot-js';
@@ -215,7 +217,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		}
 
 		return;
-	};
+	}};
 
 	if (extensionNotFound) {
 		return (

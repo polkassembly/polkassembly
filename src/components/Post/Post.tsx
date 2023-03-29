@@ -115,15 +115,32 @@ const Post: FC<IPostProps> = (props) => {
 
 	useEffect(() => {
 		if (post && post.timeline && Array.isArray(post.timeline)) {
-			const currIndex = post.timeline.findIndex((obj) => obj && obj.index === post.post_id && obj.type === post.type);
-			const index = post.timeline.findIndex((obj, i) => obj && i > currIndex && obj.type !== post.type);
-			if (index >= 0 && (index < post.timeline.length)) {
-				const nextPost = post.timeline[index];
+			let isFind = false;
+			const map = new Map();
+			post.timeline.forEach((obj) => {
+				if (obj && obj.index === post.post_id && obj.type === post.type) {
+					isFind = true;
+				} else if (isFind) {
+					map.set(obj.type, obj);
+				}
+			});
+			let nextPost: any = undefined;
+			map.forEach((v) => {
+				if (!nextPost) {
+					nextPost = v;
+				}
+			});
+			if (nextPost) {
 				const proposalType = getFirestoreProposalType(nextPost.type) as ProposalType;
 				const link = getSinglePostLinkFromProposalType(proposalType);
 				setRedirection({
 					link: `/${link}/${nextPost.index}`,
 					text: `${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} #${nextPost.index}`
+				});
+			} else {
+				setRedirection({
+					link: '',
+					text: ''
 				});
 			}
 		}

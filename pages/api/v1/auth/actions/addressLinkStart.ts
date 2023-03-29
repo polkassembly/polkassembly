@@ -11,6 +11,7 @@ import { Address, ChallengeMessage, MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import firebaseAdmin from '~src/services/firebaseInit';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ChallengeMessage | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
@@ -35,13 +36,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChallengeMessag
 
 	const firestore = firebaseAdmin.firestore();
 
-	const addressExists = (await firestore.collection('addresses').doc(address).get()).exists;
+	const substrateAddress = getSubstrateAddress(address);
+	if(!substrateAddress) return res.status(400).json({ message: messages.INVALID_ADDRESS });
+
+	const addressExists = (await firestore.collection('addresses').where('address', '==', substrateAddress).where('verified', '==', true).limit(1).get()).docs.length > 0;
 	if(addressExists) return res.status(400).json({ message: messages.ADDRESS_ALREADY_EXISTS });
 
 	const sign_message = address.startsWith('0x') ?  `Link account with polkassembly ${uuidv4()}` : `<Bytes>${uuidv4()}</Bytes>`;
 
 	const newAddress: Address = {
-		address,
+		address: substrateAddress,
 		default: false,
 		is_erc20: address.startsWith('0x'),
 		network,
@@ -51,7 +55,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChallengeMessag
 		verified: false
 	};
 
-	await firestore.collection('addresses').doc(address).set(newAddress).then(() => {
+	await firestore.collection('addresses').doc(substrateAddress).set(newAddress).then(() => {
 		return res.status(200).json({ message: messages.ADDRESS_LINKING_STARTED, signMessage:sign_message });
 	}).catch((error) => {
 		console.log(' Error while address linking start : ', error);

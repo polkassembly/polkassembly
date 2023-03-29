@@ -35,6 +35,10 @@ export interface Subscription {
 	subscribed: boolean;
 }
 
+export interface IVerified {
+	verified: boolean;
+}
+
 export interface PublicUser {
 	id: number;
 	default_address?: string;

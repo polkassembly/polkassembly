@@ -259,6 +259,7 @@ const Post: FC<IPostProps> = (props) => {
 							reward: post?.reward,
 							status: post?.status,
 							statusHistory: post?.statusHistory,
+							submission_deposit_amount: post?.submission_deposit_amount,
 							submitted_amount: post?.submitted_amount,
 							track_number: post?.track_number,
 							vote_threshold: post?.vote_threshold

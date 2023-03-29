@@ -197,6 +197,10 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
       amount
       who
     }
+    submissionDeposit {
+      amount
+      who
+    }
     deciding {
       confirming
       since

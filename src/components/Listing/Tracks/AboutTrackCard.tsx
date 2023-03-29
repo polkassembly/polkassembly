@@ -94,7 +94,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						About {trackName.split(/(?=[A-Z])/).join(' ')}
 					</h2>
 					<Tooltip color='#E5007A' title='Track Number' className='cursor-pointer'>
-						<h4 className=' text-[#B70062] text-xs font-medium leading-[18px] tracking-[0.01em]'>
+						<h4 className=' text-[#B70062] text-sm font-medium leading-[18px] tracking-[0.01em]'>
 							#{trackMetaData.trackId}
 						</h4>
 					</Tooltip>

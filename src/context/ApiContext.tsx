@@ -74,17 +74,23 @@ export function ApiContextProvider(
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');
+				if (props.network) {
+					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
+				}
 			}, 60000);
 			api.on('error', async () => {
 				clearTimeout(timer);
 				queueNotification({
 					header: 'Error!',
-					message: 'Unable to connect the RPC.',
+					message: 'Unable to connect to the RPC.',
 					status: NotificationStatus.ERROR
 				});
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');
+				if (props.network) {
+					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
+				}
 			});
 			api.isReady.then(() => {
 				clearTimeout(timer);
@@ -109,6 +115,9 @@ export function ApiContextProvider(
 					await api.disconnect();
 					console.error(error);
 					localStorage.removeItem('tracks');
+					if (props.network) {
+						setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
+					}
 				});
 			return () => clearTimeout(timer);
 		}

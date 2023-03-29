@@ -67,6 +67,7 @@ export interface IOnChainInfo {
 		since?: number | string;
 	}
 	decision_deposit_amount?: string | number;
+	submission_deposit_amount?: string | number;
 	submitted_amount?: string | number;
 	proposal_arguments?: any;
 	proposed_call?: any;
@@ -107,7 +108,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 	const currentBlock = useCurrentBlock();
 	if (!onChainInfo) return null;
 
-	const { delay, description, end, status, proposer, vote_threshold, method, post_id, ended_at, proposed_call, bond, curator, curator_deposit, deciding, decision_deposit_amount, deposit, enactment_after_block, enactment_at_block, ended_at_block, fee, hash, member_count, motion_method, origin, proposal_arguments, submitted_amount, track_number, reward, payee, statusHistory } = onChainInfo;
+	const { delay, description, end, status, proposer, vote_threshold, method, post_id, ended_at, proposed_call, bond, curator, curator_deposit, deciding, decision_deposit_amount, submission_deposit_amount, deposit, enactment_after_block, enactment_at_block, ended_at_block, fee, hash, member_count, motion_method, origin, proposal_arguments, submitted_amount, track_number, reward, payee, statusHistory } = onChainInfo;
 
 	const blockNumber = getBlockNumber(statusHistory);
 	const getTrackNameFromNumber = (trackNum: number) => {
@@ -226,7 +227,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							</div>
 						</li>}
 						{deciding && deciding.confirming && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='col-span-2'>Deciding Confirming</h6>
+							<h6 className='col-span-2'>Confirm Started</h6>
 							<div className='text-navBlue col-span-4 md:col-span-6 overflow-hidden'>
 								{`${deciding.confirming}`.length < 8 ? deciding.confirming :
 									<div>
@@ -240,6 +241,12 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							<h6 className='col-span-2'>Decision Deposit</h6>
 							<div className='text-navBlue col-span-4 md:col-span-6 overflow-hidden'>
 								{formatBnBalance(String(decision_deposit_amount), { numberAfterComma: 2, withUnit: true }, network)}
+							</div>
+						</li>}
+						{submission_deposit_amount && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
+							<h6 className='col-span-2'>Submission Deposit</h6>
+							<div className='text-navBlue col-span-4 md:col-span-6 overflow-hidden'>
+								{formatBnBalance(String(submission_deposit_amount), { numberAfterComma: 2, withUnit: true }, network)}
 							</div>
 						</li>}
 						{ended_at_block && ended_at && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b pb-1.5'>

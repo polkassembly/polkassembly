@@ -5,11 +5,11 @@
 // import { DownOutlined } from '@ant-design/icons';
 import { Card, Col, Dropdown, Row } from 'antd';
 import Image from 'next/image';
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import { chainProperties, network } from 'src/global/networkConstants';
 
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
-import { NetworkContext } from '~src/context/NetworkContext';
+import { useNetworkContext } from '~src/context';
 import { ArrowDownIcon } from './CustomIcons';
 
 type DropdownMenuItemType = {
@@ -52,8 +52,14 @@ for (const key of Object.keys(network)) {
 	}
 }
 
-const NetworkDropdown: FC<{setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>}> = ({ setSidedrawer }) => {
-	const { network } = useContext(NetworkContext);
+interface INetworkDropdown {
+	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>;
+	isSmallScreen?: boolean;
+}
+
+const NetworkDropdown: FC<INetworkDropdown> = (props) => {
+	const { isSmallScreen, setSidedrawer } = props;
+	const { network } = useNetworkContext();
 
 	return (
 		<Dropdown
@@ -102,25 +108,50 @@ const NetworkDropdown: FC<{setSidedrawer: React.Dispatch<React.SetStateAction<bo
 				);}
 			}
 		>
-			<a className='flex items-center justify-between text-navBlue hover:text-pink_primary lg:min-w-[133px] lg:h-8 lg:border-solid lg:border lg:border-[#D2D8E0] lg:rounded-[26px] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px]' onClick={e => {
-				e.preventDefault();
-				setSidedrawer(false);
-			}}
-			>
-				<Image
-					className='w-[20px] h-[20px] rounded-full'
-					src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
-					alt='Logo'
-				/>
-				<span className='hidden lg:flex lg:items-center lg:justify-center lg:ml-[9.25px] lg:mr-[13.35px] font-semibold text-[#243A57] text-xs leading-[18px] tracking-[0.02em] capitalize'>
-					{
-						network
-					}
-				</span>
-				<span className='hidden lg:flex lg:items-center lg:justify-center text-[#485F7D]'>
-					<ArrowDownIcon />
-				</span>
-			</a>
+			{
+				isSmallScreen?
+					<a className='flex items-center justify-between gap-x-2 rounded-[26px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] h-10 px-[18px]' onClick={e => {
+						e.preventDefault();
+						setSidedrawer(false);
+					}}
+					>
+						<div className='flex items-center gap-x-[6px]'>
+							<Image
+								className='w-[20px] h-[20px] rounded-full'
+								src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
+								alt='Logo'
+							/>
+							<span className='font-semibold text-xs leading-[18px] tracking-[0.02em]'>
+								{
+									network
+								}
+							</span>
+						</div>
+						<span className='text-[#485F7D]'>
+							<ArrowDownIcon />
+						</span>
+					</a>
+					: <a className='flex items-center justify-between text-navBlue hover:text-pink_primary lg:min-w-[133px] lg:h-8 lg:border-solid lg:border lg:border-[#D2D8E0] lg:rounded-[26px] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px]' onClick={e => {
+						e.preventDefault();
+						setSidedrawer(false);
+					}}
+					>
+						<Image
+							className='w-[20px] h-[20px] rounded-full'
+							src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
+							alt='Logo'
+						/>
+						<span className='hidden lg:flex lg:items-center lg:justify-center lg:ml-[9.25px] lg:mr-[13.35px] font-semibold text-[#243A57] text-xs leading-[18px] tracking-[0.02em] capitalize'>
+							{
+								network
+							}
+						</span>
+						<span className='hidden lg:flex lg:items-center lg:justify-center text-[#485F7D]'>
+							<ArrowDownIcon />
+						</span>
+					</a>
+			}
+
 		</Dropdown>
 	);
 };

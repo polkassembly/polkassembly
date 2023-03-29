@@ -82,7 +82,6 @@ export interface ChainProps {
   'treasuryProposalMinBond': string | null;
   'treasuryProposalMaxBond': string | null;
   'externalLinks': string;
-  'subscanAPI': string;
 }
 
 export type ChainLinksType = {

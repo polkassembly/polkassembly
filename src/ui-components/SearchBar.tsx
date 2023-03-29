@@ -4,44 +4,97 @@
 
 import { SearchOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useState } from 'react';
 import styled from 'styled-components';
+import { useNetworkContext } from '~src/context';
 
-import { NetworkContext } from '~src/context/NetworkContext';
 import ClientOnly, { Search } from './ClientOnly';
 
 interface ISearchBarProps {
 	className?: string;
+	isSmallScreen?: boolean;
 }
 
 const SearchBar: FC<ISearchBarProps> = (props) => {
-	const { className } = props;
-	const { network } = useContext(NetworkContext);
+	const { className, isSmallScreen } = props;
+	const { network } = useNetworkContext();
 	const [open, setOpen] = useState(false);
 	return (
-		<div>
-			<button className='flex items-center justify-center outline-none border-none bg-transparent cursor-pointer text-[18px] text-[#485F7D]' onClick={() => setOpen(true)}>
-				<SearchOutlined />
-			</button>
-			<Modal
-				title='Search'
-				closable={false}
-				open={open}
-				onCancel={() => setOpen(false)}
-				footer={[]}
-				className={className}
-			>
-				<div className='client'>
-					<ClientOnly>
-						<Search network={network} />
-					</ClientOnly>
-				</div>
-			</Modal>
+		<div className={className}>
+			{
+				isSmallScreen?
+					<div className='small-client relative'>
+						<SearchOutlined className='absolute top-[11px] left-2.5 z-50' />
+						<ClientOnly>
+							<Search network={network} />
+						</ClientOnly>
+					</div>
+					: <>
+						<button className='flex items-center justify-center outline-none border-none bg-transparent cursor-pointer text-[18px] text-[#485F7D]' onClick={() => setOpen(true)}>
+							<SearchOutlined />
+						</button>
+						<Modal
+							title='Search'
+							closable={false}
+							open={open}
+							onCancel={() => setOpen(false)}
+							footer={[]}
+							className={className}
+						>
+							<div className='client'>
+								<ClientOnly>
+									<Search network={network} />
+								</ClientOnly>
+							</div>
+						</Modal>
+					</>
+			}
 		</div>
 	);
 };
 
 export default styled(SearchBar)`
+	.small-client .gsc-input-box {
+		padding: 0px !important;
+		margin: 0px !important;
+		border: none !important;
+		width: 100% !important;
+	}
+	.small-client .gsc-input input {
+		background-color: white !important;
+		border: 1px solid #D2D8E0 !important;
+		height: 34px !important;
+	}
+	.small-client .gsc-control-cse {
+		padding: 0px !important;
+		border: none !important;
+	}
+	.small-client .gsc-search-box {
+		margin: 0px !important;
+	}
+	.small-client .gsc-input {
+		padding: 0px !important;
+	}
+
+	.small-client .gsc-search-button {
+		background-color: white !important;
+	}
+
+	.small-client .gsc-search-button-v2 {
+		background-color: var(--pink_primary) !important;
+		cursor: pointer !important;
+		border: none !important;
+		margin: 0px !important;
+		padding: 11px 15px !important;
+		display: flex !important;
+		justify-content: center !important;
+		align-items: center !important;
+		border-top-left-radius: 0px !important;
+		border-top-right-radius: 0px !important;
+	}
+	.small-client .gsc-results-wrapper-overlay {
+		top: 100px !important;
+	}
 	.client .gsc-control-cse {
 		padding: 0px !important;
 		border: none !important;

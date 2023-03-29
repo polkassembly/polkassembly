@@ -3,14 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
-import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import { BN_MILLION, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
 import { Divider, Progress } from 'antd';
 import BN from 'bn.js';
 import { dayjs } from 'dayjs-init';
-import React, { useContext, useEffect, useState } from 'react';
-import { ApiContext } from 'src/context/ApiContext';
+import React, { FC, useEffect, useState } from 'react';
 import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { chainProperties } from 'src/global/networkConstants';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
@@ -20,166 +18,265 @@ import fetchTokenToUSDPrice from 'src/util/fetchTokenToUSDPrice';
 import formatBnBalance from 'src/util/formatBnBalance';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import styled from 'styled-components';
+import { useApiContext, useNetworkContext } from '~src/context';
 
-import { NetworkContext } from '~src/context/NetworkContext';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
-interface Result {
-	value?: Balance;
-	burn?: BN;
-	spendPeriod: BN;
-	treasuryAccount: Uint8Array;
-}
-
-interface Props{
+interface ITreasuryOverviewProps{
 	inTreasuryProposals?: boolean
 	className?: string
 }
 
-const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
-	const { network } = useContext(NetworkContext);
+const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
+	const { className, inTreasuryProposals } = props;
+	const { network } = useNetworkContext();
 
-	const { api, apiReady } = useContext(ApiContext);
-	const [currentBlock, setCurrentBlock] = useState<BN>(new BN(0));
-	const [treasuryBalance, setTreasuryBalance] = useState<
-		DeriveBalancesAccount | undefined
-	>(undefined);
+	const { api, apiReady } = useApiContext();
 
-	const blocktime:number = chainProperties?.[network]?.blockTime;
-
-	const [result, setResult] = useState<Result>(() => ({
-		spendPeriod: BN_ZERO,
-		treasuryAccount: u8aConcat('modl', 'py/trsry', EMPTY_U8A_32).subarray(
-			0,
-			32
-		)
-	}));
-
-	const [resultValue, setResultValue] = useState<string | undefined>(undefined);
-	const [resultBurn, setResultBurn] = useState<string | undefined>(undefined);
-	const [availableUSD, setAvailableUSD] = useState<string>('');
-	const [nextBurnUSD, setNextBurnUSD] = useState<string>('');
-	const [currentTokenPrice, setCurrentTokenPrice] = useState<string>('');
-	const [priceWeeklyChange, setPriceWeeklyChange] = useState<string | number>('NA');
-	const [spendPeriod, setSpendPeriod] = useState<{
-		total: number;
-		days: number;
-		hours: number;
-		minutes: number;
-	}>();
-	const [spendPeriodPercentage, setSpendPeriodPercentage] = useState<number>();
+	const blockTime:number = chainProperties?.[network]?.blockTime;
+	const [available, setAvailable] = useState({
+		isLoading: true,
+		value: '',
+		valueUSD: ''
+	});
+	const [nextBurn, setNextBurn] = useState({
+		isLoading: true,
+		value: '',
+		valueUSD: ''
+	});
+	const [currentTokenPrice, setCurrentTokenPrice] = useState({
+		isLoading: true,
+		value: ''
+	});
+	const [priceWeeklyChange, setPriceWeeklyChange] = useState({
+		isLoading: true,
+		value: ''
+	});
+	const [spendPeriod, setSpendPeriod] = useState({
+		isLoading: true,
+		percentage: 0,
+		value: {
+			days: 0,
+			hours: 0,
+			minutes: 0,
+			total: 0
+		}
+	});
 
 	useEffect(() => {
 		if (!api || !apiReady) {
 			return;
 		}
 
-		api.derive.chain.bestNumber((number) => {
-			setCurrentBlock(number);
+		setSpendPeriod({
+			isLoading: true,
+			percentage: 0,
+			value: {
+				days: 0,
+				hours: 0,
+				minutes: 0,
+				total: 0
+			}
+		});
+		api.derive.chain.bestNumber((currentBlock) => {
+			const spendPeriodConst = api.consts.treasury
+				? api.consts.treasury.spendPeriod
+				: BN_ZERO;
+			if(spendPeriodConst){
+				const spendPeriod = spendPeriodConst.toNumber();
+				const totalSpendPeriod: number = blockToDays(spendPeriod, network, blockTime);
+				const goneBlocks = currentBlock.toNumber() % spendPeriod;
+				// const spendPeriodElapsed: number = blockToDays(goneBlocks, network, blockTime);
+				// const spendPeriodRemaining: number = totalSpendPeriod - spendPeriodElapsed;
+				const time = blockToTime(spendPeriod - goneBlocks, network, blockTime);
+				const { d, h, m } = getDaysTimeObj(time);
+
+				const percentage = ((goneBlocks/spendPeriod) * 100).toFixed(0);
+
+				setSpendPeriod({
+					isLoading: false,
+					// spendPeriodElapsed/totalSpendPeriod for opposite
+					percentage: parseFloat(percentage),
+					value: {
+						days: d,
+						hours: h,
+						minutes: m,
+						total: totalSpendPeriod
+					}
+				});
+
+			}
+		}).catch(() => {
+			setSpendPeriod({
+				isLoading: false,
+				percentage: 0,
+				value: {
+					days: 0,
+					hours: 0,
+					minutes: 0,
+					total: 0
+				}
+			});
+		});
+	},[api, apiReady, blockTime, network]);
+
+	useEffect(() => {
+		if (!api || !apiReady) {
+			return;
+		}
+
+		setAvailable({
+			isLoading: true,
+			value: '',
+			valueUSD: ''
 		});
 
+		setNextBurn({
+			isLoading: true,
+			value: '',
+			valueUSD: ''
+		});
+
+		const treasuryAccount = u8aConcat(
+			'modl',
+			api.consts.treasury && api.consts.treasury.palletId
+				? api.consts.treasury.palletId.toU8a(true)
+				: 'py/trsry',
+			EMPTY_U8A_32
+		);
 		api.derive.balances
-			?.account(u8aToHex(result.treasuryAccount))
+			?.account(u8aToHex(treasuryAccount))
 			.then((treasuryBalance) => {
-				api.query.system.account(result.treasuryAccount).then(res => {
+				api.query.system.account(treasuryAccount).then(res => {
 					const freeBalance = new BN(res?.data?.free) || BN_ZERO;
 					treasuryBalance.freeBalance = freeBalance as Balance;
 				})
-					.catch(e => console.error(e))
+					.catch(e => {
+						console.error(e);
+						setAvailable({
+							isLoading: false,
+							value: '',
+							valueUSD: ''
+						});
+					})
 					.finally(() => {
-						setTreasuryBalance(treasuryBalance);
+						// eslint-disable-next-line @typescript-eslint/no-unused-vars
+						{
+							const burn =
+							treasuryBalance.freeBalance.gt(BN_ZERO) &&
+								!api.consts.treasury.burn.isZero()
+								? api.consts.treasury.burn
+									.mul(treasuryBalance.freeBalance)
+									.div(BN_MILLION)
+								: BN_ZERO;
+
+							let valueUSD = '';
+							let value = '';
+
+							if(burn) {
+								// replace spaces returned in string by format function
+								const nextBurnValueUSD = parseFloat(formatBnBalance(
+									burn.toString(),
+									{
+										numberAfterComma: 2,
+										withThousandDelimitor: false,
+										withUnit: false
+									},
+									network
+								));
+								if (nextBurnValueUSD && currentTokenPrice && currentTokenPrice.value) {
+									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
+								}
+								value = formatUSDWithUnits(formatBnBalance(
+									burn.toString(),
+									{
+										numberAfterComma: 0,
+										withThousandDelimitor: false,
+										withUnit: false
+									},
+									network
+								));
+							}
+
+							setNextBurn({
+								isLoading: false,
+								value,
+								valueUSD
+							});
+						}
+						{
+							const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO)
+								? treasuryBalance.freeBalance
+								: undefined;
+
+							let valueUSD = '';
+							let value = '';
+
+							if (freeBalance) {
+								const availableValueUSD = parseFloat(formatBnBalance(
+									freeBalance.toString(),
+									{
+										numberAfterComma: 2,
+										withThousandDelimitor: false,
+										withUnit: false
+									},
+									network
+								));
+								if (availableValueUSD && currentTokenPrice && currentTokenPrice.value !== 'N/A') {
+									valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value)).toString());
+								}
+								value = formatUSDWithUnits(formatBnBalance(
+									freeBalance.toString(),
+									{
+										numberAfterComma: 0,
+										withThousandDelimitor: false,
+										withUnit: false
+									}, network
+								));
+							}
+
+							setAvailable({
+								isLoading: false,
+								value,
+								valueUSD
+							});
+						}
 					});
 			});
 
-		if (treasuryBalance) {
-			setResult(() => ({
-				burn:
-				treasuryBalance.freeBalance.gt(BN_ZERO) &&
-					!api.consts.treasury.burn.isZero()
-					? api.consts.treasury.burn
-						.mul(treasuryBalance.freeBalance)
-						.div(BN_MILLION)
-					: BN_ZERO,
-				spendPeriod: api.consts.treasury
-					? api.consts.treasury.spendPeriod
-					: BN_ZERO,
-				treasuryAccount: u8aConcat(
-					'modl',
-					api.consts.treasury && api.consts.treasury.palletId
-						? api.consts.treasury.palletId.toU8a(true)
-						: 'py/trsry',
-					EMPTY_U8A_32
-				),
-				value: treasuryBalance.freeBalance.gt(BN_ZERO)
-					? treasuryBalance.freeBalance
-					: undefined
-			}));
-
-			if (result.value) {
-				setResultValue(result.value.toString());
-			}
-
-			if (result.burn) {
-				setResultBurn(result.burn.toString());
-			}
-		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, treasuryBalance, currentBlock]);
+	}, [api, apiReady, currentTokenPrice, network]);
 
 	// set availableUSD and nextBurnUSD whenever they or current price of the token changes
-	useEffect(() => {
-		let cancel = false;
-		if (cancel || !currentTokenPrice) return;
-
-		if(resultValue) {
-			// replace spaces returned in string by format function
-			const availableVal: number = parseFloat(formatBnBalance(
-				resultValue.toString(),
-				{
-					numberAfterComma: 2,
-					withThousandDelimitor: false,
-					withUnit: false
-				},
-				network
-			));
-
-			if(availableVal != 0) {
-				setAvailableUSD(formatUSDWithUnits((availableVal * Number(currentTokenPrice)).toString()));
-			}
-		}
-
-		if(resultBurn) {
-			// replace spaces returned in string by format function
-			const burnVal: number = parseFloat(formatBnBalance(
-				resultBurn.toString(),
-				{
-					numberAfterComma: 2,
-					withThousandDelimitor: false,
-					withUnit: false
-				},
-				network
-			));
-
-			if(burnVal != 0) {
-				setNextBurnUSD(formatUSDWithUnits((burnVal * Number(currentTokenPrice)).toString()));
-			}
-		}
-
-		return () => { cancel = true; };
-	}, [resultValue, resultBurn, currentTokenPrice, network]);
 
 	// fetch current price of the token
 	useEffect(() => {
 		let cancel = false;
 		if(cancel) return;
 
+		setCurrentTokenPrice({
+			isLoading: true,
+			value: ''
+		});
 		fetchTokenToUSDPrice(network).then((formattedUSD) => {
-			if(formattedUSD === 'N/A') return setCurrentTokenPrice(formattedUSD);
+			if(formattedUSD === 'N/A') {
+				setCurrentTokenPrice({
+					isLoading: false,
+					value: formattedUSD
+				});
+				return;
+			}
 
-			setCurrentTokenPrice(parseFloat(formattedUSD).toFixed(2));
+			setCurrentTokenPrice({
+				isLoading: false,
+				value: parseFloat(formattedUSD).toFixed(2)
+			});
+		}).catch(() => {
+			setCurrentTokenPrice({
+				isLoading: false,
+				value: 'N/A'
+			});
 		});
 
 		return () => {cancel = true;};
@@ -188,15 +285,19 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 	// fetch a week ago price of the token and calc priceWeeklyChange
 	useEffect(() => {
 		let cancel = false;
-		if(cancel || !currentTokenPrice) return;
+		if(cancel || !currentTokenPrice.value || currentTokenPrice.isLoading) return;
 
+		setPriceWeeklyChange({
+			isLoading: true,
+			value: ''
+		});
 		async function fetchWeekAgoTokenPrice() {
 			if (cancel) return;
 			const weekAgoDate = dayjs().subtract(7,'d').format('YYYY-MM-DD');
 
 			try {
 				const response = await fetch(
-					`${chainProperties[network].subscanAPI}/api/scan/price/history`,
+					`${chainProperties[network].externalLinks}/api/scan/price/history`,
 					{
 						body: JSON.stringify({
 							end: weekAgoDate,
@@ -209,14 +310,31 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 				const responseJSON = await response.json();
 				if (responseJSON['message'] == 'Success') {
 					const weekAgoPrice = responseJSON['data']['average'];
-					const currentTokenPriceNum : number = parseFloat(currentTokenPrice);
+					const currentTokenPriceNum : number = parseFloat(currentTokenPrice.value);
 					const weekAgoPriceNum : number = parseFloat(weekAgoPrice);
-					if(weekAgoPriceNum == 0) return setPriceWeeklyChange('N/A');
+					if(weekAgoPriceNum == 0) {
+						setPriceWeeklyChange({
+							isLoading: false,
+							value: 'N/A'
+						});
+						return;
+					}
 					const percentChange = ((currentTokenPriceNum - weekAgoPriceNum) / weekAgoPriceNum) * 100;
-					setPriceWeeklyChange(parseFloat(percentChange.toFixed(2)));
+					setPriceWeeklyChange({
+						isLoading: false,
+						value: percentChange.toFixed(2)
+					});
+					return;
 				}
+				setPriceWeeklyChange({
+					isLoading: false,
+					value: 'N/A'
+				});
 			} catch(err) {
-				setPriceWeeklyChange('N/A');
+				setPriceWeeklyChange({
+					isLoading: false,
+					value: 'N/A'
+				});
 			}
 		}
 
@@ -224,41 +342,16 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 		return () => {cancel = true;};
 	}, [currentTokenPrice, network]);
 
-	useEffect(() => {
-		if (!api || !apiReady || currentBlock.isZero()) {
-			return;
-		}
-		if(result.spendPeriod){
-			const spendPeriod = result.spendPeriod.toNumber();
-			const totalSpendPeriod: number = blockToDays(spendPeriod, network, blocktime);
-			const goneBlocks = currentBlock.toNumber() % spendPeriod;
-			// const spendPeriodElapsed: number = blockToDays(goneBlocks, network, blocktime);
-			// const spendPeriodRemaining: number = totalSpendPeriod - spendPeriodElapsed;
-			const time = blockToTime(spendPeriod - goneBlocks, network, blocktime);
-			const { d, h, m } = getDaysTimeObj(time);
-			setSpendPeriod({
-				days: d,
-				hours: h,
-				minutes: m,
-				total: totalSpendPeriod
-			});
-
-			// spendPeriodElapsed/totalSpendPeriod for opposite
-			const percentage = ((goneBlocks/spendPeriod) * 100).toFixed(0);
-			setSpendPeriodPercentage(parseFloat(percentage));
-		}
-	}, [api, apiReady, currentBlock, blocktime, result.spendPeriod, network]);
-
 	return (
 		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col gap-4 lg:flex`}>
 			{/* Available */}
 			<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-md gap-y-2">
 				{
-					apiReady?
+					!available.isLoading ?
 						<>
 							<div className="text-navBlue text-xs flex items-center">
 								<span className="mr-2">
-						Available
+									Available
 								</span>
 
 								<HelperTooltip
@@ -266,18 +359,10 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 								/>
 							</div>
 							<div className="text-sidebarBlue font-medium text-lg">
-								{!apiReady
-									? null
-									: result.value ?
+								{
+									available.value ?
 										<span>
-											{formatUSDWithUnits(formatBnBalance(
-												result.value.toString(),
-												{
-													numberAfterComma: 0,
-													withThousandDelimitor: false,
-													withUnit: false
-												}, network
-											))}
+											{available.value}
 											{' '}
 											<span className='text-navBlue'>
 												{chainProperties[network]?.tokenSymbol}
@@ -290,11 +375,10 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 								<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
 									<Divider className='m-0 p-0' />
 									<span className='flex flex-col justify-center text-sidebarBlue font-medium'>
-										{ apiReady && !resultValue ? 'N/A'
-											: resultValue == '0' ? '$ 0' :
-												availableUSD
-													? `~ $${availableUSD}`
-													: null
+										{
+											available.valueUSD
+												? `~ $${available.valueUSD}`
+												: 'N/A'
 										}
 									</span>
 								</div>
@@ -310,7 +394,7 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 			{network !== 'moonbase' &&
 				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-md gap-y-2">
 					{
-						apiReady?
+						!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading)?
 							<>
 								<div className="text-navBlue text-xs flex items-center">
 									<span className='hidden md:flex'>
@@ -321,26 +405,26 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 									</span>
 								</div>
 								<div className="text-sidebarBlue font-medium text-lg">
-									{currentTokenPrice === 'N/A' ? <span>N/A</span> : currentTokenPrice && !isNaN(Number(currentTokenPrice))
-										? <span>${currentTokenPrice}</span>
+									{currentTokenPrice.value === 'N/A' ? <span>N/A</span> : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value))
+										? <span>${currentTokenPrice.value}</span>
 										: null
 									}
 								</div>
 								<div className="flex flex-col justify-center text-sidebarBlue font-medium gap-y-3">
 									<Divider className='m-0 p-0' />
 									<span className='flex items-center gap-x-1'>
-										{priceWeeklyChange === 'N/A' ? 'N/A' : priceWeeklyChange ?
+										{priceWeeklyChange.value === 'N/A' ? 'N/A' : priceWeeklyChange.value ?
 											<>
 												<span>
-										Weekly{' '}
+													Weekly{' '}
 													<span className='hidden xl:inline-block'>
-											Change
+														Change
 													</span>
 												</span>
 												<span>
-													{Math.abs(Number(priceWeeklyChange))}%
+													{Math.abs(Number(priceWeeklyChange.value))}%
 												</span>
-												{typeof priceWeeklyChange === 'number' && priceWeeklyChange < 0 ? <CaretDownOutlined color='red' /> : <CaretUpOutlined color='green' /> }
+												{typeof priceWeeklyChange.value === 'number' && priceWeeklyChange.value < 0 ? <CaretDownOutlined color='red' /> : <CaretUpOutlined color='green' /> }
 											</>
 											: null
 										}
@@ -359,11 +443,11 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 				{!inTreasuryProposals &&
 				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-md gap-y-2">
 					{
-						apiReady?
+						!spendPeriod.isLoading?
 							<>
 								<div className="text-navBlue text-xs flex items-center gap-x-2">
 									<span>
-							Spend Period
+										Spend Period
 									</span>
 
 									<HelperTooltip
@@ -372,46 +456,38 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 								</div>
 
 								<div className="text-sidebarBlue font-medium text-lg">
-									{spendPeriod
-										? spendPeriod?.total
-											? <>
-												{
-													spendPeriod?.days?
-														<>
-															<span>{spendPeriod.days} </span>
-															<span className='text-navBlue'>days </span>
-														</>
-														: null
-												}
-												<span>{spendPeriod.hours} </span>
-												<span className='text-navBlue'>hrs </span>
-												{
-													!spendPeriod?.days?
-														<>
-															<span>{spendPeriod.minutes} </span>
-															<span className='text-navBlue'>mins </span>
-														</>
-														: null
-												}
-												<span className="text-navBlue text-xs"> / {spendPeriod.total} days </span>
-											</>
-											: 'N/A'
-										: null
+									{spendPeriod.value?.total
+										? <>
+											{
+												spendPeriod.value?.days?
+													<>
+														<span>{spendPeriod.value.days} </span>
+														<span className='text-navBlue'>days </span>
+													</>
+													: null
+											}
+											<span>{spendPeriod.value.hours} </span>
+											<span className='text-navBlue'>hrs </span>
+											{
+												!spendPeriod.value?.days?
+													<>
+														<span>{spendPeriod.value.minutes} </span>
+														<span className='text-navBlue'>mins </span>
+													</>
+													: null
+											}
+											<span className="text-navBlue text-xs"> / {spendPeriod.value.total} days </span>
+										</>
+										: 'N/A'
 									}
 								</div>
 								{
-									spendPeriod && (
-										<>
-											<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
-												<Divider className='m-0 p-0' />
-												{spendPeriod &&
+									<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
+										<Divider className='m-0 p-0' />
 										<span className='flex items-center'>
-											<Progress className='m-0 p-0 flex items-center' percent={!isNaN(Number(spendPeriodPercentage)) ? spendPeriodPercentage : 0} strokeColor='#E5007A' size="small" />
+											<Progress className='m-0 p-0 flex items-center' percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0} strokeColor='#E5007A' size="small" />
 										</span>
-												}
-											</div>
-										</>
-									)
+									</div>
 								}
 							</>
 							:  <div className='min-h-[89px] w-full flex items-center justify-center'>
@@ -426,11 +502,11 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
 				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-md gap-y-2">
 					{
-						apiReady?
+						!nextBurn.isLoading?
 							<>
 								<div className="text-navBlue text-xs flex items-center">
 									<span className="mr-2">
-						Next Burn
+										Next Burn
 									</span>
 
 									<HelperTooltip
@@ -439,29 +515,21 @@ const TreasuryOverview = ({ className, inTreasuryProposals }:Props) => {
 								</div>
 
 								<div className="text-sidebarBlue font-medium text-lg">
-									{result.burn ? (
-										<span>
-											{formatUSDWithUnits(formatBnBalance(
-												result.burn.toString(),
-												{
-													numberAfterComma: 0,
-													withThousandDelimitor: false,
-													withUnit: false
-												},
-												network
-											))} <span className='text-navBlue'>{chainProperties[network]?.tokenSymbol}</span>
-										</span>
-									) : null
+									{
+										nextBurn.value ? (
+											<span>
+												{nextBurn.value} <span className='text-navBlue'>{chainProperties[network]?.tokenSymbol}</span>
+											</span>
+										) : null
 									}
 								</div>
 								<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
 									<Divider className='m-0 p-0' />
 									<span className='mr-2 text-sidebarBlue font-medium'>
-										{apiReady && !resultBurn ? 'N/A' :
-											resultBurn == '0' ? '$ 0' :
-												nextBurnUSD
-													? `~ $${nextBurnUSD}`
-													: null
+										{
+											nextBurn.valueUSD
+												? `~ $${nextBurn.valueUSD}`
+												: 'N/A'
 										}
 									</span>
 								</div>

@@ -25,6 +25,8 @@ import EditablePostContent from './EditablePostContent';
 import PostHeading from './PostHeading';
 import PostDescription from './Tabs/PostDescription';
 import getNetwork from '~src/util/getNetwork';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IVerified } from '~src/auth/types';
 
 const GovernanceSideBar = dynamic(() => import('./GovernanceSideBar'), {
 	loading: () => <Skeleton active /> ,
@@ -91,8 +93,45 @@ const Post: FC<IPostProps> = (props) => {
 		link: '',
 		text: ''
 	});
+	const [canEdit, setCanEdit] = useState(false);
 
 	const [duration, setDuration] = useState(dayjs.duration(0));
+
+	useEffect(() => {
+		if(!post) return;
+
+		const { post_id, proposer } = post;
+
+		if(offChainProposalTypes.includes(proposalType)) {
+			setCanEdit(post.user_id === id);
+			return;
+		}
+
+		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
+		const network = getNetwork();
+		if(network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23){
+			isProposer = addresses?.includes('0xbb1e1722513a8fa80f7593617bb0113b1258b7f1');
+		}
+		if(network == 'moonriver' && proposalType == ProposalType.REFERENDUM_V2 && post_id == 3){
+			isProposer = addresses?.includes('0x16095c509f728721ad19a51704fc39116157be3a');
+		}
+
+		const substrateAddress = getSubstrateAddress(proposer);
+		if(!isProposer || !substrateAddress) return;
+
+		(async () => {
+			//check if proposer address is verified
+			const { data , error: fetchError } = await nextApiClientFetch<IVerified>( 'api/v1/auth/data/isAddressVerified', {
+				address: substrateAddress
+			});
+
+			if(fetchError || !data) return console.log('error checking verified address : ', fetchError);
+
+			if(data.verified && !isEditing) {
+				setCanEdit(true);
+			}
+		})();
+	}, [addresses, id, isEditing, post, proposalType]);
 
 	useEffect(() => {
 		if (proposalType !== ProposalType.GRANTS || dayjs(post.created_at).isBefore(dayjs().subtract(6, 'days'))) return;
@@ -115,14 +154,32 @@ const Post: FC<IPostProps> = (props) => {
 
 	useEffect(() => {
 		if (post && post.timeline && Array.isArray(post.timeline)) {
-			const index = post.timeline.findIndex((obj) => obj && obj.index === post.post_id && obj.type === post.type);
-			if (index >= 0 && ((index + 1) < post.timeline.length)) {
-				const nextPost = post.timeline[index + 1];
+			let isFind = false;
+			const map = new Map();
+			post.timeline.forEach((obj) => {
+				if (obj && obj.index === post.post_id && obj.type === post.type) {
+					isFind = true;
+				} else if (isFind) {
+					map.set(obj.type, obj);
+				}
+			});
+			let nextPost: any = undefined;
+			map.forEach((v) => {
+				if (!nextPost) {
+					nextPost = v;
+				}
+			});
+			if (nextPost) {
 				const proposalType = getFirestoreProposalType(nextPost.type) as ProposalType;
 				const link = getSinglePostLinkFromProposalType(proposalType);
 				setRedirection({
 					link: `/${link}/${nextPost.index}`,
 					text: `${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} #${nextPost.index}`
+				});
+			} else {
+				setRedirection({
+					link: '',
+					text: ''
 				});
 			}
 		}
@@ -139,21 +196,9 @@ const Post: FC<IPostProps> = (props) => {
 	const isOnchainPost = proposalTypes.includes(proposalType);
 	const isOffchainPost = offChainProposalTypes.includes(proposalType);
 
-	const { post_id, hash, proposer, status: postStatus } = post;
+	const { post_id, hash, status: postStatus } = post;
 	const onchainId = proposalType === ProposalType.TIPS? hash :post_id;
 
-	let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
-	const network = getNetwork();
-	if(network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23){
-		isProposer = addresses?.includes('0xbb1e1722513a8fa80f7593617bb0113b1258b7f1');
-	}
-	if(network == 'moonriver' && proposalType == ProposalType.REFERENDUM_V2 && post_id == 3){
-		isProposer = addresses?.includes('0x16095c509f728721ad19a51704fc39116157be3a');
-	}
-
-	const canEdit = !isEditing && (
-		post.user_id === id || isProposer
-	);
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:w-4/12 mx-auto`}>
@@ -241,6 +286,7 @@ const Post: FC<IPostProps> = (props) => {
 							reward: post?.reward,
 							status: post?.status,
 							statusHistory: post?.statusHistory,
+							submission_deposit_amount: post?.submission_deposit_amount,
 							submitted_amount: post?.submitted_amount,
 							track_number: post?.track_number,
 							vote_threshold: post?.vote_threshold

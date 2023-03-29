@@ -35,6 +35,10 @@ export interface Subscription {
 	subscribed: boolean;
 }
 
+export interface IVerified {
+	verified: boolean;
+}
+
 export interface PublicUser {
 	id: number;
 	default_address?: string;
@@ -152,13 +156,6 @@ export enum PostTypeEnum {
 }
 
 export type PostType = PostTypeEnum;
-
-export interface CommentCreationHookDataType {
-	user_id: number;
-	content: string;
-	id: string;
-	post_id: number;
-}
 
 export interface HashedPassword {
 	password: string;

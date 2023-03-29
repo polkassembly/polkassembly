@@ -2,6 +2,19 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+export const GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY = `
+query ProposalsListingByType($limit: Int, $index_in: [Int!]) {
+  proposals(where: {index_in: $index_in, type_eq: Bounty}, limit: $limit) {
+    curator
+    preimage {
+      proposer
+    }
+    proposer
+    index
+  }
+}
+`;
+
 export const GET_PROPOSALS_LISTING_BY_TYPE = `
 query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrderByInput!] = createdAtBlock_DESC, $limit: Int = 10, $offset: Int = 0, $index_in: [Int!], $hash_in: [String!], $trackNumber_in: [Int!], $status_in: [ProposalStatus!]) {
   proposalsConnection(orderBy: id_ASC, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
@@ -36,6 +49,7 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
       method
       description
     }
+    parentBountyIndex
   }
 }
 `;
@@ -180,6 +194,10 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
     enactmentAfterBlock
     enactmentAtBlock
     decisionDeposit {
+      amount
+      who
+    }
+    submissionDeposit {
       amount
       who
     }

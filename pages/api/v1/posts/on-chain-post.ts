@@ -572,6 +572,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			reward: postData?.reward,
 			status,
 			statusHistory: postData?.statusHistory,
+			submission_deposit_amount: postData?.submissionDeposit?.amount,
 			submitted_amount: postData?.submissionDeposit?.amount,
 			tally: postData?.tally,
 			timeline: [],

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Col, Divider, Row } from 'antd';
+import { Col, Divider, Row, Tooltip } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -89,9 +89,16 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	return (
 		<div className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue`}>
 			<div className="flex justify-between capitalize font-medium">
-				<h2 className="text-lg capitalize">
+				<div className='flex items-center gap-x-2'>
+					<h2 className="text-lg capitalize">
 						About {trackName.split(/(?=[A-Z])/).join(' ')}
-				</h2>
+					</h2>
+					<Tooltip color='#E5007A' title='Track Number' className='cursor-pointer'>
+						<h4 className=' text-[#B70062] text-xs font-medium leading-[18px] tracking-[0.01em]'>
+							#{trackMetaData.trackId}
+						</h4>
+					</Tooltip>
+				</div>
 
 				<h2 className="text-sm text-pink_primary">{trackMetaData?.group}</h2>
 			</div>

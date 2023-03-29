@@ -4,15 +4,15 @@
 
 import { Col, Divider, Row } from 'antd';
 import BN from 'bn.js';
-import React, { FC, useContext } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
 
-import { NetworkContext } from '~src/context/NetworkContext';
 import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 
 import DelegateModal from './DelegateModal';
+import { useNetworkContext } from '~src/context';
 // import DelegateModalEthV2 from './DelegateModalEthV2';
 
 interface IAboutTrackCardProps {
@@ -20,11 +20,49 @@ interface IAboutTrackCardProps {
 	trackName: string;
 }
 
+const getDefaultTrackMetaData = () => {
+	return {
+		confirmPeriod: '',
+		decisionDeposit: '',
+		decisionPeriod: '',
+		description: '',
+		group: '',
+		maxDeciding: '',
+		minEnactmentPeriod: '',
+		preparePeriod: '',
+		trackId: 0
+	};
+};
+
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkContext();
 
 	const { className, trackName } = props;
-	const trackMetaData = networkTrackInfo[network][trackName];
+	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
+	useEffect(() => {
+		const trackMetaData = networkTrackInfo[network][trackName];
+		const defaultTrackMetaData = getDefaultTrackMetaData();
+		Object.keys(defaultTrackMetaData).forEach((key) => {
+			(defaultTrackMetaData as any)[key] = trackMetaData?.[key];
+		});
+		const tracks = localStorage.getItem('tracks');
+		if (tracks) {
+			const tracksArr = JSON.parse(tracks) as any[];
+			if (tracksArr && Array.isArray(tracksArr) && tracksArr.length > 0) {
+				const currTrackMetaDataArr = tracksArr.find((v) => v && Array.isArray(v) && v.length > 1 && v[0] === trackMetaData.trackId);
+				if (currTrackMetaDataArr && Array.isArray(currTrackMetaDataArr) && currTrackMetaDataArr.length >= 2) {
+					const currTrackMetaData = currTrackMetaDataArr[1];
+					const keys = ['confirmPeriod', 'decisionDeposit', 'decisionPeriod', 'maxDeciding', 'minEnactmentPeriod', 'preparePeriod'];
+					keys.forEach((key) => {
+						if (currTrackMetaData[key]) {
+							(defaultTrackMetaData as any)[key] = currTrackMetaData[key];
+						}
+					});
+				}
+			}
+		}
+		setTrackMetaData(defaultTrackMetaData);
+	}, [network, trackName]);
 
 	const blockTimeSeconds:number = chainProperties?.[network]?.blockTime / 1000;
 

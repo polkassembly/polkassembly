@@ -20,14 +20,33 @@ const nextConfig = {
       }
     ];
   },
-  async redirects() {
-    return [
-      {
-        source: '/news',  // this path will be redirected to 404
-        destination: '/404',
-        permanent: true
-      }
-    ];
+  async rewrites() {
+    return {
+      fallback: [
+        // These rewrites are checked after both pages/public files
+        // and dynamic routes are checked
+        {
+          source: '/:path*',
+          destination: 'http://kusama-old.polkassembly.io/:path*',
+          has: [
+            {
+              type: 'host',
+              value: 'kusama.polkassembly.io'
+            }
+          ]
+        },
+        {
+          source: '/:path*',
+          destination: 'http://polkadot-old.polkassembly.io/:path*',
+          has: [
+            {
+              type: 'host',
+              value: 'polkadot.polkassembly.io'
+            }
+          ]
+        }
+      ]
+    };
   },
   images: {
     domains: ['parachains.info']

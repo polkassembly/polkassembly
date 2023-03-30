@@ -47,7 +47,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		content: content,
 		created_at: new Date(),
 		id: newCommentRef.id,
-		sentiment: sentiment | 0,
+		sentiment: sentiment || 0,
 		updated_at: last_comment_at,
 		user_id: user.id,
 		user_profile_img: user?.profile?.image || '',

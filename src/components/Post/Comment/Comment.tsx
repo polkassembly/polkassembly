@@ -26,7 +26,7 @@ export interface IComment {
 	comment_reactions: IReactions;
 	username: string;
 	proposer?: string;
-  sentiment:number;
+  sentiment?:number;
 }
 
 interface ICommentProps {
@@ -40,7 +40,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 	const { user_id, content, created_at, id, replies, updated_at ,sentiment} = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
-  const [newSentiment,setNewSentiment]=useState<number>(sentiment);
+  const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
 
 	const { postData: { postIndex, postType } } = usePostDataContext();
 
@@ -100,7 +100,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					disableEdit={props.disableEdit}
 					sentiment={newSentiment}
           setSentiment={setNewSentiment}
-          prevSentiment={sentiment}
+          prevSentiment={sentiment||0}
 				/>
 				{replies && replies.length > 0 && <Replies className='comment-content' commentId={id} repliesArr={replies} />}
 			</div>

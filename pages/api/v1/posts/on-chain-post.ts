@@ -310,7 +310,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				updated_at: getUpdatedAt(data),
 				user_id: data.user_id || data.user_id,
 				username: data.username,
-        sentiment:data.sentiment
+        sentiment:data.sentiment||0
 			};
 
 			const repliesSnapshot = await commentDocRef.collection('replies').get();

@@ -186,14 +186,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			});
 		}
 
-		if(loginWallet===Wallet.POLYWALLET && polywalletJSAccounts) {
+		if(['polymesh'].includes(network) && polywalletJSAccounts) {
 			accounts = accounts.concat(polywalletJSAccounts);
 			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polywallet';
 			});
 		}
 
-		if(loginWallet===Wallet.SUBWALLET && subwalletAccounts) {
+		if(subwalletAccounts) {
 			accounts = accounts.concat(subwalletAccounts);
 			subwalletAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'subwallet-js';

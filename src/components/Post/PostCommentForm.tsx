@@ -32,7 +32,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
   const [openModal,setModalOpen]=useState(false);
-  const [isPost,setIsPost]=useState(false);
+  const [isComment,setIsComment]=useState(false);
   const [sentiment,setSentiment]=useState<number>(3);
   const [isSentimentPost,setIsSentimentPost]=useState(false);
 
@@ -101,18 +101,18 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					updated_at: new Date(),
 					user_id: id,
 					username: username || '',
-          sentiment:data?.sentiment
+          sentiment:sentiment
 				}]
 			}));
 		}
 		setLoading(false);
-    setIsPost(false);
+    setIsComment(false);
     setIsSentimentPost(false);
     setSentiment(3);
 	};
   useEffect(()=>{
-    isPost && handleSave();
-  },[isPost])
+    isComment && handleSave();
+  },[isComment])
 
 	return (
 		<div className={className}>
@@ -152,7 +152,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 setSentiment={setSentiment} 
 openModal={openModal} 
 setModalOpen={setModalOpen} 
-setIsPost={setIsPost} 
+setIsComment={setIsComment} 
 setIsSentimentPost={setIsSentimentPost}
 sentiment={sentiment}
 

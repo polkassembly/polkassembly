@@ -11,16 +11,16 @@ import SlightlyForIcon from '~assets/icons/slightly-for.svg';
 import ForIcon from '~assets/icons/for.svg';
 
 interface Props{
-  setIsPost:(pre:boolean)=>void;
+  setIsComment:(pre:boolean)=>void;
   openModal:boolean;
   setModalOpen:(pre:boolean)=>void;
   setIsSentimentPost:(pre:boolean)=>void;
   className?:string;
   setSentiment:(pre:number)=>void;
-  sentiment:number;
+  sentiment:number | 0;
 }
 
-const CommentSentimentModal=({setIsPost,openModal,setModalOpen,setIsSentimentPost,className,sentiment,setSentiment}:Props)=>{
+const CommentSentimentModal=({setIsComment,openModal,setModalOpen,setIsSentimentPost,className,sentiment,setSentiment}:Props)=>{
 
   const handleOnChange=(value:number)=>{
     setSentiment(value);
@@ -28,7 +28,7 @@ const CommentSentimentModal=({setIsPost,openModal,setModalOpen,setIsSentimentPos
 
 const handleClick=()=>{
 setIsSentimentPost(true);
-setIsPost(true);
+setIsComment(true);
 setModalOpen(false);
 }
 const handleSentimentText=()=>{
@@ -48,7 +48,7 @@ return (<Modal
       className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 w-[433px] max-sm:w-[100%] padding  justify-center center-aligned`}
 			onCancel={() => {
         setModalOpen(false);
-        setIsPost(true);
+        setIsComment(true);
         setIsSentimentPost(false);
     }}
     centered

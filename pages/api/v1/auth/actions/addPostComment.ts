@@ -16,7 +16,6 @@ import { PostComment } from '~src/types';
 
 export interface IAddPostCommentResponse {
 	id: string;
-  sentiment:number;
 }
 
 const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (req, res) => {
@@ -60,8 +59,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 			last_comment_at
 		}).then(() => {});
 		return res.status(200).json({
-			id: newComment.id,
-      sentiment:newComment?.sentiment
+			id: newComment.id
 		});
 	}).catch((error) => {
 		// The document probably doesn't exist.

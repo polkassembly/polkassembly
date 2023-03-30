@@ -9,13 +9,13 @@ import { isFirestoreProposalTypeValid, isProposalTypeValid, isValidNetwork } fro
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getSubsquidProposalType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import { GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING } from '~src/queries';
+import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getComments, getReactions, getTimeline, IPostResponse, isDataExist } from './on-chain-post';
 
 interface IGetOffChainPostParams {
@@ -80,7 +80,6 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 		];
 		const topic = data?.topic;
 		const topic_id = data?.topic_id;
-		const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 		const post_link = data?.post_link;
 		if (post_link) {
 			const { id, type } = post_link;
@@ -149,7 +148,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			post_id: data?.id,
 			post_link: post_link,
 			post_reactions: post_reactions,
-			proposer: proposer_address,
+			proposer: '',
 			timeline: timeline,
 			title: data?.title,
 			topic: topic? topic: isTopicIdValid(topic_id)? {
@@ -159,6 +158,22 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			user_id: data?.user_id,
 			username: data?.username
 		};
+		if (post && (post.user_id || post.user_id === 0)) {
+			let { user_id } = post;
+			if (typeof user_id !== 'number') {
+				const numUserId = Number(user_id);
+				if (!isNaN(numUserId)) {
+					user_id = numUserId;
+				}
+			}
+			const addressDocs = await firestore_db.collection('addresses').where('user_id', '==', user_id).limit(1).get();
+			if (addressDocs && addressDocs.size > 0) {
+				const addressDoc = addressDocs.docs[0];
+				if (addressDoc && addressDoc.exists && addressDoc.data()) {
+					post.proposer = addressDoc.data().address;
+				}
+			}
+		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,

@@ -195,7 +195,8 @@ const Details: FC<IDetailsProps> = (props) => {
 				};
 			});
 		}
-	}, [onChainIdentity, profileDetails]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [onChainIdentity]);
 
 	useEffect(() => {
 		if (!api) {

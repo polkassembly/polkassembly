@@ -13,6 +13,8 @@ import { typesBundleCrust } from '../typesBundle/typesBundleCrust';
 import { typesBundleEquilibrium } from '../typesBundle/typesBundleEquilibrium';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { dropdownLabel } from '~src/ui-components/RPCDropdown';
 
 export interface ApiContextType {
 	api: ApiPromise | undefined;
@@ -72,22 +74,36 @@ export function ApiContextProvider(
 				});
 				setIsApiLoading(false);
 				await api.disconnect();
+				localStorage.removeItem('tracks');
+				if (props.network) {
+					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
+				}
 			}, 60000);
 			api.on('error', async () => {
 				clearTimeout(timer);
 				queueNotification({
 					header: 'Error!',
-					message: 'Unable to connect the RPC.',
+					message: `${dropdownLabel(wsProvider, props.network || '')} is not responding, please change RPC.`,
 					status: NotificationStatus.ERROR
 				});
 				setIsApiLoading(false);
 				await api.disconnect();
+				localStorage.removeItem('tracks');
+				if (props.network) {
+					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
+				}
 			});
 			api.isReady.then(() => {
 				clearTimeout(timer);
 				setIsApiLoading(false);
 				setApiReady(true);
 				console.log('API ready');
+				if (isOpenGovSupported(props.network || '')) {
+					const value = api.consts.referenda.tracks.toJSON();
+					localStorage.setItem('tracks', JSON.stringify(value));
+				} else {
+					localStorage.removeItem('tracks');
+				}
 			})
 				.catch(async (error) => {
 					clearTimeout(timer);
@@ -99,9 +115,14 @@ export function ApiContextProvider(
 					setIsApiLoading(false);
 					await api.disconnect();
 					console.error(error);
+					localStorage.removeItem('tracks');
+					if (props.network) {
+						setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
+					}
 				});
 			return () => clearTimeout(timer);
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api]);
 
 	return (

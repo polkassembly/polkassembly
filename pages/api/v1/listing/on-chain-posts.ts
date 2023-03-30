@@ -51,14 +51,6 @@ export interface IPostsListingResponse {
 	posts: IPostListing[]
 }
 
-export function getGeneralStatus(status: string) {
-	switch(status) {
-	case 'DecisionDepositPlaced':
-		return 'Deciding';
-	}
-	return status;
-}
-
 interface IGetOnChainPostsParams {
 	network: string;
 	page?: string | string[] | number;
@@ -184,7 +176,17 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 					}
 				});
 			}
-			const status = subsquidPost.status;
+			let status = subsquidPost.status;
+			if (status === 'DecisionDepositPlaced') {
+				const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
+				const decidingIndex = statuses.findIndex((status) => status && status.status === 'Deciding');
+				if (decidingIndex >= 0) {
+					const decisionDepositPlacedIndex = statuses.findIndex((status) => status && status.status === 'DecisionDepositPlaced');
+					if (decisionDepositPlacedIndex >=0 && decidingIndex < decisionDepositPlacedIndex) {
+						status = 'Deciding';
+					}
+				}
+			}
 			const postId = proposalType === ProposalType.TIPS? hash: index;
 			const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 

@@ -36,7 +36,11 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 	const serviceMap = {
 		[EService.SUBSCAN]: (network: string) => {
 			let url = '';
-			const host = chainProperties[network].externalLinks;
+			let host = chainProperties[network].externalLinks;
+
+			if (host.includes('subscan')) {
+				host = host.replace('.api', '');
+			}
 
 			if (proposalType === ProposalType.REFERENDUMS) {
 				url = `${host}/referenda/${onchainId}`;

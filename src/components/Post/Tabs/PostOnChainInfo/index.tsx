@@ -15,7 +15,6 @@ import styled from 'styled-components';
 import PolkaholicIntegration from '~src/components/PolkaholicIntegration';
 
 import { useNetworkContext } from '~src/context';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ProposalType } from '~src/global/proposalType';
 import { useCurrentBlock } from '~src/hooks';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
@@ -108,14 +107,9 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 	const currentBlock = useCurrentBlock();
 	if (!onChainInfo) return null;
 
-	const { delay, description, end, status, proposer, vote_threshold, method, post_id, ended_at, proposed_call, bond, curator, curator_deposit, deciding, decision_deposit_amount, submission_deposit_amount, deposit, enactment_after_block, enactment_at_block, ended_at_block, fee, hash, member_count, motion_method, origin, proposal_arguments, submitted_amount, track_number, reward, payee, statusHistory } = onChainInfo;
+	const { delay, description, end, status, proposer, vote_threshold, method, post_id, ended_at, proposed_call, bond, curator, curator_deposit, deciding, decision_deposit_amount, submission_deposit_amount, deposit, enactment_after_block, enactment_at_block, ended_at_block, fee, hash, member_count, motion_method, origin, proposal_arguments, submitted_amount, reward, payee, statusHistory } = onChainInfo;
 
 	const blockNumber = getBlockNumber(statusHistory);
-	const getTrackNameFromNumber = (trackNum: number) => {
-		for (const trackName of Object.keys(networkTrackInfo[network])) {
-			if(networkTrackInfo[network][trackName].trackId === trackNum) return trackName.split(/(?=[A-Z])/).join(' ');
-		}
-	};
 
 	const formattedBlockToTime = (blockNo: number) => {
 		if(!currentBlock) return;
@@ -179,18 +173,6 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							<h6 className='col-span-2'>Origin</h6>
 							<div className='text-navBlue col-span-4 md:col-span-6 overflow-hidden'>
 								{origin.split(/(?=[A-Z])/).join(' ')}
-							</div>
-						</li>}
-						{!!track_number && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='col-span-2'>Track Number</h6>
-							<div className='text-navBlue col-span-4 md:col-span-6 overflow-hidden'>
-								{track_number}
-							</div>
-						</li>}
-						{!!track_number && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-							<h6 className='col-span-2'>Track Name</h6>
-							<div className='text-navBlue col-span-4 md:col-span-6 overflow-hidden'>
-								{getTrackNameFromNumber(track_number)}
 							</div>
 						</li>}
 						{enactment_after_block && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>

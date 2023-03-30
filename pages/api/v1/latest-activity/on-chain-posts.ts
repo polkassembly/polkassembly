@@ -71,7 +71,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 		const subsquidPosts: any[] = subsquidData?.proposals || [];
 
 		const postsPromise = subsquidPosts?.map(async (subsquidPost) => {
-			const { createdAt, proposer, curator, preimage, type, index, status, hash, method, origin, trackNumber, group, description } = subsquidPost;
+			const { createdAt, proposer, curator, preimage, type, index, hash, method, origin, trackNumber, group, description } = subsquidPost;
 			let otherPostProposer = '';
 			if (group?.proposals?.length) {
 				group.proposals.forEach((obj: any) => {
@@ -83,6 +83,17 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 						}
 					}
 				});
+			}
+			let status = subsquidPost.status;
+			if (status === 'DecisionDepositPlaced') {
+				const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
+				const decidingIndex = statuses.findIndex((status) => status && status.status === 'Deciding');
+				if (decidingIndex >= 0) {
+					const decisionDepositPlacedIndex = statuses.findIndex((status) => status && status.status === 'DecisionDepositPlaced');
+					if (decisionDepositPlacedIndex >=0 && decidingIndex < decisionDepositPlacedIndex) {
+						status = 'Deciding';
+					}
+				}
 			}
 			const postId = proposalType === ProposalType.TIPS?  hash: index;
 			const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));

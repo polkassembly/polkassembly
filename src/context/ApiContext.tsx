@@ -14,6 +14,7 @@ import { typesBundleEquilibrium } from '../typesBundle/typesBundleEquilibrium';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { dropdownLabel } from '~src/ui-components/RPCDropdown';
 
 export interface ApiContextType {
 	api: ApiPromise | undefined;
@@ -82,7 +83,7 @@ export function ApiContextProvider(
 				clearTimeout(timer);
 				queueNotification({
 					header: 'Error!',
-					message: 'Unable to connect to the RPC.',
+					message: `${dropdownLabel(wsProvider, props.network || '')} is not responding, please change RPC.`,
 					status: NotificationStatus.ERROR
 				});
 				setIsApiLoading(false);

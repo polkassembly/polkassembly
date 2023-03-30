@@ -360,7 +360,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										/>
 										: !wallet? <FilteredError text='Please select a wallet.' />: null
 								}
-								{accounts.length===0 && wallet && <FilteredError text={`You need at least one account in ${wallet.charAt(0).toUpperCase() + wallet.slice(1) } extenstion to use this feature.Please reload this page after adding accounts.`} />}
+								{accounts.length===0 && wallet && <FilteredError text='No addresses found in the address selection tab.' />}
 
 								{
 									proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && <VoteLock className='mt-6' />

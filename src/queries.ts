@@ -50,6 +50,11 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
       description
     }
     parentBountyIndex
+    statusHistory {
+      block
+      status
+      timestamp
+    }
   }
 }
 `;

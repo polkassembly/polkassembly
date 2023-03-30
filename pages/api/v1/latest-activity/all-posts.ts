@@ -59,13 +59,24 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 		const parentBounties = new Set<number>();
 		const onChainPostsPromise = subsquidPosts?.map(async (subsquidPost) => {
-			const { createdAt, proposer, preimage, type, index, status, hash, method, origin, trackNumber, curator, description, proposalArguments, parentBountyIndex } = subsquidPost;
+			const { createdAt, proposer, preimage, type, index, hash, method, origin, trackNumber, curator, description, proposalArguments, parentBountyIndex } = subsquidPost;
 			const postId = type === 'Tip'? hash: index;
 			const postDocRef = postsByTypeRef(network, getFirestoreProposalType(type) as ProposalType).doc(String(postId));
 			const postDoc = await postDocRef.get();
 			const newProposer = proposer || preimage?.proposer || curator;
 			if (!newProposer && (parentBountyIndex || parentBountyIndex === 0)) {
 				parentBounties.add(parentBountyIndex);
+			}
+			let status = subsquidPost.status;
+			if (status === 'DecisionDepositPlaced') {
+				const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
+				const decidingIndex = statuses.findIndex((status) => status && status.status === 'Deciding');
+				if (decidingIndex >= 0) {
+					const decisionDepositPlacedIndex = statuses.findIndex((status) => status && status.status === 'DecisionDepositPlaced');
+					if (decisionDepositPlacedIndex >=0 && decidingIndex < decisionDepositPlacedIndex) {
+						status = 'Deciding';
+					}
+				}
 			}
 			const onChainPost = {
 				created_at: createdAt,

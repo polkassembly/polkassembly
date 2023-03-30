@@ -2,17 +2,17 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Col, Divider, Row } from 'antd';
+import { Col, Divider, Row, Tooltip } from 'antd';
 import BN from 'bn.js';
-import React, { FC, useContext } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
 
-import { NetworkContext } from '~src/context/NetworkContext';
 import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 
 import DelegateModal from './DelegateModal';
+import { useNetworkContext } from '~src/context';
 // import DelegateModalEthV2 from './DelegateModalEthV2';
 
 interface IAboutTrackCardProps {
@@ -20,11 +20,49 @@ interface IAboutTrackCardProps {
 	trackName: string;
 }
 
+const getDefaultTrackMetaData = () => {
+	return {
+		confirmPeriod: '',
+		decisionDeposit: '',
+		decisionPeriod: '',
+		description: '',
+		group: '',
+		maxDeciding: '',
+		minEnactmentPeriod: '',
+		preparePeriod: '',
+		trackId: 0
+	};
+};
+
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkContext();
 
 	const { className, trackName } = props;
-	const trackMetaData = networkTrackInfo[network][trackName];
+	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
+	useEffect(() => {
+		const trackMetaData = networkTrackInfo[network][trackName];
+		const defaultTrackMetaData = getDefaultTrackMetaData();
+		Object.keys(defaultTrackMetaData).forEach((key) => {
+			(defaultTrackMetaData as any)[key] = trackMetaData?.[key];
+		});
+		const tracks = localStorage.getItem('tracks');
+		if (tracks) {
+			const tracksArr = JSON.parse(tracks) as any[];
+			if (tracksArr && Array.isArray(tracksArr) && tracksArr.length > 0) {
+				const currTrackMetaDataArr = tracksArr.find((v) => v && Array.isArray(v) && v.length > 1 && v[0] === trackMetaData.trackId);
+				if (currTrackMetaDataArr && Array.isArray(currTrackMetaDataArr) && currTrackMetaDataArr.length >= 2) {
+					const currTrackMetaData = currTrackMetaDataArr[1];
+					const keys = ['confirmPeriod', 'decisionDeposit', 'decisionPeriod', 'maxDeciding', 'minEnactmentPeriod', 'preparePeriod'];
+					keys.forEach((key) => {
+						if (currTrackMetaData[key]) {
+							(defaultTrackMetaData as any)[key] = currTrackMetaData[key];
+						}
+					});
+				}
+			}
+		}
+		setTrackMetaData(defaultTrackMetaData);
+	}, [network, trackName]);
 
 	const blockTimeSeconds:number = chainProperties?.[network]?.blockTime / 1000;
 
@@ -51,9 +89,16 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	return (
 		<div className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue`}>
 			<div className="flex justify-between capitalize font-medium">
-				<h2 className="text-lg capitalize">
+				<div className='flex items-center gap-x-2'>
+					<h2 className="text-lg capitalize">
 						About {trackName.split(/(?=[A-Z])/).join(' ')}
-				</h2>
+					</h2>
+					<Tooltip color='#E5007A' title='Track Number' className='cursor-pointer'>
+						<h4 className=' text-[#B70062] text-sm font-medium leading-[18px] tracking-[0.01em]'>
+							#{trackMetaData.trackId}
+						</h4>
+					</Tooltip>
+				</div>
 
 				<h2 className="text-sm text-pink_primary">{trackMetaData?.group}</h2>
 			</div>

@@ -102,25 +102,68 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 			}
 		});
 
-		const posts = await Promise.all(postsPromise);
-		const indexMap: any = {};
-		const ids = posts.map((post, index) => {
-			indexMap[post?.user_id] = index;
-			return post?.user_id;
-		});
-
-		const newIds = ids.filter((id) => id && !isNaN(id));
-
-		if (newIds.length > 0) {
-			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds).get();
-			addressesQuery.docs.map((doc) => {
-				if (doc && doc.exists) {
-					const data = doc.data();
-					if (posts[indexMap[data.user_id]] && !posts[indexMap[data.user_id]]?.proposer) {
-						(posts[indexMap[data.user_id]] as any).proposer = data.address;
+		const postsResults = await Promise.allSettled(postsPromise);
+		let posts = postsResults.reduce((prev, post) => {
+			if (post && post.status === 'fulfilled') {
+				prev.push(post.value);
+			}
+			return prev;
+		}, [] as any[]);
+		const idsSet = new Set<number>();
+		posts.forEach((post) => {
+			if (post) {
+				const { user_id } = post;
+				if (typeof user_id === 'number') {
+					idsSet.add(user_id);
+				} else {
+					const numUserId = Number(user_id);
+					if (!isNaN(numUserId)) {
+						idsSet.add(numUserId);
 					}
 				}
-			});
+			}
+		});
+
+		const newIds = Array.from(idsSet);
+
+		if (newIds.length > 0) {
+			const newIdsLen = newIds.length;
+			let lastIndex = 0;
+			for (let i = 0; i < newIdsLen; i+=30) {
+				lastIndex = i;
+				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+				addressesQuery.docs.map((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						posts = posts.map((v) => {
+							if (v && v.user_id == data.user_id) {
+								return {
+									...v,
+									proposer: data.address
+								};
+							}
+							return v;
+						});
+					}
+				});
+			}
+			if (lastIndex <= newIdsLen) {
+				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+				addressesQuery.docs.map((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						posts = posts.map((v) => {
+							if (v && v.user_id == data.user_id) {
+								return {
+									...v,
+									proposer: data.address
+								};
+							}
+							return v;
+						});
+					}
+				});
+			}
 		}
 
 		const data: IPostsListingResponse = {

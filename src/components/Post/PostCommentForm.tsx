@@ -31,10 +31,10 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
-  const [openModal,setModalOpen]=useState(false);
-  const [isComment,setIsComment]=useState(false);
-  const [sentiment,setSentiment]=useState<number>(3);
-  const [isSentimentPost,setIsSentimentPost]=useState(false);
+	const [openModal,setModalOpen]=useState(false);
+	const [isComment,setIsComment]=useState(false);
+	const [sentiment,setSentiment]=useState<number>(3);
+	const [isSentimentPost,setIsSentimentPost]=useState(false);
 
 	const onContentChange = (content: string) => {
 		setContent(content);
@@ -49,13 +49,13 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		if(error) console.error('Error subscribing to post', error);
 		if(data) console.log(data.message);
 	};
-  
-  const handleModalOpen=async()=>{
-    await form.validateFields();
+
+	const handleModalOpen=async() => {
+		await form.validateFields();
 		const content = form.getFieldValue('content');
 		if(!content) return;
-    setModalOpen(true);
-  }
+		setModalOpen(true);
+	};
 
 	const handleSave = async () => {
 		await form.validateFields();
@@ -68,8 +68,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			content,
 			postId: postIndex,
 			postType: postType,
-			userId: id,
-      sentiment:isSentimentPost?sentiment:0
+			sentiment:isSentimentPost?sentiment:0,
+			userId: id
 		});
 
 		if(error || !data) {
@@ -98,21 +98,22 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					created_at: new Date(),
 					id: data.id,
 					replies: [],
+					sentiment:sentiment || 0,
 					updated_at: new Date(),
 					user_id: id,
-					username: username || '',
-          sentiment:sentiment
+					username: username || ''
 				}]
 			}));
 		}
 		setLoading(false);
-    setIsComment(false);
-    setIsSentimentPost(false);
-    setSentiment(3);
+		setIsComment(false);
+		setIsSentimentPost(false);
+		setSentiment(3);
 	};
-  useEffect(()=>{
-    isComment && handleSave();
-  },[isComment])
+	// eslint-disable-next-line react-hooks/rules-of-hooks
+	useEffect(() => {
+		isComment && handleSave();
+	},[isComment]);
 
 	return (
 		<div className={className}>
@@ -129,7 +130,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					form={form}
 					name="comment-content-form"
 					layout="vertical"
-          onFinish={handleModalOpen}
+					onFinish={handleModalOpen}
 					initialValues={{
 						content
 					}}
@@ -148,15 +149,15 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					</Form.Item>
 				</Form>
 			</div>
-{openModal && <CommentSentimentModal 
-setSentiment={setSentiment} 
-openModal={openModal} 
-setModalOpen={setModalOpen} 
-setIsComment={setIsComment} 
-setIsSentimentPost={setIsSentimentPost}
-sentiment={sentiment}
+			{openModal && <CommentSentimentModal
+				setSentiment={setSentiment}
+				openModal={openModal}
+				setModalOpen={setModalOpen}
+				setIsComment={setIsComment}
+				setIsSentimentPost={setIsSentimentPost}
+				sentiment={sentiment}
 
-/>}
+			/>}
 		</div>
 	);
 };

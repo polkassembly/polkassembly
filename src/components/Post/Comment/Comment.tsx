@@ -37,10 +37,10 @@ interface ICommentProps {
 
 export const Comment: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
-	const { user_id, content, created_at, id, replies, updated_at ,sentiment} = comment;
+	const { user_id, content, created_at, id, replies, updated_at ,sentiment } = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
-  const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
+	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
 
 	const { postData: { postIndex, postType } } = usePostDataContext();
 
@@ -81,7 +81,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					defaultAddress={comment.proposer}
 					text={'commented'}
 					username={comment.username}
-          sentiment={newSentiment}
+					sentiment={newSentiment}
 				>
 					<UpdateLabel
 						created_at={created_at}
@@ -99,8 +99,8 @@ export const Comment: FC<ICommentProps> = (props) => {
 					proposalType={postType}
 					disableEdit={props.disableEdit}
 					sentiment={newSentiment}
-          setSentiment={setNewSentiment}
-          prevSentiment={sentiment||0}
+					setSentiment={setNewSentiment}
+					prevSentiment={sentiment||0}
 				/>
 				{replies && replies.length > 0 && <Replies className='comment-content' commentId={id} repliesArr={replies} />}
 			</div>

@@ -17,9 +17,11 @@ import styled from 'styled-components';
 
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import { ProposalType, VoteType } from '~src/global/proposalType';
+import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from '~src/global/statuses';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 import ExtensionNotDetected from '../../ExtensionNotDetected';
+import { tipStatus } from '../Tabs/PostOnChainInfo';
 import BountyChildBounties from './Bounty/BountyChildBounties';
 import MotionVoteInfo from './Motions/MotionVoteInfo';
 import VoteMotion from './Motions/VoteMotion';
@@ -63,8 +65,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const metaMaskError = useHandleMetaMask();
 
-	const canVote = true;
-	// !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
+	const canVote =  !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
 
 	const onAccountChange = (address: string) => {
 		setAddress(address);

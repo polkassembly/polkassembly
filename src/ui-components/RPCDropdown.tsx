@@ -8,6 +8,7 @@ import { Dropdown } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useApiContext, useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
+import { TRPCEndpoint } from '~src/types';
 import { ArrowDownIcon, SignalTowerIcon } from './CustomIcons';
 import Loader from './Loader';
 
@@ -17,117 +18,31 @@ interface IRPCDropdownProps {
 	isSmallScreen?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const PolkadotRPCEndpoints = [
-	{
-		display_label: 'via On-finality',
-		endpoint: 'wss://polkadot.api.onfinality.io/public-ws'
-	},
-	{
-		display_label: 'via Dwellir',
-		endpoint: 'wss://polkadot-rpc.dwellir.com'
-	},
-	{
-		display_label: 'via Parity',
-		endpoint: 'wss://rpc.polkadot.io'
-	},
-	{
-		display_label: 'via Pinknode',
-		endpoint: 'wss://public-rpc.pinknode.io/polkadot'
-	},
-	{
-		display_label: 'via IBP-GeoDNS1',
-		endpoint: 'wss://rpc.ibp.network/polkadot'
-	},
-	{
-		display_label: 'via IBP-GeoDNS2',
-		endpoint: 'wss://rpc.dotters.network/polkadot'
-	}
+export const dropdownLabel = (wsProvider: string, network: string) => {
+	let label = '';
 
-];
+	chainProperties?.[network]?.rpcEndpoints?.some((endpointData) => {
+		if(endpointData && endpointData.key == wsProvider){
+			label = `${endpointData.label?.substring(4, endpointData.label.length)}`;
+			return true;
+		}
+	});
 
-const KusamaRPCEndpoints = [
-	{
-		display_label: 'via On-finality',
-		endpoint: 'wss://kusama.api.onfinality.io/public-ws'
-	},
-	{
-		display_label: 'via Dwellir',
-		endpoint: 'wss://kusama-rpc.dwellir.com'
-	},
-	{
-		display_label: 'via Parity',
-		endpoint: 'wss://kusama-rpc.polkadot.io'
-	},
-	{
-		display_label: 'via IBP-GeoDNS1',
-		endpoint: 'wss://rpc.ibp.network/kusama'
-	},
-	{
-		display_label: 'via IBP-GeoDNS2',
-		endpoint: 'wss://rpc.dotters.network/kusama'
-	}
-];
+	return label;
+};
 
 const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 	const { className, isSmallScreen } = props;
-	const { isApiLoading, setWsProvider } = useApiContext();
+	const { isApiLoading, setWsProvider, wsProvider } = useApiContext();
 	const { network } = useNetworkContext();
-	const [endpoint, setEndpoint] = useState<string>(network ? chainProperties?.[network]?.rpcEndpoint : '');
-	const [RPCOptions, setRPCOptions] = useState<MenuProps['items']>([]);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [rpcEndpoints, setRPCEndpoints] = useState<{
-		display_label: string;
-		endpoint: string;
-	}[]>(KusamaRPCEndpoints);
+	const [rpcEndpoints, setRPCEndpoints] = useState<TRPCEndpoint[]>([]);
 
 	useEffect(() => {
-		let cancel = false;
-		if(cancel) return;
-
-		const items: MenuProps['items'] = [];
-
-		rpcEndpoints.forEach((endpointData) => {
-			const optionObj = {
-				key: endpointData.endpoint,
-				label: endpointData.display_label
-			};
-
-			items.push(optionObj);
-		});
-
-		setRPCOptions(items);
-
-		return () => {
-			cancel = true;
-		};
-
-	}, [rpcEndpoints]);
-
-	useEffect(() => {
-		if (network === 'kusama') {
-			setRPCEndpoints(KusamaRPCEndpoints);
-		} else if (network === 'polkadot') {
-			setRPCEndpoints(PolkadotRPCEndpoints);
-		}
+		setRPCEndpoints(chainProperties[network].rpcEndpoints);
 	}, [network]);
 
-	const dropdownLabel = () => {
-		let label = '';
-
-		rpcEndpoints.some((endpointData) => {
-			if(endpointData.endpoint == endpoint){
-				label = `${endpointData.display_label?.substring(4, endpointData.display_label.length)}`;
-				return true;
-			}
-		});
-
-		return label;
-	};
-
 	const handleEndpointChange: MenuProps['onClick'] = ({ key }) => {
-		if(endpoint == `${key}`) return;
-		setEndpoint(`${key}`);
+		if(wsProvider === `${key}`) return;
 		setWsProvider(`${key}`);
 	};
 
@@ -135,7 +50,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 		!isApiLoading ?
 			<Dropdown
 				trigger={['click']}
-				menu={{ defaultSelectedKeys: [endpoint], items: RPCOptions, onClick: handleEndpointChange, selectable: true }}
+				menu={{ defaultSelectedKeys: [(wsProvider? wsProvider: (network? chainProperties?.[network]?.rpcEndpoint: ''))], items: rpcEndpoints, onClick: handleEndpointChange, selectable: true }}
 				className={className}
 			>
 				{
@@ -144,9 +59,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 							<div className='flex items-center gap-x-[6px]'>
 								<SignalTowerIcon className='w-[20px] h-[20px] m-0 p-0' />
 								<span className='font-semibold text-xs leading-[18px] tracking-[0.02em]'>
-									{
-										dropdownLabel()
-									}
+									{dropdownLabel(wsProvider, network)}
 								</span>
 							</div>
 							<span className='text-[#485F7D]'>

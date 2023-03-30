@@ -82,7 +82,13 @@ export interface ChainProps {
   'treasuryProposalMinBond': string | null;
   'treasuryProposalMaxBond': string | null;
   'externalLinks': string;
+  'rpcEndpoints': TRPCEndpoint[];
 }
+
+export type TRPCEndpoint = {
+  key: string;
+  label: string;
+};
 
 export type ChainLinksType = {
   [index: string]: ChainLinks;

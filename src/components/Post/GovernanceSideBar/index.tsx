@@ -5,12 +5,11 @@
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
-import { Injected, InjectedAccount, InjectedAccounts, InjectedWindow } from '@polkadot/extension-inject/types';
+import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Form } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
-import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
 import { Wallet } from 'src/types';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
@@ -21,7 +20,6 @@ import { ProposalType, VoteType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 import ExtensionNotDetected from '../../ExtensionNotDetected';
-import { tipStatus } from '../Tabs/PostOnChainInfo';
 import BountyChildBounties from './Bounty/BountyChildBounties';
 import MotionVoteInfo from './Motions/MotionVoteInfo';
 import VoteMotion from './Motions/VoteMotion';
@@ -61,11 +59,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const [lastVote, setLastVote] = useState<string | null | undefined>(undefined);
 
-	const { walletConnectProvider,loginWallet } = useUserDetailsContext();
+	const { walletConnectProvider } = useUserDetailsContext();
 
 	const metaMaskError = useHandleMetaMask();
 
-	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
+	const canVote = true;
+	// !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
 
 	const onAccountChange = (address: string) => {
 		setAddress(address);
@@ -164,30 +163,29 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		const accountsMapLocal = accountsMap as {[key:string]: string};
 
 		for (const extObj of extensions) {
-		if(loginWallet!==null){	
-      if(['polkadot-js'].includes(loginWallet)) {
+			if(extObj.name == 'polkadot-js') {
 				signersMapLocal['polkadot-js'] = extObj.signer;
 				polakadotJSAccounts = await getWalletAccounts(Wallet.POLKADOT);
-			} else if(['subwallet-js'].includes(loginWallet)) {
+			} else if(extObj.name == 'subwallet-js') {
 				signersMapLocal['subwallet-js'] = extObj.signer;
 				subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
-			} else if(['talisman'].includes(loginWallet)) {
+			} else if(extObj.name == 'talisman') {
 				signersMapLocal['talisman'] = extObj.signer;
 				talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
-			} else if (['polymesh'].includes(loginWallet) && ['polywallet'].includes(loginWallet)) {
+			} else if (['polymesh'].includes(network) && extObj.name === 'polywallet') {
 				signersMapLocal['polywallet'] = extObj.signer;
 				polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
-			}}
+			}
 		}
 
-		if(['polkadot'].includes(network) && polakadotJSAccounts) {
+		if( polakadotJSAccounts) {
 			accounts = accounts.concat(polakadotJSAccounts);
 			polakadotJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polkadot-js';
 			});
 		}
 
-		if(['polymesh'].includes(network) && polywalletJSAccounts) {
+		if( polywalletJSAccounts) {
 			accounts = accounts.concat(polywalletJSAccounts);
 			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polywallet';
@@ -207,7 +205,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				accountsMapLocal[acc.address] = 'talisman';
 			});
 		}
-
 		if (accounts.length === 0) {
 			setAccountsNotFound(true);
 			return;
@@ -314,9 +311,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										<VoteReferendum
 											lastVote={lastVote}
 											setLastVote={setLastVote}
-											accounts={accounts}
-											address={address}
-											getAccounts={getAccounts}
 											onAccountChange={onAccountChange}
 											referendumId={onchainId  as number}
 											proposalType={proposalType}
@@ -375,9 +369,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										<VoteReferendum
 											lastVote={lastVote}
 											setLastVote={setLastVote}
-											accounts={accounts}
-											address={address}
-											getAccounts={getAccounts}
 											onAccountChange={onAccountChange}
 											referendumId={onchainId  as number}
 											proposalType={proposalType}

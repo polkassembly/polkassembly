@@ -21,6 +21,7 @@ import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 
 import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
@@ -175,9 +176,17 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		const signRaw = injected && injected.signer && injected.signer.signRaw;
 		if (!signRaw) return console.error('Signer not available');
 
+		let substrate_address: string | null;
+		if(!multisigAddress.startsWith('0x')) {
+			substrate_address = getSubstrateAddress(multisigAddress);
+			if(!substrate_address) return console.error('Invalid address');
+		}else {
+			substrate_address = multisigAddress;
+		}
+
 		setLoading(true);
 
-		const { data , error } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/multisigLinkStart', { address: multisigAddress });
+		const { data , error } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/multisigLinkStart', { address: substrate_address });
 		if (error || !data){ setLoading(false); setError(error || 'Error in linking'); console.error('Multisig link start query failed'); return;}
 
 		const { signature } = await signRaw({
@@ -187,7 +196,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		});
 
 		const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/multisigLinkConfirm', {
-			address: multisigAddress,
+			address: substrate_address,
 			addresses: getSignatoriesArray().join(','),
 			signatory,
 			signature,

@@ -157,6 +157,16 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 		if (userDoc.exists && userDoc.data()) {
 			username = userDoc?.data()?.username;
 		}
+		let proposer = ((addresses && addresses.length > 0)? addresses[0]: '');
+		if (!proposer) {
+			const addressDocs = await firestore_db.collection('addresses').where('user_id', '==', numUserId).limit(1).get();
+			if (addressDocs && addressDocs.size > 0) {
+				const addressDoc = addressDocs.docs[0];
+				if (addressDoc && addressDoc.exists && addressDoc.data()) {
+					proposer = addressDoc.data().address;
+				}
+			}
+		}
 		const discussionsQuerySnapshot = await postsByTypeRef(network, ProposalType.DISCUSSIONS).where('user_id', '==', numUserId).get();
 		const discussionsPromise = discussionsQuerySnapshot.docs.map(async (doc) => {
 			const data = doc.data();
@@ -169,7 +179,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 						'👍': 0,
 						'👎': 0
 					},
-					proposer: data.proposer_address || '',
+					proposer: proposer,
 					title: data.title || '',
 					type: ProposalType.DISCUSSIONS,
 					username

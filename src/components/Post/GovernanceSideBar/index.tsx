@@ -58,6 +58,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [accountsMap, setAccountsMap] = useState<{[key:string]:string}>({});
 	const [signersMap, setSignersMap] = useState<{[key:string]: Signer}>({});
 
+  const [defaultAccounts,setDefaultAccounts]=useState({});
 	const { api, apiReady } = useApiContext();
 	const [lastVote, setLastVote] = useState<string | null | undefined>(undefined);
 
@@ -65,7 +66,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const metaMaskError = useHandleMetaMask();
 
-	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
+	const canVote = true;
+  // !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
 
 	const onAccountChange = (address: string) => {
 		setAddress(address);
@@ -87,11 +89,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const getWalletAccounts = async (chosenWallet: Wallet): Promise<InjectedAccount[] | undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
+    setDefaultAccounts(injectedWindow.injectedWeb3);
+    console.log(injectedWindow.injectedWeb3)
 
 		let wallet = isWeb3Injected
 			? injectedWindow.injectedWeb3[chosenWallet]
 			: null;
 
+      console.log(wallet);
 		if (!wallet) {
 			wallet = Object.values(injectedWindow.injectedWeb3)[0];
 		}
@@ -164,23 +169,21 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		const accountsMapLocal = accountsMap as {[key:string]: string};
 
 		for (const extObj of extensions) {
-		if(loginWallet!==null){	
-      if(['polkadot-js'].includes(loginWallet)) {
+	if(extObj.name == 'polkadot-js') {
 				signersMapLocal['polkadot-js'] = extObj.signer;
 				polakadotJSAccounts = await getWalletAccounts(Wallet.POLKADOT);
-			} else if(['subwallet-js'].includes(loginWallet)) {
+			} else if(extObj.name == 'subwallet-js') {
 				signersMapLocal['subwallet-js'] = extObj.signer;
 				subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
-			} else if(['talisman'].includes(loginWallet)) {
+			} else if(extObj.name == 'talisman') {
 				signersMapLocal['talisman'] = extObj.signer;
 				talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
-			} else if (['polymesh'].includes(loginWallet) && ['polywallet'].includes(loginWallet)) {
+			} else if (['polymesh'].includes(network) && extObj.name === 'polywallet') {
 				signersMapLocal['polywallet'] = extObj.signer;
 				polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
-			}}
+			}
 		}
-
-		if(['polkadot'].includes(network) && polakadotJSAccounts) {
+		if(polakadotJSAccounts) {
 			accounts = accounts.concat(polakadotJSAccounts);
 			polakadotJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polkadot-js';
@@ -218,6 +221,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		}
 
 		setAccounts(accounts);
+    console.log(accounts)
 		if (accounts.length > 0) {
 			setAddress(accounts[0].address);
 			const signer: Signer = signersMapLocal[accountsMapLocal[accounts[0].address]];
@@ -312,6 +316,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									</> : <GovSidebarCard>
 										<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
 										<VoteReferendum
+                    defaultAccount={defaultAccounts}
 											lastVote={lastVote}
 											setLastVote={setLastVote}
 											accounts={accounts}

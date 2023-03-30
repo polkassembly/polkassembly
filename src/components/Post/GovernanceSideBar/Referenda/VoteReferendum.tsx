@@ -3,16 +3,18 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, LoadingOutlined } from '@ant-design/icons';
-import { InjectedAccount } from '@polkadot/extension-inject/types';
+import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
-import { LoadingStatusType,NotificationStatus } from 'src/types';
+import { LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
+import { WalletIcon } from '~src/components/Login/MetamaskLogin';
+import WalletButtons from '~src/components/Login/WalletButtons';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import AyeNayButtons from '~src/ui-components/AyeNayButtons';
@@ -28,9 +30,10 @@ interface Props {
 	lastVote: string | null | undefined
 	setLastVote: React.Dispatch<React.SetStateAction<string | null | undefined>>
 	proposalType: ProposalType;
+  defaultAccounts:any;
 }
 
-const VoteReferendum = ({ className, referendumId, address, accounts, onAccountChange, getAccounts, lastVote, setLastVote, proposalType }: Props) => {
+const VoteReferendum = ({ className, referendumId, address, accounts, onAccountChange, getAccounts, lastVote, setLastVote, proposalType, defaultAccounts }: Props) => {
 	const { addresses, isLoggedOut } = useUserDetailsContext();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);

@@ -81,7 +81,7 @@ const ReportButton = function ({ type, contentId, className }:DiscussionProps) {
 
 	return (
 		<>
-			<Button className={`${ className } text-pink_primary flex items-center border-none shadow-none px-1.5 md:px-2`} onClick={() => setShowModal(true)}>
+			<Button className={`border-none ${ className } text-pink_primary flex items-center  shadow-none px-1.5 md:px-2`} onClick={() => setShowModal(true)}>
 				<FlagOutlined /><span className='ml-1'>Report</span>
 			</Button>
 

@@ -5,13 +5,14 @@
 import { CheckOutlined } from '@ant-design/icons';
 import { Button, Form } from 'antd';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 
 import { ChangeResponseType } from '~src/auth/types';
 import { usePostDataContext, useUserDetailsContext } from '~src/context';
+import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ContentForm from '../ContentForm';
@@ -30,6 +31,10 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
+  const [openModal,setModalOpen]=useState(false);
+  const [isPost,setIsPost]=useState(false);
+  const [sentiment,setSentiment]=useState<number>(3);
+  const [isSentimentPost,setIsSentimentPost]=useState(false);
 
 	const onContentChange = (content: string) => {
 		setContent(content);
@@ -44,6 +49,13 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		if(error) console.error('Error subscribing to post', error);
 		if(data) console.log(data.message);
 	};
+  
+  const handleModalOpen=async()=>{
+    await form.validateFields();
+		const content = form.getFieldValue('content');
+		if(!content) return;
+    setModalOpen(true);
+  }
 
 	const handleSave = async () => {
 		await form.validateFields();
@@ -56,7 +68,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			content,
 			postId: postIndex,
 			postType: postType,
-			userId: id
+			userId: id,
+      sentiment:isSentimentPost?sentiment:0
 		});
 
 		if(error || !data) {
@@ -87,13 +100,19 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					replies: [],
 					updated_at: new Date(),
 					user_id: id,
-					username: username || ''
+					username: username || '',
+          sentiment:data?.sentiment
 				}]
 			}));
 		}
-
 		setLoading(false);
+    setIsPost(false);
+    setIsSentimentPost(false);
+    setSentiment(3);
 	};
+  useEffect(()=>{
+    isPost && handleSave();
+  },[isPost])
 
 	return (
 		<div className={className}>
@@ -109,8 +128,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				<Form
 					form={form}
 					name="comment-content-form"
-					onFinish={handleSave}
 					layout="vertical"
+          onFinish={handleModalOpen}
 					initialValues={{
 						content
 					}}
@@ -129,6 +148,15 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					</Form.Item>
 				</Form>
 			</div>
+{openModal && <CommentSentimentModal 
+setSentiment={setSentiment} 
+openModal={openModal} 
+setModalOpen={setModalOpen} 
+setIsPost={setIsPost} 
+setIsSentimentPost={setIsSentimentPost}
+sentiment={sentiment}
+
+/>}
 		</div>
 	);
 };

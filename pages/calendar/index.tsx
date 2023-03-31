@@ -21,7 +21,7 @@ import styled from 'styled-components';
 
 import chainLink from '~assets/chain-link.png';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
+import { useApiContext, useNetworkContext } from '~src/context';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -30,6 +30,7 @@ import CustomToolbar from '../../src/components/Calendar/CustomToolbar';
 import CustomToolbarMini from '../../src/components/Calendar/CustomToolbarMini';
 import CustomWeekHeader, { TimeGutterHeader } from '../../src/components/Calendar/CustomWeekHeader';
 import NetworkSelect from '../../src/components/Calendar/NetworkSelect';
+import { fetchStakingInfo } from '~src/util/getCalendarEvents';
 
 interface ICalendarViewProps {
 	className?: string;
@@ -52,8 +53,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	};
 };
 
-const CalendarView: FC<ICalendarViewProps> = (props) => {
-	const { className, small = false, emitCalendarEvents = undefined, network } = props;
+const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCalendarEvents = undefined, network }) => {
+	const { api, apiReady } = useApiContext();
 	const { setNetwork } = useNetworkContext();
 	const [width, setWidth] = useState(0);
 	const [calLeftPanelWidth, setCalLeftPanelWidth] = useState<any>(0);
@@ -67,6 +68,16 @@ const CalendarView: FC<ICalendarViewProps> = (props) => {
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		if(!api || !apiReady) return;
+
+		(async () => {
+			const events = await fetchStakingInfo(api, network);
+			console.log('eventsArr ', events);
+		})();
+
+	}, [api, apiReady, network]);
 
 	// calculate #route-wrapper height with margin for sidebar.
 

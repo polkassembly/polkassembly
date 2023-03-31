@@ -311,3 +311,17 @@ export interface IReaction {
   updated_at: Date,
   username: string
 }
+
+export type PjsCalendarItemDuration = {
+  startDate?: Date;
+  endDate?: Date;
+  startBlockNumber?: number;
+  endBlockNumber?: number;
+  duration?: number;
+}
+
+export type PjsCalendarItem = PjsCalendarItemDuration & {
+  network: string;
+  type: string;
+  data: { [key: string]: unknown };
+}

@@ -20,7 +20,7 @@ import getNetwork from '../../util/getNetwork';
 import { useNetworkContext } from '~src/context';
 import addEthereumChain from '~src/util/addEthereumChain';
 
-const abi = require('../../moonbeamAbi.json');
+const abi = require('../../moonbeamConvictionVoting.json');
 
 const currentNetwork = getNetwork();
 
@@ -71,10 +71,10 @@ const ReferendaUnlock = ({ className }: Props) => {
 			return;
 		}
 
-		const votingInfo = await api.query.convictionVoting.votingFor(address, 0);
+		const votingInfo: any = await api.query.convictionVoting.votingFor(address, null);
 		setUnlocksAt(votingInfo.asCasting.prior[0].toString());
 
-		setVotes(votingInfo.asCasting.votes.map((vote) => {
+		setVotes(votingInfo.asCasting.votes.map((vote: any) => {
 			const refIndex = vote[0];
 
 			let conviction = 0;
@@ -115,7 +115,7 @@ const ReferendaUnlock = ({ className }: Props) => {
 
 		let lockedBalance = new BN(0);
 		balances.forEach((balance) => {
-			if (balance.id.toHuman() === 'democrac') {
+			if (balance.id.toHuman() === 'pyconvot') {
 				lockedBalance = lockedBalance.add(balance.amount);
 			}
 		});
@@ -208,9 +208,8 @@ const ReferendaUnlock = ({ className }: Props) => {
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		console.log('Remove:', contract.methods);
 		contract.methods
-			.remove_vote(refIndex.toString())
+			.removeVote(refIndex.toString())
 			.send({
 				from: address,
 				to: contractAddress
@@ -259,9 +258,8 @@ const ReferendaUnlock = ({ className }: Props) => {
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		console.log('Unlock:',contract.methods);
 		contract.methods
-			.unlock(address)
+			.unlock(null, address)
 			.send({
 				from: address,
 				to: contractAddress

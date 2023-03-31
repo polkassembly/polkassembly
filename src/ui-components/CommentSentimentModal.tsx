@@ -25,15 +25,12 @@ interface Props{
 
 const CommentSentimentModal=({ setIsComment,openModal,setModalOpen,setIsSentimentPost,className,sentiment,setSentiment }:Props) => {
 
-	const handleOnChange=(value:number) => {
-		setSentiment(value);
-	};
-
 	const handleClick=() => {
 		setIsSentimentPost(true);
 		setIsComment(true);
 		setModalOpen(false);
 	};
+
 	const handleSentimentText=() => {
 		switch (sentiment){
 		case 1: return 'Completely Against';
@@ -70,7 +67,7 @@ const CommentSentimentModal=({ setIsComment,openModal,setModalOpen,setIsSentimen
 				style={{ width:'100%' }}
 				className='w-full text-[12px] mt-[32px]'
 				trackStyle={{ backgroundColor:'#5C74FC' }}
-				onChange={(value:number) => handleOnChange(value)}
+				onChange={(value:number) => setSentiment(value)}
 				step={5}
 				marks={{
 					1:{ label:sentiment===1 ? <AgainstIcon  className='scale-75'/>:<div></div>, style:{ color:'#334D6E',marginTop:'-28px' } },

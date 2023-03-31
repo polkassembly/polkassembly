@@ -14,8 +14,8 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { ILatestActivityPostsListingResponse } from './on-chain-posts';
+import { firestore_db } from '~src/services/firebaseInit';
 
 interface IGetLatestActivityOffChainPostsParams {
 	listingLimit?: string | string[] | number;
@@ -44,27 +44,81 @@ export async function getLatestActivityOffChainPosts(params: IGetLatestActivityO
 			.get();
 		const count = (await postsColRef.count().get()).data().count;
 
-		const posts: any[] = [];
+		let posts: any[] = [];
+		const idsSet = new Set<number>();
+
 		postsSnapshotArr.docs.forEach((doc) => {
 			if (doc && doc.exists) {
 				const data = doc.data();
 				if (data) {
 					const { topic, topic_id } = data;
+					let user_id = data.user_id;
+					if (typeof user_id === 'number') {
+						idsSet.add(user_id);
+					} else {
+						const numUserId = Number(user_id);
+						if (!isNaN(numUserId)) {
+							idsSet.add(numUserId);
+							user_id = numUserId;
+						}
+					}
 					posts.push({
 						created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
 						post_id: data?.id,
-						proposer: getProposerAddressFromFirestorePostData(data, network),
+						proposer: '',
 						title: data?.title,
 						topic: topic? topic: isTopicIdValid(topic_id)? {
 							id: topic_id,
 							name: getTopicNameFromTopicId(topic_id)
 						}: getTopicFromType(ProposalType.DISCUSSIONS),
 						type: proposalType,
+						user_id,
 						username: data?.username
 					});
 				}
 			}
 		});
+		const newIds = Array.from(idsSet);
+
+		if (newIds.length > 0) {
+			const newIdsLen = newIds.length;
+			let lastIndex = 0;
+			for (let i = 0; i < newIdsLen; i+=30) {
+				lastIndex = i;
+				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
+				addressesQuery.docs.map((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						posts = posts.map((v) => {
+							if (v && v.user_id == data.user_id) {
+								return {
+									...v,
+									proposer: data.address
+								};
+							}
+							return v;
+						});
+					}
+				});
+			}
+			if (lastIndex <= newIdsLen) {
+				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
+				addressesQuery.docs.map((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						posts = posts.map((v) => {
+							if (v && v.user_id == data.user_id) {
+								return {
+									...v,
+									proposer: data.address
+								};
+							}
+							return v;
+						});
+					}
+				});
+			}
+		}
 
 		const data: ILatestActivityPostsListingResponse = {
 			count,

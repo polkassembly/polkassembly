@@ -166,7 +166,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 					user_id = numUserId;
 				}
 			}
-			const addressDocs = await firestore_db.collection('addresses').where('user_id', '==', user_id).limit(1).get();
+			const addressDocs = await firestore_db.collection('addresses').where('user_id', '==', user_id).where('default', '==', true).limit(1).get();
 			if (addressDocs && addressDocs.size > 0) {
 				const addressDoc = addressDocs.docs[0];
 				if (addressDoc && addressDoc.exists && addressDoc.data()) {

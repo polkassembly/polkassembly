@@ -14,11 +14,11 @@ import {  GET_PROPOSALS_LISTING_BY_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
 import { getReactions } from '../posts/on-chain-post';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 export interface IPostListing {
 	user_id?: string | number;
@@ -203,10 +203,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 			if (postDoc && postDoc.exists) {
 				const data = postDoc.data();
 				if (data) {
-					const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 					const topic = data?.topic;
 					const topic_id = data?.topic_id;
-					if (!(newProposer || proposer_address) && (parentBountyIndex || parentBountyIndex === 0)) {
+					if (!(newProposer) && (parentBountyIndex || parentBountyIndex === 0)) {
 						parentBounties.add(parentBountyIndex);
 					}
 					return {
@@ -220,7 +219,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 						parent_bounty_index: parentBountyIndex,
 						post_id: postId,
 						post_reactions,
-						proposer: newProposer || proposer_address,
+						proposer: newProposer,
 						status,
 						title: data?.title || null,
 						topic: topic? topic: isTopicIdValid(topic_id)? {

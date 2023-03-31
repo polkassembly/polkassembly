@@ -159,7 +159,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 		}
 		let proposer = ((addresses && addresses.length > 0)? addresses[0]: '');
 		if (!proposer) {
-			const addressDocs = await firestore_db.collection('addresses').where('user_id', '==', numUserId).limit(1).get();
+			const addressDocs = await firestore_db.collection('addresses').where('user_id', '==', numUserId).where('default', '==', true).limit(1).get();
 			if (addressDocs && addressDocs.size > 0) {
 				const addressDoc = addressDocs.docs[0];
 				if (addressDoc && addressDoc.exists && addressDoc.data()) {

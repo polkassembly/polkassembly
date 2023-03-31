@@ -355,7 +355,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				let lastIndex = 0;
 				for (let i = 0; i < newIdsLen; i+=30) {
 					lastIndex = i;
-					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
 					addressesQuery.docs.map((doc) => {
 						if (doc && doc.exists) {
 							const data = doc.data();
@@ -373,7 +373,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				}
 				lastIndex += 30;
 				if (lastIndex <= newIdsLen) {
-					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
 					addressesQuery.docs.map((doc) => {
 						if (doc && doc.exists) {
 							const data = doc.data();
@@ -423,7 +423,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 		let lastIndex = 0;
 		for (let i = 0; i < newIdsLen; i+=30) {
 			lastIndex = i;
-			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
 			addressesQuery.docs.map((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();
@@ -440,7 +440,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			});
 		}
 		if (lastIndex <= newIdsLen) {
-			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
 			addressesQuery.docs.map((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();

@@ -18,7 +18,7 @@ import { getTopicNameFromTopicId } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
 import { getReactions } from '../posts/on-chain-post';
-import { getProposerAddressFromFirestorePostData, IPostsListingResponse } from './on-chain-posts';
+import { IPostsListingResponse } from './on-chain-posts';
 
 interface IGetOffChainPostsParams {
 	network: string;
@@ -89,7 +89,7 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 						created_at: created_at?.toDate? created_at?.toDate(): created_at,
 						post_id: docData.id,
 						post_reactions,
-						proposer: getProposerAddressFromFirestorePostData(docData, network),
+						proposer: '',
 						title:  docData?.title || null,
 						topic: topic? topic: isTopicIdValid(topic_id)? {
 							id: topic_id,
@@ -131,7 +131,7 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 			let lastIndex = 0;
 			for (let i = 0; i < newIdsLen; i+=30) {
 				lastIndex = i;
-				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
 				addressesQuery.docs.map((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -148,7 +148,7 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 				});
 			}
 			if (lastIndex <= newIdsLen) {
-				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
 				addressesQuery.docs.map((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();

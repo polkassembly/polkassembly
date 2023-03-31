@@ -15,8 +15,6 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 
-import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
-
 export interface ILatestActivityPostsListingResponse {
     count: number;
     posts: any;
@@ -101,7 +99,6 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 			if (postDoc && postDoc.exists) {
 				const data = postDoc?.data();
 				if (data) {
-					const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 					return {
 						created_at: createdAt,
 						description,
@@ -109,7 +106,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 						method: method || preimage?.method,
 						origin,
 						post_id: postId,
-						proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
+						proposer: proposer || preimage?.proposer || otherPostProposer || curator,
 						status: status,
 						title: data?.title || null,
 						track_number: trackNumber,

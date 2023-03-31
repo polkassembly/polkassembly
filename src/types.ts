@@ -230,7 +230,7 @@ export interface PostComment {
   created_at: Date,
   id: string,
   updated_at: Date,
-  sentiment: string,
+  sentiment: number|0;
   username: string,
   user_profile_img: string;
 }

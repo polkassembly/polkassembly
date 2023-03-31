@@ -26,7 +26,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, content, postId, postType } = req.body;
+	const { userId, content, postId, postType,sentiment } = req.body;
 	if(!userId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(postType);
@@ -50,7 +50,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		content: content,
 		created_at: new Date(),
 		id: newCommentRef.id,
-		sentiment: '',
+		sentiment: sentiment || 0,
 		updated_at: last_comment_at,
 		user_id: user.id,
 		user_profile_img: user?.profile?.image || '',

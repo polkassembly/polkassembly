@@ -61,8 +61,8 @@ const CommentSentimentModal=({ setIsComment,openModal,setModalOpen,setIsSentimen
 		closeIcon={<CloseIcon/>}
 		zIndex={1002}
 	><div className='pl-5 pr-5 text-base font-medium justify-center center-aligned flex flex-col items-center'>
-			<h5>Thank you for commenting on the post.
-    Move the slider to add your sentiment.</h5>
+			<h5>Thank you for commenting on the post.<br/>
+         Move the slider to add your sentiment towards the discussion.</h5>
 			<Slider
 				style={{ width:'100%' }}
 				className='w-full text-[12px] mt-[32px]'
@@ -86,7 +86,7 @@ const CommentSentimentModal=({ setIsComment,openModal,setModalOpen,setIsSentimen
 export default styled(CommentSentimentModal)`
 .padding .ant-modal-content{
   border-radius:4px !important;
-  padding:40px 47px !important;
+  padding:40px 45px !important;
   text-align:center;
   justify-content:center;
   color:#334D6E !important;

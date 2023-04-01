@@ -91,6 +91,7 @@ const ReportButton = function ({ type, contentId, className }:DiscussionProps) {
 				onOk={handleReport}
 				confirmLoading={loading}
 				onCancel={() => setShowModal(false)}
+				zIndex={1067}
 				footer={[
 					<Button key="back" disabled={loading} onClick={() => setShowModal(false)}>
             Cancel

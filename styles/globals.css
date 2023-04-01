@@ -230,3 +230,15 @@ p > a:hover {
   width: auto !important;
   height: auto !important;
 }
+ .sentiment-dropdown .ant-dropdown-menu{
+  display: flex;
+  flex-direction: column;
+  gap:3px; 
+  padding:7px !important;
+  }
+  .sentiment-dropdown .ant-dropdown-menu-item{
+    padding:2px !important;
+    border-bottom: 1px solid white;
+    border-radius: 0px !important;
+  }
+ 

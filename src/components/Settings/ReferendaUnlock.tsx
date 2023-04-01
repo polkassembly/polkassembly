@@ -19,6 +19,7 @@ import formatBnBalance from '../../util/formatBnBalance';
 import getNetwork from '../../util/getNetwork';
 import { useNetworkContext } from '~src/context';
 import addEthereumChain from '~src/util/addEthereumChain';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 const abi = require('../../moonbeamConvictionVoting.json');
 
@@ -32,21 +33,40 @@ interface Vote {
 	refIndex: BN;
 	vote: boolean;
 	amount: BN;
+	trackId: number;
+	unlocksAt: string;
 	conviction: number;
 }
 
+interface Unlock {
+	trackId: number;
+	amount: BN;
+}
+
 const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
+
+const getTrackName = (network: string, trackId: number) => {
+	const tracksObj = networkTrackInfo[network];
+	let name = '';
+	if (tracksObj) {
+		Object.values(tracksObj).forEach((obj) => {
+			if (obj.trackId === trackId) {
+				name = obj.name;
+			}
+		});
+	}
+	return name;
+};
 
 const ReferendaUnlock = ({ className }: Props) => {
 	const { network } = useNetworkContext();
 	const [address, setAddress] = useState<string>('');
 	const [votes, setVotes] = useState<Vote[]>([]);
+	const [unlocks, setUnlocks] = useState<Unlock[]>([]);
 	const [lockedBalance, setLockedBalance] = useState<BN>(new BN(0));
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
-	const [unlocksAt, setUnlocksAt] = useState<string>('');
 	const [isAccountLoading, setIsAccountLoading] = useState(true);
-	const [canBeUnlocked, setCanBeUnlocked] = useState<boolean>(false);
 	const { api, apiReady } = useContext(ApiContext);
 
 	useEffect(() => {
@@ -60,54 +80,78 @@ const ReferendaUnlock = ({ className }: Props) => {
 		if (address) {
 			getLockedBalance();
 		}
-	}, [api, apiReady, address]); // eslint-disable-line react-hooks/exhaustive-deps
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, address]);
 
 	const getLockedBalance = async () => {
-		if (!api) {
+		if (!api || !apiReady) {
 			return;
 		}
 
-		if (!apiReady) {
-			return;
+		let unlocks: Unlock[] = [];
+
+		// const address = '0x868ADd1f496cb447Dd29403300a8AF58B6394E4D';
+		const res = await api.query.convictionVoting.classLocksFor(address);
+		if (res && res.toHuman) {
+			const arr = res.toHuman() as [string, string][];
+			arr.forEach((obj) => {
+				if (obj && Array.isArray(obj) && obj.length > 1) {
+					unlocks.push({
+						amount: new BN(obj[1].replaceAll(',', '')),
+						trackId: Number(obj[0])
+					});
+				}
+			});
 		}
 
-		const votingInfo: any = await api.query.convictionVoting.votingFor(address, null);
-		setUnlocksAt(votingInfo.asCasting.prior[0].toString());
-
-		setVotes(votingInfo.asCasting.votes.map((vote: any) => {
-			const refIndex = vote[0];
-
-			let conviction = 0;
-
-			if(vote[1].asStandard.vote.conviction.isLocked1x){
-				conviction = 1;
-			}
-			else if(vote[1].asStandard.vote.conviction.isLocked2x){
-				conviction = 2;
-			}
-			else if(vote[1].asStandard.vote.conviction.isLocked3x){
-				conviction = 3;
-			}
-			else if(vote[1].asStandard.vote.conviction.isLocked4x){
-				conviction = 4;
-			}
-			else if(vote[1].asStandard.vote.conviction.isLocked5x){
-				conviction = 5;
-			}
-			else if(vote[1].asStandard.vote.conviction.isLocked6x){
-				conviction = 6;
-			}
-			else{
-				conviction = 0;
-			}
-
-			return {
-				amount: vote[1].asStandard.balance,
-				conviction: conviction,
-				refIndex,
-				vote: vote[1].asStandard.vote.isAye
-			};
+		const votes: Vote[] = [];
+		const votingInfoEntries = await api.query.convictionVoting.votingFor.entries(address);
+		votingInfoEntries.forEach((([keys, votingInfo]) => {
+			const arr = keys.toHuman() as [string, number];
+			votes.push(...votingInfo.asCasting.votes.map((vote) => {
+				const refIndex = vote[0];
+				let conviction = 0;
+				if(vote[1].asStandard.vote.conviction.isLocked1x){
+					conviction = 1;
+				}
+				else if(vote[1].asStandard.vote.conviction.isLocked2x){
+					conviction = 2;
+				}
+				else if(vote[1].asStandard.vote.conviction.isLocked3x){
+					conviction = 3;
+				}
+				else if(vote[1].asStandard.vote.conviction.isLocked4x){
+					conviction = 4;
+				}
+				else if(vote[1].asStandard.vote.conviction.isLocked5x){
+					conviction = 5;
+				}
+				else if(vote[1].asStandard.vote.conviction.isLocked6x){
+					conviction = 6;
+				}
+				else{
+					conviction = 0;
+				}
+				return {
+					amount: vote[1].asStandard.balance,
+					conviction: conviction,
+					refIndex,
+					trackId: Number(arr[1]),
+					unlocksAt: votingInfo.asCasting.prior[0].toString(),
+					vote: vote[1].asStandard.vote.isAye
+				};
+			}));
 		}));
+
+		setVotes(votes);
+		votes.forEach((vote) => {
+			const unlockIndex = unlocks.findIndex((unlock) => unlock.trackId === vote.trackId);
+			if (unlockIndex >= 0) {
+				unlocks = unlocks.splice(1, 1);
+			}
+		});
+
+		setUnlocks(unlocks);
 
 		votes.sort((a, b) => a.conviction - b.conviction);
 
@@ -178,12 +222,8 @@ const ReferendaUnlock = ({ className }: Props) => {
 		setAddress(address);
 	};
 
-	const handleRemove = async (refIndex: BN) => {
-		if (!api) {
-			return;
-		}
-
-		if (!apiReady) {
+	const handleRemove = async (vote: Vote) => {
+		if (!api || !apiReady) {
 			return;
 		}
 
@@ -209,34 +249,34 @@ const ReferendaUnlock = ({ className }: Props) => {
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
 		contract.methods
-			.removeVote(refIndex.toString())
+			.removeVote(vote.refIndex)
 			.send({
 				from: address,
 				to: contractAddress
 			})
 			.then((result: any) => {
 				console.log(result);
+				setLoadingStatus({ isLoading: false, message: '' });
 				queueNotification({
 					header: 'Success!',
 					message: 'Remove Vote successful.',
 					status: NotificationStatus.SUCCESS
 				});
-				setLoadingStatus({ isLoading: false, message: '' });
-				setCanBeUnlocked(true);
+				getLockedBalance();
 			})
 			.catch((error: any) => {
+				setLoadingStatus({ isLoading: false, message: '' });
 				console.error('ERROR:', error);
 				queueNotification({
 					header: 'Failed!',
 					message: error.message,
 					status: NotificationStatus.ERROR
 				});
-				setLoadingStatus({ isLoading: false, message: '' });
-				setCanBeUnlocked(false);
+				getLockedBalance();
 			});
 	};
 
-	const handleUnlock = async () => {
+	const handleUnlock = async (unlock: Unlock) => {
 		// const web3 = new Web3(process.env.REACT_APP_WS_PROVIDER || 'wss://wss.testnet.moonbeam.network');
 		const web3 = new Web3((window as any).ethereum);
 
@@ -259,7 +299,7 @@ const ReferendaUnlock = ({ className }: Props) => {
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
 		contract.methods
-			.unlock(null, address)
+			.unlock(unlock.trackId, address)
 			.send({
 				from: address,
 				to: contractAddress
@@ -272,7 +312,6 @@ const ReferendaUnlock = ({ className }: Props) => {
 					message: 'Unlock successful.',
 					status: NotificationStatus.SUCCESS
 				});
-				setCanBeUnlocked(false);
 				getLockedBalance();
 			})
 			.catch((error: any) => {
@@ -283,7 +322,6 @@ const ReferendaUnlock = ({ className }: Props) => {
 					message: error.message,
 					status: NotificationStatus.ERROR
 				});
-				setCanBeUnlocked(true);
 				getLockedBalance();
 			});
 	};
@@ -328,65 +366,93 @@ const ReferendaUnlock = ({ className }: Props) => {
 					<Form.Item>
 						{lockedBalance.isZero()
 							? <div className='text-sidebarBlue'>You currently have no referenda locks.</div>
-							: <div className='text-sidebarBlue'>Your locked balance: <span className=' font-medium'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span>{unlocksAt === '0' ? <div className=' font-medium'>Available to be immediately unlocked.</div> : <div>UnlocksAt: <span className='font-medium'>{unlocksAt}</span></div>} </div>
+							: <div className='text-sidebarBlue'>Your locked balance: <span className=' font-medium'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span></div>
 						}
-						{votes.length ?
-							<>
-								<ul className='list-none flex flex-col text-sidebarBlue mt-3'>
-									<li className='grid grid-cols-6 md:grid-cols-8 font-medium gap-x-5 py-1'>
-										<span className='col-span-2'>Referendums</span>
-										<span className='col-span-2'>Locked</span>
-										<span className='col-span-2'>Unlocks At</span>
-										<span className='col-span-2'></span>
-									</li>
-									<Divider className='my-1'/>
-									{votes.map((vote, id) => (
-										<>
-											<li key={vote.refIndex.toString()} className='grid grid-cols-6 md:grid-cols-8 gap-x-5 py-1'>
-												<span className='col-span-2'>
-													<Link href={`/referendum/${vote.refIndex.toString()}`}>
+						{
+							votes.length ?
+								<>
+									<ul className='list-none flex flex-col text-sidebarBlue mt-3'>
+										<li className='grid grid-cols-6 md:grid-cols-8 font-medium gap-x-5 py-1'>
+											<span className='col-span-2'>Referendums</span>
+											<span className='col-span-2'>Locked</span>
+											<span className='col-span-2'>Unlocks At</span>
+											<span className='col-span-2'></span>
+										</li>
+										<Divider className='my-1'/>
+										{votes.map((vote) => (
+											<>
+												<li key={vote.refIndex.toString()} className='grid grid-cols-6 md:grid-cols-8 gap-x-5 py-1'>
+													<span className='col-span-2'>
+														<Link href={`/referendum/${vote.refIndex.toString()}`}>
 														Referendum #{vote.refIndex.toString()}
-													</Link>
-												</span>
-												<span className='col-span-2'>
-													{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}
-												</span>
-												<span className='col-span-2'>{unlocksAt}</span>
-												<span className='col-span-2'>
-													{ id === 0 ? canBeUnlocked ? <Button
-														onClick={handleUnlock}
-														loading={loadingStatus.isLoading}
-														size='small'
-														className='bg-pink_primary rounded-md outline-none border-none text-white'
-													>
-																Unlock
-													</Button>
-														:
+														</Link>
+													</span>
+													<span className='col-span-2'>
+														{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}
+													</span>
+													<span className='col-span-2'>{vote.unlocksAt}</span>
+													<span className='col-span-2'>
 														<Button
 															size='small'
 															className='bg-pink_primary rounded-md outline-none border-none text-white'
-															onClick={() => handleRemove(vote.refIndex)}
+															onClick={() => handleRemove(vote)}
 															loading={loadingStatus.isLoading}
 														>
-																Remove
-														</Button> : <></> }
-												</span>
-											</li>
-											<Divider className='my-1'/>
-										</>
-									))}
-								</ul>
-								{/* <div>{unlocking ? <>Please Confirm to Unlock.</> : <>*Remove Votes will also call Unlock.</>}</div> */}
-							</>
-							: <>
-								<Button
-									className='bg-pink_primary rounded-md outline-none border-none text-white mt-2'
-									onClick={handleUnlock}
-									loading={loadingStatus.isLoading}
-								>
-									Unlock
-								</Button>
-							</>}
+															Remove
+														</Button>
+													</span>
+												</li>
+												<Divider className='my-1'/>
+											</>
+										))}
+									</ul>
+									{/* <div>{unlocking ? <>Please Confirm to Unlock.</> : <>*Remove Votes will also call Unlock.</>}</div> */}
+								</>
+								: null
+						}
+						{
+							unlocks.length ?
+								<>
+									<ul className='list-none flex flex-col text-sidebarBlue mt-3'>
+										<li className='grid grid-cols-6 md:grid-cols-8 font-medium gap-x-5 py-1'>
+											<span className='col-span-2'>Tracks</span>
+											<span className='col-span-2'>Locked</span>
+											<span className='col-span-2'></span>
+										</li>
+										<Divider className='my-1'/>
+										{unlocks.map((unlock) => {
+											const { amount, trackId } = unlock;
+											const name = getTrackName(network, trackId);
+											return (
+												<>
+													<li key={unlock.trackId.toString()} className='grid grid-cols-6 md:grid-cols-8 gap-x-5 py-1'>
+														<span className='col-span-2'>
+															<Link className='capitalize' href={`/${name.split('_').join('-')}}`}>
+																{name.split('_').join(' ')}
+															</Link>
+														</span>
+														<span className='col-span-2'>
+															{formatBnBalance(String(amount), { numberAfterComma: 2, withUnit: true }, network)}
+														</span>
+														<span className='col-span-2'>
+															<Button
+																size='small'
+																className='bg-pink_primary rounded-md outline-none border-none text-white'
+																onClick={() => handleUnlock(unlock)}
+																loading={loadingStatus.isLoading}
+															>
+																Unlock
+															</Button>
+														</span>
+													</li>
+													<Divider className='my-1'/>
+												</>
+											);
+										})}
+									</ul>
+								</>
+								: null
+						}
 					</Form.Item>
 				</div>
 			</Form>

@@ -30,7 +30,12 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string,
 				/>
 			),
 			key: 'all',
-			label: 'All'
+			label: (
+				<CountBadgePill
+					label='All'
+					count={gov2LatestPosts.allGov2Posts?.data?.count}
+				/>
+			)
 		},
 		{
 			children: (

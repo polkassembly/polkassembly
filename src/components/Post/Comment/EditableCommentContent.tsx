@@ -63,7 +63,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { userId, className, comment, content, commentId,sentiment,setSentiment,prevSentiment } = props;
 	const { setPostData } = usePostDataContext();
 	const { asPath } = useRouter();
-	const [isSentimentUpdate,setIsSentimentUpdate]=useState(false);
 
 	const [isEditing, setIsEditing] = useState(false);
 	const { id, username, picture } = useUserDetailsContext();
@@ -88,6 +87,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const toggleReply = () => setIsReplying(!isReplying);
 
 	const handleCancel = () => {
+		setSentiment(prevSentiment);
 		toggleEdit();
 		form.setFieldValue('content', '');
 	};
@@ -100,7 +100,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const handleSave = async () => {
 		await form.validateFields();
 		const newContent = form.getFieldValue('content');
-		if(!newContent) return;
+		if(content === newContent && sentiment === prevSentiment)return;
 
 		setIsEditing(false);
 		setLoading(true);
@@ -109,7 +109,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			content: newContent,
 			postId: props.postId,
 			postType: props.proposalType,
-			sentiment:isSentimentUpdate?sentiment:prevSentiment || 0,
+			sentiment:sentiment,
 			userId: id
 		});
 
@@ -274,21 +274,21 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const items:MenuProps['items']=[
 		id === userId ? {
 			key:1,
-			label:<div className={`items-center shadow-none w-full text-[10px] text-slate-400 leading-4 ${poppins.variable} ${poppins.className} `} onClick={() => {toggleEdit();setOpenDropdown(false);}}>
+			label:<div className={`items-center shadow-none text-[10px] text-slate-400 leading-4  ${poppins.variable} ${poppins.className}`} onClick={toggleEdit}>
 				<span className='flex items-center' ><EditIcon className='mr-1' /> Edit</span>
 			</div>
 		}:null,
 		{
 			key:2,
-			label:<div className={`flex items-center text-slate-400 shadow-none text-[10px] leading-4 ${poppins.variable} ${poppins.className} ` } onClick={() => {copyLink();setOpenDropdown(false);}}><CopyIcon  className='mr-1'/> Copy link</div>
+			label:<div className={`flex items-center text-slate-400 shadow-none text-[10px] leading-4 ${poppins.variable} ${poppins.className} ` } onClick={() => {copyLink();}}><CopyIcon  className='mr-1'/> Copy link</div>
 		},
 		id && !isEditing ?{
 			key:3,
-			label:<ReportButton className={`flex items-center shadow-none text-slate-400 text-[10px] hover:bg-gray-100 leading-4 ml-[-7px] h-[17.2px] ${poppins.variable} ${poppins.className} `}   type='comment' contentId={commentId}/>
+			label:<ReportButton className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}  type='comment' contentId={commentId}/>
 		}:null,
 		id===userId ? {
 			key:4,
-			label:<div className={`flex items-center shadow-none text-[10px] text-slate-400 leading-4 ml-[-1.8px] ${poppins.variable} ${poppins.className} ` } onClick={() => {deleteComment();setOpenDropdown(false);}}><DeleteIcon className='mr-1' />Delete</div>
+			label:<div className={`flex items-center shadow-none text-[10px] text-slate-400 leading-4 ml-[-1.8px] ${poppins.variable} ${poppins.className} border-none` } onClick={() => {deleteComment();}}><DeleteIcon className='mr-1' />Delete</div>
 		}:null
 	];
 
@@ -320,36 +320,26 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							}
 						>
 							<ContentForm value={content} className='mb-0' />
-							<div className='bg-gray-100 mb-[10px] p-2 rounded-e-md mt-[-25px] h-[82px] background'>
+							<div className='bg-gray-100 mb-[10px] p-2 rounded-e-md mt-[-25px] h-[80px] background'>
 								<div className='flex text-[12px] gap-[2px]'>Sentiment:<h5 className='text-[12px] text-blue-500'> {handleSentimentText()}</h5></div>
-								<div className='flex mt-[-8px]'>
-									<div className='flex justify-between'>
-										<div className='cursor-pointer' onClick={() => setSentiment(1)}>{sentiment===1?<AgainstIcon className='scale-50' />:<AgainstUnfilledIcon className='scale-50 ml-[-12px]'/>}</div>
+								<div className='flex items-center mt-[-8px]'>
+									<div className='flex justify-between items-center'>
+										<div className='cursor-pointer' onClick={() => setSentiment(1)}>{sentiment===1?<AgainstIcon className='scale-50 ml-[-12px]' />:<AgainstUnfilledIcon className='scale-50 ml-[-12px]'/>}</div>
 										<div className='cursor-pointer' onClick={() => setSentiment(2)}>{sentiment===2?<SlightlyAgainstIcon className='scale-50 '/>:<SlightlyAgainstUnfilledIcon className='scale-50'/>}</div>
 										<div className='cursor-pointer' onClick={() => setSentiment(3)}>{sentiment===3?<NeutralIcon className='scale-50'/>:<NeutralUnfilledIcon className='scale-50'/>}</div>
 										<div className='cursor-pointer' onClick={() => setSentiment(4)}>{sentiment===4?<SlightlyForIcon className='scale-50'/>:<SlightlyForUnfilledIcon  className='scale-50'/>}</div>
 										<div className='cursor-pointer' onClick={() => setSentiment(5)}>{sentiment===5?<ForIcon className='scale-50'/>:<ForUnfilledIcon  className='scale-50'/>} </div>
 									</div>
-									<div className='flex w-[100%] items-center justify-end mt-[-6px]'>
-										<Button onClick={() => {setIsSentimentUpdate(false);}} className='mr-2 flex items-center'>
+									<div className='flex w-[100%] items-center justify-end mt-[-7px]'>
+										<Button htmlType="button" onClick={handleCancel}  className='mr-2 flex items-center h-[26px]'>
 											<CloseOutlined />
 										</Button>
-										<Button onClick={() => {setIsSentimentUpdate(true);}}  className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
+										<Button htmlType='submit'  className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center h-[26px]'>
 											<CheckOutlined />
 										</Button>
 									</div>
 								</div>
 							</div>
-							<Form.Item>
-								<div className='flex items-center justify-end'>
-									<Button htmlType="button" onClick={handleCancel} className='mr-2 flex items-center'>
-										<CloseOutlined /> Cancel
-									</Button>
-									<Button htmlType="submit" className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
-										<CheckOutlined /> Submit
-									</Button>
-								</div>
-							</Form.Item>
 						</Form>
 						:
 						<>
@@ -357,25 +347,24 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 							<div className='flex items-center flex-row bg-white flex-wrap gap-[10px]'>
 								<CommentReactionBar
-									className='reactions'
+									className='reactions mr-0'
 									commentId={commentId}
 									comment_reactions={comment.comment_reactions}
 								/>
 								{
 									id &&
-										<Button disabled={props.disableEdit} className={ isReplying ? 'text-white bg-pink_primary text-xs' : 'text-pink_primary flex items-center border-none shadow-none text-xs' } onClick={toggleReply}>
+										<Button disabled={props.disableEdit} className={'text-pink_primary flex items-center border-none justify-start shadow-none text-xs ml-[-10px]' } onClick={toggleReply}>
 											<ReplyIcon className='mr-1'/> Reply
 										</Button>
 								}
 								<Dropdown
-
-									open={openDropdown}
-									onOpenChange={() => setOpenDropdown(false)}
-									className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 w-[81px] flex `}
+									disabled={isReplying}
+									className={`${poppins.variable} ${poppins.className} flex cursor-pointer dropdown`}
+									overlayClassName='sentiment-dropdown'
 									placement='bottomRight'
 									menu={{ items }}
 								>
-									<div onClick={() => setOpenDropdown(true)}><ThreeDotsIcon/></div>
+									<div><ThreeDotsIcon/></div>
 								</Dropdown>
 							</div>
 
@@ -429,4 +418,5 @@ export default styled(EditableCommentContent)`
     border: 1px solid rgba(72, 95, 125, 0.1);
     border-radius: 0px 0px 2px 2px;
   }
+
 `;

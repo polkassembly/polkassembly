@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
+
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isProposalTypeValid } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
@@ -18,7 +19,7 @@ const handler: NextApiHandler< MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType,sentiment } = req.body;
+	const { userId, commentId, content, postId, postType } = req.body;
 	if(!userId || !commentId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(postType);
@@ -44,7 +45,6 @@ const handler: NextApiHandler< MessageType> = async (req, res) => {
 
 	commentRef.update({
 		content,
-		sentiment:sentiment || 0,
 		updated_at: last_comment_at
 	}).then(() => {
 		postRef.update({

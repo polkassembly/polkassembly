@@ -307,7 +307,6 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				id: data.id,
 				proposer: '',
 				replies: [] as any[],
-				sentiment:data.sentiment||0,
 				updated_at: getUpdatedAt(data),
 				user_id: data.user_id || data.user_id,
 				username: data.username

@@ -97,7 +97,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 				<button onClick={handleClick} className='outline-none border-none h-[59px] w-[174px] px-6 py-4 font-medium text-lg leading-[27px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer'>Add New Post</button>
 			</div>
 			<OffChainPostsContainer proposalType={OffChainProposalType.DISCUSSIONS} posts={posts} count={count} className='mt-7' />
-			<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title="Join Polkassembly to Start a New Discussion." subtitle="Discuss, contribute and get regular updates from Polkassembly."/>
+			{openModal &&<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title="Join Polkassembly to Start a New Discussion." subtitle="Discuss, contribute and get regular updates from Polkassembly."/>}
 		</>
 	);
 };

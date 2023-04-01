@@ -73,8 +73,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 
-	const [openDropdown,setOpenDropdown]=useState(false);
-
 	const [form] = Form.useForm();
 	useEffect(() => {
 		form.setFieldValue('content', content || ''); //initialValues is not working

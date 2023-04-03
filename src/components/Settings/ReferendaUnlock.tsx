@@ -249,7 +249,7 @@ const ReferendaUnlock = ({ className }: Props) => {
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
 		contract.methods
-			.removeVote(vote.refIndex)
+			.removeOtherVote(address, vote.trackId, vote.refIndex)
 			.send({
 				from: address,
 				to: contractAddress

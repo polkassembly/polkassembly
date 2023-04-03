@@ -5,7 +5,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import BN from 'bn.js';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from 'src/types';
@@ -13,12 +13,11 @@ import { Button, Divider, Form, Spin } from 'antd';
 import Loader from 'src/ui-components/Loader';
 import Web3 from 'web3';
 
-import { ApiContext } from '../../context/ApiContext';
 import { chainProperties } from '../../global/networkConstants';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
 import formatBnBalance from '../../util/formatBnBalance';
 import getNetwork from '../../util/getNetwork';
-import { useNetworkContext } from '~src/context';
+import { useApiContext, useNetworkContext } from '~src/context';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 
@@ -80,7 +79,8 @@ const ReferendaUnlock = ({ className }: Props) => {
 	});
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(true);
-	const { api, apiReady } = useContext(ApiContext);
+	const { api, apiReady } = useApiContext();
+	const [isBalanceUpdated, setIsBalanceUpdated] = useState(false);
 
 	useEffect(() => {
 		if (!accounts.length) {
@@ -187,6 +187,7 @@ const ReferendaUnlock = ({ className }: Props) => {
 		});
 
 		setLockedBalance(lockedBalance);
+		setIsBalanceUpdated((prev) => !prev);
 	};
 
 	const getAccounts = async () => {
@@ -421,13 +422,14 @@ const ReferendaUnlock = ({ className }: Props) => {
 				<Form id='referendaUnlock'>
 					<div>
 						<Form.Item>
-							<h1 className='dashboard-heading' >Unlock Conviction Vote tokens</h1>
+							<h1 className='dashboard-heading' >Unlock Opengov locks</h1>
 							{ accounts.length > 0 ? <AccountSelectionForm
 								title='Choose account'
 								accounts={accounts}
 								address={address}
 								onAccountChange={onAccountChange}
 								withBalance
+								isBalanceUpdated={isBalanceUpdated}
 							/> :
 								<span className='text-sidebarBlue'>No accounts found, Please approve request from your wallet and/or <a href="javascript:window.location.reload(true)">refresh</a> and try again! </span>
 							}

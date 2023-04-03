@@ -12,10 +12,11 @@ import { ProposalType } from '~src/global/proposalType';
 
 interface Props {
 	address: string
-	onChange?: (balance: string) => void
+	onChange?: (balance: string) => void;
+	isBalanceUpdated?: boolean;
 }
 
-const Balance = ({ address, onChange }: Props) => {
+const Balance = ({ address, onChange, isBalanceUpdated }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const { network } = useContext(NetworkContext);
@@ -75,7 +76,7 @@ const Balance = ({ address, onChange }: Props) => {
 				.catch(e => console.error(e));
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady, isReferendum]);
+	}, [address, api, apiReady, isReferendum, isBalanceUpdated]);
 
 	return (
 		<div className='text-xs ml-auto text-[#53595C]'>

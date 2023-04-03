@@ -15,10 +15,11 @@ interface Props{
 	onAccountChange: (address: string) => void
 	title: string
 	withBalance?: boolean
+	isBalanceUpdated?: boolean
 	onBalanceChange?: (balance: string) => void
 }
 
-const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange }: Props) =>
+const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, isBalanceUpdated }: Props) =>
 	<article className='w-full gap-y-2 flex flex-col'>
 		<div className='flex items-center gap-x-2'>
 			<h3 className='text-sm mb-0'>{title}</h3>
@@ -30,7 +31,7 @@ const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withB
 			onAccountChange={onAccountChange}
 		/>
 		{address && withBalance &&
-			<Balance address={address} onChange={onBalanceChange} />
+			<Balance isBalanceUpdated={isBalanceUpdated} address={address} onChange={onBalanceChange} />
 		}
 	</article>;
 

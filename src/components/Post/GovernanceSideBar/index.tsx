@@ -36,6 +36,7 @@ import VoteReferendumEthV2 from './Referenda/VoteReferendumEthV2';
 import EndorseTip from './Tips/EndorseTip';
 import TipInfo from './Tips/TipInfo';
 import EditProposalStatus from './TreasuryProposals/EditProposalStatus';
+import Curves from './Referenda/Curves';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -351,6 +352,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 					{[ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) &&
 						<>
+							<GovSidebarCard>
+								<h6 className="dashboard-heading mb-6">
+									Threshold Curves
+								</h6>
+								<Curves referendumId={onchainId as number} />
+							</GovSidebarCard>
 							{canVote &&
 							<>
 								{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?

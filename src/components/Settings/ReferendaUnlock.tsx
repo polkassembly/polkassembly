@@ -2,13 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import BN from 'bn.js';
 import React, { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { LoadingStatusType, NotificationStatus } from 'src/types';
-import { Button, Divider, Form } from 'antd';
+import { NotificationStatus } from 'src/types';
+import { Button, Divider, Form, Spin } from 'antd';
 import Loader from 'src/ui-components/Loader';
 import Web3 from 'web3';
 
@@ -58,13 +59,25 @@ const getTrackName = (network: string, trackId: number) => {
 	return name;
 };
 
+interface IReferendaUnlockStatus {
+	remove: {
+		[key: string]: { isLoading: boolean, message: string };
+	};
+	unlock: {
+		[key: string]: { isLoading: boolean, message: string };
+	};
+}
+
 const ReferendaUnlock = ({ className }: Props) => {
 	const { network } = useNetworkContext();
 	const [address, setAddress] = useState<string>('');
 	const [votes, setVotes] = useState<Vote[]>([]);
 	const [unlocks, setUnlocks] = useState<Unlock[]>([]);
 	const [lockedBalance, setLockedBalance] = useState<BN>(new BN(0));
-	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
+	const [loadingStatus, setLoadingStatus] = useState<IReferendaUnlockStatus>({
+		remove: {},
+		unlock: {}
+	});
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(true);
 	const { api, apiReady } = useContext(ApiContext);
@@ -88,13 +101,14 @@ const ReferendaUnlock = ({ className }: Props) => {
 			return;
 		}
 
-		let unlocks: Unlock[] = [];
+		const unlocks: Unlock[] = [];
 
 		// const address = '0x868ADd1f496cb447Dd29403300a8AF58B6394E4D';
 		const res = await api.query.convictionVoting.classLocksFor(address);
 		if (res && res.toHuman) {
 			const arr = res.toHuman() as [string, string][];
 			arr.forEach((obj) => {
+				console.log(obj);
 				if (obj && Array.isArray(obj) && obj.length > 1) {
 					unlocks.push({
 						amount: new BN(obj[1].replaceAll(',', '')),
@@ -132,6 +146,14 @@ const ReferendaUnlock = ({ className }: Props) => {
 				else{
 					conviction = 0;
 				}
+				console.log('hi', {
+					amount: vote[1].asStandard.balance,
+					conviction: conviction,
+					refIndex,
+					trackId: Number(arr[1]),
+					unlocksAt: votingInfo.asCasting.prior[0].toString(),
+					vote: vote[1].asStandard.vote.isAye
+				});
 				return {
 					amount: vote[1].asStandard.balance,
 					conviction: conviction,
@@ -147,7 +169,7 @@ const ReferendaUnlock = ({ className }: Props) => {
 		votes.forEach((vote) => {
 			const unlockIndex = unlocks.findIndex((unlock) => unlock.trackId === vote.trackId);
 			if (unlockIndex >= 0) {
-				unlocks = unlocks.splice(1, 1);
+				unlocks.splice(unlockIndex, 1);
 			}
 		});
 
@@ -241,7 +263,15 @@ const ReferendaUnlock = ({ className }: Props) => {
 			return;
 		}
 
-		setLoadingStatus({ isLoading: true, message: 'Waiting for confirmation' });
+		setLoadingStatus((prev) => {
+			return {
+				...prev,
+				remove: {
+					...prev.remove,
+					[vote.refIndex.toString()]: { isLoading: true, message: 'Waiting for confirmation' }
+				}
+			};
+		});
 
 		const contract = new web3.eth.Contract(abi, contractAddress);
 
@@ -256,7 +286,15 @@ const ReferendaUnlock = ({ className }: Props) => {
 			})
 			.then((result: any) => {
 				console.log(result);
-				setLoadingStatus({ isLoading: false, message: '' });
+				setLoadingStatus((prev) => {
+					return {
+						...prev,
+						remove: {
+							...prev.remove,
+							[vote.refIndex.toString()]: { isLoading: false, message: '' }
+						}
+					};
+				});
 				queueNotification({
 					header: 'Success!',
 					message: 'Remove Vote successful.',
@@ -265,8 +303,16 @@ const ReferendaUnlock = ({ className }: Props) => {
 				getLockedBalance();
 			})
 			.catch((error: any) => {
-				setLoadingStatus({ isLoading: false, message: '' });
 				console.error('ERROR:', error);
+				setLoadingStatus((prev) => {
+					return {
+						...prev,
+						remove: {
+							...prev.remove,
+							[vote.refIndex.toString()]: { isLoading: false, message: '' }
+						}
+					};
+				});
 				queueNotification({
 					header: 'Failed!',
 					message: error.message,
@@ -291,7 +337,15 @@ const ReferendaUnlock = ({ className }: Props) => {
 			return;
 		}
 
-		setLoadingStatus({ isLoading: true, message: 'Waiting for confirmation' });
+		setLoadingStatus((prev) => {
+			return {
+				...prev,
+				unlock: {
+					...prev.unlock,
+					[unlock.trackId.toString()]: { isLoading: true, message: 'Waiting for confirmation' }
+				}
+			};
+		});
 
 		const contract = new web3.eth.Contract(abi, contractAddress);
 
@@ -306,7 +360,15 @@ const ReferendaUnlock = ({ className }: Props) => {
 			})
 			.then((result: any) => {
 				console.log(result);
-				setLoadingStatus({ isLoading: false, message: '' });
+				setLoadingStatus((prev) => {
+					return {
+						...prev,
+						unlock: {
+							...prev.unlock,
+							[unlock.trackId.toString()]: { isLoading: false, message: '' }
+						}
+					};
+				});
 				queueNotification({
 					header: 'Success!',
 					message: 'Unlock successful.',
@@ -315,8 +377,16 @@ const ReferendaUnlock = ({ className }: Props) => {
 				getLockedBalance();
 			})
 			.catch((error: any) => {
-				setLoadingStatus({ isLoading: false, message: '' });
 				console.error('ERROR:', error);
+				setLoadingStatus((prev) => {
+					return {
+						...prev,
+						unlock: {
+							...prev.unlock,
+							[unlock.trackId.toString()]: { isLoading: false, message: '' }
+						}
+					};
+				});
 				queueNotification({
 					header: 'Failed!',
 					message: error.message,
@@ -342,125 +412,127 @@ const ReferendaUnlock = ({ className }: Props) => {
 	const noAccount = accounts.length === 0;
 
 	return (
-		<div className={className}>
-			{noAccount
-				? <GetAccountsButton />
-				: null
-			}
-			<Form id='referendaUnlock'>
-				<div>
-					<Form.Item>
-						<h1 className='dashboard-heading' >Unlock Conviction Vote tokens</h1>
-						{ accounts.length > 0 ? <AccountSelectionForm
-							title='Choose account'
-							accounts={accounts}
-							address={address}
-							onAccountChange={onAccountChange}
-							withBalance
-						/> :
-							<span className='text-sidebarBlue'>No accounts found, Please approve request from your wallet and/or <a href="javascript:window.location.reload(true)">refresh</a> and try again! </span>
-						}
-					</Form.Item>
-				</div>
-				<div>
-					<Form.Item>
-						{lockedBalance.isZero()
-							? <div className='text-sidebarBlue'>You currently have no referenda locks.</div>
-							: <div className='text-sidebarBlue'>Your locked balance: <span className=' font-medium'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span></div>
-						}
-						{
-							votes.length ?
-								<>
-									<ul className='list-none flex flex-col text-sidebarBlue mt-3'>
-										<li className='grid grid-cols-6 md:grid-cols-8 font-medium gap-x-5 py-1'>
-											<span className='col-span-2'>Referendums</span>
-											<span className='col-span-2'>Locked</span>
-											<span className='col-span-2'>Unlocks At</span>
-											<span className='col-span-2'></span>
-										</li>
-										<Divider className='my-1'/>
-										{votes.map((vote) => (
-											<>
-												<li key={vote.refIndex.toString()} className='grid grid-cols-6 md:grid-cols-8 gap-x-5 py-1'>
-													<span className='col-span-2'>
-														<Link href={`/referendum/${vote.refIndex.toString()}`}>
-														Referendum #{vote.refIndex.toString()}
-														</Link>
-													</span>
-													<span className='col-span-2'>
-														{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}
-													</span>
-													<span className='col-span-2'>{vote.unlocksAt}</span>
-													<span className='col-span-2'>
-														<Button
-															size='small'
-															className='bg-pink_primary rounded-md outline-none border-none text-white'
-															onClick={() => handleRemove(vote)}
-															loading={loadingStatus.isLoading}
-														>
-															Remove
-														</Button>
-													</span>
-												</li>
-												<Divider className='my-1'/>
-											</>
-										))}
-									</ul>
-									{/* <div>{unlocking ? <>Please Confirm to Unlock.</> : <>*Remove Votes will also call Unlock.</>}</div> */}
-								</>
-								: null
-						}
-						{
-							unlocks.length ?
-								<>
-									<ul className='list-none flex flex-col text-sidebarBlue mt-3'>
-										<li className='grid grid-cols-6 md:grid-cols-8 font-medium gap-x-5 py-1'>
-											<span className='col-span-2'>Tracks</span>
-											<span className='col-span-2'>Locked</span>
-											<span className='col-span-2'></span>
-										</li>
-										<Divider className='my-1'/>
-										{unlocks.map((unlock) => {
-											const { amount, trackId } = unlock;
-											const name = getTrackName(network, trackId);
-											return (
+		<Spin spinning={!api || !apiReady} indicator={<LoadingOutlined />}>
+			<div className={className}>
+				{noAccount
+					? <GetAccountsButton />
+					: null
+				}
+				<Form id='referendaUnlock'>
+					<div>
+						<Form.Item>
+							<h1 className='dashboard-heading' >Unlock Conviction Vote tokens</h1>
+							{ accounts.length > 0 ? <AccountSelectionForm
+								title='Choose account'
+								accounts={accounts}
+								address={address}
+								onAccountChange={onAccountChange}
+								withBalance
+							/> :
+								<span className='text-sidebarBlue'>No accounts found, Please approve request from your wallet and/or <a href="javascript:window.location.reload(true)">refresh</a> and try again! </span>
+							}
+						</Form.Item>
+					</div>
+					<div>
+						<Form.Item>
+							{lockedBalance.isZero()
+								? <div className='text-sidebarBlue'>You currently have no referenda locks.</div>
+								: <div className='text-sidebarBlue'>Your locked balance: <span className=' font-medium'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span></div>
+							}
+							{
+								votes.length ?
+									<>
+										<ul className='list-none flex flex-col text-sidebarBlue mt-3'>
+											<li className='grid grid-cols-6 md:grid-cols-8 font-medium gap-x-5 py-1'>
+												<span className='col-span-2'>Referendums</span>
+												<span className='col-span-2'>Locked</span>
+												<span className='col-span-2'>Unlocks At</span>
+												<span className='col-span-2'></span>
+											</li>
+											<Divider className='my-1'/>
+											{votes.map((vote) => (
 												<>
-													<li key={unlock.trackId.toString()} className='grid grid-cols-6 md:grid-cols-8 gap-x-5 py-1'>
+													<li key={vote.refIndex.toString()} className='grid grid-cols-6 md:grid-cols-8 gap-x-5 py-1'>
 														<span className='col-span-2'>
-															<Link className='capitalize' href={`/${name.split('_').join('-')}}`}>
-																{name.split('_').join(' ')}
+															<Link href={`/referendum/${vote.refIndex.toString()}`}>
+															Referendum #{vote.refIndex.toString()}
 															</Link>
 														</span>
 														<span className='col-span-2'>
-															{formatBnBalance(String(amount), { numberAfterComma: 2, withUnit: true }, network)}
+															{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}
 														</span>
+														<span className='col-span-2'>{vote.unlocksAt}</span>
 														<span className='col-span-2'>
 															<Button
 																size='small'
 																className='bg-pink_primary rounded-md outline-none border-none text-white'
-																onClick={() => handleUnlock(unlock)}
-																loading={loadingStatus.isLoading}
+																onClick={() => handleRemove(vote)}
+																loading={loadingStatus?.remove?.[vote?.refIndex?.toString()]?.isLoading}
 															>
-																Unlock
+																Remove
 															</Button>
 														</span>
 													</li>
 													<Divider className='my-1'/>
 												</>
-											);
-										})}
-									</ul>
-								</>
-								: null
-						}
-					</Form.Item>
-				</div>
-			</Form>
-			{isAccountLoading || loadingStatus.isLoading
-				? <Loader className='loader-wrapper' text={loadingStatus.message} />
-				: null
-			}
-		</div>
+											))}
+										</ul>
+										{/* <div>{unlocking ? <>Please Confirm to Unlock.</> : <>*Remove Votes will also call Unlock.</>}</div> */}
+									</>
+									: null
+							}
+							{
+								unlocks.length ?
+									<>
+										<ul className='list-none flex flex-col text-sidebarBlue mt-3'>
+											<li className='grid grid-cols-6 md:grid-cols-8 font-medium gap-x-5 py-1'>
+												<span className='col-span-2'>Tracks</span>
+												<span className='col-span-2'>Locked</span>
+												<span className='col-span-2'></span>
+											</li>
+											<Divider className='my-1'/>
+											{unlocks.map((unlock) => {
+												const { amount, trackId } = unlock;
+												const name = getTrackName(network, trackId);
+												return (
+													<>
+														<li key={unlock.trackId.toString()} className='grid grid-cols-6 md:grid-cols-8 gap-x-5 py-1'>
+															<span className='col-span-2'>
+																<Link className='capitalize' href={`/${name.split('_').join('-')}`}>
+																	{name.split('_').join(' ')}
+																</Link>
+															</span>
+															<span className='col-span-2'>
+																{formatBnBalance(String(amount), { numberAfterComma: 2, withUnit: true }, network)}
+															</span>
+															<span className='col-span-2'>
+																<Button
+																	size='small'
+																	className='bg-pink_primary rounded-md outline-none border-none text-white'
+																	onClick={() => handleUnlock(unlock)}
+																	loading={loadingStatus?.unlock?.[unlock?.trackId?.toString()]?.isLoading}
+																>
+																	Unlock
+																</Button>
+															</span>
+														</li>
+														<Divider className='my-1'/>
+													</>
+												);
+											})}
+										</ul>
+									</>
+									: null
+							}
+						</Form.Item>
+					</div>
+				</Form>
+				{isAccountLoading
+					? <Loader className='loader-wrapper' />
+					: null
+				}
+			</div>
+		</Spin>
 	);
 };
 

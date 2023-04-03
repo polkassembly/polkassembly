@@ -53,8 +53,8 @@ const ReferendaLoginPrompts=({ image,title,subtitle,modalOpen,setModalOpen,class
 				<h5 className="text-[20px] leading-24 traking-normal mt-[32px] font-semibold max-sm:text-[16px]">{title}</h5>
 				<h5 className="text-[14px] tracking-normal font-medium leading-21 font-poppins max-sm:text-[12px]">{subtitle}</h5></div>
 		</Modal>
-		{  <SignupPopup setLoginOpen={setLoginOpen} modalOpen={openSignup} setModalOpen={setSignupOpen} isModal={true} />}
-		{ <LoginPopup setSignupOpen={setSignupOpen} modalOpen={openLogin} setModalOpen={setLoginOpen} isModal={true} />}
+		<SignupPopup setLoginOpen={setLoginOpen} modalOpen={openSignup} setModalOpen={setSignupOpen} isModal={true} />
+		<LoginPopup setSignupOpen={setSignupOpen} modalOpen={openLogin} setModalOpen={setLoginOpen} isModal={true} />
 	</div>;
 };
 export default styled(ReferendaLoginPrompts)`

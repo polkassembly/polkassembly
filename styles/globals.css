@@ -241,4 +241,15 @@ p > a:hover {
     border-bottom: 1px solid white;
     border-radius: 0px !important;
   }
- 
+  .sentiment-hover .ant-dropdown-menu{
+  padding: 0px !important;
+  border-radius: 4px !important;
+  margin-bottom: 5px;
+  color: #334D6E;
+  }
+  .sentiment-hover .ant-dropdown-menu-item{
+    padding:2px !important;
+    border-radius: 0px !important;
+    background-color: #FCE5F2;
+  }
+  

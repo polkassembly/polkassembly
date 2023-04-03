@@ -6,7 +6,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Form, MenuProps } from 'antd';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
@@ -30,16 +30,8 @@ import DeleteIcon from '~assets/icons/delete.svg';
 import EditIcon from '~assets/icons/edit-i.svg';
 import CopyIcon from '~assets/icons/copy.svg';
 import ReplyIcon from '~assets/icons/reply.svg';
-import AgainstIcon from '~assets/icons/against.svg';
-import SlightlyAgainstIcon from '~assets/icons/slightly-against.svg';
-import NeutralIcon from '~assets/icons/neutral.svg';
-import SlightlyForIcon from '~assets/icons/slightly-for.svg';
-import ForIcon from '~assets/icons/for.svg';
-import AgainstUnfilledIcon from '~assets/icons/against-unfilled.svg';
-import SlightlyAgainstUnfilledIcon from '~assets/icons/slightly-against-unfilled.svg';
-import NeutralUnfilledIcon from '~assets/icons/neutral-unfilled.svg';
-import SlightlyForUnfilledIcon from '~assets/icons/slightly-for-unfilled.svg';
-import ForUnfilledIcon from '~assets/icons/for-unfilled.svg';
+import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon,AgainstUnfilledIcon,SlightlyAgainstUnfilledIcon,NeutralUnfilledIcon,SlightlyForUnfilledIcon,ForUnfilledIcon } from '~src/ui-components/CustomIcons';
+
 import { poppins } from 'pages/_app';
 
 interface IEditableCommentContentProps {
@@ -80,6 +72,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	}, []);
 
 	const [replyForm] = Form.useForm();
+	const currentContent=useRef<string>(content);
 
 	const [isReplying, setIsReplying] = useState(false);
 	const toggleReply = () => setIsReplying(!isReplying);
@@ -87,7 +80,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const handleCancel = () => {
 		setSentiment(prevSentiment);
 		toggleEdit();
-		form.setFieldValue('content', '');
+		form.setFieldValue('content', currentContent.current);
 	};
 
 	const handleReplyCancel = () => {
@@ -98,8 +91,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const handleSave = async () => {
 		await form.validateFields();
 		const newContent = form.getFieldValue('content');
-		if(content === newContent && sentiment === prevSentiment)return;
-
+		if(!newContent)return;
+		if(currentContent.current !== newContent){
+			currentContent.current=newContent;
+		}
 		setIsEditing(false);
 		setLoading(true);
 		const { data, error: editPostCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/editPostComment', {
@@ -143,7 +138,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					comments: comments
 				};
 			});
-			form.setFieldValue('content', '');
+			form.setFieldValue('content', currentContent.current);
 			queueNotification({
 				header: 'Success!',
 				message: 'Your comment was edited.',
@@ -319,14 +314,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						>
 							<ContentForm value={content} className='mb-0' />
 							<div className='bg-gray-100 mb-[10px] p-2 rounded-e-md mt-[-25px] h-[80px] background'>
-								<div className='flex text-[12px] gap-[2px]'>Sentiment:<h5 className='text-[12px] text-blue-500'> {handleSentimentText()}</h5></div>
-								<div className='flex items-center mt-[-8px]'>
-									<div className='flex justify-between items-center'>
-										<div className='cursor-pointer' onClick={() => setSentiment(1)}>{sentiment===1?<AgainstIcon className='scale-50 ml-[-12px]' />:<AgainstUnfilledIcon className='scale-50 ml-[-12px]'/>}</div>
-										<div className='cursor-pointer' onClick={() => setSentiment(2)}>{sentiment===2?<SlightlyAgainstIcon className='scale-50 '/>:<SlightlyAgainstUnfilledIcon className='scale-50'/>}</div>
-										<div className='cursor-pointer' onClick={() => setSentiment(3)}>{sentiment===3?<NeutralIcon className='scale-50'/>:<NeutralUnfilledIcon className='scale-50'/>}</div>
-										<div className='cursor-pointer' onClick={() => setSentiment(4)}>{sentiment===4?<SlightlyForIcon className='scale-50'/>:<SlightlyForUnfilledIcon  className='scale-50'/>}</div>
-										<div className='cursor-pointer' onClick={() => setSentiment(5)}>{sentiment===5?<ForIcon className='scale-50'/>:<ForUnfilledIcon  className='scale-50'/>} </div>
+								<div className='flex text-[12px] gap-[2px]'>Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5></div>
+								<div className='flex items-center text-transparent'>
+									<div className='flex justify-between items-center gap-x-2'>
+										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(1)}>{sentiment===1?<AgainstIcon className=''/>:<AgainstUnfilledIcon className=''/>}</div>
+										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(2)}>{sentiment===2?<SlightlyAgainstIcon/>:<SlightlyAgainstUnfilledIcon className=''/>}</div>
+										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(3)}>{sentiment===3?<NeutralIcon className=''/>:<NeutralUnfilledIcon className=''/>}</div>
+										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(4)}>{sentiment===4?<SlightlyForIcon className=''/>:<SlightlyForUnfilledIcon  className=''/>}</div>
+										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(5)}>{sentiment===5?<ForIcon className='' />:<ForUnfilledIcon  className=''/>} </div>
 									</div>
 									<div className='flex w-[100%] items-center justify-end mt-[-7px]'>
 										<Button htmlType="button" onClick={handleCancel}  className='mr-2 flex items-center h-[26px]'>
@@ -351,7 +346,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								/>
 								{
 									id &&
-										<Button disabled={props.disableEdit} className={'text-pink_primary flex items-center border-none justify-start shadow-none text-xs ml-[-10px]' } onClick={toggleReply}>
+										<Button disabled={props.disableEdit} className={'text-pink_primary flex items-center justify-start shadow-none text-xs ml-[-15px] border-none w-[85px] mt-[-1px]' } onClick={toggleReply}>
 											<ReplyIcon className='mr-1'/> Reply
 										</Button>
 								}
@@ -362,7 +357,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									placement='bottomRight'
 									menu={{ items }}
 								>
-									<div><ThreeDotsIcon/></div>
+									<ThreeDotsIcon className='ml-[-10px] mt-[-2px] hover:bg-pink-100 rounded-xl'/>
 								</Dropdown>
 							</div>
 

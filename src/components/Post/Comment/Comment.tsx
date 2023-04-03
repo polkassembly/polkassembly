@@ -91,7 +91,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 				<EditableCommentContent
 					userId={user_id}
 					created_at={created_at}
-					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-10px]' }`}
+					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px]  min-[320px]:mt-[-2px]' }`}
 					comment={comment}
 					commentId={id}
 					content={content}

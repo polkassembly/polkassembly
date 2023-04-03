@@ -7,11 +7,8 @@ import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CheckOutlined } from '@ant-design/icons';
 import CloseIcon from 'public/assets/icons/sentiment-close.svg';
-import AgainstIcon from '~assets/icons/against.svg';
-import SlightlyAgainstIcon from '~assets/icons/slightly-against.svg';
-import NeutralIcon from '~assets/icons/neutral.svg';
-import SlightlyForIcon from '~assets/icons/slightly-for.svg';
-import ForIcon from '~assets/icons/for.svg';
+
+import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon } from '~src/ui-components/CustomIcons';
 
 interface Props{
   setIsComment:(pre:boolean)=>void;
@@ -66,36 +63,36 @@ const CommentSentimentModal=({ setIsComment,openModal,setModalOpen,setIsSentimen
 			<Slider
 				style={{ width:'100%' }}
 				className='w-full text-[12px] mt-[32px]'
-				trackStyle={{ backgroundColor:'#5C74FC' }}
+				trackStyle={{ backgroundColor:'#FF49AA' }}
 				onChange={(value:number) => setSentiment(value)}
 				step={5}
 				marks={{
-					1:{ label:sentiment===1 ? <AgainstIcon  className='scale-75'/>:<div></div>, style:{ color:'#334D6E',marginTop:'-28px' } },
-					2:{ label:sentiment===2 ? <SlightlyAgainstIcon  className='scale-75'/>:<div></div> , style:{ color:'#334D6E',marginTop:'-28px' } },
-					3:{ label:sentiment===3 ? <NeutralIcon  className='scale-75'/>:<div></div>, style:{ color:'#334D6E',marginTop:'-28px' } },
-					4:{ label:sentiment===4 ? <SlightlyForIcon  className='scale-75'/>:<div></div>, style:{ color:'#334D6E',marginTop:'-28px' } },
-					5:{ label:sentiment===5 ? <ForIcon className='scale-75'/>:<div></div>, style:{ color:'#334D6E',marginTop:'-28px' } } }}
+					1:{ label:sentiment===1 ? <AgainstIcon className='text-3xl text-transparent'/>:<div></div>, style:{ marginTop:'-20px' } },
+					2:{ label:sentiment===2 ? <SlightlyAgainstIcon className='text-3xl text-transparent'/>:<div></div> , style:{ marginTop:'-20px' } },
+					3:{ label:sentiment===3 ? <NeutralIcon className='text-3xl text-transparent'/>:<div></div>, style:{ marginTop:'-20px' } },
+					4:{ label:sentiment===4 ? <SlightlyForIcon className='text-3xl text-transparent'/>:<div></div>, style:{ marginTop:'-20px' } },
+					5:{ label:sentiment===5 ? <ForIcon className='text-3xl text-white bg-white' />:<div></div>, style:{ marginTop:'-20px' } } }}
 				min={1}
 				max={5}
 				defaultValue={3}
 			/>
-			<h5 className='text-sm font-medium text-blue-600 mb-[16px]'>{handleSentimentText()}</h5>
+			<h5 className='text-sm font-medium text-pink_primary mb-[16px]'>{handleSentimentText()}</h5>
 		</div>
 	</Modal>);
 };
 export default styled(CommentSentimentModal)`
 .padding .ant-modal-content{
   border-radius:4px !important;
-  padding:40px 45px !important;
+  padding:40px 50px !important;
   text-align:center;
   justify-content:center;
-  color:#334D6E !important;
+  // color:#334D6E !important;
 }
 .padding .ant-slider-dot{
   border-color:#FCE5F2 !important;
 }
 .padding .ant-slider-dot-active{
-  border-color:#5C74FC !important;
+  border-color:#FF49AA !important;
 }
 
 
@@ -108,6 +105,10 @@ export default styled(CommentSentimentModal)`
 }
 .padding .ant-slider .ant-slider-rail{
   background-color:#FCE5F2;
+
 }
+.padding .ant-slider .ant-slider-handle:focus::after {
+  box-shadow:none;
+ }
 
 `;

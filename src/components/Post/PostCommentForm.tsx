@@ -98,7 +98,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					created_at: new Date(),
 					id: data.id,
 					replies: [],
-					sentiment:sentiment || 0,
+					sentiment:isSentimentPost? sentiment : 0,
 					updated_at: new Date(),
 					user_id: id,
 					username: username || ''
@@ -125,7 +125,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			/>
 
 			<div className='comment-box bg-white p-[1rem]'>
-				{error && <ErrorAlert errorMsg={error} className='mb-4' />}
+				{error && <ErrorAlert errorMsg={error} className='mb-2' />}
 				<Form
 					form={form}
 					name="comment-content-form"

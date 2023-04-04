@@ -143,13 +143,9 @@ const Web3Signup: FC<Props> = ({
 		try {
 			const injectedWindow = window as Window & InjectedWindow;
 
-			let wallet = isWeb3Injected
+			const wallet = isWeb3Injected
 				? injectedWindow.injectedWeb3[chosenWallet]
 				: null;
-
-			if (!wallet) {
-				wallet = Object.values(injectedWindow.injectedWeb3)[0];
-			}
 
 			if (!wallet) {
 				setExtensionNotFound(true);
@@ -198,7 +194,8 @@ const Web3Signup: FC<Props> = ({
 
 			const { data: confirmData , error: confirmError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressSignupConfirm', {
 				address: substrate_address,
-				signature
+				signature,
+				wallet: chosenWallet
 			});
 
 			if (confirmError || !confirmData) {

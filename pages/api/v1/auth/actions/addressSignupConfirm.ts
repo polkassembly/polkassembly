@@ -14,11 +14,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { address, signature } = req.body;
+	const { address, signature, wallet } = req.body;
 
-	if(!address || !signature) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if(!address || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	const { token } = await authServiceInstance.AddressSignupConfirm(network, address, signature);
+	const { token } = await authServiceInstance.AddressSignupConfirm(network, address, signature, wallet);
 
 	return res.status(200).json({ token });
 }

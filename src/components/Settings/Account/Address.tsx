@@ -84,8 +84,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 		}
 	};
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleLink = async (address: InjectedAccount['address'], account: InjectedAccount) => {
+	const handleLink = async (address: InjectedAccount['address'], wallet: Wallet) => {
 		const signRaw = !address.startsWith('0x') && signersMap[accountsMap[address]].signRaw;
 		if (!address.startsWith('0x') && !signRaw) return console.error('Signer not available');
 
@@ -127,7 +126,8 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 
 				const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/addressLinkConfirm', {
 					address: substrate_address,
-					signature
+					signature,
+					wallet
 				});
 
 				if(confirmError) {
@@ -159,7 +159,8 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 
 				const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/addressLinkConfirm', {
 					address: substrate_address,
-					signature
+					signature,
+					wallet
 				});
 
 				if(confirmError) {
@@ -304,7 +305,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 				address: string;
 			}[];
 		});
-		console.log('accountsObj: ', accountsObj);
+
 		return (
 			<article className='flex flex-col gap-y-2'>
 				<label className='font-medium text-sm tracking-wide text-sidebarBlue'>{title}</label>
@@ -340,7 +341,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 													<div className="col-span-1">
 														<Button
 															className='font-medium text-sm m-0 p-0 text-grey_primary outline-none border-none flex items-center justify-center'
-															onClick={() => handleLink(address, account)}
+															onClick={() => handleLink(address, key as Wallet)}
 															icon={
 																<LinkOutlined />
 															}
@@ -390,7 +391,6 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 											network
 										})
 											.then((res) => {
-												console.log(res);
 												setAccountsInfo(res);
 												setFetchAccountsInfo(false);
 											})

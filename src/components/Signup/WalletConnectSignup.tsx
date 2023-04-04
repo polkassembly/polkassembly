@@ -23,6 +23,7 @@ import { handleTokenChange } from '../../services/auth.service';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
 import FilteredError from '../../ui-components/FilteredError';
 import getNetwork from '../../util/getNetwork';
+import { Wallet } from '~src/types';
 
 const NETWORK = getNetwork();
 
@@ -213,7 +214,8 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 
 					const { data: confirmData , error: confirmError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressSignupConfirm', {
 						address,
-						signature: result
+						signature: result,
+						wallet: Wallet.WALLETCONNECT
 					});
 
 					if (confirmData?.token) {

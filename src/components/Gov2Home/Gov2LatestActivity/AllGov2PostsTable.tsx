@@ -21,7 +21,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		dataIndex: 'post_id',
 		key: 'id',
 		render: (post_id: any) => <div className='truncate'>{post_id}</div>,
-		width: 65,
+		width: 80,
 		fixed: 'left'
 	},
 	{

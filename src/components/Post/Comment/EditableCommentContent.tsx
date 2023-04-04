@@ -268,12 +268,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		id === userId ? {
 			key:1,
 			label:<div className={`items-center shadow-none text-[10px] text-slate-400 leading-4  ${poppins.variable} ${poppins.className}`} onClick={toggleEdit}>
-				<span className='flex items-center' ><EditIcon className='mr-1' /> Edit</span>
+				<span className='flex items-center' ><EditIcon className='mr-1' />Edit</span>
 			</div>
 		}:null,
 		{
 			key:2,
-			label:<div className={`flex items-center text-slate-400 shadow-none text-[10px] leading-4 ${poppins.variable} ${poppins.className} ` } onClick={() => {copyLink();}}><CopyIcon  className='mr-1'/> Copy link</div>
+			label:<div className={`flex items-center text-slate-400 shadow-none text-[10px] leading-4 ${poppins.variable} ${poppins.className}` } onClick={() => {copyLink();}}><CopyIcon  className='mr-1'/> Copy link</div>
 		},
 		id && !isEditing ?{
 			key:3,
@@ -317,11 +317,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								<div className='flex text-[12px] gap-[2px]'>Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5></div>
 								<div className='flex items-center text-transparent'>
 									<div className='flex justify-between items-center gap-x-2'>
-										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(1)}>{sentiment===1?<AgainstIcon className=''/>:<AgainstUnfilledIcon className=''/>}</div>
-										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(2)}>{sentiment===2?<SlightlyAgainstIcon/>:<SlightlyAgainstUnfilledIcon className=''/>}</div>
-										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(3)}>{sentiment===3?<NeutralIcon className=''/>:<NeutralUnfilledIcon className=''/>}</div>
-										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(4)}>{sentiment===4?<SlightlyForIcon className=''/>:<SlightlyForUnfilledIcon  className=''/>}</div>
-										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(5)}>{sentiment===5?<ForIcon className='' />:<ForUnfilledIcon  className=''/>} </div>
+										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(1)}>{sentiment===1?<AgainstIcon />:<AgainstUnfilledIcon />}</div>
+										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(2)}>{sentiment===2?<SlightlyAgainstIcon/>:<SlightlyAgainstUnfilledIcon />}</div>
+										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(3)}>{sentiment===3?<NeutralIcon />:<NeutralUnfilledIcon />}</div>
+										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(4)}>{sentiment===4?<SlightlyForIcon />:<SlightlyForUnfilledIcon  />}</div>
+										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(5)}>{sentiment===5?<ForIcon  />:<ForUnfilledIcon  />} </div>
 									</div>
 									<div className='flex w-[100%] items-center justify-end mt-[-7px]'>
 										<Button htmlType="button" onClick={handleCancel}  className='mr-2 flex items-center h-[26px]'>

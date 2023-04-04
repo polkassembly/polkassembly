@@ -294,6 +294,7 @@ export interface CommentReply {
   updated_at: Date,
   username: string,
   user_profile_img: string,
+  level?: number;
 }
 
 // can't use optional fields in IApiResponse

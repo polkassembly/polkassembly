@@ -15,18 +15,18 @@ import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { CommentReply } from '~src/types';
 
-export interface IAddCommentReplyResponse {
+export interface IAddReplyToReplyResponse {
 	id: string;
 }
 
-const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (req, res) => {
+const handler: NextApiHandler<IAddReplyToReplyResponse | MessageType> = async (req, res) => {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType } = req.body;
-	if(!userId || !commentId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { userId, commentId, content, postId, postType, parentReplyId } = req.body;
+	if(!userId || !commentId || !content || isNaN(postId) || !postType || !parentReplyId) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(postType);
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The post type of the name "${postType}" does not exist.` });
@@ -37,19 +37,39 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 	const user = await authServiceInstance.GetUser(token);
 	if(!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
+	const last_comment_at = new Date();
 	const postRef = postsByTypeRef(network, strProposalType as ProposalType)
 		.doc(String(postId));
-	const last_comment_at = new Date();
+
+	const parentReplyRef = postRef
+		.collection('comments')
+		.doc(String(commentId))
+		.collection('replies')
+		.doc(String(parentReplyId));
+	const parentReplyDoc = await parentReplyRef.get();
+
+	if (!parentReplyDoc.exists) {
+		return res.status(404).json({ message: `Parent reply with id: "${parentReplyId}" is not found.` });
+	}
+	const parentReplyData = parentReplyDoc.data();
+	if (!parentReplyData) {
+		return res.status(404).json({ message: 'Parent reply data is not found.' });
+	}
+	if (parentReplyData?.level === 5) {
+		return res.status(403).json({ message: 'Maximum reply to reply limit exceeds.' });
+	}
 	const newReplyRef = postRef
 		.collection('comments')
 		.doc(String(commentId))
 		.collection('replies')
 		.doc();
 
+	const children = (parentReplyData.children && Array.isArray(parentReplyData.children))? parentReplyData.children: [];
 	const newReply: CommentReply = {
 		content,
 		created_at: new Date(),
 		id: newReplyRef.id,
+		level: ((parentReplyData?.level || (parentReplyData?.level === 0)) && !isNaN(Number(parentReplyData.level)))? (parentReplyData?.level + 1): 1,
 		updated_at: last_comment_at,
 		user_id: user.id,
 		user_profile_img: user?.profile?.image || '',
@@ -59,6 +79,11 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 	await newReplyRef.set(newReply).then(() => {
 		postRef.set({
 			last_comment_at
+		}, { merge: true });
+
+		children.push(newReplyRef.id);
+		parentReplyRef.set({
+			children
 		}, { merge: true });
 
 		_sendCommentReplyMail(network, strProposalType, String(postId), content, String(commentId), user);

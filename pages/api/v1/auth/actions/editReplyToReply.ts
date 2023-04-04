@@ -7,26 +7,20 @@ import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isProposalTypeValid } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
-import _sendCommentReplyMail from '~src/api-utils/_sendCommentReplyMail';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
-import { CommentReply } from '~src/types';
 
-export interface IAddCommentReplyResponse {
-	id: string;
-}
-
-const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (req, res) => {
+const handler: NextApiHandler<MessageType> = async (req, res) => {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType } = req.body;
-	if(!userId || !commentId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { userId, commentId, content, postId, postType, replyId, parentReplyId } = req.body;
+	if(!userId || !commentId || !content || isNaN(postId) || !postType || !replyId || !parentReplyId) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(postType);
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The post type of the name "${postType}" does not exist.` });
@@ -37,39 +31,52 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 	const user = await authServiceInstance.GetUser(token);
 	if(!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
+	const last_comment_at = new Date();
 	const postRef = postsByTypeRef(network, strProposalType as ProposalType)
 		.doc(String(postId));
-	const last_comment_at = new Date();
-	const newReplyRef = postRef
+
+	const parentReplyRef = postRef
 		.collection('comments')
 		.doc(String(commentId))
 		.collection('replies')
-		.doc();
+		.doc(String(parentReplyId));
 
-	const newReply: CommentReply = {
+	const parentReplyDoc = await parentReplyRef.get();
+
+	if (!parentReplyDoc.exists) {
+		return res.status(404).json({ message: 'Parent reply not found.' });
+	}
+
+	const parentReplyData = parentReplyDoc.data();
+	const children = (parentReplyData?.children && Array.isArray(parentReplyData?.children)? parentReplyData.children: []) as string[];
+
+	if (!children.includes(replyId)) {
+		return res.status(404).json({ message: `Reply with id: "${replyId}" is not a children of a Reply with id: "${parentReplyId}"` });
+	}
+
+	const replyRef = postRef
+		.collection('comments')
+		.doc(String(commentId))
+		.collection('replies')
+		.doc(String(replyId));
+
+	const replyDoc = await replyRef.get();
+
+	if(!replyDoc.exists) return res.status(404).json({ message: 'Reply not found' });
+	if(user.id !== replyDoc.data()?.user_id) return res.status(403).json({ message: messages.UNAUTHORISED });
+
+	replyRef.update({
 		content,
-		created_at: new Date(),
-		id: newReplyRef.id,
-		updated_at: last_comment_at,
-		user_id: user.id,
-		user_profile_img: user?.profile?.image || '',
-		username: user.username
-	};
-
-	await newReplyRef.set(newReply).then(() => {
+		updated_at: last_comment_at
+	}).then(() => {
 		postRef.set({
 			last_comment_at
-		}, { merge: true });
-
-		_sendCommentReplyMail(network, strProposalType, String(postId), content, String(commentId), user);
-
-		return res.status(200).json({
-			id: newReply.id
-		});
+		}, { merge: true }).then(() => {});
+		return res.status(200).json({ message: 'Reply saved.' });
 	}).catch((error) => {
 		// The document probably doesn't exist.
-		console.error('Error saving comment: ', error);
-		return res.status(500).json({ message: 'Error saving comment' });
+		console.error('Error saving reply: ', error);
+		return res.status(500).json({ message: 'Error saving reply' });
 	});
 };
 

@@ -62,11 +62,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				{children}
 			</div>
 		</div>
-		{sentiment===1 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-2xl'><AgainstIcon /></Dropdown>}
-		{sentiment===2 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-2xl'><SlightlyAgainstIcon/></Dropdown>}
-		{sentiment===3 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-2xl'><NeutralIcon /></Dropdown>}
-		{sentiment===4 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-2xl'><SlightlyForIcon /></Dropdown>}
-		{sentiment===5 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-2xl'><div></div><ForIcon /></Dropdown>}
+		{sentiment===1 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-2xl text-white'><AgainstIcon /></Dropdown>}
+		{sentiment===2 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-2xl text-white'><SlightlyAgainstIcon/></Dropdown>}
+		{sentiment===3 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-2xl text-white'><NeutralIcon /></Dropdown>}
+		{sentiment===4 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-2xl text-white'><SlightlyForIcon /></Dropdown>}
+		{sentiment===5 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-2xl text-white'><ForIcon /></Dropdown>}
 	</div>;
 };
 

@@ -48,7 +48,6 @@ const Curves: FC<ICurvesProps> = (props) => {
 			if (referendaInfo.isOngoing) {
 				const info = referendaInfo.asOngoing.toJSON();
 				const tracks = api.consts.referenda.tracks.toJSON();
-				console.log(tracks);
 				if (tracks && Array.isArray(tracks)) {
 					const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === info.track);
 					if (track && Array.isArray(track) && track.length > 1) {
@@ -71,22 +70,44 @@ const Curves: FC<ICurvesProps> = (props) => {
 						const activeIssuance = totalIssuance.sub(inactiveIssuance || BN_ZERO);
 						const trackGraph = calcCurves(trackInfo);
 						const data = getChartResult(activeIssuance, true, referendaInfo, trackInfo, trackGraph);
+						console.log(trackInfo);
 						if (data && Array.isArray(data) && data.length > 1) {
+							console.log('activeIssuance', activeIssuance, data[0].labels.length);
 							const newData: ChartData<'line', (number | Point | null)[]> = {
 								datasets: [
 									{
-										backgroundColor: '#FFF',
+										backgroundColor: '#5BC044',
 										borderColor: '#000',
-										borderWidth: 10,
+										borderWidth: 0,
 										data: data[0].values[0].map((value) => isBn(value)? value.toNumber(): value),
 										label: 'Approval'
+									},
+									{
+										borderColor: '#68D183',
+										borderDash: [5, 5],
+										data: data[0].values[1].map((value) => isBn(value)? value.toNumber(): value),
+										label: 'Current Approval',
+										tension: 0.1
+									},
+									{
+										backgroundColor: '#E5007A',
+										borderColor: '#000',
+										borderWidth: 0,
+										data: data[1].values[0].map((value) => isBn(value)? value.toNumber(): value),
+										label: 'Support'
+									},
+									{
+										backgroundColor: '#FFF',
+										borderColor: '#E5007A',
+										borderDash: [5, 5],
+										data: data[1].values[1].map((value) => isBn(value)? value.toNumber(): value),
+										label: 'Current Support'
 									}
 								],
 								labels: data[0].labels
 							};
 							setData(newData);
 						}
-						console.log('activeIssuance', activeIssuance, data);
 					}
 				}
 			}
@@ -95,15 +116,15 @@ const Curves: FC<ICurvesProps> = (props) => {
 		});
 	}, [api, apiReady, referendumId]);
 	return (
-		<div>
+		<div className='h-[400px]'>
 			<Chart.Line
 				data={data}
 				options={{
-					responsive: true,
+					aspectRatio: 0,
+					maintainAspectRatio: false,
 					scales: {
 						y: {
-							max: 100,
-							min: 0
+							beginAtZero: true
 						}
 					}
 				}}

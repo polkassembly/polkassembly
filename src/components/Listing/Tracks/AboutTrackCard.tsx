@@ -15,6 +15,27 @@ import DelegateModal from './DelegateModal';
 import { useNetworkContext } from '~src/context';
 // import DelegateModalEthV2 from './DelegateModalEthV2';
 
+export const blocksToRelevantTime = (blocks:number, network: string): string => {
+	const blockTimeSeconds:number = chainProperties?.[network]?.blockTime / 1000;
+	let divisor:number = 1;
+	let text:string = 'sec';
+
+	const blockSeconds = blocks*blockTimeSeconds;
+
+	if(blockSeconds > 60 && blockSeconds < 3600) {
+		divisor = 60;
+		text = 'min';
+	} else if (blockSeconds > 3600 && blockSeconds < 86400) {
+		divisor = 3600;
+		text = 'hrs';
+	} else if (blockSeconds >= 86400) {
+		divisor = 86400;
+		text = 'days';
+	}
+
+	return `${blockSeconds/divisor} ${text}`;
+};
+
 interface IAboutTrackCardProps {
 	className?: string;
 	trackName: string;
@@ -64,28 +85,6 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 		setTrackMetaData(defaultTrackMetaData);
 	}, [network, trackName]);
 
-	const blockTimeSeconds:number = chainProperties?.[network]?.blockTime / 1000;
-
-	const blocksToRelevantTime = (blocks:number): string => {
-		let divisor:number = 1;
-		let text:string = 'sec';
-
-		const blockSeconds = blocks*blockTimeSeconds;
-
-		if(blockSeconds > 60 && blockSeconds < 3600) {
-			divisor = 60;
-			text = 'min';
-		} else if (blockSeconds > 3600 && blockSeconds < 86400) {
-			divisor = 3600;
-			text = 'hrs';
-		} else if (blockSeconds >= 86400) {
-			divisor = 86400;
-			text = 'days';
-		}
-
-		return `${blockSeconds/divisor} ${text}`;
-	};
-
 	return (
 		<div className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue`}>
 			<div className="flex justify-between capitalize font-medium">
@@ -129,24 +128,24 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<Col xs={24} sm={24} md={12} lg={12} xl={8}>
 						{trackMetaData.preparePeriod && <Row>
 							<Col span={15} className='font-bold'>Prepare Period:</Col>
-							<Col span={9} className='whitespace-pre'>{blocksToRelevantTime(Number(trackMetaData.preparePeriod))}</Col>
+							<Col span={9} className='whitespace-pre'>{blocksToRelevantTime(Number(trackMetaData.preparePeriod), network)}</Col>
 						</Row>}
 
 						{trackMetaData.confirmPeriod && <Row className='mt-3'>
 							<Col span={15} className='font-bold'>Confirm Period:</Col>
-							<Col span={9} className='whitespace-pre'>{blocksToRelevantTime(Number(trackMetaData.confirmPeriod))}</Col>
+							<Col span={9} className='whitespace-pre'>{blocksToRelevantTime(Number(trackMetaData.confirmPeriod), network)}</Col>
 						</Row>}
 					</Col>
 
 					<Col xs={24} sm={24} md={12} lg={12} xl={8}>
 						{trackMetaData.minEnactmentPeriod &&<Row>
 							<Col xs={15} xl={19} className='font-bold'>Min Enactment Period:</Col>
-							<Col xs={9} xl={5} className='whitespace-pre'>{blocksToRelevantTime(Number(trackMetaData.minEnactmentPeriod))}</Col>
+							<Col xs={9} xl={5} className='whitespace-pre'>{blocksToRelevantTime(Number(trackMetaData.minEnactmentPeriod), network)}</Col>
 						</Row>}
 
 						{trackMetaData.decisionPeriod && <Row className='mt-3'>
 							<Col xs={15} xl={19} className='font-bold'>Decision Period:</Col>
-							<Col xs={9} xl={5} className='whitespace-pre'>{blocksToRelevantTime(Number(trackMetaData.decisionPeriod))}</Col>
+							<Col xs={9} xl={5} className='whitespace-pre'>{blocksToRelevantTime(Number(trackMetaData.decisionPeriod), network)}</Col>
 						</Row>}
 					</Col>
 				</Row>

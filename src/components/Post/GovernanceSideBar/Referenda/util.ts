@@ -164,7 +164,7 @@ export const getChartResult: TGetChartResultFn =  (totalEligible, isConvictionVo
 
 			const step = x[1].sub(x[0]);
 			const lastIndex = x.length - 1;
-			const lastBlock = endConfirm?.add(track.minEnactmentPeriod);
+			const lastBlock = endConfirm?.add(new BN(track.minEnactmentPeriod));
 
 			// if the confirmation end is later than shown on our graph, we extend it
 			if (lastBlock?.gt(since.add(x[lastIndex]))) {

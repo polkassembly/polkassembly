@@ -145,13 +145,9 @@ const Web3Login: FC<Props> = ({
 		try {
 			const injectedWindow = window as Window & InjectedWindow;
 
-			let wallet = isWeb3Injected
+			const wallet = isWeb3Injected
 				? injectedWindow.injectedWeb3[chosenWallet]
 				: null;
-
-			if (!wallet) {
-				wallet = Object.values(injectedWindow.injectedWeb3)[0];
-			}
 
 			if (!wallet) {
 				setExtensionNotFound(true);
@@ -176,7 +172,7 @@ const Web3Login: FC<Props> = ({
 				substrate_address = address;
 			}
 
-			const { data: loginStartData , error: loginStartError } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressLoginStart', { address: substrate_address });
+			const { data: loginStartData , error: loginStartError } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressLoginStart', { address: substrate_address, wallet: chosenWallet });
 			if(loginStartError) {
 				console.log('Error in address login start', loginStartError);
 				setError(loginStartError);
@@ -195,7 +191,7 @@ const Web3Login: FC<Props> = ({
 				type: 'bytes'
 			});
 
-			const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressLogin', { address: substrate_address, signature });
+			const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressLogin', { address: substrate_address, signature, wallet: chosenWallet });
 			if(addressLoginError) {
 				setError(addressLoginError);
 				if (addressLoginError === 'Please sign up prior to logging in with a web3 address') {
@@ -224,7 +220,8 @@ const Web3Login: FC<Props> = ({
 
 						const { data: confirmData , error: confirmError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressSignupConfirm', {
 							address: substrate_address,
-							signature: signature
+							signature: signature,
+							wallet: chosenWallet
 						});
 
 						if (confirmError || !confirmData) {

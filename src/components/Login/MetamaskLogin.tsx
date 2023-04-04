@@ -166,7 +166,7 @@ const MetamaskLogin: FC<Props> = ({
 					return;
 				}
 
-				const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressLogin', { address, signature: result.result });
+				const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressLogin', { address, signature: result.result, wallet: Wallet.METAMASK });
 				if(addressLoginError) {
 					console.log('Error in address login', addressLoginError);
 					setError(addressLoginError);
@@ -208,7 +208,8 @@ const MetamaskLogin: FC<Props> = ({
 
 								const { data: confirmData , error: confirmError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressSignupConfirm', {
 									address,
-									signature: result.result
+									signature: result.result,
+									wallet: Wallet.METAMASK
 								});
 
 								if (confirmError || !confirmData) {

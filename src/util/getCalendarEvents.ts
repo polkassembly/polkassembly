@@ -21,7 +21,7 @@ import type { DeriveCollectiveProposal } from '@polkadot/api-derive/types';
 import { PjsCalendarItem, PjsCalendarItemDuration } from '~src/types';
 
 function generateCalendarItemDuration(network: string, blockNumber: number, duration: number, offset = 0): PjsCalendarItemDuration | void {
-	const blockTime = chainProperties[network].blockTime / 1000;
+	const blockTime = chainProperties[network].blockTime;
 
 	if (blockNumber >= 0) {
 		const modifiedBlockNumber = blockNumber - offset;
@@ -50,7 +50,7 @@ export async function fetchAuctionInfo(api: ApiPromise, network: string): Promis
 	const calendarItems = [];
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
-	const blockTime = chainProperties[network].blockTime / 1000;
+	const blockTime = chainProperties[network].blockTime;
 	const endingPeriod = api.consts.auctions.endingPeriod as u32;
 	const leasePeriodPerSlot = api.consts.auctions.leasePeriodsPerSlot as BlockNumber;
 	const auctionInfo = await api.query.auctions.auctionInfo() as Option<ITuple<[LeasePeriodOf, BlockNumber]>>;
@@ -87,7 +87,7 @@ export async function fetchCouncilMotions(api: ApiPromise, network: string): Pro
 	const calendarItems: any[] = [];
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
-	const blockTime = chainProperties[network].blockTime / 1000;
+	const blockTime = chainProperties[network].blockTime;
 	const councilMotions: DeriveCollectiveProposal[] = await api.derive.council.proposals();
 
 	if (councilMotions) {
@@ -120,7 +120,7 @@ export async function fetchDemocracyDispatches(api: ApiPromise, network: string)
 	const calendarItems: any[] = [];
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
-	const blockTime = chainProperties[network].blockTime / 1000;
+	const blockTime = chainProperties[network].blockTime;
 	const dispatches = await api.derive.democracy.dispatchQueue();
 
 	if (dispatches) {
@@ -151,7 +151,7 @@ export async function fetchReferendums(api: ApiPromise, network: string): Promis
 	const calendarItems: any[] = [];
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
-	const blockTime = chainProperties[network].blockTime / 1000;
+	const blockTime = chainProperties[network].blockTime;
 	const referendums = await api.derive.democracy.referendums();
 
 	if (referendums) {
@@ -207,7 +207,7 @@ export async function fetchStakingInfo(api: ApiPromise, network: string): Promis
 	const calendarItems: any[] = [];
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
-	const blockTime = chainProperties[network].blockTime / 1000;
+	const blockTime = chainProperties[network].blockTime;
 	const sessionInfo = await api.derive.session.progress();
 
 	if (sessionInfo) {
@@ -305,7 +305,7 @@ export async function fetchScheduled(api: ApiPromise, network: string): Promise<
 	const calendarItems: any[] = [];
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
-	const blockTime = chainProperties[network].blockTime / 1000;
+	const blockTime = chainProperties[network].blockTime;
 
 	const scheduled = await api.query.scheduler.agenda.entries() as [{ args: [BlockNumber] }, Option<Scheduled>[]][];
 
@@ -353,9 +353,10 @@ export async function fetchCouncilElection(api: ApiPromise, network: string): Pr
 		return [];
 	}
 
-	const duration = response.value.termDuration as u32;
+	// TODO: fix response.value is undefined
+	const duration = response.value?.termDuration as u32;
 
-	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration.toJSON() as number);
+	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
 		const item: PjsCalendarItem = Object.assign({

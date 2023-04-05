@@ -231,6 +231,7 @@ const Web3Login: FC<Props> = ({
 						}
 
 						if(confirmData.token) {
+							currentUser.loginWallet=chosenWallet;
 							handleTokenChange(confirmData.token, currentUser);
 							if(isModal){
 								setLoginOpen(false);
@@ -252,6 +253,7 @@ const Web3Login: FC<Props> = ({
 				return;
 			}
 			if(addressLoginData?.token){
+				currentUser.loginWallet=chosenWallet;
 				handleTokenChange(addressLoginData.token, currentUser);
 				if(isModal){
 					setLoginOpen(false);

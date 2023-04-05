@@ -152,6 +152,7 @@ const MetamaskSignup: FC<Props> = ({
 				}
 
 				if(confirmData.token) {
+					currentUser.loginWallet=Wallet.METAMASK;
 					handleTokenChange(confirmData.token, currentUser);
 					if(isModal){
 						setSignupOpen && setSignupOpen(false);

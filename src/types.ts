@@ -22,6 +22,7 @@ export interface UserDetailsContextType {
   walletConnectProvider: WalletConnectProvider | null;
   setWalletConnectProvider: React.Dispatch<React.SetStateAction<WalletConnectProvider | null>>
   isLoggedOut: () => boolean;
+  loginWallet:Wallet |null;
 }
 
 export enum Role {

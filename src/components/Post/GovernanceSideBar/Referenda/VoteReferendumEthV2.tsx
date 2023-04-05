@@ -42,7 +42,7 @@ const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
 const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut } = useUserDetailsContext();
+	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut,loginWallet } = useUserDetailsContext();
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const { apiReady } = useApiContext();
 	const [address, setAddress] = useState<string>('');
@@ -336,6 +336,22 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		}
 	};
 
+	const handleDefaultWallet=async(wallet:Wallet) => {
+		setWallet(wallet);
+		await getAccounts(wallet);
+		if (walletConnectProvider) {
+			await getWalletConnectAccounts();
+		}
+	};
+	// eslint-disable-next-line react-hooks/rules-of-hooks
+	useEffect(() => {
+		if(loginWallet!==null)
+		{
+			setWallet(loginWallet);
+			handleDefaultWallet(loginWallet);
+		}}
+	,[loginWallet]);
+
 	return (
 		<div className={className}>
 			<Button
@@ -389,6 +405,10 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 									await voteReferendum(isAye);
 								}}>
 									<h4 className='dashboard-heading mb-7'>Cast Your Vote</h4>
+									<div className='flex items-center justify-center gap-x-5 mt-5'>
+										<WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />
+										<WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
+									</div>
 									<BalanceInput
 										label={'Lock balance'}
 										helpText={'Amount of you are willing to lock for this vote.'}
@@ -407,11 +427,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 											/>
 											: !wallet? <FilteredError text='Please select a wallet.' />: null
 									}
-									<div className='flex items-center justify-center gap-x-5 mt-5'>
-										<WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />
-										<WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
-									</div>
-
 									<VoteLock className='mt-6' />
 
 									<AyeNayButtons

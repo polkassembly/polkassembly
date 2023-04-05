@@ -15,6 +15,7 @@ import Loader from 'src/ui-components/Loader';
 import styled from 'styled-components';
 
 import { ChallengeMessage, TokenType } from '~src/auth/types';
+import { Wallet } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import { ModalContext } from '../../context/ModalContext';
@@ -220,6 +221,7 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 
 					if (confirmData?.token) {
 						setWalletConnectProvider(provider);
+						currentUser.loginWallet=Wallet.WALLETCONNECT;
 						handleTokenChange(confirmData.token, currentUser);
 						setModal({
 							content: 'Add an email in settings if you want to be able to recover your account!',

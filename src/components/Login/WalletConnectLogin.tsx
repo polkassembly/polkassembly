@@ -258,6 +258,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isMod
 											}
 
 											if(confirmData.token) {
+												currentUser.loginWallet=Wallet.WALLETCONNECT;
 												handleTokenChange(confirmData.token, currentUser);
 												if(isModal){
 													setLoginOpen(false);
@@ -281,6 +282,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isMod
 						}
 						if (addressLoginData?.token) {
 							setWalletConnectProvider(provider);
+							currentUser.loginWallet=Wallet.WALLETCONNECT;
 							handleTokenChange(addressLoginData.token, currentUser);
 							if(isModal){
 								setLoginOpen(false);

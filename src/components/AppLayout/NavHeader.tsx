@@ -5,12 +5,12 @@
 /* eslint-disable no-tabs */
 import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Divider, Modal, Skeleton, Space } from 'antd';
+import { Divider, Skeleton, Space } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import NetworkDropdown from 'src/ui-components/NetworkDropdown';
 import checkGov2Route from 'src/util/checkGov2Route';
@@ -44,6 +44,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	const [open, setOpen] = useState(false);
 
 	const isGov2Route: boolean = checkGov2Route(pathname, query);
+	const isClicked = useRef(false);
 
 	return (
 		<Header className={`${className} shadow-md z-[1001] sticky top-0 flex items-center bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
@@ -89,81 +90,83 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 							</div>
 						}
 					</Space>
-
-					<button
-						onClick={() => {
-							setSidedrawer(false);
-							setOpen(true);
-						}}
-						className='outline-none flex md:hidden items-center justify-center w-8 h-8 p-[6px] rounded-[4px] bg-[rgba(210,216,224,0.2)] border-solid border border-[#D2D8E0]'
-					>
-						<Image
-							className='w-[20px] h-[20px] rounded-full'
-							src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
-							alt='Logo'
-						/>
-					</button>
-					<Modal
-						wrapClassName={className}
-						open={!sidedrawer && open}
-						onCancel={() => {
-							setOpen(false);
-						}}
-						className='padding-zero'
-						closable={false}
-						footer={[]}
-					>
-						<div className='p-4'>
-							<div>
-								<button
-									onClick={() => setOpen(false)}
-									className='ml-auto outline-none bg-[rgba(210,216,224,0.2)] border border-solid border-[#D2D8E0] rounded-[4px] flex items-center justify-center h-8 w-8'
+					{
+						open?
+							<button
+								onBlur={() => {
+									setTimeout(() => {
+										setOpen(false);
+									}, 100);
+								}}
+								onClick={() => {
+									if (!isClicked.current) {
+										setOpen(false);
+									}
+									isClicked.current = false;
+								}}
+								className='ml-auto outline-none bg-[rgba(210,216,224,0.2)] border border-solid border-[#D2D8E0] rounded-[4px] flex items-center justify-center h-8 w-8 md:hidden'
+							>
+								<CloseOutlined className='w-[15px] h-[15px]' />
+								<div
+									className={`absolute w-screen bg-black bg-opacity-50 top-[60px] left-0 overflow-hidden h-[calc(100vh-60px)] ${(!sidedrawer && open)? 'block': 'hidden'}`}
 								>
-									<CloseOutlined className='w-[15px] h-[15px]' />
-								</button>
-								<Divider className='mt-4 mb-6' />
-							</div>
-							<div className='flex flex-col gap-y-6'>
-								<SearchBar isSmallScreen={true} />
-								<div>
-									<p className='m-0 p-0 text-[#485F7D] font-normal text-sm leading-[23px] tracking-[0.02em]'>Network</p>
-									<NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} />
-								</div>
-								<div>
-									<p className='m-0 p-0 text-[#485F7D] font-normal text-sm leading-[23px] tracking-[0.02em]'>Node</p>
-									<RPCDropdown isSmallScreen={true} />
-								</div>
-								{
-									username?
-										null
-										: <>
-											<Divider className='my-0'/>
-											<div className='flex flex-col gap-y-4'>
-												<button
-													onClick={() => {
-														setOpen(false);
-														router.push('/signup');
-													}}
-													className='rounded-[6px] bg-white flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
-												>
-										Sign Up
-												</button>
-												<button
-													onClick={() => {
-														setOpen(false);
-														router.push('/login');
-													}}
-													className='rounded-[6px] bg-[#E5007A] flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
-												>
-										Log In
-												</button>
+									<div
+										onClick={() => {
+											isClicked.current = true;
+										}}
+										className='p-4 bg-white'
+									>
+										<div className='flex flex-col'>
+											{/* <SearchBar isSmallScreen={true} /> */}
+											<div>
+												<p className='m-0 p-0 text-[#485F7D] font-normal text-sm leading-[23px] tracking-[0.02em] text-left'>Network</p>
+												<NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} />
 											</div>
-										</>
-								}
-
-							</div>
-						</div>
-					</Modal>
+											<div className='mt-6'>
+												<p className='m-0 p-0 text-[#485F7D] font-normal text-sm leading-[23px] tracking-[0.02em] text-left'>Node</p>
+												<RPCDropdown isSmallScreen={true} />
+											</div>
+											<div className={`${username? 'hidden': 'block'}`}>
+												<Divider className='my-8'/>
+												<div className='flex flex-col gap-y-4'>
+													<button
+														onClick={() => {
+															setOpen(false);
+															router.push('/signup');
+														}}
+														className='rounded-[6px] bg-white flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize h-10'
+													>
+														Sign Up
+													</button>
+													<button
+														onClick={() => {
+															setOpen(false);
+															router.push('/login');
+														}}
+														className='h-10 rounded-[6px] bg-[#E5007A] flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+													>
+														Log In
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</button>
+							: <button
+								onClick={() => {
+									setSidedrawer(false);
+									setOpen(true);
+								}}
+								className='outline-none flex md:hidden items-center justify-center w-8 h-8 p-[6px] rounded-[4px] bg-[rgba(210,216,224,0.2)] border-solid border border-[#D2D8E0]'
+							>
+								<Image
+									className='w-[20px] h-[20px] rounded-full'
+									src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
+									alt='Logo'
+								/>
+							</button>
+					}
 				</div>
 
 			</nav>

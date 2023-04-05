@@ -18,6 +18,7 @@ import messages from '~src/util/messages';
 
 import { ILatestActivityPostsListingResponse } from './on-chain-posts';
 import { firestore_db } from '~src/services/firebaseInit';
+import { chainProperties } from '~src/global/networkConstants';
 
 interface IGetLatestActivityAllPostsParams {
 	listingLimit?: string | string[] | number;
@@ -48,88 +49,109 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			variables.type_in = 'ReferendumV2';
 		}
 
-		const subsquidRes = await fetchSubsquid({
-			network,
-			query: GET_PROPOSALS_LISTING_BY_TYPE,
-			variables
-		});
+		let onChainPosts: {
+				title: any;
+				created_at: any;
+				description: any;
+				hash: any;
+				method: any;
+				origin: any;
+				parent_bounty_index: any;
+				post_id: any;
+				proposer: any;
+				status: any;
+				track_number: any;
+				type: any;
+		}[] = [];
 
-		const subsquidData = subsquidRes?.data;
-		const subsquidPosts: any[] = subsquidData?.proposals || [];
+		let onChainPostsCount = 0;
 
-		const parentBounties = new Set<number>();
-		const onChainPostsPromise = subsquidPosts?.map(async (subsquidPost) => {
-			const { createdAt, proposer, preimage, type, index, hash, method, origin, trackNumber, curator, description, proposalArguments, parentBountyIndex } = subsquidPost;
-			const postId = type === 'Tip'? hash: index;
-			const postDocRef = postsByTypeRef(network, getFirestoreProposalType(type) as ProposalType).doc(String(postId));
-			const postDoc = await postDocRef.get();
-			const newProposer = proposer || preimage?.proposer || curator;
-			if (!newProposer && (parentBountyIndex || parentBountyIndex === 0)) {
-				parentBounties.add(parentBountyIndex);
-			}
-			let status = subsquidPost.status;
-			if (status === 'DecisionDepositPlaced') {
-				const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
-				const decidingIndex = statuses.findIndex((status) => status && status.status === 'Deciding');
-				if (decidingIndex >= 0) {
-					const decisionDepositPlacedIndex = statuses.findIndex((status) => status && status.status === 'DecisionDepositPlaced');
-					if (decisionDepositPlacedIndex >=0 && decidingIndex < decisionDepositPlacedIndex) {
-						status = 'Deciding';
+		if (chainProperties[network]?.subsquidUrl) {
+
+			const subsquidRes = await fetchSubsquid({
+				network,
+				query: GET_PROPOSALS_LISTING_BY_TYPE,
+				variables
+			});
+
+			const subsquidData = subsquidRes?.data;
+			const subsquidPosts: any[] = subsquidData?.proposals || [];
+
+			const parentBounties = new Set<number>();
+			const onChainPostsPromise = subsquidPosts?.map(async (subsquidPost) => {
+				const { createdAt, proposer, preimage, type, index, hash, method, origin, trackNumber, curator, description, proposalArguments, parentBountyIndex } = subsquidPost;
+				const postId = type === 'Tip'? hash: index;
+				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(type) as ProposalType).doc(String(postId));
+				const postDoc = await postDocRef.get();
+				const newProposer = proposer || preimage?.proposer || curator;
+				if (!newProposer && (parentBountyIndex || parentBountyIndex === 0)) {
+					parentBounties.add(parentBountyIndex);
+				}
+				let status = subsquidPost.status;
+				if (status === 'DecisionDepositPlaced') {
+					const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
+					const decidingIndex = statuses.findIndex((status) => status && status.status === 'Deciding');
+					if (decidingIndex >= 0) {
+						const decisionDepositPlacedIndex = statuses.findIndex((status) => status && status.status === 'DecisionDepositPlaced');
+						if (decisionDepositPlacedIndex >=0 && decidingIndex < decisionDepositPlacedIndex) {
+							status = 'Deciding';
+						}
+					}
+				}
+				const onChainPost = {
+					created_at: createdAt,
+					description: description || (proposalArguments? proposalArguments?.description: null),
+					hash,
+					method: method || preimage?.method || (proposalArguments? proposalArguments?.method: proposalArguments?.method),
+					origin,
+					parent_bounty_index: parentBountyIndex,
+					post_id: postId,
+					proposer: newProposer,
+					status: status,
+					title: '',
+					track_number: trackNumber,
+					type
+				};
+				if (postDoc && postDoc.exists) {
+					const data = postDoc?.data();
+					return {
+						...onChainPost,
+						title: data?.title || null
+					};
+				}
+				return onChainPost;
+			});
+
+			onChainPosts = await Promise.all(onChainPostsPromise);
+			onChainPostsCount = Number(subsquidData?.proposalsConnection?.totalCount || 0);
+
+			if (parentBounties.size > 0) {
+				const subsquidRes = await fetchSubsquid({
+					network,
+					query: GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
+					variables: {
+						index_in: Array.from(parentBounties),
+						limit: parentBounties.size
+					}
+				});
+				if (subsquidRes && subsquidRes?.data) {
+					const subsquidData = subsquidRes?.data;
+					if (subsquidData.proposals && Array.isArray(subsquidData.proposals) && subsquidData.proposals.length > 0) {
+						const subsquidPosts: any[] = subsquidData?.proposals || [];
+						subsquidPosts.forEach((post) => {
+							onChainPosts = onChainPosts.map((onChainPost) => {
+								if (onChainPost.parent_bounty_index === post.index && post) {
+									onChainPost.proposer = post.proposer || post.curator || (post?.preimage? post?.preimage?.proposer: '');
+								}
+								return {
+									...onChainPost
+								};
+							});
+						});
 					}
 				}
 			}
-			const onChainPost = {
-				created_at: createdAt,
-				description: description || (proposalArguments? proposalArguments?.description: null),
-				hash,
-				method: method || preimage?.method || (proposalArguments? proposalArguments?.method: proposalArguments?.method),
-				origin,
-				parent_bounty_index: parentBountyIndex,
-				post_id: postId,
-				proposer: newProposer,
-				status: status,
-				title: '',
-				track_number: trackNumber,
-				type
-			};
-			if (postDoc && postDoc.exists) {
-				const data = postDoc?.data();
-				return {
-					...onChainPost,
-					title: data?.title || null
-				};
-			}
-			return onChainPost;
-		});
 
-		let onChainPosts = await Promise.all(onChainPostsPromise);
-		const onChainPostsCount = Number(subsquidData?.proposalsConnection?.totalCount || 0);
-
-		if (parentBounties.size > 0) {
-			const subsquidRes = await fetchSubsquid({
-				network,
-				query: GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
-				variables: {
-					index_in: Array.from(parentBounties),
-					limit: parentBounties.size
-				}
-			});
-			if (subsquidRes && subsquidRes?.data) {
-				const subsquidData = subsquidRes?.data;
-				if (subsquidData.proposals && Array.isArray(subsquidData.proposals) && subsquidData.proposals.length > 0) {
-					const subsquidPosts: any[] = subsquidData?.proposals || [];
-					subsquidPosts.forEach((post) => {
-						onChainPosts = onChainPosts.map((onChainPost) => {
-							if (onChainPost.parent_bounty_index === post.index && post) {
-								onChainPost.proposer = post.proposer || post.curator || (post?.preimage? post?.preimage?.proposer: '');
-							}
-							return {
-								...onChainPost
-							};
-						});
-					});
-				}
-			}
 		}
 
 		const discussionsPostsColRef = postsByTypeRef(network, ProposalType.DISCUSSIONS);

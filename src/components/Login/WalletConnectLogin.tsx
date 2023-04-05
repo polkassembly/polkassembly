@@ -18,6 +18,7 @@ import getNetwork from 'src/util/getNetwork';
 import styled from 'styled-components';
 
 import { ChallengeMessage, TokenType } from '~src/auth/types';
+import { Wallet } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
@@ -204,7 +205,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isMod
 				.then(async (result: any) => {
 					try {
 
-						const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressLogin', { address, signature: result });
+						const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressLogin', { address, signature: result, wallet: Wallet.WALLETCONNECT });
 						if(addressLoginError) {
 							console.log('Error in address login', addressLoginError);
 							setError(addressLoginError);
@@ -246,7 +247,8 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isMod
 
 											const { data: confirmData , error: confirmError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressSignupConfirm', {
 												address,
-												signature: result.result
+												signature: result.result,
+												wallet: Wallet.WALLETCONNECT
 											});
 
 											if (confirmError || !confirmData) {
@@ -256,6 +258,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isMod
 											}
 
 											if(confirmData.token) {
+												currentUser.loginWallet=Wallet.WALLETCONNECT;
 												handleTokenChange(confirmData.token, currentUser);
 												if(isModal){
 													setLoginOpen(false);
@@ -279,6 +282,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isMod
 						}
 						if (addressLoginData?.token) {
 							setWalletConnectProvider(provider);
+							currentUser.loginWallet=Wallet.WALLETCONNECT;
 							handleTokenChange(addressLoginData.token, currentUser);
 							if(isModal){
 								setLoginOpen(false);

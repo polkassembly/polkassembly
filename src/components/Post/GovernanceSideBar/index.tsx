@@ -10,7 +10,6 @@ import { Form } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
-import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
 import { Wallet } from 'src/types';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
@@ -18,6 +17,7 @@ import styled from 'styled-components';
 
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import { ProposalType, VoteType } from '~src/global/proposalType';
+import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from '~src/global/statuses';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 import ExtensionNotDetected from '../../ExtensionNotDetected';
@@ -65,7 +65,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const metaMaskError = useHandleMetaMask();
 
-	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
+	const canVote =  !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
 
 	const onAccountChange = (address: string) => {
 		setAddress(address);
@@ -179,14 +179,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			}
 		}
 
-		if(polakadotJSAccounts) {
+		if( polakadotJSAccounts) {
 			accounts = accounts.concat(polakadotJSAccounts);
 			polakadotJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polkadot-js';
 			});
 		}
 
-		if(['polymesh'].includes(network) && polywalletJSAccounts) {
+		if( polywalletJSAccounts) {
 			accounts = accounts.concat(polywalletJSAccounts);
 			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polywallet';
@@ -206,7 +206,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				accountsMapLocal[acc.address] = 'talisman';
 			});
 		}
-
 		if (accounts.length === 0) {
 			setAccountsNotFound(true);
 			return;
@@ -313,9 +312,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										<VoteReferendum
 											lastVote={lastVote}
 											setLastVote={setLastVote}
-											accounts={accounts}
-											address={address}
-											getAccounts={getAccounts}
 											onAccountChange={onAccountChange}
 											referendumId={onchainId  as number}
 											proposalType={proposalType}
@@ -374,9 +370,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										<VoteReferendum
 											lastVote={lastVote}
 											setLastVote={setLastVote}
-											accounts={accounts}
-											address={address}
-											getAccounts={getAccounts}
 											onAccountChange={onAccountChange}
 											referendumId={onchainId  as number}
 											proposalType={proposalType}

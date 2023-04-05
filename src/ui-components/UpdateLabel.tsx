@@ -15,11 +15,13 @@ interface Props{
 
 const UpdateLabel = ({ className, created_at, updated_at } : Props) => {
 	if (!updated_at) return null;
+	const defaultTime='a few minutes ago';
+	const title = dayjs.utc(updated_at, 'YYYY-MM-DDTHH:mm:ss.SSS').fromNow()!=='NaN years ago'?dayjs.utc(updated_at, 'YYYY-MM-DDTHH:mm:ss.SSS').fromNow():defaultTime;
 	return (
 		updated_at.toString() === created_at.toString()
 			? null :
 			<span className={className}>
-				<Tooltip color='#E5007A' title={dayjs.utc(updated_at, 'YYYY-MM-DDTHH:mm:ss.SSS').fromNow()}>
+				<Tooltip color='#E5007A' title={title}>
 					<span>(edited)</span>
 				</Tooltip>
 			</span>

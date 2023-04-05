@@ -233,7 +233,8 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 			image: '',
 			network,
 			signature,
-			title:  title || ''
+			title:  title || '',
+			wallet: injected.name || ''
 		});
 
 		if(fetchError) {

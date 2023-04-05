@@ -18,7 +18,7 @@ import { ProposalType } from '~src/global/proposalType';
 import firebaseAdmin from '~src/services/firebaseInit';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
-import { Network, Role } from '../types';
+import { Network, Role, Wallet } from '../types';
 import {
 	sendResetPasswordEmail,
 	sendUndoEmailChangeEmail,
@@ -128,7 +128,7 @@ class AuthService {
 		return newUser;
 	}
 
-	private async createAddress (network: Network, address: string, defaultAddress: boolean, user_id: number, is_erc20?: boolean): Promise<Address> {
+	private async createAddress (network: Network, address: string, defaultAddress: boolean, user_id: number, is_erc20?: boolean, wallet?:Wallet): Promise<Address> {
 
 		if(address.startsWith('0x')) {
 			address = address.toLowerCase();
@@ -142,7 +142,8 @@ class AuthService {
 			public_key: getPublicKey(address),
 			sign_message: '',
 			user_id,
-			verified: true
+			verified: true,
+			wallet: wallet || ''
 		};
 
 		await firebaseAdmin.firestore().collection('addresses').doc(address).set(newAddress);
@@ -254,15 +255,19 @@ class AuthService {
 		return signMessage;
 	}
 
-	public async AddressLogin (address: string, signature: string): Promise<AuthObjectType> {
+	public async AddressLogin (address: string, signature: string, wallet: Wallet): Promise<AuthObjectType> {
 		const signMessage = await redisGet(getAddressLoginKey(address));
 		if (!signMessage) throw apiErrorWithStatusCode(messages.ADDRESS_LOGIN_SIGN_MESSAGE_EXPIRED, 401);
 
-		const isValidSr = address.startsWith('0x') ? verifyMetamaskSignature(signMessage, address, signature) : verifySignature(signMessage, address, signature);
+		const isValidSr = address.startsWith('0x') && wallet === Wallet.METAMASK ? verifyMetamaskSignature(signMessage, address, signature) : verifySignature(signMessage, address, signature);
 
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_LOGIN_INVALID_SIGNATURE, 401);
 
 		const firestore = firebaseAdmin.firestore();
+
+		if(address.startsWith('0x')) {
+			address = address.toLowerCase();
+		}
 
 		const addressDoc = await firestore.collection('addresses').doc(address).get();
 		if (!addressDoc.exists) throw apiErrorWithStatusCode('Please sign up prior to logging in with a web3 address', 404);
@@ -327,11 +332,12 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async AddressSignupConfirm (network: Network, address: string, signature: string): Promise<AuthObjectType> {
+	public async AddressSignupConfirm (network: Network, address: string, signature: string, wallet: Wallet): Promise<AuthObjectType> {
 		const signMessage = await redisGet(getAddressSignupKey(address));
 		if (!signMessage) throw apiErrorWithStatusCode(messages.ADDRESS_SIGNUP_SIGN_MESSAGE_EXPIRED, 403);
 
-		const isValidSr = address.startsWith('0x') ? verifyMetamaskSignature(signMessage, address, signature) : verifySignature(signMessage, address, signature);
+		const isValidSr = address.startsWith('0x') && wallet === Wallet.METAMASK ? verifyMetamaskSignature(signMessage, address, signature) : verifySignature(signMessage, address, signature);
+
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_SIGNUP_INVALID_SIGNATURE, 400);
 
 		const addressDoc = await firebaseAdmin.firestore().collection('addresses').doc(address).get();
@@ -342,7 +348,7 @@ class AuthService {
 
 		const user = await this.createUser('', password, username, true, network);
 
-		await this.createAddress(network, address, true, user.id, address.startsWith('0x'));
+		await this.createAddress(network, address, true, user.id, address.startsWith('0x'), wallet);
 		await redisDel(getAddressSignupKey(address));
 
 		return {
@@ -412,7 +418,7 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async AddressLinkConfirm (token: string, address: string, signature: string): Promise<string> {
+	public async AddressLinkConfirm (token: string, address: string, signature: string, wallet: Wallet): Promise<string> {
 		const user = await this.GetUser(token);
 		if(!user) throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
 
@@ -427,7 +433,7 @@ class AuthService {
 
 		const addressToLink = addressToLinkDoc.data() as Address;
 
-		const isValidSr = address.startsWith('0x') ? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature) :verifySignature(addressToLink.sign_message, addressToLink.address, signature);
+		const isValidSr = address.startsWith('0x') && wallet === Wallet.METAMASK ? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature) : verifySignature(addressToLink.sign_message, addressToLink.address, signature);
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_LINKING_FAILED, 400);
 
 		// If this linked address is the first address to be linked. Then set it as default.
@@ -444,7 +450,8 @@ class AuthService {
 			default: setAsDefault,
 			is_erc20: address.startsWith('0x'),
 			public_key: getPublicKey(address),
-			verified: true
+			verified: true,
+			wallet: wallet
 		};
 
 		await firestore.collection('addresses').doc(address).set(newAddress);

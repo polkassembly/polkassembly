@@ -40,6 +40,16 @@ import ParachainsSVG from '~assets/sidebar/parachains.svg';
 import ReferendaSVG from '~assets/sidebar/referenda.svg';
 import TipsSVG from '~assets/sidebar/tips.svg';
 import TreasuryProposalsSVG from '~assets/sidebar/treasury_proposals.svg';
+import AgainstSVG from '~assets/icons/against.svg';
+import SlightlyAgainstSVG from '~assets/icons/slightly-against.svg';
+import NeutralSVG from '~assets/icons/neutral.svg';
+import SlightlyForSVG from '~assets/icons/slightly-for.svg';
+import ForSVG from '~assets/icons/for.svg';
+import AgainstUnfilledSVG from '~assets/icons/against-unfilled.svg';
+import SlightlyAgainstUnfilledSVG from '~assets/icons/slightly-against-unfilled.svg';
+import NeutralUnfilledSVG from '~assets/icons/neutral-unfilled.svg';
+import SlightlyForUnfilledSVG from '~assets/icons/slightly-for-unfilled.svg';
+import ForUnfilleSVG from '~assets/icons/for-unfilled.svg';
 
 export const OverviewIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={OverviewSVG} {...props} />
@@ -172,7 +182,36 @@ export const TreasuryGroupIcon = (props: Partial<CustomIconComponentProps>) => (
 export const FellowshipGroupIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={FellowshipGroupSVG} {...props} />
 );
-
 export const PreimagesIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={PreimagesSVG} {...props} />
+);
+export const AgainstIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={AgainstSVG} {...props} />
+);
+export const AgainstUnfilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={AgainstUnfilledSVG} {...props} />
+);
+export const SlightlyAgainstIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SlightlyAgainstSVG} {...props} />
+);
+export const SlightlyAgainstUnfilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SlightlyAgainstUnfilledSVG} {...props} />
+);
+export const NeutralIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={NeutralSVG} {...props} />
+);
+export const NeutralUnfilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={NeutralUnfilledSVG} {...props} />
+);
+export const SlightlyForIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SlightlyForSVG} {...props} />
+);
+export const SlightlyForUnfilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SlightlyForUnfilledSVG} {...props} />
+);
+export const ForIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ForSVG} {...props} />
+);
+export const ForUnfilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ForUnfilleSVG} {...props} />
 );

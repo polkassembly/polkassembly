@@ -26,6 +26,7 @@ import { PostOrigin } from '~src/types';
 import Footer from './Footer';
 import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
+import { chainProperties } from '~src/global/networkConstants';
 
 const { Content, Sider } = Layout;
 
@@ -141,29 +142,29 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
 			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white' />)
 		],
-		democracyItems: [
+		democracyItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
 			getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='text-white' />)
-		],
-		councilItems: [
+		] : [],
+		councilItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Motions', '/motions', <MotionsIcon className='text-white' />),
 			getSiderMenuItem('Members', '/council', <MembersIcon className='text-white' />)
-		],
-		treasuryItems: [
+		] : [],
+		treasuryItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
 			getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
 			getSiderMenuItem('Child Bounties', '/child_bounties', <BountiesIcon className='text-white' />),
 			getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
-		],
-		techCommItems: [
+		] : [],
+		techCommItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/tech-comm-proposals', <DemocracyProposalsIcon className='text-white' />)
-		],
-		allianceItems: [
+		] : [],
+		allianceItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Members', '/alliance-members', <MembersIcon className='text-white' />),
 			// getSiderMenuItem('Motions', '/alliance-motions', <MotionsIcon className='text-white' />),
 			getSiderMenuItem('Announcements', '/alliance-announcements', <NewsIcon className='text-white' />),
 			getSiderMenuItem('Unscrupulous', '/alliance-unscrupulous', <ReferendaIcon className='text-white' />)
-		]
+		] : []
 	};
 
 	if (isGrantsSupported(network)) {
@@ -178,32 +179,41 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let items: MenuProps['items'] = [
-		...gov1Items.overviewItems,
-
-		getSiderMenuItem('Democracy', 'democracy_group', null, [
-			...gov1Items.democracyItems
-		]),
-
-		getSiderMenuItem('Treasury', 'treasury_group', null, [
-			...gov1Items.treasuryItems
-		]),
-
-		getSiderMenuItem('Council', 'council_group', null, [
-			...gov1Items.councilItems
-		]),
-
-		getSiderMenuItem('Tech. Comm.', 'tech_comm_group', null, [
-			...gov1Items.techCommItems
-		])
+		...gov1Items.overviewItems
 	];
+
+	if(chainProperties[network]?.subsquidUrl) {
+		items = items.concat([
+			getSiderMenuItem('Democracy', 'democracy_group', null, [
+				...gov1Items.democracyItems
+			]),
+
+			getSiderMenuItem('Treasury', 'treasury_group', null, [
+				...gov1Items.treasuryItems
+			]),
+
+			getSiderMenuItem('Council', 'council_group', null, [
+				...gov1Items.councilItems
+			]),
+
+			getSiderMenuItem('Tech. Comm.', 'tech_comm_group', null, [
+				...gov1Items.techCommItems
+			])
+		]);
+	}
 
 	let collapsedItems: MenuProps['items'] = [
-		...gov1Items.overviewItems,
-		...gov1Items.democracyItems,
-		...gov1Items.treasuryItems,
-		...gov1Items.councilItems,
-		...gov1Items.techCommItems
+		...gov1Items.overviewItems
 	];
+
+	if(chainProperties[network]?.subsquidUrl) {
+		collapsedItems = collapsedItems.concat([
+			...gov1Items.democracyItems,
+			...gov1Items.treasuryItems,
+			...gov1Items.councilItems,
+			...gov1Items.techCommItems
+		]);
+	}
 
 	if(network === 'collectives'){
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [

@@ -5,6 +5,7 @@
 /* eslint-disable sort-keys */
 import acalaLogo from '~assets/parachain-logos/acala-logo.jpg';
 import acuityLogo from '~assets/parachain-logos/acuity-logo.jpg';
+import integriteeLogo from '~assets/parachain-logos/integritee-logo.png';
 import altairLogo from '~assets/parachain-logos/altair-logo.jpeg';
 import amplitudeLogo from '~assets/parachain-logos/amplitude-logo.png';
 import astarLogo from '~assets/parachain-logos/astar-logo.png';
@@ -16,7 +17,6 @@ import centrifugeLogo from '~assets/parachain-logos/centrifuge-logo.png';
 import composableFinanceLogo from '~assets/parachain-logos/composable-finance-logo.png';
 import crustLogo from '~assets/parachain-logos/crust-logo.png';
 import equilibriumLogo from '~assets/parachain-logos/equilibrium-logo.png';
-import frequencyRococoLogo from '~assets/parachain-logos/frequency-logo.png';
 import frequencyLogo from '~assets/parachain-logos/frequency-logo.png';
 import gearLogo from '~assets/parachain-logos/gear-logo.jpg';
 import genshiroLogo from '~assets/parachain-logos/genshiro.png';
@@ -68,13 +68,13 @@ export const network = {
 	CRUST: 'crust',
 	CRUSTSHADOW: 'crustshadow',
 	EQUILIBRIUM: 'equilibrium',
-	FREQUENCYROCOCO: 'frequency-rococo',
 	FREQUENCY: 'frequency',
 	GEAR: 'gear',
 	GENSHIRO: 'genshiro',
 	GMORDIE: 'gmordie',
 	HEIKO: 'heiko',
 	HYDRADX: 'hydradx',
+	INTEGRITEE: 'integritee',
 	KARURA: 'karura',
 	KHALA: 'khala',
 	KILT: 'kilt',
@@ -145,6 +145,7 @@ export const tokenSymbol = {
 	TDFY: 'TDFY',
 	TUR: 'TUR',
 	TOKEN: 'TOKEN',
+	TEER: 'TEER',
 	PICA: 'PICA',
 	POLYX: 'POLYX',
 	WND: 'WND',
@@ -474,22 +475,6 @@ export const chainProperties: types.ChainPropType = {
 		externalLinks: '',
 		rpcEndpoints: []
 	},
-	[network.FREQUENCYROCOCO]: {
-		blockTime: 12000,
-		category: 'test',
-		chainId: 0,
-		logo: frequencyRococoLogo,
-		rpcEndpoint: 'wss://rpc.rococo.frequency.xyz/',
-		ss58Format: 42,
-		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.UNIT,
-		subsquidUrl: '',
-		treasuryProposalBondPercent: null,
-		treasuryProposalMinBond: null,
-		treasuryProposalMaxBond: null,
-		externalLinks: '',
-		rpcEndpoints: []
-	},
 	[network.GEAR]: {
 		blockTime: 1000,
 		category: 'solo',
@@ -568,6 +553,22 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '10000',
 		treasuryProposalMaxBond:'50000',
 		externalLinks: 'https://hydradx.api.subscan.io',
+		rpcEndpoints: []
+	},
+	[network.INTEGRITEE]: {
+		blockTime: 12000,
+		category: 'integritee',
+		chainId: 0,
+		logo: integriteeLogo,
+		rpcEndpoint: 'wss://polkadot.api.integritee.network',
+		ss58Format: 13,
+		subsquidUrl: '',
+		tokenDecimals: 12,
+		tokenSymbol: tokenSymbol.TEER,
+		treasuryProposalBondPercent: '3%',
+		treasuryProposalMinBond: '10000',
+		treasuryProposalMaxBond:'50000',
+		externalLinks: 'https://integritee.subscan.io/',
 		rpcEndpoints: []
 	},
 	[network.KARURA]: {

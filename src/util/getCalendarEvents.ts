@@ -348,12 +348,11 @@ export async function fetchCouncilElection(api: ApiPromise, network: string): Pr
 		api.consts.phragmenElection,
 		api.consts.electionsPhragmen
 	]);
-	const response = responses.find((r) => r.status === 'fulfilled') as PromiseFulfilledResult<QueryableModuleConsts>;
+	const response = responses.find((r) => r.status === 'fulfilled' && r.value) as PromiseFulfilledResult<QueryableModuleConsts>;
 	if (!response) {
 		return [];
 	}
 
-	// TODO: fix response.value is undefined
 	const duration = response.value?.termDuration as u32;
 
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);

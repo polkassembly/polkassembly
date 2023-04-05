@@ -4,7 +4,7 @@
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-import { Checkbox, MenuProps, Spin } from 'antd';
+import { Checkbox, MenuProps, Skeleton, Spin } from 'antd';
 import {  Badge, Button, Col, Divider, Dropdown, Row, Space } from 'antd';
 import { dayjs } from 'dayjs-init';
 import { GetServerSideProps } from 'next';
@@ -30,7 +30,7 @@ import CustomToolbar from '../../src/components/Calendar/CustomToolbar';
 import CustomToolbarMini from '../../src/components/Calendar/CustomToolbarMini';
 import CustomWeekHeader, { TimeGutterHeader } from '../../src/components/Calendar/CustomWeekHeader';
 import NetworkSelect from '../../src/components/Calendar/NetworkSelect';
-import { fetchAuctionInfo, fetchDemocracyDispatches, fetchDemocracyLaunch, fetchParachainLease, fetchScheduled, fetchSocietyChallenge, fetchSocietyRotate, fetchStakingInfo, fetchTreasurySpend } from '~src/util/getCalendarEvents';
+import { fetchAuctionInfo, fetchCouncilElection, fetchCouncilMotions, fetchDemocracyDispatches, fetchDemocracyLaunch, fetchParachainLease, fetchScheduled, fetchSocietyChallenge, fetchSocietyRotate, fetchStakingInfo, fetchTreasurySpend } from '~src/util/getCalendarEvents';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 
 interface ICalendarViewProps {
@@ -98,6 +98,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 	useEffect(() => {
 		if(!api || !apiReady) return;
 
+		// TODO: use Promise.allSettled instead
 		(async () => {
 			setCategoriesLoading(true);
 			const eventsArr: any[] = [];
@@ -123,13 +124,35 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 				});
 			}
 
-			// TODO: fix council
 			if(selectedCategories.includes('Council')) {
-				// const councilMotionEvents = await fetchCouncilMotions(api, network);
-				// console.log('fetchCouncilMotions ', councilMotionEvents);
+				const councilMotionEvents = await fetchCouncilMotions(api, network);
 
-				// const councilElectionEvents = await fetchCouncilElection(api, network);
-				// console.log('fetchCouncilElection ', councilElectionEvents);
+				councilMotionEvents.forEach((eventObj, i) => {
+					eventsArr.push({
+						content: `Council Motion ${eventObj?.data?.hash}`,
+						end_time: dayjs(eventObj.endDate).toDate(),
+						id: `councilMotionEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.endDate).toDate(),
+						status: 'approved',
+						title: 'Council Motion',
+						url: ''
+					});
+				});
+
+				const councilElectionEvents = await fetchCouncilElection(api, network);
+				councilElectionEvents.forEach((eventObj, i) => {
+					eventsArr.push({
+						content: `Election of new council candidates period ${eventObj?.data?.electionRound}`,
+						end_time: dayjs(eventObj.endDate).toDate(),
+						id: `councilElectionEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.endDate).toDate(),
+						status: 'approved',
+						title: 'Start New Council Election',
+						url: ''
+					});
+				});
 			}
 
 			if(selectedCategories.includes('Schedule')) {
@@ -465,7 +488,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 						{!small && width > 992 &&
 						<Col span={8} id='calendar-left-panel' className='calendar-left-panel'>
 							<div className='p-5 pl-2 pt-0'>
-								<p className='text-sidebarBlue font-medium text-md text-center mb-2'>Current Time: { dayjs(utcDate).format('D-MM-YY | h:mm a UTC') } </p>
+								<p className='text-sidebarBlue font-medium text-md text-center mb-2'>Current UTC Time: { dayjs(utcDate).format('D-MM-YY | h:mm a UTC') } </p>
 
 								<Spin spinning={categoriesLoading} indicator={<></>}>
 									<Calendar
@@ -498,68 +521,75 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 								</Space>
 
 								<div className='font-medium text-md text-sidebarBlue mt-8 mb-3'>Categories: </div>
-								<Spin spinning={categoriesLoading}>
-									<Checkbox.Group disabled={categoriesLoading} className='flex-wrap' defaultValue={initCategories} onChange={(checkedValues) => setSelectedCategories(checkedValues)}>
-										<Row>
-											{
-												categoryOptions.map(item => (
-													<Col key={item.value} span={8}>
-														<Checkbox value={item.value}>{item.label}</Checkbox>
-													</Col>
-												))
-											}
-										</Row>
-									</Checkbox.Group>
-								</Spin>
+								<Checkbox.Group disabled={categoriesLoading} className='flex-wrap' defaultValue={initCategories} onChange={(checkedValues) => setSelectedCategories(checkedValues)}>
+									<Row>
+										{
+											categoryOptions.map(item => (
+												<Col key={item.value} span={8}>
+													<Checkbox value={item.value}>{item.label}</Checkbox>
+												</Col>
+											))
+										}
+									</Row>
+								</Checkbox.Group>
 							</div>
 						</Col>
 						}
 
-						<Col span={!small && width > 992 ? 16 : 24} className=' h-full' >
-							<Spin spinning={categoriesLoading} indicator={<></>}>
-								<Calendar
-									className={`events-calendar ${small || width < 768 ? 'small' : '' }`}
-									localizer={localizer}
-									date={selectedDate}
-									view={selectedView}
-									events={calendarEvents}
-									startAccessor='start_time'
-									endAccessor='end_time'
-									popup={false}
-									components={{
-										event: Event,
-										eventWrapper: EventWrapperComponent,
-										timeGutterHeader: () => <TimeGutterHeader localizer={localizer} date={selectedDate} selectedView={selectedView} />,
-										toolbar: (props:any) => <CustomToolbar
-											{...props}
-											small={small}
-											width={width}
-											selectedNetwork={selectedNetwork}
-											setSelectedNetwork={setSelectedNetwork}
-											setSidebarCreateEvent={setSidebarCreateEvent}
-											isLoggedIn={Boolean(id)}
-											leftPanelWidth={calLeftPanelWidth}
-											setMiniCalendarToToday={setMiniCalendarToToday}
-										/>,
-										week: {
-											header: (props:any) => <CustomWeekHeader {...props} small={small || width < 768} />
-										}
-									}}
-									formats={{
-										timeGutterFormat: 'h A'
-									}}
-									onNavigate={setSelectedDate}
-									onView={setSelectedView}
-									views={{
-										agenda: true,
-										day: true,
-										month: true,
-										week: true,
-										work_week: false
-									}}
-								/>
+						{<Col span={!small && width > 992 ? 16 : 24} className=' h-full' >
+							<Spin spinning={categoriesLoading}>
+								{!categoriesLoading ? // this is needed to render (+3 more) without changing views
+									<Calendar
+										className={`events-calendar ${small || width < 768 ? 'small' : '' }`}
+										localizer={localizer}
+										date={selectedDate}
+										view={selectedView}
+										events={calendarEvents}
+										startAccessor='start_time'
+										endAccessor='end_time'
+										popup={false}
+										components={{
+											event: Event,
+											eventWrapper: EventWrapperComponent,
+											timeGutterHeader: () => <TimeGutterHeader localizer={localizer} date={selectedDate} selectedView={selectedView} />,
+											toolbar: (props:any) => <CustomToolbar
+												{...props}
+												small={small}
+												width={width}
+												selectedNetwork={selectedNetwork}
+												setSelectedNetwork={setSelectedNetwork}
+												setSidebarCreateEvent={setSidebarCreateEvent}
+												isLoggedIn={Boolean(id)}
+												leftPanelWidth={calLeftPanelWidth}
+												setMiniCalendarToToday={setMiniCalendarToToday}
+											/>,
+											week: {
+												header: (props:any) => <CustomWeekHeader {...props} small={small || width < 768} />
+											}
+										}}
+										formats={{
+											timeGutterFormat: 'h A'
+										}}
+										onNavigate={setSelectedDate}
+										onView={setSelectedView}
+										views={{
+											agenda: true,
+											day: true,
+											month: true,
+											week: true,
+											work_week: false
+										}}
+									/> :
+									<div className="flex flex-col gap-y-6 px-4 max-h-screen overflow-y-hidden">
+										<Skeleton />
+										<Skeleton />
+										<Skeleton />
+										<Skeleton />
+										<Skeleton />
+									</div>
+								}
 							</Spin>
-						</Col>
+						</Col>}
 					</Row>
 				</div>
 			</div>

@@ -313,17 +313,17 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							}
 						>
 							<ContentForm value={content} className='mb-0' />
-							<div className='bg-gray-100 mb-[10px] p-2 rounded-e-md mt-[-25px] h-[80px] background'>
+							<div className='bg-gray-100 mb-[10px] p-2 rounded-e-md mt-[-25px] h-[70px] background'>
 								<div className='flex text-[12px] gap-[2px]'>Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5></div>
 								<div className='flex items-center text-transparent'>
-									<div className='flex justify-between items-center gap-x-2'>
-										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(1)}>{sentiment===1?<AgainstIcon />:<AgainstUnfilledIcon />}</div>
-										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(2)}>{sentiment===2?<SlightlyAgainstIcon/>:<SlightlyAgainstUnfilledIcon />}</div>
-										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(3)}>{sentiment===3?<NeutralIcon />:<NeutralUnfilledIcon />}</div>
-										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(4)}>{sentiment===4?<SlightlyForIcon />:<SlightlyForUnfilledIcon  />}</div>
-										<div className='cursor-pointer text-3xl' onClick={() => setSentiment(5)}>{sentiment===5?<ForIcon  />:<ForUnfilledIcon  />} </div>
+									<div className='flex justify-between items-center gap-[15px] border-solid'>
+										<div className='cursor-pointer text-lg flex justify-center items-center' onClick={() => setSentiment(1)}>{sentiment===1?<AgainstIcon />:<AgainstUnfilledIcon />}</div>
+										<div className='cursor-pointer text-lg flex justify-center items-center' onClick={() => setSentiment(2)}>{sentiment===2?<SlightlyAgainstIcon/>:<SlightlyAgainstUnfilledIcon />}</div>
+										<div className='cursor-pointer text-lg flex justify-center items-center' onClick={() => setSentiment(3)}>{sentiment===3?<NeutralIcon />:<NeutralUnfilledIcon />}</div>
+										<div className='cursor-pointer text-lg  flex justify-center items-center' onClick={() => setSentiment(4)}>{sentiment===4?<SlightlyForIcon />:<SlightlyForUnfilledIcon  />}</div>
+										<div className='cursor-pointer text-lg flex justify-center items-center' onClick={() => setSentiment(5)}>{sentiment===5?<ForIcon className='text-[20px]' />:<ForUnfilledIcon  />} </div>
 									</div>
-									<div className='flex w-[100%] items-center justify-end mt-[-7px]'>
+									<div className='flex w-[100%] items-center justify-end '>
 										<Button htmlType="button" onClick={handleCancel}  className='mr-2 flex items-center h-[26px]'>
 											<CloseOutlined />
 										</Button>
@@ -338,7 +338,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						<>
 							<Markdown md={content} className='py-2 px-2 md:px-4 bg-comment_bg rounded-b-md text-sm' />
 
-							<div className='flex items-center flex-row bg-white flex-wrap gap-[10px]'>
+							<div className='flex items-center flex-row bg-white flex-wrap gap-[1px]'>
 								<CommentReactionBar
 									className='reactions mr-0'
 									commentId={commentId}
@@ -346,7 +346,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								/>
 								{
 									id &&
-										<Button disabled={props.disableEdit} className={'text-pink_primary flex items-center justify-start shadow-none text-xs ml-[-15px] border-none w-[85px] mt-[-1px]' } onClick={toggleReply}>
+										<Button disabled={props.disableEdit} className={'text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1' } onClick={toggleReply}>
 											<ReplyIcon className='mr-1'/> Reply
 										</Button>
 								}
@@ -357,7 +357,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									placement='bottomRight'
 									menu={{ items }}
 								>
-									<ThreeDotsIcon className='ml-[-10px] mt-[-2px] hover:bg-pink-100 rounded-xl'/>
+									<ThreeDotsIcon className=' mt-[-1px] ml-[6px] hover:bg-pink-100 rounded-xl'/>
 								</Dropdown>
 							</div>
 

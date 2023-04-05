@@ -351,7 +351,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 										</Button>
 								}
 								<Dropdown
-									disabled={isReplying}
 									className={`${poppins.variable} ${poppins.className} flex cursor-pointer dropdown`}
 									overlayClassName='sentiment-dropdown'
 									placement='bottomRight'

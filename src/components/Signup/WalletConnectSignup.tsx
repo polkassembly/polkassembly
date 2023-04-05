@@ -24,7 +24,6 @@ import { handleTokenChange } from '../../services/auth.service';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
 import FilteredError from '../../ui-components/FilteredError';
 import getNetwork from '../../util/getNetwork';
-import { Wallet } from '~src/types';
 
 const NETWORK = getNetwork();
 

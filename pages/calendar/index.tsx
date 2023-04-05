@@ -4,7 +4,7 @@
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-import type { MenuProps } from 'antd';
+import { Checkbox, MenuProps, Skeleton, Spin } from 'antd';
 import {  Badge, Button, Col, Divider, Dropdown, Row, Space } from 'antd';
 import { dayjs } from 'dayjs-init';
 import { GetServerSideProps } from 'next';
@@ -21,7 +21,7 @@ import styled from 'styled-components';
 
 import chainLink from '~assets/chain-link.png';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
+import { useApiContext, useNetworkContext } from '~src/context';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -30,6 +30,8 @@ import CustomToolbar from '../../src/components/Calendar/CustomToolbar';
 import CustomToolbarMini from '../../src/components/Calendar/CustomToolbarMini';
 import CustomWeekHeader, { TimeGutterHeader } from '../../src/components/Calendar/CustomWeekHeader';
 import NetworkSelect from '../../src/components/Calendar/NetworkSelect';
+import { fetchAuctionInfo, fetchCouncilElection, fetchCouncilMotions, fetchDemocracyDispatches, fetchDemocracyLaunch, fetchParachainLease, fetchScheduled, fetchSocietyChallenge, fetchSocietyRotate, fetchStakingInfo, fetchTreasurySpend } from '~src/util/getCalendarEvents';
+import { CheckboxValueType } from 'antd/es/checkbox/Group';
 
 interface ICalendarViewProps {
 	className?: string;
@@ -52,11 +54,36 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	};
 };
 
-const CalendarView: FC<ICalendarViewProps> = (props) => {
-	const { className, small = false, emitCalendarEvents = undefined, network } = props;
+const categoryOptions = [
+	{ label: 'Staking', value: 'Staking' },
+	{ label: 'Council', value: 'Council' },
+	{ label: 'Schedule', value: 'Schedule' },
+	{ label: 'Treasury', value: 'Treasury' },
+	{ label: 'Democracy', value: 'Democracy' },
+	{ label: 'Society', value: 'Society' },
+	{ label: 'Parachains', value: 'Parachains' }
+];
+
+const initCategories = ['Staking', 'Council', 'Schedule', 'Treasury', 'Democracy', 'Society', 'Parachains'];
+
+const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCalendarEvents = undefined, network }) => {
+	const { api, apiReady } = useApiContext();
 	const { setNetwork } = useNetworkContext();
 	const [width, setWidth] = useState(0);
 	const [calLeftPanelWidth, setCalLeftPanelWidth] = useState<any>(0);
+	const [error, setError] = useState('');
+	const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
+	const [selectedView, setSelectedView] = useState<View>('month');
+	const [selectedNetwork, setSelectedNetwork] = useState<string>(network);
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const [miniCalSelectedDate, setMiniCalSelectedDate] = useState<Date>(new Date());
+	const [selectedCategories, setSelectedCategories] = useState<CheckboxValueType[]>(initCategories);
+	const [sidebarEvent, setSidebarEvent] = useState<any>();
+	const [sidebarCreateEvent, setSidebarCreateEvent] = useState<boolean>(false);
+	const [categoriesLoading, setCategoriesLoading] = useState(true);
+
+	const [queryApprovalStatus, setQueryApprovalStatus] = useState<string>(approvalStatus.APPROVED);
+	const [eventApprovalStatus, setEventApprovalStatus] = useState<string>(queryApprovalStatus);
 
 	useEffect(() => {
 		setNetwork(network);
@@ -67,6 +94,201 @@ const CalendarView: FC<ICalendarViewProps> = (props) => {
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		if(!api || !apiReady) return;
+
+		// TODO: use Promise.allSettled instead
+		(async () => {
+			setCategoriesLoading(true);
+			const eventsArr: any[] = [];
+
+			if(selectedCategories.includes('Staking')) {
+				const stakingInfoEvents = await fetchStakingInfo(api, network);
+				stakingInfoEvents.forEach((eventObj, i) => {
+					const type = eventObj?.type?.replace(/([A-Z])/g, ' $1');
+					const title = type.charAt(0).toUpperCase() + type.slice(1);
+
+					eventsArr.push({
+						content: eventObj.type === 'stakingEpoch' ? `Start of a new staking session ${eventObj?.data?.index}`
+							: eventObj.type === 'stakingEra' ? `Start of a new staking era ${eventObj?.data?.index}`
+								: `${eventObj.type} ${eventObj?.data?.index}`,
+						end_time: dayjs(eventObj.startDate).toDate(),
+						id: `stakingInfoEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.startDate).toDate(),
+						status: 'approved',
+						title,
+						url: ''
+					});
+				});
+			}
+
+			if(selectedCategories.includes('Council')) {
+				const councilMotionEvents = await fetchCouncilMotions(api, network);
+
+				councilMotionEvents.forEach((eventObj, i) => {
+					eventsArr.push({
+						content: `Council Motion ${eventObj?.data?.hash}`,
+						end_time: dayjs(eventObj.endDate).toDate(),
+						id: `councilMotionEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.endDate).toDate(),
+						status: 'approved',
+						title: 'Council Motion',
+						url: ''
+					});
+				});
+
+				const councilElectionEvents = await fetchCouncilElection(api, network);
+				councilElectionEvents.forEach((eventObj, i) => {
+					eventsArr.push({
+						content: `Election of new council candidates period ${eventObj?.data?.electionRound}`,
+						end_time: dayjs(eventObj.endDate).toDate(),
+						id: `councilElectionEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.endDate).toDate(),
+						status: 'approved',
+						title: 'Start New Council Election',
+						url: ''
+					});
+				});
+			}
+
+			if(selectedCategories.includes('Schedule')) {
+				const scheduledEvents = await fetchScheduled(api, network);
+
+				scheduledEvents.forEach((eventObj, i) => {
+					eventsArr.push({
+						content: eventObj?.data?.id ? `Execute named scheduled task ${eventObj?.data?.id}` : 'Execute anonymous scheduled task',
+						end_time: dayjs(eventObj.endDate).toDate(),
+						id: `scheduledEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.endDate).toDate(),
+						status: 'approved',
+						title: 'Scheduled Task',
+						url: ''
+					});
+				});
+			}
+
+			if(selectedCategories.includes('Treasury')) {
+				const treasurySpendEvents = await fetchTreasurySpend(api, network);
+
+				treasurySpendEvents.forEach((eventObj, i) => {
+					eventsArr.push({
+						content: `Start of next spend period ${eventObj?.data?.spendingPeriod}`,
+						end_time: dayjs(eventObj.endDate).toDate(),
+						id: `treasurySpendEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.endDate).toDate(),
+						status: 'approved',
+						title : 'Start Spend Period',
+						url: ''
+					});
+				});
+			}
+
+			if(selectedCategories.includes('Democracy')) {
+				const democracyDispatchEvents = await fetchDemocracyDispatches(api, network);
+
+				democracyDispatchEvents.forEach((eventObj, i) => {
+					eventsArr.push({
+						content: `Democracy Dispatch ${eventObj?.data?.index}`,
+						end_time: dayjs(eventObj.endDate).toDate(),
+						id: `democracyDispatchEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.endDate).toDate(),
+						status: 'approved',
+						title : 'Democracy Dispatch',
+						url: ''
+					});
+				});
+
+				const democracyLaunchEvents = await fetchDemocracyLaunch(api, network);
+
+				democracyLaunchEvents.forEach((eventObj, i) => {
+					eventsArr.push({
+						content: `Start of next referendum voting period ${eventObj?.data?.launchPeriod}`,
+						end_time: dayjs(eventObj.endDate).toDate(),
+						id: `democracyLaunchEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.endDate).toDate(),
+						status: 'approved',
+						title : 'Start Referendum Voting Period',
+						url: ''
+					});
+				});
+			}
+
+			if(selectedCategories.includes('Society')) {
+				const societyRotateEvents = await fetchSocietyRotate(api, network);
+
+				societyRotateEvents.forEach((eventObj, i) => {
+					eventsArr.push({
+						content: `Acceptance of new members and bids ${eventObj?.data?.rotateRound}`,
+						end_time: dayjs(eventObj.endDate).toDate(),
+						id: `societyRotateEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.endDate).toDate(),
+						status: 'approved',
+						title : 'New Members & Bids',
+						url: ''
+					});
+				});
+
+				const societyChallengeEvents = await fetchSocietyChallenge(api, network);
+				societyChallengeEvents.forEach((eventObj, i) => {
+					eventsArr.push({
+						content: `Start of next membership challenge period ${eventObj?.data?.challengePeriod}`,
+						end_time: dayjs(eventObj.endDate).toDate(),
+						id: `societyChallengeEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.endDate).toDate(),
+						status: 'approved',
+						title : 'Start Membership Challenge Period',
+						url: ''
+					});
+				});
+			}
+
+			if(selectedCategories.includes('Parachains')) {
+				const auctionInfoEvents = await fetchAuctionInfo(api, network);
+
+				auctionInfoEvents.forEach((eventObj, i) => {
+					eventsArr.push({
+						content: `End of the current parachain auction ${eventObj?.data?.leasePeriod}`,
+						end_time: dayjs(eventObj.endDate).toDate(),
+						id: `auctionInfoEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.endDate).toDate(),
+						status: 'approved',
+						title : 'End Parachain Auction',
+						url: ''
+					});
+				});
+
+				const parachainLeaseEvents = await fetchParachainLease(api, network);
+
+				parachainLeaseEvents.forEach((eventObj, i) => {
+					eventsArr.push({
+						content: `Start of the next parachain lease period  ${eventObj?.data?.leasePeriod}`,
+						end_time: dayjs(eventObj.endDate).toDate(),
+						id: `parachainLeaseEvent_${i}`,
+						location: '',
+						start_time: dayjs(eventObj.endDate).toDate(),
+						status: 'approved',
+						title : 'Start Parachain Lease Period',
+						url: ''
+					});
+				});
+			}
+
+			setCalendarEvents(eventsArr);
+			setCategoriesLoading(false);
+		})();
+
+	}, [api, apiReady, network, selectedCategories]);
 
 	// calculate #route-wrapper height with margin for sidebar.
 
@@ -79,19 +301,6 @@ const CalendarView: FC<ICalendarViewProps> = (props) => {
 	if(allowed_roles && allowed_roles?.length > 0 && allowed_roles.includes(ALLOWED_ROLE)) {
 		accessible = true;
 	}
-
-	const [error, setError] = useState('');
-	const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
-	const [selectedView, setSelectedView] = useState<View>('month');
-	const [selectedNetwork, setSelectedNetwork] = useState<string>(network);
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	const [miniCalSelectedDate, setMiniCalSelectedDate] = useState<Date>(new Date());
-	const [sidebarEvent, setSidebarEvent] = useState<any>();
-	const [sidebarCreateEvent, setSidebarCreateEvent] = useState<boolean>(false);
-
-	const [queryApprovalStatus, setQueryApprovalStatus] = useState<string>(approvalStatus.APPROVED);
-
-	const [eventApprovalStatus, setEventApprovalStatus] = useState<string>(queryApprovalStatus);
 
 	const approvalStatusDropdown : MenuProps['items'] = [
 		{
@@ -119,7 +328,7 @@ const CalendarView: FC<ICalendarViewProps> = (props) => {
 		}
 
 		if(data) {
-			const eventsArr:any[] = [];
+			const eventsArr:any[] = calendarEvents;
 			const eventDatesArr:string[] = [];
 
 			data.forEach(eventObj => {
@@ -145,6 +354,7 @@ const CalendarView: FC<ICalendarViewProps> = (props) => {
 				emitCalendarEvents(eventsArr);
 			}
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [emitCalendarEvents, queryApprovalStatus]);
 
 	useEffect(() => {
@@ -278,28 +488,30 @@ const CalendarView: FC<ICalendarViewProps> = (props) => {
 						{!small && width > 992 &&
 						<Col span={8} id='calendar-left-panel' className='calendar-left-panel'>
 							<div className='p-5 pl-2 pt-0'>
-								<p className='text-sidebarBlue font-medium text-md text-center mb-2'>Current Time: { dayjs(utcDate).format('D-MM-YY | h:mm a UTC') } </p>
+								<p className='text-sidebarBlue font-medium text-md text-center mb-2'>Current UTC Time: { dayjs(utcDate).format('D-MM-YY | h:mm a UTC') } </p>
 
-								<Calendar
-									className='events-calendar-mini'
-									date={miniCalSelectedDate}
-									onNavigate={setMiniCalSelectedDate}
-									localizer={localizer}
-									events={calendarEvents}
-									startAccessor="start_time"
-									endAccessor="end_time"
-									components={{
-										event: () => null,
-										eventWrapper: EventWrapperComponent,
-										month: {
-											dateHeader: MonthDateComponentHeader
-										},
-										toolbar: (props:any) => <CustomToolbarMini
-											{...props}
-											leftPanelWidth={calLeftPanelWidth}
-										/>
-									}}
-								/>
+								<Spin spinning={categoriesLoading} indicator={<></>}>
+									<Calendar
+										className='events-calendar-mini'
+										date={miniCalSelectedDate}
+										onNavigate={setMiniCalSelectedDate}
+										localizer={localizer}
+										events={calendarEvents}
+										startAccessor="start_time"
+										endAccessor="end_time"
+										components={{
+											event: () => null,
+											eventWrapper: EventWrapperComponent,
+											month: {
+												dateHeader: MonthDateComponentHeader
+											},
+											toolbar: (props:any) => <CustomToolbarMini
+												{...props}
+												leftPanelWidth={calLeftPanelWidth}
+											/>
+										}}
+									/>
+								</Spin>
 
 								<div className='font-medium text-md text-sidebarBlue mb-3'>Proposal Status: </div>
 								<Space direction='vertical'>
@@ -307,53 +519,77 @@ const CalendarView: FC<ICalendarViewProps> = (props) => {
 										<Badge key={item.color} text={item.label} color={item.color} />
 									))}
 								</Space>
+
+								<div className='font-medium text-md text-sidebarBlue mt-8 mb-3'>Categories: </div>
+								<Checkbox.Group disabled={categoriesLoading} className='flex-wrap' defaultValue={initCategories} onChange={(checkedValues) => setSelectedCategories(checkedValues)}>
+									<Row>
+										{
+											categoryOptions.map(item => (
+												<Col key={item.value} span={8}>
+													<Checkbox value={item.value}>{item.label}</Checkbox>
+												</Col>
+											))
+										}
+									</Row>
+								</Checkbox.Group>
 							</div>
 						</Col>
 						}
 
-						<Col span={!small && width > 992 ? 16 : 24} className=' h-full' >
-							<Calendar
-								className={`events-calendar ${small || width < 768 ? 'small' : '' }`}
-								localizer={localizer}
-								date={selectedDate}
-								view={selectedView}
-								events={calendarEvents}
-								startAccessor='start_time'
-								endAccessor='end_time'
-								popup={false}
-								components={{
-									event: Event,
-									eventWrapper: EventWrapperComponent,
-									timeGutterHeader: () => <TimeGutterHeader localizer={localizer} date={selectedDate} selectedView={selectedView} />,
-									toolbar: (props:any) => <CustomToolbar
-										{...props}
-										small={small}
-										width={width}
-										selectedNetwork={selectedNetwork}
-										setSelectedNetwork={setSelectedNetwork}
-										setSidebarCreateEvent={setSidebarCreateEvent}
-										isLoggedIn={Boolean(id)}
-										leftPanelWidth={calLeftPanelWidth}
-										setMiniCalendarToToday={setMiniCalendarToToday}
-									/>,
-									week: {
-										header: (props:any) => <CustomWeekHeader {...props} small={small || width < 768} />
-									}
-								}}
-								formats={{
-									timeGutterFormat: 'h A'
-								}}
-								onNavigate={setSelectedDate}
-								onView={setSelectedView}
-								views={{
-									agenda: true,
-									day: true,
-									month: true,
-									week: true,
-									work_week: false
-								}}
-							/>
-						</Col>
+						{<Col span={!small && width > 992 ? 16 : 24} className=' h-full' >
+							<Spin spinning={categoriesLoading}>
+								{!categoriesLoading ? // this is needed to render (+3 more) without changing views
+									<Calendar
+										className={`events-calendar ${small || width < 768 ? 'small' : '' }`}
+										localizer={localizer}
+										date={selectedDate}
+										view={selectedView}
+										events={calendarEvents}
+										startAccessor='start_time'
+										endAccessor='end_time'
+										popup={false}
+										components={{
+											event: Event,
+											eventWrapper: EventWrapperComponent,
+											timeGutterHeader: () => <TimeGutterHeader localizer={localizer} date={selectedDate} selectedView={selectedView} />,
+											toolbar: (props:any) => <CustomToolbar
+												{...props}
+												small={small}
+												width={width}
+												selectedNetwork={selectedNetwork}
+												setSelectedNetwork={setSelectedNetwork}
+												setSidebarCreateEvent={setSidebarCreateEvent}
+												isLoggedIn={Boolean(id)}
+												leftPanelWidth={calLeftPanelWidth}
+												setMiniCalendarToToday={setMiniCalendarToToday}
+											/>,
+											week: {
+												header: (props:any) => <CustomWeekHeader {...props} small={small || width < 768} />
+											}
+										}}
+										formats={{
+											timeGutterFormat: 'h A'
+										}}
+										onNavigate={setSelectedDate}
+										onView={setSelectedView}
+										views={{
+											agenda: true,
+											day: true,
+											month: true,
+											week: true,
+											work_week: false
+										}}
+									/> :
+									<div className="flex flex-col gap-y-6 px-4 max-h-screen overflow-y-hidden">
+										<Skeleton />
+										<Skeleton />
+										<Skeleton />
+										<Skeleton />
+										<Skeleton />
+									</div>
+								}
+							</Spin>
+						</Col>}
 					</Row>
 				</div>
 			</div>
@@ -623,6 +859,10 @@ export default styled(CalendarView)`
 		border-radius: 10px;
 		padding: 15px 8px;
 		margin-bottom: 24px;
+
+		.rbc-show-more {
+			display: none !important;
+		}
 
 		.custom-calendar-toolbar-mini {
 			display: flex;

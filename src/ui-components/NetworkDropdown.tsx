@@ -110,7 +110,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 		>
 			{
 				isSmallScreen?
-					<a className='flex items-center justify-between gap-x-2 rounded-[26px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] h-10 px-[18px]' onClick={e => {
+					<a className='flex items-center justify-between gap-x-2 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] h-10 px-[18px]' onClick={e => {
 						e.preventDefault();
 						setSidedrawer(false);
 					}}

@@ -59,7 +59,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 							<div className='flex items-center gap-x-[6px]'>
 								<SignalTowerIcon className='w-[20px] h-[20px] m-0 p-0' />
 								<span className='font-semibold text-xs leading-[18px] tracking-[0.02em]'>
-									{dropdownLabel(wsProvider, network)}
+									{dropdownLabel(wsProvider || chainProperties?.[network!]?.rpcEndpoint, network)}
 								</span>
 							</div>
 							<span className='text-[#485F7D]'>

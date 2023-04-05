@@ -12,7 +12,6 @@ import NameLabel from './NameLabel';
 import TopicTag from './TopicTag';
 
 import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon } from '~src/ui-components/CustomIcons';
-import { useUserDetailsContext } from '~src/context';
 
 interface ICreationLabelProps {
 	className?: string
@@ -26,9 +25,8 @@ interface ICreationLabelProps {
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-	const { className, children, created_at, text, username, topic,sentiment } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic,sentiment } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
-	const { defaultAddress }=useUserDetailsContext();
 
 	const items : MenuProps['items']=[
 		sentiment === 1 ? { key:1,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely Against</div> }:null,

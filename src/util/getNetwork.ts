@@ -39,6 +39,9 @@ export default function getNetwork(): Network {
 	else if(network == 'test-polkadot'){
 		network = 'polkadot';
 	}
+	else if(network == 'moonriver-test'){
+		network = 'moonriver';
+	}
 
 	if (!possibleNetworks.includes(network)) {
 		network = defaultNetwork;

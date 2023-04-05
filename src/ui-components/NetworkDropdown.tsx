@@ -121,7 +121,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
 								alt='Logo'
 							/>
-							<span className='font-semibold text-xs leading-[18px] tracking-[0.02em]'>
+							<span className='font-semibold text-xs leading-[18px] tracking-[0.02em] text-[#243A57] capitalize'>
 								{
 									network
 								}

@@ -116,25 +116,25 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 										}}
 										className='p-4 bg-white'
 									>
-										<div className='flex flex-col gap-y-6'>
+										<div className='flex flex-col'>
 											{/* <SearchBar isSmallScreen={true} /> */}
 											<div>
 												<p className='m-0 p-0 text-[#485F7D] font-normal text-sm leading-[23px] tracking-[0.02em] text-left'>Network</p>
 												<NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} />
 											</div>
-											<div>
+											<div className='mt-6'>
 												<p className='m-0 p-0 text-[#485F7D] font-normal text-sm leading-[23px] tracking-[0.02em] text-left'>Node</p>
 												<RPCDropdown isSmallScreen={true} />
 											</div>
-											<div>
-												<Divider className='my-0'/>
+											<div className={`${username? 'hidden': 'block'}`}>
+												<Divider className='my-8'/>
 												<div className='flex flex-col gap-y-4'>
 													<button
 														onClick={() => {
 															setOpen(false);
 															router.push('/signup');
 														}}
-														className='rounded-[6px] bg-white flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+														className='rounded-[6px] bg-white flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize h-10'
 													>
 														Sign Up
 													</button>
@@ -143,7 +143,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 															setOpen(false);
 															router.push('/login');
 														}}
-														className='rounded-[6px] bg-[#E5007A] flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+														className='h-10 rounded-[6px] bg-[#E5007A] flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
 													>
 														Log In
 													</button>

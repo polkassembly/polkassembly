@@ -16,10 +16,11 @@ interface Props{
 	title: string
 	withBalance?: boolean
 	onBalanceChange?: (balance: string) => void
+  className?:string;
 }
 
-const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange }: Props) =>
-	<article className='w-full gap-y-2 flex flex-col p-2'>
+const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange,className }: Props) =>
+	<article className={`w-full gap-y-2 flex flex-col p-2 ${className}`}>
 		<div className='flex items-center gap-x-2'>
 			<h3 className='text-sm mb-0'>{title}</h3>
 			<HelperTooltip text='You can choose an account from the extension.' />

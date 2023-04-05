@@ -21,6 +21,8 @@ import SignalTowerSVG from '~assets/icons/signal-tower.svg';
 import EditSVG from '~assets/icons/edit.svg';
 import SyncSVG from '~assets/icons/sync.svg';
 import ArrowDownSVG from '~assets/icons/arrow-down.svg';
+import VotingHistorySVG from '~assets/icons/voting-history.svg';
+import ThresholdGraphSVG from '~assets/icons/threshold-graph.svg';
 import BountiesSVG from '~assets/sidebar/bounties.svg';
 import CalendarSVG from '~assets/sidebar/calendar.svg';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy_proposals.svg';
@@ -147,6 +149,14 @@ export const SyncIcon = (props: Partial<CustomIconComponentProps>) => (
 
 export const ArrowDownIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={ArrowDownSVG} {...props} />
+);
+
+export const ThresholdGraphIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ThresholdGraphSVG} {...props} />
+);
+
+export const VotingHistoryIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={VotingHistorySVG} {...props} />
 );
 
 export const RootIcon = (props: Partial<CustomIconComponentProps>) => (

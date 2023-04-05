@@ -39,12 +39,14 @@ const Curves: FC<ICurvesProps> = (props) => {
 		datasets: [],
 		labels: []
 	});
+	console.log(referendumId, data);
 	useEffect(() => {
 		if (!api || !apiReady) {
 			return;
 		}
 		api.query.referenda.referendumInfoFor.multi([referendumId]).then(async (res) => {
 			const referendaInfo = res[0].unwrap();
+			console.log(referendaInfo.isOngoing);
 			if (referendaInfo.isOngoing) {
 				const info = referendaInfo.asOngoing.toJSON();
 				const tracks = api.consts.referenda.tracks.toJSON();
@@ -116,12 +118,12 @@ const Curves: FC<ICurvesProps> = (props) => {
 		});
 	}, [api, apiReady, referendumId]);
 	return (
-		<div className='h-[400px]'>
+		<div className='h-[500px]'>
 			<Chart.Line
 				data={data}
 				options={{
 					aspectRatio: 0,
-					maintainAspectRatio: false,
+					maintainAspectRatio: true,
 					scales: {
 						y: {
 							beginAtZero: true

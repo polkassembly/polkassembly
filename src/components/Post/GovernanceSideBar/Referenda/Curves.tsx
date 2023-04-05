@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
+import { LoadingOutlined } from '@ant-design/icons';
 import React, { FC, useEffect, useState } from 'react';
 import { useApiContext } from '~src/context';
 import { calcCurves, getChartResult } from './util';
@@ -18,6 +20,7 @@ import * as Chart from 'react-chartjs-2';import {
 	ChartData,
 	Point
 } from 'chart.js';
+import { Spin } from 'antd';
 
 ChartJS.register(
 	CategoryScale,
@@ -35,6 +38,8 @@ interface ICurvesProps {
 const Curves: FC<ICurvesProps> = (props) => {
 	const { referendumId } = props;
 	const { api, apiReady } = useApiContext();
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState('');
 	const [data, setData] = useState<any>({
 		datasets: [],
 		labels: []
@@ -44,6 +49,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 		if (!api || !apiReady) {
 			return;
 		}
+		setLoading(true);
 		api.query.referenda.referendumInfoFor.multi([referendumId]).then(async (res) => {
 			const referendaInfo = res[0].unwrap();
 			console.log(referendaInfo.isOngoing);
@@ -113,25 +119,46 @@ const Curves: FC<ICurvesProps> = (props) => {
 					}
 				}
 			}
+			setLoading(false);
 		}).catch((err) => {
 			console.log(err);
+			setLoading(false);
+			if (err) {
+				if (typeof err === 'string') {
+					setError(err);
+				} else if (err.message && typeof err.message === 'string') {
+					setError(err.message);
+				} else {
+					setError('Something went wrong.');
+				}
+			} else {
+				setError('Something went wrong.');
+			}
 		});
 	}, [api, apiReady, referendumId]);
 	return (
-		<div className='h-[500px]'>
-			<Chart.Line
-				data={data}
-				options={{
-					aspectRatio: 0,
-					maintainAspectRatio: true,
-					scales: {
-						y: {
-							beginAtZero: true
-						}
-					}
-				}}
-			/>
-		</div>
+		<Spin indicator={<LoadingOutlined />} spinning={loading}>
+			{
+				error?
+					<p className='text-red-500 font-medium text-center'>
+						{error}
+					</p>
+					: <div className='h-[500px]'>
+						<Chart.Line
+							data={data}
+							options={{
+								aspectRatio: 0,
+								maintainAspectRatio: true,
+								scales: {
+									y: {
+										beginAtZero: true
+									}
+								}
+							}}
+						/>
+					</div>
+			}
+		</Spin>
 	);
 };
 

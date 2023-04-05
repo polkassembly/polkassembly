@@ -266,7 +266,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const VoteLock = ({ className }: { className?:string }) =>
 		<Form.Item className={className}>
-			<label  className='mb-3 flex items-center text-sm text-sidebarBlue font-medium'>
+			<label  className='mb-2 flex items-center text-sm text-sidebarBlue font-medium'>
 				Vote lock
 				<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.' />
 			</label>

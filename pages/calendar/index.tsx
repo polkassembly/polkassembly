@@ -329,7 +329,6 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 
 		if(data) {
 			const eventsArr:any[] = calendarEvents;
-			const eventDatesArr:string[] = [];
 
 			data.forEach(eventObj => {
 				const eventDate = new Date(eventObj.end_time);
@@ -345,8 +344,6 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 						title: eventObj.title,
 						url: eventObj.url
 					});
-					const eventDateStr = dayjs(eventObj.end_time).format('L');
-					eventDatesArr.push(eventDateStr);
 				}
 			});
 			setCalendarEvents(eventsArr);

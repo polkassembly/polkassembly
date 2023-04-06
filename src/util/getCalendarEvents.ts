@@ -422,6 +422,7 @@ export async function fetchSocietyRotate(api: ApiPromise, network: string): Prom
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
 	const duration = api.consts.society?.rotationPeriod as u32;
+	if(!duration) return [];
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);
 
 	if (itemDuration) {

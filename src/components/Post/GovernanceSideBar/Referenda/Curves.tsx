@@ -44,7 +44,6 @@ const Curves: FC<ICurvesProps> = (props) => {
 		datasets: [],
 		labels: []
 	});
-	console.log(referendumId, data);
 	useEffect(() => {
 		if (!api || !apiReady) {
 			return;
@@ -52,7 +51,6 @@ const Curves: FC<ICurvesProps> = (props) => {
 		setLoading(true);
 		api.query.referenda.referendumInfoFor.multi([referendumId]).then(async (res) => {
 			const referendaInfo = res[0].unwrap();
-			console.log(referendaInfo.isOngoing);
 			if (referendaInfo.isOngoing) {
 				const info = referendaInfo.asOngoing.toJSON();
 				const tracks = api.consts.referenda.tracks.toJSON();
@@ -78,9 +76,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 						const activeIssuance = totalIssuance.sub(inactiveIssuance || BN_ZERO);
 						const trackGraph = calcCurves(trackInfo);
 						const data = getChartResult(activeIssuance, true, referendaInfo, trackInfo, trackGraph);
-						console.log(trackInfo);
 						if (data && Array.isArray(data) && data.length > 1) {
-							console.log('activeIssuance', activeIssuance, data[0].labels.length);
 							const newData: ChartData<'line', (number | Point | null)[]> = {
 								datasets: [
 									{

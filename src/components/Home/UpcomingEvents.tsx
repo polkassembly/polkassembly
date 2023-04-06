@@ -352,7 +352,7 @@ const UpcomingEvents = ({ className }:Props) => {
 			<List
 				className='h-[100%] overflow-y-auto'
 				itemLayout="horizontal"
-				dataSource={calendarEvents}
+				dataSource={calendarEvents.sort((a,b) => (a?.end_time?.getTime() || a?.start_time?.getTime())- (b?.end_time?.getTime() || b?.start_time?.getTime()))}
 				renderItem={item => {
 					return (<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-sidebarBlue`}>
 						<a {...(item.url ? { href: item.url } : {})} target='_blank' rel='noreferrer' className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-sidebarBlue`}>

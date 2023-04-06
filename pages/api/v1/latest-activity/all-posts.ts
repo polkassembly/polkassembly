@@ -79,11 +79,11 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 			const parentBounties = new Set<number>();
 			const onChainPostsPromise = subsquidPosts?.map(async (subsquidPost) => {
-				const { createdAt, proposer, preimage, type, index, hash, method, origin, trackNumber, curator, description, proposalArguments, parentBountyIndex } = subsquidPost;
+				const { createdAt, proposer, preimage, type, index, hash, method, origin, trackNumber, curator, description, proposalArguments, parentBountyIndex, group } = subsquidPost;
 				const postId = type === 'Tip'? hash: index;
 				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(type) as ProposalType).doc(String(postId));
 				const postDoc = await postDocRef.get();
-				const newProposer = proposer || preimage?.proposer || curator;
+				let newProposer = proposer || preimage?.proposer || curator;
 				if (!newProposer && (parentBountyIndex || parentBountyIndex === 0)) {
 					parentBounties.add(parentBountyIndex);
 				}
@@ -95,6 +95,26 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 						const decisionDepositPlacedIndex = statuses.findIndex((status) => status && status.status === 'DecisionDepositPlaced');
 						if (decisionDepositPlacedIndex >=0 && decidingIndex < decisionDepositPlacedIndex) {
 							status = 'Deciding';
+						}
+					}
+				}
+				if (!newProposer) {
+					// Timeline
+					const timelineProposals = group?.proposals || [];
+					// Proposer and Curator address
+					if (timelineProposals && Array.isArray(timelineProposals)) {
+						for (let i = 0; i < timelineProposals.length; i++) {
+							if (newProposer) {
+								break;
+							}
+							const obj = timelineProposals[i];
+							if (!newProposer) {
+								if (obj.proposer) {
+									newProposer = obj.proposer;
+								} else if (obj?.preimage?.proposer) {
+									newProposer = obj.preimage.proposer;
+								}
+							}
 						}
 					}
 				}

@@ -4,7 +4,7 @@
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-import { DownOutlined } from '@ant-design/icons';
+// import { DownOutlined } from '@ant-design/icons';
 import { MenuProps, Space } from 'antd';
 import { Dropdown } from 'antd';
 import Image from 'next/image';
@@ -56,8 +56,11 @@ function NetworkSelect({ selectedNetwork, setSelectedNetwork }: {selectedNetwork
 
 	return (
 		<div className='select-div filter-by-chain-div'>
-			<label>Filter by</label>
-			<Dropdown trigger={['click']} dropdownRender={menus => (<div className='max-h-[20rem] rounded-md drop-shadow-xl overflow-auto'>{menus}</div>)} menu={{ items:networkOptions, onClick:handleSetSelectedNetwork }} ><Space className='cursor-pointer'><StyledNetworkItem className='text-pink_primary' showNetwork={selectedNetwork}/><DownOutlined className='text-pink_primary align-middle' /></Space></Dropdown>
+			{/* <label>Filter by</label> */}
+			<label>Network</label>
+			<Dropdown disabled trigger={['click']} dropdownRender={menus => (<div className='max-h-[20rem] rounded-md drop-shadow-xl overflow-auto'>{menus}</div>)} menu={{ items:networkOptions, onClick:handleSetSelectedNetwork }} ><Space className='cursor-pointer'><StyledNetworkItem className='text-pink_primary' showNetwork={selectedNetwork}/>
+				{/* <DownOutlined className='text-pink_primary align-middle' /> */}
+			</Space></Dropdown>
 		</div>
 	);
 }

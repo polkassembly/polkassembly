@@ -145,11 +145,13 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					open={thresholdOpen}
 					footer={[]}
 					className='w-[700px]'
+					title={
+						<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
+					}
 				>
-					<h6 className="dashboard-heading mb-6">
-						Threshold Curves
-					</h6>
-					<Curves referendumId={referendumId as number} />
+					<div className='mt-5'>
+						<Curves referendumId={referendumId as number} />
+					</div>
 				</Modal>
 			</section>
 		</GovSidebarCard>

@@ -44,6 +44,7 @@ export interface IPostData {
         description?: string;
         created_at?: Date | string;
     }
+    track_number?: number;
 }
 
 export interface IPostDataContext {

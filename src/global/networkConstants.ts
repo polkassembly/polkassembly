@@ -557,18 +557,18 @@ export const chainProperties: types.ChainPropType = {
 	},
 	[network.INTEGRITEE]: {
 		blockTime: 12000,
-		category: 'integritee',
+		category: 'kusama',
 		chainId: 0,
 		logo: integriteeLogo,
-		rpcEndpoint: 'wss://polkadot.api.integritee.network',
+		rpcEndpoint: 'wss://integritee-kusama.api.onfinality.io/public-ws',
 		ss58Format: 13,
-		subsquidUrl: '',
+		subsquidUrl: 'https://squid.subsquid.io/integritee-polkassembly/graphql',
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.TEER,
 		treasuryProposalBondPercent: '3%',
 		treasuryProposalMinBond: '10000',
 		treasuryProposalMaxBond:'50000',
-		externalLinks: 'https://integritee.subscan.io/',
+		externalLinks: 'https://integritee.api.subscan.io',
 		rpcEndpoints: []
 	},
 	[network.KARURA]: {

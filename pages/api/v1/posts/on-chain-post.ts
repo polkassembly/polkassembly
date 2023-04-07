@@ -313,7 +313,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				username: data.username
 			};
 
-			const repliesSnapshot = await commentDocRef.collection('replies').get();
+			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').get();
 			repliesSnapshot.docs.forEach((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();

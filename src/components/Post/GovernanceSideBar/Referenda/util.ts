@@ -11,7 +11,7 @@ export function makeReciprocalCurve(reciprocal: any) {
 	const { factor, xOffset, yOffset } = reciprocal;
 	return function (percentage: number) {
 		const x = new BN((percentage * BN_BILLION.toNumber()));
-		const v = new BN(factor).mul(BN_BILLION).div(new BN(x).add(new BN(xOffset))).toNumber().toFixed(0);
+		const v = new BN(factor).mul(BN_BILLION).div(new BN(x).add(new BN(xOffset))).toNumber();
 
 		const calcValue = new BN(v)
 			.add(new BN(yOffset))

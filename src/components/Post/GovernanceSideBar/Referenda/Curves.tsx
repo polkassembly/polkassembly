@@ -78,9 +78,9 @@ const Curves: FC<ICurvesProps> = (props) => {
 							}
 						});
 					}
-					const labels: number[] = [];
-					const supportData: number[] = [];
-					const approvalData: number[] = [];
+					let labels: number[] = [];
+					let supportData: (number | { x: number; y: number; })[] = [];
+					let approvalData: (number | { x: number; y: number; })[] = [];
 					const currentApprovalData: { x: number; y: number; }[] = [];
 					const currentSupportData: { x: number; y: number; }[] = [];
 					let supportCalc: any = null;
@@ -113,30 +113,44 @@ const Curves: FC<ICurvesProps> = (props) => {
 					const { data, error } = await nextApiClientFetch<ICurvePointsResponse>('api/v1/curves', {
 						postId: referendumId
 					});
-					let graph_points: any[] = [];
 					if (!error || !data) {
-						graph_points = data?.graph_points?.map((graph_point) => {
-							const new_graph_point = {
-								...graph_point,
-								hour: dayjs(graph_point.time).diff(dayjs(created_at), 'hour')
-							};
-							currentApprovalData.push({
-								x: new_graph_point.hour,
-								y: new_graph_point.approval_percent
+						const graph_points = data?.graph_points || [];
+						labels = [];
+						approvalData = [];
+						supportData = [];
+						if (graph_points?.length > 0) {
+							const lastGraphPoint = graph_points[graph_points.length - 1];
+							const decisionPeriodHrs = dayjs(lastGraphPoint.time).diff(dayjs(created_at), 'hour');
+							graph_points?.forEach((graph_point) => {
+								const hour = dayjs(graph_point.time).diff(dayjs(created_at), 'hour');
+								const new_graph_point = {
+									...graph_point,
+									hour
+								};
+								labels.push(hour);
+								approvalData.push({
+									x: hour,
+									y: approvalCalc((hour / decisionPeriodHrs)) * 100
+								});
+								supportData.push({
+									x: hour,
+									y: supportCalc((hour / decisionPeriodHrs)) * 100
+								});
+								currentApprovalData.push({
+									x: hour,
+									y: new_graph_point.approval_percent
+								});
+								currentSupportData.push({
+									x: hour,
+									y: new_graph_point.support_percent
+								});
+								return new_graph_point;
 							});
-							currentSupportData.push({
-								x: new_graph_point.hour,
-								y: new_graph_point.support_percent
-							});
-							return new_graph_point;
-						}) || [];
-
-						if (graph_points.length > 0) {
 							setProgress({
 								approval: graph_points[graph_points.length - 1].approval_percent,
-								approvalThreshold: approvalData[graph_points[graph_points.length - 1].hour],
+								approvalThreshold: (approvalData[approvalData.length - 1] as any).y,
 								support: graph_points[graph_points.length - 1].support_percent,
-								supportThreshold: supportData[graph_points[graph_points.length - 1].hour]
+								supportThreshold: (supportData[supportData.length - 1] as any).y
 							});
 						}
 					} else {
@@ -147,7 +161,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 							{
 								borderColor: '#5BC044',
 								borderWidth: 2,
-								data: approvalData,
+								data: approvalData.slice(1),
 								label: 'Approval',
 								pointHitRadius: 10,
 								pointHoverRadius: 5,
@@ -157,7 +171,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 							{
 								borderColor: '#E5007A',
 								borderWidth: 2,
-								data: supportData,
+								data: supportData.slice(1),
 								label: 'Support',
 								pointHitRadius: 10,
 								pointHoverRadius: 5,
@@ -165,9 +179,9 @@ const Curves: FC<ICurvesProps> = (props) => {
 								tension: 0.1
 							},
 							{
-								borderColor: '#5BC044',
+								borderColor: '#7F64FF',
 								borderWidth: 2,
-								data: currentApprovalData,
+								data: currentApprovalData.slice(1),
 								label: 'Current Approval',
 								pointHitRadius: 10,
 								pointHoverRadius: 5,
@@ -176,9 +190,9 @@ const Curves: FC<ICurvesProps> = (props) => {
 
 							},
 							{
-								borderColor: '#E5007A',
+								borderColor: '#334D6E',
 								borderWidth: 2,
-								data: currentSupportData,
+								data: currentSupportData.slice(1),
 								label: 'Current Support',
 								pointHitRadius: 10,
 								pointHoverRadius: 5,
@@ -232,11 +246,13 @@ const Curves: FC<ICurvesProps> = (props) => {
 													}
 
 													const hs = parsed.x;
+													const approval = data.datasets[0].data[dataIndex];
+													const support = data.datasets[1].data[dataIndex];
 													const approvalValue = Number(
-														data.datasets[0].data[dataIndex]
+														typeof approval === 'object'? approval.y: approval
 													).toFixed(2);
 													const supportValue = Number(
-														data.datasets[1].data[dataIndex]
+														typeof support === 'object'? support.y: support
 													).toFixed(2);
 
 													const result = `Time: ${hs}hs Support: ${supportValue}% Approval: ${approvalValue}%`;
@@ -254,6 +270,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 									} as any,
 									scales: {
 										x: {
+											beginAtZero: false,
 											display: true,
 											grid: {
 												display: false
@@ -272,7 +289,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 											type: 'linear'
 										},
 										y: {
-											beginAtZero: true,
+											beginAtZero: false,
 											display: true,
 											max: 100,
 											min: 0,
@@ -299,7 +316,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 								</p>
 								<p className='flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E]'>
 									<span className='font-semibold'>Threshold</span>
-									<span className='font-normal'>{progress.approvalThreshold.toFixed(1)}%</span>
+									<span className='font-normal'>{progress.approvalThreshold && progress.approvalThreshold.toFixed(1)}%</span>
 								</p>
 							</div>
 							<div className='flex-1 p-[12.5px] bg-[#FFF5FB] rounded-[5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
@@ -309,7 +326,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 								</p>
 								<p className='flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E]'>
 									<span className='font-semibold'>Threshold</span>
-									<span className='font-normal'>{progress.supportThreshold.toFixed(1)}%</span>
+									<span className='font-normal'>{progress.supportThreshold && progress.supportThreshold.toFixed(1)}%</span>
 								</p>
 							</div>
 						</article>

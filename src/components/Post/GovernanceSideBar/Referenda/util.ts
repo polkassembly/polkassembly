@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { PalletConvictionVotingTally, PalletRankedCollectiveTally, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaReferendumInfoRankedCollectiveTally, PalletReferendaTrackInfo } from '@polkadot/types/lookup';
-import { BN, BN_BILLION, BN_MILLION, BN_THOUSAND, bnMax, bnMin, formatNumber } from '@polkadot/util';
+import { BN, BN_BILLION, BN_MILLION, BN_THOUSAND, bnMax, bnMin } from '@polkadot/util';
 
 const CURVE_LENGTH = 500;
 const PT_CUR = 0;
@@ -22,7 +22,7 @@ export interface ChartResult {
     value: BN;
     total: BN;
   };
-  labels: string[];
+  labels: BN[];
   values: number[][];
 }
 
@@ -131,7 +131,7 @@ export const getChartResult: TGetChartResultFn =  (totalEligible, isConvictionVo
 			const currentSupport = isConvictionVote
 				? (tally as PalletConvictionVotingTally).support
 				: (tally as PalletRankedCollectiveTally).bareAyes;
-			const labels: string[] = [];
+			const labels: BN[] = [];
 			const values: number[][][] = [[[], [], []], [[], [], []]];
 			const supc = totalEligible.isZero()
 				? 0
@@ -144,7 +144,7 @@ export const getChartResult: TGetChartResultFn =  (totalEligible, isConvictionVo
 			const points: BN[] = [];
 
 			for (let i = 0; i < approval.length; i++) {
-				labels.push(formatNumber(since.add(x[i])));
+				labels.push(since.add(x[i]));
 				points.push(x[i]);
 
 				const appr = approval[i].div(BN_MILLION).toNumber() / 10;
@@ -171,7 +171,7 @@ export const getChartResult: TGetChartResultFn =  (totalEligible, isConvictionVo
 				let currentBlock = x[lastIndex].add(since).add(step);
 
 				do {
-					labels.push(formatNumber(currentBlock));
+					labels.push(currentBlock);
 					points.push(currentBlock.sub(since));
 
 					// adjust approvals (no curve adjustment)

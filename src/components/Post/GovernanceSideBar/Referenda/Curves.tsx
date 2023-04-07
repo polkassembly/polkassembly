@@ -83,8 +83,24 @@ const Curves: FC<ICurvesProps> = (props) => {
 					const approvalData: number[] = [];
 					const currentApprovalData: { x: number; y: number; }[] = [];
 					const currentSupportData: { x: number; y: number; }[] = [];
-					const supportCalc = makeReciprocalCurve(trackInfo);
-					const approvalCalc = makeLinearCurve(trackInfo);
+					let supportCalc: any = null;
+					let approvalCalc: any = null;
+					if (trackInfo) {
+						if (trackInfo.minApproval) {
+							if (trackInfo.minApproval.reciprocal) {
+								approvalCalc = makeReciprocalCurve(trackInfo.minApproval.reciprocal);
+							} else if (trackInfo.minApproval.linearDecreasing) {
+								approvalCalc = makeLinearCurve(trackInfo.minApproval.linearDecreasing);
+							}
+						}
+						if (trackInfo.minSupport) {
+							if (trackInfo.minSupport.reciprocal) {
+								supportCalc = makeReciprocalCurve(trackInfo.minSupport.reciprocal);
+							} else if (trackInfo.minSupport.linearDecreasing) {
+								supportCalc = makeLinearCurve(trackInfo.minSupport.linearDecreasing);
+							}
+						}
+					}
 					for (let i = 0; i < decisionPeriodHrs + 1; i++) {
 						labels.push(i);
 						if (supportCalc) {

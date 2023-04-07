@@ -4,18 +4,11 @@
 
 import { BN, BN_BILLION } from '@polkadot/util';
 
-export function makeReciprocalCurve(trackInfo: any) {
-	if (!trackInfo) {
+export function makeReciprocalCurve(reciprocal: any) {
+	if (!reciprocal) {
 		return null;
 	}
-	const minSupport = trackInfo.minSupport;
-	if (!minSupport) {
-		return null;
-	}
-	if (!minSupport.reciprocal) {
-		return null;
-	}
-	const { factor, xOffset, yOffset } = minSupport.reciprocal;
+	const { factor, xOffset, yOffset } = reciprocal;
 	return function (percentage: number) {
 		const x = new BN((percentage * BN_BILLION.toNumber()));
 		const v = new BN(factor).mul(BN_BILLION).div(new BN(x).add(new BN(xOffset))).toNumber().toFixed(0);
@@ -27,18 +20,11 @@ export function makeReciprocalCurve(trackInfo: any) {
 	};
 }
 
-export function makeLinearCurve(trackInfo: any) {
-	if (!trackInfo) {
+export function makeLinearCurve(linearDecreasing: any) {
+	if (!linearDecreasing) {
 		return null;
 	}
-	const minApproval = trackInfo.minApproval;
-	if (!minApproval) {
-		return null;
-	}
-	if (!minApproval.linearDecreasing) {
-		return null;
-	}
-	const { length, floor, ceil } = minApproval.linearDecreasing;
+	const { length, floor, ceil } = linearDecreasing;
 	return function (percentage: number) {
 		const x = new BN(percentage * BN_BILLION.toNumber());
 

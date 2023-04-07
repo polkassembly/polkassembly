@@ -17,7 +17,7 @@ export interface TokenType {
 	token: string;
 }
 
-export interface ChangeResponseType extends MessageType, TokenType {}
+export interface ChangeResponseType extends MessageType, TokenType { }
 
 export interface UpdatedDataResponseType<T> extends MessageType {
 	updated: T
@@ -58,6 +58,7 @@ export interface ISocial {
 	link: string;
 }
 export interface ProfileDetails {
+	name?: string;
 	bio?: string;
 	badges?: string[];
 	title?: string;
@@ -101,9 +102,9 @@ export interface IUserPreference {
 export interface UndoEmailChangeToken {
 	user_id: number;
 	email: string;
-  valid: boolean;
-  created_at: Date;
-  token: string;
+	valid: boolean;
+	created_at: Date;
+	token: string;
 }
 
 export interface User {
@@ -121,7 +122,7 @@ export interface ISignedTokenParams extends User {
 	notification_settings: NotificationSettings;
 }
 
-export  interface Roles {
+export interface Roles {
 	allowedRoles: Role[];
 	currentRole: Role.PROPOSAL_BOT | Role.USER | Role.EVENT_BOT
 }

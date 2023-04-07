@@ -21,6 +21,7 @@ interface IBasicInformationProps {
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
 	const { profile, loading, setProfile } = props;
+	console.log(profile);
 	const [newBadge, setNewBadge] = useState<string>('');
 
 	const addNewBadge = () => {
@@ -74,7 +75,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 				<div
 					className='flex flex-col'
 				>
-					<h4 className='font-semibold text-sm text-[#485F7D]'>Profile Image</h4>
+					<h4 className='font-normal text-sm text-[#485F7D]'>Profile Image</h4>
 					<p className='font-normal text-xs'>
 						Please provide a url of your profile photo using a service such as
 						<a href='https://postimages.org/' target='_blank' rel="noreferrer">
@@ -102,8 +103,29 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			<div className='flex gap-x-6'>
 				<div className='hidden md:block max-w-[103px] w-full'></div>
 				<div className='flex-1'>
-					<Divider className='my-6' />
+					<Divider className='my-4' />
 					<article>
+						<label
+							className='text-sm cursor-pointer font-normal text-[#485F7D]'
+							htmlFor='name'
+						>
+							Name
+						</label>
+						<Input
+							id='name'
+							value={profile?.name}
+							placeholder='Your name'
+							onChange={(e) => setProfile((prev) => {
+								return {
+									...prev,
+									name: e.target.value
+								};
+							})}
+							disabled={loading}
+							className="border border-solid rounded-[4px] border-[rgba(72,95,125,0.2)] h-10 px-[14px]"
+						/>
+					</article>
+					<article className='mt-4'>
 						<label
 							className='text-sm cursor-pointer font-normal text-[#485F7D]'
 							htmlFor='title'

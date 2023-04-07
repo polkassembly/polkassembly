@@ -24,6 +24,7 @@ const getDefaultProfile: () => ProfileDetails = () => {
 		badges: [],
 		bio: '',
 		imgUrl: '',
+		name: '',
 		social_links: [],
 		title: ''
 	};
@@ -38,11 +39,12 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 	const populateData = useCallback(() => {
 		if (data) {
-			const { badges, bio, image, social_links, title } = data;
+			const { badges, bio, image, name, social_links, title } = data;
 			setProfile({
 				badges,
 				bio,
 				image,
+				name,
 				social_links,
 				title
 			});
@@ -63,7 +65,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 		// eslint-disable-next-line no-useless-escape
 		const regex = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi);
-		const { badges, bio, image, social_links, title } = profile;
+		const { badges, bio, image, name, social_links, title } = profile;
 		if(image && image.trim() && !image?.match(regex)) {
 			setError('Image URL is invalid.');
 			return;
@@ -84,6 +86,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			badges: JSON.stringify(badges || []),
 			bio: bio,
 			image: image,
+			name: name,
 			social_links: JSON.stringify(social_links || []),
 			title: title,
 			user_id: Number(id)
@@ -111,6 +114,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					badges: badges || [],
 					bio: bio || '',
 					image: image || '',
+					name: name || '',
 					social_links: social_links || [],
 					title: title || ''
 				};

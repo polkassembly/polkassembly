@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CheckOutlined, LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from '@ant-design/icons';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Select, Spin } from 'antd';
@@ -23,6 +23,7 @@ import AyeNayButtons from '~src/ui-components/AyeNayButtons';
 import FilteredError from '~src/ui-components/FilteredError';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import LoginToVote from '../LoginToVoteOrEndorse';
+import { poppins } from 'pages/_app';
 
 interface Props {
 	className?: string
@@ -42,7 +43,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [isFellowshipMember, setIsFellowshipMember] = useState<boolean>(false);
 	const [fetchingFellowship, setFetchingFellowship] = useState(true);
 	const { network } = useNetworkContext();
-	const [fetchAccountsInfo, setFetchAccountsInfo] = useState(true);
 	const [wallet,setWallet]=useState<Wallet>();
 	const [defaultWallets,setDefaultWallets]=useState<any>({});
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -266,7 +266,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const VoteLock = ({ className }: { className?:string }) =>
 		<Form.Item className={className}>
-			<label  className='mb-3 flex items-center text-sm text-sidebarBlue'>
+			<label  className='mb-2 flex items-center text-sm text-sidebarBlue font-medium'>
 				Vote lock
 				<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.' />
 			</label>
@@ -287,96 +287,63 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			<Modal
 				open={showModal}
 				onCancel={() => setShowModal(false)}
-				closable={!fetchAccountsInfo}
-				footer={
-					fetchAccountsInfo?
-						<div className='flex items-center justify-end'>
+				footer={false}
+				className={`${poppins.variable} ${poppins.className}`}
+			><>
+					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
+						<h4 className='dashboard-heading mb-7'>Cast Your Vote</h4>
+						<div className='flex items-center justify-center gap-x-5 mt-5 mb-6'>
+							{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
+							{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+							{defaultWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
 							{
-								[
-									<Button
-										key='got-it'
-										icon={<CheckOutlined />}
-										className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
-										onClick={async () => {
-											setFetchAccountsInfo(false);
-										}}
-									>
-										Got it!
-									</Button>,
-									<Button
-										key="cancel"
-										onClick={() => setShowModal(false)}
-										className='bg-white text-pink_primary outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
-									>
-										Cancel
-									</Button>
-								]
+								(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
+                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary': ''}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
+							}
+							{
+								['polymesh'].includes(network) && defaultWallets[Wallet.POLYWALLET]?
+									<WalletButton disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
+									: null
 							}
 						</div>
-						: null
-				}
-			>
-				{
-					fetchAccountsInfo?
-						<div className='max-w-[600px]'>
-							<p>
-					For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
-							</p>
-						</div>
-						: <>
-							<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
-								<h4 className='dashboard-heading mb-7'>Cast Your Vote</h4>
-								<div className='flex items-center justify-center gap-x-5 mt-5 mb-6'>
-									{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
-									{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-									{defaultWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
-									{
-										(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
-                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary': ''}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
-									}
-									{
-										['polymesh'].includes(network) && defaultWallets[Wallet.POLYWALLET]?
-											<WalletButton disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
-											: null
-									}
-								</div>
-								{
-									proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS &&
+						{
+							proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS &&
 						<BalanceInput
 							label={'Lock balance'}
 							helpText={'Amount of you are willing to lock for this vote.'}
 							placeholder={'123'}
 							onChange={onBalanceChange}
+							className='text-sm font-medium'
 						/>
-								}
-								{
-									accounts.length > 0?
-										<AccountSelectionForm
-											title='Vote with Account'
-											accounts={accounts}
-											address={address}
-											withBalance
-											onAccountChange={onAccountChange}
-										/>
-										: !wallet? <FilteredError text='Please select a wallet.' />: null
-								}
-								{accounts.length===0 && wallet && <FilteredError text='No addresses found in the address selection tab.' />}
-
-								{
-									proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && <VoteLock className='mt-6' />
-								}
-
-								<AyeNayButtons
-									className='mt-6 max-w-[156px]'
-									size='large'
-									disabled={!apiReady}
-									onClickAye={() => voteReferendum(true)}
-									onClickNay={() => voteReferendum(false)}
+						}
+						{
+							accounts.length > 0?
+								<AccountSelectionForm
+									title='Vote with Account'
+									accounts={accounts}
+									address={address}
+									withBalance
+									onAccountChange={onAccountChange}
+									className={`${poppins.variable} ${poppins.className} text-sidebarBlue`}
 								/>
+								: !wallet? <FilteredError text='Please select a wallet.' />: null
+						}
+						{accounts.length===0 && wallet && <FilteredError text='No addresses found in the address selection tab.' />}
 
-							</Spin>
-						</>
-				}
+						{
+							proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && <VoteLock className='mt-6' />
+						}
+
+						<AyeNayButtons
+							className='mt-6 max-w-[156px]'
+							size='large'
+							disabled={!apiReady}
+							onClickAye={() => voteReferendum(true)}
+							onClickNay={() => voteReferendum(false)}
+						/>
+
+					</Spin>
+				</>
 			</Modal>
 		</div>
 	</>;

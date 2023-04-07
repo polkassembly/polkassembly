@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CheckOutlined, LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Button, Form, Modal, Select, Spin } from 'antd';
@@ -50,7 +50,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
 	const { network } = useNetworkContext();
 	const { setPostData } = usePostDataContext();
-	const [fetchAccountsInfo, setFetchAccountsInfo] = useState(true);
 	const [wallet, setWallet] = useState<Wallet>();
 	const [isAye, setIsAye] = useState(false);
 
@@ -363,83 +362,47 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			<Modal
 				open={showModal}
 				onCancel={() => setShowModal(false)}
-				closable={!fetchAccountsInfo}
-				footer={
-					fetchAccountsInfo?
-						<div className='flex items-center justify-end'>
+				footer={false}
+			> <>
+					<Spin spinning={loadingStatus.isLoading || isAccountLoading} indicator={<LoadingOutlined />}>
+						<Form onFinish={async () => {
+							await voteReferendum(isAye);
+						}}>
+							<h4 className='dashboard-heading mb-7'>Cast Your Vote</h4>
+							<div className='flex items-center justify-center gap-x-5 mt-5'>
+								<WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />
+								<WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
+							</div>
+							<BalanceInput
+								label={'Lock balance'}
+								helpText={'Amount of you are willing to lock for this vote.'}
+								placeholder={'123'}
+								onChange={onBalanceChange}
+							/>
+
 							{
-								[
-									<Button
-										key='got-it'
-										icon={<CheckOutlined />}
-										className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
-										onClick={() => {
-											setFetchAccountsInfo(false);
-										}}
-									>
-										Got it!
-									</Button>,
-									<Button
-										key="cancel"
-										onClick={() => setShowModal(false)}
-										className='bg-white text-pink_primary outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
-									>
-										Cancel
-									</Button>
-								]
+								accounts.length > 0?
+									<AccountSelectionForm
+										title='Vote with Account'
+										accounts={accounts}
+										address={address}
+										withBalance
+										onAccountChange={onAccountChange}
+									/>
+									: !wallet? <FilteredError text='Please select a wallet.' />: null
 							}
-						</div>
-						: null
-				}
-			>
-				{
-					fetchAccountsInfo?
-						<div className='max-w-[600px]'>
-							<p>
-						For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
-							</p>
-						</div>
-						: <>
-							<Spin spinning={loadingStatus.isLoading || isAccountLoading} indicator={<LoadingOutlined />}>
-								<Form onFinish={async () => {
-									await voteReferendum(isAye);
-								}}>
-									<h4 className='dashboard-heading mb-7'>Cast Your Vote</h4>
-									<div className='flex items-center justify-center gap-x-5 mt-5'>
-										<WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />
-										<WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
-									</div>
-									<BalanceInput
-										label={'Lock balance'}
-										helpText={'Amount of you are willing to lock for this vote.'}
-										placeholder={'123'}
-										onChange={onBalanceChange}
-									/>
+							<VoteLock className='mt-6' />
 
-									{
-										accounts.length > 0?
-											<AccountSelectionForm
-												title='Vote with Account'
-												accounts={accounts}
-												address={address}
-												withBalance
-												onAccountChange={onAccountChange}
-											/>
-											: !wallet? <FilteredError text='Please select a wallet.' />: null
-									}
-									<VoteLock className='mt-6' />
-
-									<AyeNayButtons
-										className='mt-6 max-w-[156px]'
-										size='large'
-										disabled={!apiReady}
-										onClickAye={() => setIsAye(true)}
-										onClickNay={() => setIsAye(false)}
-									/>
-								</Form>
-							</Spin>
-						</>
-				}
+							<AyeNayButtons
+								className='mt-6 max-w-[156px]'
+								size='large'
+								disabled={!apiReady}
+								onClickAye={() => setIsAye(true)}
+								onClickNay={() => setIsAye(false)}
+							/>
+						</Form>
+					</Spin>
+				</>
 			</Modal>
 		</div>
 	);

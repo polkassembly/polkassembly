@@ -230,3 +230,34 @@ p > a:hover {
   width: auto !important;
   height: auto !important;
 }
+.tags .ant-dropdown-menu .ant-dropdown-menu-item{
+  padding: 10px !important;
+
+}
+.tags .ant-dropdown-menu{
+  padding: 0px !important;
+  min-width: 150px;
+  border-radius: 5px !important;
+
+}
+.tags,.background-change .ant-dropdown-menu .ant-dropdown-menu-item:hover{
+background-color: white !important;
+}
+
+.create-post .ant-dropdown-menu{
+border-radius: 5px !important;
+margin-bottom: 5px;
+padding: 5px;
+}
+.create-post .ant-dropdown-menu .ant-dropdown-menu-item{
+  padding: 7px 6px !important;
+  border-radius: 4px !important;
+}
+.background-change .ant-dropdown-menu .ant-dropdown-menu-item{
+  padding:5px !important;
+}
+.background-change ant-dropdown-menu{
+  padding: 0px !important;
+  border-radius: 5px !important;
+} 
+

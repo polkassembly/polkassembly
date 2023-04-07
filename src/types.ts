@@ -277,7 +277,13 @@ export interface Post {
   topic_id: number,
   proposer_address: string,
   post_link: PostLink | null,
-  username?: string
+  username?: string;
+  gov_type?:'gov_1' | 'open_gov'
+  tags?:string[] | [];
+}
+export interface IPostTag {
+  name:string;
+  last_used_at:Date;
 }
 
 export interface CommentReply {

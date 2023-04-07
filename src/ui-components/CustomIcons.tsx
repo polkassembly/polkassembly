@@ -40,6 +40,12 @@ import ParachainsSVG from '~assets/sidebar/parachains.svg';
 import ReferendaSVG from '~assets/sidebar/referenda.svg';
 import TipsSVG from '~assets/sidebar/tips.svg';
 import TreasuryProposalsSVG from '~assets/sidebar/treasury_proposals.svg';
+import FilterSVG from '~assets/icons/filter-icon.svg';
+import FilterUnfilledSVG from "~assets/icons/filter-unfilled.svg";
+import SearchSVG from '~assets/icons/search.svg';
+import CheckedSVG from '~assets/icons/checked.svg';
+import CheckedOutlinedSVG from '~assets/icons/check-outline.svg';
+import TrendingSVG from '~assets/icons/trending.svg';
 
 export const OverviewIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={OverviewSVG} {...props} />
@@ -175,4 +181,23 @@ export const FellowshipGroupIcon = (props: Partial<CustomIconComponentProps>) =>
 
 export const PreimagesIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={PreimagesSVG} {...props} />
+);
+export const FilterIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={FilterSVG} {...props} />
+);
+export const FilterUnfilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={FilterUnfilledSVG} {...props} />
+);
+
+export const SearchIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SearchSVG} {...props} />
+);
+export const CheckOutlineIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CheckedOutlinedSVG} {...props} />
+);
+export const CheckedIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CheckedSVG} {...props} />
+);
+export const TrendingIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={TrendingSVG} {...props} />
 );

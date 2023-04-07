@@ -40,17 +40,25 @@ export function getTopicFromType(proposalType: ProposalType) {
 		topic.id = 6;
 		topic.name = 'Grant';
 	}
-
 	return topic;
 }
 
+//  'ROOT':6,
+//   'STAKING_ADMIN':7,
+//   'AUCTION_ADMIN':8,
+//   'GOVERNANCE':9,
+//   'FELLOWSHIP':10,
 export const topicIdToNameMap = {
 	1: 'Democracy',
 	2: 'Council',
 	3: 'Technical Committee',
 	4: 'Treasury',
 	5: 'General',
-	6: 'Grant'
+	6: 'Root',
+  7: 'Staking Admin',
+  8: 'Auction Admin',
+  9: 'Governance',
+  10: 'Fellowship'
 };
 
 export const isTopicIdValid = (topicId: any) => {

@@ -4,14 +4,16 @@
 
 import { Segmented } from 'antd';
 import { SegmentedValue } from 'antd/lib/segmented';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-import { post_topic } from '~src/global/post_topics';
+import { post_topic} from '~src/global/post_topics';
 
 interface Props {
     className?: string
-    onTopicSelection: (id: number)=> void
-}
+    onTopicSelection: (id: number)=> void;
+    govType?: 'gov_1' | 'open_gov';
+}   
 
 const topicToOptionText = (topic: string) => {
 	//replace _ with space and then capitalize first letter of each word
@@ -25,22 +27,57 @@ const optionTextToTopic = (optionText: string) => {
 	return optionText.replace(/ /g, '_').toUpperCase();
 };
 
-const TopicsRadio = ({ className, onTopicSelection }: Props) => {
-	const topicOptions: string[] = [];
-	Object.keys(post_topic).forEach(topic => {
-		topicOptions.push(topicToOptionText(topic));
-	});
+const TopicsRadio = ({ className, onTopicSelection,govType }: Props) => {
+
+	const [ topicOptions, setTopicOptions]=useState<string[]>([]);
+   
+
+useEffect(()=> {
+  if( govType === 'gov_1' ){
+    setTopicOptions([topicToOptionText('COUNCIL'),topicToOptionText('DEMOCRACY'),topicToOptionText('GENERAL'),topicToOptionText('TECHNICAL_COMMITTEE'), topicToOptionText('TREASURY')]);
+  }else if( govType === 'open_gov' ){
+ setTopicOptions([topicToOptionText('ROOT'),topicToOptionText('STAKING_ADMIN'),topicToOptionText('AUCTION_ADMIN'),topicToOptionText('FELLOWSHIP'), topicToOptionText('TREASURY'),topicToOptionText('GOVERNANCE')]);
+  }
+}, [govType])
+    
 
 	const onTopicChange = (value: SegmentedValue) => {
 		const topic = optionTextToTopic(String(value));
-		onTopicSelection(post_topic[topic as keyof typeof post_topic]);
+      onTopicSelection(post_topic[topic as keyof typeof post_topic]);	
 	};
+
+
 
 	return (
 		<div className={`${className} overflow-x-auto`}>
-			<Segmented options={topicOptions} onChange={onTopicChange} />
+      <Segmented className='text-navBlue borderRadius flex gap-4 rounded-xl bg-white text-xs' options={topicOptions} onChange={onTopicChange}/>
 		</div>
 	);
 };
 
-export default TopicsRadio;
+export default styled(TopicsRadio)`
+.borderRadius .ant-segmented-item{
+ background:#EBEEF2 ;
+  border-radius:16px;
+}
+.borderRadius .ant-segmented-item-selected{
+border-radius:16px;
+background:#E5007A ;
+
+}
+.borderRadius .ant-segmented-item-selected .ant-segmented-item-label{
+border-radius:16px ;
+color:white !important;
+font-size:12px;
+
+}
+.borderRadius .ant-segmented-item .ant-segmented-item-label{
+border-radius:16px ;
+font-size:12px;
+padding:2px 14px;
+}
+.borderRadius .ant-segmented-group{
+gap:12px !important;
+}
+
+`;

@@ -40,6 +40,45 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
 }
 `;
 
+export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES=`query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!]) {
+  proposals(where: {type_eq: $type_eq, index_in: $index_in}, limit: $limit) {
+    proposer
+    curator
+    createdAt
+    updatedAt
+    preimage {
+      method
+      proposer
+    }
+    index
+    end
+    hash
+    description
+    type
+    origin
+    trackNumber
+    group {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
+        proposer
+        preimage {
+          proposer
+        }
+      }
+    }
+    proposalArguments {
+      method
+      description
+    }
+    parentBountyIndex
+    statusHistory {
+      block
+      status
+      timestamp
+    }
+    status
+  }
+}`
+
 export const GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING = `
 query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal) {
   proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, hash_eq: $hash_eq}) {

@@ -80,6 +80,8 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 		];
 		const topic = data?.topic;
 		const topic_id = data?.topic_id;
+    const tags = data?.tags || [];
+    const gov_type = data?.gov_type;
 		const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 		const post_link = data?.post_link;
 		if (post_link) {
@@ -157,7 +159,9 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 				name: getTopicNameFromTopicId(topic_id)
 			}: getTopicFromType(strProposalType as ProposalType),
 			user_id: data?.user_id,
-			username: data?.username
+			username: data?.username,
+      gov_type:gov_type,
+      tags:tags
 		};
 		return {
 			data: JSON.parse(JSON.stringify(post)),
@@ -180,7 +184,7 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
 
-	const { data, error, status } = await getOffChainPost({
+	const { data, error, status} = await getOffChainPost({
 		network,
 		postId,
 		proposalType

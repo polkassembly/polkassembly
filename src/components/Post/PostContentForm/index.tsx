@@ -3,10 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, InputRef, Tag } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
-import React, { useState } from 'react';
-import { NotificationStatus } from 'src/types';
+import React, { useEffect, useRef, useState } from 'react';
+import { IPostTag, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 
@@ -16,6 +16,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ContentForm from '../../ContentForm';
 import LinkPostModal from './LinkPostModal';
+import AddTags from '~src/ui-components/AddTags';
+import styled from 'styled-components';
 
 interface Props {
 	className?: string;
@@ -28,13 +30,15 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 
+
 	const { postData: {
 		title,
 		content,
 		postType: proposalType,
 		postIndex,
-		timeline
+		timeline,tags:oldTags
 	}, setPostData } = usePostDataContext();
+  const [tags,setTags]=useState<string[]>(oldTags);
 
 	const onFinish = async ({ title, content }: any) => {
 		await form.validateFields();
@@ -47,7 +51,8 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 			postId: postIndex,
 			proposalType,
 			timeline,
-			title
+			title,
+      tags
 		});
 
 		if(editError || !data) {
@@ -75,7 +80,8 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 				last_edited_at,
 				proposer,
 				title,
-				topic
+				topic,
+        tags
 			}));
 			setFormDisabled(false);
 			toggleEdit();
@@ -112,6 +118,8 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 					<Input autoFocus placeholder='Your title...' className='text-black' />
 				</Form.Item>
 				<ContentForm />
+ <h5 className='text-sm text-color mt-8 font-normal'>Tags</h5>
+        <AddTags tags={tags} setTags={setTags} className='mb-8' />
 				<Form.Item>
 					<div className='flex items-center justify-between'>
 						<LinkPostModal
@@ -120,7 +128,6 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 							setNewTitle={setNewTitle}
 							setNewContent={setNewContent}
 						/>
-
 						<div className='flex items-center justify-end'>
 							<Button htmlType="button" loading={loading} onClick={toggleEdit} className='mr-2 flex items-center'>
 								<CloseOutlined /> Cancel
@@ -136,4 +143,8 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 	);
 };
 
-export default PostContentForm;
+export default styled(PostContentForm)`
+.text-color{
+  color:#334D6EE5;
+}
+`;

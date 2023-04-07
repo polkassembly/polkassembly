@@ -41,6 +41,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 								title={post.title}
 								topic={post.topic.name}
 								created_at={post.created_at}
+                tags={post?.tags}
 							/>
 						</Link>}
 					</div>

@@ -385,7 +385,7 @@ switch (sentiment){
 							{/* Add Reply Form*/}
 							{errorReply && <div>{errorReply}</div>}
 							{
-								isReplying && !props.disableEdit && <Form
+								 !props.disableEdit && <Form
 									form={replyForm}
 									name="reply-content-form"
 									onFinish={handleReplySave}

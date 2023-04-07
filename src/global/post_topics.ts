@@ -7,5 +7,11 @@ export const post_topic = {
 	'DEMOCRACY': 1,
 	'GENERAL': 5,
 	'TECHNICAL_COMMITTEE': 3,
-	'TREASURY': 4
+	'TREASURY': 4,
+  'ROOT':6,
+  'STAKING_ADMIN':7,
+  'AUCTION_ADMIN':8,
+  'GOVERNANCE':9,
+  'FELLOWSHIP':10,
+
 };

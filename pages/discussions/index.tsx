@@ -26,12 +26,12 @@ interface IDiscussionsProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.COMMENTED } = query;
+	const { page = 1, sortBy = sortValues.COMMENTED,filterBy } = query;
 
-	if(!Object.values(sortValues).includes(sortBy.toString())) {
+	if(!Object.values(sortValues).includes(sortBy.toString()) || filterBy && filterBy.length!==0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))) {
 		return {
 			redirect: {
-				destination: `/discussions?page=${page}&sortBy=${sortValues.COMMENTED}`,
+				destination: `/discussions?page=${page}&sortBy=${sortValues.COMMENTED}?filterBy=${filterBy}`,
 				permanent: false
 			}
 		};
@@ -44,8 +44,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		network,
 		page: Number(page),
 		proposalType: OffChainProposalType.DISCUSSIONS,
-		sortBy: String(sortBy)
-	});
+		sortBy: String(sortBy),
+    filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
+  });
 
 	return {
 		props: {
@@ -97,7 +98,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 				<button onClick={handleClick} className='outline-none border-none h-[59px] w-[174px] px-6 py-4 font-medium text-lg leading-[27px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer'>Add New Post</button>
 			</div>
 			<OffChainPostsContainer proposalType={OffChainProposalType.DISCUSSIONS} posts={posts} count={count} className='mt-7' />
-			{openModal &&<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title="Join Polkassembly to Start a New Discussion." subtitle="Discuss, contribute and get regular updates from Polkassembly."/>}
+			{<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title="Join Polkassembly to Start a New Discussion." subtitle="Discuss, contribute and get regular updates from Polkassembly."/>}
 		</>
 	);
 };

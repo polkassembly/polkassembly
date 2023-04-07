@@ -20,7 +20,7 @@ import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	if(!networkTrackInfo[network][PostOrigin.GENERAL_ADMIN]) {
@@ -38,7 +38,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			proposalType,
 			sortBy,
 			trackNo: trackId,
-			trackStatus: 'All'
+			trackStatus: 'All',
+       filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
 		}),
 		closed: getOnChainPosts({
 			listingLimit: LISTING_LIMIT,
@@ -47,7 +48,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			proposalType,
 			sortBy,
 			trackNo: trackId,
-			trackStatus: CustomStatus.Closed
+			trackStatus: CustomStatus.Closed,
+       filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
 		}),
 		submitted: getOnChainPosts({
 			listingLimit: LISTING_LIMIT,
@@ -56,7 +58,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			proposalType,
 			sortBy,
 			trackNo: trackId,
-			trackStatus: CustomStatus.Submitted
+			trackStatus: CustomStatus.Submitted,
+       filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
 		}),
 		voting: getOnChainPosts({
 			listingLimit: LISTING_LIMIT,
@@ -65,7 +68,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			proposalType,
 			sortBy,
 			trackNo: trackId,
-			trackStatus: CustomStatus.Voting
+			trackStatus: CustomStatus.Voting,
+       filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
 		})
 	};
 

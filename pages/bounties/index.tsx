@@ -15,11 +15,12 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
+import FilterByTags from '~src/ui-components/FilterByTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST } = query;
+	const { page = 1, sortBy = sortValues.NEWEST ,filterBy} = query;
 	const proposalType = ProposalType.BOUNTIES;
 	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOnChainPosts({
@@ -27,7 +28,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		network,
 		page,
 		proposalType,
-		sortBy
+		sortBy, 
+    filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
 	});
 	return { props: { data, error, network } };
 };
@@ -78,6 +80,7 @@ const Bounties: FC<IBountiesProps> = (props) => {
 			<div className='shadow-md bg-white p-3 md:p-8 rounded-md'>
 				<div className='flex items-center justify-between'>
 					<h1 className='dashboard-heading'>{ count } Bounties</h1>
+            <FilterByTags className='mr-[2px]'/>
 				</div>
 
 				<div>

@@ -22,9 +22,8 @@ interface IOffChainPostsListingContainerProps {
 	proposalType: OffChainProposalType;
 }
 
-const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = ({ posts, className, count, proposalType }) => {
+const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = ({ posts, className, count, proposalType}) => {
 	const router = useRouter();
-
 	const onPaginationChange = (page:number) => {
 		router.push({
 			query:{

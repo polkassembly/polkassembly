@@ -292,7 +292,9 @@ const Post: FC<IPostProps> = (props) => {
 			timeline: post?.timeline,
 			title: post?.title,
 			topic: post?.topic,
-			username: post?.username
+			username: post?.username,
+      tags:post?.tags || [],
+      trackName:trackName
 		}}>
 			<>
 				<div className={`${className} flex flex-col xl:flex-row`}>
@@ -347,7 +349,8 @@ const Post: FC<IPostProps> = (props) => {
 
 						{/* Post Content */}
 						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-md w-full mb-6'>
-							{isEditing && <EditablePostContent
+							{isEditing && 
+              <EditablePostContent
 								toggleEdit={toggleEdit}
 							/>}
 
@@ -355,12 +358,12 @@ const Post: FC<IPostProps> = (props) => {
 								<PostHeading
 									className='mb-8'
 								/>
-
 								<Tabs
 									type="card"
 									className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
 									items={tabItems}
 								/>
+                
 							</>}
 
 						</div>

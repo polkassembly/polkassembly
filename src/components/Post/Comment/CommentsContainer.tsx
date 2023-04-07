@@ -12,6 +12,7 @@ import { ProposalType } from '~src/global/proposalType';
 
 import PostCommentForm from '../PostCommentForm';
 import Comments from './Comments';
+import RefendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -53,9 +54,9 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const targetOffset = 10;
 	const [timelines, setTimelines] = useState<ITimeline[]>([]);
 	// const [modalOpen,setModalOpen]=useState<boolean>(false);
-
+	// const { isLoggedOut } = useUserDetailsContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
-
+	const[openLoginModal,setOpenLoginModal]=useState<boolean>(false);
 	const getCommentCountAndFirstIdBetweenDates = (startDate: Dayjs, endDate: Dayjs, comments: any[]) => {
 		if (startDate.isAfter(endDate)) {
 			return {
@@ -147,7 +148,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					}
 				</>
 					:<Alert
-						className='p-4 mb-8 mt-9'
+						onClick={() => {
+							setOpenLoginModal(true);
+						}
+						}
+						className='p-4 mb-8 mt-9 cursor-pointer'
 						type='info' message="Please Login to Comment" showIcon/>
 				}
 				<div className='text-sidebarBlue text-sm font-medium mb-5 '>{comments?.length} comments</div>
@@ -155,6 +160,15 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						<>
 							<Comments disableEdit={isGrantClosed} comments={comments} />
 						</>
+				}
+				{
+					<RefendaLoginPrompts
+						modalOpen={openLoginModal}
+						setModalOpen={setOpenLoginModal}
+						image="/assets/post-comment.png"
+						title="Join Polkassembly to Comment on this proposal."
+						subtitle="Discuss, contribute and get regular updates from Polkassembly."
+					/>
 				}
 			</div>
 		</div>

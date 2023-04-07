@@ -58,7 +58,12 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 	const handleReact = async () => {
 		if (!id || !username) {
-			console.error('No user id found. Not logged in?');
+			if(reaction == '👍') {
+				setLikeModalOpen && setLikeModalOpen(true);
+			}
+			else{
+				setDislikeModalOpen && setDislikeModalOpen(true);
+			}
 			return;
 		}else{
 			setReactionsDisabled(true);

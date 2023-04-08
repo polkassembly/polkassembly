@@ -113,7 +113,6 @@ const Curves: FC<ICurvesProps> = (props) => {
 					const subsquidRes = await fetchSubsquid({
 						network: network,
 						query: GET_CURVE_DATA_BY_INDEX,
-						url: 'https://squid.subsquid.io/kusama-polkassembly/v/v3/graphql',
 						variables: {
 							index_eq: Number(referendumId)
 						}

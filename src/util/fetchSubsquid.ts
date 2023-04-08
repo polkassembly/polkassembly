@@ -11,11 +11,12 @@ interface Args {
 	query: string;
 	variables?: Object;
 	network: string;
+	url?: string;
 }
 
-export default async function fetchSubsquid({ query, variables, network } : Args) {
+export default async function fetchSubsquid({ query, variables, network, url } : Args) {
 	const body = variables ? { query, variables } : { query };
-	const subsquidUrl = chainProperties[network]?.subsquidUrl;
+	const subsquidUrl = url? url: chainProperties[network]?.subsquidUrl;
 	return fetch(`${subsquidUrl}`, {
 		body : JSON.stringify(body),
 		headers: {

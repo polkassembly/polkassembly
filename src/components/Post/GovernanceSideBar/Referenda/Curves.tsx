@@ -19,10 +19,10 @@ import * as Chart from 'react-chartjs-2';import {
 } from 'chart.js';
 import { Spin } from 'antd';
 import blockToTime from '~src/util/blockToTime';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { ICurvePointsResponse } from 'pages/api/v1/curves';
 import dayjs from 'dayjs';
 import { makeLinearCurve, makeReciprocalCurve } from './util';
+import fetchSubsquid from '~src/util/fetchSubsquid';
+import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
 
 ChartJS.register(
 	CategoryScale,
@@ -110,19 +110,25 @@ const Curves: FC<ICurvesProps> = (props) => {
 							approvalData.push(approvalCalc((i / decisionPeriodHrs)) * 100);
 						}
 					}
-					const { data, error } = await nextApiClientFetch<ICurvePointsResponse>('api/v1/curves', {
-						postId: referendumId
+					const subsquidRes = await fetchSubsquid({
+						network: network,
+						query: GET_CURVE_DATA_BY_INDEX,
+						url: 'https://squid.subsquid.io/kusama-polkassembly/v/v3/graphql',
+						variables: {
+							index_eq: Number(referendumId)
+						}
 					});
-					if (!error || !data) {
-						const graph_points = data?.graph_points || [];
-						labels = [];
-						approvalData = [];
-						supportData = [];
+					if (subsquidRes && subsquidRes.data && subsquidRes.data.curveData && Array.isArray(subsquidRes.data.curveData)) {
+						const graph_points = subsquidRes.data.curveData || [];
 						if (graph_points?.length > 0) {
+							labels = [];
+							approvalData = [];
+							supportData = [];
 							const lastGraphPoint = graph_points[graph_points.length - 1];
-							const decisionPeriodHrs = dayjs(lastGraphPoint.time).diff(dayjs(created_at), 'hour');
-							graph_points?.forEach((graph_point) => {
-								const hour = dayjs(graph_point.time).diff(dayjs(created_at), 'hour');
+							const proposalCreatedAt = dayjs(created_at);
+							const decisionPeriodHrs = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'minute');
+							graph_points?.forEach((graph_point: any) => {
+								const hour = dayjs(graph_point.timestamp).diff(proposalCreatedAt, 'minute');
 								const new_graph_point = {
 									...graph_point,
 									hour
@@ -138,30 +144,30 @@ const Curves: FC<ICurvesProps> = (props) => {
 								});
 								currentApprovalData.push({
 									x: hour,
-									y: new_graph_point.approval_percent
+									y: new_graph_point.approvalPercent
 								});
 								currentSupportData.push({
 									x: hour,
-									y: new_graph_point.support_percent
+									y: new_graph_point.supportPercent
 								});
 								return new_graph_point;
 							});
 							setProgress({
-								approval: graph_points[graph_points.length - 1].approval_percent,
+								approval: graph_points[graph_points.length - 1].approvalPercent.toFixed(1),
 								approvalThreshold: (approvalData[approvalData.length - 1] as any).y,
-								support: graph_points[graph_points.length - 1].support_percent,
+								support: graph_points[graph_points.length - 1].supportPercent.toFixed(1),
 								supportThreshold: (supportData[supportData.length - 1] as any).y
 							});
 						}
 					} else {
-						setError(error || 'Something went wrong.');
+						setError(subsquidRes.errors?.[0]?.message || 'Something went wrong.');
 					}
 					const newData: ChartData<'line', (number | Point | null)[]> = {
 						datasets: [
 							{
 								borderColor: '#5BC044',
 								borderWidth: 2,
-								data: approvalData.slice(1),
+								data: approvalData,
 								label: 'Approval',
 								pointHitRadius: 10,
 								pointHoverRadius: 5,
@@ -171,7 +177,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 							{
 								borderColor: '#E5007A',
 								borderWidth: 2,
-								data: supportData.slice(1),
+								data: supportData,
 								label: 'Support',
 								pointHitRadius: 10,
 								pointHoverRadius: 5,
@@ -181,7 +187,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 							{
 								borderColor: '#7F64FF',
 								borderWidth: 2,
-								data: currentApprovalData.slice(1),
+								data: currentApprovalData,
 								label: 'Current Approval',
 								pointHitRadius: 10,
 								pointHoverRadius: 5,
@@ -192,7 +198,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 							{
 								borderColor: '#334D6E',
 								borderWidth: 2,
-								data: currentSupportData.slice(1),
+								data: currentSupportData,
 								label: 'Current Support',
 								pointHitRadius: 10,
 								pointHoverRadius: 5,
@@ -209,7 +215,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 		};
 		getData();
 	}, [api, apiReady, referendumId, created_at, track_number, network]);
-	const labelsLength = (data?.labels?.length? typeof data.labels.length === 'number'? data.labels.length: isNaN(Number(data.labels.length))? 0: Number(data.labels.length): 0) as number;
+	const labelsLength = data.labels[data.labels.length - 1];
 	return (
 		<Spin indicator={<LoadingOutlined />} spinning={loading}>
 			{
@@ -267,7 +273,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 														typeof support === 'object'? support.y: support
 													).toFixed(2);
 
-													const result = `Time: ${hs}hs Support: ${supportValue}% Approval: ${approvalValue}%`;
+													const result = `Time: ${(hs/60).toFixed(0)}hs Support: ${supportValue}% Approval: ${approvalValue}%`;
 
 													return result;
 												},
@@ -289,10 +295,10 @@ const Curves: FC<ICurvesProps> = (props) => {
 											},
 											ticks: {
 												callback(v: any) {
-													return v + 'hs';
+													return (v / 60).toFixed(0) + 'hs';
 												},
 												max: labelsLength,
-												stepSize: Math.round(labelsLength / 100)
+												stepSize: Math.round(labelsLength / 30)
 											} as any,
 											title: {
 												display: true,

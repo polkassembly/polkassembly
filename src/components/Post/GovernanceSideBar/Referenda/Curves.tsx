@@ -241,8 +241,20 @@ const Curves: FC<ICurvesProps> = (props) => {
 													const { dataIndex, parsed, dataset } = tooltipItem;
 
 													// only display one item
-													if (dataset.label === 'Approval') {
+													if (['Approval', 'Current Approval'].includes(dataset.label)) {
 														return '';
+													}
+
+													if (dataset.label === 'Current Support') {
+														const currentApproval = data.datasets[2].data[dataIndex];
+														const currentSupport = data.datasets[3].data[dataIndex];
+														const currentApprovalValue = Number(
+															typeof currentApproval === 'object'? currentApproval.y: currentApproval
+														).toFixed(2);
+														const currentSupportValue = Number(
+															typeof currentSupport === 'object'? currentSupport.y: currentSupport
+														).toFixed(2);
+														return `Current Support: ${currentSupportValue}% Current Approval: ${currentApprovalValue}%`;
 													}
 
 													const hs = parsed.x;

@@ -13,6 +13,7 @@ import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UISt
 import { NetworkContext } from '~src/context/NetworkContext';
 
 import WhitelistMembersListing from './WhitelistMembersListing';
+import FilterByTags from '~src/ui-components/FilterByTags';
 
 export type WhitelistMember = {accountId:string, rank?: number};
 
@@ -115,6 +116,7 @@ const WhitelistMembersContainer = ({ className, membersType } : { className?:str
 				<div className={`${className} shadow-md bg-white p-3 md:p-8 rounded-md`}>
 					<div className='flex items-center justify-between'>
 						<h1 className='dashboard-heading'>{members.length} Members</h1>
+						<FilterByTags className='mr-[2px]'/>
 					</div>
 
 					<WhitelistMembersListing membersType={membersType} className='mt-6' data={members} />

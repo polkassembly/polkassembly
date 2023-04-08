@@ -113,6 +113,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	// eslint-disable-next-line react-hooks/rules-of-hooks
 	useEffect(() => {
 		isComment && handleSave();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[isComment]);
 
 	return (

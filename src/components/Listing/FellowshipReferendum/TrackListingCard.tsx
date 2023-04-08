@@ -7,6 +7,7 @@ import React, { FC } from 'react';
 
 import TrackListingAllTabContent from './TrackListingAllTabContent';
 import TrackListingTabContent from './TrackListingTabContent';
+import FilterByTags from '~src/ui-components/FilterByTags';
 
 interface ITrackListingCardProps {
 	className?: string;
@@ -43,9 +44,10 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 	return (
 		<div
 			className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue`}
-		>
-			<h2 className="text-lg capitalize font-medium mb-10">Fellowship Referenda</h2>
-
+		><div className='flex items-center justify-between mb-10'>
+				<h2 className="text-lg capitalize font-medium">Fellowship Referenda</h2>
+				<FilterByTags className='mr-[2px] mt-[-8px]'/>
+			</div>
 			<Tabs
 				items={items}
 				type="card"

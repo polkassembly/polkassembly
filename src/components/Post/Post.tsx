@@ -335,9 +335,11 @@ const Post: FC<IPostProps> = (props) => {
 			requested: post?.requested,
 			reward: post?.reward,
 			status: post?.status,
+			tags:post?.tags || [],
 			timeline: post?.timeline,
 			title: post?.title,
 			topic: post?.topic,
+			trackName:trackName,
 			username: post?.username
 		}}>
 			<>
@@ -393,20 +395,19 @@ const Post: FC<IPostProps> = (props) => {
 
 						{/* Post Content */}
 						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-md w-full mb-6'>
-							{isEditing && <EditablePostContent
-								toggleEdit={toggleEdit}
-							/>}
+							{isEditing &&
+              <EditablePostContent toggleEdit={toggleEdit} />}
 
 							{!isEditing && <>
 								<PostHeading
 									className='mb-8'
 								/>
-
 								<Tabs
 									type="card"
 									className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
 									items={tabItems}
 								/>
+
 							</>}
 
 						</div>

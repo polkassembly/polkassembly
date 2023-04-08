@@ -46,11 +46,11 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 	const getReactionIcon = (reaction: string, reacted: string | boolean | null | undefined) => {
 		if(reaction == '👍') {
-			return reacted ? <LikeFilled /> : <div onClick={() => !id || !username && setLikeModalOpen && setLikeModalOpen(true)}><LikeOutlined /></div>;
+			return reacted ? <LikeFilled /> : <div onClick={() => !id && setLikeModalOpen && setLikeModalOpen(true)}><LikeOutlined /></div>;
 		}
 
 		if(reaction == '👎') {
-			return reacted ? <LikeFilled rotate={180} /> : <div onClick={() => !id || !username && setDislikeModalOpen && setDislikeModalOpen(true)}><LikeOutlined rotate={180} /></div>;
+			return reacted ? <LikeFilled rotate={180} /> : <div onClick={() => !id && setDislikeModalOpen && setDislikeModalOpen(true)}><LikeOutlined rotate={180} /></div>;
 		}
 
 		return reaction;

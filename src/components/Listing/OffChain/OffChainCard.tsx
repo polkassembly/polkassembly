@@ -23,10 +23,11 @@ export interface IDiscussionProps {
 		'👎': number;
 	};
 	post_id: string;
+  tags:string[] | [];
 }
 
 const DiscussionCard: FC<IDiscussionProps> = (props) => {
-	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id } = props;
+	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id,tags } = props;
 	const currentUser = useContext(UserDetailsContext);
 	const ownPost = currentUser.username === username;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
@@ -48,21 +49,21 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					</div>
 
 				</div>
-				<div className="mt-3 gap-2.5 font-medium text-navBlue text-xs flex flex-col md:flex-row items-start md:items-center">
+				<div className="mt-3 gap-2.5 font-medium text-navBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
 					<OnchainCreationLabel address={address} topic={topic} username={username} />
-					<Divider className='hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+					<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 
 					<div className='flex items-center gap-x-2'>
 						<div className='flex items-center justify-center gap-x-1.5'>
 							<LikeOutlined />
 							<span>{getFormattedLike(postReactionCount['👍'])}</span>
 						</div>
-						<Divider className='hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+						<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 						<div className='flex items-center justify-center gap-x-1.5'>
 							<DislikeOutlined />
 							<span>{getFormattedLike(postReactionCount['👎'])}</span>
 						</div>
-						<Divider className='hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+						<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 						<div className='flex items-center'>
 							<CommentOutlined className='mr-1' /> {commentsCount}
 						</div>
@@ -72,6 +73,8 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 							</div>
 						</>}
+						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
+						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) => (<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >{tag?.charAt(0).toUpperCase()+tag?.slice(1).toLowerCase()}</div>))} {tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }}>+{tags.length-2} more</span>}</>}
 					</div>
 				</div>
 			</div>

@@ -34,12 +34,12 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 	const router = useRouter();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 
-  const handleSortByClick = ({ key }: { key:string }) => {
+	const handleSortByClick = ({ key }: { key:string }) => {
 
 		router.push({
 			pathname:'',
-			query:{...router.query,
-				sortBy: key,
+			query:{ ...router.query,
+				sortBy: key
 			}
 		});
 		setSortBy(key);
@@ -67,10 +67,10 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 				<h1 className='dashboard-heading'>{ count } {
 					getTitle(proposalType)
 				}</h1>
-        <div className='flex gap-1'>
-          <FilterByTags/>
-				{sortByDropdown}
-        </div>
+				<div className='flex gap-1'>
+					<FilterByTags/>
+					{sortByDropdown}
+				</div>
 			</div>
 			<OffChainPostsListingContainer proposalType={proposalType} sortBy={sortBy} count={count} posts={posts} className='mt-8' />
 		</div>

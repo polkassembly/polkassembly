@@ -51,7 +51,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		updated_at: last_comment_at,
 		user_id: user.id,
 		user_profile_img: user?.profile?.image || '',
-		username: user.username,
+		username: user.username
 	};
 
 	await newCommentRef.set(newComment).then(() => {

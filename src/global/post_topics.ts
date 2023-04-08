@@ -3,15 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 export const post_topic = {
+	'AUCTION_ADMIN':8,
 	'COUNCIL': 2,
 	'DEMOCRACY': 1,
+	'FELLOWSHIP':10,
 	'GENERAL': 5,
+	'GOVERNANCE':9,
+	'ROOT':6,
+	'STAKING_ADMIN':7,
 	'TECHNICAL_COMMITTEE': 3,
-	'TREASURY': 4,
-  'ROOT':6,
-  'STAKING_ADMIN':7,
-  'AUCTION_ADMIN':8,
-  'GOVERNANCE':9,
-  'FELLOWSHIP':10,
+	'TREASURY': 4
 
 };

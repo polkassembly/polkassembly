@@ -130,9 +130,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								}
 							</div>
 					}<div className='flex gap-[4px] items-center'>
-          	{tags && tags.length>0 && <Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />}
-              {tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index)=>(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >{tag?.charAt(0).toUpperCase()+tag?.slice(1).toLowerCase()}</div>))} {tags.length>2 && <span className='text-pink_primary' style={{borderBottom:'1px solid #E5007A' }}>+{tags.length-2} more</span>}</>}
-				</div></div>
+						{tags && tags.length>0 && <Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />}
+						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) => (<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >{tag?.charAt(0).toUpperCase()+tag?.slice(1).toLowerCase()}</div>))} {tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }}>+{tags.length-2} more</span>}</>}
+					</div></div>
 			</div>
 		</div>
 	);

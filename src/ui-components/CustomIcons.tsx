@@ -41,7 +41,7 @@ import ReferendaSVG from '~assets/sidebar/referenda.svg';
 import TipsSVG from '~assets/sidebar/tips.svg';
 import TreasuryProposalsSVG from '~assets/sidebar/treasury_proposals.svg';
 import FilterSVG from '~assets/icons/filter-icon.svg';
-import FilterUnfilledSVG from "~assets/icons/filter-unfilled.svg";
+import FilterUnfilledSVG from '~assets/icons/filter-unfilled.svg';
 import SearchSVG from '~assets/icons/search.svg';
 import CheckedSVG from '~assets/icons/checked.svg';
 import CheckedOutlinedSVG from '~assets/icons/check-outline.svg';

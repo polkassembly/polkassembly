@@ -43,11 +43,6 @@ export function getTopicFromType(proposalType: ProposalType) {
 	return topic;
 }
 
-//  'ROOT':6,
-//   'STAKING_ADMIN':7,
-//   'AUCTION_ADMIN':8,
-//   'GOVERNANCE':9,
-//   'FELLOWSHIP':10,
 export const topicIdToNameMap = {
 	1: 'Democracy',
 	2: 'Council',
@@ -55,10 +50,11 @@ export const topicIdToNameMap = {
 	4: 'Treasury',
 	5: 'General',
 	6: 'Root',
-  7: 'Staking Admin',
-  8: 'Auction Admin',
-  9: 'Governance',
-  10: 'Fellowship'
+	7: 'Staking Admin',
+	8: 'Auction Admin',
+	9: 'Governance',
+	// eslint-disable-next-line sort-keys
+	10: 'Fellowship'
 };
 
 export const isTopicIdValid = (topicId: any) => {

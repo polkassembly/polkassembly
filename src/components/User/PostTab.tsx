@@ -26,7 +26,7 @@ const PostTab: FC<IPostTabProps> = (props) => {
 					:posts.map((post, i) => {
 						return (
 							<Link key={post.id} href={`/${getSinglePostLinkFromProposalType(post.type)}/${post.id}`}>
-                
+
 								<GovernanceCard
 									tip_index={posts.length - i}
 									isTip={post.type === 'tips'}

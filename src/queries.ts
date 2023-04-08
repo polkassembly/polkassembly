@@ -77,7 +77,7 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES=`query ProposalsListingByT
     }
     status
   }
-}`
+}`;
 
 export const GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING = `
 query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal) {

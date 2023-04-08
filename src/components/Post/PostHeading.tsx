@@ -26,22 +26,22 @@ interface IPostHeadingProps {
 	className?: string;
 }
 const PostHeading: FC<IPostHeadingProps> = (props) => {
-  const router= useRouter();
+	const router= useRouter();
 	const { className } = props;
 	const { postData: {
 		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags,trackName
 	} } = usePostDataContext();
-  
+
 	const { network } = useNetworkContext();
 
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2? requested: reward;
 
-  const handleTagClick=(pathname:string,filterBy:string)=>{
-  if(pathname !== '') ( 
-    router.replace({pathname:`/${pathname}`,query:{
-      filterBy:encodeURIComponent(JSON.stringify([filterBy]))
-    }}))
-  }
+	const handleTagClick=(pathname:string,filterBy:string) => {
+		if(pathname !== '') (
+			router.replace({ pathname:`/${pathname}`,query:{
+				filterBy:encodeURIComponent(JSON.stringify([filterBy]))
+			} }));
+	};
 	return (
 		<div className={className} >
 			<div className="flex justify-between items-center">
@@ -66,11 +66,11 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							updated_at={last_edited_at}
 						/>
 					</CreationLabel>
-				</>   
+				</>
 			</div>
-       {tags && tags.length>0 &&<div className='flex mt-6 gap-[8px]'>
-             {tags?.map((tag,index )=>(<div onClick={()=>handleTagClick(onTagClickFilter(proposalType, trackName || ''),tag)} className='rounded-full px-[16px] py-[4px] border-navBlue border-solid border-[1px] text-navBlue text-xs traking-2 cursor-pointer hover:border-pink_primary hover:text-pink_primary' key={index} >{tag.charAt(0).toUpperCase()+tag.slice(1)}</div>))}
-        </div> }
+			{tags && tags.length>0 &&<div className='flex mt-6 gap-[8px]'>
+				{tags?.map((tag,index ) => (<div onClick={() => handleTagClick(onTagClickFilter(proposalType, trackName || ''),tag)} className='rounded-full px-[16px] py-[4px] border-navBlue border-solid border-[1px] text-navBlue text-xs traking-2 cursor-pointer hover:border-pink_primary hover:text-pink_primary' key={index} >{tag.charAt(0).toUpperCase()+tag.slice(1)}</div>))}
+			</div> }
 		</div>
 	);
 };

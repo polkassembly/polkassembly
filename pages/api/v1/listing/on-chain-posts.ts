@@ -96,7 +96,7 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 
 export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<IApiResponse<IPostsListingResponse>> {
 	try {
-		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy} = params;
+		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy } = params;
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode( `Invalid listingLimit "${listingLimit}"`, 400);
@@ -116,319 +116,320 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 		if (!isProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(`The proposal type of the name "${proposalType}" does not exist.`, 400);
 		}
-    if(filterBy && Array.isArray(filterBy) && filterBy.length > 0){
-     
-    const offChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
-    let order: 'desc' | 'asc' = sortBy === sortValues.NEWEST ? 'desc' : 'asc';
-		let orderedField = 'created_at';
-		if (sortBy === sortValues.COMMENTED) {
-			order = 'desc';
-			orderedField = 'last_comment_at';
-		}
-		const postsSnapshotArr = 
-       await offChainCollRef
-			.orderBy(orderedField,order)
-      .where('tags','array-contains-any',filterBy)
-			.limit(Number(listingLimit) || LISTING_LIMIT)
-			.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
-			.get();
+		if(filterBy && Array.isArray(filterBy) && filterBy.length > 0){
 
-const count = (await offChainCollRef.where('tags','array-contains-any',filterBy).count().get()).data().count;
-const postsPromise = postsSnapshotArr.docs.map(async (doc) => {
-			if (doc && doc.exists) {
-				const docData = doc.data();
-				if (docData) {
-					const postDocRef = offChainCollRef.doc(String(docData.id));
-
-					const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
-					const reactions = getReactions(post_reactionsQuerySnapshot);
-					const post_reactions = {
-						'👍': reactions['👍']?.count || 0,
-						'👎': reactions['👎']?.count || 0
-					};
-
-					const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
-
-					const created_at = docData.created_at;
-					const { topic, topic_id } = docData;
-          
-					return {
-						comments_count: commentsQuerySnapshot.data()?.count || 0,
-						created_at: created_at?.toDate? created_at?.toDate(): created_at,
-						post_id: docData.id,
-						post_reactions,
-						proposer: getProposerAddressFromFirestorePostData(docData, network),
-						title:  docData?.title || null,
-						topic: topic? topic: isTopicIdValid(topic_id)? {
-							id: topic_id,
-							name: getTopicNameFromTopicId(topic_id)
-						}: getTopicFromType(strProposalType as ProposalType),
-						user_id: docData?.user_id || 1,
-						username: docData?.username,
-            gov_type:docData?.gov_type ,
-            tags:docData?.tags || []
-					};
-				}
+			const offChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
+			let order: 'desc' | 'asc' = sortBy === sortValues.NEWEST ? 'desc' : 'asc';
+			let orderedField = 'created_at';
+			if (sortBy === sortValues.COMMENTED) {
+				order = 'desc';
+				orderedField = 'last_comment_at';
 			}
-     
-		});
-  const posts = await Promise.all(postsPromise);
-  const indexMap: any = {};
-		const ids = posts.map((post, index) => {
-			indexMap[Number(post?.post_id)] = index;
-			return Number(post?.post_id);
-		});
+			const postsSnapshotArr = await offChainCollRef
+				.orderBy(orderedField,order)
+				.where('tags','array-contains-any',filterBy)
+				.limit(Number(listingLimit) || LISTING_LIMIT)
+				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
+				.get();
 
-    const topicFromType = getTopicFromType(proposalType as ProposalType);
-    const subsquidProposalType = getSubsquidProposalType(proposalType as any);
-     const postsVariables: any = {
-			limit: numListingLimit,
-			offset: numListingLimit * (numPage - 1),
-			type_eq: subsquidProposalType,
-      index_in:ids
-		};
+			const count = (await offChainCollRef.where('tags','array-contains-any',filterBy).count().get()).data().count;
+			const postsPromise = postsSnapshotArr.docs.map(async (doc) => {
+				if (doc && doc.exists) {
+					const docData = doc.data();
+					if (docData) {
+						const postDocRef = offChainCollRef.doc(String(docData.id));
 
-    	const subsquidRes = await fetchSubsquid({
-			network,
-			query: GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
-			variables: postsVariables
-		});
+						const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
+						const reactions = getReactions(post_reactionsQuerySnapshot);
+						const post_reactions = {
+							'👍': reactions['👍']?.count || 0,
+							'👎': reactions['👎']?.count || 0
+						};
 
-		const subsquidData = subsquidRes?.data;
-		const subsquidPosts: any[] = subsquidData?.proposals;
-    const subsquidPostsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-			const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator } = subsquidPost;
-      let otherPostProposer = '';
-			if (group?.proposals?.length) {
-				group.proposals.forEach((obj: any) => {
-					if (!otherPostProposer) {
-						if (obj.proposer) {
-							otherPostProposer = obj.proposer;
-						} else if (obj?.preimage?.proposer) {
-							otherPostProposer = obj.preimage.proposer;
-						}
+						const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+
+						const created_at = docData.created_at;
+						const { topic, topic_id } = docData;
+
+						return {
+							comments_count: commentsQuerySnapshot.data()?.count || 0,
+							created_at: created_at?.toDate? created_at?.toDate(): created_at,
+							post_id: docData.id,
+							post_reactions,
+							proposer: getProposerAddressFromFirestorePostData(docData, network),
+							title:  docData?.title || null,
+							topic: topic? topic: isTopicIdValid(topic_id)? {
+								id: topic_id,
+								name: getTopicNameFromTopicId(topic_id)
+							}: getTopicFromType(strProposalType as ProposalType),
+							user_id: docData?.user_id || 1,
+							username: docData?.username,
+							// eslint-disable-next-line sort-keys
+							gov_type:docData?.gov_type ,
+							tags:docData?.tags || []
+						};
 					}
-				});
-			}
-			const status = subsquidPost.status;
-			const postId = proposalType === ProposalType.TIPS? hash: index;
-			const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
+				}
 
-			const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
-			const reactions = getReactions(post_reactionsQuerySnapshot);
-			const post_reactions = {
-				'👍': reactions['👍']?.count || 0,
-				'👎': reactions['👎']?.count || 0
+			});
+			const posts = await Promise.all(postsPromise);
+			const indexMap: any = {};
+			const ids = posts.map((post, index) => {
+				indexMap[Number(post?.post_id)] = index;
+				return Number(post?.post_id);
+			});
+
+			const topicFromType = getTopicFromType(proposalType as ProposalType);
+			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+			const postsVariables: any = {
+				limit: numListingLimit,
+				offset: numListingLimit * (numPage - 1),
+				type_eq: subsquidProposalType,
+				// eslint-disable-next-line sort-keys
+				index_in:ids
 			};
 
-			const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
-			const postDoc = await postDocRef.get();
-			if (postDoc && postDoc.exists) {
-				const data = postDoc.data();
-				if (data) {
-					const proposer_address = getProposerAddressFromFirestorePostData(data, network);
-					const topic = data?.topic;
-					const topic_id = data?.topic_id;
-					return {
-						comments_count: commentsQuerySnapshot.data()?.count || 0,
-						created_at: createdAt,
-						curator,
-						description,
-						end,
-						hash,
-						method: preimage?.method,
-						post_id: postId,
-						post_reactions,
-						proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
-						status,
-						title: data?.title || null,
-						topic: topic? topic: isTopicIdValid(topic_id)? {
-							id: topic_id,
-							name: getTopicNameFromTopicId(topic_id)
-						}: topicFromType,
-						type: type || subsquidProposalType,
-						user_id: data?.user_id || 1,
-            tags:data?.tags || [],
-            gov_type:data.gov_type
-					};
+			const subsquidRes = await fetchSubsquid({
+				network,
+				query: GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
+				variables: postsVariables
+			});
+
+			const subsquidData = subsquidRes?.data;
+			const subsquidPosts: any[] = subsquidData?.proposals;
+			const subsquidPostsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
+				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator } = subsquidPost;
+				let otherPostProposer = '';
+				if (group?.proposals?.length) {
+					group.proposals.forEach((obj: any) => {
+						if (!otherPostProposer) {
+							if (obj.proposer) {
+								otherPostProposer = obj.proposer;
+							} else if (obj?.preimage?.proposer) {
+								otherPostProposer = obj.preimage.proposer;
+							}
+						}
+					});
 				}
-			}
+				const status = subsquidPost.status;
+				const postId = proposalType === ProposalType.TIPS? hash: index;
+				const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
+
+				const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
+				const reactions = getReactions(post_reactionsQuerySnapshot);
+				const post_reactions = {
+					'👍': reactions['👍']?.count || 0,
+					'👎': reactions['👎']?.count || 0
+				};
+
+				const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+				const postDoc = await postDocRef.get();
+				if (postDoc && postDoc.exists) {
+					const data = postDoc.data();
+					if (data) {
+						const proposer_address = getProposerAddressFromFirestorePostData(data, network);
+						const topic = data?.topic;
+						const topic_id = data?.topic_id;
+						return {
+							comments_count: commentsQuerySnapshot.data()?.count || 0,
+							created_at: createdAt,
+							curator,
+							description,
+							end,
+							gov_type:data.gov_type,
+							hash,
+							method: preimage?.method,
+							post_id: postId,
+							post_reactions,
+							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
+							status,
+							tags:data?.tags || [],
+							title: data?.title || null,
+							topic: topic? topic: isTopicIdValid(topic_id)? {
+								id: topic_id,
+								name: getTopicNameFromTopicId(topic_id)
+							}: topicFromType,
+							type: type || subsquidProposalType,
+							user_id: data?.user_id || 1
+						};
+					}
+				}
+
+				return {
+					comments_count: commentsQuerySnapshot.data()?.count || 0,
+					created_at: createdAt,
+					curator,
+					description,
+					end: end,
+					hash: hash || null,
+					method: preimage?.method,
+					post_id: postId,
+					post_reactions,
+					proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
+					status: status,
+					title: '',
+					topic: topicFromType,
+					type: type || subsquidProposalType,
+					user_id: 1
+				};
+			});
+
+			const subsquidDataPost = await Promise.all(subsquidPostsPromise);
+
+			const data: IPostsListingResponse = {
+				count:count,
+				posts:subsquidDataPost
+			};
 
 			return {
-				comments_count: commentsQuerySnapshot.data()?.count || 0,
-				created_at: createdAt,
-				curator,
-				description,
-				end: end,
-				hash: hash || null,
-				method: preimage?.method,
-				post_id: postId,
-				post_reactions,
-				proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
-				status: status,
-				title: '',
-				topic: topicFromType,
-				type: type || subsquidProposalType,
-				user_id: 1,
+				data: JSON.parse(JSON.stringify(data)),
+				error: null,
+				status: 200
 			};
-		});
-
-		const subsquidDataPost = await Promise.all(subsquidPostsPromise);
-
-		const data: IPostsListingResponse = {
-			count:count,
-			posts:subsquidDataPost
-		};
-
-		return {
-			data: JSON.parse(JSON.stringify(data)),
-			error: null,
-			status: 200
-		};
-    }
-    else{
-		const numTrackNo = Number(trackNo);
-		const strTrackStatus = String(trackStatus);
-		if (strProposalType === ProposalType.OPEN_GOV) {
-			if (!isTrackNoValid(numTrackNo, network)) {
-				throw apiErrorWithStatusCode(`The OpenGov trackNo "${trackNo}" is invalid.`, 400);
-			}
-			if (trackStatus !== undefined && trackStatus !== null && !isTrackPostStatusValid(strTrackStatus) && !isCustomOpenGovStatusValid(strTrackStatus)) {
-				throw apiErrorWithStatusCode(`The Track status of the name "${trackStatus}" is invalid.`, 400);
-			}
 		}
-
-		const topicFromType = getTopicFromType(proposalType as ProposalType);
-
-		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
-
-		const orderBy = strSortBy === 'newest'? 'createdAtBlock_DESC': 'createdAtBlock_ASC';
-		const postsVariables: any = {
-			limit: numListingLimit,
-			offset: numListingLimit * (numPage - 1),
-			orderBy: orderBy,
-			type_in: subsquidProposalType
-		};
-
-		if (proposalType === ProposalType.OPEN_GOV) {
-			strProposalType = 'referendums_v2';
-			postsVariables.trackNumber_in = numTrackNo;
-			if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
-				postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
+		else{
+			const numTrackNo = Number(trackNo);
+			const strTrackStatus = String(trackStatus);
+			if (strProposalType === ProposalType.OPEN_GOV) {
+				if (!isTrackNoValid(numTrackNo, network)) {
+					throw apiErrorWithStatusCode(`The OpenGov trackNo "${trackNo}" is invalid.`, 400);
+				}
+				if (trackStatus !== undefined && trackStatus !== null && !isTrackPostStatusValid(strTrackStatus) && !isCustomOpenGovStatusValid(strTrackStatus)) {
+					throw apiErrorWithStatusCode(`The Track status of the name "${trackStatus}" is invalid.`, 400);
+				}
 			}
-		} else if (strProposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
-			if (numTrackNo !== undefined && numTrackNo !== null && !isNaN(numTrackNo)) {
+
+			const topicFromType = getTopicFromType(proposalType as ProposalType);
+
+			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+
+			const orderBy = strSortBy === 'newest'? 'createdAtBlock_DESC': 'createdAtBlock_ASC';
+			const postsVariables: any = {
+				limit: numListingLimit,
+				offset: numListingLimit * (numPage - 1),
+				orderBy: orderBy,
+				type_in: subsquidProposalType
+			};
+
+			if (proposalType === ProposalType.OPEN_GOV) {
+				strProposalType = 'referendums_v2';
 				postsVariables.trackNumber_in = numTrackNo;
-			}
-		}
-
-		if (postIds && postIds.length > 0) {
-			if (proposalType === ProposalType.TIPS) {
-				postsVariables['hash_in'] = postIds;
-			} else {
-				postsVariables['index_in'] = postIds;
-			}
-		}
-
-		const subsquidRes = await fetchSubsquid({
-			network,
-			query: GET_PROPOSALS_LISTING_BY_TYPE,
-			variables: postsVariables
-		});
-
-		const subsquidData = subsquidRes?.data;
-		const subsquidPosts: any[] = subsquidData?.proposals;
-
-		const postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-			const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator } = subsquidPost;
-			let otherPostProposer = '';
-			if (group?.proposals?.length) {
-				group.proposals.forEach((obj: any) => {
-					if (!otherPostProposer) {
-						if (obj.proposer) {
-							otherPostProposer = obj.proposer;
-						} else if (obj?.preimage?.proposer) {
-							otherPostProposer = obj.preimage.proposer;
-						}
-					}
-				});
-			}
-			const status = subsquidPost.status;
-			const postId = proposalType === ProposalType.TIPS? hash: index;
-			const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
-
-			const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
-			const reactions = getReactions(post_reactionsQuerySnapshot);
-			const post_reactions = {
-				'👍': reactions['👍']?.count || 0,
-				'👎': reactions['👎']?.count || 0
-			};
-
-			const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
-			const postDoc = await postDocRef.get();
-			if (postDoc && postDoc.exists) {
-				const data = postDoc.data();
-				if (data) {
-					const proposer_address = getProposerAddressFromFirestorePostData(data, network);
-					const topic = data?.topic;
-					const topic_id = data?.topic_id;
-					return {
-						comments_count: commentsQuerySnapshot.data()?.count || 0,
-						created_at: createdAt,
-						curator,
-						description,
-						end,
-						hash,
-						method: preimage?.method,
-						post_id: postId,
-						post_reactions,
-						proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
-						status,
-						title: data?.title || null,
-						topic: topic? topic: isTopicIdValid(topic_id)? {
-							id: topic_id,
-							name: getTopicNameFromTopicId(topic_id)
-						}: topicFromType,
-						type: type || subsquidProposalType,
-						user_id: data?.user_id || 1,
-            tags:data?.tags || [],
-            gov_type:data.gov_type
-					};
+				if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
+					postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
+				}
+			} else if (strProposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
+				if (numTrackNo !== undefined && numTrackNo !== null && !isNaN(numTrackNo)) {
+					postsVariables.trackNumber_in = numTrackNo;
 				}
 			}
 
-			return {
-				comments_count: commentsQuerySnapshot.data()?.count || 0,
-				created_at: createdAt,
-				curator,
-				description,
-				end: end,
-				hash: hash || null,
-				method: preimage?.method,
-				post_id: postId,
-				post_reactions,
-				proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
-				status: status,
-				title: '',
-				topic: topicFromType,
-				type: type || subsquidProposalType,
-				user_id: 1,
+			if (postIds && postIds.length > 0) {
+				if (proposalType === ProposalType.TIPS) {
+					postsVariables['hash_in'] = postIds;
+				} else {
+					postsVariables['index_in'] = postIds;
+				}
+			}
+
+			const subsquidRes = await fetchSubsquid({
+				network,
+				query: GET_PROPOSALS_LISTING_BY_TYPE,
+				variables: postsVariables
+			});
+
+			const subsquidData = subsquidRes?.data;
+			const subsquidPosts: any[] = subsquidData?.proposals;
+
+			const postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
+				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator } = subsquidPost;
+				let otherPostProposer = '';
+				if (group?.proposals?.length) {
+					group.proposals.forEach((obj: any) => {
+						if (!otherPostProposer) {
+							if (obj.proposer) {
+								otherPostProposer = obj.proposer;
+							} else if (obj?.preimage?.proposer) {
+								otherPostProposer = obj.preimage.proposer;
+							}
+						}
+					});
+				}
+				const status = subsquidPost.status;
+				const postId = proposalType === ProposalType.TIPS? hash: index;
+				const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
+
+				const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
+				const reactions = getReactions(post_reactionsQuerySnapshot);
+				const post_reactions = {
+					'👍': reactions['👍']?.count || 0,
+					'👎': reactions['👎']?.count || 0
+				};
+
+				const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+				const postDoc = await postDocRef.get();
+				if (postDoc && postDoc.exists) {
+					const data = postDoc.data();
+					if (data) {
+						const proposer_address = getProposerAddressFromFirestorePostData(data, network);
+						const topic = data?.topic;
+						const topic_id = data?.topic_id;
+						return {
+							comments_count: commentsQuerySnapshot.data()?.count || 0,
+							created_at: createdAt,
+							curator,
+							description,
+							end,
+							gov_type:data.gov_type,
+							hash,
+							method: preimage?.method,
+							post_id: postId,
+							post_reactions,
+							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
+							status,
+							tags:data?.tags || [],
+							title: data?.title || null,
+							topic: topic? topic: isTopicIdValid(topic_id)? {
+								id: topic_id,
+								name: getTopicNameFromTopicId(topic_id)
+							}: topicFromType,
+							type: type || subsquidProposalType,
+							user_id: data?.user_id || 1
+						};
+					}
+				}
+
+				return {
+					comments_count: commentsQuerySnapshot.data()?.count || 0,
+					created_at: createdAt,
+					curator,
+					description,
+					end: end,
+					hash: hash || null,
+					method: preimage?.method,
+					post_id: postId,
+					post_reactions,
+					proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
+					status: status,
+					title: '',
+					topic: topicFromType,
+					type: type || subsquidProposalType,
+					user_id: 1
+				};
+			});
+
+			const posts = await Promise.all(postsPromise);
+
+			const data: IPostsListingResponse = {
+				count: Number(subsquidData?.proposalsConnection?.totalCount || 0),
+				posts
 			};
-		});
 
-		const posts = await Promise.all(postsPromise);
-
-		const data: IPostsListingResponse = {
-			count: Number(subsquidData?.proposalsConnection?.totalCount || 0),
-			posts
-		};
-
-		return {
-			data: JSON.parse(JSON.stringify(data)),
-			error: null,
-			status: 200
-		};
-  }
+			return {
+				data: JSON.parse(JSON.stringify(data)),
+				error: null,
+				status: 200
+			};
+		}
 	} catch (error) {
 		return {
 			data: null,
@@ -446,6 +447,7 @@ const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async
 	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
 	const postIds = req.body.postIds;
 	const { data, error, status } = await getOnChainPosts({
+		filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit,
 		network,
 		page,
@@ -453,8 +455,7 @@ const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async
 		proposalType,
 		sortBy,
 		trackNo,
-		trackStatus,
-    filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
+		trackStatus
 	});
 
 	if(error || !data) {

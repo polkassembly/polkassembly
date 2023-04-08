@@ -31,7 +31,7 @@ interface IGetOffChainPostsParams {
 
 export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promise<IApiResponse<IPostsListingResponse>> {
 	try {
-		const { network, listingLimit, page, proposalType, sortBy,filterBy} = params;
+		const { network, listingLimit, page, proposalType, sortBy, filterBy } = params;
 		const strSortBy = String(sortBy);
 
 		const numListingLimit = Number(listingLimit);
@@ -60,22 +60,23 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 		}
 
 		const offChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
-		const postsSnapshotArr = filterBy && filterBy.length === 0 ? await offChainCollRef
-			.orderBy(orderedField, order)
-			.limit(Number(listingLimit) || LISTING_LIMIT)
-			.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
-			.get()
-      :
-       await offChainCollRef
-      .where('tags','array-contains-any',filterBy)
-			.orderBy(orderedField, order)
-			.limit(Number(listingLimit) || LISTING_LIMIT)
-			.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
-			.get()
+		const postsSnapshotArr = filterBy && filterBy.length === 0
+			? await offChainCollRef
+				.orderBy(orderedField, order)
+				.limit(Number(listingLimit) || LISTING_LIMIT)
+				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
+				.get()
+			:
+			await offChainCollRef
+				.where('tags','array-contains-any',filterBy)
+				.orderBy(orderedField, order)
+				.limit(Number(listingLimit) || LISTING_LIMIT)
+				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
+				.get();
 
-		const count = filterBy && filterBy.length === 0 
-    ? (await offChainCollRef.count().get()).data().count
-    :(await offChainCollRef.where('tags','array-contains-any',filterBy).count().get()).data().count;
+		const count = filterBy && filterBy.length === 0
+			? (await offChainCollRef.count().get()).data().count
+			:(await offChainCollRef.where('tags','array-contains-any',filterBy).count().get()).data().count;
 
 		const postsPromise = postsSnapshotArr.docs.map(async (doc) => {
 			if (doc && doc.exists) {
@@ -97,19 +98,19 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 					return {
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: created_at?.toDate? created_at?.toDate(): created_at,
+						gov_type:docData?.gov_type ,
 						post_id: docData.id,
 						post_reactions,
 						proposer: getProposerAddressFromFirestorePostData(docData, network),
+						tags:docData?.tags || [],
 						title:  docData?.title || null,
 						topic: topic? topic: isTopicIdValid(topic_id)? {
 							id: topic_id,
 							name: getTopicNameFromTopicId(topic_id)
 						}: getTopicFromType(strProposalType as ProposalType),
 						user_id: docData?.user_id || 1,
-						username: docData?.username,
-            gov_type:docData?.gov_type ,
-            tags:docData?.tags || []
-            
+						username: docData?.username
+
 					};
 				}
 			}
@@ -162,16 +163,16 @@ const handler: NextApiHandler<IPostsListingResponse | IApiErrorResponse> = async
 	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getOffChainPosts({
+		filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit,
 		network,
 		page,
 		proposalType,
-		sortBy,
-    filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
+		sortBy
 	});
 
 	if(error || !data) {
- 
+
 		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	}else {
 		res.status(status).json(data);

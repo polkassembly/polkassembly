@@ -23,12 +23,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const proposalType = ProposalType.DEMOCRACY_PROPOSALS;
 	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOnChainPosts({
+		filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
 		proposalType,
-		sortBy,
-     filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
+		sortBy
 	});
 	return { props: { data, error, network } };
 };
@@ -79,7 +79,7 @@ const Proposals: FC<IProposalsProps> = (props) => {
 			<div className='mt-8 shadow-md bg-white p-3 md:p-8 rounded-md'>
 				<div className='flex items-center justify-between'>
 					<h1 className='dashboard-heading'>{ count } Proposals</h1>
-            <FilterByTags className='mr-[2px]'/>
+					<FilterByTags className='mr-[2px]'/>
 				</div>
 
 				<div>

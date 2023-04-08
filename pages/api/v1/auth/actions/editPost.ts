@@ -39,7 +39,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, postId, proposalType, title, timeline ,tags} = req.body;
+	const { content, postId, proposalType, title, timeline, tags } = req.body;
 	if(isNaN(postId) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(proposalType);
@@ -144,11 +144,11 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,
 		proposer_address: proposer_address,
+		tags: tags || [],
 		title,
 		topic_id : topic_id || getTopicFromType(proposalType).id,
 		user_id: user.id,
-		username: user.username,
-    tags:tags || [],
+		username: user.username
 	};
 
 	let isCurrPostUpdated = false;
@@ -168,11 +168,11 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				last_edited_at: new Date(),
 				post_link: post_link || null,
 				proposer_address: proposer_address,
+				tags: tags || [],
 				title,
 				topic_id : getTopicFromType(proposalType).id,
 				user_id: user.id,
-				username: user.username,
-        tags:tags || [],
+				username: user.username
 			}, { merge: true });
 		});
 		await batch.commit();
@@ -183,17 +183,17 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	}
 
 	const { last_edited_at, topic_id: topicId } = newPostDoc;
-  
-const batch = firestore_db.batch();
-tags.length > 0 && tags?.map((tag:string)=>{
-let tagRef = firestore_db.collection('tags').doc(tag);
-const newTag:IPostTag={
-  name:tag.toLowerCase() ,
-  last_used_at:new Date()
-}
-batch.set(tagRef, newTag, {merge: true})}
-);
- res.status(200).json({
+
+	const batch = firestore_db.batch();
+	tags.length > 0 && tags?.map((tag:string) => {
+		const tagRef = firestore_db.collection('tags').doc(tag);
+		const newTag:IPostTag={
+			last_used_at:new Date(),
+			name:tag.toLowerCase()
+		};
+		batch.set(tagRef, newTag, { merge: true });}
+	);
+	res.status(200).json({
 		content,
 		last_edited_at: last_edited_at,
 		proposer: proposer_address,
@@ -203,8 +203,8 @@ batch.set(tagRef, newTag, {merge: true})}
 			name: getTopicNameFromTopicId(topicId as any)
 		}
 	});
-   tags.length>0 && await batch.commit();
-   return;
+	tags.length>0 && await batch.commit();
+	return;
 
 };
 

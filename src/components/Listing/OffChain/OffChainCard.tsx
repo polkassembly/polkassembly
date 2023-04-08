@@ -4,7 +4,7 @@
 
 import { ClockCircleOutlined, CommentOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
 import { Divider } from 'antd';
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 
@@ -73,8 +73,8 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 							</div>
 						</>}
-            	{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
-              {tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index)=>(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >{tag?.charAt(0).toUpperCase()+tag?.slice(1).toLowerCase()}</div>))} {tags.length>2 && <span className='text-pink_primary' style={{borderBottom:'1px solid #E5007A' }}>+{tags.length-2} more</span>}</>}
+						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
+						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) => (<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >{tag?.charAt(0).toUpperCase()+tag?.slice(1).toLowerCase()}</div>))} {tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }}>+{tags.length-2} more</span>}</>}
 					</div>
 				</div>
 			</div>

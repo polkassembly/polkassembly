@@ -3,10 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Form, Input, InputRef, Tag } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
-import React, { useEffect, useRef, useState } from 'react';
-import { IPostTag, NotificationStatus } from 'src/types';
+import React, { useState } from 'react';
+import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 
@@ -30,7 +30,6 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 
-
 	const { postData: {
 		title,
 		content,
@@ -38,7 +37,8 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 		postIndex,
 		timeline,tags:oldTags
 	}, setPostData } = usePostDataContext();
-  const [tags,setTags]=useState<string[]>(oldTags);
+
+	const [tags,setTags]=useState<string[]>(oldTags);
 
 	const onFinish = async ({ title, content }: any) => {
 		await form.validateFields();
@@ -50,9 +50,9 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 			content,
 			postId: postIndex,
 			proposalType,
+			tags,
 			timeline,
-			title,
-      tags
+			title
 		});
 
 		if(editError || !data) {
@@ -79,9 +79,9 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 				content,
 				last_edited_at,
 				proposer,
+				tags,
 				title,
-				topic,
-        tags
+				topic
 			}));
 			setFormDisabled(false);
 			toggleEdit();
@@ -118,8 +118,8 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 					<Input autoFocus placeholder='Your title...' className='text-black' />
 				</Form.Item>
 				<ContentForm />
- <h5 className='text-sm text-color mt-8 font-normal'>Tags</h5>
-        <AddTags tags={tags} setTags={setTags} className='mb-8' />
+				<h5 className='text-sm text-color mt-8 font-normal'>Tags</h5>
+				<AddTags tags={tags} setTags={setTags} className='mb-8' />
 				<Form.Item>
 					<div className='flex items-center justify-between'>
 						<LinkPostModal

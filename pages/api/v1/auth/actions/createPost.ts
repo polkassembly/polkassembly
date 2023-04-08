@@ -22,10 +22,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, proposalType, title, topicId, userId ,gov_type,tags} = req.body;
+	const { content, proposalType, title, topicId, userId ,gov_type,tags } = req.body;
 	if(!content || !title || !topicId || !userId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-   if(!Array.isArray(tags)) return  res.status(400).json({ message: `Invalid tags parameter` });
+	if(!Array.isArray(tags)) return  res.status(400).json({ message: 'Invalid tags parameter' });
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The off chain proposal type "${proposalType}" is invalid.` });
@@ -48,33 +48,34 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	const newPost: Post = {
 		content,
 		created_at: new Date(),
+		gov_type:gov_type,
 		id: newID,
 		last_comment_at,
 		last_edited_at: last_comment_at,
 		post_link: null,
 		proposer_address: userDefaultAddress?.address || '',
+		tags:tags ? tags : [],
 		title,
 		topic_id: strProposalType === ProposalType.GRANTS? 6:Number(topicId),
 		user_id: user.id,
-		username: user.username,
-    gov_type:gov_type,
-    tags:tags ? tags : []
+		username: user.username
 	};
 
-const batch = firestore_db.batch();
-tags.length > 0 && tags?.map((tag:string)=>{
-let tagRef = firestore_db.collection('tags').doc(tag);
-const newTag:IPostTag={
-  name:tag.toLowerCase() ,
-  last_used_at:new Date()
-}
-batch.set(tagRef, newTag, {merge: true})}
-);
- 
+	const batch = firestore_db.batch();
+	tags.length > 0 && tags?.map((tag:string) => {
+		const tagRef = firestore_db.collection('tags').doc(tag);
+		const newTag:IPostTag={
+			name:tag.toLowerCase() ,
+			// eslint-disable-next-line sort-keys
+			last_used_at:new Date()
+		};
+		batch.set(tagRef, newTag, { merge: true });}
+	);
+
 	await postDocRef.set(newPost).then(() => {
 		res.status(200).json({ message: 'Post saved.', post_id: newID });
-    tags.length>0 && batch.commit();
-    return;
+		tags.length>0 && batch.commit();
+		return;
 	}).catch((error) => {
 		// The document probably doesn't exist.
 		console.error('Error saving post: ', error);

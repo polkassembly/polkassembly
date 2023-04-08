@@ -45,7 +45,7 @@ const Listing: FC<IListingProps> = (props) => {
 					description,
 					method,
 					end,
-          tags
+					tags
 				} = post;
 				const id = isTip ? hash : post_id;
 				return (
@@ -66,7 +66,7 @@ const Listing: FC<IListingProps> = (props) => {
 									created_at={created_at}
 									tip_index={tipStartedIndex? tipStartedIndex - index: null}
 									isTip={isTip}
-                  tags={tags}
+									tags={tags}
 								/>
 							</Link>
 						}

@@ -10,15 +10,15 @@ import { IPostTag } from '~src/types';
 
 const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 	const tagsSnapshots = await firestore_db.collection('tags').orderBy('last_used_at','desc').get();
-const tags=  tagsSnapshots.docs.map((tag)=>{
-  let data=tag.data();
-  let newTag:IPostTag={
-    name:data?.name,
-    last_used_at:data?.last_used_at
-  }
-    return newTag;
-  })
-  res.status(200).json(tags);
+	const tags=  tagsSnapshots.docs.map((tag) => {
+		const data=tag.data();
+		const newTag:IPostTag={
+			last_used_at:data?.last_used_at,
+			name:data?.name
+		};
+		return newTag;
+	});
+	res.status(200).json(tags);
 
 };
 

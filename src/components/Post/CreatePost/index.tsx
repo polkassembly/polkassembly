@@ -9,7 +9,7 @@ import ContentForm from 'src/components/ContentForm';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { PostCategory } from 'src/global/post_categories';
 import { usePollEndBlock } from 'src/hooks';
-import { IPostTag, NotificationStatus } from 'src/types';
+import { NotificationStatus } from 'src/types';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -38,8 +38,8 @@ const CreatePost = ({ className, proposalType } : Props) => {
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
-  const [govType,setGovType]=useState<'gov_1' | 'open_gov'>('gov_1');
-  const [tags,setTags]=useState<string[]>([]);
+	const [govType,setGovType]=useState<'gov_1' | 'open_gov'>('gov_1');
+	const [tags,setTags]=useState<string[]>([]);
 
 	useEffect(() => {
 		if (!currentUser?.id) {
@@ -96,12 +96,12 @@ const CreatePost = ({ className, proposalType } : Props) => {
 
 			const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>( 'api/v1/auth/actions/createPost', {
 				content,
+				gov_type:govType,
 				proposalType,
+				tags,
 				title,
 				topicId,
-				userId: currentUser.id,
-        gov_type:govType,
-        tags
+				userId: currentUser.id
 			});
 
 			if(apiError || !data?.post_id) {
@@ -132,7 +132,7 @@ const CreatePost = ({ className, proposalType } : Props) => {
 		} finally {
 			setFormDisabled(false);
 		}
-	}; 
+	};
 
 	return (
 		<div className={className}>
@@ -160,11 +160,11 @@ const CreatePost = ({ className, proposalType } : Props) => {
 						<Switch size="small" onChange={checked => setHasPoll(checked)} />
 						<span className='ml-2 text-sidebarBlue text-sm'>Add poll to {proposalType === ProposalType.DISCUSSIONS? 'discussion': 'grant'}</span>
 					</div>
-          <h5 className='text-sm text-color mt-8 font-normal'>Select Governance version <span className='text-red-500'>*</span></h5>
-         <Radio.Group className='font-normal text-xs p-1' onChange={(e)=>setGovType(e.target.value)} value={govType}>
-         <Radio className={`font-normal text-xs text-navBlue ${ govType === 'gov_1' && 'text-pink_primary' }`} value='gov_1' defaultChecked >Governance V1</Radio>
-          <Radio className={`font-normal text-xs text-navBlue ${ govType ==='open_gov' && 'text-pink_primary' }`} value='open_gov' defaultChecked={false}>Governance V2</Radio>
-          </Radio.Group>
+					<h5 className='text-sm text-color mt-8 font-normal'>Select Governance version <span className='text-red-500'>*</span></h5>
+					<Radio.Group className='font-normal text-xs p-1' onChange={(e) => setGovType(e.target.value)} value={govType}>
+						<Radio className={`font-normal text-xs text-navBlue ${ govType === 'gov_1' && 'text-pink_primary' }`} value='gov_1' defaultChecked >Governance V1</Radio>
+						<Radio className={`font-normal text-xs text-navBlue ${ govType ==='open_gov' && 'text-pink_primary' }`} value='open_gov' defaultChecked={false}>Governance V2</Radio>
+					</Radio.Group>
 					{
 						proposalType === ProposalType.DISCUSSIONS?
 							<div className='mt-8'>
@@ -175,8 +175,8 @@ const CreatePost = ({ className, proposalType } : Props) => {
 							</div>
 							: null
 					}
-           <h5 className='text-sm text-color mt-8 font-normal'>Add Tags</h5>
-          <AddTags tags={tags} setTags={setTags} />
+					<h5 className='text-sm text-color mt-8 font-normal'>Add Tags</h5>
+					<AddTags tags={tags} setTags={setTags} />
 					<Form.Item>
 						<Button htmlType="submit" disabled={!currentUser.id || formDisabled || loading} className='mt-10 bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center justify-center rounded-md text-lg h-[50px] w-[215px]'>
 							Create Post

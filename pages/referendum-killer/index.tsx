@@ -32,44 +32,44 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const fetches = {
 		all: getOnChainPosts({
+			filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 			listingLimit: LISTING_LIMIT,
 			network,
 			page,
 			proposalType,
 			sortBy,
 			trackNo: trackId,
-			trackStatus: 'All',
-       filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
+			trackStatus: 'All'
 		}),
 		closed: getOnChainPosts({
+			filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 			listingLimit: LISTING_LIMIT,
 			network,
 			page,
 			proposalType,
 			sortBy,
 			trackNo: trackId,
-			trackStatus: CustomStatus.Closed,
-       filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
+			trackStatus: CustomStatus.Closed
 		}),
 		submitted: getOnChainPosts({
-			listingLimit: LISTING_LIMIT,
+
+			filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],  listingLimit: LISTING_LIMIT,
 			network,
 			page,
 			proposalType,
 			sortBy,
 			trackNo: trackId,
-			trackStatus: CustomStatus.Submitted,
-       filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
+			trackStatus: CustomStatus.Submitted
 		}),
 		voting: getOnChainPosts({
+			filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 			listingLimit: LISTING_LIMIT,
 			network,
 			page,
 			proposalType,
 			sortBy,
 			trackNo: trackId,
-			trackStatus: CustomStatus.Voting,
-       filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
+			trackStatus: CustomStatus.Voting
 		})
 	};
 

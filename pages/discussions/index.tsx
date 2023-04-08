@@ -8,7 +8,6 @@ import { getOffChainPosts } from 'pages/api/v1/listing/off-chain-posts';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
-
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
 import { useNetworkContext } from '~src/context';
@@ -40,13 +39,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const { data, error = ''  } = await getOffChainPosts({
+		filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page: Number(page),
 		proposalType: OffChainProposalType.DISCUSSIONS,
-		sortBy: String(sortBy),
-    filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : []
-  });
+		sortBy: String(sortBy)
+	});
 
 	return {
 		props: {

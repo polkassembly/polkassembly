@@ -101,13 +101,13 @@ const Curves: FC<ICurvesProps> = (props) => {
 							}
 						}
 					}
-					for (let i = 0; i < decisionPeriodHrs + 1; i++) {
+					for (let i = 0; i < (decisionPeriodHrs * 60); i++) {
 						labels.push(i);
 						if (supportCalc) {
-							supportData.push(supportCalc((i / decisionPeriodHrs)) * 100);
+							supportData.push(supportCalc((i / (decisionPeriodHrs * 60))) * 100);
 						}
 						if (approvalCalc) {
-							approvalData.push(approvalCalc((i / decisionPeriodHrs)) * 100);
+							approvalData.push(approvalCalc((i / (decisionPeriodHrs * 60))) * 100);
 						}
 					}
 					const subsquidRes = await fetchSubsquid({
@@ -120,27 +120,32 @@ const Curves: FC<ICurvesProps> = (props) => {
 					if (subsquidRes && subsquidRes.data && subsquidRes.data.curveData && Array.isArray(subsquidRes.data.curveData)) {
 						const graph_points = subsquidRes.data.curveData || [];
 						if (graph_points?.length > 0) {
-							labels = [];
-							approvalData = [];
-							supportData = [];
 							const lastGraphPoint = graph_points[graph_points.length - 1];
 							const proposalCreatedAt = dayjs(created_at);
-							const decisionPeriodHrs = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'minute');
+							const decisionPeriodMinutes = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'minute');
+							if (decisionPeriodMinutes > decisionPeriodHrs * 60) {
+								labels = [];
+								approvalData = [];
+								supportData = [];
+							}
 							graph_points?.forEach((graph_point: any) => {
 								const hour = dayjs(graph_point.timestamp).diff(proposalCreatedAt, 'minute');
 								const new_graph_point = {
 									...graph_point,
 									hour
 								};
-								labels.push(hour);
-								approvalData.push({
-									x: hour,
-									y: approvalCalc((hour / decisionPeriodHrs)) * 100
-								});
-								supportData.push({
-									x: hour,
-									y: supportCalc((hour / decisionPeriodHrs)) * 100
-								});
+
+								if (decisionPeriodMinutes > decisionPeriodHrs * 60) {
+									labels.push(hour);
+									approvalData.push({
+										x: hour,
+										y: approvalCalc((hour / decisionPeriodMinutes)) * 100
+									});
+									supportData.push({
+										x: hour,
+										y: supportCalc((hour / decisionPeriodMinutes)) * 100
+									});
+								}
 								currentApprovalData.push({
 									x: hour,
 									y: new_graph_point.approvalPercent
@@ -164,6 +169,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 					const newData: ChartData<'line', (number | Point | null)[]> = {
 						datasets: [
 							{
+								backgroundColor: 'transparent',
 								borderColor: '#5BC044',
 								borderWidth: 2,
 								data: approvalData,
@@ -174,6 +180,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 								tension: 0.1
 							},
 							{
+								backgroundColor: 'transparent',
 								borderColor: '#E5007A',
 								borderWidth: 2,
 								data: supportData,
@@ -184,7 +191,9 @@ const Curves: FC<ICurvesProps> = (props) => {
 								tension: 0.1
 							},
 							{
-								borderColor: '#7F64FF',
+								backgroundColor: 'transparent',
+								borderColor: '#5BC044',
+								borderDash: [4, 4],
 								borderWidth: 2,
 								data: currentApprovalData,
 								label: 'Current Approval',
@@ -195,7 +204,9 @@ const Curves: FC<ICurvesProps> = (props) => {
 
 							},
 							{
-								borderColor: '#334D6E',
+								backgroundColor: 'transparent',
+								borderColor: '#E5007A',
+								borderDash: [4, 4],
 								borderWidth: 2,
 								data: currentSupportData,
 								label: 'Current Support',
@@ -331,7 +342,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 									<span className='font-semibold'>Current Approval</span>
 									<span className='font-normal'>{progress.approval}%</span>
 								</p>
-								<p className='flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E]'>
+								<p className='m-0 p-0 flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E]'>
 									<span className='font-semibold'>Threshold</span>
 									<span className='font-normal'>{progress.approvalThreshold && progress.approvalThreshold.toFixed(1)}%</span>
 								</p>
@@ -341,7 +352,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 									<span className='font-semibold'>Current Support</span>
 									<span className='font-normal'>{progress.support}%</span>
 								</p>
-								<p className='flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E]'>
+								<p className='m-0 p-0 flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E]'>
 									<span className='font-semibold'>Threshold</span>
 									<span className='font-normal'>{progress.supportThreshold && progress.supportThreshold.toFixed(1)}%</span>
 								</p>

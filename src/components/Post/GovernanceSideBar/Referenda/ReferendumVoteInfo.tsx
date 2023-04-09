@@ -163,7 +163,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		}
 		return voteInfo?.turnout.muln(10000).div(totalIssuance).toNumber()/100;
 	} , [voteInfo, totalIssuance]);
-
+	console.log(voteInfo);
 	return (
 		<>
 			{isSubscanSupport(network)? !voteInfo ?

@@ -17,7 +17,7 @@ const PassingInfoTag = ({ className, isPassing }:Props ) => {
 
 	let text = NO_INFO_TEXT;
 	if (isPassing !== null){
-		text = isPassing ? 'Passing' : 'Failing';
+		text = isPassing ? 'Passed' : 'Failed';
 	}
 
 	return (
@@ -30,11 +30,11 @@ const PassingInfoTag = ({ className, isPassing }:Props ) => {
 };
 
 export default styled(PassingInfoTag)`
-	&.passing {
+	&.passed {
 		background-color: #4DD18F;
 	}
 
-	&.failing {
+	&.failed {
 		background-color: #FF5A47;
 	}
 `;

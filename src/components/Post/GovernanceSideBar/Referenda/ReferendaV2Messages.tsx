@@ -56,9 +56,28 @@ const getDefaultPeriod = () => {
 	};
 };
 
+const getDecidingStatusBlock = (timeline?: any[]) => {
+	let deciding: any;
+	if (timeline && Array.isArray(timeline)) {
+		timeline.some((v) => {
+			if (v && v.statuses && Array.isArray(v.statuses)) {
+				let isFind = false;
+				v.statuses.some((v: any) => {
+					if (v && v.status === 'Deciding') {
+						isFind = true;
+						deciding = v;
+					}
+				});
+				return isFind;
+			}
+			return false;
+		});
+	}
+	return deciding;
+};
+
 const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
-	const { postData: { track_name, track_number, created_at, status } } = usePostDataContext();
-	console.log(track_name, track_number);
+	const { postData: { track_name, track_number, created_at, status, timeline } } = usePostDataContext();
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useApiContext();
 	const trackData = getTrackData(network, track_name, track_number);
@@ -71,6 +90,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	const [open, setOpen] = useState(false);
 	const isTreasuryProposal = trackData.group === 'Treasury';
 	const isProposalPassed = ['Executed', 'Confirmed', 'Approved'].includes(status);
+	const decidingStatusBlock = getDecidingStatusBlock(timeline);
 
 	const Button: FC<IButtonProps> = (props) => {
 		const { children } = props;
@@ -85,7 +105,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 		if (!trackData) return;
 		const prepare = getPeriodData(network, proposalCreatedAt, trackData, 'preparePeriod');
 		setPrepare(prepare);
-		const decision = getPeriodData(network, prepare.periodEndsAt, trackData, 'decisionPeriod');
+		const preparePeriodEndsAt = ((decidingStatusBlock && decidingStatusBlock.timestamp)? dayjs(decidingStatusBlock.timestamp): prepare.periodEndsAt);
+		const decision = getPeriodData(network, preparePeriodEndsAt, trackData, 'decisionPeriod');
 		setDecision(decision);
 		const confirm = getPeriodData(network, decision.periodEndsAt, trackData, 'confirmPeriod');
 		setConfirm(confirm);
@@ -106,11 +127,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	}, [api, apiReady, network]);
 
 	if (!prepare.periodCardVisible && !decision.periodCardVisible && !confirm.periodCardVisible && !minEnactment.periodCardVisible && (isTreasuryProposal? !spend.periodCardVisible: isProposalPassed)) return null;
-	console.log(minEnactment, isTreasuryProposal);
 	return (
 		<GovSidebarCard>
 			{
-				prepare.periodCardVisible && (
+				(prepare.periodCardVisible || !decidingStatusBlock) && (
 					<article className='py-6'>
 						<div className='flex items-center justify-between'>
 							<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
@@ -127,7 +147,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 				)
 			}
 			{
-				confirm.periodCardVisible && (
+				(confirm.periodCardVisible && decidingStatusBlock) && (
 					<article className='py-6'>
 						<div className='flex items-center justify-between'>
 							<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
@@ -237,18 +257,18 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 					<article className='flex gap-x-[23px]'>
 						<div className='w-[4.5px] h-[300px] md:h-[250px] bg-[#FCE5F2] rounded-full overflow-hidden'>
 							<div style={{
-								height: `${(Math.min(decision.periodPercent, 100) / 100) * 300}px`
+								height: `${decidingStatusBlock? (Math.min(decision.periodPercent, 100) / 100) * 300: 0}px`
 							}} className='bg-pink_primary rounded-full border-0'>
 
 							</div>
 						</div>
 						<div>
 							<div className='relative'>
-								<span className={`absolute -top-[2px] -left-[37px] w-[26px] h-[26px] font-medium text-base leading-0 flex items-center justify-center rounded-full ${decision.periodPercent > 0? 'bg-pink_primary text-white': 'bg-[#FFD3EC] text-[#7A8BA1]'}`}>
+								<span className={`absolute -top-[2px] -left-[37px] w-[26px] h-[26px] font-medium text-base leading-0 flex items-center justify-center rounded-full ${decision.periodPercent > 0 && decidingStatusBlock? 'bg-pink_primary text-white': 'bg-[#FFD3EC] text-[#7A8BA1]'}`}>
 									2
 								</span>
 								<span>
-									<DecisionPeriodIcon className={`${decision.periodPercent > 0? 'text-pink_primary': 'text-[#FFD3EC]'} text-xl`} />
+									<DecisionPeriodIcon className={`${decision.periodPercent > 0 && decidingStatusBlock? 'text-pink_primary': 'text-[#FFD3EC]'} text-xl`} />
 								</span>
 							</div>
 							<h4 className='text-base leading-[24px] tracking-[0.01em] font-medium'>Voting Period</h4>
@@ -288,6 +308,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 							</p>
 							<ul className='text-sm leading-[21px] tracking-[0.01em] px-5'>
 								<li>A referendum is executed after the completion of the enactment period
+								</li>
+								<li>For treasury referenda, the funds will be disbursed after completion of the funds disbursal period
 								</li>
 							</ul>
 						</div>

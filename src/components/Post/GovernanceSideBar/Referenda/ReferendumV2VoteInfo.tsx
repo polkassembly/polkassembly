@@ -14,6 +14,7 @@ import { usePostDataContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import Curves from './Curves';
 import { ThresholdGraphIcon, VotingHistoryIcon } from '~src/ui-components/CustomIcons';
+import PassingInfoTag from '~src/ui-components/PassingInfoTag';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
@@ -74,6 +75,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		<GovSidebarCard className={className}>
 			<div className='flex items-center justify-between gap-x-2'>
 				<h6 className='text-sidebarBlue font-semibold text-[20px] leading-[24px] m-0 p-0'>Voting</h6>
+				{['Executed', 'Confirmed', 'Approved', 'Timedout', 'Cancelled', 'Rejected'].includes(status) && <PassingInfoTag isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}/>}
 			</div>
 			<VoteProgress
 				ayeVotes={tallyData.ayes}
@@ -90,7 +92,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					<div
 						className='text-navBlue text-xs font-medium leading-[22px]'
 					>
-						{tallyData.ayes.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+						{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 					</div>
 				</article>
 				<article className='flex items-center justify-between gap-x-2'>
@@ -102,7 +104,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					<div
 						className='text-navBlue text-xs font-medium leading-[22px]'
 					>
-						{tallyData.nays.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+						{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 					</div>
 				</article>
 				<article className='flex items-center justify-between gap-x-2'>
@@ -114,7 +116,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					<div
 						className='text-navBlue text-xs font-medium leading-[22px]'
 					>
-						{tallyData.support.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(tallyData.support, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+						{formatUSDWithUnits(formatBnBalance(tallyData.support, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 					</div>
 				</article>
 			</section>

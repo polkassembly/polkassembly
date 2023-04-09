@@ -163,7 +163,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		}
 		return voteInfo?.turnout.muln(10000).div(totalIssuance).toNumber()/100;
 	} , [voteInfo, totalIssuance]);
-
+	console.log(voteInfo);
 	return (
 		<>
 			{isSubscanSupport(network)? !voteInfo ?
@@ -198,7 +198,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								<div
 									className='text-navBlue text-xs font-medium leading-[22px]'
 								>
-									{voteInfo?.aye_amount.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+									{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 								</div>
 							</article>
 							<article className='flex items-center justify-between gap-x-2'>
@@ -210,7 +210,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								<div
 									className='text-navBlue text-xs font-medium leading-[22px]'
 								>
-									{voteInfo?.nay_amount.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+									{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 								</div>
 							</article>
 							<article className='flex items-center justify-between gap-x-2'>
@@ -222,7 +222,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								<div
 									className='text-navBlue text-xs font-medium leading-[22px]'
 								>
-									{voteInfo?.turnout.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+									{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 								</div>
 							</article>
 							{
@@ -236,7 +236,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 										<div
 											className='text-navBlue text-xs font-medium leading-[22px]'
 										>
-											{totalIssuance.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(totalIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+											{formatUSDWithUnits(formatBnBalance(totalIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 										</div>
 									</article>
 									: null

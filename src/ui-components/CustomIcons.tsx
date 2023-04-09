@@ -20,6 +20,9 @@ import RiotSVG from '~assets/icons/riot.svg';
 import SignalTowerSVG from '~assets/icons/signal-tower.svg';
 import EditSVG from '~assets/icons/edit.svg';
 import SyncSVG from '~assets/icons/sync.svg';
+import PreparePeriodSVG from '~assets/icons/prepare.svg';
+import DecisionPeriodSVG from '~assets/icons/decision.svg';
+import EnactmentPeriodSVG from '~assets/icons/enactment.svg';
 import ArrowDownSVG from '~assets/icons/arrow-down.svg';
 import BountiesSVG from '~assets/sidebar/bounties.svg';
 import CalendarSVG from '~assets/sidebar/calendar.svg';
@@ -153,6 +156,18 @@ export const EditIcon = (props: Partial<CustomIconComponentProps>) => (
 
 export const SyncIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={SyncSVG} {...props} />
+);
+
+export const PreparePeriodIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={PreparePeriodSVG} {...props} />
+);
+
+export const DecisionPeriodIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DecisionPeriodSVG} {...props} />
+);
+
+export const EnactmentPeriodIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={EnactmentPeriodSVG} {...props} />
 );
 
 export const ArrowDownIcon = (props: Partial<CustomIconComponentProps>) => (

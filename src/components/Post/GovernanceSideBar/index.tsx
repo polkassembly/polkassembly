@@ -36,6 +36,7 @@ import VoteReferendumEthV2 from './Referenda/VoteReferendumEthV2';
 import EndorseTip from './Tips/EndorseTip';
 import TipInfo from './Tips/TipInfo';
 import EditProposalStatus from './TreasuryProposals/EditProposalStatus';
+import ReferendaV2Messages from './Referenda/ReferendaV2Messages';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -347,6 +348,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 					{[ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) &&
 						<>
+							<ReferendaV2Messages />
 							{canVote &&
 							<>
 								{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?

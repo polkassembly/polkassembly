@@ -338,6 +338,8 @@ const Post: FC<IPostProps> = (props) => {
 			timeline: post?.timeline,
 			title: post?.title,
 			topic: post?.topic,
+			track_name: trackName,
+			track_number: post?.track_number,
 			username: post?.username
 		}}>
 			<>

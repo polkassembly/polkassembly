@@ -385,7 +385,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: centrifugeLogo,
 		rpcEndpoint: 'wss://centrifuge-parachain.api.onfinality.io/public-ws',
 		ss58Format: 36,
-		subsquidUrl: '',
+		subsquidUrl: 'https://squid.subsquid.io/centrifuge-polkassembly/graphql',
 		tokenDecimals: 18,
 		tokenSymbol: tokenSymbol.CFG,
 		treasuryProposalBondPercent: '5%',

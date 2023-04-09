@@ -90,6 +90,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	const [open, setOpen] = useState(false);
 	const isTreasuryProposal = trackData.group === 'Treasury';
 	const isProposalPassed = ['Executed', 'Confirmed', 'Approved'].includes(status);
+	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled'].includes(status);
 	const decidingStatusBlock = getDecidingStatusBlock(timeline);
 
 	const Button: FC<IButtonProps> = (props) => {
@@ -130,7 +131,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	return (
 		<GovSidebarCard>
 			{
-				(prepare.periodCardVisible || !decidingStatusBlock) && (
+				(prepare.periodCardVisible || !decidingStatusBlock) && !isProposalFailed && (
 					<article className='py-6'>
 						<div className='flex items-center justify-between'>
 							<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
@@ -147,7 +148,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 				)
 			}
 			{
-				(confirm.periodCardVisible && decidingStatusBlock) && (
+				(confirm.periodCardVisible && decidingStatusBlock) && !isProposalFailed && (
 					<article className='py-6'>
 						<div className='flex items-center justify-between'>
 							<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>

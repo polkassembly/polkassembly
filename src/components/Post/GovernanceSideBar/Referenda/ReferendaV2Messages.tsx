@@ -289,6 +289,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 							<ul className='text-sm leading-[21px] tracking-[0.01em] px-5'>
 								<li>A referendum is executed after the completion of the enactment period
 								</li>
+								<li>For treasury referenda, the funds will be disbursed after completion of the funds disbursal period
+								</li>
 							</ul>
 						</div>
 					</article>

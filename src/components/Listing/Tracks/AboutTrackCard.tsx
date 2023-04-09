@@ -16,27 +16,6 @@ import { useNetworkContext } from '~src/context';
 import { TrackProps } from '~src/types';
 // import DelegateModalEthV2 from './DelegateModalEthV2';
 
-export const blocksToRelevantTime = (blocks:number, network: string): string => {
-	const blockTimeSeconds:number = chainProperties?.[network]?.blockTime / 1000;
-	let divisor:number = 1;
-	let text:string = 'sec';
-
-	const blockSeconds = blocks*blockTimeSeconds;
-
-	if(blockSeconds > 60 && blockSeconds < 3600) {
-		divisor = 60;
-		text = 'min';
-	} else if (blockSeconds > 3600 && blockSeconds < 86400) {
-		divisor = 3600;
-		text = 'hrs';
-	} else if (blockSeconds >= 86400) {
-		divisor = 86400;
-		text = 'days';
-	}
-
-	return `${blockSeconds/divisor} ${text}`;
-};
-
 interface IAboutTrackCardProps {
 	className?: string;
 	trackName: string;

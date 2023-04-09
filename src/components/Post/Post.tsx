@@ -43,13 +43,6 @@ const PostTimeline = dynamic(() => import('./Tabs/PostTimeline'), {
 	ssr: false
 });
 
-const AboutTrackCard = dynamic(() => import('../Listing/Tracks/AboutTrackCard'), {
-	loading: () => <div className='bg-white drop-shadow-md rounded-md p-4 md:p-8'>
-		<Skeleton active />
-	</div>,
-	ssr: false
-});
-
 const ClaimPayoutModal = dynamic(() => import('./ClaimPayoutModal'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
@@ -345,13 +338,6 @@ const Post: FC<IPostProps> = (props) => {
 			<>
 				<div className={`${className} flex flex-col xl:flex-row`}>
 					<div className='flex-1 w-full xl:w-8/12 mx-auto xl:mr-9 mb-6 xl:mb-0'>
-
-						{
-							trackName && proposalType === ProposalType.OPEN_GOV && <AboutTrackCard
-								trackName={trackName}
-								className='mb-6'
-							/>
-						}
 
 						{
 							!isEditing && <DiscussionLink isOffchainPost={isOffchainPost} />

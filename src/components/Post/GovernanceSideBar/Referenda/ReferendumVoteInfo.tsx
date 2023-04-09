@@ -5,7 +5,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import BN from 'bn.js';
-import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
+import React, { FC, memo, useContext, useEffect, useMemo, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { useFetch } from 'src/hooks';
@@ -18,15 +18,15 @@ import VoteProgress from 'src/ui-components/VoteProgress';
 import formatBnBalance from 'src/util/formatBnBalance';
 
 import { useNetworkContext } from '~src/context';
-import { VoteType } from '~src/global/proposalType';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { isSubscanSupport } from 'src/util/subscanCheck';
-import VotersList from './VotersList';
 import { chainProperties } from '~src/global/networkConstants';
+import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 
-interface Props {
+interface IReferendumVoteInfoProps {
 	className?: string
 	referendumId: number
+	setOpen: (value: React.SetStateAction<boolean>) => void;
 }
 
 type VoteInfo = {
@@ -41,7 +41,7 @@ type VoteInfo = {
 
 const ZERO = new BN(0);
 
-const ReferendumVoteInfo = ({ className, referendumId }: Props) => {
+const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpen }) => {
 	const { network } = useNetworkContext();
 
 	const { api, apiReady } = useContext(ApiContext);
@@ -242,16 +242,21 @@ const ReferendumVoteInfo = ({ className, referendumId }: Props) => {
 									: null
 							}
 						</section>
+						<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] mt-[18px] pt-[18px] pb-[14px]'>
+							<button
+								className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
+								onClick={() => {
+									setOpen(true);
+								}}
+							>
+								<VotingHistoryIcon />
+								<span>Voting History</span>
+							</button>
+						</section>
 					</Spin>
 				</GovSidebarCard>
 				: null
 			}
-
-			<VotersList
-				className={className}
-				referendumId={referendumId}
-				voteType={VoteType.REFERENDUM}
-			/>
 		</>
 	);
 };

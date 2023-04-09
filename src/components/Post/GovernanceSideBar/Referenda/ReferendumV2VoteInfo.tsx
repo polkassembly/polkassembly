@@ -90,7 +90,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					<div
 						className='text-navBlue text-xs font-medium leading-[22px]'
 					>
-						{tallyData.ayes.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+						{formatUSDWithUnits(formatBnBalance(tallyData.ayes, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 					</div>
 				</article>
 				<article className='flex items-center justify-between gap-x-2'>
@@ -102,7 +102,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					<div
 						className='text-navBlue text-xs font-medium leading-[22px]'
 					>
-						{tallyData.nays.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+						{formatUSDWithUnits(formatBnBalance(tallyData.nays, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 					</div>
 				</article>
 				<article className='flex items-center justify-between gap-x-2'>
@@ -114,7 +114,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					<div
 						className='text-navBlue text-xs font-medium leading-[22px]'
 					>
-						{tallyData.support.isZero()? '': '~ '}{formatUSDWithUnits(formatBnBalance(tallyData.support, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+						{formatUSDWithUnits(formatBnBalance(tallyData.support, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 					</div>
 				</article>
 			</section>

@@ -158,9 +158,9 @@ const Curves: FC<ICurvesProps> = (props) => {
 							});
 							setProgress({
 								approval: graph_points[graph_points.length - 1].approvalPercent.toFixed(1),
-								approvalThreshold: (approvalData[approvalData.length - 1] as any).y,
+								approvalThreshold: (typeof (approvalData[approvalData.length - 1] as any) === 'object' ?(approvalData[approvalData.length - 1] as any).y: (approvalData[approvalData.length - 1] as any)),
 								support: graph_points[graph_points.length - 1].supportPercent.toFixed(1),
-								supportThreshold: (supportData[supportData.length - 1] as any).y
+								supportThreshold: (typeof (supportData[supportData.length - 1] as any) === 'object' ?(supportData[supportData.length - 1] as any).y: (supportData[supportData.length - 1] as any))
 							});
 						}
 					} else {

@@ -25,7 +25,7 @@ interface IGetOffChainPostParams {
 }
 
 export const getUpdatedAt = (data: any) => {
-	let updated_at: Date | string | null = null;
+	let updated_at: Date | string | undefined;
 	if (data) {
 		if (data.last_edited_at) {
 			updated_at = data.last_edited_at?.toDate? data.last_edited_at.toDate(): data.last_edited_at;

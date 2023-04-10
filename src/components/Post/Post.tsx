@@ -13,7 +13,7 @@ import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import PostDataContextProvider from '~src/context/PostDataContext';
-import { getFirestoreProposalType, getSinglePostLinkFromProposalType, offChainProposalTypes, ProposalType, proposalTypes } from '~src/global/proposalType';
+import { checkIsOnChainPost, getFirestoreProposalType, getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 import OtherProposals from '../OtherProposals';
@@ -90,12 +90,15 @@ const Post: FC<IPostProps> = (props) => {
 
 	const [duration, setDuration] = useState(dayjs.duration(0));
 
+	const isOnchainPost = checkIsOnChainPost(proposalType);
+	const isOffchainPost = !isOnchainPost;
+
 	useEffect(() => {
 		if(!post) return;
 
 		const { post_id, proposer } = post;
 
-		if(offChainProposalTypes.includes(proposalType)) {
+		if(isOffchainPost) {
 			setCanEdit(post.user_id === id);
 			return;
 		}
@@ -124,6 +127,7 @@ const Post: FC<IPostProps> = (props) => {
 				setCanEdit(true);
 			}
 		})();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [addresses, id, isEditing, post, proposalType]);
 
 	useEffect(() => {
@@ -185,9 +189,6 @@ const Post: FC<IPostProps> = (props) => {
 			</div>
 		);
 	}
-
-	const isOnchainPost = proposalTypes.includes(proposalType);
-	const isOffchainPost = offChainProposalTypes.includes(proposalType);
 
 	const { post_id, hash, status: postStatus } = post;
 	const onchainId = proposalType === ProposalType.TIPS? hash :post_id;
@@ -319,7 +320,7 @@ const Post: FC<IPostProps> = (props) => {
 			created_at: post?.created_at || '',
 			curator: post?.curator || '',
 			description: post?.description,
-			last_edited_at: post?.last,
+			last_edited_at: post?.last_edited_at,
 			postIndex: proposalType === ProposalType.TIPS? post.hash: post.post_id ,
 			postType: proposalType,
 			post_link: post?.post_link,

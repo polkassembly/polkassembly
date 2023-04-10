@@ -26,6 +26,7 @@ import EnactmentPeriodSVG from '~assets/icons/enactment.svg';
 import ArrowDownSVG from '~assets/icons/arrow-down.svg';
 import VotingHistorySVG from '~assets/icons/voting-history.svg';
 import ThresholdGraphSVG from '~assets/icons/threshold-graph.svg';
+import PostLinkingSVG from '~assets/icons/post-linking.svg';
 import BountiesSVG from '~assets/sidebar/bounties.svg';
 import CalendarSVG from '~assets/sidebar/calendar.svg';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy_proposals.svg';
@@ -178,6 +179,10 @@ export const ArrowDownIcon = (props: Partial<CustomIconComponentProps>) => (
 
 export const ThresholdGraphIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={ThresholdGraphSVG} {...props} />
+);
+
+export const PostLinkingIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={PostLinkingSVG} {...props} />
 );
 
 export const VotingHistoryIcon = (props: Partial<CustomIconComponentProps>) => (

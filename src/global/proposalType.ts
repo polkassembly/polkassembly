@@ -156,6 +156,10 @@ export function getSinglePostLinkFromProposalType(proposalType: ProposalType | O
 export const proposalTypes = ['democracy_proposals', 'tech_committee_proposals', 'treasury_proposals', 'referendums', 'fellowship_referendums', 'council_motions', 'bounties', 'tips', 'child_bounties', 'open_gov', 'referendums_v2'];
 export const offChainProposalTypes = ['discussions', 'grants'];
 
+export const checkIsOnChainPost = (proposalType: string) => {
+	return !offChainProposalTypes.includes(proposalType);
+};
+
 export const gov1ProposalTypes = ['DemocracyProposal', 'TechCommitteeProposal', 'TreasuryProposal', 'Referendum', 'CouncilMotion', 'Bounty', 'Tip', 'ChildBounty'];
 
 export enum VoteType {

@@ -79,7 +79,7 @@ export interface IPostResponse {
 		name: string;
 	};
 	decision?: string;
-	last_edited_at?: string | Date | null;
+	last_edited_at?: string | Date;
 	[key: string]: any;
 }
 
@@ -558,7 +558,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			ended_at_block: postData?.endedAtBlock,
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
-			last_edited_at: postData?.updatedAt,
+			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
 			motion_method: proposalArguments?.method,

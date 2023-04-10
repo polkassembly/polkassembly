@@ -55,7 +55,7 @@ function NetworkSelect({ selectedNetwork, setSelectedNetwork }: {selectedNetwork
 	};
 
 	return (
-		<div className='select-div filter-by-chain-div'>
+		<div className='select-div filter-by-chain-div pt-1'>
 			{/* <label>Filter by</label> */}
 			<label>Network</label>
 			<Dropdown disabled trigger={['click']} dropdownRender={menus => (<div className='max-h-[20rem] rounded-md drop-shadow-xl overflow-auto'>{menus}</div>)} menu={{ items:networkOptions, onClick:handleSetSelectedNetwork }} ><Space className='cursor-pointer'><StyledNetworkItem className='text-pink_primary' showNetwork={selectedNetwork}/>

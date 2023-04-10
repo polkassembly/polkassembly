@@ -432,7 +432,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 	function Event({ event } : {event: any}) {
 		return (
 			<span className='event-container-span' onClick={() => showEventSidebar(event)}>
-				{ (!(small || width < 768)) &&  <span className='event-time'> {dayjs(event.end_time).format('LT').toLowerCase()}</span> }
+				{/* { (!(small || width < 768)) &&  <span className='event-time'> {dayjs(event.end_time).format('LT').toLowerCase()}</span> } */}
 				{event.title}
 			</span>
 		);
@@ -485,7 +485,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 						{!small && width > 992 &&
 						<Col span={8} id='calendar-left-panel' className='calendar-left-panel'>
 							<div className='p-5 pl-2 pt-0'>
-								<p className='text-sidebarBlue font-medium text-md text-center mb-2'>Current UTC Time: { dayjs(utcDate).format('D-MM-YY | h:mm a UTC') } </p>
+								<p className='text-sidebarBlue font-medium text-md text-center mb-2'>Current Time: { dayjs(utcDate).format('D-MM-YY | h:mm a UTC') } </p>
 
 								<Spin spinning={categoriesLoading} indicator={<></>}>
 									<Calendar
@@ -1034,6 +1034,9 @@ export default styled(CalendarView)`
 	.rbc-time-view,
 	.rbc-agenda-view  {
 		padding: 10px 10px;
+		td {
+			border: 1px solid #ddd;
+		}
 	}
 
 	.custom-calendar-toolbar {
@@ -1058,10 +1061,9 @@ export default styled(CalendarView)`
 			height: 65px;
 			border-right: 1px solid #E8E8E8;
 			padding-right: 19px;
-
 			label {
 				font-size: 14px;
-				margin-bottom: 8px;
+				margin-bottom: 5px;
 			}
 
 			.dropdown {

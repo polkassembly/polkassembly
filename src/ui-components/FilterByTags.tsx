@@ -11,6 +11,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CheckOutlineIcon, CheckedIcon, FilterIcon, FilterUnfilledIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close.svg';
 import { poppins } from 'pages/_app';
+import handleFilterResults from '~src/util/handleFilterResults';
 
 interface Props {
   className?:string;
@@ -89,26 +90,9 @@ const FilterByTags=({ className }:Props) => {
 		handleFilterByClick(newTags);
 	};
 
-	const handleFilterResults= ( defaultTags:IPostTag[], setDefaultTag: (string:IPostTag[])=> void ) => {
-		const keyword = searchInput.toLowerCase();
-		const filteresData = defaultTags.filter((tag) => {
-			const item = tag.name.toLowerCase();
-			return item.indexOf(keyword) > -1;
-		});
-
-		const data=filteresData.filter((item) => {
-			let count=0;
-			tags.map((tag) => {
-				if(item.name === tag)count++;
-			});
-			if(count === 0)return item;
-		});
-		setDefaultTag(data);
-	};
-
 	useEffect(() => {
-		handleFilterResults(allTags,setFilteredTags);
-		handleFilterResults(trendingTags,setTrendingTags);
+		handleFilterResults(allTags, setFilteredTags, tags, searchInput);
+		handleFilterResults(trendingTags, setTrendingTags, tags, searchInput);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[searchInput,tags]);
 

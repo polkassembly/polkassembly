@@ -3,8 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, CommentOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
-import { Divider } from 'antd';
-import React, { FC, useContext } from 'react';
+import { Divider, Modal } from 'antd';
+import { poppins } from 'pages/_app';
+import React, { FC, useContext, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 
@@ -27,10 +28,11 @@ export interface IDiscussionProps {
 }
 
 const DiscussionCard: FC<IDiscussionProps> = (props) => {
-	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id,tags } = props;
+	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags } = props;
 	const currentUser = useContext(UserDetailsContext);
 	const ownPost = currentUser.username === username;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
+	const [tagsModal, setTagsModal] = useState<boolean>(false);
 
 	return (
 		<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-3 md:p-4`}>
@@ -74,10 +76,30 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							</div>
 						</>}
 						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
-						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) => (<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >{tag?.charAt(0).toUpperCase()+tag?.slice(1).toLowerCase()}</div>))} {tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }}>+{tags.length-2} more</span>}</>}
+						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
+							(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >
+								{tag?.charAt(0).toUpperCase()+tag?.slice(1).toLowerCase()}
+							</div>))}
+						{tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+                +{tags.length-2} more
+						</span>}
+						</>}
 					</div>
 				</div>
 			</div>
+			<Modal
+				open= {tagsModal}
+				onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
+				footer={false}
+				className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 w-[433px] max-sm:w-[100%] h-[120px] padding  justify-center center-aligned`}
+			><div>
+					<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
+					<div className='flex gap-2'>{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
+						(<div key={index} className='rounded-xl px-[16px] py-[2px] border-navBlue border-solid border-[1px] font-normal text-xs text-navBlue' >
+							{tag?.charAt(0).toUpperCase()+tag?.slice(1).toLowerCase()}
+						</div>))}
+					</>}</div></div>
+			</Modal>
 		</div>
 	);
 };

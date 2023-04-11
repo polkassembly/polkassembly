@@ -252,7 +252,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 								</span>
 							</div>
 							<h4 className='text-base leading-[24px] tracking-[0.01em] font-medium'>Prepare Period</h4>
-							<p className='text-sm leading-[21px] tracking-[0.01em]'>The prepare period is used to avoid decision sniping. It occurs before a referendum goes into voting</p>
+							<p className='text-sm leading-[21px] tracking-[0.01em]'>The prepare period is used to avoid decision sniping. It occurs before a referendum goes into voting.</p>
 						</div>
 					</article>
 					<article className='flex gap-x-[23px]'>
@@ -274,9 +274,9 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 							</div>
 							<h4 className='text-base leading-[24px] tracking-[0.01em] font-medium'>Voting Period</h4>
 							<ul className='text-sm leading-[21px] tracking-[0.01em] px-5'>
-								<li>A referendum will be in voting till the decision period is completed or the proposal is passed</li>
-								<li>For a referendum to pass, the support and approval should be greater than the threshold for the track for the confirmation period</li>
-								<li>If the referendum does not pass during the decision period, it is considered as failed</li>
+								<li>A referendum will be in voting till the decision period is completed or the proposal is passed.</li>
+								<li>For a referendum to pass, the support and approval should be greater than the threshold for the track for the confirmation period.</li>
+								<li>If the referendum does not pass during the decision period, it is considered as failed.</li>
 							</ul>
 						</div>
 					</article>
@@ -298,19 +298,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 								</span>
 							</div>
 							<h4 className='text-base leading-[24px] tracking-[0.01em] font-medium'>After Voting Period</h4>
-							<p className='m-0 p-0'>In case of a treasury referendum</p>
 							<ul className='text-sm leading-[21px] tracking-[0.01em] m-0 p-0 px-5'>
-								<li>A referendum is executed after the completion of the enactment period
+								<li>A referendum is executed after the completion of the enactment period.
 								</li>
-								<li>The funds will be disbursed after completion of the funds disbursal period
-								</li>
-							</ul>
-							<p className='m-0 p-0 mt-2'>In case of a normal referendum
-							</p>
-							<ul className='text-sm leading-[21px] tracking-[0.01em] px-5'>
-								<li>A referendum is executed after the completion of the enactment period
-								</li>
-								<li>For treasury referenda, the funds will be disbursed after completion of the funds disbursal period
+								<li>For treasury referenda, the funds will be disbursed after completion of the funds disbursal period.
 								</li>
 							</ul>
 						</div>

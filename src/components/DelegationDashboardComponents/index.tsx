@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Address from '~src/ui-components/Address';
 import copyToClipboard from 'src/util/copyToClipboard';
@@ -17,6 +17,10 @@ import { Button } from 'antd';
 import { EditIcon } from '~src/ui-components/CustomIcons';
 import Balance from '../Balance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { ProfileDetailsResponse } from '~src/auth/types';
+import SocialLink from '~src/ui-components/SocialLinks';
+import { socialLinks } from '../UserProfile/Details';
+import DashboardTrackListing from './tracksListing';
 
 interface Props {
   className?: string;
@@ -24,7 +28,18 @@ interface Props {
 
 const DelegationDashboardHome = ({ className } : Props) => {
 
-	const { username, picture, addresses } = useUserDetailsContext();
+	const { username, addresses } = useUserDetailsContext();
+	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
+		addresses: [],
+		badges: [],
+		bio: '',
+		image: '',
+		social_links: [],
+		title: '',
+		user_id: 0,
+		username: ''
+	});
+	const { image, social_links } = profileDetails;
 
 	const copyLink = (address:string) => {
 		copyToClipboard(address);
@@ -37,7 +52,10 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	const getData = async() => {
 		const { data, error } = await nextApiClientFetch('api/v1/auth/data/userProfileWithUsername',
 			{ username:username?.toString() });
+		if(data){ setProfileDetails({ ...profileDetails, ...data });}
+		else{ console.log(error); }
 		console.log(data,error);
+
 	};
 
 	useEffect(() => {
@@ -48,17 +66,36 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	return <div className= { `${ className } ` }>
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px]'><Balance address={addresses ? addresses[0]:''}/></div>
 		<h2 className='dashboard-heading mb-4 md:mb-5 mt-5'>Dashboard</h2>
-		<div className='flex justify-between py-[24px] px-[34px] shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white h-[172px] rounded-[14px]'>
+		<div className='flex justify-between py-[24px] px-[34px] shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white rounded-[14px]'>
 			<div className='flex justify-center gap-[34px] '>
-				{picture !== null ? <div></div>: <div ><DashboardProfile/></div>}
+				{image?.length !== 0 ? <div></div>: <div ><DashboardProfile/></div>}
 				<div className=''>
-					<span className='text-xl text-sidebarBlue font-semibold mb-4 tracking-wide'>{username}</span>
+					<span className='text-sidebarBlue font-semibold mb-4 tracking-wide text-lg'>{username}</span>
 					{addresses && addresses?.length > 0 &&
-        <div className='flex gap-2  items-center'> <Address address={addresses[0]} /><span className='flex items-center cursor-pointer' onClick={() => copyLink(addresses[0])}><CopyIcon/></span></div>}
+        <div className='flex gap-2  items-center'><Address address={addresses[0]} /><span className='flex items-center cursor-pointer' onClick={() => copyLink(addresses[0])}><CopyIcon/></span></div>}
 					<h2 className='text-sm font-normal text-navBlue mt-2'>Click here to add bio</h2>
+					<div
+						className='flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-[10px]'
+					>
+						{
+							socialLinks?.map((social, index) => {
+								const link = (social_links && Array.isArray(social_links))? social_links?.find((s) => s.type === social)?.link || '': '';
+								return (
+									<SocialLink
+										className='flex items-center justify-center text-2xl md:text-base text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] rounded-[20px] h-[39px] w-[40px]'
+										key={index}
+										link={link}
+										disable={!link}
+										type={social}
+									/>
+								);
+							})
+						}
+					</div>
 				</div>
 			</div>
 			<div className='flex gap-2.5 text-pink_primary'><MessengerIcon/><span><Button title='Edit' className='h-[40px] bg-transparent text-pink_primary border-pink_primary' icon={<EditIcon/>}>Edit</Button></span></div></div>
+		<div ><DashboardTrackListing className='border-solid h-[200px] mt-8 px-8 py-6 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]'/></div>
 	</div>;
 };
 

@@ -4,7 +4,7 @@
 
 import { Divider, Skeleton, Tabs } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
-import { ESocialType, ISocial, ProfileDetailsResponse } from '~src/auth/types';
+import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
 import { useApiContext, useUserDetailsContext } from '~src/context';
 import Addresses from './Addresses';
 import EditProfile from './EditProfile';

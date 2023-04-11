@@ -76,7 +76,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		<GovSidebarCard className={className}>
 			<div className='flex items-center justify-between gap-x-2'>
 				<h6 className='text-sidebarBlue font-semibold text-[20px] leading-[24px] m-0 p-0'>Voting</h6>
-				{['Executed', 'Confirmed', 'Approved', 'Timedout', 'Cancelled', 'Rejected'].includes(status) && <PassingInfoTag isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}/>}
+				{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && <PassingInfoTag status={status} isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}/>}
 			</div>
 			<VoteProgress
 				ayeVotes={tallyData.ayes}

@@ -33,7 +33,6 @@ const Balance = ({ address, onChange }: Props) => {
 					onChange && onChange(result.toHuman()?.Positive?.toString() || '0');
 				})
 				.catch(e => console.error(e));
-
 		}
 		else if(['equilibrium'].includes(network)){
 			api.query.system.account(address)

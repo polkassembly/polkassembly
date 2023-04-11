@@ -75,7 +75,7 @@ export const blocksToRelevantTime = (network: string, blocks:number): string => 
 
 	const blockSeconds = blocks*blockTimeSeconds;
 
-	if(blockSeconds > 60 && blockSeconds < 3600) {
+	if(blockSeconds > 60 && blockSeconds <= 3600) {
 		divisor = 60;
 		text = 'min';
 	} else if (blockSeconds > 3600 && blockSeconds < 86400) {

@@ -15,6 +15,7 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import Curves from './Curves';
 import { ThresholdGraphIcon, VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
+import CloseIcon from 'public/assets/icons/close.svg';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
@@ -140,13 +141,13 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					<span>Threshold Data</span>
 				</button>
 				<Modal
-					closeIcon={false}
 					onCancel={() => {
 						setThresholdOpen(false);
 					}}
 					open={thresholdOpen}
 					footer={[]}
 					className='w-[700px]'
+					closeIcon={<CloseIcon />}
 					title={
 						<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
 					}

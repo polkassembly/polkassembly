@@ -10,6 +10,7 @@ import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Trac
 import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
 import { DecisionPeriodIcon, EnactmentPeriodIcon, PreparePeriodIcon } from '~src/ui-components/CustomIcons';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
+import CloseIcon from 'public/assets/icons/close.svg';
 
 interface IReferendaV2Messages {
     className?: string;
@@ -56,7 +57,7 @@ const getDefaultPeriod = () => {
 	};
 };
 
-const getDecidingStatusBlock = (timeline?: any[]) => {
+export const getDecidingStatusBlock = (timeline?: any[]) => {
 	let deciding: any;
 	if (timeline && Array.isArray(timeline)) {
 		timeline.some((v) => {
@@ -96,7 +97,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	const Button: FC<IButtonProps> = (props) => {
 		const { children } = props;
 		return (
-			<button onClick={() => setOpen(true)} className='cursor-pointer flex items-center justify-center border-none outline-none bg-[#FCE5F2] w-[30px] h-[30px] rounded-full'>
+			<button onClick={() => setOpen(true)} className='cursor-pointer flex items-center justify-center border-none outline-none bg-[#FCE5F2] w-[30px] h-[30px] rounded-full text-base font-medium leading-[24px] tracking-[0.01em] text-[#576D8B]'>
 				{children}
 			</button>
 		);
@@ -231,6 +232,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 				open={open}
 				title={<h3 className='text-sidebarBlue font-semibold text-xl leading-[24px] tracking-[0.0015em]'>Status</h3>}
 				onCancel={() => setOpen(false)}
+				closeIcon={<CloseIcon />}
 				footer={[]}
 			>
 				<section className='text-sidebarBlue mt-[30px]'>

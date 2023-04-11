@@ -5,7 +5,8 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import React, { FC, useEffect, useState } from 'react';
 import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
-import * as Chart from 'react-chartjs-2';import {
+import * as Chart from 'react-chartjs-2';
+import {
 	Chart as ChartJS,
 	CategoryScale,
 	LinearScale,
@@ -46,6 +47,28 @@ const Curves: FC<ICurvesProps> = (props) => {
 		datasets: [],
 		labels: []
 	});
+	const toggleData = (index: number) => {
+		setData((prev: any) => {
+			if (prev.datasets && Array.isArray(prev.datasets) && prev.datasets.length > index) {
+				const datasets = [...prev.datasets.map((dataset: any, i: any) => {
+					if (dataset && index === i) {
+						return {
+							...dataset,
+							borderColor: dataset.borderColor === 'transparent'? ([0, 2].includes(i)? '#5BC044': '#E5007A'):'transparent'
+						};
+					}
+					return { ...dataset };
+				})];
+				return {
+					...prev,
+					datasets: datasets
+				};
+			}
+			return {
+				...prev
+			};
+		});
+	};
 	const [progress, setProgress] = useState({
 		approval: 0,
 		approvalThreshold: 0,
@@ -218,14 +241,14 @@ const Curves: FC<ICurvesProps> = (props) => {
 						],
 						labels
 					};
-					setData(newData);
+					setData(JSON.parse(JSON.stringify(newData)));
 				}
 			}
 			setLoading(false);
 		};
 		getData();
 	}, [api, apiReady, referendumId, created_at, track_number, network]);
-	const labelsLength = data.labels[data.labels.length - 1];
+	const labelsLength = data.labels.length;
 	return (
 		<Spin indicator={<LoadingOutlined />} spinning={loading}>
 			{
@@ -234,7 +257,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 						{error}
 					</p>
 					: <section>
-						<article className='h-[400px]'>
+						<article className='h-[300px] md:min-h-[400px] -mx-3 md:m-0'>
 							<Chart.Line
 								data={data}
 								plugins={[hoverLinePlugin]}
@@ -249,7 +272,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 											lineWidth: 1
 										},
 										legend: {
-											display: true,
+											display: false,
 											position: 'bottom'
 										},
 										tooltip: {
@@ -338,7 +361,33 @@ const Curves: FC<ICurvesProps> = (props) => {
 								}}
 							/>
 						</article>
-						<article className='flex items-center justify-between gap-x-2 -mt-10'>
+						<article className='-mt-20 md:-mt-16 flex items-center justify-center gap-x-5'>
+							<button onClick={() => {
+								toggleData(0);
+							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
+								<span className='h-1 border-0 border-t border-solid border-[#E5007A] w-[32px]'></span>
+								<span className='text-sidebarBlue font-normal text-[10px] leading-[12px]'>Support</span>
+							</button>
+							<button onClick={() => {
+								toggleData(1);
+							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
+								<span className='h-1 border-0 border-t border-dashed border-[#E5007A] w-[32px]'></span>
+								<span className='text-sidebarBlue font-normal text-[10px] leading-[12px]'>Current Support</span>
+							</button>
+							<button onClick={() => {
+								toggleData(2);
+							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
+								<span className='h-1 border-0 border-t border-solid border-[#5BC044] w-[32px]'></span>
+								<span className='text-sidebarBlue font-normal text-[10px] leading-[12px]'>Approval</span>
+							</button>
+							<button onClick={() => {
+								toggleData(3);
+							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
+								<span className='h-1 border-0 border-t border-dashed border-[#5BC044] w-[32px]'></span>
+								<span className='text-sidebarBlue font-normal text-[10px] leading-[12px]'>Current Approval</span>
+							</button>
+						</article>
+						<article className='mt-5 flex items-center justify-between gap-x-2'>
 							<div className='flex-1 p-[12.5px] bg-[#FFF5FB] rounded-[5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>
 								<p className='flex items-center gap-x-2 justify-between text-[10px] leading-3 text-[#334D6E]'>
 									<span className='font-semibold'>Current Approval</span>

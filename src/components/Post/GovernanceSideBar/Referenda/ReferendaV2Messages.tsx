@@ -147,7 +147,6 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
 
-	if (!prepare.periodCardVisible && !decision.periodCardVisible && !confirm.periodCardVisible && !minEnactment.periodCardVisible && (isTreasuryProposal? !spend.periodCardVisible: isProposalPassed)) return null;
 	return (
 		<GovSidebarCard>
 			{

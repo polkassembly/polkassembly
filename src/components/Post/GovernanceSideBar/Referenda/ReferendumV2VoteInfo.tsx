@@ -41,6 +41,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
 
 	const { api, apiReady } = useApiContext();
+	const [activeIssuance, setActiveIssuance] = useState<BN | null>(null);
 
 	const [tallyData, setTallyData] = useState({
 		ayes: ZERO || 0,
@@ -49,6 +50,14 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	});
 
 	useEffect(() => {
+		if( !api || !apiReady) return;
+
+		(async () => {
+			const totalIssuance = await api.query.balances.totalIssuance();
+			const inactiveIssuance = await api.query.balances.inactiveIssuance();
+			setActiveIssuance(totalIssuance.sub(inactiveIssuance));
+		})();
+
 		if(['confirmed', 'executed', 'timedout', 'cancelled', 'rejected'].includes(status.toLowerCase())){
 			setTallyData({
 				ayes: String(tally?.ayes).startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
@@ -57,8 +66,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			});
 			return;
 		}
-
-		if( !api || !apiReady) return;
 
 		(async () => {
 			const referendumInfoOf = await api.query.referenda.referendumInfoFor(postIndex);
@@ -134,6 +141,22 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						{formatUSDWithUnits(formatBnBalance(tallyData.support, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 					</div>
 				</article>
+				{
+					activeIssuance?
+						<article className='flex items-center justify-between gap-x-2'>
+							<div className='flex items-center gap-x-1'>
+								<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+									Issuance
+								</span>
+							</div>
+							<div
+								className='text-navBlue text-xs font-medium leading-[22px]'
+							>
+								{formatUSDWithUnits(formatBnBalance(activeIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+							</div>
+						</article>
+						: null
+				}
 			</section>
 			<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] mt-[18px] pt-[18px] pb-[14px]'>
 				<button

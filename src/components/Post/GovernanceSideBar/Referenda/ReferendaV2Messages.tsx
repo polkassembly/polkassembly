@@ -147,6 +147,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
 
+	if (isProposalPassed && (isTreasuryProposal? awardedStatusBlock: executedStatusBlock)) {
+		return null;
+	}
+
 	return (
 		<GovSidebarCard>
 			{

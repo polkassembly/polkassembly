@@ -5,12 +5,12 @@ import { Modal, Progress } from 'antd';
 import BN from 'bn.js';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Tracks/AboutTrackCard';
 import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
 import { DecisionPeriodIcon, EnactmentPeriodIcon, PreparePeriodIcon } from '~src/ui-components/CustomIcons';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import CloseIcon from 'public/assets/icons/close.svg';
+import { getBlockLink } from '~src/util/subscanCheck';
 
 interface IReferendaV2Messages {
     className?: string;
@@ -57,14 +57,14 @@ const getDefaultPeriod = () => {
 	};
 };
 
-export const getDecidingStatusBlock = (timeline?: any[]) => {
+export const getStatusBlock = (timeline: any[], status: string) => {
 	let deciding: any;
 	if (timeline && Array.isArray(timeline)) {
 		timeline.some((v) => {
 			if (v && v.statuses && Array.isArray(v.statuses)) {
 				let isFind = false;
 				v.statuses.some((v: any) => {
-					if (v && v.status === 'Deciding') {
+					if (v && v.status === status) {
 						isFind = true;
 						deciding = v;
 					}
@@ -92,7 +92,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	const isTreasuryProposal = trackData.group === 'Treasury';
 	const isProposalPassed = ['Executed', 'Confirmed', 'Approved'].includes(status);
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled'].includes(status);
-	const decidingStatusBlock = getDecidingStatusBlock(timeline);
+	const decidingStatusBlock = getStatusBlock(timeline || [], 'Deciding');
 
 	const Button: FC<IButtonProps> = (props) => {
 		const { children } = props;
@@ -209,17 +209,11 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 								<>
 									<article className='py-6'>
 										<div className='flex items-center justify-between'>
-											<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal Failed</h3>
+											<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal { status === 'Cancelled'? 'Cancelled': status === 'Killed'? 'Killer': status === 'TimedOut'? 'Timed Out': 'Failed'}</h3>
 											<Button>3</Button>
 										</div>
 										<div className='mt-[20px] text-sidebarBlue text-sm font-normal leading-[21px] tracking-[0.01em]'>
-											<p>
-                                                Referendum failed because either of the 2 reasons:
-											</p>
-											<ul className='pl-5 m-0'>
-												<li>The support was lesser than the threshold for this track.</li>
-												<li>The approval was lesser than the threshold for this track.</li>
-											</ul>
+											<FailedReferendaText network={network} status={status} timeline={timeline} />
 										</div>
 									</article>
 								</>
@@ -314,4 +308,30 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	);
 };
 
-export default styled(ReferendaV2Messages)``;
+export default ReferendaV2Messages;
+
+const FailedReferendaText: FC<{ status: string; network: string; timeline?: any[] }> = (props) => {
+	const { status, timeline, network } = props;
+	const url = getBlockLink(network);
+	const block = getStatusBlock(timeline || [], status);
+	const BlockElement = <a className='text-pink_primary font-medium' href={`${url}/${block?.block}`} target='_blank' rel="noreferrer">#{block?.block && block?.block}</a>;
+	return <>
+		{
+			status === 'Cancelled'?
+				<>The proposal has been cancelled at block {BlockElement} via the referendum canceller track</>
+				: status === 'Killed'?
+					<>The proposal has been killed at block {BlockElement} via the referendum killer track and the deposit was slashed</>
+					: status === 'TimedOut'?
+						<>The proposal has been timed out as the decision deposit was not placed in due time</>
+						: <>
+							<p>
+								Referendum failed because either of the 2 reasons:
+							</p>
+							<ul className='pl-5 m-0'>
+								<li>The support was lesser than the threshold for this track.</li>
+								<li>The approval was lesser than the threshold for this track.</li>
+							</ul>
+						</>
+		}
+	</>;
+};

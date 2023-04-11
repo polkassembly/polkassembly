@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Modal } from 'antd';
+import { CheckCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
@@ -16,6 +17,13 @@ import Curves from './Curves';
 import { ThresholdGraphIcon, VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
 import CloseIcon from 'public/assets/icons/close.svg';
+import VoteCalculationIcon from 'public/assets/icons/vote-calculation.svg';
+import VoteImage from 'public/assets/icons/vote-image.svg';
+import RightArrowImage from 'public/assets/icons/right-arrow.svg';
+import CastVoteImage from 'public/assets/icons/cast-vote.svg';
+import VoteAmountImage from 'public/assets/icons/vote-amount.svg';
+import ConvictionPeriodImage from 'public/assets/icons/conviction-period.svg';
+import LikeDislikeImage from 'public/assets/icons/like-dislike.svg';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
@@ -30,6 +38,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	const { network } = useNetworkContext();
 	const { postData: { status, postIndex } } = usePostDataContext();
 	const [thresholdOpen, setThresholdOpen] = useState(false);
+	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
 
 	const { api, apiReady } = useApiContext();
 
@@ -74,15 +83,20 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 
 	return (
 		<GovSidebarCard className={className}>
-			<div className='flex items-center justify-between gap-x-2'>
+			<div className='flex items-center justify-between gap-x-2 relative z-50'>
 				<h6 className='text-sidebarBlue font-semibold text-[20px] leading-[24px] m-0 p-0'>Voting</h6>
-				{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && <PassingInfoTag status={status} isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}/>}
+				<div className='flex items-center gap-x-2'>
+					{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && <PassingInfoTag status={status} isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}/>}
+					<button onClick={() => setVoteCalculationModalOpen(true)} className='border-none outline-none bg-transparent flex items-center cursor-pointer justify-center'><VoteCalculationIcon /></button>
+				</div>
 			</div>
-			<VoteProgress
-				ayeVotes={tallyData.ayes}
-				className='vote-progress'
-				nayVotes={tallyData.nays}
-			/>
+			<div>
+				<VoteProgress
+					ayeVotes={tallyData.ayes}
+					className='vote-progress'
+					nayVotes={tallyData.nays}
+				/>
+			</div>
 			<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] -mt-4'>
 				<article className='flex items-center justify-between gap-x-2'>
 					<div className='flex items-center gap-x-1'>
@@ -146,7 +160,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					}}
 					open={thresholdOpen}
 					footer={[]}
-					className='w-[700px]'
+					className='md:min-w-[700px]'
 					closeIcon={<CloseIcon />}
 					title={
 						<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
@@ -155,6 +169,67 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					<div className='mt-5'>
 						<Curves referendumId={referendumId as number} />
 					</div>
+				</Modal>
+				<Modal
+					onCancel={() => {
+						setVoteCalculationModalOpen(false);
+					}}
+					open={voteCalculationModalOpen}
+					footer={[
+						<div key='ok' className='flex items-center justify-center'>
+							<button
+								className='flex items-center justify-center border-none outline-none rounded-[5px] bg-pink_primary text-white font-normal text-xs leading-[18px] tracking-[0.01em] gap-x-1 w-[57.65px] h-[29.95px] cursor-pointer'
+								onClick={() => setVoteCalculationModalOpen(false)}
+							>
+								<CheckCircleOutlined />
+								Ok!
+							</button>
+						</div>
+					]}
+					className='md:min-w-[584px]'
+					closeIcon={<CloseIcon />}
+					title={
+						<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>How Votes Calculated</h2>
+					}
+				>
+					<section className='flex flex-col gap-y-5'>
+						<p className='text-sidebarBlue font-normal text-xs leading-[18px] m-0 p-0 mt-3'>
+							Votes are calculated by multiplying the votes casted by a user with the conviction period.
+						</p>
+						<p className='font-medium text-xs leading-[18px] text-sidebarBlue m-0 p-0'>For example:</p>
+						<article className='flex items-center justify-between gap-x-5 my-2'>
+							<div className='flex flex-col items-center justify-center gap-y-3'>
+								<CastVoteImage />
+								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] text-center'>User wants to cast a vote</p>
+							</div>
+							<div className='flex items-center justify-center'>
+								<RightArrowImage />
+							</div>
+							<div className='flex flex-col items-center justify-center gap-y-3'>
+								<VoteAmountImage />
+								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] text-center'>Chooses vote amount and type (Aye/Nay)</p>
+							</div>
+							<div className='flex items-center justify-center'>
+								<RightArrowImage />
+							</div>
+							<div className='flex flex-col items-center justify-center gap-y-3'>
+								<ConvictionPeriodImage />
+								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] text-center'>Sets a conviction period</p>
+							</div>
+							<div className='flex items-center justify-center'>
+								<RightArrowImage />
+							</div>
+							<div className='flex flex-col items-center justify-center gap-y-3'>
+								<LikeDislikeImage />
+								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] text-center'>User casts their vote</p>
+							</div>
+						</article>
+						<p className='font-medium text-xs leading-[18px] text-sidebarBlue m-0 p-0'>Here,</p>
+						<article className='flex items-center justify-center'>
+							<VoteImage />
+						</article>
+						<p className='p-0 m-0 text-sidebarBlue font-normal text-xs leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount) into 4 (conviction) to get the final vote.</span></p>
+					</section>
 				</Modal>
 			</section>
 		</GovSidebarCard>

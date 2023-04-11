@@ -36,6 +36,6 @@ export default styled(PassingInfoTag)`
 	}
 
 	&.failed {
-		background-color: #FF5A47;
+		background-color: #FF0000;
 	}
 `;

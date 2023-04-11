@@ -114,7 +114,7 @@ const FilterByTags=({ className }:Props) => {
 			}
 			return null;
 		}),
-		filteredTags.length === 0 ? { key: 0, label: <div className='h-[100%] flex items-center justify-center flex-col gap-2'><NoTagsFoundIcon/><span className={`text-[10px] text-navBlue tracking-wide ${poppins.className} ${poppins.variable} `}>No tag found.</span></div> } : null ,
+		filteredTags.length === 0 && searchInput.length > 0 ? { key: 0, label: <div className='h-[100%] flex items-center justify-center flex-col gap-2'><NoTagsFoundIcon/><span className={`text-[10px] text-navBlue tracking-wide ${poppins.className} ${poppins.variable} `}>No tag found.</span></div> } : null ,
 
 		...filteredTags.slice(0,5).map((tag, index) => {
 			return { key: index+20, label:<div className='flex items-center justify-between'><div><SearchIcon className='mr-2'/><span className={`${poppins.variable} ${poppins.className} text-navBlue text-xs tracking-wide`}>{tag?.name?.charAt(0).toUpperCase()+tag?.name.slice(1)}</span></div><div>{!handleExits(tag?.name) && <div onClick={() => handleSetTags(tag?.name)}><CheckOutlineIcon className='mt-[-2px]'/></div>}</div></div> };

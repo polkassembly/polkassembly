@@ -17,11 +17,12 @@ interface Props{
 	withBalance?: boolean
 	isBalanceUpdated?: boolean
 	onBalanceChange?: (balance: string) => void
+  className?:string;
 }
 
-const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, isBalanceUpdated }: Props) =>
-	<article className='w-full gap-y-2 flex flex-col'>
-		<div className='flex items-center gap-x-2'>
+const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange,className }: Props) =>
+	<article className={`w-full gap-y-2 flex flex-col p-2 ${className}`}>
+		<div className='flex items-center gap-x-2 ml-[-6px] mb-1'>
 			<h3 className='text-sm mb-0'>{title}</h3>
 			<HelperTooltip text='You can choose an account from the extension.' />
 		</div>
@@ -31,7 +32,7 @@ const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withB
 			onAccountChange={onAccountChange}
 		/>
 		{address && withBalance &&
-			<Balance isBalanceUpdated={isBalanceUpdated} address={address} onChange={onBalanceChange} />
+			<Balance address={address} onChange={onBalanceChange} />
 		}
 	</article>;
 

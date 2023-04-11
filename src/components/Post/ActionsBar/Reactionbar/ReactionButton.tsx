@@ -20,7 +20,8 @@ export interface IReactionButtonProps {
 	reactionsDisabled: boolean;
 	setReactionsDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 	setReactions: React.Dispatch<React.SetStateAction<IReactions>>
-  setModalOpen?:(pre:boolean)=>void;
+  setLikeModalOpen?:(pre:boolean)=>void;
+  setDislikeModalOpen?:(pre:boolean)=>void;
 }
 
 type IReaction = '👍' | '👎';
@@ -34,7 +35,8 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	setReactions,
 	reactionsDisabled,
 	setReactionsDisabled,
-	setModalOpen
+	setLikeModalOpen,
+	setDislikeModalOpen
 }) => {
 	const { postData: { postIndex, postType } } = usePostDataContext();
 	const { id, username } = useContext(UserDetailsContext);
@@ -44,11 +46,11 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 	const getReactionIcon = (reaction: string, reacted: string | boolean | null | undefined) => {
 		if(reaction == '👍') {
-			return reacted ? <LikeFilled /> : <LikeOutlined />;
+			return reacted ? <LikeFilled /> : <div onClick={() => !id || !username && setLikeModalOpen && setLikeModalOpen(true)}><LikeOutlined /></div>;
 		}
 
 		if(reaction == '👎') {
-			return reacted ? <LikeFilled rotate={180} /> : <LikeOutlined rotate={180} />;
+			return reacted ? <LikeFilled rotate={180} /> : <div onClick={() => !id || !username && setDislikeModalOpen && setDislikeModalOpen(true)}><LikeOutlined rotate={180} /></div>;
 		}
 
 		return reaction;
@@ -56,8 +58,12 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 	const handleReact = async () => {
 		if (!id || !username) {
-			setModalOpen && setModalOpen(true);
-			console.error('No user id found. Not logged in?');
+			if(reaction == '👍') {
+				setLikeModalOpen && setLikeModalOpen(true);
+			}
+			else{
+				setDislikeModalOpen && setDislikeModalOpen(true);
+			}
 			return;
 		}else{
 			setReactionsDisabled(true);

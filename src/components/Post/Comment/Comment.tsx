@@ -6,7 +6,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
 import { useRouter } from 'next/router';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import CreationLabel from 'src/ui-components/CreationLabel';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
 import UserAvatar from 'src/ui-components/UserAvatar';
@@ -26,6 +26,7 @@ export interface IComment {
 	comment_reactions: IReactions;
 	username: string;
 	proposer?: string;
+  sentiment?:number;
 }
 
 interface ICommentProps {
@@ -36,9 +37,10 @@ interface ICommentProps {
 
 export const Comment: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
-	const { user_id, content, created_at, id, replies, updated_at } = comment;
+	const { user_id, content, created_at, id, replies, updated_at ,sentiment } = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
+	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
 
 	const { postData: { postIndex, postType } } = usePostDataContext();
 
@@ -74,11 +76,12 @@ export const Comment: FC<ICommentProps> = (props) => {
 			/>
 			<div className='w-full overflow-hidden'>
 				<CreationLabel
-					className='creation-label py-2 pt-4 px-0 md:px-4 bg-comment_bg rounded-t-md'
+					className='creation-label py-2 pt-4 px-0 md:px-4 bg-comment_bg rounded-t-md mb'
 					created_at={created_at}
 					defaultAddress={comment.proposer}
 					text={'commented'}
 					username={comment.username}
+					sentiment={newSentiment}
 				>
 					<UpdateLabel
 						created_at={created_at}
@@ -88,13 +91,16 @@ export const Comment: FC<ICommentProps> = (props) => {
 				<EditableCommentContent
 					userId={user_id}
 					created_at={created_at}
-					className='rounded-md'
+					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px]  min-[320px]:mt-[-2px]' }`}
 					comment={comment}
 					commentId={id}
 					content={content}
 					postId={postIndex}
 					proposalType={postType}
 					disableEdit={props.disableEdit}
+					sentiment={newSentiment}
+					setSentiment={setNewSentiment}
+					prevSentiment={sentiment||0}
 				/>
 				{replies && replies.length > 0 && <Replies className='comment-content' commentId={id} repliesArr={replies} />}
 			</div>

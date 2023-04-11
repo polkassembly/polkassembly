@@ -26,6 +26,7 @@ import { getLatestActivityAllPosts } from './api/v1/latest-activity/all-posts';
 import { getLatestActivityOffChainPosts } from './api/v1/latest-activity/off-chain-posts';
 import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } from './api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from './api/v1/network-socials';
+import { chainProperties } from '~src/global/networkConstants';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -52,7 +53,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 
 	const networkSocialsData = await getNetworkSocials({ network });
 
-	const fetches = {
+	let fetches = {
 		all: getLatestActivityAllPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
 			network
@@ -61,39 +62,45 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 			listingLimit: LATEST_POSTS_LIMIT,
 			network,
 			proposalType: OffChainProposalType.DISCUSSIONS
-		}),
-		// eslint-disable-next-line sort-keys
-		bounties: getLatestActivityOnChainPosts({
-			listingLimit: LATEST_POSTS_LIMIT,
-			network,
-			proposalType: ProposalType.BOUNTIES
-		}),
-		council_motions: getLatestActivityOnChainPosts({
-			listingLimit: LATEST_POSTS_LIMIT,
-			network,
-			proposalType: ProposalType.COUNCIL_MOTIONS
-		}),
-		democracy_proposals: getLatestActivityOnChainPosts({
-			listingLimit: LATEST_POSTS_LIMIT,
-			network,
-			proposalType: ProposalType.DEMOCRACY_PROPOSALS
-		}),
-		referendums: getLatestActivityOnChainPosts({
-			listingLimit: LATEST_POSTS_LIMIT,
-			network,
-			proposalType: ProposalType.REFERENDUMS
-		}),
-		tips: getLatestActivityOnChainPosts({
-			listingLimit: LATEST_POSTS_LIMIT,
-			network,
-			proposalType: ProposalType.TIPS
-		}),
-		treasury_proposals: getLatestActivityOnChainPosts({
-			listingLimit: LATEST_POSTS_LIMIT,
-			network,
-			proposalType: ProposalType.TREASURY_PROPOSALS
 		})
 	};
+
+	if(chainProperties[network]?.subsquidUrl) {
+		const onChainFetches = {
+			bounties: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.BOUNTIES
+			}),
+			council_motions: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.COUNCIL_MOTIONS
+			}),
+			democracy_proposals: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.DEMOCRACY_PROPOSALS
+			}),
+			referendums: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.REFERENDUMS
+			}),
+			tips: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.TIPS
+			}),
+			treasury_proposals: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.TREASURY_PROPOSALS
+			})
+		};
+
+		fetches = { ...fetches, ...onChainFetches };
+	}
 
 	if (isGrantsSupported(network)) {
 		(fetches as any)['grants'] = getLatestActivityOffChainPosts({
@@ -109,6 +116,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		network,
 		networkSocialsData
 	};
+
 	Object.keys(fetches).forEach((key, index) => {
 		props.latestPosts[key as keyof typeof fetches] = responseArr[index];
 	});

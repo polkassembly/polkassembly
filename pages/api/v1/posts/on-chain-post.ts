@@ -307,12 +307,13 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				id: data.id,
 				proposer: '',
 				replies: [] as any[],
+				sentiment:data.sentiment||0,
 				updated_at: getUpdatedAt(data),
 				user_id: data.user_id || data.user_id,
 				username: data.username
 			};
 
-			const repliesSnapshot = await commentDocRef.collection('replies').get();
+			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').get();
 			repliesSnapshot.docs.forEach((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();
@@ -354,7 +355,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				let lastIndex = 0;
 				for (let i = 0; i < newIdsLen; i+=30) {
 					lastIndex = i;
-					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
 					addressesQuery.docs.map((doc) => {
 						if (doc && doc.exists) {
 							const data = doc.data();
@@ -372,7 +373,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				}
 				lastIndex += 30;
 				if (lastIndex <= newIdsLen) {
-					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
 					addressesQuery.docs.map((doc) => {
 						if (doc && doc.exists) {
 							const data = doc.data();
@@ -422,7 +423,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 		let lastIndex = 0;
 		for (let i = 0; i < newIdsLen; i+=30) {
 			lastIndex = i;
-			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
 			addressesQuery.docs.map((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();
@@ -439,7 +440,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			});
 		}
 		if (lastIndex <= newIdsLen) {
-			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
 			addressesQuery.docs.map((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();

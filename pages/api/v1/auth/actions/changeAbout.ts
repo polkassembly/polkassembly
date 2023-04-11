@@ -11,6 +11,7 @@ import getUserFromUserId from '~src/auth/utils/getUserFromUserId';
 import messages from '~src/auth/utils/messages';
 import verifySignature from '~src/auth/utils/verifySignature';
 import firebaseAdmin from '~src/services/firebaseInit';
+import { Wallet } from '~src/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
@@ -18,8 +19,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { address, title, description, image = '', signature } = req.body;
-	if(!address || !title || !description || !signature) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { address, title, description, image = '', signature, wallet } = req.body;
+	if(!address || !title || !description || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const signMessage = `<Bytes>about::network:${network}|address:${address}|title:${title}|description:${description}|image:${image}</Bytes>`;
 
@@ -38,7 +39,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const addressDoc = await firestore.collection('addresses').doc(address).get();
 	if(!addressDoc.exists){
 		const signMessage  = await authServiceInstance.AddressSignupStart(address);
-		const { user_id } = await authServiceInstance.AddressSignupConfirm(network, address, signMessage);
+		const { user_id } = await authServiceInstance.AddressSignupConfirm(network, address, signMessage, wallet as Wallet);
 		userId = user_id!;
 	}else {
 		userId = addressDoc.data()?.user_id;

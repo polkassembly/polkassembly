@@ -166,7 +166,7 @@ const MetamaskLogin: FC<Props> = ({
 					return;
 				}
 
-				const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressLogin', { address, signature: result.result });
+				const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressLogin', { address, signature: result.result, wallet: Wallet.METAMASK });
 				if(addressLoginError) {
 					console.log('Error in address login', addressLoginError);
 					setError(addressLoginError);
@@ -208,7 +208,8 @@ const MetamaskLogin: FC<Props> = ({
 
 								const { data: confirmData , error: confirmError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressSignupConfirm', {
 									address,
-									signature: result.result
+									signature: result.result,
+									wallet: Wallet.METAMASK
 								});
 
 								if (confirmError || !confirmData) {
@@ -218,7 +219,8 @@ const MetamaskLogin: FC<Props> = ({
 								}
 
 								if(confirmData.token) {
-									handleTokenChange(confirmData.token, currentUser);
+									currentUser.loginWallet=Wallet.METAMASK;
+									handleTokenChange(confirmData.token,currentUser);
 									if(isModal){
 										setLoginOpen(false);
 										setLoading(false);
@@ -239,6 +241,7 @@ const MetamaskLogin: FC<Props> = ({
 					}
 				}
 				if(addressLoginData?.token){
+					currentUser.loginWallet=Wallet.METAMASK;
 					handleTokenChange(addressLoginData.token, currentUser);
 					if(isModal){
 						setLoginOpen(false);

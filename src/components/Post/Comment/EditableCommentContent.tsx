@@ -2,11 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LinkOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Form } from 'antd';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Form, MenuProps } from 'antd';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
@@ -25,6 +25,15 @@ import CommentReactionBar from '../ActionsBar/Reactionbar/CommentReactionBar';
 import ReportButton from '../ActionsBar/ReportButton';
 import { IComment } from './Comment';
 
+import ThreeDotsIcon from '~assets/icons/three-dots.svg';
+import DeleteIcon from '~assets/icons/delete.svg';
+import EditIcon from '~assets/icons/edit-i.svg';
+import CopyIcon from '~assets/icons/copy.svg';
+import ReplyIcon from '~assets/icons/reply.svg';
+import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon,AgainstUnfilledIcon,SlightlyAgainstUnfilledIcon,NeutralUnfilledIcon,SlightlyForUnfilledIcon,ForUnfilledIcon } from '~src/ui-components/CustomIcons';
+
+import { poppins } from 'pages/_app';
+
 interface IEditableCommentContentProps {
 	userId: number,
 	className?: string,
@@ -35,12 +44,15 @@ interface IEditableCommentContentProps {
 	proposalType: ProposalType
 	postId: number | string
 	disableEdit?: boolean
+  sentiment:number,
+	setSentiment:(pre:number)=>void;
+	prevSentiment:number;
 }
 
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { network } = useContext(NetworkContext);
 
-	const { userId, className, comment, content, commentId } = props;
+	const { userId, className, comment, content, commentId,sentiment,setSentiment,prevSentiment } = props;
 	const { setPostData } = usePostDataContext();
 	const { asPath } = useRouter();
 
@@ -60,13 +72,15 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	}, []);
 
 	const [replyForm] = Form.useForm();
+	const currentContent=useRef<string>(content);
 
 	const [isReplying, setIsReplying] = useState(false);
 	const toggleReply = () => setIsReplying(!isReplying);
 
 	const handleCancel = () => {
+		setSentiment(prevSentiment);
 		toggleEdit();
-		form.setFieldValue('content', '');
+		form.setFieldValue('content', currentContent.current);
 	};
 
 	const handleReplyCancel = () => {
@@ -77,8 +91,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const handleSave = async () => {
 		await form.validateFields();
 		const newContent = form.getFieldValue('content');
-		if(!newContent) return;
-
+		if(!newContent)return;
+		if(currentContent.current !== newContent){
+			currentContent.current=newContent;
+		}
 		setIsEditing(false);
 		setLoading(true);
 		const { data, error: editPostCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/editPostComment', {
@@ -86,6 +102,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			content: newContent,
 			postId: props.postId,
 			postType: props.proposalType,
+			sentiment:sentiment,
 			userId: id
 		});
 
@@ -112,6 +129,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						}
 						return {
 							...newComment
+
 						};
 					});
 				}
@@ -120,7 +138,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					comments: comments
 				};
 			});
-			form.setFieldValue('content', '');
+			form.setFieldValue('content', currentContent.current);
 			queueNotification({
 				header: 'Success!',
 				message: 'Your comment was edited.',
@@ -246,7 +264,37 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			});
 		}
 	};
+	const items:MenuProps['items']=[
+		id === userId ? {
+			key:1,
+			label:<div className={`items-center shadow-none text-[10px] text-slate-400 leading-4  ${poppins.variable} ${poppins.className}`} onClick={toggleEdit}>
+				<span className='flex items-center' ><EditIcon className='mr-1' />Edit</span>
+			</div>
+		}:null,
+		{
+			key:2,
+			label:<div className={`flex items-center text-slate-400 shadow-none text-[10px] leading-4 ${poppins.variable} ${poppins.className}` } onClick={() => {copyLink();}}><CopyIcon  className='mr-1'/> Copy link</div>
+		},
+		id && !isEditing ?{
+			key:3,
+			label:<ReportButton className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}  type='comment' contentId={commentId}/>
+		}:null,
+		id===userId ? {
+			key:4,
+			label:<div className={`flex items-center shadow-none text-[10px] text-slate-400 leading-4 ml-[-1.8px] ${poppins.variable} ${poppins.className} border-none` } onClick={() => {deleteComment();}}><DeleteIcon className='mr-1' />Delete</div>
+		}:null
+	];
 
+	const handleSentimentText=() => {
+		switch (sentiment){
+		case 1: return 'Completely Against';
+		case 2: return 'Slightly Against';
+		case 3: return 'Neutral';
+		case 4: return 'Slightly For';
+		case 5: return 'Completely For';
+		default: return 'Neutral';
+		}
+	};
 	return (
 		<>
 			<div className={className}>
@@ -264,46 +312,52 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								{ required: "Please add the '${name}'" }
 							}
 						>
-							<ContentForm />
-							<Form.Item>
-								<div className='flex items-center justify-end'>
-									<Button htmlType="button" onClick={handleCancel} className='mr-2 flex items-center'>
-										<CloseOutlined /> Cancel
-									</Button>
-									<Button htmlType="submit" className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
-										<CheckOutlined /> Submit
-									</Button>
+							<ContentForm value={content} className='mb-0' />
+							<div className='bg-gray-100 mb-[10px] p-2 rounded-e-md mt-[-25px] h-[70px] background'>
+								<div className='flex text-[12px] gap-[2px]'>Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5></div>
+								<div className='flex items-center text-transparent'>
+									<div className='flex justify-between items-center gap-[15px] border-solid'>
+										<div className='cursor-pointer text-lg flex justify-center items-center' onClick={() => setSentiment(1)}>{sentiment===1?<AgainstIcon />:<AgainstUnfilledIcon />}</div>
+										<div className='cursor-pointer text-lg flex justify-center items-center' onClick={() => setSentiment(2)}>{sentiment===2?<SlightlyAgainstIcon/>:<SlightlyAgainstUnfilledIcon />}</div>
+										<div className='cursor-pointer text-lg flex justify-center items-center' onClick={() => setSentiment(3)}>{sentiment===3?<NeutralIcon />:<NeutralUnfilledIcon />}</div>
+										<div className='cursor-pointer text-lg  flex justify-center items-center' onClick={() => setSentiment(4)}>{sentiment===4?<SlightlyForIcon />:<SlightlyForUnfilledIcon  />}</div>
+										<div className='cursor-pointer text-lg flex justify-center items-center' onClick={() => setSentiment(5)}>{sentiment===5?<ForIcon className='text-[20px]' />:<ForUnfilledIcon  />} </div>
+									</div>
+									<div className='flex w-[100%] items-center justify-end '>
+										<Button htmlType="button" onClick={handleCancel}  className='mr-2 flex items-center h-[26px]'>
+											<CloseOutlined />
+										</Button>
+										<Button htmlType='submit'  className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center h-[26px]'>
+											<CheckOutlined />
+										</Button>
+									</div>
 								</div>
-							</Form.Item>
+							</div>
 						</Form>
 						:
 						<>
 							<Markdown md={content} className='py-2 px-2 md:px-4 bg-comment_bg rounded-b-md text-sm' />
 
-							<div className='flex items-center flex-row bg-white flex-wrap'>
+							<div className='flex items-center flex-row bg-white flex-wrap gap-[1px]'>
 								<CommentReactionBar
-									className='reactions'
+									className='reactions mr-0'
 									commentId={commentId}
 									comment_reactions={comment.comment_reactions}
 								/>
 								{
 									id &&
-										<Button disabled={props.disableEdit} className={ isReplying ? 'text-white bg-pink_primary text-xs' : 'text-pink_primary flex items-center border-none shadow-none text-xs' } onClick={toggleReply}>
-											Reply
+										<Button disabled={props.disableEdit} className={'text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1' } onClick={toggleReply}>
+											<ReplyIcon className='mr-1'/> Reply
 										</Button>
 								}
-								{id === userId &&
-										<Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} disabled={props.disableEdit || loading} onClick={toggleEdit}>
-											{
-												loading
-													? <span className='flex items-center'><LoadingOutlined className='mr-2' /> Editing</span>
-													: <span className='flex items-center'><FormOutlined className='mr-2' /> Edit</span>
-											}
-										</Button>
-								}
-								{id === userId && <Button disabled={props.disableEdit} className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteComment}><DeleteOutlined />Delete</Button>}
-								{id && !isEditing && <ReportButton className='text-xs' type='comment' contentId={commentId} />}
-								{<Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={copyLink}><LinkOutlined /> Copy link</Button>}
+								<Dropdown
+									className={`${poppins.variable} ${poppins.className} flex cursor-pointer dropdown`}
+									overlayClassName='sentiment-dropdown'
+									placement='bottomRight'
+									menu={{ items }}
+								>
+									<ThreeDotsIcon className=' mt-[-1px] ml-[6px] hover:bg-pink-100 rounded-xl'/>
+								</Dropdown>
 							</div>
 
 							{/* Add Reply Form*/}
@@ -351,4 +405,10 @@ export default styled(EditableCommentContent)`
 	.replyForm {
 		margin-top: 2rem;
 	}
+  .background{
+    background: rgba(72, 95, 125, 0.05);
+    border: 1px solid rgba(72, 95, 125, 0.1);
+    border-radius: 0px 0px 2px 2px;
+  }
+
 `;

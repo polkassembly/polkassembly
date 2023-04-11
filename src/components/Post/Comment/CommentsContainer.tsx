@@ -9,10 +9,10 @@ import styled from 'styled-components';
 
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
-// import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 
 import PostCommentForm from '../PostCommentForm';
 import Comments from './Comments';
+import RefendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -54,9 +54,9 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const targetOffset = 10;
 	const [timelines, setTimelines] = useState<ITimeline[]>([]);
 	// const [modalOpen,setModalOpen]=useState<boolean>(false);
-
+	// const { isLoggedOut } = useUserDetailsContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
-
+	const[openLoginModal,setOpenLoginModal]=useState<boolean>(false);
 	const getCommentCountAndFirstIdBetweenDates = (startDate: Dayjs, endDate: Dayjs, comments: any[]) => {
 		if (startDate.isAfter(endDate)) {
 			return {
@@ -140,31 +140,37 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 			}
 
-			<div className={`col-start-1 ${timelines.length > 1 && 'xl:col-start-3'} col-end-13`}>
-				<div className='text-sidebarBlue text-sm font-medium mb-5'>{comments?.length} comments</div>
+			<div className={`col-start-1 ${timelines.length > 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
+				{ id ? <>
+					{ isGrantClosed ?
+						<Alert message="Grant closed, no comments can be added or edited." type="info" showIcon /> :
+						<PostCommentForm className='mb-8' />
+					}
+				</>
+					:<Alert
+						onClick={() => {
+							setOpenLoginModal(true);
+						}
+						}
+						className='p-4 mb-8 mt-9 cursor-pointer'
+						type='info' message="Please Login to Comment" showIcon/>
+				}
+				<div className='text-sidebarBlue text-sm font-medium mb-5 '>{comments?.length} comments</div>
 				{ !!comments?.length &&
 						<>
 							<Comments disableEdit={isGrantClosed} comments={comments} />
 						</>
 				}
-				{ id ? <>
-					{ isGrantClosed ?
-						<Alert message="Grant closed, no comments can be added or edited." type="info" showIcon /> :
-						<PostCommentForm />
-					}
-				</>
-					:<Alert
-						className='p-4'
-						type='info' message="Please Login to Comment" showIcon/>
+				{
+					<RefendaLoginPrompts
+						modalOpen={openLoginModal}
+						setModalOpen={setOpenLoginModal}
+						image="/assets/post-comment.png"
+						title="Join Polkassembly to Comment on this proposal."
+						subtitle="Discuss, contribute and get regular updates from Polkassembly."
+					/>
 				}
 			</div>
-			{/* {modalOpen &&
-			 <ReferendaLoginPrompts
-			  modalOpen={modalOpen}
-			  setModalOpen={setModalOpen}
-			  image="/assets/referenda-comment.png"
-			  title='Join Polkassembly to Comment on this proposal.'
-			  subtitle='Discuss, contribute and get regular updates from Polkassembly.'/>} */}
 		</div>
 	);
 };

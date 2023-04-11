@@ -5,6 +5,7 @@
 /* eslint-disable sort-keys */
 import acalaLogo from '~assets/parachain-logos/acala-logo.jpg';
 import acuityLogo from '~assets/parachain-logos/acuity-logo.jpg';
+import integriteeLogo from '~assets/parachain-logos/integritee-logo.png';
 import altairLogo from '~assets/parachain-logos/altair-logo.jpeg';
 import amplitudeLogo from '~assets/parachain-logos/amplitude-logo.png';
 import astarLogo from '~assets/parachain-logos/astar-logo.png';
@@ -16,7 +17,6 @@ import centrifugeLogo from '~assets/parachain-logos/centrifuge-logo.png';
 import composableFinanceLogo from '~assets/parachain-logos/composable-finance-logo.png';
 import crustLogo from '~assets/parachain-logos/crust-logo.png';
 import equilibriumLogo from '~assets/parachain-logos/equilibrium-logo.png';
-import frequencyRococoLogo from '~assets/parachain-logos/frequency-logo.png';
 import frequencyLogo from '~assets/parachain-logos/frequency-logo.png';
 import gearLogo from '~assets/parachain-logos/gear-logo.jpg';
 import genshiroLogo from '~assets/parachain-logos/genshiro.png';
@@ -68,13 +68,13 @@ export const network = {
 	CRUST: 'crust',
 	CRUSTSHADOW: 'crustshadow',
 	EQUILIBRIUM: 'equilibrium',
-	FREQUENCYROCOCO: 'frequency-rococo',
 	FREQUENCY: 'frequency',
 	GEAR: 'gear',
 	GENSHIRO: 'genshiro',
 	GMORDIE: 'gmordie',
 	HEIKO: 'heiko',
 	HYDRADX: 'hydradx',
+	INTEGRITEE: 'integritee',
 	KARURA: 'karura',
 	KHALA: 'khala',
 	KILT: 'kilt',
@@ -145,6 +145,7 @@ export const tokenSymbol = {
 	TDFY: 'TDFY',
 	TUR: 'TUR',
 	TOKEN: 'TOKEN',
+	TEER: 'TEER',
 	PICA: 'PICA',
 	POLYX: 'POLYX',
 	WND: 'WND',
@@ -160,7 +161,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: polkadotLogo,
-		rpcEndpoint: 'wss://rpc.ibp.network/polkadot',
+		rpcEndpoint: 'wss://polkadot.api.onfinality.io/public-ws',
 		ss58Format: 0,
 		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
 		tokenDecimals: 10,
@@ -201,7 +202,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'kusama',
 		chainId: 0,
 		logo: kusamaLogo,
-		rpcEndpoint: 'wss://rpc.ibp.network/kusama',
+		rpcEndpoint: 'wss://kusama.api.onfinality.io/public-ws',
 		ss58Format: 2,
 		subsquidUrl: 'https://squid.subsquid.io/kusama-polkassembly/graphql',
 		tokenDecimals: 12,
@@ -384,7 +385,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: centrifugeLogo,
 		rpcEndpoint: 'wss://centrifuge-parachain.api.onfinality.io/public-ws',
 		ss58Format: 36,
-		subsquidUrl: '',
+		subsquidUrl: 'https://squid.subsquid.io/centrifuge-polkassembly/graphql',
 		tokenDecimals: 18,
 		tokenSymbol: tokenSymbol.CFG,
 		treasuryProposalBondPercent: '5%',
@@ -460,30 +461,14 @@ export const chainProperties: types.ChainPropType = {
 	},
 	[network.FREQUENCY]: {
 		blockTime: 12000,
-		category: 'test',
+		category: 'polkadot',
 		chainId: 0,
 		logo: frequencyLogo,
 		rpcEndpoint: 'wss://0.rpc.frequency.xyz',
 		ss58Format: 90,
 		tokenDecimals: 8,
 		tokenSymbol: tokenSymbol.FRQCY,
-		subsquidUrl: '',
-		treasuryProposalBondPercent: null,
-		treasuryProposalMinBond: null,
-		treasuryProposalMaxBond: null,
-		externalLinks: '',
-		rpcEndpoints: []
-	},
-	[network.FREQUENCYROCOCO]: {
-		blockTime: 12000,
-		category: 'test',
-		chainId: 0,
-		logo: frequencyRococoLogo,
-		rpcEndpoint: 'wss://rpc.rococo.frequency.xyz/',
-		ss58Format: 42,
-		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.UNIT,
-		subsquidUrl: '',
+		subsquidUrl: 'https://squid.subsquid.io/frequency-polkassembly/graphql',
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
@@ -568,6 +553,22 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '10000',
 		treasuryProposalMaxBond:'50000',
 		externalLinks: 'https://hydradx.api.subscan.io',
+		rpcEndpoints: []
+	},
+	[network.INTEGRITEE]: {
+		blockTime: 12000,
+		category: 'kusama',
+		chainId: 0,
+		logo: integriteeLogo,
+		rpcEndpoint: 'wss://integritee-kusama.api.onfinality.io/public-ws',
+		ss58Format: 13,
+		subsquidUrl: 'https://squid.subsquid.io/integritee-polkassembly/graphql',
+		tokenDecimals: 12,
+		tokenSymbol: tokenSymbol.TEER,
+		treasuryProposalBondPercent: '3%',
+		treasuryProposalMinBond: '10000',
+		treasuryProposalMaxBond:'50000',
+		externalLinks: 'https://integritee.api.subscan.io',
 		rpcEndpoints: []
 	},
 	[network.KARURA]: {

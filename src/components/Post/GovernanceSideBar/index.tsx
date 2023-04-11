@@ -6,7 +6,7 @@ import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Form } from 'antd';
+import { Form, Modal } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -26,9 +26,8 @@ import BountyChildBounties from './Bounty/BountyChildBounties';
 import MotionVoteInfo from './Motions/MotionVoteInfo';
 import VoteMotion from './Motions/VoteMotion';
 import ProposalDisplay from './Proposals';
-import FellowshipReferendumVotingStatus from './Referenda/FellowshipReferendumVotingStatus';
+import FellowshipReferendumVoteInfo from './Referenda/FellowshipReferendumVoteInfo';
 import ReferendumV2VoteInfo from './Referenda/ReferendumV2VoteInfo';
-import ReferendumV2VotingStatus from './Referenda/ReferendumV2VotingStatus';
 import ReferendumVoteInfo from './Referenda/ReferendumVoteInfo';
 import VoteReferendum from './Referenda/VoteReferendum';
 import VoteReferendumEth from './Referenda/VoteReferendumEth';
@@ -36,6 +35,8 @@ import VoteReferendumEthV2 from './Referenda/VoteReferendumEthV2';
 import EndorseTip from './Tips/EndorseTip';
 import TipInfo from './Tips/TipInfo';
 import EditProposalStatus from './TreasuryProposals/EditProposalStatus';
+import VotersList from './Referenda/VotersList';
+import ReferendaV2Messages from './Referenda/ReferendaV2Messages';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -57,6 +58,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
 	const [accountsMap, setAccountsMap] = useState<{[key:string]:string}>({});
 	const [signersMap, setSignersMap] = useState<{[key:string]: Signer}>({});
+	const [open, setOpen] = useState(false);
 
 	const { api, apiReady } = useApiContext();
 	const [lastVote, setLastVote] = useState<string | null | undefined>(undefined);
@@ -288,129 +290,129 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						/>
 					}
 
-					{proposalType === ProposalType.REFERENDUMS &&
+					{[ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS, ProposalType.REFERENDUMS].includes(proposalType) &&
 						<>
-							{canVote &&
-							<>
-								{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
+							{
+								proposalType === ProposalType.REFERENDUMS?
 									<>
-										{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 
-										{(!metaMaskError || walletConnectProvider?.wc.connected) &&
+										{canVote &&
+											<>
+												{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
+													<>
+														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 
-									<GovSidebarCard>
-										<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
-										<VoteReferendumEth
-											referendumId={onchainId as number}
-											onAccountChange={onAccountChange}
-											setLastVote={setLastVote}
-											lastVote={lastVote} />
-									</GovSidebarCard>
+														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
+													<GovSidebarCard>
+														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+														<VoteReferendumEth
+															referendumId={onchainId as number}
+															onAccountChange={onAccountChange}
+															setLastVote={setLastVote}
+															lastVote={lastVote} />
+													</GovSidebarCard>
+
+														}
+													</> : <GovSidebarCard>
+														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+														<VoteReferendum
+															lastVote={lastVote}
+															setLastVote={setLastVote}
+															onAccountChange={onAccountChange}
+															referendumId={onchainId  as number}
+															proposalType={proposalType}
+														/>
+													</GovSidebarCard>
+												}
+											</>
 										}
-									</> : <GovSidebarCard>
-										<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
-										<VoteReferendum
-											lastVote={lastVote}
-											setLastVote={setLastVote}
-											accounts={accounts}
-											address={address}
-											getAccounts={getAccounts}
-											onAccountChange={onAccountChange}
-											referendumId={onchainId  as number}
-											proposalType={proposalType}
-										/>
-									</GovSidebarCard>
-								}
-							</>
+
+										{(onchainId || onchainId === 0) &&
+											<div className={className}>
+												<ReferendumVoteInfo
+													setOpen={setOpen}
+													referendumId={onchainId as number}
+												/>
+											</div>
+										}
+									</>
+									: <>
+										<ReferendaV2Messages />
+										{canVote &&
+											<>
+												{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
+													<>
+														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
+
+														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
+
+													<GovSidebarCard>
+														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+														<VoteReferendumEthV2
+															referendumId={onchainId as number}
+															onAccountChange={onAccountChange}
+															setLastVote={setLastVote}
+															lastVote={lastVote} />
+													</GovSidebarCard>
+
+														}
+													</> : <GovSidebarCard>
+														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+														<VoteReferendum
+															lastVote={lastVote}
+															setLastVote={setLastVote}
+															onAccountChange={onAccountChange}
+															referendumId={onchainId  as number}
+															proposalType={proposalType}
+														/>
+													</GovSidebarCard>}
+											</>
+										}
+
+										{(onchainId || onchainId === 0) &&
+											<>
+												{
+													proposalType === ProposalType.OPEN_GOV &&
+													<div className={className}>
+														<ReferendumV2VoteInfo
+															setOpen={setOpen}
+															referendumId={onchainId as number}
+															tally={tally}
+														/>
+													</div>
+												}
+												{
+													proposalType === ProposalType.FELLOWSHIP_REFERENDUMS &&
+													<div className={className}>
+														<FellowshipReferendumVoteInfo
+															setOpen={setOpen}
+															tally={tally}
+														/>
+													</div>
+												}
+											</>
+										}
+									</>
 							}
 
-							{(onchainId || onchainId === 0) &&
-								<div className={className}>
-									<ReferendumVoteInfo
+							{
+								(onchainId || onchainId === 0) &&
+								<Modal
+									closeIcon={false}
+									onCancel={() => {
+										setOpen(false);
+									}}
+									open={open}
+									footer={[]}
+									closable={false}
+								>
+									<VotersList
+										className={className}
 										referendumId={onchainId as number}
+										voteType={proposalType === ProposalType.REFERENDUMS?VoteType.REFERENDUM: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS? VoteType.FELLOWSHIP: VoteType.REFERENDUM_V2}
 									/>
-								</div>
-							}
-
-							<div>
-								{lastVote != undefined ? lastVote == null ?
-									<GovSidebarCard>
-										You haven&apos;t voted yet, vote now and do your bit for the community
-									</GovSidebarCard>
-									:
-									<GovSidebarCard className='flex items-center'>
-										You Voted: { lastVote == 'aye' ? <LikeFilled className='text-aye_green ml-2' /> : <DislikeFilled className='text-nay_red ml-2' /> }
-										<span className={`last-vote-text ${lastVote == 'aye' ? 'green-text' : 'red-text'}`}>{lastVote}</span>
-									</GovSidebarCard>
-									: <></>
-								}
-							</div>
-						</>
-					}
-
-					{[ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) &&
-						<>
-							{canVote &&
-							<>
-								{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
-									<>
-										{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
-
-										{(!metaMaskError || walletConnectProvider?.wc.connected) &&
-
-									<GovSidebarCard>
-										<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
-										<VoteReferendumEthV2
-											referendumId={onchainId as number}
-											onAccountChange={onAccountChange}
-											setLastVote={setLastVote}
-											lastVote={lastVote} />
-									</GovSidebarCard>
-
-										}
-									</> : <GovSidebarCard>
-										<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
-										<VoteReferendum
-											lastVote={lastVote}
-											setLastVote={setLastVote}
-											accounts={accounts}
-											address={address}
-											getAccounts={getAccounts}
-											onAccountChange={onAccountChange}
-											referendumId={onchainId  as number}
-											proposalType={proposalType}
-										/>
-									</GovSidebarCard>}
-							</>
-							}
-
-							{(onchainId || onchainId === 0) &&
-								<>
-									{
-										proposalType === ProposalType.OPEN_GOV &&
-										<div className={className}>
-											<ReferendumV2VotingStatus
-												referendumId={onchainId as number}
-												tally={tally}
-											/>
-										</div>
-									}
-									{
-										proposalType === ProposalType.FELLOWSHIP_REFERENDUMS &&
-										<div className={className}>
-											<FellowshipReferendumVotingStatus
-												tally={tally}
-											/>
-										</div>
-									}
-									<div className={className}>
-										<ReferendumV2VoteInfo
-											voteType={proposalType === ProposalType.FELLOWSHIP_REFERENDUMS? VoteType.FELLOWSHIP: VoteType.REFERENDUM_V2}
-											referendumId={onchainId as number}
-										/>
-									</div>
-								</>
+								</Modal>
 							}
 
 							<div>

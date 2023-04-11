@@ -80,6 +80,7 @@ export interface Address {
 	user_id: number;
 	verified: boolean;
 	is_erc20?: boolean;
+	wallet?: string;
 }
 
 export interface NotificationSettings {

@@ -14,16 +14,11 @@ import { useApiContext, useNetworkContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import Curves from './Curves';
-import { ThresholdGraphIcon, VotingHistoryIcon } from '~src/ui-components/CustomIcons';
+import { CastVoteIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, ThresholdGraphIcon, VoteAmountIcon, VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
 import CloseIcon from 'public/assets/icons/close.svg';
 import VoteCalculationIcon from 'public/assets/icons/vote-calculation.svg';
 import VoteImage from 'public/assets/icons/vote-image.svg';
-import RightArrowImage from 'public/assets/icons/right-arrow.svg';
-import CastVoteImage from 'public/assets/icons/cast-vote.svg';
-import VoteAmountImage from 'public/assets/icons/vote-amount.svg';
-import ConvictionPeriodImage from 'public/assets/icons/conviction-period.svg';
-import LikeDislikeImage from 'public/assets/icons/like-dislike.svg';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
@@ -212,7 +207,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					className='md:min-w-[584px]'
 					closeIcon={<CloseIcon />}
 					title={
-						<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>How Votes Calculated</h2>
+						<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>How are votes calculated</h2>
 					}
 				>
 					<section className='flex flex-col gap-y-5'>
@@ -220,31 +215,65 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							Votes are calculated by multiplying the votes casted by a user with the conviction period.
 						</p>
 						<p className='font-medium text-xs leading-[18px] text-sidebarBlue m-0 p-0'>For example:</p>
-						<article className='flex items-center justify-between gap-x-5 my-2'>
+						<article className='flex items-center justify-between md:gap-x-5 my-2'>
 							<div className='flex flex-col items-center justify-center gap-y-3'>
-								<CastVoteImage />
-								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] text-center'>User wants to cast a vote</p>
+								<CastVoteIcon className='text-4xl' />
+								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] flex flex-col items-center'>
+									<span className='whitespace-nowrap flex items-center gap-x-1 flex-col md:flex-row'>
+										<span>User wants</span>
+										<span> to cast a</span>
+									</span>
+									<span>vote</span>
+								</p>
 							</div>
 							<div className='flex items-center justify-center'>
-								<RightArrowImage />
+								<RightArrowIcon className='text-sm md:text-xl' />
 							</div>
 							<div className='flex flex-col items-center justify-center gap-y-3'>
-								<VoteAmountImage />
-								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] text-center'>Chooses vote amount and type (Aye/Nay)</p>
+								<VoteAmountIcon className='text-4xl' />
+								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] hidden md:flex flex-col items-center'>
+									<span className='whitespace-nowrap'>Chooses vote amount</span>
+									<span>and type (Aye/Nay)</span>
+								</p>
+								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] flex md:hidden flex-col items-center'>
+									<span className='whitespace-nowrap'>
+										Chooses vote
+									</span>
+									<span>
+										amount and
+									</span>
+									<span className='whitespace-nowrap'>type (Aye/Nay)</span>
+								</p>
 							</div>
 							<div className='flex items-center justify-center'>
-								<RightArrowImage />
+								<RightArrowIcon className='text-sm md:text-xl' />
 							</div>
 							<div className='flex flex-col items-center justify-center gap-y-3'>
-								<ConvictionPeriodImage />
-								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] text-center'>Sets a conviction period</p>
+								<ConvictionPeriodIcon className='text-4xl' />
+								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] flex flex-col items-center'>
+									<span className='whitespace-nowrap flex items-center gap-x-1 flex-col md:flex-row'>
+										<span>Sets a</span>
+										<a className='text-pink_primary underline' href="https://wiki.polkadot.network/docs/learn-opengov#voluntary-locking" target='_blank' rel="noreferrer">conviction</a>
+									</span>
+									<span>period</span>
+								</p>
 							</div>
 							<div className='flex items-center justify-center'>
-								<RightArrowImage />
+								<RightArrowIcon className='text-sm md:text-xl' />
 							</div>
 							<div className='flex flex-col items-center justify-center gap-y-3'>
-								<LikeDislikeImage />
-								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] text-center'>User casts their vote</p>
+								<LikeDislikeIcon className='text-4xl' />
+								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] hidden md:flex flex-col items-center'>
+									<span className='whitespace-nowrap'>User casts their</span>
+									<span>vote</span>
+								</p>
+								<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] flex md:hidden flex-col items-center'>
+									<span className='whitespace-nowrap'>
+										User
+									</span>
+									<span>casts</span>
+									<span className='whitespace-nowrap'>their vote</span>
+								</p>
 							</div>
 						</article>
 						<p className='font-medium text-xs leading-[18px] text-sidebarBlue m-0 p-0'>Here,</p>

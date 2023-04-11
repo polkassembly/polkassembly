@@ -23,6 +23,11 @@ import SyncSVG from '~assets/icons/sync.svg';
 import PreparePeriodSVG from '~assets/icons/prepare.svg';
 import DecisionPeriodSVG from '~assets/icons/decision.svg';
 import EnactmentPeriodSVG from '~assets/icons/enactment.svg';
+import RightArrowSVG from '~assets/icons/right-arrow.svg';
+import CastVoteSVG from '~assets/icons/cast-vote.svg';
+import VoteAmountSVG from '~assets/icons/vote-amount.svg';
+import ConvictionPeriodSVG from '~assets/icons/conviction-period.svg';
+import LikeDislikeSVG from '~assets/icons/like-dislike.svg';
 import ArrowDownSVG from '~assets/icons/arrow-down.svg';
 import VotingHistorySVG from '~assets/icons/voting-history.svg';
 import ThresholdGraphSVG from '~assets/icons/threshold-graph.svg';
@@ -170,6 +175,26 @@ export const DecisionPeriodIcon = (props: Partial<CustomIconComponentProps>) => 
 
 export const EnactmentPeriodIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={EnactmentPeriodSVG} {...props} />
+);
+
+export const RightArrowIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={RightArrowSVG} {...props} />
+);
+
+export const CastVoteIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CastVoteSVG} {...props} />
+);
+
+export const VoteAmountIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={VoteAmountSVG} {...props} />
+);
+
+export const ConvictionPeriodIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ConvictionPeriodSVG} {...props} />
+);
+
+export const LikeDislikeIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={LikeDislikeSVG} {...props} />
 );
 
 export const ArrowDownIcon = (props: Partial<CustomIconComponentProps>) => (

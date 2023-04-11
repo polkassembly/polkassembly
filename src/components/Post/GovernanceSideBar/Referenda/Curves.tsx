@@ -361,7 +361,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 								}}
 							/>
 						</article>
-						<article className='-mt-20 md:-mt-16 flex items-center justify-center gap-x-5'>
+						<article className='-mt-24 md:-mt-16 flex items-center justify-center gap-x-5'>
 							<button onClick={() => {
 								toggleData(0);
 							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>

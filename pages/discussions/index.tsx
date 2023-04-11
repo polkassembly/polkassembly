@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const { data, error = ''  } = await getOffChainPosts({
-		filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page: Number(page),

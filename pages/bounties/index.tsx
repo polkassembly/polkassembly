@@ -25,7 +25,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const proposalType = ProposalType.BOUNTIES;
 	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOnChainPosts({
-		filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,

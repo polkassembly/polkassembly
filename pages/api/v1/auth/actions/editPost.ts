@@ -42,6 +42,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const { content, postId, proposalType, title, timeline, tags } = req.body;
 	if(isNaN(postId) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
+	if(tags && !Array.isArray(tags)) return  res.status(400).json({ message: 'Invalid tags parameter' });
+
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The proposal type of the name "${proposalType}" does not exist.` });
 

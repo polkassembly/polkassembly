@@ -445,7 +445,7 @@ const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async
 	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
 	const postIds = req.body.postIds;
 	const { data, error, status } = await getOnChainPosts({
-		filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 		listingLimit,
 		network,
 		page,

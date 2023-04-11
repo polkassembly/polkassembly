@@ -13,7 +13,7 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 	const tags=  tagsSnapshots.docs.map((tag) => {
 		const data=tag.data();
 		const newTag:IPostTag={
-			last_used_at:data?.last_used_at,
+			last_used_at:data?.last_used_at.toDate() ? data?.last_used_at.Date(): data?.last_used_at,
 			name:data?.name
 		};
 		return newTag;

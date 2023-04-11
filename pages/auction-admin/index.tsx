@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const fetches = {
 		all: getOnChainPosts({
-			filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 			listingLimit: LISTING_LIMIT,
 			network,
 			page,
@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			trackStatus: 'All'
 		}),
 		closed: getOnChainPosts({
-			filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 			listingLimit: LISTING_LIMIT,
 			network,
 			page,
@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			trackStatus: CustomStatus.Closed
 		}),
 		submitted: getOnChainPosts({
-			filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 			listingLimit: LISTING_LIMIT,
 			network,
 			page,
@@ -62,7 +62,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			trackStatus: CustomStatus.Submitted
 		}),
 		voting: getOnChainPosts({
-			filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 			listingLimit: LISTING_LIMIT,
 			network,
 			page,

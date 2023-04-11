@@ -25,7 +25,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	const { content, proposalType, title, topicId, userId ,gov_type,tags } = req.body;
 	if(!content || !title || !topicId || !userId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	if(!Array.isArray(tags)) return  res.status(400).json({ message: 'Invalid tags parameter' });
+	if(tags && !Array.isArray(tags)) return  res.status(400).json({ message: 'Invalid tags parameter' });
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The off chain proposal type "${proposalType}" is invalid.` });

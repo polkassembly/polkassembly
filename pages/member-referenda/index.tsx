@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const proposalType = ProposalType.FELLOWSHIP_REFERENDUMS;
 
 	const { data, error } = await getOnChainPosts({
-		filterBy:filterBy ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,

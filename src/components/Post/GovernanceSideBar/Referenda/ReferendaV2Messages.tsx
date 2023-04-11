@@ -57,11 +57,11 @@ const getDefaultPeriod = () => {
 	};
 };
 
-export const getStatusBlock = (timeline: any[], status: string) => {
+export const getStatusBlock = (timeline: any[], type: string, status: string) => {
 	let deciding: any;
 	if (timeline && Array.isArray(timeline)) {
 		timeline.some((v) => {
-			if (v && v.statuses && Array.isArray(v.statuses)) {
+			if (v && v.type === type && v.statuses && Array.isArray(v.statuses)) {
 				let isFind = false;
 				v.statuses.some((v: any) => {
 					if (v && v.status === status) {
@@ -91,8 +91,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	const [open, setOpen] = useState(false);
 	const isTreasuryProposal = trackData.group === 'Treasury';
 	const isProposalPassed = ['Executed', 'Confirmed', 'Approved'].includes(status);
-	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled'].includes(status);
-	const decidingStatusBlock = getStatusBlock(timeline || [], 'Deciding');
+	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(status);
+	const decidingStatusBlock = getStatusBlock(timeline || [], 'ReferendumV2', 'Deciding');
+	const confirmStartedStatusBlock = getStatusBlock(timeline || [], 'ReferendumV2', 'ConfirmStarted');
+	const confirmedStatusBlock = getStatusBlock(timeline || [], 'ReferendumV2', 'Confirmed');
+	const executedStatusBlock = getStatusBlock(timeline || [], 'ReferendumV2', 'Executed');
+	const awardedStatusBlock = getStatusBlock(timeline || [], 'TreasuryProposal', 'Awarded');
 
 	const Button: FC<IButtonProps> = (props) => {
 		const { children } = props;
@@ -105,14 +109,20 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 
 	useEffect(() => {
 		if (!trackData) return;
+
 		const prepare = getPeriodData(network, proposalCreatedAt, trackData, 'preparePeriod');
 		setPrepare(prepare);
-		const preparePeriodEndsAt = ((decidingStatusBlock && decidingStatusBlock.timestamp)? dayjs(decidingStatusBlock.timestamp): prepare.periodEndsAt);
-		const decision = getPeriodData(network, preparePeriodEndsAt, trackData, 'decisionPeriod');
+
+		const decisionPeriodStartsAt = ((decidingStatusBlock && decidingStatusBlock.timestamp)? dayjs(decidingStatusBlock.timestamp): prepare.periodEndsAt);
+		const decision = getPeriodData(network, decisionPeriodStartsAt, trackData, 'decisionPeriod');
 		setDecision(decision);
-		const confirm = getPeriodData(network, decision.periodEndsAt, trackData, 'confirmPeriod');
+
+		const confirmPeriodEndsAt = ((confirmStartedStatusBlock && confirmStartedStatusBlock.timestamp)? dayjs(confirmStartedStatusBlock.timestamp): decision.periodEndsAt);
+		const confirm = getPeriodData(network, confirmPeriodEndsAt, trackData, 'confirmPeriod');
 		setConfirm(confirm);
-		const minEnactment = getPeriodData(network, confirm.periodEndsAt, trackData, 'minEnactmentPeriod');
+
+		const minEnactmentPeriodStartsAt = ((confirmedStatusBlock && confirmedStatusBlock.timestamp)? dayjs(confirmedStatusBlock.timestamp): confirm.periodEndsAt);
+		const minEnactment = getPeriodData(network, minEnactmentPeriodStartsAt, trackData, 'minEnactmentPeriod');
 		setMinEnactment(minEnactment);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
@@ -120,10 +130,19 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	useEffect(() => {
 		if (isTreasuryProposal) {
 			if (!api || !apiReady) return;
-			const spendPeriodConst = api.consts.treasury? api.consts.treasury.spendPeriod : new BN(0);
-			(trackData as any).spendPeriod = spendPeriodConst.toNumber();
-			const spend = getPeriodData(network, confirm.periodEndsAt, trackData, 'spendPeriod');
-			setSpend(spend);
+			(async () => {
+				const currentBlock = await api.derive.chain.bestNumber();
+				const spendPeriodConst = api.consts.treasury? api.consts.treasury.spendPeriod : new BN(0);
+				const spendPeriod = spendPeriodConst.toNumber();
+				const goneBlocks = currentBlock.toNumber() % spendPeriod;
+				const percentage = ((goneBlocks / spendPeriod) * 100).toFixed(0);
+				setSpend({
+					period: blocksToRelevantTime(network, spendPeriod),
+					periodCardVisible: false,
+					periodEndsAt: dayjs(),
+					periodPercent: Number(percentage)
+				});
+			})();
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
@@ -132,7 +151,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	return (
 		<GovSidebarCard>
 			{
-				(prepare.periodCardVisible || !decidingStatusBlock) && !isProposalFailed && (
+				(!decidingStatusBlock) && !isProposalFailed && (
 					<article className='py-6'>
 						<div className='flex items-center justify-between'>
 							<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
@@ -149,7 +168,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 				)
 			}
 			{
-				(confirm.periodCardVisible && decidingStatusBlock) && !isProposalFailed && (
+				(decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed && (
 					<article className='py-6'>
 						<div className='flex items-center justify-between'>
 							<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
@@ -173,52 +192,51 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 				)
 			}
 			{
-				!prepare.periodCardVisible && !confirm.periodCardVisible && (
+				isProposalPassed? (
 					<>
 						{
-							isProposalPassed? (
-								<>
-									<article className='py-6'>
-										<div className='flex items-center justify-between'>
-											<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
-											<Button>3</Button>
-										</div>
-										<div className='mt-[20px]'>
-											<Progress className='m-0 p-0 flex items-center' percent={minEnactment.periodPercent} strokeColor='#E5007A' size="small" />
-										</div>
-										<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
-											<span className='text-sidebarBlue'>Enactment Period</span>
-											<span className='text-navBlue'>{minEnactment.period}</span>
-										</p>
-										{
-											isTreasuryProposal && (
-												<>
-													<div className='mt-[20px]'>
-														<Progress className='m-0 p-0 flex items-center' percent={spend.periodPercent} strokeColor='#E5007A' size="small" />
-													</div>
-													<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
-														<span className='text-sidebarBlue'>Funds Disbursal Period</span>
-														<span className='text-navBlue'>{spend.period}</span>
-													</p>
-												</>
-											)
-										}
-									</article>
-								</>
-							): (
-								<>
-									<article className='py-6'>
-										<div className='flex items-center justify-between'>
-											<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal { status === 'Cancelled'? 'Cancelled': status === 'Killed'? 'Killer': status === 'TimedOut'? 'Timed Out': 'Failed'}</h3>
-											<Button>3</Button>
-										</div>
-										<div className='mt-[20px] text-sidebarBlue text-sm font-normal leading-[21px] tracking-[0.01em]'>
-											<FailedReferendaText network={network} status={status} timeline={timeline} />
-										</div>
-									</article>
-								</>
-							)
+							(isTreasuryProposal? awardedStatusBlock: executedStatusBlock)
+								?
+								null
+								: <article className='py-6'>
+									<div className='flex items-center justify-between'>
+										<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
+										<Button>3</Button>
+									</div>
+									<div className='mt-[20px]'>
+										<Progress className='m-0 p-0 flex items-center' percent={minEnactment.periodPercent} strokeColor='#E5007A' size="small" />
+									</div>
+									<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
+										<span className='text-sidebarBlue'>Enactment Period</span>
+										<span className='text-navBlue'>{minEnactment.period}</span>
+									</p>
+									{
+										isTreasuryProposal && (
+											<>
+												<div className='mt-[20px]'>
+													<Progress className='m-0 p-0 flex items-center' percent={spend.periodPercent} strokeColor='#E5007A' size="small" />
+												</div>
+												<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
+													<span className='text-sidebarBlue'>Funds Disbursal Period</span>
+													<span className='text-navBlue'>{spend.period}</span>
+												</p>
+											</>
+										)
+									}
+								</article>
 						}
+					</>
+				): isProposalFailed && (
+					<>
+						<article className='py-6'>
+							<div className='flex items-center justify-between'>
+								<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal { status === 'Cancelled'? 'Cancelled': status === 'Killed'? 'Killer': status === 'TimedOut'? 'Timed Out': 'Failed'}</h3>
+								<Button>3</Button>
+							</div>
+							<div className='mt-[20px] text-sidebarBlue text-sm font-normal leading-[21px] tracking-[0.01em]'>
+								<FailedReferendaText network={network} status={status} timeline={timeline} />
+							</div>
+						</article>
 					</>
 				)
 			}
@@ -313,7 +331,7 @@ export default ReferendaV2Messages;
 const FailedReferendaText: FC<{ status: string; network: string; timeline?: any[] }> = (props) => {
 	const { status, timeline, network } = props;
 	const url = getBlockLink(network);
-	const block = getStatusBlock(timeline || [], status);
+	const block = getStatusBlock(timeline || [], 'ReferendumV2', status);
 	const BlockElement = <a className='text-pink_primary font-medium' href={`${url}/${block?.block}`} target='_blank' rel="noreferrer">#{block?.block && block?.block}</a>;
 	return <>
 		{

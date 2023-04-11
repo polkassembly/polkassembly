@@ -27,7 +27,7 @@ export const isDataExist = (data: any) => {
 export const getTimeline = (proposals: any, isStatus?: {
 	swap: boolean;
 }) => {
-	return proposals.map((obj: any) => {
+	return proposals?.map((obj: any) => {
 		const statuses = obj?.statusHistory as { status: string }[];
 		if (obj.type === 'ReferendumV2') {
 			const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');

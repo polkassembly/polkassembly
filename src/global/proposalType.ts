@@ -152,6 +152,34 @@ export function getSinglePostLinkFromProposalType(proposalType: ProposalType | O
 	}
 	return '';
 }
+export function getProposalTypeFromSinglePostLink(link: string): ProposalType | undefined {
+	switch(link) {
+	case 'bounty':
+		return ProposalType.BOUNTIES;
+	case 'child_bounty':
+		return ProposalType.CHILD_BOUNTIES;
+	case 'motion':
+		return ProposalType.COUNCIL_MOTIONS;
+	case 'proposal':
+		return ProposalType.DEMOCRACY_PROPOSALS;
+	case 'post':
+		return ProposalType.DISCUSSIONS;
+	case 'grant':
+		return ProposalType.GRANTS;
+	case 'fellowship_referendum':
+		return ProposalType.FELLOWSHIP_REFERENDUMS;
+	case 'referenda':
+		return ProposalType.OPEN_GOV;
+	case 'referendum':
+		return ProposalType.REFERENDUMS;
+	case 'tech':
+		return ProposalType.TECH_COMMITTEE_PROPOSALS;
+	case 'tip':
+		return ProposalType.TIPS;
+	case 'treasury':
+	case ProposalType.TREASURY_PROPOSALS:
+	}
+}
 
 export const proposalTypes = ['democracy_proposals', 'tech_committee_proposals', 'treasury_proposals', 'referendums', 'fellowship_referendums', 'council_motions', 'bounties', 'tips', 'child_bounties', 'open_gov', 'referendums_v2'];
 export const offChainProposalTypes = ['discussions', 'grants'];

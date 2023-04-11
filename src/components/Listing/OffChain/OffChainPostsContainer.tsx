@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import { OffChainProposalType } from '~src/global/proposalType';
 import OffChainPostsListingContainer from './OffChainPostsListingContainer';
 import FilterByTags from '~src/ui-components/FilterByTags';
+import FilteredTags from '~src/ui-components/filteredTags';
 
 interface IOffChainContainerProps {
 	posts: any[];
@@ -64,9 +65,12 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 	return (
 		<div className={`${className} bg-white p-3 md:p-8 rounded-[4px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)]`}>
 			<div className='flex items-center justify-between'>
-				<h1 className='dashboard-heading'>{ count } {
-					getTitle(proposalType)
-				}</h1>
+				<div>
+					<h1 className='dashboard-heading'>{ count } {
+						getTitle(proposalType)
+					}</h1>
+					<FilteredTags/>
+				</div>
 				<div className='flex gap-1'>
 					<FilterByTags/>
 					{sortByDropdown}

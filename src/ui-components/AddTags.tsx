@@ -9,6 +9,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { poppins } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
+import NoTagsFoundIcon from '~assets/icons/no-tag.svg';
 
 interface Props{
   tags:string[];
@@ -76,7 +77,8 @@ const AddTags=({ tags,setTags,className }:Props) => {
 	};
 
 	const items:MenuProps['items']=[
-		...filteredTags.slice(0,5).map((tag,index) => {return  { key:index,label:<div className={`text-xs text-navBlue ${poppins.className} ${poppins.className} tracking-wide`} onClick={() => {selectedTag.current = tag?.name; handleInputConfirm(); } }>{tag?.name.charAt(0).toUpperCase()+tag?.name.slice(1)}</div> }; } )];
+		filteredTags.length === 0 ? { key: 1, label: <div className='h-[100%] flex items-center justify-center flex-col gap-2'><NoTagsFoundIcon/><span className={`text-[10px] text-navBlue tracking-wide ${poppins.className} ${poppins.variable} `}>No tag found.</span></div> } : null ,
+		...filteredTags.slice(0,5).map((tag,index) => {return  { key: index+2, label:<div className={`text-xs text-navBlue ${poppins.className} ${poppins.className} tracking-wide`} onClick={() => {selectedTag.current = tag?.name; handleInputConfirm(); } }>{tag?.name.charAt(0).toUpperCase()+tag?.name.slice(1)}</div> }; })];
 
 	return <div className={className}>
 		<div className='border-solid border-gray-300 h-[40px] p-[10px] flex rounded border justify-between items-center text-navBlue max-lg:h-auto'>

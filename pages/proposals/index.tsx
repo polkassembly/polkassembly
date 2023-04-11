@@ -15,6 +15,7 @@ import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import FilterByTags from '~src/ui-components/FilterByTags';
+import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
@@ -78,7 +79,10 @@ const Proposals: FC<IProposalsProps> = (props) => {
 
 			<div className='mt-8 shadow-md bg-white p-3 md:p-8 rounded-md'>
 				<div className='flex items-center justify-between'>
-					<h1 className='dashboard-heading'>{ count } Proposals</h1>
+					<div>
+						<h1 className='dashboard-heading'>{ count } Proposals</h1>
+						<FilteredTags/>
+					</div>
 					<FilterByTags className='mr-[2px]'/>
 				</div>
 

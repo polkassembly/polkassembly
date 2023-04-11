@@ -279,8 +279,9 @@ padding: 5px;
 .background-change .ant-dropdown-menu .ant-dropdown-menu-item{
   padding:5px !important;
 }
-.background-change ant-dropdown-menu{
-  padding: 0px !important;
+.background-change .ant-dropdown-menu{
+  padding: 4px !important;
   border-radius: 5px !important;
+  width: 186px;
 } 
 

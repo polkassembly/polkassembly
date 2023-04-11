@@ -338,7 +338,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										}
 									</>
 									: <>
-										<ReferendaV2Messages />
 										{canVote &&
 											<>
 												{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
@@ -369,6 +368,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</GovSidebarCard>}
 											</>
 										}
+										<ReferendaV2Messages />
 
 										{(onchainId || onchainId === 0) &&
 											<>

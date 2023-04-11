@@ -249,7 +249,8 @@ const Curves: FC<ICurvesProps> = (props) => {
 											lineWidth: 1
 										},
 										legend: {
-											display: true
+											display: true,
+											position: 'bottom'
 										},
 										tooltip: {
 											callbacks: {
@@ -301,18 +302,19 @@ const Curves: FC<ICurvesProps> = (props) => {
 											beginAtZero: false,
 											display: true,
 											grid: {
-												display: false
+												display: true,
+												drawOnChartArea: false
 											},
 											ticks: {
 												callback(v: any) {
-													return (v / 60).toFixed(0) + 'hs';
+													return (v / (60 * 24)).toFixed(0);
 												},
 												max: labelsLength,
-												stepSize: Math.round(labelsLength / 30)
+												stepSize: Math.round(labelsLength / 14)
 											} as any,
 											title: {
 												display: true,
-												text: 'Hours'
+												text: 'Days'
 											},
 											type: 'linear'
 										},

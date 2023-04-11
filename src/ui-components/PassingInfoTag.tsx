@@ -10,9 +10,10 @@ import styled from 'styled-components';
 interface Props {
 	className?: string;
 	isPassing: boolean | null;
+	status?: string;
 }
 
-const PassingInfoTag = ({ className, isPassing }:Props ) => {
+const PassingInfoTag = ({ className, isPassing, status }:Props ) => {
 	const NO_INFO_TEXT = '-';
 
 	let text = NO_INFO_TEXT;
@@ -23,7 +24,7 @@ const PassingInfoTag = ({ className, isPassing }:Props ) => {
 	return (
 		<Spin spinning={text === NO_INFO_TEXT} indicator={<LoadingOutlined />}>
 			<div className={`${className} ${text === NO_INFO_TEXT ? null : text.toLowerCase()} ml-auto text-white border-0 border-solid text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min w-min`}>
-				{text}
+				{(text === 'Failed' && status)? status === 'Cancelled'? 'Cancelled': status === 'TimedOut'? 'Timed Out': status === 'Killed'? 'Killed': 'Failed': text}
 			</div>
 		</Spin>
 	);
@@ -35,6 +36,6 @@ export default styled(PassingInfoTag)`
 	}
 
 	&.failed {
-		background-color: #FF5A47;
+		background-color: #FF0000;
 	}
 `;

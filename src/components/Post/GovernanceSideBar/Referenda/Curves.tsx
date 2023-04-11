@@ -249,7 +249,8 @@ const Curves: FC<ICurvesProps> = (props) => {
 											lineWidth: 1
 										},
 										legend: {
-											display: true
+											display: true,
+											position: 'bottom'
 										},
 										tooltip: {
 											callbacks: {

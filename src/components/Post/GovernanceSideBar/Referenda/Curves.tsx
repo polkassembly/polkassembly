@@ -257,8 +257,9 @@ const Curves: FC<ICurvesProps> = (props) => {
 						{error}
 					</p>
 					: <section>
-						<article className='h-[300px] md:min-h-[400px] -mx-3 md:m-0'>
+						<article className='-mx-3 md:m-0'>
 							<Chart.Line
+								className='h-full w-full'
 								data={data}
 								plugins={[hoverLinePlugin]}
 								options={{
@@ -337,6 +338,10 @@ const Curves: FC<ICurvesProps> = (props) => {
 											} as any,
 											title: {
 												display: true,
+												font: {
+													size: window.innerWidth < 400? 10: 12,
+													weight: window.innerWidth > 400? '500': '400'
+												},
 												text: 'Days'
 											},
 											type: 'linear'
@@ -354,6 +359,10 @@ const Curves: FC<ICurvesProps> = (props) => {
 											},
 											title: {
 												display: true,
+												font: {
+													size: window.innerWidth < 400? 10: 12,
+													weight: window.innerWidth > 400? '500': '400'
+												},
 												text: 'Passing Percentage'
 											}
 										}
@@ -361,30 +370,30 @@ const Curves: FC<ICurvesProps> = (props) => {
 								}}
 							/>
 						</article>
-						<article className='-mt-24 md:-mt-16 flex items-center justify-center gap-x-5'>
+						<article className='mt-3 flex items-center justify-center gap-x-3 xs:gap-x-5'>
 							<button onClick={() => {
 								toggleData(0);
 							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
 								<span className='h-1 border-0 border-t border-solid border-[#E5007A] w-[32px]'></span>
-								<span className='text-sidebarBlue font-normal text-[10px] leading-[12px]'>Support</span>
+								<span className='text-sidebarBlue font-normal text-[8px] sm:text-[10px] leading-[12px]'>Support</span>
 							</button>
 							<button onClick={() => {
 								toggleData(1);
 							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
 								<span className='h-1 border-0 border-t border-dashed border-[#E5007A] w-[32px]'></span>
-								<span className='text-sidebarBlue font-normal text-[10px] leading-[12px]'>Current Support</span>
+								<span className='text-sidebarBlue font-normal text-[8px] sm:text-[10px] leading-[12px]'>Current Support</span>
 							</button>
 							<button onClick={() => {
 								toggleData(2);
 							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
 								<span className='h-1 border-0 border-t border-solid border-[#5BC044] w-[32px]'></span>
-								<span className='text-sidebarBlue font-normal text-[10px] leading-[12px]'>Approval</span>
+								<span className='text-sidebarBlue font-normal text-[8px] sm:text-[10px] leading-[12px]'>Approval</span>
 							</button>
 							<button onClick={() => {
 								toggleData(3);
 							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
 								<span className='h-1 border-0 border-t border-dashed border-[#5BC044] w-[32px]'></span>
-								<span className='text-sidebarBlue font-normal text-[10px] leading-[12px]'>Current Approval</span>
+								<span className='text-sidebarBlue font-normal text-[8px] sm:text-[10px] leading-[12px]'>Current Approval</span>
 							</button>
 						</article>
 						<article className='mt-5 flex items-center justify-between gap-x-2'>

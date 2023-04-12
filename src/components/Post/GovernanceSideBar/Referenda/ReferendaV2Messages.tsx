@@ -248,12 +248,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			}
 			<Modal
 				open={open}
-				title={<h3 className='text-sidebarBlue font-semibold text-xl leading-[24px] tracking-[0.0015em]'>Status</h3>}
+				title={<div className='flex items-center justify-between gap-x-5 py-3 px-2'>
+					<h3 className='text-sidebarBlue font-semibold text-xl leading-[24px] tracking-[0.0015em] m-0 p-0'>Status</h3>
+					<button onClick={() => setOpen(false)} className='border-none outline-none cursor-pointer bg-transparent flex items-center justify-center'><CloseIcon /></button>
+				</div>}
 				onCancel={() => setOpen(false)}
-				closeIcon={<CloseIcon />}
+				closable={false}
 				footer={[]}
 			>
-				<section className='text-sidebarBlue mt-[30px]'>
+				<section className='text-sidebarBlue mt-[24px] pl-[21px]'>
 					<article className='flex gap-x-[23px]'>
 						<div className='w-[4.5px] h-[150px] bg-[#FCE5F2] rounded-full'>
 							<div style={{

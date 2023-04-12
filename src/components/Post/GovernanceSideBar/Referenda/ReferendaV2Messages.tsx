@@ -79,6 +79,18 @@ export const getStatusBlock = (timeline: any[], type: string, status: string) =>
 	return deciding;
 };
 
+export const checkProposalPresent = (timeline: any[], type: string) => {
+	if (timeline && Array.isArray(timeline)) {
+		return timeline.some((v) => {
+			if (v && v.type === type) {
+				return true;
+			}
+			return false;
+		});
+	}
+	return false;
+};
+
 const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const { progress } = props;
 	const { postData: { track_name, track_number, created_at, status, timeline, requested } } = usePostDataContext();
@@ -98,8 +110,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const decidingStatusBlock = getStatusBlock(timeline || [], 'ReferendumV2', 'Deciding');
 	const confirmStartedStatusBlock = getStatusBlock(timeline || [], 'ReferendumV2', 'ConfirmStarted');
 	const confirmedStatusBlock = getStatusBlock(timeline || [], 'ReferendumV2', 'Confirmed');
-	const executedStatusBlock = getStatusBlock(timeline || [], 'ReferendumV2', 'Executed');
 	const awardedStatusBlock = getStatusBlock(timeline || [], 'TreasuryProposal', 'Awarded');
+	const isTreasuryProposalPresent = checkProposalPresent(timeline || [], 'TreasuryProposal');
 
 	const Button: FC<IButtonProps> = (props) => {
 		const { children } = props;
@@ -150,90 +162,93 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
 
-	if (isProposalPassed && (isTreasuryProposal? (awardedStatusBlock || !requested): (executedStatusBlock? true: confirmedStatusBlock && !minEnactment.periodCardVisible))) {
-		return null;
-	}
+	const isDisbursalPeriodCardVisible = isTreasuryProposal? (requested? (isTreasuryProposalPresent? (awardedStatusBlock? false: true): false): false): false;
 
 	return (
-		<GovSidebarCard>
+		<>
 			{
 				(!decidingStatusBlock) && !isProposalFailed && (
-					<article className='py-6'>
-						<div className='flex items-center justify-between'>
-							<h3 className='m-0 text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
-							<Button>1</Button>
-						</div>
-						<div className='mt-[20px]'>
-							<Progress className='m-0 p-0 flex items-center' percent={prepare.periodPercent} strokeColor='#E5007A' size="small" />
-						</div>
-						<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
-							<span className='text-sidebarBlue'>Prepare Period</span>
-							<span className='text-navBlue'>{prepare.period}</span>
-						</p>
-					</article>
+					<GovSidebarCard>
+						<article className='py-6'>
+							<div className='flex items-center justify-between'>
+								<h3 className='m-0 text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
+								<Button>1</Button>
+							</div>
+							<div className='mt-[20px]'>
+								<Progress className='m-0 p-0 flex items-center' percent={prepare.periodPercent} strokeColor='#E5007A' size="small" />
+							</div>
+							<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
+								<span className='text-sidebarBlue'>Prepare Period</span>
+								<span className='text-navBlue'>{prepare.period}</span>
+							</p>
+						</article>
+					</GovSidebarCard>
 				)
 			}
 			{
 				(decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed && (
-					<article className='py-6'>
-						<div className='flex items-center justify-between'>
-							<h3 className='m-0 text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
-							<Button>2</Button>
-						</div>
-						<div className='mt-[20px]'>
-							<Progress className='m-0 p-0 flex items-center' percent={decision.periodPercent} strokeColor='#E5007A' size="small" />
-						</div>
-						<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
-							<span className='text-sidebarBlue'>Decision Period</span>
-							<span className='text-navBlue'>{decision.period}</span>
-						</p>
-						<div className='mt-[20px]'>
-							<Progress className='m-0 p-0 flex items-center' percent={confirm.periodPercent} strokeColor='#E5007A' size="small" />
-						</div>
-						<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
-							<span className='text-sidebarBlue'>Confirmation Period</span>
-							<span className='text-navBlue'>{confirm.period}</span>
-						</p>
-					</article>
+					<GovSidebarCard>
+						<article className='py-6'>
+							<div className='flex items-center justify-between'>
+								<h3 className='m-0 text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
+								<Button>2</Button>
+							</div>
+							<div className='mt-[20px]'>
+								<Progress className='m-0 p-0 flex items-center' percent={decision.periodPercent} strokeColor='#E5007A' size="small" />
+							</div>
+							<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
+								<span className='text-sidebarBlue'>Decision Period</span>
+								<span className='text-navBlue'>{decision.period}</span>
+							</p>
+							<div className='mt-[20px]'>
+								<Progress className='m-0 p-0 flex items-center' percent={confirm.periodPercent} strokeColor='#E5007A' size="small" />
+							</div>
+							<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
+								<span className='text-sidebarBlue'>Confirmation Period</span>
+								<span className='text-navBlue'>{confirm.period}</span>
+							</p>
+						</article>
+					</GovSidebarCard>
 				)
 			}
 			{
 				isProposalPassed? (
 					<>
 						{
-							(isTreasuryProposal? (awardedStatusBlock || !requested): (executedStatusBlock? true: confirmedStatusBlock && !minEnactment.periodCardVisible))
-								?
-								null
-								: <article className='py-6'>
-									<div className='flex items-center justify-between'>
-										<h3 className='m-0 text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
-										<Button>3</Button>
-									</div>
-									<div className='mt-[20px]'>
-										<Progress className='m-0 p-0 flex items-center' percent={minEnactment.periodPercent} strokeColor='#E5007A' size="small" />
-									</div>
-									<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
-										<span className='text-sidebarBlue'>Enactment Period</span>
-										<span className='text-navBlue'>{minEnactment.period}</span>
-									</p>
-									{
-										isTreasuryProposal && requested && (
-											<>
-												<div className='mt-[20px]'>
-													<Progress className='m-0 p-0 flex items-center' percent={spend.periodPercent} strokeColor='#E5007A' size="small" />
-												</div>
-												<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
-													<span className='text-sidebarBlue'>Funds Disbursal Period</span>
-													<span className='text-navBlue'>{spend.period}</span>
-												</p>
-											</>
-										)
-									}
-								</article>
+							(isDisbursalPeriodCardVisible || minEnactment.periodCardVisible)
+								? <GovSidebarCard>
+									<article className='py-6'>
+										<div className='flex items-center justify-between'>
+											<h3 className='m-0 text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
+											<Button>3</Button>
+										</div>
+										<div className='mt-[20px]'>
+											<Progress className='m-0 p-0 flex items-center' percent={minEnactment.periodPercent} strokeColor='#E5007A' size="small" />
+										</div>
+										<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
+											<span className='text-sidebarBlue'>Enactment Period</span>
+											<span className='text-navBlue'>{minEnactment.period}</span>
+										</p>
+										{
+											isDisbursalPeriodCardVisible && (
+												<>
+													<div className='mt-[20px]'>
+														<Progress className='m-0 p-0 flex items-center' percent={spend.periodPercent} strokeColor='#E5007A' size="small" />
+													</div>
+													<p className='p-0 m-0 flex items-center justify-between mt-2 font-medium text-sm leading-[22px]'>
+														<span className='text-sidebarBlue'>Funds Disbursal Period</span>
+														<span className='text-navBlue'>{spend.period}</span>
+													</p>
+												</>
+											)
+										}
+									</article>
+								</GovSidebarCard>
+								: null
 						}
 					</>
 				): isProposalFailed && (
-					<>
+					<GovSidebarCard>
 						<article className='py-6'>
 							<div className='flex items-center justify-between'>
 								<h3 className='m-0 text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal { status === 'Cancelled'? 'Cancelled': status === 'Killed'? 'Killer': status === 'TimedOut'? 'Timed Out': 'Failed'}</h3>
@@ -243,7 +258,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								<FailedReferendaText progress={progress} network={network} status={status} timeline={timeline} />
 							</div>
 						</article>
-					</>
+					</GovSidebarCard>
 				)
 			}
 			<Modal
@@ -331,7 +346,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					</article>
 				</section>
 			</Modal>
-		</GovSidebarCard>
+		</>
 	);
 };
 

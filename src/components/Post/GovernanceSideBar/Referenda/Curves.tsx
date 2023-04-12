@@ -334,7 +334,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 													return (v / (60 * 24)).toFixed(0);
 												},
 												max: labelsLength,
-												stepSize: Math.round(labelsLength / 14)
+												stepSize: Math.round(labelsLength / (labelsLength/(60 * 24)))
 											} as any,
 											title: {
 												display: true,

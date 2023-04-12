@@ -13,7 +13,6 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import { useApiContext, useNetworkContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import Curves from './Curves';
 import { CastVoteIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, ThresholdGraphIcon, VoteAmountIcon, VoteCalculationIcon,VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
 import CloseIcon from 'public/assets/icons/close.svg';
@@ -24,14 +23,14 @@ interface IReferendumV2VoteInfoProps {
 	referendumId: number;
 	tally?: any;
 	setOpen: (value: React.SetStateAction<boolean>) => void;
+	setThresholdOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, referendumId, setOpen }) => {
+const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, setOpen, setThresholdOpen }) => {
 	const { network } = useNetworkContext();
 	const { postData: { status, postIndex } } = usePostDataContext();
-	const [thresholdOpen, setThresholdOpen] = useState(false);
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
 
 	const { api, apiReady } = useApiContext();
@@ -171,22 +170,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					<ThresholdGraphIcon />
 					<span>Threshold Data</span>
 				</button>
-				<Modal
-					onCancel={() => {
-						setThresholdOpen(false);
-					}}
-					open={thresholdOpen}
-					footer={[]}
-					className='md:min-w-[700px]'
-					closeIcon={<CloseIcon />}
-					title={
-						<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
-					}
-				>
-					<div className='mt-5'>
-						<Curves referendumId={referendumId as number} />
-					</div>
-				</Modal>
 				<Modal
 					onCancel={() => {
 						setVoteCalculationModalOpen(false);

@@ -32,7 +32,7 @@ const PassingInfoTag = ({ className, isPassing, status }:Props ) => {
 
 export default styled(PassingInfoTag)`
 	&.passed {
-		background-color: #4DD18F;
+		background-color: #5BC044;
 	}
 
 	&.failed {

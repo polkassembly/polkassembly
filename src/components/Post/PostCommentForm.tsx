@@ -42,8 +42,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		return content.length ? content : null;
 	};
 
-	if (!id) return <div>You must log in to comment.</div>;
-
 	const createSubscription = async (postId: number | string) => {
 		const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType: postType });
 		if(error) console.error('Error subscribing to post', error);
@@ -100,7 +98,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					replies: [],
 					sentiment:isSentimentPost? sentiment : 0,
 					updated_at: new Date(),
-					user_id: id,
+					user_id: id as any,
 					username: username || ''
 				}]
 			}));
@@ -110,10 +108,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		setIsSentimentPost(false);
 		setSentiment(3);
 	};
-	// eslint-disable-next-line react-hooks/rules-of-hooks
 	useEffect(() => {
 		isComment && handleSave();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[isComment]);
+
+	if (!id) return <div>You must log in to comment.</div>;
 
 	return (
 		<div className={className}>

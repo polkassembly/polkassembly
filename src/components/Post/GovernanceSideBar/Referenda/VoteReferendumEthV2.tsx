@@ -69,7 +69,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		setPostData((prev) => {
 			return {
 				...prev,
-				postType: ProposalType.REFERENDUMS
+				postType: ProposalType.REFERENDUM_V2
 			};
 		});
 	// eslint-disable-next-line react-hooks/exhaustive-deps

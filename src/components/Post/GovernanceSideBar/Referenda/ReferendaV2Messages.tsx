@@ -11,9 +11,11 @@ import { DecisionPeriodIcon, EnactmentPeriodIcon, PreparePeriodIcon } from '~src
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import CloseIcon from 'public/assets/icons/close.svg';
 import { getBlockLink } from '~src/util/subscanCheck';
+import { IProgress } from './Curves';
 
 interface IReferendaV2Messages {
     className?: string;
+	progress: IProgress;
 }
 
 interface IButtonProps extends PropsWithChildren {}
@@ -77,7 +79,8 @@ export const getStatusBlock = (timeline: any[], type: string, status: string) =>
 	return deciding;
 };
 
-const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
+const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
+	const { progress } = props;
 	const { postData: { track_name, track_number, created_at, status, timeline, requested } } = usePostDataContext();
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useApiContext();
@@ -237,7 +240,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 								<Button>3</Button>
 							</div>
 							<div className='mt-[20px] text-sidebarBlue text-sm font-normal leading-[21px] tracking-[0.01em]'>
-								<FailedReferendaText network={network} status={status} timeline={timeline} />
+								<FailedReferendaText progress={progress} network={network} status={status} timeline={timeline} />
 							</div>
 						</article>
 					</>
@@ -245,12 +248,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 			}
 			<Modal
 				open={open}
-				title={<h3 className='text-sidebarBlue font-semibold text-xl leading-[24px] tracking-[0.0015em]'>Status</h3>}
+				title={<div className='flex items-center justify-between gap-x-5 py-3 px-2'>
+					<h3 className='text-sidebarBlue font-semibold text-xl leading-[24px] tracking-[0.0015em] m-0 p-0'>Status</h3>
+					<button onClick={() => setOpen(false)} className='border-none outline-none cursor-pointer bg-transparent flex items-center justify-center'><CloseIcon /></button>
+				</div>}
 				onCancel={() => setOpen(false)}
-				closeIcon={<CloseIcon />}
+				closable={false}
 				footer={[]}
 			>
-				<section className='text-sidebarBlue mt-[30px]'>
+				<section className='text-sidebarBlue mt-[24px] pl-[21px]'>
 					<article className='flex gap-x-[23px]'>
 						<div className='w-[4.5px] h-[150px] bg-[#FCE5F2] rounded-full'>
 							<div style={{
@@ -331,11 +337,13 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 
 export default ReferendaV2Messages;
 
-const FailedReferendaText: FC<{ status: string; network: string; timeline?: any[] }> = (props) => {
-	const { status, timeline, network } = props;
+const FailedReferendaText: FC<{ status: string; network: string; timeline?: any[]; progress: IProgress }> = (props) => {
+	const { status, timeline, network, progress } = props;
 	const url = getBlockLink(network);
 	const block = getStatusBlock(timeline || [], 'ReferendumV2', status);
 	const BlockElement = <a className='text-pink_primary font-medium' href={`${url}/${block?.block}`} target='_blank' rel="noreferrer">#{block?.block && block?.block}</a>;
+	const isSupportLess = Number(progress.support) < Number(progress.supportThreshold);
+	const isApprovalLess = Number(progress.approval) < Number(progress.approvalThreshold);
 	return <>
 		{
 			status === 'Cancelled'?
@@ -345,13 +353,21 @@ const FailedReferendaText: FC<{ status: string; network: string; timeline?: any[
 					: status === 'TimedOut'?
 						<>The proposal has been timed out as the decision deposit was not placed in due time</>
 						: <>
-							<p>
-								Referendum failed because either of the 2 reasons:
-							</p>
-							<ul className='pl-5 m-0'>
-								<li>The support was lesser than the threshold for this track.</li>
-								<li>The approval was lesser than the threshold for this track.</li>
-							</ul>
+							{
+								isSupportLess && isApprovalLess?
+									<>
+										<p>
+											Referendum failed because either of the 2 reasons:
+										</p>
+										<ul className='pl-5 m-0'>
+											<li>The support was lesser than the threshold for this track.</li>
+											<li>The approval was lesser than the threshold for this track.</li>
+										</ul>
+									</>
+									: isSupportLess?
+										<>The support was lesser than the threshold for this track.</>
+										: <>The approval was lesser than the threshold for this track.</>
+							}
 						</>
 		}
 	</>;

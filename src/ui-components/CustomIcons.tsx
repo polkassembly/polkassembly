@@ -25,6 +25,7 @@ import DecisionPeriodSVG from '~assets/icons/decision.svg';
 import EnactmentPeriodSVG from '~assets/icons/enactment.svg';
 import RightArrowSVG from '~assets/icons/right-arrow.svg';
 import CastVoteSVG from '~assets/icons/cast-vote.svg';
+import VoteCalculationSVG from '~assets/icons/vote-calculation.svg';
 import VoteAmountSVG from '~assets/icons/vote-amount.svg';
 import ConvictionPeriodSVG from '~assets/icons/conviction-period.svg';
 import LikeDislikeSVG from '~assets/icons/like-dislike.svg';
@@ -183,6 +184,10 @@ export const RightArrowIcon = (props: Partial<CustomIconComponentProps>) => (
 
 export const CastVoteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={CastVoteSVG} {...props} />
+);
+
+export const VoteCalculationIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={VoteCalculationSVG} {...props} />
 );
 
 export const VoteAmountIcon = (props: Partial<CustomIconComponentProps>) => (

@@ -154,7 +154,7 @@ const Details: FC<IDetailsProps> = (props) => {
 	useEffect(() => {
 		if (onChainIdentity) {
 			const { email, twitter, riot } = onChainIdentity;
-			const social_links = profileDetails.social_links || [];
+			const social_links = userProfile.data.social_links || [];
 			let isEmailAvailable = false;
 			let isTwitterAvailable = false;
 			let isRiotAvailable = false;
@@ -196,7 +196,7 @@ const Details: FC<IDetailsProps> = (props) => {
 			});
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onChainIdentity]);
+	}, [onChainIdentity, userProfile]);
 
 	useEffect(() => {
 		if (!api) {

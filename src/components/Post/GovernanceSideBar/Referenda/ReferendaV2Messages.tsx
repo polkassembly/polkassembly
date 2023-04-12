@@ -147,7 +147,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
 
-	if (isProposalPassed && (isTreasuryProposal? (awardedStatusBlock || !requested): executedStatusBlock)) {
+	if (isProposalPassed && (isTreasuryProposal? (awardedStatusBlock || !requested): (executedStatusBlock? true: confirmedStatusBlock && !minEnactment.periodCardVisible))) {
 		return null;
 	}
 
@@ -198,7 +198,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 				isProposalPassed? (
 					<>
 						{
-							(isTreasuryProposal? (awardedStatusBlock || !requested): executedStatusBlock)
+							(isTreasuryProposal? (awardedStatusBlock || !requested): (executedStatusBlock? true: confirmedStatusBlock && !minEnactment.periodCardVisible))
 								?
 								null
 								: <article className='py-6'>

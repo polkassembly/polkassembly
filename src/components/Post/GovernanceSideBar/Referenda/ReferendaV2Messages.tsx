@@ -157,7 +157,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 				(!decidingStatusBlock) && !isProposalFailed && (
 					<article className='py-6'>
 						<div className='flex items-center justify-between'>
-							<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
+							<h3 className='m-0 text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
 							<Button>1</Button>
 						</div>
 						<div className='mt-[20px]'>
@@ -174,7 +174,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 				(decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed && (
 					<article className='py-6'>
 						<div className='flex items-center justify-between'>
-							<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
+							<h3 className='m-0 text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
 							<Button>2</Button>
 						</div>
 						<div className='mt-[20px]'>
@@ -203,7 +203,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 								null
 								: <article className='py-6'>
 									<div className='flex items-center justify-between'>
-										<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
+										<h3 className='m-0 text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
 										<Button>3</Button>
 									</div>
 									<div className='mt-[20px]'>
@@ -233,7 +233,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 					<>
 						<article className='py-6'>
 							<div className='flex items-center justify-between'>
-								<h3 className='text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal { status === 'Cancelled'? 'Cancelled': status === 'Killed'? 'Killer': status === 'TimedOut'? 'Timed Out': 'Failed'}</h3>
+								<h3 className='m-0 text-sidebarBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal { status === 'Cancelled'? 'Cancelled': status === 'Killed'? 'Killer': status === 'TimedOut'? 'Timed Out': 'Failed'}</h3>
 								<Button>3</Button>
 							</div>
 							<div className='mt-[20px] text-sidebarBlue text-sm font-normal leading-[21px] tracking-[0.01em]'>

@@ -116,8 +116,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							});
 						}
 						let labels: number[] = [];
-						let supportData: (number | { x: number; y: number; })[] = [];
-						let approvalData: (number | { x: number; y: number; })[] = [];
+						let supportData: { x: number; y: number; }[] = [];
+						let approvalData: { x: number; y: number; }[] = [];
 						const currentApprovalData: { x: number; y: number; }[] = [];
 						const currentSupportData: { x: number; y: number; }[] = [];
 						let supportCalc: any = null;
@@ -141,10 +141,16 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						for (let i = 0; i < (decisionPeriodHrs * 60); i++) {
 							labels.push(i);
 							if (supportCalc) {
-								supportData.push(supportCalc((i / (decisionPeriodHrs * 60))) * 100);
+								supportData.push({
+									x: i,
+									y: supportCalc((i / (decisionPeriodHrs * 60))) * 100
+								});
 							}
 							if (approvalCalc) {
-								approvalData.push(approvalCalc((i / (decisionPeriodHrs * 60))) * 100);
+								approvalData.push({
+									x: i,
+									y: approvalCalc((i / (decisionPeriodHrs * 60))) * 100
+								});
 							}
 						}
 						const subsquidRes = await fetchSubsquid({
@@ -193,13 +199,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									});
 									return new_graph_point;
 								});
-								const approvalDataIndex = (graph_points.length < approvalData.length? graph_points.length: approvalData.length) - 1;
-								const supportDataIndex = (graph_points.length < supportData.length? graph_points.length: supportData.length) - 1;
+
+								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
+								const currentSupport = currentSupportData[currentSupportData.length - 1];
+
 								setProgress({
-									approval: graph_points[graph_points.length - 1].approvalPercent.toFixed(1),
-									approvalThreshold: (typeof (approvalData[approvalDataIndex] as any) === 'object' ?(approvalData[approvalDataIndex] as any)?.y: (approvalData[approvalDataIndex] as any)),
-									support: graph_points[graph_points.length - 1].supportPercent.toFixed(1),
-									supportThreshold: (typeof (supportData[supportDataIndex] as any) === 'object' ?(supportData[supportDataIndex] as any)?.y: (supportData[supportDataIndex] as any))
+									approval: currentApproval?.y?.toFixed(1) as any,
+									approvalThreshold: (approvalData.find((data) => data && data?.x >= currentApproval?.x)?.y as any) || 0,
+									support: currentSupport?.y?.toFixed(1) as any,
+									supportThreshold: (supportData.find((data) => data && data?.x >= currentSupport?.x)?.y as any) || 0
 								});
 							}
 						} else {

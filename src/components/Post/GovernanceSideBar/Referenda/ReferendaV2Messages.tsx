@@ -78,7 +78,7 @@ export const getStatusBlock = (timeline: any[], type: string, status: string) =>
 };
 
 const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
-	const { postData: { track_name, track_number, created_at, status, timeline } } = usePostDataContext();
+	const { postData: { track_name, track_number, created_at, status, timeline, requested } } = usePostDataContext();
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useApiContext();
 	const trackData = getTrackData(network, track_name, track_number);
@@ -147,7 +147,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
 
-	if (isProposalPassed && (isTreasuryProposal? awardedStatusBlock: executedStatusBlock)) {
+	if (isProposalPassed && (isTreasuryProposal? (awardedStatusBlock || !requested): executedStatusBlock)) {
 		return null;
 	}
 
@@ -198,7 +198,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 				isProposalPassed? (
 					<>
 						{
-							(isTreasuryProposal? awardedStatusBlock: executedStatusBlock)
+							(isTreasuryProposal? (awardedStatusBlock || !requested): executedStatusBlock)
 								?
 								null
 								: <article className='py-6'>
@@ -214,7 +214,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = () => {
 										<span className='text-navBlue'>{minEnactment.period}</span>
 									</p>
 									{
-										isTreasuryProposal && (
+										isTreasuryProposal && requested && (
 											<>
 												<div className='mt-[20px]'>
 													<Progress className='m-0 p-0 flex items-center' percent={spend.periodPercent} strokeColor='#E5007A' size="small" />

@@ -193,11 +193,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									});
 									return new_graph_point;
 								});
+								const approvalDataIndex = (graph_points.length < approvalData.length? graph_points.length: approvalData.length) - 1;
+								const supportDataIndex = (graph_points.length < supportData.length? graph_points.length: supportData.length) - 1;
 								setProgress({
 									approval: graph_points[graph_points.length - 1].approvalPercent.toFixed(1),
-									approvalThreshold: (typeof (approvalData[approvalData.length - 1] as any) === 'object' ?(approvalData[approvalData.length - 1] as any).y: (approvalData[approvalData.length - 1] as any)),
+									approvalThreshold: (typeof (approvalData[approvalDataIndex] as any) === 'object' ?(approvalData[approvalDataIndex] as any)?.y: (approvalData[approvalDataIndex] as any)),
 									support: graph_points[graph_points.length - 1].supportPercent.toFixed(1),
-									supportThreshold: (typeof (supportData[supportData.length - 1] as any) === 'object' ?(supportData[supportData.length - 1] as any).y: (supportData[supportData.length - 1] as any))
+									supportThreshold: (typeof (supportData[supportDataIndex] as any) === 'object' ?(supportData[supportDataIndex] as any)?.y: (supportData[supportDataIndex] as any))
 								});
 							}
 						} else {

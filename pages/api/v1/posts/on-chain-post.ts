@@ -122,7 +122,7 @@ export function getReactions(reactionsQuerySnapshot: FirebaseFirestore.QuerySnap
 	return reactions;
 }
 
-const getTopicFromFirestoreData = (data: any, proposalType: ProposalType) => {
+export const getTopicFromFirestoreData = (data: any, proposalType: ProposalType) => {
 	if (data) {
 		const topic = data.topic;
 		const topic_id = data.topic_id;
@@ -716,6 +716,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 						post_link.title = postData?.title;
 						post_link.description = postData.content;
 						post_link.created_at = postData?.created_at?.toDate? postData?.created_at?.toDate(): postData?.created_at;
+						post_link.last_edited_at = getUpdatedAt(postData);
 						if (post.timeline && Array.isArray(post.timeline)) {
 							post.timeline.splice(0, 0, {
 								created_at: postData?.created_at?.toDate? postData?.created_at?.toDate(): postData?.created_at,

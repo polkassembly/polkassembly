@@ -13,6 +13,9 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getPostTypeAndId } from './ContinueWithLinking';
 import { ILinkPostStartResponse } from 'pages/api/v1/auth/actions/linkPostStart';
+import CreationLabel from '~src/ui-components/CreationLabel';
+import dayjs from 'dayjs';
+import UpdateLabel from '~src/ui-components/UpdateLabel';
 
 interface ILinkingAndEditingProps {
     setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,12 +25,10 @@ interface ILinkingAndEditingProps {
 const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 	const { linkingAndEditingOpen, setLinkingAndEditingOpen } = props;
 	const [form] = Form.useForm();
-	const [post, setPost] = useState<{
-		description: string,
-		title: string
-	}>();
+	const [post, setPost] = useState<ILinkPostStartResponse>();
 	const [prevURL, setURL] = useState('');
 	const [loading, setLoading] = useState(false);
+	const [fetchAndPreview, setFetchAndPreview] = useState(false);
 	const [error, setError] = useState('');
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 
@@ -35,76 +36,79 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 		content,
 		postIndex,
 		postType,
-		title
+		title,
+		post_link
 	}, setPostData } = usePostDataContext();
 	const { network } = useNetworkContext();
-
+	console.log(post_link);
 	const onFinish = async ({ url }: any) => {
 		setError('');
 		setFormDisabled(true);
 		setLoading(true);
-		const postTypeAndId = getPostTypeAndId(network, url);
-		if (!postTypeAndId) {
-			setError('Invalid URL');
-			setFormDisabled(false);
-			setLoading(false);
-			return;
-		}
-		if (prevURL !== url) {
-			const { data , error } = await nextApiClientFetch<ILinkPostStartResponse>('api/v1/auth/actions/linkPostStart', {
-				postId: postTypeAndId.id,
-				postType: postTypeAndId.type
-			});
-			if (error || !data) {
-				setError(error || 'Something went wrong');
+		if (fetchAndPreview) {
+			const postTypeAndId = getPostTypeAndId(network, url);
+			if (!postTypeAndId) {
+				setError('Invalid URL');
 				setFormDisabled(false);
 				setLoading(false);
 				return;
 			}
-			if (data) {
-				queueNotification({
-					header: 'Success!',
-					message: 'Post data fetched successfully.',
-					status: NotificationStatus.SUCCESS
+			if (prevURL !== url) {
+				const { data , error } = await nextApiClientFetch<ILinkPostStartResponse>('api/v1/auth/actions/linkPostStart', {
+					postId: postTypeAndId.id,
+					postType: postTypeAndId.type
 				});
-				setPost(data);
-				setLoading(false);
-				setFormDisabled(false);
-			}
-			setURL(url);
-		} else {
-			const { data , error } = await nextApiClientFetch<ILinkPostConfirmResponse>('api/v1/auth/actions/linkPostConfirm', {
-				currPostId: postIndex,
-				currPostType: postType,
-				postId: postTypeAndId.id,
-				postType: postTypeAndId.type
-			});
-			if (error || !data) {
-				setError(error || 'Something went wrong');
-				setFormDisabled(false);
-				setLoading(false);
-				return;
-			}
-			if (data) {
-				queueNotification({
-					header: 'Success!',
-					message: 'Post linked successfully.',
-					status: NotificationStatus.SUCCESS
+				if (error || !data) {
+					setError(error || 'Something went wrong');
+					setFormDisabled(false);
+					setLoading(false);
+					return;
+				}
+				if (data) {
+					queueNotification({
+						header: 'Success!',
+						message: 'Post data fetched successfully.',
+						status: NotificationStatus.SUCCESS
+					});
+					setPost(data);
+					setLoading(false);
+					setFormDisabled(false);
+				}
+				setURL(url);
+			} else {
+				const { data , error } = await nextApiClientFetch<ILinkPostConfirmResponse>('api/v1/auth/actions/linkPostConfirm', {
+					currPostId: postIndex,
+					currPostType: postType,
+					postId: postTypeAndId.id,
+					postType: postTypeAndId.type
 				});
-				setPostData((prev) => ({
-					...prev,
-					post_link: {
-						description: post?.description,
-						id: postTypeAndId.id,
-						title: post?.title,
-						type: postTypeAndId.type
-					},
-					timeline: data.timeline
-				}));
-				setLoading(false);
-				setFormDisabled(false);
+				if (error || !data) {
+					setError(error || 'Something went wrong');
+					setFormDisabled(false);
+					setLoading(false);
+					return;
+				}
+				if (data) {
+					queueNotification({
+						header: 'Success!',
+						message: 'Post linked successfully.',
+						status: NotificationStatus.SUCCESS
+					});
+					setPostData((prev) => ({
+						...prev,
+						post_link: {
+							description: post?.description,
+							id: postTypeAndId.id,
+							title: post?.title,
+							type: postTypeAndId.type
+						},
+						timeline: data.timeline
+					}));
+					setLoading(false);
+					setFormDisabled(false);
+				}
+				setURL(url);
 			}
-			setURL(url);
 		}
 	};
 	return (
@@ -164,34 +168,59 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						<label className='text-[#475F7D] font-semibold text-lg leading-[27px] tracking-[0.01em] flex items-center mb-2'>Description</label>
 						<ContentForm />
 					</div>
-					<Form.Item
-						name="url"
-						label={<span className='text-[#475F7D] text-lg leading-[27px] tracking-[0.01em] font-semibold'>Link Discussion Post</span>}
-						rules={[
-							{
-								required: true
-							}
-						]}
-						className='mt-5'
-					>
-						<Input
-							name='url'
-							autoFocus
-							onChange={() => setURL('')}
-							placeholder='Enter your post URL here'
-							className='border border-solid border-[rgba(72,95,125,0.2)] rounded-[4px] placeholder:text-[#CED4DE] font-medium text-sm leading-[21px] tracking-[0.01em] p-2 text-[#475F7D]'
-						/>
-					</Form.Item>
+					<article>
+						<Form.Item
+							name="url"
+							label={<span className='text-[#475F7D] text-lg leading-[27px] tracking-[0.01em] font-semibold'>Link Discussion Post</span>}
+							rules={[
+								{
+									required: true
+								}
+							]}
+							className='mt-5 mb-0'
+						>
+							<Input
+								name='url'
+								autoFocus
+								onChange={() => setURL('')}
+								placeholder='Enter your post URL here'
+								className='border border-solid border-[rgba(72,95,125,0.2)] rounded-[4px] placeholder:text-[#CED4DE] font-medium text-sm leading-[21px] tracking-[0.01em] p-2 text-[#475F7D]'
+							/>
+						</Form.Item>
+						<div className='flex items-center justify-end my-2'>
+							<Button loading={formDisabled} disabled={formDisabled} onClick={() => {
+								setFetchAndPreview(true);
+								form.submit();
+							}} className={`'border-none outline-none bg-pink_primary text-white rounded-[4px] px-4 py-1 font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize' ${formDisabled? 'cursor-not-allowed': 'cursor-pointer'}`}>
+								Fetch and Preview
+							</Button>
+						</div>
+					</article>
 					{
 						post?
-							<section>
+							<section className='border border-solid border-[rgba(72,95,125,0.2)] rounded-[4px] p-4'>
 								<h3
-									className='border border-solid border-[rgba(72,95,125,0.2)] rounded-[4px] font-medium text-sm leading-[21px] tracking-[0.01em] p-2 text-[#475F7D]'
+									className=' font-medium text-sm leading-[21px] tracking-[0.01em] text-sidebarBlue'
 								>
 									{post.title}
 								</h3>
-								<div className='border border-solid border-[rgba(72,95,125,0.2)] rounded-[4px] p-2 pb-0'>
-									<Markdown md={post.description} />
+								<div className='my-3'>
+									<CreationLabel
+										className='md'
+										created_at={dayjs(post.created_at).toDate()}
+										defaultAddress={post.proposer}
+										username={post.username}
+										topic={post.topic && post.topic?.name}
+									>
+										<UpdateLabel
+											className='md'
+											created_at={post.created_at}
+											updated_at={post.last_edited_at}
+										/>
+									</CreationLabel>
+								</div>
+								<div>
+									<Markdown className='text-xs font-normal text-navBlue leading-[20px]' md={post.description.slice(0, 400) + '...'} />
 								</div>
 							</section>
 							: null

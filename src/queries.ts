@@ -92,6 +92,7 @@ query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_e
     proposer
     type
     createdAtBlock
+    createdAt
     group {
       proposals(limit: 10) {
         curator

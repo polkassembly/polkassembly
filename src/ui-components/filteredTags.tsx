@@ -24,7 +24,7 @@ const FilteredTags = () => {
 		<span className='rounded-xl text-sidebarBlue py-[4px] pr-[16px] font-medium flex items-center text-sm' >Filters :</span>
 		{tags.map((tag, index) => (
 			<div className='rounded-xl text-navBlue py-[4px] px-[2px] text-xs tracking-wide font-normal' key= {index}>
-				{tag.charAt(0).toUpperCase()+tag.slice(1)} {tags.length === index+1 ? null :','}
+				{tag} {tags.length === index+1 ? null :','}
 			</div>
 		))}
 	</div>:null;

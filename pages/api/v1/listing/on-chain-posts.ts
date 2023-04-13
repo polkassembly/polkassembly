@@ -171,7 +171,13 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 				}
 
 			});
-			const posts = await Promise.all(postsPromise);
+			const postsResults = await Promise.allSettled(postsPromise);
+			const posts = postsResults.reduce((prev, post) => {
+				if (post && post.status === 'fulfilled') {
+					prev.push(post.value);
+				}
+				return prev;
+			}, [] as any[]);
 			const indexMap: any = {};
 			const ids = posts.map((post, index) => {
 				indexMap[Number(post?.post_id)] = index;
@@ -272,7 +278,13 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 				};
 			});
 
-			const subsquidDataPost = await Promise.all(subsquidPostsPromise);
+			const subsquidDataPostResults = await Promise.allSettled(subsquidPostsPromise);
+			const subsquidDataPost = subsquidDataPostResults.reduce((prev, post) => {
+				if (post && post.status === 'fulfilled') {
+					prev.push(post.value);
+				}
+				return prev;
+			}, [] as any[]);
 
 			const data: IPostsListingResponse = {
 				count:count,
@@ -415,7 +427,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 				};
 			});
 
-			const posts = await Promise.all(postsPromise);
+			const postsResults = await Promise.allSettled(postsPromise);
+
+			const posts = postsResults.reduce((prev, post) => {
+				if (post && post.status === 'fulfilled') {
+					prev.push(post.value);
+				}
+				return prev;
+			}, [] as any[]);
 
 			const data: IPostsListingResponse = {
 				count: Number(subsquidData?.proposalsConnection?.totalCount || 0),

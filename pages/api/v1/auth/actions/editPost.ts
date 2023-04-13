@@ -191,7 +191,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		const tagRef = firestore_db.collection('tags').doc(tag);
 		const newTag:IPostTag={
 			last_used_at:new Date(),
-			name:tag.toLowerCase()
+			name:tag
 		};
 		batch.set(tagRef, newTag, { merge: true });}
 	);

@@ -8,9 +8,9 @@ const handleFilterResults = ( defaultTags: IPostTag[],
 	setDefaultTag:  (string:IPostTag[])=> void,
 	selectedTags: string[],
 	searchInput:string ) => {
-	const keyword = searchInput.toLowerCase();
+	const keyword = searchInput;
 	const filteredData = defaultTags.filter((tag :IPostTag) => {
-		const item = tag.name.toLowerCase();
+		const item = tag.name;
 		return item.indexOf(keyword) > -1;
 	});
 

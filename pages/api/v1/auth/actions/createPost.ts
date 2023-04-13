@@ -65,7 +65,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	tags.length > 0 && tags?.map((tag:string) => {
 		const tagRef = firestore_db.collection('tags').doc(tag);
 		const newTag:IPostTag={
-			name:tag.toLowerCase() ,
+			name:tag ,
 			// eslint-disable-next-line sort-keys
 			last_used_at:new Date()
 		};

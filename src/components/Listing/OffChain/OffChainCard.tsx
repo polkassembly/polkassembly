@@ -78,7 +78,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
 						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
 							(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >
-								{tag?.charAt(0).toUpperCase()+tag?.slice(1).toLowerCase()}
+								{tag}
 							</div>))}
 						{tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
                 +{tags.length-2} more
@@ -96,7 +96,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
 					<div className='flex gap-2'>{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
 						(<div key={index} className='rounded-xl px-[16px] py-[2px] border-navBlue border-solid border-[1px] font-normal text-xs text-navBlue' >
-							{tag?.charAt(0).toUpperCase()+tag?.slice(1).toLowerCase()}
+							{tag}
 						</div>))}
 					</>}</div></div>
 			</Modal>

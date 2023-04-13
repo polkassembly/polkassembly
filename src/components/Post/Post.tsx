@@ -30,6 +30,7 @@ import { IVerified } from '~src/auth/types';
 import CloseIcon from '~assets/icons/close.svg';
 import { PlusOutlined } from '@ant-design/icons';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
+import SpamAlert from '~src/ui-components/SpamAlert';
 
 const GovernanceSideBar = dynamic(() => import('./GovernanceSideBar'), {
 	loading: () => <Skeleton active /> ,
@@ -348,8 +349,9 @@ const Post: FC<IPostProps> = (props) => {
 			proposer: post?.proposer || '',
 			requested: post?.requested,
 			reward: post?.reward,
+			spam_users_count: post?.spam_users_count,
 			status: post?.status,
-			tags:post?.tags || [],
+			tags: post?.tags || [],
 			timeline: post?.timeline,
 			title: post?.title,
 			topic: post?.topic,
@@ -358,6 +360,7 @@ const Post: FC<IPostProps> = (props) => {
 			username: post?.username
 		}}>
 			<>
+				<SpamAlert />
 				<div className={`${className} flex flex-col xl:flex-row`}>
 					<div className='flex-1 w-full xl:w-8/12 mx-auto xl:mr-9 mb-6 xl:mb-0'>
 

@@ -6,7 +6,7 @@ import type { NextApiHandler } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isCustomOpenGovStatusValid, isProposalTypeValid, isSortByValid, isTrackNoValid, isTrackPostStatusValid, isValidNetwork } from '~src/api-utils';
-import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
@@ -415,7 +415,62 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 				};
 			});
 
-			const posts = await Promise.all(postsPromise);
+			const postsResults = await Promise.allSettled(postsPromise);
+			const posts = postsResults.reduce((prev, post) => {
+				if (post && post.status === 'fulfilled') {
+					prev.push(post.value);
+				}
+				return prev;
+			}, [] as any[]);
+
+			const postsMap = new Map();
+			posts.forEach((post, index) => {
+				if (post) {
+					postsMap.set(post.post_id, index);
+				}
+			});
+
+			const postsIds = Array.from(postsMap.keys());
+			if (postsMap.size > 0) {
+				const newIdsLen = postsMap.size;
+				let lastIndex = 0;
+				for (let i = 0; i < newIdsLen; i+=30) {
+					lastIndex = i;
+					const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', strProposalType).where('content_id', 'in', postsIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+
+					reportsQuery.docs.map((doc) => {
+						if (doc && doc.exists) {
+							const data = doc.data();
+							const index = postsMap.get(data.content_id);
+							if (index !== undefined && index !== null) {
+								if (posts[index]) {
+									posts[index] = {
+										...posts[index],
+										is_spam: true
+									};
+								}
+							}
+						}
+					});
+				}
+				if (lastIndex <= newIdsLen) {
+					const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+					reportsQuery.docs.map((doc) => {
+						if (doc && doc.exists) {
+							const data = doc.data();
+							const index = postsMap.get(data.content_id);
+							if (index !== undefined && index !== null) {
+								if (posts[index]) {
+									posts[index] = {
+										...posts[index],
+										is_spam: true
+									};
+								}
+							}
+						}
+					});
+				}
+			}
 
 			const data: IPostsListingResponse = {
 				count: Number(subsquidData?.proposalsConnection?.totalCount || 0),

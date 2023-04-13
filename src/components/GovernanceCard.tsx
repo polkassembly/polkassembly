@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, CommentOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
-import { Divider, Modal, Skeleton } from 'antd';
+import { Divider, Modal, Skeleton, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 import React, { FC, useContext, useState } from 'react';
@@ -13,6 +13,7 @@ import useCurrentBlock from 'src/hooks/useCurrentBlock';
 import OnchainCreationLabel from 'src/ui-components/OnchainCreationLabel';
 import StatusTag from 'src/ui-components/StatusTag';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
+import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 
 import { getFormattedLike } from '~src/util/getFormattedLike';
 
@@ -36,7 +37,8 @@ interface IGovernanceProps {
 	isTip?: boolean;
 	tip_index?: number | null;
 	isCommentsVisible?: boolean;
-  tags?: string[] | [];
+	tags?: string[] | [];
+	is_spam?: boolean;
 }
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
@@ -60,7 +62,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		isTip,
 		tip_index,
 		isCommentsVisible = true,
-		username,tags
+		username,
+		tags,
+		is_spam
 	} = props;
 	const currentUser = useContext(UserDetailsContext);
 	let titleString = title || method || tipReason || noTitle;
@@ -78,14 +82,23 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	return (
 		<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-3 md:p-4`}>
 			<div className="flex flex-col justify-between">
-				<div className='flex lg:justify-between lg:items-start lg:flex-row'>
+				<div className='flex justify-between gap-x-2 lg:items-start lg:flex-row'>
 					<div className='mt-3 lg:mt-0'>
-						<h1 className='text-sidebarBlue font-semibold text-sm flex truncate'>
-							{<span className='font-medium mr-2'>#{isTip? tip_index: onchainId}</span>} {mainTitle}
+						<h1 className='text-sidebarBlue font-semibold text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
+							{<span className='font-medium mr-2'>#{isTip? tip_index: onchainId}</span>} <span className='break-all'>{mainTitle}</span>
 						</h1>
 						<h2 className='text-navBlue font-medium text-sm'>{subTitle}</h2>
 					</div>
-					<div className='flex justify-between items-center'>
+					<div className='flex justify-between items-center gap-x-2'>
+						{
+							is_spam?
+								<div className='flex items-center justify-center'>
+									<Tooltip color="#E5007A" title="This post could be a spam.">
+										<WarningMessageIcon className='text-xl text-[#FFA012]' />
+									</Tooltip>
+								</div>
+								: null
+						}
 						{status && <StatusTag status={status}/>}
 					</div>
 				</div>
@@ -139,7 +152,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								{tag}
 							</div>))}
 						{tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
-                +{tags.length-2} more 
+                +{tags.length-2} more
 						</span>}
 						</>}
 					</div>

@@ -95,7 +95,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 				</div>
 			</div>
 			<div className='flex gap-2.5 text-pink_primary'><MessengerIcon/><span><Button title='Edit' className='h-[40px] bg-transparent text-pink_primary border-pink_primary' icon={<EditIcon/>}>Edit</Button></span></div></div>
-		<div ><DashboardTrackListing className='border-solid h-[200px] mt-8 px-8 py-6 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]'/></div>
+		<div ><DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]'/></div>
 	</div>;
 };
 

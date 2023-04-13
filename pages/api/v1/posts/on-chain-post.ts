@@ -743,6 +743,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 		post.post_reactions = getReactions(postReactionsQuerySnapshot);
 
+		// Check if it is a spam or not
+		post.spam_users_count = await getSpamUsersCount(network, proposalType, (proposalType === ProposalType.TIPS? strPostId: numPostId));
+
 		if (!post.content || post.content?.trim().length === 0) {
 			const proposer = post.proposer;
 			if (proposer) {
@@ -765,6 +768,22 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		};
 	}
 }
+
+export const getSpamUsersCount = async (network: string, proposalType: any, postId: string | number) => {
+	const query = await networkDocRef(network).collection('reports').where('proposal_type', '==', proposalType).where('content_id', '==', postId).get();
+	const userMap: { [key: number]: boolean } = {};
+	query.docs.forEach((doc) => {
+		if (doc && doc.exists) {
+			const data = doc.data();
+			if (data) {
+				if (!userMap[data.user_id]) {
+					userMap[data.user_id] = true;
+				}
+			}
+		}
+	});
+	return Object.entries(userMap).length;
+};
 
 // expects optional proposalType and postId of proposal
 const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, res) => {

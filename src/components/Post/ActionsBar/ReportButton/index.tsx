@@ -4,19 +4,22 @@
 
 import { FlagOutlined } from '@ant-design/icons';
 import { Button,Form,Input,Modal, Select } from 'antd';
-import React, { useState } from 'react';
+import { IReportContentResponse } from 'pages/api/v1/auth/actions/reportContent';
+import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 
-import { ChangeResponseType } from '~src/auth/types';
+import { usePostDataContext } from '~src/context';
+import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-interface DiscussionProps {
+interface IReportButtonProps {
 	type: string
 	contentId: string
 	className?: string
+	proposalType: ProposalType;
 }
 
 const reasons = [
@@ -26,11 +29,9 @@ const reasons = [
 	'other (please let us know in the field below)'
 ];
 
-const reasonOptions = reasons.map(reason => (
-	<Select.Option key={reason} value={reason}>{reason}</Select.Option>
-));
-
-const ReportButton = function ({ type, contentId, className }:DiscussionProps) {
+const ReportButton: FC<IReportButtonProps> = (props) => {
+	const { type, contentId, className, proposalType } = props;
+	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [loading, setLoading] = useState(false);
@@ -48,9 +49,10 @@ const ReportButton = function ({ type, contentId, className }:DiscussionProps) {
 
 		setLoading(true);
 
-		const { data: reportData , error: reportError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/reportContent', {
+		const { data: reportData , error: reportError } = await nextApiClientFetch<IReportContentResponse>('api/v1/auth/actions/reportContent', {
 			comments,
 			content_id: contentId,
+			proposalType,
 			reason,
 			type
 		});
@@ -72,8 +74,15 @@ const ReportButton = function ({ type, contentId, className }:DiscussionProps) {
 				message: reportData.message,
 				status: NotificationStatus.SUCCESS
 			});
+			setPostData && setPostData((prev) => {
+				return {
+					...prev,
+					spam_users_count: reportData.user_reports_count === 1? (Number(prev?.spam_users_count || 0)) + 1: prev?.spam_users_count
+				};
+			});
 			setShowModal(false);
 			setFormDisabled(false);
+			form.setFieldValue('comments', '');
 		}
 
 		setLoading(false);
@@ -118,9 +127,16 @@ const ReportButton = function ({ type, contentId, className }:DiscussionProps) {
 					{error && <ErrorAlert errorMsg={error} className='mb-4' />}
 
 					<Form.Item name='reason' label="Reason" rules={[{ required: true }]}>
-						<Select>
-							{reasonOptions}
-						</Select>
+						<Select
+							popupClassName='z-[9999]'
+							defaultValue={'It\'s suspicious or spam'}
+							options={reasons.map((reason) => {
+								return {
+									label: reason,
+									value: reason
+								};
+							})}
+						/>
 					</Form.Item>
 					<Form.Item
 						name="comments"

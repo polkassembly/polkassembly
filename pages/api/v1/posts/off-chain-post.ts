@@ -16,7 +16,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { getComments, getReactions, getTimeline, IPostResponse, isDataExist } from './on-chain-post';
+import { getComments, getReactions, getSpamUsersCount, getTimeline, IPostResponse, isDataExist } from './on-chain-post';
 
 interface IGetOffChainPostParams {
 	network: string;
@@ -177,6 +177,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 				}
 			}
 		}
+		post.spam_users_count = await getSpamUsersCount(network, proposalType, Number(postId));
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,

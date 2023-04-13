@@ -779,19 +779,23 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 }
 
 export const getSpamUsersCount = async (network: string, proposalType: any, postId: string | number) => {
-	const query = await networkDocRef(network).collection('reports').where('proposal_type', '==', proposalType).where('content_id', '==', postId).where('type', '==', 'post').get();
-	const userMap: { [key: number]: boolean } = {};
-	query.docs.forEach((doc) => {
-		if (doc && doc.exists) {
-			const data = doc.data();
-			if (data) {
-				if (!userMap[data.user_id]) {
-					userMap[data.user_id] = true;
-				}
-			}
+	const countQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', '==', postId).count().get();
+	const data = countQuery.data();
+	const totalUsers = data.count || 0;
+
+	return checkReportThreshold(totalUsers);
+};
+
+export const checkReportThreshold = (totalUsers?: number) => {
+	const threshold = process.env.REPORTS_THRESHOLD;
+
+	if (threshold && totalUsers) {
+		if (Number(totalUsers) >= Number(threshold)) {
+			return totalUsers;
 		}
-	});
-	return Object.entries(userMap).length;
+		return 0;
+	}
+	return totalUsers;
 };
 
 // expects optional proposalType and postId of proposal

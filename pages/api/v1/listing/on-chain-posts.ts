@@ -18,7 +18,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { getReactions } from '../posts/on-chain-post';
+import { checkReportThreshold, getReactions } from '../posts/on-chain-post';
 
 export interface IPostListing {
 	user_id?: string | number;
@@ -416,61 +416,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 			});
 
 			const postsResults = await Promise.allSettled(postsPromise);
-			const posts = postsResults.reduce((prev, post) => {
+			let posts = postsResults.reduce((prev, post) => {
 				if (post && post.status === 'fulfilled') {
 					prev.push(post.value);
 				}
 				return prev;
 			}, [] as any[]);
 
-			const postsMap = new Map();
-			posts.forEach((post, index) => {
-				if (post) {
-					postsMap.set(post.post_id, index);
-				}
-			});
-
-			const postsIds = Array.from(postsMap.keys());
-			if (postsMap.size > 0) {
-				const newIdsLen = postsMap.size;
-				let lastIndex = 0;
-				for (let i = 0; i < newIdsLen; i+=30) {
-					lastIndex = i;
-					const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', strProposalType).where('content_id', 'in', postsIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
-
-					reportsQuery.docs.map((doc) => {
-						if (doc && doc.exists) {
-							const data = doc.data();
-							const index = postsMap.get(data.content_id);
-							if (index !== undefined && index !== null) {
-								if (posts[index]) {
-									posts[index] = {
-										...posts[index],
-										is_spam: true
-									};
-								}
-							}
-						}
-					});
-				}
-				if (lastIndex <= newIdsLen) {
-					const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
-					reportsQuery.docs.map((doc) => {
-						if (doc && doc.exists) {
-							const data = doc.data();
-							const index = postsMap.get(data.content_id);
-							if (index !== undefined && index !== null) {
-								if (posts[index]) {
-									posts[index] = {
-										...posts[index],
-										is_spam: true
-									};
-								}
-							}
-						}
-					});
-				}
-			}
+			posts = await getSpamUsersCountForPosts(network, posts, strProposalType);
 
 			const data: IPostsListingResponse = {
 				count: Number(subsquidData?.proposalsConnection?.totalCount || 0),
@@ -491,6 +444,64 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 		};
 	}
 }
+
+export const getSpamUsersCountForPosts = async (network: string, posts: any[], proposalType: string): Promise<any[]> => {
+	const postsMap = new Map();
+	posts.forEach((post, index) => {
+		if (post) {
+			postsMap.set(post.post_id, index);
+		}
+	});
+
+	const postsIds = Array.from(postsMap.keys());
+	if (postsMap.size > 0) {
+		const newIdsLen = postsMap.size;
+		let lastIndex = 0;
+		for (let i = 0; i < newIdsLen; i+=30) {
+			lastIndex = i;
+			const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+
+			reportsQuery.docs.map((doc) => {
+				if (doc && doc.exists) {
+					const data = doc.data();
+					const index = postsMap.get(data.content_id);
+					if (index !== undefined && index !== null) {
+						if (posts[index]) {
+							posts[index] = {
+								...posts[index],
+								spam_users_count: Number(posts[index].spam_users_count || 0) + 1
+							};
+						}
+					}
+				}
+			});
+		}
+		if (lastIndex <= newIdsLen) {
+			const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+			reportsQuery.docs.map((doc) => {
+				if (doc && doc.exists) {
+					const data = doc.data();
+					const index = postsMap.get(data.content_id);
+					if (index !== undefined && index !== null) {
+						if (posts[index]) {
+							posts[index] = {
+								...posts[index],
+								spam_users_count: Number(posts[index].spam_users_count || 0) + 1
+							};
+						}
+					}
+				}
+			});
+		}
+	}
+
+	return posts.map((post) => {
+		if (post) {
+			post.spam_users_count = checkReportThreshold(post.spam_users_count);
+		}
+		return post;
+	});
+};
 
 // expects optional proposalType, page and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {

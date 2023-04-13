@@ -77,7 +77,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 			setPostData && setPostData((prev) => {
 				return {
 					...prev,
-					spam_users_count: reportData.user_reports_count === 1? (Number(prev?.spam_users_count || 0)) + 1: prev?.spam_users_count
+					spam_users_count: reportData.spam_users_count
 				};
 			});
 			setShowModal(false);

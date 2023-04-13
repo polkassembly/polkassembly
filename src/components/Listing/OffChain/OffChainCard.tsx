@@ -3,11 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, CommentOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
-import { Divider, Modal } from 'antd';
+import { Divider, Modal, Tooltip } from 'antd';
 import { poppins } from 'pages/_app';
 import React, { FC, useContext, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
+import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
 import { getFormattedLike } from '~src/util/getFormattedLike';
@@ -24,11 +25,12 @@ export interface IDiscussionProps {
 		'👎': number;
 	};
 	post_id: string;
-  tags:string[] | [];
+	tags:string[] | [];
+	is_spam?: boolean;
 }
 
 const DiscussionCard: FC<IDiscussionProps> = (props) => {
-	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags } = props;
+	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, is_spam } = props;
 	const currentUser = useContext(UserDetailsContext);
 	const ownPost = currentUser.username === username;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
@@ -48,8 +50,25 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							<div className='flex items-center text-navBlue lg:hidden'>
 								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 							</div>}
+						{
+							is_spam?
+								<div className='flex lg:hidden items-center justify-center'>
+									<Tooltip color="#E5007A" title="This post could be a spam.">
+										<WarningMessageIcon className='text-xl text-[#FFA012]' />
+									</Tooltip>
+								</div>
+								: null
+						}
 					</div>
-
+					{
+						is_spam?
+							<div className='hidden lg:flex items-center justify-center'>
+								<Tooltip color="#E5007A" title="This post could be a spam.">
+									<WarningMessageIcon className='text-xl text-[#FFA012]' />
+								</Tooltip>
+							</div>
+							: null
+					}
 				</div>
 				<div className="mt-3 gap-2.5 font-medium text-navBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
 					<OnchainCreationLabel address={address} topic={topic} username={username} />

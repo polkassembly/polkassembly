@@ -26,11 +26,11 @@ export interface IDiscussionProps {
 	};
 	post_id: string;
 	tags:string[] | [];
-	is_spam?: boolean;
+	spam_users_count?: number;
 }
 
 const DiscussionCard: FC<IDiscussionProps> = (props) => {
-	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, is_spam } = props;
+	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, spam_users_count } = props;
 	const currentUser = useContext(UserDetailsContext);
 	const ownPost = currentUser.username === username;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
@@ -51,7 +51,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 							</div>}
 						{
-							is_spam?
+							spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
 								<div className='flex lg:hidden items-center justify-center'>
 									<Tooltip color="#E5007A" title="This post could be a spam.">
 										<WarningMessageIcon className='text-xl text-[#FFA012]' />
@@ -61,7 +61,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						}
 					</div>
 					{
-						is_spam?
+						spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
 							<div className='hidden lg:flex items-center justify-center'>
 								<Tooltip color="#E5007A" title="This post could be a spam.">
 									<WarningMessageIcon className='text-xl text-[#FFA012]' />

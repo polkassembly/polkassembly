@@ -82,7 +82,7 @@ const messages = {
 	POST_EDIT_INVALID_SIGNATURE: 'Post edit failed. Invalid signature.',
 	POST_EDIT_SIGN_MESSAGE_EXPIRED: 'Session expired, please edit post again.',
 	PROFILE_CHANGED_SUCCESS: 'Profile changed successfully',
-	REPORT_COMMENTS_LENGTH_EXCEDEED: 'Report comments can be max 300 character long.',
+	REPORT_COMMENTS_LENGTH_EXCEEDED: 'Report comments can be max 300 character long.',
 	REPORT_REASON_REQUIRED: 'Please provide a reason for reporting content',
 	REPORT_TYPE_INVALID: 'Report type can only be post or comment',
 	RESEND_VERIFY_EMAIL_TOKEN_REQUEST_SUCCESSFUL: 'A new verification mail has been sent to your email.',

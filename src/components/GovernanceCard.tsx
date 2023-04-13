@@ -139,7 +139,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								{tag}
 							</div>))}
 						{tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
-                +{tags.length-2} more
+                +{tags.length-2} more 
 						</span>}
 						</>}
 					</div>

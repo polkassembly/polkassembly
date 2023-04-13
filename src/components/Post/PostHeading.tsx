@@ -5,6 +5,7 @@
 import { Skeleton } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import React, { FC } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import StatusTag from 'src/ui-components/StatusTag';
@@ -14,6 +15,7 @@ import { useNetworkContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import formatBnBalance from '~src/util/formatBnBalance';
+import { onTagClickFilter } from '~src/util/onTagClickFilter';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => <div className="flex gap-x-6"><Skeleton.Avatar active /><Skeleton.Input active /></div> ,
@@ -24,15 +26,24 @@ interface IPostHeadingProps {
 	className?: string;
 }
 const PostHeading: FC<IPostHeadingProps> = (props) => {
+	const router= useRouter();
 	const { className } = props;
 	const { postData: {
-		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward
+		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags, track_name
 	} } = usePostDataContext();
+
 	const { network } = useNetworkContext();
 
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2? requested: reward;
+
+	const handleTagClick=(pathname:string,filterBy:string) => {
+		if(pathname !== '') (
+			router.replace({ pathname:`/${pathname}`,query:{
+				filterBy:encodeURIComponent(JSON.stringify([filterBy]))
+			} }));
+	};
 	return (
-		<div className={className}>
+		<div className={className} >
 			<div className="flex justify-between items-center">
 				{status && <StatusTag className='mb-3' status={status}/>}
 				{ requestedAmt && <h5 className='text-sm text-sidebarBlue font-medium'>Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}</h5>}
@@ -57,6 +68,9 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					</CreationLabel>
 				</>
 			</div>
+			{tags && tags.length>0 &&<div className='flex mt-6 gap-[8px]'>
+				{tags?.map((tag,index ) => (<div onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''),tag)} className='rounded-full px-[16px] py-[4px] border-navBlue border-solid border-[1px] text-navBlue text-xs traking-2 cursor-pointer hover:border-pink_primary hover:text-pink_primary' key={index} >{tag}</div>))}
+			</div> }
 		</div>
 	);
 };

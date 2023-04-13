@@ -6,13 +6,13 @@ import { SwapOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { useRouter } from 'next/router';
-import React, { FC, useState } from 'react';
+import React, { FC,useState } from 'react';
 import { sortOptions, sortValues } from 'src/global/sortOptions';
 import styled from 'styled-components';
-
 import { OffChainProposalType } from '~src/global/proposalType';
-
 import OffChainPostsListingContainer from './OffChainPostsListingContainer';
+import FilterByTags from '~src/ui-components/FilterByTags';
+import FilteredTags from '~src/ui-components/filteredTags';
 
 interface IOffChainContainerProps {
 	posts: any[];
@@ -36,9 +36,10 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 
 	const handleSortByClick = ({ key }: { key:string }) => {
+
 		router.push({
 			pathname:'',
-			query:{
+			query:{ ...router.query,
 				sortBy: key
 			}
 		});
@@ -46,7 +47,6 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 	};
 
 	const sortByOptions: ItemType[] = sortOptions;
-
 	const sortByDropdown = (
 		<Dropdown
 			menu={{
@@ -65,12 +65,17 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 	return (
 		<div className={`${className} bg-white p-3 md:p-8 rounded-[4px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)]`}>
 			<div className='flex items-center justify-between'>
-				<h1 className='dashboard-heading'>{ count } {
-					getTitle(proposalType)
-				}</h1>
-				{sortByDropdown}
+				<div>
+					<h1 className='dashboard-heading'>{ count } {
+						getTitle(proposalType)
+					}</h1>
+					<FilteredTags/>
+				</div>
+				<div className='flex gap-1'>
+					<FilterByTags/>
+					{sortByDropdown}
+				</div>
 			</div>
-
 			<OffChainPostsListingContainer proposalType={proposalType} sortBy={sortBy} count={count} posts={posts} className='mt-8' />
 		</div>
 	);
@@ -80,4 +85,8 @@ export default styled(OffChainPostsContainer)`
 	.ant-dropdown-trigger.ant-dropdown-open {
 		color: pink_primary !important;
 	}
+  .text-color{
+  color: #334D6E;
+}
+
 `;

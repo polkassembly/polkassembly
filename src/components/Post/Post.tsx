@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton, Tabs } from 'antd';
+import { Button, Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -27,6 +27,9 @@ import PostDescription from './Tabs/PostDescription';
 import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
+import CloseIcon from '~assets/icons/close.svg';
+import { PlusOutlined } from '@ant-design/icons';
+import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import SpamAlert from '~src/ui-components/SpamAlert';
 
 const GovernanceSideBar = dynamic(() => import('./GovernanceSideBar'), {
@@ -90,6 +93,7 @@ const Post: FC<IPostProps> = (props) => {
 	const [canEdit, setCanEdit] = useState(false);
 
 	const [duration, setDuration] = useState(dayjs.duration(0));
+	const [graphicOpen, setGraphicOpen] = useState<boolean>(true);
 
 	useEffect(() => {
 		if(!post) return;
@@ -196,6 +200,23 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:w-4/12 mx-auto`}>
+
+				{canEdit && post.tags?.length === 0 && graphicOpen && <div className=' rounded-[14px] bg-white shadow-[0px 6px 18px rgba(0, 0, 0, 0.06)] pb-[36px] mb-8'>
+					<div className='flex justify-end py-[17px] px-[20px] items-center' onClick={ () => setGraphicOpen(false)}>
+						<CloseIcon/>
+					</div>
+					<div className='flex items-center flex-col justify-center gap-6'>
+						<GraphicIcon/>
+						<Button
+							className='w-[176px] text-white bg-pink_primary text-[16px] font-medium h-[35px] rounded-[4px]'
+							onClick={() => { toggleEdit(); setGraphicOpen(false);}}
+						>
+							<PlusOutlined/>
+                Add Tags
+						</Button>
+					</div>
+				</div>}
+
 				<GovernanceSideBar
 					proposalType={proposalType}
 					onchainId={onchainId}
@@ -330,6 +351,7 @@ const Post: FC<IPostProps> = (props) => {
 			reward: post?.reward,
 			spam_users_count: post?.spam_users_count,
 			status: post?.status,
+			tags: post?.tags || [],
 			timeline: post?.timeline,
 			title: post?.title,
 			topic: post?.topic,
@@ -363,7 +385,6 @@ const Post: FC<IPostProps> = (props) => {
 								/>
 							</div>
 						)}
-
 						{
 							proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&
 						<Link href={`/bounty/${post.parent_bounty_index}`}>
@@ -384,20 +405,19 @@ const Post: FC<IPostProps> = (props) => {
 
 						{/* Post Content */}
 						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-md w-full mb-6'>
-							{isEditing && <EditablePostContent
-								toggleEdit={toggleEdit}
-							/>}
+							{isEditing &&
+              <EditablePostContent toggleEdit={toggleEdit} />}
 
 							{!isEditing && <>
 								<PostHeading
 									className='mb-8'
 								/>
-
 								<Tabs
 									type="card"
 									className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
 									items={tabItems}
 								/>
+
 							</>}
 
 						</div>

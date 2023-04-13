@@ -69,7 +69,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 				</>
 			</div>
 			{tags && tags.length>0 &&<div className='flex mt-6 gap-[8px]'>
-				{tags?.map((tag,index ) => (<div onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''),tag)} className='rounded-full px-[16px] py-[4px] border-navBlue border-solid border-[1px] text-navBlue text-xs traking-2 cursor-pointer hover:border-pink_primary hover:text-pink_primary' key={index} >{tag.charAt(0).toUpperCase()+tag.slice(1)}</div>))}
+				{tags?.map((tag,index ) => (<div onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''),tag)} className='rounded-full px-[16px] py-[4px] border-navBlue border-solid border-[1px] text-navBlue text-xs traking-2 cursor-pointer hover:border-pink_primary hover:text-pink_primary' key={index} >{tag}</div>))}
 			</div> }
 		</div>
 	);

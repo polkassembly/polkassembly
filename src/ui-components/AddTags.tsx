@@ -77,11 +77,11 @@ const AddTags=({ tags,setTags,className }:Props) => {
 	};
 
 	const items:MenuProps['items']=[
-		filteredTags.length === 0 ? { key: 1, label: <div className='h-[100%] flex items-center justify-center flex-col gap-2'><NoTagsFoundIcon/><span className={`text-[10px] text-navBlue tracking-wide ${poppins.className} ${poppins.variable} `}>No tag found.</span></div> } : null ,
-		...filteredTags.slice(0,5).map((tag,index) => {return  { key: index+2, label:<div className={`text-xs text-navBlue ${poppins.className} ${poppins.className} tracking-wide`} onClick={() => {selectedTag.current = tag?.name; handleInputConfirm(); } }>{tag?.name.charAt(0).toUpperCase()+tag?.name.slice(1)}</div> }; })];
+		filteredTags.length === 0 ? { key: 1, label: <div className='h-[100%] flex items-center justify-center flex-col gap-2'><NoTagsFoundIcon/><span className={`text-[10px] text-[#90A0B7] tracking-wide ${poppins.className} ${poppins.variable} `}>No tag found.</span></div> } : null ,
+		...filteredTags.slice(0,5).map((tag,index) => {return  { key: index+2, label:<div className={`text-xs text-[#90A0B7]  ${poppins.className} ${poppins.className} tracking-wide`} onClick={() => {selectedTag.current = tag?.name; handleInputConfirm(); } }>{tag?.name}</div> }; })];
 
 	return <div className={className}>
-		<div className='border-solid border-gray-300 h-[40px] p-[10px] flex rounded border justify-between items-center text-navBlue max-lg:h-auto'>
+		<div className='border-solid border-gray-300 h-[40px] p-[10px] flex rounded border justify-between items-center text-[#90A0B7]  max-lg:h-auto'>
 			<Dropdown
 				disabled={tags.length === 5}
 				overlayClassName='ml-[-10px] min-w-[104px] rounded create-post' menu={{ items }} placement="topLeft">
@@ -95,7 +95,7 @@ const AddTags=({ tags,setTags,className }:Props) => {
 							value={inputValue}
 							onChange={handleInputChange}
 							onPressEnter={handleInputConfirm}
-							className='text-navBlue rounded-xl bg-white text-xs text-normal px-[16px] py-[4px] mr-2 flex items-center'
+							className='text-[#90A0B7]  rounded-xl bg-white text-xs text-normal px-[16px] py-[4px] mr-2 flex items-center'
 						/>  :
 						tags.length <5 && <Tag onClick={showInput}className='rounded-xl bg-white border-pink_primary py-[4px] px-[16px] cursor-pointer text-pink_primary text-xs flex items-center' >
 							<PlusOutlined className='mr-1'/>
@@ -105,11 +105,11 @@ const AddTags=({ tags,setTags,className }:Props) => {
 						{tags.map((tag,index) => (
 							<Tag
 								key={index}
-								className='text-navBlue rounded-xl bg-white text-normal text-xs py-[4px] px-[16px] tracking-wide hover:border-pink_primary'
+								className='text-[#90A0B7] border-[#90A0B7] rounded-xl bg-white text-normal text-xs py-[4px] px-[16px] tracking-wide hover:border-pink_primary'
 								closable
-								onClose={(e) => {e.preventDefault();handleClose(tag);}}>{tag.charAt(0).toUpperCase()+tag.slice(1)}</Tag>))}
+								onClose={(e) => {e.preventDefault();handleClose(tag);}}>{tag}</Tag>))}
 					</div></div></Dropdown>
-			<div className={`text-xs  ${  5 - tags.length === 0 ? 'text-pink_primary':'text-navBlue' }`}>{5-(tags.length)} Tags left</div>
+			<div className={`text-xs  ${  5 - tags.length === 0 ? 'text-pink_primary':'text-[#90A0B7] ' }`}>{5-(tags.length)} Tags left</div>
 		</div></div>;
 };
 export default AddTags;

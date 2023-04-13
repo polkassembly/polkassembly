@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const fetches = {
 		all: getOnChainPosts({
 			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
-      		listingLimit: LISTING_LIMIT,
+			listingLimit: LISTING_LIMIT,
 			network,
 			page,
 			proposalType,
@@ -43,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		}),
 		closed: getOnChainPosts({
 			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
-      		listingLimit: LISTING_LIMIT,
+			listingLimit: LISTING_LIMIT,
 			network,
 			page,
 			proposalType,

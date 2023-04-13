@@ -38,7 +38,7 @@ interface IGovernanceProps {
 	tip_index?: number | null;
 	isCommentsVisible?: boolean;
 	tags?: string[] | [];
-	is_spam?: boolean;
+	spam_users_count?: number;
 }
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
@@ -64,7 +64,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		isCommentsVisible = true,
 		username,
 		tags,
-		is_spam
+		spam_users_count
 	} = props;
 	const currentUser = useContext(UserDetailsContext);
 	let titleString = title || method || tipReason || noTitle;
@@ -91,7 +91,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 					<div className='flex justify-between items-center gap-x-2'>
 						{
-							is_spam?
+							spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
 								<div className='flex items-center justify-center'>
 									<Tooltip color="#E5007A" title="This post could be a spam.">
 										<WarningMessageIcon className='text-xl text-[#FFA012]' />

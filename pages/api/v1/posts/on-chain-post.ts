@@ -779,7 +779,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 }
 
 export const getSpamUsersCount = async (network: string, proposalType: any, postId: string | number) => {
-	const query = await networkDocRef(network).collection('reports').where('proposal_type', '==', proposalType).where('content_id', '==', postId).get();
+	const query = await networkDocRef(network).collection('reports').where('proposal_type', '==', proposalType).where('content_id', '==', postId).where('type', '==', 'post').get();
 	const userMap: { [key: number]: boolean } = {};
 	query.docs.forEach((doc) => {
 		if (doc && doc.exists) {

@@ -25,6 +25,7 @@ const AddTags=({ tags,setTags,className }:Props) => {
 	const [ allTags, setAllTags]=useState<IPostTag[]>([]);
 	const [ filteredTags, setFilteredTags ] =useState<IPostTag[]>([]);
 	const selectedTag = useRef<string | null>(null);
+	const [ charLimitReached, setCharLimitReached ] = useState<boolean>(false);
 
 	const getData= async() => {
 		const { data , error } = await nextApiClientFetch<IPostTag[]>('api/v1/all-tags');
@@ -33,7 +34,11 @@ const AddTags=({ tags,setTags,className }:Props) => {
 	};
 
 	useEffect(() => {
+
+		inputValue.length >= 10 ? setCharLimitReached(true) : setCharLimitReached(false);
+
 		allTags.length === 0 && getData();
+
 		handleFilterResults(allTags, setFilteredTags, tags, inputValue);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[inputValue,tags]);
@@ -55,6 +60,10 @@ const AddTags=({ tags,setTags,className }:Props) => {
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		selectedTag.current = null;
+		const value = e.target.value;
+		if(value.length > 10){
+			return ;
+		}
 		setInputValue(e.target.value);
 
 	};
@@ -68,7 +77,15 @@ const AddTags=({ tags,setTags,className }:Props) => {
 		}
 		else{
 			if ( inputValue && tags.length < 5 && tags.indexOf( inputValue.toLowerCase() ) === -1 && inputValue.trim().length > 0){
-				setTags([...tags, inputValue.trim().toLowerCase()]);
+				const format = /^[a-zA-Z0-9]*$/;
+				if(inputValue.length === 10){
+					setCharLimitReached(true);
+				}
+				if(inputValue.length > 10 || !format.test(inputValue)){
+					setInputValue('');
+					return ;
+				}else {
+					setTags([...tags, inputValue.trim().toLowerCase()]);}
 			}}
 		selectedTag.current = null;
 		setInputValue('');
@@ -95,7 +112,7 @@ const AddTags=({ tags,setTags,className }:Props) => {
 							value={inputValue}
 							onChange={handleInputChange}
 							onPressEnter={handleInputConfirm}
-							className='text-[#90A0B7]  rounded-xl bg-white text-xs text-normal px-[16px] py-[4px] mr-2 flex items-center'
+							className={`text-[#90A0B7]  rounded-xl bg-white text-xs text-normal px-[16px] py-[4px] mr-2 flex items-center ${charLimitReached && 'border-red-500'}`}
 						/>  :
 						tags.length <5 && <Tag onClick={showInput}className='rounded-xl bg-white border-pink_primary py-[4px] px-[16px] cursor-pointer text-pink_primary text-xs flex items-center' >
 							<PlusOutlined className='mr-1'/>
@@ -110,6 +127,8 @@ const AddTags=({ tags,setTags,className }:Props) => {
 								onClose={(e) => {e.preventDefault();handleClose(tag);}}>{tag}</Tag>))}
 					</div></div></Dropdown>
 			<div className={`text-xs  ${  5 - tags.length === 0 ? 'text-pink_primary':'text-[#90A0B7] ' }`}>{5-(tags.length)} Tags left</div>
-		</div></div>;
+		</div>
+		{charLimitReached && <h2 className='text-red-500 font-medium text-xs tracking-wide mt-1'>Character limit reached</h2>
+		}</div>;
 };
 export default AddTags;

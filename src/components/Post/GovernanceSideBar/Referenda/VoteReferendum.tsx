@@ -100,6 +100,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		return;
 	};
 
+	useEffect(() => {
+		getWallet();
+		loginWallet!==null && getAccounts(loginWallet);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[]);
+
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
 		setAccounts([]);
 		setAddress('');
@@ -257,12 +263,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const openModal = () => {
 		setShowModal(true);
 	};
-
-	// eslint-disable-next-line react-hooks/rules-of-hooks
-	useEffect(() => {
-		getWallet();
-		loginWallet!==null && getAccounts(loginWallet);
-	},[]);
 
 	const VoteLock = ({ className }: { className?:string }) =>
 		<Form.Item className={className}>

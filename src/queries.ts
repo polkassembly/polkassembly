@@ -2,6 +2,19 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+export const GET_CURVE_DATA_BY_INDEX = `
+query CurveDataByIndex($index_eq: Int, $limit: Int = 1000) {
+  curveData(limit: $limit, where: {index_eq: $index_eq}, orderBy: block_ASC) {
+    approvalPercent
+    block
+    id
+    index
+    supportPercent
+    timestamp
+  }
+}
+`;
+
 export const GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY = `
 query ProposalsListingByType($limit: Int, $index_in: [Int!]) {
   proposals(where: {index_in: $index_in, type_eq: Bounty}, limit: $limit) {

@@ -55,6 +55,11 @@ const AddTags=({ tags,setTags,className }:Props) => {
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		selectedTag.current = null;
+		const value = e.target.value;
+		const format = /^[a-zA-Z0-9]*$/;
+		if(value.length > 10 && !format.test(value)){
+			return ;
+		}
 		setInputValue(e.target.value);
 
 	};
@@ -68,7 +73,12 @@ const AddTags=({ tags,setTags,className }:Props) => {
 		}
 		else{
 			if ( inputValue && tags.length < 5 && tags.indexOf( inputValue.toLowerCase() ) === -1 && inputValue.trim().length > 0){
-				setTags([...tags, inputValue.trim().toLowerCase()]);
+				const format = /^[a-zA-Z0-9]*$/;
+				if(inputValue.length > 10 || !format.test(inputValue)){
+					setInputValue('');
+					return ;
+				}else {
+					setTags([...tags, inputValue.trim().toLowerCase()]);}
 			}}
 		selectedTag.current = null;
 		setInputValue('');

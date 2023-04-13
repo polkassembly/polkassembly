@@ -3,9 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, CommentOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
-import { Divider, Skeleton } from 'antd';
+import { Divider, Modal, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
-import React, { FC, useContext } from 'react';
+import { poppins } from 'pages/_app';
+import React, { FC, useContext, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { noTitle } from 'src/global/noTitle';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
@@ -35,6 +36,7 @@ interface IGovernanceProps {
 	isTip?: boolean;
 	tip_index?: number | null;
 	isCommentsVisible?: boolean;
+  tags?: string[] | [];
 }
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
@@ -58,7 +60,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		isTip,
 		tip_index,
 		isCommentsVisible = true,
-		username
+		username,tags
 	} = props;
 	const currentUser = useContext(UserDetailsContext);
 	let titleString = title || method || tipReason || noTitle;
@@ -71,6 +73,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const currentBlock = useCurrentBlock()?.toNumber() || 0;
 	const ownProposal = currentUser?.addresses?.includes(address);
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
+	const [tagsModal, setTagsModal] = useState<boolean>(false);
+
 	return (
 		<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-3 md:p-4`}>
 			<div className="flex flex-col justify-between">
@@ -86,16 +90,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 				</div>
 
-				<div className="mt-3 gap-2.5 font-medium text-navBlue text-xs flex flex-col md:flex-row items-start md:items-center">
+				<div className="mt-3 gap-2.5 font-medium text-navBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
 					<OnchainCreationLabel address={address} username={username} topic={topic} />
-					<Divider className='hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+					<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 
 					<div className='flex items-center gap-x-2'>
 						<div className='flex items-center justify-center gap-x-1.5'>
 							<LikeOutlined />
 							<span>{getFormattedLike(postReactionCount['👍'])}</span>
 						</div>
-						<Divider className='hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+						<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 						<div className='flex items-center justify-center gap-x-1.5'>
 							<DislikeOutlined />
 							<span>{getFormattedLike(postReactionCount['👎'])}</span>
@@ -103,7 +107,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						{
 							isCommentsVisible?
 								<>
-									<Divider className='hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+									<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 									<div className='flex items-center'>
 										<CommentOutlined className='mr-1' /> {commentsCount}
 									</div>
@@ -120,7 +124,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 					{!!end && !!currentBlock &&
 							<div className="flex items-center">
-								<Divider className='hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+								<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 								<ClockCircleOutlined className='mr-1' />
 								{
 									end > currentBlock
@@ -128,9 +132,32 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										: <span>ended <BlockCountdown endBlock={end}/></span>
 								}
 							</div>
-					}
+					}<div className='flex gap-[4px] items-center'>
+						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
+						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
+							(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >
+								{tag?.charAt(0).toUpperCase()+tag?.slice(1).toLowerCase()}
+							</div>))}
+						{tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+                +{tags.length-2} more
+						</span>}
+						</>}
+					</div>
 				</div>
 			</div>
+			<Modal
+				open= {tagsModal}
+				onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
+				footer={false}
+				className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 w-[433px] max-sm:w-[100%] h-[120px] padding  justify-center center-aligned`}
+			><div>
+					<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
+					<div className='flex gap-2'>{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
+						(<div key={index} className='rounded-xl px-[16px] py-[2px] border-navBlue border-solid border-[1px] font-normal text-xs text-navBlue' >
+							{tag?.charAt(0).toUpperCase()+tag?.slice(1).toLowerCase()}
+						</div>))}
+					</>}</div></div>
+			</Modal>
 		</div>
 	);
 };

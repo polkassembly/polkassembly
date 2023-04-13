@@ -346,7 +346,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								/>
 								{
 									id &&
-										<Button disabled={props.disableEdit} className={'text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1' } onClick={toggleReply}>
+										<Button disabled={props.disableEdit} className={'text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1' } onClick={ toggleReply }>
 											<ReplyIcon className='mr-1'/> Reply
 										</Button>
 								}
@@ -363,7 +363,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							{/* Add Reply Form*/}
 							{errorReply && <div>{errorReply}</div>}
 							{
-								isReplying && !props.disableEdit && <Form
+								!props.disableEdit && isReplying && <Form
 									form={replyForm}
 									name="reply-content-form"
 									onFinish={handleReplySave}

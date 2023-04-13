@@ -57,7 +57,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { network } = useContext(NetworkContext);
 
 	const { userId, className, comment, content, commentId,sentiment,setSentiment,prevSentiment } = props;
-	const { setPostData } = usePostDataContext();
+	const { setPostData, postData: { postType } } = usePostDataContext();
 	const { asPath } = useRouter();
 
 	const [isEditing, setIsEditing] = useState(false);
@@ -295,7 +295,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		},
 		id && !isEditing ?{
 			key:3,
-			label:<ReportButton className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}  type='comment' contentId={commentId}/>
+			label: <ReportButton proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}  type='comment' contentId={commentId}/>
 		}:null,
 		id===userId ? {
 			key:4,

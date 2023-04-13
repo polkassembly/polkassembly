@@ -79,6 +79,7 @@ const TrackListingTabContent: FC<ITrackListingTabContentProps> = (props) => {
 								topic={post.topic.name}
 								created_at={post.created_at}
 								tags={post?.tags}
+								is_spam={post?.is_spam}
 							/>
 						</Link>}
 					</div>

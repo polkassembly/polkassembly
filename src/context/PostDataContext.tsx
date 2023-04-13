@@ -47,6 +47,7 @@ export interface IPostData {
     track_name?: string;
     track_number?: number;
     tags: string[] | [];
+    spam_users_count?: number;
 }
 
 export interface IPostDataContext {

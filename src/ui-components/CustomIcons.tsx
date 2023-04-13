@@ -61,6 +61,12 @@ import SlightlyAgainstUnfilledSVG from '~assets/icons/slightly-against-unfilled.
 import NeutralUnfilledSVG from '~assets/icons/neutral-unfilled.svg';
 import SlightlyForUnfilledSVG from '~assets/icons/slightly-for-unfilled.svg';
 import ForUnfilleSVG from '~assets/icons/for-unfilled.svg';
+import FilterSVG from '~assets/icons/filter-icon.svg';
+import FilterUnfilledSVG from '~assets/icons/filter-unfilled.svg';
+import SearchSVG from '~assets/icons/search.svg';
+import CheckedSVG from '~assets/icons/checked.svg';
+import CheckedOutlinedSVG from '~assets/icons/check-outline.svg';
+import TrendingSVG from '~assets/icons/trending.svg';
 
 export const OverviewIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={OverviewSVG} {...props} />
@@ -269,4 +275,23 @@ export const ForIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 export const ForUnfilledIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={ForUnfilleSVG} {...props} />
+);
+export const FilterIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={FilterSVG} {...props} />
+);
+export const FilterUnfilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={FilterUnfilledSVG} {...props} />
+);
+
+export const SearchIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SearchSVG} {...props} />
+);
+export const CheckOutlineIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CheckedOutlinedSVG} {...props} />
+);
+export const CheckedIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CheckedSVG} {...props} />
+);
+export const TrendingIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={TrendingSVG} {...props} />
 );

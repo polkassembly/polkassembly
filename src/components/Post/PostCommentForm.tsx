@@ -27,7 +27,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className } = props;
 	const { id, username } = useUserDetailsContext();
 	const { postData: { postIndex, postType }, setPostData } = usePostDataContext();
-	const [content, setContent] = useState('');
+	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -77,6 +77,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		if(data) {
 			setContent('');
 			form.resetFields();
+			form.setFieldValue('content', '');
 			global.window.localStorage.removeItem(commentKey());
 			postIndex && createSubscription(postIndex);
 			setPostData((prev) => ({

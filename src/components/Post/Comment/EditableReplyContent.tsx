@@ -28,6 +28,8 @@ interface Props {
 	replyId: string
 }
 
+const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.location.href}`;
+
 const EditableReplyContent = ({ userId, className, commentId, content, replyId }: Props) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const { id } = useContext(UserDetailsContext);
@@ -42,12 +44,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId }
 	} } = usePostDataContext();
 
 	useEffect(() => {
-		form.setFieldValue('content', content); //initialValues is not working
+		const localContent = global.window.localStorage.getItem(editReplyKey(replyId)) || '';
+		form.setFieldValue('content', localContent || content || ''); //
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleCancel = () => {
 		toggleEdit();
+		global.window.localStorage.removeItem(editReplyKey(replyId));
 		form.setFieldValue('content', '');
 	};
 
@@ -80,6 +84,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId }
 
 		if (data) {
 			setError('');
+			global.window.localStorage.removeItem(editReplyKey(replyId));
 			form.setFieldValue('content', '');
 			setPostData((prev) => {
 				let comments: IComment[] = [];
@@ -180,7 +185,10 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId }
 								{ required: "Please add the '${name}'" }
 							}
 						>
-							<ContentForm />
+							<ContentForm onChange={(content: string) => {
+								global.window.localStorage.setItem(editReplyKey(replyId), content);
+								return content.length ? content : null;
+							}} />
 							<Form.Item>
 								<div className='flex items-center justify-end'>
 									<Button htmlType="button" onClick={handleCancel} className='mr-2 flex items-center'>

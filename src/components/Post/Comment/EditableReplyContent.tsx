@@ -33,13 +33,12 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const EditableReplyContent = ({ userId, className, commentId, content, replyId }: Props) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const { id } = useContext(UserDetailsContext);
-	const { setPostData } = usePostDataContext();
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 
-	const { postData: {
+	const { setPostData, postData: {
 		postType, postIndex
 	} } = usePostDataContext();
 
@@ -214,7 +213,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId }
 									</Button>
 								}
 								{id === userId && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>}
-								{id && !isEditing && <ReportButton className='text-xs' type='comment' contentId={commentId + '#' + replyId} />}
+								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} type='comment' contentId={commentId + '#' + replyId} />}
 							</div>
 						</>
 				}

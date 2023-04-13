@@ -62,7 +62,7 @@ const AddTags=({ tags,setTags,className }:Props) => {
 	const handleInputConfirm = () => {
 
 		if(selectedTag.current !== null){
-			if ( tags.length < 5 && selectedTag.current && tags.indexOf( selectedTag.current ) === -1 && selectedTag.current !== null){
+			if ( tags.length < 5 && selectedTag.current && tags.indexOf( selectedTag.current.toLowerCase() ) === -1 && selectedTag.current !== null){
 				setTags([...tags, selectedTag.current.trim()]);
 			}
 		}

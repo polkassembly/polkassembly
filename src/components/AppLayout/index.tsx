@@ -222,6 +222,23 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems];
 	}
 
+	if(network === 'tanganika'){
+		const offChainGovItems = [
+			getSiderMenuItem('Remark Proposals', '/remark-proposals', <DemocracyProposalsIcon className='text-white' />)
+		];
+
+		items.splice(4, 0,
+			getSiderMenuItem('Off Chain Governance', 'offchain_group', null, [
+				...offChainGovItems
+			])
+		);
+
+		collapsedItems.splice(4, 0,
+			...offChainGovItems
+		);
+
+	}
+
 	const gov2TrackItems: {[x:string]: ItemType[]} = {
 		mainItems: [],
 		governanceItems : [],
@@ -397,7 +414,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						theme="light"
 						mode="inline"
 						selectedKeys={[router.pathname]}
-						defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group']}
+						defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group', 'offchain_group']}
 						items={sidebarItems}
 						onClick={handleMenuClick}
 						className={`${username?'auth-sider-menu':''} mt-[60px]`}

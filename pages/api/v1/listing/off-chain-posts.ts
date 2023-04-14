@@ -60,7 +60,6 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 		}
 
 		const offChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
-		console.log(filterBy, filterBy?.length, (filterBy && filterBy.length >= 0), orderedField, order, Number(listingLimit), LISTING_LIMIT, page);
 		const postsSnapshotArr = (filterBy && filterBy.length > 0)
 			? await offChainCollRef
 				.where('tags','array-contains-any',filterBy)

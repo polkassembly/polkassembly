@@ -45,6 +45,8 @@ import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
 import Curves from './Referenda/Curves';
 import CloseIcon from 'public/assets/icons/close.svg';
+import VoteRemarkProposal from './RemarkProposals/VoteRemarkProposal';
+import RemarkProposalTimestamps from './RemarkProposals/RemarkProposalTimestamps';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -451,6 +453,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			</GovSidebarCard>
 		);
 	}
+
 	return (
 		<>
 			{<div className={className}>
@@ -691,6 +694,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						/>
 					</>
 					}
+
+					{proposalType === ProposalType.REMARK_PROPOSALS && post.remark_options?.length && <>
+						<RemarkProposalTimestamps
+							className='mb-8'
+							startBlock={post.start_block_num}
+							endBlock={post.end_block_num}
+						/>
+						<VoteRemarkProposal />
+					</>}
 				</Form>
 			</div>
 			}

@@ -24,6 +24,7 @@ const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 
 interface IPostHeadingProps {
 	className?: string;
+	customStatus?:string;
 }
 const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router= useRouter();
@@ -45,7 +46,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	return (
 		<div className={className} >
 			<div className="flex justify-between items-center">
-				{status && <StatusTag className='mb-3' status={status}/>}
+				{(props.customStatus || status) && <StatusTag className='mb-3' status={props.customStatus || status}/>}
 				{ requestedAmt && <h5 className='text-sm text-sidebarBlue font-medium'>Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}</h5>}
 			</div>
 			<h2 className='text-lg text-sidebarBlue font-medium mb-1'>

@@ -20,6 +20,12 @@ export const referendumStatus = {
 	VETOED: 'Vetoed'
 };
 
+export const remarkProposalStatus = {
+	ENDED: 'Ended',
+	IN_PROGRESS: 'In-Progress',
+	YET_TO_START: 'Yet-to-Start'
+};
+
 export const gov2ReferendumStatus = {
 	CANCELLED: 'Cancelled',
 	CONFIRMED: 'Confirmed',

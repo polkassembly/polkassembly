@@ -31,6 +31,8 @@ import CloseIcon from '~assets/icons/close.svg';
 import { PlusOutlined } from '@ant-design/icons';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import SpamAlert from '~src/ui-components/SpamAlert';
+import { useApiContext } from '~src/context';
+import { remarkProposalStatus } from '~src/global/statuses';
 
 const GovernanceSideBar = dynamic(() => import('./GovernanceSideBar'), {
 	loading: () => <Skeleton active /> ,
@@ -81,6 +83,8 @@ const Post: FC<IPostProps> = (props) => {
 		proposalType
 	} = props;
 
+	const { api, apiReady } = useApiContext();
+
 	const { id, addresses } = useContext(UserDetailsContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
@@ -91,6 +95,8 @@ const Post: FC<IPostProps> = (props) => {
 		text: ''
 	});
 	const [canEdit, setCanEdit] = useState(false);
+	const [currentBlockNumber, setCurrentBlockNumber] = useState(0);
+	const [remarkStatus, setRemarkStatus] = useState('');
 
 	const [duration, setDuration] = useState(dayjs.duration(0));
 	const [graphicOpen, setGraphicOpen] = useState<boolean>(true);
@@ -182,6 +188,27 @@ const Post: FC<IPostProps> = (props) => {
 			}
 		}
 	}, [post]);
+
+	useEffect(() => {
+		if(proposalType !== ProposalType.REMARK_PROPOSALS || !api || !apiReady) return;
+
+		if(!currentBlockNumber) {
+			api.derive.chain.bestNumber((number) => {
+				setCurrentBlockNumber(number.toNumber());
+			});
+		} else {
+			if(Number(post.start_block_num) > currentBlockNumber){
+				setRemarkStatus(remarkProposalStatus.YET_TO_START);
+			}
+			if(Number(post.start_block_num) < currentBlockNumber && Number(post.end_block_num) > currentBlockNumber){
+				setRemarkStatus(remarkProposalStatus.IN_PROGRESS);
+			}
+			if(Number(post.end_block_num) < currentBlockNumber){
+				setRemarkStatus(remarkProposalStatus.ENDED);
+			}
+		}
+
+	}, [api, apiReady, currentBlockNumber, post, proposalType]);
 
 	if (!post) {
 		return (
@@ -411,6 +438,7 @@ const Post: FC<IPostProps> = (props) => {
 							{!isEditing && <>
 								<PostHeading
 									className='mb-8'
+									customStatus={remarkStatus}
 								/>
 								<Tabs
 									type="card"

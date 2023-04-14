@@ -12,12 +12,15 @@ interface IArgumentsTableProps {
 const urlRegex = /(https?:\/\/[^\s]+)/g;
 
 const constructAnchorTag = (value: string) => {
-	if (!value) return value;
-	const urls = value.match(urlRegex);
-	if (urls) {
-		urls?.forEach((url) => {
-			value = value.replace(url, `<a class="text-pink_primary" href='${url}' target='_blank'>${url}</a>`);
-		});
+	if (value && typeof value === 'string') {
+		const urls = value.match(urlRegex);
+		if (urls && Array.isArray(urls)) {
+			urls?.forEach((url) => {
+				if (url && typeof url === 'string') {
+					value = value.replace(url, `<a class="text-pink_primary" href='${url}' target='_blank'>${url}</a>`);
+				}
+			});
+		}
 	}
 	return value;
 };

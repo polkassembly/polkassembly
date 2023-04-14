@@ -18,14 +18,15 @@ interface Props {
 }
 
 function isHex(value: string) {
-	return typeof value == 'string' && value.length % 2 == 0 && /^0x[a-f\d]*$/i.test(value);
+	return typeof value === 'string' && value.length % 2 == 0 && /^0x[a-f\d]*$/i.test(value);
 }
 
 function containsBinaryData(str: string) {
-	const buffer = Buffer.from(str);
+	if (!str || typeof str !== 'string') return false;
+	const buffer = Buffer.from(str.trim());
 
 	for (let i = 0; i < buffer.length; i++) {
-		if (buffer[i] < 32 || buffer[i] > 126) {
+		if ((buffer[i] > 0 && buffer[i] < 32) || buffer[i] > 126) {
 			return true;
 		}
 	}
@@ -41,9 +42,8 @@ const convertAnyHexToASCII = (obj: any): any => {
 				const str = u8aToString(Buffer.from(obj.replace('0x', ''), 'hex'));
 				if (containsBinaryData(str)) {
 					return obj;
-				} else {
-					return str;
 				}
+				return str;
 			} catch (err) {
 				return obj;
 			}

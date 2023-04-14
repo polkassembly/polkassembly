@@ -9,6 +9,19 @@ interface IArgumentsTableProps {
 	argumentsJSON: any,
 }
 
+const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+const constructAnchorTag = (value: string) => {
+	if (!value) return value;
+	const urls = value.match(urlRegex);
+	if (urls) {
+		urls?.forEach((url) => {
+			value = value.replace(url, `<a class="text-pink_primary" href='${url}' target='_blank'>${url}</a>`);
+		});
+	}
+	return value;
+};
+
 const ArgumentsTable: FC<IArgumentsTableProps> = ({ argumentsJSON }) => {
 	if (!argumentsJSON) return null;
 	return (
@@ -20,9 +33,9 @@ const ArgumentsTable: FC<IArgumentsTableProps> = ({ argumentsJSON }) => {
 					</td>
 					{
 						typeof value !== 'object'?
-							<td className='direct-data data-2'>
-								{value as any}
-							</td>
+							<td dangerouslySetInnerHTML={{
+								__html: constructAnchorTag(value as any)
+							}} className='direct-data data-2'/>
 							: <td className='indirect-data data-1'>
 								<ArgumentsTable argumentsJSON={value} />
 							</td>

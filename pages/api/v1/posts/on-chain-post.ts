@@ -80,10 +80,10 @@ export interface IPostResponse {
 	};
 	decision?: string;
 	last_edited_at?: string | Date | null;
-	[key: string]: any;
   gov_type?: 'gov_1' | 'open_gov' ;
   tags?: string[] | [];
 	remark_options?: string[]
+	[key: string]: any;
 }
 
 export type IReaction = '👍' | '👎';

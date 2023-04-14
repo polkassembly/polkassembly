@@ -22,7 +22,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, proposalType, title, topicId, userId ,gov_type,tags, remark_options } = req.body;
+	const { content, proposalType, title, topicId, userId ,gov_type,tags, remark_options, start_block_num, end_block_num, proposer_address } = req.body;
 	if(!content || !title || !topicId || !userId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if(tags && !Array.isArray(tags)) return  res.status(400).json({ message: 'Invalid tags parameter' });
@@ -30,6 +30,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The off chain proposal type "${proposalType}" is invalid.` });
+
+	if(strProposalType === ProposalType.REMARK_PROPOSALS) {
+		if(!start_block_num || !end_block_num || !proposer_address) return res.status(400).json({ message: 'Missing parameters for remark post in request body' });
+	}
 
 	const token = getTokenFromReq(req);
 	if(!token) return res.status(400).json({ message: 'Invalid token' });
@@ -54,7 +58,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 		last_comment_at,
 		last_edited_at: last_comment_at,
 		post_link: null,
-		proposer_address: userDefaultAddress?.address || '',
+		proposer_address: proposer_address || userDefaultAddress?.address || '',
 		tags:tags ? tags : [],
 		title,
 		topic_id: strProposalType === ProposalType.GRANTS? 6:Number(topicId),
@@ -64,6 +68,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	if(remark_options && remark_options.length) {
 		newPost.remark_options = remark_options;
+		newPost.start_block_num = Number(start_block_num);
+		newPost.end_block_num = Number(end_block_num);
 	}
 
 	const batch = firestore_db.batch();

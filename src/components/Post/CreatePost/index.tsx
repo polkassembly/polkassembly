@@ -139,11 +139,11 @@ const CreatePost = ({ className, proposalType } : Props) => {
 		setLoading(false);
 	};
 
-	async function _createPost(content: string, title: string, options?: string[]) {
+	async function _createPost(content: string, title: string, remarkPayload?:any, options?: string[]) {
 		setFormDisabled(true);
 		setLoading(true);
 
-		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>( 'api/v1/auth/actions/createPost', {
+		const createPostPayload: any = {
 			content,
 			gov_type:govType,
 			proposalType,
@@ -152,7 +152,15 @@ const CreatePost = ({ className, proposalType } : Props) => {
 			title,
 			topicId,
 			userId: currentUser.id
-		});
+		};
+
+		if(remarkPayload && remarkPayload.address && remarkPayload.start && remarkPayload.end && remarkPayload.address) {
+			createPostPayload.start_block_num = Number(remarkPayload.start);
+			createPostPayload.end_block_num = Number(remarkPayload.end);
+			createPostPayload.proposer_address = String(remarkPayload.address);
+		}
+
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>( 'api/v1/auth/actions/createPost', createPostPayload);
 
 		if(apiError || !data?.post_id) {
 			setError(apiError || 'There was an error creating your post.');
@@ -199,21 +207,23 @@ const CreatePost = ({ className, proposalType } : Props) => {
 				setFormDisabled(true);
 				setLoading(true);
 
-				const payload = JSON.stringify({
+				const remarkPayload = {
 					address,
 					content,
 					end: endBlock,
 					id: currentUser.id,
 					start: startBlock,
 					title
-				});
+				};
+
+				const payload = JSON.stringify(remarkPayload);
 
 				await api.tx.system.remarkWithEvent(`Tanganika::Proposal::${payload}`).signAndSend(address, async ({ status }) => {
 					setFormDisabled(true);
 					setLoading(true);
 
 					if(status.isInBlock){
-						await _createPost(content, title, options);
+						await _createPost(content, title, remarkPayload, options);
 					}
 				}).catch((error) => {
 					queueNotification({

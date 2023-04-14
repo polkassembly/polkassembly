@@ -32,12 +32,10 @@ interface IRemarkProposalProps {
 	data: IPostResponse;
 	error?: string;
 }
-const GrantPost: FC<IRemarkProposalProps> = (props) => {
+const RemarkProposalPost: FC<IRemarkProposalProps> = (props) => {
 	const { data: post, error } = props;
 
 	if (error) return <ErrorState errorMessage={error} />;
-
-	console.log('post; ', post);
 
 	if (post) return (<>
 		<SEOHead title={post.title || `${noTitle} Remark Proposal`} desc={post.content} />
@@ -53,4 +51,4 @@ const GrantPost: FC<IRemarkProposalProps> = (props) => {
 
 };
 
-export default GrantPost;
+export default RemarkProposalPost;

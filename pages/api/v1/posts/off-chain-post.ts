@@ -168,6 +168,8 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 
 		if(proposalType === ProposalType.REMARK_PROPOSALS) {
 			post.remark_options = data?.remark_options || [];
+			post.start_block_num = Number(data?.start_block_num || 0);
+			post.end_block_num = Number(data?.end_block_num || 0);
 		}
 
 		if (post && (post.user_id || post.user_id === 0)) {

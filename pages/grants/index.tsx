@@ -4,10 +4,9 @@
 
 import { Button } from 'antd';
 import { GetServerSideProps } from 'next';
-import Link from 'next/link';
 import { getOffChainPosts } from 'pages/api/v1/listing/off-chain-posts';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-import { FC, useContext, useEffect } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
@@ -18,6 +17,8 @@ import { OffChainProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { ErrorState } from '~src/ui-components/UIStates';
+import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import { useRouter } from 'next/router';
 
 interface IGrantsProps {
 	data?: IPostsListingResponse;
@@ -61,6 +62,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 const Grants: FC<IGrantsProps> = (props) => {
 	const { data, error, network } = props;
 	const { setNetwork } = useNetworkContext();
+	const [openModal,setModalOpen]=useState<boolean>(false);
 
 	useEffect(() => {
 		setNetwork(props.network);
@@ -68,19 +70,27 @@ const Grants: FC<IGrantsProps> = (props) => {
 	}, []);
 
 	const { id } = useContext(UserDetailsContext);
+	const router = useRouter();
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;
 	const { posts, count } = data;
+
+	const handleClick=() => {
+		if(id){
+			router.push('/grant/create');
+		}else{
+			setModalOpen(true);
+		}
+
+	};
 
 	return (
 		<>
 			<SEOHead title='Discussions' />
 			<div className='w-full flex flex-col sm:flex-row sm:items-center'>
 				<h1 className='dashboard-heading flex-1 mb-4 sm:mb-0'>Grants Discussion</h1>
-				<Link href="/grant/create">
-					<Button disabled={!id} className={`flex items-center justify-center ${id && 'bg-pink_primary hover:bg-pink_secondary text-white transition-colors duration-300'} h-[40px] md:h-[69px] w-full md:w-[300px] rounded-md`}>New Grant post</Button>
-				</Link>
+				<Button onClick={handleClick} className='outline-none border-none h-[59px] w-[174px] px-6 py-4 font-medium text-lg leading-[27px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer'>New Grant post</Button>
 			</div>
 
 			{/* Intro and Create Post Button */}
@@ -92,6 +102,7 @@ const Grants: FC<IGrantsProps> = (props) => {
 			</div>
 
 			<OffChainPostsContainer proposalType={OffChainProposalType.GRANTS} posts={posts} count={count} className='mt-8' />
+			<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title="Join Polkassembly to Start a New Discussion." subtitle="Discuss, contribute and get regular updates from Polkassembly."/>
 		</>
 	);
 };

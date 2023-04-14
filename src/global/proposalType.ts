@@ -18,11 +18,13 @@ export enum ProposalType {
 	OPEN_GOV = 'referendums_v2',
 	REFERENDUM_V2 = 'referendums_v2',
 	DISCUSSIONS = 'discussions',
-	GRANTS = 'grants'
+	GRANTS = 'grants',
+	REMARK_PROPOSALS = 'remark_proposals'
 }
 export enum OffChainProposalType {
 	DISCUSSIONS = 'discussions',
-	GRANTS = 'grants'
+	GRANTS = 'grants',
+	REMARK_PROPOSALS = 'remark_proposals'
 }
 
 export enum EGovType {
@@ -45,7 +47,7 @@ export type TSubsquidProposalType =
 	| 'ReferendumV2'
 	| 'FellowshipReferendum';
 
-export function getSubsquidProposalType(proposalType: Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>): TSubsquidProposalType {
+export function getSubsquidProposalType(proposalType: Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS | ProposalType.REMARK_PROPOSALS>): TSubsquidProposalType {
 	switch(proposalType) {
 	case ProposalType.DEMOCRACY_PROPOSALS:
 		return 'DemocracyProposal';
@@ -95,6 +97,8 @@ export function getFirestoreProposalType(proposalType: string): string {
 		return 'discussions';
 	case 'Grants':
 		return 'grants';
+	case 'RemarkProposals':
+		return 'remark_proposals';
 	}
 	return '';
 }
@@ -123,6 +127,7 @@ export function getProposalTypeTitle(proposalType: ProposalType) {
 		return 'tip';
 	}
 }
+
 export function getSinglePostLinkFromProposalType(proposalType: ProposalType | OffChainProposalType): string {
 	switch(proposalType) {
 	case ProposalType.BOUNTIES:
@@ -137,6 +142,8 @@ export function getSinglePostLinkFromProposalType(proposalType: ProposalType | O
 		return 'post';
 	case ProposalType.GRANTS:
 		return 'grant';
+	case ProposalType.REMARK_PROPOSALS:
+		return 'remark-proposal';
 	case ProposalType.FELLOWSHIP_REFERENDUMS:
 		return 'fellowship_referendum';
 	case ProposalType.OPEN_GOV:
@@ -154,7 +161,7 @@ export function getSinglePostLinkFromProposalType(proposalType: ProposalType | O
 }
 
 export const proposalTypes = ['democracy_proposals', 'tech_committee_proposals', 'treasury_proposals', 'referendums', 'fellowship_referendums', 'council_motions', 'bounties', 'tips', 'child_bounties', 'open_gov', 'referendums_v2'];
-export const offChainProposalTypes = ['discussions', 'grants'];
+export const offChainProposalTypes = ['discussions', 'grants', 'remark_proposals'];
 
 export const gov1ProposalTypes = ['DemocracyProposal', 'TechCommitteeProposal', 'TreasuryProposal', 'Referendum', 'CouncilMotion', 'Bounty', 'Tip', 'ChildBounty'];
 

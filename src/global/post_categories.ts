@@ -5,6 +5,7 @@
 export enum PostCategory {
 	DISCUSSION = 'discussion',
 	GRANT = 'grant',
+	REMARK_PROPOSAL = 'remark proposal',
 	REFERENDA = 'referenda',
 	PROPOSAL = 'proposal',
 	MOTION = 'motion',

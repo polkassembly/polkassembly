@@ -165,6 +165,11 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			username: data?.username
 
 		};
+
+		if(proposalType === ProposalType.REMARK_PROPOSALS) {
+			post.remark_options = data?.remark_options || [];
+		}
+
 		if (post && (post.user_id || post.user_id === 0)) {
 			let { user_id } = post;
 			if (typeof user_id !== 'number') {

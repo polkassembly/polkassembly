@@ -28,6 +28,9 @@ const BackToListingView = ({ postCategory, trackName } : Props) => {
 		case PostCategory.GRANT:
 			path = 'grants';
 			break;
+		case PostCategory.REMARK_PROPOSAL:
+			path = 'remark-proposals';
+			break;
 		case PostCategory.REFERENDA:
 			path = 'referenda';
 			break;

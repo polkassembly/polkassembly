@@ -22,10 +22,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, proposalType, title, topicId, userId ,gov_type,tags } = req.body;
+	const { content, proposalType, title, topicId, userId ,gov_type,tags, remark_options } = req.body;
 	if(!content || !title || !topicId || !userId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if(tags && !Array.isArray(tags)) return  res.status(400).json({ message: 'Invalid tags parameter' });
+	if(remark_options && !Array.isArray(remark_options)) return  res.status(400).json({ message: 'Invalid remark_options parameter' });
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The off chain proposal type "${proposalType}" is invalid.` });
@@ -60,6 +61,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 		user_id: user.id,
 		username: user.username
 	};
+
+	if(remark_options && remark_options.length) {
+		newPost.remark_options = remark_options;
+	}
 
 	const batch = firestore_db.batch();
 	tags.length > 0 && tags?.map((tag:string) => {

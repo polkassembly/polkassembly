@@ -287,6 +287,7 @@ export interface Post {
   username?: string;
   gov_type?:'gov_1' | 'open_gov'
   tags?:string[] | [];
+  remark_options?: string[]
 }
 export interface IPostTag {
   name:string;

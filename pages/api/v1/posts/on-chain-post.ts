@@ -83,6 +83,7 @@ export interface IPostResponse {
 	[key: string]: any;
   gov_type?: 'gov_1' | 'open_gov' ;
   tags?: string[] | [];
+	remark_options?: string[]
 }
 
 export type IReaction = '👍' | '👎';

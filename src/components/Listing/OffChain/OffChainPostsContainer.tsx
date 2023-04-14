@@ -27,8 +27,11 @@ export function getTitle(proposalType: OffChainProposalType): string {
 		return 'Discussions';
 	case OffChainProposalType.GRANTS:
 		return 'Grants';
+	case OffChainProposalType.REMARK_PROPOSALS:
+		return 'Remark Proposals';
+	default:
+		return '';
 	}
-	return '';
 }
 
 const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className, count, proposalType }) => {

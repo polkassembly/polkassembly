@@ -10,6 +10,8 @@ import StatusTag from '~src/ui-components/StatusTag';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 
 import { IPostsRowData } from './PostsTable';
+import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
+import { Tooltip } from 'antd';
 
 const Index: any = {
 	dataIndex: 'post_id',
@@ -39,8 +41,23 @@ const Creator: any = {
 const Status: any = {
 	dataIndex: 'status',
 	key: 'status',
-	render: (status: any) => {
-		if(status) return <StatusTag status={status} />;
+	render: (status: any, obj: any) => {
+		if(status || obj.spam_users_count) return <div className='flex items-center gap-x-2'>
+			{
+				status?
+					<StatusTag status={status} />
+					: null
+			}
+			{
+				obj.spam_users_count ?
+					<div className='flex items-center justify-center'>
+						<Tooltip color="#E5007A" title="This post could be a spam.">
+							<WarningMessageIcon className='text-lg text-[#FFA012]' />
+						</Tooltip>
+					</div>
+					: null
+			}
+		</div>;
 	},
 	title: 'Status',
 	width: 200

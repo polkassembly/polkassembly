@@ -14,6 +14,7 @@ import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
+import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 
 export interface ILatestActivityPostsListingResponse {
     count: number;
@@ -129,7 +130,15 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 			};
 		});
 
-		const posts = await Promise.all(postsPromise);
+		const postsResults = await Promise.allSettled(postsPromise);
+		let posts = postsResults.reduce((prev, post) => {
+			if (post && post.status === 'fulfilled') {
+				prev.push(post.value);
+			}
+			return prev;
+		}, [] as any[]);
+
+		posts = await getSpamUsersCountForPosts(network, posts, strProposalType);
 
 		const data: ILatestActivityPostsListingResponse = {
 			count: Number(subsquidData?.proposalsConnection.totalCount),

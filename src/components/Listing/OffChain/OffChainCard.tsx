@@ -110,7 +110,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 				open= {tagsModal}
 				onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 				footer={false}
-				className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 w-[433px] max-sm:w-[100%] h-[120px] padding  justify-center center-aligned`}
+				className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 max-sm:w-[100%] h-[120px] padding  justify-center center-aligned`}
 			><div>
 					<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
 					<div className='flex gap-2 max-sm:flex-col items-start'>{tags && tags.length>0 && <>{ tags?.map((tag,index) =>

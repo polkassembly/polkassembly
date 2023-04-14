@@ -19,6 +19,7 @@ import messages from '~src/util/messages';
 import { ILatestActivityPostsListingResponse } from './on-chain-posts';
 import { firestore_db } from '~src/services/firebaseInit';
 import { chainProperties } from '~src/global/networkConstants';
+import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 
 interface IGetLatestActivityAllPostsParams {
 	listingLimit?: string | string[] | number;
@@ -259,8 +260,10 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 		}
 
 		const allPosts = [...onChainPosts, ...offChainPosts];
-		const deDupedAllPosts = Array.from(new Set(allPosts));
+		let deDupedAllPosts = Array.from(new Set(allPosts));
 		deDupedAllPosts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+		deDupedAllPosts = await getSpamUsersCountForPosts(network, deDupedAllPosts);
 
 		const data: ILatestActivityPostsListingResponse = {
 			count:  onChainPostsCount + offChainPostsCount,

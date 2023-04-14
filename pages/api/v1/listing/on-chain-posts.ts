@@ -8,7 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isCustomOpenGovStatusValid, isProposalTypeValid, isSortByValid, isTrackNoValid, isTrackPostStatusValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-import { getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
+import { getFirestoreProposalType, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
 import {  GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES } from '~src/queries';
 import { IApiResponse } from '~src/types';
@@ -445,7 +445,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 	}
 }
 
-export const getSpamUsersCountForPosts = async (network: string, posts: any[], proposalType: string): Promise<any[]> => {
+export const getSpamUsersCountForPosts = async (network: string, posts: any[], proposalType?: string): Promise<any[]> => {
 	const postsMap = new Map();
 	posts.forEach((post, index) => {
 		if (post) {
@@ -458,15 +458,20 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 		const newIdsLen = postsMap.size;
 		let lastIndex = 0;
 		for (let i = 0; i < newIdsLen; i+=30) {
-			lastIndex = i;
-			const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+			lastIndex = i + 30;
+			let querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('content_id', 'in', postsIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+			if (proposalType) {
+				querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+			}
+
+			const reportsQuery = await querySnapshot;
 
 			reportsQuery.docs.map((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();
 					const index = postsMap.get(data.content_id);
 					if (index !== undefined && index !== null) {
-						if (posts[index]) {
+						if (posts[index] && (proposalType || data.proposal_type === getFirestoreProposalType(posts[index].type))) {
 							posts[index] = {
 								...posts[index],
 								spam_users_count: Number(posts[index].spam_users_count || 0) + 1
@@ -476,14 +481,18 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 				}
 			});
 		}
-		if (lastIndex <= newIdsLen) {
-			const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+		if (lastIndex < newIdsLen) {
+			let querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('content_id', 'in', postsIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+			if (proposalType) {
+				querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+			}
+			const reportsQuery = await querySnapshot;
 			reportsQuery.docs.map((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();
 					const index = postsMap.get(data.content_id);
 					if (index !== undefined && index !== null) {
-						if (posts[index]) {
+						if (posts[index] && (proposalType || data.proposal_type === getFirestoreProposalType(posts[index].type))) {
 							posts[index] = {
 								...posts[index],
 								spam_users_count: Number(posts[index].spam_users_count || 0) + 1

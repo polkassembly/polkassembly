@@ -60,23 +60,22 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 		}
 
 		const offChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
-		const postsSnapshotArr = !(filterBy && filterBy.length >= 0)
+		const postsSnapshotArr = (filterBy && filterBy.length > 0)
 			? await offChainCollRef
+				.where('tags','array-contains-any',filterBy)
 				.orderBy(orderedField, order)
 				.limit(Number(listingLimit) || LISTING_LIMIT)
 				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
 				.get()
-			:
-			await offChainCollRef
-				.where('tags','array-contains-any',filterBy)
+			:await offChainCollRef
 				.orderBy(orderedField, order)
 				.limit(Number(listingLimit) || LISTING_LIMIT)
 				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
 				.get();
 
-		const count = !(filterBy && filterBy.length >= 0)
-			? (await offChainCollRef.count().get()).data().count
-			:(await offChainCollRef.where('tags','array-contains-any',filterBy).count().get()).data().count;
+		const count = (filterBy && filterBy.length > 0)
+			?(await offChainCollRef.where('tags','array-contains-any',filterBy).count().get()).data().count
+			: (await offChainCollRef.count().get()).data().count;
 
 		const postsPromise = postsSnapshotArr.docs.map(async (doc) => {
 			if (doc && doc.exists) {

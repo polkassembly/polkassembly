@@ -10,6 +10,9 @@ import styled from 'styled-components';
 
 import ArgumentsTable from './ArgumentsTable';
 import { u8aToString } from '@polkadot/util';
+import { useNetworkContext } from '~src/context';
+import { encodeAddress } from '@polkadot/util-crypto';
+import { chainProperties } from '~src/global/networkConstants';
 
 interface Props {
 	className?: string
@@ -34,13 +37,26 @@ function containsBinaryData(str: string) {
 	return false;
 }
 
-const convertAnyHexToASCII = (obj: any): any => {
+const convertAnyHexToASCII = (obj: any, network: string): any => {
 	if (!obj) return obj;
 	if (typeof obj === 'string') {
 		if (isHex(obj)) {
 			try {
 				const str = u8aToString(Buffer.from(obj.replace('0x', ''), 'hex'));
 				if (containsBinaryData(str)) {
+					const ss58Format = chainProperties?.[network]?.ss58Format;
+					try {
+						const str =  encodeAddress(obj, ss58Format);
+						if (str) {
+							if (containsBinaryData(str)) {
+								return obj;
+							} else {
+								return str;
+							}
+						}
+					} catch (error) {
+						return obj;
+					}
 					return obj;
 				}
 				return str;
@@ -51,18 +67,26 @@ const convertAnyHexToASCII = (obj: any): any => {
 			return obj;
 		}
 	} else if (Array.isArray(obj)) {
-		return obj?.map(convertAnyHexToASCII);
+		return obj?.map((v) => {
+			if (typeof v === 'string') {
+				return v;
+			}
+			return convertAnyHexToASCII(v, network);
+		});
 	} if (typeof obj === 'object') {
 		for (const key in obj) {
-			obj[key] = convertAnyHexToASCII(obj[key]);
+			if (key.trim().toLowerCase() !== 'id') {
+				obj[key] = convertAnyHexToASCII(obj[key], network);
+			}
 		}
 	}
 	return obj;
 };
 
 const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments }: Props) => {
+	const { network } = useNetworkContext();
 	if(postArguments) {
-		postArguments = convertAnyHexToASCII(postArguments);
+		postArguments = convertAnyHexToASCII(postArguments, network);
 		const tabItems = [
 			{
 				children: <div className="table-view">

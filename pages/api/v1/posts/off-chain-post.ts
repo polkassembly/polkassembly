@@ -98,7 +98,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			proposer: proposer,
 			spam_users_count,
 			tags: tags || [],
-			timeline: timeline,
+			timeline: [],
 			title: data?.title,
 			topic: topic? topic: isTopicIdValid(topic_id)? {
 				id: topic_id,
@@ -168,10 +168,10 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 					post_link.description = postData.description || preimage?.proposedCall?.description;
 				}
 				updatePostTimeline(post, postData);
-				post.timeline = [...timeline, ...(post.timeline? post.timeline: [])];
 			}
 			post.post_link = post_link;
 		}
+		post.timeline = [...timeline, ...(post.timeline? post.timeline: [])];
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,

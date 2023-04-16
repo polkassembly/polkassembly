@@ -42,7 +42,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const { content, postId, proposalType, title, timeline, tags } = req.body;
 	if(isNaN(postId) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	if(tags && !Array.isArray(tags)) return  res.status(400).json({ message: 'Invalid tags parameter' });
+	if(tags && !Array.isArray(tags)) return res.status(400).json({ message: 'Invalid tags parameter' });
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The proposal type of the name "${proposalType}" does not exist.` });
@@ -186,15 +186,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 
 	const { last_edited_at, topic_id: topicId } = newPostDoc;
 
-	const batch = firestore_db.batch();
-	tags.length > 0 && tags?.map((tag:string) => {
-		const tagRef = firestore_db.collection('tags').doc(tag);
-		const newTag:IPostTag={
-			last_used_at:new Date(),
-			name:tag.toLowerCase()
-		};
-		batch.set(tagRef, newTag, { merge: true });}
-	);
 	res.status(200).json({
 		content,
 		last_edited_at: last_edited_at,
@@ -205,9 +196,20 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			name: getTopicNameFromTopicId(topicId as any)
 		}
 	});
-	tags.length>0 && await batch.commit();
-	return;
 
+	const batch = firestore_db.batch();
+	if (tags && Array.isArray(tags) && tags.length > 0) {
+		tags?.map((tag:string) => {
+			const tagRef = firestore_db.collection('tags').doc(tag);
+			const newTag:IPostTag={
+				last_used_at:new Date(),
+				name:tag.toLowerCase()
+			};
+			batch.set(tagRef, newTag, { merge: true });}
+		);
+		await batch.commit();
+	}
+	return;
 };
 
 export default withErrorHandling(handler);

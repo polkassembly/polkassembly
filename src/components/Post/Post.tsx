@@ -335,7 +335,7 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
-	console.log(post.post_link);
+
 	return (
 		<PostDataContextProvider initialPostData={{
 			comments: post?.comments || [],

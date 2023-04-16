@@ -147,13 +147,15 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 	}
 	const results = await firestore_db.getAll(...(postsRefWithData && Array.isArray(postsRefWithData)? postsRefWithData: []).map((v) => (v.ref)));
 	results.forEach((result, i) => {
-		if (result && result.exists) {
-			const data = result.data();
-			const newData: any = {
-				...data,
-				last_edited_at: new Date(),
-				post_link: isRemove? null: post_link
-			};
+		const data = result.data();
+		const newData: any = {
+			...data,
+			last_edited_at: new Date(),
+			post_link: isRemove? null: post_link
+		};
+		if (!isRemove) {
+			newData.title = currPostData.title;
+			newData.content = currPostData.content;
 			if (!newData.user_id && newData.user_id !== 0) {
 				newData.user_id = user.id;
 			}
@@ -162,9 +164,6 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 			}
 			if (!newData.username) {
 				newData.username = user.username;
-			}
-			if (!newData.proposer_address) {
-				newData.proposer_address = substrateAddress;
 			}
 			if (!newData.created_at) {
 				newData.created_at = new Date();
@@ -178,9 +177,9 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 					newData.topic_id = currPostData.topic_id;
 				}
 			}
-			if (postsRefWithData[i]) {
-				postsRefWithData[i].data = newData;
-			}
+		}
+		if (postsRefWithData[i]) {
+			postsRefWithData[i].data = newData;
 		}
 	});
 	postsRefWithData.forEach((obj) => {
@@ -269,7 +268,7 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (r
 			posts: [
 				{
 					id: currPostId,
-					isExistChecked: true,
+					isExistChecked: false,
 					type: currPostType
 				},
 				{
@@ -295,6 +294,7 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (r
 			postType,
 			user
 		};
+
 		if (isOffChainProposalTypeValid(String(postType))) {
 			if (!postData) {
 				throw apiErrorWithStatusCode(`Post with id: "${postId}" and type: "${postType}" does not exist, please create a post.`, 404);

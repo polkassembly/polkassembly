@@ -43,6 +43,13 @@ export interface IPostData {
         title?: string;
         description?: string;
         created_at?: Date | string;
+        last_edited_at?: Date | string;
+        proposer?: string;
+        username?: string;
+        topic?: {
+            id: number;
+            name: string;
+        }
     }
     track_name?: string;
     track_number?: number;

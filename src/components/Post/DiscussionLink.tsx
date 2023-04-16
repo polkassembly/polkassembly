@@ -22,7 +22,7 @@ const DiscussionLink: FC<IDiscussionLinkProps> = (props) => {
 			link: '',
 			text: ''
 		};
-		if (postData && postData.post_link) {
+		if (postData?.post_link) {
 			const type = postData.post_link?.type;
 			const id = postData.post_link?.id;
 			if (!isOffchainPost) {
@@ -33,7 +33,6 @@ const DiscussionLink: FC<IDiscussionLinkProps> = (props) => {
 					latestState.link = `/grant/${id}`;
 					latestState.text = `Grant #${id}`;
 				}
-				console.log(type, id);
 			} else {
 				if(type === 'referendum') {
 					latestState.link = `/referendum/${id}`;
@@ -47,11 +46,14 @@ const DiscussionLink: FC<IDiscussionLinkProps> = (props) => {
 				} else if (type === 'democracy_proposals') {
 					latestState.link = `/proposal/${id}`;
 					latestState.text = `Proposal #${id}`;
+				} else if (type === 'referendums_v2') {
+					latestState.link = `/referenda/${id}`;
+					latestState.text = `Referenda #${id}`;
 				}
 			}
 		}
 		setLatestState(latestState);
-	}, [postData, isOffchainPost]);
+	}, [postData.post_link, isOffchainPost]);
 
 	return (
 		<>

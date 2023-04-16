@@ -37,7 +37,6 @@ import TipInfo from './Tips/TipInfo';
 import EditProposalStatus from './TreasuryProposals/EditProposalStatus';
 import VotersList from './Referenda/VotersList';
 import ReferendaV2Messages from './Referenda/ReferendaV2Messages';
-import dayjs from 'dayjs';
 import PostEditOrLinkCTA from './PostEditOrLinkCTA';
 
 interface IGovernanceSidebarProps {
@@ -69,7 +68,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const metaMaskError = useHandleMetaMask();
 	const { postData: {
-		created_at, last_edited_at, post_link
+		post_link
 	} } = usePostDataContext();
 
 	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
@@ -251,13 +250,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			</GovSidebarCard>
 		);
 	}
-	const isEdit_OR_LinkPost_CTA_Visible = !post_link || (last_edited_at? dayjs(last_edited_at).diff(dayjs(created_at)) <= 0: true);
 	return (
 		<>
 			{<div className={className}>
 				<Form>
 					{
-						isEdit_OR_LinkPost_CTA_Visible && <>
+						!post_link && <>
 							<PostEditOrLinkCTA />
 						</>
 					}

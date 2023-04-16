@@ -9,9 +9,9 @@ import { useNetworkContext, usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeFromSinglePostLink } from '~src/global/proposalType';
 import { NotificationStatus } from '~src/types';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
-import Markdown from '~src/ui-components/Markdown';
 import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import LinkPostPreview from './LinkPostPreview';
 
 interface IContinueWithLinking {
     setLinkingModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -52,11 +52,9 @@ export const getPostTypeAndId = (currNetwork: string,url: any) => {
 const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 	const { linkingModalOpen, setLinkingModalOpen } = props;
 	const [form] = Form.useForm();
-	const [post, setPost] = useState<{
-		description: string,
-		title: string
-	}>();
-	const [prevURL, setURL] = useState('');
+	const [post, setPost] = useState<ILinkPostStartResponse>();
+	const [prevUrl, setPrevUrl] = useState('');
+	const [url, setUrl] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
@@ -69,85 +67,119 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 		setError('');
 		setFormDisabled(true);
 		setLoading(true);
-		const postTypeAndId = getPostTypeAndId(network, url);
-		if (!postTypeAndId) {
-			setError('Invalid URL');
+		try {
+			const postTypeAndId = getPostTypeAndId(network, url);
+			if (!postTypeAndId) {
+				setError('Invalid URL');
+				setFormDisabled(false);
+				setLoading(false);
+				return;
+			}
+			if (prevUrl !== url) {
+				const { data , error } = await nextApiClientFetch<ILinkPostStartResponse>('api/v1/auth/actions/linkPostStart', {
+					postId: postTypeAndId.id,
+					postType: postTypeAndId.type
+				});
+				if (error || !data) {
+					setError(error || 'Something went wrong');
+					setFormDisabled(false);
+					setLoading(false);
+					return;
+				}
+				if (data) {
+					queueNotification({
+						header: 'Success!',
+						message: 'Post data fetched successfully.',
+						status: NotificationStatus.SUCCESS
+					});
+					setPost(data);
+				}
+			} else {
+				const { data , error } = await nextApiClientFetch<ILinkPostConfirmResponse>('api/v1/auth/actions/linkPostConfirm', {
+					currPostId: postIndex,
+					currPostType: postType,
+					postId: postTypeAndId.id,
+					postType: postTypeAndId.type
+				});
+				if (error || !data) {
+					setError(error || 'Something went wrong');
+					setFormDisabled(false);
+					setLoading(false);
+					return;
+				}
+				if (data) {
+					queueNotification({
+						header: 'Success!',
+						message: 'Post linked successfully.',
+						status: NotificationStatus.SUCCESS
+					});
+					setPostData((prev) => ({
+						...prev,
+						content: post?.description || '',
+						last_edited_at: post?.last_edited_at,
+						post_link: {
+							created_at: post?.created_at,
+							description: post?.description,
+							id: postTypeAndId.id,
+							last_edited_at: post?.last_edited_at,
+							title: post?.title,
+							type: postTypeAndId.type
+						},
+						timeline: data.timeline,
+						title: post?.title || ''
+					}));
+					form.setFieldValue('url', '');
+					setLoading(false);
+					setFormDisabled(false);
+					setLinkingModalOpen(false);
+					setPrevUrl('');
+					return;
+				}
+			}
+		} catch (error) {
+			if (error) {
+				if (typeof error === 'string') {
+					setError(error);
+				} else if (typeof error === 'object' && typeof error.message === 'string') {
+					setError(error.message);
+				} else {
+					setError('Something went wrong');
+				}
+			} else {
+				setError('Something went wrong');
+			}
 			setFormDisabled(false);
 			setLoading(false);
 			return;
 		}
-		if (prevURL !== url) {
-			const { data , error } = await nextApiClientFetch<ILinkPostStartResponse>('api/v1/auth/actions/linkPostStart', {
-				postId: postTypeAndId.id,
-				postType: postTypeAndId.type
-			});
-			if (error || !data) {
-				setError(error || 'Something went wrong');
-				setFormDisabled(false);
-				setLoading(false);
-				return;
-			}
-			if (data) {
-				queueNotification({
-					header: 'Success!',
-					message: 'Post data fetched successfully.',
-					status: NotificationStatus.SUCCESS
-				});
-				setPost(data);
-				setLoading(false);
-				setFormDisabled(false);
-			}
-			setURL(url);
-		} else {
-			const { data , error } = await nextApiClientFetch<ILinkPostConfirmResponse>('api/v1/auth/actions/linkPostConfirm', {
-				currPostId: postIndex,
-				currPostType: postType,
-				postId: postTypeAndId.id,
-				postType: postTypeAndId.type
-			});
-			if (error || !data) {
-				setError(error || 'Something went wrong');
-				setFormDisabled(false);
-				setLoading(false);
-				return;
-			}
-			if (data) {
-				queueNotification({
-					header: 'Success!',
-					message: 'Post linked successfully.',
-					status: NotificationStatus.SUCCESS
-				});
-				setPostData((prev) => ({
-					...prev,
-					post_link: {
-						description: post?.description,
-						id: postTypeAndId.id,
-						title: post?.title,
-						type: postTypeAndId.type
-					},
-					timeline: data.timeline
-				}));
-				setLoading(false);
-				setFormDisabled(false);
-				setLinkingModalOpen(false);
-			}
-			setURL(url);
-		}
+
+		setPrevUrl(url);
+		setFormDisabled(false);
+		setLoading(false);
 	};
 	return (
 		<Modal
 			open={linkingModalOpen}
-			onCancel={() => setLinkingModalOpen(false)}
+			onCancel={() => {
+				setLoading(false);
+				setFormDisabled(false);
+				setPost(undefined);
+				setError('');
+				form.setFieldValue('url', '');
+				setPrevUrl('');
+				setUrl('');
+				setLinkingModalOpen(false);
+			}}
 			footer={[
 				<div
 					key='save'
 					className='flex items-center justify-end'
 				>
-					<Button loading={formDisabled} disabled={formDisabled} onClick={() => form.submit()} className={`'border-none outline-none bg-pink_primary text-white rounded-[4px] px-4 py-1 font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize' ${formDisabled? 'cursor-not-allowed': 'cursor-pointer'}`}>{
-						(post && prevURL)?
-							'Save'
-							: 'Fetch and Preview'
-					}</Button>
+					<Button loading={loading} disabled={formDisabled} onClick={() => form.submit()} className={`'border-none outline-none bg-pink_primary text-white rounded-[4px] px-4 py-1 font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize' ${formDisabled? 'cursor-not-allowed': 'cursor-pointer'}`}>
+						{
+							url && prevUrl === url? 'Save': 'Preview'
+						}
+					</Button>
 				</div>
 			]}
 			className='md:min-w-[674px]'
@@ -176,40 +208,21 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 								required: true
 							}
 						]}
-						className='mt-5'
+						className='my-0 mt-5'
 					>
 						<Input
 							name='url'
 							autoFocus
-							onChange={() => setURL('')}
+							onChange={(e) => {
+								setPrevUrl('');
+								setUrl(e.target.value);
+								setPost(undefined);
+							}}
 							placeholder='Enter your post URL here'
 							className='border border-solid border-[rgba(72,95,125,0.2)] rounded-[4px] placeholder:text-[#CED4DE] font-medium text-sm leading-[21px] tracking-[0.01em] p-2 text-[#475F7D]'
 						/>
 					</Form.Item>
-					{
-						post?
-							<>
-								<div
-									className='mt-[30px]'
-								>
-									<label className='text-[#475F7D] font-semibold text-lg leading-[27px] tracking-[0.01em] flex items-center mb-2'>Title</label>
-									<h3
-										className='border border-solid border-[rgba(72,95,125,0.2)] rounded-[4px] font-medium text-sm leading-[21px] tracking-[0.01em] p-2 text-[#475F7D]'
-									>
-										{post.title}
-									</h3>
-								</div>
-								<div
-									className='mt-[30px]'
-								>
-									<label className='text-[#475F7D] font-semibold text-lg leading-[27px] tracking-[0.01em] flex items-center mb-2'>Description</label>
-									<div className='border border-solid border-[rgba(72,95,125,0.2)] rounded-[4px] p-2 pb-0'>
-										<Markdown md={post.description} />
-									</div>
-								</div>
-							</>
-							: null
-					}
+					<LinkPostPreview post={post} className='mt-3.5' />
 				</Form>
 				{error && <ErrorAlert className='mt-3.5' errorMsg={error} />}
 			</section>

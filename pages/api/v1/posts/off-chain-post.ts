@@ -16,7 +16,8 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { getComments, getReactions, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
+import { getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
+import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 
 interface IGetOffChainPostParams {
 	network: string;
@@ -81,16 +82,23 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 
 		const topic = data?.topic;
 		const topic_id = data?.topic_id;
+		const spam_users_count = await getSpamUsersCount(network, proposalType, Number(postId));
+		const tags = data?.tags || [];
+		const gov_type = data?.gov_type;
+		const proposer = getProposerAddressFromFirestorePostData(data, network);
 		const post: IPostResponse = {
 			comments: comments,
 			content: data?.content,
 			created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
+			gov_type: gov_type,
 			last_edited_at: getUpdatedAt(data),
 			post_id: data?.id,
 			post_link: null,
 			post_reactions: post_reactions,
-			proposer: '',
-			timeline: [],
+			proposer: proposer,
+			spam_users_count,
+			tags: tags || [],
+			timeline: timeline,
 			title: data?.title,
 			topic: topic? topic: isTopicIdValid(topic_id)? {
 				id: topic_id,
@@ -98,6 +106,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			}: getTopicFromType(strProposalType as ProposalType),
 			user_id: data?.user_id,
 			username: data?.username
+
 		};
 
 		if (post && (post.user_id || post.user_id === 0)) {

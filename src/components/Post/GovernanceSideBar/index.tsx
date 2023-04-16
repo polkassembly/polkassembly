@@ -37,6 +37,14 @@ import TipInfo from './Tips/TipInfo';
 import EditProposalStatus from './TreasuryProposals/EditProposalStatus';
 import VotersList from './Referenda/VotersList';
 import ReferendaV2Messages from './Referenda/ReferendaV2Messages';
+import blockToTime from '~src/util/blockToTime';
+import { makeLinearCurve, makeReciprocalCurve } from './Referenda/util';
+import fetchSubsquid from '~src/util/fetchSubsquid';
+import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
+import dayjs from 'dayjs';
+import { ChartData, Point } from 'chart.js';
+import Curves from './Referenda/Curves';
+import CloseIcon from 'public/assets/icons/close.svg';
 import PostEditOrLinkCTA from './PostEditOrLinkCTA';
 
 interface IGovernanceSidebarProps {
@@ -65,13 +73,207 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [lastVote, setLastVote] = useState<string | null | undefined>(undefined);
 
 	const { walletConnectProvider } = useUserDetailsContext();
+	const { postData: { created_at, track_number, post_link } } = usePostDataContext();
+	const [thresholdOpen, setThresholdOpen] = useState(false);
 
 	const metaMaskError = useHandleMetaMask();
-	const { postData: {
-		post_link
-	} } = usePostDataContext();
+	const [curvesLoading, setCurvesLoading] = useState(true);
+	const [curvesError, setCurvesError] = useState('');
+	const [data, setData] = useState<any>({
+		datasets: [],
+		labels: []
+	});
+	const [progress, setProgress] = useState({
+		approval: 0,
+		approvalThreshold: 0,
+		support: 0,
+		supportThreshold: 0
+	});
 
 	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
+
+	useEffect(() => {
+		if ([ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
+			if (!api || !apiReady) {
+				return;
+			}
+			setCurvesLoading(true);
+			const getData = async () => {
+				const tracks = api.consts.referenda.tracks.toJSON();
+				if (tracks && Array.isArray(tracks)) {
+					const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
+					if (track && Array.isArray(track) && track.length > 1) {
+						const trackInfo = track[1] as any;
+						const { decisionPeriod } = trackInfo;
+						const strArr = blockToTime(decisionPeriod, network).split(' ');
+						let decisionPeriodHrs = 0;
+						if (strArr && Array.isArray(strArr)) {
+							strArr.forEach((str) => {
+								if (str.includes('h')) {
+									decisionPeriodHrs += parseInt(str.replace('h', ''));
+								} else if (str.includes('d')) {
+									decisionPeriodHrs += parseInt(str.replace('d', '')) * 24;
+								}
+							});
+						}
+						let labels: number[] = [];
+						let supportData: { x: number; y: number; }[] = [];
+						let approvalData: { x: number; y: number; }[] = [];
+						const currentApprovalData: { x: number; y: number; }[] = [];
+						const currentSupportData: { x: number; y: number; }[] = [];
+						let supportCalc: any = null;
+						let approvalCalc: any = null;
+						if (trackInfo) {
+							if (trackInfo.minApproval) {
+								if (trackInfo.minApproval.reciprocal) {
+									approvalCalc = makeReciprocalCurve(trackInfo.minApproval.reciprocal);
+								} else if (trackInfo.minApproval.linearDecreasing) {
+									approvalCalc = makeLinearCurve(trackInfo.minApproval.linearDecreasing);
+								}
+							}
+							if (trackInfo.minSupport) {
+								if (trackInfo.minSupport.reciprocal) {
+									supportCalc = makeReciprocalCurve(trackInfo.minSupport.reciprocal);
+								} else if (trackInfo.minSupport.linearDecreasing) {
+									supportCalc = makeLinearCurve(trackInfo.minSupport.linearDecreasing);
+								}
+							}
+						}
+						for (let i = 0; i < (decisionPeriodHrs * 60); i++) {
+							labels.push(i);
+							if (supportCalc) {
+								supportData.push({
+									x: i,
+									y: supportCalc((i / (decisionPeriodHrs * 60))) * 100
+								});
+							}
+							if (approvalCalc) {
+								approvalData.push({
+									x: i,
+									y: approvalCalc((i / (decisionPeriodHrs * 60))) * 100
+								});
+							}
+						}
+						const subsquidRes = await fetchSubsquid({
+							network: network,
+							query: GET_CURVE_DATA_BY_INDEX,
+							variables: {
+								index_eq: Number(onchainId)
+							}
+						});
+						if (subsquidRes && subsquidRes.data && subsquidRes.data.curveData && Array.isArray(subsquidRes.data.curveData)) {
+							const graph_points = subsquidRes.data.curveData || [];
+							if (graph_points?.length > 0) {
+								const lastGraphPoint = graph_points[graph_points.length - 1];
+								const proposalCreatedAt = dayjs(created_at);
+								const decisionPeriodMinutes = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'minute');
+								if (decisionPeriodMinutes > decisionPeriodHrs * 60) {
+									labels = [];
+									approvalData = [];
+									supportData = [];
+								}
+								graph_points?.forEach((graph_point: any) => {
+									const hour = dayjs(graph_point.timestamp).diff(proposalCreatedAt, 'minute');
+									const new_graph_point = {
+										...graph_point,
+										hour
+									};
+
+									if (decisionPeriodMinutes > decisionPeriodHrs * 60) {
+										labels.push(hour);
+										approvalData.push({
+											x: hour,
+											y: approvalCalc((hour / decisionPeriodMinutes)) * 100
+										});
+										supportData.push({
+											x: hour,
+											y: supportCalc((hour / decisionPeriodMinutes)) * 100
+										});
+									}
+									currentApprovalData.push({
+										x: hour,
+										y: new_graph_point.approvalPercent
+									});
+									currentSupportData.push({
+										x: hour,
+										y: new_graph_point.supportPercent
+									});
+									return new_graph_point;
+								});
+
+								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
+								const currentSupport = currentSupportData[currentSupportData.length - 1];
+
+								setProgress({
+									approval: currentApproval?.y?.toFixed(1) as any,
+									approvalThreshold: (approvalData.find((data) => data && data?.x >= currentApproval?.x)?.y as any) || 0,
+									support: currentSupport?.y?.toFixed(1) as any,
+									supportThreshold: (supportData.find((data) => data && data?.x >= currentSupport?.x)?.y as any) || 0
+								});
+							}
+						} else {
+							setCurvesError(subsquidRes.errors?.[0]?.message || 'Something went wrong.');
+						}
+						const newData: ChartData<'line', (number | Point | null)[]> = {
+							datasets: [
+								{
+									backgroundColor: 'transparent',
+									borderColor: '#5BC044',
+									borderWidth: 2,
+									data: approvalData,
+									label: 'Approval',
+									pointHitRadius: 10,
+									pointHoverRadius: 5,
+									pointRadius: 0,
+									tension: 0.1
+								},
+								{
+									backgroundColor: 'transparent',
+									borderColor: '#E5007A',
+									borderWidth: 2,
+									data: supportData,
+									label: 'Support',
+									pointHitRadius: 10,
+									pointHoverRadius: 5,
+									pointRadius: 0,
+									tension: 0.1
+								},
+								{
+									backgroundColor: 'transparent',
+									borderColor: '#5BC044',
+									borderDash: [4, 4],
+									borderWidth: 2,
+									data: currentApprovalData,
+									label: 'Current Approval',
+									pointHitRadius: 10,
+									pointHoverRadius: 5,
+									pointRadius: 0,
+									tension: 0.1
+
+								},
+								{
+									backgroundColor: 'transparent',
+									borderColor: '#E5007A',
+									borderDash: [4, 4],
+									borderWidth: 2,
+									data: currentSupportData,
+									label: 'Current Support',
+									pointHitRadius: 10,
+									pointHoverRadius: 5,
+									pointRadius: 0,
+									tension: 0.1
+								}
+							],
+							labels
+						};
+						setData(JSON.parse(JSON.stringify(newData)));
+					}
+				}
+				setCurvesLoading(false);
+			};
+			getData();
+		}
+	}, [api, apiReady, created_at, network, onchainId, proposalType, track_number]);
 
 	const onAccountChange = (address: string) => {
 		setAddress(address);
@@ -347,7 +549,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										}
 									</>
 									: <>
-										<ReferendaV2Messages />
 										{canVote &&
 											<>
 												{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
@@ -378,6 +579,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</GovSidebarCard>}
 											</>
 										}
+										<ReferendaV2Messages
+											progress={progress}
+										/>
 
 										{(onchainId || onchainId === 0) &&
 											<>
@@ -385,10 +589,33 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													proposalType === ProposalType.OPEN_GOV &&
 													<div className={className}>
 														<ReferendumV2VoteInfo
+															setThresholdOpen={setThresholdOpen}
 															setOpen={setOpen}
 															referendumId={onchainId as number}
 															tally={tally}
 														/>
+														<Modal
+															onCancel={() => {
+																setThresholdOpen(false);
+															}}
+															open={thresholdOpen}
+															footer={[]}
+															className='md:min-w-[700px]'
+															closeIcon={<CloseIcon />}
+															title={
+																<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
+															}
+														>
+															<div className='mt-5'>
+																<Curves
+																	curvesError={curvesError}
+																	curvesLoading={curvesLoading}
+																	data={data}
+																	progress={progress}
+																	setData={setData}
+																/>
+															</div>
+														</Modal>
 													</div>
 												}
 												{

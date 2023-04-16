@@ -16,6 +16,7 @@ import messages from '~src/util/messages';
 
 import { ILatestActivityPostsListingResponse } from './on-chain-posts';
 import { firestore_db } from '~src/services/firebaseInit';
+import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 
 interface IGetLatestActivityOffChainPostsParams {
 	listingLimit?: string | string[] | number;
@@ -119,6 +120,8 @@ export async function getLatestActivityOffChainPosts(params: IGetLatestActivityO
 				});
 			}
 		}
+
+		posts = await getSpamUsersCountForPosts(network, posts, strProposalType);
 
 		const data: ILatestActivityPostsListingResponse = {
 			count,

@@ -71,7 +71,7 @@ const CommentSentimentModal=({ setIsComment,openModal,setModalOpen,setIsSentimen
 					2:{ label:sentiment===2 ? <SlightlyAgainstIcon className='text-3xl text-transparent'/>:<div></div> , style:{ marginTop:'-20px' } },
 					3:{ label:sentiment===3 ? <NeutralIcon className='text-3xl text-transparent'/>:<div></div>, style:{ marginTop:'-20px' } },
 					4:{ label:sentiment===4 ? <SlightlyForIcon className='text-3xl text-transparent'/>:<div></div>, style:{ marginTop:'-20px' } },
-					5:{ label:sentiment===5 ? <ForIcon className='text-[33px] text-white' />:<div></div>, style:{ marginTop:'-19.7px' } } }}
+					5:{ label:sentiment===5 ? <ForIcon className='text-[33px] text-white' />:<div></div>, style:{ marginTop:'-19.3px' } } }}
 				min={1}
 				max={5}
 				defaultValue={3}

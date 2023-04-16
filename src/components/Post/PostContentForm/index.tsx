@@ -15,6 +15,8 @@ import { noTitle } from '~src/global/noTitle';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ContentForm from '../../ContentForm';
+import AddTags from '~src/ui-components/AddTags';
+import styled from 'styled-components';
 
 interface Props {
 	className?: string;
@@ -32,8 +34,10 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 		content,
 		postType: proposalType,
 		postIndex,
-		timeline
+		timeline,tags:oldTags
 	}, setPostData } = usePostDataContext();
+
+	const [tags,setTags]=useState<string[]>(oldTags);
 
 	const onFinish = async ({ title, content }: any) => {
 		await form.validateFields();
@@ -45,6 +49,7 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 			content,
 			postId: postIndex,
 			proposalType,
+			tags,
 			timeline,
 			title
 		});
@@ -73,6 +78,7 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 				content,
 				last_edited_at,
 				proposer,
+				tags,
 				title,
 				topic
 			}));
@@ -103,6 +109,8 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 					<Input autoFocus placeholder='Your title...' className='text-black' />
 				</Form.Item>
 				<ContentForm />
+				<h5 className='text-sm text-color mt-8 font-normal'>Tags</h5>
+				<AddTags tags={tags} setTags={setTags} className='mb-8' />
 				<Form.Item>
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center justify-end'>
@@ -120,4 +128,8 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 	);
 };
 
-export default PostContentForm;
+export default styled(PostContentForm)`
+.text-color{
+  color:#334D6EE5;
+}
+`;

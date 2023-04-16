@@ -19,10 +19,11 @@ import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 interface ILinkingAndEditingProps {
     setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
     linkingAndEditingOpen: boolean;
+	isOnchainPost: boolean;
 }
 
 const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
-	const { linkingAndEditingOpen, setLinkingAndEditingOpen } = props;
+	const { linkingAndEditingOpen, setLinkingAndEditingOpen, isOnchainPost } = props;
 	const [form] = Form.useForm();
 	const [post, setPost] = useState<ILinkPostStartResponse>();
 	const [url, setUrl] = useState('');
@@ -290,7 +291,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 							: <article className='flex flex-col gap-y-3'>
 								<Form.Item
 									name="url"
-									label={<span className='text-[#475F7D] text-lg leading-[27px] tracking-[0.01em] font-semibold'>Link Discussion Post</span>}
+									label={<span className='text-[#475F7D] text-lg leading-[27px] tracking-[0.01em] font-semibold'>Link {!isOnchainPost? 'Onchain': 'Discussion'}  Post</span>}
 									className='mt-5 mb-0'
 								>
 									<Input

@@ -15,18 +15,20 @@ import { Modal } from 'antd';
 import ContinueWithoutLinking from './ContinueWithoutLinking';
 import ContinueWithLinking from './ContinueWithLinking';
 import LinkingAndEditing from './LinkingAndEditing';
+import { checkIsOnChainPost } from '~src/global/proposalType';
 
 interface IPostEditOrLinkCTA {
 	className?: string;
 }
 
 const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
-	const { postData: { created_at, last_edited_at } } = usePostDataContext();
+	const { postData: { created_at, last_edited_at, postType } } = usePostDataContext();
 	const isEditCTA = (last_edited_at? (dayjs(last_edited_at).diff(dayjs(created_at)) <= 0): true);
 	const [open, setOpen] = useState(false);
 	const [linkingAndEditingOpen, setLinkingAndEditingOpen] = useState(false);
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [linkingModalOpen, setLinkingModalOpen] = useState(false);
+	const isOnchainPost = checkIsOnChainPost(postType);
 	return (
 		<GovSidebarCard>
 			<div className='flex flex-col items-center py-3'>
@@ -55,7 +57,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 							</>
 							: <>
 								<LinkOutlined />
-								<span>Link Discussion Post</span>
+								<span>Link {!isOnchainPost? 'Onchain': 'Discussion'} Post</span>
 							</>
 					}
 				</button>
@@ -96,7 +98,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 			</Modal>
 			<ContinueWithoutLinking editModalOpen={editModalOpen} setEditModalOpen={setEditModalOpen} />
 			<ContinueWithLinking linkingModalOpen={linkingModalOpen} setLinkingModalOpen={setLinkingModalOpen} />
-			<LinkingAndEditing linkingAndEditingOpen={linkingAndEditingOpen} setLinkingAndEditingOpen={setLinkingAndEditingOpen} />
+			<LinkingAndEditing isOnchainPost={isOnchainPost} linkingAndEditingOpen={linkingAndEditingOpen} setLinkingAndEditingOpen={setLinkingAndEditingOpen} />
 		</GovSidebarCard>
 	);
 };

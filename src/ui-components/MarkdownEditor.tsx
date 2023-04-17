@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import Markdown from './Markdown';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import { useUserDetailsContext } from '~src/context';
+import HelperTooltip from 'src/ui-components/HelperTooltip';
 
 const StyledTextArea = styled.div`
 
@@ -19,6 +20,7 @@ const StyledTextArea = styled.div`
 		color: #000000 !important;
 		padding: 1rem 1.2rem!important;
 		line-height: 1.4!important;
+		
 	}
 
 	@media only screen and (max-width: 768px) {
@@ -153,6 +155,12 @@ const StyledTextArea = styled.div`
 				}
 			}
 		}
+		
+			.image-tip{
+				display:none !important;
+			}
+			
+		
 	}
 `;
 
@@ -166,7 +174,7 @@ interface Props {
 
 function MarkdownEditor(props: Props): React.ReactElement {
 	const { id, username } = useUserDetailsContext();
-
+	
 	const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
 
 	const loadSuggestions = async (text: string) => {
@@ -211,7 +219,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	return (
 		<StyledTextArea className='container'>
 			<ReactMde
-				generateMarkdownPreview={markdown => Promise.resolve(<Markdown isPreview={true} md={markdown} />) }
+				generateMarkdownPreview={markdown => {return Promise.resolve(<Markdown isPreview={true} md={markdown} />)} }
 				minEditorHeight={props.height}
 				minPreviewHeight={props.height}
 				name={props.name}
@@ -224,6 +232,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 					saveImage: handleSaveImage
 				}}
 			/>
+			<HelperTooltip className='ml-2' text='Attach images by dragging & dropping, selecting or pasting them.' />
 		</StyledTextArea>
 	);
 }

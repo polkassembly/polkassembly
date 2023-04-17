@@ -13,8 +13,10 @@ const ArgumentsTable: FC<IArgumentsTableProps> = ({ argumentsJSON }) => {
 	if (!argumentsJSON) return null;
 	return (
 		<>
-			{Object.entries(argumentsJSON).map(([name, value], index) => (
-				<tr key={index}>
+			{Object.entries(argumentsJSON).map(([name, value], index) => {
+
+				// eslint-disable-next-line no-tabs
+				return	<tr key={index}>
 					<td className='direct-data data-0'>
 						{name}
 					</td>
@@ -27,8 +29,8 @@ const ArgumentsTable: FC<IArgumentsTableProps> = ({ argumentsJSON }) => {
 								<ArgumentsTable argumentsJSON={value} />
 							</td>
 					}
-				</tr>
-			))}
+				</tr>;
+			})}
 		</>
 	);
 };

@@ -7,7 +7,6 @@ import * as React from 'react';
 import ReactJson from 'react-json-view';
 import Address from 'src/ui-components/Address';
 import styled from 'styled-components';
-
 import ArgumentsTable from './ArgumentsTable';
 
 interface Props {

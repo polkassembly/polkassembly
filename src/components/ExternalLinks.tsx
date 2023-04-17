@@ -86,7 +86,7 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 		},
 		[EService.POLKAHOLIC]: (network: string) => {
 			let url = '';
-			const host = chainProperties[network].externalLinks + '/block/' + network + '/';
+			const host = chainProperties[network].externalLinks + '/block/' + network;
 
 			if (blockNumber !== undefined && host) {
 				url = `${host}/${blockNumber}`;

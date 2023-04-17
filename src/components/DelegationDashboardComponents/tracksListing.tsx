@@ -1,65 +1,149 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
-import { Radio, Table } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import React, { useEffect, useState } from 'react';
+import { Radio, Row, Table } from 'antd';
+
 import styled from 'styled-components';
+
+import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { useNetworkContext } from '~src/context';
+import  { EStatus,GetColumns } from './coloumn';
+import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
+
+import { DelegatedIcon, UnDelegatedIcon, ReceivedDelegationIcon } from '~src/ui-components/CustomIcons';
+import { useRouter } from 'next/router';
+
 interface Props{
   className?: string;
 }
 
-interface IDataType{
+export interface IDataType{
   index: number;
   track: string;
   description: string;
   active_proposals: number;
-  status: string;
+  status?: string;
+  delegated_to?:string;
+  delegated_by?:string;
 }
-const Status= {
-	Delegated: 'delegated',
-	Received_delegation: 'received_delegation',
-	Undelegated: 'undelegated'
-};
+
 const DashboardTrackListing = ({ className }: Props) => {
 
-	const [inputValue, setInputvalue ] = useState<string>('');
+	const [status, setStatusvalue ] = useState<EStatus>(EStatus.All);
+	const  { network } = useNetworkContext();
+	const [delegatedCount, setDelegatedCount] = useState<number>(0);
+	const [undelegatedCount, setUndelegatedCount] = useState<number>(0);
+	const [receivedDelegationCount, setReceivedDelegationCount] = useState<number>(0);
+	const [allCount, setAllCount] = useState<number>(14);
+	const [showTable, setShowTable] = useState<boolean>(false);
+	const router = useRouter();
+	const rowData:IDataType[] = [];
 
-	const Columns: ColumnsType = [
-		{ dataIndex: 'index', key: 1, render: (index) => { return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal' >{index}</h2>;}, title: '#',width: '10%' },
-		{ dataIndex: 'track', key: 2, render: (index) => { return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{index}</h2>;}, title: 'Tracks',width: '15%' },
-		{ dataIndex: 'description', key: 3, render: (index) => { return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{index}</h2>;}, title: 'Description',width: '45%' },
-		{ dataIndex: 'active_proposals', key: 4, render: (index) => { return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal'>{index}</h2>;}, title: 'Active proposals',width: '10%' },
-		{ dataIndex: 'status', key: 5, render: (status) => 
-    { return <div className='text-[#243A57] tracking-wider flex items-center justify-start font-medium'>
-      <h2 className={`text-[12px] ${status === Status.Received_delegation && 'bg-[#E7DCFF]'} ${status === Status.Delegated && 'bg-[#FFFBD8]'} ${status === Status.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px]`}>{status.split('_').join(' ').toUpperCase() } </h2>
-      </div >;
-      }, title: 'Status',width: '20%' }];
+	if(network ){
+		Object.entries(networkTrackInfo?.[network]).map(([key, value],index) => {
+			if (!value?.fellowshipOrigin) {
+				rowData.push( { active_proposals: 1,
+					delegated_by:'0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3',
+					delegated_to :'0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3',
+					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc luctus bibendum dapibun un prtesd s...',
+					index: index+1,
+					status: EStatus.Delegated,
+					track: key === 'root' ? 'Root': key?.split(/(?=[A-Z])/).join(' ') });
+			}
 
-	const Rows: IDataType[]= [ { active_proposals: 1, description: 'dasdas', index: 1, status: Status.Delegated, track: 'Root' },
-		{ active_proposals: 1, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc luctus bibendum dapibun un prtesd s...', index: 2, status: Status.Delegated, track: 'Whitelisted Caller' },
-		{ active_proposals: 1, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc luctus bibendum dapibun un prtesd s...', index: 3, status: Status.Delegated, track: 'Staking Admin' },
-		{ active_proposals: 1, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc luctus bibendum dapibun un prtesd s...', index: 4, status: Status.Received_delegation, track: 'Treasurer' },
-		{ active_proposals: 1, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc luctus bibendum dapibun un prtesd s...', index: 5, status: Status.Undelegated, track: 'Lease Admin' },
-		{ active_proposals: 1, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc luctus bibendum dapibun un prtesd s...', index: 6, status: Status.Received_delegation, track: 'Fellowship Admin' },
-		{ active_proposals: 1, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc luctus bibendum dapibun un prtesd s...', index: 7, status: Status.Delegated, track: 'General Admin' }];
+		});
+	}
+
+	const handleShowTable = (status:EStatus) => {
+
+		if(status === EStatus.All){
+			setShowTable(true);
+		}
+		else if(status === EStatus.Delegated){
+			if(delegatedCount !== 0){
+				setShowTable(true);
+			}
+			setShowTable(false);
+		}
+		else if(status === EStatus.Undelegated){
+			if(undelegatedCount !== 0){
+				setShowTable(true);
+			}
+			setShowTable(false);
+		}
+		else if(status === EStatus.Received_Delegation){
+			if(receivedDelegationCount !== 0){
+				setShowTable(true);
+			}
+			setShowTable(false);
+		}
+	};
+
+	useEffect(() => {
+		handleShowTable(status);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [status]);
 
 	return <div className={className} >
-		<div className='flex font-medium items-center text-sidebarBlue text-xl gap-6 px-8 py-6'>
+		<div className={`flex font-medium items-center text-sidebarBlue text-xl gap-2 max-lg:gap-0 px-8 py-6 border-l-0 border-t-0 border-r-0 ${showTable && 'border-[#e7ebf0] border-b-[1px] border-solid'}`}>
       Tracks
-			<Radio.Group buttonStyle='solid' defaultValue={'all'} onChange={(e) => setInputvalue(e.target.value)} value={inputValue} className='flex gap-4 max-md:flex-col'>
-				<Radio className='text-[#243A57B2] text-xs ' value={'all'}>All (5)</Radio>
-				<Radio className='text-[#243A57B2] text-xs' value={'delegated'}>Delegated (2)</Radio>
-				<Radio className='text-[#243A57B2] text-xs' value={Status.Undelegated}>Undelegated (9)</Radio>
-				<Radio className='text-[#243A57B2] text-xs' value={Status.Received}>Received delegation (3)</Radio>
+			<Radio.Group buttonStyle='solid' defaultValue={'all'} onChange={(e) => setStatusvalue(e.target.value)} value={status} className='flex max-md:flex-col ml-[24px] flex-shrink-0'>
+				<Radio className={`text-[#243A57B2] text-xs py-[6px] px-[14px] ${EStatus.All === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={EStatus.All}>All ({allCount})</Radio>
+				<Radio className={`text-[rgba(36,58,87,0.7)] text-xs py-[6px] px-[14px] ${EStatus.Delegated === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={EStatus.Delegated}>Delegated ({delegatedCount})</Radio>
+				<Radio className={`text-[#243A57B2] text-xs py-[6px] px-[14px] ${EStatus.Undelegated === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={EStatus.Undelegated}>Undelegated ({undelegatedCount})</Radio>
+				<Radio className={`text-[#243A57B2] text-xs py-[6px] px-[14px] ${EStatus.Received_Delegation === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={EStatus.Received_Delegation}>Received delegation ({receivedDelegationCount})</Radio>
 			</Radio.Group>
 		</div>
-		<Table
+		{showTable && <Table
 			className='column'
-			columns= {Columns}
-			dataSource= { Rows }
+			columns= {GetColumns( status )}
+			dataSource= { rowData }
+			rowClassName='cursor-pointer'
+			pagination= {false}
+			onRow={(rowData: IDataType) => {
+				return {
+					onClick: () => router.push(`/delegation-dashboard/${rowData?.track.split(' ').join('-').toLowerCase()}`)
+				};
+			}}
 		>
-		</Table>
+		</Table>}
+
+		{status === EStatus.Delegated && delegatedCount === 0 && <div className='h-[550px] bg-white flex pt-[56px] items-center flex-col text-[258px] rounded-b-[14px]'>
+			<DelegatedIcon/>
+			<div className='text-[#243A57] mt-5 text-center'>
+				<h4 className='text-base font-medium tracking-[0.005em] mt-0'>No Delegated Tracks</h4>
+				<div className='text-sm tracking-[0.01em] font-normal mt-1 flex justify-center items-center max-md:flex-col'>
+          You can see a track here once it has been delegated
+					<div  onClick={() => setStatusvalue(EStatus.Undelegated)} className='text-[#E5007A] font-normal tracking-wide text-sm ml-[17px] flex items-center justify-center  max-md:mt-[10px] cursor-pointer' >
+						<DelegatedProfileIcon className='mr-[7px]'/>
+						<span className='mt-[-1px]'>
+               Delegate Track
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>}
+
+		{status === EStatus.Undelegated && undelegatedCount === 0 && <div className='h-[550px] pt-[56px] bg-white flex items-center text-[258px] flex-col rounded-b-[14px]'>
+			<UnDelegatedIcon/>
+			<div className='text-[#243A57] mt-5 text-center'>
+				<h4 className='text-base font-medium tracking-[0.005em] mt-0'>No Undelegated Tracks</h4>
+				<div className='text-sm tracking-[0.01em] font-normal mt-1 flex justify-center items-center max-md:flex-col'>
+          All tracks have been delegated. Undelegate a track to view here
+				</div>
+			</div>
+		</div>}
+
+		{status === EStatus.Received_Delegation && receivedDelegationCount === 0 && <div className='h-[550px] pt-[56px] bg-white flex items-center text-[258px] flex-col rounded-b-[14px]'>
+			<ReceivedDelegationIcon/>
+			<div className='text-[#243A57] mt-5 text-center'>
+				<h4 className='text-base font-medium tracking-[0.005em] mt-0'>No Received Delegation</h4>
+				<div className='text-sm tracking-[0.01em] font-normal mt-1 flex justify-center items-center max-md:flex-col'>
+          You have not been delegated any track yet
+				</div>
+			</div>
+		</div>}
 	</div>;
 };
 export default styled(DashboardTrackListing)`

@@ -182,7 +182,7 @@ export enum TrackPostStatus {
 export const tracksNo = [0, 1, 10, 11, 12, 13, 14, 15, 20, 21, 30, 31, 32, 33, 34];
 
 export const trackPostStatuses = ['All', 'Confirmed', 'ConfirmStarted', 'Cancelled', 'Deciding', 'DecisionDepositPlaced', 'Killed', 'Submitted', 'Rejected', 'TimedOut'];
-export const customOpenGovStatuses = ['All', 'CustomStatusSubmitted', 'CustomStatusVoting', 'CustomStatusClosed'];
+export const customOpenGovStatuses = ['All', 'CustomStatusSubmitted', 'CustomStatusVoting', 'CustomStatusClosed','CustomStatusActive'];
 
 export const getStatusesFromCustomStatus = (customStatus: CustomStatus) => {
 	switch(customStatus) {
@@ -192,5 +192,7 @@ export const getStatusesFromCustomStatus = (customStatus: CustomStatus) => {
 		return ['Deciding', 'ConfirmStarted', 'ConfirmAborted'];
 	case CustomStatus.Closed:
 		return ['Cancelled', 'TimedOut', 'Confirmed', 'Approved', 'Rejected', 'Executed'];
+	case CustomStatus.Active:
+		return  ['DecisionDepositPlaced', 'Submitted', 'Deciding', 'ConfirmStarted', 'ConfirmAborted' ];
 	}
 };

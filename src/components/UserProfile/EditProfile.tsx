@@ -17,6 +17,8 @@ interface IEditProfileModalProps {
     id?: number | null;
     data?: ProfileDetailsResponse;
 	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
+  className?: string;
+  textStyle?: string;
 }
 
 const getDefaultProfile: () => ProfileDetails = () => {
@@ -30,7 +32,7 @@ const getDefaultProfile: () => ProfileDetails = () => {
 };
 
 const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
-	const { data, id, setProfileDetails } = props;
+	const { data, id, setProfileDetails, className, textStyle } = props;
 	const [open, setOpen] = useState(false);
 	const [profile, setProfile] = useState(getDefaultProfile());
 	const [loading, setLoading] = useState(false);
@@ -212,14 +214,14 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				}
 			</Modal>
 			<button
-				className='rounded-[4px] md:h-[30px] md:w-[67px] outline-none text-white flex items-center justify-center bg-transparent border-0 md:border border-solid border-white gap-x-1.5 font-medium text-sm cursor-pointer'
+				className={`rounded-[4px] md:h-[40px] md:w-[87px] outline-none text-white flex items-center justify-center bg-transparent border-0 md:border border-solid border-white gap-x-1.5 font-medium text-sm cursor-pointer ${className}`}
 				onClick={() => {
 					setOpen(true);
 					populateData();
 				}}
 			>
-				<EditIcon className='text-white text-2xl md:text-[15px]' />
-				<span className='hidden md:block'>
+				<EditIcon className={`text-white text-2xl md:text-[15px] ${textStyle}`} />
+				<span className=' md:block'>
 					Edit
 				</span>
 			</button>

@@ -6,29 +6,33 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Address from '~src/ui-components/Address';
 import copyToClipboard from 'src/util/copyToClipboard';
-import queueNotification from 'src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import EditProfile from '~src/components/UserProfile/EditProfile';
 
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { useUserDetailsContext } from '~src/context';
 import MessengerIcon from '~assets/icons/messenger.svg';
 import DashboardProfile from '~assets/icons/dashboard-profile.svg';
-import { Button } from 'antd';
-import { EditIcon } from '~src/ui-components/CustomIcons';
-import Balance from '../Balance';
+import { Skeleton, Tooltip, message } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import SocialLink from '~src/ui-components/SocialLinks';
 import { socialLinks } from '../UserProfile/Details';
 import DashboardTrackListing from './tracksListing';
+import ProfileBalances from './profileBalance';
+import dynamic from 'next/dynamic';
 
 interface Props {
   className?: string;
 }
 
+const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
+	loading: () => <Skeleton.Avatar active />,
+	ssr: false
+});
+
 const DelegationDashboardHome = ({ className } : Props) => {
 
-	const { username, addresses } = useUserDetailsContext();
+	const userDetails  = useUserDetailsContext();
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
 		addresses: [],
 		badges: [],
@@ -39,19 +43,24 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		user_id: 0,
 		username: ''
 	});
-	const { image, social_links } = profileDetails;
 
-	const copyLink = (address:string) => {
-		copyToClipboard(address);
-		queueNotification({
-			header: 'Copied!',
-			message: 'Address copied to clipboard.',
-			status: NotificationStatus.INFO
+	const { image, social_links, bio ,username,addresses } = profileDetails;
+	const [messageApi, contextHolder] = message.useMessage();
+
+	const success = () => {
+		messageApi.open({
+			content: 'Address copied to clipboard',
+			duration: 10,
+			type: 'success'
 		});
 	};
+	const copyLink = (address:string) => {
+		copyToClipboard(address);
+	};
+
 	const getData = async() => {
 		const { data, error } = await nextApiClientFetch('api/v1/auth/data/userProfileWithUsername',
-			{ username:username?.toString() });
+			{ username:userDetails.username?.toString() });
 		if(data){ setProfileDetails({ ...profileDetails, ...data });}
 		else{ console.log(error); }
 		console.log(data,error);
@@ -59,21 +68,36 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	};
 
 	useEffect(() => {
-		username && username?.length > 0 && getData();
+		userDetails?.username && userDetails?.username?.length > 0 && getData();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [username]);
+	}, [userDetails?.username]);
 
 	return <div className= { `${ className } ` }>
-		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px]'><Balance address={addresses ? addresses[0]:''}/></div>
-		<h2 className='dashboard-heading mb-4 md:mb-5 mt-5'>Dashboard</h2>
+		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] ml-[-53px] mr-[-53px]'>
+			<ProfileBalances address={addresses[0]}/>
+		</div>
+		<h2 className='dashboard-heading mb-4 md:mb-5 mt-5 text-sm'>Dashboard</h2>
 		<div className='flex justify-between py-[24px] px-[34px] shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white rounded-[14px]'>
 			<div className='flex justify-center gap-[34px] '>
-				{image?.length !== 0 ? <div></div>: <div ><DashboardProfile/></div>}
-				<div className=''>
-					<span className='text-sidebarBlue font-semibold mb-4 tracking-wide text-lg'>{username}</span>
-					{addresses && addresses?.length > 0 &&
-        <div className='flex gap-2  items-center'><Address address={addresses[0]} /><span className='flex items-center cursor-pointer' onClick={() => copyLink(addresses[0])}><CopyIcon/></span></div>}
-					<h2 className='text-sm font-normal text-navBlue mt-2'>Click here to add bio</h2>
+				{image && image?.length !== 0
+					? <ImageComponent
+						src={image}
+						alt='User Picture'
+						className='bg-transparent flex items-center justify-center w-[95px] h-[95px] '
+						iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full border-4 border-solid rounded-full'
+					/>: <div ><DashboardProfile/></div>}
+				<div className='text-[#243A57]'>
+					<span className='text-[#243A57] font-semibold mb-4 tracking-wide text-lg'>{userDetails?.username}</span >
+					{userDetails?.addresses && userDetails?.addresses?.length > 0 && <div className='flex gap-2  items-center'>
+						<Address address={userDetails?.addresses[0]} />
+						<span className='flex items-center cursor-pointer' onClick={() => {userDetails.username && copyLink(addresses[0]) ;success();}}>
+							{contextHolder}
+							<CopyIcon/>
+						</span>
+					</div>}
+					{bio?.length === 0
+						? <h2 className='text-sm font-normal text-[#576D8BCC] mt-2 cursor-pointer'>Click here to add bio</h2>
+						: <h2 className='text-sm mt-2 text-[#243A57] tracking-[0.01em] '>{bio}</h2>}
 					<div
 						className='flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-[10px]'
 					>
@@ -82,7 +106,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 								const link = (social_links && Array.isArray(social_links))? social_links?.find((s) => s.type === social)?.link || '': '';
 								return (
 									<SocialLink
-										className='flex items-center justify-center text-2xl md:text-base text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] rounded-[20px] h-[39px] w-[40px]'
+										className='flex items-center justify-center text-2xl md:text-base text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] rounded-[20px] h-[39px] w-[40px] mt-6'
 										key={index}
 										link={link}
 										disable={!link}
@@ -94,8 +118,21 @@ const DelegationDashboardHome = ({ className } : Props) => {
 					</div>
 				</div>
 			</div>
-			<div className='flex gap-2.5 text-pink_primary'><MessengerIcon/><span><Button title='Edit' className='h-[40px] bg-transparent text-pink_primary border-pink_primary' icon={<EditIcon/>}>Edit</Button></span></div></div>
-		<div ><DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]'/></div>
+			<div className='flex gap-2.5 text-pink_primary'>
+				<Tooltip
+					title='Coming Soon' key={1} color='linear-gradient(0deg, #5A46FF, #5A46FF), linear-gradient(0deg, #AD00FF, #AD00FF), linear-gradient(0deg, #407BFF, #407BFF), #FFFFFF'>
+					<MessengerIcon/>
+				</Tooltip>
+				<span>
+					{username === userDetails.username   &&
+							<EditProfile data={profileDetails} setProfileDetails={setProfileDetails} className='text-[#E5007A] border-[1px] border-solid border-[#E5007A] h-[40px] w-[87px]' textStyle='text-[#E5007A] text-[14px] tracking-wide font-medium'/>
+					}
+				</span>
+			</div>
+		</div>
+		<div >
+			<DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]'/>
+		</div>
 	</div>;
 };
 

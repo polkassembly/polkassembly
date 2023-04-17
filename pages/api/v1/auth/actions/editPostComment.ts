@@ -44,7 +44,7 @@ const handler: NextApiHandler< MessageType> = async (req, res) => {
 
 	commentRef.update({
 		content,
-		sentiment:sentiment || 0,
+		sentiment,
 		updated_at: last_comment_at
 	}).then(() => {
 		postRef.update({

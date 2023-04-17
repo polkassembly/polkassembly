@@ -53,6 +53,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(injectedWindow.injectedWeb3);
 	};
+
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
 
@@ -95,10 +96,20 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 		setAccounts(accounts);
 		if (accounts.length > 0) {
+			if(api && apiReady) {
+				api.setSigner(injected.signer);
+			}
+
 			setAddress(accounts[0].address);
 		}
 		return;
 	};
+
+	useEffect(() => {
+		getWallet();
+		loginWallet!==null && getAccounts(loginWallet);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[]);
 
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
 		setAccounts([]);
@@ -257,12 +268,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const openModal = () => {
 		setShowModal(true);
 	};
-
-	// eslint-disable-next-line react-hooks/rules-of-hooks
-	useEffect(() => {
-		getWallet();
-		loginWallet!==null && getAccounts(loginWallet);
-	},[]);
 
 	const VoteLock = ({ className }: { className?:string }) =>
 		<Form.Item className={className}>

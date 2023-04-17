@@ -81,6 +81,8 @@ export interface IPostResponse {
 	decision?: string;
 	last_edited_at?: string | Date | null;
 	[key: string]: any;
+  gov_type?: 'gov_1' | 'open_gov' ;
+  tags?: string[] | [];
 }
 
 export type IReaction = '👍' | '👎';
@@ -214,6 +216,12 @@ const getAndSetNewData = async (params: IParams) => {
 							}
 							if (data.post_link && !newData.post_link) {
 								newData.post_link = data.post_link;
+							}
+							if(data.tags){
+								newData.tags = data?.tags;
+							}
+							if(data.gov_type){
+								newData.gov_type = data?.gov_type;
 							}
 						}
 					}
@@ -706,6 +714,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.user_id = data.user_id;
 				post.title = data?.title;
 				post.last_edited_at = getUpdatedAt(data);
+				post.tags = data?.tags;
+				post.gov_type = data?.gov_type;
 				const post_link = data?.post_link;
 				if (post_link) {
 					const { id, type } = post_link;
@@ -743,6 +753,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 		post.post_reactions = getReactions(postReactionsQuerySnapshot);
 
+		// Check if it is a spam or not
+		post.spam_users_count = await getSpamUsersCount(network, proposalType, (proposalType === ProposalType.TIPS? strPostId: numPostId));
+
 		if (!post.content || post.content?.trim().length === 0) {
 			const proposer = post.proposer;
 			if (proposer) {
@@ -751,7 +764,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 			}
 		}
-
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,
@@ -765,6 +777,26 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		};
 	}
 }
+
+export const getSpamUsersCount = async (network: string, proposalType: any, postId: string | number) => {
+	const countQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', '==', postId).count().get();
+	const data = countQuery.data();
+	const totalUsers = data.count || 0;
+
+	return checkReportThreshold(totalUsers);
+};
+
+export const checkReportThreshold = (totalUsers?: number) => {
+	const threshold = process.env.REPORTS_THRESHOLD;
+
+	if (threshold && totalUsers) {
+		if (Number(totalUsers) >= Number(threshold)) {
+			return totalUsers;
+		}
+		return 0;
+	}
+	return totalUsers;
+};
 
 // expects optional proposalType and postId of proposal
 const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, res) => {

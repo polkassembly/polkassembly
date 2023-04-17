@@ -314,6 +314,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			setWallet(loginWallet);
 			handleDefaultWallet(loginWallet);
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[loginWallet]);
 
 	return (

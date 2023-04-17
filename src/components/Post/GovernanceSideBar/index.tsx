@@ -6,18 +6,18 @@ import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Form } from 'antd';
+import { Form, Modal } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
+import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
 import { Wallet } from 'src/types';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType, VoteType } from '~src/global/proposalType';
-import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from '~src/global/statuses';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 import ExtensionNotDetected from '../../ExtensionNotDetected';
@@ -26,9 +26,8 @@ import BountyChildBounties from './Bounty/BountyChildBounties';
 import MotionVoteInfo from './Motions/MotionVoteInfo';
 import VoteMotion from './Motions/VoteMotion';
 import ProposalDisplay from './Proposals';
-import FellowshipReferendumVotingStatus from './Referenda/FellowshipReferendumVotingStatus';
+import FellowshipReferendumVoteInfo from './Referenda/FellowshipReferendumVoteInfo';
 import ReferendumV2VoteInfo from './Referenda/ReferendumV2VoteInfo';
-import ReferendumV2VotingStatus from './Referenda/ReferendumV2VotingStatus';
 import ReferendumVoteInfo from './Referenda/ReferendumVoteInfo';
 import VoteReferendum from './Referenda/VoteReferendum';
 import VoteReferendumEth from './Referenda/VoteReferendumEth';
@@ -36,6 +35,16 @@ import VoteReferendumEthV2 from './Referenda/VoteReferendumEthV2';
 import EndorseTip from './Tips/EndorseTip';
 import TipInfo from './Tips/TipInfo';
 import EditProposalStatus from './TreasuryProposals/EditProposalStatus';
+import VotersList from './Referenda/VotersList';
+import ReferendaV2Messages from './Referenda/ReferendaV2Messages';
+import blockToTime from '~src/util/blockToTime';
+import { makeLinearCurve, makeReciprocalCurve } from './Referenda/util';
+import fetchSubsquid from '~src/util/fetchSubsquid';
+import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
+import dayjs from 'dayjs';
+import { ChartData, Point } from 'chart.js';
+import Curves from './Referenda/Curves';
+import CloseIcon from 'public/assets/icons/close.svg';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -57,15 +66,213 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
 	const [accountsMap, setAccountsMap] = useState<{[key:string]:string}>({});
 	const [signersMap, setSignersMap] = useState<{[key:string]: Signer}>({});
+	const [open, setOpen] = useState(false);
 
 	const { api, apiReady } = useApiContext();
 	const [lastVote, setLastVote] = useState<string | null | undefined>(undefined);
 
 	const { walletConnectProvider } = useUserDetailsContext();
+	const { postData: { created_at, track_number } } = usePostDataContext();
+	const [thresholdOpen, setThresholdOpen] = useState(false);
 
 	const metaMaskError = useHandleMetaMask();
+	const [curvesLoading, setCurvesLoading] = useState(true);
+	const [curvesError, setCurvesError] = useState('');
+	const [data, setData] = useState<any>({
+		datasets: [],
+		labels: []
+	});
+	const [progress, setProgress] = useState({
+		approval: 0,
+		approvalThreshold: 0,
+		support: 0,
+		supportThreshold: 0
+	});
 
-	const canVote =  !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
+	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
+
+	useEffect(() => {
+		if ([ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
+			if (!api || !apiReady) {
+				return;
+			}
+			setCurvesLoading(true);
+			const getData = async () => {
+				const tracks = api.consts.referenda.tracks.toJSON();
+				if (tracks && Array.isArray(tracks)) {
+					const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
+					if (track && Array.isArray(track) && track.length > 1) {
+						const trackInfo = track[1] as any;
+						const { decisionPeriod } = trackInfo;
+						const strArr = blockToTime(decisionPeriod, network).split(' ');
+						let decisionPeriodHrs = 0;
+						if (strArr && Array.isArray(strArr)) {
+							strArr.forEach((str) => {
+								if (str.includes('h')) {
+									decisionPeriodHrs += parseInt(str.replace('h', ''));
+								} else if (str.includes('d')) {
+									decisionPeriodHrs += parseInt(str.replace('d', '')) * 24;
+								}
+							});
+						}
+						let labels: number[] = [];
+						let supportData: { x: number; y: number; }[] = [];
+						let approvalData: { x: number; y: number; }[] = [];
+						const currentApprovalData: { x: number; y: number; }[] = [];
+						const currentSupportData: { x: number; y: number; }[] = [];
+						let supportCalc: any = null;
+						let approvalCalc: any = null;
+						if (trackInfo) {
+							if (trackInfo.minApproval) {
+								if (trackInfo.minApproval.reciprocal) {
+									approvalCalc = makeReciprocalCurve(trackInfo.minApproval.reciprocal);
+								} else if (trackInfo.minApproval.linearDecreasing) {
+									approvalCalc = makeLinearCurve(trackInfo.minApproval.linearDecreasing);
+								}
+							}
+							if (trackInfo.minSupport) {
+								if (trackInfo.minSupport.reciprocal) {
+									supportCalc = makeReciprocalCurve(trackInfo.minSupport.reciprocal);
+								} else if (trackInfo.minSupport.linearDecreasing) {
+									supportCalc = makeLinearCurve(trackInfo.minSupport.linearDecreasing);
+								}
+							}
+						}
+						for (let i = 0; i < (decisionPeriodHrs * 60); i++) {
+							labels.push(i);
+							if (supportCalc) {
+								supportData.push({
+									x: i,
+									y: supportCalc((i / (decisionPeriodHrs * 60))) * 100
+								});
+							}
+							if (approvalCalc) {
+								approvalData.push({
+									x: i,
+									y: approvalCalc((i / (decisionPeriodHrs * 60))) * 100
+								});
+							}
+						}
+						const subsquidRes = await fetchSubsquid({
+							network: network,
+							query: GET_CURVE_DATA_BY_INDEX,
+							variables: {
+								index_eq: Number(onchainId)
+							}
+						});
+						if (subsquidRes && subsquidRes.data && subsquidRes.data.curveData && Array.isArray(subsquidRes.data.curveData)) {
+							const graph_points = subsquidRes.data.curveData || [];
+							if (graph_points?.length > 0) {
+								const lastGraphPoint = graph_points[graph_points.length - 1];
+								const proposalCreatedAt = dayjs(created_at);
+								const decisionPeriodMinutes = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'minute');
+								if (decisionPeriodMinutes > decisionPeriodHrs * 60) {
+									labels = [];
+									approvalData = [];
+									supportData = [];
+								}
+								graph_points?.forEach((graph_point: any) => {
+									const hour = dayjs(graph_point.timestamp).diff(proposalCreatedAt, 'minute');
+									const new_graph_point = {
+										...graph_point,
+										hour
+									};
+
+									if (decisionPeriodMinutes > decisionPeriodHrs * 60) {
+										labels.push(hour);
+										approvalData.push({
+											x: hour,
+											y: approvalCalc((hour / decisionPeriodMinutes)) * 100
+										});
+										supportData.push({
+											x: hour,
+											y: supportCalc((hour / decisionPeriodMinutes)) * 100
+										});
+									}
+									currentApprovalData.push({
+										x: hour,
+										y: new_graph_point.approvalPercent
+									});
+									currentSupportData.push({
+										x: hour,
+										y: new_graph_point.supportPercent
+									});
+									return new_graph_point;
+								});
+
+								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
+								const currentSupport = currentSupportData[currentSupportData.length - 1];
+
+								setProgress({
+									approval: currentApproval?.y?.toFixed(1) as any,
+									approvalThreshold: (approvalData.find((data) => data && data?.x >= currentApproval?.x)?.y as any) || 0,
+									support: currentSupport?.y?.toFixed(1) as any,
+									supportThreshold: (supportData.find((data) => data && data?.x >= currentSupport?.x)?.y as any) || 0
+								});
+							}
+						} else {
+							setCurvesError(subsquidRes.errors?.[0]?.message || 'Something went wrong.');
+						}
+						const newData: ChartData<'line', (number | Point | null)[]> = {
+							datasets: [
+								{
+									backgroundColor: 'transparent',
+									borderColor: '#5BC044',
+									borderWidth: 2,
+									data: approvalData,
+									label: 'Approval',
+									pointHitRadius: 10,
+									pointHoverRadius: 5,
+									pointRadius: 0,
+									tension: 0.1
+								},
+								{
+									backgroundColor: 'transparent',
+									borderColor: '#E5007A',
+									borderWidth: 2,
+									data: supportData,
+									label: 'Support',
+									pointHitRadius: 10,
+									pointHoverRadius: 5,
+									pointRadius: 0,
+									tension: 0.1
+								},
+								{
+									backgroundColor: 'transparent',
+									borderColor: '#5BC044',
+									borderDash: [4, 4],
+									borderWidth: 2,
+									data: currentApprovalData,
+									label: 'Current Approval',
+									pointHitRadius: 10,
+									pointHoverRadius: 5,
+									pointRadius: 0,
+									tension: 0.1
+
+								},
+								{
+									backgroundColor: 'transparent',
+									borderColor: '#E5007A',
+									borderDash: [4, 4],
+									borderWidth: 2,
+									data: currentSupportData,
+									label: 'Current Support',
+									pointHitRadius: 10,
+									pointHoverRadius: 5,
+									pointRadius: 0,
+									tension: 0.1
+								}
+							],
+							labels
+						};
+						setData(JSON.parse(JSON.stringify(newData)));
+					}
+				}
+				setCurvesLoading(false);
+			};
+			getData();
+		}
+	}, [api, apiReady, created_at, network, onchainId, proposalType, track_number]);
 
 	const onAccountChange = (address: string) => {
 		setAddress(address);
@@ -179,14 +386,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			}
 		}
 
-		if( polakadotJSAccounts) {
+		if(polakadotJSAccounts) {
 			accounts = accounts.concat(polakadotJSAccounts);
 			polakadotJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polkadot-js';
 			});
 		}
 
-		if( polywalletJSAccounts) {
+		if(['polymesh'].includes(network) && polywalletJSAccounts) {
 			accounts = accounts.concat(polywalletJSAccounts);
 			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polywallet';
@@ -206,6 +413,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				accountsMapLocal[acc.address] = 'talisman';
 			});
 		}
+
 		if (accounts.length === 0) {
 			setAccountsNotFound(true);
 			return;
@@ -287,123 +495,154 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						/>
 					}
 
-					{proposalType === ProposalType.REFERENDUMS &&
+					{[ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS, ProposalType.REFERENDUMS].includes(proposalType) &&
 						<>
-							{canVote &&
-							<>
-								{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
+							{
+								proposalType === ProposalType.REFERENDUMS?
 									<>
-										{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 
-										{(!metaMaskError || walletConnectProvider?.wc.connected) &&
+										{canVote &&
+											<>
+												{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
+													<>
+														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 
-									<GovSidebarCard>
-										<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
-										<VoteReferendumEth
-											referendumId={onchainId as number}
-											onAccountChange={onAccountChange}
-											setLastVote={setLastVote}
-											lastVote={lastVote} />
-									</GovSidebarCard>
+														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
+													<GovSidebarCard>
+														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+														<VoteReferendumEth
+															referendumId={onchainId as number}
+															onAccountChange={onAccountChange}
+															setLastVote={setLastVote}
+															lastVote={lastVote} />
+													</GovSidebarCard>
+
+														}
+													</> : <GovSidebarCard>
+														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+														<VoteReferendum
+															lastVote={lastVote}
+															setLastVote={setLastVote}
+															onAccountChange={onAccountChange}
+															referendumId={onchainId  as number}
+															proposalType={proposalType}
+														/>
+													</GovSidebarCard>
+												}
+											</>
 										}
-									</> : <GovSidebarCard>
-										<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
-										<VoteReferendum
-											lastVote={lastVote}
-											setLastVote={setLastVote}
-											onAccountChange={onAccountChange}
-											referendumId={onchainId  as number}
-											proposalType={proposalType}
+
+										{(onchainId || onchainId === 0) &&
+											<div className={className}>
+												<ReferendumVoteInfo
+													setOpen={setOpen}
+													referendumId={onchainId as number}
+												/>
+											</div>
+										}
+									</>
+									: <>
+										{canVote &&
+											<>
+												{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
+													<>
+														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
+
+														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
+
+													<GovSidebarCard>
+														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+														<VoteReferendumEthV2
+															referendumId={onchainId as number}
+															onAccountChange={onAccountChange}
+															setLastVote={setLastVote}
+															lastVote={lastVote} />
+													</GovSidebarCard>
+
+														}
+													</> : <GovSidebarCard>
+														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+														<VoteReferendum
+															lastVote={lastVote}
+															setLastVote={setLastVote}
+															onAccountChange={onAccountChange}
+															referendumId={onchainId  as number}
+															proposalType={proposalType}
+														/>
+													</GovSidebarCard>}
+											</>
+										}
+										<ReferendaV2Messages
+											progress={progress}
 										/>
-									</GovSidebarCard>
-								}
-							</>
+
+										{(onchainId || onchainId === 0) &&
+											<>
+												{
+													proposalType === ProposalType.OPEN_GOV &&
+													<div className={className}>
+														<ReferendumV2VoteInfo
+															setThresholdOpen={setThresholdOpen}
+															setOpen={setOpen}
+															referendumId={onchainId as number}
+															tally={tally}
+														/>
+														<Modal
+															onCancel={() => {
+																setThresholdOpen(false);
+															}}
+															open={thresholdOpen}
+															footer={[]}
+															className='md:min-w-[700px]'
+															closeIcon={<CloseIcon />}
+															title={
+																<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
+															}
+														>
+															<div className='mt-5'>
+																<Curves
+																	curvesError={curvesError}
+																	curvesLoading={curvesLoading}
+																	data={data}
+																	progress={progress}
+																	setData={setData}
+																/>
+															</div>
+														</Modal>
+													</div>
+												}
+												{
+													proposalType === ProposalType.FELLOWSHIP_REFERENDUMS &&
+													<div className={className}>
+														<FellowshipReferendumVoteInfo
+															setOpen={setOpen}
+															tally={tally}
+														/>
+													</div>
+												}
+											</>
+										}
+									</>
 							}
 
-							{(onchainId || onchainId === 0) &&
-								<div className={className}>
-									<ReferendumVoteInfo
+							{
+								(onchainId || onchainId === 0) &&
+								<Modal
+									closeIcon={false}
+									onCancel={() => {
+										setOpen(false);
+									}}
+									open={open}
+									footer={[]}
+									closable={false}
+								>
+									<VotersList
+										className={className}
 										referendumId={onchainId as number}
+										voteType={proposalType === ProposalType.REFERENDUMS?VoteType.REFERENDUM: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS? VoteType.FELLOWSHIP: VoteType.REFERENDUM_V2}
 									/>
-								</div>
-							}
-
-							<div>
-								{lastVote != undefined ? lastVote == null ?
-									<GovSidebarCard>
-										You haven&apos;t voted yet, vote now and do your bit for the community
-									</GovSidebarCard>
-									:
-									<GovSidebarCard className='flex items-center'>
-										You Voted: { lastVote == 'aye' ? <LikeFilled className='text-aye_green ml-2' /> : <DislikeFilled className='text-nay_red ml-2' /> }
-										<span className={`last-vote-text ${lastVote == 'aye' ? 'green-text' : 'red-text'}`}>{lastVote}</span>
-									</GovSidebarCard>
-									: <></>
-								}
-							</div>
-						</>
-					}
-
-					{[ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) &&
-						<>
-							{canVote &&
-							<>
-								{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
-									<>
-										{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
-
-										{(!metaMaskError || walletConnectProvider?.wc.connected) &&
-
-									<GovSidebarCard>
-										<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
-										<VoteReferendumEthV2
-											referendumId={onchainId as number}
-											onAccountChange={onAccountChange}
-											setLastVote={setLastVote}
-											lastVote={lastVote} />
-									</GovSidebarCard>
-
-										}
-									</> : <GovSidebarCard>
-										<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
-										<VoteReferendum
-											lastVote={lastVote}
-											setLastVote={setLastVote}
-											onAccountChange={onAccountChange}
-											referendumId={onchainId  as number}
-											proposalType={proposalType}
-										/>
-									</GovSidebarCard>}
-							</>
-							}
-
-							{(onchainId || onchainId === 0) &&
-								<>
-									{
-										proposalType === ProposalType.OPEN_GOV &&
-										<div className={className}>
-											<ReferendumV2VotingStatus
-												referendumId={onchainId as number}
-												tally={tally}
-											/>
-										</div>
-									}
-									{
-										proposalType === ProposalType.FELLOWSHIP_REFERENDUMS &&
-										<div className={className}>
-											<FellowshipReferendumVotingStatus
-												tally={tally}
-											/>
-										</div>
-									}
-									<div className={className}>
-										<ReferendumV2VoteInfo
-											voteType={proposalType === ProposalType.FELLOWSHIP_REFERENDUMS? VoteType.FELLOWSHIP: VoteType.REFERENDUM_V2}
-											referendumId={onchainId as number}
-										/>
-									</div>
-								</>
+								</Modal>
 							}
 
 							<div>

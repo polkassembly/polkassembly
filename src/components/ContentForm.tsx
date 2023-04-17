@@ -45,7 +45,7 @@ const ContentForm = ({ className, height, onChange, value }: Props): JSX.Element
 	const onChangeWrapper = (content:string) => {
 		const validationStatus = validateContent(content);
 		setValidation(validationStatus);
-		if(onchange){
+		if(onChange){
 			onChange!(content);
 		}
 

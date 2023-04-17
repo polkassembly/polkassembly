@@ -149,7 +149,7 @@ function CustomToolbar(props: any) {
 					<NetworkSelect selectedNetwork={props.selectedNetwork} setSelectedNetwork={props.setSelectedNetwork} />
 					<div className='select-div'>
 						<label>Type</label>
-						<Dropdown trigger={['click']} menu={{ items:viewStateOptions, onClick: onViewStateChange }} ><Space className='text-pink_primary cursor-pointer capitalize'>{viewState}<DownOutlined className='text-pink_primary align-middle'/></Space></Dropdown>
+						<Dropdown trigger={['click']} menu={{ items:viewStateOptions, onClick: onViewStateChange }} ><Space className='text-pink_primary cursor-pointer capitalize mt-1'>{viewState}<DownOutlined className='text-pink_primary align-middle'/></Space></Dropdown>
 					</div>
 					<div className='flex items-center'>
 						<span className='text-sidebarBlue w-[130px] ml-5 text-md md:text-lg mr-5'>{dayjs(props.date).format('MMMM YYYY')}</span>

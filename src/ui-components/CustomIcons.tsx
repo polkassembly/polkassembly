@@ -20,7 +20,19 @@ import RiotSVG from '~assets/icons/riot.svg';
 import SignalTowerSVG from '~assets/icons/signal-tower.svg';
 import EditSVG from '~assets/icons/edit.svg';
 import SyncSVG from '~assets/icons/sync.svg';
+import PreparePeriodSVG from '~assets/icons/prepare.svg';
+import DecisionPeriodSVG from '~assets/icons/decision.svg';
+import EnactmentPeriodSVG from '~assets/icons/enactment.svg';
+import RightArrowSVG from '~assets/icons/right-arrow.svg';
+import CastVoteSVG from '~assets/icons/cast-vote.svg';
+import VoteCalculationSVG from '~assets/icons/vote-calculation.svg';
+import VoteAmountSVG from '~assets/icons/vote-amount.svg';
+import ConvictionPeriodSVG from '~assets/icons/conviction-period.svg';
+import LikeDislikeSVG from '~assets/icons/like-dislike.svg';
 import ArrowDownSVG from '~assets/icons/arrow-down.svg';
+import VotingHistorySVG from '~assets/icons/voting-history.svg';
+import ThresholdGraphSVG from '~assets/icons/threshold-graph.svg';
+import WarningMessageSVG from '~assets/icons/warning-message.svg';
 import BountiesSVG from '~assets/sidebar/bounties.svg';
 import CalendarSVG from '~assets/sidebar/calendar.svg';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy_proposals.svg';
@@ -53,6 +65,12 @@ import ForUnfilleSVG from '~assets/icons/for-unfilled.svg';
 import DelegatedSVG from '~assets/icons/delegated.svg';
 import UndelegatedSVG from '~assets/icons/undelegated.svg';
 import ReceivedDelegationSVG from '~assets/icons/received-delegation.svg'; 
+import FilterSVG from '~assets/icons/filter-icon.svg';
+import FilterUnfilledSVG from '~assets/icons/filter-unfilled.svg';
+import SearchSVG from '~assets/icons/search.svg';
+import CheckedSVG from '~assets/icons/checked.svg';
+import CheckedOutlinedSVG from '~assets/icons/check-outline.svg';
+import TrendingSVG from '~assets/icons/trending.svg';
 
 export const OverviewIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={OverviewSVG} {...props} />
@@ -158,8 +176,56 @@ export const SyncIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={SyncSVG} {...props} />
 );
 
+export const PreparePeriodIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={PreparePeriodSVG} {...props} />
+);
+
+export const DecisionPeriodIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DecisionPeriodSVG} {...props} />
+);
+
+export const EnactmentPeriodIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={EnactmentPeriodSVG} {...props} />
+);
+
+export const RightArrowIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={RightArrowSVG} {...props} />
+);
+
+export const CastVoteIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CastVoteSVG} {...props} />
+);
+
+export const VoteCalculationIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={VoteCalculationSVG} {...props} />
+);
+
+export const VoteAmountIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={VoteAmountSVG} {...props} />
+);
+
+export const ConvictionPeriodIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ConvictionPeriodSVG} {...props} />
+);
+
+export const LikeDislikeIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={LikeDislikeSVG} {...props} />
+);
+
 export const ArrowDownIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={ArrowDownSVG} {...props} />
+);
+
+export const ThresholdGraphIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ThresholdGraphSVG} {...props} />
+);
+
+export const WarningMessageIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={WarningMessageSVG} {...props} />
+);
+
+export const VotingHistoryIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={VotingHistorySVG} {...props} />
 );
 
 export const RootIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -226,4 +292,23 @@ export const UnDelegatedIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 export const ReceivedDelegationIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={ReceivedDelegationSVG} {...props} />
+);
+export const FilterIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={FilterSVG} {...props} />
+);
+export const FilterUnfilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={FilterUnfilledSVG} {...props} />
+);
+
+export const SearchIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SearchSVG} {...props} />
+);
+export const CheckOutlineIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CheckedOutlinedSVG} {...props} />
+);
+export const CheckedIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CheckedSVG} {...props} />
+);
+export const TrendingIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={TrendingSVG} {...props} />
 );

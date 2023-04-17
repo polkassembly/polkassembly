@@ -40,6 +40,8 @@ const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts
 							title={post.title || 'No title'}
 							username={post?.username}
 							topic={post.topic.name}
+							tags={post?.tags}
+							spam_users_count={post.spam_users_count}
 						/>
 					</Link>
 				</div>

@@ -17,7 +17,7 @@ import messages from '~src/auth/utils/messages';
 import { getFirestoreProposalType, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { GET_PROPOSAL_BY_INDEX_AND_TYPE_V2 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { Post } from '~src/types';
+import { IPostTag, Post } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFromType';
@@ -39,8 +39,10 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, postId, proposalType, title, timeline } = req.body;
+	const { content, postId, proposalType, title, timeline, tags } = req.body;
 	if(isNaN(postId) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+
+	if(tags && !Array.isArray(tags)) return  res.status(400).json({ message: 'Invalid tags parameter' });
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The proposal type of the name "${proposalType}" does not exist.` });
@@ -144,6 +146,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,
 		proposer_address: proposer_address,
+		tags: tags || [],
 		title,
 		topic_id : topic_id || getTopicFromType(proposalType).id,
 		user_id: user.id,
@@ -167,6 +170,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				last_edited_at: new Date(),
 				post_link: post_link || null,
 				proposer_address: proposer_address,
+				tags: tags || [],
 				title,
 				topic_id : getTopicFromType(proposalType).id,
 				user_id: user.id,
@@ -181,7 +185,17 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	}
 
 	const { last_edited_at, topic_id: topicId } = newPostDoc;
-	return res.status(200).json({
+
+	const batch = firestore_db.batch();
+	tags.length > 0 && tags?.map((tag:string) => {
+		const tagRef = firestore_db.collection('tags').doc(tag);
+		const newTag:IPostTag={
+			last_used_at:new Date(),
+			name:tag.toLowerCase()
+		};
+		batch.set(tagRef, newTag, { merge: true });}
+	);
+	res.status(200).json({
 		content,
 		last_edited_at: last_edited_at,
 		proposer: proposer_address,
@@ -191,6 +205,9 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			name: getTopicNameFromTopicId(topicId as any)
 		}
 	});
+	tags.length>0 && await batch.commit();
+	return;
+
 };
 
 export default withErrorHandling(handler);

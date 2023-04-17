@@ -18,6 +18,7 @@ import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 
 import { ChangeResponseType } from '~src/auth/types';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
@@ -86,7 +87,17 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 		const signRaw = injected && injected.signer && injected.signer.signRaw;
 		if (!signRaw) return console.error('Signer not available');
 
-		const message = `<Bytes>I am linking proxied address ${formData?.proxiedAccount}</Bytes>`;
+		const proxied = formData?.proxiedAccount;
+
+		let substrate_address: string | null;
+		if(!proxied.startsWith('0x')) {
+			substrate_address = getSubstrateAddress(proxied);
+			if(!substrate_address) return console.error('Invalid address');
+		}else {
+			substrate_address = proxied;
+		}
+
+		const message = `<Bytes>I am linking proxied address ${substrate_address}</Bytes>`;
 
 		const { signature } = await signRaw({
 			address: proxyAddress,
@@ -98,7 +109,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 
 		const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/linkProxyAddress', {
 			message,
-			proxied: formData?.proxiedAccount,
+			proxied: substrate_address,
 			proxy: proxyAddress,
 			signature
 		});

@@ -380,6 +380,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 									<ArgumentsTableJSONView
 										postArguments={proposal_arguments.args}
 										showAccountArguments={true}
+
 									/>
 								</div>
 								: null

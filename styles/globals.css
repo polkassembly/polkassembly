@@ -136,7 +136,7 @@ p > a:hover {
 
 .ant-form-item-explain-error {
   margin-top: 0.3em !important;
-  margin-bottom: 1em !important;
+  display: inline-block;
 }
 
 .ant-switch {

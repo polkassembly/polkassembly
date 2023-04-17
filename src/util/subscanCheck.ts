@@ -21,9 +21,13 @@ export const getBlockLink = (network: string) => {
 	if (url.includes('subscan')) {
 		url = url.replace('.api', '');
 	}
-	if(isExplorerSupport(network)){
+	else if(isPolkaholicSupport(network)){
+		url += `/block/${network}`;
+	}
+	else if(isExplorerSupport(network)){
 		url += '/blocks';
-	} else {
+	}
+	else {
 		url += '/block';
 	}
 	return url;

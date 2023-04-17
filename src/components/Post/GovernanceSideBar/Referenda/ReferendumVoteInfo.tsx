@@ -80,8 +80,8 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 			setTotalIssuance(ZERO);
 		}
 		else if(['genshiro'].includes(network)){
+			// eslint-disable-next-line  @typescript-eslint/no-unused-vars
 			const { collateral, debt } = api.query.eqAggregates.totalUserGroup('Balances', { '0': 1734700659 }) as any;
-			console.log('collatoral', collateral, 'debt', debt);
 			setTotalIssuance(collateral);
 		}
 		else{
@@ -163,7 +163,6 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 		}
 		return voteInfo?.turnout.muln(10000).div(totalIssuance).toNumber()/100;
 	} , [voteInfo, totalIssuance]);
-	console.log(voteInfo);
 	return (
 		<>
 			{isSubscanSupport(network)? !voteInfo ?

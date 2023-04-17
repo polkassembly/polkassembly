@@ -295,7 +295,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '10',
 		treasuryProposalMaxBond: null,
-		externalLinks: '',
+		externalLinks: 'https://polkaholic.io',
 		rpcEndpoints: []
 	},
 	[network.ASTAR]: {
@@ -760,7 +760,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: '',
+		externalLinks: 'https://polkaholic.io',
 		rpcEndpoints: []
 	},
 	[network.POLKADEX]: {

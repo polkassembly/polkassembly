@@ -7,7 +7,7 @@ import { useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 
 import { ProposalType } from '~src/global/proposalType';
-import { isExplorerSupport, isSubscanSupport } from '~src/util/subscanCheck';
+import { isExplorerSupport, isPolkaholicSupport, isSubscanSupport } from '~src/util/subscanCheck';
 
 interface IExternalLinksProps {
 	className?: string
@@ -18,7 +18,8 @@ interface IExternalLinksProps {
 
 enum EService {
 	EXPLORER = 'explorer',
-	SUBSCAN = 'subscan'
+	SUBSCAN = 'subscan',
+	POLKAHOLIC = 'polkaholic'
 }
 
 const getService = (network: string) => {
@@ -26,6 +27,8 @@ const getService = (network: string) => {
 		return EService.SUBSCAN;
 	} else if (isExplorerSupport(network)) {
 		return EService.EXPLORER;
+	}else if (isPolkaholicSupport(network)) {
+		return EService.POLKAHOLIC;
 	}
 };
 
@@ -78,6 +81,19 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 
 			return {
 				label: 'Show in Explorer',
+				url
+			};
+		},
+		[EService.POLKAHOLIC]: (network: string) => {
+			let url = '';
+			const host = chainProperties[network].externalLinks + '/block/' + network;
+
+			if (blockNumber !== undefined && host) {
+				url = `${host}/${blockNumber}`;
+			}
+
+			return {
+				label: 'Show in Polkaholic',
 				url
 			};
 		}

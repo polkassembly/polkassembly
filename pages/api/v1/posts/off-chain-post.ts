@@ -76,7 +76,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 						timestamp: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at
 					}
 				],
-				type: 'Discussions'
+				type: proposalType === ProposalType.REMARK_PROPOSALS ? 'Remark Proposal' : 'Discussions'
 			}
 		];
 		const topic = data?.topic;

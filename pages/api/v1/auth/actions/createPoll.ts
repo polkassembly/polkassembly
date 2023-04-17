@@ -13,7 +13,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import POLL_TYPE, { isPollTypeValid } from '~src/global/pollTypes';
 import { ProposalType } from '~src/global/proposalType';
-import { IOptionPoll, IPoll } from '~src/types';
+import { IOptionPoll, IPoll, IRemarkPoll } from '~src/types';
 
 import { getPollCollectionName } from '../../polls';
 
@@ -27,12 +27,12 @@ const handler: NextApiHandler<ICreatePollResponse | MessageType> = async (req, r
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { endAt, options: optionsString, question, blockEnd, postId, proposalType, pollType } = req.body;
+	const { endAt, options: optionsString, question, blockEnd, blockStart, postId, proposalType, pollType } = req.body;
 
 	const strPollType = String(pollType);
 	if (!pollType || !isPollTypeValid(strPollType)) return res.status(400).json({ message: `The pollType "${pollType}" is invalid` });
 
-	if(isNaN(postId) || !proposalType || (strPollType === 'normal' && (!blockEnd && blockEnd !== 0)) || (strPollType === 'option' && ((!endAt && endAt !== 0) || !optionsString || !question))) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if(isNaN(postId) || !proposalType || (strPollType === POLL_TYPE.REMARK && (!blockEnd || !blockStart || isNaN(blockStart) || isNaN(blockEnd))) || (strPollType === 'normal' && (!blockEnd && blockEnd !== 0)) || (strPollType === 'option' && ((!endAt && endAt !== 0) || !optionsString || !question))) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The off chain proposal type "${proposalType}" is invalid.` });
@@ -50,19 +50,34 @@ const handler: NextApiHandler<ICreatePollResponse | MessageType> = async (req, r
 	if(postDoc.data()?.user_id !== user.id) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const date = new Date();
-	let poll: IOptionPoll | IPoll | undefined;
-	if (strPollType === POLL_TYPE.OPTION) {
+	let poll: IOptionPoll | IPoll | IRemarkPoll | undefined;
+
+	if (strPollType === POLL_TYPE.OPTION || strPollType === POLL_TYPE.REMARK) {
 		const options = JSON.parse(optionsString);
 		if (!options|| !Array.isArray(options)) return res.status(400).json({ message: 'Options should be an array' });
-		poll = {
-			created_at: date,
-			end_at: Number(endAt),
-			id: '',
-			option_poll_votes: [],
-			options,
-			question,
-			updated_at: date
-		} as IOptionPoll;
+
+		if(strPollType === POLL_TYPE.OPTION) {
+			poll = {
+				created_at: date,
+				end_at: Number(endAt),
+				id: '',
+				option_poll_votes: [],
+				options,
+				question,
+				updated_at: date
+			} as IOptionPoll;
+		}else {
+			poll = {
+				created_at: date,
+				end_at: Number(blockEnd),
+				id: '',
+				options,
+				remark_poll_votes: [],
+				start_at: Number(blockStart),
+				updated_at: date
+			} as IRemarkPoll;
+		}
+
 	} else if (strPollType === POLL_TYPE.NORMAL) {
 		poll = {
 			block_end: Number(blockEnd),

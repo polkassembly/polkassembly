@@ -695,13 +695,16 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					</>
 					}
 
-					{proposalType === ProposalType.REMARK_PROPOSALS && post.remark_options?.length && <>
+					{proposalType === ProposalType.REMARK_PROPOSALS && <>
 						<RemarkProposalTimestamps
 							className='mb-8'
 							startBlock={post.start_block_num}
 							endBlock={post.end_block_num}
 						/>
-						<VoteRemarkProposal />
+						<VoteRemarkProposal
+							startBlock={post.start_block_num}
+							endBlock={post.end_block_num}
+						/>
 					</>}
 				</Form>
 			</div>

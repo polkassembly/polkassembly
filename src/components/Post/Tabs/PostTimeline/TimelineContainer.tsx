@@ -87,6 +87,8 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 			</section>
 		);
 	};
+
+	console.log('[type', type);
 	return (
 		<section className='flex'>
 			<div className='min-h-[300px] bg-pink_primary w-[2px] relative'>

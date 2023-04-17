@@ -374,6 +374,7 @@ const Post: FC<IPostProps> = (props) => {
 			post_link: post?.post_link,
 			post_reactions: post?.post_reactions,
 			proposer: post?.proposer || '',
+			remark_poll: null,
 			requested: post?.requested,
 			reward: post?.reward,
 			spam_users_count: post?.spam_users_count,

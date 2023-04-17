@@ -258,6 +258,12 @@ export interface IPoll {
   block_end: number;
 }
 
+export interface IRemarkPollVote extends IOptionPollVote {
+  address: string;
+  block_number: Number;
+  power: string;
+}
+
 export interface IOptionPoll {
   created_at: Date;
   updated_at: Date;
@@ -265,6 +271,16 @@ export interface IOptionPoll {
   option_poll_votes: IOptionPollVote[];
   end_at: number;
   question: string;
+  options: string[];
+}
+
+export interface IRemarkPoll {
+  created_at: Date;
+  updated_at: Date;
+  id: string;
+  remark_poll_votes: IRemarkPollVote[];
+  end_at: number;
+  start_at: number;
   options: string[];
 }
 
@@ -287,7 +303,6 @@ export interface Post {
   username?: string;
   gov_type?:'gov_1' | 'open_gov'
   tags?:string[] | [];
-  remark_options?: string[]
   start_block_num?: number;
   end_block_num?: number;
 }

@@ -4,13 +4,14 @@
 
 const POLL_TYPE = {
 	NORMAL: 'normal',
-	OPTION: 'option'
+	OPTION: 'option',
+	REMARK: 'remark_poll'
 };
 
 export function isPollTypeValid(pollType: string) {
 	return pollTypes.includes(pollType);
 }
 
-export const pollTypes = [POLL_TYPE.NORMAL, POLL_TYPE.OPTION];
+export const pollTypes = [POLL_TYPE.NORMAL, POLL_TYPE.OPTION, POLL_TYPE.REMARK];
 
 export default POLL_TYPE;

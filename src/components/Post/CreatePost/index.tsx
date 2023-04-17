@@ -27,6 +27,7 @@ import { useApiContext, useNetworkContext } from '~src/context';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import getAllAccounts, { initResponse } from '~src/util/getAllAccounts';
 import Address from '~src/ui-components/Address';
+import { Signer } from '@polkadot/api/types';
 
 interface Props {
 	className?: string;
@@ -43,7 +44,7 @@ const CreatePost = ({ className, proposalType } : Props) => {
 	const [form] = Form.useForm();
 
 	const [accountsInfo, setAccountsInfo] = useState(initResponse);
-	const { accounts } = accountsInfo;
+	const { accounts, accountsMap, signersMap } = accountsInfo;
 
 	const [topicId, setTopicId] = useState<number>(1);
 	const [hasPoll, setHasPoll] = useState<boolean>(false);
@@ -95,9 +96,10 @@ const CreatePost = ({ className, proposalType } : Props) => {
 	};
 
 	const createPoll = async (postId: number) => {
-		if (!hasPoll) return;
+		if (proposalType !== ProposalType.REMARK_PROPOSALS && !hasPoll) return;
+		if(proposalType === ProposalType.REMARK_PROPOSALS && !optionsArray?.length) return;
 
-		if (!pollEndBlock) {
+		if (!pollEndBlock && !endBlock) {
 			queueNotification({
 				header: 'Failed to get end block number. Poll creation failed!',
 				message: 'Failed',
@@ -106,12 +108,20 @@ const CreatePost = ({ className, proposalType } : Props) => {
 			return;
 		}
 
-		const { error: apiError } = await nextApiClientFetch( 'api/v1/auth/actions/createPoll', {
-			blockEnd: pollEndBlock,
-			pollType: POLL_TYPE.NORMAL,
+		const options = [...(new Set(optionsArray))].filter(x => x);
+
+		// { endAt, options: optionsString, question, blockEnd, blockStart, postId, proposalType, pollType }
+
+		const pollPayload = {
+			blockEnd: endBlock || pollEndBlock,
+			blockStart: startBlock,
+			options: JSON.stringify(options),
+			pollType: proposalType === ProposalType.REMARK_PROPOSALS ? POLL_TYPE.REMARK : POLL_TYPE.NORMAL,
 			postId,
 			proposalType
-		});
+		};
+
+		const { error: apiError } = await nextApiClientFetch( 'api/v1/auth/actions/createPoll', pollPayload);
 
 		if(apiError) {
 			console.error('Error creating a poll', apiError);
@@ -139,7 +149,7 @@ const CreatePost = ({ className, proposalType } : Props) => {
 		setLoading(false);
 	};
 
-	async function _createPost(content: string, title: string, remarkPayload?:any, options?: string[]) {
+	async function _createPost(content: string, title: string, remarkPayload?:any) {
 		setFormDisabled(true);
 		setLoading(true);
 
@@ -147,7 +157,6 @@ const CreatePost = ({ className, proposalType } : Props) => {
 			content,
 			gov_type:govType,
 			proposalType,
-			remark_options: options || [],
 			tags,
 			title,
 			topicId,
@@ -192,8 +201,6 @@ const CreatePost = ({ className, proposalType } : Props) => {
 	const handleSend = async () => {
 		if(!currentUser.id) return;
 
-		const options = [...optionsArray].filter(x => x);
-
 		try {
 			await form.validateFields();
 			// Validation is successful
@@ -203,6 +210,9 @@ const CreatePost = ({ className, proposalType } : Props) => {
 			if(!title || !content) return;
 			if(proposalType === ProposalType.REMARK_PROPOSALS) {
 				if(!api || !apiReady || !startBlock || !endBlock || !address) return;
+
+				const signer: Signer = signersMap[accountsMap[address]];
+				api.setSigner(signer);
 
 				setFormDisabled(true);
 				setLoading(true);
@@ -218,12 +228,12 @@ const CreatePost = ({ className, proposalType } : Props) => {
 
 				const payload = JSON.stringify(remarkPayload);
 
-				await api.tx.system.remarkWithEvent(`Tanganika::Proposal::${payload}`).signAndSend(address, async ({ status }) => {
+				await api.tx.system.remarkWithEvent(`${network.charAt(0).toUpperCase() + network.slice(1)}::Proposal::${payload}`).signAndSend(address, async ({ status }) => {
 					setFormDisabled(true);
 					setLoading(true);
 
 					if(status.isInBlock){
-						await _createPost(content, title, remarkPayload, options);
+						await _createPost(content, title, remarkPayload);
 					}
 				}).catch((error) => {
 					queueNotification({
@@ -352,7 +362,7 @@ const CreatePost = ({ className, proposalType } : Props) => {
 						>
 							<Spin spinning={loading} indicator={<LoadingOutlined />}>
 								<AccountSelectionForm
-									title='Endorse with account'
+									title='Post with account'
 									accounts={accounts}
 									address={address || ''}
 									withBalance

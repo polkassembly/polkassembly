@@ -99,6 +99,7 @@ export const network = {
 	PICHIUROCOCO: 'pichiu-rococo',
 	POLYMESH:'polymesh',
 	POLYMESHTEST: 'polymesh-test',
+	ROCOCO: 'rococo',
 	TINKER: 'tinker',
 	TURING: 'turing',
 	VARA: 'vara',
@@ -148,6 +149,7 @@ export const tokenSymbol = {
 	TEER: 'TEER',
 	PICA: 'PICA',
 	POLYX: 'POLYX',
+	ROC: 'ROC',
 	WND: 'WND',
 	XRT: 'XRT',
 	UNIT: 'UNIT',
@@ -873,6 +875,23 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '10',
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://robonomics.api.subscan.io',
+		rpcEndpoints: []
+	},
+	// TODO: Remove before PROD
+	[network.ROCOCO]: {
+		blockTime: 6000,
+		chainId: 0,
+		category: 'test',
+		logo: westendLogo,
+		rpcEndpoint: 'wss://rococo-rpc.polkadot.io',
+		ss58Format: 42,
+		tokenDecimals: 12,
+		tokenSymbol: tokenSymbol.ROC,
+		subsquidUrl: '',
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: '',
 		rpcEndpoints: []
 	},
 	[network.SHIBUYA]: {

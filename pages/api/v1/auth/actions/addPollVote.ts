@@ -13,7 +13,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import POLL_TYPE, { isPollTypeValid } from '~src/global/pollTypes';
 import { ProposalType } from '~src/global/proposalType';
-import { IOptionPollVote, IPollVote } from '~src/types';
+import { IOptionPollVote, IPollVote, IRemarkPollVote } from '~src/types';
 
 import { getPollCollectionName } from '../../polls';
 
@@ -23,8 +23,8 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { pollId, postId, userId, vote, option, pollType, proposalType } = req.body;
-	if(!pollId || isNaN(postId) || !userId || (pollType === POLL_TYPE.NORMAL && !vote) || (pollType === POLL_TYPE.OPTION && !option)) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { pollId, postId, userId, vote, option, pollType, proposalType, address, block_number, power } = req.body;
+	if(!pollId || isNaN(postId) || !userId || (pollType === POLL_TYPE.NORMAL && !vote) || (pollType === POLL_TYPE.OPTION && !option) || (pollType === POLL_TYPE.REMARK && (!option || !address || !block_number || !power))) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The off chain proposal type of the name "${proposalType}" does not exist.` });
@@ -39,9 +39,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	if(!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const pollColName = getPollCollectionName(strPollType);
-	if (!['option_polls', 'polls'].includes(pollColName)) {
-		return res.status(400).json({ message: `The pollType "${pollType}" is invalid` });
-	}
+	if (!pollColName) return res.status(400).json({ message: `The pollType "${pollType}" is invalid` });
 
 	const pollRef = postsByTypeRef(network, strProposalType as ProposalType)
 		.doc(String(postId))
@@ -71,6 +69,17 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			vote: vote
 		} as IPollVote;
 		votes_field_name = 'poll_votes';
+	} else if (strPollType === POLL_TYPE.REMARK) {
+		newVote =  {
+			address,
+			block_number: Number(block_number),
+			created_at: date,
+			option: option,
+			power,
+			updated_at: date,
+			user_id: Number(userId)
+		} as IRemarkPollVote;
+		votes_field_name = 'remark_poll_votes';
 	} else {
 		return res.status(400).json({ message: `The pollType "${pollType}" is invalid` });
 	}

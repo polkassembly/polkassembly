@@ -5,13 +5,14 @@
 import type { GetServerSideProps } from 'next';
 import { getOffChainPost } from 'pages/api/v1/posts/off-chain-post';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState, LoadingState } from 'src/ui-components/UIStates';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Post from '~src/components/Post/Post';
+import { useNetworkContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -25,15 +26,22 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		postId: id,
 		proposalType: OffChainProposalType.REMARK_PROPOSALS
 	});
-	return { props: { data, error } };
+	return { props: { data, error, network } };
 };
 
 interface IRemarkProposalProps {
+	network: string;
 	data: IPostResponse;
 	error?: string;
 }
 const RemarkProposalPost: FC<IRemarkProposalProps> = (props) => {
 	const { data: post, error } = props;
+	const { setNetwork } = useNetworkContext();
+
+	useEffect(() => {
+		setNetwork(props.network);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	if (error) return <ErrorState errorMessage={error} />;
 

@@ -8,7 +8,7 @@ import { createContext, FC, PropsWithChildren, useState } from 'react';
 
 import { IComment } from '~src/components/Post/Comment/Comment';
 import { ProposalType } from '~src/global/proposalType';
-import { IOptionPoll, IPoll } from '~src/types';
+import { IOptionPoll, IPoll, IRemarkPoll } from '~src/types';
 
 export interface IPostDataContextProviderProps extends PropsWithChildren {
 	initialPostData: IPostData;
@@ -23,6 +23,7 @@ export interface IPostData {
     created_at: string | Date;
     last_edited_at: string | Date;
     proposer: string;
+    remark_poll: IRemarkPoll | null
     curator: string;
     username: string;
     topic?: {

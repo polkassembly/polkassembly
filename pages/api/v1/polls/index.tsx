@@ -9,7 +9,7 @@ import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import POLL_TYPE, { isPollTypeValid } from '~src/global/pollTypes';
 import { ProposalType } from '~src/global/proposalType';
-import { IOptionPoll, IPoll } from '~src/types';
+import { IOptionPoll, IPoll, IRemarkPoll } from '~src/types';
 
 export function getPollCollectionName(pollType: string): string {
 	switch(pollType) {
@@ -17,6 +17,8 @@ export function getPollCollectionName(pollType: string): string {
 		return 'polls';
 	case 'option':
 		return 'option_polls';
+	case 'remark_poll':
+		return 'remark_polls';
 	}
 	return '';
 }
@@ -29,7 +31,7 @@ export interface IOptionPollsResponse {
 	optionPolls: IOptionPoll[];
 }
 
-const handler: NextApiHandler<IPollsResponse | IOptionPollsResponse | MessageType> = async (req, res) => {
+const handler: NextApiHandler<IPollsResponse | IOptionPollsResponse | IRemarkPoll | MessageType> = async (req, res) => {
 	const { postId = null, pollType, proposalType } = req.query;
 	if (isNaN(Number(postId))) return res.status(400).json({ message: 'Invalid post ID.' });
 
@@ -51,6 +53,8 @@ const handler: NextApiHandler<IPollsResponse | IOptionPollsResponse | MessageTyp
 
 	const polls: IPoll[] = [];
 	const optionPolls: IOptionPoll[] = [];
+	let remarkPoll: IRemarkPoll | undefined = undefined;
+
 	pollsQuery.forEach((poll) => {
 		if (poll.exists) {
 			const data = poll.data();
@@ -73,10 +77,17 @@ const handler: NextApiHandler<IPollsResponse | IOptionPollsResponse | MessageTyp
 						poll_votes: data.poll_votes || [],
 						updated_at: data.updated_at
 					});
+				} else if (strPollType === POLL_TYPE.REMARK) {
+					remarkPoll = {
+						...data,
+						created_at: data.created_at?.toDate ? data.created_at?.toDate(): data.created_at,
+						updated_at: data.updated_at?.toDate ? data.updated_at?.toDate(): data.updated_at
+					} as IRemarkPoll;
 				}
 			}
 		}
 	});
+
 	if (strPollType === POLL_TYPE.OPTION) {
 		res.status(200).json({
 			optionPolls
@@ -85,9 +96,12 @@ const handler: NextApiHandler<IPollsResponse | IOptionPollsResponse | MessageTyp
 		res.status(200).json({
 			polls
 		});
+	} else if (strPollType === POLL_TYPE.REMARK && remarkPoll) {
+		res.status(200).json(remarkPoll);
 	} else {
 		return res.status(400).json({ message: `The pollType "${pollType}" is invalid` });
 	}
+	return;
 };
 
 export default withErrorHandling(handler);

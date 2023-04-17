@@ -167,7 +167,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						});
 						setPostData((prev) => ({
 							...prev,
-							content: post?.description || '',
+							content: isOnchainPost? post?.description || '': prev.content,
 							last_edited_at: post?.last_edited_at,
 							post_link: {
 								created_at: post?.created_at,
@@ -178,7 +178,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 								type: postTypeAndId.type
 							},
 							timeline: data.timeline,
-							title: post?.title || ''
+							title: isOnchainPost? post?.title || '': prev.title
 						}));
 					}
 				}

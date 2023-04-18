@@ -15,6 +15,7 @@ import { getPostTypeAndId } from './ContinueWithLinking';
 import { ILinkPostStartResponse } from 'pages/api/v1/auth/actions/linkPostStart';
 import LinkPostPreview from './LinkPostPreview';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
+import AddTags from '~src/ui-components/AddTags';
 
 interface ILinkingAndEditingProps {
     setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -42,9 +43,12 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 		postType,
 		title,
 		post_link,
-		timeline
+		timeline,
+		tags: oldTags
 	}, setPostData } = usePostDataContext();
 	const { network } = useNetworkContext();
+
+	const [tags, setTags] = useState<string[]>(oldTags);
 
 	useEffect(() => {
 		setEditPostValue({
@@ -60,6 +64,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 				description: post_link.description,
 				last_edited_at: post_link.last_edited_at || '',
 				proposer: post_link.proposer,
+				tags: post_link.tags,
 				title: post_link.title,
 				topic: post_link.topic,
 				username: post_link.username
@@ -78,6 +83,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					content: updatedContent,
 					postId: postIndex,
 					proposalType: postType,
+					tags: ((tags && Array.isArray(tags))? tags: []),
 					timeline,
 					title: updatedTitle
 				});
@@ -100,6 +106,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						content,
 						last_edited_at,
 						proposer,
+						tags: ((tags && Array.isArray(tags))? tags: []),
 						title,
 						topic
 					}));
@@ -174,9 +181,11 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 								description: post?.description,
 								id: postTypeAndId.id,
 								last_edited_at: post?.last_edited_at,
+								tags: ((post?.tags && Array.isArray(post?.tags))? post?.tags: prev.tags),
 								title: post?.title,
 								type: postTypeAndId.type
 							},
+							tags: ((post?.tags && Array.isArray(post?.tags))? post?.tags: prev.tags),
 							timeline: data.timeline,
 							title: isOnchainPost? post?.title || '': prev.title
 						}));
@@ -274,6 +283,12 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 								return content.length ? content : null;
 							}}
 						/>
+					</div>
+					<div
+						className='mt-[30px]'
+					>
+						<label className='text-[#475F7D] font-semibold text-lg leading-[27px] tracking-[0.01em] flex items-center mb-2'>Tags</label>
+						<AddTags tags={tags} setTags={setTags} className='mb-1' />
 					</div>
 					{
 						post_link?

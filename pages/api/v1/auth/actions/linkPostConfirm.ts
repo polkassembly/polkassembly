@@ -156,6 +156,7 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 		if (!isRemove) {
 			newData.title = currPostData.title;
 			newData.content = currPostData.content;
+			newData.tags = currPostData.tags;
 			if (!newData.user_id && newData.user_id !== 0) {
 				newData.user_id = user.id;
 			}

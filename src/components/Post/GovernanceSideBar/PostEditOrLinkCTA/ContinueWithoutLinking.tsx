@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import ContentForm from '~src/components/ContentForm';
 import { usePostDataContext } from '~src/context';
 import { NotificationStatus } from '~src/types';
+import AddTags from '~src/ui-components/AddTags';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -27,8 +28,11 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 	const { postData: {
 		postType: proposalType,
 		postIndex,
-		timeline
+		timeline,
+		tags: oldTags
 	}, setPostData } = usePostDataContext();
+
+	const [tags,setTags]=useState<string[]>(oldTags);
 
 	const onFinish = async ({ title, content }: any) => {
 		setError('');
@@ -41,6 +45,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 			content,
 			postId: postIndex,
 			proposalType,
+			tags: ((tags && Array.isArray(tags))? tags: []),
 			timeline,
 			title
 		});
@@ -69,6 +74,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 				content,
 				last_edited_at,
 				proposer,
+				tags: ((tags && Array.isArray(tags))? tags: []),
 				title,
 				topic
 			}));
@@ -129,6 +135,12 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 					>
 						<label className='text-[#475F7D] font-semibold text-lg leading-[27px] tracking-[0.01em] flex items-center mb-2'>Description</label>
 						<ContentForm />
+					</div>
+					<div
+						className='mt-[30px]'
+					>
+						<label className='text-[#475F7D] font-semibold text-lg leading-[27px] tracking-[0.01em] flex items-center mb-2'>Tags</label>
+						<AddTags tags={tags} setTags={setTags} className='mb-8' />
 					</div>
 				</Form>
 				{error && <ErrorAlert errorMsg={error} />}

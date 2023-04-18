@@ -49,7 +49,8 @@ export interface IPostData {
         topic?: {
             id: number;
             name: string;
-        }
+        };
+        tags?: string[]
     }
     track_name?: string;
     track_number?: number;

@@ -29,7 +29,8 @@ export interface ILinkPostStartResponse {
 	username?: string;
 	topic?: {
 		name: string;
-	},
+	};
+	tags?: string[];
 }
 
 const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req, res) => {
@@ -57,6 +58,7 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req
 		created_at: '',
 		description: '',
 		proposer: '',
+		tags: [],
 		title: '',
 		username: ''
 	};
@@ -78,6 +80,7 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req
 		linkPostRes.topic = getTopicFromFirestoreData(postData, ProposalType.DISCUSSIONS);
 		linkPostRes.last_edited_at = getUpdatedAt(postData);
 		linkPostRes.created_at = postData?.created_at && postData?.created_at?.toDate? postData?.created_at?.toDate(): '';
+		linkPostRes.tags = postData?.tags;
 		const addressDocs = await firestore_db.collection('addresses').where('user_id', '==', user.id).where('default', '==', true).limit(1).get();
 		if (addressDocs && addressDocs.size > 0) {
 			const doc = addressDocs.docs[0];
@@ -137,6 +140,7 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req
 			}
 			linkPostRes.topic = getTopicFromFirestoreData(postData, getFirestoreProposalType(post.type) as any);
 			linkPostRes.last_edited_at = getUpdatedAt(postData);
+			linkPostRes.tags = postData?.tags;
 		}
 		if (!linkPostRes.title) {
 			linkPostRes.title = preimage?.method;

@@ -457,7 +457,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			{<div className={className}>
 				<Form>
 					{
-						!post_link && <>
+						!post_link && canEdit && <>
 							<PostEditOrLinkCTA />
 						</>
 					}

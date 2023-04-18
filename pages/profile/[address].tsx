@@ -61,7 +61,7 @@ const Profile: FC<IProfileProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Profile' />
+			<SEOHead title='Profile' network={network}/>
 			<ProfileComponent className={className} profileDetails={userProfile.data} />
 		</>
 	);

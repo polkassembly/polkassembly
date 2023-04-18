@@ -2,14 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import Head from 'next/head';
-import React, { useContext } from 'react';
-
-import { NetworkContext } from '~src/context/NetworkContext';
+import React from 'react';
 import sanitizeMarkdown from '~src/util/sanitizeMarkdown';
 
 interface Props {
 	title: string;
 	desc?: string;
+	network:string
 }
 
 const imageMapper:any= {
@@ -47,8 +46,7 @@ const imageMapper:any= {
 		small:'turing-small.png' }
 };
 
-const SEOHead = ({ title, desc } : Props) => {
-	const { network } = useContext(NetworkContext);
+const SEOHead = ({ title, desc, network } : Props) => {
 
 	// need these consts because : https://github.com/vercel/next.js/discussions/38256
 	const descString = sanitizeMarkdown(desc) || `Polkassembly, discussion platform for ${network} governance`;
@@ -65,7 +63,7 @@ const SEOHead = ({ title, desc } : Props) => {
 			<meta property="og:title" content={title} />
 			<meta property="og:description" content={descString} />
 			<meta property="og:type" content="website" />
-			<meta property="og:image" content={`https://firebasestorage.googleapis.com/v0/b/polkassembly-backend.appspot.com/o/public%2F${image}?alt=media`} />
+			<meta property="og:image" content={`https://firebasestorage.googleapis.com/v0/b/flash-chat-6aa4f.appspot.com/o/${image}?alt=media`} />
 			<link rel="apple-touch-icon" href="/logo192.png" />
 		</Head>
 	);

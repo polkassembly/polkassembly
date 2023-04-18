@@ -103,7 +103,7 @@ interface IReferendumKillerProps {
 }
 
 const ReferendumKiller: FC<IReferendumKillerProps> = (props) => {
-	const { posts, error } = props;
+	const { posts, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -115,7 +115,7 @@ const ReferendumKiller: FC<IReferendumKillerProps> = (props) => {
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return <>
-		<SEOHead title={PostOrigin.REFERENDUM_KILLER.split(/(?=[A-Z])/).join(' ')} />
+		<SEOHead title={PostOrigin.REFERENDUM_KILLER.split(/(?=[A-Z])/).join(' ')} network={network}/>
 		<TrackListing
 			trackName={PostOrigin.REFERENDUM_KILLER}
 			posts={posts}

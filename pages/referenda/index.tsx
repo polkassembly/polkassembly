@@ -41,7 +41,7 @@ interface IReferendaProps {
 }
 
 const Referenda: FC<IReferendaProps> = (props) => {
-	const { data, error } = props;
+	const { data, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -66,7 +66,7 @@ const Referenda: FC<IReferendaProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Referenda' />
+			<SEOHead title='Referenda' network={network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>On Chain Referenda</h1>
 
 			{/* Intro and Create Post Button */}

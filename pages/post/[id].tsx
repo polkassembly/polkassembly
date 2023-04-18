@@ -35,7 +35,7 @@ interface IDiscussionPostProps {
 	network: string;
 }
 const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { data: post, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -46,7 +46,7 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} Discussion`} desc={post.content} />
+		<SEOHead title={post.title || `${noTitle} Discussion`} desc={post.content} network={network}/>
 
 		<BackToListingView postCategory={PostCategory.DISCUSSION} />
 

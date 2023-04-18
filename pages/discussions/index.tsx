@@ -57,7 +57,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 };
 
 const Discussions: FC<IDiscussionsProps> = (props) => {
-	const { data, error } = props;
+	const { data, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 	const [openModal,setModalOpen]=useState<boolean>(false);
 	const router=useRouter();
@@ -83,7 +83,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 	};
 	return (
 		<>
-			<SEOHead title='Discussions' />
+			<SEOHead title='Discussions' network={network}/>
 
 			<h1 className='dashboard-heading'>Latest Discussions</h1>
 

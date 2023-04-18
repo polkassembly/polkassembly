@@ -72,7 +72,7 @@ const Login = ({ network,setLoginOpen,setSignupOpen,isModal }:Props) => {
 	},[currentUser?.id, router]);
 	return (
 		<>
-			<SEOHead title="Login" />
+			<SEOHead title="Login" network={network}/>
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px]'>
 					{displayWeb === 2 ? (

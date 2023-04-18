@@ -111,7 +111,7 @@ interface IRootProps {
 }
 
 const Root: FC<IRootProps> = (props) => {
-	const { posts, error } = props;
+	const { posts, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -123,7 +123,7 @@ const Root: FC<IRootProps> = (props) => {
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return <>
-		<SEOHead title={PostOrigin.ROOT.split(/(?=[A-Z])/).join(' ')} />
+		<SEOHead title={PostOrigin.ROOT.split(/(?=[A-Z])/).join(' ')} network={network}/>
 		<TrackListing
 			trackName={PostOrigin.ROOT}
 			posts={posts}

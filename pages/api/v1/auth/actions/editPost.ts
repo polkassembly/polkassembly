@@ -56,7 +56,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
 
 	let created_at = new Date();
-	let topic_id = null;
+	let topic_id: any = null;
 	let post_link: any = null;
 	let proposer_address = '';
 
@@ -162,20 +162,21 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			if (strProposalType === proposalType && Number(obj.index) === Number(postId)) {
 				isCurrPostUpdated = true;
 				batch.set(postDocRef, newPostDoc, { merge: true });
+			} else {
+				batch.set(postDocRef, {
+					content,
+					created_at,
+					id: proposalType === ProposalType.TIPS ? obj.hash : Number(obj.index),
+					last_edited_at: last_comment_at,
+					post_link: post_link || null,
+					proposer_address: proposer_address,
+					tags: tags || [],
+					title,
+					topic_id : topic_id || getTopicFromType(proposalType).id,
+					user_id: user.id,
+					username: user.username
+				}, { merge: true });
 			}
-			batch.set(postDocRef, {
-				content,
-				created_at,
-				id: proposalType === ProposalType.TIPS ? obj.hash : Number(obj.index),
-				last_edited_at: new Date(),
-				post_link: post_link || null,
-				proposer_address: proposer_address,
-				tags: tags || [],
-				title,
-				topic_id : getTopicFromType(proposalType).id,
-				user_id: user.id,
-				username: user.username
-			}, { merge: true });
 		});
 		await batch.commit();
 	}

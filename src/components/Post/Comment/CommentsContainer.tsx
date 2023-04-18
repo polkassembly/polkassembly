@@ -110,7 +110,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 	}, [timeline, comments]);
 	return (
-		<div className={`${className} block xl:grid grid-cols-12`}>
+		<div className={`${className} block xl:grid grid-cols-12 `}>
 			{
 				!!comments?.length && timelines.length > 1 &&
 					<div className='hidden h-screen xl:block col-start-1 col-end-2 min-w-[100px] -ml-2 sticky top-[10%] pt-10'>
@@ -159,7 +159,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						</div>
 					</div>
 				}
-				<div className='text-sidebarBlue text-sm font-medium mb-5 '>{comments?.length} comments</div>
+				<div className='text-sidebarBlue text-sm font-medium mb-5'>{comments?.length} comments</div>
 				{ !!comments?.length &&
 						<>
 							<Comments disableEdit={isGrantClosed} comments={comments} />

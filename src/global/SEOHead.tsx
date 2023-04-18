@@ -47,8 +47,6 @@ const imageMapper:any= {
 		small:'turing-small.png' }
 };
 
-// `https://firebasestorage.googleapis.com/v0/b/flash-chat-6aa4f.appspot.com/o/${image}?alt=media`
-
 const SEOHead = ({ title, desc } : Props) => {
 	const { network } = useContext(NetworkContext);
 
@@ -67,7 +65,7 @@ const SEOHead = ({ title, desc } : Props) => {
 			<meta property="og:title" content={title} />
 			<meta property="og:description" content={descString} />
 			<meta property="og:type" content="website" />
-			<meta property="og:image" content={`https://firebasestorage.googleapis.com/v0/b/flash-chat-6aa4f.appspot.com/o/${image}?alt=media`} />
+			<meta property="og:image" content={`https://firebasestorage.googleapis.com/v0/b/polkassembly-backend.appspot.com/o/public%2F${image}?alt=media`} />
 			<link rel="apple-touch-icon" href="/logo192.png" />
 		</Head>
 	);

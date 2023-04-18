@@ -118,7 +118,7 @@ const Footer = ({ className } : { className?:string }) => {
 						</p>
 
 						<p className="mt-4 text-sm text-gray-500 sm:order-first sm:mt-0">
-						&copy; Polka Labs Private Limited {new Date().getFullYear()}
+							&copy; 2022 Polka Labs Private Limited
 						</p>
 					</div>
 				</div>

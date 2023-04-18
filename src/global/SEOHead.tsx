@@ -15,20 +15,20 @@ const imageMapper:any= {
 	acala:{ large:'acala.png',
 		small:'acala-small.png' },
 	equilibrium:{ large:'equilibrium.png',
-		small:'equilibrium-small.png ' },
-	frequency:{ large:'frequency.png ',
-		small:'frequency-small.png ' },
+		small:'equilibrium-small.png' },
+	frequency:{ large:'frequency.png',
+		small:'frequency-small.png' },
 	kilt:{ large:'kilt.png',
 		small:'kilt-small.png' },
 	kusama:{ large:'kusama.png',
 		small:'kusama-small.png' },
-	moonbase:{ large:'moonbase.png ',
+	moonbase:{ large:'moonbase.png',
 		small:'moonbase-small.png' },
-	moonbeam:{ large:'moonbeam.png ',
-		small:'moonbeam-small.png ' },
-	moonriver:{ large:'moonriver.png ',
+	moonbeam:{ large:'moonbeam.png',
+		small:'moonbeam-small.png' },
+	moonriver:{ large:'moonriver.png',
 		small:'moonriver-small.png' },
-	network:{ large:'network.png ',
+	network:{ large:'network.png',
 		small:'network-small.png' },
 	picasso:{ large:'picasso.png',
 		small:'picasso-small.png' },
@@ -63,7 +63,7 @@ const SEOHead = ({ title, desc, network } : Props) => {
 			<meta property="og:title" content={title} />
 			<meta property="og:description" content={descString} />
 			<meta property="og:type" content="website" />
-			<meta property="og:image" content={`https://firebasestorage.googleapis.com/v0/b/polkassembly-backend.appspot.com/o/public%2F${image}?alt=media`} />
+			<meta property="og:image" content={`https://firebasestorage.googleapis.com/v0/b/polkassembly-backend.appspot.com/o/public%2F${image.trim()}?alt=media`} />
 			<link rel="apple-touch-icon" href="/logo192.png" />
 		</Head>
 	);

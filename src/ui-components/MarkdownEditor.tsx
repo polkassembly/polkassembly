@@ -174,9 +174,7 @@ interface Props {
 
 function MarkdownEditor(props: Props): React.ReactElement {
 	const { id, username } = useUserDetailsContext();
-	
 	const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
-
 	const loadSuggestions = async (text: string) => {
 		return new Promise<Suggestion[]>((accept) => {
 			const savedUsers = global.window.localStorage.getItem('users');
@@ -219,7 +217,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	return (
 		<StyledTextArea className='container'>
 			<ReactMde
-				generateMarkdownPreview={markdown => {return Promise.resolve(<Markdown isPreview={true} md={markdown} />)} }
+				generateMarkdownPreview={markdown => Promise.resolve(<Markdown isPreview={true} md={markdown} />)}
 				minEditorHeight={props.height}
 				minPreviewHeight={props.height}
 				name={props.name}

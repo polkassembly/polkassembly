@@ -36,7 +36,7 @@ interface ITreasuryPostProps {
 }
 
 const TreasuryPost: FC<ITreasuryPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { data: post, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -48,7 +48,7 @@ const TreasuryPost: FC<ITreasuryPostProps> = (props) => {
 	if (!post) return null;
 
 	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} - Treasury Proposal`} desc={post.content} />
+		<SEOHead title={post.title || `${noTitle} - Treasury Proposal`} desc={post.content} network={network}/>
 
 		<BackToListingView postCategory={PostCategory.TREASURY_PROPOSAL} />
 

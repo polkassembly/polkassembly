@@ -117,7 +117,7 @@ const MediumSpender: FC<IMediumSpenderProps> = (props) => {
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return <>
-		<SEOHead title={PostOrigin.MEDIUM_SPENDER.split(/(?=[A-Z])/).join(' ')} />
+		<SEOHead title={PostOrigin.MEDIUM_SPENDER.split(/(?=[A-Z])/).join(' ')} network={props.network}/>
 		<TrackListing
 			trackName={PostOrigin.MEDIUM_SPENDER}
 			posts={posts}

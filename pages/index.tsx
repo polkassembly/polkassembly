@@ -139,7 +139,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 
 	return (
 		<>
-			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" />
+			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network}/>
 			<main>
 				<div className="mt-6 mx-1">
 					{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}

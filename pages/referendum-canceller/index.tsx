@@ -102,7 +102,7 @@ interface IReferendumCancellerProps {
 }
 
 const ReferendumCanceller: FC<IReferendumCancellerProps> = (props) => {
-	const { posts, error } = props;
+	const { posts, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -114,7 +114,7 @@ const ReferendumCanceller: FC<IReferendumCancellerProps> = (props) => {
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return <>
-		<SEOHead title={PostOrigin.REFERENDUM_CANCELLER.split(/(?=[A-Z])/).join(' ')} />
+		<SEOHead title={PostOrigin.REFERENDUM_CANCELLER.split(/(?=[A-Z])/).join(' ')} network={network}/>
 		<TrackListing
 			trackName={PostOrigin.REFERENDUM_CANCELLER}
 			posts={posts}

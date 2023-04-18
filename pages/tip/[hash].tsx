@@ -36,7 +36,7 @@ interface ITipPostProps {
 }
 
 const TipPost: FC<ITipPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { data: post, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -48,7 +48,7 @@ const TipPost: FC<ITipPostProps> = (props) => {
 	if (!post) return null;
 
 	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} - Tip`} desc={post.content} />
+		<SEOHead title={post.title || `${noTitle} - Tip`} desc={post.content} network={network}/>
 
 		<BackToListingView postCategory={PostCategory.TIP} />
 

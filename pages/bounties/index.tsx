@@ -42,7 +42,7 @@ interface IBountiesProps {
 }
 
 const Bounties: FC<IBountiesProps> = (props) => {
-	const { data, error } = props;
+	const { data, error, network } = props;
 	const router = useRouter();
 
 	const { setNetwork } = useNetworkContext();
@@ -67,7 +67,7 @@ const Bounties: FC<IBountiesProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Bounties' />
+			<SEOHead title='Bounties' network={network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>On Chain Bounties</h1>
 
 			{/* Intro and Create Post Button */}

@@ -67,7 +67,7 @@ const VerifyEmail = ({ network }: { network: string }) => {
 
 	return (
 		<>
-			<SEOHead title="Verify Email" />
+			<SEOHead title="Verify Email" network={network}/>
 			<Row justify='center' align='middle' className='h-full -mt-16'>
 				{ error
 					? <article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">

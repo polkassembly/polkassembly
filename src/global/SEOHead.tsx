@@ -2,14 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import Head from 'next/head';
-import React, { useContext } from 'react';
-
-import { NetworkContext } from '~src/context/NetworkContext';
+import React from 'react';
 import sanitizeMarkdown from '~src/util/sanitizeMarkdown';
 
 interface Props {
 	title: string;
 	desc?: string;
+	network:string
 }
 
 const imageMapper:any= {
@@ -47,8 +46,7 @@ const imageMapper:any= {
 		small:'turing-small.png' }
 };
 
-const SEOHead = ({ title, desc } : Props) => {
-	const { network } = useContext(NetworkContext);
+const SEOHead = ({ title, desc, network } : Props) => {
 
 	// need these consts because : https://github.com/vercel/next.js/discussions/38256
 	const descString = sanitizeMarkdown(desc) || `Polkassembly, discussion platform for ${network} governance`;

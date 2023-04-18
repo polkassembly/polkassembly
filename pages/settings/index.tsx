@@ -37,7 +37,7 @@ const Settings: FC<Props> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Settings' />
+			<SEOHead title='Settings' network={network}/>
 			<Col className='w-full h-full'>
 				<Row>
 					<h3

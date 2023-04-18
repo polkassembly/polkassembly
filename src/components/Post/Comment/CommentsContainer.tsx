@@ -12,6 +12,8 @@ import { ProposalType } from '~src/global/proposalType';
 
 import PostCommentForm from '../PostCommentForm';
 import Comments from './Comments';
+import RefendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import Image from 'next/image';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -53,9 +55,9 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const targetOffset = 10;
 	const [timelines, setTimelines] = useState<ITimeline[]>([]);
 	// const [modalOpen,setModalOpen]=useState<boolean>(false);
-
+	// const { isLoggedOut } = useUserDetailsContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
-
+	const[openLoginModal,setOpenLoginModal]=useState<boolean>(false);
 	const getCommentCountAndFirstIdBetweenDates = (startDate: Dayjs, endDate: Dayjs, comments: any[]) => {
 		if (startDate.isAfter(endDate)) {
 			return {
@@ -146,15 +148,31 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						<PostCommentForm className='mb-8' />
 					}
 				</>
-					:<Alert
-						className='p-4 mb-8 mt-9'
-						type='info' message="Please Login to Comment" showIcon/>
+					:<div className="p-4 mt-4 mb-8 bg-[#FFF7FB] border-none rounded-lg shadow-md">
+						<div className="flex flex-wrap justify-center items-center">
+							<Image src="/assets/icons/alert-login.svg" width={20} height={20} alt={''} />
+							<div className="ml-1 mt-3">
+								<p className="text-sm leading-5 font-medium text-[#243A57]">
+									Please <span className="cursor-pointer text-pink_primary" onClick={() => {setOpenLoginModal(true);}}>Log In</span> to comment
+								</p>
+							</div>
+						</div>
+					</div>
 				}
 				<div className='text-sidebarBlue text-sm font-medium mb-5'>{comments?.length} comments</div>
 				{ !!comments?.length &&
 						<>
 							<Comments disableEdit={isGrantClosed} comments={comments} />
 						</>
+				}
+				{
+					<RefendaLoginPrompts
+						modalOpen={openLoginModal}
+						setModalOpen={setOpenLoginModal}
+						image="/assets/post-comment.png"
+						title="Join Polkassembly to Comment on this proposal."
+						subtitle="Discuss, contribute and get regular updates from Polkassembly."
+					/>
 				}
 			</div>
 		</div>
@@ -187,6 +205,9 @@ export default React.memo(styled(CommentsContainer)`
 		border: none !important;
 		border-radius: 50% !important;
 		margin-left: -7px;
+	}
+	.my-alert .ant-alert-message span {
+  		color: red !important;
 	}
 }
 `);

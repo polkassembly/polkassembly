@@ -11,6 +11,7 @@ import { chainProperties, network } from 'src/global/networkConstants';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import { useNetworkContext } from '~src/context';
 import { ArrowDownIcon } from './CustomIcons';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 type DropdownMenuItemType = {
 	key: any,
@@ -24,7 +25,12 @@ const testChains: DropdownMenuItemType[] = [];
 
 for (const key of Object.keys(network)) {
 	const keyVal = network[key as keyof typeof network];
-	const link = ['MOONBASE', 'MOONRIVER', 'MOONBEAM', 'KILT'].includes(key) ? `https://${key}.polkassembly.network` : `https://${key === 'POLYMESHTEST'? 'polymesh-test': key}.polkassembly.io`;
+	if(key === 'TANGANIKA') continue;
+
+	let link = ['MOONBASE', 'MOONRIVER', 'MOONBEAM', 'KILT'].includes(key) ? `https://${key}.polkassembly.network` : `https://${key === 'POLYMESHTEST'? 'polymesh-test': key}.polkassembly.io`;
+	if (isOpenGovSupported(keyVal)) {
+		link = `${link}/gov-2`;
+	}
 	const optionObj: DropdownMenuItemType = {
 		key,
 		label: <a href={link} className='flex items-center my-2'>

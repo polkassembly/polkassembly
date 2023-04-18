@@ -40,7 +40,6 @@ export function getTopicFromType(proposalType: ProposalType) {
 		topic.id = 6;
 		topic.name = 'Grant';
 	}
-
 	return topic;
 }
 
@@ -50,7 +49,12 @@ export const topicIdToNameMap = {
 	3: 'Technical Committee',
 	4: 'Treasury',
 	5: 'General',
-	6: 'Grant'
+	6: 'Root',
+	7: 'Staking Admin',
+	8: 'Auction Admin',
+	9: 'Governance',
+	// eslint-disable-next-line sort-keys
+	10: 'Fellowship'
 };
 
 export const isTopicIdValid = (topicId: any) => {

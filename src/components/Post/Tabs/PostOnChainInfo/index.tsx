@@ -12,13 +12,11 @@ import Address from 'src/ui-components/Address';
 import blockToTime from 'src/util/blockToTime';
 import formatBnBalance from 'src/util/formatBnBalance';
 import styled from 'styled-components';
-import PolkaholicIntegration from '~src/components/PolkaholicIntegration';
-
 import { useNetworkContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { useCurrentBlock } from '~src/hooks';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
-import { getBlockLink, isPolkaholicSupport } from '~src/util/subscanCheck';
+import { getBlockLink } from '~src/util/subscanCheck';
 
 import OnchainInfoWrapper from './OnchainInfoWrapper';
 
@@ -406,16 +404,12 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							: null
 					}
 					{
-						isPolkaholicSupport(network)?
-							<PolkaholicIntegration
-								blockNumber={blockNumber}
-							/>
-							: <ExternalLinks
-								className='mt-5'
-								proposalType={proposalType}
-								onchainId={post_id}
-								blockNumber={blockNumber}
-							/>
+						<ExternalLinks
+							className='mt-5'
+							proposalType={proposalType}
+							onchainId={post_id}
+							blockNumber={blockNumber}
+						/>
 					}
 				</OnchainInfoWrapper>
 			</div>

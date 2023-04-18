@@ -46,11 +46,11 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 	const getReactionIcon = (reaction: string, reacted: string | boolean | null | undefined) => {
 		if(reaction == '👍') {
-			return reacted ? <LikeFilled /> : <div onClick={() => setLikeModalOpen && setLikeModalOpen(true)}><LikeOutlined /></div>;
+			return reacted ? <LikeFilled /> : <div onClick={() => !id && setLikeModalOpen && setLikeModalOpen(true)}><LikeOutlined /></div>;
 		}
 
 		if(reaction == '👎') {
-			return reacted ? <LikeFilled rotate={180} /> : <div onClick={() => setDislikeModalOpen && setDislikeModalOpen(true)}><LikeOutlined rotate={180} /></div>;
+			return reacted ? <LikeFilled rotate={180} /> : <div onClick={() => !id && setDislikeModalOpen && setDislikeModalOpen(true)}><LikeOutlined rotate={180} /></div>;
 		}
 
 		return reaction;
@@ -58,7 +58,12 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 	const handleReact = async () => {
 		if (!id || !username) {
-			console.error('No user id found. Not logged in?');
+			if(reaction == '👍') {
+				setLikeModalOpen && setLikeModalOpen(true);
+			}
+			else{
+				setDislikeModalOpen && setDislikeModalOpen(true);
+			}
 			return;
 		}else{
 			setReactionsDisabled(true);

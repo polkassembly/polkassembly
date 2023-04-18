@@ -8,7 +8,6 @@ import { getOffChainPosts } from 'pages/api/v1/listing/off-chain-posts';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
-
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
 import { useNetworkContext } from '~src/context';
@@ -26,12 +25,12 @@ interface IDiscussionsProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.COMMENTED } = query;
+	const { page = 1, sortBy = sortValues.COMMENTED,filterBy } = query;
 
-	if(!Object.values(sortValues).includes(sortBy.toString())) {
+	if(!Object.values(sortValues).includes(sortBy.toString()) || filterBy && filterBy.length!==0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))) {
 		return {
 			redirect: {
-				destination: `/discussions?page=${page}&sortBy=${sortValues.COMMENTED}`,
+				destination: `/discussions?page=${page}&sortBy=${sortValues.COMMENTED}&filterBy=${filterBy}`,
 				permanent: false
 			}
 		};
@@ -40,6 +39,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const { data, error = ''  } = await getOffChainPosts({
+		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page: Number(page),

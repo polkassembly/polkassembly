@@ -12,7 +12,6 @@ import UpdateLabel from 'src/ui-components/UpdateLabel';
 import UserAvatar from 'src/ui-components/UserAvatar';
 
 import { usePostDataContext } from '~src/context';
-
 import EditableCommentContent from './EditableCommentContent';
 import Replies from './Replies';
 

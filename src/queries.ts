@@ -2,6 +2,19 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+export const GET_CURVE_DATA_BY_INDEX = `
+query CurveDataByIndex($index_eq: Int, $limit: Int = 1000) {
+  curveData(limit: $limit, where: {index_eq: $index_eq}, orderBy: block_ASC) {
+    approvalPercent
+    block
+    id
+    index
+    supportPercent
+    timestamp
+  }
+}
+`;
+
 export const GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY = `
 query ProposalsListingByType($limit: Int, $index_in: [Int!]) {
   proposals(where: {index_in: $index_in, type_eq: Bounty}, limit: $limit) {
@@ -58,6 +71,45 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
   }
 }
 `;
+
+export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES=`query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!]) {
+  proposals(where: {type_eq: $type_eq, index_in: $index_in}, limit: $limit) {
+    proposer
+    curator
+    createdAt
+    updatedAt
+    preimage {
+      method
+      proposer
+    }
+    index
+    end
+    hash
+    description
+    type
+    origin
+    trackNumber
+    group {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
+        proposer
+        preimage {
+          proposer
+        }
+      }
+    }
+    proposalArguments {
+      method
+      description
+    }
+    parentBountyIndex
+    statusHistory {
+      block
+      status
+      timestamp
+    }
+    status
+  }
+}`;
 
 export const GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING = `
 query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal) {

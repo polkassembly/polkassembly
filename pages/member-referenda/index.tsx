@@ -57,7 +57,7 @@ const FellowshipAdmin: FC<IFellowshipReferendumProps> = (props) => {
 		});
 	}
 	return <>
-		<SEOHead title={'Fellowship Referendum'} />
+		<SEOHead title={'Fellowship Referendum'} network={network}/>
 		<TrackListing
 			allTrackPosts={posts}
 			fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}

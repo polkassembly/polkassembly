@@ -40,7 +40,7 @@ interface IPreImagesProps {
 }
 
 const PreImages: FC<IPreImagesProps> = (props) => {
-	const { data, error } = props;
+	const { data, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -65,7 +65,7 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='PreImages' />
+			<SEOHead title='PreImages' network={network}/>
 			<h1 className='dashboard-heading'>{ count } Preimages</h1>
 
 			{/* <div className="mt-8 mx-1">

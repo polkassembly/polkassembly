@@ -36,7 +36,7 @@ interface IReferendumPostProps {
 }
 
 const ReferendumPost: FC<IReferendumPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { data: post, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -48,7 +48,7 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 	if (!post) return null;
 
 	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} - Referendum`} desc={post.content} />
+		<SEOHead title={post.title || `${noTitle} - Referendum`} desc={post.content} network={network}/>
 
 		<BackToListingView postCategory={PostCategory.REFERENDA} />
 

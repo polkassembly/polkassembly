@@ -51,7 +51,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 		}
 
 		return <>
-			<SEOHead title={post.title || `${noTitle} - Referenda V2`} desc={post.content} />
+			<SEOHead title={post.title || `${noTitle} - Referenda V2`} desc={post.content} network={props.network}/>
 
 			<BackToListingView trackName={'member-referenda'} />
 

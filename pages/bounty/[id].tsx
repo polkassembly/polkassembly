@@ -35,7 +35,7 @@ interface IBountyPostProps {
 	network: string;
 }
 const BountyPost: FC<IBountyPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { data: post, error, network } = props;
 
 	const { setNetwork } = useNetworkContext();
 
@@ -48,7 +48,7 @@ const BountyPost: FC<IBountyPostProps> = (props) => {
 	if (!post) return null;
 
 	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} - Bounty`} desc={post.content} />
+		<SEOHead title={post.title || `${noTitle} - Bounty`} desc={post.content} network={network}/>
 
 		<BackToListingView postCategory={PostCategory.BOUNTY} />
 

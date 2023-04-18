@@ -36,7 +36,7 @@ interface IReferendaPostProps {
 }
 
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { data: post, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -55,7 +55,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 		}
 
 		return <>
-			<SEOHead title={post.title || `${noTitle} - Referenda V2`} desc={post.content} />
+			<SEOHead title={post.title || `${noTitle} - Referenda V2`} desc={post.content} network={network}/>
 
 			{trackName && <BackToListingView trackName={trackName} />}
 

@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const TrackerContainer: FC<ITrackerContainerProps> = (props) => {
-	const { className } = props;
+	const { className, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -63,7 +63,7 @@ const TrackerContainer: FC<ITrackerContainerProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Tracker' />
+			<SEOHead title='Tracker' network={network}/>
 			<div className={className}>
 				<h1 className='dashboard-heading mb-4 md:mb-6'> Tracker</h1>
 

@@ -113,7 +113,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	});
 	return (
 		<>
-			<SEOHead title='User Profile' />
+			<SEOHead title='User Profile' network={network}/>
 			<section className={`my-0 pb-5 md:pb-0 md:bg-white md:shadow-md rounded-[4px] flex h-full min-h-[calc(100vh-150px)] ${className}`}>
 				<Details userPosts={userPosts.data} userProfile={userProfile} />
 				<article className='hidden md:flex flex-1 py-6 px-10 flex-col w-[calc(100%-330px)]'>

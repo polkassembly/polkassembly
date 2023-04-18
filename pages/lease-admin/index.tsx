@@ -102,7 +102,7 @@ interface ILeaseAdminProps {
 }
 
 const LeaseAdmin: FC<ILeaseAdminProps> = (props) => {
-	const { posts, error } = props;
+	const { posts, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -114,7 +114,7 @@ const LeaseAdmin: FC<ILeaseAdminProps> = (props) => {
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return <>
-		<SEOHead title={PostOrigin.LEASE_ADMIN.split(/(?=[A-Z])/).join(' ')} />
+		<SEOHead title={PostOrigin.LEASE_ADMIN.split(/(?=[A-Z])/).join(' ')} network={network}/>
 		<TrackListing
 			trackName={PostOrigin.LEASE_ADMIN}
 			posts={posts}

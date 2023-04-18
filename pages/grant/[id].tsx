@@ -25,20 +25,21 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		postId: id,
 		proposalType: OffChainProposalType.GRANTS
 	});
-	return { props: { data, error } };
+	return { props: { data, error, network } };
 };
 
 interface IGrantPostProps {
 	data: IPostResponse;
+	network:string;
 	error?: string;
 }
 const GrantPost: FC<IGrantPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { data: post, error, network } = props;
 
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} Grant`} desc={post.content} />
+		<SEOHead title={post.title || `${noTitle} Grant`} desc={post.content} network={network}/>
 
 		<BackToListingView postCategory={PostCategory.GRANT} />
 

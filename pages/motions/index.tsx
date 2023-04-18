@@ -40,7 +40,7 @@ interface IMotionsProps {
 	network: string;
 }
 const Motions: FC<IMotionsProps> = (props) => {
-	const { data, error } = props;
+	const { data, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -64,7 +64,7 @@ const Motions: FC<IMotionsProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Motions' />
+			<SEOHead title='Motions' network={network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>On Chain Motions</h1>
 
 			{/* Intro and Create Post Button */}

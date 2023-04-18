@@ -41,7 +41,7 @@ interface IProposalsProps {
 }
 
 const Proposals: FC<IProposalsProps> = (props) => {
-	const { data, error } = props;
+	const { data, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -66,7 +66,7 @@ const Proposals: FC<IProposalsProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Proposals' />
+			<SEOHead title='Proposals' network={network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>On Chain Proposals</h1>
 
 			{/* Intro and Create Post Button */}

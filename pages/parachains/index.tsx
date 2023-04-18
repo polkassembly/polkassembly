@@ -55,7 +55,7 @@ const Parachains = ({ className, network }: Props) => {
 
 	return (
 		<>
-			<SEOHead title='Parachains' />
+			<SEOHead title='Parachains' network={network}/>
 			<div className={className}>
 				<h1 className='dashboard-heading mb-4 md:mb-6'>Polkadot and Kusama ecosystem and directory</h1>
 

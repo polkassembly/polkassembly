@@ -114,7 +114,7 @@ const WhitelistedCaller: FC<IWhitelistedCallerProps> = (props) => {
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return <>
-		<SEOHead title={PostOrigin.WHITELISTED_CALLER.split(/(?=[A-Z])/).join(' ')} />
+		<SEOHead title={PostOrigin.WHITELISTED_CALLER.split(/(?=[A-Z])/).join(' ')} network={props.network}/>
 		<TrackListing
 			trackName={PostOrigin.WHITELISTED_CALLER}
 			posts={posts}

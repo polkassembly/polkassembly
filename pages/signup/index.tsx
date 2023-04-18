@@ -69,7 +69,7 @@ const Signup = ({ network,isModal,setLoginOpen,setSignupOpen }:Props) => {
 
 	return (
 		<>
-			<SEOHead title="Signup" />
+			<SEOHead title="Signup" network={network}/>
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px]'>
 					{ displayWeb === 2

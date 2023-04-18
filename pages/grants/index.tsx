@@ -87,7 +87,7 @@ const Grants: FC<IGrantsProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Discussions' />
+			<SEOHead title='Discussions' network={network}/>
 			<div className='w-full flex flex-col sm:flex-row sm:items-center'>
 				<h1 className='dashboard-heading flex-1 mb-4 sm:mb-0'>Grants Discussion</h1>
 				<Button onClick={handleClick} className='outline-none border-none h-[59px] w-[174px] px-6 py-4 font-medium text-lg leading-[27px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer'>New Grant post</Button>

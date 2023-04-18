@@ -36,7 +36,7 @@ interface ITechCommPostProps {
 }
 
 const TechCommPost: FC<ITechCommPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { data: post, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -48,7 +48,7 @@ const TechCommPost: FC<ITechCommPostProps> = (props) => {
 	if (!post) return null;
 
 	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} - Tech Comm.`} desc={post.content} />
+		<SEOHead title={post.title || `${noTitle} - Tech Comm.`} desc={post.content} network={network}/>
 
 		<BackToListingView postCategory={PostCategory.TECH_COMMITTEE_PROPOSAL} />
 

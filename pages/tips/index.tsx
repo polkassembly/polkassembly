@@ -42,7 +42,7 @@ interface ITipsProps {
 }
 
 const Tips: FC<ITipsProps> = (props) => {
-	const { data, error, page } = props;
+	const { data, error, page, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -67,7 +67,7 @@ const Tips: FC<ITipsProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Tips' />
+			<SEOHead title='Tips' network={network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>On Chain Tips</h1>
 
 			{/* Intro and Create Post Button */}

@@ -53,7 +53,7 @@ const News: FC<Props> = ({ data, error, network }) => {
 
 	return (
 		<>
-			<SEOHead title='News' />
+			<SEOHead title='News' network={network}/>
 			<div className='w-full h-full'>
 				<h3 className='font-medium text-lg tracking-wide leading-7 text-sidebarBlue'>
 					News

@@ -42,7 +42,7 @@ interface IProposalPostProps {
 }
 
 const ProposalPost: FC<IProposalPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { data: post, error, network } = props;
 
 	const { setNetwork } = useNetworkContext();
 
@@ -55,7 +55,7 @@ const ProposalPost: FC<IProposalPostProps> = (props) => {
 	if (!post) return null;
 
 	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} - Proposal`} desc={post.content} />
+		<SEOHead title={post.title || `${noTitle} - Proposal`} desc={post.content} network={network}/>
 
 		<BackToListingView postCategory={PostCategory.PROPOSAL} />
 

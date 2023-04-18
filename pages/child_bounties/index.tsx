@@ -41,7 +41,7 @@ interface IChildBountiesProps {
 }
 
 const ChildBounties: FC<IChildBountiesProps> = (props) => {
-	const { data, error } = props;
+	const { data, error, network } = props;
 
 	const { setNetwork } = useNetworkContext();
 
@@ -67,7 +67,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Child Bounties' />
+			<SEOHead title='Child Bounties' network={network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>On Chain Child Bounties</h1>
 
 			{/* Intro and Create Post Button */}

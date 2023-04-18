@@ -102,7 +102,7 @@ interface IBigSpenderProps {
 }
 
 const BigSpender: FC<IBigSpenderProps> = (props) => {
-	const { posts, error } = props;
+	const { posts, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -114,7 +114,7 @@ const BigSpender: FC<IBigSpenderProps> = (props) => {
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return <>
-		<SEOHead title={PostOrigin.BIG_SPENDER.split(/(?=[A-Z])/).join(' ')} />
+		<SEOHead title={PostOrigin.BIG_SPENDER.split(/(?=[A-Z])/).join(' ')} network={network}/>
 		<TrackListing
 			trackName={PostOrigin.BIG_SPENDER}
 			posts={posts}

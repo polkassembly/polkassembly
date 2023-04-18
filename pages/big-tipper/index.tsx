@@ -102,7 +102,7 @@ interface IBigTipperProps {
 }
 
 const BigTipper: FC<IBigTipperProps> = (props) => {
-	const { posts, error } = props;
+	const { posts, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -114,7 +114,7 @@ const BigTipper: FC<IBigTipperProps> = (props) => {
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return <>
-		<SEOHead title={PostOrigin.BIG_TIPPER.split(/(?=[A-Z])/).join(' ')} />
+		<SEOHead title={PostOrigin.BIG_TIPPER.split(/(?=[A-Z])/).join(' ')} network={network}/>
 		<TrackListing
 			trackName={PostOrigin.BIG_TIPPER}
 			posts={posts}

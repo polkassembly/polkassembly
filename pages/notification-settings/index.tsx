@@ -24,7 +24,7 @@ const NotificationSettingsPage = ({ network }: { network:string }) => {
 
 	return (
 		<>
-			<SEOHead title='Notification Settings' />
+			<SEOHead title='Notification Settings' network={network}/>
 			<NotificationSettings/>
 		</>
 	);

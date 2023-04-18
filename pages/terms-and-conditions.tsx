@@ -33,7 +33,7 @@ const TermsAndConditionsPage: FC<ITermsAndConditionsPage> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Terms and Conditions' />
+			<SEOHead title='Terms and Conditions' network={network} />
 			<TermsAndConditions/>
 		</>
 	);

@@ -102,7 +102,7 @@ interface IFellowshipAdminProps {
 }
 
 const FellowshipAdmin: FC<IFellowshipAdminProps> = (props) => {
-	const { posts, error } = props;
+	const { posts, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -114,7 +114,7 @@ const FellowshipAdmin: FC<IFellowshipAdminProps> = (props) => {
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return <>
-		<SEOHead title={PostOrigin.FELLOWSHIP_ADMIN.split(/(?=[A-Z])/).join(' ')} />
+		<SEOHead title={PostOrigin.FELLOWSHIP_ADMIN.split(/(?=[A-Z])/).join(' ')} network={network}/>
 		<TrackListing
 			trackName={PostOrigin.FELLOWSHIP_ADMIN}
 			posts={posts}

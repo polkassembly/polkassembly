@@ -3,29 +3,52 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
-// import { getOnChainPosts } from 'pages/api/v1/listing/on-chain-posts';
-import { useEffect } from 'react';
+import { IPostsListingResponse, getOnChainPosts } from 'pages/api/v1/listing/on-chain-posts';
+import { FC, useEffect } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import DashboardTrackListing from '~src/components/DelegationDashboardComponents/dashboardTrack';
-import { getTrackData } from '~src/components/Listing/Tracks/AboutTrackCard';
-// import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
+import DashboardTrackListing from '~src/components/DelegationDashboardComponents/DashboardTrack';
+import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
-// import { ProposalType } from '~src/global/proposalType';
-// import { sortValues } from '~src/global/sortOptions';
+import { LISTING_LIMIT } from '~src/global/listingLimit';
+import { ProposalType } from '~src/global/proposalType';
+import { sortValues } from '~src/global/sortOptions';
+import { ErrorState } from '~src/ui-components/UIStates';
+import getQueryToTrack from '~src/util/getQueryToTrack';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { track } = query;
+export const getServerSideProps: GetServerSideProps = async ({ req , query }) => {
+	const { page = 1,sortBy = sortValues.NEWEST, track } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
-	const data= getTrackData(String(track));
-	console.log(data);
-	// const fetch = getOnChainPosts({ network , proposalType: ProposalType.OPEN_GOV, trackStatus: CustomStatus.Active , sortBy,page })
-	return { props: { network } };
+	const  trackDetails:any = getQueryToTrack(String(track), network);
+	const { data, error = ''  }  = await getOnChainPosts({
+		listingLimit:LISTING_LIMIT,
+		network,
+		page,
+		proposalType: ProposalType.OPEN_GOV,
+		sortBy,
+		trackNo: trackDetails?.trackId,
+		trackStatus: CustomStatus.Active
+	});
 
+	return {
+		props: {
+			data,
+			error,
+			network,
+			trackDetails
+		}
+	};
 };
 
-const DashboardTracks = ( props : { network: string} ) => {
+interface ITrackProps {
+	data?: IPostsListingResponse;
+	error?: string;
+	network: string;
+  trackDetails: any
+}
 
+const DashboardTracks:FC<ITrackProps> = ( props  ) => {
+	const { data, error ,trackDetails } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -33,9 +56,13 @@ const DashboardTracks = ( props : { network: string} ) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	if (error) return <ErrorState errorMessage={error} />;
+	if (!data) return null;
+	const { posts } = data;
+
 	return <>
 		<SEOHead title='Delegation Board' />
-		<DashboardTrackListing/>
+		<DashboardTrackListing posts= {posts} trackDetails= {trackDetails}/>
 	</>;
 };
 export default DashboardTracks;

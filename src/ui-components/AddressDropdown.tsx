@@ -18,7 +18,7 @@ interface Props {
 
 const AddressDropdown = ({
 	defaultAddress,
-	className = 'px-4 py-2 border-solid border-gray-300 border-2 rounded-md',
+	className = 'px-3 py-1 border-solid border-gray-300 border-2 rounded-md',
 	accounts,
 	filterAccounts,
 	onAccountChange

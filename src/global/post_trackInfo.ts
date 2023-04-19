@@ -15,6 +15,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.ROOT] : {
 			'trackId': 0,
 			'description': 'Origin for General network-wide improvements',
+			'delegationDescription':'Origin for the system root',
 			'group': 'Main',
 			'name': 'root',
 			'maxDeciding': 1,
@@ -41,6 +42,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.WHITELISTED_CALLER] : {
 			'trackId': 1,
 			'description': 'Origin able to dispatch a whitelisted call.',
+			'delegationDescription':'',
 			'group': 'Whitelist',
 			'name': 'whitelisted_caller',
 			'maxDeciding': 100,
@@ -67,6 +69,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.STAKING_ADMIN] : {
 			'trackId': 10,
 			'description': 'Origin for cancelling slashes.',
+			'delegationDescription':'Origin for cancelling slashes',
 			'group': 'Main',
 			'name': 'staking_admin',
 			'maxDeciding': 10,
@@ -93,6 +96,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.TREASURER] : {
 			'trackId': 11,
 			'description': 'Origin for spending (any amount of) funds.',
+			'delegationDescription':'',
 			'group': 'Treasury',
 			'name': 'treasurer',
 			'maxDeciding': 10,
@@ -119,6 +123,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.LEASE_ADMIN] : {
 			'trackId': 12,
 			'description': 'Origin able to force slot leases.',
+			'delegationDescription':'',
 			'group': 'Governance',
 			'name': 'lease_admin',
 			'maxDeciding': 10,
@@ -145,6 +150,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.FELLOWSHIP_ADMIN] : {
 			'trackId': 13,
 			'description': 'Origin for managing the composition of the fellowship.',
+			'delegationDescription':'',
 			'group': 'Whitelist',
 			'name': 'fellowship_admin',
 			'maxDeciding': 10,
@@ -171,6 +177,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.GENERAL_ADMIN] : {
 			'trackId': 14,
 			'description': 'Origin for managing the registrar.',
+			'delegationDescription':'',
 			'group': 'Governance',
 			'name': 'general_admin',
 			'maxDeciding': 10,
@@ -197,6 +204,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.AUCTION_ADMIN] : {
 			'trackId': 15,
 			'description': 'Origin for starting auctions.',
+			'delegationDescription':'',
 			'group': 'Main',
 			'name': 'auction_admin',
 			'maxDeciding': 10,
@@ -223,6 +231,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.REFERENDUM_CANCELLER] : {
 			'trackId': 20,
 			'description': 'Origin able to cancel referenda.',
+			'delegationDescription':'Origin able to cancel referenda',
 			'group': 'Governance',
 			'name': 'referendum_canceller',
 			'maxDeciding': 1000,
@@ -249,6 +258,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.REFERENDUM_KILLER] : {
 			'trackId': 21,
 			'description': 'Origin able to kill referenda.',
+			'delegationDescription':'',
 			'group': 'Governance',
 			'name': 'referendum_killer',
 			'maxDeciding': 1000,
@@ -275,6 +285,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.SMALL_TIPPER] : {
 			'trackId': 30,
 			'description': 'Origin able to spend up to 1 KSM from the treasury at once.',
+			'delegationDescription':'Origin able to spend up to 8 ksm from the treasury at once',
 			'group': 'Treasury',
 			'name': 'small_tipper',
 			'maxDeciding': 200,
@@ -301,6 +312,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.BIG_TIPPER] : {
 			'trackId': 31,
 			'description': 'Origin able to spend up to 5 KSM from the treasury at once.',
+			'delegationDescription':'',
 			'group': 'Treasury',
 			'name': 'big_tipper',
 			'maxDeciding': 100,
@@ -327,6 +339,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.SMALL_SPENDER] : {
 			'trackId': 32,
 			'description': 'Origin able to spend up to 333 KSM from the treasury at once.',
+			'delegationDescription':'',
 			'group': 'Treasury',
 			'name': 'small_spender',
 			'maxDeciding': 50,
@@ -353,6 +366,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.MEDIUM_SPENDER] : {
 			'trackId': 33,
 			'description': 'Origin able to spend up to 3,333 KSM from the treasury at once.',
+			'delegationDescription':'origin able to spend up to 3,333 ksm from the treasury at once',
 			'group': 'Treasury',
 			'name': 'medium_spender',
 			'maxDeciding': 50,
@@ -379,6 +393,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.BIG_SPENDER] : {
 			'trackId': 34,
 			'description': 'Origin able to spend up to 33,333 KSM from the treasury at once.',
+			'delegationDescription':'',
 			'group': 'Treasury',
 			'name': 'big_spender',
 			'maxDeciding': 50,
@@ -667,6 +682,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.ROOT] : {
 			'trackId': 0,
 			'description': 'Origin for General network-wide improvements',
+			'delegationDescription':'Origin for the system root',
 			'group': 'Main',
 			'name': 'root',
 			'maxDeciding': 1,
@@ -693,6 +709,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.WHITELISTED_CALLER] : {
 			'trackId': 1,
 			'description': 'Origin able to dispatch a whitelisted call.',
+			'delegationDescription':'',
 			'group': 'Whitelist',
 			'name': 'whitelisted_caller',
 			'maxDeciding': 100,
@@ -719,6 +736,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.STAKING_ADMIN] : {
 			'trackId': 10,
 			'description': 'Origin for cancelling slashes.',
+			'delegationDescription':'Origin for cancelling slashes',
 			'group': 'Main',
 			'name': 'staking_admin',
 			'maxDeciding': 10,
@@ -745,6 +763,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.TREASURER] : {
 			'trackId': 11,
 			'description': 'Origin for spending (any amount of) funds.',
+			'delegationDescription':'',
 			'group': 'Treasury',
 			'name': 'treasurer',
 			'maxDeciding': 10,
@@ -771,6 +790,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.FELLOWSHIP_ADMIN] : {
 			'trackId': 12,
 			'description': 'Origin for managing the composition of the fellowship.',
+			'delegationDescription':'',
 			'group': 'Whitelist',
 			'name': 'fellowship_admin',
 			'maxDeciding': 10,
@@ -797,6 +817,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.GENERAL_ADMIN] : {
 			'trackId': 13,
 			'description': 'Origin for managing the registrar.',
+			'delegationDescription':'',
 			'group': 'Governance',
 			'name': 'general_admin',
 			'maxDeciding': 10,
@@ -823,6 +844,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.REFERENDUM_CANCELLER] : {
 			'trackId': 20,
 			'description': 'Origin able to cancel referenda.',
+			'delegationDescription':'Origin able to cancel referenda',
 			'group': 'Governance',
 			'name': 'referendum_canceller',
 			'maxDeciding': 1000,
@@ -849,6 +871,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.REFERENDUM_KILLER] : {
 			'trackId': 21,
 			'description': 'Origin able to kill referenda.',
+			'delegationDescription':'',
 			'group': 'Governance',
 			'name': 'referendum_killer',
 			'maxDeciding': 1000,
@@ -982,6 +1005,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.ROOT] : {
 			'trackId': 0,
 			'description': 'Origin for General network-wide improvements',
+			'delegationDescription':'Origin for the system root',
 			'group': 'Main',
 			'name': 'root',
 			'maxDeciding': 5,
@@ -1008,6 +1032,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.WHITELISTED_CALLER] : {
 			'trackId': 1,
 			'description': 'Origin able to dispatch a whitelisted call.',
+			'delegationDescription':'',
 			'group': 'Whitelist',
 			'name': 'whitelisted_caller',
 			'maxDeciding': 100,
@@ -1034,6 +1059,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.GENERAL_ADMIN] : {
 			'trackId': 2,
 			'description': 'Origin for managing the registrar.',
+			'delegationDescription':'',
 			'group': 'Governance',
 			'name': 'general_admin',
 			'maxDeciding': 10,
@@ -1060,6 +1086,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.REFERENDUM_CANCELLER] : {
 			'trackId': 3,
 			'description': 'Origin able to cancel referenda.',
+			'delegationDescription':'Origin able to cancel referenda',
 			'group': 'Governance',
 			'name': 'referendum_canceller',
 			'maxDeciding': 20,
@@ -1086,6 +1113,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.REFERENDUM_KILLER] : {
 			'trackId': 4,
 			'description': 'Origin able to kill referenda.',
+			'delegationDescription':'',
 			'group': 'Governance',
 			'name': 'referendum_killer',
 			'maxDeciding': 100,
@@ -1114,6 +1142,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.ROOT] : {
 			'trackId': 0,
 			'description': 'Origin for General network-wide improvements',
+			'delegationDescription':'Origin for the system root',
 			'group': 'Main',
 			'name': 'root',
 			'maxDeciding': 5,
@@ -1140,6 +1169,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.WHITELISTED_CALLER] : {
 			'trackId': 1,
 			'description': 'Origin able to dispatch a whitelisted call.',
+			'delegationDescription':'',
 			'group': 'Whitelist',
 			'name': 'whitelisted_caller',
 			'maxDeciding': 100,
@@ -1166,6 +1196,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.GENERAL_ADMIN] : {
 			'trackId': 2,
 			'description': 'Origin for managing the registrar.',
+			'delegationDescription':'',
 			'group': 'Governance',
 			'name': 'general_admin',
 			'maxDeciding': 10,
@@ -1192,6 +1223,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.REFERENDUM_CANCELLER] : {
 			'trackId': 3,
 			'description': 'Origin able to cancel referenda.',
+			'delegationDescription':'',
 			'group': 'Governance',
 			'name': 'referendum_canceller',
 			'maxDeciding': 20,
@@ -1218,6 +1250,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		[PostOrigin.REFERENDUM_KILLER] : {
 			'trackId': 4,
 			'description': 'Origin able to kill referenda.',
+			'delegationDescription':'',
 			'group': 'Governance',
 			'name': 'referendum_killer',
 			'maxDeciding': 100,

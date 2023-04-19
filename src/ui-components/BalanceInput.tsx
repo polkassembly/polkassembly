@@ -11,6 +11,7 @@ import { NetworkContext } from '~src/context/NetworkContext';
 
 import { inputToBn } from '../util/inputToBn';
 import HelperTooltip from './HelperTooltip';
+import Balance from '~src/components/Balance';
 
 interface Props{
 	className?: string
@@ -18,10 +19,13 @@ interface Props{
 	helpText?: string
 	onChange: (balance: BN) => void
 	placeholder?: string
-	size?: 'large' | 'small' | 'middle'
+	size?: 'large' | 'small' | 'middle';
+  address?: string;
+  withBalance?: boolean;
+  onAccountBalanceChange?: (balance: string) => void
 }
 
-const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size }: Props) => {
+const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 
@@ -33,9 +37,13 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 		}
 	};
 
-	return <div className={className}>
-		<label className='mb-2 flex items-center text-sm text-sidebarBlue'> {label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> } </label>
-
+	return <div className={`${className} w-full flex flex-col`}>
+		<label className='mb-[2px] flex items-center text-sm text-[#485F7D]'>
+			{label} {helpText && <HelperTooltip className='' text={helpText}/> }
+			{address && withBalance &&
+			<Balance address={address} onChange={onAccountBalanceChange}  />
+			}
+		</label>
 		<Form.Item
 			name="balance"
 			rules={[
@@ -58,7 +66,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 			<InputNumber
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name='balance'
-				className='text-sm text-sidebarBlue w-full px-2 py-1 border-2 rounded-md'
+				className='text-sm text-sidebarBlue w-full h-[40px] border-2 rounded-md mt-0'
 				onChange={onBalanceChange}
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}

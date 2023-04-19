@@ -4,7 +4,7 @@
 import Identicon from '@polkadot/react-identicon';
 import { checkAddress } from '@polkadot/util-crypto';
 import { Form, Input } from 'antd';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { addressPrefix } from 'src/global/networkConstants';
 import Web3 from 'web3';
 
@@ -19,13 +19,14 @@ interface Props{
 	helpText?: string
 	onChange: (address: string) => void
 	placeholder?: string
-	size?: 'large' | 'small' | 'middle'
+	size?: 'large' | 'small' | 'middle';
+  defaultAddress?: string;
 }
 
-const AddressInput = ({ className, helpText, label, placeholder, size, onChange } : Props) => {
+const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress } : Props) => {
 	const { network } = useContext(NetworkContext);
 
-	const [address, setAddress] = useState<string>('');
+	const [address, setAddress] = useState<string>(defaultAddress ? defaultAddress : '');
 	const [isValid, setIsValid] = useState<boolean>(false);
 
 	const handleAddressChange = (address: string) => {
@@ -42,9 +43,22 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange 
 		}
 	};
 
+	useEffect(() => {
+		const isValidMetaAddress = Web3.utils.isAddress(address, addressPrefix[network]);
+		const [validAddress] = checkAddress(address, addressPrefix[network]);
+
+		if(validAddress || isValidMetaAddress) {
+			setIsValid(true);
+			onChange(address);
+		} else {
+			setIsValid(false);
+			onChange('');
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
 	return (
-		<div className={`${className} mb-2`}>
-			<label className='-mb-0.5 flex items-center text-sm text-sidebarBlue'> {label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> } </label>
+		<div className={`${className} mb-2 mt-6`}>
+			<label className=' flex items-center text-sm text-[#485F7D] mb-[2px]'> {label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> } </label>
 
 			<div className={`${className} flex items-center`}>
 
@@ -68,7 +82,7 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange 
 				<Form.Item className='mb-0 w-full' validateStatus={address && !isValid ? 'error' : ''} >
 					<Input
 						value={address}
-						className={`${!isValid ? 'px-[0.5em]' : 'pl-10'} text-sm text-sidebarBlue w-full px-2 py-3 border-2 rounded-md`}
+						className={`${!isValid ? 'px-[0.5em]' : 'pl-10'} text-sm text-sidebarBlue w-full h-[40px] border-2 rounded-md`}
 						onChange={ (e) => handleAddressChange(e.target.value)}
 						placeholder={placeholder || 'Address'}
 						size={size}

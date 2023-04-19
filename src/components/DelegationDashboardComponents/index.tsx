@@ -17,8 +17,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import SocialLink from '~src/ui-components/SocialLinks';
 import { socialLinks } from '../UserProfile/Details';
-import DashboardTrackListing from './tracksListing';
-import ProfileBalances from './profileBalance';
+import DashboardTrackListing from './TracksListing';
+import ProfileBalances from './ProfileBalance';
 import dynamic from 'next/dynamic';
 
 interface Props {
@@ -76,7 +76,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] ml-[-53px] mr-[-53px]'>
 			<ProfileBalances address={addresses[0]}/>
 		</div>
-		<h2 className='dashboard-heading mb-4 md:mb-5 mt-5 text-sm'>Dashboard</h2>
+		<h2 className=' text-[#243A57] mb-4 md:mb-5 mt-5 text-[28px] font-semibold'>Dashboard</h2>
 		<div className='flex justify-between py-[24px] px-[34px] shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white rounded-[14px]'>
 			<div className='flex justify-center gap-[34px] '>
 				{image && image?.length !== 0

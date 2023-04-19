@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable no-tabs */
 import BN from 'bn.js';
+import { poppins } from 'pages/_app';
 import React, { useContext, useEffect, useState } from 'react';
 import { useApiContext, usePostDataContext } from 'src/context';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -77,8 +78,8 @@ const Balance = ({ address, onChange }: Props) => {
 	}, [address, api, apiReady, isReferendum]);
 
 	return (
-		<div className='text-xs ml-auto text-[#53595C]'>
-			<span className='font-medium text-[#2E2F30]'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span> available.
+		<div className={ `${poppins.className} ${poppins.variable} text-[12px] ml-auto text-[#576D8BCC] tracking-[0.0025em] font-medium`}>
+      Available: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		</div>
 	);
 };

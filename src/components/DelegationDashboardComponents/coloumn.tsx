@@ -4,14 +4,20 @@
 
 import React from 'react';
 import { ColumnsType } from 'antd/es/table';
-import RootIcon from '~assets/icons/root.svg';
-import AuctionAdminIcon from '~assets/icons/whitelisted.svg';
-import StackingAdminIcon from '~assets/icons/staking-admin.svg';
 import Address from '~src/ui-components/Address';
-import { IDataType } from './tracksListing';
-import { IData } from './dashboardTrack';
+import { IDataType } from './TracksListing';
+import { IData } from './DashboardTrack';
 import { Button } from 'antd';
-import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
+import UndelegatedProfileIcon from '~assets/icons/undelegate-profile.svg';
+import RootIcon from '~assets/delegation-tracks/root.svg';
+import FellowshipAdminIcon from '~assets/delegation-tracks/fellowship-admin.svg';
+import GeneralAdminIcon from '~assets/delegation-tracks/genral-admin.svg' ;
+import LeaseAdminIcon from '~assets/delegation-tracks/lease-admin.svg';
+import SmallTipperIcon from '~assets/delegation-tracks/small-tipper.svg';
+import WhitelistedCallerIcon from '~assets/delegation-tracks/whitelisted-caller.svg';
+import MediumSpenderIcon from '~assets/delegation-tracks/medium-spender.svg';
+import StakingAdminIcon from '~assets/delegation-tracks/staking-admin.svg';
+import TreasurerIcon from '~assets/delegation-tracks/treasurer.svg';
 
 export enum EStatus {
   All = 'all',
@@ -20,36 +26,35 @@ export enum EStatus {
 	Undelegated = 'undelegated',
 }
 
-const GetColumns = (status :EStatus) => {
+export const handleTracksIcon =  (index:string ) => {
 
-	const handleIcon =  (index:string ) => {
-		if(index === 'Root' ){
-			return <RootIcon/>;
-		}else if(index === 'Treasurer'){
-			return <RootIcon/>;
-		}else if(index === 'Whitelisted Caller' ){
-			return <AuctionAdminIcon/>;
-		} else if(index === 'Lease Admin'){
-			return <AuctionAdminIcon/>;
-		}
-		else if(index ===  'General Admin' ){
-			return <AuctionAdminIcon/>;
-		}
-		else if(index === 'Staking Admin' ){
-			return <StackingAdminIcon/>;
-		}else if( index === 'Fellowship Admin' ){
-			return <StackingAdminIcon/>;
-		}
-		else if( index === 'Auction Admin' ){
-			return <StackingAdminIcon/>;
-		} else if(index === 'Referendum Killer'){
-			return <AuctionAdminIcon/>;
-		}
-		else if(index === 'Referendum Canceller'){
-			return <AuctionAdminIcon/>;
-		}
-		return null;
-	};
+	if(index === 'Root' ){
+		return <RootIcon/>;
+	}else if(index === 'Treasurer'){
+		return <TreasurerIcon/>;
+	}else if(index === 'Whitelisted Caller' ){
+		return <WhitelistedCallerIcon/>;
+	} else if(index === 'Lease Admin'){
+		return <LeaseAdminIcon/>;
+	}
+	else if(index ===  'General Admin' ){
+		return <GeneralAdminIcon/>;
+	}
+	else if(index === 'Staking Admin' ){
+		return <StakingAdminIcon/>;
+	}else if( index === 'Fellowship Admin' ){
+		return <FellowshipAdminIcon/>;
+	}
+	else if( index === 'Small Tiper' ){
+		return <SmallTipperIcon/>;
+	}
+	else if( index === 'Medium Spender' ){
+		return <MediumSpenderIcon/>;
+	}
+
+	return null;
+};
+const GetColumns = (status :EStatus) => {
 
 	const AllColumns: ColumnsType<IDataType> = [
 		{ dataIndex: 'index', key: 1,
@@ -61,7 +66,7 @@ const GetColumns = (status :EStatus) => {
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
 				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-md:flex-col max-lg:gap-[2px]'>
-					{ handleIcon(track)}<span>{track}</span>
+					{ handleTracksIcon(track)}<span>{track}</span>
 				</h2>;}, title: 'Tracks',width: '23%'
 		},
 
@@ -94,8 +99,8 @@ const GetColumns = (status :EStatus) => {
 
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-md:flex-col max-lg:gap-[2px]'>
-					{ handleIcon(track)}<span>{track}</span>
+				return <h2 className='text-[14px] text-[#243A57] tracking-wide '>
+					{ handleTracksIcon(track)}<span>{track}</span>
 				</h2>;}, title: 'Tracks',width: '23%'
 		},
 
@@ -130,7 +135,7 @@ const GetColumns = (status :EStatus) => {
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
 				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-md:flex-col max-lg:gap-[2px]'>
-					{ handleIcon(track)}<span>{track}</span>
+					{ handleTracksIcon(track)}<span>{track}</span>
 				</h2>;}, title: 'Tracks',width: '23%'
 		},
 
@@ -158,7 +163,7 @@ const GetColumns = (status :EStatus) => {
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
 				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-md:flex-col max-lg:gap-[2px]'>
-					{ handleIcon(track)}<span>{track}</span>
+					{ handleTracksIcon(track)}<span>{track}</span>
 				</h2>;}, title: 'Tracks',width: '23%'
 		},
 
@@ -211,7 +216,8 @@ const GetTracksColumns = (status :EStatus) => {
 			{ dataIndex:'conviction', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-center'>{index}</h4>, title: 'Conviction', width: '15%' },
 			{ dataIndex:'delegatedOn', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-center'>{index}</h4>, title: 'Delegated on', width: '20%' },
 			{ dataIndex:'action', key:1, render: (action) => <div className='flex justify-center items-center'>
-				<Button className='text-sm text-[#243A57] font-normal text-center border-[1px] border-solid border-pink_primary w-[148px] h-[40px]'><DelegatedProfileIcon className='mr-2'/>
+				<Button className='text-sm text-[#243A57] font-normal border-[1px] border-solid border-pink_primary h-[40px] flex items-center justify-center px-2 gap-2'>
+					<UndelegatedProfileIcon/>
 					<span className='text-sm tracking-wide text-pink_primary font-medium'>
 						{action}
 					</span>
@@ -224,7 +230,9 @@ const GetTracksColumns = (status :EStatus) => {
 
 		const TrackColumn: ColumnsType<IData> = [
 			{ dataIndex:'index', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-center'>{index}</h4>, title: '#',width: '10%' } ,
-			{ dataIndex:'delegatedTo', key:1, render: (address) => <div className='text-sm text-[#243A57] font-normal text-center flex justify-center items-center'><Address address= {address}/></div>, title: 'Delegated to', width: '20%' },
+			{ dataIndex:'delegatedTo', key:1, render: (address) => <div className='text-sm text-[#243A57] font-normal text-center flex justify-center items-center'>
+				<Address address= {address}  />
+			</div>, title: 'Delegated to', width: '20%' },
 			{ dataIndex:'balance', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-center'>{index}</h4>, title: 'Balance', width: '15%' },
 			{ dataIndex:'conviction', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-center'>{index}</h4>, title: 'Conviction', width: '15%' },
 			{ dataIndex:'delegatedOn', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-center'>{index}</h4>, title: 'Delegated on', width: '20%' }

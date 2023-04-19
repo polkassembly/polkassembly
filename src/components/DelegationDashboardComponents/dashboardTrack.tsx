@@ -2,27 +2,29 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import ProfileBalances from './profileBalance';
-import { useNetworkContext, useUserDetailsContext } from '~src/context';
+import ProfileBalances from './ProfileBalance';
+import { useUserDetailsContext } from '~src/context';
 import styled from 'styled-components';
 import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { PostOrigin } from '~src/types';
-import { EStatus, GetTracksColumns } from './coloumn';
-import { Table } from 'antd';
+
+import { EStatus, GetTracksColumns, handleTracksIcon } from './Coloumn';
+import { Skeleton, Table } from 'antd';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import { DelegatedIcon } from '~src/ui-components/CustomIcons';
-import ActiveProposals from './activeProposals';
-import Delegate from './delegate';
+import ActiveProposals from './ActiveProposals';
+import dynamic from 'next/dynamic';
 
 interface Props{
   className?: string;
+  posts : any[];
+  trackDetails: any;
 }
-interface ITrackDetails{
-  name: string;
-  dashboardDescription: string;
-}
+
+const Delegate = dynamic(() => import('./Delegate'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
 
 export interface IData{
   index: number;
@@ -33,12 +35,13 @@ export interface IData{
   action:string;
 }
 
-const DashboardTrackListing = ( { className }: Props ) => {
+const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 	const { addresses } = useUserDetailsContext();
 	const { query : { track } } = useRouter();
 	const [status, setStatus] = useState(EStatus.Delegated);
 	const router = useRouter();
+	const [showTable, setShowTable] = useState<boolean>(false);
 
 	const handleReroute = ( route: string ) => {
 		if(route.length === 0){
@@ -53,15 +56,26 @@ const DashboardTrackListing = ( { className }: Props ) => {
 
 	};
 	const handleTrack = ( track: string ) => {
+
 		const firstPart = track.split('-')[0];
 		const secondPart = track.split('-')[1] ? track.split('-')[1] : '';
 		const trackName = `${firstPart.charAt(0).toUpperCase() + firstPart.slice(1)} ${secondPart.length > 0 ? secondPart.charAt(0).toUpperCase() + secondPart.slice(1) : ''}`;
-		return trackName;
+
+		return trackName.trim();
+
 	};
 
 	const rowData: IData[] = [
 		{ action: 'Undelegated',balance: '400 KSM', conviction: '1x', delegatedOn: '17th Jun 2023', delegatedTo: '0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3', index: 1 }
 	];
+
+	useEffect(() => {
+		if(status === EStatus.Delegated){
+			setShowTable(true);
+		}else if(status === EStatus.Received_Delegation){
+			setShowTable(true);
+		}
+	}, [status]);
 
 	return <div className={`${className}`}>
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] ml-[-53px] mr-[-53px]'>
@@ -72,20 +86,22 @@ const DashboardTrackListing = ( { className }: Props ) => {
 			<span className='mt-[-2px]'>
 				<RightOutlined className='text-xs' />
 			</span>
-			<span className='text-pink_primary text-sm cursor-pointer' onClick={() => handleReroute(track && !Array.isArray(track) ? track : '')}>
-				{handleTrack(track && !Array.isArray(track) ? track : '')}
+			<span className='text-pink_primary text-sm cursor-pointer' onClick={() => handleReroute(String(track))}>
+				{handleTrack(String(track))}
 			</span>
 		</div>
 		<div className='border-solid border-[1px] border-[#D2D8E0] rounded-[14px] py-6 px-9 shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white'>
-			<div className='text-[28px] font-semibold tracking-[0.0015em] text-[#243A57] flex gap-3 items-center'>{handleTrack(track && !Array.isArray(track) ? track : '')}
+			<div className='text-[28px] font-semibold tracking-[0.0015em] text-[#243A57] flex gap-3 items-center'>
+				{handleTracksIcon(handleTrack(String(track)))}
+				<span>{handleTrack(String(track))}</span>
 				<span className={`text-[12px] ${status === EStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${status === EStatus.Delegated && 'bg-[#FFFBD8]'} ${status === EStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center`}>
 					{status?.split('_').join(' ').charAt(0).toUpperCase()+status?.split('_').join(' ').slice(1)}
 				</span>
 			</div>
 			<h4 className='mt-[19px] text-sm text-[#243A57] tracking-[0.01em]'>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque enim erat, blandit ac fringilla et, ultricies eget nibh. Fusce bibendum, dui vehicula faucibus blandit, tellus nibh aliquet velit, at interdum eros nulla non enim. Integer iaculis et ex sit amet scelerisque. In felis diam, porta ac eleifend et, blandit ac est. Praesent eu efficitur purus. Cras sollicitudin et ipsum ut mattis. Morbi placerat imperdiet massa. Aenean sit amet sapien augue.
+				{trackDetails.description}
 			</h4>
-			{status === EStatus.Delegated || EStatus.Received_Delegation && <div className='bg-white mt-6 border-[1px] border-solid rounded-[6px] pl-[3px] pr-[3px] border-[#D2D8E0] bg-transparent'>
+			{showTable && <div className='bg-white mt-6 border-[1px] border-solid rounded-[6px] pl-[3px] pr-[3px] border-[#D2D8E0] bg-transparent'>
 				<Table
 					className= 'column'
 					columns= { GetTracksColumns(status) }
@@ -108,8 +124,8 @@ const DashboardTrackListing = ( { className }: Props ) => {
 				</div>
 			</div>}
 		</div>
-		<div><ActiveProposals/></div>
-		<div><Delegate/></div>
+		<div><ActiveProposals posts={posts} trackDetails={trackDetails} /></div>
+		<div><Delegate trackDetails={trackDetails}/></div>
 	</div>;
 };
 

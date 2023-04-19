@@ -2,13 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Radio, Row, Table } from 'antd';
+import { Radio, Table } from 'antd';
 
 import styled from 'styled-components';
 
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useNetworkContext } from '~src/context';
-import  { EStatus,GetColumns } from './coloumn';
+import  { EStatus,GetColumns } from './Coloumn';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 
 import { DelegatedIcon, UnDelegatedIcon, ReceivedDelegationIcon } from '~src/ui-components/CustomIcons';
@@ -46,7 +46,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 				rowData.push( { active_proposals: 1,
 					delegated_by:'0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3',
 					delegated_to :'0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3',
-					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc luctus bibendum dapibun un prtesd s...',
+					description: value.description,
 					index: index+1,
 					status: EStatus.Delegated,
 					track: key === 'root' ? 'Root': key?.split(/(?=[A-Z])/).join(' ') });

@@ -37,7 +37,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 	const  { network } = useNetworkContext();
 	const [delegatedCount, setDelegatedCount] = useState<number>(0);
 	const [undelegatedCount, setUndelegatedCount] = useState<number>(0);
-	const [receivedDelegationCount, setReceivedDelegationCount] = useState<number>(0);
+	const [receivedDelegationCount, setReceivedDelegationCount] = useState<number>(0); 
 	const [allCount, setAllCount] = useState<number>(14);
 	const [showTable, setShowTable] = useState<boolean>(false);
 	const router = useRouter();

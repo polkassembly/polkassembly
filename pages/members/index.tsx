@@ -30,7 +30,7 @@ const WhitelistMembers = (props: { network: string }) => {
 
 	return (
 		<>
-			<SEOHead title='Whitelist' />
+			<SEOHead title='Whitelist' network={props.network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>Open Tech Committee Members</h1>
 
 			{/* Intro and Create Post Button */}

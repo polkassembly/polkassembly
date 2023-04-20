@@ -25,7 +25,7 @@ const FellowshipMembers = (props: { network: string }) => {
 
 	return (
 		<>
-			<SEOHead title='Fellowship' />
+			<SEOHead title='Fellowship' network={props.network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>Fellowship</h1>
 
 			{/* Intro and Create Post Button */}

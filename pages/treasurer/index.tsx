@@ -102,7 +102,7 @@ interface ITreasurerProps {
 }
 
 const Treasurer: FC<ITreasurerProps> = (props) => {
-	const { posts, error } = props;
+	const { posts, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -114,7 +114,7 @@ const Treasurer: FC<ITreasurerProps> = (props) => {
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return <>
-		<SEOHead title={PostOrigin.TREASURER.split(/(?=[A-Z])/).join(' ')} />
+		<SEOHead title={PostOrigin.TREASURER.split(/(?=[A-Z])/).join(' ')} network={network}/>
 		<TrackListing
 			trackName={PostOrigin.TREASURER}
 			posts={posts}

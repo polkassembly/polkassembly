@@ -221,7 +221,7 @@ p > a:hover {
       color: initial;
   }
 }
-.command-palette-list-item svg {
+a.command-palette-list-item svg {
   width: auto !important;
   height: auto !important;
 }

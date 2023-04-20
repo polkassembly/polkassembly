@@ -80,7 +80,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Treasury Proposals' />
+			<SEOHead title='Treasury Proposals' network={network}/>
 
 			<div className='w-full flex flex-col sm:flex-row sm:items-center'>
 				<h1 className='dashboard-heading flex-1 mb-4 sm:mb-0'>On Chain Treasury Proposals</h1>

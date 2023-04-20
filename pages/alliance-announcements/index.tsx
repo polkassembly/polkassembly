@@ -1,14 +1,25 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import { GetServerSideProps } from 'next';
 import React from 'react';
+import { getNetworkFromReqHeaders } from '~src/api-utils';
 import AllianceAnnouncements from '~src/components/Listing/Members/AllianceAnnouncements';
 import SEOHead from '~src/global/SEOHead';
 
-const Announcements = () => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+	return {
+		props: {
+			network
+		}
+	};
+};
+
+const Announcements = ({ network }:{network:string}) => {
 	return (
 		<>
-			<SEOHead title={'Alliance Announcements'} />
+			<SEOHead title={'Alliance Announcements'} network={network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>Alliance</h1>
 
 			{/* Intro and Create Post Button */}

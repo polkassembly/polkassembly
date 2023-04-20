@@ -41,7 +41,7 @@ interface ITechCommProposalsProps {
 }
 
 const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
-	const { data, error } = props;
+	const { data, error,network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -66,7 +66,7 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Tech Committee Proposals' />
+			<SEOHead title='Tech Committee Proposals' network={network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>On Chain Technical Committee Proposals</h1>
 
 			{/* Intro and Create Post Button */}

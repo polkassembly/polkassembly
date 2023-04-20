@@ -35,7 +35,7 @@ interface IChildBountyPostProps {
 	network: string;
 }
 const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { data: post, error, network } = props;
 
 	const { setNetwork } = useNetworkContext();
 
@@ -48,7 +48,7 @@ const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
 	if (!post) return null;
 
 	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} - Child Bounty`} desc={post.content} />
+		<SEOHead title={post.title || `${noTitle} - Child Bounty`} desc={post.content} network={network}/>
 
 		<BackToListingView postCategory={PostCategory.CHILD_BOUNTY} />
 

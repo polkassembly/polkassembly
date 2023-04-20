@@ -64,7 +64,7 @@ const RequestResetPassword: FC<Props> = (props) => {
 
 	return (
 		<>
-			<SEOHead title="Request Reset Password" />
+			<SEOHead title="Request Reset Password" network={props.network}/>
 			<Row justify='center' align='middle' className='h-full -mt-16'>
 				<article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
 					<h3 className='text-2xl font-semibold text-[#1E232C]'>Request Password Reset</h3>

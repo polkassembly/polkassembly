@@ -36,7 +36,7 @@ const Create = ({ network }: { network: string }) => {
 	}, []);
 
 	return <>
-		<SEOHead title={'Create Post'} />
+		<SEOHead title={'Create Post'} network={network}/>
 		<CreatePost proposalType={ProposalType.DISCUSSIONS} />
 	</>;
 };

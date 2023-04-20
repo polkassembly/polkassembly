@@ -35,7 +35,7 @@ interface IMotionPostProps {
 }
 
 const MotionPost: FC<IMotionPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { data: post, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -47,7 +47,7 @@ const MotionPost: FC<IMotionPostProps> = (props) => {
 	if (!post) return null;
 
 	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} - Motion`} desc={post.content} />
+		<SEOHead title={post.title || `${noTitle} - Motion`} desc={post.content} network={network}/>
 
 		<BackToListingView postCategory={PostCategory.MOTION} />
 

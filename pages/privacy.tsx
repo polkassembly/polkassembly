@@ -32,7 +32,7 @@ const PrivacyPage: FC<IPrivacyPage> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Privacy Policy' />
+			<SEOHead title='Privacy Policy' network={network}/>
 			<PrivacyPolicy/>
 		</>
 	);

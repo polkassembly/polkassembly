@@ -31,6 +31,7 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 	const { postId = 0, page = 1, voteType = VoteType.REFERENDUM, listingLimit = VOTES_LISTING_LIMIT, sortBy = votesSortValues.TIME, address } = req.query;
 
 	const network = String(req.headers['x-network']);
+  console.log(network);
 	if(!network || !isValidNetwork(network)) {
 		res.status(400).json({ error: 'Invalid network in request header' });
 	}
@@ -131,7 +132,7 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 			}
 		}
 	});
-
+console.log(resObj);
 	res.status(200).json(resObj);
 }
 

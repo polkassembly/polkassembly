@@ -14,6 +14,14 @@ import Link from 'next/link';
 import { IPeriod, getDefaultPeriod, getPeriodData, getStatusBlock } from '../Post/GovernanceSideBar/Referenda/ReferendaV2Messages';
 import { useNetworkContext } from '~src/context';
 import dayjs from 'dayjs';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import formatBnBalance from '~src/util/formatBnBalance';
+import { IVotesResponse } from 'pages/api/v1/votes';
+import AyeIcon from '~assets/delegation-tracks/aye-delegation.svg';
+import NayIcon from '~assets/delegation-tracks/nay-delegation.svg';
+import CautionIcon from '~assets/delegation-tracks/caution.svg';
+import BN from 'bn.js';
+import { BN_ZERO } from '@polkadot/util';
 
 interface Props{
   proposal: IPostListing;
@@ -27,6 +35,13 @@ const ActiveProposalCard = ({ proposal, trackDetails }: Props) => {
 	const [decision, setDecision] = useState<IPeriod>(getDefaultPeriod());
 	const decidingStatusBlock = getStatusBlock( timeline || [], 'ReferendumV2', 'Deciding');
 	const [isDays, setIsDays] = useState(true);
+  const [votingData, setVotingData] = useState<IVotesResponse>();
+  const [balance, setBalance] = useState<BN>(BN_ZERO);
+  const [isAye, setIsAye] = useState<boolean>(false);
+  const [isNay, setIsNay] = useState<boolean>(false);
+  const [isAbstain, setIsAbstain] = useState<boolean>(false);
+
+  const address = '0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3';
 
 	let titleString = proposal?.title || proposal?.method || noTitle;
 
@@ -48,17 +63,43 @@ const ActiveProposalCard = ({ proposal, trackDetails }: Props) => {
 		return (`${diffDays !== 0 ? diffDays+' days ' : ''} ${diffHours} : ${diffMinutes} : ${diffSeconds} `);
 	};
 
+   const getData = async() => {
+   if(!address || !proposal?.post_id) return;
+
+    const {data, error} = await nextApiClientFetch<IVotesResponse>(`api/v1/votes?listingLimit=10&postId=${proposal?.post_id}&voteType=ReferendumV2&page=1&address=${address}`);
+    if(data){
+      setVotingData(data);
+    }else{
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
+
 	useEffect(() => {
 		const prepare = getPeriodData(network, dayjs(proposal.created_at), trackDetails, 'preparePeriod');
 
 		const decisionPeriodStartsAt = ((decidingStatusBlock && decidingStatusBlock.timestamp)? dayjs(decidingStatusBlock.timestamp): prepare.periodEndsAt);
 		const decision = getPeriodData(network, decisionPeriodStartsAt, trackDetails, 'decisionPeriod');
 		setDecision(decision);
+
+    if(votingData){
+      if(votingData?.yes?.count === 1){
+        setIsAye(true);
+        setBalance(votingData?.yes?.votes[0].balance.value);
+      }else if(votingData?.no?.count === 1){
+        setIsNay(true);
+        setBalance(votingData?.no?.votes[0].balance.value);
+      }
+    }
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	return <Link href={`/referenda/${proposal?.post_id}`}>
-		<div className='border-solid px-6 py-6 border-[1px] border-[#D2D8E0] rounded-[6px] flex justify-between max-sm:gap-2 max-sm:items-start max-sm:flex-col hover:border-pink_primary'>
+    <div className='border-[#D2D8E0] border-solid border-[1px] rounded-[6px]'>
+		<div className='px-6 py-6 border-[1px] flex justify-between max-sm:gap-2 max-sm:items-start max-sm:flex-col hover:border-pink_primary'>
 			<div className='flex flex-col '>
 				<h2 className='text-sm text-medium text-[#243A57]'>{mainTitle}</h2>
 				<div className='mt-[5px] flex items-center gap-1 text-xs font-normal text-[#485F7D] max-lg:flex-col max-lg:items-start max-lg:gap-2'>
@@ -84,12 +125,33 @@ const ActiveProposalCard = ({ proposal, trackDetails }: Props) => {
 							<ClockCircleOutlined className='mr-1' />
 							{convertRemainingTime(decision.periodEndsAt)}
            Remaining
-						</div></div>
+						</div>
+            </div>
 				</div>
 			</div>
 			<div className='flex justify-center mt-2 gap-2'>
 				<VoteIcon/><span className='text-pink_primary text-sm font-medium'>Cast Vote</span>
 			</div>
+      </div>
+       {isAye || isNay
+       ? <div className={`border-solid py-2 px-6 flex gap-2 border-[1px] ${isAye && 'bg-[#F0FCF6] border-[#2ED47A]'} ${!isAye && 'bg-[#fff1f4] border-[#FF3C5F]'}`}>
+        <Address address={address} displayInline/>
+       <div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
+          Voted:<span className='flex justify-center items-center'>
+            {isAye ? <AyeIcon/> : <NayIcon/>}</span>
+            </div>
+            <div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
+              Balance:<span className='text-[#243A57] font-medium'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+              </div>
+              <div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
+                Conviction:<span className='text-[#243A57] font-medium'>
+                  {isAye ? votingData?.yes?.votes[0]?.lockPeriod : votingData?.no?.votes[0]?.lockPeriod}x</span>
+              </div>
+      </div> 
+      : <div className='border-solid py-2 px-6 flex gap-2 border-[1px] bg-[#fff7ef] border-[#F89118]'>
+        <Address address={address} displayInline/>
+        <div className='text-xs text-[#485F7D] flex items-center justify-center'>Not Voted yet <CautionIcon className='ml-1'/></div>
+        </div>}
 		</div></Link>;
 
 };

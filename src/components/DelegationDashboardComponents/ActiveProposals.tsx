@@ -6,7 +6,6 @@ import ActiveProposalsIcon from '~assets/icons/active-proposals.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import { IPostListing } from 'pages/api/v1/listing/on-chain-posts';
-// import ActiveProposalCard from './activeProposalCard';
 import dynamic from 'next/dynamic';
 import { Skeleton } from 'antd';
 
@@ -20,6 +19,7 @@ const ActiveProposalCard = dynamic(() => import('./ActiveProposalCard'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
+
 const ActiveProposals = ( { className, posts, trackDetails }: Props ) => {
 
 	const count = posts.length;

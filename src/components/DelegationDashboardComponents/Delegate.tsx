@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { Button, Input, Skeleton } from 'antd';
+import { Button, Input, Popover, Skeleton } from 'antd';
 
 import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
 import DelegatedIcon from '~assets/icons/delegate.svg';
@@ -11,6 +11,8 @@ import CollapseIcon from '~assets/icons/collapse.svg';
 import DelegateMenuIcon from '~assets/icons/delegate-menu.svg';
 import dynamic from 'next/dynamic';
 import DelegateCard from './DelegateCard';
+import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
+import ProfileIcon from '~assets/icons/delegate-popup-profile.svg';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active /> ,
@@ -59,7 +61,21 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 						</span>
 					</Button>
 				</div>
-				<DelegateMenuIcon/>
+        <Popover
+        showArrow={false}
+        placement='bottomLeft' 
+        content={<>
+          <div className='py-1 flex items-center gap-[11px] cursor-pointer'>
+            <NovaWalletIcon/>
+            <span className='text-sm text-[#243A57]'>Nova Wallet Delegates</span>
+          </div>
+          <div className='py-1 flex items-center gap-[11px] cursor-pointer'>
+            <ProfileIcon/>
+            <span className='text-sm text-[#243A57]'>Others</span>
+            </div>
+        </>}>
+          	<DelegateMenuIcon/>
+        </Popover>
 			</div>
 			<div className='mt-6'><DelegateCard trackNum = {trackDetails?.trackId} /></div>
 		</div>}

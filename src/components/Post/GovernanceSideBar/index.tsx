@@ -462,7 +462,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								address={address}
 								getAccounts={getAccounts}
 								motionId={onchainId as number}
-								motionProposalHash={post.proposer}
+								motionProposalHash={post.hash}
 								onAccountChange={onAccountChange}
 							/>
 						}

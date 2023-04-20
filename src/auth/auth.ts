@@ -60,7 +60,7 @@ const PROFILE_DETAILS_DEFAULTS: ProfileDetails = {
 };
 
 const getProxiesEndpoint = (network: Network, address: string): string => {
-	return `https://us-central1-polkassembly-home.cloudfunctions.net/proxies?network=${network}&address=${address}`;
+	return `https://europe-west3-individual-node-watcher.cloudfunctions.net/proxies?network=${network}&address=${address}`;
 };
 
 export const getPwdResetTokenKey = (userId: number): string => `PRT-${userId}`;

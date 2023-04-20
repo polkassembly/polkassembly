@@ -67,7 +67,7 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 					<>
 						{
 							address.startsWith('0x') ?
-								<EthIdenticon className='z-10 absolute left-[8px]' size={26} address={address} />
+								<EthIdenticon className='z-10 absolute left-[8px] flex justify-center items-center' size={26} address={address} />
 								:
 								<Identicon
 									className='z-10 absolute left-[8px]'

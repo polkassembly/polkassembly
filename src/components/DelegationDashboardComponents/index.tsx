@@ -125,7 +125,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 				</Tooltip>
 				<span>
 					{username === userDetails.username   &&
-							<EditProfile data={profileDetails} setProfileDetails={setProfileDetails} className='text-[#E5007A] border-[1px] border-solid border-[#E5007A] h-[40px] w-[87px]' textStyle='text-[#E5007A] text-[14px] tracking-wide font-medium'/>
+							<EditProfile data={profileDetails} setProfileDetails={setProfileDetails} className='text-[#E5007A] border-[1px] border-solid border-[#E5007A] h-[40px] w-[87px] max-lg:w-auto' textStyle='text-[#E5007A] text-[14px] tracking-wide font-medium'/>
 					}
 				</span>
 			</div>

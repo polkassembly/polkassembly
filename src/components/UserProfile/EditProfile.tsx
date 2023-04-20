@@ -220,7 +220,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					populateData();
 				}}
 			>
-				<EditIcon className={`text-white text-2xl md:text-[15px] ${textStyle}`} />
+				<EditIcon className={`text-white text-2xl ${textStyle} md:text-[15px]`} />
 				<span className=' md:block'>
 					Edit
 				</span>

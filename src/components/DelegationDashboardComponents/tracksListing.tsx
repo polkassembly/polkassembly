@@ -7,12 +7,14 @@ import { Radio, Table } from 'antd';
 import styled from 'styled-components';
 
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { useNetworkContext } from '~src/context';
+import { useApiContext, useNetworkContext } from '~src/context';
 import  { EStatus,GetColumns } from './Coloumn';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 
 import { DelegatedIcon, UnDelegatedIcon, ReceivedDelegationIcon } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
+import { IApiResponse } from '~src/types';
+import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 
 interface Props{
   className?: string;
@@ -26,6 +28,7 @@ export interface IDataType{
   status?: string;
   delegated_to?:string;
   delegated_by?:string;
+  trackNo: number;
 }
 
 const DashboardTrackListing = ({ className }: Props) => {
@@ -38,23 +41,61 @@ const DashboardTrackListing = ({ className }: Props) => {
 	const [allCount, setAllCount] = useState<number>(14);
 	const [showTable, setShowTable] = useState<boolean>(false);
 	const router = useRouter();
-	const rowData:IDataType[] = [];
+	let rowData:IDataType[] = [];
+	const { api, apiReady } = useApiContext();
 
 	if(network ){
 		Object.entries(networkTrackInfo?.[network]).map(([key, value],index) => {
 			if (!value?.fellowshipOrigin) {
-				rowData.push( { active_proposals: 1,
+				rowData.push( { active_proposals: 0,
 					delegated_by:'0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3',
 					delegated_to :'0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3',
 					description: value.description,
 					index: index+1,
 					status: EStatus.Delegated,
-					track: key === 'root' ? 'Root': key?.split(/(?=[A-Z])/).join(' ') });
+					track: key === 'root' ? 'Root': key?.split(/(?=[A-Z])/).join(' '),
+					trackNo: value.trackId
+				});
 			}
 
 		});
 	}
 
+	const getData = async() => {
+		if (!api || !apiReady ) return;
+
+		const obj:any = {};
+
+		const fetches = rowData.map((trackDetails, index: number) => {
+			obj[index] = api.query.referenda.decidingCount(trackDetails.trackNo);
+		});
+
+		const responseArr = await Promise.allSettled(Object.values(obj));
+		const results = responseArr.map((result:any) => {
+			if (result.status === 'fulfilled') {
+				return result.value.toJSON();
+			} else {
+				return {
+					data: null,
+					error: result.reason
+				} as IApiResponse<IPostsListingResponse>;
+			}
+		});
+		console.log(results);
+		const arr = rowData.map((track, index) =>
+		{return {
+			...track,
+			active_proposals: results[index]
+		};});
+		console.log(arr);
+
+		rowData=arr;
+
+	};
+
+	useEffect(() => {
+		getData();
+	}, []);
 	const handleShowTable = (status:EStatus) => {
 
 		if(status === EStatus.All){

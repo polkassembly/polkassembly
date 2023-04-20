@@ -10,6 +10,7 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import DelegateMenuIcon from '~assets/icons/delegate-menu.svg';
 import dynamic from 'next/dynamic';
+import DelegateCard from './DelegateCard';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active /> ,
@@ -46,7 +47,7 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 			</div>
 			<div onClick={() => setExpandProposals(!expandProposals)}>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
 		</div>
-		{expandProposals && <div className=' h-[100px] mt-[24px]'>
+		{expandProposals && <div className='mt-[24px]'>
 			<h4 className='text-sm font-normal text-[#243A57] mb-4'>Enter an address or Select from the list below to delegate your voting power</h4>
 			<div className='flex gap-4 items-center'>
 				<div className='text-[#576D8BCC] font-normal text-[14px] h-[48px] border-[1px] border-solid border-[#D2D8E0] rounded-md flex items-center justify-between w-[93%] max-lg:w-[85%]'>
@@ -60,8 +61,9 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 				</div>
 				<DelegateMenuIcon/>
 			</div>
+			<div className='mt-6'><DelegateCard trackNum = {trackDetails?.trackId} /></div>
 		</div>}
-		<DelegateModal trackNum={trackDetails.trackId} defaultTarget={address} open={open} setOpen={setOpen} />
+		<DelegateModal trackNum={trackDetails?.trackId} defaultTarget={address} open={open} setOpen={setOpen} />
 	</div>;
 };
 export default Delegate;

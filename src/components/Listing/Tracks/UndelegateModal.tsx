@@ -1,47 +1,50 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-import { CheckOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { PlusOutlined } from '@ant-design/icons';
-import { Signer } from '@polkadot/api/types';
+
 import { Button, Form, Modal, Slider, Spin } from 'antd';
+
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import React, { useContext, useEffect, useState } from 'react';
-import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
 import { ApiContext } from 'src/context/ApiContext';
 import { NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import AddressInput from 'src/ui-components/AddressInput';
 import BalanceInput from 'src/ui-components/BalanceInput';
-import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
-import { inputToBn } from 'src/util/inputToBn';
 import styled from 'styled-components';
 
-import { NetworkContext } from '~src/context/NetworkContext';
-import getAllAccounts, { initResponse } from '~src/util/getAllAccounts';
 import LockIcon from '~assets/icons/lock.svg';
-import DelegateProfileIcon from '~assets/icons/delegate-popup-profile.svg';
 import CloseIcon from '~assets/icons/close.svg';
+import SuccessPopup from './SuccessPopup';
+import { InjectedAccount } from '@polkadot/extension-inject/types';
+import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
 
 const ZERO_BN = new BN(0);
 
-const UndelegateModal = ({ trackNum, className } : { trackNum:number, className: string }) => {
+interface Props {
+  trackNum: number;
+  className?: string;
+  defaultTarget: string;
+  open: boolean;
+  setOpen: (pre:boolean) => void;
+  tracks: string[];
+  conviction: number;
+  account: InjectedAccount;
+  defaultAddress: string;
+}
+const UndelegateModal = ({ trackNum, className, defaultTarget, open, tracks, setOpen, conviction,account, defaultAddress }: Props ) => {
 	const { api, apiReady } = useContext(ApiContext);
-	const { network } = useContext(NetworkContext);
-
-	const [accountsInfo, setAccountsInfo] = useState(initResponse);
-	const { accounts, accountsMap, noExtension, signersMap, noAccounts } = accountsInfo;
 	const [form] = Form.useForm();
-
-	const [showModal, setShowModal] = useState<boolean>(false);
-
-	const [address, setAddress] = useState<string>('');
-	const [conviction, setConviction] = useState<number>(0);
-	const [lock ,setLockValue] = useState<number>(0);
+	const [loading, setLoading] = useState<boolean>(false);
+	const [address, setAddress] = useState<string>(defaultAddress);
+	const [target, setTarget] = useState<string>(defaultTarget);
+	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
+	const lock = (Number(2**(conviction - 2)));
+	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
+	const accounts:InjectedAccount[] = [account];
 
 	useEffect(() => {
 		if (!api) {
@@ -51,84 +54,113 @@ const UndelegateModal = ({ trackNum, className } : { trackNum:number, className:
 		if (!apiReady) {
 			return;
 		}
-
-		const signer: Signer = signersMap[accountsMap[address]];
-		api?.setSigner(signer);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
+	const handleSubmit = async () => {
+
+		setLoading(true);
+
+		if (!api || !apiReady) {
+			return;
+		}
+
+		// TODO: check .toNumber()
+		const delegateTxn = api.tx.convictionVoting.undelegate(trackNum);
+
+		delegateTxn.signAndSend(address, ({ status }: any) => {
+			if (status.isInBlock) {
+				queueNotification({
+					header: 'Success!',
+					message: 'Delegation successful.',
+					status: NotificationStatus.SUCCESS
+				});
+				setLoading(false);
+				console.log(`Delegation: completed at block hash #${status.asInBlock.toString()}`);
+			} else {
+				console.log(`Delegation: Current status: ${status.type}`);
+			}
+			setOpen(false);
+			setOpenSuccessPopup(true);
+		}).catch((error: any) => {
+			console.log(':( transaction failed');
+			console.error('ERROR:', error);
+			queueNotification({
+				header: 'Delegation failed!',
+				message: error.message,
+				status: NotificationStatus.ERROR
+			});
+			setLoading(false);
+		});
+	};
+
+	const handleOnBalanceChange = () => {
+	};
 	return (
 		<>
-			<button
-				type="button"
-				className="flex items-center ml-auto px-5 py-1 border border-pink_primary text-pink_primary bg-white hover:text-white font-medium text-xs leading-tight uppercase rounded hover:bg-pink_secondary hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
-				onClick={() => setShowModal(true)}
-			>
-				<PlusOutlined />
-
-				<span className='ml-1'> Delegate </span>
-			</button>
-
 			<Modal
 				closeIcon={<CloseIcon className='mt-[10px]'/>}
 				className={`${poppins.variable} ${poppins.className} padding ` }
 				wrapClassName={className}
 				title={
 					<div className='flex items-center text-[#243A57] text-[20px] font-semibold mb-6'>
-						<DelegateProfileIcon className='mr-2'/>Delegate
+						<UndelegateProfileIcon className='mr-2'/>Undelegate
 					</div>
 				}
 
-				open={showModal}
-				onCancel={() => setShowModal(false)}
+				open={open}
+				onOk={handleSubmit}
+				confirmLoading={loading}
+				onCancel={() => setOpen(false)}
 				footer={
 					<div className='flex items-center justify-end'>
 						{
 							[
-								<Button key="back"  className='h-[40px] w-[134px]' onClick={() => setShowModal(false)}>
+								<Button key="back" disabled={loading} className='h-[40px] w-[134px]' onClick={() => setOpen(false)}>
 										Cancel
 								</Button>,
-								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] '  disabled={loading || noAccounts || noExtension} onClick={handleSubmit}>
-										Delegate
+								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] '  disabled={loading} onClick={ handleSubmit }>
+										Undelegate
 								</Button>
 							]
 						}
 					</div>
 				}
 			>
-				<Spin  indicator={<LoadingOutlined />}>
-					<div className="flex flex-col gap-y-3">
 
-						{noAccounts && <ErrorAlert errorMsg='You need at least one account in your wallet extenstion to use this feature.' />}
-						{noExtension && <ExtensionNotDetected />}
-
+				<Spin spinning={loading} indicator={<LoadingOutlined />}>
+					<div className='flex flex-col'>
 						<Form
 							form={form}
-							disabled= {true}
+							disabled={true}
 						>
 							<AccountSelectionForm
+								isDisabled={true}
 								title='Your Address'
 								accounts={accounts}
 								address={address}
 								withBalance={false}
-								className='text-[#485F7D] text-sm'
+								className='text-[#485F7D] text-sm '
+								onAccountChange={setAddress}
 							/>
 
 							<AddressInput
+								defaultAddress={defaultTarget}
 								label={'Delegate to'}
 								placeholder='Delegate Account Address'
 								className='text-[#485F7D] text-sm '
+								onChange={(address) => setTarget(address)}
 								size='large'
 							/>
-
 							<BalanceInput
 								label={'Balance'}
 								placeholder={'Enter balance'}
 								className='mt-6'
 								address={address}
 								withBalance={true}
+								onAccountBalanceChange={handleOnBalanceChange}
+								onChange={(balance) => setBnBalance(balance)}
 								size='large'
-
 							/>
 
 							<div className='mb-2 border-solid border-white'>
@@ -136,19 +168,9 @@ const UndelegateModal = ({ trackNum, className } : { trackNum:number, className:
 
 								<div className='px-[2px]'>
 									<Slider
+										disabled={true}
 										className='text-[12px] mt-[9px]'
 										trackStyle={{ backgroundColor:'#FF49AA' }}
-										onChange={(value:number) => {
-											if(value === 1){
-												setConviction(0);
-											}
-											else if(value === 2){
-												setConviction(1);
-												setLockValue(1);
-											}else{
-												setConviction(Number(value-1));
-												setLockValue(Number(2**(value - 2)));
-											}} }
 										step={7}
 										marks={{
 											1:{ label:<div>0.1x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
@@ -169,13 +191,15 @@ const UndelegateModal = ({ trackNum, className } : { trackNum:number, className:
 									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x enactment period ${lock} days`}
 								</div>
 							</div>
-							<div className='border-solid'>
-
+							<div className='mt-6'>
+								<label className='text-[#485F7D] text-sm tracking-[0.0025em] mb-[2px]'>Selected tracks</label>
 							</div>
 						</Form>
 
 					</div>
 				</Spin>
+
+				<SuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={tracks} address={target} isDelegate={true} balance={bnBalance} />
 			</Modal>
 		</>
 	);

@@ -66,7 +66,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	};
 
 	const rowData: IData[] = [
-		{ action: 'Undelegated',balance: '400 KSM', conviction: '1x', delegatedOn: '17th Jun 2023', delegatedTo: '0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3', index: 1 }
+		{ action: 'Undelegate',balance: '400 KSM', conviction: '1x', delegatedOn: '17th Jun 2023', delegatedTo: '0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3', index: 1 }
 	];
 
 	useEffect(() => {
@@ -141,9 +141,5 @@ export default styled(DashboardTrackListing)`
   line-height: 21px;
   text-align: center;
 }
-.column .ant-table-tbody{
-border: 1px solid red !important;
-}
-
 
 `;

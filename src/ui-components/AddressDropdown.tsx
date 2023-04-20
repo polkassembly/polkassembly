@@ -14,13 +14,15 @@ interface Props {
   className?: string;
   filterAccounts?: string[]
   onAccountChange: (address: string) => void;
+  isDisabled?: boolean;
 }
 
 const AddressDropdown = ({
 	defaultAddress,
-	className = 'px-3 py-1 border-solid border-gray-300 border-2 rounded-md',
+	className = 'px-3 py-1 border-solid border-gray-300 border-2 rounded-md h-[48px]',
 	accounts,
 	filterAccounts,
+	isDisabled,
 	onAccountChange
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
@@ -50,6 +52,7 @@ const AddressDropdown = ({
 		<Dropdown
 			trigger={['click']}
 			className={className}
+			disabled={isDisabled}
 
 			menu={{
 				items: addressItems,

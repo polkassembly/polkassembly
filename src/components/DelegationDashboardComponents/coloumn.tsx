@@ -18,6 +18,12 @@ import WhitelistedCallerIcon from '~assets/delegation-tracks/whitelisted-caller.
 import MediumSpenderIcon from '~assets/delegation-tracks/medium-spender.svg';
 import StakingAdminIcon from '~assets/delegation-tracks/staking-admin.svg';
 import TreasurerIcon from '~assets/delegation-tracks/treasurer.svg';
+import AuctionAdminIcon from '~assets/delegation-tracks/auction-admin.svg';
+import ReferendumCancellerIcon from '~assets/delegation-tracks/referendum-cancellor.svg';
+import ReferendumKillerIcon from '~assets/delegation-tracks/referendum-killer.svg';
+import BigSpenderIcon from '~assets/delegation-tracks/big-spender.svg';
+import BigTipperIcon from '~assets/delegation-tracks/big-tipper.svg';
+import SmallSpenderIcon from '~assets/delegation-tracks/small-spender.svg';
 
 export enum EStatus {
   All = 'all',
@@ -45,11 +51,29 @@ export const handleTracksIcon =  (index:string ) => {
 	}else if( index === 'Fellowship Admin' ){
 		return <FellowshipAdminIcon/>;
 	}
-	else if( index === 'Small Tiper' ){
+	else if( index === 'Small Tipper' ){
 		return <SmallTipperIcon/>;
 	}
 	else if( index === 'Medium Spender' ){
 		return <MediumSpenderIcon/>;
+	}
+	else if( index === 'Small Spender' ){
+		return <SmallSpenderIcon/>;
+	}
+	else if( index === 'Auction Admin' ){
+		return <AuctionAdminIcon/>;
+	}
+	else if( index === 'Big Spender' ){
+		return <BigSpenderIcon/>;
+	}
+	else if( index === 'Big Tipper' ){
+		return <BigTipperIcon/>;
+	}
+	else if( index === 'Referendum Killer' ){
+		return <ReferendumKillerIcon/>;
+	}
+	else if( index === 'Referendum Canceller' ){
+		return <ReferendumCancellerIcon/>;
 	}
 
 	return null;
@@ -65,7 +89,7 @@ const GetColumns = (status :EStatus) => {
 
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-md:flex-col max-lg:gap-[2px]'>
+				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-md:flex-col max-lg:gap-[2px] max-lg:text-center'>
 					{ handleTracksIcon(track)}<span>{track}</span>
 				</h2>;}, title: 'Tracks',width: '23%'
 		},
@@ -216,12 +240,12 @@ const GetTracksColumns = (status :EStatus) => {
 			{ dataIndex:'conviction', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-center'>{index}</h4>, title: 'Conviction', width: '15%' },
 			{ dataIndex:'delegatedOn', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-center'>{index}</h4>, title: 'Delegated on', width: '20%' },
 			{ dataIndex:'action', key:1, render: (action) => <div className='flex justify-center items-center'>
-				<Button className='text-sm text-[#243A57] font-normal border-[1px] border-solid border-pink_primary h-[40px] flex items-center justify-center px-2 gap-2'>
+				<Button className='text-sm text-[#243A57] font-normal border-[1px] border-solid border-pink_primary h-[40px] flex items-center justify-center px-2 gap-2 max-md:h-auto max-md:gap-0 max-md:flex-col max-md:border-none max-md:p-0 '>
 					<UndelegatedProfileIcon/>
 					<span className='text-sm tracking-wide text-pink_primary font-medium'>
 						{action}
 					</span>
-				</Button></div>, title: 'Action', width: '20%' }
+				</Button></div>, title: 'Action', width: '10%' }
 
 		];
 		return TrackColumn;

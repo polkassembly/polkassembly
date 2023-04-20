@@ -36,8 +36,8 @@ const getTrimmedUsername = (username:string) => {
 	return username.length >= 8 ? username?.slice(0, 8) :username;
 };
 
-const getReactionUsers = (comment:any) => {
-	return comment.reactions.map((rec:any) => {
+const getReactionUsers = (reactions:any) => {
+	return reactions.map((rec:any) => {
 		return rec.user?.address || '';
 	});
 };
@@ -56,13 +56,13 @@ const convertReply = (subSquareReply:any) => {
 
 const convertDataToComment =(data:any[], network:string) => {
 	return data.map((comment:any) => {
-		const users =getReactionUsers(comment);
+		const reactionUsers =getReactionUsers(comment.reactions);
 		const newAddress = comment.author?.address ?  getEncodedAddress(comment.author?.address, network) : '';
 		return {
 			comment_reactions: {
 				'👍': {
-					count: users.length,
-					usernames: users
+					count: reactionUsers.length,
+					usernames: reactionUsers
 				},
 				'👎': {
 					count: 0,

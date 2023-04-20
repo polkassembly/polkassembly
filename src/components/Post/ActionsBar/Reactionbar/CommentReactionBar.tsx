@@ -34,6 +34,7 @@ const CommentReactionBar: FC<ICommentReactionBarProps> = ({ className, comment_r
 						setReactions={setReactions}
 						setLikeModalOpen={setLikeModalOpen}
 						setDislikeModalOpen={setDislikeModalOpen}
+						importedReactions={importedReactions}
 					/>
 				);
 			})}

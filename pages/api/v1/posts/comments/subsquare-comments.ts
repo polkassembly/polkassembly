@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { v4 as uuid } from 'uuid';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const urlMapper:any= {
 	bounties: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/bounties/${id}/comments`,
@@ -16,9 +17,21 @@ const urlMapper:any= {
 	treasury_proposals: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/proposals/${id}/comments`
 };
 
+const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+const generateRandomString = (length:number) => {
+	let result = '';
+	const charactersLength = characters.length;
+	for ( let i = 0; i < length; i++ ) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+
+	return result;
+};
+
 const getTrimmedUsername = (username:string) => {
 	if(!username){
-		return 'User...';
+		return generateRandomString(8);
 	}
 	return username.length >= 8 ? username?.slice(0, 8) :username;
 };
@@ -41,10 +54,10 @@ const convertReply = (subSquareReply:any) => {
 	}));
 };
 
-const convertDataToComment = (data:any[]) => {
+const convertDataToComment =(data:any[], network:string) => {
 	return data.map((comment:any) => {
 		const users =getReactionUsers(comment);
-		// console.log(getProfileWithAddress(comment.author?.address));
+		const newAddress = comment.author?.address ?  getEncodedAddress(comment.author?.address, network) : '';
 		return {
 			comment_reactions: {
 				'👍': {
@@ -60,9 +73,10 @@ const convertDataToComment = (data:any[]) => {
 			content:comment.content,
 			created_at: comment.createdAt,
 			id:comment._id,
+			proposer:newAddress,
 			replies:convertReply(comment?.replies || []),
 			updated_at:comment?.updatedAt,
-			user_id:comment.author?.address || uuid(),
+			user_id:uuid(),
 			username:getTrimmedUsername(comment.author?.username)
 		};});
 };
@@ -72,7 +86,7 @@ export const getSubSquareComments = async (proposalType:string,network:string, i
 	try{
 		const data = await (await fetch(url)).json();
 		// console.log(data.items[0].author, data.items[1].author);
-		return convertDataToComment(data.items);
+		return convertDataToComment(data.items, network);
 	}catch(error){
 		return [];
 	}

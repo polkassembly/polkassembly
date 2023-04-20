@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Form, MenuProps } from 'antd';
+import { Button, Dropdown, Form, MenuProps, Tooltip } from 'antd';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import React, { FC, useContext, useEffect, useRef, useState } from 'react';
@@ -368,10 +368,17 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									importedReactions={props.isSubsquareUser}
 								/>
 								{
-									id &&
+									id && ( props.isSubsquareUser ?
+										(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
+											<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
+												<ReplyIcon className='mr-1'/> Reply
+											</Button>
+										</Tooltip>)
+										:
 										<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
 											<ReplyIcon className='mr-1'/> Reply
 										</Button>
+									)
 								}
 								<Dropdown
 									className={`${poppins.variable} ${poppins.className} flex cursor-pointer dropdown`}

@@ -16,35 +16,35 @@ import HelperTooltip from './HelperTooltip';
 import styled from 'styled-components';
 
 const Styled = styled.div`
-padding:0;
-margin:0;
-
-&:hover{
-	color:#E5007A;
-}
-.ant-tooltip {
-	font-size:16px;
-}
-.ant-tooltip .ant-tooltip-placement-leftTop{
-	height:10px;
-	padding:0px;
-}
-.ant-tooltip .ant-tooltip-inner{
-	min-height:0;
-}
-.ant-tooltip-placement-leftTop .ant-tooltip-arrow{
-	top:-7px;
-	right:4px;
-}
-  .ant-tooltip-inner {
-    color: black;
-	font-size:10px;
-	padding:0px 6px;
-  }
-  .dark-pink{
-	color:#E5007A;
-	text-decoration:underline;
-  }
+    padding:0;
+    margin:0;
+    
+    &:hover{
+    	color:#E5007A;
+    }
+    .ant-tooltip {
+    	font-size:16px;
+    }
+    .ant-tooltip .ant-tooltip-placement-leftTop{
+    	height:10px;
+    	padding:0px;
+    }
+    .ant-tooltip .ant-tooltip-inner{
+    	min-height:0;
+    }
+    .ant-tooltip-placement-leftTop .ant-tooltip-arrow{
+    	top:-7px;
+    	right:4px;
+    }
+    .ant-tooltip-inner {
+        color: black;
+  	    font-size:10px;
+  	    padding:0px 6px;
+    }
+    .dark-pink{
+  	    color:#E5007A;
+  	    text-decoration:underline;
+    }
 `;
 
 interface ICreationLabelProps {
@@ -79,7 +79,6 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					<NameLabel
 						defaultAddress={defaultAddress}
 						username={username}
-						clickable={commentSource==='polkassembly'}
 					/>
 					{text}&nbsp;
 					{topic &&

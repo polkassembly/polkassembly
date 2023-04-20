@@ -64,6 +64,7 @@ export const network = {
 	BASILISK: 'basilisk',
 	CALAMARI: 'calamari',
 	CENTRIFUGE: 'centrifuge',
+	COLLECTIVES: 'collectives',
 	COMPOSABLE: 'composable',
 	CRUST: 'crust',
 	CRUSTSHADOW: 'crustshadow',
@@ -393,6 +394,24 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond:'5000',
 		externalLinks: 'https://centrifuge.api.subscan.io',
 		rpcEndpoints: []
+	},
+	//TODO: Aleem=> Need to update collective network, currently using polkadot data
+	[network.COLLECTIVES]: {
+		blockTime: 6000,
+		category: 'polkadot',
+		chainId: 0,
+		logo: polkadotLogo,
+		rpcEndpoint: 'wss://polkadot-collectives-rpc.polkadot.io',
+		ss58Format: 0,
+		subsquidUrl: 'https://squid.subsquid.io/collectives-polkassembly/v/v1/graphql',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.DOT,
+		treasuryProposalBondPercent: '5.00%',
+		treasuryProposalMinBond: '100',
+		treasuryProposalMaxBond: '500',
+		externalLinks: '',
+		rpcEndpoints: [
+		]
 	},
 	[network.COMPOSABLE]: {
 		blockTime: 12000,

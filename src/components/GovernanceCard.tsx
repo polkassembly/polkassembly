@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { ClockCircleOutlined, CommentOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, CommentOutlined, DislikeOutlined, LikeOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { Divider, Modal, Skeleton, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
@@ -14,6 +14,7 @@ import OnchainCreationLabel from 'src/ui-components/OnchainCreationLabel';
 import StatusTag from 'src/ui-components/StatusTag';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
+import { useNetworkContext } from '~src/context';
 
 import { getFormattedLike } from '~src/util/getFormattedLike';
 
@@ -68,6 +69,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	} = props;
 	const currentUser = useContext(UserDetailsContext);
 	let titleString = title || method || tipReason || noTitle;
+
+	const { network } = useNetworkContext();
 
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
@@ -128,6 +131,13 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								: null
 						}
 						<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+
+						{network === 'collectives' ? <>
+							<PaperClipOutlined />
+							<span>IPFS</span>
+							<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+						</> : null}
+
 						{relativeCreatedAt && <>
 							<div className='flex items-center'>
 								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}

@@ -27,6 +27,8 @@ import { getLatestActivityOffChainPosts } from './api/v1/latest-activity/off-cha
 import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } from './api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from './api/v1/network-socials';
 import { chainProperties } from '~src/global/networkConstants';
+import { network as AllNetwork } from '~src/global/networkConstants';
+import { allianceAllPost, allianceDiscussionsPost } from '~src/global/collectiveMockData';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -53,7 +55,11 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 
 	const networkSocialsData = await getNetworkSocials({ network });
 
-	let fetches = {
+	// TODO: Aleem => getting mock data for UI, need to update
+	let fetches = network === AllNetwork.COLLECTIVES ?  {
+		all: allianceAllPost,
+		discussions: allianceDiscussionsPost
+	} : {
 		all: getLatestActivityAllPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
 			network
@@ -65,7 +71,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		})
 	};
 
-	if(chainProperties[network]?.subsquidUrl) {
+	if(chainProperties[network]?.subsquidUrl && network !== AllNetwork.COLLECTIVES) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
@@ -154,11 +160,9 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				</div>
 
 				<div className="mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">
-					{network !== 'collectives' &&
-						<div className='w-full xl:w-[60%]'>
-							<UpcomingEvents />
-						</div>
-					}
+					<div className='w-full xl:w-[60%]'>
+						<UpcomingEvents />
+					</div>
 
 					<div className='w-full xl:w-[40%]'>
 						<News twitter={networkSocialsData?.data?.twitter || ''} />

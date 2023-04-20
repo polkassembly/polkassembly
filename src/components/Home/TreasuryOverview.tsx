@@ -31,7 +31,12 @@ interface ITreasuryOverviewProps{
 
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals } = props;
-	const { network } = useNetworkContext();
+	let { network } = useNetworkContext();
+
+	// TODO: Aleem => Currently changing network just to see the UI, Should be update after backend
+	if(network === 'collectives'){
+		network = 'polkadot';
+	}
 
 	const { api, apiReady } = useApiContext();
 

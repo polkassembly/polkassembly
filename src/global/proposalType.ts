@@ -158,6 +158,8 @@ export const offChainProposalTypes = ['discussions', 'grants'];
 
 export const gov1ProposalTypes = ['DemocracyProposal', 'TechCommitteeProposal', 'TreasuryProposal', 'Referendum', 'CouncilMotion', 'Bounty', 'Tip', 'ChildBounty'];
 
+export const collectivesProposalTypes = ['AllianceMotion', 'Announcement', 'UnscrupulousItem'];
+
 export enum VoteType {
 	MOTION = 'Motion',
 	FELLOWSHIP = 'Fellowship',

@@ -160,10 +160,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Proposals', '/tech-comm-proposals', <DemocracyProposalsIcon className='text-white' />)
 		] : [],
 		allianceItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Members', '/alliance-members', <MembersIcon className='text-white' />),
-			// getSiderMenuItem('Motions', '/alliance-motions', <MotionsIcon className='text-white' />),
 			getSiderMenuItem('Announcements', '/alliance-announcements', <NewsIcon className='text-white' />),
-			getSiderMenuItem('Unscrupulous', '/alliance-unscrupulous', <ReferendaIcon className='text-white' />)
+			getSiderMenuItem('Motions', '/alliance-motions', <MotionsIcon className='text-white' />),
+			getSiderMenuItem('Unscrupulous', '/alliance-unscrupulous', <ReferendaIcon className='text-white' />),
+			getSiderMenuItem('Members', '/alliance-members', <MembersIcon className='text-white' />)
 		] : []
 	};
 

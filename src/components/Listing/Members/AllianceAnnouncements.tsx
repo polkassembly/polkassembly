@@ -9,6 +9,7 @@ import { ErrorState } from 'src/ui-components/UIStates';
 import { LoadingState } from 'src/ui-components/UIStates';
 
 import AllianceAnnouncementsListing from './AllianceAnnouncementListing';
+import { announcements as mockAnnouncement } from '~src/global/collectiveMockData';
 
 const AllianceAnnouncements = ({ className } : { className?:string }) => {
 	const { api, apiReady } = useContext(AllianceApiContext);
@@ -22,12 +23,12 @@ const AllianceAnnouncements = ({ className } : { className?:string }) => {
 		if (!apiReady) {
 			return;
 		}
-
 		api.query.alliance.announcements().then((cids) => {
 			setAnnouncements(cids.toHuman() as string[]);
 			const res = cids.map((cid) => {
 				return cid.toJSON();
 			});
+			console.log(res);
 			setAnnouncements(res);
 		}).catch(error => setErr(error));
 
@@ -45,7 +46,7 @@ const AllianceAnnouncements = ({ className } : { className?:string }) => {
 						<h1 className='dashboard-heading'>Announcements</h1>
 					</div>
 
-					<AllianceAnnouncementsListing className='mt-6' data={announcements} />
+					<AllianceAnnouncementsListing className='mt-6' data={mockAnnouncement} />
 				</div>
 			</>
 		);

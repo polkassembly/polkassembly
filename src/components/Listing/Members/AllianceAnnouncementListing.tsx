@@ -19,6 +19,7 @@ const AllianceAnnouncementsListing = ({ className, data } : Props) => {
 		<div className={`${className} motions__list`}>
 			{data.map(
 				(member) => (
+					//TODO: Aleem => will use Listing component when will get test data
 					<div key={member.codec} className='my-5'>
 						<div className={`${className} border-2 border-grey_light rounded-md p-3 md:p-4`}>
 							<div className="content">

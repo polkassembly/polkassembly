@@ -61,6 +61,7 @@ export const getDelegationDashboardData = async (address: string, network: strin
 		// undelegated
 		if(!votingDelegationsArr.length) {
 			result.push(trackDelegation);
+			continue;
 		}else if(votingDelegationsArr[0].from === address) {
 			// address has delegated to someone for this track
 			trackDelegation.status = ETrackDelegationStatus.Delegated;

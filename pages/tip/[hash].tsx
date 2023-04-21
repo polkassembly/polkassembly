@@ -16,33 +16,60 @@ import { noTitle } from '~src/global/noTitle';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 
+import { useRouter } from 'next/router';
+import { PostEmptyState } from 'src/ui-components/UIStates';
+import EmptyIcon from '~assets/icons/empty-state-image.svg';
+import { checkIsOnChain } from '~src/util/checkIsOnChain';
+import { useApiContext } from '~src/context';
+import { useState } from 'react';
+
 const proposalType = ProposalType.TIPS;
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 	const { hash } = query;
 
 	const network = getNetworkFromReqHeaders(req.headers);
-	const { data, error } = await getOnChainPost({
+	const { data, error ,status } = await getOnChainPost({
 		network,
 		postId: hash,
 		proposalType
 	});
-	return { props: { data, error, network } };
+	return { props: { data, error, network ,status } };
 };
 
 interface ITipPostProps {
 	data: IPostResponse;
 	error?: string;
 	network: string;
+	status?: number;
 }
 
 const TipPost: FC<ITipPostProps> = (props) => {
-	const { data: post, error, network } = props;
+	const { data: post, error, network , status } = props;
 	const { setNetwork } = useNetworkContext();
+	const router = useRouter();
+	const { api, apiReady } = useApiContext();
+	const [isUnfinalized,setIsUnFinalized] = useState(false);
+	const { hash } = router.query;
 
 	useEffect(() => {
 		setNetwork(props.network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+
+		if(!api || !apiReady || !error || !status || !hash || status !== 404 ){
+			return;
+		}
+		(async() => {
+			setIsUnFinalized( Boolean(await checkIsOnChain(String(hash),proposalType, api)));
+		})();
+
+	}, [api, apiReady, error, status,hash]);
+
+	if(isUnfinalized){
+		return <PostEmptyState image={<EmptyIcon/>} description={<><b className='text-xl mx-4'>Waiting for Block Confirmation</b><p>Usually its done within a few seconds</p></>} imageStyle={ { height:300 } }/>;
+	}
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!post) return null;

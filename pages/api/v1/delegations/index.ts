@@ -23,9 +23,9 @@ export const getDelegationDashboardData = async (address: string, network: strin
 	if(!address || !network || !isOpenGovSupported(network)) return [];
 
 	const subsquidFetches: any[] = [];
-	Object.values(networkTrackInfo[network]).map((trackInfo) => {
-		if(trackNum && trackInfo.trackId !== trackNum) return;
 
+	Object.values(networkTrackInfo[network]).map((trackInfo) => {
+		if(trackInfo.fellowshipOrigin || !isNaN(Number(trackNum)) && trackInfo.trackId !== trackNum) return;
 		subsquidFetches.push(
 			fetchSubsquid({
 				network,
@@ -83,9 +83,10 @@ async function handler (req: NextApiRequest, res: NextApiResponse<ITrackDelegati
 	const { address, track } = req.query;
 	if(!address) return res.status(400).json({ error: 'Missing address in request query.' });
 
-	if(track && isNaN(Number(track))) return res.status(400).json({ error: 'Invalid track in request query.' });
+	const trackNum = Number(track);
+	if(track && isNaN(trackNum)) return res.status(400).json({ error: 'Invalid track in request query.' });
 
-	const result = await getDelegationDashboardData(String(address), network, track ? Number(track) : undefined);
+	const result = await getDelegationDashboardData(String(address), network, !isNaN(trackNum) ? trackNum : undefined);
 	return res.status(200).json(result as ITrackDelegation[]);
 }
 

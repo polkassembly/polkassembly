@@ -65,79 +65,12 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 	const [checkAll, setCheckAll] = useState(false);
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
 	const [wallet,setWallet]=useState<Wallet>();
-	const [defaultWallets,setDefaultWallets]=useState<any>({});
-	const [extensionOpen, setExtentionOpen] = useState<boolean>(false);
-
-	const getWallet=() => {
-		const injectedWindow = window as Window & InjectedWindow;
-		setDefaultWallets(injectedWindow.injectedWeb3);
-	};
 
 	if(network){ Object.entries(networkTrackInfo?.[network]).map(([key, value]) => {
 		if (!value?.fellowshipOrigin) {
 			trackArr.push(String(key));
 		}
 	});}
-	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
-		setExtentionOpen(false);
-		const injectedWindow = window as Window & InjectedWindow;
-
-		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[chosenWallet]
-			: null;
-
-		if (!wallet) {
-			setExtentionOpen(true);
-			return;
-		}
-
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if(wallet && wallet.enable) {
-					wallet.enable(APPNAME)
-						.then((value) => { clearTimeout(timeoutId); resolve(value); })
-						.catch((error) => { reject(error); });
-				}
-			});
-		} catch (err) {
-			console.log(err?.message);
-		}
-		if (!injected) {
-			return;
-		}
-
-		const accounts = await injected.accounts.get();
-		if (accounts.length === 0) {
-			return;
-		}
-
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
-
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			if(api && apiReady) {
-				api.setSigner(injected.signer);
-			}
-
-			setAddress(accounts[0].address);
-		}
-		return;
-	};
-
-	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
-		setAccounts([]);
-		setAddress('');
-		event.preventDefault();
-		setWallet(wallet);
-		await getAccounts(wallet);
-	};
 
 	const onChange = (list: CheckboxValueType[]) => {
 		setCheckedList(list);
@@ -149,11 +82,7 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 		setIndeterminate(false);
 		setCheckAll(e.target.checked);
 	};
-	useEffect(() => {
-		getWallet();
-		loginWallet!==null && getAccounts(loginWallet);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[]);
+
 	const content = (<div className='flex flex-col'>
 		<Checkbox.Group className='flex flex-col h-[200px] overflow-y-scroll' onChange={onChange} value={checkedList} >
 			{trackArr?.map((track, index) => (
@@ -286,110 +215,85 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 
 				<Spin spinning={loading} indicator={<LoadingOutlined />}>
 					<div className='flex flex-col'>
-						<h3 className='text-sm font-normal text-[#485F7D]'>Select a wallet</h3>
-						<div className='flex items-center justify-start gap-x-4 mb-6'>
-							{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
-							{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-							{defaultWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
-							{
-								(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
-                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
-							}
-							{
-								['polymesh'].includes(network) && defaultWallets[Wallet.POLYWALLET]?
-									<WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
-									: null
-							}
-						</div>
 
-						{extensionOpen && <ErrorAlert errorMsg='You need at least one account in your wallet extenstion to use this feature.' />}
-						{extensionOpen && <ExtensionNotDetected />}
+						<Form
+							form={form}
+							disabled={loading}
+						>
+							{accounts.length> 0
+								?<AccountSelectionForm
+									title='Your Address'
+									accounts={accounts}
+									address={address}
+									withBalance={false}
+									onAccountChange={(address) => setAddress(address)}
+									onBalanceChange={handleOnBalanceChange}
+									className='text-[#485F7D] text-sm'
+								/>: !wallet? <FilteredError text='Please select a wallet.' />: null}
+							<AddressInput
+								defaultAddress={defaultTarget}
+								label={'Delegate to'}
+								placeholder='Delegate Account Address'
+								className='text-[#485F7D] text-sm '
+								onChange={(address) => setTarget(address)}
+								size='large'
+							/>
+							<BalanceInput
+								label={'Balance'}
+								placeholder={'Enter balance'}
+								className='mt-6'
+								address={address}
+								withBalance={true}
+								onAccountBalanceChange={handleOnBalanceChange}
+								onChange={(balance) => setBnBalance(balance)}
+								size='large'
+							/>
 
-						{
-							errorArr.length > 0 && errorArr.map(errorMsg => <ErrorAlert key={errorMsg} className='mb-6' errorMsg={errorMsg} />)
-						}
+							<div className='mb-2 border-solid border-white'>
+								<label  className='text-[#485F7D] flex items-center text-sm'>Conviction</label>
 
-						{
-							!extensionOpen &&
-								<Form
-									form={form}
-									disabled={loading}
-								>
-									{accounts.length> 0
-										?<AccountSelectionForm
-											title='Your Address'
-											accounts={accounts}
-											address={address}
-											withBalance={false}
-											onAccountChange={(address) => setAddress(address)}
-											onBalanceChange={handleOnBalanceChange}
-											className='text-[#485F7D] text-sm'
-										/>: !wallet? <FilteredError text='Please select a wallet.' />: null}
-									<AddressInput
-										defaultAddress={defaultTarget}
-										label={'Delegate to'}
-										placeholder='Delegate Account Address'
-										className='text-[#485F7D] text-sm '
-										onChange={(address) => setTarget(address)}
-										size='large'
-									/>
-									<BalanceInput
-										label={'Balance'}
-										placeholder={'Enter balance'}
-										className='mt-6'
-										address={address}
-										withBalance={true}
-										onAccountBalanceChange={handleOnBalanceChange}
-										onChange={(balance) => setBnBalance(balance)}
-										size='large'
-									/>
-
-									<div className='mb-2 border-solid border-white'>
-										<label  className='text-[#485F7D] flex items-center text-sm'>Conviction</label>
-
-										<div className='px-[2px]'>
-											<Slider
-												className='text-[12px] mt-[9px]'
-												trackStyle={{ backgroundColor:'#FF49AA' }}
-												onChange={(value:number) => {
-													if(value === 1){
-														setConviction(0);
-													}
-													else if(value === 2){
-														setConviction(1);
-														setLockValue(1);
-													}else{
-														setConviction(Number(value-1));
-														setLockValue(Number(2**(value - 2)));
-													}} }
-												step={7}
-												marks={{
-													1:{ label:<div>0.1x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-													2:{ label:<div>1x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-													3:{ label:<div>2x</div> , style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-													4:{ label:<div>3x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-													5:{ label:<div>4x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-													6:{ label:<div>5x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-													7:{ label:<div>6x</div>, style: { color: '#243A57', fontSize:'14px',marginTop:'16px' } }  }}
-												min={1}
-												max={7}
-												defaultValue={1}
-											/></div>
-									</div>
-									<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
-										<div className='flex gap-[10px] items-center justify-center text-[#485F7D] text-sm'> <LockIcon/><span>Locking period</span></div>
-										<div className='text-[#243A57] font-medium text-sm flex justify-center items-center' >
-											{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x enactment period ${lock} days`}
-										</div>
-									</div>
-									<Popover
-										content={content}
-										placement='topLeft'
-										className='mt-6 mb-6  border-solid border-[1px] border-[#D2D8E0] py-[11px] px-4 rounded-[20px]'>
-										<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Delegate for all tracks</Checkbox>
-									</Popover>
-								</Form>
-						}
+								<div className='px-[2px]'>
+									<Slider
+										className='text-[12px] mt-[9px]'
+										trackStyle={{ backgroundColor:'#FF49AA' }}
+										onChange={(value:number) => {
+											if(value === 1){
+												setConviction(0);
+											}
+											else if(value === 2){
+												setConviction(1);
+												setLockValue(1);
+											}else{
+												setConviction(Number(value-1));
+												setLockValue(Number(2**(value - 2)));
+											}} }
+										step={7}
+										marks={{
+											1:{ label:<div>0.1x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
+											2:{ label:<div>1x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
+											3:{ label:<div>2x</div> , style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
+											4:{ label:<div>3x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
+											5:{ label:<div>4x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
+											6:{ label:<div>5x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
+											7:{ label:<div>6x</div>, style: { color: '#243A57', fontSize:'14px',marginTop:'16px' } }  }}
+										min={1}
+										max={7}
+										defaultValue={1}
+									/></div>
+							</div>
+							<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
+								<div className='flex gap-[10px] items-center justify-center text-[#485F7D] text-sm'> <LockIcon/><span>Locking period</span></div>
+								<div className='text-[#243A57] font-medium text-sm flex justify-center items-center' >
+									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x enactment period ${lock} days`}
+								</div>
+							</div>
+							<Popover
+								content={content}
+								placement='topLeft'
+								className='mt-6 mb-6  border-solid border-[1px] border-[#D2D8E0] py-[11px] px-4 rounded-[20px]'>
+								<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Delegate for all tracks</Checkbox>
+							</Popover>
+						</Form>
 
 					</div>
 				</Spin>

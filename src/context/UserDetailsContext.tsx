@@ -15,6 +15,7 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	addresses: [],
 	allowed_roles: [],
 	defaultAddress: '',
+	delegationDashboardAddress:'',
 	email: null,
 	email_verified: false,
 	id: null,

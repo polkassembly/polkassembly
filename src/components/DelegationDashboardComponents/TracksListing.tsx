@@ -15,9 +15,12 @@ import { DelegatedIcon, UnDelegatedIcon, ReceivedDelegationIcon } from '~src/ui-
 import { useRouter } from 'next/router';
 import { IApiResponse } from '~src/types';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 
 interface Props{
   className?: string;
+  address: string;
 }
 
 export interface IDataType{
@@ -31,17 +34,17 @@ export interface IDataType{
   trackNo: number;
 }
 
-const DashboardTrackListing = ({ className }: Props) => {
+const DashboardTrackListing = ({ className, address }: Props) => {
 
 	const [status, setStatusvalue ] = useState<EStatus>(EStatus.All);
 	const  { network } = useNetworkContext();
 	const [delegatedCount, setDelegatedCount] = useState<number>(0);
 	const [undelegatedCount, setUndelegatedCount] = useState<number>(0);
-	const [receivedDelegationCount, setReceivedDelegationCount] = useState<number>(0); 
+	const [receivedDelegationCount, setReceivedDelegationCount] = useState<number>(0);
 	const [allCount, setAllCount] = useState<number>(14);
 	const [showTable, setShowTable] = useState<boolean>(false);
 	const router = useRouter();
-	let rowData:IDataType[] = [];
+	const rowData:IDataType[] = [];
 	const { api, apiReady } = useApiContext();
 
 	if(network ){
@@ -64,37 +67,12 @@ const DashboardTrackListing = ({ className }: Props) => {
 	const getData = async() => {
 		if (!api || !apiReady ) return;
 
-		const obj:any = {};
-
-		const fetches = rowData.map((trackDetails, index: number) => {
-			obj[index] = api.query.referenda.decidingCount(trackDetails.trackNo);
-		});
-
-		const responseArr = await Promise.allSettled(Object.values(obj));
-		const results = responseArr.map((result:any) => {
-			if (result.status === 'fulfilled') {
-				return result.value.toJSON();
-			} else {
-				return {
-					data: null,
-					error: result.reason
-				} as IApiResponse<IPostsListingResponse>;
-			}
-		});
-		console.log(results);
-		const arr = rowData.map((track, index) =>
-		{return {
-			...track,
-			active_proposals: results[index]
-		};});
-		console.log(arr);
-
-		rowData=arr;
-
+		const { data, error } = await nextApiClientFetch<IPostResponse>(`api/v1/delegations/dashboard?address=${address}`);
+		console.log(data, error);
 	};
 
 	useEffect(() => {
-		getData();
+	 getData();
 	}, []);
 	const handleShowTable = (status:EStatus) => {
 

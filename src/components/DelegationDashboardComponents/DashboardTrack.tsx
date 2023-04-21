@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 import React, { useEffect, useState } from 'react';
 import ProfileBalances from './ProfileBalance';
 import { useUserDetailsContext } from '~src/context';
@@ -78,7 +79,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	}, [status]);
 
 	return <div className={`${className}`}>
-		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] ml-[-53px] mr-[-53px]'>
+		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>
 			<ProfileBalances address={addresses && addresses.length > 0 ? addresses[0] : ''}/>
 		</div>
 		<div className='flex gap-2 mb-4 md:mb-5 mt-5 dashboard-heading items-center'>

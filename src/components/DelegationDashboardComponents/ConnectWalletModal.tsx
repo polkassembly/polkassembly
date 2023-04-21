@@ -1,0 +1,189 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+
+import React, { useContext, useEffect, useState } from 'react';
+import { Button, Form, Modal, Spin } from 'antd';
+import { poppins } from 'pages/_app';
+import { Wallet } from '~src/types';
+import { ApiContext } from '~src/context/ApiContext';
+import { useUserDetailsContext } from '~src/context';
+import { NetworkContext } from '~src/context/NetworkContext';
+import ErrorAlert from '~src/ui-components/ErrorAlert';
+import ExtensionNotDetected from '../ExtensionNotDetected';
+import WalletButton from '~src/components/WalletButton';
+import { LoadingOutlined } from '@ant-design/icons';
+import { WalletIcon } from '~src/components/Login/MetamaskLogin';
+import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
+import FilteredError from '~src/ui-components/FilteredError';
+import { isWeb3Injected } from '@polkadot/extension-dapp';
+import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { inputToBn } from '~src/util/inputToBn';
+import BN from 'bn.js';
+import { APPNAME } from '~src/global/appName';
+
+interface Props{
+  className?: string;
+  open: boolean;
+  setOpen: (pre: boolean) => void;
+}
+
+const ZERO_BN = new BN(0);
+
+const ConnectWalletModal = ({ className, open, setOpen }: Props) => {
+
+	const { network } = useContext(NetworkContext);
+	const { api, apiReady } = useContext(ApiContext);
+	const { loginWallet, setUserDetailsContextState } = useUserDetailsContext();
+	const [address, setAddress] = useState<string>('');
+	const [form] = Form.useForm();
+	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
+	const [loading, setLoading] = useState<boolean>(false);
+	const [defaultWallets, setDefaultWallets]=useState<any>({});
+	const [wallet,setWallet]=useState<Wallet>();
+	const [extensionOpen, setExtentionOpen] = useState<boolean>(false);
+	const [errorArr, setErrorArr] = useState<string[]>([]);
+	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+
+	const handleSubmit = () => {
+
+		setUserDetailsContextState((prev) => {
+			return { ...prev,
+				delegationDashboardAddress: address
+			};
+		});
+		setOpen(false);
+	};
+
+	const getWallet=() => {
+		const injectedWindow = window as Window & InjectedWindow;
+		setDefaultWallets(injectedWindow.injectedWeb3);
+	};
+
+	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
+		setExtentionOpen(false);
+		const injectedWindow = window as Window & InjectedWindow;
+
+		const wallet = isWeb3Injected
+			? injectedWindow.injectedWeb3[chosenWallet]
+			: null;
+
+		if (!wallet) {
+			setExtentionOpen(true);
+			return;
+		}
+
+		let injected: Injected | undefined;
+		try {
+			injected = await new Promise((resolve, reject) => {
+				const timeoutId = setTimeout(() => {
+					reject(new Error('Wallet Timeout'));
+				}, 60000); // wait 60 sec
+
+				if(wallet && wallet.enable) {
+					wallet.enable(APPNAME)
+						.then((value) => { clearTimeout(timeoutId); resolve(value); })
+						.catch((error) => { reject(error); });
+				}
+			});
+		} catch (err) {
+			console.log(err?.message);
+		}
+		if (!injected) {
+			return;
+		}
+
+		const accounts = await injected.accounts.get();
+		if (accounts.length === 0) {
+			return;
+		}
+
+		accounts.forEach((account) => {
+			account.address = getEncodedAddress(account.address, network) || account.address;
+		});
+
+		setAccounts(accounts);
+		if (accounts.length > 0) {
+			if(api && apiReady) {
+				api.setSigner(injected.signer);
+			}
+
+			setAddress(accounts[0].address);
+		}
+		return;
+	};
+
+	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
+		setAccounts([]);
+		setAddress('');
+		event.preventDefault();
+		setWallet(wallet);
+		await getAccounts(wallet);
+	};
+
+	const handleOnBalanceChange = (balanceStr: string) => {
+		const [balance, isValid] = inputToBn(balanceStr, network, false);
+		isValid ? setAvailableBalance(balance) : setAvailableBalance(ZERO_BN);
+	};
+
+	useEffect(() => {
+		getWallet();
+		loginWallet!==null && getAccounts(loginWallet);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[]);
+
+	return <Modal
+		className = {`${className} ${poppins.className} ${poppins.variable} w-[453px] backdrop-blur-lg`}
+		open = {open}
+		title = {<div className='text-center text-[20px] font-semibold text-[#243A57]'>Connect your wallet</div>}
+		footer = {[<Button onClick={handleSubmit} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-6 rounded-[4px]'>Continue</Button>]}
+		closable = {false}
+	>
+		<Spin spinning={loading} indicator={<LoadingOutlined />}>
+			<div className='flex flex-col'>
+				<h3 className='text-sm font-normal text-[#485F7D] text-center'>Select a wallet</h3>
+				<div className='flex items-center justify-center gap-x-4 mb-6'>
+					{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
+					{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+					{defaultWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
+					{
+						(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
+                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
+					}
+					{
+						['polymesh'].includes(network) && defaultWallets[Wallet.POLYWALLET]?
+							<WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
+							: null
+					}
+				</div>
+
+				{extensionOpen && <ErrorAlert errorMsg='You need at least one account in your wallet extenstion to use this feature.' />}
+				{extensionOpen && <ExtensionNotDetected />}
+
+				{
+					errorArr.length > 0 && errorArr.map(errorMsg => <ErrorAlert key={errorMsg} className='mb-6' errorMsg={errorMsg} />)
+				}
+
+				{
+					!extensionOpen &&
+								<Form
+									form={form}
+									disabled={loading}
+								>
+									{accounts.length> 0
+										?<AccountSelectionForm
+											title='Select an address'
+											accounts={accounts}
+											address={address}
+											withBalance={true}
+											onAccountChange={(address) => setAddress(address)}
+											onBalanceChange={handleOnBalanceChange}
+											className='text-[#485F7D] text-sm'
+										/>: !wallet? <FilteredError text='Please select a wallet.' />: null}
+								</Form>}
+			</div>
+		</Spin>
+	</Modal>;
+};
+export default ConnectWalletModal;

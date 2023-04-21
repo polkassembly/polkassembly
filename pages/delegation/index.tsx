@@ -24,7 +24,7 @@ const DelegationDashboard = ( props : { network: string} ) => {
 	}, []);
 
 	return <>
-		<SEOHead title='Delegation Board' />
+		<SEOHead title='Delegation Board' network={props.network} />
 		<DelegationDashboardComponents/>
 	</>;
 };

@@ -47,7 +47,7 @@ const ContentForm = ({ className, height, onChange, value }: Props): JSX.Element
 		if(onChange){
 			onChange(content);
 		}
-	
+
 		return content;
 	};
 

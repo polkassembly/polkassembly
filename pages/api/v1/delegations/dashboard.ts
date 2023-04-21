@@ -5,6 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK } from '~src/queries';
 import { ETrackDelegationStatus, IDelegation } from '~src/types';
@@ -12,14 +13,14 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 
 export interface ITrackDelegation {
 	track: number
-	activeProposals: number
+	active_proposals_count: number
 	status: ETrackDelegationStatus
 	recieved_delegation_count: number
 	delegations: IDelegation[]
 }
 
 export const getDelegationDashboardData = async (address: string, network: string) => {
-	if(!address || !network) return [];
+	if(!address || !network || !isOpenGovSupported(network)) return [];
 
 	const subsquidFetches: any[] = [];
 	Object.values(networkTrackInfo[network]).map((trackInfo) => {
@@ -48,7 +49,7 @@ export const getDelegationDashboardData = async (address: string, network: strin
 		if(isNaN(track)) continue;
 
 		const trackDelegation: ITrackDelegation = {
-			activeProposals: trackDelegationData.value.data.proposalsConnection?.totalCount || 0,
+			active_proposals_count: trackDelegationData.value.data.proposalsConnection?.totalCount || 0,
 			delegations: votingDelegationsArr,
 			recieved_delegation_count: 0,
 			status: ETrackDelegationStatus.Undelegated,

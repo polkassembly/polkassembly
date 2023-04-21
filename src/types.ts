@@ -350,4 +350,7 @@ export interface IDelegation {
   track: number;
   to: string;
   from: string;
+  lockPeriod: number;
+  balance: string;
+  createdAt: Date
 }

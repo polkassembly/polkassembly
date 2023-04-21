@@ -22,33 +22,30 @@ export interface ITrackDelegation {
 export const getDelegationDashboardData = async (address: string, network: string, trackNum?:number) => {
 	if(!address || !network || !isOpenGovSupported(network)) return [];
 
-	const subsquidFetches: any[] = [];
+	const subsquidFetches: {[index:number]: any} = [];
 
 	Object.values(networkTrackInfo[network]).map((trackInfo) => {
 		if(trackInfo.fellowshipOrigin || !isNaN(Number(trackNum)) && trackInfo.trackId !== trackNum) return;
-		subsquidFetches.push(
-			fetchSubsquid({
-				network,
-				query: ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK,
-				variables : {
-					address: String(address),
-					track_eq: trackInfo.trackId
-				}
-			})
-		);
+		subsquidFetches[trackInfo.trackId] = fetchSubsquid({
+			network,
+			query: ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK,
+			variables : {
+				address: String(address),
+				track_eq: trackInfo.trackId
+			}
+		});
 	});
 
-	const subsquidResults = await Promise.allSettled(subsquidFetches);
+	const subsquidResults = await Promise.allSettled(Object.values(subsquidFetches));
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const result: ITrackDelegation[] = [];
 
-	for(const trackDelegationData of subsquidResults) {
+	for(const [index, trackDelegationData] of subsquidResults.entries()) {
 		if (!trackDelegationData || trackDelegationData.status !== 'fulfilled') continue;
 		const votingDelegationsArr = (trackDelegationData.value.data.votingDelegations || []) as IDelegation[];
 
-		const track = votingDelegationsArr?.length ? votingDelegationsArr[0].track : false;
-		if(isNaN(Number(track))) continue;
+		const track = Number(Object.keys(subsquidFetches)[index]);
+		if(isNaN(track)) continue;
 
 		const trackDelegation: ITrackDelegation = {
 			active_proposals_count: trackDelegationData.value.data.proposalsConnection?.totalCount || 0,

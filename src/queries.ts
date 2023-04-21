@@ -646,6 +646,9 @@ query ActiveDelegationsToOrFromAddressForTrack($track_eq: Int = 0, $address: Str
     track
     to
     from
+    lockPeriod
+    balance
+    createdAt
   }
   proposalsConnection(orderBy: id_ASC, where: {type_eq: ReferendumV2, status_in: [DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted]}) {
     totalCount

@@ -19,11 +19,13 @@ export interface ITrackDelegation {
 	delegations: IDelegation[]
 }
 
-export const getDelegationDashboardData = async (address: string, network: string) => {
+export const getDelegationDashboardData = async (address: string, network: string, trackNum?:number) => {
 	if(!address || !network || !isOpenGovSupported(network)) return [];
 
 	const subsquidFetches: any[] = [];
 	Object.values(networkTrackInfo[network]).map((trackInfo) => {
+		if(trackNum && trackInfo.trackId !== trackNum) return;
+
 		subsquidFetches.push(
 			fetchSubsquid({
 				network,
@@ -43,21 +45,24 @@ export const getDelegationDashboardData = async (address: string, network: strin
 
 	for(const trackDelegationData of subsquidResults) {
 		if (!trackDelegationData || trackDelegationData.status !== 'fulfilled') continue;
-		const votingDelegationsArr = trackDelegationData.value.data.votingDelegations;
+		const votingDelegationsArr = (trackDelegationData.value.data.votingDelegations || []) as IDelegation[];
 
 		const track = votingDelegationsArr?.length ? votingDelegationsArr[0].track : false;
-		if(isNaN(track)) continue;
+		if(isNaN(Number(track))) continue;
 
 		const trackDelegation: ITrackDelegation = {
 			active_proposals_count: trackDelegationData.value.data.proposalsConnection?.totalCount || 0,
 			delegations: votingDelegationsArr,
 			recieved_delegation_count: 0,
 			status: ETrackDelegationStatus.Undelegated,
-			track
+			track: Number(track)
 		};
 
-		// address has delegated to someone for this track
-		if(votingDelegationsArr[0].from === address) {
+		// undelegated
+		if(!votingDelegationsArr.length) {
+			result.push(trackDelegation);
+		}else if(votingDelegationsArr[0].from === address) {
+			// address has delegated to someone for this track
 			trackDelegation.status = ETrackDelegationStatus.Delegated;
 		}else {
 			// address has received delegation for this track
@@ -75,10 +80,12 @@ async function handler (req: NextApiRequest, res: NextApiResponse<ITrackDelegati
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
-	const { address } = req.query;
+	const { address, track } = req.query;
 	if(!address) return res.status(400).json({ error: 'Missing address in request query.' });
 
-	const result = await getDelegationDashboardData(String(address), network);
+	if(track && isNaN(Number(track))) return res.status(400).json({ error: 'Invalid track in request query.' });
+
+	const result = await getDelegationDashboardData(String(address), network, track ? Number(track) : undefined);
 	return res.status(200).json(result as ITrackDelegation[]);
 }
 

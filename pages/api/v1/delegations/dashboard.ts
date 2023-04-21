@@ -18,7 +18,7 @@ export interface ITrackDelegation {
 	delegations: IDelegation[]
 }
 
-const getDelegationDashboardData = async (address: string, network: string) => {
+export const getDelegationDashboardData = async (address: string, network: string) => {
 	if(!address || !network) return [];
 
 	const subsquidFetches: any[] = [];

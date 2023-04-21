@@ -338,3 +338,16 @@ export type PjsCalendarItem = PjsCalendarItemDuration & {
   type: string;
   data: { [key: string]: unknown };
 }
+
+export enum ETrackDelegationStatus {
+  All = 'all',
+	Delegated = 'delegated',
+	Received_Delegation = 'received_delegation',
+	Undelegated = 'undelegated',
+}
+
+export interface IDelegation {
+  track: number;
+  to: string;
+  from: string;
+}

@@ -638,5 +638,17 @@ query VotingHistoryByVoterAddress($offset: Int = 0, $limit: Int = 10, $voter_eq:
     totalCount
   }
 }
-
 `;
+
+export const ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK = `
+query ActiveDelegationsToOrFromAddressForTrack($track_eq: Int = 0, $address: String = "") {
+  votingDelegations(orderBy: createdAt_DESC, where: {track_eq: $track_eq, endedAtBlock_isNull: true, AND: {from_eq: $address, OR: {to_eq: $address}}}) {
+    track
+    to
+    from
+  }
+  proposalsConnection(orderBy: id_ASC, where: {type_eq: ReferendumV2, status_in: [DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted]}) {
+    totalCount
+  }
+}`;
+

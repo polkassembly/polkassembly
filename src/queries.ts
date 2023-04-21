@@ -650,7 +650,7 @@ query ActiveDelegationsToOrFromAddressForTrack($track_eq: Int = 0, $address: Str
     balance
     createdAt
   }
-  proposalsConnection(orderBy: id_ASC, where: {type_eq: ReferendumV2, status_in: [DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted]}) {
+  proposalsConnection(orderBy: id_ASC, where: {type_eq: ReferendumV2, status_in: [DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted], trackNumber_eq: $track_eq}) {
     totalCount
   }
 }`;

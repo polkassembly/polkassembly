@@ -8,12 +8,13 @@ import styled from 'styled-components';
 import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 
-import { EStatus, GetTracksColumns, handleTracksIcon } from './Coloumn';
+import { GetTracksColumns, handleTracksIcon } from './Coloumn';
 import { Skeleton, Table } from 'antd';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import { DelegatedIcon } from '~src/ui-components/CustomIcons';
 import ActiveProposals from './ActiveProposals';
 import dynamic from 'next/dynamic';
+import { ETrackDelegationStatus } from '~src/types';
 
 interface Props{
   className?: string;
@@ -39,7 +40,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 	const { addresses } = useUserDetailsContext();
 	const { query : { track } } = useRouter();
-	const [status, setStatus] = useState(EStatus.Delegated);
+	const [status, setStatus] = useState(ETrackDelegationStatus.Delegated);
 	const router = useRouter();
 	const [showTable, setShowTable] = useState<boolean>(false);
 
@@ -70,9 +71,9 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	];
 
 	useEffect(() => {
-		if(status === EStatus.Delegated){
+		if(status === ETrackDelegationStatus.Delegated){
 			setShowTable(true);
-		}else if(status === EStatus.Received_Delegation){
+		}else if(status === ETrackDelegationStatus.Received_Delegation){
 			setShowTable(true);
 		}
 	}, [status]);
@@ -94,7 +95,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			<div className='text-[28px] font-semibold tracking-[0.0015em] text-[#243A57] flex gap-3 items-center'>
 				{handleTracksIcon(handleTrack(String(track)))}
 				<span>{handleTrack(String(track))}</span>
-				<span className={`text-[12px] ${status === EStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${status === EStatus.Delegated && 'bg-[#FFFBD8]'} ${status === EStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center`}>
+				<span className={`text-[12px] ${status === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${status === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${status === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center`}>
 					{status?.split('_').join(' ').charAt(0).toUpperCase()+status?.split('_').join(' ').slice(1)}
 				</span>
 			</div>
@@ -109,7 +110,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 					pagination={false}
 				></Table>
 			</div>}
-			{status === EStatus.Undelegated && <div className='bg-white flex pt-[24px] items-center flex-col text-[169px] pb-[33px] rounded-b-[14px]'>
+			{status === ETrackDelegationStatus.Undelegated && <div className='bg-white flex pt-[24px] items-center flex-col text-[169px] pb-[33px] rounded-b-[14px]'>
 				<DelegatedIcon />
 				<div className='text-[#243A57] mt-[18px] text-center'>
 					<div className='text-sm tracking-[0.01em] font-normal mt-1 flex justify-center items-center max-md:flex-col'>

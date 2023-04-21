@@ -24,13 +24,7 @@ import ReferendumKillerIcon from '~assets/delegation-tracks/referendum-killer.sv
 import BigSpenderIcon from '~assets/delegation-tracks/big-spender.svg';
 import BigTipperIcon from '~assets/delegation-tracks/big-tipper.svg';
 import SmallSpenderIcon from '~assets/delegation-tracks/small-spender.svg';
-
-export enum EStatus {
-  All = 'all',
-	Delegated = 'delegated',
-	Received_Delegation = 'received_delegation',
-	Undelegated = 'undelegated',
-}
+import { ETrackDelegationStatus } from '~src/types';
 
 export const handleTracksIcon =  (index:string ) => {
 
@@ -78,7 +72,7 @@ export const handleTracksIcon =  (index:string ) => {
 
 	return null;
 };
-const GetColumns = (status :EStatus) => {
+const GetColumns = (status :ETrackDelegationStatus) => {
 
 	const AllColumns: ColumnsType<IDataType> = [
 		{ dataIndex: 'index', key: 1,
@@ -110,7 +104,7 @@ const GetColumns = (status :EStatus) => {
 
 		{ dataIndex: 'status', key: 5, render: (status) =>
 		{ return <div className='text-[#243A57] tracking-wider flex items-center justify-start font-medium'>
-			<h2 className={`text-[12px] ${status === EStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${status === EStatus.Delegated && 'bg-[#FFFBD8]'} ${status === EStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center`}>{status?.split('_').join(' ').charAt(0).toUpperCase()+status?.split('_').join(' ').slice(1)} </h2>
+			<h2 className={`text-[12px] ${status === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${status === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${status === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center`}>{status?.split('_').join(' ').charAt(0).toUpperCase()+status?.split('_').join(' ').slice(1)} </h2>
 		</div >;
 		}, title: 'Status',width: '20%' }];
 
@@ -212,26 +206,26 @@ const GetColumns = (status :EStatus) => {
 			},
 			title: 'Active proposals',width: '10%' }];
 
-	if(status === EStatus.All)
+	if(status === ETrackDelegationStatus.All)
 	{
 		return AllColumns;
 	}
-	if(status === EStatus.Delegated)
+	if(status === ETrackDelegationStatus.Delegated)
 	{
 		return DelegatedColumns;
 	}
-	if(status === EStatus.Undelegated)
+	if(status === ETrackDelegationStatus.Undelegated)
 	{
 		return UndelegatedColumns;
 	}
-	if(status === EStatus.Received_Delegation)
+	if(status === ETrackDelegationStatus.Received_Delegation)
 	{
 		return ReceivedDelegationColumns;
 	}
 	return null;
 };
-const GetTracksColumns = (status :EStatus) => {
-	if(status === EStatus.Delegated){
+const GetTracksColumns = (status :ETrackDelegationStatus) => {
+	if(status === ETrackDelegationStatus.Delegated){
 		const TrackColumn: ColumnsType<IData> = [
 
 			{ dataIndex:'index', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-center'>{index}</h4>, title: '#',width: '10%' } ,
@@ -250,7 +244,7 @@ const GetTracksColumns = (status :EStatus) => {
 		];
 		return TrackColumn;
 	}
-	else if(status === EStatus.Received_Delegation){
+	else if(status === ETrackDelegationStatus.Received_Delegation){
 
 		const TrackColumn: ColumnsType<IData> = [
 			{ dataIndex:'index', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-center'>{index}</h4>, title: '#',width: '10%' } ,

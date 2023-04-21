@@ -5,7 +5,6 @@ import { ApiPromise } from '@polkadot/api';
 import { ProposalType } from '~src/global/proposalType';
 
 export  async  function checkIsOnChain (id: number | string, postType: ProposalType, api:ApiPromise) {
-	console.log('function called');
 	let dataFromChain: any[] = [];
 	switch (postType) {
 	case ProposalType.BOUNTIES:

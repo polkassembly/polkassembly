@@ -46,11 +46,14 @@ interface IReferendaPostProps {
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	const { data: post, error , status } = props;
 	const { setNetwork } = useNetworkContext();
-	setNetwork(props.network);
 	const router = useRouter();
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized,setIsUnFinalized] = useState(false);
 	const { id } = router.query;
+
+	useEffect(() => {
+		setNetwork(props.network);
+	},[]);
 
 	useEffect(() => {
 

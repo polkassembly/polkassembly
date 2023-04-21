@@ -206,13 +206,15 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const batch = firestore_db.batch();
 	if (tags && Array.isArray(tags) && tags.length > 0) {
 		tags?.map((tag:string) => {
-			const tagRef = firestore_db.collection('tags').doc(tag);
-			const newTag:IPostTag={
-				last_used_at:new Date(),
-				name:tag.toLowerCase()
-			};
-			batch.set(tagRef, newTag, { merge: true });}
-		);
+			if (tag && typeof tag === 'string') {
+				const tagRef = firestore_db.collection('tags').doc(tag);
+				const newTag: IPostTag = {
+					last_used_at: new Date(),
+					name: tag.toLowerCase()
+				};
+				batch.set(tagRef, newTag, { merge: true });
+			}
+		});
 		await batch.commit();
 	}
 	return;

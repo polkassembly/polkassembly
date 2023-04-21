@@ -217,7 +217,7 @@ const getAndSetNewData = async (params: IParams) => {
 							if (data.post_link && !newData.post_link) {
 								newData.post_link = data.post_link;
 							}
-							if(data.tags){
+							if(data.tags && Array.isArray(data.tags)){
 								newData.tags = data?.tags;
 							}
 							if(data.gov_type){

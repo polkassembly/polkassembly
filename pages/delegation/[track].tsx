@@ -4,22 +4,25 @@
 
 import { GetServerSideProps } from 'next';
 import { IPostsListingResponse, getOnChainPosts } from 'pages/api/v1/listing/on-chain-posts';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import DashboardTrackListing from '~src/components/DelegationDashboardComponents/DashboardTrack';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
-import { useNetworkContext } from '~src/context';
+import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
 import { ErrorState } from '~src/ui-components/UIStates';
 import getQueryToTrack from '~src/util/getQueryToTrack';
+import { ITrackDelegation } from 'pages/api/v1/delegations';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 export const getServerSideProps: GetServerSideProps = async ({ req , query }) => {
 	const { page = 1,sortBy = sortValues.NEWEST, track } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
 	const  trackDetails:any = getQueryToTrack(String(track), network);
+
 	const { data, error = ''  }  = await getOnChainPosts({
 		listingLimit:LISTING_LIMIT,
 		network,
@@ -50,6 +53,7 @@ interface ITrackProps {
 const DashboardTracks:FC<ITrackProps> = ( props  ) => {
 	const { data, error ,trackDetails } = props;
 	const { setNetwork } = useNetworkContext();
+	const { delegationDashboardAddress: address } = useUserDetailsContext();
 
 	useEffect(() => {
 		setNetwork(props.network);

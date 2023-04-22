@@ -22,6 +22,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
 import { APPNAME } from '~src/global/appName';
+import styled from 'styled-components';
 
 interface Props{
   className?: string;
@@ -31,7 +32,7 @@ interface Props{
 
 const ZERO_BN = new BN(0);
 
-const ConnectWalletModal = ({ className, open, setOpen }: Props) => {
+const WalletConnectModal = ({ className, open, setOpen }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
@@ -134,7 +135,8 @@ const ConnectWalletModal = ({ className, open, setOpen }: Props) => {
 	},[]);
 
 	return <Modal
-		className = {`${className} ${poppins.className} ${poppins.variable} w-[453px] backdrop-blur-lg`}
+		wrapClassName={className}
+		className = {`${poppins.className} ${poppins.variable} w-[453px] radius`}
 		open = {open}
 		title = {<div className='text-center text-[20px] font-semibold text-[#243A57]'>Connect your wallet</div>}
 		footer = {[<Button onClick={handleSubmit} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-6 rounded-[4px]'>Continue</Button>]}
@@ -186,4 +188,8 @@ const ConnectWalletModal = ({ className, open, setOpen }: Props) => {
 		</Spin>
 	</Modal>;
 };
-export default ConnectWalletModal;
+
+export default styled(WalletConnectModal)`
+.radius .ant-modal-content {
+border-radius: 4px !important;
+}`;

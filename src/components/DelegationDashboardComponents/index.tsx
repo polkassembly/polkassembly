@@ -29,7 +29,7 @@ const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
 	ssr: false
 });
-const ConnectWalletModal = dynamic(() => import('./ConnectWalletModal'), {
+const WalletConnectModal = dynamic(() => import('./DelegationWalletConnectModal'), {
 	loading: () => <Skeleton.Avatar active />,
 	ssr: false
 });
@@ -62,7 +62,6 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	const copyLink = (address:string) => {
 		copyToClipboard(address);
 	};
-	console.log(userDetails.username,username);
 
 	const getData = async() => {
 		const { data, error } = await nextApiClientFetch('api/v1/auth/data/userProfileWithUsername',
@@ -74,6 +73,10 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	};
 
 	useEffect(() => {
+    console.log(userDetails.delegationDashboardAddress)
+		if(userDetails.delegationDashboardAddress ){
+			setOpenModal(false);
+		}
 		userDetails?.username && userDetails?.username?.length > 0 && getData();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userDetails?.username]);
@@ -82,7 +85,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>
 			<ProfileBalances address={addresses[0]}/>
 		</div>
-		<h2 className=' text-[#243A57] mb-4 md:mb-5 mt-5 text-[28px] font-semibold max-lg:pt-[80px]'>Dashboard</h2>
+		<h2 className=' text-[#243A57] mb-4 md:mb-5 mt-5 text-[28px] font-semibold max-lg:pt-[60px]'>Dashboard</h2>
 		<div className='flex justify-between py-[24px] px-[34px] shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white rounded-[14px]'>
 			<div className='flex justify-center gap-[34px] '>
 				{image && image?.length !== 0
@@ -137,9 +140,9 @@ const DelegationDashboardHome = ({ className } : Props) => {
 			</div>
 		</div>
 		<div >
-			<DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]' address={String(userDetails.delegationDashboardAddress)}/>
+			{userDetails?.delegationDashboardAddress.length> 0 && <DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]' address={String(userDetails.delegationDashboardAddress)}/>}
 		</div>
-		<ConnectWalletModal open={openModal} setOpen={setOpenModal} className={`${openModal && 'backdrop-blur-lg'}`}/>
+		<WalletConnectModal open={openModal} setOpen={setOpenModal} />
 	</div>;
 };
 

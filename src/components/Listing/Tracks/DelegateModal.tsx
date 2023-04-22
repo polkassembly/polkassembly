@@ -27,11 +27,7 @@ import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import DelegateProfileIcon from '~assets/icons/delegate-popup-profile.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import SuccessPopup from './SuccessPopup';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { APPNAME } from '~src/global/appName';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import WalletButton from '~src/components/WalletButton';
-import { WalletIcon } from '~src/components/Login/MetamaskLogin';
+import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { useUserDetailsContext } from '~src/context';
 import FilteredError from '~src/ui-components/FilteredError';
 
@@ -40,14 +36,13 @@ const ZERO_BN = new BN(0);
 interface Props {
   trackNum: number;
   className?: string;
-  defaultTarget: string;
-  open: boolean;
-  setOpen: (pre:boolean) => void;
+  defaultTarget?: string;
+  open?: boolean;
+  setOpen?: (pre:boolean) => void;
 }
 
 const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Props ) => {
 	const { api, apiReady } = useContext(ApiContext);
-	const { loginWallet } = useUserDetailsContext();
 	const { network } = useContext(NetworkContext);
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [form] = Form.useForm();
@@ -220,16 +215,15 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 							form={form}
 							disabled={loading}
 						>
-							{accounts.length> 0
-								?<AccountSelectionForm
-									title='Your Address'
-									accounts={accounts}
-									address={address}
-									withBalance={false}
-									onAccountChange={(address) => setAddress(address)}
-									onBalanceChange={handleOnBalanceChange}
-									className='text-[#485F7D] text-sm'
-								/>: !wallet? <FilteredError text='Please select a wallet.' />: null}
+							<AccountSelectionForm
+								title='Your Address'
+								accounts={accounts}
+								address={address}
+								withBalance={false}
+								onAccountChange={(address) => setAddress(address)}
+								onBalanceChange={handleOnBalanceChange}
+								className='text-[#485F7D] text-sm'
+							/>
 							<AddressInput
 								defaultAddress={defaultTarget}
 								label={'Delegate to'}

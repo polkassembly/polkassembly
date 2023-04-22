@@ -13,10 +13,10 @@ import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 
 import { DelegatedIcon, UnDelegatedIcon, ReceivedDelegationIcon } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
-import { ETrackDelegationStatus, IApiResponse } from '~src/types';
-import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
+import { ETrackDelegationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
+import { ITrackDelegation } from 'pages/api/v1/delegations';
 
 interface Props{
   className?: string;
@@ -29,8 +29,8 @@ export interface IDataType{
   description: string;
   active_proposals: number;
   status?: string;
-  delegated_to?:string;
-  delegated_by?:string;
+  delegated_to?: any[];
+  delegated_by?: any[];
   trackNo: number;
 }
 
@@ -41,39 +41,77 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 	const [delegatedCount, setDelegatedCount] = useState<number>(0);
 	const [undelegatedCount, setUndelegatedCount] = useState<number>(0);
 	const [receivedDelegationCount, setReceivedDelegationCount] = useState<number>(0);
-	const [allCount, setAllCount] = useState<number>(14);
+	const [allCount, setAllCount] = useState<number>(0);
 	const [showTable, setShowTable] = useState<boolean>(false);
 	const router = useRouter();
-	const rowData:IDataType[] = [];
+	const [rowData, setRowData] = useState<IDataType[]>([]);
 	const { api, apiReady } = useApiContext();
 
-	if(network ){
-		Object.entries(networkTrackInfo?.[network]).map(([key, value],index) => {
-			if (!value?.fellowshipOrigin) {
-				rowData.push( { active_proposals: 0,
-					delegated_by:'0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3',
-					delegated_to :'0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3',
-					description: value.description,
-					index: index+1,
-					status: ETrackDelegationStatus.Delegated,
-					track: key === 'root' ? 'Root': key?.split(/(?=[A-Z])/).join(' '),
-					trackNo: value.trackId
-				});
-			}
+	const filterTrackDataByTrackNumber = (trackNo: number) => {
+		if(network){
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const data:any = Object.entries(networkTrackInfo?.[network]).find(([key, value]) => {
+				if (!value?.fellowshipOrigin) {
+					return  value?.trackId === trackNo;
+				}
 
-		});
-	}
+			});
+			return data;
+		}
+
+	};
 
 	const getData = async() => {
 		if (!api || !apiReady ) return;
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${'HWyLYmpW68JGJYoVJcot6JQ1CJbtUQeTdxfY1kUTsvGCB1r'}`);
 
-		const { data, error } = await nextApiClientFetch<IPostResponse>(`api/v1/delegations/dashboard?address=${address}`);
-		console.log(data, error);
+		if(data){
+			const rows = data?.map((track: any, index: number) => {
+
+				const trackData = filterTrackDataByTrackNumber(track?.track);
+
+				if(track.status === ETrackDelegationStatus.Delegated){
+					setDelegatedCount(delegatedCount + 1);
+				}
+				else if(track.status === ETrackDelegationStatus.Undelegated){
+					setUndelegatedCount(undelegatedCount + 1);
+				}
+				else if(track.status === ETrackDelegationStatus.Received_Delegation){
+					setReceivedDelegationCount(receivedDelegationCount + 1);
+				}
+
+				return {
+					active_proposals: track?.active_proposals_count,
+					delegated_by: track?.delegations,
+					delegated_to: track?.delegations,
+					description: trackData[1]?.description,
+					index: index+1,
+					status: track.status === ETrackDelegationStatus.Delegated && ETrackDelegationStatus.Delegated
+        ||  track?.status === ETrackDelegationStatus.Undelegated && ETrackDelegationStatus.Undelegated
+        ||  track?.status === ETrackDelegationStatus.Received_Delegation && ETrackDelegationStatus.Received_Delegation ,
+					track: trackData[0] === 'root' ? 'Root': trackData[0]?.split(/(?=[A-Z])/).join(' '),
+					trackNo: track?.track
+				};
+			});
+			setRowData(rows);
+			setAllCount(rows?.length);
+		}else{
+			console.log(error);
+		}
 	};
 
 	useEffect(() => {
-	 getData();
-	}, []);
+		rowData.length === 0 && getData();
+		if(rowData.length > 0){
+			const receivedDelegations = rowData.filter((row) => row.status === ETrackDelegationStatus.Received_Delegation);
+			setReceivedDelegationCount(receivedDelegations?.length);
+			const delegateDelegations = rowData.filter((row) => row.status === ETrackDelegationStatus.Delegated);
+			setDelegatedCount(delegateDelegations?.length);
+			const undelegateDelegations = rowData.filter((row) => row.status === ETrackDelegationStatus.Undelegated);
+			setUndelegatedCount(undelegateDelegations?.length);
+		}
+	}, [rowData]);
+
 	const handleShowTable = (status:ETrackDelegationStatus) => {
 
 		if(status === ETrackDelegationStatus.All){
@@ -82,20 +120,24 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 		else if(status === ETrackDelegationStatus.Delegated){
 			if(delegatedCount !== 0){
 				setShowTable(true);
+			}else{
+				setShowTable(false);
 			}
-			setShowTable(false);
 		}
 		else if(status === ETrackDelegationStatus.Undelegated){
 			if(undelegatedCount !== 0){
 				setShowTable(true);
+			}else{
+				setShowTable(false);
 			}
-			setShowTable(false);
 		}
 		else if(status === ETrackDelegationStatus.Received_Delegation){
 			if(receivedDelegationCount !== 0){
 				setShowTable(true);
 			}
-			setShowTable(false);
+			else{
+				setShowTable(false);
+			}
 		}
 	};
 
@@ -122,7 +164,7 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 			pagination= {false}
 			onRow={(rowData: IDataType) => {
 				return {
-					onClick: () => router.push(`/delegation-dashboard/${rowData?.track.split(' ').join('-').toLowerCase()}`)
+					onClick: () => router.push(`/delegation/${rowData?.track.split(' ').join('-').toLowerCase()}`)
 				};
 			}}
 		>
@@ -175,7 +217,7 @@ export default styled(DashboardTrackListing)`
 .column .ant-table-thead > tr > th:nth-child(1){
   text-align: center;
 }
-.column .ant-table-thead > tr > th:nth-child(4){
+.column .ant-table-thead > tr > th:nth-child(5){
   text-align: center;
 }
 `;

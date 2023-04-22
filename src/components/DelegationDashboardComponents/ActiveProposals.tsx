@@ -8,11 +8,15 @@ import CollapseIcon from '~assets/icons/collapse.svg';
 import { IPostListing } from 'pages/api/v1/listing/on-chain-posts';
 import dynamic from 'next/dynamic';
 import { Skeleton } from 'antd';
+import { ETrackDelegationStatus } from '~src/types';
 
 interface Props{
   className?: string;
   posts: IPostListing[];
   trackDetails: any;
+  status: ETrackDelegationStatus;
+  delegatedBy: string | null;
+
 }
 
 const ActiveProposalCard = dynamic(() => import('./ActiveProposalCard'), {
@@ -20,7 +24,7 @@ const ActiveProposalCard = dynamic(() => import('./ActiveProposalCard'), {
 	ssr: false
 });
 
-const ActiveProposals = ( { className, posts, trackDetails }: Props ) => {
+const ActiveProposals = ( { className, posts, trackDetails, status, delegatedBy }: Props ) => {
 
 	const count = posts.length;
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
@@ -40,7 +44,7 @@ const ActiveProposals = ( { className, posts, trackDetails }: Props ) => {
 		</div>
 		{expandProposals && <div className='mt-[24px] flex flex-col gap-6'>
 			{posts?.length > 0 && posts?.map((proposal, index) => (
-				<ActiveProposalCard proposal= {proposal} key={index}  trackDetails={trackDetails}/>))}
+				<ActiveProposalCard proposal= {proposal} key={index}  trackDetails={trackDetails} status={status} delegatedBy = {delegatedBy} />))}
 		</div>}
 	</div>;
 };

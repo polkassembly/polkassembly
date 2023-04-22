@@ -29,10 +29,14 @@ const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
 	ssr: false
 });
+const WalletConnectModal = dynamic(() => import('./DelegationWalletConnectModal'), {
+	loading: () => <Skeleton.Avatar active />,
+	ssr: false
+});
 
 const DelegationDashboardHome = ({ className } : Props) => {
 
-	const userDetails  = useUserDetailsContext();
+	const userDetails   = useUserDetailsContext();
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
 		addresses: [],
 		badges: [],
@@ -44,8 +48,9 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		username: ''
 	});
 
-	const { image, social_links, bio ,username,addresses } = profileDetails;
+	const { image, social_links, bio , username, addresses } = profileDetails;
 	const [messageApi, contextHolder] = message.useMessage();
+	const [openModal, setOpenModal] = useState<boolean>(true);
 
 	const success = () => {
 		messageApi.open({
@@ -68,15 +73,19 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	};
 
 	useEffect(() => {
+    console.log(userDetails.delegationDashboardAddress)
+		if(userDetails.delegationDashboardAddress ){
+			setOpenModal(false);
+		}
 		userDetails?.username && userDetails?.username?.length > 0 && getData();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userDetails?.username]);
 
-	return <div className= { `${ className } ` }>
-		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] ml-[-53px] mr-[-53px]'>
+	return <div className= { `${ className }` }>
+		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>
 			<ProfileBalances address={addresses[0]}/>
 		</div>
-		<h2 className=' text-[#243A57] mb-4 md:mb-5 mt-5 text-[28px] font-semibold'>Dashboard</h2>
+		<h2 className=' text-[#243A57] mb-4 md:mb-5 mt-5 text-[28px] font-semibold max-lg:pt-[60px]'>Dashboard</h2>
 		<div className='flex justify-between py-[24px] px-[34px] shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white rounded-[14px]'>
 			<div className='flex justify-center gap-[34px] '>
 				{image && image?.length !== 0
@@ -88,13 +97,13 @@ const DelegationDashboardHome = ({ className } : Props) => {
 					/>: <div ><DashboardProfile/></div>}
 				<div className='text-[#243A57]'>
 					<span className='text-[#243A57] font-semibold mb-4 tracking-wide text-lg'>{userDetails?.username}</span >
-					{userDetails?.addresses && userDetails?.addresses?.length > 0 && <div className='flex gap-2  items-center'>
-						<Address address={userDetails?.addresses[0]} />
+					{userDetails.delegationDashboardAddress && userDetails?.delegationDashboardAddress.length > 0 ? <div className='flex gap-2  items-center'>
+						<Address address={userDetails?.delegationDashboardAddress} />
 						<span className='flex items-center cursor-pointer' onClick={() => {userDetails.username && copyLink(addresses[0]) ;success();}}>
 							{contextHolder}
 							<CopyIcon/>
 						</span>
-					</div>}
+					</div> : <Skeleton/>}
 					{bio?.length === 0
 						? <h2 className='text-sm font-normal text-[#576D8BCC] mt-2 cursor-pointer'>Click here to add bio</h2>
 						: <h2 className='text-sm mt-2 text-[#243A57] tracking-[0.01em] '>{bio}</h2>}
@@ -131,8 +140,9 @@ const DelegationDashboardHome = ({ className } : Props) => {
 			</div>
 		</div>
 		<div >
-			<DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]'/>
+			{userDetails?.delegationDashboardAddress.length> 0 && <DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]' address={String(userDetails.delegationDashboardAddress)}/>}
 		</div>
+		<WalletConnectModal open={openModal} setOpen={setOpenModal} />
 	</div>;
 };
 

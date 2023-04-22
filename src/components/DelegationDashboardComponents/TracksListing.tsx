@@ -3,131 +3,130 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { Radio, Table } from 'antd';
-
 import styled from 'styled-components';
-
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useApiContext, useNetworkContext } from '~src/context';
 import  { GetColumns } from './Coloumn';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
-
 import { DelegatedIcon, UnDelegatedIcon, ReceivedDelegationIcon } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
-import { ETrackDelegationStatus, IApiResponse } from '~src/types';
-import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-
+import { ETrackDelegationStatus } from '~src/types';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { ITrackDelegation } from 'pages/api/v1/delegations';
 interface Props{
   className?: string;
+  address: string;
 }
-
 export interface IDataType{
   index: number;
   track: string;
   description: string;
   active_proposals: number;
   status?: string;
-  delegated_to?:string;
-  delegated_by?:string;
+  delegated_to?: any[];
+  delegated_by?: any[];
   trackNo: number;
 }
-
-const DashboardTrackListing = ({ className }: Props) => {
-
+const DashboardTrackListing = ({ className, address }: Props) => {
 	const [status, setStatusvalue ] = useState<ETrackDelegationStatus>(ETrackDelegationStatus.All);
 	const  { network } = useNetworkContext();
 	const [delegatedCount, setDelegatedCount] = useState<number>(0);
 	const [undelegatedCount, setUndelegatedCount] = useState<number>(0);
-	const [receivedDelegationCount, setReceivedDelegationCount] = useState<number>(0); 
-	const [allCount, setAllCount] = useState<number>(14);
+	const [receivedDelegationCount, setReceivedDelegationCount] = useState<number>(0);
+	const [allCount, setAllCount] = useState<number>(0);
 	const [showTable, setShowTable] = useState<boolean>(false);
 	const router = useRouter();
-	let rowData:IDataType[] = [];
+	const [rowData, setRowData] = useState<IDataType[]>([]);
 	const { api, apiReady } = useApiContext();
-
-	if(network ){
-		Object.entries(networkTrackInfo?.[network]).map(([key, value],index) => {
-			if (!value?.fellowshipOrigin) {
-				rowData.push( { active_proposals: 0,
-					delegated_by:'0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3',
-					delegated_to :'0x4b809cCF39fF19B0ef43172c3578a188Ffb6a1f3',
-					description: value.description,
-					index: index+1,
-					status: ETrackDelegationStatus.Delegated,
-					track: key === 'root' ? 'Root': key?.split(/(?=[A-Z])/).join(' '),
-					trackNo: value.trackId
-				});
-			}
-
-		});
-	}
-
+	const filterTrackDataByTrackNumber = (trackNo: number) => {
+		if(network){
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const data:any = Object.entries(networkTrackInfo?.[network]).find(([key, value]) => {
+				if (!value?.fellowshipOrigin) {
+					return  value?.trackId === trackNo;
+				}
+			});
+			return data;
+		}
+	};
 	const getData = async() => {
 		if (!api || !apiReady ) return;
-
-		const obj:any = {};
-
-		const fetches = rowData.map((trackDetails, index: number) => {
-			obj[index] = api.query.referenda.decidingCount(trackDetails.trackNo);
-		});
-
-		const responseArr = await Promise.allSettled(Object.values(obj));
-		const results = responseArr.map((result:any) => {
-			if (result.status === 'fulfilled') {
-				return result.value.toJSON();
-			} else {
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${'HWyLYmpW68JGJYoVJcot6JQ1CJbtUQeTdxfY1kUTsvGCB1r'}`);
+		if(data){
+			const rows = data?.map((track: any, index: number) => {
+				const trackData = filterTrackDataByTrackNumber(track?.track);
+				if(track.status === ETrackDelegationStatus.Delegated){
+					setDelegatedCount(delegatedCount + 1);
+				}
+				else if(track.status === ETrackDelegationStatus.Undelegated){
+					setUndelegatedCount(undelegatedCount + 1);
+				}
+				else if(track.status === ETrackDelegationStatus.Received_Delegation){
+					setReceivedDelegationCount(receivedDelegationCount + 1);
+				}
 				return {
-					data: null,
-					error: result.reason
-				} as IApiResponse<IPostsListingResponse>;
-			}
-		});
-		console.log(results);
-		const arr = rowData.map((track, index) =>
-		{return {
-			...track,
-			active_proposals: results[index]
-		};});
-		console.log(arr);
-
-		rowData=arr;
-
+					active_proposals: track?.active_proposals_count,
+					delegated_by: track?.delegations,
+					delegated_to: track?.delegations,
+					description: trackData[1]?.description,
+					index: index+1,
+					status: track.status === ETrackDelegationStatus.Delegated && ETrackDelegationStatus.Delegated
+        ||  track?.status === ETrackDelegationStatus.Undelegated && ETrackDelegationStatus.Undelegated
+        ||  track?.status === ETrackDelegationStatus.Received_Delegation && ETrackDelegationStatus.Received_Delegation ,
+					track: trackData[0] === 'root' ? 'Root': trackData[0]?.split(/(?=[A-Z])/).join(' '),
+					trackNo: track?.track
+				};
+			});
+			setRowData(rows);
+			setAllCount(rows?.length);
+		}else{
+			console.log(error);
+		}
 	};
-
 	useEffect(() => {
-		getData();
-	}, []);
+		rowData.length === 0 && getData();
+		if(rowData.length > 0){
+			const receivedDelegations = rowData.filter((row) => row.status === ETrackDelegationStatus.Received_Delegation);
+			setReceivedDelegationCount(receivedDelegations?.length);
+			const delegateDelegations = rowData.filter((row) => row.status === ETrackDelegationStatus.Delegated);
+			setDelegatedCount(delegateDelegations?.length);
+			const undelegateDelegations = rowData.filter((row) => row.status === ETrackDelegationStatus.Undelegated);
+			setUndelegatedCount(undelegateDelegations?.length);
+		}
+	}, [rowData]);
 	const handleShowTable = (status:ETrackDelegationStatus) => {
-
 		if(status === ETrackDelegationStatus.All){
 			setShowTable(true);
 		}
 		else if(status === ETrackDelegationStatus.Delegated){
 			if(delegatedCount !== 0){
 				setShowTable(true);
+			}else{
+				setShowTable(false);
 			}
-			setShowTable(false);
 		}
 		else if(status === ETrackDelegationStatus.Undelegated){
 			if(undelegatedCount !== 0){
 				setShowTable(true);
+			}else{
+				setShowTable(false);
 			}
-			setShowTable(false);
 		}
 		else if(status === ETrackDelegationStatus.Received_Delegation){
 			if(receivedDelegationCount !== 0){
 				setShowTable(true);
 			}
-			setShowTable(false);
+			else{
+				setShowTable(false);
+			}
 		}
 	};
-
 	useEffect(() => {
 		handleShowTable(status);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [status]);
-
 	return <div className={className} >
-		<div className={`flex font-medium items-center text-sidebarBlue text-xl gap-2 max-lg:gap-0 px-8 py-6 border-l-0 border-t-0 border-r-0 ${showTable && 'border-[#e7ebf0] border-b-[1px] border-solid'}`}>
+		<div className={`flex font-medium items-center text-sidebarBlue text-xl gap-2 max-lg:gap-0 px-8 py-6 border-l-0 border-t-0 border-r-0 ${showTable && 'border-[#E7EBF0] border-b-[1px] border-solid'}`}>
       Tracks
 			<Radio.Group buttonStyle='solid' defaultValue={'all'} onChange={(e) => setStatusvalue(e.target.value)} value={status} className='flex max-md:flex-col ml-[24px] flex-shrink-0'>
 				<Radio className={`text-[#243A57B2] text-xs py-[6px] px-[14px] ${ETrackDelegationStatus.All === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={ETrackDelegationStatus.All}>All ({allCount})</Radio>
@@ -144,12 +143,11 @@ const DashboardTrackListing = ({ className }: Props) => {
 			pagination= {false}
 			onRow={(rowData: IDataType) => {
 				return {
-					onClick: () => router.push(`/delegation-dashboard/${rowData?.track.split(' ').join('-').toLowerCase()}`)
+					onClick: () => router.push(`/delegation/${rowData?.track.split(' ').join('-').toLowerCase()}`)
 				};
 			}}
 		>
 		</Table>}
-
 		{status === ETrackDelegationStatus.Delegated && delegatedCount === 0 && <div className='h-[550px] bg-white flex pt-[56px] items-center flex-col text-[258px] rounded-b-[14px]'>
 			<DelegatedIcon/>
 			<div className='text-[#243A57] mt-5 text-center'>
@@ -165,7 +163,6 @@ const DashboardTrackListing = ({ className }: Props) => {
 				</div>
 			</div>
 		</div>}
-
 		{status === ETrackDelegationStatus.Undelegated && undelegatedCount === 0 && <div className='h-[550px] pt-[56px] bg-white flex items-center text-[258px] flex-col rounded-b-[14px]'>
 			<UnDelegatedIcon/>
 			<div className='text-[#243A57] mt-5 text-center'>
@@ -175,7 +172,6 @@ const DashboardTrackListing = ({ className }: Props) => {
 				</div>
 			</div>
 		</div>}
-
 		{status === ETrackDelegationStatus.Received_Delegation && receivedDelegationCount === 0 && <div className='h-[550px] pt-[56px] bg-white flex items-center text-[258px] flex-col rounded-b-[14px]'>
 			<ReceivedDelegationIcon/>
 			<div className='text-[#243A57] mt-5 text-center'>
@@ -197,7 +193,7 @@ export default styled(DashboardTrackListing)`
 .column .ant-table-thead > tr > th:nth-child(1){
   text-align: center;
 }
-.column .ant-table-thead > tr > th:nth-child(4){
+.column .ant-table-thead > tr > th:nth-child(5){
   text-align: center;
 }
 `;

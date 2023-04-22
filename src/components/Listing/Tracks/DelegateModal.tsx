@@ -25,6 +25,7 @@ import DelegateProfileIcon from '~assets/icons/delegate-popup-profile.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import SuccessPopup from './SuccessPopup';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const ZERO_BN = new BN(0);
 
@@ -42,7 +43,7 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
-	const [address, setAddress] = useState<string>('');
+	const [address, setAddress] = useState<string>('5G7JNH62Psrqx2KY3CWEfQaYFc9aNRXtmKB65VeNQNTde1sR');
 	const [target, setTarget] = useState<string>('');
 	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
 	const [conviction, setConviction] = useState<number>(0);
@@ -57,7 +58,7 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 	const [txFee, setTxFee] = useState(ZERO_BN);
 
 	useEffect(() => {
-		if(!address || !target || !checkedList || !checkedList.length || isNaN(conviction) ||
+		if(!address || !target || !getEncodedAddress(target, network) || !checkedList || !checkedList.length || isNaN(conviction) ||
 			!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN)) return;
 
 		setLoading(true);
@@ -99,7 +100,7 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 			errors.push('Please select an address.');
 		}
 
-		if(!target) {
+		if(!target || !getEncodedAddress(target, network)) {
 			errors.push('Please provide a valid target address.');
 		}
 
@@ -124,29 +125,51 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 		if(!checkedList || !checkedList.length || !api || !apiReady) return;
 		setLoading(true);
 
-		if(!validateForm()){
+		const targetAddr = getEncodedAddress(target, network);
+
+		if(!validateForm() || !targetAddr || availableBalance.lte(txFee)){
 			setLoading(false);
 			return;
 		}
 
-		const txArr = checkedList.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toNumber()));
+		const txArr = checkedList.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, targetAddr, conviction, bnBalance.toNumber()));
 
 		const delegateTxn = api.tx.utility.batchAll(txArr);
 
-		delegateTxn.signAndSend(address, ({ status }: any) => {
-			if (status.isInBlock) {
-				queueNotification({
-					header: 'Success!',
-					message: 'Delegation successful.',
-					status: NotificationStatus.SUCCESS
-				});
+		delegateTxn.signAndSend(address, ({ status, events }: any) => {
+			if (status.isFinalized) {
+				for (const { event } of events) {
+					if (event.method === 'ExtrinsicSuccess') {
+						queueNotification({
+							header: 'Success!',
+							message: 'Delegation successful.',
+							status: NotificationStatus.SUCCESS
+						});
+						setOpenSuccessPopup(true);
+					} else if (event.method === 'ExtrinsicFailed') {
+						const errorModule = (event.data as any)?.dispatchError?.asModule;
+						let message = 'Delegation failed.';
+
+						if(errorModule) {
+							const { method, section, docs } = api.registry.findMetaError(errorModule);
+							message = `${section}.${method} : ${docs.join(' ')}`;
+						}
+
+						queueNotification({
+							header: 'Delegation failed!',
+							message,
+							status: NotificationStatus.ERROR
+						});
+						// TODO: error state popup
+					}
+				}
+
 				setLoading(false);
-				console.log(`Delegation: completed at block hash #${status.asInBlock.toString()}`);
+				setOpen?.(false);
+				console.log(`Delegation: completed at block hash #${status.toString()}`);
 			} else {
 				console.log(`Delegation: Current status: ${status.type}`);
 			}
-			setOpen?.(false);
-			setOpenSuccessPopup(true);
 		}).catch((error: any) => {
 			console.log(':( transaction failed');
 			console.error('ERROR:', error);
@@ -233,6 +256,7 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 								className='text-[#485F7D] text-sm '
 								onChange={(address) => setTarget(address)}
 								size='large'
+								skipFormatCheck={true}
 							/>
 							<BalanceInput
 								label={'Balance'}

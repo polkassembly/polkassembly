@@ -16,30 +16,59 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 
+import { useRouter } from 'next/router';
+import { PostEmptyState } from 'src/ui-components/UIStates';
+import EmptyIcon from '~assets/icons/empty-state-image.svg';
+import { checkIsOnChain } from '~src/util/checkIsOnChain';
+import { useApiContext } from '~src/context';
+import { useState , useEffect } from 'react';
+
 const proposalType = ProposalType.FELLOWSHIP_REFERENDUMS;
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 
 	const network = getNetworkFromReqHeaders(req.headers);
-	const { data, error } = await getOnChainPost({
+	const { data, error ,status } = await getOnChainPost({
 		network,
 		postId: id,
 		proposalType
 	});
-	return { props: { data, error, network } };
+	return { props: { data, error, network ,status } };
 };
 
 interface IReferendaPostProps {
 	data: IPostResponse;
 	error?: string;
-	network: string
+	network: string;
+	status?: number;
 }
 
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { data: post, error , status } = props;
 	const { setNetwork } = useNetworkContext();
-	setNetwork(props.network);
+	const router = useRouter();
+	const { api, apiReady } = useApiContext();
+	const [isUnfinalized,setIsUnFinalized] = useState(false);
+	const { id } = router.query;
 
+	useEffect(() => {
+		setNetwork(props.network);
+	},[]);
+
+	useEffect(() => {
+
+		if(!api || !apiReady || !error || !status || !id || status !== 404 ){
+			return;
+		}
+		(async() => {
+			setIsUnFinalized( Boolean(await checkIsOnChain(String(id),proposalType, api)));
+		})();
+
+	}, [api, apiReady, error, status,id]);
+
+	if(isUnfinalized){
+		return <PostEmptyState image={<EmptyIcon/>} description={<div className='p-5'><b className='text-xl my-4'>Waiting for Block Confirmation</b><p>Usually its done within a few seconds</p></div>} imageStyle={ { height:300  } }/>;
+	}
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (post) {

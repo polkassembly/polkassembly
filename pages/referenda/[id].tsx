@@ -65,7 +65,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	}, [api, apiReady, error, status,id]);
 
 	if(isUnfinalized){
-		return <PostEmptyState image={<EmptyIcon/>} description={<><b className='text-xl mx-4'>Waiting for Block Confirmation</b><p>Usually its done within a few seconds</p></>} imageStyle={ { height:300 } }/>;
+		return <PostEmptyState image={<EmptyIcon/>} description={<div className='p-5'><b className='text-xl my-4'>Waiting for Block Confirmation</b><p>Usually its done within a few seconds</p></div>} imageStyle={ { height:300  } }/>;
 	}
 
 	if (error) return <ErrorState errorMessage={error} />;

@@ -61,21 +61,21 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 						</span>
 					</Button>
 				</div>
-        <Popover
-        showArrow={false}
-        placement='bottomLeft' 
-        content={<>
-          <div className='py-1 flex items-center gap-[11px] cursor-pointer'>
-            <NovaWalletIcon/>
-            <span className='text-sm text-[#243A57]'>Nova Wallet Delegates</span>
-          </div>
-          <div className='py-1 flex items-center gap-[11px] cursor-pointer'>
-            <ProfileIcon/>
-            <span className='text-sm text-[#243A57]'>Others</span>
-            </div>
-        </>}>
-          	<DelegateMenuIcon/>
-        </Popover>
+				<Popover
+					showArrow={false}
+					placement='bottomLeft'
+					content={<>
+						<div className='py-1 flex items-center gap-[11px] cursor-pointer'>
+							<NovaWalletIcon/>
+							<span className='text-sm text-[#243A57]'>Nova Wallet Delegates</span>
+						</div>
+						<div className='py-1 flex items-center gap-[11px] cursor-pointer'>
+							<ProfileIcon/>
+							<span className='text-sm text-[#243A57]'>Others</span>
+						</div>
+					</>}>
+					<DelegateMenuIcon/>
+				</Popover>
 			</div>
 			<div className='mt-6'><DelegateCard trackNum = {trackDetails?.trackId} /></div>
 		</div>}

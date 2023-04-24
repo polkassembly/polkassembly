@@ -28,10 +28,10 @@ interface Props{
   proposal: IPostListing;
   trackDetails: any;
   status: ETrackDelegationStatus;
-  delegatedBy: string | null;
+  delegatedTo: string | null;
 }
 
-const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedBy }: Props) => {
+const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Props) => {
 
 	const { network } = useNetworkContext();
 	const timeline = [{ created_at: proposal.created_at, hash: proposal.hash }];
@@ -60,7 +60,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedBy }: Pro
 		const diffDays = diffDuration.days();
 		const diffHours = diffDuration.hours();
 		const diffMinutes = diffDuration.minutes();
-		return (`${diffDays !== 0 ? diffDays+' d ' : ''} ${diffHours} h : ${diffMinutes} m `);
+		return (`${diffDays !== 0 ? diffDays+' d ' : ''} : ${diffHours} h : ${diffMinutes} m `);
 	};
 
 	const remainingTime = convertRemainingTime(decision.periodEndsAt);
@@ -74,8 +74,8 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedBy }: Pro
 		}
 		if(status === ETrackDelegationStatus.Received_Delegation){
 			votesAddress = address;
-		}else if(status === ETrackDelegationStatus.Delegated && delegatedBy !== null){
-			votesAddress = delegatedBy;
+		}else if(status === ETrackDelegationStatus.Delegated && delegatedTo !== null){
+			votesAddress = delegatedTo;
 		}
 
 		const { data, error } = await nextApiClientFetch<IVotesResponse>(`api/v1/votes?listingLimit=10&postId=${proposal?.post_id}&voteType=ReferendumV2&page=1&address=${votesAddress}`);
@@ -87,10 +87,14 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedBy }: Pro
 	};
 
 	useEffect(() => {
+
 		!votingData && getData();
-	}, []);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [votingData]);
 
 	useEffect(() => {
+
 		const prepare = getPeriodData(network, dayjs(proposal.created_at), trackDetails, 'preparePeriod');
 
 		const decisionPeriodStartsAt = ((decidingStatusBlock && decidingStatusBlock.timestamp)? dayjs(decidingStatusBlock.timestamp): prepare.periodEndsAt);
@@ -148,7 +152,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedBy }: Pro
 			</div>
 			{votingData && status !== ETrackDelegationStatus.Undelegated && isAye || isNay
 				? <div className={`border-solid py-2 px-6 flex gap-2 border-[1px] ${isAye && 'bg-[#F0FCF6] border-[#2ED47A]'} ${!isAye && 'bg-[#fff1f4] border-[#FF3C5F]'}`}>
-					{status === ETrackDelegationStatus.Delegated && <Address address={address} displayInline/>}
+					{status === ETrackDelegationStatus.Delegated && <Address address={String(delegatedTo)} displayInline/>}
 					<div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
           Voted:<span className='flex justify-center items-center'>
 							{isAye ? <AyeIcon/> : <NayIcon/>}</span>
@@ -163,7 +167,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedBy }: Pro
 				</div>
 				:
 				votingData &&  <div className='border-solid py-2 px-6 flex gap-2 border-[1px] bg-[#fff7ef] border-[#F89118]'>
-					{status === ETrackDelegationStatus.Delegated &&  <Address address={address} displayInline/>}
+					{status === ETrackDelegationStatus.Delegated &&  <Address address={String(delegatedTo)} displayInline/>}
 					<div className='text-xs text-[#485F7D] flex items-center justify-center'>Not Voted yet <CautionIcon className='ml-1'/></div>
 				</div>}
 		</div></Link>;

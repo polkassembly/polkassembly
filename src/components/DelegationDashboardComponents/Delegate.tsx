@@ -47,7 +47,7 @@ const Delegate = ( { className,trackDetails }: Props ) => {
           Delegate
 				</span>
 			</div>
-			<div onClick={() => setExpandProposals(!expandProposals)}>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
+			<div onClick={() => setExpandProposals(!expandProposals)} className='cursor-pointer p-2'>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
 		</div>
 		{expandProposals && <div className='mt-[24px]'>
 			<h4 className='text-sm font-normal text-[#243A57] mb-4'>Enter an address or Select from the list below to delegate your voting power</h4>
@@ -61,23 +61,23 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 						</span>
 					</Button>
 				</div>
-        <Popover
-        showArrow={false}
-        placement='bottomLeft' 
-        content={<>
-          <div className='py-1 flex items-center gap-[11px] cursor-pointer'>
-            <NovaWalletIcon/>
-            <span className='text-sm text-[#243A57]'>Nova Wallet Delegates</span>
-          </div>
-          <div className='py-1 flex items-center gap-[11px] cursor-pointer'>
-            <ProfileIcon/>
-            <span className='text-sm text-[#243A57]'>Others</span>
-            </div>
-        </>}>
-          	<DelegateMenuIcon/>
-        </Popover>
+				<Popover
+					showArrow={false}
+					placement='bottomLeft'
+					content={<>
+						<div className='py-1 flex items-center gap-[11px] cursor-pointer'>
+							<NovaWalletIcon/>
+							<span className='text-sm text-[#243A57]'>Nova Wallet Delegates</span>
+						</div>
+						<div className='py-1 flex items-center gap-[11px] cursor-pointer'>
+							<ProfileIcon/>
+							<span className='text-sm text-[#243A57]'>Others</span>
+						</div>
+					</>}>
+					<DelegateMenuIcon/>
+				</Popover>
 			</div>
-			<div className='mt-6'><DelegateCard trackNum = {trackDetails?.trackId} /></div>
+			<div className='mt-6'><DelegateCard trackName = {trackDetails?.name} /></div>
 		</div>}
 		<DelegateModal trackNum={trackDetails?.trackId} defaultTarget={address} open={open} setOpen={setOpen} />
 	</div>;

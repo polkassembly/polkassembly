@@ -15,7 +15,7 @@ interface Props{
   posts: IPostListing[];
   trackDetails: any;
   status: ETrackDelegationStatus;
-  delegatedBy: string | null;
+  delegatedTo: string | null;
 
 }
 
@@ -24,7 +24,7 @@ const ActiveProposalCard = dynamic(() => import('./ActiveProposalCard'), {
 	ssr: false
 });
 
-const ActiveProposals = ( { className, posts, trackDetails, status, delegatedBy }: Props ) => {
+const ActiveProposals = ( { className, posts, trackDetails, status, delegatedTo }: Props ) => {
 
 	const count = posts.length;
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
@@ -40,11 +40,11 @@ const ActiveProposals = ( { className, posts, trackDetails, status, delegatedBy 
 					{count < 10 && count !==0 && 0}{count}
 				</span>
 			</div>
-			<div onClick={() => posts?.length > 0 && setExpandProposals(!expandProposals)}>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
+			<div onClick={() => posts?.length > 0 && setExpandProposals(!expandProposals)} className='cursor-pointer p-2'>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
 		</div>
 		{expandProposals && <div className='mt-[24px] flex flex-col gap-6'>
 			{posts?.length > 0 && posts?.map((proposal, index) => (
-				<ActiveProposalCard proposal= {proposal} key={index}  trackDetails={trackDetails} status={status} delegatedBy = {delegatedBy} />))}
+				<ActiveProposalCard proposal= {proposal} key={index}  trackDetails={trackDetails} status={status} delegatedTo = {delegatedTo} />))}
 		</div>}
 	</div>;
 };

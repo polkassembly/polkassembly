@@ -12,6 +12,7 @@ import { NetworkContext } from '~src/context/NetworkContext';
 
 import EthIdenticon from './EthIdenticon';
 import HelperTooltip from './HelperTooltip';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props{
 	className?: string
@@ -21,9 +22,10 @@ interface Props{
 	placeholder?: string
 	size?: 'large' | 'small' | 'middle';
   defaultAddress?: string;
+	skipFormatCheck?: boolean
 }
 
-const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress } : Props) => {
+const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck } : Props) => {
 	const { network } = useContext(NetworkContext);
 
 	const [address, setAddress] = useState<string>(defaultAddress ? defaultAddress : '');
@@ -31,6 +33,14 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 
 	const handleAddressChange = (address: string) => {
 		setAddress(address);
+
+		if(skipFormatCheck) {
+			if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
+				onChange(address);
+			}
+			return;
+		}
+
 		const isValidMetaAddress = Web3.utils.isAddress(address, addressPrefix[network]);
 		const [validAddress] = checkAddress(address, addressPrefix[network]);
 
@@ -44,6 +54,14 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 	};
 
 	useEffect(() => {
+		if(skipFormatCheck) {
+			if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
+				setIsValid(true);
+				onChange(address);
+			}
+			return;
+		}
+
 		const isValidMetaAddress = Web3.utils.isAddress(address, addressPrefix[network]);
 		const [validAddress] = checkAddress(address, addressPrefix[network]);
 
@@ -56,6 +74,7 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
+
 	return (
 		<div className={`${className} mb-2 mt-6`}>
 			<label className=' flex items-center text-sm text-[#485F7D] mb-[2px]'> {label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> } </label>

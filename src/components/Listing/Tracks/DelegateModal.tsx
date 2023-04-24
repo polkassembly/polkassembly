@@ -1,22 +1,18 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { LoadingOutlined } from '@ant-design/icons';
 
-import { Button, Checkbox, Form, Modal, Popover, Slider, Spin } from 'antd';
-import { isWeb3Injected } from '@polkadot/extension-dapp';
+import React, { useContext, useEffect, useState } from 'react';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Alert, Button, Checkbox, Form, Modal, Popover, Slider, Spin } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
-import React, { useContext, useEffect, useState } from 'react';
-import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
 import { ApiContext } from 'src/context/ApiContext';
-import { NotificationStatus, Wallet } from 'src/types';
+import { NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import AddressInput from 'src/ui-components/AddressInput';
 import BalanceInput from 'src/ui-components/BalanceInput';
-import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
-import { inputToBn } from 'src/util/inputToBn';
 import styled from 'styled-components';
 
 import { NetworkContext } from '~src/context/NetworkContext';
@@ -24,42 +20,67 @@ import LockIcon from '~assets/icons/lock.svg';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import DelegateProfileIcon from '~assets/icons/delegate-popup-profile.svg';
-import CloseIcon from '~assets/icons/close.svg';
 import SuccessPopup from './SuccessPopup';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useUserDetailsContext } from '~src/context';
-import FilteredError from '~src/ui-components/FilteredError';
+
+import DelegateProfileIcon from '~assets/icons/delegate-popup-profile.svg';
+import CloseIcon from '~assets/icons/close.svg';
+import formatBnBalance from '~src/util/formatBnBalance';
+import ErrorAlert from '~src/ui-components/ErrorAlert';
 
 const ZERO_BN = new BN(0);
 
 interface Props {
-  trackNum: number;
+  trackNum?: number;
   className?: string;
   defaultTarget?: string;
   open?: boolean;
   setOpen?: (pre:boolean) => void;
+  trackName?: string;
 }
 
-const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Props ) => {
+const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: Props ) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useContext(NetworkContext);
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
-	const [address, setAddress] = useState<string>('');
+	const { delegationDashboardAddress } = useUserDetailsContext();
+	const [address, setAddress] = useState<string>(delegationDashboardAddress);
 	const [target, setTarget] = useState<string>('');
 	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
 	const [conviction, setConviction] = useState<number>(0);
 	const [lock ,setLockValue] = useState<number>(0);
 	const [errorArr, setErrorArr] = useState<string[]>([]);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
-	const trackArr: string[] = [];
 	const [checkedList, setCheckedList] = useState<CheckboxValueType[]>([]);
 	const [indeterminate, setIndeterminate] = useState(true);
 	const [checkAll, setCheckAll] = useState(false);
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
-	const [wallet,setWallet]=useState<Wallet>();
+	const [txFee, setTxFee] = useState(ZERO_BN);
+	const [showAlert, setShowAlert] = useState(false);
+
+	useEffect(() => {
+
+		if(!address || !target || !getEncodedAddress(target, network) || !checkedList || !checkedList.length || isNaN(conviction) ||
+			!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN)) return;
+
+		setLoading(true);
+
+		const txArr = checkedList.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
+		const delegateTxn = api.tx.utility.batchAll(txArr);
+
+		(async () => {
+			const info = await delegateTxn.paymentInfo(address);
+			setTxFee(new BN(info.partialFee.toString() || 0));
+			setLoading(false);
+			setShowAlert(true);
+		})();
+	}, [address, api, apiReady, bnBalance, checkedList, conviction, network, target]);
+
+	const trackArr: string[] = [];
 
 	if(network){ Object.entries(networkTrackInfo?.[network]).map(([key, value]) => {
 		if (!value?.fellowshipOrigin) {
@@ -72,35 +93,12 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 		setIndeterminate(!!list.length && list.length < trackArr.length);
 		setCheckAll(list.length === trackArr.length);
 	};
+
 	const onCheckAllChange = (e: CheckboxChangeEvent) => {
 		setCheckedList(e.target.checked ? trackArr : []);
 		setIndeterminate(false);
 		setCheckAll(e.target.checked);
 	};
-
-	const content = (<div className='flex flex-col'>
-		<Checkbox.Group className='flex flex-col h-[200px] overflow-y-scroll' onChange={onChange} value={checkedList} >
-			{trackArr?.map((track, index) => (
-				<div
-					className={`${poppins.variable} ${poppins.className} text-sm tracking-[0.01em] text-[#243A57] flex gap-[13px] p-[8px]`}
-					key={index}
-				>
-					<Checkbox className='text-pink_primary' value={track}/>
-					{track === 'root' ? 'Root': track?.split(/(?=[A-Z])/).join(' ')}
-				</div>
-			))}
-		</Checkbox.Group>
-	</div>);
-	useEffect(() => {
-		if (!api) {
-			return;
-		}
-
-		if (!apiReady) {
-			return;
-		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
 
 	const validateForm = ():boolean => {
 		const errors = [];
@@ -109,7 +107,7 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 			errors.push('Please select an address.');
 		}
 
-		if(!target) {
+		if(!target || !getEncodedAddress(target, network)) {
 			errors.push('Please provide a valid target address.');
 		}
 
@@ -125,41 +123,64 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 			errors.push('Insufficient balance.');
 		}
 
+		if(availableBalance.lte(txFee)) {
+			errors.push('Available balance is not sufficient for transaction fee');
+		}
+
 		setErrorArr(errors);
 
 		return errors.length === 0;
 	};
 
 	const handleSubmit = async () => {
-
+		if(!checkedList || !checkedList.length || !api || !apiReady) return;
 		setLoading(true);
 
-		if(!validateForm()){
+		const targetAddr = getEncodedAddress(target, network);
+
+		if(!validateForm() || !targetAddr){
 			setLoading(false);
 			return;
 		}
 
-		if (!api || !apiReady) {
-			return;
-		}
+		const txArr = checkedList.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, targetAddr, conviction, bnBalance.toNumber()));
 
-		// TODO: check .toNumber()
-		const delegateTxn = api.tx.convictionVoting.delegate(trackNum, target, conviction, bnBalance.toNumber());
+		const delegateTxn = api.tx.utility.batchAll(txArr);
 
-		delegateTxn.signAndSend(address, ({ status }: any) => {
-			if (status.isInBlock) {
-				queueNotification({
-					header: 'Success!',
-					message: 'Delegation successful.',
-					status: NotificationStatus.SUCCESS
-				});
+		delegateTxn.signAndSend(address, ({ status, events }: any) => {
+			if (status.isFinalized) {
+				for (const { event } of events) {
+					if (event.method === 'ExtrinsicSuccess') {
+						queueNotification({
+							header: 'Success!',
+							message: 'Delegation successful.',
+							status: NotificationStatus.SUCCESS
+						});
+						setOpenSuccessPopup(true);
+					} else if (event.method === 'ExtrinsicFailed') {
+						const errorModule = (event.data as any)?.dispatchError?.asModule;
+						let message = 'Delegation failed.';
+
+						if(errorModule) {
+							const { method, section, docs } = api.registry.findMetaError(errorModule);
+							message = `${section}.${method} : ${docs.join(' ')}`;
+						}
+
+						queueNotification({
+							header: 'Delegation failed!',
+							message,
+							status: NotificationStatus.ERROR
+						});
+						// TODO: error state popup
+					}
+				}
+
 				setLoading(false);
-				console.log(`Delegation: completed at block hash #${status.asInBlock.toString()}`);
+				setOpen?.(false);
+				console.log(`Delegation: completed at block hash #${status.toString()}`);
 			} else {
 				console.log(`Delegation: Current status: ${status.type}`);
 			}
-			setOpen(false);
-			setOpenSuccessPopup(true);
 		}).catch((error: any) => {
 			console.log(':( transaction failed');
 			console.error('ERROR:', error);
@@ -173,9 +194,32 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 	};
 
 	const handleOnBalanceChange = (balanceStr: string) => {
-		const [balance, isValid] = inputToBn(balanceStr, network, false);
-		isValid ? setAvailableBalance(balance) : setAvailableBalance(ZERO_BN);
+		let balance = ZERO_BN;
+
+		try{
+			balance = new BN(balanceStr);
+		}
+		catch(err){
+			console.log(err);
+		}
+
+		setAvailableBalance(balance);
 	};
+
+	const content = (<div className='flex flex-col'>
+		<Checkbox.Group className='flex flex-col h-[200px] overflow-y-scroll' onChange={onChange} value={checkedList} >
+			{trackArr?.map((track, index) => (
+				<div
+					className={`${poppins.variable} ${poppins.className} text-sm tracking-[0.01em] text-[#243A57] flex gap-[13px] p-[8px]`}
+					key={index}
+				>
+					<Checkbox className='text-pink_primary' value={track}/>
+					{track === 'root' ? 'Root': track?.split(/(?=[A-Z])/).join(' ')}
+				</div>
+			))}
+		</Checkbox.Group>
+	</div>);
+
 	return (
 		<>
 			<Modal
@@ -191,12 +235,12 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 				open={open}
 				onOk={handleSubmit}
 				confirmLoading={loading}
-				onCancel={() => setOpen(false)}
+				onCancel={() => setOpen?.(false)}
 				footer={
 					<div className='flex items-center justify-end'>
 						{
 							[
-								<Button key="back" disabled={loading} className='h-[40px] w-[134px]' onClick={() => setOpen(false)}>
+								<Button key="back" disabled={loading} className='h-[40px] w-[134px]' onClick={() => setOpen?.(false)}>
 										Cancel
 								</Button>,
 								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] '  disabled={loading} onClick={ handleSubmit }>
@@ -210,6 +254,9 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 
 				<Spin spinning={loading} indicator={<LoadingOutlined />}>
 					<div className='flex flex-col'>
+						{
+							errorArr.length > 0 && errorArr.map(errorMsg => <ErrorAlert className='mb-6' key={errorMsg} errorMsg={errorMsg} />)
+						}
 
 						<Form
 							form={form}
@@ -221,7 +268,6 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 								address={address}
 								withBalance={false}
 								onAccountChange={(address) => setAddress(address)}
-								onBalanceChange={handleOnBalanceChange}
 								className='text-[#485F7D] text-sm'
 							/>
 							<AddressInput
@@ -231,6 +277,7 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 								className='text-[#485F7D] text-sm '
 								onChange={(address) => setTarget(address)}
 								size='large'
+								skipFormatCheck={true}
 							/>
 							<BalanceInput
 								label={'Balance'}
@@ -278,7 +325,7 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 							<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
 								<div className='flex gap-[10px] items-center justify-center text-[#485F7D] text-sm'> <LockIcon/><span>Locking period</span></div>
 								<div className='text-[#243A57] font-medium text-sm flex justify-center items-center' >
-									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x enactment period ${lock} days`}
+									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enachment period`}
 								</div>
 							</div>
 							<Popover
@@ -289,6 +336,7 @@ const DelegateModal = ({ trackNum, className, defaultTarget, open, setOpen }: Pr
 							</Popover>
 						</Form>
 
+						{showAlert && <Alert showIcon type='info' className='mb-6' message={`Fees of ${formatBnBalance(txFee,{ numberAfterComma: 2,withUnit:true },network)} will be applied to the transaction`}/>}
 					</div>
 				</Spin>
 

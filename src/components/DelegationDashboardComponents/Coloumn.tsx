@@ -226,8 +226,10 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		return ReceivedDelegationColumns;
 	}
 };
-const GetTracksColumns = (status :ETrackDelegationStatus) => {
+const GetTracksColumns = (status :ETrackDelegationStatus,setOpen: (pre: boolean) => void) => {
+
 	const { network } = useNetworkContext();
+
 	if(status === ETrackDelegationStatus.Delegated){
 		const TrackColumn: ColumnsType<ITrackRowData> = [
 
@@ -237,12 +239,13 @@ const GetTracksColumns = (status :ETrackDelegationStatus) => {
 			{ dataIndex:'lockPeriod', key:1, render: (conviction) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{conviction}x</h4>, title: 'Conviction', width: '15%' },
 			{ dataIndex:'delegatedOn', key:1, render: (date) => <h4 className='text-sm text-[#243A57] font-normal text-start ml-1'>{dayjs(date).format('DD MMM YYYY')}</h4>, title: 'Delegated on', width: '20%' },
 			{ dataIndex:'action', key:1, render: (action) => <div className='flex justify-center items-start'>
-				<Button className='text-sm text-[#243A57] font-normal border-[1px] border-solid border-pink_primary h-[40px] flex items-center justify-center px-2 gap-2 max-md:h-auto max-md:gap-0 max-md:flex-col max-md:border-none max-md:p-2 max-md:shadow-none'>
+				<Button onClick={() => setOpen(true)} className='text-sm text-[#243A57] font-normal border-[1px] border-solid border-pink_primary h-[40px] flex items-center justify-center px-2 gap-2 max-md:h-auto max-md:gap-0 max-md:flex-col max-md:border-none max-md:p-2 max-md:shadow-none'>
 					<UndelegatedProfileIcon/>
 					<span className='text-sm tracking-wide text-pink_primary font-medium'>
 						{action}
 					</span>
-				</Button></div>, title: 'Action', width: '10%' }
+				</Button>
+			</div>, title: 'Action', width: '10%' }
 
 		];
 		return TrackColumn;

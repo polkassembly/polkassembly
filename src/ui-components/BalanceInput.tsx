@@ -12,6 +12,8 @@ import { NetworkContext } from '~src/context/NetworkContext';
 import { inputToBn } from '../util/inputToBn';
 import HelperTooltip from './HelperTooltip';
 import Balance from '~src/components/Balance';
+import formatBnBalance from '~src/util/formatBnBalance';
+import { BN_ZERO } from '@polkadot/util';
 
 interface Props{
 	className?: string
@@ -23,9 +25,10 @@ interface Props{
   address?: string;
   withBalance?: boolean;
   onAccountBalanceChange?: (balance: string) => void
+  balance?: BN;
 }
 
-const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange }: Props) => {
+const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 
@@ -45,6 +48,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 			}
 		</label>
 		<Form.Item
+			initialValue= {balance ? (formatBnBalance (balance,{ numberAfterComma:2, withUnit: false }, network )) : BN_ZERO}
 			name="balance"
 			rules={[
 				{
@@ -70,6 +74,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 				onChange={onBalanceChange}
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}
+
 			/>
 		</Form.Item>
 	</div>;

@@ -17,6 +17,8 @@ import dynamic from 'next/dynamic';
 import { ETrackDelegationStatus, IDelegation } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
+import UndelegateModal from '../Listing/Tracks/UndelegateModal';
+import BN from 'bn.js';
 
 interface Props{
   className?: string;
@@ -47,6 +49,16 @@ export interface ITrackRowData{
   action: string;
 }
 
+export const handleTrack = ( track: string ) => {
+
+	const firstPart = track.split('-')[0];
+	const secondPart = track.split('-')[1] ? track.split('-')[1] : '';
+	const trackName = `${firstPart.charAt(0).toUpperCase() + firstPart.slice(1)} ${secondPart.length > 0 ? secondPart.charAt(0).toUpperCase() + secondPart.slice(1) : ''}`;
+
+	return trackName.trim();
+
+};
+
 const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 	const { query : { track } } = useRouter();
@@ -57,18 +69,27 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	const { delegationDashboardAddress: address } = useUserDetailsContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [rowData, setRowData] = useState<ITrackRowData[]>([]);
+	const [loading, setLoading] = useState<boolean>(false);
+	const [ openUndelegateModal, setOpenUndelegateModal ] = useState<boolean>(false);
 
 	useEffect(() => {
+
 		if(!address){
 			setOpenModal(true);
 		}
-	}, [address]);
+
+		if(status?.length === 0){
+			setLoading(true);
+		}
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address, status]);
 
 	const getData = async() => {
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${address}&track=${trackDetails?.trackId}`);
 
 		if(data){
-			console.log(data,'fh');
+	
 			setDelegationDetails(data[0]);
 			const rowData: ITrackRowData[] = data[0]?.delegations?.map((delegation : IDelegation, index: number) => {
 				return { action: 'Undelegate', balance:delegation?.balance , delegatedFrom: delegation?.from, delegatedOn: delegation?.createdAt, delegatedTo:delegation?.to, index: index + 1, lockPeriod: delegation?.lockPeriod };
@@ -101,15 +122,6 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 		}else{
 			router.push(`/delegation/${route}`);
 		}
-
-	};
-	const handleTrack = ( track: string ) => {
-
-		const firstPart = track.split('-')[0];
-		const secondPart = track.split('-')[1] ? track.split('-')[1] : '';
-		const trackName = `${firstPart.charAt(0).toUpperCase() + firstPart.slice(1)} ${secondPart.length > 0 ? secondPart.charAt(0).toUpperCase() + secondPart.slice(1) : ''}`;
-
-		return trackName.trim();
 
 	};
 
@@ -151,10 +163,10 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			{  showTable && <div className='bg-white mt-6 border-[1px] border-solid rounded-[6px] pl-[3px] pr-[3px] border-[#D2D8E0] bg-transparent'>
 				<Table
 					className= 'column'
-					columns= { GetTracksColumns(status) }
+					columns= { GetTracksColumns( status, setOpenUndelegateModal ) }
 					dataSource= { rowData }
 					pagination={status === ETrackDelegationStatus.Delegated ? false: { pageSize : 5 }}
-					loading={!status}
+					loading={loading}
 				></Table>
 			</div>}
 			{status === ETrackDelegationStatus.Undelegated && <div className='bg-white flex pt-[24px] items-center flex-col text-[169px] pb-[33px] rounded-b-[14px]'>
@@ -171,13 +183,26 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 					</div>
 				</div>
 			</div>}
-		</div> : <Skeleton/>}
+		</div> : <Skeleton className='py-6'/>}
+
 		{status ? <div>
-			<ActiveProposals posts={posts} trackDetails={trackDetails} status={status} delegatedBy = {status === ETrackDelegationStatus.Delegated ? rowData[0]?.delegatedTo : null} />
-		</div> : <Skeleton/>}
+			<ActiveProposals posts={posts} trackDetails={trackDetails} status={status} delegatedTo = {status === ETrackDelegationStatus.Delegated ? rowData[0]?.delegatedTo : null} />
+		</div> : <Skeleton className='mt-4'/>}
+
 		{ status ? status !== ETrackDelegationStatus.Delegated && <div>
-			<Delegate trackDetails={trackDetails}/></div> : <Skeleton/>}
+			<Delegate trackDetails={trackDetails}/></div> : <Skeleton className='mt-4'/>}
+
 		<WalletConnectModal open={openModal} setOpen={setOpenModal} />
+
+		{openUndelegateModal && <UndelegateModal
+			balance={new BN(rowData[0]?.balance)}
+			open={openUndelegateModal}
+			setOpen={setOpenUndelegateModal}
+			defaultTarget={rowData[0]?.delegatedTo}
+			trackNum={trackDetails?.trackId}
+			conviction={rowData[0]?.lockPeriod}
+		/>}
+
 	</div>;
 };
 

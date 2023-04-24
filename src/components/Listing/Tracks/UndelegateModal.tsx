@@ -21,8 +21,10 @@ import CloseIcon from '~assets/icons/close.svg';
 import SuccessPopup from './SuccessPopup';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
-
-const ZERO_BN = new BN(0);
+import { useUserDetailsContext } from '~src/context';
+import { useRouter } from 'next/router';
+import { handleTrack } from '~src/components/DelegationDashboardComponents/DashboardTrack';
+import { BN_ZERO } from '@polkadot/util';
 
 interface Props {
   trackNum: number;
@@ -30,21 +32,24 @@ interface Props {
   defaultTarget: string;
   open: boolean;
   setOpen: (pre:boolean) => void;
-  tracks: string[];
   conviction: number;
-  account: InjectedAccount;
-  defaultAddress: string;
+  balance : BN;
 }
-const UndelegateModal = ({ trackNum, className, defaultTarget, open, tracks, setOpen, conviction,account, defaultAddress }: Props ) => {
+const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance }: Props ) => {
+
 	const { api, apiReady } = useContext(ApiContext);
+
+	const router = useRouter();
+	const trackName = handleTrack(String(router.query.track));
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
+	const { delegationDashboardAddress : defaultAddress } = useUserDetailsContext();
 	const [address, setAddress] = useState<string>(defaultAddress);
 	const [target, setTarget] = useState<string>(defaultTarget);
-	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
-	const lock = (Number(2**(conviction - 2)));
+	const [bnBalance, setBnBalance] = useState<BN>(balance ? balance : BN_ZERO);
+	const lock = (Number(2**(conviction-1)));
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
-	const accounts:InjectedAccount[] = [account];
+	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 
 	useEffect(() => {
 		if (!api) {
@@ -145,7 +150,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, tracks, set
 							/>
 
 							<AddressInput
-								defaultAddress={defaultTarget}
+								defaultAddress={target}
 								label={'Delegate to'}
 								placeholder='Delegate Account Address'
 								className='text-[#485F7D] text-sm '
@@ -157,10 +162,11 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, tracks, set
 								placeholder={'Enter balance'}
 								className='mt-6'
 								address={address}
-								withBalance={true}
+								withBalance={false}
 								onAccountBalanceChange={handleOnBalanceChange}
 								onChange={(balance) => setBnBalance(balance)}
 								size='large'
+								balance={bnBalance}
 							/>
 
 							<div className='mb-2 border-solid border-white'>
@@ -182,24 +188,26 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, tracks, set
 											7:{ label:<div>6x</div>, style: { color: '#243A57', fontSize:'14px',marginTop:'16px' } }  }}
 										min={1}
 										max={7}
-										defaultValue={1}
+										defaultValue={conviction}
 									/></div>
 							</div>
 							<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
 								<div className='flex gap-[10px] items-center justify-center text-[#485F7D] text-sm'> <LockIcon/><span>Locking period</span></div>
 								<div className='text-[#243A57] font-medium text-sm flex justify-center items-center' >
-									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x enactment period ${lock} days`}
+									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enachment period`}
 								</div>
 							</div>
-							<div className='mt-6'>
-								<label className='text-[#485F7D] text-sm tracking-[0.0025em] mb-[2px]'>Selected tracks</label>
+							<div className='mt-6 flex justify-start items-center gap-2 mb-6'>
+								<label className='text-[#485F7D] text-sm tracking-[0.0025em] mb-[2px]'>Track:</label>
+								<span className='text-[#243A57] text-sm tracking-medium'>{trackName} #{trackNum}</span>
 							</div>
 						</Form>
 
 					</div>
 				</Spin>
 
-				<SuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={tracks} address={target} isDelegate={true} balance={bnBalance} />
+				{/* <SuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} trackNum={trackNum} address={target} isDelegate={true} balance={bnBalance} /> */}
+
 			</Modal>
 		</>
 	);
@@ -231,6 +239,7 @@ export default styled(UndelegateModal)`
 .padding .ant-slider .ant-slider-track{
 height: 7px;
  background-color: #E5007A !important;
+
 }
 .padding .ant-slider .ant-slider-handle:focus::after {
  }

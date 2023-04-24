@@ -9,10 +9,11 @@ import { Button } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 
 interface Props{
-  trackNum: number;
+  trackName: string;
 }
 
-const DelegateCard = ({ trackNum }: Props) => {
+const DelegateCard = ({ trackName }: Props) => {
+
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
 
@@ -47,7 +48,7 @@ const DelegateCard = ({ trackNum }: Props) => {
 				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal'>Received Delegation</span>
 			</div>
 		</div>
-		<DelegateModal trackNum={trackNum} defaultTarget={address} open={open} setOpen={setOpen} />
+		<DelegateModal trackName={trackName} defaultTarget={address} open={open} setOpen={setOpen} />
 	</div>;
 };
 

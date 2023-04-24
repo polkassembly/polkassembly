@@ -103,8 +103,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 				</div>
 
-				<div className="mt-3 gap-2.5 font-medium text-navBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
-					<OnchainCreationLabel address={address} username={username} topic={topic} />
+				<div className="mt-3 font-medium text-navBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
+					<OnchainCreationLabel address={address} username={username} topic={topic}/>
 					<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 
 					<div className='flex items-center gap-x-2'>
@@ -145,7 +145,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										: <span>ended <BlockCountdown endBlock={end}/></span>
 								}
 							</div>
-					}<div className='flex gap-[4px] max-sm:flex-col items-start'>
+					}<div className='flex gap-[4px] max-sm:flex-col items-center ml-1'>
 						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
 						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
 							(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >

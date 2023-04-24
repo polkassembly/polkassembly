@@ -47,6 +47,7 @@ interface IEditableCommentContentProps {
   sentiment:number,
 	setSentiment:(pre:number)=>void;
 	prevSentiment:number;
+	isSubsquareUser:boolean;
 }
 
 const editCommentKey = (commentId: string) => `comment:${commentId}:${global.window.location.href}`;
@@ -364,10 +365,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									className='reactions mr-0'
 									commentId={commentId}
 									comment_reactions={comment.comment_reactions}
+									importedReactions={props.isSubsquareUser}
 								/>
 								{
 									id &&
-										<Button disabled={props.disableEdit} className={'text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1' } onClick={ toggleReply }>
+										<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
 											<ReplyIcon className='mr-1'/> Reply
 										</Button>
 								}
@@ -433,6 +435,11 @@ export default styled(EditableCommentContent)`
     background: rgba(72, 95, 125, 0.05);
     border: 1px solid rgba(72, 95, 125, 0.1);
     border-radius: 0px 0px 2px 2px;
+  }
+
+  .disabled-reply{
+	cursor:not-allowed;
+	opacity: 0.5;
   }
 
 `;

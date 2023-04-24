@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { v4 as uuid } from 'uuid';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const urlMapper:any= {
 	bounties: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/bounties/${id}/comments`,
@@ -54,10 +53,9 @@ const convertReply = (subSquareReply:any) => {
 	}));
 };
 
-const convertDataToComment =(data:any[], network:string) => {
+const convertDataToComment =(data:any[]) => {
 	return data.map((comment:any) => {
-		const reactionUsers =getReactionUsers(comment.reactions);
-		const newAddress = comment.author?.address ?  getEncodedAddress(comment.author?.address, network) : '';
+		const reactionUsers = getReactionUsers(comment.reactions);
 		return {
 			comment_reactions: {
 				'👍': {
@@ -73,7 +71,7 @@ const convertDataToComment =(data:any[], network:string) => {
 			content:comment.content,
 			created_at: comment.createdAt,
 			id:comment._id,
-			proposer:newAddress,
+			proposer:comment.author?.address || '',
 			replies:convertReply(comment?.replies || []),
 			updated_at:comment?.updatedAt,
 			user_id:uuid(),
@@ -85,8 +83,7 @@ export const getSubSquareComments = async (proposalType:string,network:string, i
 	const url = urlMapper[proposalType]( id, network);
 	try{
 		const data = await (await fetch(url)).json();
-		// console.log(data.items[0].author, data.items[1].author);
-		return convertDataToComment(data.items, network);
+		return convertDataToComment(data.items);
 	}catch(error){
 		return [];
 	}

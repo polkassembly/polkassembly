@@ -15,7 +15,6 @@ import { DelegatedIcon, UnDelegatedIcon, ReceivedDelegationIcon } from '~src/ui-
 import { useRouter } from 'next/router';
 import { ETrackDelegationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 
 interface Props{
@@ -23,7 +22,7 @@ interface Props{
   address: string;
 }
 
-export interface IDataType{
+export interface ITrackDataType{
   index: number;
   track: string;
   description: string;
@@ -44,8 +43,10 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 	const [allCount, setAllCount] = useState<number>(0);
 	const [showTable, setShowTable] = useState<boolean>(false);
 	const router = useRouter();
-	const [rowData, setRowData] = useState<IDataType[]>([]);
+	const [rowsData, setRowsData] = useState<ITrackDataType[]>([]);
 	const { api, apiReady } = useApiContext();
+	const [data, setData] = useState<ITrackDataType[]>([]);
+	const [loading , setLoading] = useState<boolean>(false);
 
 	const filterTrackDataByTrackNumber = (trackNo: number) => {
 		if(network){
@@ -61,9 +62,35 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 
 	};
 
+	const filterByStatus = (currentStatus: ETrackDelegationStatus) => {
+
+		if(currentStatus === ETrackDelegationStatus.All){
+			setRowsData(data);
+		}
+		if(currentStatus === ETrackDelegationStatus.Received_Delegation){
+			const filteredData = data.filter((row) => row.status === ETrackDelegationStatus.Received_Delegation);
+			const rows = filteredData.map((item, index) => {return { ...item, index: index+1 };} );
+			setRowsData(rows);
+		}
+		if(currentStatus === ETrackDelegationStatus.Undelegated){
+			const filteredData = data.filter((row) => row.status === ETrackDelegationStatus.Undelegated);
+			const rows = filteredData.map((item, index) => {return { ...item, index: index+1 };} );
+			setRowsData(rows);
+		}
+		if(currentStatus === ETrackDelegationStatus.Delegated){
+			const filteredData = data.filter((row) => row.status === ETrackDelegationStatus.Delegated);
+			const rows = filteredData.map((item, index) => {return { ...item, index: index+1 };} );
+			setRowsData(rows);
+		}
+
+	};
+
 	const getData = async() => {
 		if (!api || !apiReady ) return;
-		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${'HWyLYmpW68JGJYoVJcot6JQ1CJbtUQeTdxfY1kUTsvGCB1r'}`);
+
+		setLoading(true);
+
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${address}`);
 
 		if(data){
 			const rows = data?.map((track: any, index: number) => {
@@ -88,29 +115,34 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 					index: index+1,
 					status: track.status === ETrackDelegationStatus.Delegated && ETrackDelegationStatus.Delegated
         ||  track?.status === ETrackDelegationStatus.Undelegated && ETrackDelegationStatus.Undelegated
-        ||  track?.status === ETrackDelegationStatus.Received_Delegation && ETrackDelegationStatus.Received_Delegation ,
+        ||  track?.status === ETrackDelegationStatus.Received_Delegation && ETrackDelegationStatus.Received_Delegation || ETrackDelegationStatus.All ,
 					track: trackData[0] === 'root' ? 'Root': trackData[0]?.split(/(?=[A-Z])/).join(' '),
 					trackNo: track?.track
 				};
 			});
-			setRowData(rows);
+
+			setData(rows);
+			setRowsData(rows);
 			setAllCount(rows?.length);
+			setLoading(false);
+
 		}else{
 			console.log(error);
 		}
 	};
 
 	useEffect(() => {
-		rowData.length === 0 && getData();
-		if(rowData.length > 0){
-			const receivedDelegations = rowData.filter((row) => row.status === ETrackDelegationStatus.Received_Delegation);
+		data.length === 0 && getData();
+		if(data.length > 0){
+			const receivedDelegations = data.filter((row) => row.status === ETrackDelegationStatus.Received_Delegation);
 			setReceivedDelegationCount(receivedDelegations?.length);
-			const delegateDelegations = rowData.filter((row) => row.status === ETrackDelegationStatus.Delegated);
+			const delegateDelegations = data.filter((row) => row.status === ETrackDelegationStatus.Delegated);
 			setDelegatedCount(delegateDelegations?.length);
-			const undelegateDelegations = rowData.filter((row) => row.status === ETrackDelegationStatus.Undelegated);
+			const undelegateDelegations = data.filter((row) => row.status === ETrackDelegationStatus.Undelegated);
 			setUndelegatedCount(undelegateDelegations?.length);
 		}
-	}, [rowData]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [data]);
 
 	const handleShowTable = (status:ETrackDelegationStatus) => {
 
@@ -149,20 +181,21 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 	return <div className={className} >
 		<div className={`flex font-medium items-center text-sidebarBlue text-xl gap-2 max-lg:gap-0 px-8 py-6 border-l-0 border-t-0 border-r-0 ${showTable && 'border-[#e7ebf0] border-b-[1px] border-solid'}`}>
       Tracks
-			<Radio.Group buttonStyle='solid' defaultValue={'all'} onChange={(e) => setStatusvalue(e.target.value)} value={status} className='flex max-md:flex-col ml-[24px] flex-shrink-0'>
+			<Radio.Group buttonStyle='solid' defaultValue={'all'} onChange={(e) => {setStatusvalue(e.target.value); filterByStatus(e.target.value); }} value={status} className='flex max-md:flex-col ml-[24px] flex-shrink-0'>
 				<Radio className={`text-[#243A57B2] text-xs py-[6px] px-[14px] ${ETrackDelegationStatus.All === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={ETrackDelegationStatus.All}>All ({allCount})</Radio>
 				<Radio className={`text-[rgba(36,58,87,0.7)] text-xs py-[6px] px-[14px] ${ETrackDelegationStatus.Delegated === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={ETrackDelegationStatus.Delegated}>Delegated ({delegatedCount})</Radio>
 				<Radio className={`text-[#243A57B2] text-xs py-[6px] px-[14px] ${ETrackDelegationStatus.Undelegated === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={ETrackDelegationStatus.Undelegated}>Undelegated ({undelegatedCount})</Radio>
 				<Radio className={`text-[#243A57B2] text-xs py-[6px] px-[14px] ${ETrackDelegationStatus.Received_Delegation === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={ETrackDelegationStatus.Received_Delegation}>Received delegation ({receivedDelegationCount})</Radio>
 			</Radio.Group>
 		</div>
-		{showTable && <Table
+		{showTable  && status && <Table
 			className='column'
-			columns= {GetColumns( status )}
-			dataSource= { rowData }
+			columns = { GetColumns( status )}
+			dataSource= { rowsData }
 			rowClassName='cursor-pointer'
+			loading = {loading}
 			pagination= {false}
-			onRow={(rowData: IDataType) => {
+			onRow={(rowData: ITrackDataType) => {
 				return {
 					onClick: () => router.push(`/delegation/${rowData?.track.split(' ').join('-').toLowerCase()}`)
 				};
@@ -217,7 +250,5 @@ export default styled(DashboardTrackListing)`
 .column .ant-table-thead > tr > th:nth-child(1){
   text-align: center;
 }
-.column .ant-table-thead > tr > th:nth-child(5){
-  text-align: center;
-}
+
 `;

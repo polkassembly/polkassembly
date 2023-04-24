@@ -37,12 +37,11 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedBy }: Pro
 	const timeline = [{ created_at: proposal.created_at, hash: proposal.hash }];
 	const [decision, setDecision] = useState<IPeriod>(getDefaultPeriod());
 	const decidingStatusBlock = getStatusBlock( timeline || [], 'ReferendumV2', 'Deciding');
-	const [isDays, setIsDays] = useState(true);
 	const [votingData, setVotingData] = useState<IVotesResponse>();
 	const [balance, setBalance] = useState<BN>(BN_ZERO);
 	const [isAye, setIsAye] = useState<boolean>(false);
 	const [isNay, setIsNay] = useState<boolean>(false);
-	const [isAbstain, setIsAbstain] = useState<boolean>(false);
+	// const [isAbstain, setIsAbstain] = useState<boolean>(false);
 	const { delegationDashboardAddress: address } = useUserDetailsContext();
 
 	let titleString = proposal?.title || proposal?.method || noTitle;
@@ -61,9 +60,10 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedBy }: Pro
 		const diffDays = diffDuration.days();
 		const diffHours = diffDuration.hours();
 		const diffMinutes = diffDuration.minutes();
-		const diffSeconds = diffDuration.seconds();
-		return (`${diffDays !== 0 ? diffDays+' days ' : ''} ${diffHours} : ${diffMinutes} : ${diffSeconds} `);
+		return (`${diffDays !== 0 ? diffDays+' d ' : ''} ${diffHours} h : ${diffMinutes} m `);
 	};
+
+	const remainingTime = convertRemainingTime(decision.periodEndsAt);
 
 	const getData = async() => {
 		if(!address || !proposal?.post_id) return;
@@ -73,7 +73,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedBy }: Pro
 			return;
 		}
 		if(status === ETrackDelegationStatus.Received_Delegation){
-			votesAddress = 'HWyLYmpW68JGJYoVJcot6JQ1CJbtUQeTdxfY1kUTsvGCB1r';
+			votesAddress = address;
 		}else if(status === ETrackDelegationStatus.Delegated && delegatedBy !== null){
 			votesAddress = delegatedBy;
 		}
@@ -106,11 +106,12 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedBy }: Pro
 				setBalance(votingData?.no?.votes[0].balance.value);
 			}
 		}
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network,votingData]);
 
 	return <Link href={`/referenda/${proposal?.post_id}`}>
-		<div className='border-[#D2D8E0] border-solid border-[1px] rounded-t-[6px] hover:border-[#E5007A]'>
+		<div className={`border-[#D2D8E0] border-solid border-[1px] rounded-t-[6px] hover:border-[#E5007A] ${status === ETrackDelegationStatus.Undelegated && 'rounded-[6px]'}`}>
 			<div className='px-6 py-6 border-[1px] flex justify-between max-sm:gap-2 max-sm:items-start max-sm:flex-col hover:border-pink_primary'>
 				<div className='flex flex-col '>
 					<h2 className='text-sm text-medium text-[#243A57]'>{mainTitle}</h2>
@@ -133,9 +134,9 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedBy }: Pro
 							</>}</div>
 						<div className='flex justify-center items-center gap-2'>
 							<Divider type="vertical" style={{ border: '1px solid #485F7D', marginLeft: '4px', marginRight: '4px' }}/>
-							<div className={`flex items-center ${!isDays ? 'text-[#EB0F36]' :'text-[#243A57]'}`}>
+							<div className={`flex items-center ${!remainingTime.includes('d') ? 'text-[#EB0F36]' :'text-[#243A57]'}`}>
 								<ClockCircleOutlined className='mr-1' />
-								{convertRemainingTime(decision.periodEndsAt)}
+								{remainingTime}
            Remaining
 							</div>
 						</div>

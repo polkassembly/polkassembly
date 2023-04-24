@@ -38,7 +38,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	return <div className={`${className} flex gap-6 px-[70px] max-md:px-[10px] py-[17px] items-center`}>
 		<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
 			<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-				{formatBnBalance('400', { numberAfterComma: 2, withUnit: false }, network)}
+				{formatBnBalance(balance, { numberAfterComma: 2, withUnit: false }, network)}
 				<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
 			<div className='flex items-center justify-center gap-2'>
 				<BalanceIcon/>
@@ -51,7 +51,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 		<div className='flex gap-6 py-2 justify-start'>
 			<div className='h-[71px] flex flex-col py-2 gap-1'>
 				<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-					{formatBnBalance('399', { numberAfterComma: 2, withUnit: false }, network)}
+					{formatBnBalance(transferableBalance, { numberAfterComma: 2, withUnit: false }, network)}
 					<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
 				<div className='flex items-center justify-center gap-2'>
 					<RightTickIcon/>
@@ -62,7 +62,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 			</div>
 			<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
 				<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-					{formatBnBalance('99', { numberAfterComma: 2, withUnit: false }, network)}
+					{formatBnBalance(lockBalance, { numberAfterComma: 2, withUnit: false }, network)}
 					<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
 				<div className='flex items-center justify-center gap-2'>
 					<LockBalanceIcon/>

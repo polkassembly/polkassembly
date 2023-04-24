@@ -65,7 +65,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	}, [address]);
 
 	const getData = async() => {
-		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${'HWyLYmpW68JGJYoVJcot6JQ1CJbtUQeTdxfY1kUTsvGCB1r'}&track=${trackDetails?.trackId}`);
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${address}&track=${trackDetails?.trackId}`);
 
 		if(data){
 			console.log(data,'fh');

@@ -48,9 +48,10 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		username: ''
 	});
 
-	const { image, social_links, bio , username, addresses } = profileDetails;
+	const { image, social_links, bio , username } = profileDetails;
+  
 	const [messageApi, contextHolder] = message.useMessage();
-	const [openModal, setOpenModal] = useState<boolean>(true);
+	const [openModal, setOpenModal] = useState<boolean>(false);
 
 	const success = () => {
 		messageApi.open({
@@ -73,9 +74,8 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	};
 
 	useEffect(() => {
-    console.log(userDetails.delegationDashboardAddress)
-		if(userDetails.delegationDashboardAddress ){
-			setOpenModal(false);
+		if(!userDetails.delegationDashboardAddress ){
+			setOpenModal(true);
 		}
 		userDetails?.username && userDetails?.username?.length > 0 && getData();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,7 +83,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 
 	return <div className= { `${ className }` }>
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>
-			<ProfileBalances address={addresses[0]}/>
+			<ProfileBalances address={userDetails.delegationDashboardAddress}/>
 		</div>
 		<h2 className=' text-[#243A57] mb-4 md:mb-5 mt-5 text-[28px] font-semibold max-lg:pt-[60px]'>Dashboard</h2>
 		<div className='flex justify-between py-[24px] px-[34px] shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white rounded-[14px]'>
@@ -99,7 +99,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 					<span className='text-[#243A57] font-semibold mb-4 tracking-wide text-lg'>{userDetails?.username}</span >
 					{userDetails.delegationDashboardAddress && userDetails?.delegationDashboardAddress.length > 0 ? <div className='flex gap-2  items-center'>
 						<Address address={userDetails?.delegationDashboardAddress} />
-						<span className='flex items-center cursor-pointer' onClick={() => {userDetails.username && copyLink(addresses[0]) ;success();}}>
+						<span className='flex items-center cursor-pointer' onClick={() => {userDetails.username && copyLink(userDetails?.delegationDashboardAddress) ;success();}}>
 							{contextHolder}
 							<CopyIcon/>
 						</span>

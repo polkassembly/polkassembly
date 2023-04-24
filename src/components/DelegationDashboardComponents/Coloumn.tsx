@@ -5,7 +5,7 @@
 import React from 'react';
 import { ColumnsType } from 'antd/es/table';
 import Address from '~src/ui-components/Address';
-import { IDataType } from './TracksListing';
+import { ITrackDataType } from './TracksListing';
 import { ITrackRowData } from './DashboardTrack';
 import { Button } from 'antd';
 import UndelegatedProfileIcon from '~assets/icons/undelegate-profile.svg';
@@ -77,7 +77,7 @@ export const handleTracksIcon =  (index:string ) => {
 };
 const GetColumns = (status :ETrackDelegationStatus) => {
 
-	const AllColumns: ColumnsType<IDataType> = [
+	const AllColumns: ColumnsType<ITrackDataType> = [
 		{ dataIndex: 'index', key: 1,
 			render: (index) =>
 			{
@@ -101,7 +101,7 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		{ dataIndex: 'active_proposals', key: 4,
 			render: (activeProposals) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal'>{activeProposals}</h2>;
+				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{activeProposals}</h2>;
 			},
 			title: 'Active proposals',width: '10%' },
 
@@ -111,7 +111,7 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		</div >;
 		}, title: 'Status',width: '20%' }];
 
-	const DelegatedColumns: ColumnsType<IDataType> = [
+	const DelegatedColumns: ColumnsType<ITrackDataType> = [
 		{ dataIndex: 'index', key: 1,
 			render: (index) =>
 			{
@@ -135,7 +135,7 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		{ dataIndex: 'delegated_to', key: 4,
 			render: (addresses) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'><Address address={addresses[0]?.to} /></h2>;
+				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'><Address address={addresses[0]?.to || ''} /></h2>;
 			},
 			title: 'Delegated to',width: '25%' },
 
@@ -146,7 +146,7 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 			},
 			title: 'Active proposals',width: '15%' }];
 
-	const UndelegatedColumns: ColumnsType<IDataType> = [
+	const UndelegatedColumns: ColumnsType<ITrackDataType> = [
 		{ dataIndex: 'index', key: 1,
 			render: (index) =>
 			{
@@ -174,7 +174,7 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 			},
 			title: 'Active proposals',width: '15%' }];
 
-	const ReceivedDelegationColumns: ColumnsType<IDataType> = [
+	const ReceivedDelegationColumns: ColumnsType<ITrackDataType> = [
 		{ dataIndex: 'index', key: 1,
 			render: (index) =>
 			{
@@ -198,7 +198,7 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		{ dataIndex: 'delegated_by', key: 4,
 			render: (addresses) =>
 			{
-				return <div className='text-sm text-[#243A57] tracking-wide flex items-center justify-start font-normal max-lg:flex-col gap-1'><Address address={addresses[0].from} displayInline /> <span className='text-xs text-[#243A57] tracking-[0.0015em] font-medium'>+ {addresses.length-1} more</span></div>;
+				return <div className='text-sm text-[#243A57] tracking-wide flex items-center justify-start font-normal max-lg:flex-col gap-1'><Address address={addresses[0].from || ''} displayInline /> <span className='text-xs text-[#243A57] tracking-[0.0015em] font-medium'>{ addresses.length-1 !== 0 && `+ ${addresses.length-1} more`} </span></div>;
 			},
 			title: 'Delegated by',width: '25%' },
 
@@ -225,7 +225,6 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 	{
 		return ReceivedDelegationColumns;
 	}
-	return null;
 };
 const GetTracksColumns = (status :ETrackDelegationStatus) => {
 	const { network } = useNetworkContext();
@@ -233,7 +232,7 @@ const GetTracksColumns = (status :ETrackDelegationStatus) => {
 		const TrackColumn: ColumnsType<ITrackRowData> = [
 
 			{ dataIndex:'index', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{index}</h4>, title: '#',width: '10%' } ,
-			{ dataIndex:'delegatedTo', key:1, render: (address) => <div className='text-sm text-[#243A57] font-normal text-center flex justify-start items-center'><Address address= {address} displayInline/></div>, title: 'Delegated to', width: '20%' },
+			{ dataIndex:'delegatedTo', key:1, render: (address) => <div className='text-sm text-[#243A57] font-normal text-center flex justify-start items-center'><Address address= {address || ''} displayInline/></div>, title: 'Delegated to', width: '20%' },
 			{ dataIndex:'balance', key:1, render: (balance) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</h4>, title: 'Balance', width: '15%' },
 			{ dataIndex:'lockPeriod', key:1, render: (conviction) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{conviction}x</h4>, title: 'Conviction', width: '15%' },
 			{ dataIndex:'delegatedOn', key:1, render: (date) => <h4 className='text-sm text-[#243A57] font-normal text-start ml-1'>{dayjs(date).format('DD MMM YYYY')}</h4>, title: 'Delegated on', width: '20%' },
@@ -253,7 +252,7 @@ const GetTracksColumns = (status :ETrackDelegationStatus) => {
 		const TrackColumn: ColumnsType<ITrackRowData> = [
 			{ dataIndex:'index', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{index}</h4>, title: '#',width: '10%' } ,
 			{ dataIndex:'delegatedFrom', key:1, render: (address) => <div className='text-sm text-[#243A57] font-normal text-center flex justify-start items-center'>
-				<Address address= {address} displayInline />
+				<Address address= {address || ''} displayInline />
 			</div>, title: 'Delegated to', width: '20%' },
 			{ dataIndex:'balance', key:1, render: (balance) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</h4>, title: 'Balance', width: '15%' },
 			{ dataIndex:'lockPeriod', key:1, render: (conviction) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{conviction}x</h4>, title: 'Conviction', width: '15%' },

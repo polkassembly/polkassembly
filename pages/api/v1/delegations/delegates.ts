@@ -16,6 +16,7 @@ import { IDelegate } from '~src/types';
 export const getDelegatesData = async (network: string, address?: string) => {
 	if(!network || !isOpenGovSupported(network)) return [];
 	if(address && !(getEncodedAddress(String(address), network) || Web3.utils.isAddress(String(address)))) return [];
+	// TODO: Implement for single address
 
 	const subsquidFetches: {[index:string]: any} = [];
 

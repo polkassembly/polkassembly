@@ -354,3 +354,11 @@ export interface IDelegation {
   balance: string;
   createdAt: Date
 }
+
+export interface IDelegate {
+	name?: string
+	address: string
+	bio: string
+	active_delegation_count: number
+	voted_proposals_count: number
+}

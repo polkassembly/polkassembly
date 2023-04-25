@@ -343,7 +343,7 @@ export enum ETrackDelegationStatus {
   All = 'all',
 	Delegated = 'delegated',
 	Received_Delegation = 'received_delegation',
-	Undelegated = 'undelegated',
+	Undelegated = 'undelegated'
 }
 
 export interface IDelegation {

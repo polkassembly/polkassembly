@@ -77,8 +77,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 		setFormDisabled(true);
 		setLoading(true);
 		try {
-			if ((!url || !url.trim()) && (content !== updatedContent || title !== updatedTitle)) {
-				// TODO: Sanitization of content and title
+			if ((!url || !url.trim())) {
 				const { data , error: editError } = await nextApiClientFetch<IEditPostResponse>('api/v1/auth/actions/editPost', {
 					content: updatedContent,
 					postId: postIndex,

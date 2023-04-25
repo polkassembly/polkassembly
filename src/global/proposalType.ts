@@ -177,7 +177,7 @@ export function getProposalTypeFromSinglePostLink(link: string): ProposalType | 
 	case 'tip':
 		return ProposalType.TIPS;
 	case 'treasury':
-	case ProposalType.TREASURY_PROPOSALS:
+		return ProposalType.TREASURY_PROPOSALS;
 	}
 }
 

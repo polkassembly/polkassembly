@@ -89,7 +89,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${address}&track=${trackDetails?.trackId}`);
 
 		if(data){
-	
+
 			setDelegationDetails(data[0]);
 			const rowData: ITrackRowData[] = data[0]?.delegations?.map((delegation : IDelegation, index: number) => {
 				return { action: 'Undelegate', balance:delegation?.balance , delegatedFrom: delegation?.from, delegatedOn: delegation?.createdAt, delegatedTo:delegation?.to, index: index + 1, lockPeriod: delegation?.lockPeriod };

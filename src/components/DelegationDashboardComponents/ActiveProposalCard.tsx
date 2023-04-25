@@ -41,7 +41,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 	const [balance, setBalance] = useState<BN>(BN_ZERO);
 	const [isAye, setIsAye] = useState<boolean>(false);
 	const [isNay, setIsNay] = useState<boolean>(false);
-	// const [isAbstain, setIsAbstain] = useState<boolean>(false);
+	const [isAbstain, setIsAbstain] = useState<boolean>(false);
 	const { delegationDashboardAddress: address } = useUserDetailsContext();
 
 	let titleString = proposal?.title || proposal?.method || noTitle;
@@ -109,13 +109,17 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 				setIsNay(true);
 				setBalance(votingData?.no?.votes[0].balance.value);
 			}
+			else if(votingData?.abstain?.count === 1){
+				setIsAbstain(true);
+				setBalance(votingData?.abstain?.votes[0].balance.value);
+			}
 		}
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network,votingData]);
 
 	return <Link href={`/referenda/${proposal?.post_id}`}>
-		<div className={`border-[#D2D8E0] border-solid border-[1px] rounded-t-[6px] hover:border-[#E5007A] ${status === ETrackDelegationStatus.Undelegated && 'rounded-[6px]'}`}>
+		<div className={'border-[#D2D8E0] border-solid border-[1px] rounded-t-[6px] hover:border-[#E5007A] rounded-[6px]'}>
 			<div className='px-6 py-6 border-[1px] flex justify-between max-sm:gap-2 max-sm:items-start max-sm:flex-col hover:border-pink_primary'>
 				<div className='flex flex-col '>
 					<h2 className='text-sm text-medium text-[#243A57]'>{mainTitle}</h2>
@@ -149,24 +153,28 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 				<div className='flex justify-center mt-2 gap-2'>
 					<VoteIcon/><span className='text-pink_primary text-sm font-medium'>Cast Vote</span>
 				</div>
+				{console.log(status,votingData)}
 			</div>
-			{votingData && status !== ETrackDelegationStatus.Undelegated && isAye || isNay
-				? <div className={`border-solid py-2 px-6 flex gap-2 border-[1px] ${isAye && 'bg-[#F0FCF6] border-[#2ED47A]'} ${!isAye && 'bg-[#fff1f4] border-[#FF3C5F]'}`}>
+			{votingData && status !== ETrackDelegationStatus.Undelegated && isAye || isNay || isAbstain
+				? <div className={`border-solid py-2 px-6 flex gap-2 border-[1px] rounded-b-[5px] ${isAye && 'bg-[#F0FCF6] border-[#2ED47A]'} ${isNay && 'bg-[#fff1f4] border-[#FF3C5F]'} ${isAbstain && 'bg-[#f9f9f9] border-[#ABABAC]'}`}>
 					{status === ETrackDelegationStatus.Delegated && <Address address={String(delegatedTo)} displayInline/>}
 					<div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
-          Voted:<span className='flex justify-center items-center'>
-							{isAye ? <AyeIcon/> : <NayIcon/>}</span>
+          Voted:
 					</div>
-					<div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
+					{!isAbstain ? <div className='flex gap-2'>
+						<span className='flex justify-center items-center -ml-1'>
+							{isAye && <AyeIcon/>} {isNay && <NayIcon/>}</span>
+						<div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
               Balance:<span className='text-[#243A57] font-medium'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
-					</div>
-					<div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
+						</div>
+						<div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
                 Conviction:<span className='text-[#243A57] font-medium'>
-							{isAye ? votingData?.yes?.votes[0]?.lockPeriod : votingData?.no?.votes[0]?.lockPeriod}x</span>
-					</div>
+								{isAye ? votingData?.yes?.votes[0]?.lockPeriod : votingData?.no?.votes[0]?.lockPeriod}x</span>
+						</div>
+					</div> :<div className='text-[#485F7D] font-medium text-xs ml-1 flex items-center'>Abstain</div> }
 				</div>
 				:
-				votingData &&  <div className='border-solid py-2 px-6 flex gap-2 border-[1px] bg-[#fff7ef] border-[#F89118]'>
+				votingData &&  <div className='border-solid py-2 px-6 flex gap-2 border-[1px] rounded-b-[5px] bg-[#fff7ef] border-[#F89118]'>
 					{status === ETrackDelegationStatus.Delegated &&  <Address address={String(delegatedTo)} displayInline/>}
 					<div className='text-xs text-[#485F7D] flex items-center justify-center'>Not Voted yet <CautionIcon className='ml-1'/></div>
 				</div>}

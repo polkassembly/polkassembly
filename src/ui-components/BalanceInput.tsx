@@ -13,7 +13,6 @@ import { inputToBn } from '../util/inputToBn';
 import HelperTooltip from './HelperTooltip';
 import Balance from '~src/components/Balance';
 import formatBnBalance from '~src/util/formatBnBalance';
-import { BN_ZERO } from '@polkadot/util';
 
 interface Props{
 	className?: string
@@ -48,7 +47,6 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 			}
 		</label>
 		<Form.Item
-			initialValue= {balance ? (formatBnBalance (balance,{ numberAfterComma:2, withUnit: false }, network )) : BN_ZERO}
 			name="balance"
 			rules={[
 				{
@@ -67,15 +65,24 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 				}
 			]}
 		>
-			<InputNumber
+			{balance ? <InputNumber
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name='balance'
 				className='text-sm text-sidebarBlue w-full h-[40px] border-2 rounded-md mt-0'
 				onChange={onBalanceChange}
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}
-
+				value={Number(formatBnBalance (balance,{ numberAfterComma:2, withUnit: false }, network ))}
 			/>
+				:<InputNumber
+					addonAfter={chainProperties[network]?.tokenSymbol}
+					name='balance'
+					className='text-sm text-sidebarBlue w-full h-[40px] border-2 rounded-md mt-0'
+					onChange={onBalanceChange}
+					placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
+					size={size || 'large'}
+
+				/> }
 		</Form.Item>
 	</div>;
 };

@@ -28,11 +28,12 @@ interface Props{
   className?: string;
   open: boolean;
   setOpen: (pre: boolean) => void;
+  closable?: boolean;
 }
 
 const ZERO_BN = new BN(0);
 
-const WalletConnectModal = ({ className, open, setOpen }: Props) => {
+const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
@@ -44,7 +45,6 @@ const WalletConnectModal = ({ className, open, setOpen }: Props) => {
 	const [defaultWallets, setDefaultWallets]=useState<any>({});
 	const [wallet,setWallet]=useState<Wallet>();
 	const [extensionOpen, setExtentionOpen] = useState<boolean>(false);
-	const [errorArr, setErrorArr] = useState<string[]>([]);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 
 	const handleSubmit = () => {
@@ -140,7 +140,8 @@ const WalletConnectModal = ({ className, open, setOpen }: Props) => {
 		open = {open}
 		title = {<div className='text-center text-[20px] font-semibold text-[#243A57]'>Connect your wallet</div>}
 		footer = {[<Button onClick={handleSubmit} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-6 rounded-[4px]'>Continue</Button>]}
-		closable = {false}
+		closable = {closable? true : false}
+		onCancel={() => closable ? setOpen(false) : setOpen(true)}
 	>
 		<Spin spinning={loading} indicator={<LoadingOutlined />}>
 			<div className='flex flex-col'>
@@ -162,10 +163,6 @@ const WalletConnectModal = ({ className, open, setOpen }: Props) => {
 
 				{extensionOpen && <ErrorAlert errorMsg='You need at least one account in your wallet extenstion to use this feature.' />}
 				{extensionOpen && <ExtensionNotDetected />}
-
-				{
-					errorArr.length > 0 && errorArr.map(errorMsg => <ErrorAlert key={errorMsg} className='mb-6' errorMsg={errorMsg} />)
-				}
 
 				{
 					!extensionOpen &&

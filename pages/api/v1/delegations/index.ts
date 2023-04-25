@@ -14,7 +14,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 export interface ITrackDelegation {
 	track: number
 	active_proposals_count: number
-	status: ETrackDelegationStatus
+	status: ETrackDelegationStatus[]
 	recieved_delegation_count: number
 	delegations: IDelegation[]
 }
@@ -51,21 +51,29 @@ export const getDelegationDashboardData = async (address: string, network: strin
 			active_proposals_count: trackDelegationData.value.data.proposalsConnection?.totalCount || 0,
 			delegations: votingDelegationsArr,
 			recieved_delegation_count: 0,
-			status: ETrackDelegationStatus.Undelegated,
+			status: [],
 			track: Number(track)
 		};
 
 		// undelegated
 		if(!votingDelegationsArr.length) {
+			trackDelegation.status.push(ETrackDelegationStatus.Undelegated);
 			result.push(trackDelegation);
 			continue;
-		}else if(votingDelegationsArr[0].from === address) {
-			// address has delegated to someone for this track
-			trackDelegation.status = ETrackDelegationStatus.Delegated;
-		}else {
-			// address has received delegation for this track
-			trackDelegation.status = ETrackDelegationStatus.Received_Delegation;
-			trackDelegation.recieved_delegation_count = votingDelegationsArr.length;
+		}
+
+		for (const votingDelegation of votingDelegationsArr) {
+			if(trackDelegation.status.length >= 2) break;
+
+			if(votingDelegation.from === address) {
+				if(!trackDelegation.status.includes(ETrackDelegationStatus.Delegated)) trackDelegation.status.push(ETrackDelegationStatus.Delegated);
+			}else {
+				if(!trackDelegation.status.includes(ETrackDelegationStatus.Received_Delegation)) trackDelegation.status.push(ETrackDelegationStatus.Received_Delegation);
+			}
+		}
+
+		if(trackDelegation.status.includes(ETrackDelegationStatus.Received_Delegation)) {
+			trackDelegation.recieved_delegation_count = votingDelegationsArr.filter((delegation) => delegation.from !== address).length;
 		}
 
 		result.push(trackDelegation);

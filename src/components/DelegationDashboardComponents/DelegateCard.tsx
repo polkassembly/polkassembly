@@ -2,31 +2,50 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Address from '~src/ui-components/Address';
 import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
 import { Button } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
 import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
+import userProfileBalances from '~src/util/userProfieBalances';
+import { chainProperties } from '~src/global/networkConstants';
+import { useApiContext, useNetworkContext } from '~src/context';
+import formatBnBalance from '~src/util/formatBnBalance';
+import styled from 'styled-components';
 
 interface Props{
   trackName: string;
   delegate: IDelegate;
+  className: string;
 }
 
-const DelegateCard = ({ trackName, delegate }: Props) => {
+const DelegateCard = ({ trackName, delegate, className }: Props) => {
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
+	const [balance, setBalance] = useState<string>('0');
+	const [lockBalance, setLockBalance] = useState<string>('0');
+	const [transferableBalance, setTransferableBalance] = useState<string>('0');
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkContext();
+	const unit =`${chainProperties[network]?.tokenSymbol}`;
+
+	useEffect(() => {
+
+		userProfileBalances({ address: delegate?.address , api, apiReady, network, setBalance, setLockBalance, setTransferableBalance });
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address, api, apiReady]);
 
 	const handleClick = () => {
 		setOpen(true);
 		setAddress(address);
 	};
-	return <div className=' border-solid border-[1px] border-[#D2D8E0] rounded-[6px]'>
+	return <div className={`border-solid border-[1px] border-[#D2D8E0] rounded-[6px] ${className}`}>
 
-		{ <div className='h-[35px] border-[#3C74E1] border-solid border-[1px] rounded-t-[5px] bg-[#e2eafb] px-[19px] flex items-center gap-[11px]'>
+		{delegate?.isNovaWalletDelegate && <div className='h-[35px] border-[#3C74E1] border-solid border-[1px] rounded-t-[5px] bg-[#e2eafb] px-[19px] flex items-center gap-[11px]'>
 			<NovaWalletIcon/>
 			<span className='text-xs text-[#798aa2]'>Nova Wallet Delegate</span>
 		</div>}
@@ -41,13 +60,13 @@ const DelegateCard = ({ trackName, delegate }: Props) => {
 			</Button>
 		</div>
 
-		<p className = 'text-sm tracking-[0.015em] text-[#576D8B] pl-[56px] h-[42px] pr-7 mb-[16px] overflow-hidden truncate mt-2'>
+		<p className = 'text-sm tracking-[0.015em] text-[#576D8B] pl-[56px] h-[60px] mb-[16px] mt-2 w-[95%] bio'>
 			{delegate?.bio ? delegate?.bio : 'No Bio'}
 		</p>
 		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0]'>
 			<div className='pt-4 flex items-center flex-col w-[33%] text-[24px] font-medium text-[#243A57]'>
-				<div className='flex gap-1 items-end justify-center'> 1k
-					<span className='text-sm font-normal text-[#243A57]'>DOT</span>
+				<div className='flex gap-1 items-end justify-center'> {formatBnBalance(balance,{ numberAfterComma:2, withUnit:false },network)}
+					<span className='text-sm font-normal text-[#243A57]'>{unit}</span>
 				</div>
 				<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>
 			</div>
@@ -64,4 +83,11 @@ const DelegateCard = ({ trackName, delegate }: Props) => {
 	</div>;
 };
 
-export default DelegateCard;
+export default styled(DelegateCard)`
+.bio{
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical; 
+  width: 250px;
+  overflow: hidden;
+}`;

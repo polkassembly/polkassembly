@@ -8,15 +8,23 @@ import BalanceIcon from '~assets/icons/total-balance.svg';
 import LockBalanceIcon from '~assets/icons/lock-balance.svg';
 import RightTickIcon from '~assets/icons/right-tick.svg';
 import NextUnlockIcon from '~assets/icons/next-unlock.svg';
-import { Divider } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import userProfileBalances from '~src/util/userProfieBalances';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
+import Address from '~src/ui-components/Address';
+import { DownOutlined } from '@ant-design/icons';
+import dynamic from 'next/dynamic';
 
 interface Props{
   className?: string;
   address: string;
 }
+
+const DelegationWalletConnectModal = dynamic(() => import('./DelegationWalletConnectModal'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
 
 const ProfileBalances = ({ className, address }: Props ) => {
 
@@ -26,7 +34,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
-	console.log(balance, lockBalance, transferableBalance);
+	const [openModal, setOpenModal] = useState<boolean>(false);
 
 	useEffect(() => {
 
@@ -35,55 +43,61 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady]);
 
-	return <div className={`${className} flex gap-6 px-[70px] max-md:px-[10px] py-[17px] items-center`}>
-		<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
-			<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-				{formatBnBalance(balance, { numberAfterComma: 2, withUnit: false }, network)}
-				<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
-			<div className='flex items-center justify-center gap-2'>
-				<BalanceIcon/>
-				<span className='text-white text-sm font-normal tracking-[0.01em]'>
-          Balance
-				</span>
-			</div>
-		</div>
-		<Divider  type= 'vertical' style={{ borderLeft: '1px solid #D2D8E0',height:'100%' }} />
-		<div className='flex gap-6 py-2 justify-start'>
-			<div className='h-[71px] flex flex-col py-2 gap-1'>
-				<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-					{formatBnBalance(transferableBalance, { numberAfterComma: 2, withUnit: false }, network)}
-					<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
-				<div className='flex items-center justify-center gap-2'>
-					<RightTickIcon/>
-					<span className='text-white text-sm font-normal tracking-[0.01em]'>
-          Transferable
-					</span>
-				</div>
-			</div>
+	return <div className={'flex justify-between items-center  w-full px-[70px] '}>
+		<div className={`${className} flex  max-md:px-[10px] py-[17px] items-center max-md:flex-col`}>
 			<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
 				<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-					{formatBnBalance(lockBalance, { numberAfterComma: 2, withUnit: false }, network)}
+					{formatBnBalance(balance, { numberAfterComma: 2, withUnit: false }, network)}
 					<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
 				<div className='flex items-center justify-center gap-2'>
-					<LockBalanceIcon/>
+					<BalanceIcon/>
 					<span className='text-white text-sm font-normal tracking-[0.01em]'>
+          Balance
+					</span>
+				</div>
+			</div>
+			<Divider  type= 'vertical' style={{ borderLeft: '1px solid #D2D8E0',height:'100%' }} />
+			<div className='flex gap-6 py-2 justify-start'>
+				<div className='h-[71px] flex flex-col py-2 gap-1'>
+					<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
+						{formatBnBalance(transferableBalance, { numberAfterComma: 2, withUnit: false }, network)}
+						<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
+					<div className='flex items-center justify-center gap-2'>
+						<RightTickIcon/>
+						<span className='text-white text-sm font-normal tracking-[0.01em]'>
+          Transferable
+						</span>
+					</div>
+				</div>
+				<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
+					<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
+						{formatBnBalance(lockBalance, { numberAfterComma: 2, withUnit: false }, network)}
+						<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
+					<div className='flex items-center justify-center gap-2'>
+						<LockBalanceIcon/>
+						<span className='text-white text-sm font-normal tracking-[0.01em]'>
              Total Locked
+						</span>
+					</div>
+				</div>
+			</div>
+			<Divider  type= 'vertical' style={{ borderLeft: '1px solid #D2D8E0',height:'100%' }} />
+			<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
+				<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
+					{formatBnBalance('55', { numberAfterComma: 2, withUnit: false }, network)}
+					<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
+				<div className='flex items-center justify-center gap-2'>
+					<NextUnlockIcon/>
+					<span className='text-white text-sm font-normal tracking-[0.01em]'>
+          Next Unlock
 					</span>
 				</div>
 			</div>
 		</div>
-		<Divider  type= 'vertical' style={{ borderLeft: '1px solid #D2D8E0',height:'100%' }} />
-		<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
-			<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-				{formatBnBalance('55', { numberAfterComma: 2, withUnit: false }, network)}
-				<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
-			<div className='flex items-center justify-center gap-2'>
-				<NextUnlockIcon/>
-				<span className='text-white text-sm font-normal tracking-[0.01em]'>
-          Next Unlock
-				</span>
-			</div>
-		</div>
+		{ address.length > 0 && <div onClick={() => setOpenModal(true)} className='border-solid  h-[40px] flex justify-end gap-2 px-[12px] bg-[#981059] rounded-[8px] border-[1px] border-[#D2D8E0]'>
+			<Address displayInline address={address} disableAddressClick/><DownOutlined className='text-white'/>
+		</div>}
+		<DelegationWalletConnectModal open={openModal} setOpen={setOpenModal} closable={true}/>
 	</div>;
 };
 export default ProfileBalances;

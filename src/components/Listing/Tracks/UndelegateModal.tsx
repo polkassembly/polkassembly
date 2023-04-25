@@ -188,7 +188,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 											7:{ label:<div>6x</div>, style: { color: '#243A57', fontSize:'14px',marginTop:'16px' } }  }}
 										min={1}
 										max={7}
-										defaultValue={conviction}
+										defaultValue={conviction+1}
 									/></div>
 							</div>
 							<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>

@@ -27,7 +27,7 @@ import { ETrackDelegationStatus } from '~src/types';
 interface Props{
   proposal: IPostListing;
   trackDetails: any;
-  status: ETrackDelegationStatus;
+  status: ETrackDelegationStatus[];
   delegatedTo: string | null;
 }
 
@@ -69,12 +69,12 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 		if(!address || !proposal?.post_id) return;
 		let votesAddress = '';
 
-		if(status === ETrackDelegationStatus.Undelegated){
+		if(status.includes(ETrackDelegationStatus.Undelegated)){
 			return;
 		}
-		if(status === ETrackDelegationStatus.Received_Delegation){
+		if(status.includes(ETrackDelegationStatus.Received_Delegation)){
 			votesAddress = address;
-		}else if(status === ETrackDelegationStatus.Delegated && delegatedTo !== null){
+		}else if(status.includes(ETrackDelegationStatus.Delegated) && delegatedTo !== null){
 			votesAddress = delegatedTo;
 		}
 
@@ -154,9 +154,9 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 					<VoteIcon/><span className='text-pink_primary text-sm font-medium'>Cast Vote</span>
 				</div>
 			</div>
-			{votingData && status !== ETrackDelegationStatus.Undelegated && isAye || isNay || isAbstain
+			{votingData && !status.includes(ETrackDelegationStatus.Undelegated) && isAye || isNay || isAbstain
 				? <div className={`border-solid py-2 px-6 flex gap-2 border-[1px] rounded-b-[5px] ${isAye && 'bg-[#F0FCF6] border-[#2ED47A]'} ${isNay && 'bg-[#fff1f4] border-[#FF3C5F]'} ${isAbstain && 'bg-[#f9f9f9] border-[#ABABAC]'}`}>
-					{status === ETrackDelegationStatus.Delegated && <Address address={String(delegatedTo)} displayInline/>}
+					{status.includes(ETrackDelegationStatus.Delegated) && <Address address={String(delegatedTo)} displayInline/>}
 					<div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
           Voted:
 					</div>
@@ -174,7 +174,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 				</div>
 				:
 				votingData &&  <div className='border-solid py-2 px-6 flex gap-2 border-[1px] rounded-b-[5px] bg-[#fff7ef] border-[#F89118]'>
-					{status === ETrackDelegationStatus.Delegated &&  <Address address={String(delegatedTo)} displayInline/>}
+					{status.includes(ETrackDelegationStatus.Delegated) &&  <Address address={String(delegatedTo)} displayInline/>}
 					<div className='text-xs text-[#485F7D] flex items-center justify-center'>Not Voted yet <CautionIcon className='ml-1'/></div>
 				</div>}
 		</div></Link>;

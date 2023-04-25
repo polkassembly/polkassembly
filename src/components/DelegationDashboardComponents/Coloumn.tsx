@@ -86,9 +86,9 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-md:flex-col max-lg:gap-[2px] max-lg:text-center'>
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-lg:flex-col max-lg:gap-[2px] max-lg:text-center shrink-0'>
 					{ handleTracksIcon(track)}<span>{track}</span>
-				</h2>;}, title: 'Tracks',width: '23%'
+				</div>;}, title: 'Tracks',width: '25%'
 		},
 
 		{ dataIndex: 'description', key: 3,
@@ -106,8 +106,12 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 			title: 'Active proposals',width: '10%' },
 
 		{ dataIndex: 'status', key: 5, render: (status) =>
-		{ return <div className='text-[#243A57] tracking-wider flex items-center justify-start font-medium'>
-			<h2 className={`text-[12px] ${status === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${status === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${status === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center`}>{status?.split('_').join(' ').charAt(0).toUpperCase()+status?.split('_').join(' ').slice(1)} </h2>
+		{ return <div className='text-[#243A57] tracking-wider flex items-center justify-start font-medium gap-2 max-md:flex-col'>
+
+			{status.map((item: ETrackDelegationStatus, index:number)  => <h2 key={index} className={`text-[12px] ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF] truncate w-[95px]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center`}>
+				{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
+			</h2>)}
+
 		</div >;
 		}, title: 'Status',width: '20%' }];
 
@@ -120,9 +124,9 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-md:flex-col max-lg:gap-[2px] max-lg:text-center'>
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 					{ handleTracksIcon(track)}<span>{track}</span>
-				</h2>;}, title: 'Tracks',width: '23%'
+				</div>;}, title: 'Tracks',width: '23%'
 		},
 
 		{ dataIndex: 'description', key: 3,
@@ -155,9 +159,9 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-md:flex-col max-lg:gap-[2px] max-lg:text-center'>
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 					{ handleTracksIcon(track)}<span>{track}</span>
-				</h2>;}, title: 'Tracks',width: '23%'
+				</div>;}, title: 'Tracks',width: '23%'
 		},
 
 		{ dataIndex: 'description', key: 3,
@@ -183,9 +187,9 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-md:flex-col max-lg:gap-[2px] max-lg:text-center'>
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 					{ handleTracksIcon(track)}<span>{track}</span>
-				</h2>;}, title: 'Tracks',width: '23%'
+				</div>;}, title: 'Tracks',width: '23%'
 		},
 
 		{ dataIndex: 'description', key: 3,
@@ -256,7 +260,7 @@ const GetTracksColumns = (status :ETrackDelegationStatus,setOpen: (pre: boolean)
 			{ dataIndex:'index', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{index}</h4>, title: '#',width: '10%' } ,
 			{ dataIndex:'delegatedFrom', key:1, render: (address) => <div className='text-sm text-[#243A57] font-normal text-center flex justify-start items-center'>
 				<Address address= {address || ''} displayInline />
-			</div>, title: 'Delegated to', width: '20%' },
+			</div>, title: 'Delegated by', width: '20%' },
 			{ dataIndex:'balance', key:1, render: (balance) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</h4>, title: 'Balance', width: '15%' },
 			{ dataIndex:'lockPeriod', key:1, render: (conviction) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{conviction}x</h4>, title: 'Conviction', width: '15%' },
 			{ dataIndex:'delegatedOn', key:1, render: (date) => <h4 className='text-sm text-[#243A57] font-normal text-start ml-1'>{dayjs(date).format('DD MMM YYYY')}</h4>, title: 'Delegated on', width: '20%' }

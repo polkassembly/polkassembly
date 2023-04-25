@@ -16,6 +16,7 @@ import { useRouter } from 'next/router';
 import { ETrackDelegationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
+import { IDelegation } from '~src/types';
 
 interface Props{
   className?: string;
@@ -27,7 +28,7 @@ export interface ITrackDataType{
   track: string;
   description: string;
   active_proposals: number;
-  status?: string;
+  status?: ETrackDelegationStatus[];
   delegated_to?: any[];
   delegated_by?: any[];
   trackNo: number;
@@ -68,18 +69,19 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 			setRowsData(data);
 		}
 		if(currentStatus === ETrackDelegationStatus.Received_Delegation){
-			const filteredData = data.filter((row) => row.status === ETrackDelegationStatus.Received_Delegation);
+			const filteredData = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Received_Delegation));
 			const rows = filteredData.map((item, index) => {return { ...item, index: index+1 };} );
 			setRowsData(rows);
 		}
 		if(currentStatus === ETrackDelegationStatus.Undelegated){
-			const filteredData = data.filter((row) => row.status === ETrackDelegationStatus.Undelegated);
+			const filteredData = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Undelegated));
 			const rows = filteredData.map((item, index) => {return { ...item, index: index+1 };} );
 			setRowsData(rows);
 		}
 		if(currentStatus === ETrackDelegationStatus.Delegated){
-			const filteredData = data.filter((row) => row.status === ETrackDelegationStatus.Delegated);
+			const filteredData = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Delegated));
 			const rows = filteredData.map((item, index) => {return { ...item, index: index+1 };} );
+			console.log(rows,'de');
 			setRowsData(rows);
 		}
 
@@ -91,7 +93,6 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${address}`);
-
 		if(data){
 			const rows = data?.map((track: any, index: number) => {
 
@@ -109,13 +110,11 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 
 				return {
 					active_proposals: track?.active_proposals_count,
-					delegated_by: track?.delegations,
-					delegated_to: track?.delegations,
+					delegated_by: track?.status?.includes(ETrackDelegationStatus.Received_Delegation) ? track?.delegations.filter((row:IDelegation) => row?.to === address) : null, //rece
+					delegated_to: track?.status?.includes(ETrackDelegationStatus.Delegated) ? track?.delegations.filter((row:IDelegation) => row?.to !== address) : null,
 					description: trackData[1]?.description,
 					index: index+1,
-					status: track.status === ETrackDelegationStatus.Delegated && ETrackDelegationStatus.Delegated
-        ||  track?.status === ETrackDelegationStatus.Undelegated && ETrackDelegationStatus.Undelegated
-        ||  track?.status === ETrackDelegationStatus.Received_Delegation && ETrackDelegationStatus.Received_Delegation || ETrackDelegationStatus.All ,
+					status: track?.status,
 					track: trackData[0] === 'root' ? 'Root': trackData[0]?.split(/(?=[A-Z])/).join(' '),
 					trackNo: track?.track
 				};
@@ -134,11 +133,11 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 	useEffect(() => {
 		data.length === 0 && getData();
 		if(data.length > 0){
-			const receivedDelegations = data.filter((row) => row.status === ETrackDelegationStatus.Received_Delegation);
+			const receivedDelegations = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Received_Delegation));
 			setReceivedDelegationCount(receivedDelegations?.length);
-			const delegateDelegations = data.filter((row) => row.status === ETrackDelegationStatus.Delegated);
+			const delegateDelegations = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Delegated));
 			setDelegatedCount(delegateDelegations?.length);
-			const undelegateDelegations = data.filter((row) => row.status === ETrackDelegationStatus.Undelegated);
+			const undelegateDelegations = data.filter((row) => row.status?.includes(ETrackDelegationStatus.Undelegated));
 			setUndelegatedCount(undelegateDelegations?.length);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -249,6 +248,11 @@ export default styled(DashboardTrackListing)`
 }
 .column .ant-table-thead > tr > th:nth-child(1){
   text-align: center;
+}
+@media only screen and (max-width: 1024px) {
+ .column .ant-table-thead > tr > th:nth-child(2){
+  text-align: center;
+}
 }
 
 `;

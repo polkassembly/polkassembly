@@ -48,6 +48,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 			active_delegation_count: delegationCount,
 			address,
 			bio: novaDelegates[index].longDescription,
+			isNovaWalletDelegate: true,
 			name: novaDelegates[index].name,
 			voted_proposals_count: votesCount
 		};

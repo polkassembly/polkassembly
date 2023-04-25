@@ -343,7 +343,7 @@ export enum ETrackDelegationStatus {
   All = 'all',
 	Delegated = 'delegated',
 	Received_Delegation = 'received_delegation',
-	Undelegated = 'undelegated',
+	Undelegated = 'undelegated'
 }
 
 export interface IDelegation {
@@ -361,4 +361,5 @@ export interface IDelegate {
 	bio: string
 	active_delegation_count: number
 	voted_proposals_count: number
+  isNovaWalletDelegate?: boolean
 }

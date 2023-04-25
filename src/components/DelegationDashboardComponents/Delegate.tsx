@@ -2,25 +2,24 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Popover, Skeleton } from 'antd';
+import { Button, Input, Skeleton } from 'antd';
+
+import dynamic from 'next/dynamic';
+import DelegateCard from './DelegateCard';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { IDelegate } from '~src/types';
+
+import Web3 from 'web3';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
 import DelegatedIcon from '~assets/icons/delegate.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
-import DelegateMenuIcon from '~assets/icons/delegate-menu.svg';
-import dynamic from 'next/dynamic';
-import DelegateCard from './DelegateCard';
-import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
-import ProfileIcon from '~assets/icons/delegate-popup-profile.svg';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
-import { IDelegate } from '~src/types';
-import NovaWalletDelegates from 'pages/api/v1/delegations/nova-delegates-kusama.json';
-import { addressPrefix } from '~src/global/networkConstants';
-import { checkAddress } from '@polkadot/util-crypto';
-import Web3 from 'web3';
-import AddressInput from '~src/ui-components/AddressInput';
+// import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
+// import ProfileIcon from '~assets/icons/delegate-popup-profile.svg';
+// import DelegateMenuIcon from '~assets/icons/delegate-menu.svg';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active /> ,
@@ -45,24 +44,6 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 	// const [selectedWallet ,setSelectedWallet] = useState<string>('');
 	const { network } = useNetworkContext();
 
-	const isValidMetaAddress = Web3.utils.isAddress(address, addressPrefix[network]);
-	const [validAddress] = checkAddress(address, addressPrefix[network]);
-
-	console.log(isValidMetaAddress, validAddress);
-
-	// const filterByWallet = (wallet: string) => {
-
-	// 	if(wallet === 'others'){
-	// 		setFilteredData(delegatesData);
-	// 	}
-	// 	else if(wallet === 'nova-wallet'){
-	// 	}
-	// };
-
-	const handleChange = (e: any) => {
-		setAddress(e.target.value);
-
-	};
 	const handleClick = () => {
 		setOpen(true);
 		setAddress(address);
@@ -83,9 +64,13 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 		}else{
 			console.log(error);
 		}
+		setLoading(false);
+
 	};
+
 	useEffect(() => {
 		delegatesData.length === 0 && getData();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return <div className=  {`${className} rounded-[14px] bg-white py-[24px] px-[37px] mt-[22px]`}>
@@ -106,17 +91,9 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 			<div className='flex gap-4 items-center'>
 				<div className='text-[#576D8BCC] font-normal text-[14px] h-[48px] border-[1px] border-solid border-[#D2D8E0] rounded-md flex items-center justify-between w-full'>
 
-					<AddressInput
-						defaultAddress={address}
-						placeholder='Enter address to Delegate vote'
-						inputClassName='h-[45px] mt-0 border-none'
-						className='text-[#485F7D] text-sm w-full mt-[5px] '
-						onChange={(address) => setAddress(address)}
-						size='large'
-						skipFormatCheck={true}
-					/>
+					<Input onChange={(e) => setAddress(e.target.value)} value={address} className='h-[44px] border-none'/>
 
-					<Button onClick={handleClick}  className='h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1'>
+					<Button onClick={handleClick} disabled={!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address))} className='h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1'>
 						<DelegatesProfileIcon/>
 						<span className='text-white text-sm font-medium'>
               Delegate
@@ -144,9 +121,9 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 				</Popover> */}
 			</div>
 
-			<div className='mt-6 grid grid-cols-2 max-md:grid-cols-1 gap-6'>
+			{!loading ? <div className='mt-6 grid grid-cols-2 max-md:grid-cols-1 gap-6'>
 				{delegatesData.map((delegate, index) => <DelegateCard key={ index } trackName={ trackDetails?.name } delegate={ delegate } />)}
-			</div>
+			</div> : <Skeleton className='mt-6'/>}
 
 		</div>}
 

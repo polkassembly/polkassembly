@@ -14,7 +14,7 @@ interface Props{
   className?: string;
   posts: IPostListing[];
   trackDetails: any;
-  status: ETrackDelegationStatus;
+  status: ETrackDelegationStatus[];
   delegatedTo: string | null;
 
 }

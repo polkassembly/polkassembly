@@ -45,6 +45,7 @@ import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
 import Curves from './Referenda/Curves';
 import CloseIcon from 'public/assets/icons/close.svg';
+import PostEditOrLinkCTA from './PostEditOrLinkCTA';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -72,7 +73,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [lastVote, setLastVote] = useState<string | null | undefined>(undefined);
 
 	const { walletConnectProvider } = useUserDetailsContext();
-	const { postData: { created_at, track_number } } = usePostDataContext();
+	const { postData: { created_at, track_number, post_link } } = usePostDataContext();
 	const [thresholdOpen, setThresholdOpen] = useState(false);
 
 	const metaMaskError = useHandleMetaMask();
@@ -455,6 +456,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		<>
 			{<div className={className}>
 				<Form>
+					{
+						!post_link && canEdit && <>
+							<PostEditOrLinkCTA />
+						</>
+					}
 					{proposalType === ProposalType.COUNCIL_MOTIONS && <>
 						{canVote &&
 							<VoteMotion

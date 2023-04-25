@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Input, Popover, Skeleton } from 'antd';
 
 import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
@@ -13,6 +13,14 @@ import dynamic from 'next/dynamic';
 import DelegateCard from './DelegateCard';
 import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
 import ProfileIcon from '~assets/icons/delegate-popup-profile.svg';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { IDelegate } from '~src/types';
+import NovaWalletDelegates from 'pages/api/v1/delegations/nova-delegates-kusama.json';
+import { addressPrefix } from '~src/global/networkConstants';
+import { checkAddress } from '@polkadot/util-crypto';
+import Web3 from 'web3';
+import AddressInput from '~src/ui-components/AddressInput';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active /> ,
@@ -26,9 +34,30 @@ interface Props{
 
 const Delegate = ( { className,trackDetails }: Props ) => {
 
+	const { api, apiReady } = useApiContext();
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
+	const { delegationDashboardAddress } = useUserDetailsContext();
 	const [open, setOpen] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
+	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
+	// const [filteredData, setFilteredData] = useState<IDelegate[]>([]);
+	// const [selectedWallet ,setSelectedWallet] = useState<string>('');
+	const { network } = useNetworkContext();
+
+	const isValidMetaAddress = Web3.utils.isAddress(address, addressPrefix[network]);
+	const [validAddress] = checkAddress(address, addressPrefix[network]);
+
+	console.log(isValidMetaAddress, validAddress);
+
+	// const filterByWallet = (wallet: string) => {
+
+	// 	if(wallet === 'others'){
+	// 		setFilteredData(delegatesData);
+	// 	}
+	// 	else if(wallet === 'nova-wallet'){
+	// 	}
+	// };
 
 	const handleChange = (e: any) => {
 		setAddress(e.target.value);
@@ -38,6 +67,26 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 		setOpen(true);
 		setAddress(address);
 	};
+
+	const getData = async() => {
+		if (!api || !apiReady ) return;
+
+		setLoading(true);
+
+		const { data, error } = await nextApiClientFetch<IDelegate[]>(`api/v1/delegations/delegates?address=${delegationDashboardAddress}`);
+
+		if(data){
+
+			setDelegatesData(data);
+			console.log(data);
+
+		}else{
+			console.log(error);
+		}
+	};
+	useEffect(() => {
+		delegatesData.length === 0 && getData();
+	}, []);
 
 	return <div className=  {`${className} rounded-[14px] bg-white py-[24px] px-[37px] mt-[22px]`}>
 		<div className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between'>
@@ -50,36 +99,59 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 			<div onClick={() => setExpandProposals(!expandProposals)} className='cursor-pointer p-2'>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
 		</div>
 		{expandProposals && <div className='mt-[24px]'>
-			<h4 className='text-sm font-normal text-[#243A57] mb-4'>Enter an address or Select from the list below to delegate your voting power</h4>
+			<h4 className='text-sm font-normal text-[#243A57] mb-4'>
+        Enter an address or Select from the list below to delegate your voting power
+			</h4>
+
 			<div className='flex gap-4 items-center'>
-				<div className='text-[#576D8BCC] font-normal text-[14px] h-[48px] border-[1px] border-solid border-[#D2D8E0] rounded-md flex items-center justify-between w-[93%] max-lg:w-[85%]'>
-					<Input onChange={(e) => handleChange(e)} type='text' placeholder='Enter address to Delegate vote' className='border-0 h-[46px]' />
-					<Button onClick={handleClick} disabled={address?.length === 0} className='h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1'>
+				<div className='text-[#576D8BCC] font-normal text-[14px] h-[48px] border-[1px] border-solid border-[#D2D8E0] rounded-md flex items-center justify-between w-full'>
+
+					<AddressInput
+						defaultAddress={address}
+						placeholder='Enter address to Delegate vote'
+						inputClassName='h-[45px] mt-0 border-none'
+						className='text-[#485F7D] text-sm w-full mt-[5px] '
+						onChange={(address) => setAddress(address)}
+						size='large'
+						skipFormatCheck={true}
+					/>
+
+					<Button onClick={handleClick}  className='h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1'>
 						<DelegatesProfileIcon/>
 						<span className='text-white text-sm font-medium'>
               Delegate
 						</span>
 					</Button>
 				</div>
-				<Popover
+				{/* <Popover
 					showArrow={false}
 					placement='bottomLeft'
 					content={<>
-						<div className='py-1 flex items-center gap-[11px] cursor-pointer'>
+						<div className='py-1 flex items-center gap-[11px] cursor-pointer'
+							// onClick={() => { setSelectedWallet('nova-wallet');filterByWallet('nova-wallet');}}
+						>
 							<NovaWalletIcon/>
 							<span className='text-sm text-[#243A57]'>Nova Wallet Delegates</span>
 						</div>
-						<div className='py-1 flex items-center gap-[11px] cursor-pointer'>
+						<div className='py-1 flex items-center gap-[11px] cursor-pointer'
+							//  onClick={() => { setSelectedWallet('others');filterByWallet('others');}}
+						>
 							<ProfileIcon/>
 							<span className='text-sm text-[#243A57]'>Others</span>
 						</div>
 					</>}>
 					<DelegateMenuIcon/>
-				</Popover>
+				</Popover> */}
 			</div>
-			<div className='mt-6'><DelegateCard trackName = {trackDetails?.name} /></div>
+
+			<div className='mt-6 grid grid-cols-2 max-md:grid-cols-1 gap-6'>
+				{delegatesData.map((delegate, index) => <DelegateCard key={ index } trackName={ trackDetails?.name } delegate={ delegate } />)}
+			</div>
+
 		</div>}
+
 		<DelegateModal trackNum={trackDetails?.trackId} defaultTarget={address} open={open} setOpen={setOpen} />
+
 	</div>;
 };
 export default Delegate;

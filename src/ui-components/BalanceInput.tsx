@@ -48,6 +48,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 		</label>
 		<Form.Item
 			name="balance"
+			initialValue={balance ? Number(formatBnBalance (balance,{ numberAfterComma:2, withUnit: false }, network )) : ''}
 			rules={[
 				{
 					message: 'Lock Balance is required.',
@@ -65,24 +66,15 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 				}
 			]}
 		>
-			{balance ? <InputNumber
+			<InputNumber
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name='balance'
 				className='text-sm text-sidebarBlue w-full h-[40px] border-2 rounded-md mt-0'
 				onChange={onBalanceChange}
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}
-				value={Number(formatBnBalance (balance,{ numberAfterComma:2, withUnit: false }, network ))}
-			/>
-				:<InputNumber
-					addonAfter={chainProperties[network]?.tokenSymbol}
-					name='balance'
-					className='text-sm text-sidebarBlue w-full h-[40px] border-2 rounded-md mt-0'
-					onChange={onBalanceChange}
-					placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
-					size={size || 'large'}
 
-				/> }
+			/>
 		</Form.Item>
 	</div>;
 };

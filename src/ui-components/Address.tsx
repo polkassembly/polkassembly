@@ -52,7 +52,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 	const router = useRouter();
 	const [username, setUsername] = useState('');
 
-	const substrate_addr =address ? getEncodedAddress(address, network) : address;
+	const substrate_addr = address ? getEncodedAddress(address, network) : address;
 	const fetchUsername = async () => {
 		if (!username) {
 			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${address}`);

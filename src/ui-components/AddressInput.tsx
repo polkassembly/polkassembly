@@ -22,10 +22,11 @@ interface Props{
 	placeholder?: string
 	size?: 'large' | 'small' | 'middle';
   defaultAddress?: string;
-	skipFormatCheck?: boolean
+	skipFormatCheck?: boolean;
+  inputClassName?: string;
 }
 
-const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck } : Props) => {
+const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName } : Props) => {
 	const { network } = useContext(NetworkContext);
 
 	const [address, setAddress] = useState<string>(defaultAddress ? defaultAddress : '');
@@ -77,8 +78,7 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 
 	return (
 		<div className={`${className} mb-2 mt-6`}>
-			<label className=' flex items-center text-sm text-[#485F7D] mb-[2px]'> {label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> } </label>
-
+		{label && <label className=' flex items-center text-sm text-[#485F7D] mb-[2px]'> {label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> } </label>}
 			<div className={`${className} flex items-center`}>
 
 				{
@@ -101,7 +101,7 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 				<Form.Item className='mb-0 w-full' validateStatus={address && !isValid ? 'error' : ''} >
 					<Input
 						value={address}
-						className={`${!isValid ? 'px-[0.5em]' : 'pl-10'} text-sm text-sidebarBlue w-full h-[40px] border-2 rounded-md`}
+						className={`${!isValid ? 'px-[0.5em]' : 'pl-10'} text-sm text-sidebarBlue w-full h-[40px] border-2 rounded-md ${inputClassName}`}
 						onChange={ (e) => handleAddressChange(e.target.value)}
 						placeholder={placeholder || 'Address'}
 						size={size}

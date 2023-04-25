@@ -655,3 +655,13 @@ query ActiveDelegationsToOrFromAddressForTrack($track_eq: Int = 0, $address: Str
   }
 }`;
 
+export const RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS = `
+query ReceivedDelgationsAndVotesCountForAddress($address: String = "", $createdAt_gte: DateTime) {
+  votingDelegationsConnection(orderBy: createdAt_ASC, where: {to_eq: $address, endedAtBlock_isNull: true}) {
+    totalCount
+  }
+  votesConnection(orderBy: id_ASC, where: {voter_eq: $address, proposal: {type_eq: ReferendumV2, createdAt_gte: $createdAt_gte}}) {
+    totalCount
+  }
+}
+`;

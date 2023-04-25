@@ -140,20 +140,19 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 								</div>
 							</>}</div>
-						<div className='flex justify-center items-center gap-2'>
+						{proposal?.status !== 'Submitted' &&<div className='flex justify-center items-center gap-2'>
 							<Divider type="vertical" style={{ border: '1px solid #485F7D', marginLeft: '4px', marginRight: '4px' }}/>
 							<div className={`flex items-center ${!remainingTime.includes('d') ? 'text-[#EB0F36]' :'text-[#243A57]'}`}>
 								<ClockCircleOutlined className='mr-1' />
 								{remainingTime}
            Remaining
 							</div>
-						</div>
+						</div>}
 					</div>
 				</div>
 				<div className='flex justify-center mt-2 gap-2'>
 					<VoteIcon/><span className='text-pink_primary text-sm font-medium'>Cast Vote</span>
 				</div>
-				{console.log(status,votingData)}
 			</div>
 			{votingData && status !== ETrackDelegationStatus.Undelegated && isAye || isNay || isAbstain
 				? <div className={`border-solid py-2 px-6 flex gap-2 border-[1px] rounded-b-[5px] ${isAye && 'bg-[#F0FCF6] border-[#2ED47A]'} ${isNay && 'bg-[#fff1f4] border-[#FF3C5F]'} ${isAbstain && 'bg-[#f9f9f9] border-[#ABABAC]'}`}>

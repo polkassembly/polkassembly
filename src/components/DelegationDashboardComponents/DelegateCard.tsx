@@ -7,12 +7,15 @@ import Address from '~src/ui-components/Address';
 import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
 import { Button } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
+import { IDelegate } from '~src/types';
+import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
 
 interface Props{
   trackName: string;
+  delegate: IDelegate;
 }
 
-const DelegateCard = ({ trackName }: Props) => {
+const DelegateCard = ({ trackName, delegate }: Props) => {
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
@@ -21,17 +24,26 @@ const DelegateCard = ({ trackName }: Props) => {
 		setOpen(true);
 		setAddress(address);
 	};
-	return <div className='pt-5  border-solid border-[1px] border-[#D2D8E0] rounded-b-[6px]'>
-		<div className='flex justify-between items-center px-5'>
-			<Address address='5GBnMKKUHNbN2fqBY4NbwMMNNieJLYHjr3p9J5W9i1nxKk8e' />
-			<Button onClick={handleClick} className='h-[40px] py-1 px-4 flex justify-around items-center rounded-md text-pink_primary bg-transparent shadow-none gap-2 mr-1 ml-1 border-none'>
+	return <div className=' border-solid border-[1px] border-[#D2D8E0] rounded-[6px]'>
+
+		{ <div className='h-[35px] border-[#3C74E1] border-solid border-[1px] rounded-t-[5px] bg-[#e2eafb] px-[19px] flex items-center gap-[11px]'>
+			<NovaWalletIcon/>
+			<span className='text-xs text-[#798aa2]'>Nova Wallet Delegate</span>
+		</div>}
+
+		<div className='flex justify-between items-center px-5 pt-5'>
+			<Address address={delegate?.address}/>
+			<Button onClick={handleClick} className='h-[40px] border-none hover:border-solid py-1 px-4 flex justify-around items-center rounded-md text-pink_primary bg-transparent shadow-none gap-2 mr-1 ml-1 '>
 				<DelegatesProfileIcon/>
 				<span className='text-sm font-medium'>
               Delegate
 				</span>
 			</Button>
 		</div>
-		<div className = ' text-sm tracking-[0.015em] text-[#576D8B] pl-[56px] min-h-[42px] mb-[16px]'>No Bio</div>
+
+		<p className = 'text-sm tracking-[0.015em] text-[#576D8B] pl-[56px] h-[42px] pr-7 mb-[16px] overflow-hidden truncate mt-2'>
+			{delegate?.bio ? delegate?.bio : 'No Bio'}
+		</p>
 		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0]'>
 			<div className='pt-4 flex items-center flex-col w-[33%] text-[24px] font-medium text-[#243A57]'>
 				<div className='flex gap-1 items-end justify-center'> 1k
@@ -40,15 +52,15 @@ const DelegateCard = ({ trackName }: Props) => {
 				<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>
 			</div>
 			<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-[#243A57] text-[24px] font-semibold'>
-        24
+				{delegate?.voted_proposals_count}
 				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal'>Voted proposals </span><span className='text-xs font-normal text-[#576D8B]'>(Past 30 days)</span>
 			</div>
 			<div className='pt-4 flex items-center flex-col w-[33%] text-[#243A57] text-[24px] font-semibold'>
-        12
-				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal'>Received Delegation</span>
+				{delegate?.active_delegation_count}
+				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal text-center'>Received Delegation</span>
 			</div>
 		</div>
-		<DelegateModal trackName={trackName} defaultTarget={address} open={open} setOpen={setOpen} />
+		<DelegateModal trackName={trackName} defaultTarget={delegate?.address} open={open} setOpen={setOpen} />
 	</div>;
 };
 

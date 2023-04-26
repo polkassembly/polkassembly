@@ -186,8 +186,13 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			<ActiveProposals posts={posts} trackDetails={trackDetails} status={status} delegatedTo = {status.includes(ETrackDelegationStatus.Delegated) ?  rowData.filter((row ) => row.delegatedTo !== address )[0].delegatedTo : null} />
 		</div> : <Skeleton className='mt-6'/>}
 
-		{ status.length > 0 ? !status.includes(ETrackDelegationStatus.Delegated) && <div>
-			<Delegate trackDetails={trackDetails}/></div> : <Skeleton className='mt-'/>}
+		{ status.length > 0  ? <div>
+			<Delegate
+				className={`${status.includes(ETrackDelegationStatus.Delegated) && 'opacity-75'}`}
+				disabled={status.includes(ETrackDelegationStatus.Delegated)}
+				trackDetails={trackDetails}
+			/>
+		</div> : <Skeleton className='mt-'/>}
 
 		<WalletConnectModal open={openModal} setOpen={setOpenModal} />
 

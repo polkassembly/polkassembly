@@ -18,7 +18,7 @@ import styled from 'styled-components';
 interface Props{
   trackName: string;
   delegate: IDelegate;
-  className: string;
+  className?: string;
 }
 
 const DelegateCard = ({ trackName, delegate, className }: Props) => {
@@ -51,7 +51,7 @@ const DelegateCard = ({ trackName, delegate, className }: Props) => {
 		</div>}
 
 		<div className='flex justify-between items-center px-5 pt-5'>
-			<Address address={delegate?.address}/>
+			<Address address={delegate?.address} />
 			<Button onClick={handleClick} className='h-[40px] border-none hover:border-solid py-1 px-4 flex justify-around items-center rounded-md text-pink_primary bg-transparent shadow-none gap-2 mr-1 ml-1 '>
 				<DelegatesProfileIcon/>
 				<span className='text-sm font-medium'>

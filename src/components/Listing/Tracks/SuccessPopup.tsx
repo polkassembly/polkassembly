@@ -10,9 +10,10 @@ import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import UndelegateCloseIcon from '~assets/icons/white-close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
-import formatBnBalance from '~src/util/formatBnBalance';
-import { useNetworkContext } from '~src/context';
+
+// import { useNetworkContext } from '~src/context';
 import Address from '~src/ui-components/Address';
+import { formatBalance } from '@polkadot/util';
 
 interface Props{
   className?: string;
@@ -21,13 +22,16 @@ interface Props{
   tracks?: CheckboxValueType[];
   address?: string;
   isDelegate?: boolean;
-  balance?: BN;
+  balance: BN;
+  trackNum?: number;
+
 }
 
 const SuccessPopup = ({ className, open, setOpen, tracks, address ,isDelegate, balance }: Props) => {
 
-	const { network } = useNetworkContext();
+	// const { network } = useNetworkContext();
 	return <Modal
+		zIndex={100000}
 		open={open}
 		className={`${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'}`}
 		wrapClassName={className}
@@ -40,7 +44,7 @@ const SuccessPopup = ({ className, open, setOpen, tracks, address ,isDelegate, b
 			<SuccessIcon/>
 			<h2 className='text-[20px] font-semibold tracking-[0.0015em]'>{isDelegate ? 'Delegated successfully' : 'Undelegated successfully' }</h2>
 			{isDelegate && <div className='flex flex-col justify-center items-center gap-[18px]'>
-				{balance && <div className='text-pink_primary text-[24px] font-semibold'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit:true }, network)}</div>}
+				{balance && <div className='text-pink_primary text-[24px] font-semibold'>{formatBalance(balance, { withUnit:true })}</div>}
 				<div className='flex-col flex items-start justify-center gap-[10px]'>
 					{address && <div className='flex gap-4 text-sm text-[#485F7D]'>To address:<span>
 						<Address address={address}

@@ -31,21 +31,32 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	const [balance, setBalance] = useState<string>('0');
 	const [lockBalance, setLockBalance] = useState<string>('0');
 	const [transferableBalance, setTransferableBalance] = useState<string>('0');
+	const [nextUnlock, setNextUnlock] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
+	// const getNextUnlock = async() => {
+	// 	if (!api || !apiReady ) return;
+
+	// 	const details = await api.query.staking.ledger(address);
+  //   console.log(details);
+	// 	// setNextUnlock(unlocking.total);
+
+	// };
+
 	useEffect(() => {
 
 		userProfileBalances({ address, api, apiReady, network, setBalance, setLockBalance, setTransferableBalance });
 
+    // getNextUnlock();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady]);
 
-	return <div className={'flex justify-between items-center  w-full px-[70px] '}>
-		<div className={`${className} flex  max-md:px-[10px] py-[17px] items-center max-md:flex-col`}>
-			<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
+	return <div className={'flex justify-between items-center w-full px-[70px] max-md:px-1 '}>
+		<div className={`${className} flex py-[17px] items-center  h-full gap-1 max-md:px-[10px]`}>
+			<div className='h-[71px] flex flex-col justify-start py-2 gap-1 '>
 				<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
 					{formatBnBalance(balance, { numberAfterComma: 2, withUnit: false }, network)}
 					<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
@@ -57,7 +68,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				</div>
 			</div>
 			<Divider  type= 'vertical' style={{ borderLeft: '1px solid #D2D8E0',height:'100%' }} />
-			<div className='flex gap-6 py-2 justify-start'>
+			<div className='flex gap-6 py-2 justify-start max-md:gap-2'>
 				<div className='h-[71px] flex flex-col py-2 gap-1'>
 					<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
 						{formatBnBalance(transferableBalance, { numberAfterComma: 2, withUnit: false }, network)}

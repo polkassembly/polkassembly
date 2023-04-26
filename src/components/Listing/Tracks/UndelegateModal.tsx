@@ -77,21 +77,23 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			if (status.isInBlock) {
 				queueNotification({
 					header: 'Success!',
-					message: 'Delegation successful.',
+					message: 'Undelegation successful.',
 					status: NotificationStatus.SUCCESS
 				});
+
 				setLoading(false);
-				console.log(`Delegation: completed at block hash #${status.asInBlock.toString()}`);
+				setOpenSuccessPopup(true);
+				setOpen(false);
+				console.log(`Undelegation: completed at block hash #${status.asInBlock.toString()}`);
 			} else {
-				console.log(`Delegation: Current status: ${status.type}`);
+				console.log(`Undelegation: Current status: ${status.type}`);
 			}
-			setOpen(false);
-			setOpenSuccessPopup(true);
+
 		}).catch((error: any) => {
 			console.log(':( transaction failed');
 			console.error('ERROR:', error);
 			queueNotification({
-				header: 'Delegation failed!',
+				header: 'Undelegation failed!',
 				message: error.message,
 				status: NotificationStatus.ERROR
 			});
@@ -104,7 +106,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	return (
 		<>
 			<Modal
-				closeIcon={<CloseIcon className='mt-[10px]'/>}
+				closeIcon={<CloseIcon/>}
 				className={`${poppins.variable} ${poppins.className} padding ` }
 				wrapClassName={className}
 				title={
@@ -205,10 +207,8 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 					</div>
 				</Spin>
-
-				{/* <SuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} trackNum={trackNum} address={target} isDelegate={true} balance={bnBalance} /> */}
-
 			</Modal>
+			<SuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} trackNum={trackNum} address={target} isDelegate={true} balance={bnBalance} />
 		</>
 	);
 };

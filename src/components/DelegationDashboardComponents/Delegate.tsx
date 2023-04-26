@@ -29,9 +29,10 @@ const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 interface Props{
   className?: string;
   trackDetails: any;
+  disabled?: boolean
 }
 
-const Delegate = ( { className,trackDetails }: Props ) => {
+const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 
 	const { api, apiReady } = useApiContext();
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
@@ -45,8 +46,10 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 	const { network } = useNetworkContext();
 
 	const handleClick = () => {
+
 		setOpen(true);
 		setAddress(address);
+
 	};
 
 	const getData = async() => {
@@ -73,7 +76,7 @@ const Delegate = ( { className,trackDetails }: Props ) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	return <div className=  {`${className} rounded-[14px] bg-white py-[24px] px-[37px] mt-[22px]`}>
+	return <div className=  {`${className} ${disabled && 'cursor-not-allowed' } rounded-[14px] bg-white py-[24px] px-[37px] mt-[22px]`}>
 		<div className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between'>
 			<div  className='flex jutify-center items-center gap-2'>
 				<DelegatedIcon className='mr-[4px]'/>
@@ -81,7 +84,7 @@ const Delegate = ( { className,trackDetails }: Props ) => {
           Delegate
 				</span>
 			</div>
-			<div onClick={() => setExpandProposals(!expandProposals)} className='cursor-pointer p-2'>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
+			<div onClick={() => !disabled && setExpandProposals(!expandProposals)} className={`${!disabled ? 'cursor-pointer' :'cursor-not-allowed' } p-2`}>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
 		</div>
 		{expandProposals && <div className='mt-[24px]'>
 			<h4 className='text-sm font-normal text-[#243A57] mb-4'>

@@ -8,7 +8,7 @@ import { Alert, Button, Checkbox, Form, Modal, Popover, Slider, Spin } from 'ant
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import { ApiContext } from 'src/context/ApiContext';
-import { NotificationStatus } from 'src/types';
+import { ETrackDelegationStatus, NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import AddressInput from 'src/ui-components/AddressInput';
 import BalanceInput from 'src/ui-components/BalanceInput';
@@ -29,6 +29,8 @@ import DelegateProfileIcon from '~assets/icons/delegate-popup-profile.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
+import { ITrackDelegation } from 'pages/api/v1/delegations';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const ZERO_BN = new BN(0);
 
@@ -80,13 +82,38 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 		})();
 	}, [address, api, apiReady, bnBalance, checkedList, conviction, network, target]);
 
-	const trackArr: string[] = [];
+	const [trackArr, setTrackArr] = useState<any[]>([]);
 
-	if(network){ Object.entries(networkTrackInfo?.[network]).map(([key, value]) => {
-		if (!value?.fellowshipOrigin) {
-			trackArr.push(String(key));
+	const getData = async() => {
+		if (!api || !apiReady ) return;
+
+		setLoading(true);
+
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${address}`);
+		if(data){
+			const trackData = data.filter((item) => !item.status.includes(ETrackDelegationStatus.Delegated));
+			if(network){
+				const tracks = trackData.map((item) => {
+
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
+					const values = Object.entries(networkTrackInfo?.[network]).find(([key, value]) => {
+						return value.trackId === item?.track ;
+					});
+
+					return values ? {
+						name: values[0],
+						trackId: values[1].trackId
+					} : null;
+				});
+
+				setTrackArr(tracks);
+
+			}
+		}else{
+			console.log(error);
 		}
-	});}
+		setLoading(false);
+	};
 
 	const onChange = (list: CheckboxValueType[]) => {
 		setCheckedList(list);
@@ -95,7 +122,7 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 	};
 
 	const onCheckAllChange = (e: CheckboxChangeEvent) => {
-		setCheckedList(e.target.checked ? trackArr : []);
+		setCheckedList(e.target.checked ? trackArr.map((track) => track?.name) : []);
 		setIndeterminate(false);
 		setCheckAll(e.target.checked);
 	};
@@ -156,7 +183,6 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 							message: 'Delegation successful.',
 							status: NotificationStatus.SUCCESS
 						});
-						setOpenSuccessPopup(true);
 					} else if (event.method === 'ExtrinsicFailed') {
 						const errorModule = (event.data as any)?.dispatchError?.asModule;
 						let message = 'Delegation failed.';
@@ -176,6 +202,7 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 				}
 
 				setLoading(false);
+				setOpenSuccessPopup(true);
 				setOpen?.(false);
 				console.log(`Delegation: completed at block hash #${status.toString()}`);
 			} else {
@@ -205,6 +232,9 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 
 		setAvailableBalance(balance);
 	};
+	useEffect(() => {
+		getData();
+	}, []);
 
 	const content = (<div className='flex flex-col'>
 		<Checkbox.Group className='flex flex-col h-[200px] overflow-y-scroll' onChange={onChange} value={checkedList} >
@@ -213,8 +243,8 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 					className={`${poppins.variable} ${poppins.className} text-sm tracking-[0.01em] text-[#243A57] flex gap-[13px] p-[8px]`}
 					key={index}
 				>
-					<Checkbox className='text-pink_primary' value={track}/>
-					{track === 'root' ? 'Root': track?.split(/(?=[A-Z])/).join(' ')}
+					<Checkbox className='text-pink_primary' value={track?.name}/>
+					{track.name === 'root' ? 'Root': track.name?.split(/(?=[A-Z])/).join(' ')}
 				</div>
 			))}
 		</Checkbox.Group>
@@ -223,7 +253,7 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 	return (
 		<>
 			<Modal
-				closeIcon={<CloseIcon className='mt-[10px]'/>}
+				closeIcon={<CloseIcon/>}
 				className={`${poppins.variable} ${poppins.className} padding ` }
 				wrapClassName={className}
 				title={
@@ -340,13 +370,17 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 					</div>
 				</Spin>
 
-				<SuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedList} address={target} isDelegate={true} balance={bnBalance} />
 			</Modal>
+			<SuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedList} address={target} isDelegate={true} balance={bnBalance} />
 		</>
 	);
 };
 
 export default styled(DelegateModal)`
+
+// .modal .ant-modal .ant-modal-close{
+//   top: 22px !important;
+// }
 
 .padding .ant-slider-dot{
  border-color:#243A5799 !important;

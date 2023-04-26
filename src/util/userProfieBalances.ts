@@ -9,8 +9,8 @@ interface Props{
   api: any;
   apiReady: any;
   setBalance: (pre: string) => void;
-  setLockBalance: (pre: string) => void;
-  setTransferableBalance: (pre:string) => void;
+  setLockBalance?: (pre: string) => void;
+  setTransferableBalance?: (pre:string) => void;
   network: string;
 }
 
@@ -33,7 +33,7 @@ const userProfileBalances = ( { address, api, apiReady, network, setBalance, set
 				const positive = result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0';
 				if(new BN(positive).cmp(new BN(locked))){
 					setBalance((new BN(positive).sub(new BN(locked))).toString() || '0');
-					setLockBalance(locked);
+					setLockBalance && setLockBalance(locked);
 				}
 				else{
 					setBalance(positive);
@@ -44,8 +44,8 @@ const userProfileBalances = ( { address, api, apiReady, network, setBalance, set
 		api.query.system.account(address)
 			.then((result: any) => {
 				if (result.data.free && result.data?.free?.toBigInt() >= result.data?.miscFrozen?.toBigInt()){
-					setTransferableBalance((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()).toString() || '0');
-					setLockBalance(result.data.reserved?.toBigInt());
+					setTransferableBalance && setTransferableBalance((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()).toString() || '0');
+					setLockBalance && setLockBalance(result.data.reserved?.toBigInt());
 					setBalance(((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()) + result.data.reserved?.toBigInt()).toString() );
 				}
 				else{

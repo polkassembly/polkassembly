@@ -49,7 +49,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	});
 
 	const { image, social_links, bio , username } = profileDetails;
-  
+
 	const [messageApi, contextHolder] = message.useMessage();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 

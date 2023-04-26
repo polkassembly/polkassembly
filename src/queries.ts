@@ -570,3 +570,160 @@ query VotingHistoryByVoterAddress($offset: Int = 0, $limit: Int = 10, $voter_eq:
 }
 
 `;
+
+// Alliance
+export const GET_ALLIANCE_LATEST_ACTIVITY = `
+query getAllianceLatestActivity( $limit: Int = 10, $offset: Int = 0 ) {
+  proposals(orderBy: id_DESC,limit: $limit, offset: $offset) {
+    id
+    type
+    createdAt
+    status
+    proposer
+    hash
+    index
+  }
+  proposalsConnection(orderBy: id_ASC) {
+    totalCount
+  }
+}
+`;
+
+export const GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE = `
+query AlliancePostByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = AllianceMotion, $voter_eq: String = "") {
+  votesConnection(orderBy: blockNumber_DESC, where: {voter_eq: $voter_eq}) {
+    totalCount
+    edges {
+      node {
+        voter
+        decision
+      }
+    }
+  }
+  proposalsConnection(orderBy: createdAtBlock_DESC) {
+    totalCount
+    edges {
+      node {
+        description
+        index
+        status
+        proposalArgumentHash
+      }
+    }
+  }
+  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, hash_eq: $hash_eq}) {
+    index
+    proposer
+    status
+    description
+    hash
+    type
+    threshold {
+      ... on MotionThreshold {
+        __typename
+        value
+      }
+      ... on ReferendumThreshold {
+        __typename
+        type
+      }
+    }
+    end
+    createdAt
+    updatedAt
+    endedAt
+    deposit
+    voting {
+      decision
+      voter
+    }
+    tally {
+      ayes
+      bareAyes
+      nays
+      support
+    }
+    statusHistory {
+      status
+      timestamp
+      block
+    }
+  }
+}
+`;
+
+export const GET_ALLIANCE_ANNOUNCEMENTS = `
+query getAllianceAnnouncements( $limit: Int = 10, $offset: Int = 0 ) {
+  announcements(limit: $limit, offset: $offset) {
+    id
+    code
+    codec
+    createdAt
+    createdAtBlock
+    hash
+    index
+    proposer
+    type
+    updatedAt
+    version
+    cid
+  }
+  announcementsConnection(orderBy: id_ASC) {
+    totalCount
+  }
+}
+`;
+
+export const GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE = `
+query AllianceAnnouncementByCidAndType($cid_eq: String) {
+  announcements(where: {cid_eq: $cid_eq}) {
+    cid
+    proposer
+    index
+    hash
+    updatedAt
+    proposal {
+      index
+      proposer
+      status
+      description
+      hash
+      type
+      threshold {
+        ... on MotionThreshold {
+          __typename
+          value
+        }
+        ... on ReferendumThreshold {
+          __typename
+          type
+        }
+      }
+      end
+      createdAt
+      updatedAt
+      endedAt
+      deposit
+      voting {
+        decision
+        voter
+      }
+      tally {
+        ayes
+        bareAyes
+        nays
+        support
+      }
+      statusHistory {
+        status
+        timestamp
+        block
+      }
+    }
+    createdAt
+    type
+    version
+  }
+}
+
+`;

@@ -403,15 +403,14 @@ export const chainProperties: types.ChainPropType = {
 		logo: polkadotLogo,
 		rpcEndpoint: 'wss://polkadot-collectives-rpc.polkadot.io',
 		ss58Format: 0,
-		subsquidUrl: 'https://squid.subsquid.io/collectives-polkassembly/v/v1/graphql',
+		subsquidUrl: 'https://squid.subsquid.io/westend-collectives/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.DOT,
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: '500',
 		externalLinks: '',
-		rpcEndpoints: [
-		]
+		rpcEndpoints: []
 	},
 	[network.COMPOSABLE]: {
 		blockTime: 12000,

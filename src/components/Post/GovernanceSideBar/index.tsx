@@ -455,7 +455,43 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		<>
 			{<div className={className}>
 				<Form>
-					{proposalType === ProposalType.COUNCIL_MOTIONS && <>
+					{(proposalType === ProposalType.COUNCIL_MOTIONS)  && <>
+						{canVote &&
+							<VoteMotion
+								accounts={accounts}
+								address={address}
+								getAccounts={getAccounts}
+								motionId={onchainId as number}
+								motionProposalHash={post.proposer}
+								onAccountChange={onAccountChange}
+							/>
+						}
+						{(post.motion_votes && post.motion_votes.length > 0) &&
+							<MotionVoteInfo
+								councilVotes={post.motion_votes}
+								title='Council'
+							/>
+						}
+					</>}
+					{(proposalType === ProposalType.ALLIANCE_MOTION)  && <>
+						{canVote &&
+							<VoteMotion
+								accounts={accounts}
+								address={address}
+								getAccounts={getAccounts}
+								motionId={onchainId as number}
+								motionProposalHash={post.proposer}
+								onAccountChange={onAccountChange}
+							/>
+						}
+						{(post.motion_votes && post.motion_votes.length > 0) &&
+							<MotionVoteInfo
+								councilVotes={post.motion_votes}
+								title='Alliance Motion'
+							/>
+						}
+					</>}
+					{(proposalType === ProposalType.ANNOUNCEMENT)  && <>
 						{canVote &&
 							<VoteMotion
 								accounts={accounts}
@@ -467,9 +503,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							/>
 						}
 
-						{(post.motion_votes) &&
+						{(post.motion_votes && post.motion_votes.length > 0) &&
 							<MotionVoteInfo
 								councilVotes={post.motion_votes}
+								title='Announcement'
 							/>
 						}
 					</>}

@@ -336,6 +336,7 @@ const Post: FC<IPostProps> = (props) => {
 	];
 	return (
 		<PostDataContextProvider initialPostData={{
+			cid: post?.cid || '',
 			comments: post?.comments || [],
 			content: post?.content,
 			created_at: post?.created_at || '',

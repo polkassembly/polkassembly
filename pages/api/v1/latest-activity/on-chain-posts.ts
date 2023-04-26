@@ -9,12 +9,13 @@ import { isProposalTypeValid, isTrackNoValid, isValidNetwork } from '~src/api-ut
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
-import { GET_PROPOSALS_LISTING_BY_TYPE } from '~src/queries';
+import { GET_ALLIANCE_LATEST_ACTIVITY, GET_PROPOSALS_LISTING_BY_TYPE } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 export interface ILatestActivityPostsListingResponse {
     count: number;
@@ -60,75 +61,95 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 			postsVariables.trackNumber_in = numTrackNo;
 		}
 
+		const query = network === AllNetworks.COLLECTIVES ? GET_ALLIANCE_LATEST_ACTIVITY : GET_PROPOSALS_LISTING_BY_TYPE;
+
 		const subsquidRes = await fetchSubsquid({
 			network,
-			query: GET_PROPOSALS_LISTING_BY_TYPE,
+			query: query,
 			variables: postsVariables
 		});
 
 		const subsquidData = subsquidRes?.data;
 		const subsquidPosts: any[] = subsquidData?.proposals || [];
-
-		const postsPromise = subsquidPosts?.map(async (subsquidPost) => {
-			const { createdAt, proposer, curator, preimage, type, index, hash, method, origin, trackNumber, group, description } = subsquidPost;
-			let otherPostProposer = '';
-			if (group?.proposals?.length) {
-				group.proposals.forEach((obj: any) => {
-					if (!otherPostProposer) {
-						if (obj.proposer) {
-							otherPostProposer = obj.proposer;
-						} else if (obj?.preimage?.proposer) {
-							otherPostProposer = obj.preimage.proposer;
+		let postsPromise;
+		if(network === AllNetworks.COLLECTIVES){
+			postsPromise = subsquidPosts?.map((subsquidPost) => {
+				const { title, createdAt, description, hash, id, proposer, status, type } = subsquidPost;
+				return {
+					created_at: createdAt,
+					description: description ||'',
+					hash: hash,
+					post_id: id,
+					proposer: proposer,
+					status: status,
+					title: title || '',
+					type: type
+				};
+			});
+		}
+		else{
+			postsPromise = subsquidPosts?.map(async (subsquidPost) => {
+				const { createdAt, proposer, curator, preimage, type, index, hash, method, origin, trackNumber, group, description } = subsquidPost;
+				let otherPostProposer = '';
+				if (group?.proposals?.length) {
+					group.proposals.forEach((obj: any) => {
+						if (!otherPostProposer) {
+							if (obj.proposer) {
+								otherPostProposer = obj.proposer;
+							} else if (obj?.preimage?.proposer) {
+								otherPostProposer = obj.preimage.proposer;
+							}
+						}
+					});
+				}
+				let status = subsquidPost.status;
+				if (status === 'DecisionDepositPlaced') {
+					const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
+					const decidingIndex = statuses.findIndex((status) => status && status.status === 'Deciding');
+					if (decidingIndex >= 0) {
+						const decisionDepositPlacedIndex = statuses.findIndex((status) => status && status.status === 'DecisionDepositPlaced');
+						if (decisionDepositPlacedIndex >=0 && decidingIndex < decisionDepositPlacedIndex) {
+							status = 'Deciding';
 						}
 					}
-				});
-			}
-			let status = subsquidPost.status;
-			if (status === 'DecisionDepositPlaced') {
-				const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
-				const decidingIndex = statuses.findIndex((status) => status && status.status === 'Deciding');
-				if (decidingIndex >= 0) {
-					const decisionDepositPlacedIndex = statuses.findIndex((status) => status && status.status === 'DecisionDepositPlaced');
-					if (decisionDepositPlacedIndex >=0 && decidingIndex < decisionDepositPlacedIndex) {
-						status = 'Deciding';
+				}
+				const postId = proposalType === ProposalType.TIPS?  hash: index;
+				const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
+				const postDoc = await postDocRef.get();
+				if (postDoc && postDoc.exists) {
+					const data = postDoc?.data();
+					if (data) {
+						return {
+							created_at: createdAt,
+							description,
+							hash,
+							method: method || preimage?.method,
+							origin,
+							post_id: postId,
+							proposer: proposer || preimage?.proposer || otherPostProposer || curator,
+							status: status,
+							title: data?.title || null,
+							track_number: trackNumber,
+							type
+						};
 					}
 				}
-			}
-			const postId = proposalType === ProposalType.TIPS?  hash: index;
-			const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
-			const postDoc = await postDocRef.get();
-			if (postDoc && postDoc.exists) {
-				const data = postDoc?.data();
-				if (data) {
-					return {
-						created_at: createdAt,
-						description,
-						hash,
-						method: method || preimage?.method,
-						origin,
-						post_id: postId,
-						proposer: proposer || preimage?.proposer || otherPostProposer || curator,
-						status: status,
-						title: data?.title || null,
-						track_number: trackNumber,
-						type
-					};
-				}
-			}
-			return {
-				created_at: createdAt,
-				description,
-				hash,
-				method: method || preimage?.method,
-				origin,
-				post_id: postId,
-				proposer: proposer || preimage?.proposer || otherPostProposer || curator,
-				status: status,
-				title: '',
-				track_number: trackNumber,
-				type
-			};
-		});
+				return {
+					created_at: createdAt,
+					description,
+					hash,
+					method: method || preimage?.method,
+					origin,
+					post_id: postId,
+					proposer: proposer || preimage?.proposer || otherPostProposer || curator,
+					status: status,
+					title: '',
+					track_number: trackNumber,
+					type
+				};
+			});
+
+		}
 
 		const postsResults = await Promise.allSettled(postsPromise);
 		let posts = postsResults.reduce((prev, post) => {

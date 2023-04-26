@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { ReactNode } from 'react';
-import { bountyStatus, bountyStatusMap, childBountyStatus, childBountyStatusMap, gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus, tipStatus, tipStatusMap } from 'src/global/statuses';
+import { announcementStatus, bountyStatus, bountyStatusMap, childBountyStatus, childBountyStatusMap, gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus, tipStatus, tipStatusMap } from 'src/global/statuses';
 import styled from 'styled-components';
 
 interface Props{
@@ -97,7 +97,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${tipStatus.CLOSED},
 	&.${bountyStatus.AWARDED},
 	&.${bountyStatus.CLAIMED},
-	&.${childBountyStatus.AWARDED} {
+	&.${childBountyStatus.AWARDED},
+	&.${announcementStatus.Announced} {
 		border-color: #5BC044;
 		background: #5BC044;
 

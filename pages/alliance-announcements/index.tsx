@@ -2,21 +2,64 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
-import React from 'react';
+import { Pagination } from 'antd';
+import { useRouter } from 'next/router';
+import { getOnChainPosts } from 'pages/api/v1/listing/on-chain-posts';
+import React, { useEffect } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import AllianceAnnouncements from '~src/components/Listing/Members/AllianceAnnouncements';
+import Listing from '~src/components/Listing';
+import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
+import { LISTING_LIMIT } from '~src/global/listingLimit';
+import { ProposalType } from '~src/global/proposalType';
+import { sortValues } from '~src/global/sortOptions';
+import { ErrorState } from '~src/ui-components/UIStates';
+import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	const { page = 1, sortBy = sortValues.NEWEST } = query;
+	const proposalType = ProposalType.ANNOUNCEMENT;
 	const network = getNetworkFromReqHeaders(req.headers);
-	return {
-		props: {
-			network
-		}
-	};
+	const { data, error } = await getOnChainPosts({
+		listingLimit: LISTING_LIMIT,
+		network,
+		page,
+		proposalType,
+		sortBy
+	});
+	return { props: { data, error, network } };
 };
 
-const Announcements = ({ network }:{network:string}) => {
+interface IAnnouncementProps {
+	data?: {posts:any[],count:number };
+	error?: string;
+	network: string;
+}
+
+const Announcements = (props:IAnnouncementProps) => {
+	const { data, error, network } = props;
+	const { setNetwork } = useNetworkContext();
+	const router = useRouter();
+
+	useEffect(() => {
+		setNetwork(props.network);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	if (error) return <ErrorState errorMessage={error} />;
+
+	if (!data) return null;
+
+	const { posts, count } = data;
+	const onPaginationChange = (page:number) => {
+		router.push({
+			query:{
+				page
+			}
+		});
+		handlePaginationChange({ limit: LISTING_LIMIT, page });
+	};
+
 	return (
 		<>
 			<SEOHead title={'Alliance Announcements'} network={network}/>
@@ -28,7 +71,28 @@ const Announcements = ({ network }:{network:string}) => {
 					The Alliance Pallet provides a collective that curates a list of accounts and URLs, deemed by the voting members to be unscrupulous actors. The Alliance provides a set of ethics against bad behavior, and provides recognition and influence for those teams that contribute something back to the ecosystem.
 				</p>
 			</div>
-			<AllianceAnnouncements className='mt-8' />
+			<div className='shadow-md bg-white p-3 md:p-8 rounded-md'>
+				<div className='flex items-center justify-between'>
+					<h1 className='dashboard-heading'>{ count } Announcement</h1>
+				</div>
+
+				<div>
+					<Listing posts={posts} proposalType={ProposalType.ANNOUNCEMENT} />
+					<div className='flex justify-end mt-6'>
+						{!!count && count > 0 && count > LISTING_LIMIT &&
+							<Pagination
+								defaultCurrent={1}
+								pageSize={LISTING_LIMIT}
+								total={count}
+								showSizeChanger={false}
+								hideOnSinglePage={true}
+								onChange={onPaginationChange}
+								responsive={true}
+							/>
+						}
+					</div>
+				</div>
+			</div>
 		</>
 	);
 };

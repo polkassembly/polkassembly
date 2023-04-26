@@ -21,6 +21,7 @@ import styled from 'styled-components';
 import { useApiContext, useNetworkContext } from '~src/context';
 
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -34,7 +35,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	let { network } = useNetworkContext();
 
 	// TODO: Aleem => Currently changing network just to see the UI, Should be update after backend
-	if(network === 'collectives'){
+	if(network === AllNetworks.COLLECTIVES){
 		network = 'polkadot';
 	}
 

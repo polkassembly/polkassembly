@@ -94,3 +94,10 @@ export const approvalStatus = {
 	PENDING: 'pending',
 	REJECTED: 'rejected'
 };
+
+export const announcementStatus = {
+	Announced:'Announced'
+};
+export const announcementStatusMap = {
+	[announcementStatus.Announced]:'Announced'
+};

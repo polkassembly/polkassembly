@@ -27,7 +27,7 @@ import Footer from './Footer';
 import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
-
+import { network as AllNetworks } from '~src/global/networkConstants';
 const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -215,7 +215,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]);
 	}
 
-	if(network === 'collectives'){
+	if(network === AllNetworks.COLLECTIVES){
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
 			...gov1Items.allianceItems
 		])];

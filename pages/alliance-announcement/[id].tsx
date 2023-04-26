@@ -14,26 +14,25 @@ import { noTitle } from '~src/global/noTitle';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 
-const proposalType = ProposalType.ALLIANCE_MOTION;
+const proposalType = ProposalType.ANNOUNCEMENT;
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
-
 	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOnChainPost({
 		network,
-		postId: id,
+		postId: id || '',
 		proposalType
 	});
 
 	return { props: { data, error, network } };
 };
-interface IMotionPostProps {
+interface IAnnouncementPostProps {
 	data: IPostResponse;
 	error?: string;
 	network: string;
 }
 
-const MotionPost: FC<IMotionPostProps> = (props) => {
+const AnnouncementPost: FC<IAnnouncementPostProps> = (props) => {
 	const { data: post, error } = props;
 
 	if (error) return <ErrorState errorMessage={error} />;
@@ -41,8 +40,8 @@ const MotionPost: FC<IMotionPostProps> = (props) => {
 	if (!post) return null;
 
 	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} - Alliance Motion`} desc={post.content} />
-		<BackToListingView postCategory={PostCategory.ALLIANCE_MOTION} />
+		<SEOHead title={post.title || `${noTitle} - Announcement`} desc={post.content} />
+		<BackToListingView postCategory={PostCategory.ALLIANCE_ANNOUNCEMENT} />
 
 		<div className='mt-6'>
 			<Post post={post} proposalType={proposalType} />
@@ -53,4 +52,4 @@ const MotionPost: FC<IMotionPostProps> = (props) => {
 
 };
 
-export default MotionPost;
+export default AnnouncementPost;

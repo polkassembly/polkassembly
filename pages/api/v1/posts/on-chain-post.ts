@@ -8,7 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY } from '~src/queries';
+import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -19,9 +19,10 @@ import messages from '~src/util/messages';
 
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getUpdatedAt } from './off-chain-post';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 export const isDataExist = (data: any) => {
-	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]);
+	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]) ;
 };
 
 export const getTimeline = (proposals: any, isStatus?: {
@@ -480,7 +481,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			if (!strPostId) {
 				throw apiErrorWithStatusCode(`The Tip hash "${postId} is invalid."`, 400);
 			}
-		} else if (isNaN(numPostId) || numPostId < 0) {
+		} else if ((isNaN(numPostId) || numPostId < 0) && proposalType !== ProposalType.ANNOUNCEMENT) {
 			throw apiErrorWithStatusCode(`The postId "${postId}" is invalid.`, 400);
 		}
 
@@ -492,13 +493,21 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
 
-		let postVariables: any = {
+		let postVariables: any = proposalType === ProposalType.ANNOUNCEMENT ? {
+			cid: postId,
+			type_eq: subsquidProposalType
+		} :{
 			index_eq: numPostId,
 			type_eq: subsquidProposalType,
 			voter_eq: voterAddress? String(voterAddress): ''
 		};
 
-		const postQuery = GET_PROPOSAL_BY_INDEX_AND_TYPE;
+		let postQuery =network === AllNetworks.COLLECTIVES ? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE : GET_PROPOSAL_BY_INDEX_AND_TYPE;
+
+		if(proposalType === ProposalType.ANNOUNCEMENT){
+			postQuery = GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE;
+		}
+
 		if (proposalType === ProposalType.TIPS) {
 			postVariables = {
 				hash_eq: strPostId,
@@ -514,16 +523,16 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		});
 
 		// Post
-		const subsquidData = subsquidRes?.data;
+		const subsquidData = subsquidRes?.data || subsquidRes?.announcements;
 		if (!isDataExist(subsquidData)) {
 			throw apiErrorWithStatusCode(`The Post with index "${postId}" is not found.`, 404);
 		}
 
-		const postData = subsquidData.proposals[0];
+		const postData = subsquidData.proposals?.[0] ||  subsquidData.announcements?.[0];
 		const preimage = postData?.preimage;
 		const proposalArguments = postData?.proposalArguments;
 		const proposedCall = preimage?.proposedCall;
-		const status = postData?.status;
+		const status = proposalType === ProposalType.ANNOUNCEMENT ? 'Announced' : postData?.status;
 		let proposer = postData?.proposer || preimage?.proposer || postData?.curator;
 		if (!proposer && (postData?.parentBountyIndex || postData?.parentBountyIndex === 0)) {
 			const subsquidRes = await fetchSubsquid({
@@ -549,6 +558,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		}
 		const post: IPostResponse = {
 			bond: postData?.bond,
+			cid:postData?.cid,
 			comments: [],
 			content: '',
 			created_at: postData?.createdAt,
@@ -595,8 +605,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			swap: false
 		};
 		// Timeline
-		const timelineProposals = postData?.group?.proposals || [];
+		const timelineProposals = postData?.group?.proposals ||[];
 		post.timeline = getTimeline(timelineProposals, isStatus);
+
 		// Proposer and Curator address
 		if (timelineProposals && Array.isArray(timelineProposals)) {
 			for (let i = 0; i < timelineProposals.length; i++) {
@@ -621,8 +632,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				{
 					createdAt: postData?.createdAt,
 					hash: postData?.hash,
-					index: postData?.index,
-					statusHistory: postData?.statusHistory,
+					index: postData?.index || postData?.cid,
+					statusHistory: postData?.statusHistory || postData?.proposal?.statusHistory,
 					type: postData?.type
 				}
 			], isStatus);
@@ -668,6 +679,16 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				}
 				return motion_votes;
 			}, []) || [];
+		}
+
+		// Alliance motions votes
+		if(proposalType === ProposalType.ALLIANCE_MOTION ){
+			post.motion_votes = postData.voting;
+		}
+
+		// Alliance Announcement votes
+		if(proposalType === ProposalType.ANNOUNCEMENT ){
+			post.motion_votes = postData.proposal.voting;
 		}
 
 		// Democracy proposals votes TotalCount

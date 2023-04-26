@@ -7,6 +7,7 @@ import { Divider, Modal, Skeleton, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 import React, { FC, useContext, useState } from 'react';
+import Link from 'next/link';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { noTitle } from 'src/global/noTitle';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
@@ -14,7 +15,6 @@ import OnchainCreationLabel from 'src/ui-components/OnchainCreationLabel';
 import StatusTag from 'src/ui-components/StatusTag';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
-import { useNetworkContext } from '~src/context';
 
 import { getFormattedLike } from '~src/util/getFormattedLike';
 
@@ -40,6 +40,7 @@ interface IGovernanceProps {
 	isCommentsVisible?: boolean;
 	tags?: string[] | [];
 	spam_users_count?: number;
+	cid?:string;
 }
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
@@ -51,6 +52,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		postReactionCount,
 		address,
 		className,
+		cid,
 		commentsCount,
 		created_at,
 		end = 0,
@@ -70,8 +72,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const currentUser = useContext(UserDetailsContext);
 	let titleString = title || method || tipReason || noTitle;
 
-	const { network } = useNetworkContext();
-
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
 
@@ -88,7 +88,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				<div className='flex justify-between gap-x-2 lg:items-start lg:flex-row'>
 					<div className='mt-3 lg:mt-0'>
 						<h1 className='text-sidebarBlue font-semibold text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
-							{<span className='font-medium mr-2'>#{isTip? tip_index: onchainId}</span>} <span className='break-all'>{mainTitle}</span>
+							{<span className='font-medium mr-2'>#{isTip? tip_index: onchainId}</span>} <span className='break-all'>{cid ? null : mainTitle}</span>
 						</h1>
 						<h2 className='text-navBlue font-medium text-sm'>{subTitle}</h2>
 					</div>
@@ -132,9 +132,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						}
 						<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 
-						{network === 'collectives' ? <>
-							<PaperClipOutlined />
-							<span>IPFS</span>
+						{cid ? <>
+
+							<Link href={`/ipfs/${cid}`}> <PaperClipOutlined /> IPFS</Link>
 							<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 						</> : null}
 

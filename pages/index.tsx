@@ -28,7 +28,6 @@ import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } fr
 import { getNetworkSocials } from './api/v1/network-socials';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetwork } from '~src/global/networkConstants';
-import { allianceAllPost, allianceDiscussionsPost } from '~src/global/collectiveMockData';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -55,11 +54,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 
 	const networkSocialsData = await getNetworkSocials({ network });
 
-	// TODO: Aleem => getting mock data for UI, need to update
-	let fetches = network === AllNetwork.COLLECTIVES ?  {
-		all: allianceAllPost,
-		discussions: allianceDiscussionsPost
-	} : {
+	let fetches = {
 		all: getLatestActivityAllPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
 			network

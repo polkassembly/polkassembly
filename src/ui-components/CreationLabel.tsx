@@ -12,6 +12,8 @@ import NameLabel from './NameLabel';
 import TopicTag from './TopicTag';
 
 import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon } from '~src/ui-components/CustomIcons';
+import Link from 'next/link';
+import { PaperClipOutlined } from '@ant-design/icons';
 
 interface ICreationLabelProps {
 	className?: string
@@ -22,10 +24,11 @@ interface ICreationLabelProps {
 	topic?: string
 	username?: string;
   sentiment?:number;
+  cid?:string;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-	const { className, children, created_at, text, username, defaultAddress, topic,sentiment } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic,sentiment, cid } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 
 	const items : MenuProps['items']=[
@@ -46,9 +49,15 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						username={username}
 					/>
 					{text}&nbsp;
-					{topic &&
-			<div className='flex items-center'> <span>in</span> &nbsp; &nbsp; <TopicTag topic={topic} className={topic} /></div>
+					{
+						topic && <div className='flex items-center'> <span>in</span> &nbsp; &nbsp; <TopicTag topic={topic} className={topic} /></div>
 					}
+					{cid ?
+						<>
+							<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+							<Link href={`/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
+						</> : null}
+					{children}
 				</div>
 			</div>
 			<div className='flex items-center mt-2 md:mt-0'>
@@ -57,7 +66,6 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 				</>}
 				{created_at && <span className='flex items-center'> <ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>}
-				{children}
 			</div>
 		</div>
 		{sentiment===1 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center  min-[320px]:mr-2'><AgainstIcon className='min-[320px]:items-start' /></Dropdown>}

@@ -73,27 +73,45 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		// TODO: check .toNumber()
 		const delegateTxn = api.tx.convictionVoting.undelegate(trackNum);
 
-		delegateTxn.signAndSend(address, ({ status }: any) => {
-			if (status.isInBlock) {
-				queueNotification({
-					header: 'Success!',
-					message: 'Undelegation successful.',
-					status: NotificationStatus.SUCCESS
-				});
+		delegateTxn.signAndSend(address, ({ status, events }: any) => {
+			if (status.isFinalized) {
+				for (const { event } of events) {
+					if (event.method === 'ExtrinsicSuccess') {
+						queueNotification({
+							header: 'Success!',
+							message: 'Undelegate successful.',
+							status: NotificationStatus.SUCCESS
+						});
+					} else if (event.method === 'ExtrinsicFailed') {
+						const errorModule = (event.data as any)?.dispatchError?.asModule;
+						let message = 'Undelegate failed.';
+
+						if(errorModule) {
+							const { method, section, docs } = api.registry.findMetaError(errorModule);
+							message = `${section}.${method} : ${docs.join(' ')}`;
+						}
+
+						queueNotification({
+							header: 'Undelegate failed!',
+							message,
+							status: NotificationStatus.ERROR
+						});
+						// TODO: error state popup
+					}
+				}
 
 				setLoading(false);
 				setOpenSuccessPopup(true);
-				setOpen(false);
-				console.log(`Undelegation: completed at block hash #${status.asInBlock.toString()}`);
+				setOpen?.(false);
+				console.log(`Undelegate: completed at block hash #${status.toString()}`);
 			} else {
-				console.log(`Undelegation: Current status: ${status.type}`);
+				console.log(`Undelegate: Current status: ${status.type}`);
 			}
-
 		}).catch((error: any) => {
 			console.log(':( transaction failed');
 			console.error('ERROR:', error);
 			queueNotification({
-				header: 'Undelegation failed!',
+				header: 'Undelegate failed!',
 				message: error.message,
 				status: NotificationStatus.ERROR
 			});

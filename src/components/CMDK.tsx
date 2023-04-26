@@ -323,7 +323,7 @@ const getFellowship = (network: string) => {
 		if (isFellowshipFound) {
 			items.push({
 				icon: <Gov2FellowshipGroupSVG />,
-				name: 'Fellowship Members',
+				name: 'Members',
 				pathname: '/fellowship',
 				value: 'fellowshipMembers'
 			});
@@ -370,15 +370,15 @@ const getWhitelist = (network: string) => {
 				isWhiteListedCallerFound = true;
 			}
 		});
-		if (isWhiteListedCallerFound) {
-			items.push({
-				icon: <ReferendaSVG />,
-				name: 'Whitelisted Caller',
-				pathname: '/whitelisted-caller',
-				value: 'whitelistedCaller'
-			});
-		}
 		if (isFellowshipNotFound) {
+			if (isWhiteListedCallerFound) {
+				items.push({
+					icon: <ReferendaSVG />,
+					name: 'Whitelisted Caller',
+					pathname: '/whitelisted-caller',
+					value: 'whitelistedCaller'
+				});
+			}
 			items.push({
 				icon: <Gov2FellowshipGroupSVG />,
 				name: 'Whitelist Members',

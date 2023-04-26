@@ -9,6 +9,7 @@ import React, { useMemo, useState } from 'react';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy_proposals.svg';
 import TreasuryProposalsSVG from '~assets/sidebar/treasury_proposals.svg';
 import ReferendaSVG from '~assets/sidebar/referenda.svg';
+import Gov2FellowshipGroupSVG from '~assets/sidebar/gov2_fellowship_group.svg';
 import BountiesSVG from '~assets/sidebar/bounties.svg';
 import TipsSVG from '~assets/sidebar/tips.svg';
 import MotionsSVG from '~assets/sidebar/motions.svg';
@@ -17,12 +18,16 @@ import CalendarSVG from '~assets/sidebar/calendar.svg';
 import OverviewSVG from '~assets/sidebar/overview.svg';
 import DiscussionsSVG from '~assets/sidebar/discussions.svg';
 import ParachainsSVG from '~assets/sidebar/parachains.svg';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { useNetworkContext, useUserDetailsContext } from '~src/context';
 
 const CMDK = () => {
 	const [page, setPage] = useState('home');
 	const [open, setOpen] = useState<boolean>(false);
 	const [search, setSearch] = useState('');
 	useHandleOpenCommandPalette(setOpen);
+	const { network } = useNetworkContext();
+	const { isLoggedOut } = useUserDetailsContext();
 
 	function onPageEscape(page: any) {
 		if (page.id === 'home') {
@@ -31,7 +36,15 @@ const CMDK = () => {
 		}
 		setPage('home');
 	}
-	const homeMenus = getHomeMenu();
+	const homeMenus = getHomeMenu(network);
+	if (isLoggedOut()) {
+		if (homeMenus && Array.isArray(homeMenus) && homeMenus.length > 0) {
+			const index = homeMenus?.[0]?.items?.findIndex((item) => item?.value === 'settings');
+			if (index >= 0) {
+				homeMenus[0].items.splice(index, 1);
+			}
+		}
+	}
 	const foldedMenu = homeMenus.filter((menu: any) => menu.name && menu.items.length);
 
 	const pages = useMemo(() => {
@@ -231,9 +244,9 @@ const council = {
 		},
 		{
 			icon: <MembersSVG />,
-			name: 'Members',
-			pathname: '/members',
-			value: 'members'
+			name: 'Council Members',
+			pathname: '/council',
+			value: 'councilMembers'
 		}
 	],
 	name: 'COUNCIL'
@@ -251,12 +264,131 @@ const techComm = {
 	name: 'TECH.COMM.'
 };
 
-const getHomeMenu = () => {
+const getHomeMenu = (network: string) => {
 	return [
 		commonMenus,
+		getReferenda(network),
+		getFellowship(network),
+		getWhitelist(network),
 		democracy,
 		treasury,
 		council,
 		techComm
 	];
+};
+
+const getReferenda = (network: string) => {
+	const items: any[] = [];
+	if (networkTrackInfo && networkTrackInfo[network]) {
+		Object.values(networkTrackInfo[network]).forEach((v) => {
+			if (v && !v.fellowshipOrigin && !['whitelisted_caller', 'fellowship_admin'].includes(v.name)) {
+				items.push({
+					icon: (
+						<span
+							className='w-6 h-6 bg-grey_secondary text-xs leading-none font-medium text-white rounded-full flex items-center justify-center'
+						>
+							{v.trackId}
+						</span>
+					),
+					name: v?.name?.split('_')?.map((s: string) => s?.charAt(0)?.toUpperCase() + s?.slice(1)).join(' '),
+					pathname: v?.name?.split('_')?.join('-') || '',
+					value: v.name
+				});
+			}
+		});
+	}
+	return {
+		items,
+		name: 'REFERENDA'
+	};
+};
+
+const getFellowship = (network: string) => {
+	const items: any[] = [];
+	if (networkTrackInfo && networkTrackInfo[network]) {
+		let isFellowshipFound = false;
+		let isWhiteListedCallerFound = false;
+		let isFellowshipAdmin = false;
+		Object.values(networkTrackInfo[network]).forEach((v) => {
+			if (v.fellowshipOrigin) {
+				isFellowshipFound = true;
+			}
+			if (v.name === 'whitelisted_caller') {
+				isWhiteListedCallerFound = true;
+			}
+			if (v.name === 'fellowship_admin') {
+				isFellowshipAdmin = true;
+			}
+		});
+		if (isFellowshipFound) {
+			items.push({
+				icon: <Gov2FellowshipGroupSVG />,
+				name: 'Fellowship Members',
+				pathname: '/fellowship',
+				value: 'fellowshipMembers'
+			});
+			items.push({
+				icon: <ReferendaSVG />,
+				name: 'Member Referenda',
+				pathname: '/member-referenda',
+				value: 'memberReferenda'
+			});
+			if (isWhiteListedCallerFound) {
+				items.push({
+					icon: <Gov2FellowshipGroupSVG />,
+					name: 'Whitelisted Caller',
+					pathname: '/whitelisted-caller',
+					value: 'whitelistedCaller'
+				});
+			}
+			if (isFellowshipAdmin) {
+				items.push({
+					icon: <Gov2FellowshipGroupSVG />,
+					name: 'Fellowship Admin',
+					pathname: '/fellowship-admin',
+					value: 'fellowshipAdmin'
+				});
+			}
+		}
+	}
+	return {
+		items,
+		name: 'FELLOWSHIP'
+	};
+};
+
+const getWhitelist = (network: string) => {
+	const items: any[] = [];
+	if (networkTrackInfo && networkTrackInfo[network]) {
+		let isFellowshipNotFound = true;
+		let isWhiteListedCallerFound = false;
+		Object.values(networkTrackInfo[network]).forEach((v) => {
+			if (v.fellowshipOrigin) {
+				isFellowshipNotFound = false;
+			}
+			if (v.name === 'whitelisted_caller') {
+				isWhiteListedCallerFound = true;
+			}
+		});
+		if (isWhiteListedCallerFound) {
+			items.push({
+				icon: <ReferendaSVG />,
+				name: 'Whitelisted Caller',
+				pathname: '/whitelisted-caller',
+				value: 'whitelistedCaller'
+			});
+		}
+		if (isFellowshipNotFound) {
+			items.push({
+				icon: <Gov2FellowshipGroupSVG />,
+				name: 'Whitelist Members',
+				pathname: '/members',
+				value: 'whitelistMembers'
+			});
+		}
+	}
+	return {
+		items,
+		name: 'WHITELIST'
+	};
 };

@@ -72,6 +72,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 		const subsquidData = subsquidRes?.data;
 		const subsquidPosts: any[] = subsquidData?.proposals || [];
 		let postsPromise;
+		let posts:any[];
 		if(network === AllNetworks.COLLECTIVES){
 			postsPromise = subsquidPosts?.map((subsquidPost) => {
 				const { title, createdAt, description, hash, id, proposer, status, type } = subsquidPost;
@@ -86,6 +87,8 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 					type: type
 				};
 			});
+
+			posts = await Promise.allSettled(postsPromise);
 		}
 		else{
 			postsPromise = subsquidPosts?.map(async (subsquidPost) => {
@@ -149,17 +152,15 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 				};
 			});
 
+			const postsResults = await Promise.allSettled(postsPromise);
+			posts = postsResults.reduce((prev, post) => {
+				if (post && post.status === 'fulfilled') {
+					prev.push(post.value);
+				}
+				return prev;
+			}, [] as any[]);
+			posts = await getSpamUsersCountForPosts(network, posts, strProposalType);
 		}
-
-		const postsResults = await Promise.allSettled(postsPromise);
-		let posts = postsResults.reduce((prev, post) => {
-			if (post && post.status === 'fulfilled') {
-				prev.push(post.value);
-			}
-			return prev;
-		}, [] as any[]);
-
-		posts = await getSpamUsersCountForPosts(network, posts, strProposalType);
 
 		const data: ILatestActivityPostsListingResponse = {
 			count: Number(subsquidData?.proposalsConnection.totalCount),

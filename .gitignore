@@ -49,3 +49,8 @@ next-env.d.ts
 next.config.original.js
 
 .env
+# Sentry
+.sentryclirc
+
+# Sentry
+next.config.original.js

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useContext, useEffect, useState } from 'react';
-import { Button, Form, Modal, Spin } from 'antd';
+import { Alert, Button, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
@@ -15,7 +15,6 @@ import WalletButton from '~src/components/WalletButton';
 import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
-import FilteredError from '~src/ui-components/FilteredError';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -183,7 +182,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 											onAccountChange={(address) => setAddress(address)}
 											onBalanceChange={handleOnBalanceChange}
 											className='text-[#485F7D] text-sm'
-										/>: !wallet? <FilteredError text='Please select a wallet.' />: null}
+										/>: !wallet? <Alert type='info' showIcon message='Please select a wallet.' />: null}
 								</Form>}
 			</div>
 		</Spin>

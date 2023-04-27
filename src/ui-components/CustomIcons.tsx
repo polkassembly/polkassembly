@@ -64,7 +64,7 @@ import SlightlyForUnfilledSVG from '~assets/icons/slightly-for-unfilled.svg';
 import ForUnfilleSVG from '~assets/icons/for-unfilled.svg';
 import DelegatedSVG from '~assets/icons/delegated.svg';
 import UndelegatedSVG from '~assets/icons/undelegated.svg';
-import ReceivedDelegationSVG from '~assets/icons/received-delegation.svg'; 
+import ReceivedDelegationSVG from '~assets/icons/received-delegation.svg';
 import FilterSVG from '~assets/icons/filter-icon.svg';
 import FilterUnfilledSVG from '~assets/icons/filter-unfilled.svg';
 import SearchSVG from '~assets/icons/search.svg';

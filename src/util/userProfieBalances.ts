@@ -43,10 +43,11 @@ const userProfileBalances = ( { address, api, apiReady, network, setBalance, set
 	else{
 		api.query.system.account(address)
 			.then((result: any) => {
+
 				if (result.data.free && result.data?.free?.toBigInt() >= result.data?.miscFrozen?.toBigInt()){
 					setTransferableBalance && setTransferableBalance((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()).toString() || '0');
-					setLockBalance && setLockBalance(result.data.reserved?.toBigInt());
-					setBalance(((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()) + result.data.reserved?.toBigInt()).toString() );
+					setLockBalance && setLockBalance( result.data?.miscFrozen?.toBigInt().toString());
+					setBalance(result.data?.free?.toBigInt().toString());
 				}
 				else{
 					setBalance('0');

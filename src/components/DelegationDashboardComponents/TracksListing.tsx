@@ -103,16 +103,6 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 
 				const trackData = filterTrackDataByTrackNumber(track?.track);
 
-				if(track.status === ETrackDelegationStatus.Delegated){
-					setDelegatedCount(delegatedCount + 1);
-				}
-				else if(track.status === ETrackDelegationStatus.Undelegated){
-					setUndelegatedCount(undelegatedCount + 1);
-				}
-				else if(track.status === ETrackDelegationStatus.Received_Delegation){
-					setReceivedDelegationCount(receivedDelegationCount + 1);
-				}
-
 				return {
 					active_proposals: track?.active_proposals_count,
 					delegated_by: track?.status?.includes(ETrackDelegationStatus.Received_Delegation) ? track?.delegations.filter((row:IDelegation) => row?.to === address) : null, //rece
@@ -183,7 +173,7 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 	}, [status]);
 
 	return <div className={className} >
-		<div className={`flex font-medium items-center text-sidebarBlue text-xl gap-2 max-lg:gap-0 px-8 py-6 border-l-0 border-t-0 border-r-0 ${showTable && 'border-[#e7ebf0] border-b-[1px] border-solid'} max-lg:px-1.5`}>
+		<div className={`flex font-medium items-center text-sidebarBlue text-xl gap-2 max-lg:gap-0 px-8 py-6 border-l-0 border-t-0 border-r-0 ${showTable && 'border-[#e7ebf0] border-b-[1px] border-solid'} max-lg:px-4`}>
       Tracks
 			<Radio.Group buttonStyle='solid' defaultValue={'all'} onChange={(e) => {setStatusvalue(e.target.value); filterByStatus(e.target.value); }} value={status} className='flex max-md:flex-col ml-[24px] flex-shrink-0 '>
 				<Radio className={`text-[#243A57B2] text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.All === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={ETrackDelegationStatus.All}>All ({allCount})</Radio>

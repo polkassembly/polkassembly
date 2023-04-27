@@ -7,7 +7,6 @@ import { useApiContext, useNetworkContext } from '~src/context';
 import BalanceIcon from '~assets/icons/total-balance.svg';
 import LockBalanceIcon from '~assets/icons/lock-balance.svg';
 import RightTickIcon from '~assets/icons/right-tick.svg';
-import NextUnlockIcon from '~assets/icons/next-unlock.svg';
 import { Divider, Skeleton } from 'antd';
 import userProfileBalances from '~src/util/userProfieBalances';
 import formatBnBalance from '~src/util/formatBnBalance';
@@ -82,21 +81,10 @@ const ProfileBalances = ({ className, address }: Props ) => {
 					</div>
 				</div>
 			</div>
-			<Divider  type= 'vertical' style={{ borderLeft: '1px solid #D2D8E0',height:'100%' }} />
-			<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
-				<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-					{formatBnBalance('55', { numberAfterComma: 2, withUnit: false }, network)}
-					<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
-				<div className='flex items-center justify-center gap-2'>
-					<NextUnlockIcon/>
-					<span className='text-white text-sm font-normal tracking-[0.01em]'>
-          Next Unlock
-					</span>
-				</div>
-			</div>
 		</div>
 		{ address.length > 0 && <div onClick={() => setOpenModal(true)} className='border-solid  h-[40px] flex justify-end gap-2 px-[12px] bg-[#981059] rounded-[8px] border-[1px] border-[#D2D8E0]'>
-			<Address displayInline address={address} disableAddressClick/><DownOutlined className='text-white'/>
+			<Address displayInline address={address} disableAddressClick/>
+			<DownOutlined className='text-white'/>
 		</div>}
 		<DelegationWalletConnectModal open={openModal} setOpen={setOpenModal} closable={true}/>
 	</div>;

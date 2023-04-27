@@ -160,7 +160,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		</div>
 		<WalletConnectModal open={openModal} setOpen={setOpenModal} />
 		{openEditModal  && username === userDetails.username &&
-							<EditProfile openModal={openEditModal} setOpenModal={setOpenEditModal} data={profileDetails} setProfileDetails={setProfileDetails} className='text-[#E5007A] border-[1px] border-solid border-[#E5007A] h-[40px] w-[87px] max-lg:w-auto' textStyle='text-[#E5007A] text-[14px] tracking-wide font-medium'/>
+							<EditProfile openModal={openEditModal} setOpenModal={setOpenEditModal} data={profileDetails} setProfileDetails={setProfileDetails}/>
 		}
 	</div>;
 };

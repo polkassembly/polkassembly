@@ -109,7 +109,7 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		{ return <div className='text-[#243A57] tracking-wider flex items-center justify-start font-medium gap-2 max-md:flex-col'>
 
 			{status.map((item: ETrackDelegationStatus, index:number)  => <h2 key={index}
-      className={`text-[12px] ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center ${item === ETrackDelegationStatus.Received_Delegation && status.length > 1 && 'truncate w-[95px]'} `}>
+				className={`text-[12px] ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center ${item === ETrackDelegationStatus.Received_Delegation && status.length > 1 && 'truncate w-[95px]'} `}>
 				{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
 			</h2>)}
 

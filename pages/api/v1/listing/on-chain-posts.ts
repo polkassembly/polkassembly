@@ -34,6 +34,7 @@ export interface IPostListing {
 	};
 	proposer?: string;
 	curator?: string;
+	parent_bounty_index?: number
 	method?: string;
 	status?: string;
 	title: string;
@@ -116,6 +117,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 		if (!isProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(`The proposal type of the name "${proposalType}" does not exist.`, 400);
 		}
+
 		if(filterBy && Array.isArray(filterBy) && filterBy.length > 0){
 
 			const offChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
@@ -196,7 +198,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals;
 			const subsquidPostsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator } = subsquidPost;
+				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex } = subsquidPost;
 				let otherPostProposer = '';
 				if (group?.proposals?.length) {
 					group.proposals.forEach((obj: any) => {
@@ -237,6 +239,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 							gov_type:data.gov_type,
 							hash,
 							method: preimage?.method,
+							parent_bounty_index: parentBountyIndex || null,
 							post_id: postId,
 							post_reactions,
 							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
@@ -261,6 +264,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 					end: end,
 					hash: hash || null,
 					method: preimage?.method,
+					parent_bounty_index: parentBountyIndex || null,
 					post_id: postId,
 					post_reactions,
 					proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
@@ -339,7 +343,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 			const subsquidPosts: any[] = subsquidData?.proposals;
 
 			const postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator } = subsquidPost;
+				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex } = subsquidPost;
 				let otherPostProposer = '';
 				if (group?.proposals?.length) {
 					group.proposals.forEach((obj: any) => {
@@ -380,6 +384,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 							gov_type:data.gov_type,
 							hash,
 							method: preimage?.method,
+							parent_bounty_index: parentBountyIndex || null,
 							post_id: postId,
 							post_reactions,
 							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
@@ -404,6 +409,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 					end: end,
 					hash: hash || null,
 					method: preimage?.method,
+					parent_bounty_index: parentBountyIndex || null,
 					post_id: postId,
 					post_reactions,
 					proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,

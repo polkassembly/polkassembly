@@ -106,9 +106,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 				/>
 				{replies && replies.length > 0 && <Replies className='comment-content' commentId={id} repliesArr={replies} />}
 			</div>
-			<div>
-
-			</div>
 		</div>
 	);
 };

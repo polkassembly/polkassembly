@@ -18,6 +18,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
+import ReferendaIcon from '~assets/icons/Discussion_icon.svg';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
@@ -67,29 +68,30 @@ const Referenda: FC<IReferendaProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Referenda' network={network}/>
-			<h1 className='dashboard-heading mb-4 md:mb-6'>On Chain Referenda</h1>
+			<h1 className='dashboard-heading mb-4 md:mb-6 flex'><ReferendaIcon /> On Chain Referenda ({count})</h1>
 
 			{/* Intro and Create Post Button */}
-			<div className="flex flex-col md:flex-row">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+			<div className="flex flex-col md:flex-row mb-4">
+				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-[14px] w-full shadow-md mb-4">
 					This is the place to discuss on-chain referenda. On-chain posts are automatically generated as soon as they are created on the chain.
 					Only the proposer is able to edit them.
 				</p>
 			</div>
-			<div className='shadow-md bg-white p-3 md:p-8 rounded-md'>
-				<div className='flex items-center justify-between'>
+			<div className='shadow-md bg-white p-3 md:p-0 rounded-[14px]'>
+				<div className='flex items-center justify-between h-[59px]'>
 					<div>
-						<h1 className='dashboard-heading'>{ count } Referenda</h1>
 						<FilteredTags/>
 					</div>
-					<FilterByTags className='mr-[2px]'/>
+					<FilterByTags className='mr-[25px]'/>
 				</div>
 
 				<div>
 					<Listing posts={posts} proposalType={ProposalType.REFERENDUMS} />
-					<div className='flex justify-end mt-6'>
-						{
-							!!count && count > 0 && count > LISTING_LIMIT &&
+				</div>
+			</div>
+			<div className='flex justify-end mt-6'>
+				{
+					!!count && count > 0 && count > LISTING_LIMIT &&
 						<Pagination
 							defaultCurrent={1}
 							pageSize={LISTING_LIMIT}
@@ -99,9 +101,7 @@ const Referenda: FC<IReferendaProps> = (props) => {
 							onChange={onPaginationChange}
 							responsive={true}
 						/>
-						}
-					</div>
-				</div>
+				}
 			</div>
 		</>
 	);

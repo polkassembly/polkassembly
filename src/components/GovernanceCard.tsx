@@ -14,8 +14,9 @@ import OnchainCreationLabel from 'src/ui-components/OnchainCreationLabel';
 import StatusTag from 'src/ui-components/StatusTag';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
-
+import TopicTag from 'src/ui-components/TopicTag';
 import { getFormattedLike } from '~src/util/getFormattedLike';
+import NewChatIcon from '~assets/icons/new-chat-icon.svg';
 
 interface IGovernanceProps {
 	postReactionCount: {
@@ -80,12 +81,14 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
 
 	return (
-		<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-3 md:p-4`}>
-			<div className="flex flex-col justify-between">
-				<div className='flex justify-between gap-x-2 lg:items-start lg:flex-row'>
+		<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200  p-3 md:p-6 min-h-[147px] flex`}>
+			<span className='font-medium text-center mr-2 flex-none w-[120px] text-[#334D6E] mt-4'>#{isTip? tip_index: onchainId}</span>
+			<div className="flex flex-col justify-between flex-1 mt-4">
+				<OnchainCreationLabel address={address} username={username} />
+				<div className='flex justify-between gap-x-2  lg:items-start lg:flex-row my-2 '>
 					<div className='mt-3 lg:mt-0'>
-						<h1 className='text-sidebarBlue font-semibold text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
-							{<span className='font-medium mr-2'>#{isTip? tip_index: onchainId}</span>} <span className='break-all'>{mainTitle}</span>
+						<h1 className='text-sidebarBlue  flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
+							{} <span className='break-all font-medium text-[14px] leading-[21px]'>{mainTitle}</span>
 						</h1>
 						<h2 className='text-navBlue font-medium text-sm'>{subTitle}</h2>
 					</div>
@@ -99,40 +102,55 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								</div>
 								: null
 						}
-						{status && <StatusTag status={status}/>}
+						{status  && <StatusTag className='mt-[-36px]' status={status} />}
 					</div>
 				</div>
 
-				<div className="mt-3 gap-2.5 font-medium text-navBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
-					<OnchainCreationLabel address={address} username={username} topic={topic} />
-					<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+				<div className="mt-0 gap-2.5 font-medium text-navBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
 
 					<div className='flex items-center gap-x-2'>
-						<div className='flex items-center justify-center gap-x-1.5'>
+						<div className='flex items-center justify-center gap-x-1.5 mr-2'>
 							<LikeOutlined />
 							<span>{getFormattedLike(postReactionCount['👍'])}</span>
 						</div>
-						<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
-						<div className='flex items-center justify-center gap-x-1.5'>
+						<div className='flex items-center justify-center gap-x-1.5 mr-2'>
 							<DislikeOutlined />
 							<span>{getFormattedLike(postReactionCount['👎'])}</span>
 						</div>
 						{
 							isCommentsVisible?
 								<>
-									<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 									<div className='flex items-center'>
-										<CommentOutlined className='mr-1' /> {commentsCount}
+										<NewChatIcon className='mr-1' /> {commentsCount}
 									</div>
 								</>
 								: null
 						}
+						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
+						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
+							(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >
+								{tag}
+							</div>))}
+						{tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+                		+{tags.length-2} more
+						</span>}
+						</>}
 						<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 						{relativeCreatedAt && <>
 							<div className='flex items-center'>
 								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 							</div>
 						</>}
+
+						{
+							topic?
+								<div className='flex items-center '>
+									<div className='mr-1.5 ml-auto hidden min-[340px]:flex'></div>
+									<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
+									<TopicTag topic={topic} />
+								</div>
+								: null
+						}
 					</div>
 
 					{!!end && !!currentBlock &&
@@ -145,17 +163,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										: <span>ended <BlockCountdown endBlock={end}/></span>
 								}
 							</div>
-					}<div className='flex gap-[4px] max-sm:flex-col items-start'>
-						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
-						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
-							(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >
-								{tag}
-							</div>))}
-						{tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
-                +{tags.length-2} more
-						</span>}
-						</>}
-					</div>
+					}
+					
 				</div>
 			</div>
 			<Modal

@@ -116,9 +116,9 @@ p > a:hover {
 
 .dashboard-heading {
   font-style: normal !important;
-  font-weight: 500 !important;
-  font-size: 18px !important;
-  line-height: 27px !important;
+  font-weight: 600 !important;
+  font-size: 20px !important;
+  line-height: 29px !important;
   color: var(--sidebarBlue) !important;
   letter-spacing: 0.01em !important;
 }

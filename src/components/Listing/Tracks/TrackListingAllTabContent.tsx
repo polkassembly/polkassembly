@@ -29,11 +29,12 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 
 	return (
 		<div className={`${className} proposals__list`}>
-			{posts.map((post: any) => {
+			{posts.map((post: any , index) => {
 				return (
-					<div key={post.post_id} className='my-5'>
+					<div key={post.post_id} className=''>
 						{<Link href={`/referenda/${post.post_id}`}>
 							<GovernanceCard
+								className={`${(index+1)%2!==0 && 'bg-[#F5F6F8]'}`}
 								postReactionCount={post?.post_reactions}
 								address={post.proposer}
 								commentsCount={post.comments_count || 0}

@@ -68,18 +68,17 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 	];
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue`}>
-			<div className='flex items-center justify-between mb-10'>
+		<div className={`${className} bg-white drop-shadow-md rounded-[14px] p-4 md:p-0 text-sidebarBlue `}>
+			<div className='flex items-center justify-between mb-10 h-[59px]'>
 				<div>
-					<h1 className='dashboard-heading'>Referenda</h1>
 					<FilteredTags/>
 				</div>
-				<FilterByTags className='mr-[2px] mt-[-10px]'/>
+				<FilterByTags className='mr-[25px]'/>
 			</div>
 			<Tabs
 				items={items}
 				type="card"
-				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium mt-[-70px]'
 			/>
 		</div>
 	);

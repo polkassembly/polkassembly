@@ -30,7 +30,7 @@ const StatusTag = ({ className, content, status, colorInverted, type }: Props) =
 	}
 
 	return (
-		<div className={`${className} ${status} ${colorInverted && 'bg-white inverted'} text-xs rounded-full border-solid border-2 px-3 py-1 whitespace-nowrap h-min`}>
+		<div className={`${className} ${status} ${colorInverted && 'bg-white inverted'} text-xs rounded-[13px] border-solid border-2 px-3 py-1 whitespace-nowrap h-[26px] `}>
 			{content}
 		</div>
 	);
@@ -80,7 +80,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${childBountyStatus.ADDED}
 	&.${gov2ReferendumStatus.CONFIRM_STARTED} {
 		border-color: #6495ED;
-		background: #6495ED;
+		background: #407AFC;
+
 
 		&.inverted {
 			color: #6495ED;

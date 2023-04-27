@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import Link from 'next/link';
+import { poppins } from 'pages/_app';
 import React, { FC } from 'react';
 import GovernanceCard from 'src/components/GovernanceCard';
 import { PostEmptyState } from 'src/ui-components/UIStates';
@@ -49,11 +50,16 @@ const Listing: FC<IListingProps> = (props) => {
 					spam_users_count
 				} = post;
 				const id = isTip ? hash : post_id;
+
+				if(![ProposalType.COUNCIL_MOTIONS, ProposalType.DEMOCRACY_PROPOSALS].includes(proposalType)){
+					topic.name = '' ;
+				}
 				return (
-					<div key={id} className="my-5">
+					<div key={id} className="my-0" >
 						{
-							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${id}`}>
+							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${id}`} >
 								<GovernanceCard
+									className={`${(index+1)%2!==0 && 'bg-[#F5F6F8]'} ${poppins.variable} ${poppins.className}`}
 									postReactionCount={post_reactions}
 									address={proposer || curator}
 									commentsCount={comments_count || 0}
@@ -69,6 +75,7 @@ const Listing: FC<IListingProps> = (props) => {
 									isTip={isTip}
 									tags={tags}
 									spam_users_count={spam_users_count}
+
 								/>
 							</Link>
 						}

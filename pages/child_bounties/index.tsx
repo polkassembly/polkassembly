@@ -18,6 +18,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
+import DollarIcon from '~assets/icons/dollar-icon.svg';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
@@ -68,23 +69,22 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Child Bounties' network={network}/>
-			<h1 className='dashboard-heading mb-4 md:mb-6'>On Chain Child Bounties</h1>
+			<h1 className='dashboard-heading mb-4 md:mb-6 flex'> <DollarIcon className='mr-2' /> On Chain Child Bounties ({count})</h1>
 
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+				<p className="text-sidebarBlue font-font_default text-sm md:text-base bg-white p-4 md:p-8 rounded-[14px] shadow-md mb-8 font-medium text-[14px] leading-[21px]">
 					This is the place to discuss on-chain child bounties. Child Bounty posts are automatically generated as soon as they are created on-chain.
 					Only the proposer is able to edit them.
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white p-3 md:p-8 rounded-md'>
-				<div className='flex items-center justify-between'>
+			<div className='shadow-md bg-white p-3 md:p-0 rounded-[14px]'>
+				<div className='flex items-center justify-between h-[59px]'>
 					<div>
-						<h1 className='dashboard-heading'>{ count } Child Bounties</h1>
 						<FilteredTags/>
 					</div>
-					<FilterByTags className='mr-[2px]'/>
+					<FilterByTags className='mr-[25px] fill-[#E5007A]'/>
 				</div>
 
 				<div>
@@ -92,9 +92,11 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 						posts={posts}
 						proposalType={ProposalType.CHILD_BOUNTIES}
 					/>
-					<div className='flex justify-end mt-6'>
-						{
-							!!count && count > 0 && count > LISTING_LIMIT &&
+				</div>
+			</div>
+			<div className='flex justify-end mt-6'>
+				{
+					!!count && count > 0 && count > LISTING_LIMIT &&
 						<Pagination
 							defaultCurrent={1}
 							pageSize={LISTING_LIMIT}
@@ -104,9 +106,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 							onChange={onPaginationChange}
 							responsive={true}
 						/>
-						}
-					</div>
-				</div>
+				}
 			</div>
 		</>
 	);

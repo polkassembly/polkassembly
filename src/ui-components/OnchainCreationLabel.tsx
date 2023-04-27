@@ -5,7 +5,7 @@
 import React from 'react';
 
 import Address from './Address';
-import TopicTag from './TopicTag';
+//import TopicTag from './TopicTag';
 
 interface Props {
 	address: string
@@ -20,16 +20,15 @@ const OnchainCreationLabel = ({ address, topic, username }:Props ) => {
 				{
 					username || address?
 						<>
-							<div>By:</div>
 							{
 								address?
 									<Address
 										address={address}
-										className='address ml-1.5'
+										className='address '
 										displayInline={true}
 									/>
 									: <span
-										className='mx-1.5'
+										className=''
 									>
 										{username}
 									</span>
@@ -38,14 +37,7 @@ const OnchainCreationLabel = ({ address, topic, username }:Props ) => {
 						: null
 				}
 			</div>
-			{
-				topic?
-					<div className='flex items-center'>
-						<div className='mr-1.5 ml-auto hidden min-[340px]:flex'>from</div>
-						<TopicTag topic={topic} />
-					</div>
-					: null
-			}
+
 		</div>
 	);
 };

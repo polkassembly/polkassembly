@@ -126,7 +126,7 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 		}
 		timeline.push(...getTimeline(proposals));
 		if (timeline.length <= 1) {
-			timeline.push(getTimeline([
+			timeline.push(...getTimeline([
 				{
 					createdAt: post?.createdAt,
 					hash: post?.hash,
@@ -145,15 +145,25 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 			ref: postsByTypeRef(network, postType as any).doc(String(postId))
 		});
 	}
-	const results = await firestore_db.getAll(...postsRefWithData.map((v) => (v.ref)));
+	const results = await firestore_db.getAll(...(postsRefWithData && Array.isArray(postsRefWithData)? postsRefWithData: []).map((v) => (v.ref)));
 	results.forEach((result, i) => {
-		if (result && result.exists) {
-			const data = result.data();
-			const newData: any = {
-				...data,
-				last_edited_at: new Date(),
-				post_link: isRemove? null: post_link
-			};
+		const data = result.data();
+		const newData: any = {
+			...data,
+			last_edited_at: new Date(),
+			post_link: isRemove? null: post_link
+		};
+		if (!isRemove) {
+			newData.title = currPostData.title;
+			newData.content = currPostData.content;
+			if (!(newData.tags && Array.isArray(newData.tags))) {
+				delete newData.tags;
+			}
+			if (currPostData.tags && Array.isArray(currPostData.tags)) {
+				newData.tags = currPostData.tags;
+			} else {
+				newData.tags = null;
+			}
 			if (!newData.user_id && newData.user_id !== 0) {
 				newData.user_id = user.id;
 			}
@@ -162,9 +172,6 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 			}
 			if (!newData.username) {
 				newData.username = user.username;
-			}
-			if (!newData.proposer_address) {
-				newData.proposer_address = substrateAddress;
 			}
 			if (!newData.created_at) {
 				newData.created_at = new Date();
@@ -178,9 +185,9 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 					newData.topic_id = currPostData.topic_id;
 				}
 			}
-			if (postsRefWithData[i]) {
-				postsRefWithData[i].data = newData;
-			}
+		}
+		if (postsRefWithData[i]) {
+			postsRefWithData[i].data = newData;
 		}
 	});
 	postsRefWithData.forEach((obj) => {
@@ -213,22 +220,25 @@ type TGetPostsRefAndData = (params: IGetPostsRefAndDataParams) => Promise<TPosts
 export const getPostsRefAndData: TGetPostsRefAndData = async (params) => {
 	const { network, posts } = params;
 
-	const postsRefWithData: TPostsRefWithData = posts.map((post) => {
+	const postsRefWithData: TPostsRefWithData = posts?.map((post) => {
 		return {
 			data: {},
 			ref: postsByTypeRef(network, post.type as any).doc(String(post.id))
 		};
 	});
-	const results = await firestore_db.getAll(...postsRefWithData.map(({ ref }) => (ref)));
-
-	results.forEach((result, i) => {
-		const currPostData = result.data();
-		if (posts?.[i].isExistChecked && !(result.exists && currPostData)) {
-			throw apiErrorWithStatusCode(`Post with id: "${posts[i].id}" and type: "${posts[i].type}" does not exist.`, 404);
-		}
-		postsRefWithData[i].data = currPostData;
-	});
-	return postsRefWithData;
+	const refs = ((postsRefWithData && Array.isArray(postsRefWithData))? postsRefWithData: []).map(({ ref }) => (ref));
+	if (refs.length > 0) {
+		const results = await firestore_db.getAll(...refs);
+		results.forEach((result, i) => {
+			const currPostData = result.data();
+			if (posts?.[i].isExistChecked && !(result.exists && currPostData)) {
+				throw apiErrorWithStatusCode(`Post with id: "${posts[i].id}" and type: "${posts[i].type}" does not exist.`, 404);
+			}
+			postsRefWithData[i].data = currPostData;
+		});
+		return postsRefWithData;
+	}
+	return [];
 };
 
 export interface ILinkPostConfirmResponse {
@@ -266,7 +276,7 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (r
 			posts: [
 				{
 					id: currPostId,
-					isExistChecked: true,
+					isExistChecked: false,
 					type: currPostType
 				},
 				{
@@ -276,6 +286,7 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (r
 				}
 			]
 		});
+
 		if (postsRefWithData.length !== 2) {
 			throw apiErrorWithStatusCode('Something went wrong!', 500);
 		}
@@ -291,6 +302,7 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (r
 			postType,
 			user
 		};
+
 		if (isOffChainProposalTypeValid(String(postType))) {
 			if (!postData) {
 				throw apiErrorWithStatusCode(`Post with id: "${postId}" and type: "${postType}" does not exist, please create a post.`, 404);
@@ -315,7 +327,7 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (r
 		const data = await updatePostLinkInGroup(params);
 		return res.status(200).json(data);
 	} catch (error) {
-		return res.status(error.name).json({ message: error.message });
+		return res.status((error.name && !isNaN(Number(error.name))? Number(error.name): 500)).json({ message: error.message });
 	}
 };
 

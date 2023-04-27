@@ -243,10 +243,6 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 	useEffect(() => {
 		const post_link = postData.post_link;
 		if (post_link && (post_link.id !== postId || post_link.type !== postType)) {
-			setData({
-				description: post_link.description || '',
-				title: post_link.title || ''
-			});
 			if (post_link.id) {
 				setPostId(post_link.id);
 			}
@@ -263,11 +259,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 				setErr('');
 				const post_link = postData.post_link;
 				if (post_link) {
-					const { type, description, title, id } = post_link;
-					setData({
-						description: description || '',
-						title: title || ''
-					});
+					const { type, id } = post_link;
 					setPostId(id);
 					if (type) {
 						setPostType(type);

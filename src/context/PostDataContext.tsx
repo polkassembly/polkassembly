@@ -21,7 +21,7 @@ export interface IPostData {
     title: string;
     content: string;
     created_at: string | Date;
-    last_edited_at: string | Date;
+    last_edited_at?: string | Date;
     proposer: string;
     curator: string;
     username: string;
@@ -43,6 +43,14 @@ export interface IPostData {
         title?: string;
         description?: string;
         created_at?: Date | string;
+        last_edited_at?: Date | string;
+        proposer?: string;
+        username?: string;
+        topic?: {
+            id: number;
+            name: string;
+        };
+        tags?: string[]
     }
     track_name?: string;
     track_number?: number;

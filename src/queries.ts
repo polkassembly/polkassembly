@@ -131,8 +131,9 @@ query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_e
     proposer
     type
     createdAtBlock
+    createdAt
     group {
-      proposals(limit: 10) {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
         curator
         description
         hash
@@ -150,7 +151,7 @@ query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_e
         proposer
         type
         createdAtBlock
-        statusHistory(limit: 10) {
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
           status
           block
           timestamp

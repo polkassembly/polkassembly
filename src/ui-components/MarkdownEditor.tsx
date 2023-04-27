@@ -7,8 +7,10 @@ import 'react-mde/lib/styles/css/react-mde-all.css';
 import React from 'react';
 import ReactMde, { Suggestion } from 'react-mde';
 import styled from 'styled-components';
-
 import Markdown from './Markdown';
+import { IMG_BB_API_KEY } from '~src/global/apiKeys';
+import { useUserDetailsContext } from '~src/context';
+import HelperTooltip from 'src/ui-components/HelperTooltip';
 
 const StyledTextArea = styled.div`
 
@@ -18,6 +20,7 @@ const StyledTextArea = styled.div`
 		color: #000000 !important;
 		padding: 1rem 1.2rem!important;
 		line-height: 1.4!important;
+		
 	}
 
 	@media only screen and (max-width: 768px) {
@@ -152,6 +155,12 @@ const StyledTextArea = styled.div`
 				}
 			}
 		}
+		
+			.image-tip{
+				display:none !important;
+			}
+			
+		
 	}
 `;
 
@@ -164,9 +173,8 @@ interface Props {
 }
 
 function MarkdownEditor(props: Props): React.ReactElement {
-
+	const { id, username } = useUserDetailsContext();
 	const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
-
 	const loadSuggestions = async (text: string) => {
 		return new Promise<Suggestion[]>((accept) => {
 			const savedUsers = global.window.localStorage.getItem('users');
@@ -181,10 +189,35 @@ function MarkdownEditor(props: Props): React.ReactElement {
 		});
 	};
 
+	// Generator function to save images pasted. This generator should 1) Yield the image URL. 2) Return true if the save was successful or false, otherwise
+	const handleSaveImage = async function* (data: any) {
+		const imgBlob = new Blob([data], { type: 'image/jpeg' });
+
+		const formData = new FormData();
+		formData.append('image', imgBlob, `${id}_${username}_${new Date().valueOf()}.jpg`);
+
+		let url = '';
+
+		await fetch(`https://api.imgbb.com/1/upload?key=${IMG_BB_API_KEY}`, {
+			body: formData,
+			method: 'POST'
+		}).then(response => response.json())
+			.then(res => {
+				url = res?.data?.display_url;
+			})
+			.catch(error => console.error('Error in uploading image: ', error));
+
+		// yields the URL that should be inserted in the markdown
+		yield url;
+
+		// returns true meaning that the save was successful
+		return Boolean(url);
+	};
+
 	return (
 		<StyledTextArea className='container'>
 			<ReactMde
-				generateMarkdownPreview={markdown => Promise.resolve(<Markdown isPreview={true} md={markdown} />) }
+				generateMarkdownPreview={markdown => Promise.resolve(<Markdown isPreview={true} md={markdown} />)}
 				minEditorHeight={props.height}
 				minPreviewHeight={props.height}
 				name={props.name}
@@ -193,7 +226,11 @@ function MarkdownEditor(props: Props): React.ReactElement {
 				loadSuggestions={loadSuggestions}
 				toolbarCommands={[['bold', 'header', 'link', 'quote', 'strikethrough', 'code', 'image', 'ordered-list', 'unordered-list']]}
 				{...props}
+				paste={{
+					saveImage: handleSaveImage
+				}}
 			/>
+			<HelperTooltip className='ml-2' text='Attach images by dragging & dropping, selecting or pasting them.' />
 		</StyledTextArea>
 	);
 }

@@ -8,9 +8,9 @@ import rehypeRaw from 'rehype-raw';
 import styled from 'styled-components';
 
 interface Props {
-	className?: string
-	isPreview?: boolean
-	md: string
+	className?: string;
+	isPreview?: boolean;
+	md: string;
 }
 
 const Markdown = ({ className, isPreview=false, md }: Props) => {

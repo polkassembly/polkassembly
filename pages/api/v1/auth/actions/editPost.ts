@@ -42,7 +42,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const { content, postId, proposalType, title, timeline, tags } = req.body;
 	if(isNaN(postId) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	if(tags && !Array.isArray(tags)) return  res.status(400).json({ message: 'Invalid tags parameter' });
+	if(tags && !Array.isArray(tags)) return res.status(400).json({ message: 'Invalid tags parameter' });
 
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The proposal type of the name "${proposalType}" does not exist.` });
@@ -64,11 +64,39 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 
 	const postDoc = await postDocRef.get();
 	let isAuthor = false;
+	const defaultUserAddress = await getDefaultUserAddressFromId(user.id);
+	proposer_address = defaultUserAddress?.address || '';
+
+	const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+	const postQuery = GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
+	let variables: any = {
+		index_eq: Number(postId),
+		type_eq: subsquidProposalType
+	};
+
+	if (proposalType === ProposalType.TIPS) {
+		variables = {
+			hash_eq: String(postId),
+			type_eq: subsquidProposalType
+		};
+	}
+
+	const postRes = await fetchSubsquid({
+		network,
+		query: postQuery,
+		variables
+	});
+
+	const post = postRes.data?.proposals?.[0];
 	if(postDoc.exists) {
 		const post = postDoc.data();
 		if(![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)){
 			const substrateAddress = getSubstrateAddress(post?.proposer_address || '');
-			isAuthor = Boolean(userAddresses.find(address => address.address === substrateAddress));
+			let proposer = '';
+			if (post) {
+				proposer = post?.proposer || post?.preimage?.proposer;
+			}
+			isAuthor = Boolean(userAddresses.find(address => address.address === substrateAddress || address.address === proposer));
 			if(network === 'moonbeam' && proposalType === ProposalType.DEMOCRACY_PROPOSALS && post?.id === 23){
 				if(userAddresses.find(address => address.address === '0xbb1e1722513a8fa80f7593617bb0113b1258b7f1')){
 					isAuthor = true;
@@ -89,32 +117,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		topic_id = post?.topic_id;
 		post_link = post?.post_link;
 		proposer_address = post?.proposer_address;
-	}else {
-		const defaultUserAddress = await getDefaultUserAddressFromId(user.id);
-		proposer_address = defaultUserAddress?.address || '';
-
-		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
-		const postQuery = GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
-		let variables: any = {
-			index_eq: Number(postId),
-			type_eq: subsquidProposalType
-		};
-
-		if (proposalType === ProposalType.TIPS) {
-			variables = {
-				hash_eq: String(postId),
-				type_eq: subsquidProposalType
-			};
-		}
-
-		const postRes = await fetchSubsquid({
-			network,
-			query: postQuery,
-			variables
-		});
-
-		const post = postRes.data?.proposals?.[0];
-
+	} else {
 		if(!post) return res.status(500).json({ message: 'Something went wrong.' });
 		if(!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
 
@@ -138,11 +141,10 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	}
 
 	const last_comment_at = new Date();
-	const newPostDoc: Post = {
+	const newPostDoc: Omit<Post, 'last_comment_at'> = {
 		content,
 		created_at,
 		id: proposalType === ProposalType.TIPS ? postId : Number(postId),
-		last_comment_at,
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,
 		proposer_address: proposer_address,
@@ -152,6 +154,10 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		user_id: user.id,
 		username: user.username
 	};
+
+	if (!postDoc.exists || !postDoc?.data() || !postDoc?.data()?.last_comment_at) {
+		(newPostDoc as Post).last_comment_at = last_comment_at;
+	}
 
 	let isCurrPostUpdated = false;
 	if (timeline && Array.isArray(timeline) && timeline.length > 0) {
@@ -168,7 +174,10 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					created_at,
 					id: proposalType === ProposalType.TIPS ? obj.hash : Number(obj.index),
 					last_edited_at: last_comment_at,
-					post_link: post_link || null,
+					post_link: {
+						id: postId,
+						type: strProposalType
+					},
 					proposer_address: proposer_address,
 					tags: tags || [],
 					title,
@@ -187,15 +196,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 
 	const { last_edited_at, topic_id: topicId } = newPostDoc;
 
-	const batch = firestore_db.batch();
-	tags.length > 0 && tags?.map((tag:string) => {
-		const tagRef = firestore_db.collection('tags').doc(tag);
-		const newTag:IPostTag={
-			last_used_at:new Date(),
-			name:tag.toLowerCase()
-		};
-		batch.set(tagRef, newTag, { merge: true });}
-	);
 	res.status(200).json({
 		content,
 		last_edited_at: last_edited_at,
@@ -206,9 +206,22 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			name: getTopicNameFromTopicId(topicId as any)
 		}
 	});
-	tags.length>0 && await batch.commit();
-	return;
 
+	const batch = firestore_db.batch();
+	if (tags && Array.isArray(tags) && tags.length > 0) {
+		tags?.map((tag:string) => {
+			if (tag && typeof tag === 'string') {
+				const tagRef = firestore_db.collection('tags').doc(tag);
+				const newTag: IPostTag = {
+					last_used_at: new Date(),
+					name: tag.toLowerCase()
+				};
+				batch.set(tagRef, newTag, { merge: true });
+			}
+		});
+		await batch.commit();
+	}
+	return;
 };
 
 export default withErrorHandling(handler);

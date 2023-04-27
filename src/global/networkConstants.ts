@@ -14,6 +14,7 @@ import basiliskLogo from '~assets/parachain-logos/basilisk-logo.jpg';
 import pioneerLogo from '~assets/parachain-logos/bitcountrypioneer-logo.jpg';
 import calamariLogo from '~assets/parachain-logos/calamari-logo.png';
 import centrifugeLogo from '~assets/parachain-logos/centrifuge-logo.png';
+import collectivesLogo from '~assets/parachain-logos/collectives-logo.png';
 import composableFinanceLogo from '~assets/parachain-logos/composable-finance-logo.png';
 import crustLogo from '~assets/parachain-logos/crust-logo.png';
 import equilibriumLogo from '~assets/parachain-logos/equilibrium-logo.png';
@@ -104,6 +105,7 @@ export const network = {
 	TURING: 'turing',
 	VARA: 'vara',
 	WESTEND: 'westend',
+	WESTENDCOLLECTIVES: 'westend-collectives',
 	XX: 'xx'
 };
 
@@ -400,15 +402,15 @@ export const chainProperties: types.ChainPropType = {
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,
-		logo: polkadotLogo,
+		logo: collectivesLogo,
 		rpcEndpoint: 'wss://polkadot-collectives-rpc.polkadot.io',
 		ss58Format: 0,
-		subsquidUrl: 'https://squid.subsquid.io/westend-collectives/graphql',
+		subsquidUrl: 'https://squid.subsquid.io/collectives-polkassembly/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.DOT,
-		treasuryProposalBondPercent: '5.00%',
-		treasuryProposalMinBond: '100',
-		treasuryProposalMaxBond: '500',
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		rpcEndpoints: []
 	},
@@ -1001,6 +1003,22 @@ export const chainProperties: types.ChainPropType = {
 		subsquidUrl: 'https://squid.subsquid.io/vara-polkassembly/graphql',
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '20',
+		treasuryProposalMaxBond: null,
+		externalLinks: '',
+		rpcEndpoints: []
+	},
+	[network.WESTENDCOLLECTIVES]: {
+		blockTime: 6000,
+		category: 'test',
+		chainId: 0,
+		logo: westendLogo,
+		rpcEndpoint: 'wss://sys.ibp.network/collectives-westend',
+		ss58Format: 0,
+		subsquidUrl: 'https://squid.subsquid.io/westend-collectives/graphql',
+		tokenDecimals: 12,
+		tokenSymbol: tokenSymbol.WND,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		rpcEndpoints: []

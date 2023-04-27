@@ -32,6 +32,8 @@ import LikeDislikeSVG from '~assets/icons/like-dislike.svg';
 import ArrowDownSVG from '~assets/icons/arrow-down.svg';
 import VotingHistorySVG from '~assets/icons/voting-history.svg';
 import ThresholdGraphSVG from '~assets/icons/threshold-graph.svg';
+import PostEditSVG from '~assets/icons/post-edit.svg';
+import PostLinkingSVG from '~assets/icons/post-linking.svg';
 import WarningMessageSVG from '~assets/icons/warning-message.svg';
 import BountiesSVG from '~assets/sidebar/bounties.svg';
 import CalendarSVG from '~assets/sidebar/calendar.svg';
@@ -215,6 +217,14 @@ export const ArrowDownIcon = (props: Partial<CustomIconComponentProps>) => (
 
 export const ThresholdGraphIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={ThresholdGraphSVG} {...props} />
+);
+
+export const PostEditIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={PostEditSVG} {...props} />
+);
+
+export const PostLinkingIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={PostLinkingSVG} {...props} />
 );
 
 export const WarningMessageIcon = (props: Partial<CustomIconComponentProps>) => (

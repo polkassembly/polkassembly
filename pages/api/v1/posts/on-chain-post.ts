@@ -28,7 +28,7 @@ export const isDataExist = (data: any) => {
 export const getTimeline = (proposals: any, isStatus?: {
 	swap: boolean;
 }) => {
-	return proposals.map((obj: any) => {
+	return proposals?.map((obj: any) => {
 		const statuses = obj?.statusHistory as { status: string }[];
 		if (obj.type === 'ReferendumV2') {
 			const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');
@@ -80,7 +80,7 @@ export interface IPostResponse {
 		name: string;
 	};
 	decision?: string;
-	last_edited_at?: string | Date | null;
+	last_edited_at?: string | Date;
 	[key: string]: any;
   gov_type?: 'gov_1' | 'open_gov' ;
   tags?: string[] | [];
@@ -125,7 +125,7 @@ export function getReactions(reactionsQuerySnapshot: FirebaseFirestore.QuerySnap
 	return reactions;
 }
 
-const getTopicFromFirestoreData = (data: any, proposalType: ProposalType) => {
+export const getTopicFromFirestoreData = (data: any, proposalType: ProposalType) => {
 	if (data) {
 		const topic = data.topic;
 		const topic_id = data.topic_id;
@@ -218,7 +218,7 @@ const getAndSetNewData = async (params: IParams) => {
 							if (data.post_link && !newData.post_link) {
 								newData.post_link = data.post_link;
 							}
-							if(data.tags){
+							if(data.tags && Array.isArray(data.tags)){
 								newData.tags = data?.tags;
 							}
 							if(data.gov_type){
@@ -576,7 +576,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			ended_at_block: postData?.endedAtBlock,
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
-			last_edited_at: postData?.updatedAt,
+			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
 			motion_method: proposalArguments?.method,
@@ -601,49 +601,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			vote_threshold: postData?.threshold?.type
 		};
 
-		const isStatus = {
-			swap: false
-		};
 		// Timeline
-		const timelineProposals = postData?.group?.proposals ||[];
-		post.timeline = getTimeline(timelineProposals, isStatus);
-
-		// Proposer and Curator address
-		if (timelineProposals && Array.isArray(timelineProposals)) {
-			for (let i = 0; i < timelineProposals.length; i++) {
-				if (post.proposer && post.curator) {
-					break;
-				}
-				const obj = timelineProposals[i];
-				if (!post.proposer) {
-					if (obj.proposer) {
-						post.proposer = obj.proposer;
-					} else if (obj?.preimage?.proposer) {
-						post.proposer = obj.preimage.proposer;
-					}
-				}
-				if (!post.curator && obj.curator) {
-					post.curator = obj.curator;
-				}
-			}
-		}
-		if (!post.timeline || post.timeline.length === 0) {
-			post.timeline = getTimeline([
-				{
-					createdAt: postData?.createdAt,
-					hash: postData?.hash,
-					index: postData?.index || postData?.cid,
-					statusHistory: postData?.statusHistory || postData?.proposal?.statusHistory,
-					type: postData?.type
-				}
-			], isStatus);
-		}
-
-		if (isStatus.swap) {
-			if (post.status === 'DecisionDepositPlaced') {
-				post.status = 'Deciding';
-			}
-		}
+		updatePostTimeline(post, postData);
 
 		if (['referendums', 'open_gov'].includes(strProposalType) && voterAddress && postData?.votes?.[0]?.decision) {
 			post['decision'] = postData?.votes?.[0]?.decision;
@@ -747,6 +706,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 						post_link.title = postData?.title;
 						post_link.description = postData.content;
 						post_link.created_at = postData?.created_at?.toDate? postData?.created_at?.toDate(): postData?.created_at;
+						post_link.last_edited_at = getUpdatedAt(postData);
+						post_link.topic = getTopicFromFirestoreData(postData, strProposalType);
+						post_link.username = postData?.username;
+						if (postData?.user_id === post.user_id) {
+							post_link.proposer = post.proposer;
+						}
 						if (post.timeline && Array.isArray(post.timeline)) {
 							post.timeline.splice(0, 0, {
 								created_at: postData?.created_at?.toDate? postData?.created_at?.toDate(): postData?.created_at,
@@ -842,3 +807,52 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 };
 
 export default withErrorHandling(handler);
+
+export const updatePostTimeline = (post: any, postData: any) => {
+	if (post && postData) {
+		const isStatus = {
+			swap: false
+		};
+		if (postData.group && postData.group.proposals) {
+			// Timeline
+			const timelineProposals = postData?.group?.proposals || [];
+			post.timeline = getTimeline(timelineProposals, isStatus);
+			// Proposer and Curator address
+			if (timelineProposals && Array.isArray(timelineProposals)) {
+				for (let i = 0; i < timelineProposals.length; i++) {
+					if (post.proposer && post.curator) {
+						break;
+					}
+					const obj = timelineProposals[i];
+					if (!post.proposer) {
+						if (obj.proposer) {
+							post.proposer = obj.proposer;
+						} else if (obj?.preimage?.proposer) {
+							post.proposer = obj.preimage.proposer;
+						}
+					}
+					if (!post.curator && obj.curator) {
+						post.curator = obj.curator;
+					}
+				}
+			}
+		}
+		if (!post.timeline || post.timeline.length === 0) {
+			post.timeline = getTimeline([
+				{
+					createdAt: postData?.createdAt,
+					hash: postData?.hash,
+					index: postData?.index || postData?.cid,
+					statusHistory: postData?.statusHistory || postData?.proposal?.statusHistory,
+					type: postData?.type
+				}
+			], isStatus);
+		}
+
+		if (isStatus.swap) {
+			if (post.status === 'DecisionDepositPlaced') {
+				post.status = 'Deciding';
+			}
+		}
+	}
+};

@@ -43,7 +43,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady]);
 
-	return <div className={'flex justify-between items-center w-full px-[70px] max-md:px-1 '}>
+	return <div className={'flex justify-between items-center w-full px-[70px] max-md:px-4 '}>
 		<div className={`${className} flex py-[17px] items-center  h-full gap-1 max-md:px-[10px]`}>
 			<div className='h-[71px] flex flex-col justify-start py-2 gap-1 '>
 				<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>

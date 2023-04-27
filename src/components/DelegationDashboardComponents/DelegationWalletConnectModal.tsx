@@ -45,16 +45,18 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 	const [defaultWallets, setDefaultWallets]=useState<any>({});
 	const [wallet,setWallet]=useState<Wallet>();
 	const [extensionOpen, setExtentionOpen] = useState<boolean>(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 
 	const handleSubmit = () => {
-
+		setLoading(true);
 		setUserDetailsContextState((prev) => {
 			return { ...prev,
 				delegationDashboardAddress: address
 			};
 		});
 		setOpen(false);
+		setLoading(false);
 	};
 
 	const getWallet=() => {
@@ -63,6 +65,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 	};
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
+		if(!api || !apiReady) return;
+
 		setExtentionOpen(false);
 		const injectedWindow = window as Window & InjectedWindow;
 

@@ -18,13 +18,13 @@ import styled from 'styled-components';
 
 import LockIcon from '~assets/icons/lock.svg';
 import CloseIcon from '~assets/icons/close.svg';
-import SuccessPopup from './SuccessPopup';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
 import { useUserDetailsContext } from '~src/context';
 import { useRouter } from 'next/router';
 import { handleTrack } from '~src/components/DelegationDashboardComponents/DashboardTrack';
 import { BN_ZERO } from '@polkadot/util';
+import DelegationSuccessPopup from './DelegationSuccessPopup';
 
 interface Props {
   trackNum: number;
@@ -34,8 +34,9 @@ interface Props {
   setOpen: (pre:boolean) => void;
   conviction: number;
   balance : BN;
+  setIsRefresh: (pre: boolean) => void;
 }
-const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance }: Props ) => {
+const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, setIsRefresh }: Props ) => {
 
 	const { api, apiReady } = useContext(ApiContext);
 
@@ -49,6 +50,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const [bnBalance, setBnBalance] = useState<BN>(balance ? balance : BN_ZERO);
 	const lock = (Number(2**(conviction-1)));
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 
 	useEffect(() => {
@@ -82,6 +84,12 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							message: 'Undelegate successful.',
 							status: NotificationStatus.SUCCESS
 						});
+
+						setIsRefresh(true);
+						setLoading(false);
+						setOpenSuccessPopup(true);
+						setOpen(false);
+
 					} else if (event.method === 'ExtrinsicFailed') {
 						const errorModule = (event.data as any)?.dispatchError?.asModule;
 						let message = 'Undelegate failed.';
@@ -101,8 +109,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				}
 
 				setLoading(false);
-				setOpenSuccessPopup(true);
-				setOpen?.(false);
+
 				console.log(`Undelegate: completed at block hash #${status.toString()}`);
 			} else {
 				console.log(`Undelegate: Current status: ${status.type}`);
@@ -116,6 +123,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
+
 		});
 	};
 
@@ -226,7 +234,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 					</div>
 				</Spin>
 			</Modal>
-			<SuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} trackNum={trackNum} address={target} isDelegate={true} balance={bnBalance} />
+			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={bnBalance} setIsRefresh={setIsRefresh}/>
 		</>
 	);
 };

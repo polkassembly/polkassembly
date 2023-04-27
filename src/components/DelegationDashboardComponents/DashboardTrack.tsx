@@ -10,7 +10,7 @@ import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 
 import { GetTracksColumns, handleTracksIcon } from './Coloumn';
-import { Skeleton, Table } from 'antd';
+import { Button, Skeleton, Table } from 'antd';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import { DelegatedIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
@@ -19,6 +19,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import UndelegateModal from '../Listing/Tracks/UndelegateModal';
 import BN from 'bn.js';
+import DelegateModal from '../Listing/Tracks/DelegateModal';
 
 interface Props{
   className?: string;
@@ -65,12 +66,15 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	const [status, setStatus] = useState<ETrackDelegationStatus[]>([]);
 	const router = useRouter();
 	const [showTable, setShowTable] = useState<boolean>(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [delegationDetails, setDelegationDetails] = useState<ITrackDelegation>();
 	const { delegationDashboardAddress: address } = useUserDetailsContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [rowData, setRowData] = useState<ITrackRowData[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [ openUndelegateModal, setOpenUndelegateModal ] = useState<boolean>(false);
+	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
+	const [isRefresh, setIsRefresh] = useState<boolean>(false);
 
 	useEffect(() => {
 
@@ -91,14 +95,12 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${address}&track=${trackDetails?.trackId}`);
 
 		if(data){
-
 			setDelegationDetails(data[0]);
 			const rowData: ITrackRowData[] = data[0]?.delegations?.map((delegation : IDelegation, index: number) => {
 
 				return { action: 'Undelegate', balance: delegation?.balance , delegatedFrom: delegation?.from, delegatedOn: delegation?.createdAt, delegatedTo:delegation?.to, index: index + 1, lockPeriod: delegation?.lockPeriod };
 			});
 
-			console.log(data);
 			setRowData(rowData);
 
 			setStatus(data[0]?.status);
@@ -122,15 +124,23 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	};
 
 	useEffect(() => {
-		!delegationDetails && address && getData();
 
 		if(status.includes(ETrackDelegationStatus.Delegated)){
 			setShowTable(true);
 		}else if(status.includes(ETrackDelegationStatus.Received_Delegation)){
 			setShowTable(true);
+		}else if(status.includes(ETrackDelegationStatus.Undelegated)){
+			setShowTable(false);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status, address]);
+	}, [status, address, isRefresh]);
+
+	useEffect(() => {
+
+		address && getData();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address, isRefresh]);
 
 	return <div className={`${className}`}>
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>
@@ -171,12 +181,12 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 				<div className='text-[#243A57] mt-[18px] text-center'>
 					<div className='text-sm tracking-[0.01em] font-normal mt-1 flex justify-center items-center max-md:flex-col'>
         Voting power for this track has not been delegated yet
-						<div className='text-[#E5007A] font-normal tracking-wide text-sm ml-[11px] flex items-center justify-center  max-md:mt-[10px] cursor-pointer' >
+						<Button onClick={() => setOpenDelegateModal(true)} className='text-[#E5007A] font-normal tracking-wide text-sm ml-1 flex items-center justify-center max-md:mt-[10px] border-none shadow-none' >
 							<DelegatedProfileIcon className='mr-[7px]'/>
 							<span className='mt-[1px]'>
                Delegate Track
 							</span>
-						</div>
+						</Button>
 					</div>
 				</div>
 			</div>}
@@ -196,15 +206,16 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 		<WalletConnectModal open={openModal} setOpen={setOpenModal} />
 
-		{openUndelegateModal && <UndelegateModal
-			balance={new BN(rowData.filter((row ) => row.delegatedTo !== address )[0].balance)}
+		{rowData.filter((row ) => row.delegatedTo !== address ).length > 0 &&  <UndelegateModal
+			setIsRefresh={setIsRefresh}
+			balance={new BN(rowData.filter((row ) => row.delegatedTo !== address )[0]?.balance)}
 			open={openUndelegateModal}
 			setOpen={setOpenUndelegateModal}
-			defaultTarget={rowData.filter((row ) => row.delegatedTo !== address )[0].delegatedTo}
+			defaultTarget={rowData.filter((row ) => row.delegatedTo !== address )[0]?.delegatedTo}
 			trackNum={trackDetails?.trackId}
-			conviction={rowData.filter((row ) => row.delegatedTo !== address )[0].lockPeriod}
+			conviction={rowData.filter((row ) => row.delegatedTo !== address )[0]?.lockPeriod}
 		/>}
-
+		<DelegateModal open={openDelegateModal} setOpen={setOpenDelegateModal} trackNum={trackDetails?.trackId} setIsRefresh={setIsRefresh}  />
 	</div>;
 };
 

@@ -20,7 +20,6 @@ import LockIcon from '~assets/icons/lock.svg';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import SuccessPopup from './SuccessPopup';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useUserDetailsContext } from '~src/context';
@@ -31,6 +30,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import DelegationSuccessPopup from './DelegationSuccessPopup';
 
 const ZERO_BN = new BN(0);
 
@@ -40,16 +40,18 @@ interface Props {
   defaultTarget?: string;
   open?: boolean;
   setOpen?: (pre:boolean) => void;
-  trackName?: string;
+  setIsRefresh?: (pre: boolean) => void;
 }
 
-const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: Props ) => {
+const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setIsRefresh }: Props ) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useContext(NetworkContext);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { delegationDashboardAddress } = useUserDetailsContext();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [address, setAddress] = useState<string>(delegationDashboardAddress);
 	const [target, setTarget] = useState<string>('');
 	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
@@ -63,10 +65,11 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState(false);
+	const [trackArr, setTrackArr] = useState<any[]>([]);
 
 	useEffect(() => {
 
-		if(!address || !target || !getEncodedAddress(target, network) || !checkedList || !checkedList.length || isNaN(conviction) ||
+		if(!delegationDashboardAddress || !target || !getEncodedAddress(target, network) || !checkedList || !checkedList.length || isNaN(conviction) ||
 			!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN)) return;
 
 		setLoading(true);
@@ -75,21 +78,19 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 		const delegateTxn = api.tx.utility.batchAll(txArr);
 
 		(async () => {
-			const info = await delegateTxn.paymentInfo(address);
+			const info = await delegateTxn.paymentInfo(delegationDashboardAddress);
 			setTxFee(new BN(info.partialFee.toString() || 0));
 			setLoading(false);
 			setShowAlert(true);
 		})();
-	}, [address, api, apiReady, bnBalance, checkedList, conviction, network, target]);
-
-	const [trackArr, setTrackArr] = useState<any[]>([]);
+	}, [delegationDashboardAddress, api, apiReady, bnBalance, checkedList, conviction, network, target]);
 
 	const getData = async() => {
 		if (!api || !apiReady ) return;
 
 		setLoading(true);
 
-		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${address}`);
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${delegationDashboardAddress}`);
 		if(data){
 			const trackData = data.filter((item) => !item.status.includes(ETrackDelegationStatus.Delegated));
 			if(network){
@@ -130,7 +131,7 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 	const validateForm = ():boolean => {
 		const errors = [];
 
-		if(!address) {
+		if(!delegationDashboardAddress) {
 			errors.push('Please select an address.');
 		}
 
@@ -138,7 +139,7 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 			errors.push('Please provide a valid target address.');
 		}
 
-		if(address == target) {
+		if(delegationDashboardAddress == target) {
 			errors.push('Please provide a different target address.');
 		}
 
@@ -174,7 +175,7 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 
 		const delegateTxn = api.tx.utility.batchAll(txArr);
 
-		delegateTxn.signAndSend(address, ({ status, events }: any) => {
+		delegateTxn.signAndSend(delegationDashboardAddress, ({ status, events }: any) => {
 			if (status.isFinalized) {
 				for (const { event } of events) {
 					if (event.method === 'ExtrinsicSuccess') {
@@ -183,6 +184,13 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 							message: 'Delegation successful.',
 							status: NotificationStatus.SUCCESS
 						});
+
+						setIsRefresh && setIsRefresh(true);
+
+						setLoading(false);
+						setOpenSuccessPopup(true);
+						setOpen?.(false);
+
 					} else if (event.method === 'ExtrinsicFailed') {
 						const errorModule = (event.data as any)?.dispatchError?.asModule;
 						let message = 'Delegation failed.';
@@ -202,7 +210,6 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 				}
 
 				setLoading(false);
-				setOpenSuccessPopup(true);
 				setOpen?.(false);
 				console.log(`Delegation: completed at block hash #${status.toString()}`);
 			} else {
@@ -233,8 +240,9 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 		setAvailableBalance(balance);
 	};
 	useEffect(() => {
-		getData();
-	}, []);
+		open && getData();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [open]);
 
 	const content = (<div className='flex flex-col'>
 		<Checkbox.Group className='flex flex-col h-[200px] overflow-y-scroll' onChange={onChange} value={checkedList} >
@@ -295,7 +303,7 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 							<AccountSelectionForm
 								title='Your Address'
 								accounts={accounts}
-								address={address}
+								address={delegationDashboardAddress}
 								withBalance={false}
 								onAccountChange={(address) => setAddress(address)}
 								className='text-[#485F7D] text-sm'
@@ -313,7 +321,7 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 								label={'Balance'}
 								placeholder={'Enter balance'}
 								className='mt-6'
-								address={address}
+								address={delegationDashboardAddress}
 								withBalance={true}
 								onAccountBalanceChange={handleOnBalanceChange}
 								onChange={(balance) => setBnBalance(balance)}
@@ -371,7 +379,8 @@ const DelegateModal = ({ trackName, className, defaultTarget, open, setOpen }: P
 				</Spin>
 
 			</Modal>
-			<SuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedList} address={target} isDelegate={true} balance={bnBalance} />
+
+			<DelegationSuccessPopup setIsRefresh={setIsRefresh} open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedList} address={target} isDelegate={true} balance={bnBalance} trackNum= {trackNum} />
 		</>
 	);
 };

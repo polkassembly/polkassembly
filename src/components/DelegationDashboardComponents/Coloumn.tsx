@@ -108,7 +108,8 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		{ dataIndex: 'status', key: 5, render: (status) =>
 		{ return <div className='text-[#243A57] tracking-wider flex items-center justify-start font-medium gap-2 max-md:flex-col'>
 
-			{status.map((item: ETrackDelegationStatus, index:number)  => <h2 key={index} className={`text-[12px] ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF] truncate w-[95px]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center`}>
+			{status.map((item: ETrackDelegationStatus, index:number)  => <h2 key={index}
+      className={`text-[12px] ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center ${item === ETrackDelegationStatus.Received_Delegation && status.length > 1 && 'truncate w-[95px]'} `}>
 				{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
 			</h2>)}
 
@@ -239,7 +240,7 @@ const GetTracksColumns = (status :ETrackDelegationStatus,setOpen: (pre: boolean)
 
 			{ dataIndex:'index', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{index}</h4>, title: '#',width: '10%' } ,
 			{ dataIndex:'delegatedTo', key:1, render: (address) => <div className='text-sm text-[#243A57] font-normal text-center flex justify-start items-center'><Address address= {address || ''} displayInline/></div>, title: 'Delegated to', width: '20%' },
-			{ dataIndex:'balance', key:1, render: (balance) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</h4>, title: 'Balance', width: '15%' },
+			{ dataIndex:'balance', key:1, render: (balance) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network) }</h4>, title: 'Balance', width: '15%' },
 			{ dataIndex:'lockPeriod', key:1, render: (conviction) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{conviction}x</h4>, title: 'Conviction', width: '15%' },
 			{ dataIndex:'delegatedOn', key:1, render: (date) => <h4 className='text-sm text-[#243A57] font-normal text-start ml-1'>{dayjs(date).format('DD MMM YYYY')}</h4>, title: 'Delegated on', width: '20%' },
 			{ dataIndex:'action', key:1, render: (action) => <div className='flex justify-center items-start'>

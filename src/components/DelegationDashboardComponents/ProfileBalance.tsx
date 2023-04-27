@@ -31,26 +31,16 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	const [balance, setBalance] = useState<string>('0');
 	const [lockBalance, setLockBalance] = useState<string>('0');
 	const [transferableBalance, setTransferableBalance] = useState<string>('0');
-	const [nextUnlock, setNextUnlock] = useState<string>('0');
+	// const [nextUnlock, setNextUnlock] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
-	// const getNextUnlock = async() => {
-	// 	if (!api || !apiReady ) return;
-
-	// 	const details = await api.query.staking.ledger(address);
-  //   console.log(details);
-	// 	// setNextUnlock(unlocking.total);
-
-	// };
-
 	useEffect(() => {
 
 		userProfileBalances({ address, api, apiReady, network, setBalance, setLockBalance, setTransferableBalance });
 
-    // getNextUnlock();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady]);
 

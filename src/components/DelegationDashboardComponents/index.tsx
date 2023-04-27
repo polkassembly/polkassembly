@@ -53,6 +53,8 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	const [messageApi, contextHolder] = message.useMessage();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
+	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+
 	const success = () => {
 		messageApi.open({
 			content: 'Address copied to clipboard',
@@ -67,9 +69,11 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	const getData = async() => {
 		const { data, error } = await nextApiClientFetch('api/v1/auth/data/userProfileWithUsername',
 			{ username:userDetails.username?.toString() });
+
 		if(data){ setProfileDetails({ ...profileDetails, ...data });}
-		else{ console.log(error); }
-		console.log(data,error);
+		else{
+			console.log(error);
+		}
 
 	};
 
@@ -103,10 +107,15 @@ const DelegationDashboardHome = ({ className } : Props) => {
 							{contextHolder}
 							<CopyIcon/>
 						</span>
-					</div> : <Skeleton/>}
+					</div> : <Skeleton className='mt-4'/>}
+
 					{bio?.length === 0
-						? <h2 className='text-sm font-normal text-[#576D8BCC] mt-2 cursor-pointer'>Click here to add bio</h2>
-						: <h2 className='text-sm mt-2 text-[#243A57] tracking-[0.01em] '>{bio}</h2>}
+						? <h2 className={`text-sm font-normal text-[#576D8BCC] mt-2  ${username === userDetails.username && 'cursor-pointer'}`} onClick={() => setOpenEditModal(true)}>
+							{username === userDetails.username ? 'Click here to add bio' : 'No Bio' }
+						</h2>
+						: <h2 className='text-sm mt-2 text-[#243A57] tracking-[0.01em] '>{bio}</h2>
+					}
+
 					<div
 						className='flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-[10px]'
 					>
@@ -127,6 +136,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 					</div>
 				</div>
 			</div>
+
 			<div className='flex gap-2.5 text-pink_primary'>
 				<Tooltip
 					title='Coming Soon' key={1} color='linear-gradient(0deg, #5A46FF, #5A46FF), linear-gradient(0deg, #AD00FF, #AD00FF), linear-gradient(0deg, #407BFF, #407BFF), #FFFFFF'>
@@ -138,11 +148,15 @@ const DelegationDashboardHome = ({ className } : Props) => {
 					}
 				</span>
 			</div>
+
 		</div>
 		<div >
 			{userDetails?.delegationDashboardAddress.length> 0 && <DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]' address={String(userDetails.delegationDashboardAddress)}/>}
 		</div>
 		<WalletConnectModal open={openModal} setOpen={setOpenModal} />
+		{openEditModal  && username === userDetails.username &&
+							<EditProfile openModal={openEditModal} setOpenModal={setOpenEditModal} data={profileDetails} setProfileDetails={setProfileDetails} className='text-[#E5007A] border-[1px] border-solid border-[#E5007A] h-[40px] w-[87px] max-lg:w-auto' textStyle='text-[#E5007A] text-[14px] tracking-wide font-medium'/>
+		}
 	</div>;
 };
 

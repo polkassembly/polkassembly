@@ -19,6 +19,8 @@ interface IEditProfileModalProps {
 	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
   className?: string;
   textStyle?: string;
+  openModal?: boolean;
+  setOpenModal?: (pre:boolean) => void;
 }
 
 const getDefaultProfile: () => ProfileDetails = () => {
@@ -32,7 +34,7 @@ const getDefaultProfile: () => ProfileDetails = () => {
 };
 
 const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
-	const { data, id, setProfileDetails, className, textStyle } = props;
+	const { data, id, setProfileDetails, className, textStyle, openModal, setOpenModal } = props;
 	const [open, setOpen] = useState(false);
 	const [profile, setProfile] = useState(getDefaultProfile());
 	const [loading, setLoading] = useState(false);
@@ -123,6 +125,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		setLoading(false);
 		setError('');
 		setOpen(false);
+		setOpenModal && setOpenModal(false);
 	};
 	return (
 		<div>
@@ -130,6 +133,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				className='max-w-[648px] w-full max-h-[774px] h-full'
 				onCancel={() => {
 					setOpen(false);
+					setOpenModal && setOpenModal(false);
 				}}
 				centered
 				title={
@@ -177,7 +181,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					</div>
 				}
 				zIndex={1002}
-				open={open}
+				open={openModal ? openModal : open}
 			>
 				<Tabs
 					type="card"

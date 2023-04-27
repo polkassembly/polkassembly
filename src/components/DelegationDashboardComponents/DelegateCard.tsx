@@ -16,17 +16,18 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import styled from 'styled-components';
 
 interface Props{
-  trackName: string;
   delegate: IDelegate;
   className?: string;
 }
 
-const DelegateCard = ({ trackName, delegate, className }: Props) => {
+const DelegateCard = ({ delegate, className }: Props) => {
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
 	const [balance, setBalance] = useState<string>('0');
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [lockBalance, setLockBalance] = useState<string>('0');
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [transferableBalance, setTransferableBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
@@ -79,7 +80,7 @@ const DelegateCard = ({ trackName, delegate, className }: Props) => {
 				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal text-center'>Received Delegation</span>
 			</div>
 		</div>
-		<DelegateModal trackName={trackName} defaultTarget={delegate?.address} open={open} setOpen={setOpen} />
+		<DelegateModal defaultTarget={delegate?.address} open={open} setOpen={setOpen} />
 	</div>;
 };
 

@@ -41,8 +41,6 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
-	// const [filteredData, setFilteredData] = useState<IDelegate[]>([]);
-	// const [selectedWallet ,setSelectedWallet] = useState<string>('');
 	const { network } = useNetworkContext();
 
 	const handleClick = () => {
@@ -62,7 +60,6 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 		if(data){
 
 			setDelegatesData(data);
-			console.log(data);
 
 		}else{
 			console.log(error);
@@ -125,7 +122,7 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 			</div>
 
 			{!loading ? <div className='mt-6 grid grid-cols-2 max-md:grid-cols-1 gap-6'>
-				{delegatesData.map((delegate, index) => <DelegateCard key={ index } trackName={ trackDetails?.name } delegate={ delegate } />)}
+				{delegatesData.map((delegate, index) => <DelegateCard key={ index }  delegate={ delegate } />)}
 			</div> : <Skeleton className='mt-6'/>}
 
 		</div>}

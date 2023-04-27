@@ -1,8 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 /* eslint-disable */
+
+import Head from 'next/head';
 
 const boxStyles = { padding: '12px', border: '1px solid #eaeaea', borderRadius: '10px' };
 export default function Home() {

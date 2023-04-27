@@ -12,7 +12,7 @@ import CopyIcon from '~assets/icons/content-copy.svg';
 import { useUserDetailsContext } from '~src/context';
 import MessengerIcon from '~assets/icons/messenger.svg';
 import DashboardProfile from '~assets/icons/dashboard-profile.svg';
-import { Skeleton, Tooltip, message } from 'antd';
+import { Button, Skeleton, Tooltip, message } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import SocialLink from '~src/ui-components/SocialLinks';
@@ -20,6 +20,7 @@ import { socialLinks } from '../UserProfile/Details';
 import DashboardTrackListing from './TracksListing';
 import ProfileBalances from './ProfileBalance';
 import dynamic from 'next/dynamic';
+import { EditIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
   className?: string;
@@ -143,8 +144,12 @@ const DelegationDashboardHome = ({ className } : Props) => {
 					<MessengerIcon/>
 				</Tooltip>
 				<span>
-					{username === userDetails.username   &&
-							<EditProfile data={profileDetails} setProfileDetails={setProfileDetails} className='text-[#E5007A] border-[1px] border-solid border-[#E5007A] h-[40px] w-[87px] max-lg:w-auto' textStyle='text-[#E5007A] text-[14px] tracking-wide font-medium'/>
+					{username === userDetails.username && <Button onClick={() => setOpenEditModal(true)} className='text-[#E5007A] border-[1px] border-solid border-[#E5007A] h-[40px] w-[87px] max-lg:w-auto font-medium'>
+						<EditIcon className='text-[#E5007A] text-[14px] tracking-wide ' />
+						<span className='max-md:hidden'>
+					Edit
+						</span>
+					</Button>
 					}
 				</span>
 			</div>

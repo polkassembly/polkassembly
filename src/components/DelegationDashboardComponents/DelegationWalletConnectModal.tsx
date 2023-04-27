@@ -142,7 +142,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 		className = {`${poppins.className} ${poppins.variable} w-[453px] radius`}
 		open = {open}
 		title = {<div className='text-center text-[20px] font-semibold text-[#243A57]'>Connect your wallet</div>}
-		footer = {[<Button onClick={handleSubmit} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-6 rounded-[4px]'>Continue</Button>]}
+		footer = {[<Button onClick={handleSubmit} disabled={accounts.length === 0} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-6 rounded-[4px]'>Continue</Button>]}
 		closable = {closable? true : false}
 		onCancel={() => closable ? setOpen(false) : setOpen(true)}
 	>

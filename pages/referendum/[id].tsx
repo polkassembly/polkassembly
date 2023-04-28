@@ -61,6 +61,7 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 
 	useEffect(() => {
 		setNetwork(props.network);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
 	if(isUnfinalized){

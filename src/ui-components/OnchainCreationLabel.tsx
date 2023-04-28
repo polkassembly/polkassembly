@@ -13,7 +13,7 @@ interface Props {
 	username?: string;
 }
 
-const OnchainCreationLabel = ({ address, topic, username }:Props ) => {
+const OnchainCreationLabel = ({ address, username }:Props ) => {
 	return (
 		<div className='flex justify-between min-[340px]:flex-row min-[340px]:items-center text-xs text-navBlue w-full min-[340px]:w-auto'>
 			<div className='flex items-center'>

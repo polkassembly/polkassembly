@@ -17,7 +17,7 @@ import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 import { ErrorState } from '~src/ui-components/UIStates';
-import DiscussionsIcon from '~assets/icons/discussions-icon.svg'
+import DiscussionsIcon from '~assets/icons/discussions-icon.svg';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;

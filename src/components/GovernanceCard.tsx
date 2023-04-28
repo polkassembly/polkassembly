@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { ClockCircleOutlined, CommentOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
 import { Divider, Modal, Skeleton, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
@@ -132,7 +132,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								{tag}
 							</div>))}
 						{tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
-                		+{tags.length-2} more
+            +{tags.length-2} more
 						</span>}
 						</>}
 						<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
@@ -164,7 +164,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								}
 							</div>
 					}
-					
+
 				</div>
 			</div>
 			<Modal

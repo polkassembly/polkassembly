@@ -53,6 +53,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 
 	useEffect(() => {
 		setNetwork(props.network);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
 	useEffect(() => {

@@ -5,13 +5,13 @@
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { Balance } from '@polkadot/types/interfaces';
 import { BN_MILLION, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
-import { Divider, Progress } from 'antd';
+import { Progress } from 'antd';
 import BN from 'bn.js';
 import { dayjs } from 'dayjs-init';
 import React, { FC, useEffect, useState } from 'react';
 import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { chainProperties } from 'src/global/networkConstants';
-import HelperTooltip from 'src/ui-components/HelperTooltip';
+
 import blockToDays from 'src/util/blockToDays';
 import blockToTime from 'src/util/blockToTime';
 import fetchTokenToUSDPrice from 'src/util/fetchTokenToUSDPrice';

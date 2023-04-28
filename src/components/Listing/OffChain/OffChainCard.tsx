@@ -31,7 +31,7 @@ export interface IDiscussionProps {
 }
 
 const DiscussionCard: FC<IDiscussionProps> = (props) => {
-	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, spam_users_count , className} = props;
+	const { created_at, commentsCount, address, title, username, topic, postReactionCount, post_id, tags, spam_users_count , className } = props;
 	const currentUser = useContext(UserDetailsContext);
 	const ownPost = currentUser.username === username;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);

@@ -13,7 +13,7 @@ import { poppins } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
 import NoTagsFoundIcon from '~assets/icons/no-tag.svg';
 
-import { CheckOutlineIcon, CheckedIcon, FilterIcon, FilterUnfilledIcon, SearchIcon, TrendingIcon } from './CustomIcons';
+import { CheckOutlineIcon, CheckedIcon, FilterIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close-tags.svg';
 
 interface Props {

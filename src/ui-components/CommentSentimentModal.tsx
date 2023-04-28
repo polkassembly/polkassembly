@@ -8,19 +8,25 @@ import styled from 'styled-components';
 import { CheckOutlined } from '@ant-design/icons';
 import CloseIcon from 'public/assets/icons/sentiment-close.svg';
 
-import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon } from '~src/ui-components/CustomIcons';
-
-interface Props{
-  setIsComment:(pre:boolean)=>void;
-  openModal:boolean;
-  setModalOpen:(pre:boolean)=>void;
-  setIsSentimentPost:(pre:boolean)=>void;
-  className?:string;
-  setSentiment:(pre:number)=>void;
-  sentiment:number | 0;
+enum ESentiment {
+  Against = 1,
+  SlightlyAgainst =2,
+  Neutral = 3,
+  SlightlyFor = 4,
+  For = 5
 }
 
-const CommentSentimentModal=({ setIsComment,openModal,setModalOpen,setIsSentimentPost,className,sentiment,setSentiment }:Props) => {
+interface Props{
+  setIsComment: (pre: boolean)=>void;
+  openModal: boolean;
+  setModalOpen: (pre: boolean)=>void;
+  setIsSentimentPost: (pre: boolean)=>void;
+  className?: string;
+  setSentiment: (pre: number)=>void;
+  sentiment: number | 0;
+}
+
+const CommentSentimentModal=({ setIsComment, openModal, setModalOpen, setIsSentimentPost, className, sentiment, setSentiment }:Props) => {
 
 	const handleClick=() => {
 		setIsSentimentPost(true);
@@ -41,8 +47,8 @@ const CommentSentimentModal=({ setIsComment,openModal,setModalOpen,setIsSentimen
 
 	return (<Modal
 		open={openModal}
-		wrapClassName={className}
-		className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 w-[433px] max-sm:w-[100%] padding  justify-center center-aligned`}
+		wrapClassName={`${className}  sentiment_${sentiment}`}
+		className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 w-[433px] max-sm:w-[100%] padding justify-center center-aligned`}
 		onCancel={() => {
 			setModalOpen(false);
 			setIsComment(true);
@@ -57,21 +63,21 @@ const CommentSentimentModal=({ setIsComment,openModal,setModalOpen,setIsSentimen
 			</div>]}
 		closeIcon={<CloseIcon/>}
 		zIndex={1002}
-	><div className='pl-5 pr-5 text-base font-medium justify-center center-aligned flex flex-col items-center'>
-			<h5>Thank you for commenting on the post.<br/>
+	><div className='pl-5 pr-5 text-base font-medium justify-center center-aligned flex flex-col items-center text-[#334D6E]'>
+			<h5 className='text-center mt-3'>Thank you for commenting on the post.<br/>
          Move the slider to add your sentiment towards the discussion.</h5>
 			<Slider
 				style={{ width:'100%' }}
-				className='w-full text-[12px] mt-[32px]'
+				className={`w-full text-[12px] mt-[32px] sentiment_${sentiment}`}
 				trackStyle={{ backgroundColor:'#FF49AA' }}
 				onChange={(value:number) => setSentiment(value)}
 				step={5}
 				marks={{
-					1:{ label:sentiment===1 ? <AgainstIcon className='text-3xl text-transparent'/>:<div></div>, style:{ marginTop:'-20px' } },
-					2:{ label:sentiment===2 ? <SlightlyAgainstIcon className='text-3xl text-transparent'/>:<div></div> , style:{ marginTop:'-20px' } },
-					3:{ label:sentiment===3 ? <NeutralIcon className='text-3xl text-transparent'/>:<div></div>, style:{ marginTop:'-20px' } },
-					4:{ label:sentiment===4 ? <SlightlyForIcon className='text-3xl text-transparent'/>:<div></div>, style:{ marginTop:'-20px' } },
-					5:{ label:sentiment===5 ? <ForIcon className='text-[33px] text-white' />:<div></div>, style:{ marginTop:'-19.3px' } } }}
+					1: { label:<div></div> },
+					2: { label:<div></div> },
+					3: { label:<div></div> },
+					4: { label:<div></div> },
+					5: { label:<div></div> } }}
 				min={1}
 				max={5}
 				defaultValue={3}
@@ -80,7 +86,9 @@ const CommentSentimentModal=({ setIsComment,openModal,setModalOpen,setIsSentimen
 		</div>
 	</Modal>);
 };
-export default styled(CommentSentimentModal)`
+export default styled(CommentSentimentModal).attrs(({ sentiment }: Props) => ({
+	className: sentiment
+}))`
 .padding .ant-modal-content{
   border-radius:4px !important;
   padding:40px 50px !important;
@@ -90,19 +98,15 @@ export default styled(CommentSentimentModal)`
 }
 .padding .ant-slider-dot{
   border-color:#FCE5F2 !important;
+  
 }
 .padding .ant-slider-dot-active{
   border-color:#FF49AA !important;
 }
-
-
 .padding .ant-tooltip-open{
  border-color:#5C74FC !important;
 }
-.padding .ant-slider-handle{
-  border:1px solid #5C74FC ;
-  background:#5C74FC;
-}
+
 .padding .ant-slider .ant-slider-rail{
   background-color:#FCE5F2;
 
@@ -110,5 +114,65 @@ export default styled(CommentSentimentModal)`
 .padding .ant-slider .ant-slider-handle:focus::after {
   box-shadow:none;
  }
+
+.sentiment_${ESentiment.Against}{
+ .ant-slider-handle::after{
+height:32px;
+margin-top:-10px;
+width:32px;
+background-image: url('/assets/icons/against.svg') !important;
+box-shadow:none;
+background-color:transparent;
+margin-left:-5px;
+ }
+}
+.sentiment_${ESentiment.SlightlyAgainst}{
+ .ant-slider-handle::after{
+height:32px;
+margin-top:-10px;
+width:32px;
+background-image: url('/assets/icons/slightly-against.svg') !important;
+box-shadow:none;
+background-color:transparent;
+margin-left:-2px;
+ }
+}
+
+.sentiment_${ESentiment.Neutral}{
+.ant-slider-handle::after{
+height:32px;
+margin-top:-10px;
+width:32px;
+background-image: url('/assets/icons/neutral.svg') !important;
+box-shadow:none;
+background-color:transparent;
+margin-left:-2px;
+ }
+}
+
+.sentiment_${ESentiment.SlightlyFor}{
+.ant-slider-handle::after{
+height:32px;
+margin-top:-10px;
+width:32px;
+background-image: url('/assets/icons/slightly-for.svg') !important;
+box-shadow:none;
+background-color:transparent;
+margin-left:-2px;
+ }
+}
+
+.sentiment_${ESentiment.For}{
+.ant-slider-handle::after{
+height:33px;
+margin-top:-11px;
+width:33px;
+background-image: url('/assets/icons/for.svg') !important;
+box-shadow:none;
+background-color:transparent;
+margin-left:-2px;
+
+ }
+}
 
 `;

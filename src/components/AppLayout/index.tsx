@@ -215,7 +215,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]);
 	}
 
-	if(network === AllNetworks.COLLECTIVES){
+	if(network === AllNetworks.COLLECTIVES ||network === AllNetworks.WESTENDCOLLECTIVES){
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
 			...gov1Items.allianceItems
 		])];

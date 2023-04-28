@@ -36,7 +36,7 @@ interface IMotionsProps {
   network: string;
 }
 export const AllianceMotions: FC<IMotionsProps> = (props) => {
-	const { data, error } = props;
+	const { data, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -62,7 +62,7 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title="Alliance Motion" />
+			<SEOHead title="Alliance Motion" network={network}/>
 			<h1 className="dashboard-heading mb-4 md:mb-6">Alliance Motions</h1>
 			<div className="flex flex-col md:flex-row">
 				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">

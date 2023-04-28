@@ -502,7 +502,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			voter_eq: voterAddress? String(voterAddress): ''
 		};
 
-		let postQuery =network === AllNetworks.COLLECTIVES ? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE : GET_PROPOSAL_BY_INDEX_AND_TYPE;
+		let postQuery =(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES ) ? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE : GET_PROPOSAL_BY_INDEX_AND_TYPE;
 
 		if(proposalType === ProposalType.ANNOUNCEMENT){
 			postQuery = GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE;

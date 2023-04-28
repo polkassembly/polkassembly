@@ -66,7 +66,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		})
 	};
 
-	if(chainProperties[network]?.subsquidUrl && network !== AllNetwork.COLLECTIVES) {
+	if(chainProperties[network]?.subsquidUrl && (network !== AllNetwork.COLLECTIVES && network !== AllNetwork.WESTENDCOLLECTIVES)) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,

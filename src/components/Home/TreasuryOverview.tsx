@@ -35,7 +35,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	let { network } = useNetworkContext();
 
 	// TODO: Aleem => Currently changing network just to see the UI, Should be update after backend
-	if(network === AllNetworks.COLLECTIVES){
+	if(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES){
 		network = 'polkadot';
 	}
 

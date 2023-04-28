@@ -331,7 +331,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 			}
 
 			let query;
-			if(network === AllNetworks.COLLECTIVES){
+			if(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES){
 				if(proposalType === ProposalType.ANNOUNCEMENT){
 					query = GET_ALLIANCE_ANNOUNCEMENTS;
 				}else{
@@ -352,7 +352,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 			const subsquidPosts: any[] = proposalType === ProposalType.ANNOUNCEMENT ? subsquidData?.announcements: subsquidData?.proposals;
 			let postsPromise;
 			let posts:any[];
-			if(network === AllNetworks.COLLECTIVES){
+			if(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES){
 				if(proposalType === ProposalType.ANNOUNCEMENT){
 					postsPromise = subsquidPosts?.map(async (subsquidPost) => {
 						const { createdAt, hash, proposer, type, updatedAt, version, cid } = subsquidPost;
@@ -514,7 +514,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 			}
 
 			const data: IPostsListingResponse = {
-				count: Number(subsquidData?.proposalsConnection?.totalCount || 0),
+				count: Number(subsquidData?.proposalsConnection?.totalCount ||subsquidData?.announcementsConnection?.totalCount|| 0),
 				posts
 			};
 

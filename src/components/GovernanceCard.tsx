@@ -134,7 +134,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 						{cid ? <>
 
-							<Link href={`/ipfs/${cid}`}> <PaperClipOutlined /> IPFS</Link>
+							<Link href={`/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
 							<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 						</> : null}
 

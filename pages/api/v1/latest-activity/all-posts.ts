@@ -68,7 +68,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 		let onChainPostsCount = 0;
 
-		if(network=== AllNetworks.COLLECTIVES) {
+		if(network === AllNetworks.COLLECTIVES ||network=== AllNetworks.WESTENDCOLLECTIVES  ) {
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query: GET_ALLIANCE_LATEST_ACTIVITY,
@@ -98,7 +98,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			onChainPostsCount = Number(subsquidData?.proposalsConnection?.totalCount || 0);
 		}
 
-		if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES) {
+		if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES ) {
 
 			const subsquidRes = await fetchSubsquid({
 				network,

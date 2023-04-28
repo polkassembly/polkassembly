@@ -10,7 +10,7 @@ import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
-import {  GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES } from '~src/queries';
+import { GET_ALLIANCE_ANNOUNCEMENTS, GET_ALLIANCE_LATEST_ACTIVITY, GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -19,6 +19,8 @@ import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/
 import messages from '~src/util/messages';
 
 import { checkReportThreshold, getReactions } from '../posts/on-chain-post';
+import { network as AllNetworks } from '~src/global/networkConstants';
+import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 
 export interface IPostListing {
 	user_id?: string | number;
@@ -44,8 +46,8 @@ export interface IPostListing {
 	};
 	type?: string;
 	username?: string;
-  tags?:string[] | [];
-  gov_type?:'gov_1' | 'open_gov';
+	tags?: string[] | [];
+	gov_type?: 'gov_1' | 'open_gov';
 }
 
 export interface IPostsListingResponse {
@@ -54,7 +56,7 @@ export interface IPostsListingResponse {
 }
 
 export function getGeneralStatus(status: string) {
-	switch(status) {
+	switch (status) {
 	case 'DecisionDepositPlaced':
 		return 'Deciding';
 	}
@@ -70,7 +72,7 @@ interface IGetOnChainPostsParams {
 	trackStatus?: string | string[];
 	proposalType?: string | string[];
 	postIds?: string | string[] | number[];
-  filterBy?: string[] | [];
+	filterBy?: string[] | [];
 }
 
 export function getProposerAddressFromFirestorePostData(data: any, network: string) {
@@ -88,19 +90,19 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 		}
 	}
 
-	if(proposer_address.startsWith('0x')) {
+	if (proposer_address.startsWith('0x')) {
 		return proposer_address;
 	}
 
 	return (proposer_address && getEncodedAddress(proposer_address, network)) || proposer_address;
 }
 
-export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<IApiResponse<IPostsListingResponse>> {
+export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
 		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy } = params;
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
-			throw apiErrorWithStatusCode( `Invalid listingLimit "${listingLimit}"`, 400);
+			throw apiErrorWithStatusCode(`Invalid listingLimit "${listingLimit}"`, 400);
 		}
 
 		const numPage = Number(page);
@@ -118,7 +120,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 			throw apiErrorWithStatusCode(`The proposal type of the name "${proposalType}" does not exist.`, 400);
 		}
 
-		if(filterBy && Array.isArray(filterBy) && filterBy.length > 0){
+		if (filterBy && Array.isArray(filterBy) && filterBy.length > 0) {
 
 			const offChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
 			let order: 'desc' | 'asc' = sortBy === sortValues.NEWEST ? 'desc' : 'asc';
@@ -127,14 +129,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 				order = 'desc';
 				orderedField = 'last_comment_at';
 			}
-			const postsSnapshotArr =await offChainCollRef
-				.orderBy(orderedField,order)
-				.where('tags','array-contains-any',filterBy)
+			const postsSnapshotArr = await offChainCollRef
+				.orderBy(orderedField, order)
+				.where('tags', 'array-contains-any', filterBy)
 				.limit(Number(listingLimit) || LISTING_LIMIT)
 				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
 				.get();
 
-			const count = (await offChainCollRef.where('tags','array-contains-any',filterBy).count().get()).data().count;
+			const count = (await offChainCollRef.where('tags', 'array-contains-any', filterBy).count().get()).data().count;
 			const postsPromise = postsSnapshotArr.docs.map(async (doc) => {
 				if (doc && doc.exists) {
 					const docData = doc.data();
@@ -155,17 +157,17 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 
 						return {
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
-							created_at: created_at?.toDate? created_at?.toDate(): created_at,
-							gov_type:docData?.gov_type ,
+							created_at: created_at?.toDate ? created_at?.toDate() : created_at,
+							gov_type: docData?.gov_type,
 							post_id: docData.id,
 							post_reactions,
 							proposer: getProposerAddressFromFirestorePostData(docData, network),
-							tags:docData?.tags || [],
-							title:  docData?.title || null,
-							topic: topic? topic: isTopicIdValid(topic_id)? {
+							tags: docData?.tags || [],
+							title: docData?.title || null,
+							topic: topic ? topic : isTopicIdValid(topic_id) ? {
 								id: topic_id,
 								name: getTopicNameFromTopicId(topic_id)
-							}: getTopicFromType(strProposalType as ProposalType),
+							} : getTopicFromType(strProposalType as ProposalType),
 							user_id: docData?.user_id || 1,
 							username: docData?.username
 						};
@@ -183,7 +185,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 			const topicFromType = getTopicFromType(proposalType as ProposalType);
 			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
 			const postsVariables: any = {
-				index_in:ids,
+				index_in: ids,
 				limit: numListingLimit,
 				offset: numListingLimit * (numPage - 1),
 				type_eq: subsquidProposalType
@@ -212,7 +214,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 					});
 				}
 				const status = subsquidPost.status;
-				const postId = proposalType === ProposalType.TIPS? hash: index;
+				const postId = proposalType === ProposalType.TIPS ? hash : index;
 				const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 
 				const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
@@ -236,7 +238,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 							curator,
 							description,
 							end,
-							gov_type:data.gov_type,
+							gov_type: data.gov_type,
 							hash,
 							method: preimage?.method,
 							parent_bounty_index: parentBountyIndex || null,
@@ -244,12 +246,12 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 							post_reactions,
 							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 							status,
-							tags:data?.tags || [],
+							tags: data?.tags || [],
 							title: data?.title || null,
-							topic: topic? topic: isTopicIdValid(topic_id)? {
+							topic: topic ? topic : isTopicIdValid(topic_id) ? {
 								id: topic_id,
 								name: getTopicNameFromTopicId(topic_id)
-							}: topicFromType,
+							} : topicFromType,
 							type: type || subsquidProposalType,
 							user_id: data?.user_id || 1
 						};
@@ -279,8 +281,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 			const subsquidDataPost = await Promise.all(subsquidPostsPromise);
 
 			const data: IPostsListingResponse = {
-				count:count,
-				posts:subsquidDataPost
+				count: count,
+				posts: subsquidDataPost
 			};
 
 			return {
@@ -289,7 +291,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 				status: 200
 			};
 		}
-		else{
+		else {
 			const numTrackNo = Number(trackNo);
 			const strTrackStatus = String(trackStatus);
 			if (strProposalType === ProposalType.OPEN_GOV) {
@@ -305,7 +307,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 
 			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
 
-			const orderBy = strSortBy === 'newest'? 'createdAtBlock_DESC': 'createdAtBlock_ASC';
+			const orderBy = strSortBy === 'newest' ? 'createdAtBlock_DESC' : 'createdAtBlock_ASC';
 			const postsVariables: any = {
 				limit: numListingLimit,
 				offset: numListingLimit * (numPage - 1),
@@ -333,103 +335,192 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 				}
 			}
 
+			let query;
+			if (network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES) {
+				if (proposalType === ProposalType.ANNOUNCEMENT) {
+					query = GET_ALLIANCE_ANNOUNCEMENTS;
+				} else {
+					query = GET_ALLIANCE_LATEST_ACTIVITY;
+				}
+			}
+			else {
+				query = GET_PROPOSALS_LISTING_BY_TYPE;
+			}
+
 			const subsquidRes = await fetchSubsquid({
 				network,
-				query: GET_PROPOSALS_LISTING_BY_TYPE,
+				query: query,
 				variables: postsVariables
 			});
 
 			const subsquidData = subsquidRes?.data;
-			const subsquidPosts: any[] = subsquidData?.proposals;
+			const subsquidPosts: any[] = proposalType === ProposalType.ANNOUNCEMENT ? subsquidData?.announcements : subsquidData?.proposals;
+			let postsPromise;
+			let posts: any[];
+			if (network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES) {
+				if (proposalType === ProposalType.ANNOUNCEMENT) {
+					postsPromise = subsquidPosts?.map(async (subsquidPost) => {
+						const { createdAt, hash, proposer, type, updatedAt, version, cid, status } = subsquidPost;
 
-			const postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex } = subsquidPost;
-				let otherPostProposer = '';
-				if (group?.proposals?.length) {
-					group.proposals.forEach((obj: any) => {
-						if (!otherPostProposer) {
-							if (obj.proposer) {
-								otherPostProposer = obj.proposer;
-							} else if (obj?.preimage?.proposer) {
-								otherPostProposer = obj.preimage.proposer;
-							}
-						}
+						const postId = cid;
+						const postDocRef = postsByTypeRef(network, proposalType as ProposalType).doc(String(postId));
+
+						const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
+						const reactions = getReactions(post_reactionsQuerySnapshot);
+
+						const post_reactions = {
+							'👍': reactions['👍']?.count || 0,
+							'👎': reactions['👎']?.count || 0
+						};
+
+						const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+						const newProposer = proposer || null;
+
+						return {
+							cid: cid,
+							comments_count: commentsQuerySnapshot.data()?.count || 0,
+							created_at: createdAt,
+							hash: hash || null,
+							post_id: postId,
+							post_reactions,
+							proposer: newProposer,
+							status: status,
+							type: type || proposalType,
+							updated_at: updatedAt,
+							user_id: 1,
+							version: version
+						};
 					});
-				}
-				const status = subsquidPost.status;
-				const postId = proposalType === ProposalType.TIPS? hash: index;
-				const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
+				} else {
+					postsPromise = subsquidPosts?.map(async (subsquidPost) => {
+						const { createdAt, description, hash, proposer, type, end, index } = subsquidPost;
 
-				const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
-				const reactions = getReactions(post_reactionsQuerySnapshot);
-				const post_reactions = {
-					'👍': reactions['👍']?.count || 0,
-					'👎': reactions['👎']?.count || 0
-				};
+						const title = splitterAndCapitalizer(subsquidPost.callData?.method || '', '_');
 
-				const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
-				const postDoc = await postDocRef.get();
-				if (postDoc && postDoc.exists) {
-					const data = postDoc.data();
-					if (data) {
-						const proposer_address = getProposerAddressFromFirestorePostData(data, network);
-						const topic = data?.topic;
-						const topic_id = data?.topic_id;
+						const status = subsquidPost.status;
+
+						const postId = index;
+						const postDocRef = postsByTypeRef(network, proposalType as ProposalType).doc(String(postId));
+
+						const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
+						const reactions = getReactions(post_reactionsQuerySnapshot);
+
+						const post_reactions = {
+							'👍': reactions['👍']?.count || 0,
+							'👎': reactions['👎']?.count || 0
+						};
+						const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+						const newProposer = proposer || null;
+
 						return {
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							created_at: createdAt,
-							curator,
-							description,
-							end,
-							gov_type:data.gov_type,
-							hash,
-							method: preimage?.method,
-							parent_bounty_index: parentBountyIndex || null,
+							description: description || '',
+							end: end,
+							hash: hash || null,
 							post_id: postId,
 							post_reactions,
-							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
-							status,
-							tags:data?.tags || [],
-							title: data?.title || null,
-							topic: topic? topic: isTopicIdValid(topic_id)? {
-								id: topic_id,
-								name: getTopicNameFromTopicId(topic_id)
-							}: topicFromType,
-							type: type || subsquidProposalType,
-							user_id: data?.user_id || 1
+							proposer: newProposer,
+							status: status,
+							title: title || '',
+							type: type || proposalType,
+							user_id: 1
 						};
+					});
+				}
+				posts = await Promise.all(postsPromise);
+			}
+			else {
+
+				postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
+					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex } = subsquidPost;
+					let otherPostProposer = '';
+					if (group?.proposals?.length) {
+						group.proposals.forEach((obj: any) => {
+							if (!otherPostProposer) {
+								if (obj.proposer) {
+									otherPostProposer = obj.proposer;
+								} else if (obj?.preimage?.proposer) {
+									otherPostProposer = obj.preimage.proposer;
+								}
+							}
+						});
 					}
-				}
+					const status = subsquidPost.status;
+					const postId = proposalType === ProposalType.TIPS ? hash : index;
+					const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 
-				return {
-					comments_count: commentsQuerySnapshot.data()?.count || 0,
-					created_at: createdAt,
-					curator,
-					description,
-					end: end,
-					hash: hash || null,
-					method: preimage?.method,
-					parent_bounty_index: parentBountyIndex || null,
-					post_id: postId,
-					post_reactions,
-					proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
-					status: status,
-					title: '',
-					topic: topicFromType,
-					type: type || subsquidProposalType,
-					user_id: 1
-				};
-			});
+					const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
+					const reactions = getReactions(post_reactionsQuerySnapshot);
+					const post_reactions = {
+						'👍': reactions['👍']?.count || 0,
+						'👎': reactions['👎']?.count || 0
+					};
 
-			const postsResults = await Promise.allSettled(postsPromise);
-			let posts = postsResults.reduce((prev, post) => {
-				if (post && post.status === 'fulfilled') {
-					prev.push(post.value);
-				}
-				return prev;
-			}, [] as any[]);
+					const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
+					const postDoc = await postDocRef.get();
+					if (postDoc && postDoc.exists) {
+						const data = postDoc.data();
+						if (data) {
+							const proposer_address = getProposerAddressFromFirestorePostData(data, network);
+							const topic = data?.topic;
+							const topic_id = data?.topic_id;
+							return {
+								comments_count: commentsQuerySnapshot.data()?.count || 0,
+								created_at: createdAt,
+								curator,
+								description,
+								end,
+								gov_type: data.gov_type,
+								hash,
+								method: preimage?.method,
+								parent_bounty_index: parentBountyIndex || null,
+								post_id: postId,
+								post_reactions,
+								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
+								status,
+								tags: data?.tags || [],
+								title: data?.title || null,
+								topic: topic ? topic : isTopicIdValid(topic_id) ? {
+									id: topic_id,
+									name: getTopicNameFromTopicId(topic_id)
+								} : topicFromType,
+								type: type || subsquidProposalType,
+								user_id: data?.user_id || 1
+							};
+						}
+					}
 
-			posts = await getSpamUsersCountForPosts(network, posts, strProposalType);
+					return {
+						comments_count: commentsQuerySnapshot.data()?.count || 0,
+						created_at: createdAt,
+						curator,
+						description,
+						end: end,
+						hash: hash || null,
+						method: preimage?.method,
+						parent_bounty_index: parentBountyIndex || null,
+						post_id: postId,
+						post_reactions,
+						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
+						status: status,
+						title: '',
+						topic: topicFromType,
+						type: type || subsquidProposalType,
+						user_id: 1
+					};
+				});
+
+				const postsResults = await Promise.allSettled(postsPromise);
+				posts = postsResults.reduce((prev, post) => {
+					if (post && post.status === 'fulfilled') {
+						prev.push(post.value);
+					}
+					return prev;
+				}, [] as any[]);
+
+				posts = await getSpamUsersCountForPosts(network, posts, strProposalType);
+			}
 
 			const data: IPostsListingResponse = {
 				count: Number(subsquidData?.proposalsConnection?.totalCount || 0),
@@ -463,11 +554,11 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 	if (postsMap.size > 0) {
 		const newIdsLen = postsMap.size;
 		let lastIndex = 0;
-		for (let i = 0; i < newIdsLen; i+=30) {
+		for (let i = 0; i < newIdsLen; i += 30) {
 			lastIndex = i + 30;
-			let querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('content_id', 'in', postsIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+			let querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('content_id', 'in', postsIds.slice(i, newIdsLen > (i + 30) ? (i + 30) : newIdsLen)).get();
 			if (proposalType) {
-				querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+				querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(i, newIdsLen > (i + 30) ? (i + 30) : newIdsLen)).get();
 			}
 
 			const reportsQuery = await querySnapshot;
@@ -488,9 +579,9 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 			});
 		}
 		if (lastIndex < newIdsLen) {
-			let querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('content_id', 'in', postsIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+			let querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('content_id', 'in', postsIds.slice(lastIndex, (lastIndex === newIdsLen) ? (newIdsLen + 1) : newIdsLen)).get();
 			if (proposalType) {
-				querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+				querySnapshot = networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', 'in', postsIds.slice(lastIndex, (lastIndex === newIdsLen) ? (newIdsLen + 1) : newIdsLen)).get();
 			}
 			const reportsQuery = await querySnapshot;
 			reportsQuery.docs.map((doc) => {
@@ -520,13 +611,13 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 
 // expects optional proposalType, page and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
-	const { page = 1, trackNo, trackStatus, proposalType = ProposalType.DEMOCRACY_PROPOSALS, sortBy = sortValues.NEWEST,listingLimit = LISTING_LIMIT, filterBy } = req.query;
+	const { page = 1, trackNo, trackStatus, proposalType = ProposalType.DEMOCRACY_PROPOSALS, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
 	const postIds = req.body.postIds;
 	const { data, error, status } = await getOnChainPosts({
-		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit,
 		network,
 		page,
@@ -537,9 +628,9 @@ const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async
 		trackStatus
 	});
 
-	if(error || !data) {
+	if (error || !data) {
 		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
+	} else {
 		res.status(status).json(data);
 	}
 };

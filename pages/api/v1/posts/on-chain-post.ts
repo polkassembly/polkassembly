@@ -8,7 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY } from '~src/queries';
+import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -19,9 +19,11 @@ import messages from '~src/util/messages';
 
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getUpdatedAt } from './off-chain-post';
+import { network as AllNetworks } from '~src/global/networkConstants';
+import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 
 export const isDataExist = (data: any) => {
-	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]);
+	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
 };
 
 export const getTimeline = (proposals: any, isStatus?: {
@@ -480,7 +482,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			if (!strPostId) {
 				throw apiErrorWithStatusCode(`The Tip hash "${postId} is invalid."`, 400);
 			}
-		} else if (isNaN(numPostId) || numPostId < 0) {
+		} else if ((isNaN(numPostId) || numPostId < 0)  && proposalType !== ProposalType.ANNOUNCEMENT) {
 			throw apiErrorWithStatusCode(`The postId "${postId}" is invalid.`, 400);
 		}
 
@@ -492,13 +494,20 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
 
-		let postVariables: any = {
+		let postVariables: any = proposalType === ProposalType.ANNOUNCEMENT ? {
+			cid: postId,
+			type_eq: subsquidProposalType
+		} : {
 			index_eq: numPostId,
 			type_eq: subsquidProposalType,
 			voter_eq: voterAddress? String(voterAddress): ''
 		};
 
-		const postQuery = GET_PROPOSAL_BY_INDEX_AND_TYPE;
+		let postQuery =(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES ) ? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE : GET_PROPOSAL_BY_INDEX_AND_TYPE;
+		if(proposalType === ProposalType.ANNOUNCEMENT){
+			postQuery = GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE;
+		}
+
 		if (proposalType === ProposalType.TIPS) {
 			postVariables = {
 				hash_eq: strPostId,
@@ -514,14 +523,14 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		});
 
 		// Post
-		const subsquidData = subsquidRes?.data;
+		const subsquidData = subsquidRes?.data || subsquidRes?.announcements;
 		if (!isDataExist(subsquidData)) {
 			throw apiErrorWithStatusCode(`The Post with index "${postId}" is not found.`, 404);
 		}
 
-		const postData = subsquidData.proposals[0];
+		const postData = subsquidData.proposals?.[0] ||  subsquidData.announcements?.[0];
 		const preimage = postData?.preimage;
-		const proposalArguments = postData?.proposalArguments;
+		const proposalArguments = postData?.proposalArguments  || postData?.callData;
 		const proposedCall = preimage?.proposedCall;
 		const status = postData?.status;
 		let proposer = postData?.proposer || preimage?.proposer || postData?.curator;
@@ -548,7 +557,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		}
 		const post: IPostResponse = {
+			announcement: postData?.announcement,
 			bond: postData?.bond,
+			cid: postData?.cid,
 			comments: [],
 			content: '',
 			created_at: postData?.createdAt,
@@ -621,11 +632,41 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				{
 					createdAt: postData?.createdAt,
 					hash: postData?.hash,
-					index: postData?.index,
+					index: postData?.index || postData?.cid,
 					statusHistory: postData?.statusHistory,
 					type: postData?.type
 				}
 			], isStatus);
+		}
+
+		if(proposalType === ProposalType.ANNOUNCEMENT){
+			const proposal = postData.proposal;
+			const proposalTimeline = getTimeline([
+				{
+					createdAt: proposal.createdAt,
+					hash: proposal.hash,
+					index: proposal.index,
+					statusHistory: proposal.statusHistory,
+					type: proposal.type
+				}
+			]);
+			post.timeline = [...proposalTimeline , ...post.timeline ];
+		}
+
+		if(proposalType === ProposalType.ALLIANCE_MOTION){
+			const announcement = postData.announcement;
+			if(announcement){
+				const announcementTimeline = getTimeline([
+					{
+						createdAt: announcement.createdAt,
+						hash: announcement.hash,
+						index: announcement.cid,
+						statusHistory: announcement.statusHistory,
+						type: announcement.type
+					}
+				]);
+				post.timeline = [...post.timeline, ...announcementTimeline ];
+			}
 		}
 
 		if (isStatus.swap) {
@@ -674,6 +715,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			const numTotalCount = Number(subsquidData?.votesConnection?.totalCount);
 			post.seconds = isNaN(numTotalCount)? 0: numTotalCount;
+		}
+
+		// Alliance motions votes
+		if(proposalType === ProposalType.ALLIANCE_MOTION ){
+			post.motion_votes = postData.voting;
 		}
 
 		// Child Bounties
@@ -764,6 +810,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 			}
 		}
+
+		if(proposalType === ProposalType.ALLIANCE_MOTION || proposalType === ProposalType.ANNOUNCEMENT && !post.title){
+			post.title = splitterAndCapitalizer(postData?.callData?.method || '', '_') || postData?.cid;
+		}
+
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,

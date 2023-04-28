@@ -54,6 +54,7 @@ const CommentSentimentModal=({ setIsComment, openModal, setModalOpen, setIsSenti
 			setIsComment(true);
 			setIsSentimentPost(false);
 		}}
+		maskClosable={false}
 		centered
 		footer={[
 			<div className='flex items-center justify-center' key={1}>
@@ -73,11 +74,11 @@ const CommentSentimentModal=({ setIsComment, openModal, setModalOpen, setIsSenti
 				onChange={(value:number) => setSentiment(value)}
 				step={5}
 				marks={{
-					1: { label:<div></div> },
-					2: { label:<div></div> },
-					3: { label:<div></div> },
-					4: { label:<div></div> },
-					5: { label:<div></div> } }}
+					1: { label:<span></span> },
+					2: { label:<span></span> },
+					3: { label:<span></span> },
+					4: { label:<span></span> },
+					5: { label:<span></span> } }}
 				min={1}
 				max={5}
 				defaultValue={3}

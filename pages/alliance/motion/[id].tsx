@@ -49,7 +49,7 @@ const MotionPost: FC<IMotionPostProps> = (props) => {
 
 	if (post) return (<>
 		<SEOHead title={post.title || `${noTitle} - Alliance Motion`} desc={post.content} network={network}/>
-		<BackToListingView postCategory={PostCategory.ALLIANCE_MOTION} />
+		<BackToListingView postCategory={PostCategory.ALLIANCE_MOTION} trackName='Alliance Motions'/>
 
 		<div className='mt-6'>
 			<Post post={post} proposalType={proposalType} />

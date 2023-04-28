@@ -90,7 +90,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					{cid ?
 						<>
 							<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
-							<Link href={`/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
+							<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
 						</> : null}
 					{children}
 				</div>

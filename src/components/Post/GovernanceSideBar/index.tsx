@@ -496,24 +496,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							/>
 						}
 					</>}
-					{(proposalType === ProposalType.ANNOUNCEMENT)  && <>
-						{canVote &&
-							<VoteMotion
-								accounts={accounts}
-								address={address}
-								getAccounts={getAccounts}
-								motionId={onchainId as number}
-								motionProposalHash={post.proposer}
-								onAccountChange={onAccountChange}
-							/>
-						}
-						{(post.motion_votes && post.motion_votes.length > 0) &&
-							<MotionVoteInfo
-								councilVotes={post.motion_votes}
-								title='Announcement'
-							/>
-						}
-					</>}
 					{
 						!post_link && canEdit && <>
 							<PostEditOrLinkCTA />

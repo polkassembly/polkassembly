@@ -78,7 +78,8 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			const subsquidPosts: any[] = subsquidData?.proposals || [];
 
 			const posts = subsquidPosts?.map((subsquidPost) => {
-				const { title, createdAt, description, hash, index, proposer, status, type } = subsquidPost;
+				const { createdAt, description, hash, index, proposer, status, type } = subsquidPost;
+				const title = subsquidPost.callData?.method?.split('_').map((word:string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 				return {
 					created_at: createdAt,
 					description: description || '',

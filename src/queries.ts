@@ -583,6 +583,9 @@ query getAllianceLatestActivity( $limit: Int = 10, $offset: Int = 0 ) {
     proposer
     hash
     index
+    callData {
+      method
+    }
   }
   proposalsConnection(orderBy: id_ASC) {
     totalCount
@@ -648,6 +651,23 @@ query AlliancePostByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Pro
       status
       timestamp
       block
+    }
+    callData {
+      method
+      args
+      description
+      section
+    }
+    announcement {
+      statusHistory {
+        id
+        status
+        timestamp
+      }
+      cid
+      hash
+      type
+      createdAt
     }
   }
 }
@@ -720,6 +740,12 @@ query AllianceAnnouncementByCidAndType($cid_eq: String) {
         timestamp
         block
       }
+    }
+    status
+    statusHistory {
+      id
+      status
+      timestamp
     }
     createdAt
     type

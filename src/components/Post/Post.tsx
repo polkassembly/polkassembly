@@ -172,9 +172,10 @@ const Post: FC<IPostProps> = (props) => {
 				const link = getSinglePostLinkFromProposalType(proposalType);
 				setRedirection({
 					link: `/${link}/${nextPost.index}`,
-					text: `${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} #${nextPost.index}`
+					text:`${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} ${nextPost.type === ProposalType.ANNOUNCEMENT ? '' : '#'+nextPost.index}`
 				});
-			} else {
+			}
+			else {
 				setRedirection({
 					link: '',
 					text: ''

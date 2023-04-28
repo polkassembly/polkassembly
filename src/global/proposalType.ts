@@ -166,9 +166,9 @@ export function getSinglePostLinkFromProposalType(proposalType: ProposalType | O
 	case ProposalType.TREASURY_PROPOSALS:
 		return 'treasury';
 	case ProposalType.ALLIANCE_MOTION:
-		return 'alliance-motion';
+		return 'alliance/motion';
 	case ProposalType.ANNOUNCEMENT:
-		return 'alliance-announcement';
+		return 'alliance/announcement';
 	}
 	return '';
 }

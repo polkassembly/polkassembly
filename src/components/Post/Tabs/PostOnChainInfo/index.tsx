@@ -150,7 +150,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								<li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
 									<h6 className='col-span-2'>Proposer</h6>
 									<article className='flex gap-x-2 col-span-4 md:col-span-6 overflow-hidden'>
-										<Address displayInline={true} address={proposer}/>
+										<Address displayInline={true} address={proposer} fullAddress={true}/>
 										<div
 											className='hidden md:block text-pink_primary cursor-pointer ml-auto'
 											onClick={() => handleOpenSidebar(proposer)}

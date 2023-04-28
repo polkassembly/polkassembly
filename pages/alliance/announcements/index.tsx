@@ -42,7 +42,7 @@ const Announcements = (props:IAnnouncementProps) => {
 	const router = useRouter();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

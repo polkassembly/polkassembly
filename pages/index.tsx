@@ -146,9 +146,12 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}
 				</div>
 
-				<div className="mt-8 mx-1">
-					<TreasuryOverview />
-				</div>
+				{
+					network !== AllNetwork.COLLECTIVES && network !== AllNetwork.WESTENDCOLLECTIVES &&
+					<div className="mt-8 mx-1">
+						<TreasuryOverview />
+					</div>
+				}
 
 				<div className="mt-8 mx-1">
 					<LatestActivity latestPosts={latestPosts} />

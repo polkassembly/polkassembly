@@ -20,6 +20,7 @@ import messages from '~src/util/messages';
 
 import { checkReportThreshold, getReactions } from '../posts/on-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import { capitalize } from '~src/util/capitalize';
 
 export interface IPostListing {
 	user_id?: string | number;
@@ -390,7 +391,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams) : Promise<
 					});
 				}else{
 					postsPromise = subsquidPosts?.map(async (subsquidPost) => {
-						const { title, createdAt, description, hash, proposer, type, end, index } = subsquidPost;
+						const { createdAt, description, hash, proposer, type, end, index } = subsquidPost;
+
+						const title = capitalize(subsquidPost.callData?.method || '', '_' );
 
 						const status = subsquidPost.status;
 

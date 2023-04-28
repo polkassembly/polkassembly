@@ -20,6 +20,7 @@ import messages from '~src/util/messages';
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getUpdatedAt } from './off-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import { capitalize } from '~src/util/capitalize';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]) ;
@@ -530,9 +531,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		const postData = subsquidData.proposals?.[0] ||  subsquidData.announcements?.[0];
 		const preimage = postData?.preimage;
-		const proposalArguments = postData?.proposalArguments;
+		const proposalArguments = postData?.proposalArguments || postData?.callData;
 		const proposedCall = preimage?.proposedCall;
-		const status = proposalType === ProposalType.ANNOUNCEMENT ? 'Announced' : postData?.status;
+		const status = postData?.status;
 		let proposer = postData?.proposer || preimage?.proposer || postData?.curator;
 		if (!proposer && (postData?.parentBountyIndex || postData?.parentBountyIndex === 0)) {
 			const subsquidRes = await fetchSubsquid({
@@ -557,8 +558,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		}
 		const post: IPostResponse = {
+			announcement: postData?.announcement,
 			bond: postData?.bond,
-			cid:postData?.cid,
+			cid: postData?.cid,
 			comments: [],
 			content: '',
 			created_at: postData?.createdAt,
@@ -603,6 +605,35 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		// Timeline
 		updatePostTimeline(post, postData);
+		if(proposalType === ProposalType.ANNOUNCEMENT){
+			const proposal = postData.proposal;
+			const proposalTimeline = getTimeline([
+				{
+					createdAt: proposal.createdAt,
+					hash: proposal.hash,
+					index: proposal.index,
+					statusHistory: proposal.statusHistory,
+					type: proposal.type
+				}
+			]);
+			post.timeline = [...proposalTimeline , ...post.timeline ];
+		}
+
+		if(proposalType === ProposalType.ALLIANCE_MOTION){
+			const announcement = postData.announcement;
+			if(announcement){
+				const announcementTimeline = getTimeline([
+					{
+						createdAt: announcement.createdAt,
+						hash: announcement.hash,
+						index: announcement.cid,
+						statusHistory: announcement.statusHistory,
+						type: announcement.type
+					}
+				]);
+				post.timeline = [...post.timeline, ...announcementTimeline ];
+			}
+		}
 
 		if (['referendums', 'open_gov'].includes(strProposalType) && voterAddress && postData?.votes?.[0]?.decision) {
 			post['decision'] = postData?.votes?.[0]?.decision;
@@ -750,6 +781,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 			}
 		}
+		if(proposalType === ProposalType.ALLIANCE_MOTION || proposalType === ProposalType.ANNOUNCEMENT && !post.title){
+			post.title = capitalize(postData?.callData?.method || '', '_') || postData?.cid;
+		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,
@@ -843,7 +877,7 @@ export const updatePostTimeline = (post: any, postData: any) => {
 					createdAt: postData?.createdAt,
 					hash: postData?.hash,
 					index: postData?.index || postData?.cid,
-					statusHistory: postData?.statusHistory || postData?.proposal?.statusHistory,
+					statusHistory: postData?.statusHistory,
 					type: postData?.type
 				}
 			], isStatus);

@@ -35,6 +35,7 @@ interface Props {
 	disableHeader?: boolean;
 	disableAddressClick?: boolean;
 	isSubVisible?: boolean;
+	fullAddress?:boolean;
 }
 
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
@@ -42,7 +43,7 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 	ssr: false
 });
 
-const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true }: Props): JSX.Element => {
+const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true, fullAddress=false }: Props): JSX.Element => {
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useContext(ApiContext);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
@@ -118,7 +119,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 		return () => unsubscribe && unsubscribe();
 	}, [substrate_addr, api, apiReady]);
 
-	const t1 = mainDisplay || (isShortenAddressLength? shortenAddress(substrate_addr, shortenAddressLength): substrate_addr);
+	const t1 =fullAddress ?substrate_addr : mainDisplay || (isShortenAddressLength? shortenAddress(substrate_addr, shortenAddressLength): substrate_addr);
 	const t2 = extensionName || mainDisplay;
 
 	return (
@@ -158,7 +159,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 							<div className={'description display_inline flex items-center'}>
 								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} />}
 								<span title={mainDisplay || substrate_addr} className={`${textClassName} identityName max-w-[85px] flex gap-x-1 ml-0.5 pl-1.5`}>
-									{ t1 && <span className={`truncate text-navBlue ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
+									{ t1 && <span className={`${!fullAddress && 'truncate'} text-navBlue ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
 									{sub && isSubVisible && <span className={'sub truncate text-navBlue'}>{sub}</span>}
 								</span>
 							</div>

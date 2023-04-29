@@ -40,7 +40,12 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { content, postId, proposalType, title, timeline, tags } = req.body;
-	if((proposalType !== ProposalType.ANNOUNCEMENT && isNaN(postId)) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if(proposalType === ProposalType.ANNOUNCEMENT){
+		if(!postId || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	}
+	else{
+		if(isNaN(postId) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	}
 
 	if(tags && !Array.isArray(tags)) return  res.status(400).json({ message: 'Invalid tags parameter' });
 

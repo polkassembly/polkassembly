@@ -13,6 +13,6 @@ export enum PostCategory {
 	BOUNTY = 'bounty',
 	CHILD_BOUNTY = 'child bounty',
 	TIP = 'tip',
-	ALLIANCE_MOTION = 'alliance motions',
-	ANNOUNCEMENT = 'alliance announcements'
+	ALLIANCE_MOTION = 'alliance motion',
+	ANNOUNCEMENT = 'alliance announcement'
 }

@@ -17,9 +17,7 @@ import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
 import DelegatedIcon from '~assets/icons/delegate.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
-// import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
-// import ProfileIcon from '~assets/icons/delegate-popup-profile.svg';
-// import DelegateMenuIcon from '~assets/icons/delegate-menu.svg';
+
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active /> ,

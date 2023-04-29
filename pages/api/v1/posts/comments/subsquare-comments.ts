@@ -72,8 +72,8 @@ const convertDataToComment =(data:any[]) => {
 };
 
 export const getSubSquareComments = async (proposalType:string ,network:string | string[] | undefined, id:string | string[] | undefined) => {
-	const url = urlMapper[proposalType]( id, network);
 	try{
+		const url = urlMapper[proposalType]?.( id, network);
 		const data = await (await fetch(url)).json();
 		return convertDataToComment(data.items);
 	}catch(error){

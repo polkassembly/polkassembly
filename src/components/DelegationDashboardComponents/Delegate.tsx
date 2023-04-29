@@ -18,7 +18,6 @@ import DelegatedIcon from '~assets/icons/delegate.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 
-
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false

@@ -19,6 +19,7 @@ export interface IPostData {
     postType: ProposalType;
     timeline?: any[];
     title: string;
+    cid?:string;
     content: string;
     created_at: string | Date;
     last_edited_at?: string | Date;

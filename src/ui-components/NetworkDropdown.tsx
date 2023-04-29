@@ -27,7 +27,8 @@ for (const key of Object.keys(network)) {
 	const keyVal = network[key as keyof typeof network];
 	if(key === 'TANGANIKA') continue;
 
-	let link = ['MOONBASE', 'MOONRIVER', 'MOONBEAM', 'KILT'].includes(key) ? `https://${key}.polkassembly.network` : `https://${key === 'POLYMESHTEST'? 'polymesh-test': key}.polkassembly.io`;
+	let link = ['MOONBASE', 'MOONRIVER', 'MOONBEAM', 'KILT'].includes(key) ? `https://${key}.polkassembly.network` : `https://${key === 'POLYMESHTEST'? 'polymesh-test': keyVal}.polkassembly.io`;
+
 	if (isOpenGovSupported(keyVal)) {
 		link = `${link}/gov-2`;
 	}

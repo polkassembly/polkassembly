@@ -14,7 +14,7 @@ const handler: NextApiHandler<NetworkEvent | MessageType > = async (req, res) =>
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const { post_id } = req.body;
-	if(!post_id) res.status(400).json({ message: 'post_id is required' });
+	if(!post_id) return res.status(400).json({ message: 'post_id is required' });
 
 	const firestore = firebaseAdmin.firestore();
 
@@ -23,6 +23,6 @@ const handler: NextApiHandler<NetworkEvent | MessageType > = async (req, res) =>
 
 	const event = eventQuerySnapshot.docs[0].data() as NetworkEvent;
 
-	res.status(200).json(event);
+	return res.status(200).json(event);
 };
 export default withErrorHandling(handler);

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Form, MenuProps } from 'antd';
+import { Button, Dropdown, Form, MenuProps, Tooltip } from 'antd';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import React, { FC, useContext, useEffect, useRef, useState } from 'react';
@@ -47,6 +47,7 @@ interface IEditableCommentContentProps {
   sentiment:number,
 	setSentiment:(pre:number)=>void;
 	prevSentiment:number;
+	isSubsquareUser:boolean;
 }
 
 const editCommentKey = (commentId: string) => `comment:${commentId}:${global.window.location.href}`;
@@ -364,12 +365,20 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									className='reactions mr-0'
 									commentId={commentId}
 									comment_reactions={comment.comment_reactions}
+									importedReactions={props.isSubsquareUser}
 								/>
 								{
-									id &&
-										<Button disabled={props.disableEdit} className={'text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1' } onClick={ toggleReply }>
+									id && ( props.isSubsquareUser ?
+										(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
+											<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
+												<ReplyIcon className='mr-1'/> Reply
+											</Button>
+										</Tooltip>)
+										:
+										<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
 											<ReplyIcon className='mr-1'/> Reply
 										</Button>
+									)
 								}
 								<Dropdown
 									className={`${poppins.variable} ${poppins.className} flex cursor-pointer dropdown`}
@@ -433,6 +442,11 @@ export default styled(EditableCommentContent)`
     background: rgba(72, 95, 125, 0.05);
     border: 1px solid rgba(72, 95, 125, 0.1);
     border-radius: 0px 0px 2px 2px;
+  }
+
+  .disabled-reply{
+	cursor:not-allowed;
+	opacity: 0.5;
   }
 
 `;

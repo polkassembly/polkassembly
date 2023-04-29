@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { ClockCircleOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { Divider, Dropdown, MenuProps } from 'antd';
 import React, { FC, ReactNode } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
@@ -12,6 +12,7 @@ import NameLabel from './NameLabel';
 import TopicTag from './TopicTag';
 
 import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon } from '~src/ui-components/CustomIcons';
+import Link from 'next/link';
 import HelperTooltip from './HelperTooltip';
 import styled from 'styled-components';
 
@@ -57,10 +58,11 @@ interface ICreationLabelProps {
 	username?: string;
   sentiment?:number;
   commentSource?:'polkassembly' | 'subsquare';
+  cid?:string;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-	const { className, children, created_at, text, username, defaultAddress, topic,sentiment,commentSource='polkassembly' } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic,sentiment,commentSource='polkassembly', cid } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 
 	const items : MenuProps['items']=[
@@ -84,6 +86,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					{topic &&
 			<div className='flex items-center'> <span>in</span> &nbsp; &nbsp; <TopicTag topic={topic} className={topic} /></div>
 					}
+					{cid ?
+						<>
+							<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+							<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
+						</> : null}
 				</div>
 			</div>
 			<div className='flex items-center mt-2 md:mt-0'>

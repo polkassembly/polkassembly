@@ -32,6 +32,7 @@ const Listing: FC<IListingProps> = (props) => {
 		<div className={`${className}`}>
 			{posts.map((post, index) => {
 				const {
+					cid,
 					curator,
 					post_id,
 					post_reactions,
@@ -54,6 +55,7 @@ const Listing: FC<IListingProps> = (props) => {
 						{
 							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${id}`}>
 								<GovernanceCard
+									cid={cid}
 									postReactionCount={post_reactions}
 									address={proposer || curator}
 									commentsCount={comments_count || 0}

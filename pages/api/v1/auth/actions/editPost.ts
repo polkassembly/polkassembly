@@ -15,7 +15,7 @@ import getDefaultUserAddressFromId from '~src/auth/utils/getDefaultUserAddressFr
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { getFirestoreProposalType, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE_V2 } from '~src/queries';
+import { GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PROPOSAL_BY_INDEX_AND_TYPE_V2 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IPostTag, Post } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -40,7 +40,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { content, postId, proposalType, title, timeline, tags } = req.body;
-	if(isNaN(postId) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if((proposalType !== ProposalType.ANNOUNCEMENT && isNaN(postId)) || !title || !content || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if(tags && !Array.isArray(tags)) return  res.status(400).json({ message: 'Invalid tags parameter' });
 
@@ -94,7 +94,11 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		proposer_address = defaultUserAddress?.address || '';
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
-		const postQuery = GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
+		const postQuery = proposalType === ProposalType.ALLIANCE_MOTION ?
+			GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE :
+			proposalType === ProposalType.ANNOUNCEMENT ?
+				GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE :
+				GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 		let variables: any = {
 			index_eq: Number(postId),
 			type_eq: subsquidProposalType
@@ -113,7 +117,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			variables
 		});
 
-		const post = postRes.data?.proposals?.[0];
+		const post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
 
 		if(!post) return res.status(500).json({ message: 'Something went wrong.' });
 		if(!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
@@ -141,7 +145,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const newPostDoc: Post = {
 		content,
 		created_at,
-		id: proposalType === ProposalType.TIPS ? postId : Number(postId),
+		id: proposalType === ProposalType.ANNOUNCEMENT ? postId : proposalType === ProposalType.TIPS ? postId : Number(postId),
 		last_comment_at,
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,

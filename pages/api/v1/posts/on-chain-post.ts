@@ -523,7 +523,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		});
 
 		// Post
-		const subsquidData = subsquidRes?.data || subsquidRes?.announcements;
+		const subsquidData = subsquidRes?.data;
 		if (!isDataExist(subsquidData)) {
 			throw apiErrorWithStatusCode(`The Post with index "${postId}" is not found.`, 404);
 		}
@@ -560,6 +560,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			announcement: postData?.announcement,
 			bond: postData?.bond,
 			cid: postData?.cid,
+			code:postData?.code,
+			codec:postData?.codec,
 			comments: [],
 			content: '',
 			created_at: postData?.createdAt,
@@ -599,6 +601,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			topic: topicFromType,
 			track_number: postData?.trackNumber,
 			type: postData?.type || getSubsquidProposalType(proposalType as any),
+			version:postData?.version,
 			vote_threshold: postData?.threshold?.type
 		};
 
@@ -652,7 +655,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			]);
 			post.timeline = [...proposalTimeline , ...post.timeline ];
 		}
-
 		if(proposalType === ProposalType.ALLIANCE_MOTION){
 			const announcement = postData.announcement;
 			if(announcement){
@@ -741,15 +743,18 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		if (firestorePost) {
 			let data = firestorePost.data();
 			// traverse the group, get and set the data.
-			data = await getAndSetNewData({
-				data,
-				id: strPostId,
-				network,
-				proposalType: strProposalType,
-				proposer: post.proposer,
-				timeline: post?.timeline
-			});
-
+			try{
+				data = await getAndSetNewData({
+					data,
+					id: strPostId,
+					network,
+					proposalType: strProposalType,
+					proposer: post.proposer,
+					timeline: post?.timeline
+				});
+			}catch(e){
+				data=undefined;
+			}
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
@@ -811,7 +816,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}
 		}
 
-		if(proposalType === ProposalType.ALLIANCE_MOTION || proposalType === ProposalType.ANNOUNCEMENT && !post.title){
+		if((proposalType === ProposalType.ALLIANCE_MOTION || proposalType === ProposalType.ANNOUNCEMENT) && !post.title){
 			post.title = splitterAndCapitalizer(postData?.callData?.method || '', '_') || postData?.cid;
 		}
 

@@ -103,6 +103,10 @@ export function getFirestoreProposalType(proposalType: string): string {
 		return 'discussions';
 	case 'Grants':
 		return 'grants';
+	case 'AllianceMotion':
+		return 'alliance_motion';
+	case 'Announcement':
+		return 'announcement';
 	}
 	return '';
 }
@@ -157,6 +161,10 @@ export function getSinglePostLinkFromProposalType(proposalType: ProposalType | O
 		return 'tip';
 	case ProposalType.TREASURY_PROPOSALS:
 		return 'treasury';
+	case ProposalType.ALLIANCE_MOTION:
+		return 'alliance/motion';
+	case ProposalType.ANNOUNCEMENT:
+		return 'alliance/announcement';
 	}
 	return '';
 }

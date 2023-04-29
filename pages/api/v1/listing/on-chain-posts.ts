@@ -411,6 +411,28 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						};
 						const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
 						const newProposer = proposer || null;
+						const postDoc = await postDocRef.get();
+						if (postDoc && postDoc.exists) {
+							const data = postDoc.data();
+							if (data) {
+								return {
+									comments_count: commentsQuerySnapshot.data()?.count || 0,
+									created_at: createdAt,
+									description,
+									end,
+									gov_type: data.gov_type,
+									hash,
+									post_id: postId,
+									post_reactions,
+									proposer: proposer,
+									status,
+									tags: data?.tags || [],
+									title: data?.title || title,
+									type: type || subsquidProposalType,
+									user_id: data?.user_id || 1
+								};
+							}
+						}
 
 						return {
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
@@ -523,7 +545,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			}
 
 			const data: IPostsListingResponse = {
-				count: Number(subsquidData?.proposalsConnection?.totalCount || 0),
+				count: Number(subsquidData?.proposalsConnection?.totalCount || subsquidData?.announcementsConnection?.totalCount|| 0),
 				posts
 			};
 

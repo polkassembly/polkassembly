@@ -29,7 +29,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router= useRouter();
 	const { className } = props;
 	const { postData: {
-		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags, track_name
+		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags, track_name, cid
 	} } = usePostDataContext();
 
 	const { network } = useNetworkContext();
@@ -59,6 +59,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						defaultAddress={proposer || curator}
 						username={username}
 						topic={topic && topic?.name}
+						cid={cid}
 					>
 						<UpdateLabel
 							className='md'

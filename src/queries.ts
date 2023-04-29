@@ -698,6 +698,9 @@ export const GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE = `
 query AllianceAnnouncementByCidAndType($cid_eq: String) {
   announcements(where: {cid_eq: $cid_eq}) {
     cid
+    code
+    codec
+    version
     proposer
     index
     hash

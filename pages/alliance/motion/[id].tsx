@@ -25,7 +25,6 @@ export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 		postId: id,
 		proposalType
 	});
-
 	return { props: { data, error, network } };
 };
 interface IMotionPostProps {
@@ -56,7 +55,11 @@ const MotionPost: FC<IMotionPostProps> = (props) => {
 		</div>
 	</>);
 
-	return <div className='mt-16'><LoadingState /></div>;
+	return (
+		<div className='mt-16'>
+			<LoadingState />
+		</div>
+	);
 
 };
 

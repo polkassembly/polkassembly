@@ -48,7 +48,7 @@ const AnnouncementPost: FC<IAnnouncementPostProps> = (props) => {
 
 	if (post) return (<>
 		<SEOHead title={post.title || `${noTitle} - Announcement`} desc={post.content} network={network}/>
-		<BackToListingView postCategory={PostCategory.ALLIANCE_ANNOUNCEMENT} trackName='Announcements'/>
+		<BackToListingView postCategory={PostCategory.ANNOUNCEMENT} trackName='Announcements'/>
 
 		<div className='mt-6'>
 			<Post post={post} proposalType={proposalType} />

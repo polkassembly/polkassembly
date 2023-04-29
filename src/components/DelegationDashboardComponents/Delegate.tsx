@@ -87,7 +87,6 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 			<h4 className='text-sm font-normal text-[#243A57] mb-4'>
         Enter an address or Select from the list below to delegate your voting power
 			</h4>
-
 			<div className='flex gap-4 items-center'>
 				<div className='text-[#576D8BCC] font-normal text-[14px] h-[48px] border-[1px] border-solid border-[#D2D8E0] rounded-md flex items-center justify-between w-full'>
 
@@ -120,6 +119,8 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 					<DelegateMenuIcon/>
 				</Popover> */}
 			</div>
+
+			{!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) &&<label className='text-red-500 text-[12px] font-normal'>Invalid Address</label>}
 
 			{!loading ? <div className='mt-6 grid grid-cols-2 max-md:grid-cols-1 gap-6'>
 				{delegatesData.map((delegate, index) => <DelegateCard key={ index }  delegate={ delegate } />)}

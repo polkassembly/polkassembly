@@ -66,7 +66,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 		let onChainPostsCount = 0;
 
-		if(network === AllNetworks.COLLECTIVES ||network=== AllNetworks.WESTENDCOLLECTIVES  ) {
+		if(network === AllNetworks.COLLECTIVES || network=== AllNetworks.WESTENDCOLLECTIVES  ) {
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query: GET_ALLIANCE_LATEST_ACTIVITY,
@@ -75,10 +75,10 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals || [];
 
-			const posts = subsquidPosts?.map((subsquidPost) => {
+			const posts = subsquidPosts?.map(async (subsquidPost) => {
 				const { createdAt, description, hash, index, proposer, status, type } = subsquidPost;
 				const title = subsquidPost.callData?.method?.split('_').map((word:string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-				return {
+				const singlePost = {
 					created_at: createdAt,
 					description: description || '',
 					hash: hash,
@@ -92,8 +92,19 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					track_number: '',
 					type: type
 				};
+				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(type) as ProposalType).doc(String(index));
+				const postDoc = await postDocRef.get();
+				if (postDoc && postDoc.exists) {
+					const data = postDoc?.data();
+					return {
+						...singlePost,
+						title: data?.title || title
+					};
+				}
+				return singlePost;
+
 			});
-			onChainPosts = posts;
+			onChainPosts =await Promise.all(posts);
 			onChainPostsCount = Number(subsquidData?.proposalsConnection?.totalCount || 0);
 		}
 

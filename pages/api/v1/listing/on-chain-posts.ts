@@ -375,6 +375,27 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 						const commentsQuerySnapshot = await postDocRef.collection('comments').count().get();
 						const newProposer = proposer || null;
+						const postDoc = await postDocRef.get();
+						if (postDoc && postDoc.exists) {
+							const data = postDoc.data();
+							if (data) {
+								return {
+									cid: cid,
+									comments_count: commentsQuerySnapshot.data()?.count || 0,
+									created_at: createdAt,
+									gov_type: data.gov_type,
+									hash,
+									post_id: postId,
+									post_reactions,
+									proposer: proposer,
+									status,
+									tags: data?.tags || [],
+									title: data?.title,
+									type: type || subsquidProposalType,
+									user_id: data?.user_id || 1
+								};
+							}
+						}
 
 						return {
 							cid: cid,

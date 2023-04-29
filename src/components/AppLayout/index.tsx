@@ -27,6 +27,7 @@ import Footer from './Footer';
 import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 const { Content, Sider } = Layout;
 
@@ -160,10 +161,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Proposals', '/tech-comm-proposals', <DemocracyProposalsIcon className='text-white' />)
 		] : [],
 		allianceItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Members', '/alliance-members', <MembersIcon className='text-white' />),
-			// getSiderMenuItem('Motions', '/alliance-motions', <MotionsIcon className='text-white' />),
-			getSiderMenuItem('Announcements', '/alliance-announcements', <NewsIcon className='text-white' />),
-			getSiderMenuItem('Unscrupulous', '/alliance-unscrupulous', <ReferendaIcon className='text-white' />)
+			getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-white' />),
+			getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='text-white' />),
+			getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-white' />),
+			getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='text-white' />)
 		] : []
 	};
 
@@ -215,7 +216,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]);
 	}
 
-	if(network === 'collectives'){
+	if(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES){
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
 			...gov1Items.allianceItems
 		])];

@@ -172,7 +172,7 @@ const Post: FC<IPostProps> = (props) => {
 				const link = getSinglePostLinkFromProposalType(proposalType);
 				setRedirection({
 					link: `/${link}/${nextPost.index}`,
-					text: `${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} #${nextPost.index}`
+					text:`${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} ${proposalType === ProposalType.ANNOUNCEMENT ? '' : '#'+nextPost.index}`
 				});
 			} else {
 				setRedirection({
@@ -275,6 +275,9 @@ const Post: FC<IPostProps> = (props) => {
 					<PostOnChainInfo
 						onChainInfo={{
 							bond: post?.bond,
+							cid: post?.cid,
+							code: post?.code,
+							codec: post?.codec,
 							curator: post?.curator,
 							curator_deposit: post?.curator_deposit,
 							deciding: post?.deciding,
@@ -304,6 +307,7 @@ const Post: FC<IPostProps> = (props) => {
 							submission_deposit_amount: post?.submission_deposit_amount,
 							submitted_amount: post?.submitted_amount,
 							track_number: post?.track_number,
+							version: post?.version,
 							vote_threshold: post?.vote_threshold
 						}}
 						handleOpenSidebar={handleOpenSidebar}
@@ -336,6 +340,7 @@ const Post: FC<IPostProps> = (props) => {
 	];
 	return (
 		<PostDataContextProvider initialPostData={{
+			cid: post?.cid || '',
 			comments: post?.comments || [],
 			content: post?.content,
 			created_at: post?.created_at || '',

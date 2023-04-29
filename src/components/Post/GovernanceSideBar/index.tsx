@@ -473,6 +473,24 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							/>
 						}
 					</>}
+					{proposalType === ProposalType.ALLIANCE_MOTION && <>
+						{canVote &&
+							<VoteMotion
+								accounts={accounts}
+								address={address}
+								getAccounts={getAccounts}
+								motionId={onchainId as number}
+								motionProposalHash={post.hash}
+								onAccountChange={onAccountChange}
+							/>
+						}
+
+						{(post.motion_votes && post.motion_votes.length > 0 ) &&
+							<MotionVoteInfo
+								councilVotes={post.motion_votes}
+							/>
+						}
+					</>}
 
 					{proposalType === ProposalType.DEMOCRACY_PROPOSALS &&
 						<ProposalDisplay

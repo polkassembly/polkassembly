@@ -104,7 +104,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				setLoading(true);
 				setUserDetailsContextState((prev) => {
 					return { ...prev,
-						delegationDashboardAddress: loginAddress.length === 0 ? delegationDashboardAddress : loginAddress 
+						delegationDashboardAddress: loginAddress.length === 0 ? delegationDashboardAddress : loginAddress
 					};
 				});
 				setLoading(false);

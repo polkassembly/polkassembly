@@ -35,7 +35,7 @@ interface Props {
 	setLoginOpen?: (pre: boolean)=> void;
 	setSignupOpen?: (pre: boolean)=> void;
   isDelegation?: boolean;
-  className: string;
+  className?: string;
 }
 
 const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation }) => {

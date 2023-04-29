@@ -88,7 +88,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				<div className='flex justify-between gap-x-2 lg:items-start lg:flex-row'>
 					<div className='mt-3 lg:mt-0'>
 						<h1 className='text-sidebarBlue font-semibold text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
-							{<span className='font-medium mr-2'>#{isTip? tip_index: onchainId}</span>} <span className='break-all'>{cid ? null : mainTitle}</span>
+							{cid ? (!title ?<span className='font-medium mr-2'>#{onchainId}</span> : <span className='break-all'>{ mainTitle }</span>):
+								<><span className='font-medium mr-2'>#{isTip? tip_index: onchainId}</span><span className='break-all'>{ mainTitle }</span></>}
 						</h1>
 						<h2 className='text-navBlue font-medium text-sm'>{subTitle}</h2>
 					</div>

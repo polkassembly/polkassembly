@@ -320,14 +320,6 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								</div>
 							</li>
 						}
-						{
-							motion_method && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-								<h6 className='col-span-2 text-base'>Motion&apos;s method</h6>
-								<div className={`col-span-4 md:col-span-6 ${motion_method === 'reject_proposal' ? 'bold-red-text' : 'text-navBlue'}`}>
-									{motion_method}
-								</div>
-							</li>
-						}
 						{curator && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
 							<h6 className='col-span-2'>Curator</h6>
 							<div className='col-span-4 md:col-span-6 overflow-hidden'>
@@ -364,14 +356,6 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								<Address displayInline={true} address={payee}/>
 							</div>
 						</li>}
-						{
-							motion_method && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-								<h6 className='col-span-2 text-base'>Motion&apos;s method</h6>
-								<div className={`col-span-4 md:col-span-6 ${motion_method === 'reject_proposal' ? 'bold-red-text' : 'text-navBlue'}`}>
-									{motion_method}
-								</div>
-							</li>
-						}
 						{
 							motion_method && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
 								<h6 className='col-span-2 text-base'>Motion&apos;s method</h6>

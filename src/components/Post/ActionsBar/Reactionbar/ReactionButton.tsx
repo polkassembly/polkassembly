@@ -20,8 +20,9 @@ export interface IReactionButtonProps {
 	reactionsDisabled: boolean;
 	setReactionsDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 	setReactions: React.Dispatch<React.SetStateAction<IReactions>>
-  setLikeModalOpen?:(pre:boolean)=>void;
-  setDislikeModalOpen?:(pre:boolean)=>void;
+    setLikeModalOpen?:(pre:boolean)=>void;
+    setDislikeModalOpen?:(pre:boolean)=>void;
+    importedReactions?:boolean;
 }
 
 type IReaction = '👍' | '👎';
@@ -36,7 +37,8 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	reactionsDisabled,
 	setReactionsDisabled,
 	setLikeModalOpen,
-	setDislikeModalOpen
+	setDislikeModalOpen,
+	importedReactions = false
 }) => {
 	const { postData: { postIndex, postType } } = usePostDataContext();
 	const { id, username } = useContext(UserDetailsContext);
@@ -119,8 +121,10 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	</span>;
 
 	let popupContent = '';
-
-	if (usernames?.length > 10) {
+	if(importedReactions){
+		popupContent = 'Likes are disabled for imported comments.';
+	}
+	else if (usernames?.length > 10) {
 		popupContent = `${usernames.slice(0, 10).join(', ')} and ${usernames.length - 10} others`;
 	} else {
 		popupContent = usernames?.join(', ');

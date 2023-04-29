@@ -101,7 +101,6 @@ export const network = {
 	PICHIUROCOCO: 'pichiu-rococo',
 	POLYMESH:'polymesh',
 	POLYMESHTEST: 'polymesh-test',
-	TINKER: 'tinker',
 	TURING: 'turing',
 	VARA: 'vara',
 	WESTEND: 'westend',

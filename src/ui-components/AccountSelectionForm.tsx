@@ -13,24 +13,30 @@ interface Props{
 	accounts: InjectedAccount[]
 	address: string
 	onAccountChange: (address: string) => void
-	title: string
+	title?: string
 	withBalance?: boolean
 	onBalanceChange?: (balance: string) => void
   className?: string;
   isDisabled?: boolean;
+  inputClassName?: string;
+  isSwitchButton?: boolean,
+	setSwitchModalOpen?: (pre: boolean) => void;
 }
 
-const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isDisabled }: Props) =>
+const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen }: Props) =>
 	<article className={`w-full flex flex-col ${className}`}>
-		<div className='flex items-center mb-[2px] gap-2 text-[#485F7D]'>
+		{title && <div className='flex items-center mb-[2px] gap-2'>
 			<h3 className='text-sm mb-0 font-normal'>{title}</h3>
 			<HelperTooltip text='You can choose an account from the extension.' />
-		</div>
+		</div>}
 		<AddressDropdown
 			isDisabled={isDisabled}
 			accounts={accounts}
 			defaultAddress={address}
 			onAccountChange={onAccountChange}
+			className={inputClassName}
+			isSwitchButton={isSwitchButton}
+			setSwitchModalOpen={setSwitchModalOpen}
 		/>
 		{address && withBalance &&
 			<Balance address={address} onChange={onBalanceChange} />

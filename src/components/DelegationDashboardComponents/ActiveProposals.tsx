@@ -30,17 +30,17 @@ const ActiveProposals = ( { className, posts, trackDetails, status, delegatedTo 
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
 
 	return <div className=  {`${className} rounded-[14px] bg-white py-[24px] px-[37px] mt-[22px]`}>
-		<div className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between'>
-			<div  className='flex jutify-center items-center gap-2'>
+		<div onClick={() => posts?.length > 0 && setExpandProposals(!expandProposals)}  className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
+			<div className='flex jutify-center items-center gap-2'>
 				<ActiveProposalsIcon className='mr-[4px]'/>
-				<span className='text-[28px] font-semibold tracking-[0.0015em] text-[#243A57]'>
+				<span className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57]'>
           Active Proposals
 				</span>
 				<span className='h-[34px] py-[6px] px-3 bg-[#D2D8E04D] rounded-[26px] text-[#243A57] flex justify-center items-center font-semibold'>
 					{count < 10 && count !==0 && 0}{count}
 				</span>
 			</div>
-			<div onClick={() => posts?.length > 0 && setExpandProposals(!expandProposals)} className='cursor-pointer p-2'>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
+			<div  className='cursor-pointer p-2'>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
 		</div>
 		{expandProposals && <div className='mt-[24px] flex flex-col gap-6'>
 			{posts?.length > 0 && posts?.map((proposal, index) => (

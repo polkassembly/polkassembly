@@ -13,6 +13,7 @@ import { inputToBn } from '../util/inputToBn';
 import HelperTooltip from './HelperTooltip';
 import Balance from '~src/components/Balance';
 import formatBnBalance from '~src/util/formatBnBalance';
+import styled from 'styled-components';
 
 interface Props{
 	className?: string
@@ -25,9 +26,10 @@ interface Props{
   withBalance?: boolean;
   onAccountBalanceChange?: (balance: string) => void
   balance?: BN;
+  inputClassName?: string;
 }
 
-const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance }: Props) => {
+const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 
@@ -40,7 +42,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 	};
 
 	return <div className={`${className} w-full flex flex-col`}>
-		<label className='mb-[2px] flex items-center text-sm text-[#485F7D]'>
+		<label className='mb-[2px] flex items-center text-sm'>
 			{label} {helpText && <HelperTooltip className='' text={helpText}/> }
 			{address && withBalance &&
 			<Balance address={address} onChange={onAccountBalanceChange}  />
@@ -69,14 +71,19 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 			<InputNumber
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name='balance'
-				className='text-sm text-sidebarBlue w-full h-[40px] border-2 rounded-md mt-0'
+				className={`text-sm w-full h-[40px] border-[1px] rounded-[4px] mt-0 ${inputClassName} placeholderColor`}
 				onChange={onBalanceChange}
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}
-
 			/>
 		</Form.Item>
 	</div>;
 };
 
-export default BalanceInput;
+export default styled(BalanceInput)`
+.placeholderColor .ant-input-number-group .ant-input-number-group-addon{
+border: 1px solid red;
+background:#E5007A;
+color:white;
+font-size:12px;
+}`;

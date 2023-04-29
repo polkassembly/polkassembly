@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { Button, Form, Modal, Slider, Spin } from 'antd';
+import { Alert, Button, Form, Modal, Slider, Spin } from 'antd';
 
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -20,11 +20,15 @@ import LockIcon from '~assets/icons/lock.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
-import { useUserDetailsContext } from '~src/context';
+import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import { useRouter } from 'next/router';
 import { handleTrack } from '~src/components/DelegationDashboardComponents/DashboardTrack';
 import { BN_ZERO } from '@polkadot/util';
 import DelegationSuccessPopup from './DelegationSuccessPopup';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import formatBnBalance from '~src/util/formatBnBalance';
+
+const ZERO_BN = new BN(0);
 
 interface Props {
   trackNum: number;
@@ -39,7 +43,7 @@ interface Props {
 const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, setIsRefresh }: Props ) => {
 
 	const { api, apiReady } = useContext(ApiContext);
-
+	const { network } = useNetworkContext();
 	const router = useRouter();
 	const trackName = handleTrack(String(router.query.track));
 	const [form] = Form.useForm();
@@ -52,6 +56,25 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
+	const [txFee, setTxFee] = useState(ZERO_BN);
+	const [showAlert, setShowAlert] = useState(false);
+
+	useEffect(() => {
+
+		if(!defaultAddress || !target || !getEncodedAddress(target, network) || !trackNum || isNaN(conviction) ||
+			!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN)) return;
+
+		setLoading(true);
+
+		const txArr =  api.tx.convictionVoting.undelegate(trackNum);
+
+		(async () => {
+			const info = await txArr.paymentInfo(defaultAddress);
+			setTxFee(new BN(info.partialFee.toString() || 0));
+			setLoading(false);
+			setShowAlert(true);
+		})();
+	}, [defaultAddress, api, apiReady, bnBalance, trackNum, conviction, network, target]);
 
 	useEffect(() => {
 		if (!api) {
@@ -132,11 +155,11 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	return (
 		<>
 			<Modal
-				closeIcon={<CloseIcon/>}
-				className={`${poppins.variable} ${poppins.className} padding ` }
+				closeIcon={<CloseIcon />}
+				className={`${poppins.variable} ${poppins.className} padding w-[600px] ` }
 				wrapClassName={className}
 				title={
-					<div className='flex items-center text-[#243A57] text-[20px] font-semibold mb-6'>
+					<div className='flex items-center text-[#243A57] text-[20px] font-semibold mb-6 '>
 						<UndelegateProfileIcon className='mr-2'/>Undelegate
 					</div>
 				}
@@ -146,7 +169,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				confirmLoading={loading}
 				onCancel={() => setOpen(false)}
 				footer={
-					<div className='flex items-center justify-end'>
+					<div className='flex items-center justify-end mt-6'>
 						{
 							[
 								<Button key="back" disabled={loading} className='h-[40px] w-[134px]' onClick={() => setOpen(false)}>
@@ -161,8 +184,9 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				}
 			>
 
-				<Spin spinning={loading} indicator={<LoadingOutlined />}>
-					<div className='flex flex-col'>
+				<Spin spinning={loading} indicator={<LoadingOutlined />} >
+					<div className='flex flex-col border-0'>
+						{showAlert && <Alert showIcon type='info' className='mb-6 text-[14px] bg-[#4E75FF] ' message={`Fees of ${formatBnBalance(txFee,{ numberAfterComma: 2,withUnit:true },network)} will be applied to the transaction`}/>}
 						<Form
 							form={form}
 							disabled={true}
@@ -173,32 +197,35 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 								accounts={accounts}
 								address={address}
 								withBalance={false}
-								className='text-[#485F7D] text-sm '
+								className='text-[#788698] text-sm'
 								onAccountChange={setAddress}
+								inputClassName='text-[#ccd1d9] border-[1px] border-[#D2D8E0] border-solid px-3 rounded-[6px] bg-[#F6F7F9] py-[6px]'
 							/>
 
 							<AddressInput
 								defaultAddress={target}
 								label={'Delegate to'}
 								placeholder='Delegate Account Address'
-								className='text-[#485F7D] text-sm '
+								className='text-[#788698] text-sm '
 								onChange={(address) => setTarget(address)}
 								size='large'
+								inputClassName='text-[#ccd1d9]  bg-[#F6F7F9]'
 							/>
 							<BalanceInput
 								label={'Balance'}
 								placeholder={'Enter balance'}
-								className='mt-6'
+								className='mt-6 text-[#788698]'
 								address={address}
 								withBalance={false}
 								onAccountBalanceChange={handleOnBalanceChange}
 								onChange={(balance) => setBnBalance(balance)}
 								size='large'
 								balance={bnBalance}
+								inputClassName='text-[#ccd1d9] bg-[#F6F7F9] rounded-[4px]'
 							/>
 
 							<div className='mb-2 border-solid border-white'>
-								<label  className='text-[#485F7D] flex items-center text-sm'>Conviction</label>
+								<label  className='text-[#788698] flex items-center text-sm'>Conviction</label>
 
 								<div className='px-[2px]'>
 									<Slider
@@ -207,21 +234,21 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 										trackStyle={{ backgroundColor:'#FF49AA' }}
 										step={7}
 										marks={{
-											1:{ label:<div>0.1x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-											2:{ label:<div>1x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-											3:{ label:<div>2x</div> , style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-											4:{ label:<div>3x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-											5:{ label:<div>4x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-											6:{ label:<div>5x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-											7:{ label:<div>6x</div>, style: { color: '#243A57', fontSize:'14px',marginTop:'16px' } }  }}
+											1:{ label:<div>0.1x</div>, style: { color: '#adacb5', fontSize:'12px', marginTop:'16px' } },
+											2:{ label:<div>1x</div>, style: { color: '#adacb5', fontSize:'12px', marginTop:'16px' } },
+											3:{ label:<div>2x</div> , style: { color: '#adacb5', fontSize:'12px', marginTop:'16px' } },
+											4:{ label:<div>3x</div>, style: { color: '#adacb5', fontSize:'12px', marginTop:'16px' } },
+											5:{ label:<div>4x</div>, style: { color: '#adacb5', fontSize:'12px', marginTop:'16px' } },
+											6:{ label:<div>5x</div>, style: { color: '#adacb5', fontSize:'12px', marginTop:'16px' } },
+											7:{ label:<div>6x</div>, style: { color: '#adacb5', fontSize:'12px',marginTop:'16px' } }  }}
 										min={1}
 										max={7}
 										defaultValue={conviction+1}
 									/></div>
 							</div>
 							<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
-								<div className='flex gap-[10px] items-center justify-center text-[#485F7D] text-sm'> <LockIcon/><span>Locking period</span></div>
-								<div className='text-[#243A57] font-medium text-sm flex justify-center items-center' >
+								<div className='flex gap-[10px] items-center justify-center text-[#b8c2ce] text-sm'> <LockIcon/><span>Locking period</span></div>
+								<div className='text-[#8894a4] font-medium text-sm flex justify-center items-center' >
 									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enachment period`}
 								</div>
 							</div>
@@ -240,18 +267,36 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 };
 
 export default styled(UndelegateModal)`
-
+.padding  .ant-modal-close{
+  margin-top: 4px;
+}
+.padding .ant-alert-message{
+color:white;
+font-size:14px;
+  font-weight: 400;
+}
+.padding .ant-alert-info .ant-alert-icon{
+  color:white;
+    font-weight: 400;
+}
+.padding  .ant-modal-close:hover{
+  margin-top: 4px;
+}
 .padding .ant-slider-dot{
- border-color:#243A5799 !important;
+  margin-top:-1px;
   height:12px;
-  width:12px;
+  width:2px;
+  border-radius:0px !important;
+  border-color:#EDEFF3;
 }
 .padding .ant-slider-dot-active{
-  border-color:#E5007A !important;
-  width:12px;
-  height:12px;
-  
+  border-color:#b97b9c !important;
+  width:2px;
+  height:12px;  
+  border-radius:0px !important;
+  margin-top:-1px;
 }
+
 .padding .ant-tooltip-open{
  border-color:#485F7D !important;
 }
@@ -259,24 +304,22 @@ export default styled(UndelegateModal)`
   border:1px solid  ;
 }
 .padding .ant-slider .ant-slider-rail{
-  background-color: #D2D8E0;
-  height: 7px;
+  background-color: #EDEFF3;
+  height: 5px;
 }
 .padding .ant-slider .ant-slider-track{
-height: 7px;
- background-color: #E5007A !important;
+height: 5px;
+ background-color: #b97b9c !important;
 
 }
-.padding .ant-slider .ant-slider-handle:focus::after {
- }
  .padding .ant-slider .ant-slider-handle::after{
 height:25px;
 margin-top:-7px;
-background:#E5007A;
+background:#F285BF;
 width:18px;
 border-radius:8px !important;
 border:none !important;
-margin-left:-2px;
+margin-left:-4px;
   box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
  }
   .padding .ant-slider .ant-slider-handle::before{

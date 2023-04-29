@@ -18,9 +18,10 @@ import { ProfileDetailsResponse } from '~src/auth/types';
 import SocialLink from '~src/ui-components/SocialLinks';
 import { socialLinks } from '../UserProfile/Details';
 import DashboardTrackListing from './TracksListing';
-import ProfileBalances from './ProfileBalance';
 import dynamic from 'next/dynamic';
 import { EditIcon } from '~src/ui-components/CustomIcons';
+import LoginPopup from '~src/ui-components/loginPopup';
+import SignupPopup from '~src/ui-components/SignupPopup';
 
 interface Props {
   className?: string;
@@ -31,6 +32,10 @@ const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	ssr: false
 });
 const WalletConnectModal = dynamic(() => import('./DelegationWalletConnectModal'), {
+	loading: () => <Skeleton.Avatar active />,
+	ssr: false
+});
+const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 	loading: () => <Skeleton.Avatar active />,
 	ssr: false
 });
@@ -53,6 +58,15 @@ const DelegationDashboardHome = ({ className } : Props) => {
 
 	const [messageApi, contextHolder] = message.useMessage();
 	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
+	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
+
+	useEffect(() => {
+
+		userDetails.isLoggedOut() && setOpenLoginModal(true);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [userDetails?.isLoggedOut]);
 
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 
@@ -90,7 +104,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>
 			<ProfileBalances address={userDetails.delegationDashboardAddress}/>
 		</div>
-		<h2 className=' text-[#243A57] mb-4 md:mb-5 mt-5 text-[28px] font-semibold max-lg:pt-[60px]'>Dashboard</h2>
+		<h2 className=' text-[#243A57] mb-6 md:mb-5 mt-5 text-[24px] font-semibold max-lg:pt-[60px]'>Dashboard</h2>
 		<div className='flex justify-between py-[24px] px-[34px] shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white rounded-[14px]'>
 			<div className='flex justify-center gap-[34px] '>
 				{image && image?.length !== 0
@@ -103,8 +117,8 @@ const DelegationDashboardHome = ({ className } : Props) => {
 				<div className='text-[#243A57]'>
 					<span className='text-[#243A57] font-semibold mb-4 tracking-wide text-lg'>{userDetails?.username}</span >
 					{userDetails.delegationDashboardAddress && userDetails?.delegationDashboardAddress.length > 0 ? <div className='flex gap-2  items-center'>
-						<Address address={userDetails?.delegationDashboardAddress} />
-						<span className='flex items-center cursor-pointer' onClick={() => {userDetails.username && copyLink(userDetails?.delegationDashboardAddress) ;success();}}>
+						<Address address={userDetails?.delegationDashboardAddress} displayInline className='text-[14px] text-[#243A57]' identiconSize={34} />
+						<span className='flex items-center cursor-pointer' onClick={() => {userDetails?.delegationDashboardAddress && copyLink(userDetails?.delegationDashboardAddress) ;success();}}>
 							{contextHolder}
 							<CopyIcon/>
 						</span>
@@ -114,7 +128,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 						? <h2 className={`text-sm font-normal text-[#576D8BCC] mt-2  ${username === userDetails.username && 'cursor-pointer'}`} onClick={() => setOpenEditModal(true)}>
 							{username === userDetails.username ? 'Click here to add bio' : 'No Bio' }
 						</h2>
-						: <h2 className='text-sm mt-2 text-[#243A57] tracking-[0.01em] '>{bio}</h2>
+						: <h2  onClick={() => setOpenEditModal(true)} className='text-sm mt-2 text-[#243A57] tracking-[0.01em] cursor-pointer font-normal'>{bio}</h2>
 					}
 
 					<div
@@ -125,11 +139,13 @@ const DelegationDashboardHome = ({ className } : Props) => {
 								const link = (social_links && Array.isArray(social_links))? social_links?.find((s) => s.type === social)?.link || '': '';
 								return (
 									<SocialLink
-										className='flex items-center justify-center text-2xl md:text-base text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] rounded-[20px] h-[39px] w-[40px] mt-6'
+										className='flex items-center justify-center text-2xl  text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] rounded-[20px] h-[39px] w-[40px] mt-6'
 										key={index}
 										link={link}
 										disable={!link}
 										type={social}
+										iconClassName={`text-[20px] ${link ? 'text-[#576D8B]' : 'text-[#96A4B6]'}`}
+
 									/>
 								);
 							})
@@ -158,9 +174,12 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		<div >
 			{userDetails?.delegationDashboardAddress.length> 0 && <DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]' address={String(userDetails.delegationDashboardAddress)}/>}
 		</div>
-		<WalletConnectModal open={openModal} setOpen={setOpenModal} />
+		{!openLoginModal && !openSignupModal && !userDetails.loginWallet && <WalletConnectModal open={openModal} setOpen={setOpenModal} />}
+		<LoginPopup closable={false} setSignupOpen={setOpenSignupModal} modalOpen={openLoginModal} setModalOpen={setOpenLoginModal} isModal={true} isDelegation={true}/>
+		<SignupPopup closable={false} setLoginOpen={setOpenLoginModal} modalOpen={openSignupModal} setModalOpen={setOpenSignupModal} isModal={true} isDelegation={true} />
+
 		{openEditModal  && username === userDetails.username &&
-							<EditProfile openModal={openEditModal} setOpenModal={setOpenEditModal} data={profileDetails} setProfileDetails={setProfileDetails}/>
+				<EditProfile openModal={openEditModal} setOpenModal={setOpenEditModal} data={profileDetails} setProfileDetails={setProfileDetails}/>
 		}
 	</div>;
 };

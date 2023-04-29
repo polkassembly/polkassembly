@@ -73,15 +73,15 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	return <div className=  {`${className} ${disabled && 'cursor-not-allowed' } rounded-[14px] bg-white py-[24px] px-[37px] mt-[22px]`}>
-		<div className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between'>
+	return <div className=  {`${className} ${disabled && 'cursor-not-allowed' } rounded-[14px] bg-white py-6 px-[37px] mt-[22px]`}>
+		<div onClick={() => !disabled && setExpandProposals(!expandProposals)} className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
 			<div  className='flex jutify-center items-center gap-2'>
 				<DelegatedIcon className='mr-[4px]'/>
-				<span className='text-[28px] font-semibold tracking-[0.0015em] text-[#243A57]'>
+				<span className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57]'>
           Delegate
 				</span>
 			</div>
-			<div onClick={() => !disabled && setExpandProposals(!expandProposals)} className={`${!disabled ? 'cursor-pointer' :'cursor-not-allowed' } p-2`}>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
+			<div  className={`${!disabled ? 'cursor-pointer' :'cursor-not-allowed' } p-2`}>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
 		</div>
 		{expandProposals && <div className='mt-[24px]'>
 			<h4 className='text-sm font-normal text-[#243A57] mb-4'>
@@ -91,7 +91,7 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 			<div className='flex gap-4 items-center'>
 				<div className='text-[#576D8BCC] font-normal text-[14px] h-[48px] border-[1px] border-solid border-[#D2D8E0] rounded-md flex items-center justify-between w-full'>
 
-					<Input onChange={(e) => setAddress(e.target.value)} value={address} className='h-[44px] border-none'/>
+					<Input placeholder='Enter address to Delegate vote' onChange={(e) => setAddress(e.target.value)} value={address} className='h-[44px] border-none'/>
 
 					<Button onClick={handleClick} disabled={!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address))} className='h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1'>
 						<DelegatesProfileIcon/>

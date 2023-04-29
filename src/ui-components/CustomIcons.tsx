@@ -73,6 +73,21 @@ import SearchSVG from '~assets/icons/search.svg';
 import CheckedSVG from '~assets/icons/checked.svg';
 import CheckedOutlinedSVG from '~assets/icons/check-outline.svg';
 import TrendingSVG from '~assets/icons/trending.svg';
+import RootTrackSVG from '~assets/delegation-tracks/root.svg';
+import FellowshipAdminSVG from '~assets/delegation-tracks/fellowship-admin.svg';
+import GeneralAdminSVG from '~assets/delegation-tracks/genral-admin.svg' ;
+import LeaseAdminSVG from '~assets/delegation-tracks/lease-admin.svg';
+import SmallTipperSVG from '~assets/delegation-tracks/small-tipper.svg';
+import WhitelistedCallerSVG from '~assets/delegation-tracks/whitelisted-caller.svg';
+import MediumSpenderSVG from '~assets/delegation-tracks/medium-spender.svg';
+import StakingAdminTrackSVG from '~assets/delegation-tracks/staking-admin.svg';
+import TreasurerSVG from '~assets/delegation-tracks/treasurer.svg';
+import AuctionAdminTrackSVG from '~assets/delegation-tracks/auction-admin.svg';
+import ReferendumCancellerSVG from '~assets/delegation-tracks/referendum-cancellor.svg';
+import ReferendumKillerSVG from '~assets/delegation-tracks/referendum-killer.svg';
+import BigSpenderSVG from '~assets/delegation-tracks/big-spender.svg';
+import BigTipperSVG from '~assets/delegation-tracks/big-tipper.svg';
+import SmallSpenderSVG from '~assets/delegation-tracks/small-spender.svg';
 
 export const OverviewIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={OverviewSVG} {...props} />
@@ -321,4 +336,50 @@ export const CheckedIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 export const TrendingIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={TrendingSVG} {...props} />
+);
+export const RootTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={RootTrackSVG} {...props} />
+);
+export const AuctionAdminTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={AuctionAdminTrackSVG} {...props} />
+);
+export const WhitelistedCallerTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={WhitelistedCallerSVG} {...props} />
+);
+export const GeneralAdminTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={GeneralAdminSVG} {...props} />
+);
+export const LeaseAdminTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={LeaseAdminSVG} {...props} />
+);
+export const SmallTipperTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SmallTipperSVG} {...props} />
+);
+export const MediumSpenderTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={MediumSpenderSVG} {...props} />
+);
+export const StakingAdminTrackTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={StakingAdminTrackSVG} {...props} />
+);
+export const TreasurerTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={TreasurerSVG} {...props} />
+);
+export const FellowshipAdminTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={FellowshipAdminSVG} {...props} />
+);
+export const ReferendumKillerTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ReferendumKillerSVG} {...props} />
+);
+export const BigSpenderTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={BigSpenderSVG} {...props} />
+);
+export const BigTipperTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={BigTipperSVG} {...props} />
+);
+
+export const ReferendumCancellerTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ReferendumCancellerSVG} {...props} />
+);
+export const SmallSpenderTrackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SmallSpenderSVG} {...props} />
 );

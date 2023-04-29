@@ -3,10 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { DownOutlined } from '@ant-design/icons';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
-import { Dropdown } from 'antd';
+import { Button, Dropdown } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
+import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
 import Address from 'src/ui-components/Address';
+import { useUserDetailsContext } from '~src/context';
 
 interface Props {
 	defaultAddress?: string;
@@ -15,15 +17,19 @@ interface Props {
   filterAccounts?: string[]
   onAccountChange: (address: string) => void;
   isDisabled?: boolean;
+  isSwitchButton?: boolean;
+  setSwitchModalOpen?: (pre: boolean)=> void;
 }
 
 const AddressDropdown = ({
 	defaultAddress,
-	className = 'px-3 py-1 border-solid border-gray-300 border-2 rounded-md h-[48px]',
+	className = 'px-3 py-1 border-solid border-gray-300 border-[1px] rounded-md h-[48px]',
 	accounts,
 	filterAccounts,
 	isDisabled,
-	onAccountChange
+	onAccountChange,
+	isSwitchButton,
+	setSwitchModalOpen
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
 	const filteredAccounts = !filterAccounts
@@ -34,6 +40,7 @@ const AddressDropdown = ({
 
 	const dropdownList: {[index: string]: string} = {};
 	const addressItems: ItemType[] = [];
+	const { setUserDetailsContextState } = useUserDetailsContext();
 
 	filteredAccounts.forEach(account => {
 		addressItems.push({
@@ -48,6 +55,15 @@ const AddressDropdown = ({
 		}
 	}
 	);
+
+	isSwitchButton && setSwitchModalOpen && addressItems.push({
+		key: 1,
+		label: (
+			<div className='flex items-center justify-center mt-2'>
+				<Button onClick={() => setSwitchModalOpen(true)} className={`w-[164px] h-[40px] rounded-[8px] text-sm text-[#fff] bg-pink_primary font-medium flex justify-center items-center ${poppins.variable} ${poppins.className}`}>Switch Wallet</Button>
+			</div>
+		)
+	});
 	return (
 		<Dropdown
 			trigger={['click']}
@@ -57,16 +73,22 @@ const AddressDropdown = ({
 			menu={{
 				items: addressItems,
 				onClick: (e) => {
-					setSelectedAddress(e.key);
-					onAccountChange(e.key);
+					if(e.key !== '1'){
+						setSelectedAddress(e.key);
+						onAccountChange(e.key);
+						setSwitchModalOpen && setUserDetailsContextState((prev) =>
+						{
+							return { ...prev, delegationDashboardAddress: e.key };
+						});}
 				}
 			}}
 		>
 			<div className="flex justify-between items-center">
+
 				<Address
 					disableAddressClick={true}
 					extensionName={dropdownList[selectedAddress]}
-					address={selectedAddress}
+					address={defaultAddress || selectedAddress}
 				/>
 				<span>
 					<DownOutlined />

@@ -8,20 +8,21 @@ import { DiscordIcon, EmailIcon, RiotIcon, TelegramIcon, TwitterIcon } from '~sr
 
 interface ISocialIconProps {
 	type: ESocialType;
+  className?: string;
 }
 
 export const SocialIcon: FC<ISocialIconProps> = (props) => {
 	switch(props.type) {
 	case ESocialType.EMAIL:
-		return <EmailIcon />;
+		return <EmailIcon className={props.className} />;
 	case ESocialType.RIOT:
-		return <RiotIcon />;
+		return <RiotIcon className={props.className}  />;
 	case ESocialType.TWITTER:
-		return <TwitterIcon />;
+		return <TwitterIcon className={props.className}  />;
 	case ESocialType.TELEGRAM:
-		return <TelegramIcon />;
+		return <TelegramIcon className={props.className}  />;
 	case ESocialType.DISCORD:
-		return <DiscordIcon />;
+		return <DiscordIcon className={props.className} />;
 	default:
 		return <></>;
 	}
@@ -30,23 +31,24 @@ export const SocialIcon: FC<ISocialIconProps> = (props) => {
 interface ISocialLink extends ISocial{
 	className?: string;
 	disable?: boolean;
+  iconClassName?: string;
 }
 
 const SocialLink: FC<ISocialLink> = (props) => {
-	const { link, className, type, disable } = props;
+	const { link, className, type, disable, iconClassName } = props;
 	return (
 		<>
 			{
 				disable?
 					<span className={`${className} cursor-not-allowed opacity-60`}>
-						<SocialIcon type={type} />
+						<SocialIcon type={type}  className={iconClassName} />
 					</span>
 					: <a
 						href={type === ESocialType.EMAIL? `mailto:${link}`: link} target='_blank'
 						rel='noreferrer'
 						className={className}
 					>
-						<SocialIcon type={type} />
+						<SocialIcon type={type} className={iconClassName} />
 					</a>
 			}
 		</>

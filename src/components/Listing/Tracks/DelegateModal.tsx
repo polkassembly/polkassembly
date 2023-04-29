@@ -261,8 +261,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 	return (
 		<>
 			<Modal
+				maskClosable={false}
 				closeIcon={<CloseIcon/>}
-				className={`${poppins.variable} ${poppins.className} padding ` }
+				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px]` }
 				wrapClassName={className}
 				title={
 					<div className='flex items-center text-[#243A57] text-[20px] font-semibold mb-6'>
@@ -306,26 +307,30 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 								address={delegationDashboardAddress}
 								withBalance={false}
 								onAccountChange={(address) => setAddress(address)}
-								className='text-[#485F7D] text-sm'
+								className='text-[#485F7D] text-sm font-normal'
+								isDisabled={true}
+								inputClassName='text-[#b0b8c3] border-[1px] px-3 py-[6px] border-solid rounded-[4px] border-[#D2D8E0]'
 							/>
 							<AddressInput
 								defaultAddress={defaultTarget}
 								label={'Delegate to'}
 								placeholder='Delegate Account Address'
-								className='text-[#485F7D] text-sm '
+								className='text-[#485F7D] text-sm font-normal'
 								onChange={(address) => setTarget(address)}
 								size='large'
 								skipFormatCheck={true}
+								inputClassName='text-[#b0b8c3]'
 							/>
 							<BalanceInput
 								label={'Balance'}
 								placeholder={'Enter balance'}
-								className='mt-6'
+								className='mt-6 text-[#485F7D] text-sm font-normal'
 								address={delegationDashboardAddress}
 								withBalance={true}
 								onAccountBalanceChange={handleOnBalanceChange}
 								onChange={(balance) => setBnBalance(balance)}
 								size='large'
+								inputClassName='text-[#b0b8c3]'
 							/>
 
 							<div className='mb-2 border-solid border-white'>
@@ -348,13 +353,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 											}} }
 										step={7}
 										marks={{
-											1:{ label:<div>0.1x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-											2:{ label:<div>1x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-											3:{ label:<div>2x</div> , style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-											4:{ label:<div>3x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-											5:{ label:<div>4x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-											6:{ label:<div>5x</div>, style: { color: '#243A57', fontSize:'14px', marginTop:'16px' } },
-											7:{ label:<div>6x</div>, style: { color: '#243A57', fontSize:'14px',marginTop:'16px' } }  }}
+											1:{ label:<div>0.1x</div>, style: { color: '#243A57', fontSize:'12px', marginTop:'16px' } },
+											2:{ label:<div>1x</div>, style: { color: '#243A57', fontSize:'12px', marginTop:'16px' } },
+											3:{ label:<div>2x</div> , style: { color: '#243A57', fontSize:'12px', marginTop:'16px' } },
+											4:{ label:<div>3x</div>, style: { color: '#243A57', fontSize:'12px', marginTop:'16px' } },
+											5:{ label:<div>4x</div>, style: { color: '#243A57', fontSize:'12px', marginTop:'16px' } },
+											6:{ label:<div>5x</div>, style: { color: '#243A57', fontSize:'12px', marginTop:'16px' } },
+											7:{ label:<div>6x</div>, style: { color: '#243A57', fontSize:'12px',marginTop:'16px' } }  }}
 										min={1}
 										max={7}
 										defaultValue={1}
@@ -374,7 +379,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 							</Popover>
 						</Form>
 
-						{showAlert && <Alert showIcon type='info' className='mb-6' message={`Fees of ${formatBnBalance(txFee,{ numberAfterComma: 2,withUnit:true },network)} will be applied to the transaction`}/>}
+						{showAlert && <Alert showIcon type='info' className='mb-6 bg-[#4E75FF] border-none' message={`Fees of ${formatBnBalance(txFee,{ numberAfterComma: 2,withUnit:true },network)} will be applied to the transaction`}/>}
 					</div>
 				</Spin>
 
@@ -387,37 +392,51 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 
 export default styled(DelegateModal)`
 
-// .modal .ant-modal .ant-modal-close{
-//   top: 22px !important;
-// }
-
+.padding  .ant-modal-close{
+  margin-top: 4px;
+}
+.padding  .ant-modal-close:hover{
+  margin-top: 4px;
+}
+.padding .ant-alert-message{
+color:white;
+font-size:14px;
+font-weight: 400;
+}
+.padding .ant-alert-info .ant-alert-icon{
+  color:white;
+  font-weight: 400;
+}
 .padding .ant-slider-dot{
- border-color:#243A5799 !important;
   height:12px;
-  width:12px;
+  width:2px;
+  border-radius:0px !important;
+  border-color:#D2D8E0;
+  margin-top:-1px;
 }
 .padding .ant-slider-dot-active{
   border-color:#E5007A !important;
-  width:12px;
-  height:12px;
-  
+  width:2px;
+  height:12px;  
+  border-radius:0px !important;
+  margin-top:-1px;
 }
 .padding .ant-tooltip-open{
- border-color:#485F7D !important;
+ border-color:#D2D8E0 !important;
+ margin-top:-1px;
 }
-.padding .ant-slider-handle{
-  border:1px solid  ;
-}
+// .padding .ant-slider-handle{
+//   border:1px solid  ;
+// }
 .padding .ant-slider .ant-slider-rail{
   background-color: #D2D8E0;
-  height: 7px;
+  height: 5px;
 }
 .padding .ant-slider .ant-slider-track{
-height: 7px;
+height: 5px;
  background-color: #E5007A !important;
 }
-.padding .ant-slider .ant-slider-handle:focus::after {
- }
+
  .padding .ant-slider .ant-slider-handle::after{
 height:25px;
 margin-top:-7px;

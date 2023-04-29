@@ -67,7 +67,7 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 					</span>
 					</div>}
 					{tracks && <div className='flex gap-[35px] text-sm text-[#485F7D]'>Track(s):<span>
-						<div className={`flex flex-col gap-1 min-h-[100px] max-h-[100px] text-[#243A57] pr-2 font-medium ${tracks.length > 4 && 'overflow-y-scroll'}`}>
+						<div className={`flex flex-col gap-1 min-h-[50px] max-h-[100px] text-[#243A57] pr-2 font-medium ${tracks.length > 4 && 'overflow-y-scroll'}`}>
 							{tracks.map((track, index) => (<div key={index}>{track} #{networkTrackInfo[network][track.toString()].trackId}</div>))}</div>
 					</span>
 					</div>}</div>

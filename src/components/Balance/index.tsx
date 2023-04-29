@@ -78,7 +78,7 @@ const Balance = ({ address, onChange }: Props) => {
 	}, [address, api, apiReady, isReferendum]);
 
 	return (
-		<div className={ `${poppins.className} ${poppins.variable} text-[12px] ml-auto text-[#576D8BCC] tracking-[0.0025em] font-medium`}>
+		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#b0b8c3] tracking-[0.0025em] font-normal`}>
       Available: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		</div>
 	);

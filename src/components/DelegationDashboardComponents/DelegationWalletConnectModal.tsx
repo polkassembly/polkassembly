@@ -10,7 +10,6 @@ import { ApiContext } from '~src/context/ApiContext';
 import { useUserDetailsContext } from '~src/context';
 import { NetworkContext } from '~src/context/NetworkContext';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
-import ExtensionNotDetected from '../ExtensionNotDetected';
 import WalletButton from '~src/components/WalletButton';
 import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
@@ -41,8 +40,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 	const [form] = Form.useForm();
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [defaultWallets, setDefaultWallets]=useState<any>({});
-	const [wallet,setWallet]=useState<Wallet>();
+	const [defaultWallets, setDefaultWallets] = useState<any>({});
+	const [wallet,setWallet] = useState<Wallet>();
 	const [extensionOpen, setExtentionOpen] = useState<boolean>(false);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
@@ -51,7 +50,9 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 		setLoading(true);
 		setUserDetailsContextState((prev) => {
 			return { ...prev,
-				delegationDashboardAddress: address
+				delegationDashboardAddress: address,
+				loginAddress:'',
+				loginWallet: wallet || null
 			};
 		});
 		setOpen(false);
@@ -164,8 +165,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 					}
 				</div>
 
-				{extensionOpen && <ErrorAlert errorMsg='You need at least one account in your wallet extenstion to use this feature.' />}
-				{extensionOpen && <ExtensionNotDetected />}
+				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet?.length > 0 && <ErrorAlert errorMsg='You need at least one account in your wallet extenstion to use this feature.' />}
+				{Object.keys(defaultWallets || {}).length === 0 &&  <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='warning' showIcon className='text-[#243A57] changeColor'/>}
 
 				{
 					!extensionOpen &&
@@ -182,7 +183,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 											onAccountChange={(address) => setAddress(address)}
 											onBalanceChange={handleOnBalanceChange}
 											className='text-[#485F7D] text-sm'
-										/>: !wallet? <Alert type='info' showIcon message='Please select a wallet.' />: null}
+										/>: !wallet && Object.keys(defaultWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 								</Form>}
 			</div>
 		</Spin>

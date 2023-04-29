@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import ProfileBalances from './ProfileBalance';
 import { useUserDetailsContext } from '~src/context';
 import styled from 'styled-components';
 import { RightOutlined } from '@ant-design/icons';
@@ -20,6 +19,8 @@ import { ITrackDelegation } from 'pages/api/v1/delegations';
 import UndelegateModal from '../Listing/Tracks/UndelegateModal';
 import BN from 'bn.js';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
+import LoginPopup from '~src/ui-components/loginPopup';
+import SignupPopup from '~src/ui-components/SignupPopup';
 
 interface Props{
   className?: string;
@@ -36,6 +37,10 @@ const ActiveProposals = dynamic(() => import('./ActiveProposals'), {
 	ssr: false
 });
 const WalletConnectModal = dynamic(() => import('./DelegationWalletConnectModal'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
+const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
@@ -68,13 +73,19 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	const [showTable, setShowTable] = useState<boolean>(false);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [delegationDetails, setDelegationDetails] = useState<ITrackDelegation>();
-	const { delegationDashboardAddress: address } = useUserDetailsContext();
+	const { delegationDashboardAddress: address, loginWallet, isLoggedOut } = useUserDetailsContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [rowData, setRowData] = useState<ITrackRowData[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [ openUndelegateModal, setOpenUndelegateModal ] = useState<boolean>(false);
 	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
 	const [isRefresh, setIsRefresh] = useState<boolean>(false);
+	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
+	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
+
+	useEffect(() => {
+		isLoggedOut() && setOpenLoginModal(true);
+	}, [isLoggedOut]);
 
 	useEffect(() => {
 
@@ -137,7 +148,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 	useEffect(() => {
 
-		address && getData();
+		getData();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, isRefresh]);
@@ -156,7 +167,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			</span>
 		</div>
 		{status ? <div className='border-solid border-[1px] border-[#D2D8E0] rounded-[14px] py-6 px-9 shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white'>
-			<div className='text-[28px] font-semibold tracking-[0.0015em] text-[#243A57] flex gap-3 items-center'>
+			<div className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57] flex gap-3 items-center'>
 				{handleTracksIcon(handleTrack(String(track)))}
 				<span>{handleTrack(String(track))}</span>
 				{status && status.map((item: ETrackDelegationStatus, index: number) =>
@@ -164,9 +175,9 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 						{ item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
 					</span>)}
 			</div>
-			<h4 className='mt-[19px] text-sm text-[#243A57] tracking-[0.01em]'>
+			<p className='mt-[19px] text-sm text-[#243A57] tracking-[0.01em] font-normal'>
 				{trackDetails.description}
-			</h4>
+			</p>
 			{ showTable && status.map((item: ETrackDelegationStatus, index: number) => (<div key={index} className='bg-white mt-6 border-[1px] border-solid rounded-[6px] pl-[3px] pr-[3px] border-[#D2D8E0] bg-transparent'>
 				<Table
 					className= 'column'
@@ -184,7 +195,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 						<Button onClick={() => setOpenDelegateModal(true)} className='text-[#E5007A] font-normal tracking-wide text-sm ml-1 flex items-center justify-center max-md:mt-[10px] border-none shadow-none' >
 							<DelegatedProfileIcon className='mr-[7px]'/>
 							<span className='mt-[1px]'>
-               Delegate Track
+               Delegate
 							</span>
 						</Button>
 					</div>
@@ -204,7 +215,9 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			/>
 		</div> : <Skeleton className='mt-'/>}
 
-		<WalletConnectModal open={openModal} setOpen={setOpenModal} />
+		{!openLoginModal && !openSignupModal && !loginWallet && <WalletConnectModal open={openModal} setOpen={setOpenModal} />}
+		<LoginPopup closable={false} setSignupOpen={setOpenSignupModal} modalOpen={openLoginModal} setModalOpen={setOpenLoginModal} isModal={true} isDelegation={true}/>
+		<SignupPopup closable={false} setLoginOpen={setOpenLoginModal} modalOpen={openSignupModal} setModalOpen={setOpenSignupModal} isModal={true} isDelegation={true} />
 
 		{rowData.filter((row ) => row.delegatedTo !== address ).length > 0 &&  <UndelegateModal
 			setIsRefresh={setIsRefresh}

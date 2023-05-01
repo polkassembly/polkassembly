@@ -57,6 +57,7 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 		onCancel={() => {setOpen(false); setIsRefresh && setIsRefresh(false);}}
 		centered
 		footer={false}
+		maskClosable={false}
 	>
 		<div className='flex justify-center items-center flex-col -mt-[132px]'>
 			<SuccessIcon/>

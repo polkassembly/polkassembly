@@ -16,21 +16,32 @@ import { IDelegate } from '~src/types';
 export const getDelegatesData = async (network: string, address?: string) => {
 	if(!network || !isOpenGovSupported(network)) return [];
 	if(address && !(getEncodedAddress(String(address), network) || Web3.utils.isAddress(String(address)))) return [];
-	// TODO: Implement for single address
 
 	const subsquidFetches: {[index:string]: any} = [];
 
 	const currentDate = new Date();
-	novaDelegates.map((novaDelegate) => {
-		subsquidFetches[novaDelegate.address] = fetchSubsquid({
+
+	if(address) {
+		subsquidFetches[address] = fetchSubsquid({
 			network,
 			query: RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS,
 			variables : {
 				address: String(address),
-				createdAt_gte: new Date(currentDate.getTime() - (30 * 24 * 60 * 60 * 1000)).toISOString()
+				createdAt_gte: new Date(currentDate.getTime() - (30 * 24 * 60 * 60 * 1000)).toISOString() // 30 days ago
 			}
 		});
-	});
+	} else {
+		novaDelegates.map((novaDelegate) => {
+			subsquidFetches[novaDelegate.address] = fetchSubsquid({
+				network,
+				query: RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS,
+				variables : {
+					address: String(novaDelegate.address),
+					createdAt_gte: new Date(currentDate.getTime() - (30 * 24 * 60 * 60 * 1000)).toISOString() // 30 days ago
+				}
+			});
+		});
+	}
 
 	const subsquidResults = await Promise.allSettled(Object.values(subsquidFetches));
 

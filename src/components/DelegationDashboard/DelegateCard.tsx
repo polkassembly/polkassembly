@@ -54,7 +54,7 @@ const DelegateCard = ({ delegate, className }: Props) => {
 
 		<div className='flex justify-between items-center px-5 pt-5'>
 			<Address address={delegate?.address} displayInline identiconSize={34} />
-			<Button onClick={handleClick} className='h-[40px] border-none hover:border-solid py-1 px-4 flex justify-around items-center rounded-md text-pink_primary bg-transparent shadow-none gap-2 mr-1 ml-1 '>
+			<Button onClick={handleClick} className='h-[40px] border-none hover:border-solid py-1 px-4 flex justify-around items-center rounded-md text-pink_primary bg-transparent shadow-none gap-2 ml-1 mt-[1px]'>
 				<DelegatesProfileIcon/>
 				<span className='text-sm font-medium'>
               Delegate
@@ -63,19 +63,19 @@ const DelegateCard = ({ delegate, className }: Props) => {
 		</div>
 
 		<div className={`text-sm tracking-[0.015em] text-[#576D8B] pl-[56px] min-h-[56px] mb-[16px] mt-2 flex gap-1 ${isExpand && 'h-[56px]'}`}>
-			<p className = {` w-[80%] ${!isExpand ? 'bio': 'overflow-y-scroll'  }`}>
+			<p className = {` w-[80%] ${!isExpand ? 'bio': 'overflow-y-scroll overflow-x-hidden'  }`}>
 				{delegate?.bio ? delegate?.bio : 'No Bio'}
 			</p>
 			{delegate?.bio.length > 100  && <span onClick={() => setIsExpand((pre) => !pre)} className='text-[#1B61FF] text-xs flex justify-center items-center mt-1 leading-3 cursor-pointer'>{!isExpand ? 'Read more' : 'Show less'}</span>}
 		</div>
-		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0]'>
+		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] hover:border-[#3C74E1]'>
 			<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-[#243A57]'>
 				<div className='flex gap-1 items-end justify-center'> {formatBnBalance(balance,{ numberAfterComma:2, withUnit:false },network)}
 					<span className='text-sm font-normal text-[#243A57]'>{unit}</span>
 				</div>
 				<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>
 			</div>
-			<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-[#243A57] text-[20px] font-semibold'>
+			<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-[#243A57] text-[20px] font-semibold hover:border-[#3C74E1]'>
 				{delegate?.voted_proposals_count}
 				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal'>Voted proposals </span><span className='text-xs font-normal text-[#576D8B]'>(Past 30 days)</span>
 			</div>

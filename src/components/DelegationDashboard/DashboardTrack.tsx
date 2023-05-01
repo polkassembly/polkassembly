@@ -168,7 +168,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 		</div>
 		{status ? <div className='border-solid border-[1px] border-[#D2D8E0] rounded-[14px] py-6 px-9 shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white'>
 			<div className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57] flex gap-3 items-center'>
-				{handleTracksIcon(handleTrack(String(track)))}
+				{handleTracksIcon(handleTrack(String(track)), 28)}
 				<span>{handleTrack(String(track))}</span>
 				{status && status.map((item: ETrackDelegationStatus, index: number) =>
 					<span key={index} className={`text-[12px] ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center`}>

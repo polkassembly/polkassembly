@@ -70,8 +70,12 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() => {
+		disabled && setExpandProposals(false);
+	}, [disabled]);
+
 	return <div className=  {`${className} ${disabled && 'cursor-not-allowed' } rounded-[14px] bg-white py-6 px-[37px] mt-[22px]`}>
-		<div onClick={() => !disabled && setExpandProposals(!expandProposals)} className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
+		<div onClick={() => !disabled && setExpandProposals(!expandProposals)} className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between ${disabled ? 'cursor-not-allowed': 'cursor-pointer' }`}>
 			<div  className='flex jutify-center items-center gap-2'>
 				<DelegatedIcon className='mr-[4px]'/>
 				<span className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57]'>
@@ -89,7 +93,7 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 
 					<Input placeholder='Enter address to Delegate vote' onChange={(e) => setAddress(e.target.value)} value={address} className='h-[44px] border-none'/>
 
-					<Button onClick={handleClick} disabled={!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address))} className='h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1'>
+					<Button onClick={handleClick} disabled={!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress} className='h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1'>
 						<DelegatesProfileIcon/>
 						<span className='text-white text-sm font-medium'>
               Delegate
@@ -117,7 +121,7 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 				</Popover> */}
 			</div>
 
-			{!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) &&<label className='text-red-500 text-[12px] font-normal'>Invalid Address</label>}
+			{!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress && <label className='text-red-500 text-[12px] font-normal'>{ address === delegationDashboardAddress ? 'Please provide a different target address.' : 'Invalid Address.'}</label>}
 
 			{!loading ? <div className='mt-6 grid grid-cols-2 max-md:grid-cols-1 gap-6'>
 				{delegatesData.map((delegate, index) => <DelegateCard key={ index }  delegate={ delegate } />)}

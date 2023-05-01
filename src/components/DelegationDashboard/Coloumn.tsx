@@ -9,68 +9,54 @@ import { ITrackDataType } from './TracksListing';
 import { ITrackRowData } from './DashboardTrack';
 import { Button } from 'antd';
 import UndelegatedProfileIcon from '~assets/icons/undelegate-profile.svg';
-import RootIcon from '~assets/delegation-tracks/root.svg';
-import FellowshipAdminIcon from '~assets/delegation-tracks/fellowship-admin.svg';
-import GeneralAdminIcon from '~assets/delegation-tracks/genral-admin.svg' ;
-import LeaseAdminIcon from '~assets/delegation-tracks/lease-admin.svg';
-import SmallTipperIcon from '~assets/delegation-tracks/small-tipper.svg';
-import WhitelistedCallerIcon from '~assets/delegation-tracks/whitelisted-caller.svg';
-import MediumSpenderIcon from '~assets/delegation-tracks/medium-spender.svg';
-import StakingAdminIcon from '~assets/delegation-tracks/staking-admin.svg';
-import TreasurerIcon from '~assets/delegation-tracks/treasurer.svg';
-import AuctionAdminIcon from '~assets/delegation-tracks/auction-admin.svg';
-import ReferendumCancellerIcon from '~assets/delegation-tracks/referendum-cancellor.svg';
-import ReferendumKillerIcon from '~assets/delegation-tracks/referendum-killer.svg';
-import BigSpenderIcon from '~assets/delegation-tracks/big-spender.svg';
-import BigTipperIcon from '~assets/delegation-tracks/big-tipper.svg';
-import SmallSpenderIcon from '~assets/delegation-tracks/small-spender.svg';
 import { ETrackDelegationStatus } from '~src/types';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { useNetworkContext } from '~src/context';
 import dayjs from 'dayjs';
+import { AuctionAdminTrackIcon, BigSpenderTrackIcon, BigTipperTrackIcon, FellowshipAdminTrackIcon, GeneralAdminTrackIcon, LeaseAdminTrackIcon, MediumSpenderTrackIcon, ReferendumCancellerTrackIcon, ReferendumKillerTrackIcon, RootTrackIcon, SmallSpenderTrackIcon, SmallTipperTrackIcon, StakingAdminTrackTrackIcon, TreasurerTrackIcon, WhitelistedCallerTrackIcon  } from '~src/ui-components/CustomIcons';
 
-export const handleTracksIcon =  (index:string ) => {
+export const handleTracksIcon =  (index:string, size:number ) => {
 
 	if(index === 'Root' ){
-		return <RootIcon/>;
+		return <RootTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}else if(index === 'Treasurer'){
-		return <TreasurerIcon/>;
+		return <TreasurerTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}else if(index === 'Whitelisted Caller' ){
-		return <WhitelistedCallerIcon/>;
+		return <WhitelistedCallerTrackIcon style={{ fontSize: `${size}px` }}/>;
 	} else if(index === 'Lease Admin'){
-		return <LeaseAdminIcon/>;
+		return <LeaseAdminTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}
 	else if(index ===  'General Admin' ){
-		return <GeneralAdminIcon/>;
+		return <GeneralAdminTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}
 	else if(index === 'Staking Admin' ){
-		return <StakingAdminIcon/>;
+		return <StakingAdminTrackTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}else if( index === 'Fellowship Admin' ){
-		return <FellowshipAdminIcon/>;
+		return <FellowshipAdminTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}
 	else if( index === 'Small Tipper' ){
-		return <SmallTipperIcon/>;
+		return <SmallTipperTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}
 	else if( index === 'Medium Spender' ){
-		return <MediumSpenderIcon/>;
+		return <MediumSpenderTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}
 	else if( index === 'Small Spender' ){
-		return <SmallSpenderIcon/>;
+		return <SmallSpenderTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}
 	else if( index === 'Auction Admin' ){
-		return <AuctionAdminIcon/>;
+		return <AuctionAdminTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}
 	else if( index === 'Big Spender' ){
-		return <BigSpenderIcon/>;
+		return <BigSpenderTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}
 	else if( index === 'Big Tipper' ){
-		return <BigTipperIcon/>;
+		return <BigTipperTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}
 	else if( index === 'Referendum Killer' ){
-		return <ReferendumKillerIcon/>;
+		return <ReferendumKillerTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}
 	else if( index === 'Referendum Canceller' ){
-		return <ReferendumCancellerIcon/>;
+		return <ReferendumCancellerTrackIcon style={{ fontSize: `${size}px` }}/>;
 	}
 
 	return null;
@@ -81,27 +67,27 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		{ dataIndex: 'index', key: 1,
 			render: (index) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal' >{index}</h2>;
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal'>{index}</div>;
 			}, title: '#',width: '7%' },
 
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
 				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-lg:flex-col max-lg:gap-[2px] max-lg:text-center shrink-0'>
-					{ handleTracksIcon(track)}<span>{track}</span>
+					{ handleTracksIcon(track, 24)}<span className=' flex items-center'>{track}</span>
 				</div>;}, title: 'Tracks',width: '25%'
 		},
 
 		{ dataIndex: 'description', key: 3,
 			render: (des) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{des}</h2>;
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{des}</div>;
 			},
 			title: 'Description',width: '40%' },
 
 		{ dataIndex: 'active_proposals', key: 4,
 			render: (activeProposals) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{activeProposals}</h2>;
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{activeProposals}</div>;
 			},
 			title: 'Active proposals',width: '10%' },
 
@@ -120,34 +106,34 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		{ dataIndex: 'index', key: 1,
 			render: (index) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal' >{index}</h2>;
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal' >{index}</div>;
 			}, title: '#',width: '7%' },
 
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
 				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
-					{ handleTracksIcon(track)}<span>{track}</span>
+					{ handleTracksIcon(track, 24)}<span className=' border-[1px] flex items-center'>{track}</span>
 				</div>;}, title: 'Tracks',width: '23%'
 		},
 
 		{ dataIndex: 'description', key: 3,
 			render: (des) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{des}</h2>;
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{des}</div>;
 			},
 			title: 'Description',width: '30%' },
 
 		{ dataIndex: 'delegated_to', key: 4,
 			render: (addresses) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'><Address address={addresses?.[0]?.to || ''} displayInline identiconSize={24}/></h2>;
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'><Address address={addresses?.[0]?.to || ''} displayInline identiconSize={24}/></div>;
 			},
 			title: 'Delegated to',width: '25%' },
 
 		{ dataIndex: 'active_proposals', key: 5,
 			render: (activeProposals) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal'>{activeProposals}</h2>;
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal'>{activeProposals}</div>;
 			},
 			title: 'Active proposals',width: '15%' }];
 
@@ -155,27 +141,27 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		{ dataIndex: 'index', key: 1,
 			render: (index) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal' >{index}</h2>;
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal' >{index}</div>;
 			}, title: '#',width: '7%' },
 
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
 				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
-					{ handleTracksIcon(track)}<span>{track}</span>
+					{ handleTracksIcon(track, 24)}<span className=' border-[1px] flex items-center'>{track}</span>
 				</div>;}, title: 'Tracks',width: '23%'
 		},
 
 		{ dataIndex: 'description', key: 3,
 			render: (des) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{des}</h2>;
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{des}</div>;
 			},
 			title: 'Description',width: '50%' },
 
 		{ dataIndex: 'active_proposals', key: 4,
 			render: (activeProposals) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal'>{activeProposals}</h2>;
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal'>{activeProposals}</div>;
 			},
 			title: 'Active proposals',width: '15%' }];
 
@@ -183,13 +169,13 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		{ dataIndex: 'index', key: 1,
 			render: (index) =>
 			{
-				return <h2 className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal' >{index}</h2>;
+				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-center font-normal' >{index}</div>;
 			}, title: '#',width: '7%' },
 
 		{ dataIndex: 'track', key: 2,
 			render: (track) => {
 				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
-					{ handleTracksIcon(track)}<span>{track}</span>
+					{ handleTracksIcon(track, 24)}<span className=' border-[1px] flex items-center'>{track}</span>
 				</div>;}, title: 'Tracks',width: '23%'
 		},
 
@@ -210,7 +196,7 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 		{ dataIndex: 'active_proposals', key: 4,
 			render: (activeProposals) =>
 			{
-				return <h2 className='text-sm text-[#243A57] tracking-wide flex items-center justify-center font-normal'>{activeProposals}</h2>;
+				return <div className='text-sm text-[#243A57] tracking-wide flex items-center justify-center font-normal'>{activeProposals}</div>;
 			},
 			title: 'Active proposals',width: '15%' }];
 
@@ -238,11 +224,11 @@ const GetTracksColumns = (status :ETrackDelegationStatus,setOpen: (pre: boolean)
 	if(status === ETrackDelegationStatus.Delegated){
 		const TrackColumn: ColumnsType<ITrackRowData> = [
 
-			{ dataIndex:'index', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{index}</h4>, title: '#',width: '10%' } ,
+			{ dataIndex:'index', key:1, render: (index) => <div className='text-sm text-[#243A57] font-normal text-start'>{index}</div>, title: '#',width: '10%' } ,
 			{ dataIndex:'delegatedTo', key:1, render: (address) => <div className='text-sm text-[#243A57] font-normal text-center flex justify-start items-center'><Address address= {address || ''} displayInline identiconSize={24}/></div>, title: 'Delegated to', width: '20%' },
-			{ dataIndex:'balance', key:1, render: (balance) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network) }</h4>, title: 'Balance', width: '15%' },
-			{ dataIndex:'lockPeriod', key:1, render: (conviction) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{conviction}x</h4>, title: 'Conviction', width: '15%' },
-			{ dataIndex:'delegatedOn', key:1, render: (date) => <h4 className='text-sm text-[#243A57] font-normal text-start ml-1'>{dayjs(date).format('DD MMM YYYY')}</h4>, title: 'Delegated on', width: '20%' },
+			{ dataIndex:'balance', key:1, render: (balance) => <div className='text-sm text-[#243A57] font-normal text-start'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network) }</div>, title: 'Balance', width: '15%' },
+			{ dataIndex:'lockPeriod', key:1, render: (conviction) => <div className='text-sm text-[#243A57] font-normal text-start'>{conviction}x</div>, title: 'Conviction', width: '15%' },
+			{ dataIndex:'delegatedOn', key:1, render: (date) => <div className='text-sm text-[#243A57] font-normal text-start ml-1'>{dayjs(date).format('DD MMM YYYY')}</div>, title: 'Delegated on', width: '20%' },
 			{ dataIndex:'action', key:1, render: (action) => <div className='flex justify-center items-start'>
 				<Button onClick={() => setOpen(true)} className='text-sm text-[#243A57] font-normal border-[1px] border-solid border-pink_primary h-[40px] flex items-center justify-center px-2 gap-2 max-md:h-auto max-md:gap-0 max-md:flex-col max-md:border-none max-md:p-2 max-md:shadow-none'>
 					<UndelegatedProfileIcon/>
@@ -258,13 +244,13 @@ const GetTracksColumns = (status :ETrackDelegationStatus,setOpen: (pre: boolean)
 	else if(status === ETrackDelegationStatus.Received_Delegation){
 
 		const TrackColumn: ColumnsType<ITrackRowData> = [
-			{ dataIndex:'index', key:1, render: (index) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{index}</h4>, title: '#',width: '10%' } ,
+			{ dataIndex:'index', key:1, render: (index) => <div className='text-sm text-[#243A57] font-normal text-start'>{index}</div>, title: '#',width: '10%' } ,
 			{ dataIndex:'delegatedFrom', key:1, render: (address) => <div className='text-sm text-[#243A57] font-normal text-center flex justify-start items-center'>
 				<Address address= {address || ''} displayInline identiconSize={24} />
 			</div>, title: 'Delegated by', width: '20%' },
-			{ dataIndex:'balance', key:1, render: (balance) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</h4>, title: 'Balance', width: '15%' },
-			{ dataIndex:'lockPeriod', key:1, render: (conviction) => <h4 className='text-sm text-[#243A57] font-normal text-start'>{conviction}x</h4>, title: 'Conviction', width: '15%' },
-			{ dataIndex:'delegatedOn', key:1, render: (date) => <h4 className='text-sm text-[#243A57] font-normal text-start ml-1'>{dayjs(date).format('DD MMM YYYY')}</h4>, title: 'Delegated on', width: '20%' }
+			{ dataIndex:'balance', key:1, render: (balance) => <div className='text-sm text-[#243A57] font-normal text-start'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</div>, title: 'Balance', width: '15%' },
+			{ dataIndex:'lockPeriod', key:1, render: (conviction) => <div className='text-sm text-[#243A57] font-normal text-start'>{conviction}x</div>, title: 'Conviction', width: '15%' },
+			{ dataIndex:'delegatedOn', key:1, render: (date) => <div className='text-sm text-[#243A57] font-normal text-start ml-1'>{dayjs(date).format('DD MMM YYYY')}</div>, title: 'Delegated on', width: '20%' }
 		];
 		return TrackColumn;
 	}

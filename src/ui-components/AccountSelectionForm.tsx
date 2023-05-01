@@ -21,13 +21,14 @@ interface Props{
   inputClassName?: string;
   isSwitchButton?: boolean,
 	setSwitchModalOpen?: (pre: boolean) => void;
+  withoutInfo?: boolean;
 }
 
-const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen }: Props) =>
+const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo }: Props) =>
 	<article className={`w-full flex flex-col ${className}`}>
 		{title && <div className='flex items-center mb-[2px] gap-2'>
 			<h3 className='text-sm mb-0 font-normal'>{title}</h3>
-			<HelperTooltip text='You can choose an account from the extension.' />
+			{!withoutInfo && <HelperTooltip text='You can choose an account from the extension.' />}
 		</div>}
 		<AddressDropdown
 			isDisabled={isDisabled}

@@ -60,7 +60,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 	const [errorArr, setErrorArr] = useState<string[]>([]);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [checkedList, setCheckedList] = useState<CheckboxValueType[]>([]);
-	const [indeterminate, setIndeterminate] = useState(true);
+	const [indeterminate, setIndeterminate] = useState(false);
 	const [checkAll, setCheckAll] = useState(false);
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
 	const [txFee, setTxFee] = useState(ZERO_BN);
@@ -72,6 +72,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 		if(!delegationDashboardAddress || !target || !getEncodedAddress(target, network) || !checkedList || !checkedList.length || isNaN(conviction) ||
 			!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN)) return;
 
+		validateForm();
 		setLoading(true);
 
 		const txArr = checkedList.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
@@ -83,6 +84,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 			setLoading(false);
 			setShowAlert(true);
 		})();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [delegationDashboardAddress, api, apiReady, bnBalance, checkedList, conviction, network, target]);
 
 	const getData = async() => {
@@ -244,6 +246,14 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open]);
 
+	const handleDisabledDelegate = () => {
+		if(!checkedList || !checkedList.length || !api || !apiReady || loading || errorArr.length > 0){
+			return true;
+		}
+		return false;
+
+	};
+
 	const content = (<div className='flex flex-col'>
 		<Checkbox.Group className='flex flex-col h-[200px] overflow-y-scroll' onChange={onChange} value={checkedList} >
 			{trackArr?.map((track, index) => (
@@ -282,7 +292,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 								<Button key="back" disabled={loading} className='h-[40px] w-[134px]' onClick={() => setOpen?.(false)}>
 										Cancel
 								</Button>,
-								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] '  disabled={loading} onClick={ handleSubmit }>
+								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] '  disabled={handleDisabledDelegate()} onClick={ handleSubmit }>
 										Delegate
 								</Button>
 							]
@@ -309,6 +319,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 								onAccountChange={(address) => setAddress(address)}
 								className='text-[#485F7D] text-sm font-normal'
 								isDisabled={true}
+								withoutInfo={true}
 								inputClassName='text-[#b0b8c3] border-[1px] px-3 py-[6px] border-solid rounded-[4px] border-[#D2D8E0]'
 							/>
 							<AddressInput
@@ -379,7 +390,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 							</Popover>
 						</Form>
 
-						{showAlert && <Alert showIcon type='info' className='mb-6 bg-[#4E75FF] border-none' message={`Fees of ${formatBnBalance(txFee,{ numberAfterComma: 2,withUnit:true },network)} will be applied to the transaction`}/>}
+						{showAlert && <Alert showIcon type='info' className='mb-6 border-none' message={`Fees of ${formatBnBalance(txFee,{ numberAfterComma: 2,withUnit:true },network)} will be applied to the transaction`}/>}
 					</div>
 				</Spin>
 
@@ -399,14 +410,11 @@ export default styled(DelegateModal)`
   margin-top: 4px;
 }
 .padding .ant-alert-message{
-color:white;
+color:#243A57;
 font-size:14px;
 font-weight: 400;
 }
-.padding .ant-alert-info .ant-alert-icon{
-  color:white;
-  font-weight: 400;
-}
+
 .padding .ant-slider-dot{
   height:12px;
   width:2px;

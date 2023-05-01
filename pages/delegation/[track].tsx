@@ -6,7 +6,7 @@ import { GetServerSideProps } from 'next';
 import { IPostsListingResponse, getOnChainPosts } from 'pages/api/v1/listing/on-chain-posts';
 import { FC, useEffect } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import DashboardTrackListing from '~src/components/DelegationDashboardComponents/DashboardTrack';
+import DashboardTrackListing from '~src/components/DelegationDashboard/DashboardTrack';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';

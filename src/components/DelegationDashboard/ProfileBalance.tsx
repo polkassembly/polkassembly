@@ -7,7 +7,7 @@ import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/co
 import BalanceIcon from '~assets/icons/total-balance.svg';
 import LockBalanceIcon from '~assets/icons/lock-balance.svg';
 import RightTickIcon from '~assets/icons/right-tick.svg';
-import { Divider, Skeleton } from 'antd';
+import { Divider } from 'antd';
 import userProfileBalances from '~src/util/userProfieBalances';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -25,7 +25,6 @@ interface Props{
 }
 
 const DelegationWalletConnectModal = dynamic(() => import('./DelegationWalletConnectModal'), {
-	loading: () => <Skeleton  /> ,
 	ssr: false
 });
 
@@ -133,7 +132,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				</div>
 			</div>
 			<Divider  type= 'vertical' style={{ borderLeft: '1px solid #D2D8E0',height:'100%' }} />
-			<div className='flex gap-6 py-2 justify-start max-md:gap-2'>
+			<div className='flex gap-4 py-2 justify-start max-md:gap-2'>
 				<div className='h-[71px] flex flex-col py-2 gap-1'>
 					<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
 						{formatBnBalance(transferableBalance, { numberAfterComma: 2, withUnit: false }, network)}
@@ -158,16 +157,16 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				</div>
 			</div>
 		</div>
-		{ accounts.length > 0 && <AccountSelectionForm
+		<div className=' w-[195px] mr-6'>{ accounts.length > 0 && <AccountSelectionForm
 			accounts={accounts}
 			address={delegationDashboardAddress}
 			withBalance={false}
-			className='text-[#788698] text-sm w-[195px] mr-6 cursor-pointer'
+			className='text-[#788698] text-sm cursor-pointer'
 			onAccountChange={setAddress}
 			inputClassName='text-[#ccd1d9] border-[1.5px] border-[#D2D8E0] bg-[#850c4d] border-solid px-3 rounded-[8px] py-[6px]'
 			isSwitchButton={true}
 			setSwitchModalOpen={setOpenModal}
-		/>}
+		/>}</div>
 		<DelegationWalletConnectModal open={openModal} setOpen={setOpenModal} closable={true}/>
 	</div>;
 };

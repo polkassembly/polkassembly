@@ -172,6 +172,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
+	if(network === 'kusama'){
+		gov1Items['overviewItems'].splice(1, 0, getSiderMenuItem('Delegation Dashboard','/delegation',<div className='border-solid'>NEW</div>));
+	}
 	if(typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) {
 		gov1Items.overviewItems = [
 			getSiderMenuItem(<GovernanceSwitchButton className='flex lg:hidden' />, 'gov-2', ''),

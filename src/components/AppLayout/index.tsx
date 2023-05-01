@@ -276,7 +276,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	];
 
 	if(network === 'kusama'){
-		gov2OverviewItems.splice(1, 0, getSiderMenuItem('Delegation', '/delegation', <DelegationSidebarIcon className= 'text-white -ml-1 mr-1'/>));
+		gov2OverviewItems.splice(1, 0, getSiderMenuItem(<div className='flex gap-2 items-center'>Delegation <span className='border-solid px-[6px] py-[2px] flex justify-center items-center text-white bg-[#28E774] rounded-[20px] text-xs'>New</span></div>, '/delegation', <DelegationSidebarIcon className= 'text-white -ml-1 mr-1'/>));
 	}
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));

@@ -17,7 +17,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 	if(!network || !isOpenGovSupported(network)) return [];
 	if(address && !(getEncodedAddress(String(address), network) || Web3.utils.isAddress(String(address)))) return [];
 
-	const subsquidFetches: {[index:string]: any} = [];
+	const subsquidFetches: {[index:string]: any} = {};
 
 	const currentDate = new Date();
 
@@ -50,7 +50,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 	for(const [index, delegateData] of subsquidResults.entries()) {
 		if (!delegateData || delegateData.status !== 'fulfilled') continue;
 		const delegationCount = Number(delegateData.value.data?.votingDelegationsConnection?.totalCount || 0);
-		const votesCount = Number(delegateData.value.data?.votesConnection?.totalCount || 0);
+		const votesCount = Number(delegateData.value.data?.convictionVotesConnection?.totalCount || 0);
 
 		const address = Object.keys(subsquidFetches)[index];
 		if(!address) continue;

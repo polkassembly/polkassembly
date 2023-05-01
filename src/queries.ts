@@ -661,10 +661,11 @@ query ReceivedDelgationsAndVotesCountForAddress($address: String = "", $createdA
   votingDelegationsConnection(orderBy: createdAt_ASC, where: {to_eq: $address, endedAtBlock_isNull: true}) {
     totalCount
   }
-  votesConnection(orderBy: id_ASC, where: {voter_eq: $address, proposal: {type_eq: ReferendumV2, createdAt_gte: $createdAt_gte}}) {
+  convictionVotesConnection(orderBy: id_ASC, where: {voter_eq: $address, proposal: {type_eq: ReferendumV2, createdAt_gte: $createdAt_gte}}) {
     totalCount
   }
 }`;
+
 // Alliance
 export const GET_ALLIANCE_LATEST_ACTIVITY = `
 query getAllianceLatestActivity( $limit: Int = 10, $offset: Int = 0 ) {

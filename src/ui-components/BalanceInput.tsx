@@ -71,7 +71,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 			<InputNumber
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name='balance'
-				className={`text-sm w-full h-[40px] border-[1px] rounded-[4px] mt-0 ${inputClassName} placeholderColor`}
+				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] mt-0 ${inputClassName} placeholderColor`}
 				onChange={onBalanceChange}
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}

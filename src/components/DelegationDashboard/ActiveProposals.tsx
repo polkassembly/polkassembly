@@ -7,7 +7,7 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import { IPostListing } from 'pages/api/v1/listing/on-chain-posts';
 import dynamic from 'next/dynamic';
-import { Skeleton } from 'antd';
+import { Empty, Skeleton } from 'antd';
 import { ETrackDelegationStatus } from '~src/types';
 
 interface Props{
@@ -30,7 +30,7 @@ const ActiveProposals = ( { className, posts, trackDetails, status, delegatedTo 
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
 
 	return <div className=  {`${className} rounded-[14px] bg-white py-[24px] px-[37px] mt-[22px]`}>
-		<div onClick={() => posts?.length > 0 && setExpandProposals(!expandProposals)}  className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
+		<div onClick={() =>  setExpandProposals(!expandProposals)}  className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
 			<div className='flex jutify-center items-center gap-2'>
 				<ActiveProposalsIcon className='mr-[4px]'/>
 				<span className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57]'>
@@ -43,8 +43,8 @@ const ActiveProposals = ( { className, posts, trackDetails, status, delegatedTo 
 			<div  className='cursor-pointer p-2'>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
 		</div>
 		{expandProposals && <div className='mt-[24px] flex flex-col gap-6'>
-			{posts?.length > 0 && posts?.map((proposal, index) => (
-				<ActiveProposalCard proposal= {proposal} key={index}  trackDetails={trackDetails} status={status} delegatedTo = {delegatedTo} />))}
+			{posts?.length > 0 ? posts?.map((proposal, index) => (
+				<ActiveProposalCard proposal= {proposal} key={index}  trackDetails={trackDetails} status={status} delegatedTo = {delegatedTo} />)):<Empty className='mb-4'/>}
 		</div>}
 	</div>;
 };

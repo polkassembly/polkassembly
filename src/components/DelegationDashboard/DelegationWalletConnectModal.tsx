@@ -165,7 +165,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 					}
 				</div>
 
-				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && !wallet && <ErrorAlert errorMsg='You need at least one account in your wallet extenstion to use this feature.' />}
+				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && <ErrorAlert errorMsg='You need at least one account in your wallet extenstion to use this feature.' className='mb-4' />}
 				{Object.keys(defaultWallets || {}).length === 0 &&  <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='warning' showIcon className='text-[#243A57] changeColor'/>}
 
 				{

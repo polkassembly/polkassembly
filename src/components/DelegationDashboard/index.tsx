@@ -139,7 +139,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 								const link = (social_links && Array.isArray(social_links))? social_links?.find((s) => s.type === social)?.link || '': '';
 								return (
 									<SocialLink
-										className='flex items-center justify-center text-2xl  text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] rounded-[20px] h-[39px] w-[40px] mt-6'
+										className='flex items-center justify-center text-2xl  text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] rounded-[20px] h-[39px] w-[40px] mt-4'
 										key={index}
 										link={link}
 										disable={!link}

@@ -5,7 +5,8 @@
 import { GetServerSideProps } from 'next';
 import React, { useEffect } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import DelegationDashboardComponents from '~src/components/DelegationDashboardComponents';
+import DelegationDashboard from '~src/components/DelegationDashboard';
+
 import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 
@@ -14,7 +15,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	return { props: { network } };
 };
 
-const DelegationDashboard = ( props : { network: string} ) => {
+const Delegation = ( props : { network: string} ) => {
 
 	const { setNetwork } = useNetworkContext();
 
@@ -24,9 +25,9 @@ const DelegationDashboard = ( props : { network: string} ) => {
 	}, []);
 
 	return <>
-		<SEOHead title='Delegation Board' network={props.network} />
-		<DelegationDashboardComponents/>
+		<SEOHead title='Delegation DashBoard' network={props.network} />
+		<DelegationDashboard/>
 	</>;
 };
 
-export default DelegationDashboard ;
+export default Delegation ;

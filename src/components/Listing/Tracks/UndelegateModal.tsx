@@ -22,7 +22,7 @@ import { InjectedAccount } from '@polkadot/extension-inject/types';
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import { useRouter } from 'next/router';
-import { handleTrack } from '~src/components/DelegationDashboardComponents/DashboardTrack';
+import { handleTrack } from '~src/components/DelegationDashboard/DashboardTrack';
 import { BN_ZERO } from '@polkadot/util';
 import DelegationSuccessPopup from './DelegationSuccessPopup';
 import getEncodedAddress from '~src/util/getEncodedAddress';

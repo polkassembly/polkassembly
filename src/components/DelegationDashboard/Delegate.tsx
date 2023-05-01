@@ -50,9 +50,10 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 	const getData = async() => {
 		if (!api || !apiReady ) return;
 
+		if(!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address.length > 0) return;
 		setLoading(true);
 
-		const { data, error } = await nextApiClientFetch<IDelegate[]>(`api/v1/delegations/delegates?address=${delegationDashboardAddress}`);
+		const { data, error } = await nextApiClientFetch<IDelegate[]>(`api/v1/delegations/delegates?address=${address}`);
 
 		if(data){
 
@@ -66,9 +67,9 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 	};
 
 	useEffect(() => {
-		delegatesData.length === 0 && getData();
+		getData();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [address]);
 
 	useEffect(() => {
 		disabled && setExpandProposals(false);
@@ -121,14 +122,13 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 				</Popover> */}
 			</div>
 
-			{!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress && <label className='text-red-500 text-[12px] font-normal'>{ address === delegationDashboardAddress ? 'Please provide a different target address.' : 'Invalid Address.'}</label>}
+			{!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress && <label className='text-red-500 text-[12px] font-normal'>{ address === delegationDashboardAddress ? 'You can not delegate to the same address. Please provide a different target address.' : 'Invalid Address.'}</label>}
 
 			{!loading ? <div className='mt-6 grid grid-cols-2 max-md:grid-cols-1 gap-6'>
 				{delegatesData.map((delegate, index) => <DelegateCard key={ index }  delegate={ delegate } />)}
 			</div> : <Skeleton className='mt-6'/>}
 
 		</div>}
-
 		<DelegateModal trackNum={trackDetails?.trackId} defaultTarget={address} open={open} setOpen={setOpen} />
 
 	</div>;

@@ -11,7 +11,8 @@ export const gov2Routes = [
 	'preimages',
 	'referenda',
 	'fellowship',
-	'member-referenda'
+	'member-referenda',
+	'delegation'
 ];
 
 for (const trackName of Object.keys(networkTrackInfo.kusama)) {

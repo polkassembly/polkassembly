@@ -88,6 +88,7 @@ import ReferendumKillerSVG from '~assets/delegation-tracks/referendum-killer.svg
 import BigSpenderSVG from '~assets/delegation-tracks/big-spender.svg';
 import BigTipperSVG from '~assets/delegation-tracks/big-tipper.svg';
 import SmallSpenderSVG from '~assets/delegation-tracks/small-spender.svg';
+import DelegationSVG from '~assets/sidebar/delegation-icon.svg';
 
 export const OverviewIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={OverviewSVG} {...props} />
@@ -382,4 +383,7 @@ export const ReferendumCancellerTrackIcon = (props: Partial<CustomIconComponentP
 );
 export const SmallSpenderTrackIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={SmallSpenderSVG} {...props} />
+);
+export const DelegationSidebarIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DelegationSVG} {...props} />
 );

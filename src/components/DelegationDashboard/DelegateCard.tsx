@@ -14,6 +14,10 @@ import { chainProperties } from '~src/global/networkConstants';
 import { useApiContext, useNetworkContext } from '~src/context';
 import formatBnBalance from '~src/util/formatBnBalance';
 import styled from 'styled-components';
+import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import SocialLink from '~src/ui-components/SocialLinks';
+import { socialLinks } from '../UserProfile/Details';
+import { ESocialType } from '~src/auth/types';
 
 interface Props{
   delegate: IDelegate;
@@ -33,8 +37,15 @@ const DelegateCard = ({ delegate, className }: Props) => {
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [isExpand, setIsExpand] = useState<boolean>(false);
+	const [social_links, setSocial_links]= useState<any[]>([]);
 
 	useEffect(() => {
+
+		if(!api || !apiReady) return;
+
+		api.derive.accounts.info(delegate?.address, (info: DeriveAccountInfo) => {
+			setSocial_links([...social_links, { link: info.identity?.email, type: ESocialType.EMAIL }, { link: info.identity?.twitter, type: ESocialType.TWITTER }]);
+		});
 
 		userProfileBalances({ address: delegate?.address , api, apiReady, network, setBalance, setLockBalance, setTransferableBalance });
 
@@ -45,7 +56,7 @@ const DelegateCard = ({ delegate, className }: Props) => {
 		setOpen(true);
 		setAddress(address);
 	};
-	return <div className={`border-solid border-[1px] border-[#D2D8E0] rounded-[6px]  hover:border-[#3C74E1] ${className}`}>
+	return <div className={`border-solid border-[1px] border-[#D2D8E0] rounded-[6px]  ${delegate?.isNovaWalletDelegate ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'} ${className}`}>
 
 		{delegate?.isNovaWalletDelegate && <div className='h-[35px] border-[#3C74E1] border-solid border-[1px] rounded-t-[5px] bg-[#e2eafb] px-[19px] flex items-center gap-[11px]'>
 			<NovaWalletIcon/>
@@ -53,7 +64,28 @@ const DelegateCard = ({ delegate, className }: Props) => {
 		</div>}
 
 		<div className='flex justify-between items-center px-5 pt-5'>
-			<Address address={delegate?.address} displayInline identiconSize={34} />
+			<div className='flex gap-3'>
+				<Address address={delegate?.address} displayInline identiconSize={34}/>
+
+				<div className='flex -mt-2 gap-3'>
+					{
+						socialLinks?.filter((item) => item === ESocialType.EMAIL || item === ESocialType.TELEGRAM || item === ESocialType.TWITTER).map((social, index) => {
+							const link = (social_links && Array.isArray(social_links))? social_links?.find((s) => s.type === social)?.link || '': '';
+							return (
+								<SocialLink
+									className='flex items-center justify-center text-xl text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] rounded-[20px] h-[39px] w-[40px] mt-4'
+									key={index}
+									link={link}
+									disable={!link}
+									type={social}
+									iconClassName={`text-[20px] ${link ? 'text-[#576D8B]' : 'text-[#96A4B6]'}`}
+
+								/>
+							);
+						})
+					}
+				</div>
+			</div>
 			<Button onClick={handleClick} className='h-[40px] border-none hover:border-solid py-1 px-4 flex justify-around items-center rounded-md text-pink_primary bg-transparent shadow-none gap-2 ml-1 mt-[1px]'>
 				<DelegatesProfileIcon/>
 				<span className='text-sm font-medium'>
@@ -68,14 +100,14 @@ const DelegateCard = ({ delegate, className }: Props) => {
 			</p>
 			{delegate?.bio.length > 100  && <span onClick={() => setIsExpand((pre) => !pre)} className='text-[#1B61FF] text-xs flex justify-center items-center mt-1 leading-3 cursor-pointer'>{!isExpand ? 'Read more' : 'Show less'}</span>}
 		</div>
-		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] hover:border-[#3C74E1]'>
+		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] '>
 			<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-[#243A57]'>
 				<div className='flex gap-1 items-end justify-center'> {formatBnBalance(balance,{ numberAfterComma:2, withUnit:false },network)}
 					<span className='text-sm font-normal text-[#243A57]'>{unit}</span>
 				</div>
 				<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>
 			</div>
-			<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-[#243A57] text-[20px] font-semibold hover:border-[#3C74E1]'>
+			<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-[#243A57] text-[20px] font-semibold'>
 				{delegate?.voted_proposals_count}
 				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal'>Voted proposals </span><span className='text-xs font-normal text-[#576D8B]'>(Past 30 days)</span>
 			</div>

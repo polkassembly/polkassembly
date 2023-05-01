@@ -142,7 +142,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 		}
 
 		if(delegationDashboardAddress == target) {
-			errors.push('Please provide a different target address.');
+			errors.push('You can not delegate to the same address. Please provide a different target address.');
 		}
 
 		if(bnBalance.lte(ZERO_BN)) {

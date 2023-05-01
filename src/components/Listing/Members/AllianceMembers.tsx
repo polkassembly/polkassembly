@@ -3,14 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useContext, useEffect, useState } from 'react';
-import { AllianceApiContext } from 'src/context/AllianceApiContext';
 import { ErrorState } from 'src/ui-components/UIStates';
 import { LoadingState } from 'src/ui-components/UIStates';
-
 import MembersListing from './MembersListing';
+import { ApiContext } from '~src/context/ApiContext';
 
 const AllianceMembers = ({ className } : { className?:string }) => {
-	const { api, apiReady } = useContext(AllianceApiContext);
+	const { api, apiReady } = useContext(ApiContext);
 	const [error, setErr] = useState<Error | null>(null);
 	const [fellow, setFellow] = useState<string[]>([]);
 	const [ally, setAlly] = useState<string[]>([]);

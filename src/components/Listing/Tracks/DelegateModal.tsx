@@ -19,7 +19,6 @@ import LockIcon from '~assets/icons/lock.svg';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { InjectedAccount } from '@polkadot/extension-inject/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useUserDetailsContext } from '~src/context';
 
@@ -49,13 +48,9 @@ interface Props {
 const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setIsRefresh }: Props ) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useContext(NetworkContext);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { delegationDashboardAddress } = useUserDetailsContext();
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [address, setAddress] = useState<string>(delegationDashboardAddress);
 	const [target, setTarget] = useState<string>('');
 	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
 	const [conviction, setConviction] = useState<number>(0);

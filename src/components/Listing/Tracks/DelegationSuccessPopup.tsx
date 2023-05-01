@@ -35,10 +35,6 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 
 	useEffect(() => {
-		setIsRefresh && setIsRefresh(false);
-	},[setIsRefresh]);
-
-	useEffect(() => {
 		if(!network) return ;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,

@@ -10,7 +10,6 @@ import { poppins } from 'pages/_app';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { NotificationStatus } from 'src/types';
-import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import AddressInput from 'src/ui-components/AddressInput';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -18,7 +17,6 @@ import styled from 'styled-components';
 
 import LockIcon from '~assets/icons/lock.svg';
 import CloseIcon from '~assets/icons/close.svg';
-import { InjectedAccount } from '@polkadot/extension-inject/types';
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import { useRouter } from 'next/router';
@@ -27,6 +25,7 @@ import { BN_ZERO, formatBalance } from '@polkadot/util';
 import DelegationSuccessPopup from './DelegationSuccessPopup';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { chainProperties } from '~src/global/networkConstants';
+import Address from '~src/ui-components/Address';
 
 const ZERO_BN = new BN(0);
 
@@ -49,13 +48,10 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { delegationDashboardAddress : defaultAddress } = useUserDetailsContext();
-	const [address, setAddress] = useState<string>(defaultAddress);
 	const [target, setTarget] = useState<string>(defaultTarget);
 	const [bnBalance, setBnBalance] = useState<BN>(balance ? balance : BN_ZERO);
 	const lock = (Number(2**(conviction-1)));
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState(false);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
@@ -97,7 +93,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			return;
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
+	}, [defaultAddress]);
 
 	const handleSubmit = async () => {
 
@@ -110,7 +106,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		// TODO: check .toNumber()
 		const delegateTxn = api.tx.convictionVoting.undelegate(trackNum);
 
-		delegateTxn.signAndSend(address, ({ status, events }: any) => {
+		delegateTxn.signAndSend(defaultAddress, ({ status, events }: any) => {
 			if (status.isFinalized) {
 				for (const { event } of events) {
 					if (event.method === 'ExtrinsicSuccess') {
@@ -203,16 +199,13 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							form={form}
 							disabled={true}
 						>
-							<AccountSelectionForm
-								isDisabled={true}
-								title='Your Address'
-								accounts={accounts}
-								address={address}
-								withBalance={false}
-								className='text-[#788698] text-sm'
-								onAccountChange={setAddress}
-								inputClassName='text-[#ccd1d9] border-[1px] border-[#D2D8E0] border-solid px-3 rounded-[6px] bg-[#F6F7F9] py-[6px]'
-							/>
+
+							<div className=''>
+								<label className='text-sm text-[#788698] mb-[2px]'>Your Address</label>
+								<div className='text-[#ccd1d9] border-[1px] border-[#D2D8E0] border-solid px-3 rounded-[6px] bg-[#F6F7F9] py-[6px] h-[40px] cursor-not-allowed'>
+									<Address address={defaultAddress} identiconSize={26} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
+								</div>
+							</div>
 
 							<AddressInput
 								defaultAddress={target}
@@ -227,7 +220,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 								label={'Balance'}
 								placeholder={'Enter balance'}
 								className='mt-6 text-[#788698]'
-								address={address}
+								address={defaultAddress}
 								withBalance={false}
 								onAccountBalanceChange={handleOnBalanceChange}
 								onChange={(balance) => setBnBalance(balance)}

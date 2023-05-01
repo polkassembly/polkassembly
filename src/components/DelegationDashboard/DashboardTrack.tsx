@@ -234,7 +234,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 		<LoginPopup closable={false} setSignupOpen={setOpenSignupModal} modalOpen={openLoginModal} setModalOpen={setOpenLoginModal} isModal={true} isDelegation={true}/>
 		<SignupPopup closable={false} setLoginOpen={setOpenLoginModal} modalOpen={openSignupModal} setModalOpen={setOpenSignupModal} isModal={true} isDelegation={true} />
 
-		{rowData.filter((row ) => row.delegatedTo !== address ).length > 0 &&  <UndelegateModal
+		{rowData.filter((row ) => row.delegatedTo !== address ).length > 0 && <UndelegateModal
 			setIsRefresh={setIsRefresh}
 			balance={new BN(rowData.filter((row ) => row.delegatedTo !== address )[0]?.balance)}
 			open={openUndelegateModal}

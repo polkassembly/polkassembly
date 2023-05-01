@@ -4,7 +4,7 @@
 
 import { Form, InputNumber } from 'antd';
 import BN from 'bn.js';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 
 import { NetworkContext } from '~src/context/NetworkContext';
@@ -12,8 +12,8 @@ import { NetworkContext } from '~src/context/NetworkContext';
 import { inputToBn } from '../util/inputToBn';
 import HelperTooltip from './HelperTooltip';
 import Balance from '~src/components/Balance';
-import formatBnBalance from '~src/util/formatBnBalance';
 import styled from 'styled-components';
+import { formatBalance } from '@polkadot/util';
 
 interface Props{
 	className?: string
@@ -32,6 +32,7 @@ interface Props{
 const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName }: Props) => {
 
 	const { network } = useContext(NetworkContext);
+	const unit = `${chainProperties[network].tokenSymbol}`;
 
 	const onBalanceChange = (value: number | null): void => {
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
@@ -41,16 +42,27 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 		}
 	};
 
+	useEffect(() => {
+
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return <div className={`${className} w-full flex flex-col`}>
-		<label className='mb-[2px] flex items-center text-sm'>
-			{label} {helpText && <HelperTooltip className='' text={helpText}/> }
+		<label className='mb-[2px] flex items-center text-sm '>
+			{label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> }
 			{address && withBalance &&
 			<Balance address={address} onChange={onAccountBalanceChange}  />
 			}
 		</label>
 		<Form.Item
 			name="balance"
-			initialValue={balance ? Number(formatBnBalance (balance,{ numberAfterComma:2, withUnit: false }, network )) : ''}
+			initialValue={balance ? Number(formatBalance(balance.toString(), { forceUnit: unit, withUnit: false })) : ''}
 			rules={[
 				{
 					message: 'Lock Balance is required.',
@@ -82,8 +94,12 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 
 export default styled(BalanceInput)`
 .placeholderColor .ant-input-number-group .ant-input-number-group-addon{
-border: 1px solid red;
 background:#E5007A;
 color:white;
 font-size:12px;
-}`;
+}
+.placeholderColor .ant-input-number .ant-input-number-input{
+  color:#7c899b !important;
+}`
+
+;

@@ -23,10 +23,10 @@ import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import { useRouter } from 'next/router';
 import { handleTrack } from '~src/components/DelegationDashboard/DashboardTrack';
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO, formatBalance } from '@polkadot/util';
 import DelegationSuccessPopup from './DelegationSuccessPopup';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import formatBnBalance from '~src/util/formatBnBalance';
+import { chainProperties } from '~src/global/networkConstants';
 
 const ZERO_BN = new BN(0);
 
@@ -58,6 +58,18 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState(false);
+	const unit =`${chainProperties[network]?.tokenSymbol}`;
+
+	useEffect(() => {
+
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 
@@ -186,7 +198,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 				<Spin spinning={loading} indicator={<LoadingOutlined />} >
 					<div className='flex flex-col border-0'>
-						{showAlert && <Alert showIcon type='info' className='mb-6 text-[14px] bg-[#4E75FF] ' message={`Fees of ${formatBnBalance(txFee,{ numberAfterComma: 2,withUnit:true },network)} will be applied to the transaction`}/>}
+						{showAlert && <Alert showIcon type='info' className='mb-6 text-[14px] bg-[#4E75FF] ' message={`Fees of ${formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction`}/>}
 						<Form
 							form={form}
 							disabled={true}
@@ -249,7 +261,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
 								<div className='flex gap-[10px] items-center justify-center text-[#b8c2ce] text-sm'> <LockIcon/><span>Locking period</span></div>
 								<div className='text-[#8894a4] font-medium text-sm flex justify-center items-center' >
-									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enachment period`}
+									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enactment period`}
 								</div>
 							</div>
 							<div className='mt-6 flex justify-start items-center gap-2 mb-6'>

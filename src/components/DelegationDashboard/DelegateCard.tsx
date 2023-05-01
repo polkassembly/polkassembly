@@ -12,19 +12,20 @@ import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
 import { useApiContext, useNetworkContext } from '~src/context';
-import formatBnBalance from '~src/util/formatBnBalance';
 import styled from 'styled-components';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import SocialLink from '~src/ui-components/SocialLinks';
 import { socialLinks } from '../UserProfile/Details';
 import { ESocialType } from '~src/auth/types';
+import { formatBalance } from '@polkadot/util';
 
 interface Props{
   delegate: IDelegate;
   className?: string;
+  trackNum?: number;
 }
 
-const DelegateCard = ({ delegate, className }: Props) => {
+const DelegateCard = ({ delegate, className, trackNum }: Props) => {
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
@@ -38,6 +39,17 @@ const DelegateCard = ({ delegate, className }: Props) => {
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [isExpand, setIsExpand] = useState<boolean>(false);
 	const [social_links, setSocial_links]= useState<any[]>([]);
+
+	useEffect(() => {
+
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 
@@ -64,12 +76,12 @@ const DelegateCard = ({ delegate, className }: Props) => {
 		</div>}
 
 		<div className='flex justify-between items-center px-5 pt-5'>
-			<div className='flex gap-3'>
+			<div className='flex gap-3 max-lg:justify-start'>
 				<Address address={delegate?.address} displayInline identiconSize={34}/>
 
 				<div className='flex -mt-2 gap-3'>
 					{
-						socialLinks?.filter((item) => item === ESocialType.EMAIL || item === ESocialType.TELEGRAM || item === ESocialType.TWITTER).map((social, index) => {
+						socialLinks?.filter((item) => item === ESocialType.EMAIL || item === ESocialType.TWITTER).map((social, index) => {
 							const link = (social_links && Array.isArray(social_links))? social_links?.find((s) => s.type === social)?.link || '': '';
 							return (
 								<SocialLink
@@ -102,7 +114,8 @@ const DelegateCard = ({ delegate, className }: Props) => {
 		</div>
 		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] '>
 			<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-[#243A57]'>
-				<div className='flex gap-1 items-end justify-center'> {formatBnBalance(balance,{ numberAfterComma:2, withUnit:false },network)}
+				<div className='flex gap-1 items-end justify-center'>
+					{formatBalance(balance.toString(), { forceUnit: unit, withUnit: false })}
 					<span className='text-sm font-normal text-[#243A57]'>{unit}</span>
 				</div>
 				<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>
@@ -116,7 +129,7 @@ const DelegateCard = ({ delegate, className }: Props) => {
 				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal text-center'>Received Delegation</span>
 			</div>
 		</div>
-		<DelegateModal defaultTarget={delegate?.address} open={open} setOpen={setOpen} />
+		<DelegateModal defaultTarget={delegate?.address} open={open} trackNum={trackNum} setOpen={setOpen} />
 	</div>;
 };
 

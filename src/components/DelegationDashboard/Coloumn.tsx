@@ -10,10 +10,11 @@ import { ITrackRowData } from './DashboardTrack';
 import { Button } from 'antd';
 import UndelegatedProfileIcon from '~assets/icons/undelegate-profile.svg';
 import { ETrackDelegationStatus } from '~src/types';
-import formatBnBalance from '~src/util/formatBnBalance';
 import { useNetworkContext } from '~src/context';
 import dayjs from 'dayjs';
 import { AuctionAdminTrackIcon, BigSpenderTrackIcon, BigTipperTrackIcon, FellowshipAdminTrackIcon, GeneralAdminTrackIcon, LeaseAdminTrackIcon, MediumSpenderTrackIcon, ReferendumCancellerTrackIcon, ReferendumKillerTrackIcon, RootTrackIcon, SmallSpenderTrackIcon, SmallTipperTrackIcon, StakingAdminTrackTrackIcon, TreasurerTrackIcon, WhitelistedCallerTrackIcon  } from '~src/ui-components/CustomIcons';
+import { formatBalance } from '@polkadot/util';
+import { chainProperties } from '~src/global/networkConstants';
 
 export const handleTracksIcon =  (index:string, size:number ) => {
 
@@ -220,13 +221,14 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 const GetTracksColumns = (status :ETrackDelegationStatus,setOpen: (pre: boolean) => void) => {
 
 	const { network } = useNetworkContext();
+	const unit =`${chainProperties[network]?.tokenSymbol}`;
 
 	if(status === ETrackDelegationStatus.Delegated){
 		const TrackColumn: ColumnsType<ITrackRowData> = [
 
 			{ dataIndex:'index', key:1, render: (index) => <div className='text-sm text-[#243A57] font-normal text-start'>{index}</div>, title: '#',width: '10%' } ,
 			{ dataIndex:'delegatedTo', key:1, render: (address) => <div className='text-sm text-[#243A57] font-normal text-center flex justify-start items-center'><Address address= {address || ''} displayInline identiconSize={24}/></div>, title: 'Delegated to', width: '20%' },
-			{ dataIndex:'balance', key:1, render: (balance) => <div className='text-sm text-[#243A57] font-normal text-start'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network) }</div>, title: 'Balance', width: '15%' },
+			{ dataIndex:'balance', key:1, render: (balance) => <div className='text-sm text-[#243A57] font-normal text-start'>{ formatBalance(balance.toString(),  { forceUnit: unit })}</div>, title: 'Balance', width: '15%' },
 			{ dataIndex:'lockPeriod', key:1, render: (conviction) => <div className='text-sm text-[#243A57] font-normal text-start'>{conviction}x</div>, title: 'Conviction', width: '15%' },
 			{ dataIndex:'delegatedOn', key:1, render: (date) => <div className='text-sm text-[#243A57] font-normal text-start ml-1'>{dayjs(date).format('DD MMM YYYY')}</div>, title: 'Delegated on', width: '20%' },
 			{ dataIndex:'action', key:1, render: (action) => <div className='flex justify-center items-start'>
@@ -248,7 +250,7 @@ const GetTracksColumns = (status :ETrackDelegationStatus,setOpen: (pre: boolean)
 			{ dataIndex:'delegatedFrom', key:1, render: (address) => <div className='text-sm text-[#243A57] font-normal text-center flex justify-start items-center'>
 				<Address address= {address || ''} displayInline identiconSize={24} />
 			</div>, title: 'Delegated by', width: '20%' },
-			{ dataIndex:'balance', key:1, render: (balance) => <div className='text-sm text-[#243A57] font-normal text-start'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</div>, title: 'Balance', width: '15%' },
+			{ dataIndex:'balance', key:1, render: (balance) => <div className='text-sm text-[#243A57] font-normal text-start'>{ formatBalance(balance.toString(),  { forceUnit: unit })}</div>, title: 'Balance', width: '15%' },
 			{ dataIndex:'lockPeriod', key:1, render: (conviction) => <div className='text-sm text-[#243A57] font-normal text-start'>{conviction}x</div>, title: 'Conviction', width: '15%' },
 			{ dataIndex:'delegatedOn', key:1, render: (date) => <div className='text-sm text-[#243A57] font-normal text-start ml-1'>{dayjs(date).format('DD MMM YYYY')}</div>, title: 'Delegated on', width: '20%' }
 		];

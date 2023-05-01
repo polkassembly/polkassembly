@@ -102,7 +102,7 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 				<Form.Item className='mb-0 w-full' validateStatus={address && !isValid ? 'error' : ''} >
 					<Input
 						value={address}
-						className={`${!isValid ? 'px-[0.5em]' : 'pl-10'} text-sm w-full h-[40px] border-[1px] rounded-[4px] ${inputClassName} text-[14px] border-[1px]`}
+						className={`${!isValid ? 'px-[0.5em]' : 'pl-[46px]'} text-sm w-full h-[40px] border-[1px] rounded-[4px] ${inputClassName} border-[1px]`}
 						onChange={ (e) => {handleAddressChange(e.target.value); onChange(e.target.value);}}
 						placeholder={placeholder || 'Address'}
 						size={size}

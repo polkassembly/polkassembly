@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { useUserDetailsContext } from '~src/context';
+import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import styled from 'styled-components';
 import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
@@ -21,6 +21,8 @@ import BN from 'bn.js';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
+import { chainProperties } from '~src/global/networkConstants';
+import { formatBalance } from '@polkadot/util';
 
 interface Props{
   className?: string;
@@ -68,6 +70,7 @@ export const handleTrack = ( track: string ) => {
 const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 	const { query : { track } } = useRouter();
+	const { network } = useNetworkContext();
 	const [status, setStatus] = useState<ETrackDelegationStatus[]>([]);
 	const router = useRouter();
 	const [showTable, setShowTable] = useState<boolean>(false);
@@ -82,6 +85,18 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	const [isRefresh, setIsRefresh] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
+
+	useEffect(() => {
+
+		if(!network) return ;
+
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		isLoggedOut() && setOpenLoginModal(true);

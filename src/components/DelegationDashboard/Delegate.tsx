@@ -124,8 +124,8 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 
 			{!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress && <label className='text-red-500 text-[12px] font-normal'>{ address === delegationDashboardAddress ? 'You can not delegate to the same address. Please provide a different target address.' : 'Invalid Address.'}</label>}
 
-			{!loading ? <div className='mt-6 grid grid-cols-2 max-md:grid-cols-1 gap-6'>
-				{delegatesData.map((delegate, index) => <DelegateCard key={ index }  delegate={ delegate } />)}
+			{!loading ? <div className='mt-6 grid grid-cols-2 max-lg:grid-cols-1 gap-6'>
+				{delegatesData.sort((a, b) => b.active_delegation_count - a.active_delegation_count).map((delegate, index) => <DelegateCard trackNum={trackDetails?.trackId} key={ index }  delegate={ delegate } />)}
 			</div> : <Skeleton className='mt-6'/>}
 
 		</div>}

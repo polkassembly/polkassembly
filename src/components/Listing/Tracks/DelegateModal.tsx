@@ -9,7 +9,6 @@ import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import { ApiContext } from 'src/context/ApiContext';
 import { ETrackDelegationStatus, NotificationStatus } from 'src/types';
-import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import AddressInput from 'src/ui-components/AddressInput';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -26,11 +25,15 @@ import { useUserDetailsContext } from '~src/context';
 
 import DelegateProfileIcon from '~assets/icons/delegate-popup-profile.svg';
 import CloseIcon from '~assets/icons/close.svg';
-import formatBnBalance from '~src/util/formatBnBalance';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import DelegationSuccessPopup from './DelegationSuccessPopup';
+import Address from '~src/ui-components/Address';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
+import CrossIcon from '~assets/sidebar/delegation-close.svg';
+import { formatBalance } from '@polkadot/util';
+import { chainProperties } from '~src/global/networkConstants';
 
 const ZERO_BN = new BN(0);
 
@@ -66,6 +69,23 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState(false);
 	const [trackArr, setTrackArr] = useState<any[]>([]);
+	const unit =`${chainProperties[network]?.tokenSymbol}`;
+
+	useEffect(() => {
+
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const handleClose = (removedTag: string) => {
+		const newList = checkedList.filter((list) => list !== removedTag);
+		setCheckedList(newList);
+	};
 
 	useEffect(() => {
 
@@ -108,9 +128,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 						trackId: values[1].trackId
 					} : null;
 				});
-
 				setTrackArr(tracks);
-
+				const defaultCheck = tracks.filter((item) => item?.trackId === trackNum);
+				defaultCheck.length > 0 && setIndeterminate(true);
+				defaultCheck.length > 0 && defaultCheck[0] && checkedList.filter((item) => item === defaultCheck[0]?.name)?.length === 0 && setCheckedList([...checkedList, defaultCheck[0].name]);
 			}
 		}else{
 			console.log(error);
@@ -122,6 +143,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 		setCheckedList(list);
 		setIndeterminate(!!list.length && list.length < trackArr.length);
 		setCheckAll(list.length === trackArr.length);
+
 	};
 
 	const onCheckAllChange = (e: CheckboxChangeEvent) => {
@@ -273,7 +295,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 			<Modal
 				maskClosable={false}
 				closeIcon={<CloseIcon/>}
-				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px]` }
+				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full` }
 				wrapClassName={className}
 				title={
 					<div className='flex items-center text-[#243A57] text-[20px] font-semibold mb-6'>
@@ -310,18 +332,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 						<Form
 							form={form}
 							disabled={loading}
-						>
-							<AccountSelectionForm
-								title='Your Address'
-								accounts={accounts}
-								address={delegationDashboardAddress}
-								withBalance={false}
-								onAccountChange={(address) => setAddress(address)}
-								className='text-[#485F7D] text-sm font-normal'
-								isDisabled={true}
-								withoutInfo={true}
-								inputClassName='text-[#b0b8c3] border-[1px] px-3 py-[6px] border-solid rounded-[4px] border-[#D2D8E0]'
-							/>
+						><div className=''>
+								<label className='text-sm text-[#485F7D] mb-[2px]'>Your Address</label>
+								<div className='px-[6px] py-[6px] border-solid rounded-[4px] border-[1px] cursor-not-allowed h-[40px] bg-[#f6f7f9] border-[#D2D8E0] text-[#7c899b] text-sm font-normal'>
+									<Address address={delegationDashboardAddress} identiconSize={26} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
+								</div>
+							</div>
 							<AddressInput
 								defaultAddress={defaultTarget}
 								label={'Delegate to'}
@@ -330,7 +346,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 								onChange={(address) => setTarget(address)}
 								size='large'
 								skipFormatCheck={true}
-								inputClassName='text-[#b0b8c3]'
+								inputClassName='text-[#7c899b] font-normal text-sm'
 							/>
 							<BalanceInput
 								label={'Balance'}
@@ -341,13 +357,16 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 								onAccountBalanceChange={handleOnBalanceChange}
 								onChange={(balance) => setBnBalance(balance)}
 								size='large'
-								inputClassName='text-[#b0b8c3]'
+								inputClassName='text-[#7c899b] text-sm'
 							/>
 
 							<div className='mb-2 border-solid border-white'>
-								<label  className='text-[#485F7D] flex items-center text-sm'>Conviction</label>
+								<label  className='text-[#485F7D] flex items-center text-sm'>
+                  Conviction
+									<span><HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.'/></span>
+								</label>
 
-								<div className='px-[2px]'>
+								<div className='px-[2px] mt-4'>
 									<Slider
 										className='text-[12px] mt-[9px]'
 										trackStyle={{ backgroundColor:'#FF49AA' }}
@@ -379,18 +398,29 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 							<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
 								<div className='flex gap-[10px] items-center justify-center text-[#485F7D] text-sm'> <LockIcon/><span>Locking period</span></div>
 								<div className='text-[#243A57] font-medium text-sm flex justify-center items-center' >
-									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enachment period`}
+									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enactment period`}
 								</div>
 							</div>
-							<Popover
-								content={content}
-								placement='topLeft'
-								className='mt-6 mb-6  border-solid border-[1px] border-[#D2D8E0] py-[11px] px-4 rounded-[20px]'>
-								<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Delegate for all tracks</Checkbox>
-							</Popover>
+							<div className='mt-6 mb-6 flex justify-between items-center'>
+								<span className='text-sm text-[#485F7D]'>Selected track(s)</span>
+								<Popover
+									content={content}
+									placement='topLeft'
+									className= ''>
+									<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Delegate all available tracks</Checkbox>
+								</Popover>
+							</div>
+							{checkedList.length> 0 && <div className='grid gap-2 py-2 mt-6 mb-6 shrink grid-cols-2' >
+								{checkedList.map((list, index) => (
+									<div key={index} className='text-sm text-[#7c899b] py-2 px-2 border-[1px] border-solid border-[#D2D8E0] rounded-[20px] flex justify-center gap-2 items-center'>
+										{list}
+										<span onClick={() => handleClose(String(list))} className='flex justify-center items-center'><CrossIcon/></span>
+									</div>
+								))}
+							</div>}
 						</Form>
 
-						{showAlert && <Alert showIcon type='info' className='mb-6 border-none' message={`Fees of ${formatBnBalance(txFee,{ numberAfterComma: 2,withUnit:true },network)} will be applied to the transaction`}/>}
+						{showAlert && <Alert showIcon type='info' className='mb-6 border-none' message={`Fees of ${formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction`}/>}
 					</div>
 				</Spin>
 

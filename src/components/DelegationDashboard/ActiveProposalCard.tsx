@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Divider } from 'antd';
+import { Button, Divider } from 'antd';
 
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { IPostListing } from 'pages/api/v1/listing/on-chain-posts';
@@ -15,14 +15,14 @@ import { IPeriod, getDefaultPeriod, getPeriodData, getStatusBlock } from '../Pos
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import dayjs from 'dayjs';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import formatBnBalance from '~src/util/formatBnBalance';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import AyeIcon from '~assets/delegation-tracks/aye-delegation.svg';
 import NayIcon from '~assets/delegation-tracks/nay-delegation.svg';
 import CautionIcon from '~assets/delegation-tracks/caution.svg';
 import BN from 'bn.js';
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO, formatBalance } from '@polkadot/util';
 import { ETrackDelegationStatus } from '~src/types';
+import { chainProperties } from '~src/global/networkConstants';
 
 interface Props{
   proposal: IPostListing;
@@ -64,6 +64,18 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 	};
 
 	const remainingTime = convertRemainingTime(decision.periodEndsAt);
+	const unit =`${chainProperties[network]?.tokenSymbol}`;
+
+	useEffect(() => {
+
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const getData = async() => {
 		if(!address || !proposal?.post_id) return;
@@ -150,9 +162,9 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 						</div>}
 					</div>
 				</div>
-				<div className='flex justify-center mt-2 gap-2'>
+				<Button className='flex justify-center mt-2 gap-2 border-none bg-white shadow-none' disabled={status.includes(ETrackDelegationStatus.Delegated)}>
 					<VoteIcon/><span className='text-pink_primary text-sm font-medium'>Cast Vote</span>
-				</div>
+				</Button>
 			</div>
 			{votingData && !status.includes(ETrackDelegationStatus.Undelegated) && isAye || isNay || isAbstain
 				? <div className={`border-solid py-2 px-6 flex gap-2 border-[1px] rounded-b-[5px] ${isAye && 'bg-[#F0FCF6] border-[#2ED47A]'} ${isNay && 'bg-[#fff1f4] border-[#FF3C5F]'} ${isAbstain && 'bg-[#f9f9f9] border-[#ABABAC]'}`}>
@@ -164,7 +176,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 						<span className='flex justify-center items-center -ml-1'>
 							{isAye && <AyeIcon/>} {isNay && <NayIcon/>}</span>
 						<div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
-              Balance:<span className='text-[#243A57] font-medium'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+              Balance:<span className='text-[#243A57] font-medium'>{formatBalance(balance.toString(), { forceUnit: unit })}</span>
 						</div>
 						<div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
                 Conviction:<span className='text-[#243A57] font-medium'>

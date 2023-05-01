@@ -9,7 +9,6 @@ import LockBalanceIcon from '~assets/icons/lock-balance.svg';
 import RightTickIcon from '~assets/icons/right-tick.svg';
 import { Divider } from 'antd';
 import userProfileBalances from '~src/util/userProfieBalances';
-import formatBnBalance from '~src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import dynamic from 'next/dynamic';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
@@ -18,6 +17,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { APPNAME } from '~src/global/appName';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { formatBalance } from '@polkadot/util';
 
 interface Props{
   className?: string;
@@ -43,6 +43,17 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	const { loginWallet, setUserDetailsContextState, loginAddress, delegationDashboardAddress } = useUserDetailsContext();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
+
+	useEffect(() => {
+
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 
@@ -122,9 +133,9 @@ const ProfileBalances = ({ className, address }: Props ) => {
 		<div className={`${className} flex py-[17px] items-center  h-full gap-1 max-md:px-[10px]`}>
 			<div className='h-[71px] flex flex-col justify-start py-2 gap-1 '>
 				<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-					{formatBnBalance(balance, { numberAfterComma: 2, withUnit: false }, network)}
+					{formatBalance(balance.toString(), { forceUnit: unit, withUnit: false })}
 					<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
-				<div className='flex items-center justify-center gap-2'>
+				<div className='flex items-center justify-start gap-2 ml-1'>
 					<BalanceIcon/>
 					<span className='text-white text-sm font-normal tracking-[0.01em]'>
           Balance
@@ -135,9 +146,9 @@ const ProfileBalances = ({ className, address }: Props ) => {
 			<div className='flex gap-4 py-2 justify-start max-md:gap-2'>
 				<div className='h-[71px] flex flex-col py-2 gap-1'>
 					<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-						{formatBnBalance(transferableBalance, { numberAfterComma: 2, withUnit: false }, network)}
+						{formatBalance(transferableBalance.toString(),  { forceUnit: unit, withUnit: false })}
 						<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
-					<div className='flex items-center justify-center gap-2'>
+					<div className='flex items-center justify-start gap-2 ml-1'>
 						<RightTickIcon/>
 						<span className='text-white text-sm font-normal tracking-[0.01em]'>
           Transferable
@@ -146,9 +157,9 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				</div>
 				<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
 					<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
-						{formatBnBalance(lockBalance, { numberAfterComma: 2, withUnit: false }, network)}
+						{formatBalance(lockBalance.toString(), { forceUnit: unit, withUnit: false })}
 						<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
-					<div className='flex items-center justify-center gap-2'>
+					<div className='flex items-center justify-start gap-2 ml-1'>
 						<LockBalanceIcon/>
 						<span className='text-white text-sm font-normal tracking-[0.01em]'>
              Total Locked
@@ -163,7 +174,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 			withBalance={false}
 			className='text-[#788698] text-sm cursor-pointer'
 			onAccountChange={setAddress}
-			inputClassName='text-[#ccd1d9] border-[1.5px] border-[#D2D8E0] bg-[#850c4d] border-solid px-3 rounded-[8px] py-[6px]'
+			inputClassName='text-[#fff] border-[1.5px] border-[#D2D8E0] bg-[#850c4d] text-sm border-solid px-3 rounded-[8px] py-[6px]'
 			isSwitchButton={true}
 			setSwitchModalOpen={setOpenModal}
 		/>}</div>

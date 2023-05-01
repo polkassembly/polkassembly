@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import 'react-mde/lib/styles/css/react-mde-all.css';
-
 import React from 'react';
 import ReactMde, { Suggestion } from 'react-mde';
 import styled from 'styled-components';
@@ -11,6 +10,11 @@ import Markdown from './Markdown';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import { useUserDetailsContext } from '~src/context';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
+import { useState } from 'react';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+
+import getMentionedUsernames from '~src/api-utils/getMentionedUsernames';
+import debounce from 'lodash/debounce';
 
 const StyledTextArea = styled.div`
 
@@ -214,6 +218,57 @@ function MarkdownEditor(props: Props): React.ReactElement {
 		return Boolean(url);
 	};
 
+	const [input, setInput] = useState('');
+	const [lastFoundUser, setLastFoundUser] = useState('');
+
+	async function apiCall(usernameQuery: string, content: string) {
+		let myString = content;
+		const userNames = getMentionedUsernames(content);
+		const replacedUsernames: string[] = []; // keep track of already replaced usernames
+		for (let i = 0; i < userNames.length; i++) {
+			const userName = userNames[i];
+
+			if (!replacedUsernames.includes(userName)) {
+				const regex = new RegExp(`@${userName}(?!.*@${userName})`);
+
+				myString = myString.replace(
+					regex,
+					`[@${userName}](${global.window.location.origin}/user/${userName})`
+				);
+				replacedUsernames.push(userName);
+			}
+		}
+		const res = await nextApiClientFetch(
+			`api/v1/auth/data/userProfileWithUsername?username=${usernameQuery}`
+		);
+		if (res) {
+			setLastFoundUser(res.data.username);
+		}
+		setInput(myString);
+		if (props.onChange) {
+			props.onChange(myString);
+		}
+	}
+
+	const debouncedAPIcall = debounce(apiCall, 1000);
+
+	const onChange = async (content:string) => {
+		const inputValue = content;
+		//console.log(inputValue);
+		setInput(inputValue);
+		const matches = inputValue.match(/@\w+/g);
+		if (matches && matches.length > 0) {
+			const usernameQuery = matches[matches.length - 1].substring(1);
+			if (usernameQuery !== lastFoundUser) {
+				debouncedAPIcall(usernameQuery,content);
+			}
+		}
+		if (props.onChange) {
+			return props?.onChange(content);
+		}
+		return content;
+	};
+
 	return (
 		<StyledTextArea className='container'>
 			<ReactMde
@@ -229,6 +284,8 @@ function MarkdownEditor(props: Props): React.ReactElement {
 				paste={{
 					saveImage: handleSaveImage
 				}}
+				onChange={ onChange }
+				value={input}
 			/>
 			<HelperTooltip className='ml-2' text='Attach images by dragging & dropping, selecting or pasting them.' />
 		</StyledTextArea>

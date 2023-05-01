@@ -64,7 +64,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 	return (
-		<div className={`${className} flex gap-x-4 mb-9`}>
+		<div className={`${className} flex gap-x-4 mb-9 `}>
 			{/* Offset div to scroll to because scrollIntoView doesn't support offset */}
 			<div id={id} ref={commentScrollRef} className="invisible absolute mt-[-100px]"></div>
 			<UserAvatar
@@ -90,7 +90,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 				<EditableCommentContent
 					userId={user_id}
 					created_at={created_at}
-					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px]  min-[320px]:mt-[-2px]' }`}
+					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px]  min-[320px]:mt-[-2px] ' }`}
 					comment={comment}
 					commentId={id}
 					content={content}

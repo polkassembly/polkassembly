@@ -93,7 +93,6 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				const timeoutId = setTimeout(() => {
 					reject(new Error('Wallet Timeout'));
 				}, 60000); // wait 60 sec
-				console.log( injected);
 				if(wallet && wallet.enable) {
 					wallet.enable(APPNAME)
 						.then((value) => { clearTimeout(timeoutId); resolve(value); })
@@ -138,7 +137,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 		}
 		return;
 	};
-	// console.log('jsdasds', address, loginWallet, localStorage.getItem('delegationDashboardAddress'));
+
 	useEffect(() => {
 
 		loginWallet && getAccounts(loginWallet);

@@ -110,7 +110,6 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	};
 
 	useEffect(() => {
-		console.log(userDetails.delegationDashboardAddress, userDetails.loginWallet);
 		if(!userDetails.delegationDashboardAddress){
 			setOpenModal(true);
 		}

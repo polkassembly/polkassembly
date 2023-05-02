@@ -34,25 +34,24 @@ const getReactionUsers = (reactions:any) => {
 	});
 };
 
-const extractContent = async (content: string, network:any) => {
-	if(content.startsWith('[')){
-		const markDown = content.split(' ')[0];
-		const addressWithNetwork = markDown.substring(markDown.indexOf('(')+1,markDown.length-1);
-		const address = addressWithNetwork.split('-')[0];
-		let link = `https://${network}.polkassembly.io/user/${address}`;
-
-		try{
-			const { data, error } = await getProfileWithAddress({ address: address });
-			if(!error){
-				link = `https://${network}.polkassembly.io/user/${data?.username || address}`;
-				content = content.replace(addressWithNetwork, link);
+const extractContent = async (markdownContent: string, network:any) => {
+	let updatedContent = markdownContent;
+	const matches = markdownContent.match(/\[(.*?)\]\((.*?)\)/g);
+	
+	if (matches) {
+		for (const match of matches) {
+			const [label, addressWithNetwork] = match.substring(1, match.length - 1).split('](');
+			if (label.startsWith('@')) {
+				const address = addressWithNetwork.split('-')[0]; // splitting the address and network 
+				const { data, error } = await getProfileWithAddress({ address: address });
+				if(!error){
+					const link = `https://${network}.polkassembly.io/user/${data?.username || address}`;
+					updatedContent = updatedContent.replace(match, `[${label}](${link})`);
+				}
 			}
-		} catch(error){
-			return content.replace(addressWithNetwork, link);
 		}
-
 	}
-	return content;
+	return updatedContent;
 };
 
 const convertReply =async (subSquareReply:any, network:any) => {

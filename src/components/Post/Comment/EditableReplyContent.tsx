@@ -18,6 +18,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ReportButton from '../ActionsBar/ReportButton';
 import { IComment } from './Comment';
+import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 
 interface Props {
 	userId: number,
@@ -25,18 +26,22 @@ interface Props {
 	reply: any,
 	commentId: string,
 	content: string,
-	replyId: string
+	replyId: string,
+	userName?:string
 }
 
 const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.location.href}`;
+const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
-const EditableReplyContent = ({ userId, className, commentId, content, replyId }: Props) => {
+const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName }: Props) => {
 	const [isEditing, setIsEditing] = useState(false);
-	const { id } = useContext(UserDetailsContext);
+	const { id , username ,picture } = useContext(UserDetailsContext);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
+	const [isReplying,setIsReplying] = useState(false);
+	const [replyToreply] = Form.useForm();
 
 	const { setPostData, postData: {
 		postType, postIndex
@@ -48,10 +53,18 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId }
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() => {
+		replyToreply.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})` || '');
+	});
+
 	const handleCancel = () => {
 		toggleEdit();
 		global.window.localStorage.removeItem(editReplyKey(replyId));
 		form.setFieldValue('content', '');
+	};
+	const handleReplyCancel = () => {
+		global.window.localStorage.removeItem(newReplyKey(commentId));
+		setIsReplying(!isReplying);
 	};
 
 	const handleSave = async () => {
@@ -120,6 +133,70 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId }
 		}
 
 		setLoading(false);
+	};
+
+	const handleReplySave = async () => {
+		await replyToreply.validateFields();
+		const replyContent = replyToreply.getFieldValue('content');
+		if(!replyContent) return;
+		setLoading(true);
+		if(id){
+			const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
+				commentId: commentId,
+				content: replyContent,
+				postId: postIndex,
+				postType: postType,
+				userId: id
+			});
+			if (error || !data) {
+				setError('There was an error in saving your reply.');
+				console.error('Error saving reply: ', error);
+				queueNotification({
+					header: 'Error!',
+					message: 'There was an error in saving your reply.',
+					status: NotificationStatus.ERROR
+				});
+			}
+			if(data) {
+				setError('');
+				global.window.localStorage.removeItem(newReplyKey(commentId));
+				setPostData((prev) => {
+					let comments: IComment[] = [];
+					if (prev?.comments && Array.isArray(prev.comments)) {
+						comments = prev.comments.map((comment) => {
+							if (comment.id === commentId) {
+								if (comment?.replies && Array.isArray(comment.replies)) {
+									comment.replies = [...comment.replies,{
+										content: replyContent,
+										created_at: new Date(),
+										id:data.id,
+										updated_at: new Date(),
+										user_id: id,
+										user_profile_img: picture || '',
+										username: username
+									}];
+								}
+							}
+							return {
+								...comment
+							};
+						});
+					}
+					return {
+						...prev,
+						comments: comments
+					};
+				});
+				replyToreply.resetFields();
+				setIsReplying(false);
+				queueNotification({
+					header: 'Success!',
+					message: 'Your reply was added.',
+					status: NotificationStatus.SUCCESS
+				});
+			}
+			setLoading(false);
+		}
 	};
 
 	const deleteReply = async () => {
@@ -214,7 +291,36 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId }
 								}
 								{id === userId && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>}
 								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} type='comment' contentId={commentId + '#' + replyId} />}
+								{id && !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><CheckOutlined />Reply</Button>}
 							</div>
+							{
+								isReplying
+										&&
+										<Form
+											form={replyToreply}
+											name="reply-to-reply-form"
+											layout="vertical"
+											// disabled={formDisabled}
+											validateMessages= {
+												{ required: "Please add the '${name}'" }
+											}
+										>
+											<ContentForm onChange={(content: string) => {
+												global.window.localStorage.setItem(newReplyKey(commentId), content);
+												return content.length ? content : null;
+											}}  />
+											<Form.Item>
+												<div className='flex items-center justify-end '>
+													<Button htmlType="button" onClick={() => handleReplyCancel()} className='mr-2 flex items-center'>
+														<CloseOutlined /> Cancel
+													</Button>
+													<Button onClick={() => handleReplySave()} className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
+														<CheckOutlined />Reply
+													</Button>
+												</div>
+											</Form.Item>
+										</Form>
+							}
 						</>
 				}
 			</div>

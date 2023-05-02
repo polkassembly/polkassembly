@@ -68,7 +68,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
-
 	const [form] = Form.useForm();
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editCommentKey(commentId)) || '';

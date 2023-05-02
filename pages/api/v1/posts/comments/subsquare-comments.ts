@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { ProposalType } from '~src/global/proposalType';
+import { getProfileWithAddress } from '../../auth/data/profileWithAddress';
 
 const urlMapper:any= {
 	[ProposalType.BOUNTIES]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/bounties/${id}/comments`,
@@ -33,22 +34,52 @@ const getReactionUsers = (reactions:any) => {
 	});
 };
 
-const convertReply = (subSquareReply:any) => {
-	return subSquareReply.map((reply:any) => ({
-		content:reply.content,
-		created_at:reply.createdAt,
-		id:reply._id,
-		reply_source:'subsquare',
-		updated_at:reply.updatedAt,
-		user_id:reply.user?.address || uuid(),
-		username:getTrimmedUsername(reply.user?.username)
-	}));
+const extractContent = async (content: string, network:any) => {
+	if(content.startsWith('[')){
+		const markDown = content.split(' ')[0];
+		const addressWithNetwork = markDown.substring(markDown.indexOf('(')+1,markDown.length-1);
+		const address = addressWithNetwork.split('-')[0];
+		let link = `https://${network}.polkassembly.io/user/${address}`;
+
+		try{
+			const { data, error } = await getProfileWithAddress({ address: address });
+			if(!error){
+				link = `https://${network}.polkassembly.io/user/${data?.username || address}`;
+				content = content.replace(addressWithNetwork, link);
+			}
+		} catch(error){
+			return content.replace(addressWithNetwork, link);
+		}
+
+	}
+	return content;
 };
 
-const convertDataToComment =(data:any[]) => {
-	return data.map((comment:any) => {
+const convertReply =async (subSquareReply:any, network:any) => {
+	const res = [];
+	for(const reply of subSquareReply){
+		const content = await extractContent(reply.content, network);
+
+		res.push( {
+			content,
+			created_at:reply.createdAt,
+			id:reply._id,
+			reply_source:'subsquare',
+			updated_at:reply.updatedAt,
+			user_id:reply.user?.address || uuid(),
+			username:getTrimmedUsername(reply.user?.username)
+		});
+	}
+	return res;
+};
+
+const convertDataToComment =async (data:any[], network: string | string[] | undefined) => {
+	const res = [];
+	for(const comment of data){
 		const reactionUsers = getReactionUsers(comment.reactions);
-		return {
+		const replies = await convertReply(comment?.replies || [], network);
+
+		res.push({
 			comment_reactions: {
 				'👍': {
 					count: reactionUsers.length,
@@ -64,18 +95,21 @@ const convertDataToComment =(data:any[]) => {
 			created_at: comment.createdAt,
 			id:comment._id,
 			proposer:comment.author?.address || '',
-			replies:convertReply(comment?.replies || []),
+			replies,
 			updated_at:comment?.updatedAt,
 			user_id:uuid(),
 			username:getTrimmedUsername(comment.author?.username)
-		};});
+		});
+	}
+	return res;
 };
 
 export const getSubSquareComments = async (proposalType:string ,network:string | string[] | undefined, id:string | string[] | undefined) => {
 	try{
 		const url = urlMapper[proposalType]?.( id, network);
 		const data = await (await fetch(url)).json();
-		return convertDataToComment(data.items);
+		const comments =await convertDataToComment(data.items, network);
+		return comments;
 	}catch(error){
 		return [];
 	}
@@ -87,7 +121,7 @@ const handler: NextApiHandler<{data:any}|{error:string}> = async (req, res) => {
 
 	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
 
-	const data  = await getSubSquareComments(proposalType as string,network , id);
+	const data  = await getSubSquareComments(proposalType as string, network , id);
 	if(data.length === 0) {
 		res.status(200).json({ data: [] });
 	}else {

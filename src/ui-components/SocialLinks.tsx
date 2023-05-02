@@ -35,7 +35,22 @@ interface ISocialLink extends ISocial{
 }
 
 const SocialLink: FC<ISocialLink> = (props) => {
-	const { link, className, type, disable, iconClassName } = props;
+	const { link: handle, className, type, disable, iconClassName } = props;
+
+	let link = '';
+	switch (type) {
+	case ESocialType.TWITTER:
+		link = `https://twitter.com/${handle}`;
+		break;
+	case ESocialType.TELEGRAM:
+		link = `https:/t.me/${handle}`;
+		break;
+	case ESocialType.EMAIL:
+		link = `mailto:${handle}`;
+		break;
+
+	}
+
 	return (
 		<>
 			{
@@ -44,7 +59,7 @@ const SocialLink: FC<ISocialLink> = (props) => {
 						<SocialIcon type={type}  className={iconClassName} />
 					</span>
 					: <a
-						href={type === ESocialType.EMAIL? `mailto:${link}`: link} target='_blank'
+						href={link} target='_blank'
 						rel='noreferrer'
 						className={className}
 					>

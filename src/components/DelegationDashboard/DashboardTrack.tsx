@@ -13,7 +13,7 @@ import { Button, Skeleton, Table } from 'antd';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import { DelegatedIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
-import { ETrackDelegationStatus, IDelegation } from '~src/types';
+import { ETrackDelegationStatus, IDelegation, Wallet } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import UndelegateModal from '../Listing/Tracks/UndelegateModal';
@@ -76,7 +76,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	const [showTable, setShowTable] = useState<boolean>(false);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [delegationDetails, setDelegationDetails] = useState<ITrackDelegation>();
-	const { delegationDashboardAddress: address, loginWallet, isLoggedOut } = useUserDetailsContext();
+	const { delegationDashboardAddress: address, loginWallet, isLoggedOut, setUserDetailsContextState } = useUserDetailsContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [rowData, setRowData] = useState<ITrackRowData[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -87,6 +87,17 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 
 	useEffect(() => {
+		if(!window) return;
+
+		const wallet = localStorage.getItem('delegationWallet') || '';
+		const address = localStorage.getItem('delegationDashboardAddress') || '';
+		setUserDetailsContextState((prev) =>
+		{
+			return { ...prev,
+				delegationDashboardAddress: address ,
+				loginWallet: wallet as Wallet
+			};
+		} );
 
 		if(!network) return ;
 
@@ -193,15 +204,22 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			<p className='mt-[19px] text-sm text-[#243A57] tracking-[0.01em] font-normal'>
 				{trackDetails.description}
 			</p>
-			{ showTable && status.map((item: ETrackDelegationStatus, index: number) => (<div key={index} className='bg-white mt-6 border-[1px] border-solid rounded-[6px] pl-[3px] pr-[3px] border-[#D2D8E0] bg-transparent'>
-				<Table
-					className= 'column'
-					columns= { GetTracksColumns( item, setOpenUndelegateModal ) }
-					dataSource= { item === ETrackDelegationStatus.Received_Delegation ? rowData.filter((row ) => row.delegatedTo === address)?.map((item, index) => { return { ...item, index: index+1 };} ) : rowData.filter((row ) => row.delegatedTo !== address )?.map((item, index) => { return { ...item, index: index+1 };} ) }
-					pagination={status.includes(ETrackDelegationStatus.Delegated) ? false: { pageSize : 5 }}
-					loading={loading}/>
-			</div>))
-			}
+			<div className='flex flex-col gap-4 mt-6' >
+				{ showTable && status.map((item: ETrackDelegationStatus, index: number) => (
+
+					<div className='flex gap-2 flex-col' key={index}>
+						<span className='text-sm text-[#243A57] font-semibold ml-[1px]'>
+							{item === ETrackDelegationStatus.Received_Delegation ? 'Received Delegation(s)' : 'Delegated'}</span>
+						<div className='bg-white mt-0 border-[1px] border-solid rounded-[6px] pl-[3px] pr-[3px] border-[#D2D8E0] bg-transparent'>
+							<Table
+								className='column'
+								columns={GetTracksColumns(item, setOpenUndelegateModal)}
+								dataSource={item === ETrackDelegationStatus.Received_Delegation ? rowData.filter((row) => row.delegatedTo === address)?.map((item, index) => { return { ...item, index: index + 1 }; }) : rowData.filter((row) => row.delegatedTo !== address)?.map((item, index) => { return { ...item, index: index + 1 }; })}
+								pagination={status.includes(ETrackDelegationStatus.Delegated) ? false : { pageSize: 5 }}
+								loading={loading} />
+						</div>
+					</div>))
+				}</div>
 			{status.includes(ETrackDelegationStatus.Undelegated) && <div className='bg-white flex pt-[24px] items-center flex-col text-[169px] pb-[33px] rounded-b-[14px]'>
 				<DelegatedIcon />
 				<div className='text-[#243A57] mt-[18px] text-center'>

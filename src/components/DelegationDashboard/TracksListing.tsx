@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Radio, Table } from 'antd';
+import { Radio, Skeleton, Table } from 'antd';
 
 import styled from 'styled-components';
 
@@ -34,7 +34,7 @@ export interface ITrackDataType{
   trackNo: number;
 }
 
-const DashboardTrackListing = ({ className, address }: Props) => {
+const DashboardTrackListing = ({ className }: Props) => {
 
 	const [status, setStatusValue ] = useState<ETrackDelegationStatus>(ETrackDelegationStatus.All);
 	const  { network } = useNetworkContext();
@@ -98,8 +98,11 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 	};
 
 	const getData = async() => {
+
 		if (!api || !apiReady ) return;
+
 		setLoading(true);
+
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${delegationDashboardAddress}`);
 		if(data){
 			const rows = data?.map((track: any, index: number) => {
@@ -108,8 +111,8 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 
 				return {
 					active_proposals: track?.active_proposals_count,
-					delegated_by: track?.status?.includes(ETrackDelegationStatus.Received_Delegation) ? track?.delegations.filter((row:IDelegation) => row?.to === address) : null, //rece
-					delegated_to: track?.status?.includes(ETrackDelegationStatus.Delegated) ? track?.delegations.filter((row:IDelegation) => row?.to !== address) : null,
+					delegated_by: track?.status?.includes(ETrackDelegationStatus.Received_Delegation) ? track?.delegations.filter((row:IDelegation) => row?.to === delegationDashboardAddress) : null, //rece
+					delegated_to: track?.status?.includes(ETrackDelegationStatus.Delegated) ? track?.delegations.filter((row:IDelegation) => row?.to !== delegationDashboardAddress) : null,
 					description: trackData[1]?.description,
 					index: index+1,
 					status: track?.status,
@@ -130,11 +133,11 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 
 	useEffect(() => {
 
-		getData();
+		delegationDashboardAddress.length > 0 && getData();
 		setStatusValue(ETrackDelegationStatus.All);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ address]);
+	}, [delegationDashboardAddress, api, apiReady]);
 
 	useEffect(() => {
 
@@ -191,12 +194,12 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 				<Radio disabled={loading}  className={`text-[#243A57B2] text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Received_Delegation === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={ETrackDelegationStatus.Received_Delegation}>Received delegation ({receivedDelegationCount})</Radio>
 			</Radio.Group>
 		</div>
-		{showTable  && status && <Table
+		{showTable  && status && delegationDashboardAddress ? <Table
 			className='column'
 			columns = { GetColumns( status )}
 			dataSource= { rowsData }
 			rowClassName='cursor-pointer'
-			loading = {loading}
+			loading = {loading || !delegationDashboardAddress || delegationDashboardAddress.length === 0}
 			pagination= {false}
 			onRow={(rowData: ITrackDataType) => {
 				return {
@@ -204,7 +207,7 @@ const DashboardTrackListing = ({ className, address }: Props) => {
 				};
 			}}
 		>
-		</Table>}
+		</Table>:<Skeleton/>}
 
 		{status === ETrackDelegationStatus.Delegated && delegatedCount === 0 && <div className='h-[550px] bg-white flex pt-[56px] items-center flex-col text-[258px] rounded-b-[14px]'>
 			<DelegatedIcon/>

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useContext, useEffect, useState } from 'react';
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Alert, Button, Checkbox, Form, Modal, Popover, Slider, Spin } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -33,6 +33,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import CrossIcon from '~assets/sidebar/delegation-close.svg';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
+import { useRouter } from 'next/router';
 
 const ZERO_BN = new BN(0);
 
@@ -65,6 +66,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 	const [showAlert, setShowAlert] = useState(false);
 	const [trackArr, setTrackArr] = useState<any[]>([]);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
+	const [defaultOpen, setDefaultOpen] = useState<boolean>(false);
+	const router = useRouter();
 
 	useEffect(() => {
 
@@ -208,7 +211,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 
 						setLoading(false);
 						setOpenSuccessPopup(true);
-						setOpen?.(false);
+						setOpen ? setOpen?.(false) : setDefaultOpen(false);
 
 					} else if (event.method === 'ExtrinsicFailed') {
 						const errorModule = (event.data as any)?.dispatchError?.asModule;
@@ -229,7 +232,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 				}
 
 				setLoading(false);
-				setOpen?.(false);
+				setOpen ? setOpen?.(false) : setDefaultOpen(false);
 				console.log(`Delegation: completed at block hash #${status.toString()}`);
 			} else {
 				console.log(`Delegation: Current status: ${status.type}`);
@@ -287,6 +290,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 
 	return (
 		<>
+			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm text-pink_primary hover:bg-pink_primary hover:text-white flex gap-0 items-center justify-center py-3 px-6 rounded-[4px]'>
+				<PlusOutlined/>
+				<span >Delegate</span>
+			</Button>}
 			<Modal
 				maskClosable={false}
 				closeIcon={<CloseIcon/>}
@@ -298,10 +305,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 					</div>
 				}
 
-				open={open}
+				open={open ? open : defaultOpen}
 				onOk={handleSubmit}
 				confirmLoading={loading}
-				onCancel={() => setOpen?.(false)}
+				onCancel={() => setOpen ? setOpen?.(false) : setDefaultOpen(false)}
 				footer={
 					<div className='flex items-center justify-end'>
 						{
@@ -396,7 +403,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enactment period`}
 								</div>
 							</div>
-							<div className='mt-6 mb-6 flex justify-between items-center'>
+							<div className='mt-6 mb-2 flex justify-between items-center'>
 								<span className='text-sm text-[#485F7D]'>Selected track(s)</span>
 								<Popover
 									content={content}
@@ -405,9 +412,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 									<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Delegate all available tracks</Checkbox>
 								</Popover>
 							</div>
-							{checkedList.length> 0 && <div className='grid gap-2 py-2 mt-6 mb-6 shrink grid-cols-2' >
+							{checkedList.length> 0 && <div className='flex flex-wrap gap-2 mt-0 mb-6 ' >
 								{checkedList.map((list, index) => (
-									<div key={index} className='text-sm text-[#7c899b] py-2 px-2 border-[1px] border-solid border-[#D2D8E0] rounded-[20px] flex justify-center gap-2 items-center'>
+									<div key={index} className='text-sm text-[#7c899b] py-2 px-3 border-[1px] border-solid border-[#D2D8E0] rounded-[20px] flex justify-center gap-2 items-center'>
 										{list}
 										<span onClick={() => handleClose(String(list))} className='flex justify-center items-center'><CrossIcon/></span>
 									</div>
@@ -415,12 +422,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 							</div>}
 						</Form>
 
-						{showAlert && <Alert showIcon type='info' className='mb-6 border-none' message={`Fees of ${formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction`}/>}
+						{showAlert && <Alert showIcon type='info' className='mb-6 border-none' message={`An approximate fees of ${formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction`}/>}
 					</div>
 				</Spin>
 
 			</Modal>
-
 			<DelegationSuccessPopup setIsRefresh={setIsRefresh} open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedList} address={target} isDelegate={true} balance={bnBalance} trackNum= {trackNum} />
 		</>
 	);

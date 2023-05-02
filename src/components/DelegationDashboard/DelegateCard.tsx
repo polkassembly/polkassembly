@@ -18,6 +18,7 @@ import SocialLink from '~src/ui-components/SocialLinks';
 import { socialLinks } from '../UserProfile/Details';
 import { ESocialType } from '~src/auth/types';
 import { formatBalance } from '@polkadot/util';
+import { formatedBalance } from './ProfileBalance';
 
 interface Props{
   delegate: IDelegate;
@@ -76,10 +77,10 @@ const DelegateCard = ({ delegate, className, trackNum }: Props) => {
 		</div>}
 
 		<div className='flex justify-between items-center px-5 pt-5'>
-			<div className='flex gap-3 max-lg:justify-start'>
+			<div className='flex gap-2 max-lg:justify-start'>
 				<Address address={delegate?.address} displayInline identiconSize={34}/>
 
-				<div className='flex -mt-2 gap-3'>
+				<div className='flex -mt-5 gap-2 mr-2'>
 					{
 						socialLinks?.filter((item) => item === ESocialType.EMAIL || item === ESocialType.TWITTER).map((social, index) => {
 							const link = (social_links && Array.isArray(social_links))? social_links?.find((s) => s.type === social)?.link || '': '';
@@ -115,7 +116,7 @@ const DelegateCard = ({ delegate, className, trackNum }: Props) => {
 		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] '>
 			<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-[#243A57]'>
 				<div className='flex gap-1 items-end justify-center'>
-					{formatBalance(balance.toString(), { forceUnit: unit, withUnit: false })}
+					{formatedBalance(balance, unit)}
 					<span className='text-sm font-normal text-[#243A57]'>{unit}</span>
 				</div>
 				<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>

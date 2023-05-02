@@ -22,6 +22,7 @@ import dynamic from 'next/dynamic';
 import { EditIcon } from '~src/ui-components/CustomIcons';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
+import { Wallet } from '~src/types';
 
 interface Props {
   className?: string;
@@ -62,6 +63,22 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 
 	useEffect(() => {
+		if(!window) return;
+
+		const wallet = localStorage.getItem('delegationWallet') || '';
+		const address = localStorage.getItem('delegationDashboardAddress') || '';
+		userDetails.setUserDetailsContextState((prev) =>
+		{
+			return { ...prev,
+				delegationDashboardAddress: address ,
+				loginWallet: wallet as Wallet
+			};
+		} );
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
 
 		userDetails.isLoggedOut() && setOpenLoginModal(true);
 
@@ -93,12 +110,13 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	};
 
 	useEffect(() => {
-		if(!userDetails.delegationDashboardAddress ){
+		console.log(userDetails.delegationDashboardAddress, userDetails.loginWallet);
+		if(!userDetails.delegationDashboardAddress){
 			setOpenModal(true);
 		}
 		userDetails?.username && userDetails?.username?.length > 0 && getData();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userDetails?.username]);
+	}, [userDetails?.username, userDetails?.delegationDashboardAddress]);
 
 	return <div className= { `${ className }` }>
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>
@@ -172,7 +190,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 
 		</div>
 		<div >
-			{userDetails?.delegationDashboardAddress.length> 0 && <DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]' address={String(userDetails.delegationDashboardAddress)}/>}
+			{userDetails?.delegationDashboardAddress.length> 0 ? <DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]' address={String(userDetails.delegationDashboardAddress)}/> : <Skeleton/>}
 		</div>
 		{!openLoginModal && !openSignupModal && !userDetails.loginWallet && <WalletConnectModal open={openModal} setOpen={setOpenModal} />}
 		<LoginPopup closable={false} setSignupOpen={setOpenSignupModal} modalOpen={openLoginModal} setModalOpen={setOpenLoginModal} isModal={true} isDelegation={true}/>

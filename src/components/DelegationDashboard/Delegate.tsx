@@ -69,7 +69,7 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 	useEffect(() => {
 		getData();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
+	}, [address, delegationDashboardAddress, api, apiReady]);
 
 	useEffect(() => {
 		disabled && setExpandProposals(false);

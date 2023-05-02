@@ -114,7 +114,7 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 			render: (track) => {
 				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 					{ handleTracksIcon(track, 24)}<span className=' border-[1px] flex items-center'>{track}</span>
-				</div>;}, title: 'Tracks',width: '23%'
+				</div>;}, title: 'Tracks',width: '20%'
 		},
 
 		{ dataIndex: 'description', key: 3,
@@ -122,14 +122,14 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 			{
 				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{des}</div>;
 			},
-			title: 'Description',width: '30%' },
+			title: 'Description',width: '38%' },
 
 		{ dataIndex: 'delegated_to', key: 4,
 			render: (addresses) =>
 			{
 				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal'><Address address={addresses?.[0]?.to || ''} displayInline identiconSize={24}/></div>;
 			},
-			title: 'Delegated to',width: '25%' },
+			title: 'Delegated to',width: '20%' },
 
 		{ dataIndex: 'active_proposals', key: 5,
 			render: (activeProposals) =>
@@ -177,7 +177,7 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 			render: (track) => {
 				return <div className='text-[14px] text-[#243A57] tracking-wide flex items-center justify-start font-normal gap-1 max-lg:flex-col max-lg:gap-[2px] max-lg:text-center'>
 					{ handleTracksIcon(track, 24)}<span className=' border-[1px] flex items-center'>{track}</span>
-				</div>;}, title: 'Tracks',width: '23%'
+				</div>;}, title: 'Tracks',width: '20%'
 		},
 
 		{ dataIndex: 'description', key: 3,
@@ -185,14 +185,14 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 			{
 				return <h2 className='text-sm text-[#243A57] tracking-wide flex items-center justify-start font-normal'>{des}</h2>;
 			},
-			title: 'Description',width: '30%' },
+			title: 'Description',width: '38%' },
 
 		{ dataIndex: 'delegated_by', key: 4,
 			render: (addresses) =>
 			{
 				return <div className='text-sm text-[#243A57] tracking-wide flex items-center justify-start font-normal max-lg:flex-col gap-1'><Address address={addresses?.[0].from || ''} displayInline identiconSize={24}/> <span className='text-xs text-[#243A57] tracking-[0.0015em] font-medium'>{ addresses.length-1 !== 0 && `+ ${addresses.length-1} more`} </span></div>;
 			},
-			title: 'Delegated by',width: '25%' },
+			title: 'Delegated by',width: '20%' },
 
 		{ dataIndex: 'active_proposals', key: 4,
 			render: (activeProposals) =>

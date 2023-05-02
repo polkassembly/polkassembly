@@ -194,7 +194,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 				<Spin spinning={loading} indicator={<LoadingOutlined />} >
 					<div className='flex flex-col border-0'>
-						{showAlert && <Alert showIcon type='info' className='mb-6 text-[14px] bg-[#4E75FF] ' message={`Fees of ${formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction`}/>}
+						{showAlert && <Alert showIcon type='info' className='mb-6 text-[14px]' message={`An approximate fees of ${formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction`}/>}
 						<Form
 							form={form}
 							disabled={true}
@@ -276,14 +276,11 @@ export default styled(UndelegateModal)`
   margin-top: 4px;
 }
 .padding .ant-alert-message{
-color:white;
+color:#243A57;
 font-size:14px;
-  font-weight: 400;
+font-weight: 400;
 }
-.padding .ant-alert-info .ant-alert-icon{
-  color:white;
-    font-weight: 400;
-}
+
 .padding  .ant-modal-close:hover{
   margin-top: 4px;
 }

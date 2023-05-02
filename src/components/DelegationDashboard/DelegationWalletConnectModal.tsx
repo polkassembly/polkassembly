@@ -48,7 +48,10 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 
 	const handleSubmit = () => {
 		setLoading(true);
+		localStorage.setItem('delegationWallet',  String(wallet));
+		localStorage.setItem('delegationDashboardAddress', (address) );
 		setUserDetailsContextState((prev) => {
+
 			return { ...prev,
 				delegationDashboardAddress: address,
 				loginAddress:'',

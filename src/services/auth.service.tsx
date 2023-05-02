@@ -85,6 +85,9 @@ export const handleTokenChange = (token: string, currentUser: UserDetailsContext
 
 export const logout = (setUserDetailsContextState: UserDetailsContextType['setUserDetailsContextState']) => {
 	deleteLocalStorageToken();
+	localStorage.removeItem('delegationDashboardAddress');
+	localStorage.removeItem('delegationWallet');
+
 	setUserDetailsContextState((prevState) => {
 		return {
 			...prevState,

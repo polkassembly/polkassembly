@@ -242,7 +242,7 @@ const Web3Login: FC<Props> = ({
 						}
 
 						if(confirmData.token) {
-							currentUser.loginWallet=chosenWallet;
+							currentUser.loginWallet= chosenWallet;
 							currentUser.loginAddress= address;
 							handleTokenChange(confirmData.token, currentUser);
 							if(isModal){

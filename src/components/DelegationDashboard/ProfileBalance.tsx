@@ -51,7 +51,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [loading, setLoading] =useState<boolean>(false);
-	const { loginWallet, setUserDetailsContextState, loginAddress, delegationDashboardAddress } = useUserDetailsContext();
+	const { loginWallet, setUserDetailsContextState, delegationDashboardAddress } = useUserDetailsContext();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
 
@@ -88,6 +88,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 		}
 
 		let injected: Injected | undefined;
+
 		try {
 			injected = await new Promise((resolve, reject) => {
 				const timeoutId = setTimeout(() => {
@@ -124,16 +125,16 @@ const ProfileBalances = ({ className, address }: Props ) => {
 
 			if(loginWallet){
 				setLoading(true);
-				localStorage.setItem('delegationDashboardAddress', loginAddress.length === 0 ? delegationDashboardAddress : loginAddress );
-				const delegationAddress= localStorage.getItem('delegationDashboardAddress') || '';
+				localStorage.setItem('delegationWallet', loginWallet);
+				address.length > 0 && localStorage.setItem('delegationDashboardAddress', address.length > 0 ? address : delegationDashboardAddress);
 				setUserDetailsContextState((prev) => {
 					return { ...prev,
-						delegationDashboardAddress: loginAddress.length === 0 ? delegationDashboardAddress.length > 0 ? delegationDashboardAddress : delegationAddress : loginAddress
+						delegationDashboardAddress: address.length > 0 ? address : delegationDashboardAddress
 					};
 				});
 				setLoading(false);
 			}
-			setAddress(loginAddress);
+			setAddress(address.length > 0 ? address : delegationDashboardAddress);
 		}
 		return;
 	};

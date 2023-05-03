@@ -16,9 +16,7 @@ import dynamic from 'next/dynamic';
 import { ETrackDelegationStatus, IDelegation, Wallet } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
-import UndelegateModal from '../Listing/Tracks/UndelegateModal';
 import BN from 'bn.js';
-import DelegateModal from '../Listing/Tracks/DelegateModal';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { chainProperties } from '~src/global/networkConstants';
@@ -43,6 +41,14 @@ const WalletConnectModal = dynamic(() => import('./DelegationWalletConnectModal'
 	ssr: false
 });
 const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
+const UndelegateModal = dynamic(() => import('../Listing/Tracks/UndelegateModal'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
+const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
@@ -147,7 +153,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 		}
 	};
 
-	const handleReroute = ( route: string ) => {
+	const handleReroute:any = ( route: string ) => {
 		if(route.length === 0){
 			return;
 		}

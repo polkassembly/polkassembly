@@ -34,6 +34,9 @@ import CrossIcon from '~assets/sidebar/delegation-close.svg';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { useRouter } from 'next/router';
+import Web3 from 'web3';
+import Balance from '~src/components/Balance';
+import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 
 const ZERO_BN = new BN(0);
 
@@ -91,6 +94,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 			!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN)) return;
 
 		validateForm();
+
 		setLoading(true);
 
 		const txArr = checkedList.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
@@ -161,7 +165,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 			errors.push('Please provide a valid target address.');
 		}
 
-		if(delegationDashboardAddress == target) {
+		if(delegationDashboardAddress == target || delegationDashboardAddress === getEncodedAddress(target, network)) {
 			errors.push('You can not delegate to the same address. Please provide a different target address.');
 		}
 
@@ -290,7 +294,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 
 	return (
 		<>
-			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm text-pink_primary hover:bg-pink_primary hover:text-white flex gap-0 items-center justify-center py-3 px-6 rounded-[4px]'>
+			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm text-pink_primary hover:bg-pink_primary hover:text-white flex gap-0 items-center justify-center py-3 px-6 rounded-[4px]'
+				disabled={errorArr.length > 0 || !delegationDashboardAddress || !target || !getEncodedAddress(target, network) || !checkedList || !checkedList.length || isNaN(conviction) || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.lte(availableBalance)}
+			>
 				<PlusOutlined/>
 				<span >Delegate</span>
 			</Button>}
@@ -350,26 +356,33 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 								skipFormatCheck={true}
 								inputClassName='text-[#7c899b] font-normal text-sm'
 							/>
+							<div className='flex justify-between items-center mt-6 cursor-pointer' onClick={() => {
+								setBnBalance(availableBalance);
+								form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));
+							}}>
+                Balance<span>
+									<Balance address={delegationDashboardAddress} onChange={handleOnBalanceChange}/></span></div>
 							<BalanceInput
-								label={'Balance'}
 								placeholder={'Enter balance'}
-								className='mt-6 text-[#485F7D] text-sm font-normal'
+								className='mt-1 text-[#485F7D] text-sm font-normal'
 								address={delegationDashboardAddress}
-								withBalance={true}
 								onAccountBalanceChange={handleOnBalanceChange}
 								onChange={(balance) => setBnBalance(balance)}
+								balance={ bnBalance }
 								size='large'
 								inputClassName='text-[#7c899b] text-sm'
 							/>
-
 							<div className='mb-2 border-solid border-white'>
 								<label  className='text-[#485F7D] flex items-center text-sm'>
                   Conviction
-									<span><HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.'/></span>
+									<span>
+										<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
+									</span>
 								</label>
 
 								<div className='px-[2px] mt-4'>
 									<Slider
+										tooltip={{ open: false }}
 										className='text-[12px] mt-[9px]'
 										trackStyle={{ backgroundColor:'#FF49AA' }}
 										onChange={(value:number) => {
@@ -409,7 +422,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 									content={content}
 									placement='topLeft'
 									className= ''>
-									<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Delegate all available tracks</Checkbox>
+									<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Select available tracks</Checkbox>
 								</Popover>
 							</div>
 							{checkedList.length> 0 && <div className='flex flex-wrap gap-2 mt-0 mb-6 ' >
@@ -422,7 +435,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 							</div>}
 						</Form>
 
-						{showAlert && <Alert showIcon type='info' className='mb-6 border-none' message={`An approximate fees of ${formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction`}/>}
+						{showAlert && <Alert showIcon type='info' className='mb-4 ' message={`An approximate fees of ${formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction`}/>}
+						{target && (getEncodedAddress(target, network) || Web3.utils.isAddress(target)) && target !== getEncodedAddress(target, network) && <Alert className='mb-6' showIcon message='The substrate address has been changed to Kusama address.'/> }
 					</div>
 				</Spin>
 

@@ -54,7 +54,6 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 
 			return { ...prev,
 				delegationDashboardAddress: address,
-				loginAddress:'',
 				loginWallet: wallet || null
 			};
 		});

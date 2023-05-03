@@ -12,11 +12,12 @@ import { NetworkContext } from '~src/context/NetworkContext';
 import { ProposalType } from '~src/global/proposalType';
 
 interface Props {
-	address: string
-	onChange?: (balance: string) => void
+	address: string;
+	onChange?: (balance: string) => void;
+  setAvailableBalance?: (pre: string) => void;
 }
 
-const Balance = ({ address, onChange }: Props) => {
+const Balance = ({ address, onChange, setAvailableBalance }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const { network } = useContext(NetworkContext);
@@ -31,6 +32,7 @@ const Balance = ({ address, onChange }: Props) => {
 			api.query.eqBalances.account(address, { '0': 1734700659 })
 				.then((result: any) => {
 					setBalance(result.toHuman()?.Positive?.toString() || '0');
+					setAvailableBalance &&	setAvailableBalance(result.toHuman()?.Positive?.toString() || '0');
 					onChange && onChange(result.toHuman()?.Positive?.toString() || '0');
 				})
 				.catch(e => console.error(e));
@@ -40,6 +42,7 @@ const Balance = ({ address, onChange }: Props) => {
 				.then((result: any) => {
 					if(isReferendum){
 						setBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
+						setAvailableBalance &&	setAvailableBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
 						onChange && onChange(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
 					}
 					else{
@@ -47,10 +50,12 @@ const Balance = ({ address, onChange }: Props) => {
 						const positive = result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0';
 						if(new BN(positive).cmp(new BN(locked))){
 							setBalance((new BN(positive).sub(new BN(locked))).toString() || '0');
+							setAvailableBalance &&	setAvailableBalance((new BN(positive).sub(new BN(locked))).toString() || '0');
 							onChange && onChange((new BN(positive).sub(new BN(locked))).toString() || '0');
 						}
 						else{
 							setBalance(positive);
+							setAvailableBalance &&	setAvailableBalance(positive);
 							onChange && onChange(positive);
 						}
 					}
@@ -61,14 +66,17 @@ const Balance = ({ address, onChange }: Props) => {
 				.then((result: any) => {
 					if(isReferendum){
 						setBalance(result.data?.free?.toString() || '0');
+						setAvailableBalance &&	setAvailableBalance(result.data?.free?.toString() || '0');
 						onChange && onChange(result.data?.free?.toString() || '0');
 					}
 					else if (result.data.free && result.data?.free?.toBigInt() >= result.data?.miscFrozen?.toBigInt()){
 						setBalance((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()).toString() || '0');
+						setAvailableBalance &&	setAvailableBalance((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()).toString() || '0');
 						onChange && onChange((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()).toString() || '0');
 					}
 					else{
 						setBalance('0');
+						setAvailableBalance && setAvailableBalance('0');
 						onChange && onChange('0');
 					}
 				})

@@ -14,6 +14,7 @@ import HelperTooltip from './HelperTooltip';
 import Balance from '~src/components/Balance';
 import styled from 'styled-components';
 import { formatBalance } from '@polkadot/util';
+import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 
 interface Props{
 	className?: string
@@ -33,7 +34,6 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
-
 	const onBalanceChange = (value: number | null): void => {
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
 
@@ -54,15 +54,14 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 	}, []);
 
 	return <div className={`${className} w-full flex flex-col`}>
-		<label className='mb-[2px] flex items-center text-sm '>
+		<label className='mb-[2px] flex items-center text-sm justify-between'>
 			{label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> }
-			{address && withBalance &&
-			<Balance address={address} onChange={onAccountBalanceChange}  />
+			{address && withBalance && <span><Balance address={address} onChange={onAccountBalanceChange} /></span>
 			}
 		</label>
 		<Form.Item
 			name="balance"
-			initialValue={balance ? Number(formatBalance(balance.toString(), { forceUnit: unit, withUnit: false })) : ''}
+			initialValue={balance ? Number(formatedBalance(balance.toString(), unit)) : ''}
 			rules={[
 				{
 					message: 'Lock Balance is required.',
@@ -87,6 +86,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 				onChange={onBalanceChange}
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}
+				value={Number(formatedBalance(String(balance), unit)) }
 			/>
 		</Form.Item>
 	</div>;

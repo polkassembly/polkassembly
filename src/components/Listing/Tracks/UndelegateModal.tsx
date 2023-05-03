@@ -10,8 +10,6 @@ import { poppins } from 'pages/_app';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { NotificationStatus } from 'src/types';
-import AddressInput from 'src/ui-components/AddressInput';
-import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 
@@ -21,11 +19,11 @@ import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import { useRouter } from 'next/router';
 import { handleTrack } from '~src/components/DelegationDashboard/DashboardTrack';
-import { BN_ZERO, formatBalance } from '@polkadot/util';
+import { formatBalance } from '@polkadot/util';
 import DelegationSuccessPopup from './DelegationSuccessPopup';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import { chainProperties } from '~src/global/networkConstants';
 import Address from '~src/ui-components/Address';
+import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 
 const ZERO_BN = new BN(0);
 
@@ -48,12 +46,11 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { delegationDashboardAddress : defaultAddress } = useUserDetailsContext();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [target, setTarget] = useState<string>(defaultTarget);
-	const [bnBalance, setBnBalance] = useState<BN>(balance ? balance : BN_ZERO);
 	const lock = (Number(2**(conviction-1)));
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
 	const [txFee, setTxFee] = useState(ZERO_BN);
-	const [showAlert, setShowAlert] = useState(false);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 
 	useEffect(() => {
@@ -69,8 +66,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 	useEffect(() => {
 
-		if(!defaultAddress || !target || !getEncodedAddress(target, network) || !trackNum || isNaN(conviction) ||
-			!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN)) return;
+		if(!api || !apiReady ) return;
 
 		setLoading(true);
 
@@ -80,9 +76,8 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			const info = await txArr.paymentInfo(defaultAddress);
 			setTxFee(new BN(info.partialFee.toString() || 0));
 			setLoading(false);
-			setShowAlert(true);
 		})();
-	}, [defaultAddress, api, apiReady, bnBalance, trackNum, conviction, network, target]);
+	}, [defaultAddress, api, apiReady, balance, trackNum, conviction, network, target]);
 
 	useEffect(() => {
 		if (!api) {
@@ -158,8 +153,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		});
 	};
 
-	const handleOnBalanceChange = () => {
-	};
 	return (
 		<>
 			<Modal
@@ -194,46 +187,39 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 				<Spin spinning={loading} indicator={<LoadingOutlined />} >
 					<div className='flex flex-col border-0'>
-						{showAlert && <Alert showIcon type='info' className='mb-6 text-[14px]' message={`An approximate fees of ${formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction`}/>}
+						{ <Alert showIcon type='info' className='text-[14px]' message={`An approximate fees of ${formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction`}/>}
 						<Form
 							form={form}
 							disabled={true}
 						>
 
-							<div className=''>
-								<label className='text-sm text-[#788698] mb-[2px]'>Your Address</label>
-								<div className='text-[#ccd1d9] border-[1px] border-[#D2D8E0] border-solid px-3 rounded-[6px] bg-[#F6F7F9] py-[6px] h-[40px] cursor-not-allowed'>
-									<Address address={defaultAddress} identiconSize={26} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
+							<div className='mt-4'>
+								<label className='text-sm text-[#485F7D] mb-1'>Your Address</label>
+								<div className='text-[#7c899b] px-0 rounded-[6px] py-[px] h-[40px] cursor-not-allowed'>
+									<Address address={defaultAddress} identiconSize={36} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
 								</div>
 							</div>
 
-							<AddressInput
-								defaultAddress={target}
-								label={'Delegate to'}
-								placeholder='Delegate Account Address'
-								className='text-[#788698] text-sm '
-								onChange={(address) => setTarget(address)}
-								size='large'
-								inputClassName='text-[#ccd1d9]  bg-[#F6F7F9]'
-							/>
-							<BalanceInput
-								label={'Balance'}
-								placeholder={'Enter balance'}
-								className='mt-6 text-[#788698]'
-								address={defaultAddress}
-								withBalance={false}
-								onAccountBalanceChange={handleOnBalanceChange}
-								onChange={(balance) => setBnBalance(balance)}
-								size='large'
-								balance={bnBalance}
-								inputClassName='text-[#ccd1d9] bg-[#F6F7F9] rounded-[4px]'
-							/>
+							<div className='mt-6'>
+								<label className='text-sm text-[#485F7D] mb-1'>Delegate to</label>
+								<div className='text-[#243A57] px-0 rounded-[6px] py-[px] h-[40px] cursor-not-allowed'>
+									<Address address={defaultTarget} identiconSize={36} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
+								</div>
+							</div>
 
-							<div className='mb-2 border-solid border-white'>
-								<label  className='text-[#788698] flex items-center text-sm'>Conviction</label>
+							<div className='mt-6'>
+								<label className='text-sm text-[#485F7D] mb-2'>Balance</label>
+								<div className='text-[#7c899b] px-0 rounded-[6px] py-[px] h-[40px] cursor-not-allowed'>
+									{`${formatedBalance(balance.toString(), unit)} ${unit}`}
+								</div>
+							</div>
 
-								<div className='px-[2px]'>
+							<div className='mb-2 mt-2 border-solid border-white'>
+								<label  className='text-[#485F7D] flex items-center text-sm'>Conviction</label>
+
+								<div className='px-[2px] mt-4'>
 									<Slider
+										tooltip={{ open: false }}
 										disabled={true}
 										className='text-[12px] mt-[9px]'
 										trackStyle={{ backgroundColor:'#FF49AA' }}
@@ -266,7 +252,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 					</div>
 				</Spin>
 			</Modal>
-			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={bnBalance} setIsRefresh={setIsRefresh}/>
+			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={balance} setIsRefresh={setIsRefresh}/>
 		</>
 	);
 };

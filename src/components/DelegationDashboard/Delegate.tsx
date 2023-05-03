@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Skeleton } from 'antd';
+import { Alert, Button, Input, Skeleton } from 'antd';
 
 import dynamic from 'next/dynamic';
 import DelegateCard from './DelegateCard';
@@ -122,7 +122,10 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 				</Popover> */}
 			</div>
 
-			{!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress && <label className='text-red-500 text-[12px] font-normal'>{ address === delegationDashboardAddress ? 'You can not delegate to the same address. Please provide a different target address.' : 'Invalid Address.'}</label>}
+			{!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress && <label className='text-red-500 text-[12px] font-normal'>{ address === delegationDashboardAddress && 'You cannot delegate to your own address. Please enter a different wallet address.'}</label>}
+
+			{!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && <label className='text-red-500 text-[12px] font-normal'>Invalid Address.</label>}
+			{address && (getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && <Alert className='mb-4 mt-4' showIcon message='The substrate address has been changed to Kusama address.'/> }
 
 			{!loading ? <div className='mt-6 grid grid-cols-2 max-lg:grid-cols-1 gap-6'>
 				{delegatesData.sort((a, b) => b.active_delegation_count - a.active_delegation_count).map((delegate, index) => <DelegateCard trackNum={trackDetails?.trackId} key={ index }  delegate={ delegate } />)}

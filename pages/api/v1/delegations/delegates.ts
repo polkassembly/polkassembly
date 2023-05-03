@@ -15,18 +15,21 @@ import { IDelegate } from '~src/types';
 
 export const getDelegatesData = async (network: string, address?: string) => {
 	if(!network || !isOpenGovSupported(network)) return [];
-	if(address && !(getEncodedAddress(String(address), network) || Web3.utils.isAddress(String(address)))) return [];
+
+	const encodedAddr = getEncodedAddress(String(address), network);
+
+	if(address && !(encodedAddr || Web3.utils.isAddress(String(address)))) return [];
 
 	const subsquidFetches: {[index:string]: any} = {};
 
 	const currentDate = new Date();
 
-	if(address) {
-		subsquidFetches[address] = fetchSubsquid({
+	if(encodedAddr) {
+		subsquidFetches[encodedAddr] = fetchSubsquid({
 			network,
 			query: RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS,
 			variables : {
-				address: String(address),
+				address: String(encodedAddr),
 				createdAt_gte: new Date(currentDate.getTime() - (30 * 24 * 60 * 60 * 1000)).toISOString() // 30 days ago
 			}
 		});
@@ -55,11 +58,13 @@ export const getDelegatesData = async (network: string, address?: string) => {
 		const address = Object.keys(subsquidFetches)[index];
 		if(!address) continue;
 
+		const isNovaWalletDelegate = Boolean(novaDelegates.find((novaDelegate) => novaDelegate.address === address));
+
 		const newDelegate: IDelegate = {
 			active_delegation_count: delegationCount,
 			address,
-			bio: novaDelegates[index].longDescription,
-			isNovaWalletDelegate: Boolean(novaDelegates.find((novaDelegate) => novaDelegate.address === address)),
+			bio: isNovaWalletDelegate ? novaDelegates[index].longDescription : '',
+			isNovaWalletDelegate,
 			name: novaDelegates[index].name,
 			voted_proposals_count: votesCount
 		};

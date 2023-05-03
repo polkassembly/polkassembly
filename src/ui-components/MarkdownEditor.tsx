@@ -13,7 +13,6 @@ import HelperTooltip from 'src/ui-components/HelperTooltip';
 import { useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-import getMentionedUsernames from '~src/api-utils/getMentionedUsernames';
 import debounce from 'lodash/debounce';
 
 const StyledTextArea = styled.div`

@@ -54,7 +54,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 	}, []);
 
 	return <div className={`${className} w-full flex flex-col`}>
-		<label className='mb-[2px] flex items-center text-sm justify-between'>
+		<label className='mb-[2px] flex items-center text-sm'>
 			{label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> }
 			{address && withBalance && <span><Balance address={address} onChange={onAccountBalanceChange} /></span>
 			}
@@ -97,6 +97,7 @@ export default styled(BalanceInput)`
 background:#E5007A;
 color:white;
 font-size:12px;
+border: 1px solid #E5007A; 
 }
 .placeholderColor .ant-input-number .ant-input-number-input{
   color:#7c899b !important;

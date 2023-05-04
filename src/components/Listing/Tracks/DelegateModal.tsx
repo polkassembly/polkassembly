@@ -340,7 +340,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 						<Form
 							form={form}
 							disabled={loading}
-						><div className=''>
+						>
+              <div className=''>
 								<label className='text-sm text-[#485F7D] mb-[2px]'>Your Address</label>
 								<div className='px-[6px] py-[6px] border-solid rounded-[4px] border-[1px] cursor-not-allowed h-[40px] bg-[#f6f7f9] border-[#D2D8E0] text-[#7c899b] text-sm font-normal'>
 									<Address address={delegationDashboardAddress} identiconSize={26} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
@@ -356,7 +357,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 								skipFormatCheck={true}
 								inputClassName='text-[#7c899b] font-normal text-sm'
 							/>
-							<div className='flex justify-between items-center mt-6 cursor-pointer' onClick={() => {
+							<div className='flex justify-between items-center mt-6 cursor-pointer -mb-1 text-[#485F7D]' onClick={() => {
 								setBnBalance(availableBalance);
 								form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));
 							}}>
@@ -364,7 +365,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 									<Balance address={delegationDashboardAddress} onChange={handleOnBalanceChange}/></span></div>
 							<BalanceInput
 								placeholder={'Enter balance'}
-								className='mt-1 text-[#485F7D] text-sm font-normal'
+								className='mt-[2px] text-[#485F7D] text-sm font-normal'
 								address={delegationDashboardAddress}
 								onAccountBalanceChange={handleOnBalanceChange}
 								onChange={(balance) => setBnBalance(balance)}

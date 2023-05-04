@@ -346,7 +346,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								helpText={'Amount of you are willing to lock for this vote.'}
 								placeholder={'123'}
 								onChange={onBalanceChange}
-								inputClassName='text-[#7c899b] text-sm text-red-100'
+								inputClassName='text-[#7c899b] text-sm'
 							/>
 
 							{

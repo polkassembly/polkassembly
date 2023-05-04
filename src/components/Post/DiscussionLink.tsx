@@ -22,7 +22,7 @@ const DiscussionLink: FC<IDiscussionLinkProps> = (props) => {
 			link: '',
 			text: ''
 		};
-		if (postData && postData.post_link) {
+		if (postData?.post_link) {
 			const type = postData.post_link?.type;
 			const id = postData.post_link?.id;
 			if (!isOffchainPost) {
@@ -33,25 +33,63 @@ const DiscussionLink: FC<IDiscussionLinkProps> = (props) => {
 					latestState.link = `/grant/${id}`;
 					latestState.text = `Grant #${id}`;
 				}
-				console.log(type, id);
 			} else {
-				if(type === 'referendum') {
+				switch(type) {
+				case 'referendums': {
 					latestState.link = `/referendum/${id}`;
 					latestState.text = `Referendum #${id}`;
-				} else if (type === 'motion') {
+					break;
+				}
+				case 'referendums_v2': {
+					latestState.link = `/referenda/${id}`;
+					latestState.text = `Referenda #${id}`;
+					break;
+				}
+				case 'council_motions': {
 					latestState.link = `/motion/${id}`;
 					latestState.text = `Motion #${id}`;
-				} else if (type === 'treasuryProposal') {
+					break;
+				}
+				case 'treasury_proposals': {
 					latestState.link = `/treasury/${id}`;
 					latestState.text = `Treasury Proposal #${id}`;
-				} else if (type === 'democracy_proposals') {
+					break;
+				}
+				case 'democracy_proposals': {
 					latestState.link = `/proposal/${id}`;
 					latestState.text = `Proposal #${id}`;
+					break;
+				}
+				case 'tips': {
+					latestState.link = `/tip/${id}`;
+					latestState.text = `Tip #${id}`;
+					break;
+				}
+				case 'child_bounties': {
+					latestState.link = `/child_bounty/${id}`;
+					latestState.text = `Child Bounty #${id}`;
+					break;
+				}
+				case 'bounties': {
+					latestState.link = `/bounty/${id}`;
+					latestState.text = `Bounty #${id}`;
+					break;
+				}
+				case 'fellowship_referendums': {
+					latestState.link = `/member-referenda/${id}`;
+					latestState.text = `Member referenda #${id}`;
+					break;
+				}
+				case 'tech_committee_proposals': {
+					latestState.link = `/tech/${id}`;
+					latestState.text = `Tech. Comm. Proposal #${id}`;
+					break;
+				}
 				}
 			}
 		}
 		setLatestState(latestState);
-	}, [postData, isOffchainPost]);
+	}, [postData.post_link, isOffchainPost]);
 
 	return (
 		<>

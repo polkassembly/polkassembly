@@ -12,15 +12,25 @@ import { MessageType } from '~src/auth/types';
 import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
-import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
+import { getFirestoreProposalType, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import { isDataExist } from '../../posts/on-chain-post';
+import { getTopicFromFirestoreData, isDataExist } from '../../posts/on-chain-post';
+import { getUpdatedAt } from '../../posts/off-chain-post';
+import { firestore_db } from '~src/services/firebaseInit';
 
 export interface ILinkPostStartResponse {
     title: string;
     description: string;
+	created_at: Date | string;
+	last_edited_at?: Date | string;
+	proposer?: string;
+	username?: string;
+	topic?: {
+		name: string;
+	};
+	tags?: string[];
 }
 
 const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req, res) => {
@@ -45,8 +55,12 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req
 	if (!isOffChainPost && !isOnChainPost) return res.status(400).json({ message: `The post type of the name "${postType}" does not exist.` });
 
 	const linkPostRes: ILinkPostStartResponse = {
+		created_at: '',
 		description: '',
-		title: ''
+		proposer: '',
+		tags: [],
+		title: '',
+		username: ''
 	};
 	const postDocRef = postsByTypeRef(network, strProposalType).doc(String(postId));
 	const postDoc = await postDocRef.get();
@@ -62,6 +76,23 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req
 		}
 		linkPostRes.title = postData?.title;
 		linkPostRes.description = postData?.content;
+		linkPostRes.username = postData?.username;
+		linkPostRes.topic = getTopicFromFirestoreData(postData, ProposalType.DISCUSSIONS);
+		linkPostRes.last_edited_at = getUpdatedAt(postData);
+		linkPostRes.created_at = postData?.created_at && postData?.created_at?.toDate? postData?.created_at?.toDate(): '';
+		if (postData?.tags && Array.isArray(postData?.tags)) {
+			linkPostRes.tags = postData?.tags;
+		}
+		const addressDocs = await firestore_db.collection('addresses').where('user_id', '==', user.id).where('default', '==', true).limit(1).get();
+		if (addressDocs && addressDocs.size > 0) {
+			const doc = addressDocs.docs[0];
+			if (doc && doc.exists && doc.data()) {
+				const data = doc.data();
+				if (data) {
+					linkPostRes.proposer = data.address;
+				}
+			}
+		}
 	} else {
 		const subsquidProposalType = getSubsquidProposalType(strProposalType as any);
 
@@ -89,7 +120,7 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req
 		const preimage = post?.preimage;
 		if(!post || (!post?.proposer && !preimage?.proposer)) return res.status(500).json({ message: 'Proposer address is not present in subsquid response.' });
 
-		const proposerAddress = post.proposer || post.preimage?.proposer;
+		const proposerAddress = post.proposer || post.preimage?.proposer || post?.curator;
 
 		const substrateAddress = getSubstrateAddress(proposerAddress);
 		if(!substrateAddress)  return res.status(500).json({ message: 'Something went wrong while getting encoded address corresponding to network' });
@@ -106,6 +137,14 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req
 			if (postData?.content) {
 				linkPostRes.description = postData?.content;
 			}
+			if (postData?.username) {
+				linkPostRes.username = postData?.username;
+			}
+			linkPostRes.topic = getTopicFromFirestoreData(postData, getFirestoreProposalType(post.type) as any);
+			linkPostRes.last_edited_at = getUpdatedAt(postData);
+			if (postData?.tags && Array.isArray(postData?.tags)) {
+				linkPostRes.tags = postData?.tags;
+			}
 		}
 		if (!linkPostRes.title) {
 			linkPostRes.title = preimage?.method;
@@ -113,6 +152,10 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req
 		if (!linkPostRes.description) {
 			linkPostRes.description = post.description || preimage?.proposedCall?.description;
 		}
+		if (!linkPostRes.proposer) {
+			linkPostRes.proposer = proposerAddress;
+		}
+		linkPostRes.created_at = post.createdAt;
 	}
 
 	return res.status(200).json(linkPostRes);

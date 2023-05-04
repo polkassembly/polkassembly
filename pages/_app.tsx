@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Poppins, Roboto_Mono, Work_Sans } from '@next/font/google';
+import { Poppins, Roboto_Mono, Work_Sans } from 'next/font/google';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import Image from 'next/image';

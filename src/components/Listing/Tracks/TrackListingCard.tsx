@@ -68,7 +68,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 	];
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue`}>
+		<div className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue `}>
 			<div className='flex items-center justify-between mb-10'>
 				<div>
 					<h1 className='dashboard-heading'>Referenda</h1>

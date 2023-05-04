@@ -95,6 +95,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					},
 					content,
 					created_at: new Date(),
+					history: [],
 					id: data.id,
 					replies: [],
 					sentiment:isSentimentPost? sentiment : 0,

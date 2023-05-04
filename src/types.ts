@@ -225,13 +225,19 @@ export interface NetworkEvent {
   user_id: number
 }
 
+export interface ICommentHistory{
+  content: string,
+  created_at: Date,
+  sentiment: number | 0,
+}
 export interface PostComment {
   user_id: number,
   content: string,
   created_at: Date,
+  history: ICommentHistory[],
   id: string,
   updated_at: Date,
-  sentiment: number|0;
+  sentiment: number | 0;
   username: string,
   user_profile_img: string;
 }

@@ -4,7 +4,7 @@
 
 import { ClockCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { Divider, Dropdown, MenuProps } from 'antd';
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { poppins } from 'pages/_app';
 
@@ -15,6 +15,8 @@ import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon } 
 import Link from 'next/link';
 import HelperTooltip from './HelperTooltip';
 import styled from 'styled-components';
+import { ICommentHistory } from '~src/types';
+import CommentHistoryModal from './CommentHistoryModal';
 
 const Styled = styled.div`
     padding:0;
@@ -59,11 +61,13 @@ interface ICreationLabelProps {
   sentiment?:number;
   commentSource?:'polkassembly' | 'subsquare';
   cid?:string;
+  history: ICommentHistory[];
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-	const { className, children, created_at, text, username, defaultAddress, topic,sentiment,commentSource='polkassembly', cid } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic,sentiment,commentSource='polkassembly', cid, history } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
+	const [openModal, setOpenModal] = useState<boolean>(false);
 
 	const items : MenuProps['items']=[
 		sentiment === 1 ? { key:1,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely Against</div> }:null,
@@ -98,8 +102,12 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				&nbsp;
 					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 				</>}
-				{created_at && <span className='flex items-center'> <ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>}
+				{created_at && <span className='flex items-center'><ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>}
 				{children}
+				{history?.length > 0 && <div className='flex items-center'>
+					<Divider className='ml-2' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+					<span className='text-[10px] text-navBlue border-0 border-solid border-b-[1px] leading-[10px] cursor-pointer' onClick={() => setOpenModal(true)}>Edit History</span>
+				</div>}
 			</div>
 		</div>
 		{sentiment===1 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center  min-[320px]:mr-2'><AgainstIcon className='min-[320px]:items-start' /></Dropdown>}
@@ -112,6 +120,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			<HelperTooltip text={<span>This comment is imported from <span className='dark-pink'>Subsqaure</span></span>} placement={'leftTop'} bgColor='#FCE5F2' />
 		</Styled>
 		}
+		<CommentHistoryModal open={openModal} setOpen={setOpenModal} history={history} defaultAddress={defaultAddress} username={username}/>
 	</div>;
 };
 

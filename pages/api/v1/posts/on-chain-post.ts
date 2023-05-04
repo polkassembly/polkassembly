@@ -307,17 +307,19 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 	const commentsPromise = commentsSnapshot.docs.map(async (doc) => {
 		if (doc && doc.exists) {
 			const data = doc.data();
+			const history = data?.history.length > 0 ? data.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
 			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
 			const commentsReactionsSnapshot = await commentDocRef.collection('comment_reactions').get();
 			const comment_reactions = getReactions(commentsReactionsSnapshot);
 			const comment = {
 				comment_reactions: comment_reactions,
 				content: data.content,
-				created_at: data.created_at?.toDate? data.created_at.toDate(): data.created_at,
+				created_at: data.created_at?.toDate ? data.created_at.toDate(): data.created_at,
+				history: history,
 				id: data.id,
 				proposer: '',
 				replies: [] as any[],
-				sentiment:data.sentiment||0,
+				sentiment:data.sentiment || 0,
 				updated_at: getUpdatedAt(data),
 				user_id: data.user_id || data.user_id,
 				username: data.username

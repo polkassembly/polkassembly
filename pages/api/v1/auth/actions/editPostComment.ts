@@ -11,6 +11,8 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
+import firebaseAdmin from '~src/services/firebaseInit';
+import { ICommentHistory } from '~src/types';
 
 const handler: NextApiHandler< MessageType> = async (req, res) => {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
@@ -18,7 +20,7 @@ const handler: NextApiHandler< MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType,sentiment } = req.body;
+	const { userId, commentId, content, postId, postType, sentiment } = req.body;
 	if(!userId || !commentId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(postType);
@@ -39,11 +41,24 @@ const handler: NextApiHandler< MessageType> = async (req, res) => {
 		.doc(String(commentId));
 
 	const commentDoc = await commentRef.get();
+
 	if(!commentDoc.exists) return res.status(404).json({ message: 'Comment not found' });
-	if(user.id !== commentDoc.data()?.user_id) return res.status(403).json({ message: messages.UNAUTHORISED });
+	const commentData = commentDoc.data();
+	if(user.id !== commentData?.user_id) return res.status(403).json({ message: messages.UNAUTHORISED });
+
+	const newHistory: ICommentHistory = {
+		content: commentData?.content,
+		created_at: commentData?.created_at?.toDate? commentData?.created_at.toDate(): commentData?.created_at,
+		sentiment: commentData?.sentiment || 0
+	};
+
+	const history = commentData?.history && Array.isArray(commentData?.history)
+		? firebaseAdmin.firestore.FieldValue.arrayUnion(newHistory)
+		: new Array(newHistory);
 
 	commentRef.update({
 		content,
+		history,
 		sentiment,
 		updated_at: last_comment_at
 	}).then(() => {

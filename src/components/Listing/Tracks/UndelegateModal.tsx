@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { Alert, Button, Form, Modal, Slider, Spin } from 'antd';
+import { Alert, Button, Form, Modal, Spin } from 'antd';
 
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -13,7 +13,6 @@ import { NotificationStatus } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 
-import LockIcon from '~assets/icons/lock.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import UndelegateProfileIcon from '~assets/icons/undelegate-gray-profile.svg';
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
@@ -24,6 +23,10 @@ import DelegationSuccessPopup from './DelegationSuccessPopup';
 import { chainProperties } from '~src/global/networkConstants';
 import Address from '~src/ui-components/Address';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { APPNAME } from '~src/global/appName';
+import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
+import { isWeb3Injected } from '@polkadot/extension-dapp';
 
 const ZERO_BN = new BN(0);
 
@@ -35,9 +38,8 @@ interface Props {
   setOpen: (pre:boolean) => void;
   conviction: number;
   balance : BN;
-  setIsRefresh: (pre: boolean) => void;
 }
-const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, setIsRefresh }: Props ) => {
+const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance }: Props ) => {
 
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkContext();
@@ -92,9 +94,38 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 	const handleSubmit = async () => {
 
-		setLoading(true);
+		if (!api || !apiReady) return;
 
-		if (!api || !apiReady) {
+		setLoading(true);
+		const chosenWallet = localStorage.getItem('delegationWallet');
+
+		const injectedWindow = window as Window & InjectedWindow;
+
+		const wallet = isWeb3Injected
+			? injectedWindow.injectedWeb3[String(chosenWallet)]
+			: null;
+
+		if (!wallet) {
+			return;
+		}
+
+		let injected: Injected | undefined;
+
+		try {
+			injected = await new Promise((resolve, reject) => {
+				const timeoutId = setTimeout(() => {
+					reject(new Error('Wallet Timeout'));
+				}, 60000); // wait 60 sec
+				if(wallet && wallet.enable) {
+					wallet.enable(APPNAME)
+						.then((value) => { clearTimeout(timeoutId); resolve(value); })
+						.catch((error) => { reject(error); });
+				}
+			});
+		} catch (err) {
+			console.log(err?.message);
+		}
+		if (!injected) {
 			return;
 		}
 
@@ -110,8 +141,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							message: 'Undelegate successful.',
 							status: NotificationStatus.SUCCESS
 						});
-
-						setIsRefresh(true);
 						setLoading(false);
 						setOpenSuccessPopup(true);
 						setOpen(false);
@@ -214,45 +243,27 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 								</div>
 							</div>
 
-							<div className='mb-2 mt-2 border-solid border-white'>
-								<label  className='text-[#485F7D] flex items-center text-sm'>Conviction</label>
+							<div className='mb-[2px] mt-2 border-solid border-white'>
+								<label  className='text-[#485F7D] flex items-center text-sm'>Conviction<span>
+									<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
+								</span></label>
 
-								<div className='px-[2px] mt-4'>
-									<Slider
-										tooltip={{ open: false }}
-										disabled={true}
-										className='text-[12px] mt-[9px]'
-										trackStyle={{ backgroundColor:'#FF49AA' }}
-										step={7}
-										marks={{
-											1:{ label:<div>0.1x</div>, style: { color: '#adacb5', fontSize:'12px', marginTop:'16px' } },
-											2:{ label:<div>1x</div>, style: { color: '#adacb5', fontSize:'12px', marginTop:'16px' } },
-											3:{ label:<div>2x</div> , style: { color: '#adacb5', fontSize:'12px', marginTop:'16px' } },
-											4:{ label:<div>3x</div>, style: { color: '#adacb5', fontSize:'12px', marginTop:'16px' } },
-											5:{ label:<div>4x</div>, style: { color: '#adacb5', fontSize:'12px', marginTop:'16px' } },
-											6:{ label:<div>5x</div>, style: { color: '#adacb5', fontSize:'12px', marginTop:'16px' } },
-											7:{ label:<div>6x</div>, style: { color: '#adacb5', fontSize:'12px',marginTop:'16px' } }  }}
-										min={1}
-										max={7}
-										defaultValue={conviction+1}
-									/></div>
 							</div>
-							<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
-								<div className='flex gap-[10px] items-center justify-center text-[#b8c2ce] text-sm'> <LockIcon/><span>Locking period</span></div>
-								<div className='text-[#8894a4] font-medium text-sm flex justify-center items-center' >
+							<div className='rounded-md flex items-center justify-between track-[0.0025em]'>
+								<div className='text-[#7c899b] text-sm flex justify-center items-center' >
 									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enactment period`}
 								</div>
 							</div>
 							<div className='mt-6 flex justify-start items-center gap-2 mb-6'>
 								<label className='text-[#485F7D] text-sm tracking-[0.0025em] mb-[2px]'>Track:</label>
-								<span className='text-[#243A57] text-sm tracking-medium'>{trackName} #{trackNum}</span>
+								<span className='text-[#7c899b] text-sm tracking-medium'>{trackName} #{trackNum}</span>
 							</div>
 						</Form>
 
 					</div>
 				</Spin>
 			</Modal>
-			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={balance} setIsRefresh={setIsRefresh}/>
+			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={balance}/>
 		</>
 	);
 };

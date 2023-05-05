@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Input, Skeleton } from 'antd';
+import { Alert, Button, Input, Skeleton, message } from 'antd';
 
 import dynamic from 'next/dynamic';
 import DelegateCard from './DelegateCard';
@@ -39,6 +39,7 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const { network } = useNetworkContext();
+	const [messageApi, contextHolder] = message.useMessage();
 
 	const handleClick = () => {
 
@@ -66,24 +67,28 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 
 	};
 
+	const success = () => {
+		messageApi.open({
+			content: 'You have already delegated for this track',
+			duration: 10,
+			type: 'success'
+		});
+	};
+
 	useEffect(() => {
 		getData();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, delegationDashboardAddress, api, apiReady]);
 
-	useEffect(() => {
-		disabled && setExpandProposals(false);
-	}, [disabled]);
-
-	return <div className=  {`${className} ${disabled && 'cursor-not-allowed' } rounded-[14px] bg-white py-6 px-[37px] mt-[22px]`}>
-		<div onClick={() => !disabled && setExpandProposals(!expandProposals)} className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between ${disabled ? 'cursor-not-allowed': 'cursor-pointer' }`}>
+	return <div className=  {`${className} rounded-[14px] bg-white py-6 px-[37px] mt-[22px]`}>
+		<div onClick={() => {disabled && !expandProposals && success();setExpandProposals(!expandProposals);} } className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
 			<div  className='flex jutify-center items-center gap-2'>
 				<DelegatedIcon className='mr-[4px]'/>
 				<span className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57]'>
           Delegate
 				</span>
 			</div>
-			<div  className={`${!disabled ? 'cursor-pointer' :'cursor-not-allowed' } p-2`}>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
+			<div  className='p-2'>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}{contextHolder}</div>
 		</div>
 		{expandProposals && <div className='mt-[24px]'>
 			<h4 className='text-sm font-normal text-[#243A57] mb-4'>

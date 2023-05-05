@@ -89,6 +89,7 @@ import BigSpenderSVG from '~assets/delegation-tracks/big-spender.svg';
 import BigTipperSVG from '~assets/delegation-tracks/big-tipper.svg';
 import SmallSpenderSVG from '~assets/delegation-tracks/small-spender.svg';
 import DelegationSVG from '~assets/sidebar/delegation-icon.svg';
+import DelegationNewSVG from '~assets/sidebar/new-delegation.svg';
 
 export const OverviewIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={OverviewSVG} {...props} />
@@ -386,4 +387,7 @@ export const SmallSpenderTrackIcon = (props: Partial<CustomIconComponentProps>) 
 );
 export const DelegationSidebarIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DelegationSVG} {...props} />
+);
+export const DelegationSidebarNewIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DelegationNewSVG} {...props} />
 );

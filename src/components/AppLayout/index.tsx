@@ -276,7 +276,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	];
 
 	if(network === 'kusama'){
-		gov2OverviewItems.splice(1, 0, getSiderMenuItem(<div className='flex gap-2 items-center'>Delegation <span className='px-[6px] py-[2px] flex justify-center items-center text-white bg-[#28E774] rounded-[20px] text-xs'>New</span></div>, '/delegation', <DelegationSidebarIcon className= 'text-white -ml-1 mr-1'/>));
+		gov2OverviewItems.splice(1, 0, getSiderMenuItem(<div className='flex gap-2 items-center'>Delegation <span className='px-[6px] py-[2px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-xs'>New</span></div>, '/delegation',  !sidedrawer ? <div className='flex flex-col items-center gap-0 delegation'><DelegationSidebarIcon className= 'text-white -ml-1 mr-1'/>
+			<span className='px-[4px] py-[1px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-[10px] -mt-1 -ml-1 mr-1 opacity'>New</span>
+		</div> : <DelegationSidebarIcon className= 'text-white -ml-1 mr-1'/> ));
 	}
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
@@ -454,6 +456,15 @@ export default styled(AppLayout)`
 	font-size: 18px !important;
 }
 
+.ant-menu-item .delegation{
+font-size: 18px !important;
+}
+.ant-menu-item .delegation .opacity{
+opacity:1 !important;
+margin-top: -17px !important; 
+}
+
+
 .ant-menu-item-selected {
 	background: #fff !important;
 
@@ -463,7 +474,7 @@ export default styled(AppLayout)`
 }
 
 .ant-menu-title-content:hover {
-	color: var(--pink_primary) !important;
+	// color: var(--pink_primary) !important;
 }
 
 .ant-menu-item::after {
@@ -496,6 +507,9 @@ export default styled(AppLayout)`
 	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 }
 
+.sidebar .ant-menu-item-selected .opacity {
+  background-color: var(--pink_primary) !important;
+}
 .ant-menu-inline-collapsed-noicon {
 	color: var(--navBlue);
 }

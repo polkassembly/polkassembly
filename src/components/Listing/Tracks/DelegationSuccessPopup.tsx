@@ -16,6 +16,7 @@ import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { useRouter } from 'next/router';
 
 interface Props{
   className?: string;
@@ -26,13 +27,15 @@ interface Props{
   isDelegate?: boolean;
   balance: BN;
   trackNum?: number;
-  setIsRefresh?: (pre: boolean) => void;
+  conviction?: number;
 
 }
 
-const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, setIsRefresh }: Props) => {
+const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction }: Props) => {
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
+	const router = useRouter();
+	console.log(tracks);
 
 	useEffect(() => {
 		if(!network) return ;
@@ -50,7 +53,7 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 		className={`${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'}`}
 		wrapClassName={className}
 		closeIcon={isDelegate ? <CloseIcon/> : <UndelegateCloseIcon/>}
-		onCancel={() => {setOpen(false); setIsRefresh && setIsRefresh(false);}}
+		onCancel={() => {setOpen(false); router.reload();}}
 		centered
 		footer={false}
 		maskClosable={false}
@@ -67,12 +70,13 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 							displayInline={true}/>
 					</span>
 					</div>}
+					<div className='flex gap-4 text-sm text-[#485F7D]'> Conviction:<span className='text-[#243A57] font-medium'>{conviction}x</span> </div>
 					{tracks && <div className='flex gap-[35px] text-sm text-[#485F7D]'>Track(s):<span>
 						<div className={`flex flex-col gap-1 min-h-[50px] max-h-[100px] text-[#243A57] pr-2 font-medium ${tracks.length > 4 && 'overflow-y-scroll'}`}>
 							{tracks.map((track, index) => (<div key={index}>{track} #{networkTrackInfo[network][track.toString()].trackId}</div>))}</div>
 					</span>
-					</div>}</div>
-			</div>}
+					</div>}
+				</div></div>}
 		</div>
 
 	</Modal>;

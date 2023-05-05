@@ -60,7 +60,11 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 		const diffDays = diffDuration.days();
 		const diffHours = diffDuration.hours();
 		const diffMinutes = diffDuration.minutes();
-		return (`${diffDays !== 0 ? diffDays+' d ' : ''} : ${diffHours} h : ${diffMinutes} m `);
+		if(!diffDays){
+			return (`${diffHours} h : ${diffMinutes} m `);
+		}
+		return (`${diffDays} d  : ${diffHours} h : ${diffMinutes} m `);
+
 	};
 
 	const remainingTime = convertRemainingTime(decision.periodEndsAt);
@@ -162,7 +166,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 						</div>}
 					</div>
 				</div>
-				<Button className='flex justify-center mt-2 gap-2 border-none bg-white shadow-none' disabled={status.includes(ETrackDelegationStatus.Delegated)}>
+				<Button className={`flex justify-center mt-2 gap-2 border-none bg-white shadow-none ${status.includes(ETrackDelegationStatus.Delegated) && 'opacity-50'}`} disabled={status.includes(ETrackDelegationStatus.Delegated)}>
 					<VoteIcon/><span className='text-pink_primary text-sm font-medium'>Cast Vote</span>
 				</Button>
 			</div>

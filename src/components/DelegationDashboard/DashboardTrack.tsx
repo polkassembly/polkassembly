@@ -88,7 +88,6 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [ openUndelegateModal, setOpenUndelegateModal ] = useState<boolean>(false);
 	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
-	const [isRefresh, setIsRefresh] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 
@@ -176,14 +175,14 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			setShowTable(false);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status, address, isRefresh]);
+	}, [status, address]);
 
 	useEffect(() => {
 
 		getData();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, isRefresh]);
+	}, [address]);
 
 	return <div className={`${className}`}>
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>
@@ -248,7 +247,6 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 		{ status.length > 0  ? <div>
 			<Delegate
-				className={`${status.includes(ETrackDelegationStatus.Delegated) && 'opacity-75'}`}
 				disabled={status.includes(ETrackDelegationStatus.Delegated)}
 				trackDetails={trackDetails}
 			/>
@@ -259,7 +257,6 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 		<SignupPopup closable={false} setLoginOpen={setOpenLoginModal} modalOpen={openSignupModal} setModalOpen={setOpenSignupModal} isModal={true} isDelegation={true} />
 
 		{rowData.filter((row ) => row.delegatedTo !== address ).length > 0 && <UndelegateModal
-			setIsRefresh={setIsRefresh}
 			balance={new BN(rowData.filter((row ) => row.delegatedTo !== address )[0]?.balance)}
 			open={openUndelegateModal}
 			setOpen={setOpenUndelegateModal}
@@ -267,7 +264,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			trackNum={trackDetails?.trackId}
 			conviction={rowData.filter((row ) => row.delegatedTo !== address )[0]?.lockPeriod}
 		/>}
-		<DelegateModal open={openDelegateModal} setOpen={setOpenDelegateModal} trackNum={trackDetails?.trackId} setIsRefresh={setIsRefresh}  />
+		<DelegateModal open={openDelegateModal} setOpen={setOpenDelegateModal} trackNum={trackDetails?.trackId} />
 	</div>;
 };
 

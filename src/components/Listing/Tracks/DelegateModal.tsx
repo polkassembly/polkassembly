@@ -46,10 +46,9 @@ interface Props {
   defaultTarget?: string;
   open?: boolean;
   setOpen?: (pre:boolean) => void;
-  setIsRefresh?: (pre: boolean) => void;
 }
 
-const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setIsRefresh }: Props ) => {
+const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Props ) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useContext(NetworkContext);
 	const [form] = Form.useForm();
@@ -70,7 +69,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 	const [trackArr, setTrackArr] = useState<any[]>([]);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [defaultOpen, setDefaultOpen] = useState<boolean>(false);
+	const [checkedTrack, setCheckedTrack] = useState<any>();
 	const router = useRouter();
+	const [checkedTrackArr, setCheckedTrackArr] = useState<string[]>([]);
 
 	useEffect(() => {
 
@@ -89,16 +90,20 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 	};
 
 	useEffect(() => {
-
-		if(!delegationDashboardAddress || !target || !getEncodedAddress(target, network) || !checkedList || !checkedList.length || isNaN(conviction) ||
+		if(!delegationDashboardAddress || !target || !getEncodedAddress(target, network) || isNaN(conviction) ||
 			!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN)) return;
+		if(!checkedTrack && !checkedList) return;
+		if(!checkedTrack && checkedList.length === 0) return;
 
 		validateForm();
 
 		setLoading(true);
+		const checkedArr = checkedTrack && checkedTrack.name && checkedList.filter((item) => item === checkedTrack?.name).length === 0 ? [checkedTrack?.name, ...checkedList]: [...checkedList];
 
-		const txArr = checkedList.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
+		setCheckedTrackArr(checkedArr);
+		const txArr =  checkedArr?.map((trackName) => {console.log(trackName); return api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString());});
 		const delegateTxn = api.tx.utility.batchAll(txArr);
+		console.log(delegateTxn.toJSON(),txArr);
 
 		(async () => {
 			const info = await delegateTxn.paymentInfo(delegationDashboardAddress);
@@ -107,7 +112,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 			setShowAlert(true);
 		})();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [delegationDashboardAddress, api, apiReady, bnBalance, checkedList, conviction, network, target]);
+	}, [delegationDashboardAddress, api, apiReady, bnBalance, checkedList, conviction, network, target, checkedTrack]);
 
 	const getData = async() => {
 		if (!api || !apiReady ) return;
@@ -132,8 +137,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 				});
 				setTrackArr(tracks);
 				const defaultCheck = tracks.filter((item) => item?.trackId === trackNum);
-				defaultCheck.length > 0 && setIndeterminate(true);
-				defaultCheck.length > 0 && defaultCheck[0] && checkedList.filter((item) => item === defaultCheck[0]?.name)?.length === 0 && setCheckedList([...checkedList, defaultCheck[0].name]);
+				defaultCheck.length > 0 && defaultCheck?.[0] && setCheckedTrack(defaultCheck[0]);
 			}
 		}else{
 			console.log(error);
@@ -144,8 +148,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 	const onChange = (list: CheckboxValueType[]) => {
 		setCheckedList(list);
 		setIndeterminate(!!list.length && list.length < trackArr.length);
-		setCheckAll(list.length === trackArr.length);
-
+		setCheckAll( list.length === trackArr.length);
 	};
 
 	const onCheckAllChange = (e: CheckboxChangeEvent) => {
@@ -187,7 +190,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 	};
 
 	const handleSubmit = async () => {
-		if(!checkedList || !checkedList.length || !api || !apiReady) return;
+		if(!api || !apiReady) return;
+		if(!checkedTrack && !checkedList) return;
+		if(!checkedTrack && checkedList.length === 0) return;
 		setLoading(true);
 
 		const targetAddr = getEncodedAddress(target, network);
@@ -196,9 +201,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 			setLoading(false);
 			return;
 		}
+		const checkedArr = checkedTrack && checkedTrack.name && checkedList.filter((item) => item === checkedTrack?.name).length === 0 ? [checkedTrack?.name, ...checkedList]: [...checkedList];
+		setCheckedTrackArr(checkedArr);
 
-		const txArr = checkedList.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, targetAddr, conviction, bnBalance.toNumber()));
-
+		const txArr = checkedArr?.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
 		const delegateTxn = api.tx.utility.batchAll(txArr);
 
 		delegateTxn.signAndSend(delegationDashboardAddress, ({ status, events }: any) => {
@@ -210,10 +216,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 							message: 'Delegation successful.',
 							status: NotificationStatus.SUCCESS
 						});
-
-						setIsRefresh && setIsRefresh(true);
-
-						setLoading(false);
 						setOpenSuccessPopup(true);
 						setOpen ? setOpen?.(false) : setDefaultOpen(false);
 
@@ -271,16 +273,18 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 	}, [open]);
 
 	const handleDisabledDelegate = () => {
-		if(!checkedList || !checkedList.length || !api || !apiReady || loading || errorArr.length > 0){
+		if(!delegationDashboardAddress || !target || !getEncodedAddress(target, network) || isNaN(conviction) || !api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || errorArr.length > 0 || loading){
 			return true;
 		}
+		if(!checkedList && !checkedTrack){ return true;}
+		if(checkedList.length === 0 && !checkedTrack){ return true;}
 		return false;
 
 	};
 
 	const content = (<div className='flex flex-col'>
 		<Checkbox.Group className='flex flex-col h-[200px] overflow-y-scroll' onChange={onChange} value={checkedList} >
-			{trackArr?.map((track, index) => (
+			{trackArr?.filter(( item ) => item?.trackId !== trackNum)?.map((track, index) => (
 				<div
 					className={`${poppins.variable} ${poppins.className} text-sm tracking-[0.01em] text-[#243A57] flex gap-[13px] p-[8px]`}
 					key={index}
@@ -295,7 +299,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 	return (
 		<>
 			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm text-pink_primary hover:bg-pink_primary hover:text-white flex gap-0 items-center justify-center py-3 px-6 rounded-[4px]'
-				disabled={errorArr.length > 0 || !delegationDashboardAddress || !target || !getEncodedAddress(target, network) || !checkedList || !checkedList.length || isNaN(conviction) || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.lte(availableBalance)}
+				disabled={errorArr.length > 0 || !delegationDashboardAddress || !target || !getEncodedAddress(target, network) || !checkedList || !checkedList.length || isNaN(conviction) || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.lte(availableBalance) || loading}
 			>
 				<PlusOutlined/>
 				<span >Delegate</span>
@@ -426,8 +430,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 									<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Select available tracks</Checkbox>
 								</Popover>
 							</div>
-							{checkedList.length> 0 && <div className='flex flex-wrap gap-2 mt-0 mb-6 ' >
-								{checkedList.map((list, index) => (
+							{ <div className='flex flex-wrap gap-2 mt-0 mb-6 ' >
+								{checkedTrack && <div key={checkedTrack?.trackId} className='text-sm text-[#7c899b] py-2 px-3 border-[1px] border-solid border-[#D2D8E0] rounded-[20px] flex justify-center gap-2 items-center'>
+									{checkedTrack?.name}
+								</div>}
+								{checkedList.length> 0 && checkedList.filter((item) => item !== checkedTrack?.name).map((list, index) => (
 									<div key={index} className='text-sm text-[#7c899b] py-2 px-3 border-[1px] border-solid border-[#D2D8E0] rounded-[20px] flex justify-center gap-2 items-center'>
 										{list}
 										<span onClick={() => handleClose(String(list))} className='flex justify-center items-center'><CrossIcon/></span>
@@ -442,7 +449,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, setI
 				</Spin>
 
 			</Modal>
-			<DelegationSuccessPopup setIsRefresh={setIsRefresh} open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedList} address={target} isDelegate={true} balance={bnBalance} trackNum= {trackNum} />
+			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedTrackArr} address={target} isDelegate={true} balance={bnBalance} trackNum= {trackNum} conviction={conviction} />
 		</>
 	);
 };

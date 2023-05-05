@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import Post from 'src/components/Post/Post';
@@ -18,15 +19,7 @@ import SEOHead from '~src/global/SEOHead';
 import { useRouter } from 'next/router';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
 
-interface IReferendumPostProps {
-	data: IPostResponse;
-	error?: string;
-	network: string;
-	status?: number;
-}
-
 const proposalType = ProposalType.REFERENDUMS;
-
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -35,13 +28,21 @@ export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 		postId: id,
 		proposalType
 	});
-
-	return { props: { data, error, network ,status } };
+	const comments = await getSubSquareComments(proposalType, network, id);
+	const post = data && { ...data, comments: [...data.comments, ...comments] };
+	return { props: { error, network, post ,status } };
 };
+
+interface IReferendumPostProps {
+	post: IPostResponse;
+	error?: string;
+	network: string;
+	status?: number;
+}
 
 const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 
-	const { data: post, error , status, network } = props;
+	const { post, error , status, network } = props;
 	const { setNetwork } = useNetworkContext();
 	const { api, apiReady } = useApiContext();
 	const router = useRouter();
@@ -61,6 +62,7 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 
 	useEffect(() => {
 		setNetwork(props.network);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
 	if(isUnfinalized){

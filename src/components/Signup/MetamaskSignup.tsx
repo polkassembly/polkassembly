@@ -9,7 +9,6 @@ import {
 } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
@@ -31,15 +30,17 @@ interface Props {
   chosenWallet: Wallet;
   setDisplayWeb2: () => void;
   setWalletError: React.Dispatch<React.SetStateAction<string | undefined>>;
-  isModal?:boolean;
-  setSignupOpen?:(pre:boolean)=>void;
+  isModal?: boolean;
+  setSignupOpen?: (pre: boolean) => void;
+  setLoginOpen?: (pre: boolean) => void;
 }
 
 const MetamaskSignup: FC<Props> = ({
 	chosenWallet,
 	setDisplayWeb2,
 	isModal,
-	setSignupOpen
+	setSignupOpen,
+	setLoginOpen
 }) => {
 	const [error, setErr] = useState('');
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -53,6 +54,15 @@ const MetamaskSignup: FC<Props> = ({
 	const [loading, setLoading] = useState(false);
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
+
+	const handleClick=() => {
+		if(isModal && setSignupOpen && setLoginOpen){
+			setSignupOpen(false);
+			setLoginOpen(true);
+		}else{
+			router.push('/login');
+		}
+	};
 
 	const getAccounts = async (): Promise<undefined> => {
 		const ethereum = (window as any).ethereum;
@@ -284,9 +294,7 @@ const MetamaskSignup: FC<Props> = ({
 				<label className="text-md text-grey_primary">
 					Already have an account?
 				</label>
-				<Link href="/login" className="text-pink_primary text-md">
-					Login
-				</Link>
+				<div onClick={() => handleClick()} className='text-pink_primary text-md'>Login</div>
 			</div>
 		</article>
 	);

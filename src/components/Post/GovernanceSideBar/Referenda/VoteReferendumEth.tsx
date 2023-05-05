@@ -282,7 +282,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const VoteLock = ({ className }: { className?:string }) =>
 		<Form.Item className={className}>
-			<label  className='mb-3 flex items-center text-sm text-sidebarBlue'>
+			<label  className='flex items-center text-sm text-[#485F7D]'>
 				Vote lock
 				<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.' />
 			</label>
@@ -341,10 +341,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								<WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
 							</div>
 							<BalanceInput
+								className='text-sm font-normal text-[#485F7D]'
 								label={'Lock balance'}
 								helpText={'Amount of you are willing to lock for this vote.'}
 								placeholder={'123'}
 								onChange={onBalanceChange}
+								inputClassName='text-[#7c899b] text-sm'
 							/>
 
 							{
@@ -355,6 +357,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										address={address}
 										withBalance
 										onAccountChange={onAccountChange}
+										className='text-sm font-normal text-[#485F7D]'
 									/>
 									: !wallet? <FilteredError text='Please select a wallet.' />: null
 							}

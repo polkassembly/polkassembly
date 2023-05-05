@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
 import Post from 'src/components/Post/Post';
@@ -33,17 +34,19 @@ export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 		postId: id,
 		proposalType
 	});
-	return { props: { data, error, network, status } };
+	const comments = await getSubSquareComments(proposalType, network, id);
+	const post = data && { ...data, comments: [...data.comments, ...comments] };
+	return { props: {  error, network,post, status } };
 };
 
 interface IChildBountyPostProps {
-	data: IPostResponse;
+	post: IPostResponse;
 	error?: string;
 	network: string;
 	status?: number;
 }
 const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
-	const { data: post, error, network , status } = props;
+	const {  post, error, network , status } = props;
 
 	const { setNetwork } = useNetworkContext();
 	const router = useRouter();

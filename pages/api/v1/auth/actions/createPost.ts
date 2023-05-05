@@ -62,19 +62,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	};
 
 	const batch = firestore_db.batch();
-	tags.length > 0 && tags?.map((tag:string) => {
-		const tagRef = firestore_db.collection('tags').doc(tag);
-		const newTag:IPostTag={
-			name:tag.toLowerCase() ,
-			// eslint-disable-next-line sort-keys
-			last_used_at:new Date()
-		};
-		batch.set(tagRef, newTag, { merge: true });}
-	);
+	if (tags && Array.isArray(tags) && tags.length > 0) {
+		tags?.map((tag:string) => {
+			if (tags && typeof tags === 'string') {
+				const tagRef = firestore_db.collection('tags').doc(tag);
+				const newTag:IPostTag={
+					last_used_at: new Date(),
+					name: tag.toLowerCase()
+				};
+				batch.set(tagRef, newTag, { merge: true });
+			}
+		});
+	}
 
 	await postDocRef.set(newPost).then(() => {
 		res.status(200).json({ message: 'Post saved.', post_id: newID });
-		tags.length>0 && batch.commit();
+		if (tags && Array.isArray(tags) && tags.length > 0) {
+			batch.commit();
+		}
 		return;
 	}).catch((error) => {
 		// The document probably doesn't exist.

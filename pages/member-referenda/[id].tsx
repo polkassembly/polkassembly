@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC } from 'react';
 import Post from 'src/components/Post/Post';
@@ -33,18 +34,20 @@ export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 		postId: id,
 		proposalType
 	});
-	return { props: { data, error, network ,status } };
+	const comments = await getSubSquareComments(proposalType, network, id);
+	const post = data && { ...data, comments: [...data.comments, ...comments] };
+	return { props: {  error, network,post, status } };
 };
 
 interface IReferendaPostProps {
-	data: IPostResponse;
+	post: IPostResponse;
 	error?: string;
 	network: string;
 	status?: number;
 }
 
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
-	const { data: post, error , status } = props;
+	const { post, error , status } = props;
 	const { setNetwork } = useNetworkContext();
 	const router = useRouter();
 	const { api, apiReady } = useApiContext();
@@ -53,6 +56,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 
 	useEffect(() => {
 		setNetwork(props.network);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
 	useEffect(() => {

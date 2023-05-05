@@ -89,7 +89,13 @@ const CMDK = () => {
 							}),
 							...foldedMenu.map((m: any) => {
 								return {
-									children: m.name? m.name?.charAt(0) + m.name?.slice(1)?.toLowerCase(): '',
+									children: typeof m?.name === 'string'? m.name.split('_').map((str: string) => {
+										if (str === 'OPENGOV') {
+											return 'OpenGov';
+										} else {
+											return str?.charAt(0) + str?.slice(1)?.toLowerCase();
+										}
+									}).join(' '): '',
 									closeOnSelect: false,
 									icon: () => <MenuOutlined className='text-[#C2CFE0]' />,
 									id: m.name,
@@ -299,7 +305,7 @@ const getReferenda = (network: string) => {
 	}
 	return {
 		items,
-		name: 'REFERENDA'
+		name: 'OPENGOV_REFERENDA'
 	};
 };
 

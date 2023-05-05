@@ -297,9 +297,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 
 	return (
 		<>
-			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm text-pink_primary hover:bg-pink_primary hover:text-white flex gap-0 items-center justify-center py-3 px-6 rounded-[4px]'
-				disabled={errorArr.length > 0 || !delegationDashboardAddress || !target || !getEncodedAddress(target, network) || !checkedList || !checkedList.length || isNaN(conviction) || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.lte(availableBalance) || loading}
-			>
+			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm text-pink_primary hover:bg-pink_primary hover:text-white flex gap-0 items-center justify-center py-3 px-6 rounded-[4px]'>
 				<PlusOutlined/>
 				<span >Delegate</span>
 			</Button>}

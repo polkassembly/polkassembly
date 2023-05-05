@@ -474,7 +474,7 @@ margin-top: -17px !important;
 }
 
 .ant-menu-title-content:hover {
-	// color: var(--pink_primary) !important;
+	color: var(--pink_primary) !important;
 }
 
 .ant-menu-item::after {

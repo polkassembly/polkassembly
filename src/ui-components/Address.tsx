@@ -143,7 +143,6 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 			}
 			{!disableAddress && <div className='content cursor-pointer' onClick={async () => {
 				if (!disableAddressClick) {
-					console.log('here');
 					await fetchUsername();
 				}
 			}}>

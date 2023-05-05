@@ -17,51 +17,42 @@ import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 
 export const handleTracksIcon =  (index:string, size:number ) => {
-
-	if(index === 'Root' ){
+	switch(index){
+	case 'Root':
 		return <RootTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}else if(index === 'Treasurer'){
+	case 'Treasurer':
 		return <TreasurerTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}else if(index === 'Whitelisted Caller' ){
+	case 'Whitelisted Caller':
 		return <WhitelistedCallerTrackIcon style={{ fontSize: `${size}px` }}/>;
-	} else if(index === 'Lease Admin'){
+	case 'Lease Admin':
 		return <LeaseAdminTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}
-	else if(index ===  'General Admin' ){
+	case 'General Admin':
 		return <GeneralAdminTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}
-	else if(index === 'Staking Admin' ){
+	case 'Staking Admin':
 		return <StakingAdminTrackTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}else if( index === 'Fellowship Admin' ){
+	case 'Fellowship Admin':
 		return <FellowshipAdminTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}
-	else if( index === 'Small Tipper' ){
+	case 'Small Tipper':
 		return <SmallTipperTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}
-	else if( index === 'Medium Spender' ){
+	case 'Medium Spender':
 		return <MediumSpenderTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}
-	else if( index === 'Small Spender' ){
+	case 'Small Spender':
 		return <SmallSpenderTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}
-	else if( index === 'Auction Admin' ){
+	case 'Auction Admin':
 		return <AuctionAdminTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}
-	else if( index === 'Big Spender' ){
+	case 'Big Spender':
 		return <BigSpenderTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}
-	else if( index === 'Big Tipper' ){
+	case'Big Tipper':
 		return <BigTipperTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}
-	else if( index === 'Referendum Killer' ){
+	case 'Referendum Killer':
 		return <ReferendumKillerTrackIcon style={{ fontSize: `${size}px` }}/>;
-	}
-	else if( index === 'Referendum Canceller' ){
+	case 'Referendum Canceller':
 		return <ReferendumCancellerTrackIcon style={{ fontSize: `${size}px` }}/>;
+	default:
+		return null;
 	}
-
-	return null;
 };
+
 const GetColumns = (status :ETrackDelegationStatus) => {
 
 	const AllColumns: ColumnsType<ITrackDataType> = [

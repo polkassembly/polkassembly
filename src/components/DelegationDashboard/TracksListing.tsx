@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Radio, Skeleton, Table } from 'antd';
+import { Button, Radio, Table } from 'antd';
 
 import styled from 'styled-components';
 
@@ -194,7 +194,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 				<Radio disabled={loading}  className={`text-[#243A57B2] text-xs py-[6px] px-[12px] ${ETrackDelegationStatus.Received_Delegation === status && 'bg-[#FEF2F8] rounded-[26px]'}`} value={ETrackDelegationStatus.Received_Delegation}>Received delegation ({receivedDelegationCount})</Radio>
 			</Radio.Group>
 		</div>
-		{showTable  && status && delegationDashboardAddress ? <Table
+		{showTable  && status && delegationDashboardAddress && <Table
 			className='column'
 			columns = { GetColumns( status )}
 			dataSource= { rowsData }
@@ -207,7 +207,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 				};
 			}}
 		>
-		</Table>:<Skeleton/>}
+		</Table>}
 
 		{status === ETrackDelegationStatus.Delegated && delegatedCount === 0 && <div className='h-[550px] bg-white flex pt-[56px] items-center flex-col text-[258px] rounded-b-[14px]'>
 			<DelegatedIcon/>
@@ -215,12 +215,12 @@ const DashboardTrackListing = ({ className }: Props) => {
 				<h4 className='text-base font-medium tracking-[0.005em] mt-0'>No Delegated Tracks</h4>
 				<div className='text-sm tracking-[0.01em] font-normal mt-1 flex justify-center items-center max-md:flex-col'>
           You can see a track here once it has been delegated
-					<div  onClick={() => { setStatusValue(ETrackDelegationStatus.Undelegated); filterByStatus(ETrackDelegationStatus.Undelegated);} } className='text-[#E5007A] font-normal tracking-wide text-sm ml-[17px] flex items-center justify-center  max-md:mt-[10px] cursor-pointer' >
-						<DelegatedProfileIcon className='mr-[7px]'/>
+					<Button disabled={!api || !apiReady} onClick={() => { setStatusValue(ETrackDelegationStatus.Undelegated); filterByStatus(ETrackDelegationStatus.Undelegated);} } className={`text-[#E5007A] font-normal tracking-wide text-sm ml-[17px] flex items-center justify-center  max-md:mt-[10px] cursor-pointer border-none shadow-none ${!api || !apiReady && 'opacity-50'}`} >
+						<DelegatedProfileIcon className='mr-[7px]' />
 						<span className='mt-[-1px]'>
                Delegate
 						</span>
-					</div>
+					</Button>
 				</div>
 			</div>
 		</div>}

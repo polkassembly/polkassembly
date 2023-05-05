@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Input, Skeleton, message } from 'antd';
+import { Alert, Button, Input, Skeleton } from 'antd';
 
 import dynamic from 'next/dynamic';
 import DelegateCard from './DelegateCard';
@@ -39,7 +39,6 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const { network } = useNetworkContext();
-	const [messageApi, contextHolder] = message.useMessage();
 
 	const handleClick = () => {
 
@@ -67,39 +66,34 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 
 	};
 
-	const success = () => {
-		messageApi.open({
-			content: 'You have already delegated for this track',
-			duration: 10,
-			type: 'success'
-		});
-	};
-
 	useEffect(() => {
 		getData();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, delegationDashboardAddress, api, apiReady]);
 
 	return <div className=  {`${className} rounded-[14px] bg-white py-6 px-[37px] mt-[22px]`}>
-		<div onClick={() => {disabled && !expandProposals && success();setExpandProposals(!expandProposals);} } className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
+		<div onClick={() => setExpandProposals(!expandProposals) } className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
 			<div  className='flex jutify-center items-center gap-2'>
 				<DelegatedIcon className='mr-[4px]'/>
 				<span className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57]'>
           Delegate
 				</span>
 			</div>
-			<div  className='p-2'>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}{contextHolder}</div>
+			<div  className='p-2'>{!expandProposals ? <ExpandIcon/> : <CollapseIcon/>}</div>
 		</div>
+
 		{expandProposals && <div className='mt-[24px]'>
-			<h4 className='text-sm font-normal text-[#243A57] mb-4'>
+			{disabled && <Alert className='text-sm font-normal text-[#243A57]' showIcon message='You have already delegated for this track.'/>}
+			<h4 className={`text-sm font-normal text-[#243A57] mb-4 mt-4 ${disabled && 'opacity-50'}`}>
         Enter an address or Select from the list below to delegate your voting power
 			</h4>
+
 			<div className='flex gap-4 items-center'>
 				<div className='text-[#576D8BCC] font-normal text-[14px] h-[48px] border-[1px] border-solid border-[#D2D8E0] rounded-md flex items-center justify-between w-full'>
 
-					<Input placeholder='Enter address to Delegate vote' onChange={(e) => setAddress(e.target.value)} value={address} className='h-[44px] border-none'/>
+					<Input disabled={disabled} placeholder='Enter address to Delegate vote' onChange={(e) => setAddress(e.target.value)} value={address} className='h-[44px] border-none'/>
 
-					<Button onClick={handleClick} disabled={!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress} className='h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1'>
+					<Button onClick={handleClick} disabled={!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress || disabled } className={`h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1 ${disabled && 'opacity-50'}`}>
 						<DelegatesProfileIcon/>
 						<span className='text-white text-sm font-medium'>
               Delegate
@@ -133,7 +127,7 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 			{address && (getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && <Alert className='mb-4 mt-4' showIcon message='The substrate address has been changed to Kusama address.'/> }
 
 			{!loading ? <div className='mt-6 grid grid-cols-2 max-lg:grid-cols-1 gap-6'>
-				{delegatesData.sort((a, b) => b.active_delegation_count - a.active_delegation_count).map((delegate, index) => <DelegateCard trackNum={trackDetails?.trackId} key={ index }  delegate={ delegate } />)}
+				{delegatesData.sort((a, b) => b.active_delegation_count - a.active_delegation_count).map((delegate, index) => <DelegateCard trackNum={trackDetails?.trackId} key={ index }  delegate={ delegate } disabled={disabled} />)}
 			</div> : <Skeleton className='mt-6'/>}
 
 		</div>}

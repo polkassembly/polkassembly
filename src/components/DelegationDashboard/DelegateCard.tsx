@@ -23,9 +23,10 @@ interface Props{
   delegate: IDelegate;
   className?: string;
   trackNum?: number;
+  disabled?: boolean;
 }
 
-const DelegateCard = ({ delegate, className, trackNum }: Props) => {
+const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
@@ -108,7 +109,7 @@ const DelegateCard = ({ delegate, className, trackNum }: Props) => {
 					}
 				</div>
 			</div>
-			<Button onClick={handleClick} className='h-[40px] border-none hover:border-solid py-1 px-4 flex justify-around items-center rounded-md text-pink_primary bg-transparent shadow-none gap-2 ml-1 mt-[1px]'>
+			<Button disabled={disabled} onClick={handleClick} className={`h-[40px] border-none hover:border-solid py-1 px-4 flex justify-around items-center rounded-md text-pink_primary bg-transparent shadow-none gap-2 ml-1 mt-[1px] ${disabled && 'opacity-50'}`}>
 				<DelegatesProfileIcon/>
 				<span className='text-sm font-medium'>
               Delegate

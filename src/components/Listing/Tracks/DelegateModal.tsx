@@ -90,20 +90,19 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 	};
 
 	useEffect(() => {
+		validateForm();
+
 		if(!delegationDashboardAddress || !target || !getEncodedAddress(target, network) || isNaN(conviction) ||
 			!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN)) return;
 		if(!checkedTrack && !checkedList) return;
 		if(!checkedTrack && checkedList.length === 0) return;
 
-		validateForm();
-
 		setLoading(true);
 		const checkedArr = checkedTrack && checkedTrack.name && checkedList.filter((item) => item === checkedTrack?.name).length === 0 ? [checkedTrack?.name, ...checkedList]: [...checkedList];
 
 		setCheckedTrackArr(checkedArr);
-		const txArr =  checkedArr?.map((trackName) => {console.log(trackName); return api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString());});
+		const txArr =  checkedArr?.map((trackName) =>  api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
 		const delegateTxn = api.tx.utility.batchAll(txArr);
-		console.log(delegateTxn.toJSON(),txArr);
 
 		(async () => {
 			const info = await delegateTxn.paymentInfo(delegationDashboardAddress);
@@ -273,7 +272,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 	}, [open]);
 
 	const handleDisabledDelegate = () => {
-		if(!delegationDashboardAddress || !target || !getEncodedAddress(target, network) || isNaN(conviction) || !api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || errorArr.length > 0 || loading){
+		if(!delegationDashboardAddress || !target || !getEncodedAddress(target, network) || isNaN(conviction) || !api || !apiReady || errorArr.length > 0 || loading || !bnBalance){
 			return true;
 		}
 		if(!checkedList && !checkedTrack){ return true;}
@@ -361,11 +360,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 								skipFormatCheck={true}
 								inputClassName='text-[#7c899b] font-normal text-sm'
 							/>
-							<div className='flex justify-between items-center mt-6 cursor-pointer -mb-1 text-[#485F7D]' onClick={() => {
-								setBnBalance(availableBalance);
-								form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));
-							}}>
-                Balance<span>
+							<div className='flex justify-between items-center mt-6 cursor-pointer -mb-1 text-[#485F7D]' >
+                Balance<span onClick={() => {
+									setBnBalance(availableBalance);
+									form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));
+								}}>
 									<Balance address={delegationDashboardAddress} onChange={handleOnBalanceChange}/></span></div>
 							<BalanceInput
 								placeholder={'Enter balance'}

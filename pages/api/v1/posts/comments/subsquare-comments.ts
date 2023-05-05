@@ -8,7 +8,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { ProposalType } from '~src/global/proposalType';
 import { getProfileWithAddress } from '../../auth/data/profileWithAddress';
 
-const urlMapper:any= {
+const urlMapper: any = {
 	[ProposalType.BOUNTIES]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/bounties/${id}/comments`,
 	[ProposalType.CHILD_BOUNTIES]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/child-bounties/${id}/comments`,
 	[ProposalType.COUNCIL_MOTIONS]: (id: any, network: string) => `https://${network}.subsquare.io/api/motions/${id}/comments`,
@@ -21,60 +21,61 @@ const urlMapper:any= {
 	[ProposalType.TREASURY_PROPOSALS]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/proposals/${id}/comments`
 };
 
-const getTrimmedUsername = (username:string) => {
-	if(!username){
+const getTrimmedUsername = (username: string) => {
+	if (!username) {
 		return uuid().split('-').join('').substring(0, 25);
 	}
 	return username.length >= 25 ? username?.slice(0, 25) : username;
 };
 
-const getReactionUsers = (reactions:any) => {
-	return reactions.map((rec:any) => {
+const getReactionUsers = (reactions: any) => {
+	return reactions.map((rec: any) => {
 		return rec.user?.address || '';
 	});
 };
 
-const extractContent = async (markdownContent: string, network:any) => {
+const extractContent = async (markdownContent: string, network: any) => {
 	let updatedContent = markdownContent;
 	const matches = markdownContent.match(/\[(.*?)\]\((.*?)\)/g);
-	
+
 	if (matches) {
-		for (const match of matches) {
+		const promises = matches.map(async (match) => {
 			const [label, addressWithNetwork] = match.substring(1, match.length - 1).split('](');
 			if (label.startsWith('@')) {
-				const address = addressWithNetwork.split('-')[0]; // splitting the address and network 
+				const address = addressWithNetwork.split('-')[0]; // splitting the address and network
 				const { data, error } = await getProfileWithAddress({ address: address });
-				if(!error){
+				if (!error) {
 					const link = `https://${network}.polkassembly.io/user/${data?.username || address}`;
 					updatedContent = updatedContent.replace(match, `[${label}](${link})`);
 				}
 			}
-		}
+		});
+		await Promise.allSettled(promises);
 	}
 	return updatedContent;
 };
 
-const convertReply =async (subSquareReply:any, network:any) => {
+const convertReply = async (subSquareReply: any, network: any) => {
 	const res = [];
-	for(const reply of subSquareReply){
+	for (const reply of subSquareReply) {
 		const content = await extractContent(reply.content, network);
 
-		res.push( {
+		res.push({
 			content,
-			created_at:reply.createdAt,
-			id:reply._id,
-			reply_source:'subsquare',
-			updated_at:reply.updatedAt,
-			user_id:reply.user?.address || uuid(),
-			username:getTrimmedUsername(reply.user?.username)
+			created_at: reply.createdAt,
+			id: reply._id,
+			reply_source: 'subsquare',
+			updated_at: reply.updatedAt,
+			user_id: reply.user?.address || uuid(),
+			username: getTrimmedUsername(reply.user?.username)
 		});
 	}
 	return res;
 };
 
-const convertDataToComment =async (data:any[], network: string | string[] | undefined) => {
+const convertDataToComment = async (data: any[], network: string | string[] | undefined) => {
 	const res = [];
-	for(const comment of data){
+	for (const comment of data) {
 		const reactionUsers = getReactionUsers(comment.reactions);
 		const replies = await convertReply(comment?.replies || [], network);
 
@@ -89,41 +90,41 @@ const convertDataToComment =async (data:any[], network: string | string[] | unde
 					usernames: []
 				}
 			},
-			comment_source:'subsquare',
-			content:comment.content,
+			comment_source: 'subsquare',
+			content: comment.content,
 			created_at: comment.createdAt,
-			id:comment._id,
-			proposer:comment.author?.address || '',
+			id: comment._id,
+			proposer: comment.author?.address || '',
 			replies,
-			updated_at:comment?.updatedAt,
-			user_id:uuid(),
-			username:getTrimmedUsername(comment.author?.username)
+			updated_at: comment?.updatedAt,
+			user_id: uuid(),
+			username: getTrimmedUsername(comment.author?.username)
 		});
 	}
 	return res;
 };
 
-export const getSubSquareComments = async (proposalType:string ,network:string | string[] | undefined, id:string | string[] | undefined) => {
-	try{
-		const url = urlMapper[proposalType]?.( id, network);
+export const getSubSquareComments = async (proposalType: string, network: string | string[] | undefined, id: string | string[] | undefined) => {
+	try {
+		const url = urlMapper[proposalType]?.(id, network);
 		const data = await (await fetch(url)).json();
-		const comments =await convertDataToComment(data.items, network);
+		const comments = await convertDataToComment(data.items, network);
 		return comments;
-	}catch(error){
+	} catch (error) {
 		return [];
 	}
 };
 
-const handler: NextApiHandler<{data:any}|{error:string}> = async (req, res) => {
+const handler: NextApiHandler<{ data: any } | { error: string }> = async (req, res) => {
 	const { proposalType, id } = req.query;
 	const network = String(req.headers['x-network']);
 
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
 
-	const data  = await getSubSquareComments(proposalType as string, network , id);
-	if(data.length === 0) {
+	const data = await getSubSquareComments(proposalType as string, network, id);
+	if (data.length === 0) {
 		res.status(200).json({ data: [] });
-	}else {
+	} else {
 		res.status(200).json({ data });
 	}
 };

@@ -12,6 +12,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import Web3 from 'web3';
 import novaDelegates from './nova-delegates-kusama.json';
 import { IDelegate } from '~src/types';
+import { getProfileWithAddress } from '../auth/data/profileWithAddress';
 
 export const getDelegatesData = async (network: string, address?: string) => {
 	if(!network || !isOpenGovSupported(network)) return [];
@@ -59,11 +60,22 @@ export const getDelegatesData = async (network: string, address?: string) => {
 		if(!address) continue;
 
 		const isNovaWalletDelegate = Boolean(novaDelegates.find((novaDelegate) => novaDelegate.address === address));
+		let bio = '';
+
+		if(!isNovaWalletDelegate) {
+			const { data, error } = await getProfileWithAddress({ address });
+
+			if(data && !error) {
+				bio = data.profile?.bio || '';
+			}
+		} else {
+			bio = novaDelegates[index].longDescription;
+		}
 
 		const newDelegate: IDelegate = {
 			active_delegation_count: delegationCount,
 			address,
-			bio: isNovaWalletDelegate ? novaDelegates[index].longDescription : '',
+			bio,
 			isNovaWalletDelegate,
 			name: novaDelegates[index].name,
 			voted_proposals_count: votesCount

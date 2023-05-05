@@ -230,7 +230,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							</div>
 
 							<div className='mt-6'>
-								<label className='text-sm text-[#485F7D] mb-1'>Delegate to</label>
+								<label className='text-sm text-[#485F7D] mb-1'>Delegated to</label>
 								<div className='text-[#243A57] px-0 rounded-[6px] py-[px] h-[40px] cursor-not-allowed'>
 									<Address address={defaultTarget} identiconSize={36} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
 								</div>

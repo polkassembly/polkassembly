@@ -55,7 +55,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 
 	useEffect(() => {
 		replyToreply.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})` || '');
-	});
+	}),[];
 
 	const handleCancel = () => {
 		toggleEdit();

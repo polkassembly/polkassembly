@@ -22,7 +22,8 @@ interface Props {
 export enum CustomStatus {
 	Submitted = 'CustomStatusSubmitted',
 	Voting = 'CustomStatusVoting',
-	Closed = 'CustomStatusClosed'
+	Closed = 'CustomStatusClosed',
+  Active = 'CustomStatusActive'
 }
 
 const TrackListingCard = ({ className, posts, trackName } : Props) => {

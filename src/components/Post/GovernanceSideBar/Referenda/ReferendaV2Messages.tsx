@@ -20,7 +20,7 @@ interface IReferendaV2Messages {
 
 interface IButtonProps extends PropsWithChildren {}
 
-const getPeriodData = (network: string, date: Dayjs, trackData: any, fieldKey: string) => {
+export const getPeriodData = (network: string, date: Dayjs, trackData: any, fieldKey: string) => {
 	const period = blocksToRelevantTime(network, Number(trackData[fieldKey]));
 	let periodEndsAt = date.clone();
 	let periodPercent = 0;
@@ -43,14 +43,14 @@ const getPeriodData = (network: string, date: Dayjs, trackData: any, fieldKey: s
 	};
 };
 
-interface IPeriod {
+export interface IPeriod {
 	period: string;
 	periodCardVisible: boolean;
 	periodEndsAt: dayjs.Dayjs;
 	periodPercent: number;
 }
 
-const getDefaultPeriod = () => {
+export const getDefaultPeriod = () => {
 	return {
 		period: '',
 		periodCardVisible: false,

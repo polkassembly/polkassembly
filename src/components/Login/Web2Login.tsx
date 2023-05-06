@@ -2,11 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { InjectedWindow } from '@polkadot/extension-inject/types';
 import { Alert, Button, Form , Input, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
@@ -14,6 +15,7 @@ import AuthForm from 'src/ui-components/AuthForm';
 import FilteredError from 'src/ui-components/FilteredError';
 import messages from 'src/util/messages';
 import * as validation from 'src/util/validation';
+import styled from 'styled-components';
 
 import { TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -28,16 +30,24 @@ const WalletButtons = dynamic(() => import('./WalletButtons'), {
 interface Props {
 	onWalletSelect: (wallet: Wallet) => void;
 	walletError: string | undefined;
-	isModal:boolean;
-	setLoginOpen:(pre:boolean)=>void
-	setSignupOpen:(pre:boolean)=>void;
+	isModal?: boolean;
+	setLoginOpen?: (pre: boolean)=> void
+	setSignupOpen?: (pre: boolean)=> void;
+  isDelegation?: boolean;
+  className?: string;
 }
-const Web2Login: FC<Props> = ({ walletError, onWalletSelect,setLoginOpen,isModal,setSignupOpen }) => {
+const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation }) => {
 	const { password, username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
+	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
+
+	const getWallet=() => {
+		const injectedWindow = window as Window & InjectedWindow;
+		setDefaultWallets(Object.keys(injectedWindow?.injectedWeb3 || {}));
+	};
 
 	const handleSubmitForm = async (data: any) => {
 		const { username, password } = data;
@@ -55,7 +65,7 @@ const Web2Login: FC<Props> = ({ walletError, onWalletSelect,setLoginOpen,isModal
 				handleTokenChange(data.token, currentUser);
 				if(isModal){
 					setLoading(false);
-					setLoginOpen(false);
+					setLoginOpen && setLoginOpen(false);
 					return;
 				}
 				router.back();
@@ -71,9 +81,16 @@ const Web2Login: FC<Props> = ({ walletError, onWalletSelect,setLoginOpen,isModal
 		}
 	};
 
+	useEffect(() => {
+		isDelegation && getWallet();
+	}, [isDelegation]);
+
 	return (
-		<article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6">
+		<article className={`bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className} `}>
 			<h3 className="text-2xl font-semibold text-[#1E232C]">Login</h3>
+
+			{ defaultWallets.length === 0 && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='warning' showIcon className='text-[#243A57] changeColor'/>}
+
 			{walletError && <Alert message={walletError} type="error" />}
 			<AuthForm
 				onSubmit={handleSubmitForm}
@@ -172,4 +189,8 @@ const Web2Login: FC<Props> = ({ walletError, onWalletSelect,setLoginOpen,isModal
 	);
 };
 
-export default Web2Login;
+export default styled(Web2Login)`
+.changeColor .ant-alert-message{
+color:#243A57;
+
+}`;

@@ -5,7 +5,7 @@
 import type { NextApiHandler } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
-import { isCustomOpenGovStatusValid, isProposalTypeValid, isSortByValid, isTrackNoValid, isTrackPostStatusValid, isValidNetwork } from '~src/api-utils';
+import { isCustomOpenGovStatusValid, isProposalTypeValid, isSortByValid, isTrackNoValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
@@ -298,7 +298,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				if (!isTrackNoValid(numTrackNo, network)) {
 					throw apiErrorWithStatusCode(`The OpenGov trackNo "${trackNo}" is invalid.`, 400);
 				}
-				if (trackStatus !== undefined && trackStatus !== null && !isTrackPostStatusValid(strTrackStatus) && !isCustomOpenGovStatusValid(strTrackStatus)) {
+				if (trackStatus !== undefined && trackStatus !== null && !isCustomOpenGovStatusValid(strTrackStatus)) {
 					throw apiErrorWithStatusCode(`The Track status of the name "${trackStatus}" is invalid.`, 400);
 				}
 			}
@@ -654,7 +654,7 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 
 // expects optional proposalType, page and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
-	const { page = 1, trackNo, trackStatus, proposalType = ProposalType.DEMOCRACY_PROPOSALS, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
+	const { page = 1, trackNo, trackStatus, proposalType , sortBy = sortValues.NEWEST,listingLimit = LISTING_LIMIT, filterBy } = req.query;
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });

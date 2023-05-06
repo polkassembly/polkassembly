@@ -25,13 +25,13 @@ interface Props {
 	className?: string
 	setDisplayWeb2: () => void
 	setPolkadotWallet: () => void;
-   isModal:boolean;
-  setLoginOpen:(pre:boolean)=>void;
+   isModal?:boolean;
+  setLoginOpen?:(pre:boolean)=>void;
 }
 
 const NETWORK = getNetwork();
 
-const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isModal,setLoginOpen }:Props): JSX.Element => {
+const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isModal, setLoginOpen }:Props): JSX.Element => {
 	const [error, setError] = useState('');
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -261,7 +261,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isMod
 												currentUser.loginWallet=Wallet.WALLETCONNECT;
 												handleTokenChange(confirmData.token, currentUser);
 												if(isModal){
-													setLoginOpen(false);
+													setLoginOpen && setLoginOpen(false);
 													setLoading(false);
 													return;
 												}
@@ -285,7 +285,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isMod
 							currentUser.loginWallet=Wallet.WALLETCONNECT;
 							handleTokenChange(addressLoginData.token, currentUser);
 							if(isModal){
-								setLoginOpen(false);
+								setLoginOpen && setLoginOpen(false);
 								setLoading(false);
 								return;
 							}

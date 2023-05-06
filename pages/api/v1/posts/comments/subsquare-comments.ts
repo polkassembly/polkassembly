@@ -58,17 +58,18 @@ const extractContent = async (markdownContent: string, network: any) => {
 const convertReply = async (subSquareReply: any, network: any) => {
 	const res = [];
 	for (const reply of subSquareReply) {
-		const content = await extractContent(reply.content, network);
-
-		res.push({
-			content,
-			created_at: reply.createdAt,
-			id: reply._id,
-			reply_source: 'subsquare',
-			updated_at: reply.updatedAt,
-			user_id: reply.user?.address || uuid(),
-			username: getTrimmedUsername(reply.user?.username)
-		});
+		if(reply.content.trim()){
+			const content = await extractContent(reply.content, network);
+			res.push({
+				content,
+				created_at: reply.createdAt,
+				id: reply._id,
+				reply_source: 'subsquare',
+				updated_at: reply.updatedAt,
+				user_id: reply.user?.address || uuid(),
+				username: getTrimmedUsername(reply.user?.username)
+			});
+		}
 	}
 	return res;
 };
@@ -78,28 +79,29 @@ const convertDataToComment = async (data: any[], network: string | string[] | un
 	for (const comment of data) {
 		const reactionUsers = getReactionUsers(comment.reactions);
 		const replies = await convertReply(comment?.replies || [], network);
-
-		res.push({
-			comment_reactions: {
-				'👍': {
-					count: reactionUsers.length,
-					usernames: reactionUsers
+		if(comment.content.trim()){
+			res.push({
+				comment_reactions: {
+					'👍': {
+						count: reactionUsers.length,
+						usernames: reactionUsers
+					},
+					'👎': {
+						count: 0,
+						usernames: []
+					}
 				},
-				'👎': {
-					count: 0,
-					usernames: []
-				}
-			},
-			comment_source: 'subsquare',
-			content: comment.content,
-			created_at: comment.createdAt,
-			id: comment._id,
-			proposer: comment.author?.address || '',
-			replies,
-			updated_at: comment?.updatedAt,
-			user_id: uuid(),
-			username: getTrimmedUsername(comment.author?.username)
-		});
+				comment_source: 'subsquare',
+				content: comment.content,
+				created_at: comment.createdAt,
+				id: comment._id,
+				proposer: comment.author?.address || '',
+				replies,
+				updated_at: comment?.updatedAt,
+				user_id: uuid(),
+				username: getTrimmedUsername(comment.author?.username)
+			});
+		}
 	}
 	return res;
 };

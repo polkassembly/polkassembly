@@ -62,10 +62,11 @@ interface ICreationLabelProps {
   commentSource?:'polkassembly' | 'subsquare';
   cid?:string;
   history: ICommentHistory[];
+  user_id?: number;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-	const { className, children, created_at, text, username, defaultAddress, topic,sentiment,commentSource='polkassembly', cid, history } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic,sentiment,commentSource='polkassembly', cid, history, user_id } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
@@ -120,7 +121,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			<HelperTooltip text={<span>This comment is imported from <span className='dark-pink'>Subsqaure</span></span>} placement={'leftTop'} bgColor='#FCE5F2' />
 		</Styled>
 		}
-		<CommentHistoryModal open={openModal} setOpen={setOpenModal} history={history} defaultAddress={defaultAddress} username={username}/>
+		<CommentHistoryModal open={openModal} setOpen={setOpenModal} history={history} defaultAddress={defaultAddress} username={username} user_id={user_id}/>
 	</div>;
 };
 

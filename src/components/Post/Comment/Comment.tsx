@@ -85,6 +85,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					sentiment={newSentiment}
 					commentSource={comment_source}
 					history={history}
+					user_id={user_id}
 				>
 					<UpdateLabel
 						created_at={created_at}

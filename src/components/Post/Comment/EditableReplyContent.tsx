@@ -11,6 +11,7 @@ import { NotificationStatus } from 'src/types';
 import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
+import ReplyIcon from '~assets/icons/reply.svg';
 
 import { MessageType } from '~src/auth/types';
 import { usePostDataContext } from '~src/context';
@@ -41,7 +42,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [isReplying,setIsReplying] = useState(false);
-	const [replyToreply] = Form.useForm();
+	const [replyToreplyForm] = Form.useForm();
 
 	const { setPostData, postData: {
 		postType, postIndex
@@ -50,12 +51,11 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editReplyKey(replyId)) || '';
 		form.setFieldValue('content', localContent || content || ''); //
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [content, form, replyId]);
 
 	useEffect(() => {
-		replyToreply.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})` || '');
-	}),[];
+		replyToreplyForm.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})` || '');
+	}, [replyToreplyForm, userName]);
 
 	const handleCancel = () => {
 		toggleEdit();
@@ -136,8 +136,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	};
 
 	const handleReplySave = async () => {
-		await replyToreply.validateFields();
-		const replyContent = replyToreply.getFieldValue('content');
+		await replyToreplyForm.validateFields();
+		const replyContent = replyToreplyForm.getFieldValue('content');
 		if(!replyContent) return;
 		setLoading(true);
 		if(id){
@@ -187,7 +187,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 						comments: comments
 					};
 				});
-				replyToreply.resetFields();
+				replyToreplyForm.resetFields();
 				setIsReplying(false);
 				queueNotification({
 					header: 'Success!',
@@ -291,16 +291,16 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								}
 								{id === userId && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>}
 								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} type='comment' contentId={commentId + '#' + replyId} />}
-								{id && !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><CheckOutlined />Reply</Button>}
+								{id && !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>}
 							</div>
 							{
 								isReplying
 										&&
 										<Form
-											form={replyToreply}
+											form={replyToreplyForm}
 											name="reply-to-reply-form"
 											layout="vertical"
-											// disabled={formDisabled}
+											disabled={loading}
 											validateMessages= {
 												{ required: "Please add the '${name}'" }
 											}
@@ -314,7 +314,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 													<Button htmlType="button" onClick={() => handleReplyCancel()} className='mr-2 flex items-center'>
 														<CloseOutlined /> Cancel
 													</Button>
-													<Button onClick={() => handleReplySave()} className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
+													<Button loading={loading} onClick={() => handleReplySave()} className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
 														<CheckOutlined />Reply
 													</Button>
 												</div>

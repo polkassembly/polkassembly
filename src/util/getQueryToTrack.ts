@@ -37,7 +37,7 @@ const getQueryToTrack = (track: string, network:string) => {
 	case 'SMALL_SPENDER':
 		return networkTrackInfo[network][PostOrigin.SMALL_SPENDER];
 	case 'STAKING_ADMIN':
-		return networkTrackInfo[network][PostOrigin.SMALL_TIPPER];
+		return networkTrackInfo[network][PostOrigin.STAKING_ADMIN];
 	case 'SMALL_TIPPER':
 		return networkTrackInfo[network][PostOrigin.SMALL_TIPPER];
 	}

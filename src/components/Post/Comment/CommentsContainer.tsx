@@ -52,7 +52,7 @@ interface ITimeline {
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
 	const { postData: { postType, timeline, created_at, comments } } = usePostDataContext();
-  console.log(comments,'comments');
+	console.log(comments,'comments');
 	const targetOffset = 10;
 	const [timelines, setTimelines] = useState<ITimeline[]>([]);
 	// const [modalOpen,setModalOpen]=useState<boolean>(false);

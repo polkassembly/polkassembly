@@ -22,7 +22,9 @@ export interface UserDetailsContextType {
   walletConnectProvider: WalletConnectProvider | null;
   setWalletConnectProvider: React.Dispatch<React.SetStateAction<WalletConnectProvider | null>>
   isLoggedOut: () => boolean;
-  loginWallet:Wallet |null;
+  loginWallet: Wallet | null;
+  delegationDashboardAddress: string;
+  loginAddress: string;
 }
 
 export enum Role {
@@ -336,4 +338,29 @@ export type PjsCalendarItem = PjsCalendarItemDuration & {
   network: string;
   type: string;
   data: { [key: string]: unknown };
+}
+
+export enum ETrackDelegationStatus {
+  All = 'all',
+	Delegated = 'delegated',
+	Received_Delegation = 'received_delegation',
+	Undelegated = 'undelegated'
+}
+
+export interface IDelegation {
+  track: number;
+  to: string;
+  from: string;
+  lockPeriod: number;
+  balance: string;
+  createdAt: Date
+}
+
+export interface IDelegate {
+	name?: string
+	address: string
+	bio: string
+	active_delegation_count: number
+	voted_proposals_count: number
+  isNovaWalletDelegate?: boolean
 }

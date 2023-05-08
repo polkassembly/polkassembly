@@ -31,13 +31,14 @@ interface Props{
 	isModal?:boolean;
 	setLoginOpen?:(pre:boolean)=>void;
 	setSignupOpen?:(pre:boolean)=>void;
+  isDelegation?: boolean;
 }
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 	return { props: { network } };
 };
 
-const Signup = ({ network,isModal,setLoginOpen,setSignupOpen }:Props) => {
+const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:Props) => {
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -73,18 +74,19 @@ const Signup = ({ network,isModal,setLoginOpen,setSignupOpen }:Props) => {
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px]'>
 					{ displayWeb === 2
-						? <Web2Signup  isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} onWalletSelect={onWalletSelect} walletError={walletError} /> : null}
+						? <Web2Signup  isDelegation={isDelegation} isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} onWalletSelect={onWalletSelect} walletError={walletError} /> : null}
 
 					{
 						displayWeb === 3 && chosenWallet && <>
 							{
 								chosenWallet === Wallet.METAMASK ?
-									<MetamaskSignup isModal={isModal} setSignupOpen={setSignupOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
+									<MetamaskSignup isModal={isModal} setSignupOpen={setSignupOpen} setLoginOpen={setLoginOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
 									: chosenWallet == Wallet.WALLETCONNECT ?
 										<WalletConnectSignup  isModal={isModal} setSignupOpen={setSignupOpen} setMethod={setMethod}/> :
 										<Web3Signup
 											isModal={isModal}
 											setSignupOpen={setSignupOpen}
+											setLoginOpen={setLoginOpen}
 											chosenWallet={chosenWallet}
 											setDisplayWeb2={setDisplayWeb2}
 											setWalletError={setWalletError}

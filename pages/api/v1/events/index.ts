@@ -15,7 +15,7 @@ const handler: NextApiHandler<NetworkEvent[] | MessageType > = async (req, res) 
 	const { approval_status = approvalStatus.APPROVED } = req.body;
 
 	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ message: 'Invalid network in request header' });
+	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const eventsColSnapshot = await networkDocRef(network).collection('events').where('status', '==', approval_status ).get();
 	const events: NetworkEvent[] = eventsColSnapshot.docs.reduce((events, doc) => {
@@ -24,6 +24,6 @@ const handler: NextApiHandler<NetworkEvent[] | MessageType > = async (req, res) 
 		}
 		return events;
 	}, [] as NetworkEvent[]);
-	res.status(200).json(events);
+	return res.status(200).json(events);
 };
 export default withErrorHandling(handler);

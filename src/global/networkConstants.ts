@@ -14,6 +14,7 @@ import basiliskLogo from '~assets/parachain-logos/basilisk-logo.jpg';
 import pioneerLogo from '~assets/parachain-logos/bitcountrypioneer-logo.jpg';
 import calamariLogo from '~assets/parachain-logos/calamari-logo.png';
 import centrifugeLogo from '~assets/parachain-logos/centrifuge-logo.png';
+import collectivesLogo from '~assets/parachain-logos/collectives-logo.png';
 import composableFinanceLogo from '~assets/parachain-logos/composable-finance-logo.png';
 import crustLogo from '~assets/parachain-logos/crust-logo.png';
 import equilibriumLogo from '~assets/parachain-logos/equilibrium-logo.png';
@@ -64,6 +65,7 @@ export const network = {
 	BASILISK: 'basilisk',
 	CALAMARI: 'calamari',
 	CENTRIFUGE: 'centrifuge',
+	COLLECTIVES: 'collectives',
 	COMPOSABLE: 'composable',
 	CRUST: 'crust',
 	CRUSTSHADOW: 'crustshadow',
@@ -99,10 +101,10 @@ export const network = {
 	PICHIUROCOCO: 'pichiu-rococo',
 	POLYMESH:'polymesh',
 	POLYMESHTEST: 'polymesh-test',
-	TINKER: 'tinker',
 	TURING: 'turing',
 	VARA: 'vara',
 	WESTEND: 'westend',
+	WESTENDCOLLECTIVES: 'westend-collectives',
 	XX: 'xx'
 };
 
@@ -392,6 +394,23 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1000',
 		treasuryProposalMaxBond:'5000',
 		externalLinks: 'https://centrifuge.api.subscan.io',
+		rpcEndpoints: []
+	},
+	//TODO: Aleem=> Need to update collective network, currently using polkadot data
+	[network.COLLECTIVES]: {
+		blockTime: 6000,
+		category: 'polkadot',
+		chainId: 0,
+		logo: collectivesLogo,
+		rpcEndpoint: 'wss://polkadot-collectives-rpc.polkadot.io',
+		ss58Format: 0,
+		subsquidUrl: 'https://squid.subsquid.io/collectives-polkassembly/graphql',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.DOT,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: '',
 		rpcEndpoints: []
 	},
 	[network.COMPOSABLE]: {
@@ -983,6 +1002,22 @@ export const chainProperties: types.ChainPropType = {
 		subsquidUrl: 'https://squid.subsquid.io/vara-polkassembly/graphql',
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '20',
+		treasuryProposalMaxBond: null,
+		externalLinks: '',
+		rpcEndpoints: []
+	},
+	[network.WESTENDCOLLECTIVES]: {
+		blockTime: 6000,
+		category: 'test',
+		chainId: 0,
+		logo: westendLogo,
+		rpcEndpoint: 'wss://sys.ibp.network/collectives-westend',
+		ss58Format: 0,
+		subsquidUrl: 'https://squid.subsquid.io/westend-collectives/graphql',
+		tokenDecimals: 12,
+		tokenSymbol: tokenSymbol.WND,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		rpcEndpoints: []

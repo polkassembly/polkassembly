@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { ClockCircleOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { Divider, Dropdown, MenuProps } from 'antd';
 import React, { FC, ReactNode } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
@@ -12,6 +12,41 @@ import NameLabel from './NameLabel';
 import TopicTag from './TopicTag';
 
 import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon } from '~src/ui-components/CustomIcons';
+import Link from 'next/link';
+import HelperTooltip from './HelperTooltip';
+import styled from 'styled-components';
+
+const Styled = styled.div`
+    padding:0;
+    margin:0;
+    
+    &:hover{
+    	color:#E5007A;
+    }
+    .ant-tooltip {
+    	font-size:16px;
+    }
+    .ant-tooltip .ant-tooltip-placement-leftTop{
+    	height:10px;
+    	padding:0px;
+    }
+    .ant-tooltip .ant-tooltip-inner{
+    	min-height:0;
+    }
+    .ant-tooltip-placement-leftTop .ant-tooltip-arrow{
+    	top:-7px;
+    	right:4px;
+    }
+    .ant-tooltip-inner {
+        color: black;
+  	    font-size:10px;
+  	    padding:0px 6px;
+    }
+    .dark-pink{
+  	    color:#E5007A;
+  	    text-decoration:underline;
+    }
+`;
 
 interface ICreationLabelProps {
 	className?: string
@@ -22,10 +57,12 @@ interface ICreationLabelProps {
 	topic?: string
 	username?: string;
   sentiment?:number;
+  commentSource?:'polkassembly' | 'subsquare';
+  cid?:string;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-	const { className, children, created_at, text, username, defaultAddress, topic,sentiment } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic,sentiment,commentSource='polkassembly', cid } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 
 	const items : MenuProps['items']=[
@@ -49,6 +86,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					{topic &&
 			<div className='flex items-center'> <span>in</span> &nbsp; &nbsp; <TopicTag topic={topic} className={topic} /></div>
 					}
+					{cid ?
+						<>
+							<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+							<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
+						</> : null}
 				</div>
 			</div>
 			<div className='flex items-center mt-2 md:mt-0'>
@@ -65,6 +107,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		{sentiment===3 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2'><NeutralIcon  className='min-[320px]:items-start' /></Dropdown>}
 		{sentiment===4 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2' ><SlightlyForIcon  className='min-[320px]:items-start'/></Dropdown>}
 		{sentiment===5 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-[20px] mr-[-1px] mb-[-1px] mt-[-2px] text-white  flex justify-center items-center min-[320px]:mr-2'><ForIcon  className='min-[320px]:items-start'/></Dropdown>}
+		{commentSource=== 'subsquare' &&
+		<Styled>
+			<HelperTooltip text={<span>This comment is imported from <span className='dark-pink'>Subsqaure</span></span>} placement={'leftTop'} bgColor='#FCE5F2' />
+		</Styled>
+		}
 	</div>;
 };
 

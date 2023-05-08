@@ -25,17 +25,25 @@ interface IErrorStateProps {
 export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVisible = true }) => {
 	return (
 		<Result
-			icon={<FrownOutlined className='text-pink_primary' />}
+			icon={<FrownOutlined className='text-pink_primary ' />}
 			title={cleanError(errorMessage)}
 			extra={isRefreshBtnVisible?<Button className='bg-pink_primary text-white rounded-md hover:bg-pink_secondary duration-300 transition-colors' onClick={() => window.location.reload()}>Refresh</Button>: null}
 		/>
 	);
 };
-
-export const PostEmptyState = ({ className, description, postCategory } : { className?: string, postCategory?: ProposalType | OffChainProposalType, description?: string }) => {
+interface IPostEmptyStateProps {
+	className?: string;
+	postCategory?: ProposalType | OffChainProposalType; description?: string | JSX.Element;
+	image?: JSX.Element;
+	imageStyle?:any;
+}
+export const PostEmptyState : FC<IPostEmptyStateProps> = ({ className, description, postCategory ,image ,imageStyle } ) => {
+	//console.log('image=>'+image);
 	return (
 		<Empty
 			className={className}
+			image={image}
+			imageStyle={ imageStyle }
 			description={
 				postCategory?
 					<span className='text-md text-navBlue'>

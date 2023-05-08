@@ -52,6 +52,12 @@ const BackToListingView = ({ postCategory, trackName } : Props) => {
 		case PostCategory.TIP:
 			path = 'tips';
 			break;
+		case PostCategory.ALLIANCE_MOTION:
+			path = 'alliance/motions';
+			break;
+		case PostCategory.ANNOUNCEMENT:
+			path = 'alliance/announcements';
+			break;
 		case EMembersType.COUNCIL:
 			path = 'council';
 			break;

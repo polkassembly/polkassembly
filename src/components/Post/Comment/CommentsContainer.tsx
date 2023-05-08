@@ -55,8 +55,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	console.log(comments,'comments');
 	const targetOffset = 10;
 	const [timelines, setTimelines] = useState<ITimeline[]>([]);
-	// const [modalOpen,setModalOpen]=useState<boolean>(false);
-	// const { isLoggedOut } = useUserDetailsContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const[openLoginModal,setOpenLoginModal]=useState<boolean>(false);
 	const getCommentCountAndFirstIdBetweenDates = (startDate: Dayjs, endDate: Dayjs, comments: any[]) => {

@@ -61,7 +61,7 @@ interface ICreationLabelProps {
   sentiment?:number;
   commentSource?:'polkassembly' | 'subsquare';
   cid?:string;
-  history: ICommentHistory[];
+  history?: ICommentHistory[];
   user_id?: number;
 }
 
@@ -105,7 +105,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				</>}
 				{created_at && <span className='flex items-center'><ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>}
 				{children}
-				{history?.length > 0 && <div className='flex items-center'>
+				{history && history?.length > 0 && <div className='flex items-center'>
 					<Divider className='ml-2' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 					<span className='text-[10px] text-navBlue border-0 border-solid border-b-[1px] leading-[10px] cursor-pointer' onClick={() => setOpenModal(true)}>Edit History</span>
 				</div>}
@@ -121,7 +121,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			<HelperTooltip text={<span>This comment is imported from <span className='dark-pink'>Subsqaure</span></span>} placement={'leftTop'} bgColor='#FCE5F2' />
 		</Styled>
 		}
-		<CommentHistoryModal open={openModal} setOpen={setOpenModal} history={history} defaultAddress={defaultAddress} username={username} user_id={user_id}/>
+		<CommentHistoryModal open={openModal} setOpen={setOpenModal} history={history || []} defaultAddress={defaultAddress} username={username} user_id={user_id}/>
 	</div>;
 };
 

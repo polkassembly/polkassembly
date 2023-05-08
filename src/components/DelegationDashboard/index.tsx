@@ -79,6 +79,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	useEffect(() => {
 
 		userDetails.isLoggedOut() && setOpenLoginModal(true);
+		!userDetails.isLoggedOut() && setOpenLoginModal(false);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userDetails?.isLoggedOut]);

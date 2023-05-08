@@ -40,18 +40,15 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
 	const[showMore, setShowMore] = useState(false);
 	// split content into paragraphs and check the length of each paragraph, if each paragraph is more than 350 characters long, then show the show more button
-	const contentParagraph = content.trim()?.split('\n');
-	console.log(contentParagraph);
+	const allParagraph = content.trim()?.split('\n');
 	let truncated = '';
-	// check the length of each paragraph, if any paragraph is more than 350 characters long, then truncate it and exit the loop, else return the original content
-	for (let i = 0; i < contentParagraph.length; i++) {
-		if (contentParagraph[i].length > 350) {
-			truncated = contentParagraph[i].substring(0, 350) + '...';
+	for (let i = 0; i < allParagraph.length; i++) {
+		if (allParagraph[i].length > 350) {
+			truncated = allParagraph[i].substring(0, 350) + '...';
 			break;
 		}
-		//if a paragraph is a title, then display the title and the corresponding paragraph but truncate the paragraph
-		if (contentParagraph[i].startsWith('**')) {
-			truncated = contentParagraph[i] + '\n' + contentParagraph[i + 2].substring(0,300) + '...';
+		if (allParagraph[i].startsWith('**')) {
+			truncated = allParagraph[i] + '\n' + allParagraph[i + 2].substring(0,300) + '...';
 			break;
 		}
 	}
@@ -61,20 +58,12 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 			{
 				isMultipleParagraphs?
 					<div className='flex flex-col'>
-						{/* <Markdown md={contentParagraph} /> */}
-						{
-							showMore ?
-								<Markdown md={content} />
-								:
-								<Markdown md={truncated} />
-						}
-						{!showMore ? <Button className='text-pink_primary text-start border-none shadow-none px-1.5' onClick={() => setShowMore(true)}>Show more</Button>
-							:
-							<Button className='text-pink_primary text-start border-none shadow-none px-1.5' onClick={() => setShowMore(false)}>Show less</Button>
+						{showMore ?<Markdown md={content} />:<Markdown md={truncated} />}
+						{!showMore ? <p className='text-pink_primary text-start border-none shadow-none cursor-pointer' onClick={() => setShowMore(true)}>Show more</p>
+							:<p className='text-pink_primary text-start border-none shadow-none cursor-pointer' onClick={() => setShowMore(false)}>Show less</p>
 						}
 					</div>
-					:
-					<Markdown md={content} />
+					:<Markdown md={content} />
 			}
 			{/* Actions Bar */}
 			<div id='actions-bar' className={`flex flex-col md:items-center mt-9 ${canEdit && 'flex-col'} md:flex-row mb-8`}>

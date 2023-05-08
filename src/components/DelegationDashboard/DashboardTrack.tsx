@@ -37,9 +37,11 @@ const ActiveProposals = dynamic(() => import('./ActiveProposals'), {
 	ssr: false
 });
 const WalletConnectModal = dynamic(() => import('./DelegationWalletConnectModal'), {
+	loading: () => <Skeleton active /> ,
 	ssr: false
 });
 const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
+	loading: () => <Skeleton active /> ,
 	ssr: false
 });
 const UndelegateModal = dynamic(() => import('../Listing/Tracks/UndelegateModal'), {

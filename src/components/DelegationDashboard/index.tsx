@@ -76,7 +76,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		} );
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [openLoginModal, openSignupModal, openModal, window]);
+	}, [openLoginModal, openSignupModal, openModal]);
 
 	useEffect(() => {
 

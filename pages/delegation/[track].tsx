@@ -62,7 +62,7 @@ const DashboardTracks:FC<ITrackProps> = ( props  ) => {
 	const { posts } = data;
 
 	return <>
-		<SEOHead title='Delegation Board' network={props.network}/>
+		<SEOHead title='Delegation Dashboard' network={props.network}/>
 		<DashboardTrackListing posts= {posts} trackDetails= {trackDetails}/>
 	</>;
 };

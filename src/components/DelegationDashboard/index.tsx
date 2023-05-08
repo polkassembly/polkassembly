@@ -43,7 +43,7 @@ const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 
 const DelegationDashboardHome = ({ className } : Props) => {
 
-	const userDetails   = useUserDetailsContext();
+	const userDetails = useUserDetailsContext();
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
 		addresses: [],
 		badges: [],
@@ -120,7 +120,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>
 			<ProfileBalances address={userDetails.delegationDashboardAddress}/>
 		</div>
-		<h2 className=' text-[#243A57] mb-6 md:mb-5 mt-5 text-[24px] font-semibold max-lg:pt-[60px]'>Dashboard</h2>
+		<h2 className=' text-[#243A57] mb-6 md:mb-5 mt-5 text-[24px] font-semibold max-lg:pt-[60px]'>Delegation dashboard</h2>
 		<div className='flex justify-between py-[24px] px-[34px] shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white rounded-[14px]'>
 			<div className='flex justify-center gap-[34px] '>
 				{image && image?.length !== 0

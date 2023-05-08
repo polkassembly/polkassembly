@@ -5,7 +5,7 @@
 import { FormOutlined } from '@ant-design/icons';
 import { Button, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import Markdown from 'src/ui-components/Markdown';
 
 import { usePostDataContext } from '~src/context';
@@ -38,11 +38,33 @@ interface IPostDescriptionProps {
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp } = props;
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
-
+	const[showMore, setShowMore] = useState(false);
+	// split content into paragraphs and check the length of each paragraph, if each paragraph is more than 350 characters long, then show the show more button
+	const allParagraph = content.trim()?.split('\n');
+	let truncated = '';
+	for (let i = 0; i < allParagraph.length; i++) {
+		if (allParagraph[i].length > 350) {
+			truncated = allParagraph[i].substring(0, 350) + '...';
+			break;
+		}
+		if (allParagraph[i].startsWith('**')) {
+			truncated = allParagraph[i] + '\n' + allParagraph[i + 2].substring(0,300) + '...';
+			break;
+		}
+	}
+	const isMultipleParagraphs = content.trim()?.split('\n').length > 1;
 	return (
 		<div className={`${className} mt-4`}>
-			{content && <Markdown md={content} />}
-
+			{
+				isMultipleParagraphs?
+					<div className='flex flex-col'>
+						{showMore ?<Markdown md={content} />:<Markdown md={truncated} />}
+						{!showMore ? <p className='text-pink_primary text-start border-none shadow-none cursor-pointer' onClick={() => setShowMore(true)}>Show more</p>
+							:<p className='text-pink_primary text-start border-none shadow-none cursor-pointer' onClick={() => setShowMore(false)}>Show less</p>
+						}
+					</div>
+					:<Markdown md={content} />
+			}
 			{/* Actions Bar */}
 			<div id='actions-bar' className={`flex flex-col md:items-center mt-9 ${canEdit && 'flex-col'} md:flex-row mb-8`}>
 				<div className='flex items-center'>

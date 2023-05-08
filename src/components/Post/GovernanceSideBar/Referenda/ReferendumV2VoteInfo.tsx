@@ -192,8 +192,8 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>How are votes calculated</h2>
 					}
 				>
-					<section className='flex flex-col gap-y-5'>
-						<p className='text-sidebarBlue font-normal text-xs leading-[18px] m-0 p-0 mt-3'>
+					<section className='flex flex-col gap-y-6'>
+						<p className='text-sidebarBlue font-normal text-xs leading-[18px] m-0 p-0 mt-1'>
 							Votes are calculated by multiplying the votes casted by a user with the conviction period.
 						</p>
 						<p className='font-medium text-xs leading-[18px] text-sidebarBlue m-0 p-0'>For example:</p>
@@ -258,10 +258,12 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</p>
 							</div>
 						</article>
-						<p className='font-medium text-xs leading-[18px] text-sidebarBlue m-0 p-0'>Here,</p>
-						<article className='flex items-center justify-center'>
-							<VoteImage />
-						</article>
+						<div className='flex flex-col gap-y-3'>
+							<p className='font-medium text-xs leading-[18px] text-sidebarBlue m-0 p-0'>Here,</p>
+							<article className='flex items-center justify-center'>
+								<VoteImage />
+							</article>
+						</div>
 						<p className='p-0 m-0 text-sidebarBlue font-normal text-xs leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount) into 4 (conviction) to get the final vote.</span></p>
 					</section>
 				</Modal>

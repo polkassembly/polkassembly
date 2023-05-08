@@ -131,8 +131,9 @@ query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_e
     proposer
     type
     createdAtBlock
+    createdAt
     group {
-      proposals(limit: 10) {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
         curator
         description
         hash
@@ -150,7 +151,7 @@ query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_e
         proposer
         type
         createdAtBlock
-        statusHistory(limit: 10) {
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
           status
           block
           timestamp
@@ -435,12 +436,58 @@ query VotesListingByTypeAndIndex($orderBy: [VoteOrderByInput!] = timestamp_DESC,
 }
 `;
 
+export const GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX = `
+query VotesListingForAddressByTypeAndIndex($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "") {
+  votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, voter_eq: $voter_eq}) {
+    totalCount
+  }
+  votes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, voter_eq: $voter_eq}, limit: $limit, offset: $offset) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+  }
+}`;
+
 export const GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX = `
 query ConvictionVotesListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int = 0, $type_eq: VoteType = ReferendumV2, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes) {
   convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}) {
     totalCount
   }
   convictionVotes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}, limit: $limit, offset: $offset) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+    isDelegated
+  }
+}
+`;
+
+export const GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX = `
+query ConvictionVotesListingForAddressByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int = 0, $type_eq: VoteType = ReferendumV2, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "") {
+  convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}) {
+    totalCount
+  }
+  convictionVotes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}, limit: $limit, offset: $offset) {
     decision
     voter
     balance {
@@ -483,6 +530,30 @@ query ConvictionVotesWithTxnHashListingByTypeAndIndex($orderBy: [ConvictionVoteO
   }
 }
 `;
+
+export const GET_CONVICTION_VOTES_FOR_ADDRESS_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX = `
+query ConvictionVotesForAddressWithTxnHashListingByTypeAndIndex($orderBy: [ConvictionVoteOrderByInput!] = createdAtBlock_DESC, $index_eq: Int = 0, $type_eq: VoteType = ReferendumV2, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "",) {
+  convictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}) {
+    totalCount
+  }
+  convictionVotes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true, voter_eq: $voter_eq}, limit: $limit, offset: $offset) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+    isDelegated
+    txnHash
+  }
+}`;
 
 export const GET_PROPOSALS_BY_PROPOSER_ADDRESS = `
 query ProposalsByProposerAddress($proposer_eq: String = "") {
@@ -568,5 +639,215 @@ query VotingHistoryByVoterAddress($offset: Int = 0, $limit: Int = 10, $voter_eq:
     totalCount
   }
 }
+`;
 
+export const ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK = `
+query ActiveDelegationsToOrFromAddressForTrack($track_eq: Int = 0, $address: String = "") {
+  votingDelegations(orderBy: createdAt_DESC, where: {track_eq: $track_eq, endedAtBlock_isNull: true, AND: {from_eq: $address, OR: {to_eq: $address}}}) {
+    track
+    to
+    from
+    lockPeriod
+    balance
+    createdAt
+  }
+  proposalsConnection(orderBy: id_ASC, where: {type_eq: ReferendumV2, status_in: [DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted], trackNumber_eq: $track_eq}) {
+    totalCount
+  }
+}`;
+
+export const RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS = `
+query ReceivedDelgationsAndVotesCountForAddress($address: String = "", $createdAt_gte: DateTime) {
+  votingDelegationsConnection(orderBy: createdAt_ASC, where: {to_eq: $address, endedAtBlock_isNull: true}) {
+    totalCount
+  }
+  convictionVotesConnection(orderBy: id_ASC, where: {voter_eq: $address, proposal: {type_eq: ReferendumV2, createdAt_gte: $createdAt_gte}}) {
+    totalCount
+  }
+}`;
+
+// Alliance
+export const GET_ALLIANCE_LATEST_ACTIVITY = `
+query getAllianceLatestActivity( $limit: Int = 10, $offset: Int = 0 ) {
+  proposals(orderBy: id_DESC,limit: $limit, offset: $offset) {
+    id
+    type
+    createdAt
+    status
+    proposer
+    hash
+    index
+    callData {
+      method
+    }
+  }
+  proposalsConnection(orderBy: id_ASC) {
+    totalCount
+  }
+}
+`;
+
+export const GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE = `
+query AlliancePostByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = AllianceMotion, $voter_eq: String = "") {
+  votesConnection(orderBy: blockNumber_DESC, where: {voter_eq: $voter_eq}) {
+    totalCount
+    edges {
+      node {
+        voter
+        decision
+      }
+    }
+  }
+  proposalsConnection(orderBy: createdAtBlock_DESC) {
+    totalCount
+    edges {
+      node {
+        description
+        index
+        status
+        proposalArgumentHash
+      }
+    }
+  }
+  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, hash_eq: $hash_eq}) {
+    index
+    proposer
+    status
+    description
+    hash
+    type
+    threshold {
+      ... on MotionThreshold {
+        __typename
+        value
+      }
+      ... on ReferendumThreshold {
+        __typename
+        type
+      }
+    }
+    end
+    createdAt
+    updatedAt
+    endedAt
+    deposit
+    voting {
+      decision
+      voter
+    }
+    tally {
+      ayes
+      bareAyes
+      nays
+      support
+    }
+    statusHistory {
+      status
+      timestamp
+      block
+    }
+    callData {
+      method
+      args
+      description
+      section
+    }
+    announcement {
+      statusHistory {
+        id
+        status
+        timestamp
+      }
+      cid
+      hash
+      type
+      createdAt
+    }
+  }
+}
+`;
+
+export const GET_ALLIANCE_ANNOUNCEMENTS = `
+query getAllianceAnnouncements( $limit: Int = 10, $offset: Int = 0 ) {
+  announcements(limit: $limit, offset: $offset) {
+    id
+    code
+    codec
+    createdAt
+    createdAtBlock
+    hash
+    index
+    proposer
+    type
+    updatedAt
+    version
+    cid
+    status
+  }
+  announcementsConnection(orderBy: id_ASC) {
+    totalCount
+  }
+}
+`;
+
+export const GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE = `
+query AllianceAnnouncementByCidAndType($cid_eq: String) {
+  announcements(where: {cid_eq: $cid_eq}) {
+    cid
+    code
+    codec
+    version
+    proposer
+    index
+    hash
+    updatedAt
+    proposal {
+      index
+      proposer
+      status
+      description
+      hash
+      type
+      threshold {
+        ... on MotionThreshold {
+          __typename
+          value
+        }
+        ... on ReferendumThreshold {
+          __typename
+          type
+        }
+      }
+      end
+      createdAt
+      updatedAt
+      endedAt
+      deposit
+      voting {
+        decision
+        voter
+      }
+      tally {
+        ayes
+        bareAyes
+        nays
+        support
+      }
+      statusHistory {
+        status
+        timestamp
+        block
+      }
+    }
+    status
+    statusHistory {
+      id
+      status
+      timestamp
+    }
+    createdAt
+    type
+    version
+  }
+}
 `;

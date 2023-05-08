@@ -6,7 +6,7 @@ import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Form, Modal } from 'antd';
+import { Button, Form, Modal } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -44,7 +44,10 @@ import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
 import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
 import Curves from './Referenda/Curves';
-import CloseIcon from 'public/assets/icons/close.svg';
+import PostEditOrLinkCTA from './PostEditOrLinkCTA';
+import CloseIcon from '~assets/icons/close.svg';
+import { PlusOutlined } from '@ant-design/icons';
+import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -55,11 +58,12 @@ interface IGovernanceSidebarProps {
 	startTime: string
 	tally?: any;
 	post: IPostResponse;
+	toggleEdit?: () => void;
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { network } = useNetworkContext();
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit } = props;
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [extensionNotFound, setExtensionNotFound] = useState(false);
@@ -67,12 +71,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [accountsMap, setAccountsMap] = useState<{[key:string]:string}>({});
 	const [signersMap, setSignersMap] = useState<{[key:string]: Signer}>({});
 	const [open, setOpen] = useState(false);
+	const [graphicOpen, setGraphicOpen] = useState<boolean>(true);
 
 	const { api, apiReady } = useApiContext();
 	const [lastVote, setLastVote] = useState<string | null | undefined>(undefined);
 
 	const { walletConnectProvider } = useUserDetailsContext();
-	const { postData: { created_at, track_number } } = usePostDataContext();
+	const { postData: { created_at, track_number, post_link } } = usePostDataContext();
 	const [thresholdOpen, setThresholdOpen] = useState(false);
 
 	const metaMaskError = useHandleMetaMask();
@@ -455,6 +460,27 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		<>
 			{<div className={className}>
 				<Form>
+					{
+						!post_link && canEdit && <>
+							<PostEditOrLinkCTA />
+						</>
+					}
+
+					{canEdit && graphicOpen && post_link && <div className=' rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] pb-[36px] mb-8'>
+						<div className='flex justify-end py-[17px] px-[20px] items-center' onClick={ () => setGraphicOpen(false)}>
+							<CloseIcon/>
+						</div>
+						<div className='flex items-center flex-col justify-center gap-6'>
+							<GraphicIcon/>
+							<Button
+								className='w-[176px] text-white bg-pink_primary text-[16px] font-medium h-[35px] rounded-[4px]'
+								onClick={() => { toggleEdit && toggleEdit(); setGraphicOpen(false);}}
+							>
+								<PlusOutlined/>
+                Add Tags
+							</Button>
+						</div>
+					</div>}
 					{proposalType === ProposalType.COUNCIL_MOTIONS && <>
 						{canVote &&
 							<VoteMotion
@@ -468,6 +494,24 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						}
 
 						{(post.motion_votes) &&
+							<MotionVoteInfo
+								councilVotes={post.motion_votes}
+							/>
+						}
+					</>}
+					{proposalType === ProposalType.ALLIANCE_MOTION && <>
+						{canVote &&
+							<VoteMotion
+								accounts={accounts}
+								address={address}
+								getAccounts={getAccounts}
+								motionId={onchainId as number}
+								motionProposalHash={post.hash}
+								onAccountChange={onAccountChange}
+							/>
+						}
+
+						{(post.motion_votes && post.motion_votes.length > 0 ) &&
 							<MotionVoteInfo
 								councilVotes={post.motion_votes}
 							/>

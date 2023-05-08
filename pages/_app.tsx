@@ -15,12 +15,12 @@ import { UserDetailsProvider } from 'src/context/UserDetailsContext';
 import { antdTheme } from 'styles/antdTheme';
 
 import { ApiContextProvider } from '~src/context/ApiContext';
-import { AllianceApiContextProvider } from '~src/context/AllianceApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
 import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
 
 export const poppins = Poppins({
+	adjustFontFallback: false,
 	display: 'swap',
 	style: ['italic', 'normal'],
 	subsets: ['latin'],
@@ -70,18 +70,16 @@ export default function App({ Component, pageProps }: AppProps) {
 		<ModalProvider>
 			<UserDetailsProvider>
 				<ApiContextProvider network={network}>
-					<AllianceApiContextProvider>
-						<NetworkContextProvider initialNetwork={network}>
-							<>
-								{ showSplashScreen && <SplashLoader /> }
-								<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-									<NextNProgress color="#E5007A" />
-									<CMDK />
-									<AppLayout Component={Component} pageProps={pageProps} />
-								</main>
-							</>
-						</NetworkContextProvider>
-					</AllianceApiContextProvider>
+					<NetworkContextProvider initialNetwork={network}>
+						<>
+							{ showSplashScreen && <SplashLoader /> }
+							<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+								<NextNProgress color="#E5007A" />
+								<CMDK />
+								<AppLayout Component={Component} pageProps={pageProps} />
+							</main>
+						</>
+					</NetworkContextProvider>
 				</ApiContextProvider>
 			</UserDetailsProvider>
 		</ModalProvider>

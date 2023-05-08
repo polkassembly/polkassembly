@@ -276,8 +276,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	];
 
 	if(network === 'kusama'){
-		gov2OverviewItems.splice(1, 0, getSiderMenuItem(<div className='flex gap-2 items-center'>Delegation <span className='px-[6px] py-[2px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-xs'>New</span></div>, '/delegation',  !sidedrawer ? <div className='flex flex-col items-center gap-0 delegation'><DelegationSidebarIcon className= 'text-white ml-[-3px]'/>
-			<span className='px-[4px] py-[1px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-[10px] -mt-1 ml-[-1px] opacity'>New</span>
+		gov2OverviewItems.splice(1, 0, getSiderMenuItem(<div className='flex gap-2 items-center'>Delegation <span className='px-[6px] py-[2px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-xs'>New</span></div>, '/delegation',  !sidedrawer ? <div className='flex flex-col items-center gap-0 delegation'><DelegationSidebarIcon className= 'text-white -ml-1'/>
+			<span className='px-[4px] py-[1px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-[10px] -mt-1 ml-[-2px] opacity'>New</span>
 		</div> : <DelegationSidebarIcon className= 'text-white -ml-1 mr-1'/> ));
 	}
 	if (isGrantsSupported(network)) {

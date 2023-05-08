@@ -166,7 +166,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 					}
 				</div>
 
-				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && <Alert message='You need to give access to a wallet containing at least one address to use Delegation Dashboard.' showIcon className='mb-4' type='info' />}
+				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && <Alert message='Please give access to your account or create a create a account in your wallet.' showIcon className='mb-4' type='info' />}
 				{Object.keys(defaultWallets || {}).length === 0 &&  <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
 
 				{

@@ -50,7 +50,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [loading, setLoading] =useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
 	const { loginWallet, setUserDetailsContextState, delegationDashboardAddress } = useUserDetailsContext();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
@@ -126,15 +126,15 @@ const ProfileBalances = ({ className, address }: Props ) => {
 			if(loginWallet){
 				setLoading(true);
 				localStorage.setItem('delegationWallet', loginWallet);
-				address.length > 0 && localStorage.setItem('delegationDashboardAddress', address.length > 0 ? address : delegationDashboardAddress);
+				localStorage.setItem('delegationDashboardAddress', address || delegationDashboardAddress);
 				setUserDetailsContextState((prev) => {
 					return { ...prev,
-						delegationDashboardAddress: address.length > 0 ? address : delegationDashboardAddress
+						delegationDashboardAddress: address || delegationDashboardAddress
 					};
 				});
 				setLoading(false);
 			}
-			setAddress(address.length > 0 ? address : delegationDashboardAddress);
+			setAddress(address);
 		}
 		return;
 	};

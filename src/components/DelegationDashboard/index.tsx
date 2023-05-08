@@ -63,20 +63,18 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 
 	useEffect(() => {
-		if(!window) return;
-
+		if(!window ) return;
 		const wallet = localStorage.getItem('delegationWallet') || '';
 		const address = localStorage.getItem('delegationDashboardAddress') || '';
-		userDetails.setUserDetailsContextState((prev) =>
+		(!userDetails?.delegationDashboardAddress || !userDetails?.loginWallet) && userDetails.setUserDetailsContextState((prev) =>
 		{
 			return { ...prev,
-				delegationDashboardAddress: address ,
+				delegationDashboardAddress: address || userDetails?.delegationDashboardAddress  ,
 				loginWallet: wallet as Wallet
 			};
 		} );
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [openLoginModal, openSignupModal, openModal]);
+	}, [userDetails]);
 
 	useEffect(() => {
 

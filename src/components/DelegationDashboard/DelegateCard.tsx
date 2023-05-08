@@ -18,6 +18,8 @@ import SocialLink from '~src/ui-components/SocialLinks';
 import { socialLinks } from '../UserProfile/Details';
 import { ESocialType } from '~src/auth/types';
 import { formatBalance } from '@polkadot/util';
+import { formatedBalance } from './ProfileBalance';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props{
   delegate: IDelegate;
@@ -40,16 +42,6 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [isExpand, setIsExpand] = useState<boolean>(false);
 	const [social_links, setSocial_links]= useState<any[]>([]);
-
-	const formatedBalance = (balance: string) => {
-		const formated = formatBalance(balance.toString(), { forceUnit: unit, withUnit: false }).split('.');
-		if(Number(formated?.[0]) > 0){
-			return formated?.[1] ? `${formated[0]}.${formated[1].slice(0,2)}`: '0';
-		}else{
-			return formated.join('.');
-		}
-
-	};
 
 	useEffect(() => {
 
@@ -81,7 +73,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	};
 	return <div className={`border-solid border-[1px] border-[#D2D8E0] rounded-[6px]  ${delegate?.isNovaWalletDelegate ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'} ${className}`}>
 
-		{delegate?.isNovaWalletDelegate && <div className='h-[35px] border-[#3C74E1] border-solid border-[1px] rounded-t-[5px] bg-[#e2eafb] px-[19px] flex items-center gap-[11px]'>
+		{delegate?.isNovaWalletDelegate && <div className='h-[36px] border-[#3C74E1] border-solid border-[1px] rounded-t-[6px] mt-[-1px] bg-[#e2eafb] px-5 flex items-center gap-[11px] mr-[-0.6px] ml-[-0.6px]'>
 			<NovaWalletIcon/>
 			<span className='text-xs text-[#798aa2]'>Nova Wallet Delegate</span>
 		</div>}
@@ -109,7 +101,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					}
 				</div>
 			</div>
-			<Button disabled={disabled} onClick={handleClick} className={`h-[40px] border-none hover:border-solid py-1 px-4 flex justify-around items-center rounded-md text-pink_primary bg-transparent shadow-none gap-2 ml-1 mt-[1px] ${disabled && 'opacity-50'}`}>
+			<Button disabled={disabled || getEncodedAddress(delegate?.address, network) === delegate?.address} onClick={handleClick} className={`h-[40px] border-none hover:border-solid py-1 px-4 flex justify-around items-center rounded-md text-pink_primary bg-transparent shadow-none gap-2 ml-1 mt-[1px] hover:border-pink_primary ${disabled && 'opacity-50'}`}>
 				<DelegatesProfileIcon/>
 				<span className='text-sm font-medium'>
               Delegate
@@ -126,7 +118,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] '>
 			<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-[#243A57]'>
 				<div className='flex gap-1 items-end justify-center'>
-					{formatedBalance(balance)}
+					{formatedBalance(balance, unit)}
 					<span className='text-sm font-normal text-[#243A57]'>{unit}</span>
 				</div>
 				<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>

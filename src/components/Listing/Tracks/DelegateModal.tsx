@@ -65,13 +65,17 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 	const [checkAll, setCheckAll] = useState(false);
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
 	const [txFee, setTxFee] = useState(ZERO_BN);
-	const [showAlert, setShowAlert] = useState(false);
+	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [trackArr, setTrackArr] = useState<any[]>([]);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [defaultOpen, setDefaultOpen] = useState<boolean>(false);
 	const [checkedTrack, setCheckedTrack] = useState<any>();
 	const router = useRouter();
 	const [checkedTrackArr, setCheckedTrackArr] = useState<string[]>([]);
+	const [targetErr, setTargetErr] = useState<string>('');
+	const [balanceErr, setBalanceErr] = useState<string>('');
+	const [validationOn, setValidationOn] = useState<boolean>(false);
+	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 
 	useEffect(() => {
 
@@ -84,16 +88,23 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() => {
+		target && (getEncodedAddress(target, network) || Web3.utils.isAddress(target)) && target !== getEncodedAddress(target, network) && setAddressAlert(true);
+		setTimeout(() => { setAddressAlert(false);},5000);
+	}, [network, target]);
+
 	const handleClose = (removedTag: string) => {
 		const newList = checkedList.filter((list) => list !== removedTag);
 		setCheckedList(newList);
+		setIndeterminate(!!newList.length && newList.length < trackArr.length);
+		setCheckAll( newList.length === trackArr.length);
 	};
 
 	useEffect(() => {
-		validateForm();
+		validationOn && validateForm();
 
 		if(!delegationDashboardAddress || !target || !getEncodedAddress(target, network) || isNaN(conviction) ||
-			!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN)) return;
+		!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.eq(ZERO_BN)) return;
 		if(!checkedTrack && !checkedList) return;
 		if(!checkedTrack && checkedList.length === 0) return;
 
@@ -111,7 +122,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 			setShowAlert(true);
 		})();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [delegationDashboardAddress, api, apiReady, bnBalance, checkedList, conviction, network, target, checkedTrack]);
+	}, [delegationDashboardAddress, api, apiReady, bnBalance, checkedList, conviction, network, target, checkedTrack, validationOn]);
 
 	const getData = async() => {
 		if (!api || !apiReady ) return;
@@ -158,25 +169,31 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 
 	const validateForm = ():boolean => {
 		const errors = [];
-
-		if(!delegationDashboardAddress) {
-			errors.push('Please select an address.');
-		}
+		setTargetErr('');
+		setBalanceErr('');
 
 		if(!target || !getEncodedAddress(target, network)) {
-			errors.push('Please provide a valid target address.');
+			setTargetErr('Please provide a valid target address.');
+			errors.push('');
 		}
 
-		if(delegationDashboardAddress == target || delegationDashboardAddress === getEncodedAddress(target, network)) {
-			errors.push('You can not delegate to the same address. Please provide a different target address.');
+		if(delegationDashboardAddress === target || delegationDashboardAddress === getEncodedAddress(target, network)) {
+			setTargetErr('You can not delegate to the same address. Please provide a different target address.');
+			errors.push('');
 		}
-
 		if(bnBalance.lte(ZERO_BN)) {
-			errors.push('Please provide a valid balance.');
+			setBalanceErr('Please provide a valid balance.');
+			errors.push('');
+		}
+
+		if(bnBalance.eq(ZERO_BN)){
+			setBalanceErr('Balance must be greater than 0.');
+			errors.push('');
 		}
 
 		if(availableBalance.lt(bnBalance)) {
-			errors.push('Insufficient balance.');
+			setBalanceErr('Insufficient balance.');
+			errors.push('');
 		}
 
 		if(availableBalance.lte(txFee)) {
@@ -184,12 +201,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 		}
 
 		setErrorArr(errors);
-
 		return errors.length === 0;
 	};
 
 	const handleSubmit = async () => {
-		if(!api || !apiReady) return;
+
+		if(!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.eq(ZERO_BN)) return;
 		if(!checkedTrack && !checkedList) return;
 		if(!checkedTrack && checkedList.length === 0) return;
 		setLoading(true);
@@ -271,16 +288,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open]);
 
-	const handleDisabledDelegate = () => {
-		if(!delegationDashboardAddress || !target || !getEncodedAddress(target, network) || isNaN(conviction) || !api || !apiReady || errorArr.length > 0 || loading || !bnBalance){
-			return true;
-		}
-		if(!checkedList && !checkedTrack){ return true;}
-		if(checkedList.length === 0 && !checkedTrack){ return true;}
-		return false;
-
-	};
-
 	const content = (<div className='flex flex-col'>
 		<Checkbox.Group className='flex flex-col h-[200px] overflow-y-scroll' onChange={onChange} value={checkedList} >
 			{trackArr?.filter(( item ) => item?.trackId !== trackNum)?.map((track, index) => (
@@ -301,6 +308,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 				<PlusOutlined/>
 				<span >Delegate</span>
 			</Button>}
+
 			<Modal
 				maskClosable={false}
 				closeIcon={<CloseIcon/>}
@@ -311,7 +319,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 						<DelegateProfileIcon className='mr-2'/>Delegate
 					</div>
 				}
-
 				open={open ? open : defaultOpen}
 				onOk={handleSubmit}
 				confirmLoading={loading}
@@ -323,7 +330,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 								<Button key="back" disabled={loading} className='h-[40px] w-[134px]' onClick={() => setOpen?.(false)}>
 										Cancel
 								</Button>,
-								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] '  disabled={handleDisabledDelegate()} onClick={ handleSubmit }>
+								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] ' disabled={loading} onClick={() => {handleSubmit(); setValidationOn(true);}}>
 										Delegate
 								</Button>
 							]
@@ -335,7 +342,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 				<Spin spinning={loading} indicator={<LoadingOutlined />}>
 					<div className='flex flex-col'>
 						{
-							errorArr.length > 0 && errorArr.map(errorMsg => <ErrorAlert className='mb-6' key={errorMsg} errorMsg={errorMsg} />)
+							errorArr.length > 0 && errorArr.map(errorMsg => errorMsg.length > 0 && <ErrorAlert className='mb-6' key={errorMsg} errorMsg={errorMsg} />)
 						}
 
 						<Form
@@ -356,8 +363,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 								onChange={(address) => setTarget(address)}
 								size='large'
 								skipFormatCheck={true}
-								inputClassName='text-[#7c899b] font-normal text-sm'
+								inputClassName={`text-[#7c899b] font-normal text-sm ${targetErr.length > 0 && 'border-red-500'}`}
 							/>
+							{/* errors */}
+
+							{targetErr.length > 0 && <div className='-mt-1 text-sm text-red-500'>{targetErr}</div>}
+							{addressAlert && <Alert className='mb mt-2' showIcon message='The substrate address has been changed to Kusama address.'/> }
+
 							<div className='flex justify-between items-center mt-6 cursor-pointer -mb-1 text-[#485F7D]' >
                 Balance<span onClick={() => {
 									setBnBalance(availableBalance);
@@ -372,9 +384,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 								onChange={(balance) => setBnBalance(balance)}
 								balance={ bnBalance }
 								size='large'
-								inputClassName='text-[#7c899b] text-sm'
+								inputClassName={`text-[#7c899b] text-sm ${balanceErr.length > 0 && 'border-red-500'}`}
+								noRules={true}
 							/>
-							<div className='mb-2 border-solid border-white'>
+							{/* errors */}
+							{balanceErr.length > 0 && <div className='-mt-5 text-sm text-red-500'>{balanceErr}</div>}
+
+							<div className='mb-2 border-solid border-white mt-4'>
 								<label  className='text-[#485F7D] flex items-center text-sm'>
                   Conviction
 									<span>
@@ -441,7 +457,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 						</Form>
 
 						{showAlert && <Alert showIcon type='info' className='mb-4 ' message={`An approximate fees of ${formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction`}/>}
-						{target && (getEncodedAddress(target, network) || Web3.utils.isAddress(target)) && target !== getEncodedAddress(target, network) && <Alert className='mb-6' showIcon message='The substrate address has been changed to Kusama address.'/> }
+
 					</div>
 				</Spin>
 

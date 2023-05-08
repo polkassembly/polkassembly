@@ -67,6 +67,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
 		if(!api || !apiReady) return;
+		setLoading(true);
 
 		setExtentionOpen(false);
 		const injectedWindow = window as Window & InjectedWindow;
@@ -77,6 +78,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 
 		if (!wallet) {
 			setExtentionOpen(true);
+			setLoading(false);
 			return;
 		}
 
@@ -97,6 +99,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 			console.log(err?.message);
 		}
 		if (!injected) {
+			setLoading(false);
 			return;
 		}
 
@@ -117,6 +120,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 
 			setAddress(accounts[0].address);
 		}
+		setLoading(false);
 		return;
 	};
 
@@ -166,8 +170,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 					}
 				</div>
 
-				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && <Alert message='Please give access to your account or create a create a account in your wallet.' showIcon className='mb-4' type='info' />}
-				{Object.keys(defaultWallets || {}).length === 0 &&  <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
+				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message='Create a wallet account or give access to your wallet address to view delegation Dashboard.' showIcon className='mb-4' type='info' />}
+				{Object.keys(defaultWallets || {}).length === 0 && !loading && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
 
 				{
 					!extensionOpen &&
@@ -175,7 +179,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 									form={form}
 									disabled={loading}
 								>
-									{accounts.length> 0
+									{accounts.length > 0
 										?<AccountSelectionForm
 											title='Select an address'
 											accounts={accounts}

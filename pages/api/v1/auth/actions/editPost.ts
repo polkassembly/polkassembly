@@ -72,12 +72,41 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	if(postDoc.exists) {
 		const post = postDoc.data();
 		if(![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)){
-			const substrateAddress = getSubstrateAddress(post?.proposer_address || '');
-			let proposer = '';
-			if (post) {
-				proposer = post?.proposer || post?.preimage?.proposer;
+			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+			const postQuery = proposalType === ProposalType.ALLIANCE_MOTION ?
+				GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE :
+				proposalType === ProposalType.ANNOUNCEMENT ?
+					GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE :
+					GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
+
+			let variables: any = {
+				index_eq: Number(postId),
+				type_eq: subsquidProposalType
+			};
+
+			if (proposalType === ProposalType.TIPS) {
+				variables = {
+					hash_eq: String(postId),
+					type_eq: subsquidProposalType
+				};
 			}
-			isAuthor = Boolean(userAddresses.find(address => address.address === substrateAddress || address.address === proposer));
+
+			const postRes = await fetchSubsquid({
+				network,
+				query: postQuery,
+				variables
+			});
+
+			const post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
+			if(!post) return res.status(500).json({ message: 'Something went wrong.' });
+			if(!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
+
+			const proposerAddress = post?.proposer || post?.preimage?.proposer;
+
+			const substrateAddress = getSubstrateAddress(proposerAddress);
+			if(!substrateAddress)  return res.status(500).json({ message: 'Something went wrong.' });
+			proposer_address = substrateAddress;
+			isAuthor = Boolean(userAddresses.find(address => address.address === substrateAddress));
 			if(network === 'moonbeam' && proposalType === ProposalType.DEMOCRACY_PROPOSALS && post?.id === 23){
 				if(userAddresses.find(address => address.address === '0xbb1e1722513a8fa80f7593617bb0113b1258b7f1')){
 					isAuthor = true;
@@ -97,7 +126,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		created_at = post?.created_at?.toDate();
 		topic_id = post?.topic_id;
 		post_link = post?.post_link;
-		proposer_address = post?.proposer_address;
 	}else {
 		const defaultUserAddress = await getDefaultUserAddressFromId(user.id);
 		proposer_address = defaultUserAddress?.address || '';
@@ -178,7 +206,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			if (strProposalType === proposalType && Number(obj.index) === Number(postId)) {
 				isCurrPostUpdated = true;
 				batch.set(postDocRef, newPostDoc, { merge: true });
-			} else {
+			} else if (![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)) {
 				batch.set(postDocRef, {
 					content,
 					created_at,

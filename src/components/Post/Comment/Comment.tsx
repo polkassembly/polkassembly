@@ -43,7 +43,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
 
 	const { postData: { postIndex, postType } } = usePostDataContext();
-
 	useEffect(() => {
 		if (typeof window == 'undefined') return;
 		const hashArr = asPath.split('#');

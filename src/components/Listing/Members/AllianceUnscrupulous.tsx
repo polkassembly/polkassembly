@@ -4,14 +4,14 @@
 
 // import { AccountId32 } from '@polkadot/types/interfaces';
 import React, { useContext, useEffect, useState } from 'react';
-import { AllianceApiContext } from 'src/context/AllianceApiContext';
 import { ErrorState } from 'src/ui-components/UIStates';
 import { LoadingState } from 'src/ui-components/UIStates';
 
 import AllianceAnnouncementsListing from './AllianceAnnouncementListing';
+import { ApiContext } from '~src/context/ApiContext';
 
 const AllianceUnscrupulous = ({ className } : { className?:string }) => {
-	const { api, apiReady } = useContext(AllianceApiContext);
+	const { api, apiReady } = useContext(ApiContext);
 	const [error, setErr] = useState<Error | null>(null);
 	const [accounts, setAccounts] = useState<string[]>([]);
 	const [websites, setWebsites] = useState<string[]>([]);

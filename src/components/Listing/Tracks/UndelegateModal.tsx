@@ -106,6 +106,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			: null;
 
 		if (!wallet) {
+			setLoading(true);
 			return;
 		}
 
@@ -126,6 +127,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			console.log(err?.message);
 		}
 		if (!injected) {
+			setLoading(true);
 			return;
 		}
 

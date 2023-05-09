@@ -45,7 +45,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 					<span className='border-0 border-solid border-b-[1px]'>See Details</span></div>
 			</div>
 				: <div className={`py-4 px-6 bg-[#FAFAFC] rounded-[4px] w-[95%] shadow ml-6 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
-					<div className='flex justify-between max-sm:flex-col max-sm:justify-start max-sm:gap-2'>
+					<div className='flex items-center max-sm:flex-col max-sm:justify-start max-sm:gap-2  max-sm:items-start'>
 						<div className='flex items-center max-sm:justify-start'>
 							<span className='mr-1 text-xs text-[#90A0B7]'>By:</span>
 							<NameLabel

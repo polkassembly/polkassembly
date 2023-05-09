@@ -60,7 +60,6 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						username={username}
 						topic={topic && topic?.name}
 						cid={cid}
-						history={[]}
 					>
 						<UpdateLabel
 							className='md'

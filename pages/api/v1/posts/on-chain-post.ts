@@ -10,7 +10,7 @@ import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
 import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IApiResponse } from '~src/types';
+import { IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -85,6 +85,7 @@ export interface IPostResponse {
 	[key: string]: any;
   gov_type?: 'gov_1' | 'open_gov' ;
   tags?: string[] | [];
+  history?: IPostHistory[];
 }
 
 export type IReaction = '👍' | '👎';
@@ -307,7 +308,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 	const commentsPromise = commentsSnapshot.docs.map(async (doc) => {
 		if (doc && doc.exists) {
 			const data = doc.data();
-			const history = data?.history.length > 0 ? data.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
+			const history = data?.history ? data.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
 			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
 			const commentsReactionsSnapshot = await commentDocRef.collection('comment_reactions').get();
 			const comment_reactions = getReactions(commentsReactionsSnapshot);
@@ -558,6 +559,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}
 
 		}
+		const history = postData?.history ? postData?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
+
 		const post: IPostResponse = {
 			announcement: postData?.announcement,
 			bond: postData?.bond,
@@ -581,6 +584,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			ended_at_block: postData?.endedAtBlock,
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
+			history,
 			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,

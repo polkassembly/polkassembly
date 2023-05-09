@@ -8,7 +8,7 @@ import { createContext, FC, PropsWithChildren, useState } from 'react';
 
 import { IComment } from '~src/components/Post/Comment/Comment';
 import { ProposalType } from '~src/global/proposalType';
-import { IOptionPoll, IPoll } from '~src/types';
+import { IOptionPoll, IPoll, IPostHistory } from '~src/types';
 
 export interface IPostDataContextProviderProps extends PropsWithChildren {
 	initialPostData: IPostData;
@@ -57,6 +57,7 @@ export interface IPostData {
     track_number?: number;
     tags: string[] | [];
     spam_users_count?: number;
+    history: IPostHistory[];
 }
 
 export interface IPostDataContext {

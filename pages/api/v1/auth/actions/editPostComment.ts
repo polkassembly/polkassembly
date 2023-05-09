@@ -11,7 +11,6 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
-import firebaseAdmin from '~src/services/firebaseInit';
 import { ICommentHistory } from '~src/types';
 
 const handler: NextApiHandler< MessageType> = async (req, res) => {
@@ -53,7 +52,7 @@ const handler: NextApiHandler< MessageType> = async (req, res) => {
 	};
 
 	const history = commentData?.history && Array.isArray(commentData?.history)
-		? firebaseAdmin.firestore.FieldValue.arrayUnion(newHistory)
+		? [...(commentData?.history || []), newHistory]
 		: new Array(newHistory);
 
 	commentRef.update({

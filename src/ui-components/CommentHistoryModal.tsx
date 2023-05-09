@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Divider, Dropdown, MenuProps, Modal, Timeline, TimelineItemProps } from 'antd';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import CloseIcon from '~assets/icons/close.svg';
@@ -29,6 +29,11 @@ interface IHistoryData extends ICommentHistory{
 const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress, username, user_id }: Props) => {
 
 	const [historyData, setHistoryData] = useState<IHistoryData[]>(history);
+
+	useEffect(() => {
+		setHistoryData(history);
+	}, [history]);
+
 	const items: TimelineItemProps[] = historyData?.map((item, index) =>
 	{ const items : MenuProps['items']=[
 		item?.sentiment === 1 ? { key:1,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely Against</div> }:null,
@@ -39,17 +44,9 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 	];
 
 	return {
-		children: (<div key={index} className='flex gap-2 -ml-[40px]'>
+		children: (
 
-			{username && user_id && <UserAvatar
-				className='mt-1 flex-none hidden sm:inline-block'
-				username={username}
-				size='large'
-				id={user_id}
-			/>
-			}
-
-			<div className='py-3 pl-3 pr-1 bg-[#FAFAFC] rounded-[4px] w-[100%] '>
+			<div className={`py-3 pl-3 pr-1 bg-[#FAFAFC] rounded-[4px] w-[95%] shadow ml-6 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
 				<div className='flex justify-between items-center'>
 
 					<div className='flex items-center'>
@@ -77,11 +74,16 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 					{item?.content}
 				</div>
 				{item?.content.length > 100 && <span onClick={() => handleExpand(index, !item?.expand)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expand ? 'Show less' : 'Show more'}</span>}
-			</div></div>),
+			</div>),
+		dot: username && user_id && <UserAvatar
+			className='flex-none hidden sm:inline-block -mb-1 -mt-1'
+			username={username}
+			size='large'
+			id={user_id}/>,
 		key: index };});
 
 	const handleExpand = (index: number, expand: boolean) => {
-		const data = history.map((item, idx) => {
+		const data = historyData?.map((item, idx) => {
 			if(idx === index){
 				return { ...item, expand: expand };
 			}
@@ -89,6 +91,10 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 		});
 		setHistoryData(data);
 	};
+
+	useEffect(() => {
+		setHistoryData(history);
+	}, [history, open]);
 
 	return <Modal
 		open={open}
@@ -99,7 +105,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 		closeIcon={<CloseIcon/>}
 		title={<label className='-mt-2 px-3 text-[#334D6E] text-[20px] font-semibold '>Comment Edit History</label>}
 	>
-		<div className='flex flex-col px-4 pb-9 mt-9 timeline'>
+		<div className='flex flex-col px-4 pb-9 mt-9 post-history-timeline'>
 
 			<Timeline items={items}/>
 		</div>
@@ -117,18 +123,33 @@ export default styled(CommentHistoryModal)`
   width: 100%;
   overflow: hidden;
 }
-// .timeline .ant-timeline{
-// display: flex;
-// gap: 25px;
-// flex-direction: column;
-// }
-.timeline .ant-timeline .ant-timeline-item-tail{
-border: 1px dashed #90A0B7 !important;
-}
-@media screen and (max-width: 640px){
-.timeline .ant-timeline .ant-timeline-item-tail{
-border: none !important;
-}
+
+.post-history-timeline .ant-timeline .ant-timeline-item-tail{
+  background-image: linear-gradient(rgba(144,160,183) 50%, rgba(255,255,255) 0%) !important;
+  background-position: right !important;
+  background-size: 1px 7px !important;
+  background-repeat: repeat-y !important ;
+  
 }
 
+.post-history-timeline .ant-timeline .ant-timeline-item:has(.active-timeline){
+  .ant-timeline-item-tail{
+  background-image: linear-gradient( rgba(229,0,122) 33%, rgba(255,255,255) 0%) !important;
+  background-position: right !important;
+  background-size: 1.5px 7px !important;
+  background-repeat: repeat-y !important ;
+}
+}
+@media screen and (max-width: 640px){
+.post-history-timeline .ant-timeline .ant-timeline-item-tail{
+border: none !important;
+}
+.post-history-timeline .ant-timeline .ant-timeline-item-content{
+  margin-left: 0px !important; 
+}
+}
+.shadow{
+  box-shadow-box:-2px 2px 6px rgba(128, 10, 73, 0.2) !important;
+  margin-top: 10px !important;
+}
 `;

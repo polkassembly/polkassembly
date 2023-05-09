@@ -49,6 +49,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 		content,
 		created_at: new Date(),
 		gov_type:gov_type,
+		history: [],
 		id: newID,
 		last_comment_at,
 		last_edited_at: last_comment_at,

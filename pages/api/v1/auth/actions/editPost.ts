@@ -17,7 +17,7 @@ import messages from '~src/auth/utils/messages';
 import { getFirestoreProposalType, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PROPOSAL_BY_INDEX_AND_TYPE_V2 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IPostTag, Post } from '~src/types';
+import { IPostHistory, IPostTag, Post } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFromType';
@@ -68,9 +68,9 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const userAddresses = await getAddressesFromUserId(user.id, true);
 
 	const postDoc = await postDocRef.get();
+	const post = postDoc.data();
 	let isAuthor = false;
 	if(postDoc.exists) {
-		const post = postDoc.data();
 		if(![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)){
 			const substrateAddress = getSubstrateAddress(post?.proposer_address || '');
 			let proposer = '';
@@ -150,10 +150,22 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		if(!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
 	}
 
+	const newHistory: IPostHistory = {
+		content: post?.content,
+		created_at: post?.last_edited_at,
+		title: post?.title
+	};
+
+	const history =  post?.history && Array.isArray(post?.history)
+		? [...(post?.history || []), newHistory]
+		: new Array(newHistory);
+
 	const last_comment_at = new Date();
+
 	const newPostDoc: Omit<Post, 'last_comment_at'> = {
 		content,
 		created_at,
+		history,
 		id: proposalType === ProposalType.ANNOUNCEMENT ? postId : proposalType === ProposalType.TIPS ? postId : Number(postId),
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,

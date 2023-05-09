@@ -381,7 +381,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 								className='mt-[2px] text-[#485F7D] text-sm font-normal'
 								address={delegationDashboardAddress}
 								onAccountBalanceChange={handleOnBalanceChange}
-								onChange={(balance) => setBnBalance(balance)}
+								onChange={(balance) => {setBnBalance(balance);console.log(balance);}}
 								balance={ bnBalance }
 								size='large'
 								inputClassName={`text-[#7c899b] text-sm ${balanceErr.length > 0 && 'border-red-500'}`}

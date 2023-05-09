@@ -147,7 +147,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				{isPassword?'Set Password': 'Sign Up'}
 			</h3>
 
-			{ defaultWallets.length === 0 && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
+			{ defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
 			{walletError && <Alert message={walletError} type="error" />}
 			<AuthForm
 				onSubmit={handleSubmitForm}

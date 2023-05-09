@@ -52,7 +52,6 @@ interface ITimeline {
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
 	const { postData: { postType, timeline, created_at, comments } } = usePostDataContext();
-	console.log(comments,'comments');
 	const targetOffset = 10;
 	const [timelines, setTimelines] = useState<ITimeline[]>([]);
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));

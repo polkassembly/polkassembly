@@ -302,7 +302,7 @@ export interface Post {
   username?: string;
   gov_type?: 'gov_1' | 'open_gov'
   tags?: string[] | [];
-  history: IPostHistory[];
+  history?: IPostHistory[];
 }
 export interface IPostTag {
   name:string;

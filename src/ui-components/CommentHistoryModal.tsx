@@ -46,7 +46,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 	return {
 		children: (
 
-			<div className={`py-3 pl-3 pr-1 bg-[#FAFAFC] rounded-[4px] w-[95%] shadow ml-6 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
+			<div className={`py-3 pl-3 pr-1 bg-[#FAFAFC] rounded-[4px] w-[95%] ml-6 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
 				<div className='flex justify-between items-center'>
 
 					<div className='flex items-center'>
@@ -148,8 +148,5 @@ border: none !important;
   margin-left: 0px !important; 
 }
 }
-.shadow{
-  box-shadow-box:-2px 2px 6px rgba(128, 10, 73, 0.2) !important;
-  margin-top: 10px !important;
-}
+
 `;

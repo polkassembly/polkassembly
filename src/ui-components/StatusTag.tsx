@@ -2,6 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+
 import React, { ReactNode } from 'react';
 import { announcementStatus, bountyStatus, bountyStatusMap, childBountyStatus, childBountyStatusMap, gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus, tipStatus, tipStatusMap } from 'src/global/statuses';
 import styled from 'styled-components';
@@ -16,7 +20,6 @@ interface Props{
 }
 
 const StatusTag = ({ className, content, status, colorInverted, type }: Props) => {
-
 	if (content && type === 'Tip' && tipStatusMap[content]) {
 		content = tipStatusMap[content];
 	}
@@ -31,7 +34,7 @@ const StatusTag = ({ className, content, status, colorInverted, type }: Props) =
 
 	return (
 		<div className={`${className} ${status} ${colorInverted && 'bg-white inverted'} text-xs rounded-full border-solid border-2 px-3 py-1 whitespace-nowrap h-min`}>
-			{content}
+			{content?.split(/(?=[A-Z])/).join(' ')}
 		</div>
 	);
 };
@@ -50,12 +53,15 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	}
 
 	&.${gov2ReferendumStatus.DECIDING},
-	&.${gov2ReferendumStatus.DECISION_DEPOSIT_PLACED} {
-		border-color: #CA5CDD;
-		background: #CA5CDD;
+	&.${gov2ReferendumStatus.DECISION_DEPOSIT_PLACED},
+	&.${bountyStatus.ACTIVE},
+	&.${bountyStatus.EXTENDED},
+	&.${tipStatus.CLOSING} {
+		border-color: #FF6700;
+		background: #FF6700;
 
 		&.inverted {
-			color: #CA5CDD;
+			color: #FF6700;
 		}
 	}
 
@@ -63,30 +69,41 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${referendumStatus.STARTED},
 	&.${proposalStatus.PROPOSED},
 	&.${motionStatus.PROPOSED},
-	&.${bountyStatus.PROPOSED} {
-		border-color: #6495ED;
-		background: #6495ED;
-
-		&.inverted {
-			color: #6495ED;
-		}
-	}
-
+	&.${bountyStatus.PROPOSED},
 	&.${tipStatus.OPENED},
-	&.${tipStatus.CLOSING},
-	&.${bountyStatus.AWARDED},
-	&.${bountyStatus.ACTIVE},
-	&.${bountyStatus.EXTENDED},
-	&.${childBountyStatus.ADDED}
-	&.${gov2ReferendumStatus.CONFIRM_STARTED} {
-		border-color: #6495ED;
-		background: #6495ED;
+	&.${childBountyStatus.ADDED} {
+		border-color: #407AFC;
+		background: #407AFC;
 
 		&.inverted {
-			color: #6495ED;
+			color: #407AFC;
 		}
 	}
+	&.${gov2ReferendumStatus.KILLED},
+	&.${gov2ReferendumStatus.REJECTED},
+	&.${gov2ReferendumStatus.TIMEDOUT},
+	&.${proposalStatus.CLEARED},
+	&.${referendumStatus.CANCELLED},
+	&.${referendumStatus.VETOED},
+	&.${motionStatus.DISAPPROVED},
+	&.${tipStatus.RETRACTED},
+	&.${bountyStatus.CANCELED},
+	&.${bountyStatus.REJECTED},
+	&.${childBountyStatus.CANCELED} {
+		border-color: #FF0000 !important;
+		background: #FF0000 !important;
 
+		&.inverted {
+			color: #FF0000 !important;
+		}
+	}
+	&.${referendumStatus.NOTPASSED}{
+		border-color: #FF0000 !important;
+		background: #FF0000 !important;
+		&.inverted {
+			color: #FF0000 !important;
+		}
+	}
 	&.${gov2ReferendumStatus.CONFIRMED},
 	&.${proposalStatus.TABLED},
 	&.${referendumStatus.PASSED},
@@ -98,6 +115,7 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${bountyStatus.AWARDED},
 	&.${bountyStatus.CLAIMED},
 	&.${childBountyStatus.AWARDED},
+	&.${bountyStatus.AWARDED},
 	&.${announcementStatus.Announced} {
 		border-color: #5BC044;
 		background: #5BC044;
@@ -113,26 +131,6 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 
 		&.inverted {
 			color: var(--green_primary);
-		}
-	}
-
-	&.${gov2ReferendumStatus.KILLED},
-	&.${gov2ReferendumStatus.REJECTED},
-	&.${gov2ReferendumStatus.TIMEDOUT},
-	&.${proposalStatus.CLEARED},
-	&.${referendumStatus.CANCELLED},
-	&.${referendumStatus.NOTPASSED},
-	&.${referendumStatus.VETOED},
-	&.${motionStatus.DISAPPROVED},
-	&.${tipStatus.RETRACTED},
-	&.${bountyStatus.CANCELED},
-	&.${bountyStatus.REJECTED},
-	&.${childBountyStatus.CANCELED} {
-		border-color: #FF0000;
-		background: #FF0000;
-
-		&.inverted {
-			color: #FF0000;
 		}
 	}
 `;

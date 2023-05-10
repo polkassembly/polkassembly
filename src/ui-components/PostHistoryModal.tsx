@@ -2,8 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Divider, Modal, Timeline, TimelineItemProps } from 'antd';
-import { ClockCircleOutlined } from '@ant-design/icons';
+import { Modal, Timeline, TimelineItemProps } from 'antd';
 import CloseIcon from '~assets/icons/close.svg';
 import { IPostHistory } from '~src/types';
 import styled from 'styled-components';
@@ -57,9 +56,8 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							/>
 						</div>
 						<div className='flex items-center'>
-							<Divider className='ml-1 flex-none hidden sm:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+							<div className='rounded-[50%] bg-[#A0A6AE] h-[3.5px] w-[3px] ml-1 mr-2 flex justify-center items-center mt-[1px]'/>
 							<div className='flex items-center text-xs'>
-								<ClockCircleOutlined className='mr-2 ml-[2px] text-navBlue' />
 								<span className='text-navBlue text-xs'>{getRelativeCreatedAt(date)}</span>
 							</div>
 						</div>

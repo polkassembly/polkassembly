@@ -2,8 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Divider, Dropdown, MenuProps, Modal, Timeline, TimelineItemProps } from 'antd';
-import { ClockCircleOutlined } from '@ant-design/icons';
+import { Dropdown, MenuProps, Modal, Timeline, TimelineItemProps } from 'antd';
 import CloseIcon from '~assets/icons/close.svg';
 import { ICommentHistory } from '~src/types';
 import styled from 'styled-components';
@@ -56,10 +55,9 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 						/>
 						<div className='flex items-center'>
 				&nbsp;
-							<Divider className='ml-1' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+							<div className='rounded-[50%] bg-[#A0A6AE] h-[3.5px] w-[3px] ml-1 mr-2 flex justify-center items-center mt-[1px]'/>
 
 							<div className='flex items-center'>
-								<ClockCircleOutlined className='mr-1 ml-1 text-navBlue' />
 								<span className='text-navBlue text-xs'>{getRelativeCreatedAt(item?.created_at)}</span>
 							</div>
 						</div>

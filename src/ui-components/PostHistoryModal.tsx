@@ -20,7 +20,7 @@ interface Props{
   history: IPostHistory[];
   defaultAddress?: string | null;
   username: string;
-  user_id: number | null | undefined;
+  user_id?: number | null | undefined;
 }
 interface IHistoryData extends IPostHistory{
   expandContent?: boolean;
@@ -39,10 +39,10 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 		const date = new Date(item?.created_at);
 
 		return {
-			children: !item?.expand ? <div className='text-[#334D6E] h-[60px] ml-6 text-sm tracking-[0.01em] flex flex-col gap-2 font-medium max-sm:w-full max-sm:ml-0'>
+			children: !item?.expand ? <div className='text-[#334D6E] h-[50px] ml-6 text-xs tracking-[0.01em] flex flex-col gap-2 font-medium max-sm:w-full max-sm:ml-0'>
           Edited on {dayjs(date).format('DD MMM YY')}
 				<div className='text-pink_primary text-[14px] leading-[11px] text-xs flex justify-start cursor-pointer' onClick={() => handleExpand(index, EExpandType.Expand)}>
-					<span className='border-0 border-solid border-b-[1px]'>See Details</span></div>
+					<span className='border-0 border-solid border-b-[1px] text-xs'>See Details</span></div>
 			</div>
 				: <div className={`py-4 px-6 bg-[#FAFAFC] rounded-[4px] w-[95%] shadow ml-6 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
 					<div className='flex items-center max-sm:flex-col max-sm:justify-start max-sm:gap-2  max-sm:items-start'>
@@ -51,27 +51,28 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							<NameLabel
 								defaultAddress={defaultAddress}
 								username={username}
+								textClassName='text-xs'
 							/>
 						</div>
 						<div className='flex items-center'>
 							<Divider className='ml-1 flex-none hidden sm:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
-							<div className='flex items-center'>
-								<ClockCircleOutlined className='mr-2 ml-1 text-navBlue' />
+							<div className='flex items-center text-xs'>
+								<ClockCircleOutlined className='mr-2 ml-[2px] text-navBlue' />
 								<span className='text-navBlue text-xs'>{getRelativeCreatedAt(date)}</span>
 							</div>
 						</div>
 					</div>
-					<div className='text-[#334D6E] text-[18px] mt-[11px] font-medium'>{item?.title}</div>
+					<div className='text-[#334D6E] text-[16px] mt-[11px] font-medium'>{item?.title}</div>
 					<div className={`mt-2 text-[#90A0B7] text-sm px-[2px] font-normal tracking-[0.01em] ${!item?.expandContent && item?.content.length > 100 && 'truncate-content'}  ${poppins.className} ${poppins.variable} leading-6 pr-2`}>
 						{item?.content}
 					</div>
 					{item?.content.length > 100 && <span onClick={() => handleExpand(index, EExpandType.ExpandContent)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expandContent ? 'Show less' : 'Show more'}</span>}
 				</div>,
-			dot: username && user_id && <UserAvatar
+			dot: username && <UserAvatar
 				className='flex-none hidden sm:inline-block -mb-1 -mt-1'
 				username={username}
 				size='large'
-				id={user_id}/>
+				id={user_id || 0}/>
 			,
 			key: index };});
 

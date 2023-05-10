@@ -75,11 +75,11 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 				</div>
 				{item?.content.length > 100 && <span onClick={() => handleExpand(index, !item?.expand)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expand ? 'Show less' : 'Show more'}</span>}
 			</div>),
-		dot: username && user_id && <UserAvatar
+		dot: username && <UserAvatar
 			className='flex-none hidden sm:inline-block -mb-1 -mt-1'
 			username={username}
 			size='large'
-			id={user_id}/>,
+			id={user_id || 0}/>,
 		key: index };});
 
 	const handleExpand = (index: number, expand: boolean) => {

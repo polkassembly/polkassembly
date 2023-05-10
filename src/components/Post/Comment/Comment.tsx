@@ -15,6 +15,7 @@ import { usePostDataContext } from '~src/context';
 import EditableCommentContent from './EditableCommentContent';
 import Replies from './Replies';
 import { ICommentHistory } from '~src/types';
+import CommentHistoryModal from '~src/ui-components/CommentHistoryModal';
 
 export interface IComment {
 	user_id: number;
@@ -44,6 +45,8 @@ export const Comment: FC<ICommentProps> = (props) => {
 	const commentScrollRef = useRef<HTMLDivElement>(null);
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
 	const { postData: { postIndex, postType } } = usePostDataContext();
+	const [openModal, setOpenModal] = useState<boolean>(false);
+
 	useEffect(() => {
 		if (typeof window == 'undefined') return;
 		const hashArr = asPath.split('#');
@@ -83,13 +86,12 @@ export const Comment: FC<ICommentProps> = (props) => {
 					username={comment.username}
 					sentiment={newSentiment}
 					commentSource={comment_source}
-					history={history}
-					user_id={user_id}
 				>
-					<UpdateLabel
-						created_at={created_at}
-						updated_at={updated_at}
-					/>
+					<div className='cursor-pointer' onClick={() => setOpenModal(true)}>
+						<UpdateLabel
+							created_at={created_at}
+							updated_at={updated_at}
+						/></div>
 				</CreationLabel>
 				<EditableCommentContent
 					userId={user_id}
@@ -108,6 +110,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 				/>
 				{replies && replies.length > 0 && <Replies className='comment-content' commentId={id} repliesArr={replies} />}
 			</div>
+			{ history.length > 0 && <CommentHistoryModal open={openModal} setOpen={setOpenModal} history={history || []} defaultAddress={comment?.proposer} username={comment?.username} user_id={comment?.user_id}/>}
 		</div>
 	);
 };

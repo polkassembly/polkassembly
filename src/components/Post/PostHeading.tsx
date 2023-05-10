@@ -6,7 +6,7 @@ import { Skeleton } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import StatusTag from 'src/ui-components/StatusTag';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
@@ -14,6 +14,7 @@ import UpdateLabel from 'src/ui-components/UpdateLabel';
 import { useNetworkContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
+import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 
@@ -29,8 +30,9 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router= useRouter();
 	const { className } = props;
 	const { postData: {
-		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags, track_name, cid
+		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags, track_name, cid, history
 	} } = usePostDataContext();
+	const [openModal, setOpenModal] = useState<boolean>(false);
 
 	const { network } = useNetworkContext();
 
@@ -61,17 +63,19 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						topic={topic && topic?.name}
 						cid={cid}
 					>
-						<UpdateLabel
-							className='md'
-							created_at={created_at}
-							updated_at={last_edited_at}
-						/>
+						<div className='cursor-pointer' onClick={() => setOpenModal(true)}>
+							<UpdateLabel
+								className='md'
+								created_at={created_at}
+								updated_at={last_edited_at}
+							/></div>
 					</CreationLabel>
 				</>
 			</div>
 			{tags && tags.length>0 &&<div className='flex mt-6 gap-[8px] flex-wrap'>
 				{tags?.map((tag,index ) => (<div onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''),tag)} className='rounded-full px-[16px] py-[4px] border-navBlue border-solid border-[1px] text-navBlue text-xs traking-2 cursor-pointer hover:border-pink_primary hover:text-pink_primary' key={index} >{tag}</div>))}
 			</div> }
+			{history.length > 0 && <PostHistoryModal open={openModal} setOpen={setOpenModal} history={history} username={username} defaultAddress={proposer} />}
 		</div>
 	);
 };

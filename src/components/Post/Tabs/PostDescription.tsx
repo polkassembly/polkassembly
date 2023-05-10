@@ -2,10 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { FormOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { FormOutlined } from '@ant-design/icons';
 import { Button, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import Markdown from 'src/ui-components/Markdown';
 
 import { usePostDataContext } from '~src/context';
@@ -15,7 +15,6 @@ import PostReactionBar from '../ActionsBar/Reactionbar/PostReactionBar';
 import ReportButton from '../ActionsBar/ReportButton';
 import ShareButton from '../ActionsBar/ShareButton';
 import SubscriptionButton from '../ActionsBar/SubscriptionButton/SubscriptionButton';
-import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => <div>
@@ -38,8 +37,7 @@ interface IPostDescriptionProps {
 
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp } = props;
-	const { postData: { content, postType, postIndex, title, post_reactions, history, proposer, username } } = usePostDataContext();
-	const [openModal, setOpenModal] = useState<boolean>(false);
+	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
 
 	return (
 		<div className={`${className} mt-4`}>
@@ -61,19 +59,12 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					{TrackerButtonComp}
 					<ShareButton title={title} />
 				</div>
-				{history && <div className='text-sm text-pink_primary flex items-center gap-1 px-1 font-normal max-md:mt-[5px]'>
-					<ClockCircleOutlined className='mr-1'/>
-					<span onClick={() => setOpenModal(true)} className='flex items-center cursor-pointer'>
-            Edit History
-					</span>
-				</div>}
 			</div>
 
 			{!isEditing && <div className='flex xl:hidden mb-8 mx-2'><Sidebar /></div>}
 			<CommentsContainer
 				id={id}
 			/>
-			{history.length > 0 && <PostHistoryModal open={openModal} setOpen={setOpenModal} history={history} username={username} user_id={id} defaultAddress={proposer} />}
 		</div>
 	);
 };

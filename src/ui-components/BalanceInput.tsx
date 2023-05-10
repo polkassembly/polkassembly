@@ -91,7 +91,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 				onChange={onBalanceChange}
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}
-				value={Number(formatedBalance(String(balance), unit)) }
+				value={Number(formatedBalance(String(balance || ZERO_BN), unit)) }
 			/>
 		</Form.Item>
 	</div>;

@@ -52,7 +52,7 @@ const handler: NextApiHandler< MessageType> = async (req, res) => {
 	};
 
 	const history = commentData?.history && Array.isArray(commentData?.history)
-		? [...(commentData?.history || []), newHistory]
+		? [newHistory, ...(commentData?.history || [])]
 		: new Array(newHistory);
 
 	commentRef.update({

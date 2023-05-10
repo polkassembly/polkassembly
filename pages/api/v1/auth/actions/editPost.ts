@@ -185,7 +185,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	};
 
 	const history =  post?.history && Array.isArray(post?.history)
-		? [...(post?.history || []), newHistory]
+		? [newHistory, ...(post?.history || [])]
 		: new Array(newHistory);
 
 	const last_comment_at = new Date();

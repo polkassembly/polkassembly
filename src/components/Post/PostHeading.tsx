@@ -30,7 +30,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router= useRouter();
 	const { className } = props;
 	const { postData: {
-		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags, track_name, cid, history
+		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags, track_name, cid, history, content
 	} } = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
@@ -75,7 +75,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			{tags && tags.length>0 &&<div className='flex mt-6 gap-[8px] flex-wrap'>
 				{tags?.map((tag,index ) => (<div onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''),tag)} className='rounded-full px-[16px] py-[4px] border-navBlue border-solid border-[1px] text-navBlue text-xs traking-2 cursor-pointer hover:border-pink_primary hover:text-pink_primary' key={index} >{tag}</div>))}
 			</div> }
-			{history.length > 0 && <PostHistoryModal open={openModal} setOpen={setOpenModal} history={history} username={username} defaultAddress={proposer} />}
+			{history.length > 0 && <PostHistoryModal open={openModal} setOpen={setOpenModal} history={[{ content: content, created_at: last_edited_at || '', title: title },...history]} username={username} defaultAddress={proposer} />}
 		</div>
 	);
 };

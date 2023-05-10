@@ -22,7 +22,7 @@ const UpdateLabel = ({ className, created_at, updated_at } : Props) => {
 			? null :
 			<span className={className}>
 				<Tooltip color='#E5007A' title={title}>
-					<span className='text-pink_primary leading-[10px] border-0 border-solid border-b-[1px]'>(Edited)</span>
+					<span className='text-pink_primary text-[10px] leading-4'>(Edited)</span>
 				</Tooltip>
 			</span>
 	);

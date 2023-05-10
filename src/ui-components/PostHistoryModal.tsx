@@ -12,6 +12,7 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { poppins } from 'pages/_app';
 import UserAvatar from './UserAvatar';
 import dayjs from 'dayjs';
+import { noTitle } from '~src/global/noTitle';
 
 interface Props{
   className?: string;
@@ -37,6 +38,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 	const items: TimelineItemProps[] = historyData?.map((item, index) =>
 	{
 		const date = new Date(item?.created_at);
+		const title = item?.title|| noTitle;
 
 		return {
 			children: !item?.expand ? <div className='text-[#334D6E] h-[50px] ml-6 text-xs tracking-[0.01em] flex flex-col gap-2 font-medium max-sm:w-full max-sm:ml-0'>
@@ -44,7 +46,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 				<div className='text-pink_primary text-[14px] leading-[11px] text-xs flex justify-start cursor-pointer' onClick={() => handleExpand(index, EExpandType.Expand)}>
 					<span className='border-0 border-solid border-b-[1px] text-xs'>See Details</span></div>
 			</div>
-				: <div className={`py-4 px-6 bg-[#FAFAFC] rounded-[4px] w-[95%] shadow ml-6 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
+				: <div className={`py-4 px-6 bg-[#FAFAFC] rounded-[4px] w-[95%] timeline-shadow ml-6 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
 					<div className='flex items-center max-sm:flex-col max-sm:justify-start max-sm:gap-2  max-sm:items-start'>
 						<div className='flex items-center max-sm:justify-start'>
 							<span className='mr-1 text-xs text-[#90A0B7]'>By:</span>
@@ -62,7 +64,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							</div>
 						</div>
 					</div>
-					<div className='text-[#334D6E] text-[16px] mt-[11px] font-medium'>{item?.title}</div>
+					<div className='text-[#334D6E] text-[16px] mt-[11px] font-medium'>{title}</div>
 					<div className={`mt-2 text-[#90A0B7] text-sm px-[2px] font-normal tracking-[0.01em] ${!item?.expandContent && item?.content.length > 100 && 'truncate-content'}  ${poppins.className} ${poppins.variable} leading-6 pr-2`}>
 						{item?.content}
 					</div>
@@ -160,7 +162,7 @@ border: none !important;
   margin-left: 0px !important; 
 }
 }
-.shadow{
+.timeline-shadow{
   box-shadow:-2px 2px 6px rgba(128, 10, 73, 0.2) !important;
   margin-top: 10px !important;
 }

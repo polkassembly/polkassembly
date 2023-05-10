@@ -65,6 +65,11 @@ const SEOHead = ({ title, desc, network } : Props) => {
 			<meta property="og:type" content="website" />
 			<meta property="og:image" content={`https://firebasestorage.googleapis.com/v0/b/polkassembly-backend.appspot.com/o/public%2F${image.trim()}?alt=media`} />
 			<link rel="apple-touch-icon" href="/logo192.png" />
+			<meta property="og:image:width" content="751" />
+			<meta property="og:image:height" content="501" />
+			<meta property = "og:image" content={`https://firebasestorage.googleapis.com/v0/b/polkassembly-backend.appspot.com/o/public%2F${imageMapper?.[network]?.small}?alt=media`} />
+			<meta property="og:image:width" content="608" />
+			<meta property="og:image:height" content="608" />
 		</Head>
 	);
 };

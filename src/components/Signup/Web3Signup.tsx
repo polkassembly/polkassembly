@@ -216,6 +216,8 @@ const Web3Signup: FC<Props> = ({
 
 			if(confirmData.token) {
 				currentUser.loginWallet=chosenWallet;
+				currentUser.loginAddress = address;
+				currentUser.delegationDashboardAddress = address;
 				handleTokenChange(confirmData.token, currentUser);
 				if(isModal){
 					setSignupOpen && setSignupOpen(false);

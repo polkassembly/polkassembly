@@ -14,6 +14,7 @@ import basiliskLogo from '~assets/parachain-logos/basilisk-logo.jpg';
 import pioneerLogo from '~assets/parachain-logos/bitcountrypioneer-logo.jpg';
 import calamariLogo from '~assets/parachain-logos/calamari-logo.png';
 import centrifugeLogo from '~assets/parachain-logos/centrifuge-logo.png';
+import cereLogo from '~assets/parachain-logos/cere-logo.jpg';
 import collectivesLogo from '~assets/parachain-logos/collectives-logo.png';
 import composableFinanceLogo from '~assets/parachain-logos/composable-finance-logo.png';
 import crustLogo from '~assets/parachain-logos/crust-logo.png';
@@ -68,6 +69,7 @@ export const network = {
 	COLLECTIVES: 'collectives',
 	COMPOSABLE: 'composable',
 	CRUST: 'crust',
+	CERE: 'cere',
 	CRUSTSHADOW: 'crustshadow',
 	EQUILIBRIUM: 'equilibrium',
 	FREQUENCY: 'frequency',
@@ -116,6 +118,7 @@ export const tokenSymbol = {
 	ATA: 'ATA',
 	BNC: 'BNC',
 	BSX: 'BSX',
+	CERE: 'CERE',
 	CFG: 'CFG',
 	CRU: 'CRU',
 	CSM: 'CSM',
@@ -394,6 +397,22 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1000',
 		treasuryProposalMaxBond:'5000',
 		externalLinks: 'https://centrifuge.api.subscan.io',
+		rpcEndpoints: []
+	},
+	[network.CERE]: {
+		blockTime: 12000,
+		category: 'solo',
+		chainId: 0,
+		logo: cereLogo,
+		rpcEndpoint: 'wss://archive.mainnet.cere.network/ws',
+		ss58Format: 54,
+		subsquidUrl: 'https://squid.subsquid.io/cere-polkassembly/graphql',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.CERE,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '100',
+		treasuryProposalMaxBond: null,
+		externalLinks: '',
 		rpcEndpoints: []
 	},
 	//TODO: Aleem=> Need to update collective network, currently using polkadot data

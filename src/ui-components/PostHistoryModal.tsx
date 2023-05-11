@@ -12,6 +12,7 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import UserAvatar from './UserAvatar';
 import dayjs from 'dayjs';
 import { noTitle } from '~src/global/noTitle';
+import { poppins } from 'pages/_app';
 
 interface Props{
   className?: string;
@@ -118,7 +119,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 		open={open}
 		onCancel={() => setOpen(false)}
 		wrapClassName={className}
-		className={'closeIcon  w-[600px] shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] max-sm:w-full'}
+		className={`closeIcon  w-[600px] shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] max-sm:w-full ${poppins.variable} ${poppins.className}`}
 		footer={false}
 		closeIcon={<CloseIcon/>}
 		title={<label className='-mt-2 px-3 text-[#334D6E] text-[20px] font-semibold '>Proposal Edit History</label>}

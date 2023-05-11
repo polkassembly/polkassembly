@@ -400,7 +400,7 @@ export const chainProperties: types.ChainPropType = {
 		rpcEndpoints: []
 	},
 	[network.CERE]: {
-		blockTime: 12000,
+		blockTime: 6000,
 		category: 'solo',
 		chainId: 0,
 		logo: cereLogo,

@@ -2,13 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
+import { diffChars } from 'diff';
 import { Modal, Timeline, TimelineItemProps } from 'antd';
 import CloseIcon from '~assets/icons/close.svg';
 import { IPostHistory } from '~src/types';
 import styled from 'styled-components';
 import NameLabel from './NameLabel';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
-import { poppins } from 'pages/_app';
 import UserAvatar from './UserAvatar';
 import dayjs from 'dayjs';
 import { noTitle } from '~src/global/noTitle';
@@ -34,25 +34,27 @@ enum EExpandType {
 const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, username, user_id }: Props) => {
 
 	const [historyData, setHistoryData] = useState<IHistoryData[]>([]);
+
 	const items: TimelineItemProps[] = historyData?.map((item, index) =>
 	{
 		const date = new Date(item?.created_at);
-		const title = item?.title|| noTitle;
+		const title = item?.title || noTitle;
+		const difference = historyData[index+1] ? diffChars(historyData[index+1]?.content, item?.content) : [];
 
 		return {
-			children: !item?.expand ? <div className='text-[#334D6E] h-[50px] ml-6 text-xs tracking-[0.01em] flex flex-col gap-2 font-medium max-sm:w-full max-sm:ml-0'>
+			children: !item?.expand ? <div className={'text-[#334D6E] h-[50px] ml-3 text-sm tracking-[0.01em] flex flex-col gap-2 -mt-1 font-medium max-sm:w-full max-sm:ml-0'}>
           Edited on {dayjs(date).format('DD MMM YY')}
-				<div className='text-pink_primary text-[14px] leading-[11px] text-xs flex justify-start cursor-pointer' onClick={() => handleExpand(index, EExpandType.Expand)}>
-					<span className='border-0 border-solid border-b-[1px] text-xs'>See Details</span></div>
+				<div className='text-pink_primary text-sm flex justify-start cursor-pointer -mt-2' onClick={() => handleExpand(index, EExpandType.Expand)}>
+					<span className='text-xs'>See Details</span></div>
 			</div>
-				: <div className={`py-4 px-6 bg-[#FAFAFC] rounded-[4px] w-[95%] timeline-shadow ml-6 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
+				: <div className={`py-3 px-3 bg-[#FAFAFC] rounded-[4px] mt-1 border-solid border-[0.5px] border-[#D2D8E0] w-[95%] ml-3 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
 					<div className='flex items-center max-sm:flex-col max-sm:justify-start max-sm:gap-2  max-sm:items-start'>
 						<div className='flex items-center max-sm:justify-start'>
 							<span className='mr-1 text-xs text-[#90A0B7]'>By:</span>
 							<NameLabel
 								defaultAddress={defaultAddress}
 								username={username}
-								textClassName='text-xs'
+								textClassName='text-xs text-[#334D6E]'
 							/>
 						</div>
 						<div className='flex items-center'>
@@ -62,9 +64,11 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							</div>
 						</div>
 					</div>
-					<div className='text-[#334D6E] text-[16px] mt-[11px] font-medium'>{title}</div>
-					<div className={`mt-2 text-[#90A0B7] text-sm px-[2px] font-normal tracking-[0.01em] ${!item?.expandContent && item?.content.length > 100 && 'truncate-content'}  ${poppins.className} ${poppins.variable} leading-6 pr-2`}>
-						{item?.content}
+					<div className='text-[#334D6E] text-[16px] mt-[11px] font-medium'>
+						{historyData[index+1] ?  item?.title ? <div>{diffChars( historyData[index+1]?.title, item?.title)?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : title : title}
+					</div>
+					<div className={`mt-2 text-[#243A57] text-sm px-[2px] font-normal tracking-[0.01em] ${!item?.expandContent && item?.content.length > 100 && 'truncate-content'} leading-6 pr-2`}>
+						{historyData[index+1] ? <div>{difference?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : item?.content}
 					</div>
 					{item?.content.length > 100 && <span onClick={() => handleExpand(index, EExpandType.ExpandContent)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expandContent ? 'Show less' : 'Show more'}</span>}
 				</div>,
@@ -114,7 +118,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 		open={open}
 		onCancel={() => setOpen(false)}
 		wrapClassName={className}
-		className={`closeIcon ${poppins.variable} ${poppins.className} w-[600px] shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] max-sm:w-full`}
+		className={'closeIcon  w-[600px] shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] max-sm:w-full'}
 		footer={false}
 		closeIcon={<CloseIcon/>}
 		title={<label className='-mt-2 px-3 text-[#334D6E] text-[20px] font-semibold '>Proposal Edit History</label>}
@@ -137,15 +141,16 @@ export default styled(PostHistoryModal)`
   overflow: hidden;
 }
 .post-history-timeline .ant-timeline .ant-timeline-item-tail{
-  background-image: linear-gradient(rgba(144,160,183) 50%, rgba(255,255,255) 0%) !important;
+  border-inline-start: 2px solid rgba(5, 5, 5, 0) !important;
+  background-image: linear-gradient(rgba(144,160,183) 33%, rgba(255,255,255,0) 0%) !important;
   background-position: right !important;
-  background-size: 1px 7px !important;
+  background-size: 1.5px 7px !important;
   background-repeat: repeat-y !important ;
   cursor: pointer !important;
 }
 .post-history-timeline .ant-timeline .ant-timeline-item:has(.active-timeline){
   .ant-timeline-item-tail{
-  background-image: linear-gradient( rgba(229,0,122) 33%, rgba(255,255,255) 0%) !important;
+  background-image: linear-gradient( rgba(229,0,122) 33%, rgba(255,255,255,0) 20%) !important;
   background-position: right !important;
   background-size: 1.5px 7px !important;
   background-repeat: repeat-y !important ;
@@ -160,9 +165,14 @@ border: none !important;
   margin-left: 0px !important; 
 }
 }
-.timeline-shadow{
-  box-shadow:-2px 2px 6px rgba(128, 10, 73, 0.2) !important;
-  margin-top: 10px !important;
+.post-history-timeline .ant-timeline-item{
+  padding-bottom: 30px !important;
 }
+.post-history-timeline .ant-timeline-item-content{
+    inset-block-start:-8px !important;
+  }
+ .post-history-timeline .ant-timeline .ant-timeline-item-head-custom{
+inset-block-start: 10px !important;
+ }
 
 `;

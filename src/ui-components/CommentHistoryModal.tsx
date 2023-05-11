@@ -11,6 +11,7 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { AgainstIcon, ForIcon, NeutralIcon, SlightlyAgainstIcon, SlightlyForIcon } from './CustomIcons';
 import { poppins } from 'pages/_app';
 import UserAvatar from './UserAvatar';
+import { diffChars } from 'diff';
 
 interface Props{
   className?: string;
@@ -34,51 +35,53 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 	}, [history]);
 
 	const items: TimelineItemProps[] = historyData?.map((item, index) =>
-	{ const items : MenuProps['items']=[
-		item?.sentiment === 1 ? { key:1,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely Against</div> }:null,
-		item?.sentiment === 2 ? { key:2,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Slightly Against</div> }:null,
-		item?.sentiment === 3 ? { key:3,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Neutral</div> }:null,
-		item?.sentiment === 4 ? { key:4,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Slightly For</div> }:null,
-		item?.sentiment === 5 ? { key:5,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely For</div> }:null
-	];
+	{ const difference = historyData[index+1] ? diffChars(historyData[index+1]?.content, item?.content) : [];
 
-	return {
-		children: (
+		const items : MenuProps['items']=[
+			item?.sentiment === 1 ? { key:1,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely Against</div> }:null,
+			item?.sentiment === 2 ? { key:2,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Slightly Against</div> }:null,
+			item?.sentiment === 3 ? { key:3,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Neutral</div> }:null,
+			item?.sentiment === 4 ? { key:4,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Slightly For</div> }:null,
+			item?.sentiment === 5 ? { key:5,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely For</div> }:null
+		];
 
-			<div className={`py-3 pl-3 pr-1 bg-[#FAFAFC] rounded-[4px] w-[95%] ml-6 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
-				<div className='flex justify-between items-center'>
+		return {
+			children: (
 
-					<div className='flex items-center'>
-						<NameLabel
-							defaultAddress={defaultAddress}
-							username={username}
-						/>
+				<div className={`py-3 pl-3 pr-1 bg-[#FAFAFC] rounded-[4px] w-[98%] ml-2 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'} ${poppins.variable} ${poppins.className}`}>
+					<div className='flex justify-between items-center'>
+
 						<div className='flex items-center'>
-				&nbsp;
-							<div className='rounded-[50%] bg-[#A0A6AE] h-[3.5px] w-[3px] ml-1 mr-2 flex justify-center items-center mt-[1px]'/>
-
+							<NameLabel
+								defaultAddress={defaultAddress}
+								username={username}
+								textClassName='text-[#334D6E] text-xs'
+							/>
 							<div className='flex items-center'>
-								<span className='text-navBlue text-xs'>{getRelativeCreatedAt(item?.created_at)}</span>
+				&nbsp;
+								<div className='rounded-full bg-[#A0A6AE] h-[3px] w-[3px] mr-2 flex justify-center items-center mt-[1px]'/>
+
+								<div className='flex items-center'>
+									<span className='text-navBlue text-[10px]'>{getRelativeCreatedAt(item?.created_at)}</span>
+								</div>
 							</div>
 						</div>
+						{item?.sentiment === 1 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center  min-[320px]:mr-2'><AgainstIcon className='min-[320px]:items-start' /></Dropdown>}
+						{item?.sentiment === 2 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2'><SlightlyAgainstIcon  className='min-[320px]:items-start'/></Dropdown>}
+						{item?.sentiment === 3 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2'><NeutralIcon  className='min-[320px]:items-start' /></Dropdown>}
+						{item?.sentiment === 4 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2' ><SlightlyForIcon  className='min-[320px]:items-start'/></Dropdown>}
+						{item?.sentiment === 5 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-[20px] mr-[-1px] mb-[-1px] mt-[-2px] text-white  flex justify-center items-center min-[320px]:mr-2'><ForIcon  className='min-[320px]:items-start'/></Dropdown>}
 					</div>
-					{item?.sentiment === 1 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center  min-[320px]:mr-2'><AgainstIcon className='min-[320px]:items-start' /></Dropdown>}
-					{item?.sentiment === 2 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2'><SlightlyAgainstIcon  className='min-[320px]:items-start'/></Dropdown>}
-					{item?.sentiment === 3 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2'><NeutralIcon  className='min-[320px]:items-start' /></Dropdown>}
-					{item?.sentiment === 4 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2' ><SlightlyForIcon  className='min-[320px]:items-start'/></Dropdown>}
-					{item?.sentiment === 5 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-[20px] mr-[-1px] mb-[-1px] mt-[-2px] text-white  flex justify-center items-center min-[320px]:mr-2'><ForIcon  className='min-[320px]:items-start'/></Dropdown>}
-				</div>
-				<div className={`mt-2 text-[#90A0B7] text-sm px-[2px] font-normal ${!item?.expand && item?.content.length > 100 && 'truncate-content'} tracking-[0.01em] ${poppins.className} ${poppins.variable} leading-6 pr-2`}>
-					{item?.content}
-				</div>
-				{item?.content.length > 100 && <span onClick={() => handleExpand(index, !item?.expand)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expand ? 'Show less' : 'Show more'}</span>}
-			</div>),
-		dot: username && <UserAvatar
-			className='flex-none hidden sm:inline-block -mb-1 -mt-1'
-			username={username}
-			size='large'
-			id={user_id || 0}/>,
-		key: index };});
+					<div className={`mt-2 text-[#243A57] text-sm px-[2px] font-normal ${!item?.expand && item?.content.length > 100 && 'truncate-content'} tracking-[0.01em] ${poppins.className} ${poppins.variable} leading-6 pr-2`}>
+						{historyData[index+1] ? <div>{difference?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : item?.content}</div>
+					{item?.content.length > 100 && <span onClick={() => handleExpand(index, !item?.expand)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expand ? 'Show less' : 'Show more'}</span>}
+				</div>),
+			dot: username && <UserAvatar
+				className='flex-none hidden sm:inline-block'
+				username={username}
+				size='large'
+				id={user_id || 0}/>,
+			key: index };});
 
 	const handleExpand = (index: number, expand: boolean) => {
 		const data = historyData?.map((item, idx) => {
@@ -121,11 +124,18 @@ export default styled(CommentHistoryModal)`
   width: 100%;
   overflow: hidden;
 }
+.post-history-timeline .ant-timeline-item{
+  padding-bottom: 30px !important;
+}
+.post-history-timeline .ant-timeline-item-content{
+    inset-block-start: -13px !important;
+  }
 
 .post-history-timeline .ant-timeline .ant-timeline-item-tail{
-  background-image: linear-gradient(rgba(144,160,183) 50%, rgba(255,255,255) 0%) !important;
+border-inline-start: 2px solid rgba(5, 5, 5, 0) !important;
+  background-image: linear-gradient(rgba(144,160,183) 33%, rgba(255,255,255) 0%) !important;
   background-position: right !important;
-  background-size: 1px 7px !important;
+  background-size: 1.5px 7px !important;
   background-repeat: repeat-y !important ;
   
 }

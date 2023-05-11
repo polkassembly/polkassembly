@@ -243,6 +243,7 @@ const Web3Login: FC<Props> = ({
 
 						if(confirmData.token) {
 							currentUser.loginWallet= chosenWallet;
+							currentUser.loginAddress = address;
 							currentUser.delegationDashboardAddress = address;
 							localStorage.setItem('delegationWallet', chosenWallet);
 							localStorage.setItem('delegationDashboardAddress', address);
@@ -268,6 +269,7 @@ const Web3Login: FC<Props> = ({
 			}
 			if(addressLoginData?.token){
 				currentUser.loginWallet= chosenWallet;
+				currentUser.loginAddress = address;
 				currentUser.delegationDashboardAddress = address;
 
 				localStorage.setItem('delegationWallet', chosenWallet);

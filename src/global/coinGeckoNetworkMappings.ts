@@ -9,5 +9,6 @@ export const coinGeckoNetworks: any = {
 	'kylin': 'kylin-network',
 	'robonomics': 'robonomics-network',
 	'tanganika': 'datahighway',
-	'xx': 'xxcoin'
+	'xx': 'xxcoin',
+	'cere': 'cere-network',
 };

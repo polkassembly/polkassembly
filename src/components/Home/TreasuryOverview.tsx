@@ -270,7 +270,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 			setCurrentTokenPrice({
 				isLoading: false,
-				value: parseFloat(formattedUSD).toFixed(2)
+				value: network =='cere' ? parseFloat(formattedUSD).toFixed(4) : parseFloat(formattedUSD).toFixed(2)
 			});
 		}).catch(() => {
 			setCurrentTokenPrice({

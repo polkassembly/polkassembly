@@ -285,7 +285,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	// fetch a week ago price of the token and calc priceWeeklyChange
 	useEffect(() => {
 		let cancel = false;
-		if(cancel || !currentTokenPrice.value || currentTokenPrice.isLoading) return;
+		if(cancel || !currentTokenPrice.value || currentTokenPrice.isLoading || !network) return;
 
 		setPriceWeeklyChange({
 			isLoading: true,
@@ -294,7 +294,6 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		async function fetchWeekAgoTokenPrice() {
 			if (cancel) return;
 			const weekAgoDate = dayjs().subtract(7,'d').format('YYYY-MM-DD');
-
 			try {
 				const response = await fetch(
 					`${chainProperties[network].externalLinks}/api/scan/price/history`,

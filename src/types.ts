@@ -227,13 +227,20 @@ export interface NetworkEvent {
   user_id: number
 }
 
+export interface ICommentHistory{
+  content: string,
+  created_at: Date,
+  sentiment: number | 0,
+}
+
 export interface PostComment {
   user_id: number,
   content: string,
   created_at: Date,
+  history: ICommentHistory[],
   id: string,
   updated_at: Date,
-  sentiment: number|0;
+  sentiment: number | 0;
   username: string,
   user_profile_img: string;
 }
@@ -275,10 +282,16 @@ export interface PostLink {
   id: number
 }
 
+export interface IPostHistory{
+  created_at: Date | string;
+  content: string;
+  title: string;
+}
+
 export interface Post {
   user_id: number,
   content: string,
-  created_at: Date
+  created_at: Date;
   id: number | string,
   last_edited_at: Date,
   last_comment_at: Date,
@@ -287,8 +300,9 @@ export interface Post {
   proposer_address: string,
   post_link: PostLink | null,
   username?: string;
-  gov_type?:'gov_1' | 'open_gov'
-  tags?:string[] | [];
+  gov_type?: 'gov_1' | 'open_gov'
+  tags?: string[] | [];
+  history?: IPostHistory[];
 }
 export interface IPostTag {
   name:string;

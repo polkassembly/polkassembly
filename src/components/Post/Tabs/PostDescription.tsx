@@ -69,7 +69,6 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 			</div>
 
 			{!isEditing && <div className='flex xl:hidden mb-8 mx-2'><Sidebar /></div>}
-
 			<CommentsContainer
 				id={id}
 			/>

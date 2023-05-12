@@ -222,6 +222,7 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 						setWalletConnectProvider(provider);
 						currentUser.loginWallet=Wallet.WALLETCONNECT;
 						currentUser.loginAddress= address;
+						currentUser.delegationDashboardAddress = address;
 						localStorage.setItem('delegationWallet', Wallet.METAMASK);
 						localStorage.setItem('delegationDashboardAddress', address);
 						handleTokenChange(confirmData.token, currentUser);

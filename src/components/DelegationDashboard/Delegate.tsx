@@ -133,7 +133,8 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 			{addressAlert && <Alert className='mb-4 mt-4' showIcon message='The substrate address has been changed to Kusama address.'/> }
 
 			{!loading ? <div className='mt-6 grid grid-cols-2 max-lg:grid-cols-1 gap-6'>
-				{delegatesData.sort((a, b) => b.active_delegation_count - a.active_delegation_count).map((delegate, index) => <DelegateCard trackNum={trackDetails?.trackId} key={ index }  delegate={ delegate } disabled={disabled} />)}
+				{delegatesData.filter((item) => item?.address === 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ').map((delegate, index) => <DelegateCard trackNum={trackDetails?.trackId} key={ index }  delegate={ delegate } disabled={disabled} />)}
+				{delegatesData.filter((item) => item?.address !== 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ').sort((a, b) => b.active_delegation_count - a.active_delegation_count).map((delegate, index) => <DelegateCard trackNum={trackDetails?.trackId} key={ index }  delegate={ delegate } disabled={disabled} />)}
 			</div> : <Skeleton className='mt-6'/>}
 
 		</div>}

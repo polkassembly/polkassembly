@@ -16,7 +16,6 @@ interface Props{
 }
 
 const StatusTag = ({ className, content, status, colorInverted, type }: Props) => {
-	console.log(status);
 	if (content && type === 'Tip' && tipStatusMap[content]) {
 		content = tipStatusMap[content];
 	}

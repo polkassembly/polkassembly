@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert, Anchor } from 'antd';
+import { Alert, Anchor, Empty, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -14,6 +14,12 @@ import PostCommentForm from '../PostCommentForm';
 import Comments from './Comments';
 import RefendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 import Image from 'next/image';
+import UnfilterAgainstIcon from '~assets/overall-sentiment/against.svg';
+import UnfilterSlightlyAgainstIcon from '~assets/overall-sentiment/slightly-against.svg';
+import UnfilterNeutralIcon from '~assets/overall-sentiment/neutral.svg';
+import UnfilterSlightlyForIcon from '~assets/overall-sentiment/slightly-for.svg';
+import UnfilterForIcon from '~assets/overall-sentiment/for.svg';
+import { AgainstIcon, ForIcon, NeutralIcon, SlightlyAgainstIcon, SlightlyForIcon } from '~src/ui-components/CustomIcons';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -57,7 +63,15 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	// const [modalOpen,setModalOpen]=useState<boolean>(false);
 	// const { isLoggedOut } = useUserDetailsContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
-	const[openLoginModal,setOpenLoginModal]=useState<boolean>(false);
+	const[openLoginModal, setOpenLoginModal] = useState<boolean>(false);
+	const [againstCount, setAgainstCount] = useState<number>(0);
+	const [slightlyAgainstCount, setSlightlyAgainstCount] = useState<number>(0);
+	const [neutralCount, setNeutralCount] = useState<number>(0);
+	const [slightlyForCount, setSlightlyForCount] = useState<number>(0);
+	const [forCount, setForCount] = useState<number>(0);
+	const [filteredSentiment, setFilteredSentiment] = useState<number>(0);
+	const [filteredComments, setFilteredComments] = useState(comments);
+
 	const getCommentCountAndFirstIdBetweenDates = (startDate: Dayjs, endDate: Dayjs, comments: any[]) => {
 		if (startDate.isAfter(endDate)) {
 			return {
@@ -109,6 +123,55 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			}
 		}
 	}, [timeline, comments]);
+
+	const getOverallSentiment = () => {
+		let againstCount = 0;
+		let slightlyAgainstCount = 0;
+		let neutralCount = 0;
+		let slightlyForCount = 0;
+		let forCount = 0;
+
+		for(let item = 0; item < comments.length; item++){
+			if(comments[item]?.sentiment === 1){
+				againstCount += 1;
+			}
+			if(comments[item]?.sentiment === 2){
+				slightlyAgainstCount += 1;
+			}
+			if(comments[item]?.sentiment === 3){
+				neutralCount += 1;
+			}
+			if(comments[item]?.sentiment === 4){
+				slightlyForCount += 1;
+			}
+			if(comments[item]?.sentiment === 5){
+				forCount += 1;
+			}
+		}
+
+		setAgainstCount(Number((( againstCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)));
+
+		setSlightlyAgainstCount(Number((( slightlyAgainstCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)));
+
+		setNeutralCount(Number((( neutralCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)));
+
+		setSlightlyForCount(Number((( slightlyForCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)));
+
+		setForCount(Number((( forCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)));
+
+	};
+
+	const getFilteredComments = (sentiment: number) => {
+
+		const filteredData = comments.filter((comment) => comment?.sentiment === sentiment);
+		setFilteredComments(filteredData);
+
+	};
+
+	useEffect(() => {
+		getOverallSentiment();
+	}, []);
+
 	return (
 		<div className={`${className} block xl:grid grid-cols-12 `}>
 			{
@@ -159,12 +222,66 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						</div>
 					</div>
 				}
-				<div className='text-sidebarBlue text-sm font-medium mb-5'>{comments?.length} comments</div>
+				<div className='mb-5 flex justify-between  items-center text-base tooltip-design border-solid text-[#485F7D] max-sm:flex-col  max-sm:items-start'>
+					<span className='text-base font-medium text-[#243A57]'>
+						{filteredComments?.length}
+						<span className='ml-1'>Comments</span>
+					</span>
+					<div className='flex gap-2 max-sm:gap-[2px] border-solid'>
+						<Tooltip color='#E5007A'
+							title={<div className='flex flex-col text-xs px-1'>
+								<span className='text-center font-medium'>Completely Against</span>
+								<span className='text-center pt-1'>Select to filter.</span>
+							</div>} >
+							<div onClick={() => {setFilteredSentiment(1); getFilteredComments(1);}} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] hover:text-[#243A57] ${filteredSentiment === 1 && 'bg-[#FEF2F8] text-[#243A57] '}`} >
+								{filteredSentiment === 1 ? <AgainstIcon className='text-[20px] font-medium'/> : <UnfilterAgainstIcon/>}
+								<span className='flex justify-center font-medium'>{againstCount}%</span>
+							</div>
+						</Tooltip>
+						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
+							<span className='text-center font-medium'>Slightly Against</span>
+							<span className='text-center pt-1'>Select to filter.</span>
+						</div>}>
+							<div onClick={() => {setFilteredSentiment(2); getFilteredComments(2);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] hover:text-[#243A57] ${filteredSentiment === 2 && 'bg-[#FEF2F8] text-[#243A57] '}`}>
+								{filteredSentiment === 2 ? <SlightlyAgainstIcon className='text-[20px] font-medium text-white'/> : <UnfilterSlightlyAgainstIcon/>}
+								<span className='flex justify-center font-medium'>{slightlyAgainstCount}%</span>
+							</div>
+						</Tooltip>
+						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
+							<span className='text-center font-medium'>Neutral </span>
+							<span className='text-center pt-1'>Select to filter.</span>
+						</div>}>
+							<div onClick={() => {setFilteredSentiment(3); getFilteredComments(3);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] hover:text-[#243A57] ${filteredSentiment === 3 && 'bg-[#FEF2F8] text-[#243A57] '}`}>
+								{filteredSentiment === 3 ? <NeutralIcon className='text-[20px] font-medium'/> : <UnfilterNeutralIcon/>}
+								<span className='flex justify-center font-medium'>{neutralCount}%</span>
+							</div>
+						</Tooltip>
+						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
+							<span className='text-center font-medium'>Slightly For</span>
+							<span className='text-center pt-1'>Select to filter.</span>
+						</div>}>
+							<div onClick={() => {setFilteredSentiment(4); getFilteredComments(4);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] hover:text-[#243A57] ${filteredSentiment === 4 && 'bg-[#FEF2F8] text-[#243A57] '}`}>
+								{filteredSentiment === 4 ? <SlightlyForIcon className='text-[20px] font-medium text-white'/> : <UnfilterSlightlyForIcon/>}
+								<span className='flex justify-center font-medium'>{slightlyForCount}%</span>
+							</div>
+						</Tooltip>
+						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
+							<span className='text-center font-medium'>Completely For</span>
+							<span className='text-center pt-1'> Select to filter.</span>
+						</div>}>
+							<div onClick={() => {setFilteredSentiment(5); getFilteredComments(5);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] hover:text-[#243A57] ${filteredSentiment === 5 && 'bg-[#FEF2F8] text-[#243A57] '}`}>
+								{filteredSentiment === 5 ? <ForIcon className='text-[21.4px] font-medium'/> : <UnfilterForIcon/>}
+								<span className='flex justify-center font-medium'>{forCount}%</span>
+							</div>
+						</Tooltip>
+					</div>
+				</div>
 				{ !!comments?.length &&
 						<>
-							<Comments disableEdit={isGrantClosed} comments={comments} />
+							<Comments disableEdit={isGrantClosed} comments={filteredComments} />
 						</>
 				}
+				{filteredComments.length === 0 && comments.length > 0 && <div className='mt-4 mb-4'><Empty/></div>}
 				{
 					<RefendaLoginPrompts
 						modalOpen={openLoginModal}
@@ -210,4 +327,5 @@ export default React.memo(styled(CommentsContainer)`
   		color: red !important;
 	}
 }
+
 `);

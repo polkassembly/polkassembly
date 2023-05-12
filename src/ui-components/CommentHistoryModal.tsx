@@ -48,7 +48,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 		return {
 			children: (
 
-				<div className={`py-3 pl-3 pr-1 bg-[#FAFAFC] rounded-[4px] w-[98%] ml-2 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'} ${poppins.variable} ${poppins.className}`}>
+				<div className={`py-3 pl-3 pr-1 bg-[#FAFAFC] rounded-[4px] ml-2 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'} ${poppins.variable} ${poppins.className}`}>
 					<div className='flex justify-between items-center'>
 
 						<div className='flex items-center'>

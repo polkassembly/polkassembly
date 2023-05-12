@@ -48,7 +48,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 				<div className='text-pink_primary text-sm flex justify-start cursor-pointer -mt-2' onClick={() => handleExpand(index, EExpandType.Expand)}>
 					<span className='text-xs'>See Details</span></div>
 			</div>
-				: <div className={`py-3 px-3 bg-white rounded-[4px] mt-1 border-solid border-[0.5px] border-[#D2D8E0] w-[95%] ml-3 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
+				: <div className={`py-3 px-3 bg-white rounded-[4px] mt-1 border-solid border-[0.5px] border-[#D2D8E0] ml-3 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
 					<div className='flex items-center max-sm:flex-col max-sm:justify-start max-sm:gap-2  max-sm:items-start'>
 						<div className='flex items-center max-sm:justify-start'>
 							<span className='mr-1 text-xs text-[#90A0B7]'>By:</span>
@@ -65,10 +65,10 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							</div>
 						</div>
 					</div>
-					<div className='text-[#334D6E] text-[16px] mt-[11px] font-medium'>
+					<div className='text-[#334D6E] text-[16px] mt-1 font-medium'>
 						{historyData[index+1] ?  item?.title ? <div>{diffChars( historyData[index+1]?.title, item?.title)?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : title : title}
 					</div>
-					<div className={`mt-2 text-[#243A57] text-sm px-[2px] font-normal tracking-[0.01em] ${!item?.expandContent && item?.content.length > 100 && 'truncate-content'} leading-6 pr-2`}>
+					<div className={`mt-1 text-[#243A57] text-sm font-normal tracking-[0.01em] ${!item?.expandContent && item?.content.length > 100 && 'truncate-content'} leading-6 pr-2`}>
 						{historyData[index+1] ? <div>{difference?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'} ${text?.added && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : item?.content}
 					</div>
 					{item?.content.length > 100 && <span onClick={() => handleExpand(index, EExpandType.ExpandContent)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expandContent ? 'Show less' : 'Show more'}</span>}

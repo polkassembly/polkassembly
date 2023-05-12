@@ -44,11 +44,11 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 
 		return {
 			children: !item?.expand ? <div className={'text-[#334D6E] h-[50px] ml-3 text-sm tracking-[0.01em] flex flex-col gap-2 -mt-1 font-medium max-sm:w-full max-sm:ml-0'}>
-          Edited on {dayjs(date).format('DD MMM YY')}
+          Edited on {dayjs(date).format('DD MMM YYYY')}
 				<div className='text-pink_primary text-sm flex justify-start cursor-pointer -mt-2' onClick={() => handleExpand(index, EExpandType.Expand)}>
 					<span className='text-xs'>See Details</span></div>
 			</div>
-				: <div className={`py-3 px-3 bg-[#FAFAFC] rounded-[4px] mt-1 border-solid border-[0.5px] border-[#D2D8E0] w-[95%] ml-3 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
+				: <div className={`py-3 px-3 bg-white rounded-[4px] mt-1 border-solid border-[0.5px] border-[#D2D8E0] w-[95%] ml-3 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
 					<div className='flex items-center max-sm:flex-col max-sm:justify-start max-sm:gap-2  max-sm:items-start'>
 						<div className='flex items-center max-sm:justify-start'>
 							<span className='mr-1 text-xs text-[#90A0B7]'>By:</span>
@@ -59,7 +59,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 							/>
 						</div>
 						<div className='flex items-center'>
-							<div className='rounded-[50%] bg-[#A0A6AE] h-[3.5px] w-[3px] ml-1 mr-2 flex justify-center items-center mt-[1px]'/>
+							<div className='rounded-[50%] bg-[#A0A6AE]  h-[3.5px] w-[3px] ml-1 mr-2 flex justify-center items-center mt-[1px]'/>
 							<div className='flex items-center text-xs'>
 								<span className='text-navBlue text-xs'>{getRelativeCreatedAt(date)}</span>
 							</div>
@@ -122,9 +122,9 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 		className={`closeIcon  w-[600px] shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] max-sm:w-full ${poppins.variable} ${poppins.className}`}
 		footer={false}
 		closeIcon={<CloseIcon/>}
-		title={<label className='-mt-2 px-3 text-[#334D6E] text-[20px] font-semibold '>Proposal Edit History</label>}
+		title={<label className='-mt-2 pr-3 text-[#334D6E] text-[20px] font-semibold '>Proposal Edit History</label>}
 	>
-		<div className='flex flex-col px-4 pb-9 mt-9 post-history-timeline'>
+		<div className='flex flex-col -mb-6 px-4 mt-9 post-history-timeline'>
 			<Timeline items={items}/>
 		</div>
 	</Modal>;
@@ -173,7 +173,7 @@ border: none !important;
     inset-block-start:-8px !important;
   }
  .post-history-timeline .ant-timeline .ant-timeline-item-head-custom{
-inset-block-start: 10px !important;
+inset-block-start: 8px !important;
  }
 
 `;

@@ -77,7 +77,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 					{item?.content.length > 100 && <span onClick={() => handleExpand(index, !item?.expand)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expand ? 'Show less' : 'Show more'}</span>}
 				</div>),
 			dot: username && <UserAvatar
-				className='flex-none hidden sm:inline-block'
+				className='flex-none hidden sm:inline-block -mt-1 -mb-1'
 				username={username}
 				size='large'
 				id={user_id || 0}/>,
@@ -104,9 +104,9 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 		className={`closeIcon ${poppins.variable} ${poppins.className} w-[600px] shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] max-sm:w-full`}
 		footer={false}
 		closeIcon={<CloseIcon/>}
-		title={<label className='-mt-2 px-3 text-[#334D6E] text-[20px] font-semibold '>Comment Edit History</label>}
+		title={<label className='-mt-2 pr-3 text-[#334D6E] text-[20px] font-semibold '>Comment Edit History</label>}
 	>
-		<div className='flex flex-col px-4 pb-9 mt-9 post-history-timeline'>
+		<div className='flex flex-col px-4 mt-9 -mb-5 post-history-timeline'>
 
 			<Timeline items={items}/>
 		</div>

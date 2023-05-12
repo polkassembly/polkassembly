@@ -16,6 +16,7 @@ interface Props{
 }
 
 const StatusTag = ({ className, content, status, colorInverted, type }: Props) => {
+	console.log(status);
 	if (content && type === 'Tip' && tipStatusMap[content]) {
 		content = tipStatusMap[content];
 	}
@@ -47,7 +48,6 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.inverted {
 		color: #666;
 	}
-
 	&.${gov2ReferendumStatus.DECIDING},
 	&.${gov2ReferendumStatus.DECISION_DEPOSIT_PLACED},
 	&.${bountyStatus.ACTIVE},
@@ -58,10 +58,12 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 
 		&.inverted {
 			color: #CA5CDD;
+			border-color: #CA5CDD;
 		}
 	}
 
 	&.${gov2ReferendumStatus.SUBMITTED},
+	&.${gov2ReferendumStatus.CONFIRM_STARTED},
 	&.${referendumStatus.STARTED},
 	&.${proposalStatus.PROPOSED},
 	&.${motionStatus.PROPOSED},
@@ -90,7 +92,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 		background: #FF0000 !important;
 
 		&.inverted {
-			color: #6495ED;
+			color: #FF0000 ;
+			background: #fff !important;
 		}
 	}
 	&.${referendumStatus.NOTPASSED}{

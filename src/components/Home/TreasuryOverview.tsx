@@ -285,7 +285,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	// fetch a week ago price of the token and calc priceWeeklyChange
 	useEffect(() => {
 		let cancel = false;
-		if(cancel || !currentTokenPrice.value || currentTokenPrice.isLoading || !network) return;
+		if(cancel || !currentTokenPrice.value || currentTokenPrice.isLoading) return;
 
 		setPriceWeeklyChange({
 			isLoading: true,

@@ -57,7 +57,7 @@ export interface IPostData {
     track_number?: number;
     tags: string[] | [];
     spam_users_count?: number;
-    history: IPostHistory[];
+    history?: IPostHistory[];
 }
 
 export interface IPostDataContext {

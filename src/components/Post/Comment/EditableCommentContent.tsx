@@ -141,7 +141,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					comments = prev.comments.map((comment) => {
 						const newComment = comment;
 						if (comment.id === commentId) {
-							newComment.history = [{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 }, ...newComment.history ],
+							newComment.history = [{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 }, ...(newComment?.history || []) ],
 							newComment.content = newContent;
 							newComment.updated_at = new Date();
 						}

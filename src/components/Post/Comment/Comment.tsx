@@ -29,7 +29,7 @@ export interface IComment {
 	proposer?: string;
   sentiment?:number;
   comment_source?:'polkassembly' | 'subsquare';
-  history: ICommentHistory[];
+  history?: ICommentHistory[];
 }
 
 interface ICommentProps {
@@ -110,7 +110,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 				/>
 				{replies && replies.length > 0 && <Replies className='comment-content' commentId={id} repliesArr={replies} />}
 			</div>
-			{ history.length > 0 && <CommentHistoryModal open={openModal} setOpen={setOpenModal} history={[{ content: content, created_at: updated_at, sentiment: newSentiment || sentiment || 0 } ,...history]} defaultAddress={comment?.proposer} username={comment?.username} user_id={comment?.user_id}/>}
+			{ history && history.length > 0 && <CommentHistoryModal open={openModal} setOpen={setOpenModal} history={[{ content: content, created_at: updated_at, sentiment: newSentiment || sentiment || 0 } ,...history]} defaultAddress={comment?.proposer} username={comment?.username} user_id={comment?.user_id}/>}
 		</div>
 	);
 };

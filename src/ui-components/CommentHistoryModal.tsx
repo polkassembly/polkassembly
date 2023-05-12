@@ -30,10 +30,6 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 
 	const [historyData, setHistoryData] = useState<IHistoryData[]>(history);
 
-	useEffect(() => {
-		setHistoryData(history);
-	}, [history]);
-
 	const items: TimelineItemProps[] = historyData?.map((item, index) =>
 	{ const difference = historyData[index+1] ? diffChars(historyData[index+1]?.content, item?.content) : [];
 

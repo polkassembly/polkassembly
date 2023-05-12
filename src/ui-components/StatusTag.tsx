@@ -2,10 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
-
 import React, { ReactNode } from 'react';
 import { announcementStatus, bountyStatus, bountyStatusMap, childBountyStatus, childBountyStatusMap, gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus, tipStatus, tipStatusMap } from 'src/global/statuses';
 import styled from 'styled-components';
@@ -51,7 +47,6 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.inverted {
 		color: #666;
 	}
-
 	&.${gov2ReferendumStatus.DECIDING},
 	&.${gov2ReferendumStatus.DECISION_DEPOSIT_PLACED},
 	&.${bountyStatus.ACTIVE},
@@ -61,11 +56,13 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 		background: #FF6700;
 
 		&.inverted {
-			color: #FF6700;
+			color: #CA5CDD;
+			border-color: #CA5CDD;
 		}
 	}
 
 	&.${gov2ReferendumStatus.SUBMITTED},
+	&.${gov2ReferendumStatus.CONFIRM_STARTED},
 	&.${referendumStatus.STARTED},
 	&.${proposalStatus.PROPOSED},
 	&.${motionStatus.PROPOSED},
@@ -76,7 +73,7 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 		background: #407AFC;
 
 		&.inverted {
-			color: #407AFC;
+			color: #6495ED;
 		}
 	}
 	&.${gov2ReferendumStatus.KILLED},
@@ -94,7 +91,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 		background: #FF0000 !important;
 
 		&.inverted {
-			color: #FF0000 !important;
+			color: #FF0000 ;
+			background: #fff !important;
 		}
 	}
 	&.${referendumStatus.NOTPASSED}{

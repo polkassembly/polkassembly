@@ -23,6 +23,7 @@ import frequencyLogo from '~assets/parachain-logos/frequency-logo.png';
 import gearLogo from '~assets/parachain-logos/gear-logo.jpg';
 import genshiroLogo from '~assets/parachain-logos/genshiro.png';
 import gmordieLogo from '~assets/parachain-logos/gmordie-logo.png';
+import hashedLogo from '~assets/parachain-logos/hashed-logo.png';
 import heikoLogo from '~assets/parachain-logos/heiko-logo.png';
 import hydradxLogo from '~assets/parachain-logos/hydradx-logo.jpg';
 import karuraLogo from '~assets/parachain-logos/karura-logo.jpg';
@@ -76,6 +77,7 @@ export const network = {
 	GEAR: 'gear',
 	GENSHIRO: 'genshiro',
 	GMORDIE: 'gmordie',
+	HASHED: 'hashed',
 	HEIKO: 'heiko',
 	HYDRADX: 'hydradx',
 	INTEGRITEE: 'integritee',
@@ -129,6 +131,7 @@ export const tokenSymbol = {
 	FREN: 'FREN',
 	FRQCY: 'FRQCY',
 	GLMR: 'GLMR',
+	HASH: 'HASH',
 	HDX: 'HDX',
 	HKO: 'HKO',
 	KAR: 'KAR',
@@ -558,6 +561,22 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
+		externalLinks: '',
+		rpcEndpoints: []
+	},
+	[network.HASHED]: {
+		blockTime: 12000,
+		category: 'polkadot',
+		chainId: 0,
+		logo: hashedLogo,
+		rpcEndpoint: 'wss://c1.hashed.live',
+		ss58Format: 42,
+		tokenDecimals: 18,
+		tokenSymbol: tokenSymbol.HASH,
+		subsquidUrl: 'https://squid.subsquid.io/hashed-polkassembly/graphql',
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '0.000000066666666',
+		treasuryProposalMaxBond: '0.0000033333333',
 		externalLinks: '',
 		rpcEndpoints: []
 	},

@@ -286,7 +286,7 @@ padding: 5px;
 } 
 
 .cast-vote-heading{
-font-family: 'Poppins' !important;
+
 font-style: normal !important;
 font-weight: 600 !important;
 font-size: 20px !important;
@@ -295,8 +295,7 @@ letter-spacing: 0.0015em !important;
 color: #243A57 !important;
 }
 .inner-headings{
-  height: 21px;
-font-family: 'Poppins';
+height: 21px;
 font-style: normal;
 font-weight: 400;
 font-size: 14px;

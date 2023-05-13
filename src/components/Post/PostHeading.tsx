@@ -68,6 +68,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								className='md'
 								created_at={created_at}
 								updated_at={last_edited_at}
+								isHistory={history && history?.length > 0}
 							/></div>
 					</CreationLabel>
 				</>

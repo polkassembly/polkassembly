@@ -91,12 +91,13 @@ export const Comment: FC<ICommentProps> = (props) => {
 						<UpdateLabel
 							created_at={created_at}
 							updated_at={updated_at}
+							isHistory={history && history?.length > 0}
 						/></div>
 				</CreationLabel>
 				<EditableCommentContent
 					userId={user_id}
 					created_at={created_at}
-					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px]  min-[320px]:mt-[-2px]' }`}
+					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px] min-[320px]:mt-[-2px]' }`}
 					comment={comment}
 					commentId={id}
 					content={content}

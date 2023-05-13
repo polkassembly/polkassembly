@@ -175,6 +175,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	useEffect(() => {
 		getOverallSentiment();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [comments]);
 
 	return (

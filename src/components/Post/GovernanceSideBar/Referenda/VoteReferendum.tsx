@@ -58,6 +58,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
 	const[ayeNayForm] = Form.useForm();
+	const [abstainVoteValue, setAbstainVoteValue] = useState<BN | undefined>(undefined);
+	const [ayeVoteValue, setAyeVoteValue] = useState<BN | undefined>(undefined);
+	const [nayVoteValue, setNayVoteValue] = useState<BN | undefined>(undefined);
 
 	enum EVoteDecisionType {
 		AYE = 'aye',
@@ -255,26 +258,36 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					await splitForm.validateFields();
 
 					// if form is valid
-					const  ayeVote = values.ayeVote;
-					const  nayVote = values.nayVote;
+					const  ayeVote = ayeVoteValue?.toString();
+					const  nayVote = nayVoteValue?.toString();
 					voteTx = api.tx.convictionVoting.vote(referendumId, { Split: { aye:`${ayeVote}`,nay:`${nayVote}` } });
 				} catch (e) {
 					console.log(e);
 				}
+				finally{
+					setAyeVoteValue(undefined);
+					setNayVoteValue(undefined);
+				}
 			}
 
-			else if(vote === EVoteDecisionType.ABSTAIN) {
+			else if(vote === EVoteDecisionType.ABSTAIN && ayeVoteValue && nayVoteValue) {
 				try {
 					await splitForm.validateFields();
 					// if form is valid
-					const  abstainVote = values.abstainVote;
-					const  ayeVote = values.ayeVote;
-					const  nayVote = values.nayVote;
-					voteTx = api.tx.convictionVoting.vote(referendumId, { SplitAbstain: { aye:`${ayeVote}`,nay:`${nayVote}`, abstain:`${abstainVote}` } });
+					const  abstainVote = abstainVoteValue?.toString();
+					const  ayeVote = ayeVoteValue?.toString();
+					const  nayVote = nayVoteValue?.toString();
+					voteTx = api.tx.convictionVoting.vote(referendumId, { SplitAbstain: {  abstain:`${abstainVote}`,aye:`${ayeVote}`, nay:`${nayVote}` } });
 				} catch (e) {
 					console.log(e);
 				}
+				finally{
+					setAbstainVoteValue(undefined);
+					setNayVoteValue(undefined);
+					setAyeVoteValue(undefined);
+				}
 			}
+			
 
 		} else if(proposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
 			if(vote === EVoteDecisionType.AYE){
@@ -431,7 +444,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									setVote(value as EVoteDecisionType);
 								}}
 								options={decisionOptions}
-
+								disabled={!api || !apiReady}
 							/>
 
 							{
@@ -471,7 +484,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										label={'Aye vote value'}
 										helpText={'Amount of you are willing to lock for this vote.'}
 										placeholder={'Add balance'}
-
+										onChange={(value) => {setAyeVoteValue(value);}}
 										className='text-sm font-medium'
 										formItemName={'ayeVote'}
 									/>
@@ -479,7 +492,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									<BalanceInput
 										label={'Nay vote value'}
 										placeholder={'Add balance'}
-
+										onChange={(value) => {setNayVoteValue(value);}}
 										className='text-sm font-medium'
 										formItemName={'nayVote'}
 									/>
@@ -502,7 +515,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									<BalanceInput
 										label={'Abstain vote value'}
 										placeholder={'Add balance'}
-
+										onChange={(value) => setAbstainVoteValue(value)}
 										className='text-sm font-medium'
 										formItemName={'abstainVote'}
 									/>
@@ -510,7 +523,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									<BalanceInput
 										label={'Aye vote value'}
 										placeholder={'Add balance'}
-
+										onChange={(value) => setAyeVoteValue(value) }
 										className='text-sm font-medium'
 										formItemName={'ayeVote'}
 									/>
@@ -518,7 +531,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									<BalanceInput
 										label={'Nay vote value'}
 										placeholder={'Add balance'}
-
+										onChange={(value) => setNayVoteValue(value)}
 										className='text-sm font-medium'
 										formItemName={'nayVote'}
 									/>

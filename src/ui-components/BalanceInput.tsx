@@ -10,7 +10,6 @@ import { chainProperties } from 'src/global/networkConstants';
 import { NetworkContext } from '~src/context/NetworkContext';
 
 import { inputToBn } from '../util/inputToBn';
-import HelperTooltip from './HelperTooltip';
 import Balance from '~src/components/Balance';
 import styled from 'styled-components';
 import { formatBalance } from '@polkadot/util';
@@ -42,9 +41,9 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
 
 		if(isValid){
-			onChange(balance);
+			onChange?.(balance);
 		}else{
-			onChange(ZERO_BN);
+			onChange?.(ZERO_BN);
 		}
 	};
 

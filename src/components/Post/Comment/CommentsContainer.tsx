@@ -60,8 +60,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { postData: { postType, timeline, created_at, comments } } = usePostDataContext();
 	const targetOffset = 10;
 	const [timelines, setTimelines] = useState<ITimeline[]>([]);
-	// const [modalOpen,setModalOpen]=useState<boolean>(false);
-	// const { isLoggedOut } = useUserDetailsContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const[openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [againstCount, setAgainstCount] = useState<number>(0);

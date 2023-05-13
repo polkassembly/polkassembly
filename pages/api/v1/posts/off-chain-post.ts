@@ -85,12 +85,14 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 		const spam_users_count = await getSpamUsersCount(network, proposalType, Number(postId));
 		const tags = data?.tags || [];
 		const gov_type = data?.gov_type;
+		const history = data?.history ? data?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
 		const proposer = getProposerAddressFromFirestorePostData(data, network);
 		const post: IPostResponse = {
 			comments: comments,
 			content: data?.content,
 			created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
 			gov_type: gov_type,
+			history,
 			last_edited_at: getUpdatedAt(data),
 			post_id: data?.id,
 			post_link: null,

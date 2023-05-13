@@ -4,13 +4,19 @@
 
 import { Form, InputNumber } from 'antd';
 import BN from 'bn.js';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 
 import { NetworkContext } from '~src/context/NetworkContext';
 
 import { inputToBn } from '../util/inputToBn';
 import HelperTooltip from './HelperTooltip';
+import Balance from '~src/components/Balance';
+import styled from 'styled-components';
+import { formatBalance } from '@polkadot/util';
+import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
+
+const ZERO_BN = new BN(0);
 
 interface Props{
 	className?: string
@@ -18,27 +24,50 @@ interface Props{
 	helpText?: string
 	onChange: (balance: BN) => void
 	placeholder?: string
-	size?: 'large' | 'small' | 'middle'
+	size?: 'large' | 'small' | 'middle';
+  address?: string;
+  withBalance?: boolean;
+  onAccountBalanceChange?: (balance: string) => void
+  balance?: BN;
+  inputClassName?: string;
+  noRules?: boolean;
 }
 
-const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size }: Props) => {
+const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules }: Props) => {
 
 	const { network } = useContext(NetworkContext);
-
+	const unit = `${chainProperties[network].tokenSymbol}`;
 	const onBalanceChange = (value: number | null): void => {
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
 
 		if(isValid){
 			onChange(balance);
+		}else{
+			onChange(ZERO_BN);
 		}
 	};
 
-	return <div className={className}>
-		<label className='mb-2 flex items-center text-sm text-sidebarBlue'> {label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> } </label>
+	useEffect(() => {
 
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	return <div className={`${className} w-full flex flex-col`}>
+		<label className='mb-[2px] flex items-center text-sm'>
+			{label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> }
+			{address && withBalance && <span><Balance address={address} onChange={onAccountBalanceChange} /></span>
+			}
+		</label>
 		<Form.Item
 			name="balance"
-			rules={[
+			initialValue={balance ? Number(formatedBalance(balance.toString(), unit)) : ''}
+			rules={noRules ? []: [
 				{
 					message: 'Lock Balance is required.',
 					required: true
@@ -58,13 +87,25 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 			<InputNumber
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name='balance'
-				className='text-sm text-sidebarBlue w-full px-2 py-1 border-2 rounded-md'
+				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] mt-0 ${inputClassName} placeholderColor`}
 				onChange={onBalanceChange}
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}
+				value={Number(formatedBalance(String(balance || ZERO_BN), unit)) }
 			/>
 		</Form.Item>
 	</div>;
 };
 
-export default BalanceInput;
+export default styled(BalanceInput)`
+.placeholderColor .ant-input-number-group .ant-input-number-group-addon{
+background:#E5007A;
+color:white;
+font-size:12px;
+border: 1px solid #E5007A; 
+}
+.placeholderColor .ant-input-number .ant-input-number-input{
+  color:#7c899b !important;
+}`
+
+;

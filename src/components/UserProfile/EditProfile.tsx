@@ -5,7 +5,7 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { Alert, Button, Divider, Modal, Tabs } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { MessageType, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
+import { ISocial, MessageType, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import { EditIcon } from '~src/ui-components/CustomIcons';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -17,6 +17,8 @@ interface IEditProfileModalProps {
     id?: number | null;
     data?: ProfileDetailsResponse;
 	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
+  openModal?: boolean;
+  setOpenModal?: (pre:boolean) => void;
 }
 
 const getDefaultProfile: () => ProfileDetails = () => {
@@ -30,11 +32,40 @@ const getDefaultProfile: () => ProfileDetails = () => {
 };
 
 const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
-	const { data, id, setProfileDetails } = props;
+	const { data, id, setProfileDetails, openModal, setOpenModal } = props;
 	const [open, setOpen] = useState(false);
 	const [profile, setProfile] = useState(getDefaultProfile());
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
+
+	const validateData = ( image: string | undefined, social_links: ISocial[] | undefined) => {
+
+		// eslint-disable-next-line no-useless-escape
+		const regex = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi);
+
+		if(image && image.trim() && !image?.match(regex)) {
+			setError('Image URL is invalid.');
+			return;
+		}
+
+		if (social_links && Array.isArray(social_links)) {
+			for (let i = 0; i < social_links.length; i++) {
+				const link = social_links[i];
+				if(link.link && !link.link?.match(regex)) {
+					setError(`${link.type} ${link.type === 'Email'? '': 'URL'} is invalid.`);
+					return;
+				}
+			}
+		}
+	};
+
+	useEffect(() => {
+
+		if(!profile) return;
+
+		validateData(profile?.image, profile?.social_links);
+
+	}, [profile]);
 
 	const populateData = useCallback(() => {
 		if (data) {
@@ -61,23 +92,8 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			return;
 		}
 
-		// eslint-disable-next-line no-useless-escape
-		const regex = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi);
 		const { badges, bio, image, social_links, title } = profile;
-		if(image && image.trim() && !image?.match(regex)) {
-			setError('Image URL is invalid.');
-			return;
-		}
-
-		if (social_links && Array.isArray(social_links)) {
-			for (let i = 0; i < social_links.length; i++) {
-				const link = social_links[i];
-				if(link.link && !link.link?.match(regex)) {
-					setError(`${link.type} ${link.type === 'Email'? '': 'URL'} is invalid.`);
-					return;
-				}
-			}
-		}
+		validateData(image, social_links);
 
 		setLoading(true);
 		const { data , error } = await nextApiClientFetch<MessageType>( 'api/v1/auth/actions/addProfile', {
@@ -121,6 +137,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		setLoading(false);
 		setError('');
 		setOpen(false);
+		setOpenModal && setOpenModal(false);
 	};
 	return (
 		<div>
@@ -128,8 +145,8 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				className='max-w-[648px] w-full max-h-[774px] h-full'
 				onCancel={() => {
 					setOpen(false);
+					setOpenModal && setOpenModal(false);
 				}}
-				centered
 				title={
 					<h3 className='font-semibold text-xl text-[#1D2632]'>
 						Edit Profile
@@ -146,7 +163,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 								<Button
 									key='cancel'
 									onClick={() => {
-										setOpen(false);
+										setOpenModal && setOpenModal(false); setOpen(false);
 									}}
 									disabled={loading}
 									size='middle'
@@ -175,7 +192,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					</div>
 				}
 				zIndex={1002}
-				open={open}
+				open={openModal ? openModal : open}
 			>
 				<Tabs
 					type="card"
@@ -212,14 +229,14 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				}
 			</Modal>
 			<button
-				className='rounded-[4px] md:h-[30px] md:w-[67px] outline-none text-white flex items-center justify-center bg-transparent border-0 md:border border-solid border-white gap-x-1.5 font-medium text-sm cursor-pointer'
+				className='rounded-[4px] md:h-[40px] md:w-[87px] outline-none text-[#fff] flex items-center justify-center bg-transparent border-0 md:border border-solid border-white gap-x-1.5 font-medium text-sm cursor-pointer'
 				onClick={() => {
 					setOpen(true);
 					populateData();
 				}}
 			>
 				<EditIcon className='text-white text-2xl md:text-[15px]' />
-				<span className='hidden md:block'>
+				<span className=' md:block'>
 					Edit
 				</span>
 			</button>

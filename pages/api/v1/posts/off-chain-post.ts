@@ -16,7 +16,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { getComments, getReactions, getSpamUsersCount, getTimeline, IPostResponse, isDataExist } from './on-chain-post';
+import { getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 
 interface IGetOffChainPostParams {
@@ -26,7 +26,7 @@ interface IGetOffChainPostParams {
 }
 
 export const getUpdatedAt = (data: any) => {
-	let updated_at: Date | string | null = null;
+	let updated_at: Date | string | undefined;
 	if (data) {
 		if (data.last_edited_at) {
 			updated_at = data.last_edited_at?.toDate? data.last_edited_at.toDate(): data.last_edited_at;
@@ -79,83 +79,28 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 				type: 'Discussions'
 			}
 		];
+
 		const topic = data?.topic;
 		const topic_id = data?.topic_id;
+		const spam_users_count = await getSpamUsersCount(network, proposalType, Number(postId));
 		const tags = data?.tags || [];
 		const gov_type = data?.gov_type;
-		const proposer_address = getProposerAddressFromFirestorePostData(data, network);
-		const post_link = data?.post_link;
-		if (post_link) {
-			const { id, type } = post_link;
-			const postDocRef = postsByTypeRef(network, type).doc(String(id));
-			const postDoc = await postDocRef.get();
-			const postData = postDoc.data();
-			if (postDoc.exists && postData) {
-				post_link.title = postData.title;
-				post_link.description = postData.content;
-			}
-			if (!post_link.title && !post_link.description) {
-				if (isProposalTypeValid(type)) {
-					const subsquidProposalType = getSubsquidProposalType(type as any);
-					const variables: any = {
-						type_eq: subsquidProposalType
-					};
-
-					if (type === ProposalType.TIPS) {
-						variables['hash_eq'] = String(id);
-					} else {
-						variables['index_eq'] = Number(id);
-					}
-					const subsquidRes = await fetchSubsquid({
-						network,
-						query: GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING,
-						variables: variables
-					});
-					const subsquidData = subsquidRes?.data;
-					if (!isDataExist(subsquidData)) {
-						throw apiErrorWithStatusCode(`The Post with id: "${id}" and type: "${type}" is not found.`, 400);
-					}
-					const post = subsquidData.proposals[0];
-					const preimage = post?.preimage;
-					if (!post_link.title) {
-						post_link.title = preimage?.method;
-					}
-					if (!post_link.description) {
-						post_link.description = post.description || preimage?.proposedCall?.description;
-					}
-					if (post) {
-						const proposals = post?.group?.proposals;
-						if (proposals && Array.isArray(proposals)) {
-							timeline.push(...getTimeline(proposals));
-						}
-
-						if (timeline.length === 1) {
-							timeline.push(getTimeline([
-								{
-									createdAt: postData?.createdAt,
-									hash: postData?.hash,
-									index: postData?.index,
-									statusHistory: postData?.statusHistory,
-									type: postData?.type
-								}
-							]));
-						}
-					}
-				}
-			}
-		}
+		const history = data?.history ? data?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
+		const proposer = getProposerAddressFromFirestorePostData(data, network);
 		const post: IPostResponse = {
 			comments: comments,
 			content: data?.content,
 			created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
 			gov_type: gov_type,
+			history,
 			last_edited_at: getUpdatedAt(data),
 			post_id: data?.id,
-			post_link: post_link,
+			post_link: null,
 			post_reactions: post_reactions,
-			proposer: proposer_address,
+			proposer: proposer,
+			spam_users_count,
 			tags: tags || [],
-			timeline: timeline,
+			timeline: [],
 			title: data?.title,
 			topic: topic? topic: isTopicIdValid(topic_id)? {
 				id: topic_id,
@@ -165,6 +110,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			username: data?.username
 
 		};
+
 		if (post && (post.user_id || post.user_id === 0)) {
 			let { user_id } = post;
 			if (typeof user_id !== 'number') {
@@ -184,7 +130,50 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 				}
 			}
 		}
-		post.spam_users_count = await getSpamUsersCount(network, proposalType, Number(postId));
+
+		const post_link = data?.post_link;
+		if (post_link) {
+			const { id, type } = post_link;
+			const postDocRef = postsByTypeRef(network, type).doc(String(id));
+			const postDoc = await postDocRef.get();
+			const postData = postDoc.data();
+			if (postDoc.exists && postData) {
+				post_link.title = postData.title;
+				post_link.description = postData.content;
+			}
+			if (isProposalTypeValid(type)) {
+				const subsquidProposalType = getSubsquidProposalType(type as any);
+				const variables: any = {
+					type_eq: subsquidProposalType
+				};
+
+				if (type === ProposalType.TIPS) {
+					variables['hash_eq'] = String(id);
+				} else {
+					variables['index_eq'] = Number(id);
+				}
+				const subsquidRes = await fetchSubsquid({
+					network,
+					query: GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING,
+					variables: variables
+				});
+				const subsquidData = subsquidRes?.data;
+				if (!isDataExist(subsquidData)) {
+					throw apiErrorWithStatusCode(`The Post with id: "${id}" and type: "${type}" is not found.`, 400);
+				}
+				const postData = subsquidData.proposals[0];
+				const preimage = postData?.preimage;
+				if (!post_link.title) {
+					post_link.title = preimage?.method;
+				}
+				if (!post_link.description) {
+					post_link.description = postData.description || preimage?.proposedCall?.description;
+				}
+				updatePostTimeline(post, postData);
+			}
+			post.post_link = post_link;
+		}
+		post.timeline = [...timeline, ...(post.timeline? post.timeline: [])];
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,

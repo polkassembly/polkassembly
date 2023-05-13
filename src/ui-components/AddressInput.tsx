@@ -4,7 +4,7 @@
 import Identicon from '@polkadot/react-identicon';
 import { checkAddress } from '@polkadot/util-crypto';
 import { Form, Input } from 'antd';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { addressPrefix } from 'src/global/networkConstants';
 import Web3 from 'web3';
 
@@ -12,6 +12,7 @@ import { NetworkContext } from '~src/context/NetworkContext';
 
 import EthIdenticon from './EthIdenticon';
 import HelperTooltip from './HelperTooltip';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props{
 	className?: string
@@ -19,17 +20,29 @@ interface Props{
 	helpText?: string
 	onChange: (address: string) => void
 	placeholder?: string
-	size?: 'large' | 'small' | 'middle'
+	size?: 'large' | 'small' | 'middle';
+  defaultAddress?: string;
+	skipFormatCheck?: boolean;
+  inputClassName?: string;
+
 }
 
-const AddressInput = ({ className, helpText, label, placeholder, size, onChange } : Props) => {
+const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName } : Props) => {
 	const { network } = useContext(NetworkContext);
 
-	const [address, setAddress] = useState<string>('');
-	const [isValid, setIsValid] = useState<boolean>(false);
+	const [address, setAddress] = useState<string>(defaultAddress ? defaultAddress : '');
 
+	const [isValid, setIsValid] = useState<boolean>(false);
 	const handleAddressChange = (address: string) => {
 		setAddress(address);
+
+		if(skipFormatCheck) {
+			if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
+				onChange(address);
+			}
+			return;
+		}
+
 		const isValidMetaAddress = Web3.utils.isAddress(address, addressPrefix[network]);
 		const [validAddress] = checkAddress(address, addressPrefix[network]);
 
@@ -42,10 +55,31 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange 
 		}
 	};
 
-	return (
-		<div className={`${className} mb-2`}>
-			<label className='-mb-0.5 flex items-center text-sm text-sidebarBlue'> {label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> } </label>
+	useEffect(() => {
+		if(skipFormatCheck) {
+			if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
+				setIsValid(true);
+				onChange(address);
+			}
+			return;
+		}
 
+		const isValidMetaAddress = Web3.utils.isAddress(address, addressPrefix[network]);
+		const [validAddress] = checkAddress(address, addressPrefix[network]);
+
+		if(validAddress || isValidMetaAddress) {
+			setIsValid(true);
+			onChange(address);
+		} else {
+			setIsValid(false);
+			onChange('');
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
+
+	return (
+		<div className={`${className} mb-2 mt-6`}>
+			{label && <label className=' flex items-center text-sm mb-[2px]'> {label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> } </label>}
 			<div className={`${className} flex items-center`}>
 
 				{
@@ -53,7 +87,7 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange 
 					<>
 						{
 							address.startsWith('0x') ?
-								<EthIdenticon className='z-10 absolute left-[8px]' size={26} address={address} />
+								<EthIdenticon className='z-10 absolute left-[8px] flex justify-center items-center' size={26} address={address} />
 								:
 								<Identicon
 									className='z-10 absolute left-[8px]'
@@ -68,8 +102,8 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange 
 				<Form.Item className='mb-0 w-full' validateStatus={address && !isValid ? 'error' : ''} >
 					<Input
 						value={address}
-						className={`${!isValid ? 'px-[0.5em]' : 'pl-10'} text-sm text-sidebarBlue w-full px-2 py-3 border-2 rounded-md`}
-						onChange={ (e) => handleAddressChange(e.target.value)}
+						className={`${!isValid ? 'px-[0.5em]' : 'pl-[46px]'} text-sm w-full h-[40px] border-[1px] rounded-[4px] ${inputClassName}`}
+						onChange={ (e) => {handleAddressChange(e.target.value); onChange(e.target.value);}}
 						placeholder={placeholder || 'Address'}
 						size={size}
 					/>

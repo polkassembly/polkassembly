@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 export const coinGeckoNetworks: any = {
 	'calamari': 'calamari-network',
+	'cere': 'cere-network',
 	'crust': 'crust-network',
 	'crustshadow': 'crust-storage-market',
 	'kilt': 'kilt-protocol',

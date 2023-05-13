@@ -95,6 +95,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					},
 					content,
 					created_at: new Date(),
+					history: [],
 					id: data.id,
 					replies: [],
 					sentiment:isSentimentPost? sentiment : 0,
@@ -142,7 +143,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					}
 				>
 
-					<ContentForm  onChange = {(content : any) => {console.log('called');onContentChange(content);} } height={200} />
+					<ContentForm  onChange = {(content : any) => onContentChange(content)} height={200} />
 
 					<Form.Item>
 						<div className='flex items-center justify-end mt-[-40px]'>

@@ -15,13 +15,13 @@ interface Props{
 	className?: string,
 	reply: any
 	commentId: string
+	userName?:string
 }
 
-export const Reply = ({ className, commentId, reply } : Props) => {
+export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 	const { user_id, username, content, created_at, id, updated_at, proposer } = reply;
 	const { asPath } = useRouter();
 	const replyRef = useRef<HTMLDivElement>(null);
-
 	useEffect(() => {
 		if (typeof window !== undefined) return;
 		const hashArr = asPath.split('#');
@@ -62,6 +62,7 @@ export const Reply = ({ className, commentId, reply } : Props) => {
 					reply={reply}
 					replyId={id}
 					content={content}
+					userName={userName}
 				/>
 			</div>
 		</div>

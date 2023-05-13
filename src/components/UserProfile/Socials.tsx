@@ -6,7 +6,8 @@ import { LinkOutlined } from '@ant-design/icons';
 import { Input } from 'antd';
 import React, { FC } from 'react';
 import { ProfileDetails } from '~src/auth/types';
-import { SocialIcon, socialLinks } from './Details';
+import { socialLinks } from './Details';
+import { SocialIcon } from '~src/ui-components/SocialLinks';
 
 interface ISocialsProps {
     loading: boolean;

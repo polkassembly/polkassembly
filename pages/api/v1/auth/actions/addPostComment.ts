@@ -49,6 +49,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	const newComment: PostComment = {
 		content: content,
 		created_at: new Date(),
+		history: [],
 		id: newCommentRef.id,
 		sentiment: sentiment || 0,
 		updated_at: last_comment_at,
@@ -56,7 +57,6 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		user_profile_img: user?.profile?.image || '',
 		username: user.username
 	};
-
 	await newCommentRef.set(newComment).then(() => {
 		postRef.update({
 			last_comment_at

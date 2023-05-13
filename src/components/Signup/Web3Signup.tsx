@@ -11,7 +11,6 @@ import {
 } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
@@ -36,7 +35,8 @@ interface Props {
   setDisplayWeb2: () => void;
   setWalletError: React.Dispatch<React.SetStateAction<string | undefined>>;
    isModal?:boolean;
-  setSignupOpen?:(pre:boolean)=>void;
+  setSignupOpen?: (pre: boolean) => void;
+  setLoginOpen?: (pre: boolean) => void;
 }
 
 const Web3Signup: FC<Props> = ({
@@ -44,7 +44,8 @@ const Web3Signup: FC<Props> = ({
 	setDisplayWeb2,
 	setWalletError,
 	isModal,
-	setSignupOpen
+	setSignupOpen,
+	setLoginOpen
 }) => {
 	const { network } = useNetworkContext();
 
@@ -59,6 +60,15 @@ const Web3Signup: FC<Props> = ({
 	const [loading, setLoading] = useState(false);
 
 	const currentUser = useUserDetailsContext();
+
+	const handleClick=() => {
+		if(isModal && setSignupOpen &&setLoginOpen){
+			setSignupOpen(false);
+			setLoginOpen(true);
+		}else{
+			router.push('/login');
+		}
+	};
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -206,6 +216,8 @@ const Web3Signup: FC<Props> = ({
 
 			if(confirmData.token) {
 				currentUser.loginWallet=chosenWallet;
+				currentUser.loginAddress = address;
+				currentUser.delegationDashboardAddress = address;
 				handleTokenChange(confirmData.token, currentUser);
 				if(isModal){
 					setSignupOpen && setSignupOpen(false);
@@ -333,9 +345,7 @@ const Web3Signup: FC<Props> = ({
 				<label className="text-md text-grey_primary">
 					Already have an account?
 				</label>
-				<Link href="/login" className="text-pink_primary text-md">
-					Login
-				</Link>
+				<div onClick={() => handleClick()} className='text-pink_primary text-md'>Login</div>
 			</div>
 		</article>
 	);

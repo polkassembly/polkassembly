@@ -25,13 +25,13 @@ interface Props {
 	className?: string
 	setDisplayWeb2: () => void
 	setPolkadotWallet: () => void;
-   isModal:boolean;
-  setLoginOpen:(pre:boolean)=>void;
+   isModal?:boolean;
+  setLoginOpen?:(pre:boolean)=>void;
 }
 
 const NETWORK = getNetwork();
 
-const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isModal,setLoginOpen }:Props): JSX.Element => {
+const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isModal, setLoginOpen }:Props): JSX.Element => {
 	const [error, setError] = useState('');
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -259,9 +259,13 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isMod
 
 											if(confirmData.token) {
 												currentUser.loginWallet=Wallet.WALLETCONNECT;
+												currentUser.loginAddress = address;
+												currentUser.delegationDashboardAddress = address;
+												localStorage.setItem('delegationWallet', Wallet.METAMASK);
+												localStorage.setItem('delegationDashboardAddress', address);
 												handleTokenChange(confirmData.token, currentUser);
 												if(isModal){
-													setLoginOpen(false);
+													setLoginOpen && setLoginOpen(false);
 													setLoading(false);
 													return;
 												}
@@ -283,9 +287,13 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet,isMod
 						if (addressLoginData?.token) {
 							setWalletConnectProvider(provider);
 							currentUser.loginWallet=Wallet.WALLETCONNECT;
+							currentUser.loginAddress = address;
+							currentUser.delegationDashboardAddress = address;
+							localStorage.setItem('delegationWallet', Wallet.METAMASK);
+							localStorage.setItem('delegationDashboardAddress', address);
 							handleTokenChange(addressLoginData.token, currentUser);
 							if(isModal){
-								setLoginOpen(false);
+								setLoginOpen && setLoginOpen(false);
 								setLoading(false);
 								return;
 							}

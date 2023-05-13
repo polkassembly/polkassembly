@@ -8,7 +8,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { VoteType, voteTypes } from '~src/global/proposalType';
 import { isVotesSortOptionsValid, votesSortValues } from '~src/global/sortOptions';
-import { GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX, GET_CONVICTION_VOTES_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX, GET_VOTES_LISTING_BY_TYPE_AND_INDEX } from '~src/queries';
+import { GET_CONVICTION_VOTES_FOR_ADDRESS_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX, GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX, GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX, GET_CONVICTION_VOTES_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX, GET_VOTES_LISTING_BY_TYPE_AND_INDEX, GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 export interface IVotesResponse {
@@ -28,7 +28,7 @@ export interface IVotesResponse {
 
 // expects optional id, page, voteType and listingLimit
 async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse | { error: string }>) {
-	const { postId = 0, page = 1, voteType = VoteType.REFERENDUM, listingLimit = VOTES_LISTING_LIMIT, sortBy = votesSortValues.TIME } = req.query;
+	const { postId = 0, page = 1, voteType = VoteType.REFERENDUM, listingLimit = VOTES_LISTING_LIMIT, sortBy = votesSortValues.TIME, address } = req.query;
 
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) {
@@ -74,10 +74,22 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 	// if nays count,
 
 	let votesQuery = GET_VOTES_LISTING_BY_TYPE_AND_INDEX;
+	if(address) {
+		votesQuery = GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
+		variables['voter_eq'] = address;
+	}
+
 	if (voteType === VoteType.REFERENDUM_V2) {
 		votesQuery = GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX;
+		if(address) {
+			votesQuery = GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
+		}
+
 		if (['moonbase', 'moonriver', 'moonbeam'].includes(network)) {
 			votesQuery = GET_CONVICTION_VOTES_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX;
+			if(address) {
+				votesQuery = GET_CONVICTION_VOTES_FOR_ADDRESS_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX;
+			}
 		}
 	}
 
@@ -119,7 +131,6 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 			}
 		}
 	});
-
 	res.status(200).json(resObj);
 }
 

@@ -10,7 +10,7 @@ import styled from 'styled-components';
 interface Props{
     className?: string
     created_at: Date | string;
-    updated_at: Date | string;
+    updated_at?: Date | string;
 }
 
 const UpdateLabel = ({ className, created_at, updated_at } : Props) => {
@@ -22,7 +22,7 @@ const UpdateLabel = ({ className, created_at, updated_at } : Props) => {
 			? null :
 			<span className={className}>
 				<Tooltip color='#E5007A' title={title}>
-					<span>(edited)</span>
+					<span className='text-pink_primary text-[10px] leading-4'>(Edited)</span>
 				</Tooltip>
 			</span>
 	);

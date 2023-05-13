@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Skeleton, Tabs } from 'antd';
+import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import PostDataContextProvider from '~src/context/PostDataContext';
-import { getFirestoreProposalType, getSinglePostLinkFromProposalType, offChainProposalTypes, ProposalType, proposalTypes } from '~src/global/proposalType';
+import { checkIsOnChainPost, getFirestoreProposalType, getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 import OtherProposals from '../OtherProposals';
@@ -27,9 +27,6 @@ import PostDescription from './Tabs/PostDescription';
 import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
-import CloseIcon from '~assets/icons/close.svg';
-import { PlusOutlined } from '@ant-design/icons';
-import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import SpamAlert from '~src/ui-components/SpamAlert';
 
 const GovernanceSideBar = dynamic(() => import('./GovernanceSideBar'), {
@@ -93,14 +90,16 @@ const Post: FC<IPostProps> = (props) => {
 	const [canEdit, setCanEdit] = useState(false);
 
 	const [duration, setDuration] = useState(dayjs.duration(0));
-	const [graphicOpen, setGraphicOpen] = useState<boolean>(true);
+
+	const isOnchainPost = checkIsOnChainPost(proposalType);
+	const isOffchainPost = !isOnchainPost;
 
 	useEffect(() => {
 		if(!post) return;
 
 		const { post_id, proposer } = post;
 
-		if(offChainProposalTypes.includes(proposalType)) {
+		if(isOffchainPost) {
 			setCanEdit(post.user_id === id);
 			return;
 		}
@@ -129,6 +128,7 @@ const Post: FC<IPostProps> = (props) => {
 				setCanEdit(true);
 			}
 		})();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [addresses, id, isEditing, post, proposalType]);
 
 	useEffect(() => {
@@ -191,33 +191,14 @@ const Post: FC<IPostProps> = (props) => {
 		);
 	}
 
-	const isOnchainPost = proposalTypes.includes(proposalType);
-	const isOffchainPost = offChainProposalTypes.includes(proposalType);
-
 	const { post_id, hash, status: postStatus } = post;
 	const onchainId = proposalType === ProposalType.TIPS? hash :post_id;
 
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:w-4/12 mx-auto`}>
-
-				{canEdit && post.tags?.length === 0 && graphicOpen && <div className=' rounded-[14px] bg-white shadow-[0px 6px 18px rgba(0, 0, 0, 0.06)] pb-[36px] mb-8'>
-					<div className='flex justify-end py-[17px] px-[20px] items-center' onClick={ () => setGraphicOpen(false)}>
-						<CloseIcon/>
-					</div>
-					<div className='flex items-center flex-col justify-center gap-6'>
-						<GraphicIcon/>
-						<Button
-							className='w-[176px] text-white bg-pink_primary text-[16px] font-medium h-[35px] rounded-[4px]'
-							onClick={() => { toggleEdit(); setGraphicOpen(false);}}
-						>
-							<PlusOutlined/>
-                Add Tags
-						</Button>
-					</div>
-				</div>}
-
 				<GovernanceSideBar
+					toggleEdit={toggleEdit}
 					proposalType={proposalType}
 					onchainId={onchainId}
 					status={postStatus}
@@ -338,6 +319,7 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
+
 	return (
 		<PostDataContextProvider initialPostData={{
 			cid: post?.cid || '',
@@ -346,7 +328,8 @@ const Post: FC<IPostProps> = (props) => {
 			created_at: post?.created_at || '',
 			curator: post?.curator || '',
 			description: post?.description,
-			last_edited_at: post?.last,
+			history: post?.history || [],
+			last_edited_at: post?.last_edited_at,
 			postIndex: proposalType === ProposalType.TIPS? post.hash: post.post_id ,
 			postType: proposalType,
 			post_link: post?.post_link,

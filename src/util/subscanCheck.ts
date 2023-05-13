@@ -5,7 +5,7 @@
 import { chainProperties } from '~src/global/networkConstants';
 
 export function isSubscanSupport(network: string) {
-	return !['xx', 'pendulum', 'amplitude', 'myriad', 'frequency'].includes(network);
+	return !['xx', 'pendulum', 'amplitude', 'myriad', 'frequency', 'cere'].includes(network);
 }
 
 export function isExplorerSupport(network: string) {
@@ -17,7 +17,7 @@ export function isPolkaholicSupport(network: string) {
 }
 
 export const getBlockLink = (network: string) => {
-	let url = chainProperties[network].externalLinks;
+	let url = chainProperties[network]?.externalLinks;
 	if (url.includes('subscan')) {
 		url = url.replace('.api', '');
 	}

@@ -5,13 +5,12 @@
 import { LoadingOutlined , StopOutlined } from '@ant-design/icons';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Form, InputNumber, Modal, Segmented, Select, Spin , Divider } from 'antd';
+import { Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
 import { LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
-import HelperTooltip from 'src/ui-components/HelperTooltip';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
@@ -19,7 +18,6 @@ import WalletButton from '~src/components/WalletButton';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import { APPNAME } from '~src/global/appName';
 import { ProposalType } from '~src/global/proposalType';
-import AyeNayButtons from '~src/ui-components/AyeNayButtons';
 import FilteredError from '~src/ui-components/FilteredError';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import LoginToVote from '../LoginToVoteOrEndorse';
@@ -28,8 +26,6 @@ import NewPolkaDotIcon from '~assets/icons/polka-dot-new-icon.svg';
 import NewSubwalletIcon from '~assets/icons/new-sub-wallet-icon.svg';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import SplitIcon from '~assets/icons/split-icon.svg';
-import { size } from 'lodash';
-import { chainProperties } from '~src/global/networkConstants';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
 
 interface Props {
@@ -221,7 +217,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			</Select>
 		</Form.Item>;
 
-	const handleSubmit = async (values: any) => {
+	const handleSubmit = async () => {
 
 		if (!referendumId && referendumId !== 0) {
 			console.error('referendumId not set');
@@ -287,8 +283,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					setAyeVoteValue(undefined);
 				}
 			}
-			
-
 		} else if(proposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
 			if(vote === EVoteDecisionType.AYE){
 				voteTx = api.tx.fellowshipCollective.vote(referendumId, true);

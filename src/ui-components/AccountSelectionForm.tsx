@@ -7,7 +7,6 @@ import React from 'react';
 import Balance from 'src/components/Balance';
 
 import AddressDropdown from './AddressDropdown';
-import HelperTooltip from './HelperTooltip';
 import styled from 'styled-components';
 
 interface Props{
@@ -25,7 +24,7 @@ interface Props{
   withoutInfo?: boolean;
 }
 
-const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo }: Props) =>
+const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen }: Props) =>
 	<article className={`w-full flex flex-col ${className}`}>
 		<div className='flex items-center gap-x-2 ml-[-6px]'>
 			<h3 className='inner-headings mb-0 ml-1'>{title}</h3>

@@ -8,6 +8,7 @@ import Balance from 'src/components/Balance';
 
 import AddressDropdown from './AddressDropdown';
 import HelperTooltip from './HelperTooltip';
+import styled from 'styled-components';
 
 interface Props{
 	accounts: InjectedAccount[]
@@ -24,12 +25,14 @@ interface Props{
   withoutInfo?: boolean;
 }
 
-const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo }: Props) =>
+const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange,className }: Props) =>
 	<article className={`w-full flex flex-col ${className}`}>
-		{title && <div className='flex items-center mb-[2px] gap-2'>
-			<h3 className='text-sm mb-0 font-normal'>{title}</h3>
-			{!withoutInfo && <HelperTooltip text='You can choose an account from the extension.' />}
-		</div>}
+		<div className='flex items-center gap-x-2 ml-[-6px]'>
+			<h3 className='inner-headings mb-0 ml-1'>{title}</h3>
+			{address && withBalance &&
+			<Balance address={address} onChange={onBalanceChange} />
+			}
+		</div>
 		<AddressDropdown
 			isDisabled={isDisabled}
 			accounts={accounts}
@@ -39,9 +42,24 @@ const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withB
 			isSwitchButton={isSwitchButton}
 			setSwitchModalOpen={setSwitchModalOpen}
 		/>
-		{address && withBalance &&
-			<Balance address={address} onChange={onBalanceChange} />
-		}
+
 	</article>;
 
-export default AccountSelectionForm;
+export default styled(AccountSelectionForm)`
+.ant-dropdown-trigger{
+	height: 39.85px !important;
+border: 1px solid #F8E3EE !important;
+border-radius: 7px !important;
+
+font-family: 'Poppins'  !important;
+font-style: normal !important;
+font-weight: 500 !important;
+font-size: 14px !important;
+line-height: 21px !important;
+color: #90A0B7 !important;
+
+}
+.anticon-down{
+	color: #E5007A;
+}
+`;

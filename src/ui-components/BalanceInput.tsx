@@ -22,7 +22,7 @@ interface Props{
 	className?: string
 	label?: string
 	helpText?: string
-	onChange: (balance: BN) => void
+	onChange?: (balance: BN) => void
 	placeholder?: string
 	size?: 'large' | 'small' | 'middle';
   address?: string;
@@ -31,9 +31,10 @@ interface Props{
   balance?: BN;
   inputClassName?: string;
   noRules?: boolean;
+	formItemName?: string;
 }
 
-const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules }: Props) => {
+const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance' }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -59,13 +60,13 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 	}, []);
 
 	return <div className={`${className} w-full flex flex-col`}>
-		<label className='mb-[2px] flex items-center text-sm'>
-			{label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> }
+		<label className='mb-[2px] inner-headings'>
+			{label}
 			{address && withBalance && <span><Balance address={address} onChange={onAccountBalanceChange} /></span>
 			}
 		</label>
 		<Form.Item
-			name="balance"
+			name={formItemName}
 			initialValue={balance ? Number(formatedBalance(balance.toString(), unit)) : ''}
 			rules={noRules ? []: [
 				{
@@ -86,17 +87,16 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 		>
 			<InputNumber
 				addonAfter={chainProperties[network]?.tokenSymbol}
-				name='balance'
-				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] mt-0 ${inputClassName} placeholderColor`}
+				name={formItemName}
+				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] rounded-r-[0px] mt-0 ${inputClassName} placeholderColor`}
 				onChange={onBalanceChange}
-				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
+				placeholder={`${placeholder}`}
 				size={size || 'large'}
 				value={Number(formatedBalance(String(balance || ZERO_BN), unit)) }
 			/>
 		</Form.Item>
 	</div>;
 };
-
 export default styled(BalanceInput)`
 .placeholderColor .ant-input-number-group .ant-input-number-group-addon{
 background:#E5007A;
@@ -106,6 +106,15 @@ border: 1px solid #E5007A;
 }
 .placeholderColor .ant-input-number .ant-input-number-input{
   color:#7c899b !important;
-}`
+}
+.ant-input-number-handler-up{
+	display:none !important;
+}
+.ant-input-number-handler-down{
+	display:none !important;
+}
+.ant-input-number-group-addon{
+	border-radius:4px !important;
+}
+`;
 
-;

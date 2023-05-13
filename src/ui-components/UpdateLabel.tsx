@@ -11,9 +11,10 @@ interface Props{
     className?: string
     created_at: Date | string;
     updated_at?: Date | string;
+    isHistory?: boolean;
 }
 
-const UpdateLabel = ({ className, created_at, updated_at } : Props) => {
+const UpdateLabel = ({ className, created_at, updated_at, isHistory } : Props) => {
 	if (!updated_at) return null;
 	const defaultTime='a few minutes ago';
 	const title = dayjs.utc(updated_at, 'YYYY-MM-DDTHH:mm:ss.SSS').fromNow()!=='NaN years ago'?dayjs.utc(updated_at, 'YYYY-MM-DDTHH:mm:ss.SSS').fromNow():defaultTime;
@@ -22,7 +23,7 @@ const UpdateLabel = ({ className, created_at, updated_at } : Props) => {
 			? null :
 			<span className={className}>
 				<Tooltip color='#E5007A' title={title}>
-					<span className='text-pink_primary text-[10px] leading-4'>(Edited)</span>
+					<span className={`text-navBlue text-[10px] leading-4 ${isHistory && 'text-pink_primary'}`}>(Edited)</span>
 				</Tooltip>
 			</span>
 	);

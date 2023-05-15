@@ -225,7 +225,9 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 						currentUser.delegationDashboardAddress = address;
 						localStorage.setItem('delegationWallet', Wallet.METAMASK);
 						localStorage.setItem('delegationDashboardAddress', address);
+						localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
 						handleTokenChange(confirmData.token, currentUser);
+
 						setModal({
 							content: 'Add an email in settings if you want to be able to recover your account!',
 							title: 'Add optional email'

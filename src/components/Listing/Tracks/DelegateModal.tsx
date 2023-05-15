@@ -450,7 +450,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 								{checkedList.length> 0 && checkedList.filter((item) => item !== checkedTrack?.name).map((list, index) => (
 									<div key={index} className='text-sm text-[#7c899b] py-2 px-3 border-[1px] border-solid border-[#D2D8E0] rounded-[20px] flex justify-center gap-2 items-center'>
 										{list}
-										<span onClick={() => handleClose(String(list))} className='flex justify-center items-center'><CrossIcon/></span>
+										<span onClick={() => handleClose(String(list))} className='flex justify-center items-center cursor-pointer'><CrossIcon/></span>
 									</div>
 								))}
 							</div>}

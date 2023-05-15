@@ -32,10 +32,11 @@ interface Props {
 	lastVote: string | null | undefined
 	setLastVote: React.Dispatch<React.SetStateAction<string | null | undefined>>
 	proposalType: ProposalType;
+  address: string;
 }
 
-const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType }: Props) => {
-	const { addresses, isLoggedOut ,loginWallet } = useUserDetailsContext();
+const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
+	const { addresses, isLoggedOut } = useUserDetailsContext();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const { api, apiReady } = useApiContext();
@@ -46,15 +47,21 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [wallet,setWallet]=useState<Wallet>();
 	const [defaultWallets,setDefaultWallets]=useState<any>({});
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
-	const [address, setAddress] = useState<string>('');
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
+	const [loginWallet, setLoginWallet] = useState<Wallet>();
+
+	useEffect(() => {
+		if(!window) return;
+		const Wallet = localStorage.getItem('loginWallet') ;
+		Wallet && setLoginWallet(Wallet as  Wallet);
+	}, [apiReady]);
 
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(injectedWindow.injectedWeb3);
 	};
 
-	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
+	const getAccounts = async (chosenWallet: Wallet, chosenAddress?:string): Promise<undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
 
 		const wallet = isWeb3Injected
@@ -100,20 +107,27 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				api.setSigner(injected.signer);
 			}
 
-			setAddress(accounts[0].address);
+			onAccountChange(chosenAddress || accounts[0].address);
 		}
 		return;
 	};
 
 	useEffect(() => {
 		getWallet();
-		loginWallet!==null && getAccounts(loginWallet);
+		if(!loginWallet) return ;
+		getAccounts(loginWallet);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[]);
+	},[loginWallet]);
+
+	useEffect(() => {
+		if(!address || !wallet) return;
+		getAccounts(wallet, address);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address, wallet]);
 
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
 		setAccounts([]);
-		setAddress('');
+		onAccountChange('');
 		event.preventDefault();
 		setWallet(wallet);
 		await getAccounts(wallet);

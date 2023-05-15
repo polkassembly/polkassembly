@@ -151,16 +151,15 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				forCount += 1;
 			}
 		}
+		setAgainstCount(Number((( againstCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)) || 0);
 
-		setAgainstCount(Number((( againstCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)));
+		setSlightlyAgainstCount(Number((( slightlyAgainstCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)) || 0);
 
-		setSlightlyAgainstCount(Number((( slightlyAgainstCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)));
+		setNeutralCount(Number((( neutralCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)) || 0);
 
-		setNeutralCount(Number((( neutralCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)));
+		setSlightlyForCount(Number((( slightlyForCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)) || 0);
 
-		setSlightlyForCount(Number((( slightlyForCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)));
-
-		setForCount(Number((( forCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)));
+		setForCount(Number((( forCount / (againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount) * 100)).toFixed(2)) || 0);
 
 		if(againstCount === 0 && slightlyAgainstCount === 0 && neutralCount === 0 && slightlyForCount === 0 && forCount === 0 ){
 			setIsAllZero(true);
@@ -237,54 +236,54 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						{filteredComments?.length}
 						<span className='ml-1'>Comments</span>
 					</span>
-					<div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2'>
+					{comments.length > 0 && !isAllZero && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2'>
 						<Tooltip color='#E5007A'
 							title={<div className='flex flex-col text-xs px-1'>
 								<span className='text-center font-medium'>Completely Against</span>
-								<span className='text-center pt-1'>Select to filter.</span>
+								<span className='text-center pt-1'>Select to filter</span>
 							</div>} >
 							<div onClick={() => {setFilteredSentiment((pre: any) => pre.againstTimes === 0 ? { againstTimes: 1, forTimes: 0, neutralTimes: 0, sentiment: 1, slightlyAgainstTimes: 0, slightlyForTimes: 0  } : { ...pre, againstTimes: 0, sentiment: 0 }); getFilteredComments(filteredSentiment?.againstTimes === 0 ? 1 : 0);}} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === 1 && 'bg-[#FEF2F8] text-[#243A57] '}`} >
 								{filteredSentiment.sentiment === 1 ? <AgainstIcon /> : <UnfilterAgainstIcon />}
-								{comments.length > 0 && !isAllZero && <span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === 1 && 'text-pink_primary'} `}>{againstCount}%</span>}
+								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === 1 && 'text-pink_primary'} `}>{againstCount}%</span>
 							</div>
 						</Tooltip>
 						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
 							<span className='text-center font-medium'>Slightly Against</span>
-							<span className='text-center pt-1'>Select to filter.</span>
+							<span className='text-center pt-1'>Select to filter</span>
 						</div>}>
 							<div onClick={() =>  {setFilteredSentiment((pre: any) => pre.slightlyAgainstTimes === 0 ? { againstTimes: 0, forTimes: 0, neutralTimes: 0, sentiment: 2, slightlyAgainstTimes: 2, slightlyForTimes: 0  } : { ...pre, sentiment: 0, slightlyAgainstTimes: 0 }); getFilteredComments(filteredSentiment?.slightlyAgainstTimes === 0 ? 2 : 0);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === 2 && 'bg-[#FEF2F8] text-[#243A57] '}`}>
 								{filteredSentiment.sentiment === 2 ? <SlightlyAgainstIcon /> : <UnfilterSlightlyAgainstIcon/>}
-								{comments.length > 0 && !isAllZero && <span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === 2 && 'text-pink_primary'} `}>{slightlyAgainstCount}%</span>}
+								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === 2 && 'text-pink_primary'} `}>{slightlyAgainstCount}%</span>
 							</div>
 						</Tooltip>
 						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
 							<span className='text-center font-medium'>Neutral </span>
-							<span className='text-center pt-1'>Select to filter.</span>
+							<span className='text-center pt-1'>Select to filter</span>
 						</div>}>
 							<div onClick={() =>  {setFilteredSentiment((pre: any) => pre.neutralTimes === 0 ? { againstTimes: 0, forTimes: 0, neutralTimes: 1, sentiment: 3, slightlyAgainstTimes: 0, slightlyForTimes: 0  }: { ...pre, neutralTimes: 0, sentiment: 0 }); getFilteredComments(filteredSentiment?.neutralTimes === 0 ? 3 : 0);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === 3 && 'bg-[#FEF2F8] text-[#243A57] '}`}>
 								{filteredSentiment.sentiment === 3 ? <NeutralIcon className='text-[20px] font-medium'/> : <UnfilterNeutralIcon/>}
-								{comments.length > 0 && !isAllZero && <span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === 3 && 'text-pink_primary'} `}>{neutralCount}%</span>}
+								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === 3 && 'text-pink_primary'} `}>{neutralCount}%</span>
 							</div>
 						</Tooltip>
 						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
 							<span className='text-center font-medium'>Slightly For</span>
-							<span className='text-center pt-1'>Select to filter.</span>
+							<span className='text-center pt-1'>Select to filter</span>
 						</div>}>
 							<div onClick={() =>  {setFilteredSentiment((pre: any) => pre.slightlyForTimes === 0 ? { againstTimes: 0, forTimes: 0, neutralTimes: 0, sentiment: 4, slightlyAgainstTimes: 0, slightlyForTimes: 1  } : { ...pre,  sentiment: 0, slightlyForTimes: 0 }); getFilteredComments(filteredSentiment?.slightlyForTimes === 0 ? 4 : 0);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === 4 && 'bg-[#FEF2F8] text-[#243A57] '}`}>
 								{filteredSentiment.sentiment === 4 ? <SlightlyForIcon /> : <UnfilterSlightlyForIcon/>}
-								{comments.length > 0 && !isAllZero && <span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === 4 && 'text-pink_primary'} `}>{slightlyForCount}%</span>}
+								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === 4 && 'text-pink_primary'} `}>{slightlyForCount}%</span>
 							</div>
 						</Tooltip>
 						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
 							<span className='text-center font-medium'>Completely For</span>
-							<span className='text-center pt-1'> Select to filter.</span>
+							<span className='text-center pt-1'> Select to filter</span>
 						</div>}>
 							<div onClick={() =>  {setFilteredSentiment((pre: any) => pre.forTimes === 0 ? { againstTimes: 0, forTimes: 1, neutralTimes: 0, sentiment: 5, slightlyAgainstTimes: 0, slightlyForTimes: 0  } : { ...pre, forTimes: 0, sentiment: 0 }); getFilteredComments(filteredSentiment?.forTimes === 0 ? 5 : 0);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === 5 && 'bg-[#FEF2F8] text-[#243A57] '}`}>
 								{filteredSentiment.sentiment === 5 ? <ForIcon/> : <UnfilterForIcon/>}
-								{comments.length > 0 && !isAllZero && <span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === 5 && 'text-pink_primary'} `}>{forCount}%</span>}
+								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === 5 && 'text-pink_primary'} `}>{forCount}%</span>
 							</div>
 						</Tooltip>
-					</div>
+					</div>}
 				</div>
 				{ !!comments?.length &&
 						<>

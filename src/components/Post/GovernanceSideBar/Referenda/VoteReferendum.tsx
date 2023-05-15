@@ -166,15 +166,15 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	};
 
 	const onBalanceChange = (balance: BN) => {
-		setLockedBalance(balance);
-		if(lockedBalance && lockedBalance.eq(ZERO_BN)) {
+		if(balance && balance.eq(ZERO_BN)) {
 			setBalanceErr('');
 		}
-		else if(lockedBalance && availableBalance.lt(balance)){
+		else if(balance && availableBalance.lt(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
 			setBalanceErr('');
 		}
+		setLockedBalance(balance);
 	};
 
 	const checkIfFellowshipMember = async () => {

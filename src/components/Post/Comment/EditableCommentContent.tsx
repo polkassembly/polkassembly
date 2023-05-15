@@ -48,6 +48,7 @@ interface IEditableCommentContentProps {
 	setSentiment: (pre:number)=>void;
 	prevSentiment: number;
 	isSubsquareUser: boolean;
+	userName?:string;
 }
 
 const editCommentKey = (commentId: string) => `comment:${commentId}:${global.window.location.href}`;
@@ -57,7 +58,7 @@ const replyKey = (commentId: string) => `reply:${commentId}:${global.window.loca
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { network } = useContext(NetworkContext);
 
-	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment } = props;
+	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment ,userName } = props;
 	const { setPostData, postData: { postType } } = usePostDataContext();
 	const { asPath } = useRouter();
 
@@ -74,9 +75,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [replyForm] = Form.useForm();
 
 	useEffect(() => {
-		const userName = 'userabc';
-		replyForm.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})` || '1123');
-		console.log('use effect');
+		replyForm.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})` || '');
 	}, [replyForm]);
 
 	const currentContent=useRef<string>(content);

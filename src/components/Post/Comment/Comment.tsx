@@ -108,6 +108,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					setSentiment={setNewSentiment}
 					prevSentiment={sentiment||0}
 					isSubsquareUser={comment_source==='subsquare'}
+					userName = {comment?.username}
 				/>
 				{replies && replies.length > 0 && <Replies className='comment-content' commentId={id} repliesArr={replies} />}
 			</div>

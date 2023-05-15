@@ -47,7 +47,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [fetchingFellowship, setFetchingFellowship] = useState(true);
 	const { network } = useNetworkContext();
 	const [wallet,setWallet] = useState<Wallet>();
-	const [defaultWallets, setDefaultWallets]=useState<any>({});
+	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
@@ -62,23 +62,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			setWallet(Wallet as Wallet);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [apiReady]);
+	}, []);
 
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
-		setDefaultWallets(injectedWindow.injectedWeb3);
+		setAvailableWallets(injectedWindow.injectedWeb3);
 	};
 
-	useEffect(() => {
-		if(lockedBalance && lockedBalance.eq(ZERO_BN)) {
-			setBalanceErr('');
-		}
-		else if(lockedBalance && availableBalance.lt(lockedBalance)){
-			setBalanceErr('Insufficient balance.');
-		}else{
-			setBalanceErr('');
-		}
-	}, [lockedBalance, availableBalance]);
 	const getAccounts = async (chosenWallet: Wallet, chosenAddress?:string): Promise<undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
 
@@ -175,7 +165,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setConviction(Number(value));
 	};
 
-	const onBalanceChange = (balance: BN) => setLockedBalance(balance);
+	const onBalanceChange = (balance: BN) => {
+		setLockedBalance(balance);
+		if(lockedBalance && lockedBalance.eq(ZERO_BN)) {
+			setBalanceErr('');
+		}
+		else if(lockedBalance && availableBalance.lt(balance)){
+			setBalanceErr('Insufficient balance.');
+		}else{
+			setBalanceErr('');
+		}
+	};
 
 	const checkIfFellowshipMember = async () => {
 		if (!api || !apiReady) {
@@ -347,15 +347,15 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
 						<h4 className='dashboard-heading mb-7'>Cast Your Vote</h4>
 						<div className='flex items-center justify-center gap-x-5 mt-5 mb-6'>
-							{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
-							{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-							{defaultWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
+							{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
+							{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+							{availableWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
 							{
-								(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
+								(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
                     <WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary': ''}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
 							}
 							{
-								['polymesh'].includes(network) && defaultWallets[Wallet.POLYWALLET]?
+								['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET]?
 									<WalletButton disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
 									: null
 							}

@@ -70,8 +70,11 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	useEffect(() => {
 		if(!window) return;
 		const Wallet = localStorage.getItem('loginWallet') ;
-		Wallet && setLoginWallet(Wallet as  Wallet);
-	}, [apiReady]);
+		if(Wallet){
+			setLoginWallet(Wallet as  Wallet);
+			setWallet(Wallet as Wallet);
+		}
+	}, []);
 
 	useEffect(() => {
 		setPostData((prev) => {

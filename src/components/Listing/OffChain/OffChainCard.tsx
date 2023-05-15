@@ -74,7 +74,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					<OnchainCreationLabel address={address} topic={topic} username={username} />
 					<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 
-					<div className='flex items-center gap-x-2'>
+					<div className='flex items-center flex-wrap gap-x-2 gap-y-2 '>
 						<div className='flex items-center justify-center gap-x-1.5'>
 							<LikeOutlined />
 							<span>{getFormattedLike(postReactionCount['👍'])}</span>
@@ -88,21 +88,22 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						<div className='flex items-center'>
 							<CommentOutlined className='mr-1' /> {commentsCount}
 						</div>
-						<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+						<Divider type="vertical" rootClassName=' max-[390px]:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 						{relativeCreatedAt && <>
 							<div className='hidden lg:flex items-center'>
 								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 							</div>
 						</>}
-						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
-						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
-							(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >
-								{tag}
-							</div>))}
-						{tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden max-[390px]:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
+						<div className='flex justify-between'>
+							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
+								(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px] mr-1' >
+									{tag}
+								</div>))}
+							{tags.length>2 && <span className='text-pink_primary leading-[25px] p-[0px] ' style={{ borderBottom:'1px solid #E5007A', padding: '0' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
                 +{tags.length-2} more
-						</span>}
-						</>}
+							</span>}
+							</>}</div>
 					</div>
 				</div>
 			</div>

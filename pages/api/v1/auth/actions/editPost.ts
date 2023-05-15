@@ -70,6 +70,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const postDoc = await postDocRef.get();
 	const post = postDoc.data();
 	let isAuthor = false;
+
 	if(postDoc.exists) {
 		if(![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)){
 			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
@@ -184,9 +185,9 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		title: post?.title
 	};
 
-	const history =  post?.history && Array.isArray(post?.history)
+	const history = post?.history && Array.isArray(post?.history)
 		? [newHistory, ...(post?.history || [])]
-		: new Array(newHistory);
+		: [];
 
 	const last_comment_at = new Date();
 

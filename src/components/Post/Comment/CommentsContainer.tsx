@@ -164,6 +164,9 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		if(againstCount === 0 && slightlyAgainstCount === 0 && neutralCount === 0 && slightlyForCount === 0 && forCount === 0 ){
 			setIsAllZero(true);
 		}
+		if(comments?.length === 0 ){
+			setIsAllZero(true);
+		}
 	};
 
 	const getFilteredComments = (sentiment: number) => {
@@ -236,7 +239,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						{filteredComments?.length}
 						<span className='ml-1'>Comments</span>
 					</span>
-					{comments.length > 0 && !isAllZero && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2'>
+					{!isAllZero && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2'>
 						<Tooltip color='#E5007A'
 							title={<div className='flex flex-col text-xs px-1'>
 								<span className='text-center font-medium'>Completely Against</span>

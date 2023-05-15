@@ -25,6 +25,8 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
 
+const ZERO_BN = new BN(0);
+
 interface Props {
 	className?: string
 	referendumId?: number | null | undefined
@@ -44,16 +46,22 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [isFellowshipMember, setIsFellowshipMember] = useState<boolean>(false);
 	const [fetchingFellowship, setFetchingFellowship] = useState(true);
 	const { network } = useNetworkContext();
-	const [wallet,setWallet]=useState<Wallet>();
-	const [defaultWallets,setDefaultWallets]=useState<any>({});
+	const [wallet,setWallet] = useState<Wallet>();
+	const [defaultWallets, setDefaultWallets]=useState<any>({});
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
+	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const [balanceErr, setBalanceErr] = useState('');
 
 	useEffect(() => {
 		if(!window) return;
 		const Wallet = localStorage.getItem('loginWallet') ;
-		Wallet && setLoginWallet(Wallet as  Wallet);
+		if(Wallet){
+			setLoginWallet(Wallet as  Wallet);
+			setWallet(Wallet as Wallet);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [apiReady]);
 
 	const getWallet=() => {
@@ -61,6 +69,16 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setDefaultWallets(injectedWindow.injectedWeb3);
 	};
 
+	useEffect(() => {
+		if(lockedBalance && lockedBalance.eq(ZERO_BN)) {
+			setBalanceErr('');
+		}
+		else if(lockedBalance && availableBalance.lt(lockedBalance)){
+			setBalanceErr('Insufficient balance.');
+		}else{
+			setBalanceErr('');
+		}
+	}, [lockedBalance, availableBalance]);
 	const getAccounts = async (chosenWallet: Wallet, chosenAddress?:string): Promise<undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
 
@@ -125,6 +143,18 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, wallet]);
 
+	const handleOnBalanceChange = (balanceStr: string) => {
+		let balance = ZERO_BN;
+
+		try{
+			balance = new BN(balanceStr);
+		}
+		catch(err){
+			console.log(err);
+		}
+
+		setAvailableBalance(balance);
+	};
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
 		setAccounts([]);
 		onAccountChange('');
@@ -203,6 +233,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		}
 
 		if (!apiReady) {
+			return;
+		}
+
+		if(lockedBalance && availableBalance.lt(lockedBalance)) {
+			setBalanceErr('Insufficient balance.');
 			return;
 		}
 
@@ -336,14 +371,16 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							inputClassName='text-[#7c899b] text-sm text-red-100'
 						/>
 						}
+						{balanceErr.length > 0 && <div className='-mt-2 text-sm text-red-500'>{balanceErr}</div>}
 						{
-							accounts.length > 0?
+							accounts.length > 0 ?
 								<AccountSelectionForm
 									title='Vote with Account'
 									accounts={accounts}
 									address={address}
 									withBalance
 									onAccountChange={onAccountChange}
+									onBalanceChange={handleOnBalanceChange}
 									className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
 								/>
 								: !wallet? <FilteredError text='Please select a wallet.' />: null

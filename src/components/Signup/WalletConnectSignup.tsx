@@ -223,7 +223,7 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 						currentUser.loginWallet=Wallet.WALLETCONNECT;
 						currentUser.loginAddress= address;
 						currentUser.delegationDashboardAddress = address;
-						localStorage.setItem('delegationWallet', Wallet.METAMASK);
+						localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
 						localStorage.setItem('delegationDashboardAddress', address);
 						localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
 						handleTokenChange(confirmData.token, currentUser);

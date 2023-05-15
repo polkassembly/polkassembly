@@ -75,9 +75,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	useEffect(() => {
 		const userName = 'userabc';
-		form.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})` || '1123');
+		replyForm.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})` || '1123');
 		console.log('use effect');
-	}, [form]);
+	}, [replyForm]);
 
 	const currentContent=useRef<string>(content);
 

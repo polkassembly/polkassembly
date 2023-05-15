@@ -70,24 +70,28 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
-	useEffect(() => {
-		const localContent = global.window.localStorage.getItem(editCommentKey(commentId)) || '';
-		form.setFieldValue('content', localContent || content || ''); //initialValues is not working
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
+	//const [commentState,setCommentState] = useState('');
 	const [replyForm] = Form.useForm();
+
+	useEffect(() => {
+		const userName = 'userabc';
+		form.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})` || '1123');
+		console.log('use effect');
+	}, [form]);
+
 	const currentContent=useRef<string>(content);
 
 	const [isReplying, setIsReplying] = useState(false);
+
 	const toggleReply = () => {
-		if (!isReplying) {
-			const localContent = global.window.localStorage.getItem(replyKey(commentId)) || '';
-			replyForm.setFieldValue('content', localContent);
-		} else {
-			global.window.localStorage.removeItem(replyKey(commentId));
-			replyForm.setFieldValue('content', '');
-		}
+		// if (isReplying) {
+		// const localContent = global.window.localStorage.getItem(replyKey(commentId)) || '';
+		// replyForm.setFieldValue('content', '101010');
+		// setCommentState(localContent);
+		// } else {
+		// global.window.localStorage.removeItem(replyKey(commentId));
+		// replyForm.setFieldValue('content', '');
+		// }
 		setIsReplying(!isReplying);
 	};
 
@@ -404,8 +408,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									}
 									className='mt-4'
 								>
-									<ContentForm onChange={(content: string) => {
+									<ContentForm  onChange={(content: string) => {
 										global.window.localStorage.setItem(replyKey(commentId), content);
+										console.log('on change', content);
 										return content.length ? content : null;
 									}} />
 									<Form.Item>

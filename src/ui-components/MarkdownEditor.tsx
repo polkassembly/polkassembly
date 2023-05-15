@@ -217,7 +217,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 		return Boolean(url);
 	};
 
-	const [input, setInput] = useState<string>('');
+	const [input, setInput] = useState<string>(props.value || '');
 	const [usersTillNow , setUsersTillNow] = useState<string[]>([]);
 	const [replacedUsernames,setReplacedUsernames]  = useState<string[]>([]);
 

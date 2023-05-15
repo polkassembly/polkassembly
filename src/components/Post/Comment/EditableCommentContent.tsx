@@ -6,7 +6,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Form, MenuProps, Tooltip } from 'antd';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
-import React, { FC, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, useContext, useRef, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
@@ -71,12 +71,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
-	//const [commentState,setCommentState] = useState('');
 	const [replyForm] = Form.useForm();
-
-	useEffect(() => {
-		replyForm.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})` || '');
-	}, [replyForm]);
 
 	const currentContent=useRef<string>(content);
 
@@ -91,6 +86,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		// global.window.localStorage.removeItem(replyKey(commentId));
 		// replyForm.setFieldValue('content', '');
 		// }
+		const usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
+		replyForm.setFieldValue('content', usernameContent);
+		global.window.localStorage.setItem(replyKey(commentId), usernameContent);
 		setIsReplying(!isReplying);
 	};
 
@@ -407,9 +405,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									}
 									className='mt-4'
 								>
-									<ContentForm  onChange={(content: string) => {
+									<ContentForm onChange={(content: string) => {
 										global.window.localStorage.setItem(replyKey(commentId), content);
-										console.log('on change', content);
 										return content.length ? content : null;
 									}} />
 									<Form.Item>

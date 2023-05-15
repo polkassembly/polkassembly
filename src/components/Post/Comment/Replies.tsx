@@ -14,18 +14,9 @@ interface Props{
 }
 
 const Replies = ({ className, commentId, repliesArr }: Props) => {
-	const [showReplies, setShowReplies] = useState<boolean>(false);
-	const toggleShowReplies = () => setShowReplies(!showReplies);
 	return (
 		<div className={className}>
-			{repliesArr.length > 0 ?
-				!showReplies ?
-					<div className='text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center' onClick={toggleShowReplies}>{repliesArr.length} replies <DownOutlined className='ml-1' /></div>
-					:
-					<div className='text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center' onClick={toggleShowReplies}>Hide replies <UpOutlined className='ml-1' /></div>
-				: null
-			}
-			{showReplies && repliesArr.map((reply: any) =>
+			{repliesArr.length > 0 && repliesArr.map((reply: any) =>
 				<div key={reply.id}>
 					<Reply
 						reply={reply}

@@ -111,7 +111,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<OnchainCreationLabel address={address} username={username} topic={topic}/>
 					<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 
-					<div className='flex items-center gap-x-2'>
+					<div className='flex items-center gap-x-2 '>
 						<div className='flex items-center justify-center gap-x-1.5'>
 							<LikeOutlined />
 							<span>{getFormattedLike(postReactionCount['👍'])}</span>
@@ -157,15 +157,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								}
 							</div>
 					}<div className='flex gap-[4px] max-sm:flex-col items-center ml-1'>
-						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
-						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
-							(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >
-								{tag}
-							</div>))}
-						{tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden max-[390px]:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
+						<div className='flex justify-between mt-1'>
+							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
+								(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px] mr-1' >
+									{tag}
+								</div>))}
+							{tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
                 +{tags.length-2} more
-						</span>}
-						</>}
+							</span>}
+							</>}</div>
 					</div>
 				</div>
 			</div>
@@ -176,7 +177,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px] padding  justify-center center-aligned`}
 			><div className=''>
 					<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
-					<div className='flex gap-2 max-lg:flex-col border-solid' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
+					<div className='flex gap-2 border-solid flex-wrap' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
 						(<div key={index} className='rounded-xl px-[16px] py-[2px] border-navBlue border-solid border-[1px] font-normal text-xs text-navBlue' >
 							{tag}
 						</div>))}

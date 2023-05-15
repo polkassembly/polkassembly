@@ -259,6 +259,10 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 
 											if(confirmData.token) {
 												currentUser.loginWallet=Wallet.WALLETCONNECT;
+												currentUser.loginAddress = address;
+												currentUser.delegationDashboardAddress = address;
+												localStorage.setItem('delegationWallet', Wallet.METAMASK);
+												localStorage.setItem('delegationDashboardAddress', address);
 												handleTokenChange(confirmData.token, currentUser);
 												if(isModal){
 													setLoginOpen && setLoginOpen(false);
@@ -283,6 +287,10 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 						if (addressLoginData?.token) {
 							setWalletConnectProvider(provider);
 							currentUser.loginWallet=Wallet.WALLETCONNECT;
+							currentUser.loginAddress = address;
+							currentUser.delegationDashboardAddress = address;
+							localStorage.setItem('delegationWallet', Wallet.METAMASK);
+							localStorage.setItem('delegationDashboardAddress', address);
 							handleTokenChange(addressLoginData.token, currentUser);
 							if(isModal){
 								setLoginOpen && setLoginOpen(false);

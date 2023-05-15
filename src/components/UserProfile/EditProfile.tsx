@@ -147,7 +147,6 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					setOpen(false);
 					setOpenModal && setOpenModal(false);
 				}}
-				centered
 				title={
 					<h3 className='font-semibold text-xl text-[#1D2632]'>
 						Edit Profile

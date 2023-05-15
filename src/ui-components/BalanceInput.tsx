@@ -16,6 +16,8 @@ import styled from 'styled-components';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 
+const ZERO_BN = new BN(0);
+
 interface Props{
 	className?: string
 	label?: string
@@ -28,9 +30,10 @@ interface Props{
   onAccountBalanceChange?: (balance: string) => void
   balance?: BN;
   inputClassName?: string;
+  noRules?: boolean;
 }
 
-const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName }: Props) => {
+const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -39,6 +42,8 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 
 		if(isValid){
 			onChange(balance);
+		}else{
+			onChange(ZERO_BN);
 		}
 	};
 
@@ -62,7 +67,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 		<Form.Item
 			name="balance"
 			initialValue={balance ? Number(formatedBalance(balance.toString(), unit)) : ''}
-			rules={[
+			rules={noRules ? []: [
 				{
 					message: 'Lock Balance is required.',
 					required: true
@@ -86,7 +91,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 				onChange={onBalanceChange}
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}
-				value={Number(formatedBalance(String(balance), unit)) }
+				value={Number(formatedBalance(String(balance || ZERO_BN), unit)) }
 			/>
 		</Form.Item>
 	</div>;

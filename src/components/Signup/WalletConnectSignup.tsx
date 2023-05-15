@@ -221,6 +221,10 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 					if (confirmData?.token) {
 						setWalletConnectProvider(provider);
 						currentUser.loginWallet=Wallet.WALLETCONNECT;
+						currentUser.loginAddress= address;
+						currentUser.delegationDashboardAddress = address;
+						localStorage.setItem('delegationWallet', Wallet.METAMASK);
+						localStorage.setItem('delegationDashboardAddress', address);
 						handleTokenChange(confirmData.token, currentUser);
 						setModal({
 							content: 'Add an email in settings if you want to be able to recover your account!',

@@ -29,7 +29,7 @@ export const gov2ReferendumStatus = {
 	KILLED: 'Killed',
 	REJECTED: 'Rejected',
 	SUBMITTED: 'Submitted',
-	TIMEDOUT: 'Timedout'
+	TIMEDOUT: 'TimedOut'
 };
 
 export const motionStatus = {
@@ -96,9 +96,9 @@ export const approvalStatus = {
 };
 
 export const announcementStatus = {
-	Announced:'Announced'
+	Announced: 'Announced'
 };
 
 export const announcementStatusMap = {
-	[announcementStatus.Announced]:'Announced'
+	[announcementStatus.Announced]: 'Announced'
 };

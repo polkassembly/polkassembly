@@ -39,6 +39,12 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const { network } = useNetworkContext();
+	const [addressAlert, setAddressAlert] = useState<boolean>(false);
+
+	useEffect(() => {
+		address && (getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
+		setTimeout(() => { setAddressAlert(false);},5000);
+	}, [network, address]);
 
 	const handleClick = () => {
 
@@ -93,7 +99,7 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 
 					<Input disabled={disabled} placeholder='Enter address to Delegate vote' onChange={(e) => setAddress(e.target.value)} value={address} className='h-[44px] border-none'/>
 
-					<Button onClick={handleClick} disabled={!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress || disabled } className={`h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1 ${disabled && 'opacity-50'}`}>
+					<Button onClick={handleClick} disabled={!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress || getEncodedAddress(address, network) === delegationDashboardAddress || disabled } className={`h-[40px] py-1 px-4 flex justify-around items-center rounded-md bg-pink_primary gap-2 mr-1 ml-1 ${disabled && 'opacity-50'}`}>
 						<DelegatesProfileIcon/>
 						<span className='text-white text-sm font-medium'>
               Delegate
@@ -121,13 +127,14 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 				</Popover> */}
 			</div>
 
-			{!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) || address === delegationDashboardAddress && <label className='text-red-500 text-[12px] font-normal'>{ address === delegationDashboardAddress && 'You cannot delegate to your own address. Please enter a different wallet address.'}</label>}
+			{getEncodedAddress( address, network) === delegationDashboardAddress && <label className='text-red-500 text-sm mt-1 font-normal'>You cannot delegate to your own address. Please enter a different wallet address.</label>}
 
-			{!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && <label className='text-red-500 text-[12px] font-normal'>Invalid Address.</label>}
-			{address && (getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && <Alert className='mb-4 mt-4' showIcon message='The substrate address has been changed to Kusama address.'/> }
+			{!address || !(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && <label className='text-red-500 text-sm font-normal mt-1 '>Invalid Address.</label>}
+			{addressAlert && <Alert className='mb-4 mt-4' showIcon message='The substrate address has been changed to Kusama address.'/> }
 
 			{!loading ? <div className='mt-6 grid grid-cols-2 max-lg:grid-cols-1 gap-6'>
-				{delegatesData.sort((a, b) => b.active_delegation_count - a.active_delegation_count).map((delegate, index) => <DelegateCard trackNum={trackDetails?.trackId} key={ index }  delegate={ delegate } disabled={disabled} />)}
+				{delegatesData.filter((item) => item?.address === 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ').map((delegate, index) => <DelegateCard trackNum={trackDetails?.trackId} key={ index }  delegate={ delegate } disabled={disabled} />)}
+				{delegatesData.filter((item) => item?.address !== 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ').sort((a, b) => b.active_delegation_count - a.active_delegation_count).map((delegate, index) => <DelegateCard trackNum={trackDetails?.trackId} key={ index }  delegate={ delegate } disabled={disabled} />)}
 			</div> : <Skeleton className='mt-6'/>}
 
 		</div>}

@@ -166,6 +166,7 @@ const MetamaskSignup: FC<Props> = ({
 					currentUser.loginAddress = address;
 					currentUser.delegationDashboardAddress = address;
 					handleTokenChange(confirmData.token, currentUser);
+					localStorage.setItem('loginWallet', Wallet.METAMASK);
 					if(isModal){
 						setSignupOpen && setSignupOpen(false);
 						return;

@@ -78,14 +78,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [isReplying, setIsReplying] = useState(false);
 
 	const toggleReply = () => {
-		// if (isReplying) {
-		// const localContent = global.window.localStorage.getItem(replyKey(commentId)) || '';
-		// replyForm.setFieldValue('content', '101010');
-		// setCommentState(localContent);
-		// } else {
-		// global.window.localStorage.removeItem(replyKey(commentId));
-		// replyForm.setFieldValue('content', '');
-		// }
 		const usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
 		replyForm.setFieldValue('content', usernameContent);
 		global.window.localStorage.setItem(replyKey(commentId), usernameContent);
@@ -258,7 +250,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 		if (deleteCommentError || !data) {
 			console.error('Error deleting comment: ', deleteCommentError);
-
 			queueNotification({
 				header: 'Error!',
 				message: deleteCommentError || 'There was an error in deleting your comment.',

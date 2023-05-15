@@ -239,7 +239,6 @@ function MarkdownEditor(props: Props): React.ReactElement {
 			}
 			setInput(myString);
 			setUsersTillNow([...usersTillNow,usernameQuery]);
-			console.log('users till now', usersTillNow);
 		}
 
 		if (props.onChange) {
@@ -248,7 +247,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	}
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedAPIcall = useCallback(debounce(apiCall, 500) , []);
+	const debouncedAPIcall = useCallback(debounce(apiCall, 1000) , []);
 
 	const onChange = async (content:string) => {
 		const inputValue = content;

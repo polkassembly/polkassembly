@@ -44,10 +44,10 @@ interface IEditableCommentContentProps {
 	proposalType: ProposalType
 	postId: number | string
 	disableEdit?: boolean
-  sentiment:number,
-	setSentiment:(pre:number)=>void;
-	prevSentiment:number;
-	isSubsquareUser:boolean;
+  sentiment: number,
+	setSentiment: (pre:number)=>void;
+	prevSentiment: number;
+	isSubsquareUser: boolean;
 }
 
 const editCommentKey = (commentId: string) => `comment:${commentId}:${global.window.location.href}`;
@@ -57,7 +57,7 @@ const replyKey = (commentId: string) => `reply:${commentId}:${global.window.loca
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { network } = useContext(NetworkContext);
 
-	const { userId, className, comment, content, commentId,sentiment,setSentiment,prevSentiment } = props;
+	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment } = props;
 	const { setPostData, postData: { postType } } = usePostDataContext();
 	const { asPath } = useRouter();
 
@@ -141,6 +141,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					comments = prev.comments.map((comment) => {
 						const newComment = comment;
 						if (comment.id === commentId) {
+							newComment.history = [{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 }, ...(newComment?.history || []) ],
 							newComment.content = newContent;
 							newComment.updated_at = new Date();
 						}
@@ -335,7 +336,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								return content.length ? content : null;
 							}} className='mb-0' />
 							<div className='bg-gray-100 mb-[10px] p-2 rounded-e-md mt-[-25px] h-[70px] background'>
-								<div className='flex text-[12px] gap-[2px]'>Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5></div>
+								<div className='flex text-[12px] gap-[2px] text-[#334D6E]'>Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5></div>
 								<div className='flex items-center text-transparent'>
 									<div className='flex justify-between items-center gap-[15px] border-solid'>
 										<div className='cursor-pointer text-lg flex justify-center items-center' onClick={() => setSentiment(1)}>{sentiment===1?<AgainstIcon />:<AgainstUnfilledIcon />}</div>

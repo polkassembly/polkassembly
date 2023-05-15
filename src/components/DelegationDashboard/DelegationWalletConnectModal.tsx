@@ -9,7 +9,6 @@ import { Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
 import { useUserDetailsContext } from '~src/context';
 import { NetworkContext } from '~src/context/NetworkContext';
-import ErrorAlert from '~src/ui-components/ErrorAlert';
 import WalletButton from '~src/components/WalletButton';
 import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
@@ -68,6 +67,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
 		if(!api || !apiReady) return;
+		setLoading(true);
 
 		setExtentionOpen(false);
 		const injectedWindow = window as Window & InjectedWindow;
@@ -78,6 +78,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 
 		if (!wallet) {
 			setExtentionOpen(true);
+			setLoading(false);
 			return;
 		}
 
@@ -98,6 +99,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 			console.log(err?.message);
 		}
 		if (!injected) {
+			setLoading(false);
 			return;
 		}
 
@@ -118,6 +120,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 
 			setAddress(accounts[0].address);
 		}
+		setLoading(false);
 		return;
 	};
 
@@ -167,8 +170,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 					}
 				</div>
 
-				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && <ErrorAlert errorMsg='You need at least one account in your wallet extenstion to use this feature.' className='mb-4' />}
-				{Object.keys(defaultWallets || {}).length === 0 &&  <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='warning' showIcon className='text-[#243A57] changeColor'/>}
+				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message='For using delegation dashboard:' description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
+				{Object.keys(defaultWallets || {}).length === 0 && !loading && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
 
 				{
 					!extensionOpen &&
@@ -176,7 +179,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 									form={form}
 									disabled={loading}
 								>
-									{accounts.length> 0
+									{accounts.length > 0
 										?<AccountSelectionForm
 											title='Select an address'
 											accounts={accounts}

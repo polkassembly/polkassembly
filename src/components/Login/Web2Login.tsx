@@ -89,7 +89,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 		<article className={`bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className} `}>
 			<h3 className="text-2xl font-semibold text-[#1E232C]">Login</h3>
 
-			{ defaultWallets.length === 0 && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='warning' showIcon className='text-[#243A57] changeColor'/>}
+			{ defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
 
 			{walletError && <Alert message={walletError} type="error" />}
 			<AuthForm

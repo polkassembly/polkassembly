@@ -231,7 +231,8 @@ const MetamaskLogin: FC<Props> = ({
 
 								if(confirmData.token) {
 									currentUser.loginWallet=Wallet.METAMASK;
-									currentUser.loginAddress= address;
+									currentUser.loginAddress = address;
+									currentUser.delegationDashboardAddress = address;
 									localStorage.setItem('delegationWallet', Wallet.METAMASK);
 									localStorage.setItem('delegationDashboardAddress', address);
 
@@ -257,7 +258,8 @@ const MetamaskLogin: FC<Props> = ({
 				}
 				if(addressLoginData?.token){
 					currentUser.loginWallet = Wallet.METAMASK;
-					currentUser.loginAddress= address;
+					currentUser.loginAddress = address;
+					currentUser.delegationDashboardAddress = address;
 					localStorage.setItem('delegationWallet', Wallet.METAMASK);
 					localStorage.setItem('delegationDashboardAddress', address);
 

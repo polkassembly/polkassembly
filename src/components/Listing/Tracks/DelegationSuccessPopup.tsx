@@ -35,7 +35,6 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const router = useRouter();
-	console.log(tracks);
 
 	useEffect(() => {
 		if(!network) return ;

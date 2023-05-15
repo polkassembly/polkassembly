@@ -77,7 +77,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const EmptyState = styled.div`
 	display:flex;
 	flex-direction:column;
-	alight-item:center;
+	align-item:center;
 	gap:16px;
 
 	svg{

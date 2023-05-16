@@ -17,10 +17,12 @@ interface IBasicInformationProps {
     profile?: ProfileDetails;
 	setProfile: React.Dispatch<React.SetStateAction<ProfileDetails>>
     loading: boolean;
+    setUsername: (pre: string) => void;
+    username: string;
 }
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
-	const { profile, loading, setProfile } = props;
+	const { profile, loading, setProfile, setUsername, username } = props;
 	const [newBadge, setNewBadge] = useState<string>('');
 
 	const addNewBadge = () => {
@@ -124,6 +126,16 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							className="border border-solid rounded-[4px] border-[rgba(72,95,125,0.2)] h-10 px-[14px]"
 						/>
 					</article>
+					<div className='text-sm cursor-pointer mt-6 text-[#485F7D]'>
+						<h4 className='text-sm text-[#485F7D] font-normal '>User Name</h4>
+						<Input
+							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] h-10'
+							size='large'
+							type='text'
+							onChange={(e) => setUsername(e.target.value)}
+							value={username}
+						/>
+					</div>
 					<article className='mt-4'>
 						<label
 							className='text-sm cursor-pointer font-normal text-[#485F7D]'

@@ -5,13 +5,19 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { Alert, Button, Divider, Modal, Tabs } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { ISocial, MessageType, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
+import { ISocial, ProfileDetails, ProfileDetailsResponse, TokenType } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
+import { handleTokenChange } from 'src/services/auth.service';
+
 import { EditIcon } from '~src/ui-components/CustomIcons';
 import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BasicInformation from './BasicInformation';
 import Socials from './Socials';
+import messages from '~src/auth/utils/messages';
+import nameBlacklist from '~src/auth/utils/nameBlacklist';
+import { useRouter } from 'next/router';
+import { useUserDetailsContext } from '~src/context';
 
 interface IEditProfileModalProps {
     id?: number | null;
@@ -37,6 +43,9 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const [profile, setProfile] = useState(getDefaultProfile());
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
+	const userDetailsContext = useUserDetailsContext();
+	const [username, setUsername] = useState<string>(userDetailsContext.username || '');
+	const router = useRouter();
 
 	const validateData = ( image: string | undefined, social_links: ISocial[] | undefined) => {
 
@@ -57,6 +66,32 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				}
 			}
 		}
+	};
+
+	const validateUserName = (username: string) => {
+
+		for (let i = 0; i < nameBlacklist.length; i++) {
+			if (username.toLowerCase().includes(nameBlacklist[i])){
+				queueNotification({
+					header: 'Error',
+					message: messages.USERNAME_BANNED,
+					status: NotificationStatus.ERROR
+				});
+				return false ;
+			}
+		}
+
+		const format = /^[a-zA-Z0-9]*$/;
+		if(!format.test(username) || username.length > 30 || username.length < 3){
+			queueNotification({
+				header: 'Error',
+				message: messages.USERNAME_INVALID_ERROR,
+				status: NotificationStatus.ERROR
+			});
+			return false;
+		}
+		return true;
+
 	};
 
 	useEffect(() => {
@@ -94,15 +129,17 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 		const { badges, bio, image, social_links, title } = profile;
 		validateData(image, social_links);
+		if(!validateUserName(username)) return ;
 
 		setLoading(true);
-		const { data , error } = await nextApiClientFetch<MessageType>( 'api/v1/auth/actions/addProfile', {
+		const { data , error } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addProfile', {
 			badges: JSON.stringify(badges || []),
 			bio: bio,
 			image: image,
 			social_links: JSON.stringify(social_links || []),
 			title: title,
-			user_id: Number(id)
+			user_id: Number(id),
+			username: username || userDetailsContext.username
 		});
 
 		if(error || !data) {
@@ -115,7 +152,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			setError(error || 'Error updating profile');
 		}
 
-		if (data?.message) {
+		if (data?.token) {
 			queueNotification({
 				header: 'Success!',
 				message: 'Your profile was updated.',
@@ -132,12 +169,15 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				};
 			});
 			setProfile(getDefaultProfile());
+			handleTokenChange(data?.token,  { ...userDetailsContext, picture: image } );
+			router.push(`/user/${username}`);
 		}
 
 		setLoading(false);
 		setError('');
 		setOpen(false);
 		setOpenModal && setOpenModal(false);
+
 	};
 	return (
 		<div>
@@ -201,9 +241,11 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 						{
 							children: (
 								<BasicInformation
-									loading={loading}
-									profile={profile}
-									setProfile={setProfile}
+									loading= {loading}
+									profile= {profile}
+									setProfile= {setProfile}
+									setUsername= {setUsername}
+									username= {username}
 								/>
 							),
 							key:'basic_information',

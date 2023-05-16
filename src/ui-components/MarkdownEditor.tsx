@@ -218,11 +218,11 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	};
 
 	const [input, setInput] = useState<string>(props.value || '');
-	const [validUsers , setUsersTillNow] = useState<string[]>([]);
+	const [validUsers , setValidUsers] = useState<string[]>([]);
 	const [replacedUsernames,setReplacedUsernames]  = useState<string[]>([]);
 
 	async function getUserData(usernameQuery: string, content: string) {
-		let myString = content;
+		let inputData = content;
 		const res = await nextApiClientFetch(
 			`api/v1/auth/data/userProfileWithUsername?username=${usernameQuery}`
 		);
@@ -231,18 +231,18 @@ function MarkdownEditor(props: Props): React.ReactElement {
 			if (!replacedUsernames.includes(usernameQuery)) {
 				const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
 
-				myString = myString.replace(
+				inputData = inputData.replace(
 					regex,
 					`[@${usernameQuery}](${global.window.location.origin}/user/${usernameQuery})`
 				);
 				setReplacedUsernames([...replacedUsernames,usernameQuery]);
 			}
-			setInput(myString);
-			setUsersTillNow([...validUsers,usernameQuery]);
+			setInput(inputData);
+			setValidUsers([...validUsers,usernameQuery]);
 		}
 
 		if (props.onChange) {
-			props.onChange(myString);
+			props.onChange(inputData);
 		}
 	}
 
@@ -259,14 +259,14 @@ function MarkdownEditor(props: Props): React.ReactElement {
 				debouncedAPIcall(usernameQuery,content);
 			}
 			else if(validUsers.includes(usernameQuery)){
-				let myString = content;
+				let inputData = content;
 				const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
 
-				myString = myString.replace(
+				inputData = inputData.replace(
 					regex,
 					`[@${usernameQuery}](${global.window.location.origin}/user/${usernameQuery})`
 				);
-				setInput(myString);
+				setInput(inputData);
 			}
 		}
 		if (props.onChange) {

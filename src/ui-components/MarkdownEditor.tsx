@@ -221,7 +221,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	const [usersTillNow , setUsersTillNow] = useState<string[]>([]);
 	const [replacedUsernames,setReplacedUsernames]  = useState<string[]>([]);
 
-	async function apiCall(usernameQuery: string, content: string) {
+	async function handleApiCall(usernameQuery: string, content: string) {
 		let myString = content;
 		const res = await nextApiClientFetch(
 			`api/v1/auth/data/userProfileWithUsername?username=${usernameQuery}`
@@ -247,7 +247,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	}
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedAPIcall = useCallback(debounce(apiCall, 1000) , []);
+	const debouncedAPIcall = useCallback(debounce(handleApiCall, 1000) , []);
 
 	const onChange = async (content:string) => {
 		const inputValue = content;

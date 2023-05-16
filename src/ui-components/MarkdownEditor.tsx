@@ -218,10 +218,10 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	};
 
 	const [input, setInput] = useState<string>(props.value || '');
-	const [usersTillNow , setUsersTillNow] = useState<string[]>([]);
+	const [validUsers , setUsersTillNow] = useState<string[]>([]);
 	const [replacedUsernames,setReplacedUsernames]  = useState<string[]>([]);
 
-	async function handleApiCall(usernameQuery: string, content: string) {
+	async function getUserData(usernameQuery: string, content: string) {
 		let myString = content;
 		const res = await nextApiClientFetch(
 			`api/v1/auth/data/userProfileWithUsername?username=${usernameQuery}`
@@ -238,7 +238,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 				setReplacedUsernames([...replacedUsernames,usernameQuery]);
 			}
 			setInput(myString);
-			setUsersTillNow([...usersTillNow,usernameQuery]);
+			setUsersTillNow([...validUsers,usernameQuery]);
 		}
 
 		if (props.onChange) {
@@ -247,7 +247,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	}
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedAPIcall = useCallback(debounce(handleApiCall, 1000) , []);
+	const debouncedAPIcall = useCallback(debounce(getUserData, 1000) , []);
 
 	const onChange = async (content:string) => {
 		const inputValue = content;
@@ -255,10 +255,10 @@ function MarkdownEditor(props: Props): React.ReactElement {
 		const matches = inputValue.match(/(?<!\[)@\w+/g);
 		if (matches && matches.length > 0) {
 			const usernameQuery = matches[matches.length - 1].substring(1);
-			if (!usersTillNow.includes(usernameQuery)) {
+			if (!validUsers.includes(usernameQuery)) {
 				debouncedAPIcall(usernameQuery,content);
 			}
-			else if(usersTillNow.includes(usernameQuery)){
+			else if(validUsers.includes(usernameQuery)){
 				let myString = content;
 				const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
 

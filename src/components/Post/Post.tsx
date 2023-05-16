@@ -401,7 +401,7 @@ const Post: FC<IPostProps> = (props) => {
 								/>
 								<Tabs
 									type="card"
-									className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+									className='ant-tabs-tab-bg-white text-[#243A57] font-medium'
 									items={tabItems}
 								/>
 

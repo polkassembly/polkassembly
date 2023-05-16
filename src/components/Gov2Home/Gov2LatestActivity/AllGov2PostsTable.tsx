@@ -33,11 +33,11 @@ const columns: ColumnsType<IPostsRowData> = [
 		render: (title) => {
 			return (
 				<>
-					<h4
+					<div
 						className='truncate'
 					>
 						{title}
-					</h4>
+					</div>
 				</>
 			);
 		}
@@ -46,7 +46,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Posted By',
 		dataIndex: 'username',
 		key: 'postedBy',
-		render: (username, { proposer }) => <NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={false} />
+		render: (username, { proposer }) => <NameLabel textClassName='text-[#243A57] max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={false} />
 	},
 	{
 		title: 'Created',

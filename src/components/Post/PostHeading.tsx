@@ -46,9 +46,9 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		<div className={className} >
 			<div className="flex justify-between items-center">
 				{status && <StatusTag className='mb-3' status={status}/>}
-				{ requestedAmt && <h5 className='text-sm text-sidebarBlue font-medium'>Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}</h5>}
+				{ requestedAmt && <h5 className='text-sm text-[#243A57] font-medium'>Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}</h5>}
 			</div>
-			<h2 className='text-lg text-sidebarBlue font-medium mb-1'>
+			<h2 className='text-base text-[#243A57] font-medium mb-1'>
 				{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {title || description || noTitle}
 			</h2>
 			<div className='mb-8'>

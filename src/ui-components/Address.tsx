@@ -153,8 +153,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 							{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} />}
 							<Tooltip color='#E5007A' title={popupContent}>
 								<div className={'header display_inline identityName max-w-[30px] flex flex-col gap-y-1'}>
-									{ t1 && <span className='truncate text-navBlue'>{t1}</span> }
-									{sub && isSubVisible && <span className='sub truncate text-navBlue'>{sub}</span>}
+									{ t1 && <span className='truncate text-[#243A57]'>{t1}</span> }
+									{sub && isSubVisible && <span className='sub truncate text-[#243A57]'>{sub}</span>}
 								</div>
 							</Tooltip>
 						</Space>
@@ -162,8 +162,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 							<div className={'description display_inline flex items-center'}>
 								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} />}
 								<span title={mainDisplay || encoded_addr} className={`${textClassName} identityName max-w-[85px] flex gap-x-1 ml-0.5 pl-1.5`}>
-									{ t1 && <span className={`truncate text-navBlue ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
-									{sub && isSubVisible && <span className={'sub truncate text-navBlue'}>{sub}</span>}
+									{ t1 && <span className={`truncate text-[#243A57] ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
+									{sub && isSubVisible && <span className={'sub truncate text-[#243A57]'}>{sub}</span>}
 								</span>
 							</div>
 						</>
@@ -175,8 +175,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 									<Space className={'header'}>
 										{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} />}
 										<span className='bg-red-500 identityName max-w-[85px] flex flex-col gap-y-1'>
-											{ t2 && <span className={`${textClassName} truncate text-navBlue`}>{ t2 }</span> }
-											{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-navBlue`}>{sub}</span>}
+											{ t2 && <span className={`${textClassName} truncate text-[#243A57]`}>{ t2 }</span> }
+											{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-[#243A57]`}>{sub}</span>}
 										</span>
 									</Space>
 									<div className={'description display_inline'}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
@@ -188,8 +188,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 										<Space className={'header'}>
 											{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} />}
 											<span className='identityName max-w-[85px] flex flex-col gap-y-1'>
-												{ t2 && <span className={`${textClassName} truncate text-navBlue`}>{ t2 }</span> }
-												{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-navBlue`}>{sub}</span>}
+												{ t2 && <span className={`${textClassName} truncate text-[#243A57]`}>{ t2 }</span> }
+												{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-[#243A57]`}>{sub}</span>}
 											</span>
 										</Space>
 										: null
@@ -210,25 +210,20 @@ export default styled(Address)`
 
 	.content {
 		display: inline-block;
-		color: nav_blue !important;
+		color: #243A57 !important;
+		font-weight: 400 !important;
 	}
 
 	.identicon {
 		margin-right: 0.25rem;
 	}
-
-	.identityName {
-		filter: grayscale(100%);
-	}
-
 	.header {
-		color: black_text;
 		font-weight: 500;
 		margin-right: 0.4rem;
 	}
 
 	.description {
-		color: nav_blue;
+		color: #243A57;
 		margin-right: 0.4rem;
 	}
 
@@ -237,7 +232,7 @@ export default styled(Address)`
 	}
 
 	.sub {
-		color: nav_blue;
+		color: #243A57;
 		line-height: inherit;
 	}
 `;

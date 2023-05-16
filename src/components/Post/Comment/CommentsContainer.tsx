@@ -159,7 +159,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						</div>
 					</div>
 				}
-				<div className='text-sidebarBlue text-sm font-medium mb-5'>{comments?.length} comments</div>
+				<div className='text-[#243A57] text-sm font-medium mb-5'>{comments?.length} comments</div>
 				{ !!comments?.length &&
 						<>
 							<Comments disableEdit={isGrantClosed} comments={comments} />

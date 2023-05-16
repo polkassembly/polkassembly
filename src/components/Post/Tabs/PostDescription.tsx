@@ -45,7 +45,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 		<div className={`${className} mt-4`}>
 			{content && <Markdown className={`${!showMore && 'clamped'}`} md={content} />}
 			{content.trim().split('\n')?.length > 5 &&
-				<p className='text-pink_primary py-2 cursor-pointer' onClick={() => setShowMore(!showMore)}>
+				<p className='text-pink_primary py-2 font-medium cursor-pointer' onClick={() => setShowMore(!showMore)}>
 					{showMore ? 'Show less' : 'Show more'}
 				</p>
 			}

@@ -66,7 +66,7 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 				{currentTab !== 'all' && <Link className='text-sidebarBlue font-medium hover:text-pink_primary py-0.5 px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
 			</div>
 			<Tabs
-				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+				className='ant-tabs-tab-bg-white text-[#243A57] text-sm font-medium'
 				type="card"
 				items={tabItems}
 				onChange={(key) => setCurrentTab(key)}
@@ -77,18 +77,26 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 
 export default styled(LatestActivity)`
 	th {
-		color: var(--navBlue) !important;
+		color: #485F7D !important;
+		font-weight: 600 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
 	}
 
 	td.ant-table-cell {
 		color: var(--sidebarBlue) !important;
 	}
 
-	tr:nth-child(2n) td {
-    background-color: #fbfbfb !important;
+	.ant-table-row{
+		color: #243A57 !important;
+		font-size: 14px !important;
+		font-weight: 400 !important;
 	}
 
-	tr {
+	tr{
+		color: #243A57 !important;
+		font-size: 14px !important;
+		font-weight: 400 !important;
 		cursor: pointer !important;
 	}
 

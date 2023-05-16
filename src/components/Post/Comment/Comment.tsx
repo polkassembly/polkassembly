@@ -78,7 +78,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 					className='creation-label py-2 pt-4 px-0 md:px-4 bg-comment_bg rounded-t-md mb'
 					created_at={created_at}
 					defaultAddress={comment.proposer}
-					text={'commented'}
 					username={comment.username}
 					sentiment={newSentiment}
 					commentSource={comment_source}

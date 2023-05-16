@@ -306,7 +306,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<Comments disableEdit={isGrantClosed} comments={filteredComments} />
 						</>
 				}
-				{filteredComments.length === 0 && comments.length > 0 && <div className='mt-4 mb-4'><Empty/></div>}
+				{filteredComments.length === 0 && comments.length > 0 && <div className='mt-4 mb-4'><Empty  description='No comments available'/></div>}
 				{
 					<RefendaLoginPrompts
 						modalOpen={openLoginModal}

@@ -144,7 +144,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							newComment.history = [{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 }, ...(newComment?.history || []) ],
 							newComment.content = newContent;
 							newComment.updated_at = new Date();
-							newComment.sentiment = sentiment;
+							newComment.sentiment = sentiment || 0;
 						}
 						return {
 							...newComment

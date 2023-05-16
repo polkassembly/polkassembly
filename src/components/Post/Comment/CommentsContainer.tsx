@@ -24,16 +24,9 @@ import SlightlyAgainstIcon from '~assets/overall-sentiment/pink-slightly-against
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SlightlyForIcon  from '~assets/overall-sentiment/pink-slightly-for.svg';
 import ForIcon from '~assets/overall-sentiment/pink-for.svg';
+import { ESentiments } from '~src/types';
 
 const { Link: AnchorLink } = Anchor;
-
-enum ESentiments {
-Against = 1,
-SlightlyAgainst = 2,
-Neutral = 3,
-SlightlyFor = 4,
-For = 5
-}
 
 export function getStatus(type: string) {
 	if (['DemocracyProposal'].includes(type)) {
@@ -70,6 +63,13 @@ interface IFilteredSentiment {
   sentiment : ESentiments | 0;
   active : boolean;
 }
+interface ISentimentsPercentage{
+  against: ESentiments | 0;
+  for: ESentiments | 0;
+  neutral: ESentiments | 0;
+  slightlyAgainst: ESentiments | 0;
+  slightlyFor: ESentiments | 0;
+}
 
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
@@ -81,7 +81,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [filteredSentiment, setFilteredSentiment] = useState<IFilteredSentiment>({ active: false, sentiment: 0 });
 	const [filteredComments, setFilteredComments] = useState(comments);
 	const [showOverallSentiment, setShowOverallSentiment] = useState<boolean>(true);
-	const [sentimentsPercentage, setSentimentsPercentage] = useState({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
+	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against : 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
 
 	const getCommentCountAndFirstIdBetweenDates = (startDate: Dayjs, endDate: Dayjs, comments: any[]) => {
 		if (startDate.isAfter(endDate)) {
@@ -107,6 +107,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			return;
 		}
 	};
+
+	const handleSetFilteredComments = (sentiment: ESentiments | 0) => {
+		setFilteredSentiment((pre) => pre.sentiment === sentiment ? { ...pre, active: false } : { active: true , sentiment : sentiment });
+	};
+
 	useEffect(() => {
 		let timelines: ITimeline[] = [];
 		if (timeline && timeline.length > 0 && comments.length > 0) {
@@ -143,20 +148,23 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		let forCount = 0;
 
 		for(let item = 0; item < comments.length; item++){
-			if(comments[item]?.sentiment === 1){
+			switch (comments[item]?.sentiment){
+			case ESentiments.Against:
 				againstCount += 1;
-			}
-			if(comments[item]?.sentiment === 2){
-				slightlyAgainstCount += 1;
-			}
-			if(comments[item]?.sentiment === 3){
-				neutralCount += 1;
-			}
-			if(comments[item]?.sentiment === 4){
-				slightlyForCount += 1;
-			}
-			if(comments[item]?.sentiment === 5){
-				forCount += 1;
+				break;
+			case ESentiments.SlightlyAgainst:
+				slightlyAgainstCount+=1;
+				break;
+			case ESentiments.Neutral:
+				neutralCount+=1;
+				break;
+			case ESentiments.SlightlyFor:
+				slightlyForCount+=1;
+				break;
+			case ESentiments.For:
+				forCount+=1;
+				break;
+
 			}
 		}
 		const totalCount = againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount;
@@ -250,7 +258,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<span className='text-center font-medium'>Completely Against</span>
 								<span className='text-center pt-1'>Select to filter</span>
 							</div>} >
-							<div onClick={() => {setFilteredSentiment((pre) => pre.sentiment === ESentiments.Against ? { ...pre, active: false } : { active: true ,sentiment : ESentiments.Against }); getFilteredComments(1);}} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.Against && 'bg-[#FEF2F8] text-[#243A57] '}`} >
+							<div onClick={() => {handleSetFilteredComments(ESentiments.Against); getFilteredComments(ESentiments.Against);}} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.Against && 'bg-[#FEF2F8] text-[#243A57] '}`} >
 								{filteredSentiment?.sentiment === ESentiments.Against ? <AgainstIcon /> : <UnfilterAgainstIcon />}
 								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === ESentiments.Against && 'text-pink_primary'} `}>{sentimentsPercentage?.against}%</span>
 							</div>
@@ -259,7 +267,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<span className='text-center font-medium'>Slightly Against</span>
 							<span className='text-center pt-1'>Select to filter</span>
 						</div>}>
-							<div onClick={() =>  {setFilteredSentiment((pre) => pre.sentiment === ESentiments.SlightlyAgainst ? { ...pre, active: false } : { active: true ,sentiment : ESentiments.SlightlyAgainst }); getFilteredComments(ESentiments.SlightlyAgainst);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.SlightlyAgainst && 'bg-[#FEF2F8] text-[#243A57] '}`}>
+							<div onClick={() =>  {handleSetFilteredComments(ESentiments.SlightlyAgainst); getFilteredComments(ESentiments.SlightlyAgainst);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.SlightlyAgainst && 'bg-[#FEF2F8] text-[#243A57] '}`}>
 								{filteredSentiment?.sentiment === ESentiments.SlightlyAgainst ? <SlightlyAgainstIcon /> : <UnfilterSlightlyAgainstIcon/>}
 								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === ESentiments.SlightlyAgainst && 'text-pink_primary'} `}>{sentimentsPercentage?.slightlyAgainst}%</span>
 							</div>
@@ -268,7 +276,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<span className='text-center font-medium'>Neutral </span>
 							<span className='text-center pt-1'>Select to filter</span>
 						</div>}>
-							<div onClick={() =>  {setFilteredSentiment((pre) => pre.sentiment === ESentiments.Neutral ? { ...pre, active: false } : { active: true ,sentiment : ESentiments.Neutral }); getFilteredComments(ESentiments.Neutral);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.Neutral && 'bg-[#FEF2F8] text-[#243A57] '}`}>
+							<div onClick={() =>  {handleSetFilteredComments(ESentiments.Neutral); getFilteredComments(ESentiments.Neutral);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.Neutral && 'bg-[#FEF2F8] text-[#243A57] '}`}>
 								{filteredSentiment?.sentiment === ESentiments.Neutral ? <NeutralIcon className='text-[20px] font-medium'/> : <UnfilterNeutralIcon/>}
 								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === ESentiments.Neutral && 'text-pink_primary'} `}>{sentimentsPercentage?.neutral}%</span>
 							</div>
@@ -277,7 +285,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<span className='text-center font-medium'>Slightly For</span>
 							<span className='text-center pt-1'>Select to filter</span>
 						</div>}>
-							<div onClick={() =>  {setFilteredSentiment((pre) => pre.sentiment === ESentiments.SlightlyFor ? { ...pre, active: false } : { active: true ,sentiment : ESentiments.SlightlyFor }); getFilteredComments(ESentiments.SlightlyFor);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.SlightlyFor && 'bg-[#FEF2F8] text-[#243A57] '}`}>
+							<div onClick={() =>  {handleSetFilteredComments(ESentiments.SlightlyFor); getFilteredComments(ESentiments.SlightlyFor);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.SlightlyFor && 'bg-[#FEF2F8] text-[#243A57] '}`}>
 								{filteredSentiment?.sentiment === ESentiments.SlightlyFor ? <SlightlyForIcon /> : <UnfilterSlightlyForIcon/>}
 								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === ESentiments.SlightlyFor && 'text-pink_primary'} `}>{sentimentsPercentage?.slightlyFor}%</span>
 							</div>
@@ -286,7 +294,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<span className='text-center font-medium'>Completely For</span>
 							<span className='text-center pt-1'> Select to filter</span>
 						</div>}>
-							<div onClick={() =>  {setFilteredSentiment((pre) => pre.sentiment === ESentiments.For ? { ...pre, active: false } : { active: true ,sentiment : ESentiments.For }); getFilteredComments(ESentiments.For);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.For && 'bg-[#FEF2F8] text-[#243A57] '}`}>
+							<div onClick={() =>  { handleSetFilteredComments(ESentiments.SlightlyFor); getFilteredComments(ESentiments.For);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.For && 'bg-[#FEF2F8] text-[#243A57] '}`}>
 								{filteredSentiment?.sentiment === ESentiments.For ? <ForIcon/> : <UnfilterForIcon/>}
 								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === ESentiments.For && 'text-pink_primary'} `}>{sentimentsPercentage?.for}%</span>
 							</div>

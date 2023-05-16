@@ -61,7 +61,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 							<div key={status} className={`flex flex-1 w-full items-center ${!isMobile? (index === 0? 'max-w-[250px]': 'max-w-[225px]'): 'max-w-[250px]'}`}>
 								<div className={`flex-1 h-[1px] bg-navBlue ${!isMobile? (index === 0? 'min-w-[50px]': 'min-w-[25px]'): 'min-w-[12.5px]'}`}></div>
 								<article className='flex flex-col items-center gap-y-2 font-normal text-sidebarBlue px-[14px] pb-4 pt-8 rounded-lg border border-solid border-navBlue relative bg-comment_bg w-[200px]'>
-									<StatusDiv status={status.split(/(?=[A-Z])/).join(' ')} />
+									<StatusDiv status={status} />
 									{
 										block?
 											<p className='flex items-center gap-x-1 m-0'>

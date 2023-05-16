@@ -77,6 +77,7 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 			setPostData((prev) => ({
 				...prev,
 				content,
+				history: [{ content: prev?.content, created_at: prev?.last_edited_at || '', title: prev?.title }, ...(prev?.history || [])] ,
 				last_edited_at,
 				proposer,
 				tags,

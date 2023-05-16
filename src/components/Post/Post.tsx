@@ -328,6 +328,7 @@ const Post: FC<IPostProps> = (props) => {
 			created_at: post?.created_at || '',
 			curator: post?.curator || '',
 			description: post?.description,
+			history: post?.history || [],
 			last_edited_at: post?.last_edited_at,
 			postIndex: proposalType === ProposalType.TIPS? post.hash: post.post_id ,
 			postType: proposalType,

@@ -243,9 +243,11 @@ const Web3Login: FC<Props> = ({
 
 						if(confirmData.token) {
 							currentUser.loginWallet= chosenWallet;
+							currentUser.loginAddress = address;
 							currentUser.delegationDashboardAddress = address;
 							localStorage.setItem('delegationWallet', chosenWallet);
 							localStorage.setItem('delegationDashboardAddress', address);
+							localStorage.setItem('loginWallet', chosenWallet);
 							handleTokenChange(confirmData.token, currentUser);
 							if(isModal){
 								setLoginOpen && setLoginOpen(false);
@@ -268,10 +270,12 @@ const Web3Login: FC<Props> = ({
 			}
 			if(addressLoginData?.token){
 				currentUser.loginWallet= chosenWallet;
+				currentUser.loginAddress = address;
 				currentUser.delegationDashboardAddress = address;
 
 				localStorage.setItem('delegationWallet', chosenWallet);
 				localStorage.setItem('delegationDashboardAddress', address);
+				localStorage.setItem('loginWallet', chosenWallet);
 
 				handleTokenChange(addressLoginData.token, currentUser);
 				if(isModal){

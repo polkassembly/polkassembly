@@ -70,6 +70,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 	const validateUserName = (username: string) => {
 
+		let error = 0;
 		for (let i = 0; i < nameBlacklist.length; i++) {
 			if (username.toLowerCase().includes(nameBlacklist[i])){
 				queueNotification({
@@ -77,7 +78,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					message: messages.USERNAME_BANNED,
 					status: NotificationStatus.ERROR
 				});
-				return false ;
+				error += 1;
 			}
 		}
 
@@ -88,9 +89,9 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				message: messages.USERNAME_INVALID_ERROR,
 				status: NotificationStatus.ERROR
 			});
-			return false;
+			error += 1;
 		}
-		return true;
+		return error === 0;
 
 	};
 

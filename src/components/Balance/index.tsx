@@ -86,7 +86,7 @@ const Balance = ({ address, onChange, setAvailableBalance }: Props) => {
 	}, [address, api, apiReady, isReferendum]);
 
 	return (
-		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#b0b8c3] tracking-[0.0025em] font-normal mr-3`}>
+		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-3`}>
       Available: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		</div>
 	);

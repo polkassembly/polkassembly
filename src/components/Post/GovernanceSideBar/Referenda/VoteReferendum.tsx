@@ -22,8 +22,6 @@ import FilteredError from '~src/ui-components/FilteredError';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
-import NewPolkaDotIcon from '~assets/icons/polka-dot-new-icon.svg';
-import NewSubwalletIcon from '~assets/icons/new-sub-wallet-icon.svg';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import SplitIcon from '~assets/icons/split-icon.svg';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
@@ -408,19 +406,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const decisionOptions = [
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B] w-[126px] h-[32px] rounded-[4px] ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}><LikeFilled className='mr-1' /><span>Aye</span></div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B] w-[126px] h-[32px] rounded-[4px] ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}><LikeFilled className='mr-1' /><span className='font-semibold'>Aye</span></div>,
 			value: 'aye'
 		},
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B] w-[126px] h-[32px] rounded-[4px] ${vote === 'nay'? 'bg-[#F53C3C] text-white' : ''}`}><DislikeFilled className='mr-1' /> <span>Nay</span></div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B] w-[126px] h-[32px] rounded-[4px] ${vote === 'nay'? 'bg-[#F53C3C] text-white' : ''}`}><DislikeFilled className='mr-1' /> <span className='font-semibold'>Nay</span></div>,
 			value: 'nay'
 		},
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B]  w-[126px] h-[32px] rounded-[4px] ${vote === 'split'? 'bg-[#FFBF60] text-white' : ''}`}> <SplitIcon className='mr-1' /> <span>Split</span> </div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B]  w-[126px] h-[32px] rounded-[4px] ${vote === 'split'? 'bg-[#FFBF60] text-white' : ''}`}> <SplitIcon className='mr-1' /> <span className='font-semibold'>Split</span> </div>,
 			value: 'split'
 		},
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B]  w-[126px] h-[32px] rounded-[4px] ${vote === 'abstain'? 'bg-[#407BFF] text-white' : ''}`}><StopOutlined className='mr-1 mb-[3px]'/> <span>Abstain</span></div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B]  w-[126px] h-[32px] rounded-[4px] ${vote === 'abstain'? 'bg-[#407BFF] text-white' : ''}`}><StopOutlined className='mr-1 mb-[3px]'/> <span className='font-semibold'>Abstain</span></div>,
 			value: 'abstain'
 		}
 	];
@@ -447,10 +445,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								<h4 className='cast-vote-heading mt-[22px]'>Cast Your Vote</h4>
 							</div>
 
-							<div className='flex items-center gap-x-5 mt-5 mb-6'>
-								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[69.29px] h-[44.39px] hover:border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<NewPolkaDotIcon />} />}
+							<div className='flex items-center gap-x-5 mt-[22px] mb-[24px]'>
+								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[69.29px] h-[44.39px] hover:border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
 								{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[69.29px] h-[44.39px] hover:border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-								{availableWallets[Wallet.SUBWALLET] &&  <WalletButton className={`${wallet === Wallet.SUBWALLET? 'w-[69.29px] h-[44.39px] hover:border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<NewSubwalletIcon/>} />}
+								{availableWallets[Wallet.SUBWALLET] &&  <WalletButton className={`${wallet === Wallet.SUBWALLET? 'w-[69.29px] h-[44.39px] hover:border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
 								{
 									(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
                     <WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary': ''}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
@@ -462,7 +460,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								}
 							</div>
 
-						{balanceErr.length > 0 && <div className='-mt-2 text-sm text-red-500'>{balanceErr}</div>}
+							{balanceErr.length > 0 && <div className='-mt-2 text-sm text-red-500'>{balanceErr}</div>}
 							{
 								accounts.length > 0 ?
 									<AccountSelectionForm
@@ -471,8 +469,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										address={address}
 										withBalance
 										onAccountChange={onAccountChange}
-									onBalanceChange={handleOnBalanceChange}
-										className={`${poppins.variable} ${poppins.className} text-sidebarBlue`}
+										onBalanceChange={handleOnBalanceChange}
+										className={`${poppins.variable} ${poppins.className} text-sidebarBlue mb-[21px]`}
 									/>
 									: !wallet? <FilteredError text='Please select a wallet.' />: null
 							}
@@ -482,7 +480,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							<h3 className='inner-headings mt-[24px] mb-0'>Choose your vote</h3>
 							<Segmented
 								block
-								className={`${className}  mb-[27px] border-solid border-[1px] bg-white hover:bg-white border-[#D2D8E0] rounded-[4px] w-full py-0 px-0`}
+								className={`${className}  mb-[24px] border-solid border-[1px] bg-white hover:bg-white border-[#D2D8E0] rounded-[4px] w-full py-0 px-0`}
 								size="large"
 								value={vote}
 								onChange={(value) => {
@@ -511,7 +509,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									<VoteLock className={`${className}`} />
 
 									<div className='flex justify-end mt-[-5px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold' onClick={closeModal}>Cancel</Button>
+										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={closeModal}>Cancel</Button>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold' htmlType='submit'>Confirm</Button>
 									</div>
 								</Form>
@@ -543,7 +541,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									/>
 
 									<div className='flex justify-end mt-[-5px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold' onClick={closeModal}>Cancel</Button>
+										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={closeModal}>Cancel</Button>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold' htmlType='submit'>Confirm</Button>
 									</div>
 								</Form>
@@ -582,7 +580,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									/>
 
 									<div className='flex justify-end mt-[-5px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold' onClick={closeModal}>Cancel</Button>
+										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={closeModal}>Cancel</Button>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold' htmlType='submit'>Confirm</Button>
 									</div>
 								</Form>
@@ -648,9 +646,6 @@ export default styled(VoteReferendum)`
 		
 	}
 
-	
-	
-	
 	}
 	
 

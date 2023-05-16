@@ -114,6 +114,8 @@ border: 1px solid #E5007A;
 }
 .ant-input-number-group-addon{
 	border-radius:4px !important;
+	position:relative;
+	right:2px;
 }
 `;
 

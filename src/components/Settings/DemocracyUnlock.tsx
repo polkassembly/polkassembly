@@ -4,7 +4,7 @@
 
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import BN from 'bn.js';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { LoadingStatusType, NotificationStatus } from 'src/types';
@@ -23,8 +23,10 @@ const abi = require('../../moonbeamAbi.json');
 
 const currentNetwork = getNetwork();
 
-interface Props {
-	className?: string
+interface IDemocracyUnlockProps {
+	className?: string;
+	isBalanceUpdated: boolean;
+	setIsBalanceUpdated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface Vote {
@@ -36,7 +38,7 @@ interface Vote {
 
 const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
 
-const DemocracyUnlock = ({ className }: Props) => {
+const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdated, setIsBalanceUpdated }) => {
 	const { network } = useNetworkContext();
 	const [address, setAddress] = useState<string>('');
 	const [votes, setVotes] = useState<Vote[]>([]);
@@ -47,7 +49,6 @@ const DemocracyUnlock = ({ className }: Props) => {
 	const [isAccountLoading, setIsAccountLoading] = useState(true);
 	const [canBeUnlocked, setCanBeUnlocked] = useState<boolean>(false);
 	const { api, apiReady } = useApiContext();
-	const [isBalanceUpdated, setIsBalanceUpdated] = useState(false);
 
 	useEffect(() => {
 		if (!accounts.length) {

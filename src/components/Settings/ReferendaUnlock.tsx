@@ -5,7 +5,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import BN from 'bn.js';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from 'src/types';
@@ -25,8 +25,10 @@ const abi = require('../../moonbeamConvictionVoting.json');
 
 const currentNetwork = getNetwork();
 
-interface Props {
-	className?: string
+interface IReferendaUnlockProps {
+	className?: string;
+	isBalanceUpdated: boolean;
+	setIsBalanceUpdated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface Vote {
@@ -67,7 +69,7 @@ interface IReferendaUnlockStatus {
 	};
 }
 
-const ReferendaUnlock = ({ className }: Props) => {
+const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdated, setIsBalanceUpdated }) => {
 	const { network } = useNetworkContext();
 	const [address, setAddress] = useState<string>('');
 	const [votes, setVotes] = useState<Vote[]>([]);
@@ -80,7 +82,6 @@ const ReferendaUnlock = ({ className }: Props) => {
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(true);
 	const { api, apiReady } = useApiContext();
-	const [isBalanceUpdated, setIsBalanceUpdated] = useState(false);
 
 	useEffect(() => {
 		if (!accounts.length) {

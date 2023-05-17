@@ -339,7 +339,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]));
 	}
 
-	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query);
+	const [previousRoute, setPreviousRoute] = useState(router.asPath);
+
+	useEffect(() => {
+		const handleRouteChange = () => {
+			if(router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post' ){
+				setPreviousRoute(router.asPath);
+			}
+		};
+		router.events.on('routeChangeStart', handleRouteChange);
+
+		return () => {
+			router.events.off('routeChangeStart', handleRouteChange);
+		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router]);
+	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute );
 
 	const handleMenuClick = (menuItem: any) => {
 		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;

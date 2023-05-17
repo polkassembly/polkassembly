@@ -4,7 +4,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import checkGov2Route from 'src/util/checkGov2Route';
 import { SyncIcon } from '~src/ui-components/CustomIcons';
 
@@ -13,8 +13,24 @@ interface Props {
 }
 
 const GovernanceSwitchButton = ({ className } : Props) => {
-	const { pathname , query } = useRouter();
-	const isGov2Route: boolean = checkGov2Route(pathname, query);
+	const router = useRouter();
+	const { pathname , query, asPath } = router;
+	const [previousRoute, setPreviousRoute] = useState(asPath);
+	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute );
+
+	useEffect(() => {
+		const handleRouteChange = () => {
+			if(asPath.split('/')[1] !== 'discussions' && asPath.split('/')[1] !== 'post' ){
+				setPreviousRoute(asPath);
+			}
+		};
+		router.events.on('routeChangeStart', handleRouteChange);
+
+		return () => {
+			router.events.off('routeChangeStart', handleRouteChange);
+		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router]);
 
 	return (
 		<div className={`${className}`}>

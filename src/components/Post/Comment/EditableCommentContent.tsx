@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Form, MenuProps } from 'antd';
+import { Button, Dropdown, Form, MenuProps, Tooltip } from 'antd';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import React, { FC, useContext, useEffect, useRef, useState } from 'react';
@@ -47,13 +47,18 @@ interface IEditableCommentContentProps {
   sentiment:number,
 	setSentiment:(pre:number)=>void;
 	prevSentiment:number;
+	isSubsquareUser:boolean;
 }
+
+const editCommentKey = (commentId: string) => `comment:${commentId}:${global.window.location.href}`;
+
+const replyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { network } = useContext(NetworkContext);
 
 	const { userId, className, comment, content, commentId,sentiment,setSentiment,prevSentiment } = props;
-	const { setPostData } = usePostDataContext();
+	const { setPostData, postData: { postType } } = usePostDataContext();
 	const { asPath } = useRouter();
 
 	const [isEditing, setIsEditing] = useState(false);
@@ -64,10 +69,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
-
 	const [form] = Form.useForm();
 	useEffect(() => {
-		form.setFieldValue('content', content || ''); //initialValues is not working
+		const localContent = global.window.localStorage.getItem(editCommentKey(commentId)) || '';
+		form.setFieldValue('content', localContent || content || ''); //initialValues is not working
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -75,16 +80,27 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const currentContent=useRef<string>(content);
 
 	const [isReplying, setIsReplying] = useState(false);
-	const toggleReply = () => setIsReplying(!isReplying);
+	const toggleReply = () => {
+		if (!isReplying) {
+			const localContent = global.window.localStorage.getItem(replyKey(commentId)) || '';
+			replyForm.setFieldValue('content', localContent);
+		} else {
+			global.window.localStorage.removeItem(replyKey(commentId));
+			replyForm.setFieldValue('content', '');
+		}
+		setIsReplying(!isReplying);
+	};
 
 	const handleCancel = () => {
 		setSentiment(prevSentiment);
 		toggleEdit();
+		global.window.localStorage.removeItem(editCommentKey(commentId));
 		form.setFieldValue('content', currentContent.current);
 	};
 
 	const handleReplyCancel = () => {
 		toggleReply();
+		global.window.localStorage.removeItem(replyKey(commentId));
 		replyForm.setFieldValue('content', '');
 	};
 
@@ -118,6 +134,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 		if (data) {
 			setError('');
+			global.window.localStorage.removeItem(editCommentKey(commentId));
 			setPostData((prev) => {
 				let comments: IComment[] = [];
 				if (prev?.comments && Array.isArray(prev.comments)) {
@@ -178,6 +195,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 			if(data) {
 				setErrorReply('');
+				global.window.localStorage.removeItem(replyKey(commentId));
 				setPostData((prev) => {
 					let comments: IComment[] = [];
 					if (prev?.comments && Array.isArray(prev.comments)) {
@@ -277,7 +295,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		},
 		id && !isEditing ?{
 			key:3,
-			label:<ReportButton className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}  type='comment' contentId={commentId}/>
+			label: <ReportButton proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}  type='comment' contentId={commentId}/>
 		}:null,
 		id===userId ? {
 			key:4,
@@ -312,7 +330,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								{ required: "Please add the '${name}'" }
 							}
 						>
-							<ContentForm value={content} className='mb-0' />
+							<ContentForm onChange={(content: string) => {
+								global.window.localStorage.setItem(editCommentKey(commentId), content);
+								return content.length ? content : null;
+							}} className='mb-0' />
 							<div className='bg-gray-100 mb-[10px] p-2 rounded-e-md mt-[-25px] h-[70px] background'>
 								<div className='flex text-[12px] gap-[2px]'>Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5></div>
 								<div className='flex items-center text-transparent'>
@@ -343,12 +364,20 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									className='reactions mr-0'
 									commentId={commentId}
 									comment_reactions={comment.comment_reactions}
+									importedReactions={props.isSubsquareUser}
 								/>
 								{
-									id &&
-										<Button disabled={props.disableEdit} className={'text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1' } onClick={toggleReply}>
+									id && ( props.isSubsquareUser ?
+										(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
+											<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
+												<ReplyIcon className='mr-1'/> Reply
+											</Button>
+										</Tooltip>)
+										:
+										<Button disabled={props.disableEdit} className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${props.isSubsquareUser ? 'disabled-reply' : ''}` } onClick={ props.isSubsquareUser ? () => {} : toggleReply }>
 											<ReplyIcon className='mr-1'/> Reply
 										</Button>
+									)
 								}
 								<Dropdown
 									className={`${poppins.variable} ${poppins.className} flex cursor-pointer dropdown`}
@@ -363,7 +392,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							{/* Add Reply Form*/}
 							{errorReply && <div>{errorReply}</div>}
 							{
-								isReplying && !props.disableEdit && <Form
+								!props.disableEdit && isReplying && <Form
 									form={replyForm}
 									name="reply-content-form"
 									onFinish={handleReplySave}
@@ -374,7 +403,10 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									}
 									className='mt-4'
 								>
-									<ContentForm />
+									<ContentForm onChange={(content: string) => {
+										global.window.localStorage.setItem(replyKey(commentId), content);
+										return content.length ? content : null;
+									}} />
 									<Form.Item>
 										<div className='flex items-center justify-end'>
 											<Button htmlType="button" disabled={ loadingReply } onClick={handleReplyCancel} className='mr-2 flex items-center'>
@@ -409,6 +441,11 @@ export default styled(EditableCommentContent)`
     background: rgba(72, 95, 125, 0.05);
     border: 1px solid rgba(72, 95, 125, 0.1);
     border-radius: 0px 0px 2px 2px;
+  }
+
+  .disabled-reply{
+	cursor:not-allowed;
+	opacity: 0.5;
   }
 
 `;

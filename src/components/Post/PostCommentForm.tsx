@@ -27,7 +27,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className } = props;
 	const { id, username } = useUserDetailsContext();
 	const { postData: { postIndex, postType }, setPostData } = usePostDataContext();
-	const [content, setContent] = useState('');
+	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -77,6 +77,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		if(data) {
 			setContent('');
 			form.resetFields();
+			form.setFieldValue('content', '');
 			global.window.localStorage.removeItem(commentKey());
 			postIndex && createSubscription(postIndex);
 			setPostData((prev) => ({
@@ -135,14 +136,17 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 						content
 					}}
 					disabled={loading}
+
 					validateMessages= {
-						{ required: "Please add the '${name}'" }
+						{ required: "Please add the  '${name}'" }
 					}
 				>
-					<ContentForm onChange={(content : any) => onContentChange(content)} height={200} />
+
+					<ContentForm  onChange = {(content : any) => onContentChange(content)} height={200} />
+
 					<Form.Item>
-						<div className='flex items-center justify-end'>
-							<Button loading={loading} htmlType="submit" className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
+						<div className='flex items-center justify-end mt-[-40px]'>
+							<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center my-0 ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>
 								<CheckOutlined /> Comment
 							</Button>
 						</div>
@@ -168,7 +172,7 @@ export default styled(PostCommentForm)`
 
 	.comment-box {
 		width: calc(100% - 60px);
-
+		
 		@media only screen and (max-width: 768px) {
 			width: calc(100%);
 			padding: 0.5rem;

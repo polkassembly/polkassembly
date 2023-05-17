@@ -36,7 +36,7 @@ interface IPostDescriptionProps {
 }
 
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
-	const { className, canEdit, id, isEditing, isOnchainPost, toggleEdit, Sidebar, TrackerButtonComp } = props;
+	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp } = props;
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
 
 	return (
@@ -54,7 +54,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					{canEdit && <Button className={'text-pink_primary flex items-center border-none shadow-none px-1.5'} onClick={toggleEdit}><FormOutlined />Edit</Button>}
 				</div>
 				<div className='flex items-center'>
-					{id && !isEditing && !isOnchainPost && <ReportButton type='post' contentId={`${postIndex}`} />}
+					{id && !isEditing && <ReportButton proposalType={postType} type='post' contentId={`${postIndex}`} />}
 					{canEdit && !isEditing && <CreateOptionPoll proposalType={postType} postId={postIndex} />}
 					{TrackerButtonComp}
 					<ShareButton title={title} />

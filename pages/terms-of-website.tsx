@@ -32,7 +32,7 @@ const TermsOfWebsitePage: FC<ITermsOfWebsitePage> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Terms of Website' />
+			<SEOHead title='Terms of Website' network={network}/>
 			<TermsOfWebsite/>
 		</>
 	);

@@ -17,12 +17,13 @@ import { sortValues } from '~src/global/sortOptions';
 import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST } = query;
+	const { page = 1, sortBy = sortValues.NEWEST,filterBy } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const proposalType = ProposalType.FELLOWSHIP_REFERENDUMS;
 
 	const { data, error } = await getOnChainPosts({
+		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
@@ -56,7 +57,7 @@ const FellowshipAdmin: FC<IFellowshipReferendumProps> = (props) => {
 		});
 	}
 	return <>
-		<SEOHead title={'Fellowship Referendum'} />
+		<SEOHead title={'Fellowship Referendum'} network={network}/>
 		<TrackListing
 			allTrackPosts={posts}
 			fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}

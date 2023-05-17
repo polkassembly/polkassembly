@@ -14,6 +14,8 @@ import basiliskLogo from '~assets/parachain-logos/basilisk-logo.jpg';
 import pioneerLogo from '~assets/parachain-logos/bitcountrypioneer-logo.jpg';
 import calamariLogo from '~assets/parachain-logos/calamari-logo.png';
 import centrifugeLogo from '~assets/parachain-logos/centrifuge-logo.png';
+import cereLogo from '~assets/parachain-logos/cere-logo.jpg';
+import collectivesLogo from '~assets/parachain-logos/collectives-logo.png';
 import composableFinanceLogo from '~assets/parachain-logos/composable-finance-logo.png';
 import crustLogo from '~assets/parachain-logos/crust-logo.png';
 import equilibriumLogo from '~assets/parachain-logos/equilibrium-logo.png';
@@ -21,6 +23,7 @@ import frequencyLogo from '~assets/parachain-logos/frequency-logo.png';
 import gearLogo from '~assets/parachain-logos/gear-logo.jpg';
 import genshiroLogo from '~assets/parachain-logos/genshiro.png';
 import gmordieLogo from '~assets/parachain-logos/gmordie-logo.png';
+import hashedLogo from '~assets/parachain-logos/hashed-logo.png';
 import heikoLogo from '~assets/parachain-logos/heiko-logo.png';
 import hydradxLogo from '~assets/parachain-logos/hydradx-logo.jpg';
 import karuraLogo from '~assets/parachain-logos/karura-logo.jpg';
@@ -64,14 +67,17 @@ export const network = {
 	BASILISK: 'basilisk',
 	CALAMARI: 'calamari',
 	CENTRIFUGE: 'centrifuge',
+	COLLECTIVES: 'collectives',
 	COMPOSABLE: 'composable',
 	CRUST: 'crust',
+	CERE: 'cere',
 	CRUSTSHADOW: 'crustshadow',
 	EQUILIBRIUM: 'equilibrium',
 	FREQUENCY: 'frequency',
 	GEAR: 'gear',
 	GENSHIRO: 'genshiro',
 	GMORDIE: 'gmordie',
+	HASHED: 'hashed',
 	HEIKO: 'heiko',
 	HYDRADX: 'hydradx',
 	INTEGRITEE: 'integritee',
@@ -99,10 +105,10 @@ export const network = {
 	PICHIUROCOCO: 'pichiu-rococo',
 	POLYMESH:'polymesh',
 	POLYMESHTEST: 'polymesh-test',
-	TINKER: 'tinker',
 	TURING: 'turing',
 	VARA: 'vara',
 	WESTEND: 'westend',
+	WESTENDCOLLECTIVES: 'westend-collectives',
 	XX: 'xx'
 };
 
@@ -114,6 +120,7 @@ export const tokenSymbol = {
 	ATA: 'ATA',
 	BNC: 'BNC',
 	BSX: 'BSX',
+	CERE: 'CERE',
 	CFG: 'CFG',
 	CRU: 'CRU',
 	CSM: 'CSM',
@@ -124,6 +131,7 @@ export const tokenSymbol = {
 	FREN: 'FREN',
 	FRQCY: 'FRQCY',
 	GLMR: 'GLMR',
+	HASH: 'HASH',
 	HDX: 'HDX',
 	HKO: 'HKO',
 	KAR: 'KAR',
@@ -295,7 +303,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '10',
 		treasuryProposalMaxBond: null,
-		externalLinks: '',
+		externalLinks: 'https://polkaholic.io',
 		rpcEndpoints: []
 	},
 	[network.ASTAR]: {
@@ -335,9 +343,9 @@ export const chainProperties: types.ChainPropType = {
 		category: 'kusama',
 		chainId: 2090,
 		logo: basiliskLogo,
-		rpcEndpoint: 'wss://basilisk.api.onfinality.io/public-ws',
+		rpcEndpoint: 'wss://rpc.basilisk.cloud',
 		ss58Format: 10041,
-		subsquidUrl: '',
+		subsquidUrl: 'https://squid.subsquid.io/basilisk-polkassembly/graphql',
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.BSX,
 		treasuryProposalBondPercent: '3%',
@@ -392,6 +400,39 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1000',
 		treasuryProposalMaxBond:'5000',
 		externalLinks: 'https://centrifuge.api.subscan.io',
+		rpcEndpoints: []
+	},
+	[network.CERE]: {
+		blockTime: 6000,
+		category: 'solo',
+		chainId: 0,
+		logo: cereLogo,
+		rpcEndpoint: 'wss://archive.mainnet.cere.network/ws',
+		ss58Format: 54,
+		subsquidUrl: 'https://squid.subsquid.io/cere-polkassembly/graphql',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.CERE,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '100',
+		treasuryProposalMaxBond: null,
+		externalLinks: '',
+		rpcEndpoints: []
+	},
+	//TODO: Aleem=> Need to update collective network, currently using polkadot data
+	[network.COLLECTIVES]: {
+		blockTime: 6000,
+		category: 'polkadot',
+		chainId: 0,
+		logo: collectivesLogo,
+		rpcEndpoint: 'wss://polkadot-collectives-rpc.polkadot.io',
+		ss58Format: 0,
+		subsquidUrl: 'https://squid.subsquid.io/collectives-polkassembly/graphql',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.DOT,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: '',
 		rpcEndpoints: []
 	},
 	[network.COMPOSABLE]: {
@@ -523,6 +564,22 @@ export const chainProperties: types.ChainPropType = {
 		externalLinks: '',
 		rpcEndpoints: []
 	},
+	[network.HASHED]: {
+		blockTime: 12000,
+		category: 'polkadot',
+		chainId: 0,
+		logo: hashedLogo,
+		rpcEndpoint: 'wss://c1.hashed.live',
+		ss58Format: 42,
+		tokenDecimals: 18,
+		tokenSymbol: tokenSymbol.HASH,
+		subsquidUrl: 'https://squid.subsquid.io/hashed-polkassembly/graphql',
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '0.000000066666666',
+		treasuryProposalMaxBond: '0.0000033333333',
+		externalLinks: '',
+		rpcEndpoints: []
+	},
 	[network.HEIKO]: {
 		blockTime: 13000,
 		category: 'kusama',
@@ -544,9 +601,9 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: hydradxLogo,
-		rpcEndpoint: 'wss://hydradx-rpc.dwellir.com',
+		rpcEndpoint: 'wss://rpc.hydradx.cloud',
 		ss58Format: 63,
-		subsquidUrl: '',
+		subsquidUrl: 'https://squid.subsquid.io/hydradx-polkassembly/graphql',
 		tokenDecimals: 18,
 		tokenSymbol: tokenSymbol.HDX,
 		treasuryProposalBondPercent: '3%',
@@ -760,7 +817,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: '',
+		externalLinks: 'https://polkaholic.io',
 		rpcEndpoints: []
 	},
 	[network.POLKADEX]: {
@@ -983,6 +1040,22 @@ export const chainProperties: types.ChainPropType = {
 		subsquidUrl: 'https://squid.subsquid.io/vara-polkassembly/graphql',
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '20',
+		treasuryProposalMaxBond: null,
+		externalLinks: '',
+		rpcEndpoints: []
+	},
+	[network.WESTENDCOLLECTIVES]: {
+		blockTime: 6000,
+		category: 'test',
+		chainId: 0,
+		logo: westendLogo,
+		rpcEndpoint: 'wss://sys.ibp.network/collectives-westend',
+		ss58Format: 0,
+		subsquidUrl: 'https://squid.subsquid.io/westend-collectives/graphql',
+		tokenDecimals: 12,
+		tokenSymbol: tokenSymbol.WND,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		rpcEndpoints: []

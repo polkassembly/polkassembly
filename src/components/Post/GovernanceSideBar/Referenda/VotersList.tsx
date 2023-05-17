@@ -152,10 +152,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								<div className='flex items-center justify-between mb-9' key={index}>
 									{(voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash) ?
 										<a href={`https://${network}.moonscan.io/tx/${voteData.txnHash}`} className='w-[110px] max-w-[110px] overflow-ellipsis'>
-											<Address textClassName='w-[75px]' displayInline={true} address={voteData?.voter} />
+											<Address textClassName='w-[75px]' isSubVisible={false} displayInline={true} isShortenAddressLength={false} address={voteData?.voter} />
 										</a>:
 										<div className='w-[110px] max-w-[110px] overflow-ellipsis'>
-											<Address textClassName='w-[75px]' displayInline={true} address={voteData?.voter} />
+											<Address textClassName='w-[75px]' isSubVisible={false} displayInline={true} isShortenAddressLength={false} address={voteData?.voter} />
 										</div>}
 
 									<div className='w-[80px] max-w-[80px] overflow-ellipsis'>

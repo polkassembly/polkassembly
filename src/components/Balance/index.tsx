@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable no-tabs */
 import BN from 'bn.js';
+import { poppins } from 'pages/_app';
 import React, { useContext, useEffect, useState } from 'react';
 import { useApiContext, usePostDataContext } from 'src/context';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -11,12 +12,13 @@ import { NetworkContext } from '~src/context/NetworkContext';
 import { ProposalType } from '~src/global/proposalType';
 
 interface Props {
-	address: string
+	address: string;
 	onChange?: (balance: string) => void;
 	isBalanceUpdated?: boolean;
+	setAvailableBalance?: (pre: string) => void;
 }
 
-const Balance = ({ address, onChange, isBalanceUpdated }: Props) => {
+const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const { network } = useContext(NetworkContext);
@@ -31,16 +33,17 @@ const Balance = ({ address, onChange, isBalanceUpdated }: Props) => {
 			api.query.eqBalances.account(address, { '0': 1734700659 })
 				.then((result: any) => {
 					setBalance(result.toHuman()?.Positive?.toString() || '0');
+					setAvailableBalance &&	setAvailableBalance(result.toHuman()?.Positive?.toString() || '0');
 					onChange && onChange(result.toHuman()?.Positive?.toString() || '0');
 				})
 				.catch(e => console.error(e));
-
 		}
 		else if(['equilibrium'].includes(network)){
 			api.query.system.account(address)
 				.then((result: any) => {
 					if(isReferendum){
 						setBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
+						setAvailableBalance &&	setAvailableBalance(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
 						onChange && onChange(result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0');
 					}
 					else{
@@ -48,10 +51,12 @@ const Balance = ({ address, onChange, isBalanceUpdated }: Props) => {
 						const positive = result.toHuman().data?.V0?.balance?.[0]?.[1]?.Positive?.toString().replaceAll(',', '') || '0';
 						if(new BN(positive).cmp(new BN(locked))){
 							setBalance((new BN(positive).sub(new BN(locked))).toString() || '0');
+							setAvailableBalance &&	setAvailableBalance((new BN(positive).sub(new BN(locked))).toString() || '0');
 							onChange && onChange((new BN(positive).sub(new BN(locked))).toString() || '0');
 						}
 						else{
 							setBalance(positive);
+							setAvailableBalance &&	setAvailableBalance(positive);
 							onChange && onChange(positive);
 						}
 					}
@@ -62,14 +67,17 @@ const Balance = ({ address, onChange, isBalanceUpdated }: Props) => {
 				.then((result: any) => {
 					if(isReferendum){
 						setBalance(result.data?.free?.toString() || '0');
+						setAvailableBalance &&	setAvailableBalance(result.data?.free?.toString() || '0');
 						onChange && onChange(result.data?.free?.toString() || '0');
 					}
 					else if (result.data.free && result.data?.free?.toBigInt() >= result.data?.miscFrozen?.toBigInt()){
 						setBalance((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()).toString() || '0');
+						setAvailableBalance &&	setAvailableBalance((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()).toString() || '0');
 						onChange && onChange((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()).toString() || '0');
 					}
 					else{
 						setBalance('0');
+						setAvailableBalance && setAvailableBalance('0');
 						onChange && onChange('0');
 					}
 				})
@@ -79,8 +87,8 @@ const Balance = ({ address, onChange, isBalanceUpdated }: Props) => {
 	}, [address, api, apiReady, isReferendum, isBalanceUpdated]);
 
 	return (
-		<div className='text-xs ml-auto text-[#53595C]'>
-			<span className='font-medium text-[#2E2F30]'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span> available.
+		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#b0b8c3] tracking-[0.0025em] font-normal`}>
+      Available: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		</div>
 	);
 };

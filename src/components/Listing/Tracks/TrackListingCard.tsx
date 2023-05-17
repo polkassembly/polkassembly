@@ -10,6 +10,8 @@ import CountBadgePill from '~src/ui-components/CountBadgePill';
 
 import TrackListingAllTabContent from './TrackListingAllTabContent';
 import TrackListingStatusTabContent from './TrackListingStatusTabContent';
+import FilterByTags from '~src/ui-components/FilterByTags';
+import FilteredTags from '~src/ui-components/filteredTags';
 
 interface Props {
 	className?: string;
@@ -20,7 +22,8 @@ interface Props {
 export enum CustomStatus {
 	Submitted = 'CustomStatusSubmitted',
 	Voting = 'CustomStatusVoting',
-	Closed = 'CustomStatusClosed'
+	Closed = 'CustomStatusClosed',
+  Active = 'CustomStatusActive'
 }
 
 const TrackListingCard = ({ className, posts, trackName } : Props) => {
@@ -67,8 +70,13 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 
 	return (
 		<div className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue`}>
-			<h2 className="text-lg capitalize font-medium mb-10">Referenda</h2>
-
+			<div className='flex items-center justify-between mb-10'>
+				<div>
+					<h1 className='dashboard-heading'>Referenda</h1>
+					<FilteredTags/>
+				</div>
+				<FilterByTags className='mr-[2px] mt-[-10px]'/>
+			</div>
 			<Tabs
 				items={items}
 				type="card"

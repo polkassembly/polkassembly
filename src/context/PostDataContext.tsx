@@ -19,9 +19,10 @@ export interface IPostData {
     postType: ProposalType;
     timeline?: any[];
     title: string;
+    cid?:string;
     content: string;
     created_at: string | Date;
-    last_edited_at: string | Date;
+    last_edited_at?: string | Date;
     proposer: string;
     curator: string;
     username: string;
@@ -43,9 +44,19 @@ export interface IPostData {
         title?: string;
         description?: string;
         created_at?: Date | string;
+        last_edited_at?: Date | string;
+        proposer?: string;
+        username?: string;
+        topic?: {
+            id: number;
+            name: string;
+        };
+        tags?: string[]
     }
     track_name?: string;
     track_number?: number;
+    tags: string[] | [];
+    spam_users_count?: number;
 }
 
 export interface IPostDataContext {

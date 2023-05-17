@@ -15,10 +15,11 @@ import SEOHead from '~src/global/SEOHead';
 // import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 interface Props{
-	network:string;
-	isModal:boolean;
-	setLoginOpen:(pre:boolean)=>void;
-	setSignupOpen:(pre:boolean)=>void;
+	network: string;
+	isModal?: boolean;
+	setLoginOpen?: (pre: boolean)=> void;
+	setSignupOpen?: (pre: boolean)=> void;
+  isDelegation?: boolean;
 }
 
 const Web3Login = dynamic(() => import('src/components/Login/Web3Login'), {
@@ -39,11 +40,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	return { props: { network } };
 };
 
-const Login = ({ network,setLoginOpen,setSignupOpen,isModal }:Props) => {
+const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:Props) => {
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
 		setNetwork(network);
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -72,22 +74,23 @@ const Login = ({ network,setLoginOpen,setSignupOpen,isModal }:Props) => {
 	},[currentUser?.id, router]);
 	return (
 		<>
-			<SEOHead title="Login" />
+			<SEOHead title="Login" network={network}/>
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px]'>
 					{displayWeb === 2 ? (
-						<Web2Login  isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} />
+						<Web2Login  isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} />
 					) : null}
 
 					{
 						displayWeb === 3 && chosenWallet && <>
 							{
 								chosenWallet === Wallet.METAMASK ?
-									<MetamaskLogin isModal={isModal} setLoginOpen={setLoginOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
+									<MetamaskLogin isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
 									: chosenWallet == Wallet.WALLETCONNECT ?
 										<WalletConnectLogin isModal={isModal} setLoginOpen={setLoginOpen} setDisplayWeb2={setDisplayWeb2} setPolkadotWallet={setPolkadotWallet} /> :
 										<Web3Login
 											isModal={isModal} setLoginOpen={setLoginOpen}
+											setSignupOpen={setSignupOpen}
 											chosenWallet={chosenWallet}
 											setDisplayWeb2={setDisplayWeb2}
 											setWalletError={setWalletError}

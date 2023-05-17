@@ -4,7 +4,7 @@
 
 import { Divider, Skeleton, Tabs } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
-import { ESocialType, ISocial, ProfileDetailsResponse } from '~src/auth/types';
+import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
 import { useApiContext, useUserDetailsContext } from '~src/context';
 import Addresses from './Addresses';
 import EditProfile from './EditProfile';
@@ -16,59 +16,12 @@ const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	ssr: false
 });
 
-import { DiscordIcon, EmailIcon, RiotIcon, TelegramIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
 import About from './About';
 import GovTab from './GovTab';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import OnChainIdentity from './OnChainIdentity';
-
-interface ISocialIconProps {
-	type: ESocialType;
-}
-
-export const SocialIcon: FC<ISocialIconProps> = (props) => {
-	switch(props.type) {
-	case ESocialType.EMAIL:
-		return <EmailIcon />;
-	case ESocialType.RIOT:
-		return <RiotIcon />;
-	case ESocialType.TWITTER:
-		return <TwitterIcon />;
-	case ESocialType.TELEGRAM:
-		return <TelegramIcon />;
-	case ESocialType.DISCORD:
-		return <DiscordIcon />;
-	default:
-		return <></>;
-	}
-};
-
-interface ISocialLink extends ISocial {
-	className?: string;
-	disable?: boolean;
-}
-
-const SocialLink: FC<ISocialLink> = (props) => {
-	const { link, className, type, disable } = props;
-	return (
-		<>
-			{
-				disable?
-					<span className={`${className} cursor-not-allowed opacity-60`}>
-						<SocialIcon type={type} />
-					</span>
-					: <a
-						href={type === ESocialType.EMAIL? `mailto:${link}`: link} target='_blank'
-						rel='noreferrer'
-						className={className}
-					>
-						<SocialIcon type={type} />
-					</a>
-			}
-		</>
-	);
-};
+import SocialLink from '~src/ui-components/SocialLinks';
 
 export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
 
@@ -154,7 +107,7 @@ const Details: FC<IDetailsProps> = (props) => {
 	useEffect(() => {
 		if (onChainIdentity) {
 			const { email, twitter, riot } = onChainIdentity;
-			const social_links = profileDetails.social_links || [];
+			const social_links = userProfile.data.social_links || [];
 			let isEmailAvailable = false;
 			let isTwitterAvailable = false;
 			let isRiotAvailable = false;
@@ -196,7 +149,7 @@ const Details: FC<IDetailsProps> = (props) => {
 			});
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onChainIdentity]);
+	}, [onChainIdentity, userProfile]);
 
 	useEffect(() => {
 		if (!api) {

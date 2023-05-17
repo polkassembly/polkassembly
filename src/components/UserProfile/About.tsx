@@ -38,7 +38,6 @@ const About: FC<IAboutProps> = (props) => {
 
 		addresses?.forEach((address) => {
 			api.derive.accounts.info(`${address}`, (info) => {
-				console.log('identity:', info.identity);
 				setIdentity(info.identity);
 			})
 				.then(unsub => { unsubscribe = unsub; })

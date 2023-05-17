@@ -27,6 +27,7 @@ import { getLatestActivityOffChainPosts } from './api/v1/latest-activity/off-cha
 import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } from './api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from './api/v1/network-socials';
 import { chainProperties } from '~src/global/networkConstants';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -65,7 +66,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		})
 	};
 
-	if(chainProperties[network]?.subsquidUrl) {
+	if(chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
@@ -139,26 +140,25 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 
 	return (
 		<>
-			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" />
+			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network}/>
 			<main>
 				<div className="mt-6 mx-1">
 					{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}
 				</div>
-
-				<div className="mt-8 mx-1">
-					<TreasuryOverview />
-				</div>
-
+				{ network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES &&
+					<div className="mt-8 mx-1">
+						<TreasuryOverview />
+					</div>
+				}
 				<div className="mt-8 mx-1">
 					<LatestActivity latestPosts={latestPosts} />
 				</div>
 
 				<div className="mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">
-					{network !== 'collectives' &&
-						<div className='w-full xl:w-[60%]'>
-							<UpcomingEvents />
-						</div>
-					}
+
+					<div className='w-full xl:w-[60%]'>
+						<UpcomingEvents />
+					</div>
 
 					<div className='w-full xl:w-[40%]'>
 						<News twitter={networkSocialsData?.data?.twitter || ''} />

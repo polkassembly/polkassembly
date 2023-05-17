@@ -35,8 +35,9 @@ interface Props {
   chosenWallet: Wallet;
   setDisplayWeb2: () => void;
   setWalletError: React.Dispatch<React.SetStateAction<string | undefined>>;
-  isModal:boolean;
-  setLoginOpen:(pre:boolean)=>void;
+  isModal?:boolean;
+  setLoginOpen?:(pre: boolean) => void;
+  setSignupOpen?: (pre: boolean) => void;
 }
 
 const Web3Login: FC<Props> = ({
@@ -44,7 +45,8 @@ const Web3Login: FC<Props> = ({
 	setDisplayWeb2,
 	setWalletError,
 	isModal,
-	setLoginOpen
+	setLoginOpen,
+	setSignupOpen
 }) => {
 	const { network } = useNetworkContext();
 
@@ -60,6 +62,15 @@ const Web3Login: FC<Props> = ({
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
 	const [fetchAccounts, setFetchAccounts] = useState(true);
 	const [isSignUp, setIsSignUp] = useState(false);
+
+	const handleClick=() => {
+		if(isModal && setSignupOpen && setLoginOpen){
+			setSignupOpen(true);
+			setLoginOpen(false);}
+		else{
+			router.push('/signup');
+		}
+	};
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -231,10 +242,13 @@ const Web3Login: FC<Props> = ({
 						}
 
 						if(confirmData.token) {
-							currentUser.loginWallet=chosenWallet;
+							currentUser.loginWallet= chosenWallet;
+							currentUser.delegationDashboardAddress = address;
+							localStorage.setItem('delegationWallet', chosenWallet);
+							localStorage.setItem('delegationDashboardAddress', address);
 							handleTokenChange(confirmData.token, currentUser);
 							if(isModal){
-								setLoginOpen(false);
+								setLoginOpen && setLoginOpen(false);
 								setLoading(false);
 								return;
 							}
@@ -253,10 +267,15 @@ const Web3Login: FC<Props> = ({
 				return;
 			}
 			if(addressLoginData?.token){
-				currentUser.loginWallet=chosenWallet;
+				currentUser.loginWallet= chosenWallet;
+				currentUser.delegationDashboardAddress = address;
+
+				localStorage.setItem('delegationWallet', chosenWallet);
+				localStorage.setItem('delegationDashboardAddress', address);
+
 				handleTokenChange(addressLoginData.token, currentUser);
 				if(isModal){
-					setLoginOpen(false);
+					setLoginOpen && setLoginOpen(false);
 					setLoading(false);
 					return;
 				}
@@ -383,9 +402,7 @@ const Web3Login: FC<Props> = ({
 				<label className="text-md text-grey_primary">
 					Don&apos;t have an account?
 				</label>
-				<Link href="/signup" className="text-pink_primary text-md">
-					Sign Up
-				</Link>
+				<div onClick={handleClick} className='text-pink_primary text-md'> Sign Up </div>
 			</div>
 		</article>
 	);

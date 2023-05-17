@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 import React, { FC } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import { EmptyLatestActivity, ErrorLatestActivity, PopulatedLatestActivity, PopulatedLatestActivityCard } from 'src/ui-components/LatestActivityStates';
-import { useNetworkContext } from '~src/context';
 
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
 
@@ -29,6 +28,7 @@ export interface IPostsRowData {
 		name?: string;
 	}
 	tip_id?: number;
+	spam_users_count?: number;
 }
 
 interface IPostsTableProps {
@@ -40,10 +40,9 @@ interface IPostsTableProps {
 }
 
 const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }) => {
-	const { network } = useNetworkContext();
 	const router = useRouter();
 
-	if(network === 'collectives') return <EmptyLatestActivity />;
+	// if(network === 'collectives') return <EmptyLatestActivity />;
 
 	//error state
 	if (error) return <ErrorLatestActivity errorMessage={error} />;
@@ -55,7 +54,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 
 	posts.forEach((post: any, index) => {
 		// TODO: enable this check once we have a way to fetch the author of a post
-		const { hash, post_id, method, created_at, proposer, status, description } = post;
+		const { hash, post_id, method, created_at, proposer, status, description, spam_users_count } = post;
 		// if(post?.author?.username) {
 		// truncate title
 		let title = post.title || description || method || post?.preimage?.method || post?.description || noTitle;
@@ -69,6 +68,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 			key: id,
 			post_id: id,
 			proposer: proposer,
+			spam_users_count: spam_users_count,
 			status: status,
 			tip_id: count - index - 1,
 			title,

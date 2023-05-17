@@ -32,6 +32,7 @@ const Listing: FC<IListingProps> = (props) => {
 		<div className={`${className}`}>
 			{posts.map((post, index) => {
 				const {
+					cid,
 					curator,
 					post_id,
 					post_reactions,
@@ -44,7 +45,9 @@ const Listing: FC<IListingProps> = (props) => {
 					hash,
 					description,
 					method,
-					end
+					end,
+					tags,
+					spam_users_count
 				} = post;
 				const id = isTip ? hash : post_id;
 				return (
@@ -52,6 +55,7 @@ const Listing: FC<IListingProps> = (props) => {
 						{
 							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${id}`}>
 								<GovernanceCard
+									cid={cid}
 									postReactionCount={post_reactions}
 									address={proposer || curator}
 									commentsCount={comments_count || 0}
@@ -65,6 +69,8 @@ const Listing: FC<IListingProps> = (props) => {
 									created_at={created_at}
 									tip_index={tipStartedIndex? tipStartedIndex - index: null}
 									isTip={isTip}
+									tags={tags}
+									spam_users_count={spam_users_count}
 								/>
 							</Link>
 						}

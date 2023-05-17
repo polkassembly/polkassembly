@@ -9,7 +9,7 @@ import { isGovTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, gov1ProposalTypes, ProposalType } from '~src/global/proposalType';
-import { GET_PROPOSALS_LISTING_BY_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY } from '~src/queries';
+import { GET_PROPOSALS_LISTING_BY_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_LATEST_ACTIVITY } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -18,8 +18,8 @@ import messages from '~src/util/messages';
 
 import { ILatestActivityPostsListingResponse } from './on-chain-posts';
 import { firestore_db } from '~src/services/firebaseInit';
-import { chainProperties } from '~src/global/networkConstants';
-
+import { chainProperties, network as AllNetworks } from '~src/global/networkConstants';
+import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 interface IGetLatestActivityAllPostsParams {
 	listingLimit?: string | string[] | number;
 	network: string;
@@ -66,7 +66,49 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 		let onChainPostsCount = 0;
 
-		if (chainProperties[network]?.subsquidUrl) {
+		if(network === AllNetworks.COLLECTIVES || network=== AllNetworks.WESTENDCOLLECTIVES  ) {
+			const subsquidRes = await fetchSubsquid({
+				network,
+				query: GET_ALLIANCE_LATEST_ACTIVITY,
+				variables:{ limit:numListingLimit }
+			});
+			const subsquidData = subsquidRes?.data;
+			const subsquidPosts: any[] = subsquidData?.proposals || [];
+
+			const posts = subsquidPosts?.map(async (subsquidPost) => {
+				const { createdAt, description, hash, index, proposer, status, type } = subsquidPost;
+				const title = subsquidPost.callData?.method?.split('_').map((word:string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+				const singlePost = {
+					created_at: createdAt,
+					description: description || '',
+					hash: hash,
+					method: '',
+					origin: '',
+					parent_bounty_index: '',
+					post_id: index,
+					proposer: proposer,
+					status: status,
+					title: title || '',
+					track_number: '',
+					type: type
+				};
+				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(type) as ProposalType).doc(String(index));
+				const postDoc = await postDocRef.get();
+				if (postDoc && postDoc.exists) {
+					const data = postDoc?.data();
+					return {
+						...singlePost,
+						title: data?.title || title
+					};
+				}
+				return singlePost;
+
+			});
+			onChainPosts =await Promise.all(posts);
+			onChainPostsCount = Number(subsquidData?.proposalsConnection?.totalCount || 0);
+		}
+
+		if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
 
 			const subsquidRes = await fetchSubsquid({
 				network,
@@ -259,8 +301,10 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 		}
 
 		const allPosts = [...onChainPosts, ...offChainPosts];
-		const deDupedAllPosts = Array.from(new Set(allPosts));
+		let deDupedAllPosts = Array.from(new Set(allPosts));
 		deDupedAllPosts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+		deDupedAllPosts = await getSpamUsersCountForPosts(network, deDupedAllPosts);
 
 		const data: ILatestActivityPostsListingResponse = {
 			count:  onChainPostsCount + offChainPostsCount,

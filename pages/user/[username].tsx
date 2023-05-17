@@ -18,6 +18,7 @@ import { EGovType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
+import UserNotFound from '~assets/user-not-found.svg';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -73,6 +74,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	};
 };
 
+const EmptyState = styled.div`
+	display:flex;
+	flex-direction:column;
+	alight-item:center;
+	gap:16px;
+
+	svg{
+		max-width:600px;
+		margin:auto;
+	}
+`;
+
 const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className } = props;
 	const { setNetwork } = useNetworkContext();
@@ -82,6 +95,17 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	if(userPosts.error === 'UserId is invalid'){
+		return (
+			<EmptyState>
+				<ErrorAlert
+					errorMsg="Invalid User. This user does't have any account with Polkassembly"
+				/>
+				<UserNotFound/>
+			</EmptyState>
+		);
+	}
 	if (userPosts.error || userProfile.error) {
 		return (
 			<ErrorAlert
@@ -113,7 +137,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	});
 	return (
 		<>
-			<SEOHead title='User Profile' />
+			<SEOHead title='User Profile' network={network}/>
 			<section className={`my-0 pb-5 md:pb-0 md:bg-white md:shadow-md rounded-[4px] flex h-full min-h-[calc(100vh-150px)] ${className}`}>
 				<Details userPosts={userPosts.data} userProfile={userProfile} />
 				<article className='hidden md:flex flex-1 py-6 px-10 flex-col w-[calc(100%-330px)]'>

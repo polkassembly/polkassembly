@@ -23,7 +23,7 @@ const CouncilBoard = (props : { network: string}) => {
 	}, []);
 
 	return <>
-		<SEOHead title='Council Board' />
+		<SEOHead title='Council Board' network={props.network}/>
 		<CouncilBoardContainer />
 	</>;
 };

@@ -27,6 +27,7 @@ import { oneEnactmentPeriodInDays } from '~src/util/oneEnactmentPeriodInDays';
 
 import AyeNayButtons from '../../../../ui-components/AyeNayButtons';
 import LoginToVote from '../LoginToVoteOrEndorse';
+import { poppins } from 'pages/_app';
 
 interface Props {
 	className?: string
@@ -69,7 +70,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		setPostData((prev) => {
 			return {
 				...prev,
-				postType: ProposalType.REFERENDUMS
+				postType: ProposalType.REFERENDUM_V2
 			};
 		});
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -316,7 +317,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 	const VoteLock = ({ className }: { className?:string }) =>
 		<Form.Item className={className}>
-			<label  className='mb-3 flex items-center text-sm text-sidebarBlue'>
+			<label  className='mb-3 flex items-center text-sm text-[#485F7D]'>
 				Vote lock
 				<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.' />
 			</label>
@@ -379,6 +380,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								helpText={'Amount of you are willing to lock for this vote.'}
 								placeholder={'123'}
 								onChange={onBalanceChange}
+								className='mt-6 text-sm font-normal text-[#485F7D]'
+								inputClassName='text-[#7c899b] text-sm text-red-100'
 							/>
 
 							{
@@ -389,6 +392,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 										address={address}
 										withBalance
 										onAccountChange={onAccountChange}
+										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
 									/>
 									: !wallet? <FilteredError text='Please select a wallet.' />: null
 							}

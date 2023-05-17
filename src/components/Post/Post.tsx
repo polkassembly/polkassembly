@@ -13,7 +13,7 @@ import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import PostDataContextProvider from '~src/context/PostDataContext';
-import { getFirestoreProposalType, getSinglePostLinkFromProposalType, offChainProposalTypes, ProposalType, proposalTypes } from '~src/global/proposalType';
+import { checkIsOnChainPost, getFirestoreProposalType, getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 import OtherProposals from '../OtherProposals';
@@ -27,6 +27,7 @@ import PostDescription from './Tabs/PostDescription';
 import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
+import SpamAlert from '~src/ui-components/SpamAlert';
 
 const GovernanceSideBar = dynamic(() => import('./GovernanceSideBar'), {
 	loading: () => <Skeleton active /> ,
@@ -90,12 +91,15 @@ const Post: FC<IPostProps> = (props) => {
 
 	const [duration, setDuration] = useState(dayjs.duration(0));
 
+	const isOnchainPost = checkIsOnChainPost(proposalType);
+	const isOffchainPost = !isOnchainPost;
+
 	useEffect(() => {
 		if(!post) return;
 
 		const { post_id, proposer } = post;
 
-		if(offChainProposalTypes.includes(proposalType)) {
+		if(isOffchainPost) {
 			setCanEdit(post.user_id === id);
 			return;
 		}
@@ -124,6 +128,7 @@ const Post: FC<IPostProps> = (props) => {
 				setCanEdit(true);
 			}
 		})();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [addresses, id, isEditing, post, proposalType]);
 
 	useEffect(() => {
@@ -167,7 +172,7 @@ const Post: FC<IPostProps> = (props) => {
 				const link = getSinglePostLinkFromProposalType(proposalType);
 				setRedirection({
 					link: `/${link}/${nextPost.index}`,
-					text: `${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} #${nextPost.index}`
+					text:`${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} ${proposalType === ProposalType.ANNOUNCEMENT ? '' : '#'+nextPost.index}`
 				});
 			} else {
 				setRedirection({
@@ -186,9 +191,6 @@ const Post: FC<IPostProps> = (props) => {
 		);
 	}
 
-	const isOnchainPost = proposalTypes.includes(proposalType);
-	const isOffchainPost = offChainProposalTypes.includes(proposalType);
-
 	const { post_id, hash, status: postStatus } = post;
 	const onchainId = proposalType === ProposalType.TIPS? hash :post_id;
 
@@ -196,6 +198,7 @@ const Post: FC<IPostProps> = (props) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:w-4/12 mx-auto`}>
 				<GovernanceSideBar
+					toggleEdit={toggleEdit}
 					proposalType={proposalType}
 					onchainId={onchainId}
 					status={postStatus}
@@ -253,6 +256,9 @@ const Post: FC<IPostProps> = (props) => {
 					<PostOnChainInfo
 						onChainInfo={{
 							bond: post?.bond,
+							cid: post?.cid,
+							code: post?.code,
+							codec: post?.codec,
 							curator: post?.curator,
 							curator_deposit: post?.curator_deposit,
 							deciding: post?.deciding,
@@ -282,6 +288,7 @@ const Post: FC<IPostProps> = (props) => {
 							submission_deposit_amount: post?.submission_deposit_amount,
 							submitted_amount: post?.submitted_amount,
 							track_number: post?.track_number,
+							version: post?.version,
 							vote_threshold: post?.vote_threshold
 						}}
 						handleOpenSidebar={handleOpenSidebar}
@@ -312,14 +319,16 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
+
 	return (
 		<PostDataContextProvider initialPostData={{
+			cid: post?.cid || '',
 			comments: post?.comments || [],
 			content: post?.content,
 			created_at: post?.created_at || '',
 			curator: post?.curator || '',
 			description: post?.description,
-			last_edited_at: post?.last,
+			last_edited_at: post?.last_edited_at,
 			postIndex: proposalType === ProposalType.TIPS? post.hash: post.post_id ,
 			postType: proposalType,
 			post_link: post?.post_link,
@@ -327,7 +336,9 @@ const Post: FC<IPostProps> = (props) => {
 			proposer: post?.proposer || '',
 			requested: post?.requested,
 			reward: post?.reward,
+			spam_users_count: post?.spam_users_count,
 			status: post?.status,
+			tags: post?.tags || [],
 			timeline: post?.timeline,
 			title: post?.title,
 			topic: post?.topic,
@@ -336,6 +347,7 @@ const Post: FC<IPostProps> = (props) => {
 			username: post?.username
 		}}>
 			<>
+				<SpamAlert />
 				<div className={`${className} flex flex-col xl:flex-row`}>
 					<div className='flex-1 w-full xl:w-8/12 mx-auto xl:mr-9 mb-6 xl:mb-0'>
 
@@ -360,7 +372,6 @@ const Post: FC<IPostProps> = (props) => {
 								/>
 							</div>
 						)}
-
 						{
 							proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&
 						<Link href={`/bounty/${post.parent_bounty_index}`}>
@@ -381,20 +392,19 @@ const Post: FC<IPostProps> = (props) => {
 
 						{/* Post Content */}
 						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-md w-full mb-6'>
-							{isEditing && <EditablePostContent
-								toggleEdit={toggleEdit}
-							/>}
+							{isEditing &&
+              <EditablePostContent toggleEdit={toggleEdit} />}
 
 							{!isEditing && <>
 								<PostHeading
 									className='mb-8'
 								/>
-
 								<Tabs
 									type="card"
 									className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
 									items={tabItems}
 								/>
+
 							</>}
 
 						</div>

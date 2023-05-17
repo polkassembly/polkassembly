@@ -15,7 +15,8 @@ import { noTitle } from '~src/global/noTitle';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ContentForm from '../../ContentForm';
-import LinkPostModal from './LinkPostModal';
+import AddTags from '~src/ui-components/AddTags';
+import styled from 'styled-components';
 
 interface Props {
 	className?: string;
@@ -33,8 +34,11 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 		content,
 		postType: proposalType,
 		postIndex,
-		timeline
+		cid,
+		timeline,tags:oldTags
 	}, setPostData } = usePostDataContext();
+
+	const [tags,setTags]=useState<string[]>(oldTags);
 
 	const onFinish = async ({ title, content }: any) => {
 		await form.validateFields();
@@ -44,8 +48,9 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 		setLoading(true);
 		const { data , error: editError } = await nextApiClientFetch<IEditPostResponse>('api/v1/auth/actions/editPost', {
 			content,
-			postId: postIndex,
+			postId: postIndex || cid,
 			proposalType,
+			tags,
 			timeline,
 			title
 		});
@@ -74,6 +79,7 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 				content,
 				last_edited_at,
 				proposer,
+				tags,
 				title,
 				topic
 			}));
@@ -81,14 +87,6 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 			toggleEdit();
 		}
 		setLoading(false);
-	};
-
-	const setNewTitle = (title: string) => {
-		form.setFieldValue('title', title);
-	};
-
-	const setNewContent = (content: string) => {
-		form.setFieldValue('content', content);
 	};
 
 	return (
@@ -112,15 +110,10 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 					<Input autoFocus placeholder='Your title...' className='text-black' />
 				</Form.Item>
 				<ContentForm />
+				<h5 className='text-sm text-color mt-8 font-normal'>Tags</h5>
+				<AddTags tags={tags} setTags={setTags} className='mb-8' />
 				<Form.Item>
 					<div className='flex items-center justify-between'>
-						<LinkPostModal
-							currPostId={postIndex}
-							currPostType={proposalType}
-							setNewTitle={setNewTitle}
-							setNewContent={setNewContent}
-						/>
-
 						<div className='flex items-center justify-end'>
 							<Button htmlType="button" loading={loading} onClick={toggleEdit} className='mr-2 flex items-center'>
 								<CloseOutlined /> Cancel
@@ -136,4 +129,8 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 	);
 };
 
-export default PostContentForm;
+export default styled(PostContentForm)`
+.text-color{
+  color:#334D6EE5;
+}
+`;

@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { GetServerSideProps } from 'next';
+import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import { getOffChainPost } from 'pages/api/v1/posts/off-chain-post';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
@@ -26,16 +27,18 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		postId: id,
 		proposalType: OffChainProposalType.DISCUSSIONS
 	});
-	return { props: { data, error, network } };
+	const comments = await getSubSquareComments(OffChainProposalType.DISCUSSIONS, network, id);
+	const post = data && { ...data, comments: [...data.comments, ...comments] };
+	return { props: { error, network, post } };
 };
 
 interface IDiscussionPostProps {
-	data: IPostResponse;
+	post: IPostResponse;
 	error?: string;
 	network: string;
 }
 const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
-	const { data: post, error } = props;
+	const { post, error, network } = props;
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
@@ -46,7 +49,7 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (post) return (<>
-		<SEOHead title={post.title || `${noTitle} Discussion`} desc={post.content} />
+		<SEOHead title={post.title || `${noTitle} Discussion`} desc={post.content} network={network}/>
 
 		<BackToListingView postCategory={PostCategory.DISCUSSION} />
 

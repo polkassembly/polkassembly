@@ -36,8 +36,9 @@ interface Props {
   chosenWallet: Wallet;
   setDisplayWeb2: () => void;
   setWalletError: React.Dispatch<React.SetStateAction<string | undefined>>;
-   isModal:boolean;
-  setLoginOpen:(pre:boolean)=>void;
+   isModal?:boolean;
+  setLoginOpen?:(pre:boolean)=>void;
+  setSignupOpen?: (pre: boolean) => void;
 }
 
 interface IWalletIconProps {
@@ -67,7 +68,8 @@ const MetamaskLogin: FC<Props> = ({
 	chosenWallet,
 	setDisplayWeb2,
 	isModal,
-	setLoginOpen
+	setLoginOpen,
+	setSignupOpen
 }) => {
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
@@ -82,6 +84,15 @@ const MetamaskLogin: FC<Props> = ({
 	const [fetchAccounts, setFetchAccounts] = useState(true);
 	const [isSignUp, setIsSignUp] = useState(false);
 	const { network } = useNetworkContext();
+
+	const handleClick=() => {
+		if(isModal && setSignupOpen && setLoginOpen){
+			setSignupOpen(true);
+			setLoginOpen(false);}
+		else{
+			router.push('/signup');
+		}
+	};
 
 	const getAccounts = async (): Promise<undefined> => {
 		const ethereum = (window as any).ethereum;
@@ -220,9 +231,13 @@ const MetamaskLogin: FC<Props> = ({
 
 								if(confirmData.token) {
 									currentUser.loginWallet=Wallet.METAMASK;
+									currentUser.delegationDashboardAddress = address;
+									localStorage.setItem('delegationWallet', Wallet.METAMASK);
+									localStorage.setItem('delegationDashboardAddress', address);
+
 									handleTokenChange(confirmData.token,currentUser);
 									if(isModal){
-										setLoginOpen(false);
+										setLoginOpen && setLoginOpen(false);
 										setLoading(false);
 										return;
 									}
@@ -241,10 +256,14 @@ const MetamaskLogin: FC<Props> = ({
 					}
 				}
 				if(addressLoginData?.token){
-					currentUser.loginWallet=Wallet.METAMASK;
+					currentUser.loginWallet = Wallet.METAMASK;
+					currentUser.delegationDashboardAddress = address;
+					localStorage.setItem('delegationWallet', Wallet.METAMASK);
+					localStorage.setItem('delegationDashboardAddress', address);
+
 					handleTokenChange(addressLoginData.token, currentUser);
 					if(isModal){
-						setLoginOpen(false);
+						setLoginOpen && setLoginOpen(false);
 						setLoading(false);
 						return;
 					}
@@ -374,9 +393,7 @@ const MetamaskLogin: FC<Props> = ({
 				<label className="text-md text-grey_primary">
 					Don&apos;t have an account?
 				</label>
-				<Link href="/signup" className="text-pink_primary text-md">
-					Sign Up
-				</Link>
+				<div onClick={handleClick} className='text-pink_primary text-md'> Sign Up </div>
 			</div>
 		</article>
 	);

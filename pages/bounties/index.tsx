@@ -15,14 +15,17 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
+import FilterByTags from '~src/ui-components/FilterByTags';
+import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const proposalType = ProposalType.BOUNTIES;
 	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOnChainPosts({
+		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
@@ -39,7 +42,7 @@ interface IBountiesProps {
 }
 
 const Bounties: FC<IBountiesProps> = (props) => {
-	const { data, error } = props;
+	const { data, error, network } = props;
 	const router = useRouter();
 
 	const { setNetwork } = useNetworkContext();
@@ -64,7 +67,7 @@ const Bounties: FC<IBountiesProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Bounties' />
+			<SEOHead title='Bounties' network={network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>On Chain Bounties</h1>
 
 			{/* Intro and Create Post Button */}
@@ -77,7 +80,11 @@ const Bounties: FC<IBountiesProps> = (props) => {
 
 			<div className='shadow-md bg-white p-3 md:p-8 rounded-md'>
 				<div className='flex items-center justify-between'>
-					<h1 className='dashboard-heading'>{ count } Bounties</h1>
+					<div>
+						<h1 className='dashboard-heading'>{ count } Bounties</h1>
+						<FilteredTags/>
+					</div>
+					<FilterByTags className='mr-[2px]'/>
 				</div>
 
 				<div>

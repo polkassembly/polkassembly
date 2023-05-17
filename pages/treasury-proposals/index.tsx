@@ -17,6 +17,7 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
+import FilterByTags from '~src/ui-components/FilterByTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { isCreationOfTreasuryProposalSupported } from '~src/util/isCreationOfTreasuryProposalSupported';
@@ -31,10 +32,11 @@ const TreasuryOverview = dynamic(() => import('src/components/Home/TreasuryOverv
 });
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const proposalType = ProposalType.TREASURY_PROPOSALS;
 	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOnChainPosts({
+		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
@@ -78,7 +80,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 
 	return (
 		<>
-			<SEOHead title='Treasury Proposals' />
+			<SEOHead title='Treasury Proposals' network={network}/>
 
 			<div className='w-full flex flex-col sm:flex-row sm:items-center'>
 				<h1 className='dashboard-heading flex-1 mb-4 sm:mb-0'>On Chain Treasury Proposals</h1>
@@ -106,6 +108,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 			<div className='mt-8 shadow-md bg-white p-3 md:p-8 rounded-md'>
 				<div className='flex items-center justify-between'>
 					<h1 className='dashboard-heading'>{ count } Treasury Proposals</h1>
+					<FilterByTags/>
 				</div>
 
 				<div>

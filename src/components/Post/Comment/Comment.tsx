@@ -12,7 +12,6 @@ import UpdateLabel from 'src/ui-components/UpdateLabel';
 import UserAvatar from 'src/ui-components/UserAvatar';
 
 import { usePostDataContext } from '~src/context';
-
 import EditableCommentContent from './EditableCommentContent';
 import Replies from './Replies';
 
@@ -26,7 +25,8 @@ export interface IComment {
 	comment_reactions: IReactions;
 	username: string;
 	proposer?: string;
-  sentiment?:number;
+    sentiment?:number;
+    comment_source?:'polkassembly' | 'subsquare';
 }
 
 interface ICommentProps {
@@ -37,13 +37,12 @@ interface ICommentProps {
 
 export const Comment: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
-	const { user_id, content, created_at, id, replies, updated_at ,sentiment } = comment;
+	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly' } = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
 
 	const { postData: { postIndex, postType } } = usePostDataContext();
-
 	useEffect(() => {
 		if (typeof window == 'undefined') return;
 		const hashArr = asPath.split('#');
@@ -82,6 +81,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					text={'commented'}
 					username={comment.username}
 					sentiment={newSentiment}
+					commentSource={comment_source}
 				>
 					<UpdateLabel
 						created_at={created_at}
@@ -101,6 +101,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					sentiment={newSentiment}
 					setSentiment={setNewSentiment}
 					prevSentiment={sentiment||0}
+					isSubsquareUser={comment_source==='subsquare'}
 				/>
 				{replies && replies.length > 0 && <Replies className='comment-content' commentId={id} repliesArr={replies} />}
 			</div>

@@ -24,12 +24,12 @@ interface Props{
 	onChange?: (balance: BN) => void
 	placeholder?: string
 	size?: 'large' | 'small' | 'middle';
-  address?: string;
-  withBalance?: boolean;
-  onAccountBalanceChange?: (balance: string) => void
-  balance?: BN;
-  inputClassName?: string;
-  noRules?: boolean;
+	address?: string;
+	withBalance?: boolean;
+	onAccountBalanceChange?: (balance: string) => void
+	balance?: BN;
+	inputClassName?: string;
+	noRules?: boolean;
 	formItemName?: string;
 }
 
@@ -87,7 +87,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 			<InputNumber
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name={formItemName}
-				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] rounded-r-[0px] mt-0 ${inputClassName} placeholderColor`}
+				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] rounded-r-[0px] mt-0 ${inputClassName} placeholderColor hover:border-[#E5007A]`}
 				onChange={onBalanceChange}
 				placeholder={`${placeholder}`}
 				size={size || 'large'}
@@ -104,18 +104,33 @@ font-size:12px;
 border: 1px solid #E5007A; 
 }
 .placeholderColor .ant-input-number .ant-input-number-input{
-  color:#7c899b !important;
+color:#7c899b !important;
 }
 .ant-input-number-handler-up{
-	display:none !important;
+display:none !important;
 }
 .ant-input-number-handler-down{
-	display:none !important;
+display:none !important;
 }
 .ant-input-number-group-addon{
-	border-radius:4px !important;
-	position:relative;
-	right:2px;
+border-radius:4px !important;
+position:relative;
+right:2px;
+}
+.ant-input-number{
+border: 1px solid #D2D8E0 ;
+}
+
+.ant-input-number-focused{
+border: 1px solid #E5007A ;
+}
+
+input::placeholder {
+color: #576D8B !important;
+font-weight: 400 !important;
+font-size: 14px !important;
+line-height: 21px !important;
+letter-spacing: 0.0025em !important;
 }
 `;
 

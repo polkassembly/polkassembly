@@ -27,7 +27,7 @@ interface Props{
 const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen }: Props) =>
 	<article className={`w-full flex flex-col ${className}`}>
 		<div className='flex items-center gap-x-2 ml-[-6px]'>
-			<h3 className='inner-headings mb-0 ml-1'>{title}</h3>
+			<h3 className='inner-headings mb-0 ml-1.5'>{title}</h3>
 			{address && withBalance &&
 			<Balance address={address} onChange={onBalanceChange} />
 			}
@@ -46,9 +46,13 @@ const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withB
 
 export default styled(AccountSelectionForm)`
 .ant-dropdown-trigger{
-height: 40px !important;
-background: rgba(210, 216, 224, 0.2) !important;
-border: 1px solid #D2D8E0 !important;
-border-radius: 4px !important;
+	height: 40px !important;
+	background: rgba(210, 216, 224, 0.2) !important;
+	border: 1px solid #D2D8E0 !important;
+	border-radius: 4px !important;
+}
+
+.anticon-down {
+	scale: .75 !important;
 }
 `;

@@ -22,9 +22,14 @@ import FilteredError from '~src/ui-components/FilteredError';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
-import { DislikeFilled, LikeFilled } from '@ant-design/icons';
-import SplitIcon from '~assets/icons/split-icon.svg';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
+import LikeWhite from '~assets/icons/like-white.svg';
+import LikeGray from '~assets/icons/like-gray.svg';
+import DislikeWhite from '~assets/icons/dislike-white.svg';
+import DislikeGray from '~assets/icons/dislike-gray.svg';
+import SplitWhite from '~assets/icons/split-white.svg';
+import SplitGray from '~assets/icons/split-gray.svg';
+import CloseIcon from '~assets/icons/close.svg';
 
 const ZERO_BN = new BN(0);
 
@@ -168,9 +173,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		await getAccounts(wallet);
 	};
 	const convictionOpts = useMemo(() => [
-		<Select.Option key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+		<Select.Option className='text-[#243A57]' key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
 		...CONVICTIONS.map(([value, lock]) =>
-			<Select.Option key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
+			<Select.Option className='text-[#243A57]' key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
 		)
 	],[CONVICTIONS]);
 
@@ -257,6 +262,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			<Select onChange={onConvictionChange} size='large' className='' defaultValue={conviction}>
 				{convictionOpts}
 			</Select>
+
 		</Form.Item>;
 
 	const handleSubmit = async () => {
@@ -315,7 +321,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 			else if(vote === EVoteDecisionType.ABSTAIN && ayeVoteValue && nayVoteValue) {
 				try {
-					await splitForm.validateFields();
+					await abstainFrom.validateFields();
 					// if form is valid
 					const  abstainVote = abstainVoteValue?.toString();
 					const  ayeVote = ayeVoteValue?.toString();
@@ -406,19 +412,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const decisionOptions = [
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B] w-[126px] h-[32px] rounded-[4px] ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}><LikeFilled className='mr-1' /><span className='font-semibold'>Aye</span></div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B] w-[131px] h-[32px] rounded-[4px] ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}>{vote === EVoteDecisionType.AYE ? <LikeWhite className='mr-2 mb-[3px]' /> : <LikeGray className='mr-2 mb-[3px]' /> }<span className='font-semibold'>Aye</span></div>,
 			value: 'aye'
 		},
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B] w-[126px] h-[32px] rounded-[4px] ${vote === 'nay'? 'bg-[#F53C3C] text-white' : ''}`}><DislikeFilled className='mr-1' /> <span className='font-semibold'>Nay</span></div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B] w-[126px] h-[32px] rounded-[4px] ${vote === 'nay'? 'bg-[#F53C3C] text-white' : ''}`}>{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' /> } <span className='font-semibold'>Nay</span></div>,
 			value: 'nay'
 		},
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B]  w-[126px] h-[32px] rounded-[4px] ${vote === 'split'? 'bg-[#FFBF60] text-white' : ''}`}> <SplitIcon className='mr-1' /> <span className='font-semibold'>Split</span> </div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B]  w-[126px] h-[32px] rounded-[4px] ${vote === 'split'? 'bg-[#FFBF60] text-white' : ''}`}> {vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : <SplitGray className='mr-2' /> } <span className='font-semibold'>Split</span> </div>,
 			value: 'split'
 		},
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B]  w-[126px] h-[32px] rounded-[4px] ${vote === 'abstain'? 'bg-[#407BFF] text-white' : ''}`}><StopOutlined className='mr-1 mb-[3px]'/> <span className='font-semibold'>Abstain</span></div>,
+			label: <div className={`flex items-center justify-center text-[#576D8B]  w-[126px] h-[32px] rounded-[4px] ${vote === 'abstain'? 'bg-[#407BFF] text-white' : ''}`}><StopOutlined className='mr-2 mb-[3px]'/> <span className='font-semibold'>Abstain</span></div>,
 			value: 'abstain'
 		}
 	];
@@ -435,7 +441,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`${poppins.variable} ${poppins.className} w-[604px] max-h-[675px] rounded-[6px]`}
+				className={`${poppins.variable} ${poppins.className} w-[604px] max-h-[675px] rounded-[6px] alignment-close`}
+				closeIcon={<CloseIcon />}
+				wrapClassName={className}
 			><>
 					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
 
@@ -446,9 +454,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							</div>
 
 							<div className='flex items-center gap-x-5 mt-[22px] mb-[24px]'>
-								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[69.29px] h-[44.39px] hover:border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
-								{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[69.29px] h-[44.39px] hover:border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-								{availableWallets[Wallet.SUBWALLET] &&  <WalletButton className={`${wallet === Wallet.SUBWALLET? 'w-[69.29px] h-[44.39px] hover:border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
+								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[69.29px] h-[44.39px] hover:border-pink_primary border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
+								{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[69.29px] h-[44.39px] hover:border-pink_primary border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+								{availableWallets[Wallet.SUBWALLET] &&  <WalletButton className={`${wallet === Wallet.SUBWALLET? 'w-[69.29px] h-[44.39px] hover:border-pink_primary border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
 								{
 									(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
                     <WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary': ''}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
@@ -503,14 +511,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										helpText={'Amount of you are willing to lock for this vote.'}
 										placeholder={'Add balance'}
 										onChange={onBalanceChange}
-										className='text-sm font-medium'
+										className='text-sm font-medium border-[#D2D8E0]'
 									/>
 
 									<VoteLock className={`${className}`} />
 
 									<div className='flex justify-end mt-[-5px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={closeModal}>Cancel</Button>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold' htmlType='submit'>Confirm</Button>
+										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0' htmlType='submit'>Confirm</Button>
 									</div>
 								</Form>
 							}
@@ -542,7 +550,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 									<div className='flex justify-end mt-[-5px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={closeModal}>Cancel</Button>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold' htmlType='submit'>Confirm</Button>
+										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0' htmlType='submit'>Confirm</Button>
 									</div>
 								</Form>
 							}
@@ -581,7 +589,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 									<div className='flex justify-end mt-[-5px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={closeModal}>Cancel</Button>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold' htmlType='submit'>Confirm</Button>
+										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0' htmlType='submit'>Confirm</Button>
 									</div>
 								</Form>
 							}
@@ -620,14 +628,16 @@ export default styled(VoteReferendum)`
 	}
 	
 	
-	 .ant-select-selector{
+	.ant-select-selector{
 		border:1px soild !important;
 		border-color:#D2D8E0 !important;
 		height: 40px;
 		border-radius:4px !important;
-	 }
-	 .ant-select-arrow{
+	}
+	.ant-select-arrow{
 		color:#96A4B6 !important;
+		scale: .75 !important;
+		
 	 }
 	.ant-select-selection-item{
 		font-family: 'Poppins' !important;
@@ -645,10 +655,6 @@ export default styled(VoteReferendum)`
 		height: 39.85px !important;
 		
 	}
-
-	}
-	
-
 	 .ant-segmented-group {
 		gap:10px !important;
 	 }
@@ -664,7 +670,27 @@ export default styled(VoteReferendum)`
 		padding-right:0px !important;
 		
 	}
-	.ant-modal-close-x{
-		background-color: yellow  !important; 
+	.ant-modal-close{
+		scale:1.5 !important;
+		
 	}
+
+	
+	.ant-select-selection-item{
+		color: #243A57 !important;
+	}
+	.ant-select-focused{
+		border: 1px solid #E5007A !important;
+		border-radius:4px !important;
+	}
+	.ant-segmented-item-selected{
+		box-shadow: none !important;
+	}
+	
+	.alignment-close .ant-modal-close{
+		margin-top: 6px;
+	  }
+	  .alignment-close .ant-modal-close:hover{
+		margin-top: 6px;
+	  }
 `;

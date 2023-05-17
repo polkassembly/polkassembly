@@ -29,7 +29,7 @@ import DislikeWhite from '~assets/icons/dislike-white.svg';
 import DislikeGray from '~assets/icons/dislike-gray.svg';
 import SplitWhite from '~assets/icons/split-white.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
-import CloseIcon from '~assets/icons/close.svg';
+import CloseCross from '~assets/icons/close-cross-icon.svg';
 
 const ZERO_BN = new BN(0);
 
@@ -442,7 +442,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				onCancel={() => setShowModal(false)}
 				footer={false}
 				className={`${poppins.variable} ${poppins.className} w-[604px] max-h-[675px] rounded-[6px] alignment-close`}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseCross/>}
 				wrapClassName={className}
 			><>
 					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
@@ -655,9 +655,7 @@ export default styled(VoteReferendum)`
 		height: 39.85px !important;
 		
 	}
-	 .ant-segmented-group {
-		gap:10px !important;
-	 }
+	 
 	
 	.ant-segmented-item-label{
 		display:flex ;
@@ -670,11 +668,6 @@ export default styled(VoteReferendum)`
 		padding-right:0px !important;
 		
 	}
-	.ant-modal-close{
-		scale:1.5 !important;
-		
-	}
-
 	
 	.ant-select-selection-item{
 		color: #243A57 !important;
@@ -685,6 +678,9 @@ export default styled(VoteReferendum)`
 	}
 	.ant-segmented-item-selected{
 		box-shadow: none !important;
+	}
+	.ant-segmented-item{
+		padding: 0px !important;
 	}
 	
 	.alignment-close .ant-modal-close{

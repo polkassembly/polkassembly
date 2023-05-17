@@ -68,9 +68,20 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		}
 	};
 
-	const validateUserName = (username: string) => {
+	const validateUserName = async(username: string) => {
 
 		let error = 0;
+		const { data, error: err } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
+		if(data){
+			queueNotification({
+				header: 'Error',
+				message: messages.USERNAME_ALREADY_EXISTS,
+				status: NotificationStatus.ERROR
+			});
+			error += 1;
+		}
+		console.log(err,data);
+
 		for (let i = 0; i < nameBlacklist.length; i++) {
 			if (username.toLowerCase().includes(nameBlacklist[i])){
 				queueNotification({
@@ -91,6 +102,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			});
 			error += 1;
 		}
+
 		return error === 0;
 
 	};

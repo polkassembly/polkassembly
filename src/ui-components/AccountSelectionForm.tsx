@@ -20,7 +20,7 @@ interface Props{
   className?:string;
 }
 
-const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange,className }: Props) =>
+const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange,className, isBalanceUpdated }: Props) =>
 	<article className={`w-full gap-y-2 flex flex-col p-2 ${className}`}>
 		<div className='flex items-center gap-x-2 ml-[-6px] mb-1'>
 			<h3 className='text-sm mb-0'>{title}</h3>
@@ -32,7 +32,7 @@ const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withB
 			onAccountChange={onAccountChange}
 		/>
 		{address && withBalance &&
-			<Balance address={address} onChange={onBalanceChange} />
+			<Balance address={address} onChange={onBalanceChange} isBalanceUpdated={isBalanceUpdated} />
 		}
 	</article>;
 

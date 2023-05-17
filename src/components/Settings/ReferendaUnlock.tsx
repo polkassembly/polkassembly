@@ -103,12 +103,10 @@ const ReferendaUnlock = ({ className }: Props) => {
 
 		const unlocks: Unlock[] = [];
 
-		// const address = '0x868ADd1f496cb447Dd29403300a8AF58B6394E4D';
 		const res = await api.query.convictionVoting.classLocksFor(address);
 		if (res && res.toHuman) {
 			const arr = res.toHuman() as [string, string][];
 			arr.forEach((obj) => {
-				console.log(obj);
 				if (obj && Array.isArray(obj) && obj.length > 1) {
 					unlocks.push({
 						amount: new BN(obj[1].replaceAll(',', '')),
@@ -146,14 +144,6 @@ const ReferendaUnlock = ({ className }: Props) => {
 				else{
 					conviction = 0;
 				}
-				console.log('hi', {
-					amount: vote[1].asStandard.balance,
-					conviction: conviction,
-					refIndex,
-					trackId: Number(arr[1]),
-					unlocksAt: votingInfo.asCasting.prior[0].toString(),
-					vote: vote[1].asStandard.vote.isAye
-				});
 				return {
 					amount: vote[1].asStandard.balance,
 					conviction: conviction,
@@ -280,7 +270,7 @@ const ReferendaUnlock = ({ className }: Props) => {
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
 		contract.methods
-			.removeOtherVote(address, vote.trackId, vote.refIndex)
+			.removeVoteForTrack(vote.refIndex, vote.trackId)
 			.send({
 				from: address,
 				to: contractAddress

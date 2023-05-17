@@ -95,7 +95,7 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links } : { class
 				</div>
 			</div>
 
-			<p className='mt-5'>Join our Community to discuss, contribute and get regular updates from us!</p>
+			<p className='text-[#243A57] mt-1.5 font-normal'>Join our Community to discuss, contribute and get regular updates from us!</p>
 
 			<div className='mt-5 lg:hidden flex'>
 				{networkSocialsData && socialLinks(networkSocialsData)}

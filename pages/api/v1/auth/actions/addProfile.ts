@@ -50,7 +50,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const userRef = firestore.collection('users').doc(String(user.id));
 
 	const userQuerySnapshot = await firestore.collection('users').where('username', '==', String(username).toLowerCase()).limit(1).get();
-	if (!userQuerySnapshot.empty && user?.username !== username) throw apiErrorWithStatusCode(messages.USERNAME_ALREADY_EXISTS, 400);
+	if (!userQuerySnapshot.empty && user?.username !== username) return res.status(400).json({ message: messages.USERNAME_ALREADY_EXISTS });
 
 	//update profile field in userRef
 	const profile = {

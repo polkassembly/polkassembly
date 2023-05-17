@@ -109,7 +109,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	};
 
 	const handleSetFilteredComments = (sentiment: ESentiments | 0) => {
-		setFilteredSentiment((pre) => pre.sentiment === sentiment ? { ...pre, active: false } : { active: true , sentiment : sentiment });
+		setFilteredSentiment((pre) => pre.sentiment === sentiment && pre.active === true ? { ...pre, active: false } : { active: true , sentiment : sentiment });
 	};
 
 	useEffect(() => {
@@ -181,12 +181,16 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	};
 
 	const getFilteredComments = (sentiment: number) => {
-		if(filteredSentiment.sentiment === sentiment){ setFilteredComments(comments);}
+		if(filteredSentiment.sentiment === sentiment && filteredSentiment.active){ setFilteredComments(comments);}
 
 		else{
 			const filteredData = comments.filter((comment) => comment?.sentiment === sentiment);
 			setFilteredComments(filteredData);
 		}
+	};
+
+	const checkActive = (sentiment: ESentiments) => {
+		return filteredSentiment.active && filteredSentiment.sentiment === sentiment;
 	};
 
 	useEffect(() => {
@@ -258,45 +262,45 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<span className='text-center font-medium'>Completely Against</span>
 								<span className='text-center pt-1'>Select to filter</span>
 							</div>} >
-							<div onClick={() => {handleSetFilteredComments(ESentiments.Against); getFilteredComments(ESentiments.Against);}} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.Against && 'bg-[#FEF2F8] text-[#243A57] '}`} >
-								{filteredSentiment?.sentiment === ESentiments.Against ? <AgainstIcon /> : <UnfilterAgainstIcon />}
-								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === ESentiments.Against && 'text-pink_primary'} `}>{sentimentsPercentage?.against}%</span>
+							<div onClick={() => {handleSetFilteredComments(ESentiments.Against); getFilteredComments(ESentiments.Against);}} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Against) && 'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`} >
+								{checkActive(ESentiments.Against) ? <AgainstIcon /> : <UnfilterAgainstIcon />}
+								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.against}%</span>
 							</div>
 						</Tooltip>
 						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
 							<span className='text-center font-medium'>Slightly Against</span>
 							<span className='text-center pt-1'>Select to filter</span>
 						</div>}>
-							<div onClick={() =>  {handleSetFilteredComments(ESentiments.SlightlyAgainst); getFilteredComments(ESentiments.SlightlyAgainst);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.SlightlyAgainst && 'bg-[#FEF2F8] text-[#243A57] '}`}>
-								{filteredSentiment?.sentiment === ESentiments.SlightlyAgainst ? <SlightlyAgainstIcon /> : <UnfilterSlightlyAgainstIcon/>}
-								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === ESentiments.SlightlyAgainst && 'text-pink_primary'} `}>{sentimentsPercentage?.slightlyAgainst}%</span>
+							<div onClick={() =>  {handleSetFilteredComments(ESentiments.SlightlyAgainst); getFilteredComments(ESentiments.SlightlyAgainst);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyAgainst)  &&'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`}>
+								{checkActive(ESentiments.SlightlyAgainst)  ? <SlightlyAgainstIcon /> : <UnfilterSlightlyAgainstIcon/>}
+								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyAgainst}%</span>
 							</div>
 						</Tooltip>
 						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
 							<span className='text-center font-medium'>Neutral </span>
 							<span className='text-center pt-1'>Select to filter</span>
 						</div>}>
-							<div onClick={() =>  {handleSetFilteredComments(ESentiments.Neutral); getFilteredComments(ESentiments.Neutral);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.Neutral && 'bg-[#FEF2F8] text-[#243A57] '}`}>
-								{filteredSentiment?.sentiment === ESentiments.Neutral ? <NeutralIcon className='text-[20px] font-medium'/> : <UnfilterNeutralIcon/>}
-								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === ESentiments.Neutral && 'text-pink_primary'} `}>{sentimentsPercentage?.neutral}%</span>
+							<div onClick={() =>  {handleSetFilteredComments(ESentiments.Neutral); getFilteredComments(ESentiments.Neutral);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Neutral)  && 'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`}>
+								{checkActive(ESentiments.Neutral)  ? <NeutralIcon className='text-[20px] font-medium'/> : <UnfilterNeutralIcon/>}
+								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.neutral}%</span>
 							</div>
 						</Tooltip>
 						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
 							<span className='text-center font-medium'>Slightly For</span>
 							<span className='text-center pt-1'>Select to filter</span>
 						</div>}>
-							<div onClick={() =>  {handleSetFilteredComments(ESentiments.SlightlyFor); getFilteredComments(ESentiments.SlightlyFor);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.SlightlyFor && 'bg-[#FEF2F8] text-[#243A57] '}`}>
-								{filteredSentiment?.sentiment === ESentiments.SlightlyFor ? <SlightlyForIcon /> : <UnfilterSlightlyForIcon/>}
-								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === ESentiments.SlightlyFor && 'text-pink_primary'} `}>{sentimentsPercentage?.slightlyFor}%</span>
+							<div onClick={() =>  {handleSetFilteredComments(ESentiments.SlightlyFor); getFilteredComments(ESentiments.SlightlyFor);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyFor)  && 'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`}>
+								{checkActive(ESentiments.SlightlyFor) ? <SlightlyForIcon /> : <UnfilterSlightlyForIcon/>}
+								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyFor}%</span>
 							</div>
 						</Tooltip>
 						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
 							<span className='text-center font-medium'>Completely For</span>
 							<span className='text-center pt-1'> Select to filter</span>
 						</div>}>
-							<div onClick={() =>  { handleSetFilteredComments(ESentiments.SlightlyFor); getFilteredComments(ESentiments.For);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${filteredSentiment?.sentiment === ESentiments.For && 'bg-[#FEF2F8] text-[#243A57] '}`}>
-								{filteredSentiment?.sentiment === ESentiments.For ? <ForIcon/> : <UnfilterForIcon/>}
-								<span className={`flex justify-center font-medium ${filteredSentiment?.sentiment === ESentiments.For && 'text-pink_primary'} `}>{sentimentsPercentage?.for}%</span>
+							<div onClick={() =>  { handleSetFilteredComments(ESentiments.For); getFilteredComments(ESentiments.For);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.For) && 'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`}>
+								{checkActive(ESentiments.For) ? <ForIcon/> : <UnfilterForIcon/>}
+								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.for}%</span>
 							</div>
 						</Tooltip>
 					</div>}

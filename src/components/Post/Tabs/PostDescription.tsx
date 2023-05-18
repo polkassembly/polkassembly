@@ -5,7 +5,7 @@
 import { FormOutlined } from '@ant-design/icons';
 import { Button, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Markdown from 'src/ui-components/Markdown';
 
 import { usePostDataContext } from '~src/context';
@@ -41,14 +41,33 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
 	const [showMore, setShowMore] = useState<boolean>(false);
 
+	const [numOfLines, setNumOfLines] = useState<number | null>(null);
+
+	useEffect(() => {
+		const delay = 100; // Adjust the delay as needed
+
+		// Get the element containing the content after a delay
+		const timeoutId = setTimeout(() => {
+			const contentElement = document.querySelector('.post-content') as HTMLElement;
+
+			if (contentElement) {
+				// Calculate the number of lines
+				const lineHeight = parseInt(window.getComputedStyle(contentElement).lineHeight);
+				const contentHeight = contentElement.offsetHeight;
+				const numberOfLines = Math.ceil(contentHeight / lineHeight);
+				setNumOfLines(numberOfLines);
+			}
+		}, delay);
+
+		return () => clearTimeout(timeoutId);
+	}, [content]);
+
 	return (
 		<div className={`${className} mt-4`}>
-			{content && <Markdown className={`${!showMore && 'clamped'}`} md={content} />}
-			{content.trim().split('\n')?.length > 5 &&
-				<p className='text-pink_primary py-2 cursor-pointer' onClick={() => setShowMore(!showMore)}>
-					{showMore ? 'Show less' : 'Show more'}
-				</p>
-			}
+			{content && <Markdown className={`${numOfLines && !showMore && 'clamped'} post-content`} md={content} />}
+			{numOfLines && numOfLines > 6 &&<p className='text-pink_primary py-2 cursor-pointer' onClick={() => setShowMore(!showMore)}>
+				{showMore ? 'Show less' : 'Show more'}
+			</p>}
 
 			{/* Actions Bar */}
 			<div id='actions-bar' className={`flex flex-col md:items-center mt-9 ${canEdit && 'flex-col'} md:flex-row mb-8`}>
@@ -69,7 +88,6 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 			</div>
 
 			{!isEditing && <div className='flex xl:hidden mb-8 mx-2'><Sidebar /></div>}
-
 			<CommentsContainer
 				id={id}
 			/>

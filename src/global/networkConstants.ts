@@ -14,6 +14,7 @@ import basiliskLogo from '~assets/parachain-logos/basilisk-logo.jpg';
 import pioneerLogo from '~assets/parachain-logos/bitcountrypioneer-logo.jpg';
 import calamariLogo from '~assets/parachain-logos/calamari-logo.png';
 import centrifugeLogo from '~assets/parachain-logos/centrifuge-logo.png';
+import cereLogo from '~assets/parachain-logos/cere-logo.jpg';
 import collectivesLogo from '~assets/parachain-logos/collectives-logo.png';
 import composableFinanceLogo from '~assets/parachain-logos/composable-finance-logo.png';
 import crustLogo from '~assets/parachain-logos/crust-logo.png';
@@ -22,6 +23,7 @@ import frequencyLogo from '~assets/parachain-logos/frequency-logo.png';
 import gearLogo from '~assets/parachain-logos/gear-logo.jpg';
 import genshiroLogo from '~assets/parachain-logos/genshiro.png';
 import gmordieLogo from '~assets/parachain-logos/gmordie-logo.png';
+import hashedLogo from '~assets/parachain-logos/hashed-logo.png';
 import heikoLogo from '~assets/parachain-logos/heiko-logo.png';
 import hydradxLogo from '~assets/parachain-logos/hydradx-logo.jpg';
 import karuraLogo from '~assets/parachain-logos/karura-logo.jpg';
@@ -68,12 +70,14 @@ export const network = {
 	COLLECTIVES: 'collectives',
 	COMPOSABLE: 'composable',
 	CRUST: 'crust',
+	CERE: 'cere',
 	CRUSTSHADOW: 'crustshadow',
 	EQUILIBRIUM: 'equilibrium',
 	FREQUENCY: 'frequency',
 	GEAR: 'gear',
 	GENSHIRO: 'genshiro',
 	GMORDIE: 'gmordie',
+	HASHED: 'hashed',
 	HEIKO: 'heiko',
 	HYDRADX: 'hydradx',
 	INTEGRITEE: 'integritee',
@@ -116,6 +120,7 @@ export const tokenSymbol = {
 	ATA: 'ATA',
 	BNC: 'BNC',
 	BSX: 'BSX',
+	CERE: 'CERE',
 	CFG: 'CFG',
 	CRU: 'CRU',
 	CSM: 'CSM',
@@ -126,6 +131,7 @@ export const tokenSymbol = {
 	FREN: 'FREN',
 	FRQCY: 'FRQCY',
 	GLMR: 'GLMR',
+	HASH: 'HASH',
 	HDX: 'HDX',
 	HKO: 'HKO',
 	KAR: 'KAR',
@@ -396,6 +402,22 @@ export const chainProperties: types.ChainPropType = {
 		externalLinks: 'https://centrifuge.api.subscan.io',
 		rpcEndpoints: []
 	},
+	[network.CERE]: {
+		blockTime: 6000,
+		category: 'solo',
+		chainId: 0,
+		logo: cereLogo,
+		rpcEndpoint: 'wss://archive.mainnet.cere.network/ws',
+		ss58Format: 54,
+		subsquidUrl: 'https://squid.subsquid.io/cere-polkassembly/graphql',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.CERE,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '100',
+		treasuryProposalMaxBond: null,
+		externalLinks: '',
+		rpcEndpoints: []
+	},
 	//TODO: Aleem=> Need to update collective network, currently using polkadot data
 	[network.COLLECTIVES]: {
 		blockTime: 6000,
@@ -539,6 +561,22 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
+		externalLinks: '',
+		rpcEndpoints: []
+	},
+	[network.HASHED]: {
+		blockTime: 12000,
+		category: 'polkadot',
+		chainId: 0,
+		logo: hashedLogo,
+		rpcEndpoint: 'wss://c1.hashed.live',
+		ss58Format: 42,
+		tokenDecimals: 18,
+		tokenSymbol: tokenSymbol.HASH,
+		subsquidUrl: 'https://squid.subsquid.io/hashed-polkassembly/graphql',
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '0.000000066666666',
+		treasuryProposalMaxBond: '0.0000033333333',
 		externalLinks: '',
 		rpcEndpoints: []
 	},

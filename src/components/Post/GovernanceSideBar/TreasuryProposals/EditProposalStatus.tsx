@@ -39,7 +39,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime } : Prop
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 
 	const getProposalStatus = useCallback(async () => {
-		const { data , error } = await nextApiClientFetch<NetworkEvent>( 'api/v1/auth/actions/getEventByPostId', {
+		const { data , error } = await nextApiClientFetch<NetworkEvent>( 'api/v1/events/getEventByPostId', {
 			post_id: Number(proposalId)
 		});
 

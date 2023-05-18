@@ -108,10 +108,29 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 	}, [timeline, comments]);
 	return (
-		<div className={`${className} block xl:grid grid-cols-12 `}>
-			{
-				!!comments?.length && timelines.length > 1 &&
-					<div className='hidden h-screen xl:block col-start-1 col-end-2 min-w-[100px] -ml-2 sticky top-[10%] pt-10'>
+		<div className={className}>
+			{ id ? <>
+				{ isGrantClosed ?
+					<Alert message="Grant closed, no comments can be added or edited." type="info" showIcon /> :
+					<PostCommentForm className='mb-8' />
+				}
+			</>
+				:<div className="p-3 mt-4 mb-8 bg-[#FFF7FB] border-none rounded-lg shadow-md">
+					<div className="flex flex-wrap justify-center items-center">
+						<Image src="/assets/icons/alert-login.svg" width={20} height={20} alt={''} />
+						<div className="ml-1 mt-3">
+							<p className="text-sm leading-5 font-medium text-[#243A57]">
+									Please <span className="cursor-pointer text-pink_primary" onClick={() => {setOpenLoginModal(true);}}>Log In</span> to comment
+							</p>
+						</div>
+					</div>
+				</div>
+			}
+			<div className='text-sidebarBlue text-sm font-medium mb-5'>{comments?.length} comments</div>
+			<div  className={'block xl:grid grid-cols-12 border-solid'}>
+				{
+					!!comments?.length && timelines.length > 1 &&
+					<div className='hidden h-screen xl:block col-start-1 col-end-2 min-w-[100px] -ml-2 sticky top-[10%] '>
 						<Anchor targetOffset={targetOffset} className='h-full min-w-[140px]' onClick={handleTimelineClick}>
 							{timelines.map(({ commentsCount, date, firstCommentId, id, status }) => {
 								return (
@@ -137,41 +156,24 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							})}
 						</Anchor>
 					</div>
-			}
-
-			<div className={`col-start-1 ${timelines.length > 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
-				{ id ? <>
-					{ isGrantClosed ?
-						<Alert message="Grant closed, no comments can be added or edited." type="info" showIcon /> :
-						<PostCommentForm className='mb-8' />
-					}
-				</>
-					:<div className="p-4 mt-4 mb-8 bg-[#FFF7FB] border-none rounded-lg shadow-md">
-						<div className="flex flex-wrap justify-center items-center">
-							<Image src="/assets/icons/alert-login.svg" width={20} height={20} alt={''} />
-							<div className="ml-1 mt-3">
-								<p className="text-sm leading-5 font-medium text-[#243A57]">
-									Please <span className="cursor-pointer text-pink_primary" onClick={() => {setOpenLoginModal(true);}}>Log In</span> to comment
-								</p>
-							</div>
-						</div>
-					</div>
 				}
-				<div className='text-sidebarBlue text-sm font-medium mb-5'>{comments?.length} comments</div>
-				{ !!comments?.length &&
+
+				<div className={`col-start-1 ${timelines.length > 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
+					{ !!comments?.length &&
 						<>
 							<Comments disableEdit={isGrantClosed} comments={comments} />
 						</>
-				}
-				{
-					<RefendaLoginPrompts
-						modalOpen={openLoginModal}
-						setModalOpen={setOpenLoginModal}
-						image="/assets/post-comment.png"
-						title="Join Polkassembly to Comment on this proposal."
-						subtitle="Discuss, contribute and get regular updates from Polkassembly."
-					/>
-				}
+					}
+					{
+						<RefendaLoginPrompts
+							modalOpen={openLoginModal}
+							setModalOpen={setOpenLoginModal}
+							image="/assets/post-comment.png"
+							title="Join Polkassembly to Comment on this proposal."
+							subtitle="Discuss, contribute and get regular updates from Polkassembly."
+						/>
+					}
+				</div>
 			</div>
 		</div>
 	);

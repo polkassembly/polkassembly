@@ -30,6 +30,7 @@ import DislikeGray from '~assets/icons/dislike-gray.svg';
 import SplitWhite from '~assets/icons/split-white.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
+import DownIcon from '~assets/icons/down-icon.svg';
 
 const ZERO_BN = new BN(0);
 
@@ -259,7 +260,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				Vote lock
 			</label>
 
-			<Select onChange={onConvictionChange} size='large' className='' defaultValue={conviction}>
+			<Select onChange={onConvictionChange} size='large' className='' defaultValue={conviction} suffixIcon ={<DownIcon/>}>
 				{convictionOpts}
 			</Select>
 
@@ -617,76 +618,72 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 };
 
 export default styled(VoteReferendum)`
-	.LoaderWrapper {
-		height: 40rem;
-		position: absolute;
-		width: 100%;
-	}
+.LoaderWrapper {
+	height: 40rem;
+	position: absolute;
+	width: 100%;
+}
 
-	.vote-form-cont {
-		padding: 12px;
-	}
-	
-	
-	.ant-select-selector{
-		border:1px soild !important;
-		border-color:#D2D8E0 !important;
-		height: 40px;
-		border-radius:4px !important;
-	}
-	.ant-select-arrow{
-		color:#96A4B6 !important;
-		scale: .75 !important;
-		
-	 }
-	.ant-select-selection-item{
-		font-family: 'Poppins' !important;
-		font-style: normal !important;
-		font-weight: 400 !important;
-		font-size: 14px !important;
-		display: flex;
-		align-items: center;
-		line-height: 21px !important;
-		letter-spacing: 0.0025em !important;
-		color: #243A57 !important;
-	}
+.vote-form-cont {
+	padding: 12px;
+}
 
-	.ant-input-number-in-from-item{
-		height: 39.85px !important;
-		
-	}
-	 
-	
-	.ant-segmented-item-label{
-		display:flex ;
-		justify-content: center;
-		align-items:center;
-		height:32px !important;
-		border-radius:4px !important;
-	}
-	.ant-segmented {
-		padding-right:0px !important;
-		
-	}
-	
-	.ant-select-selection-item{
-		color: #243A57 !important;
-	}
-	.ant-select-focused{
-		border: 1px solid #E5007A !important;
-		border-radius:4px !important;
-	}
-	.ant-segmented-item-selected{
-		box-shadow: none !important;
-	}
-	.ant-segmented-item{
-		padding: 0px !important;
-	}
-	
-	.alignment-close .ant-modal-close{
-		margin-top: 6px;
-	  }
-	  .alignment-close .ant-modal-close:hover{
-		margin-top: 6px;
-	  }
+
+.ant-select-selector{
+	border:1px soild !important;
+	border-color:#D2D8E0 !important;
+	height: 40px;
+	border-radius:4px !important;
+}
+
+.ant-select-selection-item{
+	font-style: normal !important;
+	font-weight: 400 !important;
+	font-size: 14px !important;
+	display: flex;
+	align-items: center;
+	line-height: 21px !important;
+	letter-spacing: 0.0025em !important;
+	color: #243A57 !important;
+}
+
+.ant-input-number-in-from-item{
+	height: 39.85px !important;
+
+}
+
+
+.ant-segmented-item-label{
+	display:flex ;
+	justify-content: center;
+	align-items:center;
+	height:32px !important;
+	border-radius:4px !important;
+	padding-right:0px !important;
+	padding-left:0px !important;
+}
+.ant-segmented {
+	padding-right:0px !important;
+}
+
+.ant-select-selection-item{
+	color: #243A57 !important;
+}
+.ant-select-focused{
+	border: 1px solid #E5007A !important;
+	border-radius:4px !important;
+}
+.ant-segmented-item-selected{
+	box-shadow: none !important;
+}
+.ant-segmented-item{
+	padding: 0px !important;
+}
+
+.alignment-close .ant-modal-close{
+	margin-top: 6px;
+}
+.alignment-close .ant-modal-close:hover{
+	margin-top: 6px;
+}
 `;

@@ -11,7 +11,6 @@ import EditProfile from '~src/components/UserProfile/EditProfile';
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { useUserDetailsContext } from '~src/context';
 import MessengerIcon from '~assets/icons/messenger.svg';
-import DashboardProfile from '~assets/icons/dashboard-profile.svg';
 import { Button, Skeleton, Tooltip, message } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProfileDetailsResponse } from '~src/auth/types';
@@ -122,13 +121,12 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		<h2 className=' text-[#243A57] mb-6 md:mb-5 mt-5 text-[24px] font-semibold max-lg:pt-[60px]'>Delegation dashboard</h2>
 		<div className='flex justify-between py-[24px] px-[34px] shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white rounded-[14px]'>
 			<div className='flex justify-center gap-[34px] '>
-				{image && image?.length !== 0
-					? <ImageComponent
-						src={image}
-						alt='User Picture'
-						className='bg-transparent flex items-center justify-center w-[95px] h-[95px] '
-						iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full border-4 border-solid rounded-full'
-					/>: <div ><DashboardProfile/></div>}
+				<ImageComponent
+					src={image}
+					alt='User Picture'
+					className='bg-transparent flex items-center justify-center w-[105px] h-[105px] '
+					iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
+				/>
 				<div className='text-[#243A57]'>
 					<span className='text-[#243A57] font-semibold mb-4 tracking-wide text-lg'>{userDetails?.username}</span >
 					{userDetails.delegationDashboardAddress && userDetails?.delegationDashboardAddress.length > 0 ? <div className='flex gap-2  items-center'>

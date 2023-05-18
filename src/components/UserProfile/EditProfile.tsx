@@ -18,6 +18,7 @@ import messages from '~src/auth/utils/messages';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
 import { useRouter } from 'next/router';
 import { useUserDetailsContext } from '~src/context';
+import { poppins } from 'pages/_app';
 
 interface IEditProfileModalProps {
     id?: number | null;
@@ -184,7 +185,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	return (
 		<div>
 			<Modal
-				className='max-w-[648px] w-full max-h-[774px] h-full'
+				className={`max-w-[648px] w-full max-h-[774px] h-full ${poppins.variable} ${poppins.className}`}
 				onCancel={() => {
 					setOpen(false);
 					setOpenModal && setOpenModal(false);

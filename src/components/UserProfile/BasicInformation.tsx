@@ -126,14 +126,16 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							className="border border-solid rounded-[4px] border-[rgba(72,95,125,0.2)] h-10 px-[14px]"
 						/>
 					</article>
-					<div className='text-sm cursor-pointer mt-6 text-[#485F7D]'>
+					<div className='text-sm cursor-pointer mt-4 text-[#485F7D]'>
 						<h4 className='text-sm text-[#485F7D] font-normal '>User Name</h4>
 						<Input
-							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] h-10'
+							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] h-10 text-sm px-[14px] py-1'
+							placeholder='eg. John'
 							size='large'
 							type='text'
 							onChange={(e) => setUsername(e.target.value)}
 							value={username}
+							disabled={loading}
 						/>
 					</div>
 					<article className='mt-4'>

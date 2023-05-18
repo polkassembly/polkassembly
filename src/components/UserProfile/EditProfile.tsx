@@ -5,7 +5,7 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { Alert, Button, Divider, Modal, Tabs } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { ISocial, ProfileDetails, ProfileDetailsResponse, TokenType } from '~src/auth/types';
+import { IAddProfileResponse, ISocial, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import { handleTokenChange } from 'src/services/auth.service';
 
@@ -68,19 +68,18 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		}
 	};
 
-	const validateUserName = async(username: string) => {
+	const validateUserName = (username: string) => {
 
 		let error = 0;
-		if(userDetailsContext.username !== username ){const { data, error: err } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
-			if(data){
-				queueNotification({
-					header: 'Error',
-					message: messages.USERNAME_ALREADY_EXISTS,
-					status: NotificationStatus.ERROR
-				});
-				error += 1;
-			}
-			console.log(err,data);}
+		const format = /^[a-zA-Z0-9]*$/;
+		if(!format.test(username) || username.length > 30 || username.length < 3){
+			queueNotification({
+				header: 'Error',
+				message: messages.USERNAME_INVALID_ERROR,
+				status: NotificationStatus.ERROR
+			});
+			error += 1;
+		}
 
 		for (let i = 0; i < nameBlacklist.length; i++) {
 			if (username.toLowerCase().includes(nameBlacklist[i])){
@@ -91,16 +90,6 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				});
 				error += 1;
 			}
-		}
-
-		const format = /^[a-zA-Z0-9]*$/;
-		if(!format.test(username) || username.length > 30 || username.length < 3){
-			queueNotification({
-				header: 'Error',
-				message: messages.USERNAME_INVALID_ERROR,
-				status: NotificationStatus.ERROR
-			});
-			error += 1;
 		}
 
 		return error === 0;
@@ -145,7 +134,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		if(!validateUserName(username)) return ;
 
 		setLoading(true);
-		const { data , error } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addProfile', {
+		const { data , error } = await nextApiClientFetch<IAddProfileResponse>( 'api/v1/auth/actions/addProfile', {
 			badges: JSON.stringify(badges || []),
 			bio: bio,
 			image: image,
@@ -159,7 +148,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			console.error('Error updating profile: ', error);
 			queueNotification({
 				header: 'Error!',
-				message: 'Your profile was not updated.',
+				message: error || 'Your profile was not updated.',
 				status: NotificationStatus.ERROR
 			});
 			setError(error || 'Error updating profile');

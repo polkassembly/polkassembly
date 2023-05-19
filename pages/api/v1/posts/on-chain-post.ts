@@ -304,7 +304,7 @@ const getAndSetNewData = async (params: IParams) => {
 	return newData;
 };
 
-export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>, postDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>): Promise<any[]> {
+export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>, postDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>, network: string, proposalType: string): Promise<any[]> {
 	const commentsPromise = commentsSnapshot.docs.map(async (doc) => {
 		if (doc && doc.exists) {
 			const data = doc.data();
@@ -321,6 +321,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				proposer: '',
 				replies: [] as any[],
 				sentiment:data.sentiment || 0,
+				spam_users_count: 0,
 				updated_at: getUpdatedAt(data),
 				user_id: data.user_id || data.user_id,
 				username: data.username
@@ -415,9 +416,13 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 	}, [] as any[]);
 
 	const idsSet = new Set<number>();
+	const commentIds: string[] = [];
 	comments.forEach((comment) => {
 		if (comment) {
-			const { user_id } = comment;
+			const { user_id, id } = comment;
+			if (id) {
+				commentIds.push(id);
+			}
 			if (typeof user_id === 'number') {
 				idsSet.add(user_id);
 			} else {
@@ -462,6 +467,46 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 							return {
 								...v,
 								proposer: data.address
+							};
+						}
+						return v;
+					});
+				}
+			});
+		}
+	}
+
+	if (commentIds.length > 0) {
+		const newIdsLen = commentIds.length;
+		let lastIndex = 0;
+		for (let i = 0; i < newIdsLen; i+=30) {
+			lastIndex = i;
+			const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', commentIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+			reportsQuery.docs.map((doc) => {
+				if (doc && doc.exists) {
+					const data = doc.data();
+					comments = comments.map((v) => {
+						if (v && v.id == data.content_id) {
+							return {
+								...v,
+								spam_users_count: checkReportThreshold(Number(v.spam_users_count) + 1)
+							};
+						}
+						return v;
+					});
+				}
+			});
+		}
+		if (lastIndex <= newIdsLen) {
+			const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', commentIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+			reportsQuery.docs.map((doc) => {
+				if (doc && doc.exists) {
+					const data = doc.data();
+					comments = comments.map((v) => {
+						if (v && v.id == data.content_id) {
+							return {
+								...v,
+								spam_users_count: checkReportThreshold(Number(v.spam_users_count) + 1)
 							};
 						}
 						return v;
@@ -769,14 +814,14 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		// Comments
 		const commentsSnapshot = await postDocRef.collection('comments').get();
-		post.comments = await getComments(commentsSnapshot, postDocRef);
+		post.comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
 
 		// Post Reactions
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 		post.post_reactions = getReactions(postReactionsQuerySnapshot);
 
 		// Check if it is a spam or not
-		post.spam_users_count = await getSpamUsersCount(network, proposalType, (proposalType === ProposalType.TIPS? strPostId: numPostId));
+		post.spam_users_count = await getSpamUsersCount(network, proposalType, (proposalType === ProposalType.TIPS? strPostId: numPostId), 'post');
 
 		if (!post.content || post.content?.trim().length === 0) {
 			const proposer = post.proposer;
@@ -805,8 +850,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 	}
 }
 
-export const getSpamUsersCount = async (network: string, proposalType: any, postId: string | number) => {
-	const countQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', proposalType).where('content_id', '==', postId).count().get();
+export const getSpamUsersCount = async (network: string, proposalType: any, postId: string | number, type: 'post' | 'comment') => {
+	const countQuery = await networkDocRef(network).collection('reports').where('type', '==', type).where('proposal_type', '==', proposalType).where('content_id', '==', postId).count().get();
 	const data = countQuery.data();
 	const totalUsers = data.count || 0;
 
@@ -822,7 +867,7 @@ export const checkReportThreshold = (totalUsers?: number) => {
 		}
 		return 0;
 	}
-	return totalUsers;
+	return totalUsers || 0;
 };
 
 // expects optional proposalType and postId of proposal

@@ -61,7 +61,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 
 		// Comments
 		const commentsSnapshot = await postDocRef.collection('comments').get();
-		const comments = await getComments(commentsSnapshot, postDocRef);
+		const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
 
 		// Post Data
 		const data = discussionPostDoc.data();
@@ -82,7 +82,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 
 		const topic = data?.topic;
 		const topic_id = data?.topic_id;
-		const spam_users_count = await getSpamUsersCount(network, proposalType, Number(postId));
+		const spam_users_count = await getSpamUsersCount(network, proposalType, Number(postId), 'post');
 		const tags = data?.tags || [];
 		const gov_type = data?.gov_type;
 		const history = data?.history ? data?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];

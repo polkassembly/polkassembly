@@ -198,6 +198,42 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setLockedBalance(balance);
 	};
 
+	const onAyeValueChange = (balance: BN) => {
+		if(balance && balance.eq(ZERO_BN)) {
+			setBalanceErr('');
+		}
+		else if(balance && availableBalance.lt(balance)){
+			setBalanceErr('Insufficient balance.');
+		}else{
+			setBalanceErr('');
+		}
+		setAyeVoteValue(balance);
+	};
+
+	const onNayValueChange = (balance: BN) => {
+		if(balance && balance.eq(ZERO_BN)) {
+			setBalanceErr('');
+		}
+		else if(balance && availableBalance.lt(balance)){
+			setBalanceErr('Insufficient balance.');
+		}else{
+			setBalanceErr('');
+		}
+		setNayVoteValue(balance);
+	};
+
+	const onAbstainValueChange = (balance: BN) => {
+		if(balance && balance.eq(ZERO_BN)) {
+			setBalanceErr('');
+		}
+		else if(balance && availableBalance.lt(balance)){
+			setBalanceErr('Insufficient balance.');
+		}else{
+			setBalanceErr('');
+		}
+		setAbstainVoteValue(balance);
+	};
+
 	const checkIfFellowshipMember = async () => {
 		if (!api || !apiReady) {
 			return;
@@ -281,6 +317,16 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			setBalanceErr('Insufficient balance.');
 			return;
 		}
+		if(ayeVoteValue && availableBalance.lt(ayeVoteValue) || nayVoteValue && availableBalance.lt(nayVoteValue) || abstainVoteValue && availableBalance.lt(abstainVoteValue) ) {
+			setBalanceErr('Insufficient balance.');
+			return;
+		}
+
+		const totalVoteValue = ayeVoteValue?.add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN);
+		if (totalVoteValue?.gt(availableBalance)) {
+			setBalanceErr('Insufficient balance.');
+			return;
+		}
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
 
@@ -289,18 +335,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if(proposalType === ProposalType.OPEN_GOV){
 
 			if(vote === EVoteDecisionType.AYE ) {
-				try {
-					voteTx = api.tx.convictionVoting.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } });
-				} catch (e) {
-					console.log(e);
-				}
+
+				voteTx = api.tx.convictionVoting.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } });
+
 			}
 			else if(vote === EVoteDecisionType.NAY ) {
-				try {
-					voteTx = api.tx.convictionVoting.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:false, conviction } } });
-				} catch (e) {
-					console.log(e);
-				}
+
+				voteTx = api.tx.convictionVoting.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:false, conviction } } });
+
 			}
 
 			else if(vote === EVoteDecisionType.SPLIT) {
@@ -362,6 +404,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						status: NotificationStatus.SUCCESS
 					});
 					setLastVote(vote);
+					closeModal();
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
 				} else {
 					if (status.isBroadcast){
@@ -389,6 +432,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						status: NotificationStatus.SUCCESS
 					});
 					setLastVote(vote);
+					closeModal();
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
 				} else {
 					if (status.isBroadcast){
@@ -469,7 +513,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								}
 							</div>
 
-							{balanceErr.length > 0 && <div className='-mt-2 text-sm text-red-500'>{balanceErr}</div>}
 							{
 								accounts.length > 0 ?
 									<AccountSelectionForm
@@ -479,12 +522,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										withBalance
 										onAccountChange={onAccountChange}
 										onBalanceChange={handleOnBalanceChange}
-										className={`${poppins.variable} ${poppins.className} text-sidebarBlue mb-[21px]`}
+										className={`${poppins.variable} ${poppins.className} text-sidebarBlue mb-[21px] `}
+										inputClassName='bg-[#F6F7F9] h-[40px] rounded-[4px]'
 									/>
 									: !wallet? <FilteredError text='Please select a wallet.' />: null
 							}
 							{accounts.length===0 && wallet && <FilteredError text='No addresses found in the address selection tab.' />}
-
+							{balanceErr.length > 0 && <div className='-mt-2 -mb-3 text-sm text-red-500'>{balanceErr}</div>}
 							{/* aye nye split abstain buttons */}
 							<h3 className='inner-headings mt-[24px] mb-0'>Choose your vote</h3>
 							<Segmented
@@ -536,7 +580,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										label={'Aye vote value'}
 										helpText={'Amount of you are willing to lock for this vote.'}
 										placeholder={'Add balance'}
-										onChange={(value) => {setAyeVoteValue(value);}}
+										onChange={onAyeValueChange}
 										className='text-sm font-medium'
 										formItemName={'ayeVote'}
 									/>
@@ -544,7 +588,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									<BalanceInput
 										label={'Nay vote value'}
 										placeholder={'Add balance'}
-										onChange={(value) => {setNayVoteValue(value);}}
+										onChange={onNayValueChange}
 										className='text-sm font-medium'
 										formItemName={'nayVote'}
 									/>
@@ -567,7 +611,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									<BalanceInput
 										label={'Abstain vote value'}
 										placeholder={'Add balance'}
-										onChange={(value) => setAbstainVoteValue(value)}
+										onChange={onAbstainValueChange}
 										className='text-sm font-medium'
 										formItemName={'abstainVote'}
 									/>
@@ -575,7 +619,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									<BalanceInput
 										label={'Aye vote value'}
 										placeholder={'Add balance'}
-										onChange={(value) => setAyeVoteValue(value) }
+										onChange={onAyeValueChange}
 										className='text-sm font-medium'
 										formItemName={'ayeVote'}
 									/>
@@ -583,7 +627,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									<BalanceInput
 										label={'Nay vote value'}
 										placeholder={'Add balance'}
-										onChange={(value) => setNayVoteValue(value)}
+										onChange={onNayValueChange}
 										className='text-sm font-medium'
 										formItemName={'nayVote'}
 									/>

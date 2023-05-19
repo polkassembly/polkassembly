@@ -82,7 +82,7 @@ const AddressDropdown = ({
 				}
 			}}
 		>
-			<div className="flex justify-between items-center">
+			<div className="flex justify-between items-center ">
 
 				<Address
 					disableAddressClick={true}
@@ -90,7 +90,7 @@ const AddressDropdown = ({
 					address={defaultAddress || selectedAddress}
 				/>
 				<span>
-					<DownIcon />
+					<DownIcon className='mr-2'/>
 				</span>
 			</div>
 		</Dropdown>

@@ -370,7 +370,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 							{targetErr.length > 0 && <div className='-mt-1 text-sm text-red-500'>{targetErr}</div>}
 							{addressAlert && <Alert className='mb mt-2' showIcon message='The substrate address has been changed to Kusama address.'/> }
 
-							<div className='flex justify-between items-center mt-6 cursor-pointer -mb-1 text-[#485F7D]' >
+							<div className='flex justify-between items-center mt-6 cursor-pointer -mb-6 text-[#485F7D]' >
                 Balance<span onClick={() => {
 									setBnBalance(availableBalance);
 									form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));

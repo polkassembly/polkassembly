@@ -701,10 +701,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									:
 									<GovSidebarCard className='flex items-center'>
 
-										You Voted: { lastVote == 'aye' ? <LikeFilled className='text-aye_green ml-2' /> : ''}
-										{ lastVote == 'nay' ? <DislikeFilled className='text-nay_red ml-2' /> : ''}
-										{ lastVote == 'split' ? <SplitGray className=' ml-2 mr-1' /> : ''}
-										{ lastVote == 'abstain' ? <AbstainGray className=' ml-2 mr-1' /> : ''}
+										You Voted: { lastVote == 'aye' && <LikeFilled className='text-aye_green ml-2' />}
+										{ lastVote == 'nay' && <DislikeFilled className='text-nay_red ml-2' />}
+										{ lastVote == 'split' && <SplitGray className=' ml-2 mr-1' />}
+										{ lastVote == 'abstain' && <AbstainGray className=' ml-2 mr-1' />}
 										<span className={`last-vote-text ${lastVote == 'aye' ? 'green-text' : 'red-text'}`}>{lastVote}</span>
 
 									</GovSidebarCard>

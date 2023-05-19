@@ -268,9 +268,9 @@ background-color: white !important;
 }
 
 .create-post .ant-dropdown-menu{
-border-radius: 5px !important;
-margin-bottom: 5px;
-padding: 5px;
+  border-radius: 5px !important;
+  margin-bottom: 5px;
+  padding: 5px;
 }
 .create-post .ant-dropdown-menu .ant-dropdown-menu-item{
   padding: 7px 6px !important;
@@ -287,28 +287,28 @@ padding: 5px;
 
 .cast-vote-heading{
 
-font-style: normal !important;
-font-weight: 600 !important;
-font-size: 20px !important;
-line-height: 24px !important;
-letter-spacing: 0.0015em !important;
-color: #243A57 !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  font-size: 20px !important;
+  line-height: 24px !important;
+  letter-spacing: 0.0015em !important;
+  color: #243A57 !important;
 }
 .inner-headings{
-height: 21px;
-font-style: normal;
-font-weight: 400;
-font-size: 14px;
-line-height: 21px;
-letter-spacing: 0.0025em;
-color: #485F7D;
+  height: 21px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: 0.0025em;
+  color: #485F7D;
   }
 
 .delegate .ant-modal-content {
-background: white;
-box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.06);
-border-radius: 14px !important;
-color: #243A57;
+  background: white;
+  box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.06);
+  border-radius: 14px !important;
+  color: #243A57;
 }
 .undelegate .ant-modal-content {
   background: linear-gradient(0deg, #E5007A, #E5007A), #FFFFFF !important;

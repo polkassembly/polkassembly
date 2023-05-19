@@ -98,39 +98,39 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 };
 export default styled(BalanceInput)`
 .placeholderColor .ant-input-number-group .ant-input-number-group-addon{
-background:#E5007A;
-color:white;
-font-size:12px;
-border: 1px solid #E5007A; 
+	background:#E5007A;
+	color:white;
+	font-size:12px;
+	border: 1px solid #E5007A; 
 }
 .placeholderColor .ant-input-number .ant-input-number-input{
-color:#7c899b !important;
+	color:#7c899b !important;
 }
 .ant-input-number-handler-up{
-display:none !important;
+	display:none !important;
 }
-.ant-input-number-handler-down{
-display:none !important;
+	.ant-input-number-handler-down{
+	display:none !important;
 }
 .ant-input-number-group-addon{
-border-radius:4px !important;
-position:relative;
-right:2px;
+	border-radius:4px !important;
+	position:relative;
+	right:2px;
 }
 .ant-input-number{
-border: 1px solid #D2D8E0 ;
+	border: 1px solid #D2D8E0 ;
 }
 
 .ant-input-number-focused{
-border: 1px solid #E5007A ;
+	border: 1px solid #E5007A ;
 }
 
 input::placeholder {
-color: #576D8B !important;
-font-weight: 400 !important;
-font-size: 14px !important;
-line-height: 21px !important;
-letter-spacing: 0.0025em !important;
+	color: #576D8B !important;
+	font-weight: 400 !important;
+	font-size: 14px !important;
+	line-height: 21px !important;
+	letter-spacing: 0.0025em !important;
 }
 `;
 

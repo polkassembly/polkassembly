@@ -15,16 +15,17 @@ interface Props{
 	onAccountChange: (address: string) => void
 	title?: string
 	withBalance?: boolean
+	isBalanceUpdated?: boolean
 	onBalanceChange?: (balance: string) => void
-  className?: string;
-  isDisabled?: boolean;
-  inputClassName?: string;
-  isSwitchButton?: boolean,
+	className?: string;
+	isDisabled?: boolean;
+	inputClassName?: string;
+	isSwitchButton?: boolean,
 	setSwitchModalOpen?: (pre: boolean) => void;
-  withoutInfo?: boolean;
+	withoutInfo?: boolean;
 }
 
-const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo }: Props) =>
+const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isBalanceUpdated, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo }: Props) =>
 	<article className={`w-full flex flex-col ${className}`}>
 		{title && <div className='flex items-center mb-[2px] gap-2'>
 			<h3 className='text-sm mb-0 font-normal'>{title}</h3>
@@ -40,7 +41,7 @@ const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withB
 			setSwitchModalOpen={setSwitchModalOpen}
 		/>
 		{address && withBalance &&
-			<Balance address={address} onChange={onBalanceChange} />
+			<Balance address={address} onChange={onBalanceChange} isBalanceUpdated={isBalanceUpdated} />
 		}
 	</article>;
 

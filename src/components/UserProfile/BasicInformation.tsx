@@ -129,7 +129,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 						/>
 					</article>
 					<article className='text-sm cursor-pointer mt-4 text-[#485F7D]' >
-						<label className='text-sm text-[#485F7D] font-medium mb-0'>User Name</label>
+						<label className='text-sm text-[#485F7D] font-medium mb-0'>Username</label>
 						<Input
 							className='rounded-[4px] border border-solid border-[#d2d8e0] text-[#7788a0] h-10 text-sm px-[14px] py-1'
 							placeholder='eg. John'

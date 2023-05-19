@@ -30,7 +30,8 @@ export default function checkGov2Route(pathname: string, query?: ParsedUrlQuery,
 	}
 	if(prevRoute && gov2Routes.includes(prevRoute.split('/')[1]) && pathname.split('/')[1] === 'discussions'){
 		return true;
-	}else if(prevRoute && gov2Routes.includes(prevRoute.split('/')[1]) && pathname.split('/')[1] === 'post'){
+	}
+	else if(prevRoute && gov2Routes.includes(prevRoute.split('/')[1]) && pathname.split('/')[1] === 'post'){
 		return true;
 	}
 	else if(!prevRoute && pathname.split('/')[1] === 'discussions'){ return false; }

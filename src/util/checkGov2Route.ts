@@ -21,15 +21,19 @@ for (const trackName of Object.keys(networkTrackInfo.kusama)) {
 
 export default function checkGov2Route(pathname: string, query?: ParsedUrlQuery, prevRoute?: string): boolean {
 
+	console.log(prevRoute,'pre');
 	if(pathname === '/referenda'){
 		return false;
 	}
 	if (query && query.membersType && ['fellowship', 'whitelist'].includes(String(query.membersType))) {
 		return true;
 	}
-	if(prevRoute && gov2Routes.includes(prevRoute.split('/')[1]) && pathname.split('/')[1] === 'discussions' || pathname.split('/')[1] === 'post'){
+	if(prevRoute && gov2Routes.includes(prevRoute.split('/')[1]) && pathname.split('/')[1] === 'discussions'){
 		return true;
-	}else if(!prevRoute && pathname.split('/')[1] === 'discussions'){ return false; }
+	}else if(prevRoute && gov2Routes.includes(prevRoute.split('/')[1]) && pathname.split('/')[1] === 'post'){
+		return true;
+	}
+	else if(!prevRoute && pathname.split('/')[1] === 'discussions'){ return false; }
 
 	return gov2Routes.includes(pathname.split('/')[1]);
 }

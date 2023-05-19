@@ -23,11 +23,15 @@ import TrackerButton from './ActionsBar/TrackerButton';
 import DiscussionLink from './DiscussionLink';
 import EditablePostContent from './EditablePostContent';
 import PostHeading from './PostHeading';
-import PostDescription from './Tabs/PostDescription';
 import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
 import SpamAlert from '~src/ui-components/SpamAlert';
+
+const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
 
 const GovernanceSideBar = dynamic(() => import('./GovernanceSideBar'), {
 	loading: () => <Skeleton active /> ,

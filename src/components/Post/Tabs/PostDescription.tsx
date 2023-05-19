@@ -40,6 +40,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp } = props;
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
 	const [showMore, setShowMore] = useState<boolean>(false);
+	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 	const [numOfLines, setNumOfLines] = useState<number | null>(null);
 
@@ -64,8 +65,8 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 
 	return (
 		<div className={`${className} mt-4`}>
-			{content && <Markdown className={`${numOfLines && !showMore && 'clamped'} post-content`} md={content} />}
-			{numOfLines && numOfLines > 6 &&<p className='text-pink_primary py-2 cursor-pointer' onClick={() => setShowMore(!showMore)}>
+			{content && <Markdown className={`${numOfLines && !showMore && !isSafari && 'clamped'} post-content`} md={content} />}
+			{numOfLines && numOfLines > 6 && !isSafari &&<p className='text-pink_primary py-2 cursor-pointer' onClick={() => setShowMore(!showMore)}>
 				{showMore ? 'Show less' : 'Show more'}
 			</p>}
 

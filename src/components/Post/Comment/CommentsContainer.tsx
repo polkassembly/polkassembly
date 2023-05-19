@@ -169,11 +169,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 		const totalCount = againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount;
 
-		setSentimentsPercentage({ against: Number((( againstCount / totalCount * 100)).toFixed(2)) || 0,
-			for: Number((( forCount / totalCount * 100)).toFixed(2)) || 0,
-			neutral: Number((( neutralCount / totalCount * 100)).toFixed(2)) || 0,
-			slightlyAgainst: Number((( slightlyAgainstCount / totalCount * 100)).toFixed(2)) || 0,
-			slightlyFor: Number((( slightlyForCount / totalCount * 100)).toFixed(2)) || 0 });
+		setSentimentsPercentage({ against: Number(Math.round( againstCount / totalCount * 100)) || 0,
+			for: Number(Math.round( forCount / totalCount * 100)) || 0,
+			neutral: Number(Math.round( neutralCount / totalCount * 100)) || 0,
+			slightlyAgainst: Number(Math.round( slightlyAgainstCount / totalCount * 100)) || 0,
+			slightlyFor: Number(Math.round( slightlyForCount / totalCount * 100)) || 0 });
 
 		comments?.length === 0 ? setShowOverallSentiment(false) : setShowOverallSentiment(true) ;
 		if(againstCount === 0 && slightlyAgainstCount === 0 && neutralCount === 0 && slightlyForCount === 0 && forCount === 0 ){ setShowOverallSentiment(false); } else{ setShowOverallSentiment(true); }

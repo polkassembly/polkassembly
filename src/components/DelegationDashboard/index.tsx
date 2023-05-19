@@ -98,8 +98,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	};
 
 	const getData = async() => {
-		const { data, error } = await nextApiClientFetch('api/v1/auth/data/userProfileWithUsername',
-			{ username:userDetails.username?.toString() });
+		const { data, error } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${userDetails?.username?.toString()}`);
 
 		if(data){ setProfileDetails({ ...profileDetails, ...data });}
 		else{

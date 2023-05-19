@@ -53,7 +53,7 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 
 		<BackToListingView postCategory={PostCategory.DISCUSSION} />
 
-		<div className='mt-6'>
+		<div className='mt-6' >
 			<Post post={post} proposalType={ProposalType.DISCUSSIONS} />
 		</div>
 	</>);

@@ -3,14 +3,17 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import 'react-mde/lib/styles/css/react-mde-all.css';
-
-import React from 'react';
+import React, { useCallback } from 'react';
 import ReactMde, { Suggestion } from 'react-mde';
 import styled from 'styled-components';
 import Markdown from './Markdown';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import { useUserDetailsContext } from '~src/context';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
+import { useState } from 'react';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+
+import debounce from 'lodash/debounce';
 
 const StyledTextArea = styled.div`
 
@@ -214,6 +217,64 @@ function MarkdownEditor(props: Props): React.ReactElement {
 		return Boolean(url);
 	};
 
+	const [input, setInput] = useState<string>(props.value || '');
+	const [validUsers , setValidUsers] = useState<string[]>([]);
+	const [replacedUsernames,setReplacedUsernames]  = useState<string[]>([]);
+
+	async function getUserData(usernameQuery: string, content: string) {
+		let inputData = content;
+		const res = await nextApiClientFetch(
+			`api/v1/auth/data/userProfileWithUsername?username=${usernameQuery}`
+		);
+		if (res.data) {
+
+			if (!replacedUsernames.includes(usernameQuery)) {
+				const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
+
+				inputData = inputData.replace(
+					regex,
+					`[@${usernameQuery}](${global.window.location.origin}/user/${usernameQuery})`
+				);
+				setReplacedUsernames([...replacedUsernames,usernameQuery]);
+			}
+			setInput(inputData);
+			setValidUsers([...validUsers,usernameQuery]);
+		}
+
+		if (props.onChange) {
+			props.onChange(inputData);
+		}
+	}
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const debouncedAPIcall = useCallback(debounce(getUserData, 1000) , []);
+
+	const onChange = async (content:string) => {
+		const inputValue = content;
+		setInput(inputValue);
+		const matches = inputValue.match(/(?<!\[)@\w+/g);
+		if (matches && matches.length > 0) {
+			const usernameQuery = matches[matches.length - 1].substring(1);
+			if (!validUsers.includes(usernameQuery)) {
+				debouncedAPIcall(usernameQuery,content);
+			}
+			else if(validUsers.includes(usernameQuery)){
+				let inputData = content;
+				const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
+
+				inputData = inputData.replace(
+					regex,
+					`[@${usernameQuery}](${global.window.location.origin}/user/${usernameQuery})`
+				);
+				setInput(inputData);
+			}
+		}
+		if (props.onChange) {
+			return props?.onChange(content);
+		}
+		return content;
+	};
+
 	return (
 		<StyledTextArea className='container'>
 			<ReactMde
@@ -229,6 +290,8 @@ function MarkdownEditor(props: Props): React.ReactElement {
 				paste={{
 					saveImage: handleSaveImage
 				}}
+				onChange={ onChange }
+				value={input}
 			/>
 			<HelperTooltip className='ml-2' text='Attach images by dragging & dropping, selecting or pasting them.' />
 		</StyledTextArea>

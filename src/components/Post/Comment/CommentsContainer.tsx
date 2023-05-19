@@ -115,14 +115,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					<PostCommentForm className='mb-8' />
 				}
 			</>
-				:<div className="p-3 mt-4 mb-8 bg-[#FFF7FB] border-none rounded-lg shadow-md">
-					<div className="flex flex-wrap justify-center items-center">
-						<Image src="/assets/icons/alert-login.svg" width={20} height={20} alt={''} />
-						<div className="ml-1 mt-3">
-							<p className="text-sm leading-5 font-medium text-[#243A57]">
+				:<div className="mt-4 mb-8 bg-[#E6F4FF] rounded-[6px] shadow-md h-12 flex justify-center items-center gap-3">
+					<Image src="/assets/icons/alert-login.svg" width={20} height={20} alt={''} />
+					<div className="text-sm font-medium text-[#243A57]">
 									Please <span className="cursor-pointer text-pink_primary" onClick={() => {setOpenLoginModal(true);}}>Log In</span> to comment
-							</p>
-						</div>
 					</div>
 				</div>
 			}
@@ -130,7 +126,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			<div  className={'block xl:grid grid-cols-12'}>
 				{
 					!!comments?.length && timelines.length > 1 &&
-					<div className='hidden h-screen xl:block col-start-1 col-end-2 min-w-[100px] -ml-2 sticky top-[10%] '>
+					<div className='hidden h-screen xl:block col-start-1 col-end-2 min-w-[100px] sticky top-[10%] '>
 						<Anchor targetOffset={targetOffset} className='h-full min-w-[140px]' onClick={handleTimelineClick}>
 							{timelines.map(({ commentsCount, date, firstCommentId, id, status }) => {
 								return (
@@ -139,7 +135,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											key={id}
 											href={`#${firstCommentId}`}
 											title={
-												<div className='flex flex-col'>
+												<div className='flex flex-col text-[#485F7D]'>
 													<div className='text-xs mb-1'>{date.format('MMM Do')}</div>
 													<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{status}</div>
 													<div className='text-xs'>({commentsCount})</div>
@@ -147,7 +143,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											}
 										/>
 										:
-										<div key={id} className='flex flex-col ml-5 cursor-default'>
+										<div key={id} className='flex flex-col ml-5 cursor-default text-[#485F7D]'>
 											<div className='text-xs mb-1'>{date.format('MMM Do')}</div>
 											<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{status}</div>
 											<div className='text-xs'>({commentsCount})</div>

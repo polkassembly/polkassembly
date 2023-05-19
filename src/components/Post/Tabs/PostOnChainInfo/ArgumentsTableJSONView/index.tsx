@@ -68,9 +68,6 @@ const convertAnyHexToASCII = (obj: any, network: string): any => {
 		}
 	} else if (Array.isArray(obj)) {
 		return obj?.map((v) => {
-			if (typeof v === 'string') {
-				return v;
-			}
 			return convertAnyHexToASCII(v, network);
 		});
 	} if (typeof obj === 'object') {

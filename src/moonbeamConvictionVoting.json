@@ -1,5 +1,279 @@
 [
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint16",
+        "name": "trackId",
+        "type": "uint16"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "delegatedAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "conviction",
+        "type": "uint8"
+      }
+    ],
+    "name": "Delegated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint16",
+        "name": "trackId",
+        "type": "uint16"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      }
+    ],
+    "name": "Undelegated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint16",
+        "name": "trackId",
+        "type": "uint16"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      }
+    ],
+    "name": "Unlocked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint32",
+        "name": "pollIndex",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "voter",
+        "type": "address"
+      }
+    ],
+    "name": "VoteRemoved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint32",
+        "name": "pollIndex",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "trackId",
+        "type": "uint16"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "voter",
+        "type": "address"
+      }
+    ],
+    "name": "VoteRemovedForTrack",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint32",
+        "name": "pollIndex",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "trackId",
+        "type": "uint16"
+      }
+    ],
+    "name": "VoteRemovedOther",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint32",
+        "name": "pollIndex",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "voter",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "aye",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "nay",
+        "type": "uint256"
+      }
+    ],
+    "name": "VoteSplit",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint32",
+        "name": "pollIndex",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "voter",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "aye",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "nay",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "abstain",
+        "type": "uint256"
+      }
+    ],
+    "name": "VoteSplitAbstained",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint32",
+        "name": "pollIndex",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "voter",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "aye",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "voteAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "conviction",
+        "type": "uint8"
+      }
+    ],
+    "name": "Voted",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "who", "type": "address" }
+    ],
+    "name": "classLocksFor",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "uint16", "name": "trackId", "type": "uint16" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "internalType": "struct ConvictionVoting.ClassLock[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "uint16", "name": "trackId", "type": "uint16" },
       {
@@ -35,6 +309,16 @@
       { "internalType": "uint32", "name": "pollIndex", "type": "uint32" }
     ],
     "name": "removeVote",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint32", "name": "pollIndex", "type": "uint32" },
+      { "internalType": "uint16", "name": "trackId", "type": "uint16" }
+    ],
+    "name": "removeVoteForTrack",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -80,6 +364,29 @@
   {
     "inputs": [
       { "internalType": "uint32", "name": "pollIndex", "type": "uint32" },
+      { "internalType": "uint256", "name": "aye", "type": "uint256" },
+      { "internalType": "uint256", "name": "nay", "type": "uint256" }
+    ],
+    "name": "voteSplit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint32", "name": "pollIndex", "type": "uint32" },
+      { "internalType": "uint256", "name": "aye", "type": "uint256" },
+      { "internalType": "uint256", "name": "nay", "type": "uint256" },
+      { "internalType": "uint256", "name": "abstain", "type": "uint256" }
+    ],
+    "name": "voteSplitAbstain",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint32", "name": "pollIndex", "type": "uint32" },
       {
         "internalType": "uint256",
         "name": "voteAmount",
@@ -95,6 +402,218 @@
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "who", "type": "address" },
+      { "internalType": "uint16", "name": "trackId", "type": "uint16" }
+    ],
+    "name": "votingFor",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "bool", "name": "isCasting", "type": "bool" },
+          {
+            "internalType": "bool",
+            "name": "isDelegating",
+            "type": "bool"
+          },
+          {
+            "components": [
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "pollIndex",
+                    "type": "uint32"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isStandard",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isSplit",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isSplitAbstain",
+                        "type": "bool"
+                      },
+                      {
+                        "components": [
+                          {
+                            "components": [
+                              {
+                                "internalType": "bool",
+                                "name": "aye",
+                                "type": "bool"
+                              },
+                              {
+                                "internalType": "enum ConvictionVoting.Conviction",
+                                "name": "conviction",
+                                "type": "uint8"
+                              }
+                            ],
+                            "internalType": "struct ConvictionVoting.Vote",
+                            "name": "vote",
+                            "type": "tuple"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "balance",
+                            "type": "uint256"
+                          }
+                        ],
+                        "internalType": "struct ConvictionVoting.StandardVote",
+                        "name": "standard",
+                        "type": "tuple"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "uint256",
+                            "name": "aye",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "nay",
+                            "type": "uint256"
+                          }
+                        ],
+                        "internalType": "struct ConvictionVoting.SplitVote",
+                        "name": "split",
+                        "type": "tuple"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "uint256",
+                            "name": "aye",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "nay",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "abstain",
+                            "type": "uint256"
+                          }
+                        ],
+                        "internalType": "struct ConvictionVoting.SplitAbstainVote",
+                        "name": "splitAbstain",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct ConvictionVoting.AccountVote",
+                    "name": "accountVote",
+                    "type": "tuple"
+                  }
+                ],
+                "internalType": "struct ConvictionVoting.PollAccountVote[]",
+                "name": "votes",
+                "type": "tuple[]"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "votes",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "capital",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct ConvictionVoting.Delegations",
+                "name": "delegations",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "balance",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct ConvictionVoting.PriorLock",
+                "name": "prior",
+                "type": "tuple"
+              }
+            ],
+            "internalType": "struct ConvictionVoting.Casting",
+            "name": "casting",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "balance",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "target",
+                "type": "address"
+              },
+              {
+                "internalType": "enum ConvictionVoting.Conviction",
+                "name": "conviction",
+                "type": "uint8"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "votes",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "capital",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct ConvictionVoting.Delegations",
+                "name": "delegations",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "balance",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct ConvictionVoting.PriorLock",
+                "name": "prior",
+                "type": "tuple"
+              }
+            ],
+            "internalType": "struct ConvictionVoting.Delegating",
+            "name": "delegating",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct ConvictionVoting.VotingFor",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   }
 ]
-

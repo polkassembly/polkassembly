@@ -6,7 +6,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Form, MenuProps, Tooltip } from 'antd';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
-import React, { FC, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, useContext, useRef, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
@@ -48,6 +48,7 @@ interface IEditableCommentContentProps {
 	setSentiment: (pre:number)=>void;
 	prevSentiment: number;
 	isSubsquareUser: boolean;
+	userName?:string;
 }
 
 const editCommentKey = (commentId: string) => `comment:${commentId}:${global.window.location.href}`;
@@ -57,7 +58,7 @@ const replyKey = (commentId: string) => `reply:${commentId}:${global.window.loca
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { network } = useContext(NetworkContext);
 
-	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment } = props;
+	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment ,userName } = props;
 	const { setPostData, postData: { postType } } = usePostDataContext();
 	const { asPath } = useRouter();
 
@@ -70,24 +71,16 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
-	useEffect(() => {
-		const localContent = global.window.localStorage.getItem(editCommentKey(commentId)) || '';
-		form.setFieldValue('content', localContent || content || ''); //initialValues is not working
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
 	const [replyForm] = Form.useForm();
+
 	const currentContent=useRef<string>(content);
 
 	const [isReplying, setIsReplying] = useState(false);
+
 	const toggleReply = () => {
-		if (!isReplying) {
-			const localContent = global.window.localStorage.getItem(replyKey(commentId)) || '';
-			replyForm.setFieldValue('content', localContent);
-		} else {
-			global.window.localStorage.removeItem(replyKey(commentId));
-			replyForm.setFieldValue('content', '');
-		}
+		const usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
+		replyForm.setFieldValue('content', usernameContent);
+		global.window.localStorage.setItem(replyKey(commentId), usernameContent);
 		setIsReplying(!isReplying);
 	};
 
@@ -257,7 +250,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 		if (deleteCommentError || !data) {
 			console.error('Error deleting comment: ', deleteCommentError);
-
 			queueNotification({
 				header: 'Error!',
 				message: deleteCommentError || 'There was an error in deleting your comment.',

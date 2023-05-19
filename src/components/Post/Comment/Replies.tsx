@@ -14,7 +14,7 @@ interface Props{
 }
 
 const Replies = ({ className, commentId, repliesArr }: Props) => {
-	const [showReplies, setShowReplies] = useState<boolean>(false);
+	const [showReplies, setShowReplies] = useState<boolean>(true);
 	const toggleShowReplies = () => setShowReplies(!showReplies);
 	return (
 		<div className={className}>

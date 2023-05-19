@@ -305,7 +305,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				<div className={`col-start-1 ${timelines.length > 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
 					{ !!comments?.length &&
 						<>
-							<Comments disableEdit={isGrantClosed} comments={comments} />
+							<Comments disableEdit={isGrantClosed} comments={filteredComments} />
 						</>
 					}
 					{filteredComments.length === 0 && comments.length > 0 && <div className='mt-4 mb-4'>

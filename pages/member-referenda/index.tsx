@@ -47,7 +47,7 @@ const FellowshipAdmin: FC<IFellowshipReferendumProps> = (props) => {
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return <PostEmptyState />;
 	const { posts } = data;
-	console.log('posts', posts);
+
 	const fellowshipReferendumPostOrigins: string[] = [];
 	if (networkTrackInfo?.[network]) {
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {

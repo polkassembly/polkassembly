@@ -4,7 +4,7 @@
 
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import BN from 'bn.js';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { LoadingStatusType, NotificationStatus } from 'src/types';
@@ -12,20 +12,21 @@ import { Button, Divider, Form } from 'antd';
 import Loader from 'src/ui-components/Loader';
 import Web3 from 'web3';
 
-import { ApiContext } from '../../context/ApiContext';
 import { chainProperties } from '../../global/networkConstants';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
 import formatBnBalance from '../../util/formatBnBalance';
 import getNetwork from '../../util/getNetwork';
-import { useNetworkContext } from '~src/context';
+import { useApiContext, useNetworkContext } from '~src/context';
 import addEthereumChain from '~src/util/addEthereumChain';
 
 const abi = require('../../moonbeamAbi.json');
 
 const currentNetwork = getNetwork();
 
-interface Props {
-	className?: string
+interface IDemocracyUnlockProps {
+	className?: string;
+	isBalanceUpdated: boolean;
+	setIsBalanceUpdated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface Vote {
@@ -37,7 +38,7 @@ interface Vote {
 
 const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
 
-const DemocracyUnlock = ({ className }: Props) => {
+const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdated, setIsBalanceUpdated }) => {
 	const { network } = useNetworkContext();
 	const [address, setAddress] = useState<string>('');
 	const [votes, setVotes] = useState<Vote[]>([]);
@@ -47,7 +48,7 @@ const DemocracyUnlock = ({ className }: Props) => {
 	const [unlocksAt, setUnlocksAt] = useState<string>('');
 	const [isAccountLoading, setIsAccountLoading] = useState(true);
 	const [canBeUnlocked, setCanBeUnlocked] = useState<boolean>(false);
-	const { api, apiReady } = useContext(ApiContext);
+	const { api, apiReady } = useApiContext();
 
 	useEffect(() => {
 		if (!accounts.length) {
@@ -122,6 +123,7 @@ const DemocracyUnlock = ({ className }: Props) => {
 		});
 
 		setLockedBalance(lockedBalance);
+		setIsBalanceUpdated((prev) => !prev);
 	};
 
 	const getAccounts = async () => {
@@ -320,6 +322,7 @@ const DemocracyUnlock = ({ className }: Props) => {
 							address={address}
 							onAccountChange={onAccountChange}
 							withBalance
+							isBalanceUpdated={isBalanceUpdated}
 						/> :
 							<span className='text-sidebarBlue'>No accounts found, Please approve request from your wallet and/or <a href="javascript:window.location.reload(true)">refresh</a> and try again! </span>
 						}

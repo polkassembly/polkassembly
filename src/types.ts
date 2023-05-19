@@ -309,6 +309,14 @@ export interface IPostTag {
   last_used_at:Date;
 }
 
+export enum ESentiments {
+Against = 1,
+SlightlyAgainst = 2,
+Neutral = 3,
+SlightlyFor = 4,
+For = 5
+}
+
 export interface CommentReply {
   user_id: number,
   content: string,

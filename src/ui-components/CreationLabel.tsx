@@ -62,7 +62,7 @@ interface ICreationLabelProps {
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-	const { className, children, created_at, text, username, defaultAddress, topic,sentiment,commentSource='polkassembly', cid } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource='polkassembly', cid } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 
 	const items : MenuProps['items']=[
@@ -84,7 +84,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					/>
 					{text}&nbsp;
 					{topic &&
-			<div className='flex items-center'> <span>in</span> &nbsp; &nbsp; <TopicTag topic={topic} className={topic} /></div>
+			<div className='flex items-center'><span>in</span> &nbsp; &nbsp; <TopicTag topic={topic} className={topic} /></div>
 					}
 					{cid ?
 						<>

@@ -160,8 +160,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 						</Space>
 						: <>
 							<div className={'description display_inline flex items-center'}>
-								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} />}
-								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[85px] flex gap-x-1 ml-0.5 ${identity ? 'pl-2' : '-ml-1'} ${textClassName}`}>
+								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} className='mr-2' />}
+								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[85px] flex gap-x-1 ${textClassName}`}>
 									{ t1 && <span className={`truncate text-navBlue ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
 									{sub && isSubVisible && <span className={'sub truncate text-navBlue'}>{sub}</span>}
 								</span>

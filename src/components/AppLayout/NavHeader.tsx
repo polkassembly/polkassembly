@@ -10,7 +10,7 @@ import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import NetworkDropdown from 'src/ui-components/NetworkDropdown';
 import checkGov2Route from 'src/util/checkGov2Route';
@@ -32,32 +32,20 @@ const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 interface Props {
 	className?: string
 	sidedrawer: boolean
+  previousRoute?: string;
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer,previousRoute } : Props) => {
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
 	const router = useRouter();
-	const { pathname, query, asPath } = router;
+	const { pathname, query } = router;
 	const { username } = currentUser;
 	const [open, setOpen] = useState(false);
-	const [previousRoute, setPreviousRoute] = useState(asPath);
+
 	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute);
 	const isClicked = useRef(false);
-
-	useEffect(() => {
-		const handleRouteChange = () => {
-			if(asPath.split('/')[1] !== 'discussions' && asPath.split('/')[1] !== 'post' ){setPreviousRoute(asPath);}
-		};
-
-		router.events.on('routeChangeStart', handleRouteChange);
-
-		return () => {
-			router.events.off('routeChangeStart', handleRouteChange);
-		};
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router]);
 
 	return (
 		<Header className={`${className} shadow-md z-[1001] sticky top-0 flex items-center bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>

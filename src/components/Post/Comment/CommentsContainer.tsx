@@ -173,7 +173,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			for: Number(Math.round( forCount / totalCount * 100)) || 0,
 			neutral: Number(Math.round( neutralCount / totalCount * 100)) || 0,
 			slightlyAgainst: Number(Math.round( slightlyAgainstCount / totalCount * 100)) || 0,
-			slightlyFor: Number(Math.round( slightlyForCount / totalCount * 100)) || 0 });
+			slightlyFor: Number(Math.round( slightlyForCount / totalCount * 100)) || 0
+		});
 
 		comments?.length === 0 ? setShowOverallSentiment(false) : setShowOverallSentiment(true) ;
 		if(againstCount === 0 && slightlyAgainstCount === 0 && neutralCount === 0 && slightlyForCount === 0 && forCount === 0 ){ setShowOverallSentiment(false); } else{ setShowOverallSentiment(true); }

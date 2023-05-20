@@ -14,10 +14,11 @@ import { ProposalType } from '~src/global/proposalType';
 interface Props {
 	address: string;
 	onChange?: (balance: string) => void;
-  setAvailableBalance?: (pre: string) => void;
+	isBalanceUpdated?: boolean;
+	setAvailableBalance?: (pre: string) => void;
 }
 
-const Balance = ({ address, onChange, setAvailableBalance }: Props) => {
+const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const { network } = useContext(NetworkContext);
@@ -83,7 +84,7 @@ const Balance = ({ address, onChange, setAvailableBalance }: Props) => {
 				.catch(e => console.error(e));
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady, isReferendum]);
+	}, [address, api, apiReady, isReferendum, isBalanceUpdated]);
 
 	return (
 		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px]`}>

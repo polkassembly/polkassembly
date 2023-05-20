@@ -8,6 +8,7 @@ import { Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { FC, useEffect } from 'react';
+import Script from 'next/script';
 import SEOHead from 'src/global/SEOHead';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -140,6 +141,19 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 
 	return (
 		<>
+			<Script
+				src="https://www.googletagmanager.com/gtag/js?id=G-KC3HDQMJSE"
+				strategy="afterInteractive"
+			/>
+			<Script id="google-analytics" strategy="afterInteractive">
+				{`
+					window.dataLayer = window.dataLayer || [];
+					function gtag(){dataLayer.push(arguments);}
+					gtag('js', new Date());
+
+					gtag('config', 'G-KC3HDQMJSE');
+				`}
+			</Script>
 			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network}/>
 			<main>
 				<div className="mt-6 mx-1">

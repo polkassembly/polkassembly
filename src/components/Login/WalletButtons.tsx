@@ -13,24 +13,35 @@ import { WalletIcon } from './MetamaskLogin';
 interface Props {
 	disabled: boolean
 	onWalletSelect: (wallet: Wallet) => void
+	showPolkasafe?:boolean
+	onPolkasafeSelect?:any
+	noHeader?:boolean
 }
 
-const WalletButtons = ({ onWalletSelect, disabled } : Props) => {
+const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSelect, noHeader=false } : Props) => {
 	const { network } = useNetworkContext();
 	function handleWalletClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) {
 		event.preventDefault();
+		console.log(wallet);
 		onWalletSelect(wallet);
 	}
 
 	return (
 		<div className='w-full'>
-			<div className='flex items-center gap-x-2'>
+			{!noHeader &&<div className='flex items-center gap-x-2'>
 				<Divider className='text-grey_primary'>Or Login with</Divider>
-			</div>
+			</div>}
 			<div className="flex mt-3 max-w-xs gap-4 flex-col m-auto justify-center sm:flex-row sm:mx-2 sm:max-w-none">
 				<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot.js" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />
 				<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />
 				<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="SubWallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6'  />} />
+				{showPolkasafe && onPolkasafeSelect &&
+					<WalletButton disabled={disabled} onClick={(event) => {
+						onPolkasafeSelect(true);
+						handleWalletClick((event as any), Wallet.POLKADOT);
+					}} name="SubWallet" icon={<WalletIcon which={Wallet.POLKASAFE} className='h-6 w-6'  />} />
+
+				}
 				{
 					['polymesh'].includes(network)?
 						<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />

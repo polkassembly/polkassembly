@@ -54,11 +54,13 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 	const [displayWeb, setDisplayWeb] = useState(2);
 	const [chosenWallet, setChosenWallet] = useState<Wallet>();
 	const [walletError, setWalletError] =  useState<string | undefined>();
+	const [withPolkasafe, setWithPolkasafe] = useState<boolean>(false);
 
 	const setDisplayWeb2 = () => setDisplayWeb(2);
 
 	const onWalletSelect = (wallet: Wallet) => {
 		setChosenWallet(wallet);
+		console.log(wallet);
 		setDisplayWeb(3);
 	};
 
@@ -78,7 +80,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px]'>
 					{displayWeb === 2 ? (
-						<Web2Login  isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} />
+						<Web2Login  isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError}  setWithPolkasafe={setWithPolkasafe}/>
 					) : null}
 
 					{
@@ -94,6 +96,8 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 											chosenWallet={chosenWallet}
 											setDisplayWeb2={setDisplayWeb2}
 											setWalletError={setWalletError}
+											withPolkasafe={withPolkasafe}
+											setChosenWallet={setChosenWallet}
 										/>
 							}
 						</>

@@ -19,6 +19,7 @@ interface Props {
   isDisabled?: boolean;
   isSwitchButton?: boolean;
   setSwitchModalOpen?: (pre: boolean)=> void;
+  showLabel?: boolean;
 }
 
 const AddressDropdown = ({
@@ -84,7 +85,6 @@ const AddressDropdown = ({
 			}}
 		>
 			<div className="flex justify-between items-center">
-
 				<Address
 					disableAddressClick={true}
 					extensionName={dropdownList[selectedAddress]}

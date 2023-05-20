@@ -109,6 +109,7 @@ export const network = {
 	VARA: 'vara',
 	WESTEND: 'westend',
 	WESTENDCOLLECTIVES: 'westend-collectives',
+	ROCOCO:'rococo',
 	XX: 'xx'
 };
 
@@ -160,6 +161,7 @@ export const tokenSymbol = {
 	XRT: 'XRT',
 	UNIT: 'UNIT',
 	VARA: 'VARA',
+	ROC:'ROC',
 	XX: 'XX'
 };
 
@@ -1074,6 +1076,22 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://westend.api.subscan.io',
+		rpcEndpoints: []
+	},
+	[network.ROCOCO]: {
+		blockTime: 6000,
+		category: 'test',
+		chainId: 0,
+		logo: westendLogo,
+		rpcEndpoint: 'wss://rococo-rpc.polkadot.io',
+		ss58Format: 42,
+		subsquidUrl: '',
+		tokenDecimals: 12,
+		tokenSymbol: tokenSymbol.ROC,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://rococo.api.subscan.io',
 		rpcEndpoints: []
 	},
 	[network.XX]: {

@@ -13,7 +13,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChallengeMessag
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const { address } = req.body;
-
+	console.log(address);
 	if(!address) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const signMessage = await authServiceInstance.AddressLoginStart(address);

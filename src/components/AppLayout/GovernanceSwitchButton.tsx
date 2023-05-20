@@ -14,6 +14,7 @@ interface Props {
 }
 
 const GovernanceSwitchButton = ({ className, previousRoute } : Props) => {
+
 	const router = useRouter();
 	const { pathname , query } = router;
 	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute );

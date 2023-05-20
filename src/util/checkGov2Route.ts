@@ -21,7 +21,6 @@ for (const trackName of Object.keys(networkTrackInfo.kusama)) {
 
 export default function checkGov2Route(pathname: string, query?: ParsedUrlQuery, prevRoute?: string): boolean {
 
-	console.log(prevRoute,'pre');
 	if(pathname === '/referenda'){
 		return false;
 	}

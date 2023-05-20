@@ -92,6 +92,11 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 				placeholder={`${placeholder}`}
 				size={size || 'large'}
 				value={Number(formatedBalance(String(balance || ZERO_BN), unit)) }
+				onKeyPress={(event) => {
+					if (!/^[0-9.]+$/.test(event.key)) {
+						event.preventDefault();
+					}
+				}}
 			/>
 		</Form.Item>
 	</div>;

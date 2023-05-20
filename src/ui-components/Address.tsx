@@ -188,13 +188,13 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 										<Space className={'header'}>
 											{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} />}
 											<span className='identityName max-w-[85px] flex flex-col gap-y-1'>
-												{ t2 && <span className={`${textClassName} truncate text-navBlue`}>{ t2 }</span> }
+												{ t2 && <span className={`${textClassName} truncate text-[#243A57] text-base font-normal leading-6 tracking-tighter text-left`}>{ t2 }</span> }
 												{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-navBlue`}>{sub}</span>}
 											</span>
 										</Space>
 										: null
 								}
-								<div className={`description text-xs ml-0.5 ${addressClassName}`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
+								<div className={`description text-xs text-[#798AA2] font-normal ml-0.5 ${addressClassName}`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 							</div>
 						: <div className={`description text-xs ${addressClassName}`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 				}

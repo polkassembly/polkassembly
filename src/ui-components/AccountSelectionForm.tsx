@@ -28,9 +28,9 @@ interface Props{
 const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isBalanceUpdated, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo }: Props) =>
 	<article className={`w-full flex flex-col ${className}`}>
 		<div className='flex items-center gap-x-2 ml-[-6px]'>
-			<h3 className='inner-headings mb-0 ml-1.5'>{title}</h3>
+			<h3 className='inner-headings mb-[2px] ml-1.5'>{title}</h3>
 			{address && withBalance &&
-			<Balance address={address} onChange={onBalanceChange} />
+			<Balance address={address} onChange={onBalanceChange} isBalanceUpdated={isBalanceUpdated} />
 			}
 		</div>
 		<AddressDropdown
@@ -42,9 +42,7 @@ const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withB
 			isSwitchButton={isSwitchButton}
 			setSwitchModalOpen={setSwitchModalOpen}
 		/>
-		{address && withBalance &&
-			<Balance address={address} onChange={onBalanceChange} isBalanceUpdated={isBalanceUpdated} />
-		}
+
 	</article>;
 
 export default styled(AccountSelectionForm)`

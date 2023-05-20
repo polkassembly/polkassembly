@@ -442,4 +442,7 @@ export default styled(EditableCommentContent)`
 	opacity: 0.5;
   }
 
+  code{
+	display:initial;
+  }
 `;

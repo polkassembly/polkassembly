@@ -118,6 +118,21 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
+	const [previousRoute, setPreviousRoute] = useState(router.asPath);
+
+	useEffect(() => {
+		const handleRouteChange = () => {
+			if(router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post' ){
+				setPreviousRoute(router.asPath);
+			}
+		};
+		router.events.on('routeChangeStart', handleRouteChange);
+
+		return () => {
+			router.events.off('routeChangeStart', handleRouteChange);
+		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router]);
 
 	useEffect(() => {
 		if(!global?.window) return;
@@ -174,7 +189,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	if(typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) {
 		gov1Items.overviewItems = [
-			getSiderMenuItem(<GovernanceSwitchButton className='flex lg:hidden' />, 'gov-2', ''),
+			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'gov-2', ''),
 			...gov1Items.overviewItems
 		];
 	}
@@ -286,7 +301,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	if(typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) {
 		gov2OverviewItems = [
-			getSiderMenuItem(<GovernanceSwitchButton className='flex lg:hidden' />, '/', ''),
+			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, '/', ''),
 			...gov2OverviewItems
 		];
 	}
@@ -339,7 +354,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]));
 	}
 
-	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query);
+	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute );
 
 	const handleMenuClick = (menuItem: any) => {
 		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
@@ -366,7 +381,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	return (
 		<Layout className={className}>
-			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer}  />
+			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} previousRoute={previousRoute} />
 			<Layout hasSider>
 				<Sider
 					trigger={null}

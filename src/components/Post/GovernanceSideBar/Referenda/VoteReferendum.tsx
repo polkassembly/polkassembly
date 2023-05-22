@@ -25,7 +25,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
-
+import { Polkasafe } from 'polkasafe';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -57,7 +57,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [showPolkasafe, setShowPolkasafe] = useState<boolean>(false);
 	const [multisig, setMultisig] = useState<string>('');
 	const [showMultisig, setShowMultisig] = useState<boolean>(false);
-
+	const [testInjected, setTestInjected] = useState<any>();
+	const client = new Polkasafe();
 	useEffect(() => {
 		if(!window) return;
 		const Wallet = localStorage.getItem('loginWallet') ;
@@ -103,6 +104,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (!injected) {
 			return;
 		}
+
+		setTestInjected(injected);
 
 		const accounts = await injected.accounts.get();
 		if (accounts.length === 0) {
@@ -227,7 +230,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	}, [api, apiReady]);
 
 	const voteReferendum = async (aye: boolean) => {
-		console.log(multisig == '','------', address);
+		// console.log(multisig == '','------', address);
+		const signatories = ['5FbW5hCeZWgjfFXZNofSMkXMduS2fzFnfjuq59KmkYt6bDvD', '5CFSybkjCJsddmUoYpCuobzcZntmDqbnNBxknpn8rTRwt7DC', '5Fe8gVNXoNoB5tbTc2jtTPBi5VAoBaRmMcjqZGnSZSYtVXiL'];
+		const threshold = 3;
+		const multisig = { signatories, threshold };
+		const data = client.voteOnProposal('5GmLM8NQRiL47wQji1GjaAdGDLX63fcdrSUDxk8h2yondLCM',testInjected, 11,{ Standard: { balance: lockedBalance, vote: { aye, conviction } } }, () => {},'democracy_proposals', '5FbW5hCeZWgjfFXZNofSMkXMduS2fzFnfjuq59KmkYt6bDvD', 'rococo', multisig);
+		console.log(data);
+		return;
 		if (!referendumId && referendumId !== 0) {
 			console.error('referendumId not set');
 			return;

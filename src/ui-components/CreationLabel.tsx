@@ -19,7 +19,12 @@ import styled from 'styled-components';
 const Styled = styled.div`
     padding:0;
     margin:0;
-    
+	margin-top:-2px;
+	margin-right:8px;
+    & svg{
+		width:14.6px;
+		height:14.6px;
+	}
     &:hover{
     	color:#E5007A;
     }
@@ -33,9 +38,8 @@ const Styled = styled.div`
     .ant-tooltip .ant-tooltip-inner{
     	min-height:0;
     }
-    .ant-tooltip-placement-leftTop .ant-tooltip-arrow{
-    	top:-7px;
-    	right:4px;
+	.ant-tooltip-arrow{
+    	display:none;
     }
     .ant-tooltip-inner {
         color: black;

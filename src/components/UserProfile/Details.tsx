@@ -224,9 +224,9 @@ const Details: FC<IDetailsProps> = (props) => {
 							}
 						</div>
 					</div>
-					<div className='flex gap-2 text-lg'>
+					<div className='flex gap-2 text-xl items-center justify-center'>
 						<h2 title={newUsername} className='font-semibold text-xl text-white truncate max-w-[200px] mt-[18px]'>{newUsername}</h2>
-						{isGood  && onChainIdentity.judgements.length > 0 && <CheckCircleFilled style={ { color:'green',marginTop:'6px' } } />}
+						{isGood  && onChainIdentity.judgements.length > 0 && <CheckCircleFilled style={ { color:'green' } } className='rounded-[50%] bg-white h-[20px] border-solid border-[#910365] mt-[7px]' />}
 					</div>
 					<div
 						className='flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-[10px]'

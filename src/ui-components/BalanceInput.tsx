@@ -87,7 +87,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 			<InputNumber
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name='balance'
-				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] mt-0 ${inputClassName} placeholderColor`}
+				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] mt-0 ${inputClassName} suffixColor`}
 				onChange={onBalanceChange}
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}
@@ -98,13 +98,13 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 };
 
 export default styled(BalanceInput)`
-.placeholderColor .ant-input-number-group .ant-input-number-group-addon{
+.suffixColor .ant-input-number-group .ant-input-number-group-addon{
 background:#E5007A;
 color:white;
 font-size:12px;
 border: 1px solid #E5007A; 
 }
-.placeholderColor .ant-input-number .ant-input-number-input{
+.suffixColor .ant-input-number .ant-input-number-input{
   color:#7c899b !important;
 }`
 

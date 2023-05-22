@@ -6,9 +6,12 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
-import { useNetworkContext } from '~src/context';
+// import { useNetworkContext } from '~src/context';
+import CloseIcon from '~assets/icons/close.svg';
 
-import ClientOnly, { Search } from './ClientOnly';
+// import ClientOnly, { Search } from './ClientOnly';
+import Search from 'src/components/Search';
+import { poppins } from 'pages/_app';
 
 interface ISearchBarProps {
 	className?: string;
@@ -17,7 +20,7 @@ interface ISearchBarProps {
 
 const SearchBar: FC<ISearchBarProps> = (props) => {
 	const { className, isSmallScreen } = props;
-	const { network } = useNetworkContext();
+	// const { network } = useNetworkContext();
 	const [open, setOpen] = useState(false);
 	return (
 		<div className={className}>
@@ -25,26 +28,27 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 				isSmallScreen?
 					<div className='small-client relative'>
 						<SearchOutlined className='absolute top-[11px] left-2.5 z-50' />
-						<ClientOnly>
+						{/* <ClientOnly>
 							<Search network={network} />
-						</ClientOnly>
+						</ClientOnly> */}
 					</div>
 					: <>
 						<button className='flex items-center justify-center outline-none border-none bg-transparent cursor-pointer text-[18px] text-[#485F7D]' onClick={() => setOpen(true)}>
 							<SearchOutlined />
 						</button>
 						<Modal
-							title='Search'
-							closable={false}
+							title={<label className='text-[#334D6E] text-xl font-semibold'>Search</label>}
 							open={open}
 							onCancel={() => setOpen(false)}
-							footer={[]}
-							className={className}
+							footer={false}
+							className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable}`}
+							closeIcon={<CloseIcon/>}
 						>
 							<div className='client'>
-								<ClientOnly>
+								{/* <ClientOnly>
 									<Search network={network} />
-								</ClientOnly>
+								</ClientOnly> */}
+								<Search/>
 							</div>
 						</Modal>
 					</>

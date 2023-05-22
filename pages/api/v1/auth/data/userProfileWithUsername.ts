@@ -47,7 +47,6 @@ export async function getUserProfileWithUsername(username: string) : Promise<IAp
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ProfileDetailsResponse | MessageType>) {
 	const { username = '' } = req.query;
-
 	if (typeof username !== 'string' || !username) return res.status(400).json({ message: 'Invalid username.' });
 
 	const { data, error, status } = await getUserProfileWithUsername(username);

@@ -112,7 +112,6 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 				type="card"
 				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
 			/>
-			{/* Check each tab if there are more than 10 posts, as the pagination is not shown if there are less than 10 posts. */}
 			{
 				(posts?.all?.data?.count||0) > 10  && activeTab === 'All' || (posts?.submitted?.data?.count||0) > 10 && activeTab === 'Submitted' || (posts?.voting?.data?.count||0) > 10 && activeTab === 'Voting' || (posts?.closed?.data?.count||0) > 10 && activeTab === 'Closed' ?
 					<Pagination

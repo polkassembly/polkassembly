@@ -4,6 +4,7 @@
 
 import { Divider, Skeleton, Tabs } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
+import { CheckCircleFilled } from '@ant-design/icons';
 import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
 import { useApiContext, useUserDetailsContext } from '~src/context';
 import Addresses from './Addresses';
@@ -196,6 +197,9 @@ const Details: FC<IDetailsProps> = (props) => {
 	}, [addresses, api, apiReady]);
 	const { nickname, display, legal } = onChainIdentity;
 	const newUsername = legal || display || nickname || username;
+	const judgements = onChainIdentity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
+	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
+
 	return (
 		<div className='w-full md:w-auto h-full flex flex-col gap-y-5 bg-[#F5F5F5]'>
 			<article className='md:w-[330px] bg-[#910365] rounded-l-[4px] md:flex-1 py-[22px] md:py-8 px-4'>
@@ -220,7 +224,10 @@ const Details: FC<IDetailsProps> = (props) => {
 							}
 						</div>
 					</div>
-					<h2 title={newUsername} className='font-semibold text-xl text-white truncate max-w-[200px] mt-[18px]'>{newUsername}</h2>
+					<div className='flex gap-2 text-lg'>
+						<h2 title={newUsername} className='font-semibold text-xl text-white truncate max-w-[200px] mt-[18px]'>{newUsername}</h2>
+						{isGood  && onChainIdentity.judgements.length > 0 && <CheckCircleFilled style={ { color:'green',marginTop:'6px' } } />}
+					</div>
 					<div
 						className='flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-[10px]'
 					>

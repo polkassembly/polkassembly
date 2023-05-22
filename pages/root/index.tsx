@@ -118,7 +118,6 @@ const Root: FC<IRootProps> = (props) => {
 		setNetwork(props.network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (!posts || Object.keys(posts).length === 0) return null;

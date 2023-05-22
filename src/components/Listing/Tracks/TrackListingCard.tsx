@@ -3,15 +3,19 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
+import { Pagination } from 'antd';
+import { useRouter } from 'next/router';
 import { Tabs } from 'antd';
 import { IReferendumV2PostsByStatus } from 'pages/root';
-import React from 'react';
+import React, { useState } from 'react';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 
 import TrackListingAllTabContent from './TrackListingAllTabContent';
 import TrackListingStatusTabContent from './TrackListingStatusTabContent';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
+import { LISTING_LIMIT } from '~src/global/listingLimit';
+import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
 interface Props {
 	className?: string;
@@ -23,7 +27,7 @@ export enum CustomStatus {
 	Submitted = 'CustomStatusSubmitted',
 	Voting = 'CustomStatusVoting',
 	Closed = 'CustomStatusClosed',
-  Active = 'CustomStatusActive'
+    Active = 'CustomStatusActive'
 }
 
 const TrackListingCard = ({ className, posts, trackName } : Props) => {
@@ -67,7 +71,31 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 			/>
 		}
 	];
+	const router = useRouter();
+	const [activeTab, setActiveTab] = useState('All');
+	const onTabClick = (key: string) => {
+		setActiveTab(key);
+		const query = { ...router.query };
+		delete query.page;
+		router.push({
+			pathname: router.pathname,
+			query: {
+				...query,
+				page: 1
+			}
+		});
+	};
 
+	const onPaginationChange = (page: number) => {
+		router.push({
+			pathname: router.pathname,
+			query: {
+				...router.query,
+				page
+			}
+		});
+		handlePaginationChange({ limit: LISTING_LIMIT, page });
+	};
 	return (
 		<div className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue `}>
 			<div className='flex items-center justify-between mb-10'>
@@ -78,10 +106,27 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 				<FilterByTags className='mr-[2px] mt-[-10px]'/>
 			</div>
 			<Tabs
+				activeKey={activeTab}
 				items={items}
+				onTabClick={onTabClick}
 				type="card"
 				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
 			/>
+			{/* Check each tab if there are more than 10 posts, as the pagination is not shown if there are less than 10 posts. */}
+			{
+				(posts?.all?.data?.count||0) > 10  && activeTab === 'All' || (posts?.submitted?.data?.count||0) > 10 && activeTab === 'Submitted' || (posts?.voting?.data?.count||0) > 10 && activeTab === 'Voting' || (posts?.closed?.data?.count||0) > 10 && activeTab === 'Closed' ?
+					<Pagination
+						className='flex justify-end mt-6'
+						defaultCurrent={1}
+						current={router.query.page ? parseInt(router.query.page as string, 10) : 1}
+						onChange={onPaginationChange}
+						pageSize={LISTING_LIMIT}
+						showSizeChanger={false}
+						total={posts?.all?.data?.count || 0}
+						responsive={true}
+					/>
+					: null
+			}
 		</div>
 	);
 };

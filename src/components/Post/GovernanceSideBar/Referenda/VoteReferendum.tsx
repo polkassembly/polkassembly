@@ -31,6 +31,7 @@ import SplitWhite from '~assets/icons/split-white.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const ZERO_BN = new BN(0);
 
@@ -295,7 +296,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			<label  className='inner-headings'>
 				Vote lock
 			</label>
-
 			<Select onChange={onConvictionChange} size='large' className='' defaultValue={conviction} suffixIcon ={<DownIcon/>}>
 				{convictionOpts}
 			</Select>
@@ -455,7 +455,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	};
 
-	const decisionOptions = [
+	const decisionOptions = isOpenGovSupported(network) ? [
 		{
 			label: <div className={`flex items-center justify-center text-[#576D8B] w-[131px] h-[32px] rounded-[4px] ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}>{vote === EVoteDecisionType.AYE ? <LikeWhite className='mr-2 mb-[3px]' /> : <LikeGray className='mr-2 mb-[3px]' /> }<span className='font-medium'>Aye</span></div>,
 			value: 'aye'
@@ -472,7 +472,15 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			label: <div className={` flex items-center justify-center text-[#576D8B]  w-[126px] h-[32px] rounded-[4px] ${vote === 'abstain'? 'bg-[#407BFF] text-white' : ''}`}><StopOutlined className='mr-2 mb-[3px]'/> <span className='font-medium'>Abstain</span></div>,
 			value: 'abstain'
 		}
-	];
+	] : [
+		{
+			label: <div className={`flex items-center justify-center text-[#576D8B] w-[131px] h-[32px] rounded-[4px] ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}>{vote === EVoteDecisionType.AYE ? <LikeWhite className='mr-2 mb-[3px]' /> : <LikeGray className='mr-2 mb-[3px]' /> }<span className='font-medium'>Aye</span></div>,
+			value: 'aye'
+		},
+		{
+			label: <div className={`flex items-center justify-center text-[#576D8B] w-[126px] h-[32px] rounded-[4px] ${vote === 'nay'? 'bg-[#F53C3C] text-white' : ''}`}>{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' /> } <span className='font-medium'>Nay</span></div>,
+			value: 'nay'
+		}];
 
 	const VoteUI = <>
 		<div className={className}>
@@ -569,7 +577,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							}
 
 							{
-								proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote === 'split' &&
+								proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote === EVoteDecisionType.SPLIT &&
 								<Form
 									form={splitForm}
 									name="split-form"
@@ -732,3 +740,4 @@ export default styled(VoteReferendum)`
 	margin-top: 6px;
 }
 `;
+

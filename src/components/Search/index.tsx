@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Checkbox, Input, Popover, Radio, RadioChangeEvent } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { SearchOutlined, DownOutlined } from '@ant-design/icons';
 import { useNetworkContext } from '~src/context';
@@ -10,6 +10,7 @@ import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { poppins } from 'pages/_app';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import FilterByTags from '~src/ui-components/FilterByTags';
+import { topicToOptionText } from 'src/components/Post/CreatePost/TopicsRadio';
 
 interface Props{
   className?: string;
@@ -43,17 +44,24 @@ const Search = ({ className }: Props) => {
 	const [dateFilter, setDateFilter] = useState<EDateFilter>();
 	const [selectedTags, setSelectedTags] =  useState<string[]>([]);
 	const [selectedTracks, setSelectedTracks] = useState<CheckboxValueType[]>([]);
-	const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+	const [selectedTopics, setSelectedTopics] = useState<CheckboxValueType[]>([]);
 	const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
+	const [ topicOptions, setTopicOptions]=useState<string[]>([]);
+	const [govType, setGovType] = useState<'gov_1' | 'open_gov'>('open_gov');
+
+	useEffect(() => {
+		govType === 'gov_1' ? setTopicOptions([topicToOptionText('COUNCIL'),topicToOptionText('DEMOCRACY'),topicToOptionText('GENERAL'),topicToOptionText('TECHNICAL_COMMITTEE'), topicToOptionText('TREASURY')]) : setTopicOptions([topicToOptionText('ROOT'),topicToOptionText('STAKING_ADMIN'),topicToOptionText('AUCTION_ADMIN'),topicToOptionText('FELLOWSHIP'), topicToOptionText('TREASURY'),topicToOptionText('GOVERNANCE')]);
+	}, [govType]);
 
 	const tracksArr: { name: string; trackId: number; }[] = [];
 
 	if (networkTrackInfo?.[network]) {
-		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => tracksArr.push({ name: key, trackId: value?.trackId }));
+		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => tracksArr.push({ name: key === 'root' ? 'Root' : key, trackId: value?.trackId }));
 	}
 
 	const onChange = (list: CheckboxValueType[], filter: EMultipleCheckFilters) => {
 		if(filter === EMultipleCheckFilters.Tracks){ setSelectedTracks(list); }
+		else if(filter === EMultipleCheckFilters.Topic) {setSelectedTopics(list);}
 	};
 
 	return <div className={className}>
@@ -81,15 +89,20 @@ const Search = ({ className }: Props) => {
 				</Popover>
 				<FilterByTags isSearch={true} setSelectedTags={setSelectedTags}/>
 				<Popover content={
-					<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => onChange(list, EMultipleCheckFilters.Tracks)} value={selectedTracks} >
-						{tracksArr && tracksArr?.map((track) => <Checkbox key={track?.name} value={track?.name} className={`text-xs font-normal py-1.5 ml-0 ${selectedTags.includes(track?.name) ? 'text-[#243A57]' : 'text-[#667589]'}`}><div className='mt-[2px]'>{track?.name}</div></Checkbox> )}
+					<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => onChange(list, EMultipleCheckFilters.Tracks)} value={selectedTracks} >
+						{tracksArr && tracksArr?.map((track) => <Checkbox key={track?.name} value={track?.name} className={`text-xs font-normal py-1.5 ml-0 ${selectedTracks.includes(track?.name) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
+							<div className='mt-[2px]'>{track?.name}</div>
+						</Checkbox> )}
 					</Checkbox.Group>} placement="bottomLeft">
 					<div className='flex items-center justify-center text-xs'>
           Tracks
 						<span className='text-[#96A4B6]'><DownOutlined className='ml-2.5'/></span>
 					</div>
 				</Popover>
-				<Popover content={<div>hello</div>} placement="bottomLeft" >
+				<Popover content={<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start ${poppins.className} ${poppins.variable}`} onChange={(list) => onChange(list, EMultipleCheckFilters.Topic)} value={selectedTopics} >
+					{topicOptions && topicOptions?.map((topic) => <Checkbox key={topic} value={topic} className={`text-xs font-normal py-1.5 ml-0 ${selectedTopics.includes(topic) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
+						<div className='mt-[2px]'>{topic}</div>
+					</Checkbox>)}</Checkbox.Group>} placement="bottomLeft" >
 					<div className='flex items-center justify-center text-xs'>
           Topic
 						<span className='text-[#96A4B6]'><DownOutlined className='ml-2.5'/></span>
@@ -103,6 +116,7 @@ const Search = ({ className }: Props) => {
 				</Popover>
 			</div>
 		</div>
+		<div className='border-solid mt-6'>hello</div>
 	</div>;
 };
 

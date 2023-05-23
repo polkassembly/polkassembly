@@ -24,6 +24,14 @@ export interface IFellowshipReferendumPostsByTrackName {
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST,filterBy, trackName } = query;
+	if (!trackName) {
+		return {
+			props: {},
+			redirect: {
+				destination: '/member-referenda?trackName=All&page=1'
+			}
+		};
+	}
 	const network = getNetworkFromReqHeaders(req.headers);
 	const fellowshipReferendumPostOrigins: string[] = [];
 	if (networkTrackInfo?.[network]) {

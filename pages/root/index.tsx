@@ -4,11 +4,11 @@
 
 import { GetServerSideProps } from 'next';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
+import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
 import React, { FC, useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import TrackListing from '~src/components/Listing/Tracks/TrackListing';
-import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -19,7 +19,15 @@ import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST,filterBy } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
+	if (!trackStatus) {
+		return {
+			props: {},
+			redirect: {
+				destination: '/root?trackStatus=all&page=1'
+			}
+		};
+	}
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	if(!networkTrackInfo[network][PostOrigin.ROOT]) {
@@ -29,51 +37,30 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const { trackId } = networkTrackInfo[network][PostOrigin.ROOT];
 	const proposalType = ProposalType.OPEN_GOV;
 
-	const fetches = {
-		all: getOnChainPosts({
-			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
-			listingLimit: LISTING_LIMIT,
-			network,
-			page,
-			proposalType,
-			sortBy,
-			trackNo: trackId,
-			trackStatus: 'All'
-		}),
-		closed: getOnChainPosts({
-
-			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
-			listingLimit: LISTING_LIMIT,
-			network,
-			page,
-			proposalType,
-			sortBy,
-			trackNo: trackId,
-			trackStatus: CustomStatus.Closed
-		}),
-		submitted: getOnChainPosts({
-
-			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
-			listingLimit: LISTING_LIMIT,
-			network,
-			page,
-			proposalType,
-			sortBy,
-			trackNo: trackId,
-			trackStatus: CustomStatus.Submitted
-		}),
-		voting: getOnChainPosts({
-
-			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
-			listingLimit: LISTING_LIMIT,
-			network,
-			page,
-			proposalType,
-			sortBy,
-			trackNo: trackId,
-			trackStatus: CustomStatus.Voting
-		})
-	};
+	const fetches = ['CustomStatusSubmitted', 'CustomStatusVoting', 'CustomStatusClosed', 'All'].reduce((prev: any, status) => {
+		const strTrackStatus = String(trackStatus);
+		if (status.toLowerCase().includes(strTrackStatus)) {
+			prev[strTrackStatus] = getOnChainPosts({
+				filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+				listingLimit: LISTING_LIMIT,
+				network,
+				page,
+				proposalType,
+				sortBy,
+				trackNo: trackId,
+				trackStatus: status
+			});
+		} else {
+			prev[status.toLowerCase().replace('customstatus', '')] = getOnChainPostsCount({
+				network,
+				page,
+				proposalType,
+				trackNo: trackId,
+				trackStatus: status
+			});
+		}
+		return prev;
+	}, {});
 
 	const responseArr = await Promise.allSettled(Object.values(fetches));
 

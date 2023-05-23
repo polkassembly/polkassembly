@@ -2,11 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CloseOutlined, LinkOutlined, PlusOutlined } from '@ant-design/icons';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Input, Skeleton, Tag } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { FC, useState } from 'react';
+import styled from 'styled-components';
 import { ProfileDetails } from '~src/auth/types';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
@@ -17,10 +19,13 @@ interface IBasicInformationProps {
     profile?: ProfileDetails;
 	setProfile: React.Dispatch<React.SetStateAction<ProfileDetails>>
     loading: boolean;
+    setUsername: (pre: string) => void;
+    username: string;
+    className?: string;
 }
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
-	const { profile, loading, setProfile } = props;
+	const { profile, loading, setProfile, setUsername, username, className } = props;
 	const [newBadge, setNewBadge] = useState<string>('');
 
 	const addNewBadge = () => {
@@ -61,21 +66,21 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 		}
 	}
 	return (
-		<div className='flex flex-col justify-between max-h-[552px] overscroll-y-scroll'>
+		<div className={`flex flex-col justify-between max-h-[552px] overscroll-y-scroll ${className}`}>
 			<article className='flex flex-col md:flex-row gap-x-6 items-center'>
 				<div className='relative flex items-center justify-center'>
 					<ImageComponent
-						src={profile?.image}
+						src={profile?.image }
 						alt='User Picture'
 						className='bg-white flex items-center justify-center w-[103px] h-[103px]'
-						iconClassName='flex items-center justify-center text-[#A0A6AE] text-5xl w-full h-full border-4 border-solid rounded-full'
+						iconClassName='flex items-center justify-center text-[#A0A6AE] text-5xl w-full h-full rounded-full'
 					/>
 				</div>
 				<div
 					className='flex flex-col'
 				>
-					<h4 className='font-semibold text-sm text-[#485F7D]'>Profile Image</h4>
-					<p className='font-normal text-xs'>
+					<h4 className='text-sm text-[#485F7D] font-medium '>Profile Image</h4>
+					<p className='font-normal text-sm -mt-1'>
 						Please provide a url of your profile photo using a service such as
 						<a href='https://postimages.org/' target='_blank' rel="noreferrer">
 							{' '}postimages.org{' '}
@@ -83,11 +88,10 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							to upload and generate a direct link.
 					</p>
 					<Input
-						className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] h-10'
+						placeholder='Profile Picture URL'
+						className='rounded-[4px] border border-solid h-10 border-[#d2d8e0] text-[#7788a0] text-sm -mt-2'
 						size='large'
 						type='url'
-						prefix={<LinkOutlined className='text-[rgba(72,95,125,0.2)] mr-1.5 text-base' />}
-						placeholder='Profile Picture URL'
 						onChange={(e) => setProfile((prev) => {
 							return {
 								...prev,
@@ -102,10 +106,10 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			<div className='flex gap-x-6'>
 				<div className='hidden md:block max-w-[103px] w-full'></div>
 				<div className='flex-1'>
-					<Divider className='my-6' />
+					<Divider className='my-6' style={{ borderColor: '#d2d8e0' }}/>
 					<article>
 						<label
-							className='text-sm cursor-pointer font-normal text-[#485F7D]'
+							className='text-sm cursor-pointer font-medium text-[#485F7D]'
 							htmlFor='title'
 						>
 							Job Title
@@ -121,12 +125,24 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								};
 							})}
 							disabled={loading}
-							className="border border-solid rounded-[4px] border-[rgba(72,95,125,0.2)] h-10 px-[14px]"
+							className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] h-10 px-[14px]"
+						/>
+					</article>
+					<article className='text-sm cursor-pointer mt-4 text-[#485F7D]' >
+						<label className='text-sm text-[#485F7D] font-medium mb-0'>Username</label>
+						<Input
+							className='rounded-[4px] border border-solid border-[#d2d8e0] text-[#7788a0] h-10 text-sm px-[14px] py-1'
+							placeholder='eg. John'
+							size='large'
+							type='text'
+							onChange={(e) => setUsername(e.target.value)}
+							value={username}
+							disabled={loading}
 						/>
 					</article>
 					<article className='mt-4'>
 						<label
-							className='text-sm cursor-pointer font-normal text-[#485F7D]'
+							className='text-sm cursor-pointer font-medium text-[#485F7D]'
 							htmlFor='bio'
 						>
 							Bio
@@ -142,19 +158,17 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								};
 							})}
 							disabled={loading}
-							className="border border-solid rounded-[4px] border-[rgba(72,95,125,0.2)] px-[14px] py-[10px]"
+							className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] px-[14px] py-[10px]"
 						/>
 					</article>
 					<article className='mt-4'>
 						<label
-							className='text-sm cursor-pointer font-normal text-[#485F7D]'
+							className='text-sm cursor-pointer font-medium text-[#485F7D]'
 							htmlFor='badges'
 						>
 							Badges
 						</label>
-						<p className='text-xs font-normal text-[#485F7D] m-0 mb-1 leading-[18px]'>
-							Badges indicate individual successes, abilities, skills and/or interests
-						</p>
+						<HelperTooltip className='ml-1 cursor-pointer text-xs font-normal text-[#485F7D] m-0 mb-1 leading-[18px]' text='Badges indicate individual successes, abilities, skills and/or interests' />
 						<div className='flex gap-x-2 items-center'>
 							<Input
 								id='badges'
@@ -162,7 +176,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								placeholder='eg. Council Member, Voter, etc.'
 								onChange={(e) => setNewBadge(e.target.value)}
 								onKeyPress={(e: any) => handleNewBadgeKeyPress(e)}
-								className="border border-solid rounded-[4px] border-[rgba(72,95,125,0.2)] h-10 px-[14px]"
+								className="border border-solid rounded-[4px] border-[#d2d8e0] text-[#7788a0] h-10 px-[14px] mt-[2px]"
 								disabled={loading}
 							/>
 							<Button
@@ -211,4 +225,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 	);
 };
 
-export default BasicInformation;
+export default styled(BasicInformation)`
+.ant-input:placeholder-shown {
+  // color: #7788a0 !important;
+}`;

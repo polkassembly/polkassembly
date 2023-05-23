@@ -5,7 +5,7 @@
 /* eslint-disable no-tabs */
 import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Divider, Skeleton, Space } from 'antd';
+import { Button, Divider, Skeleton, Space } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -23,6 +23,8 @@ import SearchBar from '~src/ui-components/SearchBar';
 import GovernanceSwitchButton from './GovernanceSwitchButton';
 import PaLogo from './PaLogo';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -32,18 +34,21 @@ const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 interface Props {
 	className?: string
 	sidedrawer: boolean
+  previousRoute?: string;
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Props) => {
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
 	const router = useRouter();
 	const { pathname, query } = router;
 	const { username } = currentUser;
 	const [open, setOpen] = useState(false);
+	const [openLogin,setLoginOpen]=useState<boolean>(false);
+	const [openSignup,setSignupOpen]=useState<boolean>(false);
 
-	const isGov2Route: boolean = checkGov2Route(pathname, query);
+	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute);
 	const isClicked = useRef(false);
 
 	return (
@@ -67,7 +72,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 				{
 					isOpenGovSupported(network) ?
 						<>
-							<GovernanceSwitchButton className='hidden lg:flex' />
+							<GovernanceSwitchButton previousRoute={previousRoute} className='hidden lg:flex' />
 						</> :
 						<div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
 				}
@@ -86,7 +91,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 						}
 						{!username
 							&& <div className='flex items-center lg:gap-x-2'>
-								<Link className='w-[60px] h-[22px] lg:w-[74px] lg:h-[32px] bg-pink_primary rounded-[2px] md:rounded-[4px] text-white lg:text-sm lg:font-medium lg:leading-[21px] tracking-[0.00125em] flex items-center justify-center hover:text-white' onClick={() => {setSidedrawer(false);}} href='/login'>Login</Link>
+								<Button className='w-[60px] h-[22px] lg:w-[74px] lg:h-[32px] bg-pink_primary rounded-[2px] md:rounded-[4px] text-white lg:text-sm lg:font-medium lg:leading-[21px] tracking-[0.00125em] flex items-center justify-center hover:text-white' onClick={() => {setSidedrawer(false); setLoginOpen(true);}}>Login</Button>
 							</div>
 						}
 					</Space>
@@ -169,6 +174,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 					}
 				</div>
 
+				<SignupPopup setLoginOpen={setLoginOpen} modalOpen={openSignup} setModalOpen={setSignupOpen} isModal={true} />
+				<LoginPopup setSignupOpen={setSignupOpen} modalOpen={openLogin} setModalOpen={setLoginOpen} isModal={true} />
 			</nav>
 		</Header>
 	);

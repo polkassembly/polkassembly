@@ -72,7 +72,9 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 		}
 	];
 	const router = useRouter();
-	const [activeTab, setActiveTab] = useState('All');
+	const trackStatus = router.query['trackStatus'];
+	const defaultActiveTab = trackStatus && ['closed', 'all', 'voting', 'submitted'].includes(String(trackStatus))? String(trackStatus).charAt(0).toUpperCase() + String(trackStatus).slice(1) : 'All';
+	const [activeTab, setActiveTab] = useState(defaultActiveTab);
 	const onTabClick = (key: string) => {
 		setActiveTab(key);
 		const query = { ...router.query };
@@ -81,7 +83,8 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 			pathname: router.pathname,
 			query: {
 				...query,
-				page: 1
+				page: 1,
+				trackStatus: key.toLowerCase()
 			}
 		});
 	};
@@ -91,7 +94,8 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 			pathname: router.pathname,
 			query: {
 				...router.query,
-				page
+				page,
+				trackStatus: activeTab.toLowerCase()
 			}
 		});
 		handlePaginationChange({ limit: LISTING_LIMIT, page });

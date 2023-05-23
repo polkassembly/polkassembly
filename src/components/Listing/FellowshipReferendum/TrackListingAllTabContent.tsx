@@ -6,11 +6,12 @@ import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import React, { FC } from 'react';
-import { PostEmptyState } from 'src/ui-components/UIStates';
+import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 
 interface ITrackListingAllTabContentProps {
 	className?: string;
 	posts: any[];
+	error?: any;
 }
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
@@ -19,9 +20,10 @@ const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 });
 
 const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) => {
-	const { className, posts } = props;
+	const { className, posts, error } = props;
 
 	const noPost = !posts || !posts.length;
+	if (error) return <ErrorState errorMessage={error} />;
 
 	if (noPost) return <div className={className}><PostEmptyState /></div>;
 

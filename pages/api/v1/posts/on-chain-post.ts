@@ -770,7 +770,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		// Comments
 		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 			const commentPromises = post.timeline.map(async (timeline: any) => {
-				console.log({ timeline });
 				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
 				const commentsSnapshot = await postDocRef.collection('comments').get();
 				const comments = await getComments(commentsSnapshot, postDocRef);

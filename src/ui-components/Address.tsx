@@ -215,7 +215,6 @@ export default styled(Address)`
 
 	.identicon {
 		margin-right: 0.25rem;
-		margin-left: 12px;
 	}
 
 	.identityName {

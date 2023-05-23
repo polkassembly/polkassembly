@@ -488,7 +488,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`${poppins.variable} ${poppins.className} w-[604px] max-h-[675px] rounded-[6px] alignment-close`}
+				className={`${poppins.variable} ${poppins.className} w-[604px] max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
 			><>
@@ -524,8 +524,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										withBalance
 										onAccountChange={onAccountChange}
 										onBalanceChange={handleOnBalanceChange}
-										className={`${poppins.variable} ${poppins.className} text-sidebarBlue mb-[21px] `}
-										inputClassName='bg-[#F6F7F9] h-[40px] rounded-[4px]'
+										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D] `}
+										inputClassName='bg-[#d2d8e033] px-[12px] rounded-[4px]'
 										withoutInfo={true}
 									/>
 									: !wallet? <FilteredError text='Please select a wallet.' />: null
@@ -536,7 +536,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							<h3 className='inner-headings mt-[24px] mb-0'>Choose your vote</h3>
 							<Segmented
 								block
-								className={`${className}  mb-[24px] border-solid border-[1px] bg-white hover:bg-white border-[#D2D8E0] rounded-[4px] w-full py-0 px-0`}
+								className={`${className}  mb-[24px] border-solid border-[1px] bg-white hover:bg-white border-[#D2D8E0] rounded-[4px] w-full py-0 px-0 `}
 								size="large"
 								value={vote}
 								onChange={(value) => {
@@ -676,14 +676,16 @@ export default styled(VoteReferendum)`
 }
 
 
-.ant-select-selector{
+
+.vote-referendum .ant-select-selector{
 	border:1px soild !important;
 	border-color:#D2D8E0 !important;
 	height: 40px;
 	border-radius:4px !important;
 }
 
-.ant-select-selection-item{
+
+.vote-referendum .ant-select-selection-item{
 	font-style: normal !important;
 	font-weight: 400 !important;
 	font-size: 14px !important;
@@ -694,12 +696,12 @@ export default styled(VoteReferendum)`
 	color: #243A57 !important;
 }
 
-.ant-input-number-in-from-item{
+.vote-referendum .ant-input-number-in-from-item{
 	height: 39.85px !important;
 }
 
 
-.ant-segmented-item-label{
+.vote-referendum .ant-segmented-item-label{
 	display:flex ;
 	justify-content: center;
 	align-items:center;
@@ -708,29 +710,29 @@ export default styled(VoteReferendum)`
 	padding-right:0px !important;
 	padding-left:0px !important;
 }
-.ant-segmented {
+.vote-referendum .ant-segmented {
 	padding :0px !important;
 }
 
-.ant-select-selection-item{
+.vote-referendum .ant-select-selection-item{
 	color: #243A57 !important;
 }
-.ant-select-focused{
+.vote-referendum .ant-select-focused{
 	border: 1px solid #E5007A !important;
 	border-radius:4px !important;
 }
-.ant-segmented-item-selected{
+.vote-referendum.ant-segmented-item-selected{
 	box-shadow: none !important;
 	padding-right:0px !important;
 }
-.ant-segmented-item{
+.vote-referendum .ant-segmented-item{
 	padding: 0px !important;
 }
 
-.alignment-close .ant-modal-close{
+.vote-referendum .alignment-close .ant-modal-close{
 	margin-top: 6px;
 }
-.alignment-close .ant-modal-close:hover{
+.vote-referendum .alignment-close .ant-modal-close:hover{
 	margin-top: 6px;
 }
 `;

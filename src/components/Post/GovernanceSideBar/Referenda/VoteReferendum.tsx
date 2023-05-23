@@ -24,6 +24,7 @@ import FilteredError from '~src/ui-components/FilteredError';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
+import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 
 const ZERO_BN = new BN(0);
 
@@ -53,6 +54,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [balanceErr, setBalanceErr] = useState('');
+	const [successModal,setSuccessModal] = useState(false);
 
 	useEffect(() => {
 		if(!window) return;
@@ -222,6 +224,48 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
+	function getCurrentDateTime() {
+		const currentDatetime = new Date();
+
+		// Function to add the appropriate suffix to the day
+		function getDaySuffix(day:any) {
+			if (day === 1 || day === 21 || day === 31) {
+				return 'st';
+			} else if (day === 2 || day === 22) {
+				return 'nd';
+			} else if (day === 3 || day === 23) {
+				return 'rd';
+			} else {
+				return 'th';
+			}
+		}
+
+		// Function to get the month name
+		function getMonthName(month:any) {
+			const monthNames = [
+				'January', 'February', 'March', 'April', 'May', 'June',
+				'July', 'August', 'September', 'October', 'November', 'December'
+			];
+			return monthNames[month];
+		}
+
+		// Function to pad a single digit number with leading zero
+		function padZero(number:any) {
+			return (number < 10 ? '0' : '') + number;
+		}
+
+		// Format the date
+		const formattedDate = currentDatetime.getDate() + getDaySuffix(currentDatetime.getDate()) + ' ' + getMonthName(currentDatetime.getMonth()) + ' ' + currentDatetime.getFullYear();
+
+		// Format the time
+		const formattedTime = currentDatetime.getHours() + ':' + padZero(currentDatetime.getMinutes());
+
+		// Combine the formatted date and time
+		const formattedDatetime = formattedTime + ', ' + formattedDate;
+
+		return formattedDatetime;
+	}
+
 	const voteReferendum = async (aye: boolean) => {
 		if (!referendumId && referendumId !== 0) {
 			console.error('referendumId not set');
@@ -263,6 +307,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						status: NotificationStatus.SUCCESS
 					});
 					setLastVote(aye ? 'aye' : 'nay');
+					setShowModal(false);
+					setSuccessModal(true);
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
 				} else {
 					if (status.isBroadcast){
@@ -290,6 +336,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						status: NotificationStatus.SUCCESS
 					});
 					setLastVote(aye ? 'aye' : 'nay');
+					setShowModal(false);
+					setSuccessModal(true);
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
 				} else {
 					if (status.isBroadcast){
@@ -402,6 +450,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
+			<DelegationSuccessPopup title='Voted' vote={'split'} open={true} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={getCurrentDateTime()}/>
 		</div>
 	</>;
 

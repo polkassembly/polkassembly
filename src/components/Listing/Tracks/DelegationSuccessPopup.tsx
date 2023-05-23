@@ -17,6 +17,10 @@ import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useRouter } from 'next/router';
+import AyeGray from '~assets/icons/ayeGray.svg';
+import NayGray from '~assets/icons/nayGray.svg';
+import SplitGray from '~assets/icons/splitGray.svg';
+import AbstainGray from '~assets/icons/abstainGray.svg';
 
 interface Props{
   className?: string;
@@ -25,13 +29,16 @@ interface Props{
   tracks?: CheckboxValueType[];
   address?: string;
   isDelegate?: boolean;
-  balance: BN;
+  balance?: BN;
   trackNum?: number;
   conviction?: number;
+  title?:string,
+  vote?:string,
+  time?:string
 
 }
 
-const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction }: Props) => {
+const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction , title = 'Delegated', vote ,time }: Props) => {
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const router = useRouter();
@@ -59,7 +66,7 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 	>
 		<div className='flex justify-center items-center flex-col -mt-[132px]'>
 			<SuccessIcon/>
-			<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-6'>{isDelegate ? 'Delegated successfully' : 'Undelegated successfully' }</h2>
+			<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-6'>{isDelegate ? `${title} successfully` : 'Undelegated successfully' }</h2>
 			{isDelegate && <div className='flex flex-col justify-center items-center gap-[18px]'>
 				{balance && <div className='text-pink_primary text-[24px] font-semibold'>{formatBalance(balance.toString(),{ forceUnit: unit })}</div>}
 				<div className='flex-col flex items-start justify-center gap-[10px]'>
@@ -69,12 +76,20 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 							displayInline={true}/>
 					</span>
 					</div>}
+					{vote && <div className='flex h-[21px] gap-[50px] text-sm text-[#485F7D] bg-red-300'> 
+						Vote :{vote === 'aye'? <p><AyeGray/> <span className='capitalize'>{vote}</span></p> : vote === 'nay' ?  <div><NayGray/> <span className='mb-[5px] capitalize'>{vote}</span></div> : vote === 'split' ? <p><SplitGray/> <span className='capitalize'>{vote}</span></p> : vote === 'abstain' ? <p><AbstainGray/> <span className='capitalize'>{vote}</span></p> : null }
+					</div>
+					}
 					<div className='flex gap-4 text-sm text-[#485F7D]'> Conviction:<span className='text-[#243A57] font-medium'>{conviction}x</span> </div>
 					{tracks && <div className='flex gap-[35px] text-sm text-[#485F7D]'>Track(s):<span>
 						<div className={`flex flex-col gap-1 min-h-[50px] max-h-[100px] text-[#243A57] pr-2 font-medium ${tracks.length > 4 && 'overflow-y-scroll'}`}>
 							{tracks.map((track, index) => (<div key={index}>{track} #{networkTrackInfo[network][track.toString()].trackId}</div>))}</div>
 					</span>
 					</div>}
+					{time && <div className='flex h-[21px] gap-[50px] text-sm text-[#485F7D] bg-red-300'> 
+						time : {time}
+					</div>
+					}
 				</div></div>}
 		</div>
 

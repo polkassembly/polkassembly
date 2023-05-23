@@ -34,7 +34,7 @@ const BlockCountdown = ({ className, endBlock }:Props ) => {
 		blocksRemaining !== endBlock && blocksRemaining > 0
 			?
 			<Tooltip title={<SpanContent>{`#${endBlock}`}</SpanContent>}>
-				<span className={`${className} blockCountdown`}>{ blockToTime(blocksRemaining, network, blocktime)}</span>
+				<span className={`${className} blockCountdown`}>{ blockToTime(blocksRemaining, network, blocktime)['time']}</span>
 			</Tooltip>
 			: <>#{endBlock}</>
 	);

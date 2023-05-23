@@ -15,7 +15,6 @@ import styled from 'styled-components';
 import { useNetworkContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { useCurrentBlock } from '~src/hooks';
-import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { getBlockLink } from '~src/util/subscanCheck';
 
 import OnchainInfoWrapper from './OnchainInfoWrapper';
@@ -116,18 +115,12 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 
 	const formattedBlockToTime = (blockNo: number) => {
 		if(!currentBlock) return;
+		const { seconds } = blockToTime(currentBlock.toNumber() - blockNo, network);
 
-		const time = blockToTime(currentBlock.toNumber() - blockNo, network);
-		const daysTimeObj = getDaysTimeObj(time);
-		const { d, h, m } = daysTimeObj;
-
-		if (d === 0 && h === 0 && m === 0) {
+		if (seconds === 0) {
 			return dayjs.utc().format('DD MMM YYYY');
 		}
-		const days = d;
-		const hours = h;
-		const minutes = m;
-		const duration = dayjs.duration({ 'days': days, 'hours': hours, 'minutes': minutes });
+		const duration = dayjs.duration({ seconds });
 		const date = dayjs.utc().subtract(duration).format('DD MMM YYYY');
 		return date;
 	};

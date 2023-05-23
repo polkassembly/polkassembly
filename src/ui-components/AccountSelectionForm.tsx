@@ -8,6 +8,7 @@ import Balance from 'src/components/Balance';
 
 import AddressDropdown from './AddressDropdown';
 import styled from 'styled-components';
+import HelperTooltip from './HelperTooltip';
 
 interface Props{
 	accounts: InjectedAccount[]
@@ -25,10 +26,11 @@ interface Props{
 	withoutInfo?: boolean;
 }
 
-const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isBalanceUpdated, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen }: Props) =>
+const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isBalanceUpdated, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo }: Props) =>
 	<article className={`w-full flex flex-col ${className}`}>
 		<div className='flex items-center gap-x-2 ml-[-6px]'>
 			<h3 className='inner-headings mb-[2px] ml-1.5'>{title}</h3>
+			{!withoutInfo && <HelperTooltip text='You can choose an account from the extension.' />}
 			{address && withBalance &&
 			<Balance address={address} onChange={onBalanceChange} isBalanceUpdated={isBalanceUpdated} />
 			}

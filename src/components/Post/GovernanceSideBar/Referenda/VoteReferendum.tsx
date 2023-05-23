@@ -532,6 +532,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										onBalanceChange={handleOnBalanceChange}
 										className={`${poppins.variable} ${poppins.className} text-sidebarBlue mb-[21px] `}
 										inputClassName='bg-[#F6F7F9] h-[40px] rounded-[4px]'
+										withoutInfo={true}
 									/>
 									: !wallet? <FilteredError text='Please select a wallet.' />: null
 							}

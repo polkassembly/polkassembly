@@ -92,7 +92,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 		const filteredComments = comments.filter((comment: any) => {
 			const commentDate = dayjs(comment.created_at);
-			return commentDate.isBetween(startDate, endDate, 'minutes' , '[)');
+			return commentDate.isBetween(startDate, endDate, 'seconds' , '[)') || commentDate.isSame(endDate, 'minutes');
 		});
 
 		return {

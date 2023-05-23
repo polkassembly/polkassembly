@@ -9,7 +9,7 @@ import { Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
-import { LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
+import { EVoteDecisionType, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -62,10 +62,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [balanceErr, setBalanceErr] = useState('');
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 
-	enum EVoteDecisionType {
-		AYE = 'aye',
-		NAY = 'nay',
-	}
 	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
 	const convictionOpts = useMemo(() => [
@@ -488,7 +484,6 @@ export default styled(VoteReferendum)`
 		height: 39.85px !important;
 	
 	}
-	
 	
 	.ant-segmented-item-label{
 		display:flex ;

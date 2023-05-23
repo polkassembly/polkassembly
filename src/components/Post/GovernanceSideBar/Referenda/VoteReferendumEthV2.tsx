@@ -9,7 +9,7 @@ import { Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
-import { LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
+import { EVoteDecisionType, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -77,19 +77,13 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
 	const[ayeNayForm] = Form.useForm();
-	const [abstainVoteValue, setAbstainVoteValue] = useState<BN | undefined>(undefined);
-	const [ayeVoteValue, setAyeVoteValue] = useState<BN | undefined>(undefined);
-	const [nayVoteValue, setNayVoteValue] = useState<BN | undefined>(undefined);
+	const [abstainVoteValue, setAbstainVoteValue] = useState<BN>(ZERO_BN);
+	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
+	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
 
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [balanceErr, setBalanceErr] = useState('');
 
-	enum EVoteDecisionType {
-		AYE = 'aye',
-		NAY = 'nay',
-		ABSTAIN = 'abstain',
-		SPLIT = 'split'
-	}
 	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
 	useEffect(() => {

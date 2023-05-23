@@ -8,7 +8,7 @@ import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-i
 import { Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
-import { LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
+import { EVoteDecisionType, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -74,16 +74,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
 	const[ayeNayForm] = Form.useForm();
-	const [abstainVoteValue, setAbstainVoteValue] = useState<BN | undefined>(undefined);
-	const [ayeVoteValue, setAyeVoteValue] = useState<BN | undefined>(undefined);
-	const [nayVoteValue, setNayVoteValue] = useState<BN | undefined>(undefined);
+	const [abstainVoteValue, setAbstainVoteValue] = useState<BN>(ZERO_BN);
+	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
+	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
 
-	enum EVoteDecisionType {
-		AYE = 'aye',
-		NAY = 'nay',
-		ABSTAIN = 'abstain',
-		SPLIT = 'split'
-	}
 	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
 	const getWallet=() => {
@@ -357,8 +351,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					console.log(e);
 				}
 				finally{
-					setAyeVoteValue(undefined);
-					setNayVoteValue(undefined);
+					setAyeVoteValue(ZERO_BN);
+					setNayVoteValue(ZERO_BN);
 				}
 			}
 
@@ -374,9 +368,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					console.log(e);
 				}
 				finally{
-					setAbstainVoteValue(undefined);
-					setNayVoteValue(undefined);
-					setAyeVoteValue(undefined);
+					setAbstainVoteValue(ZERO_BN);
+					setNayVoteValue(ZERO_BN);
+					setAyeVoteValue(ZERO_BN);
 				}
 			}
 		} else if(proposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
@@ -702,7 +696,6 @@ export default styled(VoteReferendum)`
 
 .ant-input-number-in-from-item{
 	height: 39.85px !important;
-
 }
 
 

@@ -386,3 +386,10 @@ export interface IDelegate {
 	voted_proposals_count: number
   isNovaWalletDelegate?: boolean
 }
+
+export enum EVoteDecisionType {
+  AYE = 'aye',
+  NAY = 'nay',
+  ABSTAIN = 'abstain',
+  SPLIT = 'split'
+}

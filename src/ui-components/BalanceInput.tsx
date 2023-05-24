@@ -67,7 +67,17 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 		<Form.Item
 			name="balance"
 			initialValue={balance ? Number(formatedBalance(balance.toString(), unit)) : ''}
-			rules={noRules ? []: [
+			rules={noRules ? [ {
+				message: 'Invalid Balance',
+				validator(rule, value, callback) {
+					const pattern = /^(?:0(?:\.\d+)?|[1-9]\d*(?:\.\d+)?)$/;
+					if (callback && !value.match(pattern)){
+						callback(rule?.message?.toString());
+					}else {
+						callback();
+					}
+				}
+			}]: [
 				{
 					message: 'Lock Balance is required.',
 					required: true

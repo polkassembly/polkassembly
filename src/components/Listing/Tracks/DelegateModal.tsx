@@ -186,12 +186,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 			errors.push('');
 		}
 
-		const pattern = /^(?:0(?:\.\d+)?|[1-9]\d*(?:\.\d+)?)$/;
-		if (!bnBalance.match(pattern)){
-			setBalanceErr('Invalid Balance');
-			errors.push('');
-		}
-
 		if(bnBalance.eq(ZERO_BN)){
 			setBalanceErr('Balance must be greater than 0.');
 			errors.push('');

@@ -152,6 +152,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					gtag('js', new Date());
 
 					gtag('config', 'G-KC3HDQMJSE');
+					${network === 'cere' && 'gtag(\'config\', \'G-7E14M1ZSCB\')'}
 				`}
 			</Script>
 			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network}/>

@@ -7,3 +7,9 @@ typings/
 
 # Node.js dependency directory
 node_modules/
+
+# logs
+*.log
+
+#misc
+.vscode

@@ -2,14 +2,16 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Col, Tabs } from 'antd';
+import { Col, Divider, Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import React, { FC, useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import Notifications from '~src/components/Settings/Notifications';
-import UserAccount from '~src/components/Settings/UserAccount';
-import { useNetworkContext } from '~src/context';
+import Account from '~src/components/Settings/Account';
+import Delete from '~src/components/Settings/Delete';
+import Profile from '~src/components/Settings/Profile';
+import Unlock from '~src/components/Settings/Unlock';
+import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 
 interface Props {
@@ -21,14 +23,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	return { props: { network } };
 };
 
-const tabItems = [
-	{ children:<UserAccount/> , key:'Account', label:'Account' },
-	{ children:<Notifications/> , key:'Notifications', label:'Notifications' },
-	{ children:<h1>this is Activity</h1>, key:'Activity', label:'Activity' }
-];
-
 const Settings: FC<Props> = (props) => {
 	const { setNetwork, network } = useNetworkContext();
+	const { web3signup } = useUserDetailsContext();
 
 	useEffect(() => {
 		setNetwork(props.network);
@@ -39,19 +36,21 @@ const Settings: FC<Props> = (props) => {
 		<>
 			<SEOHead title='Settings' network={network}/>
 			<Col className='w-full h-full'>
-				<div className='mt-6 w-full bg-white shadow-md p-8 rounded-md'>
+				<Row>
 					<h3
-						className='font-semibold text-xl tracking-wide leading-7 text-sidebarBlue'
+						className='font-medium text-lg tracking-wide leading-7 text-sidebarBlue'
 					>
 						Settings
 					</h3>
-					<Tabs
-						className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
-						type="card"
-						defaultActiveKey='Notification'
-						items={tabItems}
-					/>
-				</div>
+				</Row>
+				<Row className='mt-6 w-full bg-white shadow-md p-8 rounded-md'>
+					{!web3signup && <Profile />}
+					<Divider />
+					<Account />
+					<Divider />
+					<Unlock network={network} />
+					<Delete />
+				</Row>
 			</Col>
 		</>
 	);

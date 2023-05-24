@@ -81,6 +81,17 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 							callback();
 						}
 					}
+				},
+				{
+					message: 'Invalid Balance',
+					validator(rule, value, callback) {
+						const pattern = /^(?:0(?:\.\d+)?|[1-9]\d*(?:\.\d+)?)$/;
+						if (callback && !value.match(pattern)){
+							callback(rule?.message?.toString());
+						}else {
+							callback();
+						}
+					}
 				}
 			]}
 		>
@@ -92,6 +103,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}
 				value={(formatedBalance(String(balance || ZERO_BN), unit))}
+				pattern={'[0-9]{1,5}'}
 			/>
 		</Form.Item>
 	</div>;

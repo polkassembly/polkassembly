@@ -92,7 +92,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 						}
 					}
 				},
-        {
+				{
 					message: 'Please provide a valid balance.',
 					validator(rule, value, callback) {
 						if (callback && chainProperties[network]?.tokenDecimals  < (value?.split('.')[1].length) ){

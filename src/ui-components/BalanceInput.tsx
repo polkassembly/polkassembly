@@ -43,7 +43,7 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 		if(isValid){
 			onChange(balance);
 		}else{
-			onChange(ZERO_BN); 
+			onChange(ZERO_BN);
 		}
 	};
 

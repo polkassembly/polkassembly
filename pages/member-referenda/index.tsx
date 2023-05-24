@@ -16,7 +16,7 @@ import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { IApiResponse } from '~src/types';
-import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
+import { ErrorState } from '~src/ui-components/UIStates';
 
 export interface IFellowshipReferendumPostsByTrackName {
 	[key: string]: IApiResponse<IPostsListingResponse> | undefined;
@@ -104,7 +104,6 @@ const FellowshipAdmin: FC<IFellowshipReferendumProps> = (props) => {
 	setNetwork(network);
 
 	if (error) return <ErrorState errorMessage={error} />;
-	if (!posts) return <PostEmptyState />;
 	const fellowshipReferendumPostOrigins: string[] = [];
 	if (networkTrackInfo?.[network]) {
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {

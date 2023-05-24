@@ -566,6 +566,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</> : <GovSidebarCard>
 														<h6 className="text-[#243A57] font-semibold text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
+															address={address}
 															lastVote={lastVote}
 															setLastVote={setLastVote}
 															onAccountChange={onAccountChange}
@@ -608,6 +609,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</> : <GovSidebarCard>
 														<h6 className="text-[#243A57] font-semibold text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
+															address={address}
 															lastVote={lastVote}
 															setLastVote={setLastVote}
 															onAccountChange={onAccountChange}

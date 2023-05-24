@@ -19,7 +19,7 @@ export function isPolkaholicSupport(network: string) {
 export const getBlockLink = (network: string) => {
 	let url = chainProperties[network]?.externalLinks;
 	if (url.includes('subscan')) {
-		url = url.replace('.api', '');
+		url = `${url.replace('.api', '')}/block`;
 	}
 	else if(isPolkaholicSupport(network)){
 		url += `/block/${network}`;

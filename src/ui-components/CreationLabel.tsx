@@ -19,7 +19,12 @@ import styled from 'styled-components';
 const Styled = styled.div`
     padding:0;
     margin:0;
-    
+	margin-top:-2px;
+	margin-right:8px;
+    & svg{
+		width:14.6px;
+		height:14.6px;
+	}
     &:hover{
     	color:#E5007A;
     }
@@ -33,9 +38,8 @@ const Styled = styled.div`
     .ant-tooltip .ant-tooltip-inner{
     	min-height:0;
     }
-    .ant-tooltip-placement-leftTop .ant-tooltip-arrow{
-    	top:-7px;
-    	right:4px;
+	.ant-tooltip-arrow{
+    	display:none;
     }
     .ant-tooltip-inner {
         color: black;
@@ -62,7 +66,7 @@ interface ICreationLabelProps {
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-	const { className, children, created_at, text, username, defaultAddress, topic,sentiment,commentSource='polkassembly', cid } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource='polkassembly', cid } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 
 	const items : MenuProps['items']=[
@@ -98,7 +102,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				&nbsp;
 					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 				</>}
-				{created_at && <span className='flex items-center'> <ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>}
+				{created_at && <span className='flex items-center'><ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>}
 				{children}
 			</div>
 		</div>

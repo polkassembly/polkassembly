@@ -40,7 +40,7 @@ const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut,loginWallet } = useUserDetailsContext();
+	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut } = useUserDetailsContext();
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const { apiReady } = useApiContext();
 	const [address, setAddress] = useState<string>('');
@@ -50,6 +50,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const { network } = useNetworkContext();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [isAye, setIsAye] = useState(false);
+	const [loginWallet, setLoginWallet] = useState<Wallet>();
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
@@ -62,6 +63,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	],[CONVICTIONS]);
 
 	const [conviction, setConviction] = useState<number>(0);
+
+	useEffect(() => {
+		if(!window) return;
+		const Wallet = localStorage.getItem('loginWallet') ;
+		Wallet && setLoginWallet(Wallet as  Wallet);
+	}, [apiReady]);
 
 	useEffect(() => {
 		setPostData((prev) => {
@@ -310,10 +317,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	};
 	// eslint-disable-next-line react-hooks/rules-of-hooks
 	useEffect(() => {
-		if(loginWallet!==null){
-			setWallet(loginWallet);
-			handleDefaultWallet(loginWallet);
-		}
+		if(!loginWallet) return ;
+		setWallet(loginWallet);
+		handleDefaultWallet(loginWallet);
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[loginWallet]);
 

@@ -19,7 +19,6 @@ import { socialLinks } from '../UserProfile/Details';
 import { ESocialType } from '~src/auth/types';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from './ProfileBalance';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import CloseIcon from '~assets/icons/close.svg';
 
 interface Props{
@@ -102,7 +101,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					}
 				</div>
 			</div>
-			<Button disabled={disabled || getEncodedAddress(delegate?.address, network) === delegate?.address} onClick={handleClick} className={`h-[40px] border-none hover:border-solid py-1 px-4 flex justify-around items-center rounded-md text-pink_primary bg-transparent shadow-none gap-2 ml-1 mt-[1px] hover:border-pink_primary ${disabled && 'opacity-50'}`}>
+			<Button disabled={disabled} onClick={handleClick} className={`h-[40px] border-none hover:border-solid py-1 px-4 flex justify-around items-center rounded-md text-pink_primary bg-transparent shadow-none gap-2 ml-1 mt-[1px] hover:border-pink_primary ${disabled && 'opacity-50'}`}>
 				<DelegatesProfileIcon/>
 				<span className='text-sm font-medium'>
               Delegate

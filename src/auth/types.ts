@@ -16,6 +16,10 @@ export interface ChallengeMessage extends MessageType {
 export interface TokenType {
 	token: string;
 }
+export interface IAddProfileResponse{
+  message?: string;
+  token?: string;
+}
 
 export interface ChangeResponseType extends MessageType, TokenType {}
 

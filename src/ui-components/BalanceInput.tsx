@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Form, InputNumber } from 'antd';
+import { Form, Input } from 'antd';
 import BN from 'bn.js';
 import React, { useContext, useEffect } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -37,9 +37,9 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
-	const onBalanceChange = (value: number | null): void => {
-		const [balance, isValid] = inputToBn(`${value}`, network, false);
+	const onBalanceChange = (value: string | null): void => {
 
+		const [balance, isValid] = inputToBn(`${value}`, network, false);
 		if(isValid){
 			onChange(balance);
 		}else{
@@ -84,28 +84,29 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 				}
 			]}
 		>
-			<InputNumber
+			<Input
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name='balance'
-				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] mt-0 ${inputClassName} placeholderColor`}
-				onChange={onBalanceChange}
+				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] mt-0 ${inputClassName} suffixColor`}
+				onChange={(e) => onBalanceChange(e.target.value)}
 				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
 				size={size || 'large'}
-				value={Number(formatedBalance(String(balance || ZERO_BN), unit)) }
+				value={(formatedBalance(String(balance || ZERO_BN), unit))}
 			/>
 		</Form.Item>
 	</div>;
 };
 
 export default styled(BalanceInput)`
-.placeholderColor .ant-input-number-group .ant-input-number-group-addon{
+.suffixColor .ant-input-group .ant-input-group-addon{
 background:#E5007A;
 color:white;
 font-size:12px;
 border: 1px solid #E5007A; 
 }
-.placeholderColor .ant-input-number .ant-input-number-input{
+.suffixColor .ant-input{
   color:#7c899b !important;
+  font-size: 14px !important;
 }`
 
 ;

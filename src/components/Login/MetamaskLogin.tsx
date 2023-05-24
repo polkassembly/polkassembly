@@ -231,10 +231,11 @@ const MetamaskLogin: FC<Props> = ({
 
 								if(confirmData.token) {
 									currentUser.loginWallet=Wallet.METAMASK;
+									currentUser.loginAddress = address;
 									currentUser.delegationDashboardAddress = address;
 									localStorage.setItem('delegationWallet', Wallet.METAMASK);
 									localStorage.setItem('delegationDashboardAddress', address);
-
+									localStorage.setItem('loginWallet', Wallet.METAMASK);
 									handleTokenChange(confirmData.token,currentUser);
 									if(isModal){
 										setLoginOpen && setLoginOpen(false);
@@ -257,9 +258,11 @@ const MetamaskLogin: FC<Props> = ({
 				}
 				if(addressLoginData?.token){
 					currentUser.loginWallet = Wallet.METAMASK;
+					currentUser.loginAddress = address;
 					currentUser.delegationDashboardAddress = address;
 					localStorage.setItem('delegationWallet', Wallet.METAMASK);
 					localStorage.setItem('delegationDashboardAddress', address);
+					localStorage.setItem('loginWallet', Wallet.METAMASK);
 
 					handleTokenChange(addressLoginData.token, currentUser);
 					if(isModal){

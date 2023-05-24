@@ -10,7 +10,6 @@ import { chainProperties } from 'src/global/networkConstants';
 import { NetworkContext } from '~src/context/NetworkContext';
 
 import { inputToBn } from '../util/inputToBn';
-import HelperTooltip from './HelperTooltip';
 import Balance from '~src/components/Balance';
 import styled from 'styled-components';
 import { formatBalance } from '@polkadot/util';
@@ -25,15 +24,16 @@ interface Props{
 	onChange: (balance: BN) => void
 	placeholder?: string
 	size?: 'large' | 'small' | 'middle';
-  address?: string;
-  withBalance?: boolean;
-  onAccountBalanceChange?: (balance: string) => void
-  balance?: BN;
-  inputClassName?: string;
-  noRules?: boolean;
+	address?: string;
+	withBalance?: boolean;
+	onAccountBalanceChange?: (balance: string) => void
+	balance?: BN;
+	inputClassName?: string;
+	noRules?: boolean;
+	formItemName?: string;
 }
 
-const BalanceInput = ({ className, label = '', helpText = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules }: Props) => {
+const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance' }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -58,14 +58,14 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	return <div className={`${className} w-full flex flex-col`}>
-		<label className='mb-[2px] flex items-center text-sm'>
-			{label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> }
+	return <div className={`${className} w-full flex flex-col balance-input`}>
+		<label className='mb-[2px] inner-headings'>
+			{label}
 			{address && withBalance && <span><Balance address={address} onChange={onAccountBalanceChange} /></span>
 			}
 		</label>
 		<Form.Item
-			name="balance"
+			name={formItemName}
 			initialValue={balance ? Number(formatedBalance(balance.toString(), unit)) : ''}
 			rules={noRules ? []: [
 				{
@@ -86,26 +86,56 @@ const BalanceInput = ({ className, label = '', helpText = '', onChange, placehol
 		>
 			<InputNumber
 				addonAfter={chainProperties[network]?.tokenSymbol}
-				name='balance'
-				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] mt-0 ${inputClassName} placeholderColor`}
+				name={formItemName}
+				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] rounded-r-[0px] mt-0 ${inputClassName} placeholderColor hover:border-[#E5007A] balance-input`}
 				onChange={onBalanceChange}
-				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
+				placeholder={`${placeholder}`}
 				size={size || 'large'}
 				value={Number(formatedBalance(String(balance || ZERO_BN), unit)) }
+				onKeyPress={(event) => {
+					if (!/^[0-9.]+$/.test(event.key)) {
+						event.preventDefault();
+					}
+				}}
 			/>
 		</Form.Item>
 	</div>;
 };
-
 export default styled(BalanceInput)`
 .placeholderColor .ant-input-number-group .ant-input-number-group-addon{
-background:#E5007A;
-color:white;
-font-size:12px;
-border: 1px solid #E5007A; 
+	background:#E5007A;
+	color:white;
+	font-size:12px;
+	border: 1px solid #E5007A; 
 }
 .placeholderColor .ant-input-number .ant-input-number-input{
-  color:#7c899b !important;
-}`
+	color:#7c899b !important;
+}
+.balance-input .ant-input-number-handler-up{
+	display:none !important;
+}
+.balance-input .ant-input-number-handler-down{
+	display:none !important;
+}
+.balance-input .ant-input-number-group-addon{
+	border-radius:4px !important;
+	position:relative;
+	right:2px;
+}
+.balance-input .ant-input-number{
+	border: 1px solid #D2D8E0 ;
+}
 
-;
+.balance-input .ant-input-number-focused{
+	border: 1px solid #E5007A ;
+}
+
+input::placeholder {
+	color: #576D8B !important;
+	font-weight: 400 !important;
+	font-size: 14px !important;
+	line-height: 21px !important;
+	letter-spacing: 0.0025em !important;
+}
+`;
+

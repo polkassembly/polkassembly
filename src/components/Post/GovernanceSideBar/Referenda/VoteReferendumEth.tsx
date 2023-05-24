@@ -5,14 +5,13 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Button, Form, Modal, Select, Spin } from 'antd';
+import { Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
-import { LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
+import { EVoteDecisionType, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
-import HelperTooltip from 'src/ui-components/HelperTooltip';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import Web3 from 'web3';
@@ -22,9 +21,16 @@ import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsCon
 import { ProposalType } from '~src/global/proposalType';
 import FilteredError from '~src/ui-components/FilteredError';
 import addEthereumChain from '~src/util/addEthereumChain';
-
-import AyeNayButtons from '../../../../ui-components/AyeNayButtons';
 import LoginToVote from '../LoginToVoteOrEndorse';
+import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
+import LikeWhite from '~assets/icons/like-white.svg';
+import LikeGray from '~assets/icons/like-gray.svg';
+import DislikeWhite from '~assets/icons/dislike-white.svg';
+import DislikeGray from '~assets/icons/dislike-gray.svg';
+
+import CloseCross from '~assets/icons/close-cross-icon.svg';
+import DownIcon from '~assets/icons/down-icon.svg';
+const ZERO_BN = new BN(0);
 
 interface Props {
 	className?: string
@@ -40,7 +46,7 @@ const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut,loginWallet } = useUserDetailsContext();
+	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut } = useUserDetailsContext();
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const { apiReady } = useApiContext();
 	const [address, setAddress] = useState<string>('');
@@ -49,10 +55,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const { setPostData } = usePostDataContext();
 	const { network } = useNetworkContext();
 	const [wallet, setWallet] = useState<Wallet>();
-	const [isAye, setIsAye] = useState(false);
+	const [loginWallet, setLoginWallet] = useState<Wallet>();
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
+	const [balanceErr, setBalanceErr] = useState('');
+	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+
+	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
 	const convictionOpts = useMemo(() => [
 		<Select.Option key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
@@ -62,6 +72,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	],[CONVICTIONS]);
 
 	const [conviction, setConviction] = useState<number>(0);
+
+	useEffect(() => {
+		if(!window) return;
+		const Wallet = localStorage.getItem('loginWallet') ;
+		Wallet && setLoginWallet(Wallet as  Wallet);
+	}, [apiReady]);
 
 	useEffect(() => {
 		setPostData((prev) => {
@@ -200,7 +216,32 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setConviction(Number(value));
 	};
 
-	const onBalanceChange = (balance: BN) => setLockedBalance(balance);
+	//const onBalanceChange = (balance: BN) => setLockedBalance(balance);
+
+	const onBalanceChange = (balance: BN) => {
+		if(balance && balance.eq(ZERO_BN)) {
+			setBalanceErr('');
+		}
+		else if(balance && availableBalance.lt(balance)){
+			setBalanceErr('Insufficient balance.');
+		}else{
+			setBalanceErr('');
+		}
+		setLockedBalance(balance);
+	};
+
+	const handleOnBalanceChange = (balanceStr: string) => {
+		let balance = ZERO_BN;
+
+		try{
+			balance = new BN(balanceStr);
+		}
+		catch(err){
+			console.log(err);
+		}
+
+		setAvailableBalance(balance);
+	};
 
 	const voteReferendum = async (aye: boolean) => {
 		if (!referendumId && referendumId !== 0) {
@@ -282,12 +323,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const VoteLock = ({ className }: { className?:string }) =>
 		<Form.Item className={className}>
-			<label  className='flex items-center text-sm text-[#485F7D]'>
+			<label  className='inner-headings'>
 				Vote lock
-				<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.' />
 			</label>
 
-			<Select onChange={onConvictionChange} size='large' className='rounded-md text-sm text-sidebarBlue p-1 w-full' defaultValue={conviction}>
+			<Select onChange={onConvictionChange} size='large' className='rounded-[4px]' defaultValue={conviction} suffixIcon ={<DownIcon/>} >
 				{convictionOpts}
 			</Select>
 		</Form.Item>;
@@ -310,12 +350,22 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	};
 	// eslint-disable-next-line react-hooks/rules-of-hooks
 	useEffect(() => {
-		if(loginWallet!==null){
-			setWallet(loginWallet);
-			handleDefaultWallet(loginWallet);
-		}
+		if(!loginWallet) return ;
+		setWallet(loginWallet);
+		handleDefaultWallet(loginWallet);
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[loginWallet]);
+
+	const decisionOptions = [
+		{
+			label: <div className={`flex items-center justify-center text-[#576D8B] w-[131px] h-[32px] rounded-[4px] ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}>{vote === EVoteDecisionType.AYE ? <LikeWhite className='mr-2 mb-[3px]' /> : <LikeGray className='mr-2 mb-[3px]' /> }<span className='font-medium'>Aye</span></div>,
+			value: 'aye'
+		},
+		{
+			label: <div className={`flex items-center justify-center text-[#576D8B] w-[126px] h-[32px] rounded-[4px] ${vote === 'nay'? 'bg-[#F53C3C] text-white' : ''}`}>{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' /> } <span className='font-medium'>Nay</span></div>,
+			value: 'nay'
+		}];
 
 	return (
 		<div className={className}>
@@ -329,48 +379,72 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
+				className={' w-[604px] max-h-[675px] rounded-[6px] alignment-close'}
+				closeIcon={<CloseCross/>}
 			>
 				<>
 					<Spin spinning={loadingStatus.isLoading || isAccountLoading} indicator={<LoadingOutlined />}>
-						<Form onFinish={async () => {
-							await voteReferendum(isAye);
-						}}>
-							<h4 className='dashboard-heading mb-7'>Cast Your Vote</h4>
-							<div className='flex items-center justify-center gap-x-5 mt-5'>
-								<WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />
-								<WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
-							</div>
-							<BalanceInput
-								className='text-sm font-normal text-[#485F7D]'
-								label={'Lock balance'}
-								helpText={'Amount of you are willing to lock for this vote.'}
-								placeholder={'123'}
-								onChange={onBalanceChange}
-								inputClassName='text-[#7c899b] text-sm'
-							/>
 
-							{
-								accounts.length > 0?
-									<AccountSelectionForm
-										title='Vote with Account'
-										accounts={accounts}
-										address={address}
-										withBalance
-										onAccountChange={onAccountChange}
-										className='text-sm font-normal text-[#485F7D]'
-									/>
-									: !wallet? <FilteredError text='Please select a wallet.' />: null
-							}
-							<VoteLock className='mt-6' />
+						<div className='h-[72px] mt-[-20px] flex align-middle  border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px]'>
+							<CastVoteIcon className='mt-[24px] mr-[11px] ml-[24px]'/>
+							<h4 className='cast-vote-heading mt-[22px]'>Cast Your Vote</h4>
+						</div>
 
-							<AyeNayButtons
-								className='mt-6 max-w-[156px]'
-								size='large'
-								disabled={!apiReady}
-								onClickAye={() => setIsAye(true)}
-								onClickNay={() => setIsAye(false)}
-							/>
-						</Form>
+						<div className='flex items-center gap-x-5 mt-[22px] mb-[24px]'>
+							<WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />
+							<WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
+						</div>
+
+						{
+							accounts.length > 0?
+								<AccountSelectionForm
+									title='Vote with Account'
+									accounts={accounts}
+									address={address}
+									withBalance
+									onAccountChange={onAccountChange}
+									onBalanceChange={handleOnBalanceChange}
+									className={'text-sidebarBlue mb-[21px]'}
+									inputClassName='bg-[#F6F7F9] h-[40px] rounded-[4px]'
+								/>
+								: !wallet? <FilteredError text='Please select a wallet.' />: null
+						}
+						{balanceErr.length > 0 && <div className='-mt-2 -mb-3 text-sm text-red-500'>{balanceErr}</div>}
+
+						<h3 className='inner-headings mt-[24px] mb-0'>Choose your vote</h3>
+						<Segmented
+							block
+							className={`${className}  mb-[24px] border-solid border-[1px] bg-white hover:bg-white border-[#D2D8E0] rounded-[4px] w-full py-0 px-0`}
+							size="large"
+							value={vote}
+							onChange={(value) => {
+								setVote(value as EVoteDecisionType);
+							}}
+							options={decisionOptions}
+							disabled={!apiReady}
+						/>
+						{
+							<Form onFinish={async () => {
+								vote === EVoteDecisionType.AYE && await voteReferendum(true);
+								vote === EVoteDecisionType.AYE && await voteReferendum(false);
+							}}>
+
+								<BalanceInput
+									label={'Lock balance'}
+									helpText={'Amount of you are willing to lock for this vote.'}
+									placeholder={'Add Balance'}
+									onChange={onBalanceChange}
+									inputClassName='text-[#7c899b] text-sm'
+								/>
+								<VoteLock className={`${className}`} />
+
+								<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
+									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
+									<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0' htmlType='submit'>Confirm</Button>
+								</div>
+							</Form>
+						}
+
 					</Spin>
 				</>
 			</Modal>
@@ -387,5 +461,62 @@ export default styled(VoteReferendum)`
 
 	.vote-form-cont {
 		padding: 12px;
+	}
+	.alignment-close .ant-select-selector{
+		border:1px soild !important;
+		border-color:#D2D8E0 !important;
+		height: 40px;
+		border-radius:4px !important;
+	}
+	
+	.alignment-close .ant-select-selection-item{
+		font-style: normal !important;
+		font-weight: 400 !important;
+		font-size: 14px !important;
+		display: flex;
+		align-items: center;
+		line-height: 21px !important;
+		letter-spacing: 0.0025em !important;
+		color: #243A57 !important;
+	}
+	
+	.alignment-close .ant-input-number-in-from-item{
+		height: 39.85px !important;
+	
+	}
+	
+	.alignment-close .ant-segmented-item-label{
+		display:flex ;
+		justify-content: center;
+		align-items:center;
+		height:32px !important;
+		border-radius:4px !important;
+		padding-right:0px !important;
+		padding-left:0px !important;
+	}
+	.alignment-close .ant-segmented {
+		padding :0px !important;
+	}
+	
+	.alignment-close .ant-select-selection-item{
+		color: #243A57 !important;
+	}
+	.alignment-close .ant-select-focused{
+		border: 1px solid #E5007A !important;
+		border-radius:4px !important;
+	}
+	.alignment-close .ant-segmented-item-selected{
+		box-shadow: none !important;
+		padding-right:0px !important;
+	}
+	.alignment-close .ant-segmented-item{
+		padding: 0px !important;
+	}
+	
+	.alignment-close .ant-modal-close{
+		margin-top: 6px;
+	}
+	.alignment-close .ant-modal-close:hover{
+		margin-top: 6px;
 	}
 `;

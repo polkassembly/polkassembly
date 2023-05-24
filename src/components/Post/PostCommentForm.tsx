@@ -95,6 +95,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					},
 					content,
 					created_at: new Date(),
+					history: [],
 					id: data.id,
 					replies: [],
 					sentiment:isSentimentPost? sentiment : 0,
@@ -141,9 +142,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 						{ required: "Please add the  '${name}'" }
 					}
 				>
-
 					<ContentForm  onChange = {(content : any) => onContentChange(content)} height={200} />
-
 					<Form.Item>
 						<div className='flex items-center justify-end mt-[-40px]'>
 							<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center my-0 ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>

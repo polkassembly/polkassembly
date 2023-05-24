@@ -14,6 +14,8 @@ import UserAvatar from 'src/ui-components/UserAvatar';
 import { usePostDataContext } from '~src/context';
 import EditableCommentContent from './EditableCommentContent';
 import Replies from './Replies';
+import { ICommentHistory } from '~src/types';
+import CommentHistoryModal from '~src/ui-components/CommentHistoryModal';
 
 export interface IComment {
 	user_id: number;
@@ -25,8 +27,9 @@ export interface IComment {
 	comment_reactions: IReactions;
 	username: string;
 	proposer?: string;
-    sentiment?:number;
-    comment_source?:'polkassembly' | 'subsquare';
+  sentiment?:number;
+  comment_source?:'polkassembly' | 'subsquare';
+  history?: ICommentHistory[];
 }
 
 interface ICommentProps {
@@ -37,12 +40,13 @@ interface ICommentProps {
 
 export const Comment: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
-	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly' } = comment;
+	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history } = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
-
 	const { postData: { postIndex, postType } } = usePostDataContext();
+	const [openModal, setOpenModal] = useState<boolean>(false);
+
 	useEffect(() => {
 		if (typeof window == 'undefined') return;
 		const hashArr = asPath.split('#');
@@ -64,7 +68,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 	return (
-		<div className={`${className} flex gap-x-4 mb-9`}>
+		<div className={`${className} flex gap-x-4 mb-9 `}>
 			{/* Offset div to scroll to because scrollIntoView doesn't support offset */}
 			<div id={id} ref={commentScrollRef} className="invisible absolute mt-[-100px]"></div>
 			<UserAvatar
@@ -83,15 +87,17 @@ export const Comment: FC<ICommentProps> = (props) => {
 					sentiment={newSentiment}
 					commentSource={comment_source}
 				>
-					<UpdateLabel
-						created_at={created_at}
-						updated_at={updated_at}
-					/>
+					<div className='cursor-pointer' onClick={() => setOpenModal(true)}>
+						<UpdateLabel
+							created_at={created_at}
+							updated_at={updated_at}
+							isHistory={history && history?.length > 0}
+						/></div>
 				</CreationLabel>
 				<EditableCommentContent
 					userId={user_id}
 					created_at={created_at}
-					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px]  min-[320px]:mt-[-2px]' }`}
+					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px] min-[320px]:mt-[-2px]' }`}
 					comment={comment}
 					commentId={id}
 					content={content}
@@ -102,9 +108,11 @@ export const Comment: FC<ICommentProps> = (props) => {
 					setSentiment={setNewSentiment}
 					prevSentiment={sentiment||0}
 					isSubsquareUser={comment_source==='subsquare'}
+					userName = {comment?.username}
 				/>
 				{replies && replies.length > 0 && <Replies className='comment-content' commentId={id} repliesArr={replies} />}
 			</div>
+			{ history && history.length > 0 && <CommentHistoryModal open={openModal} setOpen={setOpenModal} history={[{ content: content, created_at: updated_at, sentiment: newSentiment || sentiment || 0 } ,...history]} defaultAddress={comment?.proposer} username={comment?.username} user_id={comment?.user_id}/>}
 		</div>
 	);
 };

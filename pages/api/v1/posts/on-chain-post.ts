@@ -10,7 +10,7 @@ import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
 import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IApiResponse } from '~src/types';
+import { IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -85,6 +85,7 @@ export interface IPostResponse {
 	[key: string]: any;
   gov_type?: 'gov_1' | 'open_gov' ;
   tags?: string[] | [];
+  history?: IPostHistory[];
 }
 
 export type IReaction = '👍' | '👎';
@@ -307,17 +308,19 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 	const commentsPromise = commentsSnapshot.docs.map(async (doc) => {
 		if (doc && doc.exists) {
 			const data = doc.data();
+			const history = data?.history ? data.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
 			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
 			const commentsReactionsSnapshot = await commentDocRef.collection('comment_reactions').get();
 			const comment_reactions = getReactions(commentsReactionsSnapshot);
 			const comment = {
 				comment_reactions: comment_reactions,
 				content: data.content,
-				created_at: data.created_at?.toDate? data.created_at.toDate(): data.created_at,
+				created_at: data.created_at?.toDate ? data.created_at.toDate(): data.created_at,
+				history: history,
 				id: data.id,
 				proposer: '',
 				replies: [] as any[],
-				sentiment:data.sentiment||0,
+				sentiment:data.sentiment || 0,
 				updated_at: getUpdatedAt(data),
 				user_id: data.user_id || data.user_id,
 				username: data.username
@@ -556,6 +559,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}
 
 		}
+		const history = postData?.history ? postData?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
+
 		const post: IPostResponse = {
 			announcement: postData?.announcement,
 			bond: postData?.bond,
@@ -579,6 +584,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			ended_at_block: postData?.endedAtBlock,
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
+			history,
 			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
@@ -762,8 +768,37 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		}
 
 		// Comments
-		const commentsSnapshot = await postDocRef.collection('comments').get();
-		post.comments = await getComments(commentsSnapshot, postDocRef);
+		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+			const commentPromises = post.timeline.map(async (timeline: any) => {
+				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+				const commentsSnapshot = await postDocRef.collection('comments').get();
+				const comments = await getComments(commentsSnapshot, postDocRef);
+				return comments;
+			});
+			const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
+			commentPromiseSettledResults.forEach((result) => {
+				if (result && result.status === 'fulfilled' && result.value && Array.isArray(result.value)) {
+					if (!post.comments || !Array.isArray(post.comments)) {
+						post.comments = [];
+					}
+					post.comments = post.comments.concat(result.value);
+				}
+			});
+		} else {
+			if (post.post_link) {
+				const { id, type } = post.post_link;
+				const postDocRef = postsByTypeRef(network, type).doc(String(id));
+				const commentsSnapshot = await postDocRef.collection('comments').get();
+				post.comments = await getComments(commentsSnapshot, postDocRef);
+			}
+			const commentsSnapshot = await postDocRef.collection('comments').get();
+			const comments = await getComments(commentsSnapshot, postDocRef);
+			if (post.comments && Array.isArray(post.comments)) {
+				post.comments = post.comments.concat(comments);
+			} else {
+				post.comments = comments;
+			}
+		}
 
 		// Post Reactions
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();

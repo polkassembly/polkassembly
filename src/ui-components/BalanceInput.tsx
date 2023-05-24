@@ -21,7 +21,7 @@ interface Props{
 	className?: string
 	label?: string
 	helpText?: string
-	onChange?: (balance: BN) => void
+	onChange: (balance: BN) => void
 	placeholder?: string
 	size?: 'large' | 'small' | 'middle';
 	address?: string;
@@ -41,9 +41,9 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
 
 		if(isValid){
-			onChange?.(balance);
+			onChange(balance);
 		}else{
-			onChange?.(ZERO_BN);
+			onChange(ZERO_BN);
 		}
 	};
 
@@ -87,7 +87,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 			<InputNumber
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name={formItemName}
-				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] rounded-r-[0px] mt-0 ${inputClassName} placeholderColor hover:border-[#E5007A]`}
+				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] rounded-r-[0px] mt-0 ${inputClassName} placeholderColor hover:border-[#E5007A] balance-input`}
 				onChange={onBalanceChange}
 				placeholder={`${placeholder}`}
 				size={size || 'large'}
@@ -130,7 +130,7 @@ export default styled(BalanceInput)`
 	border: 1px solid #E5007A ;
 }
 
-.balance-input input::placeholder {
+input::placeholder {
 	color: #576D8B !important;
 	font-weight: 400 !important;
 	font-size: 14px !important;

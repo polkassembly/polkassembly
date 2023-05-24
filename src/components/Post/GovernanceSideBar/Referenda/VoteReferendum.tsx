@@ -48,7 +48,7 @@ interface Props {
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
 	const { addresses, isLoggedOut } = useUserDetailsContext();
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
+	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const [isFellowshipMember, setIsFellowshipMember] = useState<boolean>(false);

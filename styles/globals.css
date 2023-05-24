@@ -317,26 +317,3 @@ background-color: white !important;
   color:white;
   height: 216px !important;
 }
-.account-name{
-font-style: normal;
-font-weight: 400;
-font-size: 14px;
-line-height: 21px;
-text-transform: capitalize;
-display: flex;
-align-items: center;
-letter-spacing: 0.0025em;
-color: #243A57;
-}
-
-.account-address{
-font-style: normal;
-font-weight: 400;
-font-size: 10px;
-line-height: 21px;
-display: flex;
-align-items: center;
-letter-spacing: 0.0025em;
-text-transform: capitalize;
-color: #798AA2;
-}

@@ -209,7 +209,7 @@ const Details: FC<IDetailsProps> = (props) => {
 								src={image}
 								alt='User Picture'
 								className='bg-transparent flex items-center justify-center w-[95px] h-[95px] '
-								iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full border-4 border-solid rounded-full'
+								iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
 							/>
 						</div>
 						<div className='col-span-1 flex justify-end'>
@@ -222,7 +222,7 @@ const Details: FC<IDetailsProps> = (props) => {
 					</div>
 					<h2 title={newUsername} className='font-semibold text-xl text-white truncate max-w-[200px] mt-[18px]'>{newUsername}</h2>
 					<div
-						className='flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-[10px]'
+						className='flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-'
 					>
 						{
 							socialLinks?.map((social, index) => {
@@ -260,7 +260,7 @@ const Details: FC<IDetailsProps> = (props) => {
 					<TitleBio bio={bio} title={title} titleClassName='hidden md:block' bioClassName='hidden md:block' />
 				</div>
 				<div className='hidden md:block'>
-					<Divider className='bg-[#FCE5F2] my-6 border-0 border-t-[0.5px]' />
+					<Divider className='bg-[#FCE5F2] mt-2 mb-6 border-0 border-t-[0.5px]' />
 					<Addresses addresses={addresses} />
 					{
 						onChainIdentity && addresses && addresses.length > 0?

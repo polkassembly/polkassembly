@@ -10,11 +10,14 @@ import { SyncIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
+  previousRoute?: string;
 }
 
-const GovernanceSwitchButton = ({ className } : Props) => {
-	const { pathname , query } = useRouter();
-	const isGov2Route: boolean = checkGov2Route(pathname, query);
+const GovernanceSwitchButton = ({ className, previousRoute } : Props) => {
+
+	const router = useRouter();
+	const { pathname , query } = router;
+	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute );
 
 	return (
 		<div className={`${className}`}>

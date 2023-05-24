@@ -2,9 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
 import React, { FC } from 'react';
+import DefaultProfile from '~assets/icons/dashboard-profile.svg';
 
 interface IImageComponentProps{
     className?: string;
@@ -24,7 +24,7 @@ const ImageComponent: FC<IImageComponentProps> = (props) => {
 				alt={alt}
 				icon={
 					<span className={iconClassName}>
-						<UserOutlined />
+						<DefaultProfile />
 					</span>
 				}
 			/>

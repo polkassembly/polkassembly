@@ -58,7 +58,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	return <div className={`${className} w-full flex flex-col`}>
+	return <div className={`${className} w-full flex flex-col balance-input`}>
 		<label className='mb-[2px] inner-headings'>
 			{label}
 			{address && withBalance && <span><Balance address={address} onChange={onAccountBalanceChange} /></span>
@@ -111,26 +111,26 @@ export default styled(BalanceInput)`
 .placeholderColor .ant-input-number .ant-input-number-input{
 	color:#7c899b !important;
 }
-.ant-input-number-handler-up{
+.balance-input .ant-input-number-handler-up{
 	display:none !important;
 }
-	.ant-input-number-handler-down{
+.balance-input .ant-input-number-handler-down{
 	display:none !important;
 }
-.ant-input-number-group-addon{
+.balance-input .ant-input-number-group-addon{
 	border-radius:4px !important;
 	position:relative;
 	right:2px;
 }
-.ant-input-number{
+.balance-input .ant-input-number{
 	border: 1px solid #D2D8E0 ;
 }
 
-.ant-input-number-focused{
+.balance-input .ant-input-number-focused{
 	border: 1px solid #E5007A ;
 }
 
-input::placeholder {
+.balance-input input::placeholder {
 	color: #576D8B !important;
 	font-weight: 400 !important;
 	font-size: 14px !important;

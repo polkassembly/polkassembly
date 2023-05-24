@@ -531,7 +531,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									: !wallet? <FilteredError text='Please select a wallet.' />: null
 							}
 							{accounts.length===0 && wallet && <FilteredError text='No addresses found in the address selection tab.' />}
-							{balanceErr.length > 0 && <div className='-mt-2 -mb-3 text-sm text-red-500'>{balanceErr}</div>}
+							{balanceErr.length > 0 && <div className='mt-1 -mb-5 text-sm text-red-500'>{balanceErr}</div>}
 							{/* aye nye split abstain buttons */}
 							<h3 className='inner-headings mt-[24px] mb-0'>Choose your vote</h3>
 							<Segmented

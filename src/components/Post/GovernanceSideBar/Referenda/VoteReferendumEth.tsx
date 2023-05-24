@@ -462,14 +462,14 @@ export default styled(VoteReferendum)`
 	.vote-form-cont {
 		padding: 12px;
 	}
-	.ant-select-selector{
+	.alignment-close .ant-select-selector{
 		border:1px soild !important;
 		border-color:#D2D8E0 !important;
 		height: 40px;
 		border-radius:4px !important;
 	}
 	
-	.ant-select-selection-item{
+	.alignment-close .ant-select-selection-item{
 		font-style: normal !important;
 		font-weight: 400 !important;
 		font-size: 14px !important;
@@ -480,12 +480,12 @@ export default styled(VoteReferendum)`
 		color: #243A57 !important;
 	}
 	
-	.ant-input-number-in-from-item{
+	.alignment-close .ant-input-number-in-from-item{
 		height: 39.85px !important;
 	
 	}
 	
-	.ant-segmented-item-label{
+	.alignment-close .ant-segmented-item-label{
 		display:flex ;
 		justify-content: center;
 		align-items:center;
@@ -494,22 +494,22 @@ export default styled(VoteReferendum)`
 		padding-right:0px !important;
 		padding-left:0px !important;
 	}
-	.ant-segmented {
+	.alignment-close .ant-segmented {
 		padding :0px !important;
 	}
 	
-	.ant-select-selection-item{
+	.alignment-close .ant-select-selection-item{
 		color: #243A57 !important;
 	}
-	.ant-select-focused{
+	.alignment-close .ant-select-focused{
 		border: 1px solid #E5007A !important;
 		border-radius:4px !important;
 	}
-	.ant-segmented-item-selected{
+	.alignment-close .ant-segmented-item-selected{
 		box-shadow: none !important;
 		padding-right:0px !important;
 	}
-	.ant-segmented-item{
+	.alignment-close .ant-segmented-item{
 		padding: 0px !important;
 	}
 	

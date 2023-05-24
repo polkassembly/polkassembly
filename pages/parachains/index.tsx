@@ -68,12 +68,12 @@ const Parachains = ({ className, network }: Props) => {
 					</Col>
 				</Row>
 
-				<div className={`${className} bg-white drop-shadow-md p-2 lg:p-6 rounded-md h-[650px]`}>
+				<div className={`${className} bg-white drop-shadow-md p-2 lg:p-6 rounded-xl h-[650px]`}>
 					<h2 className='dashboard-heading mb-6'>Projects</h2>
 					<Tabs
-						tabBarStyle={{ color:'#334D6E' }}
+						tabBarStyle={{ color:'#243A57' }}
 						type="card"
-						className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+						className='ant-tabs-tab-bg-white text-[#243A57] font-medium'
 						items={tabItems}
 					/>
 				</div>
@@ -120,6 +120,11 @@ export default styled(Parachains)`
 				overflow-x: hidden !important;
 			}
 		}
+	}
+
+	.ant-table-thead{
+		color: #243A57 !important;
+		font-weight: 500;
 	}
 
 	.ant-tabs-tab-bg-white .ant-tabs-tab:not(.ant-tabs-tab-active) {

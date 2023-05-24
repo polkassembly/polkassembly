@@ -35,6 +35,7 @@ export default styled(Markdown)`
 			margin: 0 0 0.5rem 0;
 			color: #243A57 !important;
 			font-weight: 500 !important;
+			font-size: 14px !important;
 		}
 
 		h1 {

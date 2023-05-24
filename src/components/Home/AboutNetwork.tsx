@@ -87,7 +87,7 @@ const gov2Link = ({ className, bgImage, icon, link, text, subText } : { classNam
 const AboutNetwork = ({ className, networkSocialsData, showGov2Links } : { className?: string, networkSocialsData: NetworkSocials | null, showGov2Links?: boolean }) => {
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-5 md:p-6 rounded-md`}>
+		<div className={`${className} bg-white drop-shadow-md p-5 md:p-6 rounded-xl`}>
 			<div className="flex items-center justify-between">
 				<h2 className='dashboard-heading'>About</h2>
 				<div className='hidden lg:inline-block'>

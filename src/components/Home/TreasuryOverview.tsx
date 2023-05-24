@@ -344,7 +344,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	return (
 		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col gap-4 lg:flex`}>
 			{/* Available */}
-			<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-md gap-y-2">
+			<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-xl gap-y-2">
 				{
 					!available.isLoading ?
 						<>
@@ -391,7 +391,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 			{/* CurrentPrice */}
 			{network !== 'moonbase' &&
-				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-md gap-y-2">
+				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-xl gap-y-2">
 					{
 						!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading)?
 							<>
@@ -440,7 +440,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			{/* Spend Period */}
 			{!['polymesh', 'polymesh-test'].includes(network) && <>
 				{!inTreasuryProposals &&
-				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-md gap-y-2">
+				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-xl gap-y-2">
 					{
 						!spendPeriod.isLoading?
 							<>
@@ -499,7 +499,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 			{/* Next Burn */}
 			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
-				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-md gap-y-2">
+				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-xl gap-y-2">
 					{
 						!nextBurn.isLoading?
 							<>

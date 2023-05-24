@@ -31,7 +31,6 @@ export enum CustomStatus {
 }
 
 const TrackListingCard = ({ className, posts, trackName } : Props) => {
-
 	const items = [
 		{
 			label: <CountBadgePill label='All' count={posts?.all?.data?.count || 0} />,
@@ -39,6 +38,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 			children: <TrackListingAllTabContent
 				posts={posts?.all?.data?.posts || []}
 				error={posts?.all?.error}
+				count={posts?.all?.data?.count || 0}
 			/>
 		},
 		{
@@ -48,6 +48,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 				posts={posts?.submitted?.data?.posts || []}
 				error={posts?.submitted?.error}
 				trackName={trackName}
+				count={posts?.submitted?.data?.count || 0}
 				status={CustomStatus.Submitted} />
 		},
 		{
@@ -57,6 +58,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 				posts={posts?.voting?.data?.posts || []}
 				error={posts?.voting?.error}
 				trackName={trackName}
+				count={posts?.voting?.data?.count || 0}
 				status={CustomStatus.Voting}
 			/>
 		},
@@ -67,6 +69,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 				posts={posts?.closed?.data?.posts || []}
 				error={posts?.closed?.error}
 				trackName={trackName}
+				count={posts?.closed?.data?.count || 0}
 				status={CustomStatus.Closed}
 			/>
 		}
@@ -77,12 +80,10 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 	const [activeTab, setActiveTab] = useState(defaultActiveTab);
 	const onTabClick = (key: string) => {
 		setActiveTab(key);
-		const query = { ...router.query };
-		delete query.page;
 		router.push({
 			pathname: router.pathname,
 			query: {
-				...query,
+				...router.query,
 				page: 1,
 				trackStatus: key.toLowerCase()
 			}

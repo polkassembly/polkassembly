@@ -17,7 +17,7 @@ import CountBadgePill from '~src/ui-components/CountBadgePill';
 
 interface ITrackListingCardProps {
 	className?: string;
-	posts: IFellowshipReferendumPostsByTrackName;
+	posts: IFellowshipReferendumPostsByTrackName|undefined;
     setTrackName: React.Dispatch<React.SetStateAction<string>>;
     fellowshipReferendumPostOrigins: string[];
 }
@@ -29,6 +29,7 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 			children: <TrackListingAllTabContent
 				posts={posts?.All?.data?.posts || []}
 				error={posts?.All?.error}
+				count={posts?.All?.data?.count || 0}
 			/>,
 			key: 'All',
 			label: <CountBadgePill label='All' count={posts?.All?.data?.count || 0} />
@@ -38,6 +39,7 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 				children: <TrackListingTabContent
 					posts={posts?.[value]?.data?.posts || []}
 					error={posts?.[value]?.error}
+					count={posts?.[value]?.data?.count || 0}
 				/>,
 				key: value,
 				label: <CountBadgePill label={value.replace(/([a-z0-9])([A-Z])/g, '$1 $2')} count={posts?.[value]?.data?.count || 0} />

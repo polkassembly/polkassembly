@@ -14,7 +14,7 @@ const AboutTrackCard = dynamic(() => import('~src/components/Listing/FellowshipR
 });
 
 interface ITrackListingProps {
-	posts: IFellowshipReferendumPostsByTrackName;
+	posts: IFellowshipReferendumPostsByTrackName|undefined;
     fellowshipReferendumPostOrigins: string[];
 }
 

@@ -123,9 +123,9 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 						event.preventDefault();
 					}
 				}}
-				className={`text-sm w-full h-[39px] border-[1px] rounded-l-[4px] mt-0 ${inputClassName} suffixColor hover:border-[#E5007A] balance-input`}
+				className={`text-sm w-full h-[39px] border-[1px] ${inputClassName} mt-0 suffixColor hover:border-[#E5007A] balance-input`}
 				onChange={(e) => onBalanceChange(e.target.value)}
-				placeholder={`${placeholder} ${chainProperties[network]?.tokenSymbol}`}
+				placeholder={placeholder}
 				size={size || 'large'}
 				value={(formatedBalance(String(balance || ZERO_BN), unit))}
 				pattern={'[0-9]{1,5}'}
@@ -134,14 +134,16 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 	</div>;
 };
 export default styled(BalanceInput)`
-.suffixColor .ant-input-number-group .ant-input-number-group-addon{
+.suffixColor .ant-input-group .ant-input-group-addon{
 	background:#E5007A;
 	color:white;
-	font-size:12px;
-	border: 1px solid #E5007A; 
+	font-size:12px !important;
+	border: 1px solid #E5007A;
+  border-radius:0px 4px 4px 0px !important ;
 }
-.suffixColor .ant-input-number .ant-input-number-input{
+.suffixColor .ant-input{
 	color:#7c899b !important;
+  border-radius: 4px 0px 0px 4px !important;
 }
 .balance-input .ant-input-number-handler-up{
 	display:none !important;

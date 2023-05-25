@@ -5,7 +5,6 @@ import * as admin from 'firebase-admin';
 admin.initializeApp();
 const logger = functions.logger;
 
-// v2 functions can only contain lowercase letters, numbers and no underscores.
 exports.onPostWritten = functions.region('europe-west1').firestore.document('networks/{network}/post_types/{postType}/posts/{postId}').onWrite((change, context) => {
 	const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID;
 	const ALGOLIA_WRITE_API_KEY = process.env.ALGOLIA_WRITE_API_KEY;

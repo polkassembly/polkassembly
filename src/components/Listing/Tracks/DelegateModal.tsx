@@ -182,12 +182,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 			errors.push('');
 		}
 		if(bnBalance.lte(ZERO_BN)) {
-			setBalanceErr('Please provide a valid balance.');
-			errors.push('');
-		}
-
-		if(bnBalance.eq(ZERO_BN)){
-			setBalanceErr('Balance must be greater than 0.');
+			setBalanceErr('Please provide a valid balance.Balance must be greater than 0.');
 			errors.push('');
 		}
 
@@ -390,7 +385,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 							{/* errors */}
 							{balanceErr.length > 0 && <div className='-mt-5 text-sm text-red-500'>{balanceErr}</div>}
 
-							<div className='mb-2 border-solid border-white mt-4'>
+							<div className='mb-2 border-solid border-white mt-2'>
 								<label  className='text-[#485F7D] flex items-center text-sm'>
                   Conviction
 									<span>

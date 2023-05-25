@@ -5,7 +5,7 @@
 import { LoadingOutlined , StopOutlined } from '@ant-design/icons';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Alert, Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
 import { EVoteDecisionType, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
@@ -491,14 +491,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				className={`${poppins.variable} ${poppins.className} w-[604px] max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
+				title={<div className='h-[72px] -mt-5 flex align-middle  border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px]'>
+					<CastVoteIcon className='mt-6 mr-[11px] ml-[24px]'/>
+					<h4 className='cast-vote-heading mt-[22px]'>Cast Your Vote</h4>
+				</div>}
 			><>
 					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
-
-						<div className=''>
-							<div className='h-[72px] mt-[-20px] flex align-middle  border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px]'>
-								<CastVoteIcon className='mt-[24px] mr-[11px] ml-[24px]'/>
-								<h4 className='cast-vote-heading mt-[22px]'>Cast Your Vote</h4>
-							</div>
+						<>
 
 							<div className='flex items-center gap-x-5 mt-[22px] mb-[24px]'>
 								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[69.29px] h-[44.39px] hover:border-pink_primary border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
@@ -514,6 +513,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										: null
 								}
 							</div>
+							{balanceErr.length > 0 && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
 
 							{
 								accounts.length > 0 ?
@@ -524,14 +524,15 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										withBalance
 										onAccountChange={onAccountChange}
 										onBalanceChange={handleOnBalanceChange}
-										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D] `}
+										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D] p-1`}
 										inputClassName='bg-[#d2d8e033] px-[12px] rounded-[4px]'
 										withoutInfo={true}
 									/>
 									: !wallet? <FilteredError text='Please select a wallet.' />: null
 							}
+
 							{accounts.length===0 && wallet && <FilteredError text='No addresses found in the address selection tab.' />}
-							{balanceErr.length > 0 && <div className='mt-1 -mb-5 text-sm text-red-500'>{balanceErr}</div>}
+
 							{/* aye nye split abstain buttons */}
 							<h3 className='inner-headings mt-[24px] mb-0'>Choose your vote</h3>
 							<Segmented
@@ -642,7 +643,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								</Form>
 							}
 
-						</div>
+						</>
 
 					</Spin>
 				</>

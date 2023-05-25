@@ -1,3 +1,7 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+
 // This file sets a custom webpack configuration to use your Next.js app
 // with Sentry.
 // https://nextjs.org/docs/api-reference/next.config.js/introduction
@@ -68,7 +72,8 @@ const nextConfig = {
     });
 
     return config;
-  }
+  },
+  excludeFile: (str) => str.includes('cloud-functions')
 };
 
 module.exports = nextConfig;
@@ -76,5 +81,5 @@ module.exports = nextConfig;
 module.exports = withSentryConfig(
   module.exports,
   { silent: true },
-  { hideSourcemaps: true },
+  { hideSourcemaps: true }
 );

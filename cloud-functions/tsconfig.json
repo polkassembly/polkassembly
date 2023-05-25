@@ -8,6 +8,7 @@
     "sourceMap": true,
     "strict": true,
     "target": "ES2020",
+    "typeRoots": ["./node_modules/@types"],
     "noFallthroughCasesInSwitch": true
   },
   "compileOnSave": true,

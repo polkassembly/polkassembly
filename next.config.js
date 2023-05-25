@@ -72,8 +72,7 @@ const nextConfig = {
     });
 
     return config;
-  },
-  excludeFile: (str) => str.includes('cloud-functions')
+  }
 };
 
 module.exports = nextConfig;

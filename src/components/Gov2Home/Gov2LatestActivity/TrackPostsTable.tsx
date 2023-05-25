@@ -77,8 +77,8 @@ const TrackPostsTable: FC<ITrackPostsTableProps> = ({ posts, error }) => {
 
 	function gotoPost(rowData: IPostsRowData){
 		if(rowData.origin) {
-			if (typeof window !== 'undefined' && (event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
-				window.open(`/referenda/${rowData.post_id}`, '_blank');
+			if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
+				window?.open(`/referenda/${rowData.post_id}`, '_blank');
 			} else {
 				router.push(`/referenda/${rowData.post_id}`);
 			}

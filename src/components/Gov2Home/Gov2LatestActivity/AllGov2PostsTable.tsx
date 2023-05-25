@@ -95,8 +95,8 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 		if(!rowData.origin) {
 			path = 'post';
 		}
-		if (typeof window !== 'undefined' && (event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
-			window.open(`/${path}/${rowData.post_id}`, '_blank');
+		if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
+			window?.open(`/${path}/${rowData.post_id}`, '_blank');
 		} else {
 			router.push(`/${path}/${rowData.post_id}`);
 		}

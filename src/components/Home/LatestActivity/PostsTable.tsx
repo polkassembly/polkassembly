@@ -89,8 +89,8 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 				onClick={(rowData) => {
 					const firestoreProposalType = getFirestoreProposalType(['discussions', 'grants'].includes(rowData.type) ? `${rowData.type.charAt(0).toUpperCase()}${rowData.type.slice(1)}` :  rowData.type);
 					const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
-					if (typeof window !== 'undefined' && (event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
-						window.open(`/${link}/${rowData.post_id}`, '_blank');
+					if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
+						window?.open(`/${link}/${rowData.post_id}`, '_blank');
 					} else {
 						router.push(`/${link}/${rowData.post_id}`);
 					}
@@ -104,8 +104,8 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 				onClick={(rowData) => {
 					const firestoreProposalType = getFirestoreProposalType(['discussions', 'grants'].includes(rowData.type) ? `${rowData.type.charAt(0).toUpperCase()}${rowData.type.slice(1)}` :  rowData.type);
 					const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
-					if (typeof window !== 'undefined' && (event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
-						window.open(`/${link}/${rowData.post_id}`, '_blank');
+					if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
+						window?.open(`/${link}/${rowData.post_id}`, '_blank');
 					} else {
 						router.push(`/${link}/${rowData.post_id}`);
 					}

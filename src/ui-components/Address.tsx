@@ -19,6 +19,7 @@ import shortenAddress from '../util/shortenAddress';
 import EthIdenticon from './EthIdenticon';
 import IdentityBadge from './IdentityBadge';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { getKiltDidName } from '~src/util/kiltDid';
 
 interface Props {
 	address: string
@@ -53,6 +54,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 	const [flags, setFlags] = useState<DeriveAccountFlags | undefined>(undefined);
 	const router = useRouter();
 	const [username, setUsername] = useState('');
+	const [kiltName, setKiltName] = useState('');
 
 	const encoded_addr = address ? getEncodedAddress(address, network) || '' : '';
 
@@ -70,6 +72,13 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 			}
 		}
 	};
+
+	const getKiltName = async () => {
+		const web3Name = await getKiltDidName(address)
+		if(web3Name) {
+			setKiltName(web3Name!)
+		}
+	}
 
 	useEffect(() => {
 		if (!api){
@@ -122,7 +131,13 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 		return () => unsubscribe && unsubscribe();
 	}, [encoded_addr, api, apiReady]);
 
-	const t1 = mainDisplay || (isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr);
+	useEffect(() => {
+		if(process.env.NEXT_PUBLIC_NETWORK === "kilt") {
+			getKiltName()
+		}
+	}, [])
+
+	const t1 = kiltName || mainDisplay || (isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr);
 	const t2 = extensionName || mainDisplay;
 
 	return (

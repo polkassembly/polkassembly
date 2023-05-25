@@ -29,6 +29,8 @@ import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } fr
 import { getNetworkSocials } from './api/v1/network-socials';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import { getKiltDidName } from '~src/util/kiltDid';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -138,6 +140,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
 
 	return (
 		<>

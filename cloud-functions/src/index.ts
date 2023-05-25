@@ -1,9 +1,12 @@
-import { onDocumentWritten } from 'firebase-functions/v2/firestore';
-import * as logger from 'firebase-functions/logger';
 import algoliasearch from 'algoliasearch';
+import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
+
+admin.initializeApp();
+const logger = functions.logger;
 
 // v2 functions can only contain lowercase letters, numbers and no underscores.
-exports.onpostwritten = onDocumentWritten('networks/{network}/post_types/{postType}/posts/{postId}', (event) => {
+exports.onPostWritten = functions.region('europe-west1').firestore.document('networks/{network}/post_types/{postType}/posts/{postId}').onWrite((change, context) => {
 	const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID;
 	const ALGOLIA_WRITE_API_KEY = process.env.ALGOLIA_WRITE_API_KEY;
 
@@ -12,11 +15,11 @@ exports.onpostwritten = onDocumentWritten('networks/{network}/post_types/{postTy
 	const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_WRITE_API_KEY);
 	const index = algoliaClient.initIndex('polkassembly_posts');
 
-	const { network, postType, postId } = event.params;
+	const { network, postType, postId } = context.params;
 	logger.info('Document written: ', { network, postType, postId });
 
 	// Retrieve the data from the Firestore event
-	const post = event.data?.after.data();
+	const post = change.after.data();
 
 	// Create an object to be indexed by Algolia
 	const postRecord = {
@@ -37,7 +40,7 @@ exports.onpostwritten = onDocumentWritten('networks/{network}/post_types/{postTy
 		});
 });
 
-exports.onuserwritten = onDocumentWritten('users/{userId}', (event) => {
+exports.onUserWritten = functions.region('europe-west1').firestore.document('users/{userId}').onWrite((change, context) => {
 	const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID;
 	const ALGOLIA_WRITE_API_KEY = process.env.ALGOLIA_WRITE_API_KEY;
 
@@ -46,11 +49,11 @@ exports.onuserwritten = onDocumentWritten('users/{userId}', (event) => {
 	const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_WRITE_API_KEY);
 	const index = algoliaClient.initIndex('polkassembly_users');
 
-	const { userId } = event.params;
+	const { userId } = context.params;
 	logger.info('User written: ', { userId });
 
 	// Retrieve the data from the Firestore event
-	const userData = event.data?.after.data();
+	const userData = change.after.data();
 
 	// Create an object to be indexed by Algolia
 	const userRecord = {

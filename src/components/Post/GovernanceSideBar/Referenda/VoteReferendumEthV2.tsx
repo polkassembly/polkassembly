@@ -3,9 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined , StopOutlined } from '@ant-design/icons';
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Button, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Button, Form, Modal, Segmented, Select, Spin, Alert } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -61,6 +61,9 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const { setPostData } = usePostDataContext();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
+	const [availableWallets, setAvailableWallets] = useState<any>({});
+	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
+	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
@@ -85,15 +88,22 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [balanceErr, setBalanceErr] = useState('');
 
 	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
+	const getWallet=() => {
+		const injectedWindow = window as Window & InjectedWindow ;
+		setAvailableWallets(injectedWindow.injectedWeb3);
+		setIsMetamaskWallet((injectedWindow as any)?.ethereum.isMetaMask);
+	};
 
 	useEffect(() => {
 		if(!window) return;
-		const Wallet = localStorage.getItem('loginWallet') ;
-		if(Wallet){
-			setLoginWallet(Wallet as  Wallet);
-			setWallet(Wallet as Wallet);
+		const defaultWallet = localStorage.getItem('loginWallet') as Wallet ;
+		if(defaultWallet){
+			if(defaultWallet === Wallet.METAMASK){setWallet(Wallet.METAMASK);handleDefaultWallet(Wallet.METAMASK);}
+			else if(defaultWallet === Wallet.TALISMAN){setWallet(Wallet.TALISMAN);handleDefaultWallet(Wallet.TALISMAN);}
+			setLoginWallet(defaultWallet as  Wallet);
 		}
-	}, []);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [apiReady]);
 
 	useEffect(() => {
 		setPostData((prev) => {
@@ -133,6 +143,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			return;
 		}
 
+		wallet === Wallet.TALISMAN && addresses.filter((address: string) => address.slice(0,2) === '0x').length === 0 ? setIsTalismanEthereum(false) : setIsTalismanEthereum(true);
+
 		setAccounts(addresses.map((address: string): InjectedAccountWithMeta => {
 			const account = {
 				address,
@@ -149,7 +161,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		if (addresses.length > 0) {
 			setAddress(addresses[0]);
 		}
-
 		setIsAccountLoading(false);
 	};
 
@@ -283,6 +294,11 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const voteReferendum = async () => {
 		if (!referendumId && referendumId !== 0) {
 			console.error('referendumId not set');
+			return;
+		}
+
+		if(!isTalismanEthereum){
+			console.error('Please use Ethereum account via Talisman wallet.');
 			return;
 		}
 
@@ -509,9 +525,10 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	};
 	// eslint-disable-next-line react-hooks/rules-of-hooks
 	useEffect(() => {
+		getWallet();
 		if(!loginWallet) return;
-		setWallet(loginWallet);
-		handleDefaultWallet(loginWallet);
+		if(loginWallet === Wallet.METAMASK){setWallet(Wallet.METAMASK);handleDefaultWallet(Wallet.METAMASK);}
+		else if(loginWallet === Wallet.TALISMAN){setWallet(Wallet.TALISMAN);handleDefaultWallet(Wallet.TALISMAN);}
 	}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	,[loginWallet]);
@@ -558,18 +575,20 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				className={'w-[604px] max-h-[675px] rounded-[6px] alignment-close'}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
+				title={<div className='h-[72px] mt-[-20px] flex align-middle  border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px]'>
+					<CastVoteIcon className='mt-[24px] mr-[11px] ml-[24px]'/>
+					<h4 className='cast-vote-heading mt-[22px]'>Cast Your Vote</h4>
+				</div>}
 			> <>
 					<Spin spinning={loadingStatus.isLoading || isAccountLoading} indicator={<LoadingOutlined />}>
 
-						<div className='h-[72px] mt-[-20px] flex align-middle  border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px]'>
-							<CastVoteIcon className='mt-[24px] mr-[11px] ml-[24px]'/>
-							<h4 className='cast-vote-heading mt-[22px]'>Cast Your Vote</h4>
-						</div>
-
 						<div className='flex items-center gap-x-5 mt-[22px] mb-[24px]'>
-							<WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />
-							<WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
+							{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+							{isMetamaskWallet && <WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />}
 						</div>
+						{!isTalismanEthereum && <Alert message='Please use Ethereum account via Talisman wallet.' type='info' className='mb-2 -mt-2' showIcon/>}
+
+						{balanceErr.length > 0 && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
 
 						{
 							accounts.length > 0?
@@ -580,8 +599,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 									withBalance
 									onAccountChange={onAccountChange}
 									onBalanceChange={handleOnBalanceChange}
-									className={`${poppins.variable} ${poppins.className} text-sidebarBlue mb-[21px] `}
-									inputClassName='bg-[#F6F7F9] h-[40px] rounded-[4px]'
+									className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
+									inputClassName='bg-[#d2d8e033] px-[12px] rounded-[4px] h-[40px]'
 									withoutInfo = {true}
 								/>
 								: !wallet? <FilteredError text='Please select a wallet.' />: null
@@ -599,14 +618,14 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 							options={decisionOptions}
 							disabled={ !apiReady}
 						/>
-						{balanceErr.length > 0 && <div className='-mt-5 -mb-5 text-sm text-red-500'>{balanceErr}</div>}
 						{
 							vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN &&
 							<Form onFinish={async () => {
 								await voteReferendum();
 							}}
 							form={ayeNayForm}
-							name="aye-nay-form">
+							name="aye-nay-form"
+							className={`${balanceErr.length > 0 && 'mt-4'}`}>
 
 								<BalanceInput
 									label={'Lock balance'}
@@ -631,6 +650,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								<Form
 									form={splitForm}
 									name="split-form"
+									className={`${balanceErr.length > 0 && 'mt-4'}`}
 									onFinish={async () => {
 										await voteReferendum();
 									}}

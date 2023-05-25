@@ -63,7 +63,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 				network,
 				page,
 				proposalType,
-				trackNo: trackId
+				trackNo: trackId,
+				trackStatus: 'all'
 			});
 		}
 		return prev;

@@ -105,8 +105,8 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 				{
 					message: 'Invalid Balance',
 					validator(rule, value, callback) {
-						const pattern = /^(?:0(?:\.\d+)?|[1-9]\d*(?:\.\d+)?)$/;
-						if (callback && !value.match(pattern)){
+
+						if (callback && isNaN(Number(value))){
 							callback(rule?.message?.toString());
 						}else {
 							callback();
@@ -118,17 +118,11 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 			<Input
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name={formItemName}
-				onKeyPress={(event) => {
-					if (!/^[0-9.]+$/.test(event.key)) {
-						event.preventDefault();
-					}
-				}}
 				className={`text-sm w-full h-[39px] border-[1px] ${inputClassName} mt-0 suffixColor hover:border-[#E5007A] balance-input`}
 				onChange={(e) => onBalanceChange(e.target.value)}
 				placeholder={placeholder}
 				size={size || 'large'}
 				value={(formatedBalance(String(balance || ZERO_BN), unit))}
-				pattern={'[0-9]{1,5}'}
 			/>
 		</Form.Item>
 	</div>;

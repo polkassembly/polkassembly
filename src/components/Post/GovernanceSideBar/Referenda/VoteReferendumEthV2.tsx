@@ -90,7 +90,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow ;
 		setAvailableWallets(injectedWindow.injectedWeb3);
-		setIsMetamaskWallet((injectedWindow as any)?.ethereum.isMetaMask);
+		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
 	};
 
 	const handleDefaultWallet=async(wallet:Wallet) => {
@@ -246,56 +246,47 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		});
 	};
 
-	const onConvictionChange = (value: any) => {
-		setConviction(Number(value));
-	};
-
 	const onBalanceChange = (balance: BN) => {
-		if(balance && balance.eq(ZERO_BN)) {
-			setBalanceErr('');
-		}
-		else if(balance && availableBalance.lt(balance)){
+
+		if(!balance) return;
+		if(availableBalance.lte(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
 			setBalanceErr('');
+			setLockedBalance(balance);
 		}
-		setLockedBalance(balance);
+
 	};
 
 	const onAyeValueChange = (balance: BN) => {
-		if(balance && balance.eq(ZERO_BN)) {
-			setBalanceErr('');
-		}
-		else if(balance && availableBalance.lt(balance)){
+		if(!balance) return;
+		if(availableBalance.lte(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
 			setBalanceErr('');
+			setAyeVoteValue(balance);
 		}
-		setAyeVoteValue(balance);
 	};
 
 	const onNayValueChange = (balance: BN) => {
-		if(balance && balance.eq(ZERO_BN)) {
-			setBalanceErr('');
-		}
-		else if(balance && availableBalance.lt(balance)){
+		if(!balance) return;
+		if(availableBalance.lt(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
 			setBalanceErr('');
+			setNayVoteValue(balance);
 		}
-		setNayVoteValue(balance);
+
 	};
 
 	const onAbstainValueChange = (balance: BN) => {
-		if(balance && balance.eq(ZERO_BN)) {
-			setBalanceErr('');
-		}
-		else if(balance && availableBalance.lt(balance)){
+		if(!balance) return;
+		if(availableBalance.lt(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
 			setBalanceErr('');
+			setAbstainVoteValue(balance);
 		}
-		setAbstainVoteValue(balance);
 	};
 
 	const voteReferendum = async () => {
@@ -313,17 +304,17 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			console.error('lockedBalance not set');
 			return;
 		}
-		if(lockedBalance && availableBalance.lt(lockedBalance)) {
+		if(lockedBalance && availableBalance.lte(lockedBalance)) {
 			setBalanceErr('Insufficient balance.');
 			return;
 		}
-		if(ayeVoteValue && availableBalance.lt(ayeVoteValue) || nayVoteValue && availableBalance.lt(nayVoteValue) || abstainVoteValue && availableBalance.lt(abstainVoteValue) ) {
+		if(ayeVoteValue && availableBalance.lte(ayeVoteValue) || nayVoteValue && availableBalance.lte(nayVoteValue) || abstainVoteValue && availableBalance.lte(abstainVoteValue) ) {
 			setBalanceErr('Insufficient balance.');
 			return;
 		}
 
 		const totalVoteValue = ayeVoteValue?.add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN);
-		if (totalVoteValue?.gt(availableBalance)) {
+		if (totalVoteValue?.gte(availableBalance)) {
 			setBalanceErr('Insufficient balance.');
 			return;
 		}
@@ -496,7 +487,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				Vote lock
 			</label>
 
-			<Select onChange={onConvictionChange} size='large' className='' defaultValue={conviction} suffixIcon ={<DownIcon/>}>
+			<Select onChange={(key) => setConviction(Number(key)) } size='large' className='' defaultValue={conviction} suffixIcon ={<DownIcon/>}>
 				{convictionOpts}
 			</Select>
 		</Form.Item>;

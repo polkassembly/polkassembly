@@ -78,7 +78,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setAvailableWallets(injectedWindow.injectedWeb3);
-		setIsMetamaskWallet((injectedWindow as any)?.ethereum);
+		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
 	};
 	const handleDefaultWallet=async(wallet:Wallet) => {
 		setWallet(wallet);
@@ -233,22 +233,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		});
 	};
 
-	const onConvictionChange = (value: any) => {
-		setConviction(Number(value));
-	};
-
 	//const onBalanceChange = (balance: BN) => setLockedBalance(balance);
 
 	const onBalanceChange = (balance: BN) => {
-		if(balance && balance.eq(ZERO_BN)) {
-			setBalanceErr('');
-		}
-		else if(balance && availableBalance.lt(balance)){
+		if(!balance) return;
+
+		else if(availableBalance.lte(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
 			setBalanceErr('');
+			setLockedBalance(balance);
 		}
-		setLockedBalance(balance);
 	};
 
 	const handleOnBalanceChange = (balanceStr: string) => {
@@ -353,7 +348,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				Vote lock
 			</label>
 
-			<Select onChange={onConvictionChange} size='large' className='rounded-[4px]' defaultValue={conviction} suffixIcon ={<DownIcon/>} >
+			<Select onChange={(key) => setConviction(Number(key))} size='large' className='rounded-[4px]' defaultValue={conviction} suffixIcon ={<DownIcon/>} >
 				{convictionOpts}
 			</Select>
 		</Form.Item>;

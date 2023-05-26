@@ -31,7 +31,7 @@ import SplitGray from '~assets/icons/split-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import getWalletErrors from '~src/util/getWalletErrors';
+import checkWalletForNetwork from '~src/util/checkWalletForNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -43,6 +43,11 @@ interface Props {
 	setLastVote: React.Dispatch<React.SetStateAction<string | null | undefined>>
 	proposalType: ProposalType;
   address: string;
+}
+export interface INetworkWalletErr{
+message: string;
+ description: string;
+ error: number
 }
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
@@ -67,7 +72,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [abstainVoteValue, setAbstainVoteValue] = useState<BN>(ZERO_BN);
 	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
-	const [walletErr, setWalletErr] = useState<{message: string, description: string, error: number}>({ description: '', error: 0, message: '' });
+	const [walletErr, setWalletErr] = useState<INetworkWalletErr>({ description: '', error: 0, message: '' });
 
 	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
@@ -153,7 +158,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	}, [address, wallet]);
 
 	useEffect(() => {
-		getWalletErrors(availableWallets, ['polymesh'].includes(network) ? true : false, (window as any).walletExtension?.isNovaWallet ? true : false, setWalletErr );
+		setWalletErr(checkWalletForNetwork(network) as INetworkWalletErr );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [availableWallets, network]);
 
@@ -187,56 +192,45 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const [conviction, setConviction] = useState<number>(0);
 
-	const onConvictionChange = (value: any) => {
-		setConviction(Number(value));
-	};
-
 	const onBalanceChange = (balance: BN) => {
-		if(balance && balance.eq(ZERO_BN)) {
-			setBalanceErr('');
-		}
-		else if(balance && availableBalance.lt(balance)){
+		if(!balance) return;
+		else if(availableBalance.lte(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
 			setBalanceErr('');
+			setLockedBalance(balance);
 		}
-		setLockedBalance(balance);
+
 	};
 
 	const onAyeValueChange = (balance: BN) => {
-		if(balance && balance.eq(ZERO_BN)) {
-			setBalanceErr('');
-		}
-		else if(balance && availableBalance.lt(balance)){
+		if(!balance) return;
+		if(availableBalance.lte(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
 			setBalanceErr('');
+			setAyeVoteValue(balance);
 		}
-		setAyeVoteValue(balance);
 	};
 
 	const onNayValueChange = (balance: BN) => {
-		if(balance && balance.eq(ZERO_BN)) {
-			setBalanceErr('');
-		}
-		else if(balance && availableBalance.lt(balance)){
+		if(!balance) return;
+		if(availableBalance.lte(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
 			setBalanceErr('');
+			setNayVoteValue(balance);
 		}
-		setNayVoteValue(balance);
 	};
 
 	const onAbstainValueChange = (balance: BN) => {
-		if(balance && balance.eq(ZERO_BN)) {
-			setBalanceErr('');
-		}
-		else if(balance && availableBalance.lt(balance)){
+		if(!balance) return;
+		if(availableBalance.lte(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
+			setAbstainVoteValue(balance);
 			setBalanceErr('');
 		}
-		setAbstainVoteValue(balance);
 	};
 
 	const checkIfFellowshipMember = async () => {
@@ -287,12 +281,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	if (isLoggedOut()) {
 		return <LoginToVote />;
 	}
-	const openModal = () => {
-		setShowModal(true);
-	};
-	const closeModal = () => {
-		setShowModal(false);
-	};
 
 	const VoteLock = ({ className }: { className?:string }) =>
 
@@ -300,7 +288,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			<label  className='inner-headings'>
 				Vote lock
 			</label>
-			<Select onChange={onConvictionChange} size='large' className='' defaultValue={conviction} suffixIcon ={<DownIcon/>}>
+			<Select onChange={(key) => setConviction(Number(key))} size='large' className='' defaultValue={conviction} suffixIcon ={<DownIcon/>}>
 				{convictionOpts}
 			</Select>
 
@@ -317,11 +305,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			return;
 		}
 
-		if(lockedBalance && availableBalance.lt(lockedBalance)) {
+		if(!lockedBalance) return;
+
+		if(lockedBalance && availableBalance.lte(lockedBalance)) {
 			setBalanceErr('Insufficient balance.');
 			return;
 		}
-		if(ayeVoteValue && availableBalance.lt(ayeVoteValue) || nayVoteValue && availableBalance.lt(nayVoteValue) || abstainVoteValue && availableBalance.lt(abstainVoteValue) ) {
+		if(ayeVoteValue && availableBalance.lte(ayeVoteValue) || nayVoteValue && availableBalance.lte(nayVoteValue) || abstainVoteValue && availableBalance.lte(abstainVoteValue) ) {
 			setBalanceErr('Insufficient balance.');
 			return;
 		}
@@ -408,7 +398,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						status: NotificationStatus.SUCCESS
 					});
 					setLastVote(vote);
-					closeModal();
+					setShowModal(false);
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
 				} else {
 					if (status.isBroadcast){
@@ -436,7 +426,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						status: NotificationStatus.SUCCESS
 					});
 					setLastVote(vote);
-					closeModal();
+					setShowModal(false);
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
 				} else {
 					if (status.isBroadcast){
@@ -490,7 +480,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		<div className={className}>
 			<Button
 				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[100%]'
-				onClick={openModal}
+				onClick={() => setShowModal(true)}
 			>
 				{lastVote == null || lastVote == undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }
 			</Button>
@@ -574,7 +564,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									<VoteLock className={`${className}`} />
 
 									<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={closeModal}>Cancel</Button>
+										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0' htmlType='submit'>Confirm</Button>
 									</div>
 								</Form>
@@ -606,7 +596,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									/>
 
 									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={closeModal}>Cancel</Button>
+										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0' htmlType='submit'>Confirm</Button>
 									</div>
 								</Form>
@@ -645,7 +635,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									/>
 
 									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={closeModal}>Cancel</Button>
+										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0' htmlType='submit'>Confirm</Button>
 									</div>
 								</Form>

@@ -30,9 +30,10 @@ interface Props{
 	inputClassName?: string;
 	noRules?: boolean;
 	formItemName?: string;
+  size?: 'large' | 'small' | 'middle';
 }
 
-const BalanceInput = ({ className, label = '', onChange, placeholder = '', address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance' }: Props) => {
+const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance' }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -69,8 +70,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', addre
 			rules={noRules ? [ {
 				message: 'Invalid Balance',
 				validator(rule, value, callback) {
-					const pattern = /^(?:0(?:\.\d+)?|[1-9]\d*(?:\.\d+)?)$/;
-					if (callback && !value.match(pattern)){
+					if (callback && isNaN(Number(value))){
 						callback(rule?.message?.toString());
 					}else {
 						callback();
@@ -84,17 +84,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', addre
 				{
 					message: 'Lock Balance must be greater than 0.',
 					validator(rule, value, callback) {
-						if (callback && Number(value) === 0 ){
-							callback(rule?.message?.toString());
-						}else {
-							callback();
-						}
-					}
-				},
-				{
-					message: 'Please provide a valid balance.',
-					validator(rule, value, callback) {
-						if (callback && chainProperties[network]?.tokenDecimals  < (value?.split('.')[1].length) ){
+						if (callback && Number(value) <= 0 ){
 							callback(rule?.message?.toString());
 						}else {
 							callback();
@@ -105,7 +95,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', addre
 					message: 'Invalid Balance',
 					validator(rule, value, callback) {
 
-						if (callback && isNaN(Number(value))){
+						if (callback && (isNaN(Number(value)) || (Number(value) !== 0 && chainProperties[network]?.tokenDecimals  < (value?.split('.')?.[1].length || 0)))){
 							callback(rule?.message?.toString());
 						}else {
 							callback();
@@ -121,6 +111,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', addre
 				onChange={(e) => onBalanceChange(e.target.value)}
 				placeholder={placeholder}
 				value={(formatedBalance(String(balance || ZERO_BN), unit))}
+				size={size || 'middle'}
 			/>
 		</Form.Item>
 	</div>;
@@ -141,7 +132,6 @@ export default styled(BalanceInput)`
 .balance-input .ant-input-number-handler-up{
 	display:none !important;
 }
-// .balance-input .ant-input-lg
 .balance-input .ant-input-number-handler-down{
 	display:none !important;
 }
@@ -153,11 +143,9 @@ export default styled(BalanceInput)`
 .balance-input .ant-input-number{
 	border: 1px solid #D2D8E0 ;
 }
-
 .balance-input .ant-input-number-focused{
 	border: 1px solid #E5007A ;
 }
-
 input::placeholder {
 	color: #576D8B !important;
 	font-weight: 400 !important;

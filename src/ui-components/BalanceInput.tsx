@@ -23,7 +23,6 @@ interface Props{
 	helpText?: string
 	onChange: (balance: BN) => void
 	placeholder?: string
-	size?: 'large' | 'small' | 'middle';
 	address?: string;
 	withBalance?: boolean;
 	onAccountBalanceChange?: (balance: string) => void
@@ -33,7 +32,7 @@ interface Props{
 	formItemName?: string;
 }
 
-const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance' }: Props) => {
+const BalanceInput = ({ className, label = '', onChange, placeholder = '', address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance' }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -118,10 +117,9 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 			<Input
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name={formItemName}
-				className={`text-sm w-full h-[39px] border-[1px] ${inputClassName} mt-0 suffixColor hover:border-[#E5007A] balance-input`}
+				className={`w-full h-[39px] border-[1px] ${inputClassName} text-sm mt-0 suffixColor hover:border-[#E5007A] balance-input`}
 				onChange={(e) => onBalanceChange(e.target.value)}
 				placeholder={placeholder}
-				size={size || 'large'}
 				value={(formatedBalance(String(balance || ZERO_BN), unit))}
 			/>
 		</Form.Item>
@@ -138,10 +136,12 @@ export default styled(BalanceInput)`
 .suffixColor .ant-input{
 	color:#7c899b !important;
   border-radius: 4px 0px 0px 4px !important;
+  height: 40px !important;
 }
 .balance-input .ant-input-number-handler-up{
 	display:none !important;
 }
+// .balance-input .ant-input-lg
 .balance-input .ant-input-number-handler-down{
 	display:none !important;
 }

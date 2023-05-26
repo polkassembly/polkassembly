@@ -378,7 +378,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 								onAccountBalanceChange={handleOnBalanceChange}
 								onChange={(balance) => setBnBalance(balance)}
 								balance={ bnBalance }
-								size='large'
 								inputClassName={`text-[#7c899b] text-sm ${balanceErr.length > 0 && 'border-red-500'}`}
 								noRules={true}
 							/>
@@ -464,7 +463,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 
 export default styled(DelegateModal)`
 
-.padding  .ant-modal-close{
+.padding .ant-modal-close{
   margin-top: 4px;
 }
 .padding  .ant-modal-close:hover{

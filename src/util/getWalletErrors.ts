@@ -7,18 +7,18 @@ import { Wallet } from '~src/types';
 export const getWalletErrors = (
 	availableWallets : any,
 	isNovaWallet: boolean,
-	isPolymashWallet: boolean,
+	isPolymeshWallet: boolean,
 	setWalletErr: (pre:{message: string, description: string, error: number}) => void) => {
 	if(!availableWallets) return;
 
-	if(!isPolymashWallet && !isNovaWallet){
+	if(!isPolymeshWallet && !isNovaWallet){
 
 		if((availableWallets[Wallet.TALISMAN] === undefined && availableWallets[Wallet.POLKADOT] !== undefined && availableWallets[Wallet.SUBWALLET] !== undefined)){
 			setWalletErr({ description: 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.',
 				error: 1,message:'Wallet extension not detected.' });
 		}
 	}
-	else if( isPolymashWallet && !availableWallets[Wallet.POLYWALLET]){
+	else if( isPolymeshWallet && !availableWallets[Wallet.POLYWALLET]){
 		setWalletErr({ description: 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polymash wallet extension.',
 			error: 1,
 			message:'Wallet extension not detected.' });

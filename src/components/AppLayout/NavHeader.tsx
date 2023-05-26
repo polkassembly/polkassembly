@@ -34,10 +34,11 @@ const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 interface Props {
 	className?: string
 	sidedrawer: boolean
+  previousRoute?: string;
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Props) => {
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
 	const router = useRouter();
@@ -47,7 +48,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	const [openLogin,setLoginOpen]=useState<boolean>(false);
 	const [openSignup,setSignupOpen]=useState<boolean>(false);
 
-	const isGov2Route: boolean = checkGov2Route(pathname, query);
+	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute);
 	const isClicked = useRef(false);
 
 	return (
@@ -71,7 +72,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 				{
 					isOpenGovSupported(network) ?
 						<>
-							<GovernanceSwitchButton className='hidden lg:flex' />
+							<GovernanceSwitchButton previousRoute={previousRoute} className='hidden lg:flex' />
 						</> :
 						<div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
 				}

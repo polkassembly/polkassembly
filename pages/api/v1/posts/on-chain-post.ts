@@ -813,8 +813,37 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		}
 
 		// Comments
-		const commentsSnapshot = await postDocRef.collection('comments').get();
-		post.comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+			const commentPromises = post.timeline.map(async (timeline: any) => {
+				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+				const commentsSnapshot = await postDocRef.collection('comments').get();
+				const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+				return comments;
+			});
+			const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
+			commentPromiseSettledResults.forEach((result) => {
+				if (result && result.status === 'fulfilled' && result.value && Array.isArray(result.value)) {
+					if (!post.comments || !Array.isArray(post.comments)) {
+						post.comments = [];
+					}
+					post.comments = post.comments.concat(result.value);
+				}
+			});
+		} else {
+			if (post.post_link) {
+				const { id, type } = post.post_link;
+				const postDocRef = postsByTypeRef(network, type).doc(String(id));
+				const commentsSnapshot = await postDocRef.collection('comments').get();
+				post.comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+			}
+			const commentsSnapshot = await postDocRef.collection('comments').get();
+			const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+			if (post.comments && Array.isArray(post.comments)) {
+				post.comments = post.comments.concat(comments);
+			} else {
+				post.comments = comments;
+			}
+		}
 
 		// Post Reactions
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();

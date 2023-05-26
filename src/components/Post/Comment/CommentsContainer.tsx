@@ -92,7 +92,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 		const filteredComments = comments.filter((comment: any) => {
 			const commentDate = dayjs(comment.created_at);
-			return commentDate.isBetween(startDate, endDate, 'minutes' , '[)');
+			return commentDate.isBetween(startDate, endDate, 'seconds' , '[)') || commentDate.isSame(endDate, 'minutes');
 		});
 
 		return {
@@ -203,10 +203,78 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	}, [comments]);
 
 	return (
-		<div className={`${className} block xl:grid grid-cols-12 `}>
-			{
-				!!comments?.length && timelines.length > 1 &&
-					<div className='hidden h-screen xl:block col-start-1 col-end-2 min-w-[100px] -ml-2 sticky top-[10%] pt-10'>
+		<div className={className}>
+			{ id ? <>
+				{ isGrantClosed ?
+					<Alert message="Grant closed, no comments can be added or edited." type="info" showIcon /> :
+					<PostCommentForm className='mb-8' />
+				}
+			</>
+				:<div className="mt-4 mb-8 bg-[#E6F4FF] rounded-[6px] shadow-md h-12 flex justify-center items-center gap-3">
+					<Image src="/assets/icons/alert-login.svg" width={20} height={20} alt={''} />
+					<div className="text-sm font-medium text-[#243A57]">
+									Please <span className="cursor-pointer text-pink_primary" onClick={() => {setOpenLoginModal(true);}}>Log In</span> to comment
+					</div>
+				</div>
+			}
+			<div className='mb-5 flex justify-between items-center text-base tooltip-design text-[#485F7D] max-sm:flex-col max-sm:items-start max-sm:gap-1'>
+				<span className='text-base font-medium text-[#243A57]'>
+					{filteredComments?.length}
+					<span className='ml-1'>Comments</span>
+				</span>
+				{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2'>
+					<Tooltip color='#E5007A'
+						title={<div className='flex flex-col text-xs px-1'>
+							<span className='text-center font-medium'>Completely Against</span>
+							<span className='text-center pt-1'>Select to filter</span>
+						</div>} >
+						<div onClick={() => {handleSetFilteredComments(ESentiments.Against); getFilteredComments(ESentiments.Against);}} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Against) && 'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`} >
+							{checkActive(ESentiments.Against) ? <AgainstIcon /> : <UnfilterAgainstIcon />}
+							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.against}%</span>
+						</div>
+					</Tooltip>
+					<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
+						<span className='text-center font-medium'>Slightly Against</span>
+						<span className='text-center pt-1'>Select to filter</span>
+					</div>}>
+						<div onClick={() =>  {handleSetFilteredComments(ESentiments.SlightlyAgainst); getFilteredComments(ESentiments.SlightlyAgainst);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyAgainst)  &&'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`}>
+							{checkActive(ESentiments.SlightlyAgainst)  ? <SlightlyAgainstIcon /> : <UnfilterSlightlyAgainstIcon/>}
+							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyAgainst}%</span>
+						</div>
+					</Tooltip>
+					<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
+						<span className='text-center font-medium'>Neutral </span>
+						<span className='text-center pt-1'>Select to filter</span>
+					</div>}>
+						<div onClick={() =>  {handleSetFilteredComments(ESentiments.Neutral); getFilteredComments(ESentiments.Neutral);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Neutral)  && 'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`}>
+							{checkActive(ESentiments.Neutral)  ? <NeutralIcon className='text-[20px] font-medium'/> : <UnfilterNeutralIcon/>}
+							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.neutral}%</span>
+						</div>
+					</Tooltip>
+					<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
+						<span className='text-center font-medium'>Slightly For</span>
+						<span className='text-center pt-1'>Select to filter</span>
+					</div>}>
+						<div onClick={() =>  {handleSetFilteredComments(ESentiments.SlightlyFor); getFilteredComments(ESentiments.SlightlyFor);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyFor)  && 'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`}>
+							{checkActive(ESentiments.SlightlyFor) ? <SlightlyForIcon /> : <UnfilterSlightlyForIcon/>}
+							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyFor}%</span>
+						</div>
+					</Tooltip>
+					<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
+						<span className='text-center font-medium'>Completely For</span>
+						<span className='text-center pt-1'> Select to filter</span>
+					</div>}>
+						<div onClick={() =>  { handleSetFilteredComments(ESentiments.For); getFilteredComments(ESentiments.For);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.For) && 'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`}>
+							{checkActive(ESentiments.For) ? <ForIcon/> : <UnfilterForIcon/>}
+							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.for}%</span>
+						</div>
+					</Tooltip>
+				</div>}
+			</div>
+			<div  className={'block xl:grid grid-cols-12'}>
+				{
+					!!comments?.length && timelines.length > 1 &&
+					<div className='hidden h-screen xl:block col-start-1 col-end-2 min-w-[100px] sticky top-[10%] ml-1'>
 						<Anchor targetOffset={targetOffset} className='h-full min-w-[140px]' onClick={handleTimelineClick}>
 							{timelines.map(({ commentsCount, date, firstCommentId, id, status }) => {
 								return (
@@ -215,7 +283,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											key={id}
 											href={`#${firstCommentId}`}
 											title={
-												<div className='flex flex-col'>
+												<div className='flex flex-col text-[#485F7D]'>
 													<div className='text-xs mb-1'>{date.format('MMM Do')}</div>
 													<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{status}</div>
 													<div className='text-xs'>({commentsCount})</div>
@@ -223,7 +291,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											}
 										/>
 										:
-										<div key={id} className='flex flex-col ml-5 cursor-default'>
+										<div key={id} className='flex flex-col ml-5 cursor-default text-[#485F7D]'>
 											<div className='text-xs mb-1'>{date.format('MMM Do')}</div>
 											<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{status}</div>
 											<div className='text-xs'>({commentsCount})</div>
@@ -232,95 +300,27 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							})}
 						</Anchor>
 					</div>
-			}
-
-			<div className={`col-start-1 ${timelines.length > 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
-				{ id ? <>
-					{ isGrantClosed ?
-						<Alert message="Grant closed, no comments can be added or edited." type="info" showIcon /> :
-						<PostCommentForm className='mb-8' />
-					}
-				</>
-					:<div className="p-4 mt-4 mb-8 bg-[#FFF7FB] border-none rounded-lg shadow-md">
-						<div className="flex flex-wrap justify-center items-center">
-							<Image src="/assets/icons/alert-login.svg" width={20} height={20} alt={''} />
-							<div className="ml-1 mt-3">
-								<p className="text-sm leading-5 font-medium text-[#243A57]">
-									Please <span className="cursor-pointer text-pink_primary" onClick={() => {setOpenLoginModal(true);}}>Log In</span> to comment
-								</p>
-							</div>
-						</div>
-					</div>
 				}
-				<div className='mb-5 flex justify-between items-center text-base tooltip-design text-[#485F7D] max-sm:flex-col max-sm:items-start max-sm:gap-1'>
-					<span className='text-base font-medium text-[#243A57]'>
-						{filteredComments?.length}
-						<span className='ml-1'>Comments</span>
-					</span>
-					{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2'>
-						<Tooltip color='#E5007A'
-							title={<div className='flex flex-col text-xs px-1'>
-								<span className='text-center font-medium'>Completely Against</span>
-								<span className='text-center pt-1'>Select to filter</span>
-							</div>} >
-							<div onClick={() => {handleSetFilteredComments(ESentiments.Against); getFilteredComments(ESentiments.Against);}} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Against) && 'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`} >
-								{checkActive(ESentiments.Against) ? <AgainstIcon /> : <UnfilterAgainstIcon />}
-								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.against}%</span>
-							</div>
-						</Tooltip>
-						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-							<span className='text-center font-medium'>Slightly Against</span>
-							<span className='text-center pt-1'>Select to filter</span>
-						</div>}>
-							<div onClick={() =>  {handleSetFilteredComments(ESentiments.SlightlyAgainst); getFilteredComments(ESentiments.SlightlyAgainst);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyAgainst)  &&'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`}>
-								{checkActive(ESentiments.SlightlyAgainst)  ? <SlightlyAgainstIcon /> : <UnfilterSlightlyAgainstIcon/>}
-								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyAgainst}%</span>
-							</div>
-						</Tooltip>
-						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-							<span className='text-center font-medium'>Neutral </span>
-							<span className='text-center pt-1'>Select to filter</span>
-						</div>}>
-							<div onClick={() =>  {handleSetFilteredComments(ESentiments.Neutral); getFilteredComments(ESentiments.Neutral);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Neutral)  && 'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`}>
-								{checkActive(ESentiments.Neutral)  ? <NeutralIcon className='text-[20px] font-medium'/> : <UnfilterNeutralIcon/>}
-								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.neutral}%</span>
-							</div>
-						</Tooltip>
-						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-							<span className='text-center font-medium'>Slightly For</span>
-							<span className='text-center pt-1'>Select to filter</span>
-						</div>}>
-							<div onClick={() =>  {handleSetFilteredComments(ESentiments.SlightlyFor); getFilteredComments(ESentiments.SlightlyFor);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyFor)  && 'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`}>
-								{checkActive(ESentiments.SlightlyFor) ? <SlightlyForIcon /> : <UnfilterSlightlyForIcon/>}
-								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyFor}%</span>
-							</div>
-						</Tooltip>
-						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-							<span className='text-center font-medium'>Completely For</span>
-							<span className='text-center pt-1'> Select to filter</span>
-						</div>}>
-							<div onClick={() =>  { handleSetFilteredComments(ESentiments.For); getFilteredComments(ESentiments.For);}} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.For) && 'bg-[#FEF2F8] text-[#243A57] text-pink_primary'}`}>
-								{checkActive(ESentiments.For) ? <ForIcon/> : <UnfilterForIcon/>}
-								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.for}%</span>
-							</div>
-						</Tooltip>
-					</div>}
-				</div>
-				{ !!comments?.length &&
+
+				<div className={`col-start-1 ${timelines.length > 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
+					{ !!comments?.length &&
 						<>
 							<Comments disableEdit={isGrantClosed} comments={filteredComments} />
 						</>
-				}
-				{filteredComments.length === 0 && comments.length > 0 && <div className='mt-4 mb-4'><Empty  description='No comments available'/></div>}
-				{
-					<RefendaLoginPrompts
-						modalOpen={openLoginModal}
-						setModalOpen={setOpenLoginModal}
-						image="/assets/post-comment.png"
-						title="Join Polkassembly to Comment on this proposal."
-						subtitle="Discuss, contribute and get regular updates from Polkassembly."
-					/>
-				}
+					}
+					{filteredComments.length === 0 && comments.length > 0 && <div className='mt-4 mb-4'>
+						<Empty  description='No comments available'/>
+					</div>}
+					{
+						<RefendaLoginPrompts
+							modalOpen={openLoginModal}
+							setModalOpen={setOpenLoginModal}
+							image="/assets/post-comment.png"
+							title="Join Polkassembly to Comment on this proposal."
+							subtitle="Discuss, contribute and get regular updates from Polkassembly."
+						/>
+					}
+				</div>
 			</div>
 		</div>
 	);

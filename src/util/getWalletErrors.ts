@@ -9,10 +9,11 @@ export const getWalletErrors = (
 	isNovaWallet: boolean,
 	isPolymashWallet: boolean,
 	setWalletErr: (pre:{message: string, description: string, error: number}) => void) => {
+	if(!availableWallets) return;
 
 	if(!isPolymashWallet && !isNovaWallet){
 
-		if(!availableWallets[Wallet.TALISMAN] && !availableWallets[Wallet.POLKADOT] && !availableWallets[Wallet.SUBWALLET]){
+		if((availableWallets[Wallet.TALISMAN] === undefined && availableWallets[Wallet.POLKADOT] !== undefined && availableWallets[Wallet.SUBWALLET] !== undefined)){
 			setWalletErr({ description: 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.',
 				error: 1,message:'Wallet extension not detected.' });
 		}

@@ -153,7 +153,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	}, [address, wallet]);
 
 	useEffect(() => {
-		getWalletErrors(availableWallets, ['polymesh'].includes(network), (window as any).walletExtension?.isNovaWallet ? true : false, setWalletErr );
+		getWalletErrors(availableWallets, ['polymesh'].includes(network) ? true : false, (window as any).walletExtension?.isNovaWallet ? true : false, setWalletErr );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [availableWallets, network]);
 
@@ -508,8 +508,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			><>
 					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
 						<>
-							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>}
-
+							<div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>
 							<div className='flex items-center gap-x-5 mt-1 mb-6 justify-center'>
 								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
 								{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
@@ -527,7 +526,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							{balanceErr.length > 0 && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
 							{walletErr.error === 1 && !loadingStatus.isLoading && <Alert message={walletErr.message} description={walletErr.description} showIcon/>}
 							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
-
 							{
 								accounts.length > 0 ?
 									<AccountSelectionForm

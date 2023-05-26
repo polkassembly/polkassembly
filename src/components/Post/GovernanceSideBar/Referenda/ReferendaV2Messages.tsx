@@ -20,7 +20,7 @@ interface IReferendaV2Messages {
 
 interface IButtonProps extends PropsWithChildren {}
 
-const getPeriodData = (network: string, date: Dayjs, trackData: any, fieldKey: string) => {
+export const getPeriodData = (network: string, date: Dayjs, trackData: any, fieldKey: string) => {
 	const period = blocksToRelevantTime(network, Number(trackData[fieldKey]));
 	let periodEndsAt = date.clone();
 	let periodPercent = 0;
@@ -43,14 +43,14 @@ const getPeriodData = (network: string, date: Dayjs, trackData: any, fieldKey: s
 	};
 };
 
-interface IPeriod {
+export interface IPeriod {
 	period: string;
 	periodCardVisible: boolean;
 	periodEndsAt: dayjs.Dayjs;
 	periodPercent: number;
 }
 
-const getDefaultPeriod = () => {
+export const getDefaultPeriod = () => {
 	return {
 		period: '',
 		periodCardVisible: false,
@@ -59,11 +59,11 @@ const getDefaultPeriod = () => {
 	};
 };
 
-export const getStatusBlock = (timeline: any[], type: string, status: string) => {
+export const getStatusBlock = (timeline: any[], type: string[], status: string) => {
 	let deciding: any;
 	if (timeline && Array.isArray(timeline)) {
 		timeline.some((v) => {
-			if (v && v.type === type && v.statuses && Array.isArray(v.statuses)) {
+			if (v && type.includes(v.type)  && v.statuses && Array.isArray(v.statuses)) {
 				let isFind = false;
 				v.statuses.some((v: any) => {
 					if (v && v.status === status) {
@@ -107,10 +107,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const isTreasuryProposal = trackData.group === 'Treasury';
 	const isProposalPassed = ['Executed', 'Confirmed', 'Approved'].includes(status);
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(status);
-	const decidingStatusBlock = getStatusBlock(timeline || [], 'ReferendumV2', 'Deciding');
-	const confirmStartedStatusBlock = getStatusBlock(timeline || [], 'ReferendumV2', 'ConfirmStarted');
-	const confirmedStatusBlock = getStatusBlock(timeline || [], 'ReferendumV2', 'Confirmed');
-	const awardedStatusBlock = getStatusBlock(timeline || [], 'TreasuryProposal', 'Awarded');
+	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
+	const confirmStartedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'ConfirmStarted');
+	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
+	const awardedStatusBlock = getStatusBlock(timeline || [], ['TreasuryProposal'], 'Awarded');
 	const isTreasuryProposalPresent = checkProposalPresent(timeline || [], 'TreasuryProposal');
 
 	const Button: FC<IButtonProps> = (props) => {
@@ -355,7 +355,7 @@ export default ReferendaV2Messages;
 const FailedReferendaText: FC<{ status: string; network: string; timeline?: any[]; progress: IProgress }> = (props) => {
 	const { status, timeline, network, progress } = props;
 	const url = getBlockLink(network);
-	const block = getStatusBlock(timeline || [], 'ReferendumV2', status);
+	const block = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], status);
 	const BlockElement = <a className='text-pink_primary font-medium' href={`${url}/${block?.block}`} target='_blank' rel="noreferrer">#{block?.block && block?.block}</a>;
 	const isSupportLess = Number(progress.support) < Number(progress.supportThreshold);
 	const isApprovalLess = Number(progress.approval) < Number(progress.approvalThreshold);

@@ -15,13 +15,15 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	addresses: [],
 	allowed_roles: [],
 	defaultAddress: '',
+	delegationDashboardAddress:'',
 	email: null,
 	email_verified: false,
 	id: null,
 	isLoggedOut: (): boolean => {
 		throw new Error('isLoggedIn function must be overridden');
 	},
-	loginWallet:null,
+	loginAddress: '',
+	loginWallet: null,
 	picture: null,
 	setUserDetailsContextState : (): void => {
 		throw new Error('setUserDetailsContextState function must be overridden');

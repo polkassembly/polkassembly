@@ -9,11 +9,10 @@ import React, { FC, useEffect } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Account from '~src/components/Settings/Account';
 import Delete from '~src/components/Settings/Delete';
-import DemocracyUnlock from '~src/components/Settings/DemocracyUnlock';
 import Profile from '~src/components/Settings/Profile';
+import Unlock from '~src/components/Settings/Unlock';
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
-import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 interface Props {
 	network: string
@@ -27,8 +26,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 const Settings: FC<Props> = (props) => {
 	const { setNetwork, network } = useNetworkContext();
 	const { web3signup } = useUserDetailsContext();
-
-	const metaMaskError = useHandleMetaMask();
 
 	useEffect(() => {
 		setNetwork(props.network);
@@ -51,7 +48,7 @@ const Settings: FC<Props> = (props) => {
 					<Divider />
 					<Account />
 					<Divider />
-					{!metaMaskError && ['moonbase', 'moonriver', 'moonbeam'].includes(network) ? <><DemocracyUnlock/><Divider/></> : null}
+					<Unlock network={network} />
 					<Delete />
 				</Row>
 			</Col>

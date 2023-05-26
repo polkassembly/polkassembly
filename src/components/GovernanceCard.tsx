@@ -2,9 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { ClockCircleOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, DislikeOutlined, LikeOutlined , PaperClipOutlined } from '@ant-design/icons';
 import { Divider, Modal, Skeleton, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { poppins } from 'pages/_app';
 import React, { FC, useContext, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
@@ -40,6 +41,7 @@ interface IGovernanceProps {
 	isCommentsVisible?: boolean;
 	tags?: string[] | [];
 	spam_users_count?: number;
+	cid?:string;
 }
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
@@ -50,6 +52,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const {
 		postReactionCount,
 		address,
+		cid,
 		className,
 		commentsCount,
 		created_at,
@@ -87,8 +90,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				<OnchainCreationLabel address={address} username={username} />
 				<div className='flex justify-between gap-x-2  lg:items-start lg:flex-row my-2 '>
 					<div className='mt-3 lg:mt-0'>
-						<h1 className='text-sidebarBlue  flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
-							{} <span className='break-all font-medium text-[14px] leading-[21px]'>{mainTitle}</span>
+						<h1 className='text-sidebarBlue font-semibold text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
+							{cid ? (!title ?<span className='font-medium mr-2'>#{onchainId}</span> : <span className='break-all'>{ mainTitle }</span>):
+								<><span className='font-medium mr-2'>#{isTip? tip_index: onchainId}</span><span className='break-all'>{ mainTitle }</span></>}
 						</h1>
 						<h2 className='text-navBlue font-medium text-sm'>{subTitle}</h2>
 					</div>
@@ -108,8 +112,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 				<div className="mt-0 gap-2.5 font-medium text-navBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
 
-					<div className='flex items-center gap-x-2'>
-						<div className='flex items-center justify-center gap-x-1.5 mr-2'>
+					<div className='flex items-center gap-x-2 '>
+						<div className='flex items-center justify-center gap-x-1.5'>
 							<LikeOutlined />
 							<span>{getFormattedLike(postReactionCount['👍'])}</span>
 						</div>
@@ -136,6 +140,13 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</span>}
 						</>}
 						<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+						{
+							cid ?
+								<>
+									<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
+									<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+								</> : null
+						}
 						{relativeCreatedAt && <>
 							<div className='flex items-center'>
 								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
@@ -174,7 +185,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px] padding  justify-center center-aligned`}
 			><div className=''>
 					<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
-					<div className='flex gap-2 max-lg:flex-col border-solid' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
+					<div className='flex gap-2 border-solid flex-wrap' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
 						(<div key={index} className='rounded-xl px-[16px] py-[2px] border-navBlue border-solid border-[1px] font-normal text-xs text-navBlue' >
 							{tag}
 						</div>))}

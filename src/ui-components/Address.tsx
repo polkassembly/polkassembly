@@ -18,6 +18,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import shortenAddress from '../util/shortenAddress';
 import EthIdenticon from './EthIdenticon';
 import IdentityBadge from './IdentityBadge';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 interface Props {
 	address: string
@@ -35,6 +36,7 @@ interface Props {
 	disableHeader?: boolean;
 	disableAddressClick?: boolean;
 	isSubVisible?: boolean;
+  addressClassName?: string;
 }
 
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
@@ -42,7 +44,7 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 	ssr: false
 });
 
-const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true }: Props): JSX.Element => {
+const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true, addressClassName }: Props): JSX.Element => {
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useContext(ApiContext);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
@@ -52,10 +54,12 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 	const router = useRouter();
 	const [username, setUsername] = useState('');
 
-	const substrate_addr = getEncodedAddress(address, network) || address;
+	const encoded_addr = address ? getEncodedAddress(address, network) || '' : '';
+
 	const fetchUsername = async () => {
-		if (!username) {
-			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${address}`);
+		const substrateAddress = getSubstrateAddress(address);
+		if (!username && substrateAddress) {
+			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`);
 			if (error) {
 				console.error(error);
 				return;
@@ -78,7 +82,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 
 		let unsubscribe: () => void;
 
-		api.derive.accounts.info(substrate_addr, (info: DeriveAccountInfo) => {
+		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
 			setIdentity(info.identity);
 
 			if (info.identity.displayParent && info.identity.display){
@@ -96,7 +100,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 			.catch(e => console.error(e));
 
 		return () => unsubscribe && unsubscribe();
-	}, [substrate_addr, api, apiReady]);
+	}, [encoded_addr, api, apiReady]);
 
 	useEffect(() => {
 		if (!api) {
@@ -109,28 +113,28 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 
 		let unsubscribe: () => void;
 
-		api.derive.accounts.flags(substrate_addr, (result: DeriveAccountFlags) => {
+		api.derive.accounts.flags(encoded_addr, (result: DeriveAccountFlags) => {
 			setFlags(result);
 		})
 			.then(unsub => { unsubscribe = unsub; })
 			.catch(e => console.error(e));
 
 		return () => unsubscribe && unsubscribe();
-	}, [substrate_addr, api, apiReady]);
+	}, [encoded_addr, api, apiReady]);
 
-	const t1 = mainDisplay || (isShortenAddressLength? shortenAddress(substrate_addr, shortenAddressLength): substrate_addr);
+	const t1 = mainDisplay || (isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr);
 	const t2 = extensionName || mainDisplay;
 
 	return (
 		<div className={displayInline ? `${className} display_inline`: className}>
 			{
 				!disableIdenticon ?
-					substrate_addr.startsWith('0x') ?
-						<EthIdenticon className='image identicon flex items-center' size={ethIdenticonSize? ethIdenticonSize: 26} address={substrate_addr} />
+					encoded_addr.startsWith('0x') ?
+						<EthIdenticon className='image identicon flex items-center' size={ethIdenticonSize? ethIdenticonSize: 26} address={encoded_addr} />
 						:
 						<Identicon
 							className='image identicon'
-							value={substrate_addr}
+							value={encoded_addr}
 							size={identiconSize? identiconSize:displayInline ? 20 : 32}
 							theme={'polkadot'}
 						/>
@@ -156,8 +160,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 						</Space>
 						: <>
 							<div className={'description display_inline flex items-center'}>
-								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} />}
-								<span title={mainDisplay || substrate_addr} className={`${textClassName} identityName max-w-[85px] flex gap-x-1 ml-0.5 pl-1.5`}>
+								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} className='mr-2' />}
+								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[85px] flex gap-x-1 ${textClassName}`}>
 									{ t1 && <span className={`truncate text-navBlue ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
 									{sub && isSubVisible && <span className={'sub truncate text-navBlue'}>{sub}</span>}
 								</span>
@@ -175,7 +179,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 											{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-navBlue`}>{sub}</span>}
 										</span>
 									</Space>
-									<div className={'description display_inline'}>{isShortenAddressLength? shortenAddress(substrate_addr, shortenAddressLength): substrate_addr}</div>
+									<div className={'description display_inline'}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 								</Space>
 							</Tooltip>
 							: <div>
@@ -190,9 +194,9 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 										</Space>
 										: null
 								}
-								<div className={'description text-xs ml-0.5'}>{isShortenAddressLength? shortenAddress(substrate_addr, shortenAddressLength): substrate_addr}</div>
+								<div className={`description text-xs ml-0.5 ${addressClassName}`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 							</div>
-						: <div className={'description text-xs'}>{isShortenAddressLength? shortenAddress(substrate_addr, shortenAddressLength): substrate_addr}</div>
+						: <div className={`description text-xs ${addressClassName}`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 				}
 			</div>}
 		</div>

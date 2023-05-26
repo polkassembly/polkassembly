@@ -19,6 +19,7 @@ import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { getBlockLink } from '~src/util/subscanCheck';
 
 import OnchainInfoWrapper from './OnchainInfoWrapper';
+import Link from 'next/link';
 
 const ArgumentsTableJSONView = dynamic(() => import('./ArgumentsTableJSONView'), {
 	loading: () => <Skeleton active /> ,
@@ -36,6 +37,10 @@ const BlocksToTime = dynamic(() => import('src/components/BlocksToTime'), {
 });
 
 export interface IOnChainInfo {
+	cid?:string;
+	codec?:string;
+	code?:string;
+	version?:string;
 	vote_threshold?: string;
 	proposer?: string;
 	delay?: number;
@@ -105,7 +110,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 	const currentBlock = useCurrentBlock();
 	if (!onChainInfo) return null;
 
-	const { delay, description, end, status, proposer, vote_threshold, method, post_id, ended_at, proposed_call, bond, curator, curator_deposit, deciding, decision_deposit_amount, submission_deposit_amount, deposit, enactment_after_block, enactment_at_block, ended_at_block, fee, hash, member_count, motion_method, origin, proposal_arguments, submitted_amount, reward, payee, statusHistory } = onChainInfo;
+	const { cid, code, codec, delay, description, end, status, proposer, vote_threshold, method, post_id, ended_at, proposed_call, bond, curator, curator_deposit, deciding, decision_deposit_amount, submission_deposit_amount, deposit, enactment_after_block, enactment_at_block, ended_at_block, fee, hash, member_count, motion_method, origin, proposal_arguments, submitted_amount, reward, payee, statusHistory, version } = onChainInfo;
 
 	const blockNumber = getBlockNumber(statusHistory);
 
@@ -315,14 +320,6 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								</div>
 							</li>
 						}
-						{
-							motion_method && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
-								<h6 className='col-span-2 text-base'>Motion&apos;s method</h6>
-								<div className={`col-span-4 md:col-span-6 ${motion_method === 'reject_proposal' ? 'bold-red-text' : 'text-navBlue'}`}>
-									{motion_method}
-								</div>
-							</li>
-						}
 						{curator && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
 							<h6 className='col-span-2'>Curator</h6>
 							<div className='col-span-4 md:col-span-6 overflow-hidden'>
@@ -359,6 +356,54 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								<Address displayInline={true} address={payee}/>
 							</div>
 						</li>}
+						{
+							motion_method && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
+								<h6 className='col-span-2 text-base'>Motion&apos;s method</h6>
+								<div className={`col-span-4 md:col-span-6 ${motion_method === 'reject_proposal' ? 'bold-red-text' : 'text-navBlue'}`}>
+									{motion_method}
+								</div>
+							</li>
+						}
+						{
+							cid && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
+								<h6 className='col-span-2 text-base'>IPFS</h6>
+								<div className='text-navBlue col-span-4 md:col-span-6'>
+									<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank">{`ipfs.io/ipfs/${cid}`}</Link>
+								</div>
+							</li>
+						}
+						{
+							cid && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
+								<h6 className='col-span-2 text-base'>CID</h6>
+								<div className='text-navBlue col-span-4 md:col-span-6'>
+									{cid}
+								</div>
+							</li>
+						}
+						{
+							code && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
+								<h6 className='col-span-2 flex items-center text-base'>Code</h6>
+								<div className='text-navBlue col-span-4 md:col-span-6'>
+									{code}
+								</div>
+							</li>
+						}
+						{
+							codec && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
+								<h6 className='col-span-2 flex items-center text-base'>Codec</h6>
+								<div className='text-navBlue col-span-4 md:col-span-6'>
+									{codec}
+								</div>
+							</li>
+						}
+						{
+							version && <li className='grid grid-cols-6 md:grid-cols-8 gap-x-5 border-0 border-[#e5e7eb] border-solid border-b py-1.5'>
+								<h6 className='col-span-2 flex items-center text-base'>Version</h6>
+								<div className='text-navBlue col-span-4 md:col-span-6'>
+									{version}
+								</div>
+							</li>
+						}
 					</ul>
 					{
 						proposal_arguments &&

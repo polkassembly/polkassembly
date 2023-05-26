@@ -8,9 +8,9 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY } from '~src/queries';
+import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IApiResponse } from '~src/types';
+import { IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -19,9 +19,11 @@ import messages from '~src/util/messages';
 
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getUpdatedAt } from './off-chain-post';
+import { network as AllNetworks } from '~src/global/networkConstants';
+import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 
 export const isDataExist = (data: any) => {
-	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]);
+	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
 };
 
 export const getTimeline = (proposals: any, isStatus?: {
@@ -83,6 +85,7 @@ export interface IPostResponse {
 	[key: string]: any;
   gov_type?: 'gov_1' | 'open_gov' ;
   tags?: string[] | [];
+  history?: IPostHistory[];
 }
 
 export type IReaction = '👍' | '👎';
@@ -305,17 +308,19 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 	const commentsPromise = commentsSnapshot.docs.map(async (doc) => {
 		if (doc && doc.exists) {
 			const data = doc.data();
+			const history = data?.history ? data.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
 			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
 			const commentsReactionsSnapshot = await commentDocRef.collection('comment_reactions').get();
 			const comment_reactions = getReactions(commentsReactionsSnapshot);
 			const comment = {
 				comment_reactions: comment_reactions,
 				content: data.content,
-				created_at: data.created_at?.toDate? data.created_at.toDate(): data.created_at,
+				created_at: data.created_at?.toDate ? data.created_at.toDate(): data.created_at,
+				history: history,
 				id: data.id,
 				proposer: '',
 				replies: [] as any[],
-				sentiment:data.sentiment||0,
+				sentiment:data.sentiment || 0,
 				updated_at: getUpdatedAt(data),
 				user_id: data.user_id || data.user_id,
 				username: data.username
@@ -480,7 +485,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			if (!strPostId) {
 				throw apiErrorWithStatusCode(`The Tip hash "${postId} is invalid."`, 400);
 			}
-		} else if (isNaN(numPostId) || numPostId < 0) {
+		} else if ((isNaN(numPostId) || numPostId < 0)  && proposalType !== ProposalType.ANNOUNCEMENT) {
 			throw apiErrorWithStatusCode(`The postId "${postId}" is invalid.`, 400);
 		}
 
@@ -492,13 +497,20 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
 
-		let postVariables: any = {
+		let postVariables: any = proposalType === ProposalType.ANNOUNCEMENT ? {
+			cid: postId,
+			type_eq: subsquidProposalType
+		} : {
 			index_eq: numPostId,
 			type_eq: subsquidProposalType,
 			voter_eq: voterAddress? String(voterAddress): ''
 		};
 
-		const postQuery = GET_PROPOSAL_BY_INDEX_AND_TYPE;
+		let postQuery =(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES ) ? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE : GET_PROPOSAL_BY_INDEX_AND_TYPE;
+		if(proposalType === ProposalType.ANNOUNCEMENT){
+			postQuery = GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE;
+		}
+
 		if (proposalType === ProposalType.TIPS) {
 			postVariables = {
 				hash_eq: strPostId,
@@ -519,9 +531,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			throw apiErrorWithStatusCode(`The Post with index "${postId}" is not found.`, 404);
 		}
 
-		const postData = subsquidData.proposals[0];
+		const postData = subsquidData.proposals?.[0] ||  subsquidData.announcements?.[0];
 		const preimage = postData?.preimage;
-		const proposalArguments = postData?.proposalArguments;
+		const proposalArguments = postData?.proposalArguments  || postData?.callData;
 		const proposedCall = preimage?.proposedCall;
 		const status = postData?.status;
 		let proposer = postData?.proposer || preimage?.proposer || postData?.curator;
@@ -547,8 +559,14 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}
 
 		}
+		const history = postData?.history ? postData?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
+
 		const post: IPostResponse = {
+			announcement: postData?.announcement,
 			bond: postData?.bond,
+			cid: postData?.cid,
+			code:postData?.code,
+			codec:postData?.codec,
 			comments: [],
 			content: '',
 			created_at: postData?.createdAt,
@@ -566,6 +584,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			ended_at_block: postData?.endedAtBlock,
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
+			history,
 			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
@@ -588,10 +607,40 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			topic: topicFromType,
 			track_number: postData?.trackNumber,
 			type: postData?.type || getSubsquidProposalType(proposalType as any),
+			version:postData?.version,
 			vote_threshold: postData?.threshold?.type
 		};
-
+		// Timeline
 		updatePostTimeline(post, postData);
+
+		if(proposalType === ProposalType.ANNOUNCEMENT){
+			const proposal = postData.proposal;
+			const proposalTimeline = getTimeline([
+				{
+					createdAt: proposal.createdAt,
+					hash: proposal.hash,
+					index: proposal.index,
+					statusHistory: proposal.statusHistory,
+					type: proposal.type
+				}
+			]);
+			post.timeline = [...proposalTimeline , ...post.timeline ];
+		}
+		if(proposalType === ProposalType.ALLIANCE_MOTION){
+			const announcement = postData.announcement;
+			if(announcement){
+				const announcementTimeline = getTimeline([
+					{
+						createdAt: announcement.createdAt,
+						hash: announcement.hash,
+						index: announcement.cid,
+						statusHistory: announcement.statusHistory,
+						type: announcement.type
+					}
+				]);
+				post.timeline = [...post.timeline, ...announcementTimeline ];
+			}
+		}
 
 		if (['referendums', 'open_gov'].includes(strProposalType) && voterAddress && postData?.votes?.[0]?.decision) {
 			post['decision'] = postData?.votes?.[0]?.decision;
@@ -635,6 +684,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			post.seconds = isNaN(numTotalCount)? 0: numTotalCount;
 		}
 
+		// Alliance motions votes
+		if(proposalType === ProposalType.ALLIANCE_MOTION ){
+			post.motion_votes = postData.voting;
+		}
+
 		// Child Bounties
 		if (proposalType === ProposalType.BOUNTIES) {
 			post.child_bounties_count = subsquidData?.proposalsConnection?.totalCount || 0;
@@ -654,15 +708,18 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		if (firestorePost) {
 			let data = firestorePost.data();
 			// traverse the group, get and set the data.
-			data = await getAndSetNewData({
-				data,
-				id: strPostId,
-				network,
-				proposalType: strProposalType,
-				proposer: post.proposer,
-				timeline: post?.timeline
-			});
-
+			try{
+				data = await getAndSetNewData({
+					data,
+					id: strPostId,
+					network,
+					proposalType: strProposalType,
+					proposer: post.proposer,
+					timeline: post?.timeline
+				});
+			}catch(e){
+				data=undefined;
+			}
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
@@ -711,8 +768,37 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		}
 
 		// Comments
-		const commentsSnapshot = await postDocRef.collection('comments').get();
-		post.comments = await getComments(commentsSnapshot, postDocRef);
+		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+			const commentPromises = post.timeline.map(async (timeline: any) => {
+				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+				const commentsSnapshot = await postDocRef.collection('comments').get();
+				const comments = await getComments(commentsSnapshot, postDocRef);
+				return comments;
+			});
+			const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
+			commentPromiseSettledResults.forEach((result) => {
+				if (result && result.status === 'fulfilled' && result.value && Array.isArray(result.value)) {
+					if (!post.comments || !Array.isArray(post.comments)) {
+						post.comments = [];
+					}
+					post.comments = post.comments.concat(result.value);
+				}
+			});
+		} else {
+			if (post.post_link) {
+				const { id, type } = post.post_link;
+				const postDocRef = postsByTypeRef(network, type).doc(String(id));
+				const commentsSnapshot = await postDocRef.collection('comments').get();
+				post.comments = await getComments(commentsSnapshot, postDocRef);
+			}
+			const commentsSnapshot = await postDocRef.collection('comments').get();
+			const comments = await getComments(commentsSnapshot, postDocRef);
+			if (post.comments && Array.isArray(post.comments)) {
+				post.comments = post.comments.concat(comments);
+			} else {
+				post.comments = comments;
+			}
+		}
 
 		// Post Reactions
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
@@ -729,6 +815,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 			}
 		}
+
+		if((proposalType === ProposalType.ALLIANCE_MOTION || proposalType === ProposalType.ANNOUNCEMENT) && !post.title){
+			post.title = splitterAndCapitalizer(postData?.callData?.method || '', '_') || postData?.cid;
+		}
+
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,
@@ -821,7 +912,7 @@ export const updatePostTimeline = (post: any, postData: any) => {
 				{
 					createdAt: postData?.createdAt,
 					hash: postData?.hash,
-					index: postData?.index,
+					index: postData?.index || postData?.cid,
 					statusHistory: postData?.statusHistory,
 					type: postData?.type
 				}

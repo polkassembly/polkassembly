@@ -13,7 +13,7 @@ import React, { memo, ReactNode, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
-import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon } from 'src/ui-components/CustomIcons';
+import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, DelegationSidebarIcon } from 'src/ui-components/CustomIcons';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 
@@ -27,6 +27,7 @@ import Footer from './Footer';
 import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 const { Content, Sider } = Layout;
 
@@ -117,6 +118,21 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
+	const [previousRoute, setPreviousRoute] = useState(router.asPath);
+
+	useEffect(() => {
+		const handleRouteChange = () => {
+			if(router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post' ){
+				setPreviousRoute(router.asPath);
+			}
+		};
+		router.events.on('routeChangeStart', handleRouteChange);
+
+		return () => {
+			router.events.off('routeChangeStart', handleRouteChange);
+		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router]);
 
 	useEffect(() => {
 		if(!global?.window) return;
@@ -160,10 +176,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Proposals', '/tech-comm-proposals', <DemocracyProposalsIcon className='text-white' />)
 		] : [],
 		allianceItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Members', '/alliance-members', <MembersIcon className='text-white' />),
-			// getSiderMenuItem('Motions', '/alliance-motions', <MotionsIcon className='text-white' />),
-			getSiderMenuItem('Announcements', '/alliance-announcements', <NewsIcon className='text-white' />),
-			getSiderMenuItem('Unscrupulous', '/alliance-unscrupulous', <ReferendaIcon className='text-white' />)
+			getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-white' />),
+			getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='text-white' />),
+			getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-white' />),
+			getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='text-white' />)
 		] : []
 	};
 
@@ -173,7 +189,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	if(typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) {
 		gov1Items.overviewItems = [
-			getSiderMenuItem(<GovernanceSwitchButton className='flex lg:hidden' />, 'gov-2', ''),
+			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'gov-2', ''),
 			...gov1Items.overviewItems
 		];
 	}
@@ -215,7 +231,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]);
 	}
 
-	if(network === 'collectives'){
+	if(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES){
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
 			...gov1Items.allianceItems
 		])];
@@ -274,13 +290,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='text-sidebarBlue' />)
 	];
 
+	if(network === 'kusama'){
+		gov2OverviewItems.splice(1, 0, getSiderMenuItem(<div className='flex gap-2 items-center'>Delegation <span className='px-[6px] py-[2px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-xs'>New</span></div>, '/delegation',  !sidedrawer ? <div className='flex flex-col items-center gap-0 delegation'><DelegationSidebarIcon className= 'text-white -ml-1'/>
+			<span className='px-[4px] py-[1px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-[10px] -mt-1 ml-[-2px] opacity'>New</span>
+		</div> : <DelegationSidebarIcon className= 'text-white -ml-1 mr-1'/> ));
+	}
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
 	if(typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) {
 		gov2OverviewItems = [
-			getSiderMenuItem(<GovernanceSwitchButton className='flex lg:hidden' />, '/', ''),
+			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, '/', ''),
 			...gov2OverviewItems
 		];
 	}
@@ -333,7 +354,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]));
 	}
 
-	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query);
+	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute );
 
 	const handleMenuClick = (menuItem: any) => {
 		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
@@ -360,7 +381,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	return (
 		<Layout className={className}>
-			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer}  />
+			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} previousRoute={previousRoute} />
 			<Layout hasSider>
 				<Sider
 					trigger={null}
@@ -450,6 +471,15 @@ export default styled(AppLayout)`
 	font-size: 18px !important;
 }
 
+.ant-menu-item .delegation{
+font-size: 18px !important;
+}
+.ant-menu-item .delegation .opacity{
+opacity:1 !important;
+margin-top: -17px !important; 
+}
+
+
 .ant-menu-item-selected {
 	background: #fff !important;
 
@@ -492,6 +522,9 @@ export default styled(AppLayout)`
 	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 }
 
+.sidebar .ant-menu-item-selected .opacity {
+  background-color: var(--pink_primary) !important;
+}
 .ant-menu-inline-collapsed-noicon {
 	color: var(--navBlue);
 }

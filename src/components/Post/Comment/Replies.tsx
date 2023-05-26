@@ -14,9 +14,8 @@ interface Props{
 }
 
 const Replies = ({ className, commentId, repliesArr }: Props) => {
-	const [showReplies, setShowReplies] = useState<boolean>(false);
+	const [showReplies, setShowReplies] = useState<boolean>(true);
 	const toggleShowReplies = () => setShowReplies(!showReplies);
-
 	return (
 		<div className={className}>
 			{repliesArr.length > 0 ?
@@ -32,6 +31,7 @@ const Replies = ({ className, commentId, repliesArr }: Props) => {
 						reply={reply}
 						key={reply.id}
 						commentId={commentId}
+						userName={reply.username}
 					/>
 				</div>
 			)}

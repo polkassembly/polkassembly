@@ -27,6 +27,7 @@ import { oneEnactmentPeriodInDays } from '~src/util/oneEnactmentPeriodInDays';
 
 import AyeNayButtons from '../../../../ui-components/AyeNayButtons';
 import LoginToVote from '../LoginToVoteOrEndorse';
+import { poppins } from 'pages/_app';
 
 interface Props {
 	className?: string
@@ -42,7 +43,7 @@ const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
 const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut,loginWallet } = useUserDetailsContext();
+	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut } = useUserDetailsContext();
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const { apiReady } = useApiContext();
 	const [address, setAddress] = useState<string>('');
@@ -52,6 +53,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const { setPostData } = usePostDataContext();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [isAye, setIsAye] = useState(false);
+	const [loginWallet, setLoginWallet] = useState<Wallet>();
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
@@ -64,6 +66,15 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	],[CONVICTIONS, network]);
 
 	const [conviction, setConviction] = useState<number>(0);
+
+	useEffect(() => {
+		if(!window) return;
+		const Wallet = localStorage.getItem('loginWallet') ;
+		if(Wallet){
+			setLoginWallet(Wallet as  Wallet);
+			setWallet(Wallet as Wallet);
+		}
+	}, []);
 
 	useEffect(() => {
 		setPostData((prev) => {
@@ -316,7 +327,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 	const VoteLock = ({ className }: { className?:string }) =>
 		<Form.Item className={className}>
-			<label  className='mb-3 flex items-center text-sm text-sidebarBlue'>
+			<label  className='mb-3 flex items-center text-sm text-[#485F7D]'>
 				Vote lock
 				<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.' />
 			</label>
@@ -344,18 +355,17 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	};
 	// eslint-disable-next-line react-hooks/rules-of-hooks
 	useEffect(() => {
-		if(loginWallet!==null)
-		{
-			setWallet(loginWallet);
-			handleDefaultWallet(loginWallet);
-		}}
+		if(!loginWallet) return;
+		setWallet(loginWallet);
+		handleDefaultWallet(loginWallet);
+	}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	,[loginWallet]);
 
 	return (
 		<div className={className}>
 			<Button
-				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[95%]'
+				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[100%]'
 				onClick={openModal}
 			>
 				{lastVote == null || lastVote == undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }
@@ -379,6 +389,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								helpText={'Amount of you are willing to lock for this vote.'}
 								placeholder={'123'}
 								onChange={onBalanceChange}
+								className='mt-6 text-sm font-normal text-[#485F7D]'
+								inputClassName='text-[#7c899b] text-sm text-red-100'
 							/>
 
 							{
@@ -389,6 +401,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 										address={address}
 										withBalance
 										onAccountChange={onAccountChange}
+										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
 									/>
 									: !wallet? <FilteredError text='Please select a wallet.' />: null
 							}

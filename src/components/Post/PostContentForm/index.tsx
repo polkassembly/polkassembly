@@ -34,6 +34,7 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 		content,
 		postType: proposalType,
 		postIndex,
+		cid,
 		timeline,tags:oldTags
 	}, setPostData } = usePostDataContext();
 
@@ -47,7 +48,7 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 		setLoading(true);
 		const { data , error: editError } = await nextApiClientFetch<IEditPostResponse>('api/v1/auth/actions/editPost', {
 			content,
-			postId: postIndex,
+			postId: postIndex || cid,
 			proposalType,
 			tags,
 			timeline,
@@ -76,6 +77,7 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 			setPostData((prev) => ({
 				...prev,
 				content,
+				history: [{ content: prev?.content, created_at: prev?.last_edited_at || '', title: prev?.title }, ...(prev?.history || [])] ,
 				last_edited_at,
 				proposer,
 				tags,

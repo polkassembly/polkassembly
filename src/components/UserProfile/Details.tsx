@@ -4,7 +4,8 @@
 
 import { Divider, Skeleton, Tabs } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
-import { ESocialType, ISocial, ProfileDetailsResponse } from '~src/auth/types';
+import { CheckCircleFilled } from '@ant-design/icons';
+import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
 import { useApiContext, useUserDetailsContext } from '~src/context';
 import Addresses from './Addresses';
 import EditProfile from './EditProfile';
@@ -16,59 +17,12 @@ const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	ssr: false
 });
 
-import { DiscordIcon, EmailIcon, RiotIcon, TelegramIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
 import About from './About';
 import GovTab from './GovTab';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import OnChainIdentity from './OnChainIdentity';
-
-interface ISocialIconProps {
-	type: ESocialType;
-}
-
-export const SocialIcon: FC<ISocialIconProps> = (props) => {
-	switch(props.type) {
-	case ESocialType.EMAIL:
-		return <EmailIcon />;
-	case ESocialType.RIOT:
-		return <RiotIcon />;
-	case ESocialType.TWITTER:
-		return <TwitterIcon />;
-	case ESocialType.TELEGRAM:
-		return <TelegramIcon />;
-	case ESocialType.DISCORD:
-		return <DiscordIcon />;
-	default:
-		return <></>;
-	}
-};
-
-interface ISocialLink extends ISocial {
-	className?: string;
-	disable?: boolean;
-}
-
-const SocialLink: FC<ISocialLink> = (props) => {
-	const { link, className, type, disable } = props;
-	return (
-		<>
-			{
-				disable?
-					<span className={`${className} cursor-not-allowed opacity-60`}>
-						<SocialIcon type={type} />
-					</span>
-					: <a
-						href={type === ESocialType.EMAIL? `mailto:${link}`: link} target='_blank'
-						rel='noreferrer'
-						className={className}
-					>
-						<SocialIcon type={type} />
-					</a>
-			}
-		</>
-	);
-};
+import SocialLink from '~src/ui-components/SocialLinks';
 
 export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
 
@@ -243,6 +197,9 @@ const Details: FC<IDetailsProps> = (props) => {
 	}, [addresses, api, apiReady]);
 	const { nickname, display, legal } = onChainIdentity;
 	const newUsername = legal || display || nickname || username;
+	const judgements = onChainIdentity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
+	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
+
 	return (
 		<div className='w-full md:w-auto h-full flex flex-col gap-y-5 bg-[#F5F5F5]'>
 			<article className='md:w-[330px] bg-[#910365] rounded-l-[4px] md:flex-1 py-[22px] md:py-8 px-4'>
@@ -256,7 +213,7 @@ const Details: FC<IDetailsProps> = (props) => {
 								src={image}
 								alt='User Picture'
 								className='bg-transparent flex items-center justify-center w-[95px] h-[95px] '
-								iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full border-4 border-solid rounded-full'
+								iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
 							/>
 						</div>
 						<div className='col-span-1 flex justify-end'>
@@ -267,9 +224,12 @@ const Details: FC<IDetailsProps> = (props) => {
 							}
 						</div>
 					</div>
-					<h2 title={newUsername} className='font-semibold text-xl text-white truncate max-w-[200px] mt-[18px]'>{newUsername}</h2>
+					<div className='flex gap-2 text-xl items-center justify-center'>
+						<h2 title={newUsername} className='font-semibold text-xl text-white truncate max-w-[200px] mt-[18px]'>{newUsername}</h2>
+						{isGood  && onChainIdentity.judgements.length > 0 && <CheckCircleFilled style={ { color:'green' } } className='rounded-[50%] bg-white h-[20px] border-solid border-[#910365] mt-[7px]' />}
+					</div>
 					<div
-						className='flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-[10px]'
+						className='flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-'
 					>
 						{
 							socialLinks?.map((social, index) => {
@@ -307,7 +267,7 @@ const Details: FC<IDetailsProps> = (props) => {
 					<TitleBio bio={bio} title={title} titleClassName='hidden md:block' bioClassName='hidden md:block' />
 				</div>
 				<div className='hidden md:block'>
-					<Divider className='bg-[#FCE5F2] my-6 border-0 border-t-[0.5px]' />
+					<Divider className='bg-[#FCE5F2] mt-2 mb-6 border-0 border-t-[0.5px]' />
 					<Addresses addresses={addresses} />
 					{
 						onChainIdentity && addresses && addresses.length > 0?

@@ -40,7 +40,7 @@ const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut,loginWallet } = useUserDetailsContext();
+	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut } = useUserDetailsContext();
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const { apiReady } = useApiContext();
 	const [address, setAddress] = useState<string>('');
@@ -50,6 +50,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const { network } = useNetworkContext();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [isAye, setIsAye] = useState(false);
+	const [loginWallet, setLoginWallet] = useState<Wallet>();
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
@@ -62,6 +63,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	],[CONVICTIONS]);
 
 	const [conviction, setConviction] = useState<number>(0);
+
+	useEffect(() => {
+		if(!window) return;
+		const Wallet = localStorage.getItem('loginWallet') ;
+		Wallet && setLoginWallet(Wallet as  Wallet);
+	}, [apiReady]);
 
 	useEffect(() => {
 		setPostData((prev) => {
@@ -282,7 +289,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const VoteLock = ({ className }: { className?:string }) =>
 		<Form.Item className={className}>
-			<label  className='mb-3 flex items-center text-sm text-sidebarBlue'>
+			<label  className='flex items-center text-sm text-[#485F7D]'>
 				Vote lock
 				<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.' />
 			</label>
@@ -310,17 +317,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	};
 	// eslint-disable-next-line react-hooks/rules-of-hooks
 	useEffect(() => {
-		if(loginWallet!==null){
-			setWallet(loginWallet);
-			handleDefaultWallet(loginWallet);
-		}
+		if(!loginWallet) return ;
+		setWallet(loginWallet);
+		handleDefaultWallet(loginWallet);
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[loginWallet]);
 
 	return (
 		<div className={className}>
 			<Button
-				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[95%]'
+				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[100%]'
 				onClick={openModal}
 			>
 				{lastVote == null || lastVote == undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }
@@ -341,10 +348,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								<WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
 							</div>
 							<BalanceInput
+								className='text-sm font-normal text-[#485F7D]'
 								label={'Lock balance'}
 								helpText={'Amount of you are willing to lock for this vote.'}
 								placeholder={'123'}
 								onChange={onBalanceChange}
+								inputClassName='text-[#7c899b] text-sm'
 							/>
 
 							{
@@ -355,6 +364,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										address={address}
 										withBalance
 										onAccountChange={onAccountChange}
+										className='text-sm font-normal text-[#485F7D]'
 									/>
 									: !wallet? <FilteredError text='Please select a wallet.' />: null
 							}

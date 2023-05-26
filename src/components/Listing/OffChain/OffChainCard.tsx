@@ -105,7 +105,16 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 							</div>
 						</>}
-
+						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden max-[390px]:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
+						<div className='flex justify-between'>
+							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
+								(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px] mr-1' >
+									{tag}
+								</div>))}
+							{tags.length>2 && <span className='text-pink_primary leading-[25px] p-[0px] ' style={{ borderBottom:'1px solid #E5007A', padding: '0' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+                +{tags.length-2} more
+							</span>}
+							</>}</div>
 					</div>
 				</div>
 			</div>
@@ -116,7 +125,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 				className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 max-sm:w-[100%] h-[120px] padding  justify-center center-aligned`}
 			><div>
 					<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
-					<div className='flex gap-2 max-sm:flex-col items-start'>{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
+					<div className='flex gap-2 items-start flex-wrap'>{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
 						(<div key={index} className='rounded-xl px-[16px] py-[2px] border-navBlue border-solid border-[1px] font-normal text-xs text-navBlue' >
 							{tag}
 						</div>))}

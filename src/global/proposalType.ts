@@ -18,7 +18,9 @@ export enum ProposalType {
 	OPEN_GOV = 'referendums_v2',
 	REFERENDUM_V2 = 'referendums_v2',
 	DISCUSSIONS = 'discussions',
-	GRANTS = 'grants'
+	GRANTS = 'grants',
+	ANNOUNCEMENT = 'announcement',
+	ALLIANCE_MOTION = 'alliance_motion'
 }
 export enum OffChainProposalType {
 	DISCUSSIONS = 'discussions',
@@ -33,6 +35,8 @@ export enum EGovType {
 export const govTypes = ['open_gov'];
 
 export type TSubsquidProposalType =
+	|'AllianceMotion'
+	|'Announcement'
 	| 'DemocracyProposal'
 	| 'TechCommitteeProposal'
 	| 'TreasuryProposal'
@@ -67,6 +71,10 @@ export function getSubsquidProposalType(proposalType: Exclude<ProposalType, Prop
 		return 'ChildBounty';
 	case ProposalType.OPEN_GOV:
 		return 'ReferendumV2';
+	case ProposalType.ALLIANCE_MOTION:
+		return 'AllianceMotion';
+	case ProposalType.ANNOUNCEMENT:
+		return 'Announcement';
 	}
 }
 export function getFirestoreProposalType(proposalType: string): string {
@@ -95,6 +103,10 @@ export function getFirestoreProposalType(proposalType: string): string {
 		return 'discussions';
 	case 'Grants':
 		return 'grants';
+	case 'AllianceMotion':
+		return 'alliance_motion';
+	case 'Announcement':
+		return 'announcement';
 	}
 	return '';
 }
@@ -149,6 +161,10 @@ export function getSinglePostLinkFromProposalType(proposalType: ProposalType | O
 		return 'tip';
 	case ProposalType.TREASURY_PROPOSALS:
 		return 'treasury';
+	case ProposalType.ALLIANCE_MOTION:
+		return 'alliance/motion';
+	case ProposalType.ANNOUNCEMENT:
+		return 'alliance/announcement';
 	}
 	return '';
 }
@@ -181,7 +197,7 @@ export function getProposalTypeFromSinglePostLink(link: string): ProposalType | 
 	}
 }
 
-export const proposalTypes = ['democracy_proposals', 'tech_committee_proposals', 'treasury_proposals', 'referendums', 'fellowship_referendums', 'council_motions', 'bounties', 'tips', 'child_bounties', 'open_gov', 'referendums_v2'];
+export const proposalTypes = ['democracy_proposals', 'tech_committee_proposals', 'treasury_proposals', 'referendums', 'fellowship_referendums', 'council_motions', 'bounties', 'tips', 'child_bounties', 'open_gov', 'referendums_v2', 'alliance_motion', 'announcement'];
 export const offChainProposalTypes = ['discussions', 'grants'];
 
 export const checkIsOnChainPost = (proposalType: string) => {
@@ -214,7 +230,7 @@ export enum TrackPostStatus {
 export const tracksNo = [0, 1, 10, 11, 12, 13, 14, 15, 20, 21, 30, 31, 32, 33, 34];
 
 export const trackPostStatuses = ['All', 'Confirmed', 'ConfirmStarted', 'Cancelled', 'Deciding', 'DecisionDepositPlaced', 'Killed', 'Submitted', 'Rejected', 'TimedOut'];
-export const customOpenGovStatuses = ['All', 'CustomStatusSubmitted', 'CustomStatusVoting', 'CustomStatusClosed'];
+export const customOpenGovStatuses = ['All', 'CustomStatusSubmitted', 'CustomStatusVoting', 'CustomStatusClosed','CustomStatusActive'];
 
 export const getStatusesFromCustomStatus = (customStatus: CustomStatus) => {
 	switch(customStatus) {
@@ -224,5 +240,7 @@ export const getStatusesFromCustomStatus = (customStatus: CustomStatus) => {
 		return ['Deciding', 'ConfirmStarted', 'ConfirmAborted'];
 	case CustomStatus.Closed:
 		return ['Cancelled', 'TimedOut', 'Confirmed', 'Approved', 'Rejected', 'Executed'];
+	case CustomStatus.Active:
+		return  ['DecisionDepositPlaced', 'Submitted', 'Deciding', 'ConfirmStarted', 'ConfirmAborted' ];
 	}
 };

@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 import React, { FC } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import { EmptyLatestActivity, ErrorLatestActivity, PopulatedLatestActivity, PopulatedLatestActivityCard } from 'src/ui-components/LatestActivityStates';
-import { useNetworkContext } from '~src/context';
 
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
 
@@ -41,10 +40,9 @@ interface IPostsTableProps {
 }
 
 const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }) => {
-	const { network } = useNetworkContext();
 	const router = useRouter();
 
-	if(network === 'collectives') return <EmptyLatestActivity />;
+	// if(network === 'collectives') return <EmptyLatestActivity />;
 
 	//error state
 	if (error) return <ErrorLatestActivity errorMessage={error} />;
@@ -91,7 +89,11 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 				onClick={(rowData) => {
 					const firestoreProposalType = getFirestoreProposalType(['discussions', 'grants'].includes(rowData.type) ? `${rowData.type.charAt(0).toUpperCase()}${rowData.type.slice(1)}` :  rowData.type);
 					const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
-					router.push(`/${link}/${rowData.post_id}`);
+					if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
+						window?.open(`/${link}/${rowData.post_id}`, '_blank');
+					} else {
+						router.push(`/${link}/${rowData.post_id}`);
+					}
 				}}
 			/>
 		</div>
@@ -102,7 +104,11 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 				onClick={(rowData) => {
 					const firestoreProposalType = getFirestoreProposalType(['discussions', 'grants'].includes(rowData.type) ? `${rowData.type.charAt(0).toUpperCase()}${rowData.type.slice(1)}` :  rowData.type);
 					const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
-					router.push(`/${link}/${rowData.post_id}`);
+					if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
+						window?.open(`/${link}/${rowData.post_id}`, '_blank');
+					} else {
+						router.push(`/${link}/${rowData.post_id}`);
+					}
 				}}
 			/>
 		</div>

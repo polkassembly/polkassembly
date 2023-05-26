@@ -13,3 +13,5 @@ node_modules/
 
 #misc
 .vscode
+.env
+.env.local

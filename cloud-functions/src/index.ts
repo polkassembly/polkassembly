@@ -22,7 +22,7 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 
 	// Create an object to be indexed by Algolia
 	const postRecord = {
-		objectID: postId, // Unique identifier for the object
+		objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
 		network,
 		postType,
 		...post

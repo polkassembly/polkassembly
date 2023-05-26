@@ -361,7 +361,6 @@ const DelegateModalEthV2 = ({ trackNum } : { trackNum:number }) => {
 									placeholder={'0'}
 									className='mt-4'
 									onChange={(balance) => setBnBalance(balance)}
-									size='large'
 								/>
 
 								<div className='-mt-2'>

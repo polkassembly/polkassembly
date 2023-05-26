@@ -24,7 +24,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance }: P
 	const { network } = useContext(NetworkContext);
 	const { postData } = usePostDataContext();
 
-	const isReferendum = postData?.postType === ProposalType.REFERENDUMS;
+	const isReferendum = [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(postData?.postType);
 
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;
@@ -63,6 +63,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance }: P
 				}).catch(e => console.error(e));
 		}
 		else{
+
 			api.query.system.account(address)
 				.then((result: any) => {
 					if(isReferendum){
@@ -70,10 +71,10 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance }: P
 						setAvailableBalance &&	setAvailableBalance(result.data?.free?.toString() || '0');
 						onChange && onChange(result.data?.free?.toString() || '0');
 					}
-					else if (result.data.free && result.data?.free?.toBigInt() >= result.data?.miscFrozen?.toBigInt()){
-						setBalance((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()).toString() || '0');
-						setAvailableBalance &&	setAvailableBalance((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()).toString() || '0');
-						onChange && onChange((result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt()).toString() || '0');
+					else if (result.data.free && result.data?.free?.toBigInt() >= result.data?.frozen?.toBigInt()){
+						setBalance((result.data?.free?.toBigInt() - result.data?.frozen?.toBigInt()).toString() || '0');
+						setAvailableBalance &&	setAvailableBalance((result.data?.free?.toBigInt() - result.data?.frozen?.toBigInt()).toString() || '0');
+						onChange && onChange((result.data?.free?.toBigInt() - result.data?.frozen?.toBigInt()).toString() || '0');
 					}
 					else{
 						setBalance('0');

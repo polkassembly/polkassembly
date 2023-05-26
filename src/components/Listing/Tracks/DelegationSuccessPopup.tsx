@@ -76,8 +76,8 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 							displayInline={true}/>
 					</span>
 					</div>}
-					{vote && <div className='flex h-[21px] gap-[50px] text-sm text-[#485F7D] bg-red-300'> 
-						Vote :{vote === 'aye'? <p><AyeGray/> <span className='capitalize'>{vote}</span></p> : vote === 'nay' ?  <div><NayGray/> <span className='mb-[5px] capitalize'>{vote}</span></div> : vote === 'split' ? <p><SplitGray/> <span className='capitalize'>{vote}</span></p> : vote === 'abstain' ? <p><AbstainGray/> <span className='capitalize'>{vote}</span></p> : null }
+					{vote && <div className='flex h-[21px] gap-[50px] text-sm text-[#485F7D]'>
+						Vote :{vote === 'aye'? <p><AyeGray/> <span className='capitalize font-semibold'>{vote}</span></p> : vote === 'nay' ?  <div><NayGray/> <span className='mb-[5px] capitalize font-semibold'>{vote}</span></div> : vote === 'split' ? <p><SplitGray/> <span className='capitalize font-semibold'>{vote}</span></p> : vote === 'abstain' ? <p><AbstainGray/> <span className='capitalize font-semibold'>{vote}</span></p> : null }
 					</div>
 					}
 					<div className='flex gap-4 text-sm text-[#485F7D]'> Conviction:<span className='text-[#243A57] font-medium'>{conviction}x</span> </div>
@@ -86,8 +86,8 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 							{tracks.map((track, index) => (<div key={index}>{track} #{networkTrackInfo[network][track.toString()].trackId}</div>))}</div>
 					</span>
 					</div>}
-					{time && <div className='flex h-[21px] gap-[50px] text-sm text-[#485F7D] bg-red-300'> 
-						time : {time}
+					{time && <div className='flex h-[21px] gap-[50px] text-sm text-[#485F7D] font-normal'>
+						Time : <span className='font-medium text-[#243A57]'>{time}</span>
 					</div>
 					}
 				</div></div>}

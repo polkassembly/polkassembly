@@ -177,10 +177,14 @@ class AuthService {
 			if (username.toLowerCase().includes(nameBlacklist[i])) throw apiErrorWithStatusCode(messages.USERNAME_BANNED, 401);
 		}
 
-		const userQuery = await firebaseAdmin.firestore().collection('users').where('username', '==', username).limit(1).get();
+		const userQuery = await firebaseAdmin.firestore().collection('users').where('username', '==', username).where('email', '==', username).limit(1).get();
+	
+		
 		if (userQuery.size === 0) throw apiErrorWithStatusCode(messages.NO_USER_FOUND_WITH_USERNAME, 404);
 
 		const user = userQuery.docs[0].data() as User;
+
+		console.log(user, "yash----------------------")
 
 		const isCorrectPassword = await verifyUserPassword(user.password, password);
 		if (!isCorrectPassword) throw apiErrorWithStatusCode(messages.INCORRECT_PASSWORD, 401);

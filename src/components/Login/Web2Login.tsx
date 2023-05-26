@@ -37,7 +37,7 @@ interface Props {
   className?: string;
 }
 const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation }) => {
-	const { password, username } = validation;
+	const { password, usernameOrEmail, username, email } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -101,7 +101,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 						className="text-base text-sidebarBlue font-medium"
 						htmlFor="username"
 					>
-													Username
+						Enter Username or Email
 					</label>
 					<Form.Item
 						name="username"
@@ -112,7 +112,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							},
 							{
 								message: messages.VALIDATION_USERNAME_PATTERN_ERROR,
-								pattern: username.pattern
+								pattern: email.pattern
 							},
 							{
 								max: username.maxLength,
@@ -126,7 +126,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					>
 						<Input
 							disabled={loading}
-							placeholder="John"
+							placeholder="Type here"
 							className="rounded-md py-3 px-4"
 							id="username"
 						/>
@@ -138,7 +138,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 						className="text-base text-sidebarBlue font-medium"
 						htmlFor="password"
 					>
-							Password
+						Enter Password
 					</label>
 					<Form.Item
 						name="password"
@@ -155,7 +155,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					>
 						<Input.Password
 							disabled={loading}
-							placeholder='Password'
+							placeholder="Type here"
 							className="rounded-md py-3 px-4"
 							id="password"
 						/>

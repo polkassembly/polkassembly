@@ -359,12 +359,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		</Form.Item>;
 
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
+		setLoadingStatus({ ...loadingStatus, isLoading: true });
 		event.preventDefault();
 		setWallet(wallet);
 		await getAccounts(wallet);
 		if (walletConnectProvider) {
 			await getWalletConnectAccounts();
 		}
+		setLoadingStatus({ ...loadingStatus, isLoading: false });
 	};
 
 	// eslint-disable-next-line react-hooks/rules-of-hooks
@@ -407,13 +409,16 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			>
 				<>
 					<Spin spinning={loadingStatus.isLoading || isAccountLoading} indicator={<LoadingOutlined />}>
-						<div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>
+
+						{accounts.length === 0  && wallet && !loadingStatus.isLoading && <div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>}
 						<div className='flex items-center gap-x-5 mt-1 mb-[24px] justify-center'>
 							{ availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
 							{ isMetamaskWallet && <WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />}
 						</div>
 
+						{!isTalismanEthereum && <Alert message='Please use Ethereum account via Talisman wallet.' type='info'/>}
 						{balanceErr.length > 0 && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
+						{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 
 						{
 							accounts.length > 0?
@@ -455,7 +460,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									onChange={onBalanceChange}
 									inputClassName='text-[#7c899b] text-sm'
 								/>
-								{!isTalismanEthereum && <Alert message='Please use Ethereum account via Talisman wallet.' type='info'/>}
 								<VoteLock className={`${className}`} />
 
 								<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>

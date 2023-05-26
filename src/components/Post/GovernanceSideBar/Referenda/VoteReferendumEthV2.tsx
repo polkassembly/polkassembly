@@ -502,12 +502,14 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		</Form.Item>;
 
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
+		setLoadingStatus({ ...loadingStatus, isLoading: true });
 		event.preventDefault();
 		setWallet(wallet);
 		await getAccounts(wallet);
 		if (walletConnectProvider) {
 			await getWalletConnectAccounts();
 		}
+		setLoadingStatus({ ...loadingStatus, isLoading: false });
 	};
 
 	const handleOnBalanceChange = (balanceStr: string) => {
@@ -590,6 +592,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 						{!isTalismanEthereum && <Alert message='Please use Ethereum account via Talisman wallet.' type='info' className='mb-2 -mt-2' showIcon/>}
 
 						{balanceErr.length > 0 && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
+						{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 
 						{
 							accounts.length > 0?

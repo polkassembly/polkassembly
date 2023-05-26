@@ -18,7 +18,6 @@ import WalletButton from '~src/components/WalletButton';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import { APPNAME } from '~src/global/appName';
 import { ProposalType } from '~src/global/proposalType';
-import FilteredError from '~src/ui-components/FilteredError';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
@@ -32,6 +31,7 @@ import SplitGray from '~assets/icons/split-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import getWalletErrors from '~src/util/getWalletErrors';
 
 const ZERO_BN = new BN(0);
 
@@ -61,6 +61,15 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [balanceErr, setBalanceErr] = useState('');
+	const [splitForm] = Form.useForm();
+	const [abstainFrom] = Form.useForm();
+	const[ayeNayForm] = Form.useForm();
+	const [abstainVoteValue, setAbstainVoteValue] = useState<BN>(ZERO_BN);
+	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
+	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
+	const [walletErr, setWalletErr] = useState<{message: string, description: string, error: number}>({ description: '', error: 0, message: '' });
+
+	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
 	useEffect(() => {
 		if(!window) return;
@@ -71,14 +80,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-	const [splitForm] = Form.useForm();
-	const [abstainFrom] = Form.useForm();
-	const[ayeNayForm] = Form.useForm();
-	const [abstainVoteValue, setAbstainVoteValue] = useState<BN>(ZERO_BN);
-	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
-	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
-
-	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -150,6 +151,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		getAccounts(wallet, address);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, wallet]);
+
+	useEffect(() => {
+		getWalletErrors(availableWallets, ['polymesh'].includes(network), (window as any).walletExtension?.isNovaWallet ? true : false, setWalletErr );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [availableWallets, network]);
 
 	const handleOnBalanceChange = (balanceStr: string) => {
 		let balance = ZERO_BN;
@@ -502,7 +508,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			><>
 					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
 						<>
-							<div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>
+							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>}
 
 							<div className='flex items-center gap-x-5 mt-1 mb-6 justify-center'>
 								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
@@ -519,6 +525,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								}
 							</div>
 							{balanceErr.length > 0 && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
+							{walletErr.error === 1 && !loadingStatus.isLoading && <Alert message={walletErr.message} description={walletErr.description} showIcon/>}
+							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 
 							{
 								accounts.length > 0 ?
@@ -533,10 +541,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										inputClassName='rounded-[4px] px-3 py-1'
 										withoutInfo={true}
 									/>
-									: !wallet && !loadingStatus.isLoading ? <Alert message='Please select a wallet.' showIcon type='info' />: null
+									: walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? <Alert message='Please select a wallet.' showIcon type='info' />: null
 							}
-
-							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <FilteredError text='No addresses found in the address selection tab.' />}
 
 							{/* aye nye split abstain buttons */}
 							<h3 className='inner-headings mt-[24px] mb-[2px]'>Choose your vote</h3>

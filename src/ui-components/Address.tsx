@@ -74,10 +74,10 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 	};
 
 	const getKiltName = async () => {
-		const web3Name = await getKiltDidName(address)
-		if(web3Name) {
-			setKiltName(web3Name!)
-		}
+		if (!api || !apiReady) return
+
+		const web3Name = await getKiltDidName(api, address)
+		setKiltName(web3Name || "")
 	}
 
 	useEffect(() => {
@@ -132,10 +132,12 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 	}, [encoded_addr, api, apiReady]);
 
 	useEffect(() => {
-		if(process.env.NEXT_PUBLIC_NETWORK === "kilt") {
+		if(network === "kilt") {
 			getKiltName()
 		}
 	}, [])
+
+	
 
 	const t1 = kiltName || mainDisplay || (isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr);
 	const t2 = extensionName || mainDisplay;

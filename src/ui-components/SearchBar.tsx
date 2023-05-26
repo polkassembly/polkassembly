@@ -22,6 +22,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 	const { className, isSmallScreen } = props;
 	// const { network } = useNetworkContext();
 	const [open, setOpen] = useState(false);
+  const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
 	return (
 		<div className={className}>
 			{
@@ -39,7 +40,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						<Modal
 							title={<label className='text-[#334D6E] text-xl font-semibold'>Search</label>}
 							open={open}
-							onCancel={() => setOpen(false)}
+							onCancel={() =>{ setOpen(false); setIsSuperSearch(false);}}
 							footer={false}
 							className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable}`}
 							closeIcon={<CloseIcon/>}
@@ -48,7 +49,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 								{/* <ClientOnly>
 									<Search network={network} />
 								</ClientOnly> */}
-								<Search/>
+								<Search setIsSuperSearch={setIsSuperSearch} isSuperSearch={isSuperSearch} />
 							</div>
 						</Modal>
 					</>

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Checkbox, Input, Popover, Radio, RadioChangeEvent } from 'antd';
+import { Button, Checkbox, Input, Popover, Radio, RadioChangeEvent } from 'antd';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { SearchOutlined, DownOutlined } from '@ant-design/icons';
@@ -11,9 +11,15 @@ import { poppins } from 'pages/_app';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import { topicToOptionText } from 'src/components/Post/CreatePost/TopicsRadio';
+import ResultPosts from './ResultPosts';
+import SuperSearchIcon from '~assets/icons/super-search.svg';
+import ResultPeople from './ResultPeople';
 
 interface Props{
   className?: string;
+  setIsSuperSearch: (pre: boolean) => void;
+  isSuperSearch: boolean;
+
 }
 enum EFilterValues {
   Referenda = 'on-chain-posts',
@@ -24,7 +30,6 @@ enum EMultipleCheckFilters {
   Tracks = 'track',
   Tags = 'tags',
   Topic = 'topic',
-  Status = 'status',
   Chain = 'chain'
 }
 enum EDateFilter {
@@ -37,7 +42,7 @@ enum EDateFilter {
   Last_12_months = 'last_12_months'
 }
 
-const Search = ({ className }: Props) => {
+const Search = ({ className, isSuperSearch, setIsSuperSearch }: Props) => {
 
 	const { network } = useNetworkContext();
 	const [filterBy, setFilterBy] = useState<EFilterValues>();
@@ -66,13 +71,19 @@ const Search = ({ className }: Props) => {
 
 	return <div className={className}>
 		<Input className='placeholderColor mt-4' type='search' allowClear placeholder='Type here to search for something' addonAfter= {<SearchOutlined className='text-white text-[18px] tracking-[0.02em]'/>}/>
-		<div className='mt-[18px] border-solid flex justify-between max-lg:flex-col max-md:gap-2'>
+		<div className='mt-[18px] flex justify-between max-lg:flex-col max-md:gap-2'>
 			<Radio.Group onChange={(e: RadioChangeEvent) => setFilterBy(e.target.value)} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className}`}>
 				<Radio value={EFilterValues.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterValues.Referenda ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'}`}>Referenda</Radio>
 				<Radio value={EFilterValues.Users} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterValues.Users ? 'bg-[#FEF2F8] text-[#243A57] px-4' : 'text-[#667589] px-1'}`}>People</Radio>
 				<Radio value={EFilterValues.Discussions} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterValues.Discussions ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'}`}>Discussions</Radio>
 			</Radio.Group>
 			<div className='flex text-xs font-medium tracking-[0.02em] text-[#667589] gap-3.5'>
+				{isSuperSearch && <Popover content={<div>hello</div>} placement="bottomLeft">
+					<div className='flex items-center justify-center text-xs'>
+          Chain
+						<span className='text-[#96A4B6]'><DownOutlined className='ml-2.5'/></span>
+					</div>
+				</Popover>}
 				<Popover content={<div className='flex flex-col gap-1'>
 					<Radio.Group onChange={(e: RadioChangeEvent) => setDateFilter(e.target.value)} value={dateFilter} className={`gap-[1px] flex flex-col ${poppins.variable} ${poppins.className}`}>
 						<Radio value={EDateFilter.Today} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Today ? 'text-[#243A57]' : 'text-[#667589]'}`}>Today</Radio>
@@ -108,15 +119,17 @@ const Search = ({ className }: Props) => {
 						<span className='text-[#96A4B6]'><DownOutlined className='ml-2.5'/></span>
 					</div>
 				</Popover>
-				<Popover content={<div>hello</div>} placement="bottomLeft">
-					<div className='flex items-center justify-center text-xs'>
-          Status
-						<span className='text-[#96A4B6]'><DownOutlined className='ml-2.5'/></span>
-					</div>
-				</Popover>
 			</div>
 		</div>
-		<div className='border-solid mt-6'>hello</div>
+		{(filterBy === EFilterValues.Referenda || filterBy ===  EFilterValues.Discussions) && <ResultPosts className='mt-6'/>}
+		{filterBy === EFilterValues.Users && <ResultPeople />}
+
+		{!isSuperSearch && <div className='flex flex-col justify-center items-center mt-7 gap-4 mb-5'>
+			<label className='text-[#243A57] text-sm font-medium tracking-[0.01em]'>Didn’t find what you were looking for?</label>
+			<Button onClick={() => setIsSuperSearch(true)} className='flex items-center justify-center gap-1.5 bg-[#E5007A] text-white text-sm font-medium rounded-[4px]'>
+				<SuperSearchIcon/>
+				<span>Use Super Search</span></Button>
+		</div>}
 	</div>;
 };
 

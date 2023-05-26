@@ -28,7 +28,15 @@ li {
 }
 `;
 
-const IdentityBadge = ({ className, address, identity, flags }: {className?: string, address: string, identity: DeriveAccountRegistration, flags?: DeriveAccountFlags}) => {
+interface Props {
+	className?: string, 
+	address: string, 
+	identity: DeriveAccountRegistration,
+	flags?: DeriveAccountFlags,
+	web3Name?: string
+}
+
+const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props) => {
 	const judgements = identity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 	const isBad = judgements.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
@@ -53,6 +61,7 @@ const IdentityBadge = ({ className, address, identity, flags }: {className?: str
 		{identity?.web && <li><span className='desc'>web:</span>{identity.web}</li>}
 		{flags?.isCouncil && <li><span className='desc'>Council member</span><CouncilEmoji/></li>}
 		{<li><span className='desc'><a href={`https://polkaverse.com/accounts/${address}`} target='_blank' rel='noreferrer'>Polkaverse Profile</a></span></li>}
+		{web3Name && <li><span className='desc'><a href={`https://w3n.id/${web3Name}`} target='_blank' rel='noreferrer'>Web3 Name Profile</a></span></li>}
 	</StyledPopup>;
 
 	return <div className={className}>

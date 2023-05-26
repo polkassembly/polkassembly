@@ -165,7 +165,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 					// When inline disregard the extension name.
 					? popupContent
 						? <Space>
-							{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} />}
+							{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 							<Tooltip color='#E5007A' title={popupContent}>
 								<div className={'header display_inline identityName max-w-[30px] flex flex-col gap-y-1'}>
 									{ t1 && <span className='truncate text-navBlue'>{t1}</span> }
@@ -175,7 +175,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 						</Space>
 						: <>
 							<div className={'description display_inline flex items-center'}>
-								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} className='mr-2' />}
+								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} className='mr-2' />}
 								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[85px] flex gap-x-1 ${textClassName}`}>
 									{ t1 && <span className={`truncate text-navBlue ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
 									{sub && isSubVisible && <span className={'sub truncate text-navBlue'}>{sub}</span>}
@@ -188,7 +188,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 							<Tooltip color='#E5007A' title={popupContent}>
 								<Space>
 									<Space className={'header'}>
-										{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} />}
+										{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 										<span className='bg-red-500 identityName max-w-[85px] flex flex-col gap-y-1'>
 											{ t2 && <span className={`${textClassName} truncate text-navBlue`}>{ t2 }</span> }
 											{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-navBlue`}>{sub}</span>}
@@ -201,7 +201,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 								{
 									!disableHeader ?
 										<Space className={'header'}>
-											{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} />}
+											{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 											<span className='identityName max-w-[85px] flex flex-col gap-y-1'>
 												{ t2 && <span className={`${textClassName} truncate text-navBlue`}>{ t2 }</span> }
 												{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-navBlue`}>{sub}</span>}

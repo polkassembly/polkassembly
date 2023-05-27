@@ -14,8 +14,6 @@ import CopyIcon from '~assets/icons/content-copy.svg';
 import MessengerIcon from '~assets/icons/messenger.svg';
 import EditProfileModal from '~src/components/UserProfile/EditProfile';
 import dynamic from 'next/dynamic';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
@@ -23,7 +21,7 @@ const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 });
 
 interface Props {
-  username?: string;
+  username: string;
   address: string;
   isSearch?: boolean;
   className?: string;
@@ -45,25 +43,9 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 	const { image, social_links, bio , username: userName } = profileDetails;
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [messageApi, contextHolder] = message.useMessage();
-	const [fetchedUsername, setFetchedUsername] = useState<string>('');
-
-	const fetchUsername = async () => {
-		const substrateAddress = getSubstrateAddress(address);
-		if (!username && substrateAddress) {
-			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`);
-			if (error) {
-				console.error(error);
-				return;
-			}
-			if (data && data.username) {
-				console.log(data.username);
-				setFetchedUsername(data.username);
-			}
-		}
-	};
 
 	const getData = async() => {
-		const { data, error } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${username || fetchedUsername}`);
+		const { data, error } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
 
 		if(data){console.log(data); setProfileDetails({ ...profileDetails, ...data });}
 		else{
@@ -79,7 +61,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 	useEffect(() => {
 		getData();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [username, address, fetchUsername]);
+	}, [username, address]);
 
 	const success = () => {
 		messageApi.open({

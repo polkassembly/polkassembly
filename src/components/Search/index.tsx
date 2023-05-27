@@ -14,6 +14,10 @@ import { topicToOptionText } from 'src/components/Post/CreatePost/TopicsRadio';
 import ResultPosts from './ResultPosts';
 import SuperSearchIcon from '~assets/icons/super-search.svg';
 import ResultPeople from './ResultPeople';
+import algoliasearch from 'algoliasearch';
+
+const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
+const ALGOLIA_SEARCH_API_KEY =process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
 
 interface Props{
   className?: string;
@@ -43,6 +47,19 @@ enum EDateFilter {
 }
 
 const Search = ({ className, isSuperSearch, setIsSuperSearch }: Props) => {
+
+	const client = algoliasearch(ALGOLIA_APP_ID || '', ALGOLIA_SEARCH_API_KEY || '');
+	const index = client.initIndex('polkassembly_users');
+	const getResultData = () => {
+
+		index.search('17').then(({ hits }) => {
+			console.log(hits);
+		});
+
+	};
+	useEffect(() => {
+		getResultData();
+	}, []);
 
 	const { network } = useNetworkContext();
 	const [filterBy, setFilterBy] = useState<EFilterValues>();

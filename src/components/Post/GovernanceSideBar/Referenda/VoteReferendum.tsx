@@ -317,7 +317,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		}
 
 		const totalVoteValue = ayeVoteValue?.add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN);
-		if (totalVoteValue?.gt(availableBalance)) {
+		if (totalVoteValue?.gte(availableBalance)) {
 			setBalanceErr('Insufficient balance.');
 			return;
 		}

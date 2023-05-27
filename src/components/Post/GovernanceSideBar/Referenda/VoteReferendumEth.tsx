@@ -425,7 +425,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									onAccountChange={onAccountChange}
 									onBalanceChange={handleOnBalanceChange}
 									className={'text-sidebarBlue mb-[21px]'}
-									inputClassName='rounded-[4px] px-3 py-1'
+									inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 									withoutInfo={true}
 								/>
 								: !wallet? <Alert message='Please select a wallet.' showIcon type='info' />: null

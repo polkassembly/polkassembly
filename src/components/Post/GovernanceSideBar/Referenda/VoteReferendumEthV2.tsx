@@ -595,7 +595,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 									onAccountChange={onAccountChange}
 									onBalanceChange={handleOnBalanceChange}
 									className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
-									inputClassName='rounded-[4px] px-3 py-1'
+									inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 									withoutInfo = {true}
 								/>
 								: !wallet? <Alert type='info'  message='Please select a wallet.' showIcon />: null

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CheckOutlined } from '@ant-design/icons';
+import { CheckOutlined, ArrowLeftOutlined  } from '@ant-design/icons';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import {
 	Injected,
@@ -32,6 +32,7 @@ import ExtensionNotDetected from '../ExtensionNotDetected';
 import { WalletIcon } from './MetamaskLogin';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import WalletButtons from './WalletButtons';
+import Image from 'next/image';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -354,12 +355,13 @@ const Web3Login: FC<Props> = ({
 
 	const handleChangeWalletWithPolkasafe = (wallet:string) => {
 		setChosenWallet(wallet);
+		console.log(wallet);
 		setAccounts([]);
 	};
 	useEffect(() => {
-		if(withPolkasafe && accounts.length ===0){
+		if(withPolkasafe && accounts.length === 0 && chosenWallet !== Wallet.POLKASAFE){
 			getAccounts(chosenWallet)
-				.then(() => setLoading(false))
+				.then(() => {setLoading(false);setFetchAccounts(false);})
 				.catch((err) => {
 					console.error(err);
 				});
@@ -369,12 +371,11 @@ const Web3Login: FC<Props> = ({
 
 	return (
 		<article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-3">
+			{!!withPolkasafe && <ArrowLeftOutlined onClick={setDisplayWeb2}/>}
 			<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-4">
-				<span>Login</span>
-				<p className="flex gap-x-2 items-center justify-center p-0 m-0">
-					{withPolkasafe ? (
-						'Polkasafe'
-					) : (
+				<span className={withPolkasafe ? 'flex items-center gap-[8px]' : ''}>{withPolkasafe ? <PolkasafeWithIcon/> : 'Login'}</span>
+				{!withPolkasafe && (
+					<p className="flex gap-x-2 items-center justify-center p-0 m-0">
 						<>
 							<span className="mt-2">
 								<WalletIcon which={chosenWallet} />
@@ -384,15 +385,16 @@ const Web3Login: FC<Props> = ({
 									chosenWallet.slice(1).replace('-', '.')}
 							</span>
 						</>
-					)}
-				</p>
+					</p>
+				)}
 				{!!withPolkasafe && (
 					<WalletButtons
 						disabled={loading}
 						onWalletSelect={handleChangeWalletWithPolkasafe}
 						showPolkasafe={false}
-						onPolkasafeSelect={() => { }}
+						onPolkasafeSelect={() => {}}
 						noHeader={true}
+						selectedWallet={chosenWallet}
 					/>
 				)}
 			</h3>
@@ -400,10 +402,10 @@ const Web3Login: FC<Props> = ({
 				<div className="flex flex-col justify-center items-center">
 					<p className="text-base">
 						For fetching your addresses, Polkassembly needs access
-						to your wallet extensions. Please authorize this
+						to your wallet extensions. Please {withPolkasafe && 'select your wallet and'}  authorize this
 						transaction.
 					</p>
-					<Button
+					{!withPolkasafe && <Button
 						key="got-it"
 						icon={<CheckOutlined />}
 						className="bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center"
@@ -418,7 +420,7 @@ const Web3Login: FC<Props> = ({
 						}}
 					>
 						Got it!
-					</Button>
+					</Button>}
 				</div>
 			) : (
 				<>
@@ -546,3 +548,9 @@ const Web3Login: FC<Props> = ({
 };
 
 export default Web3Login;
+
+const PolkasafeWithIcon = () => (
+	<>
+		Login by Polkasafe <Image width={25} height={25} src='/assets/polkasafe-logo.png' alt='polkasafe'/>
+	</>
+);

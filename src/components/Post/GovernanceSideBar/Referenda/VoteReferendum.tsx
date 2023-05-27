@@ -26,6 +26,10 @@ import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import { Polkasafe } from 'polkasafe';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { stringToHex } from '@polkadot/util';
+import { ChallengeMessage } from '~src/auth/types';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -54,7 +58,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [balanceErr, setBalanceErr] = useState('');
-	const [showPolkasafe, setShowPolkasafe] = useState<boolean>(false);
 	const [multisig, setMultisig] = useState<string>('');
 	const [showMultisig, setShowMultisig] = useState<boolean>(false);
 	const [testInjected, setTestInjected] = useState<any>();
@@ -229,14 +232,40 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
+	const voteReferendumByMultisig = async (aye:boolean) => {
+		if (!referendumId && referendumId !== 0) {
+			console.error('referendumId not set');
+			return;
+		}
+		const { data }= await client.getConnectAddressToken(address);
+
+		const signRaw = testInjected && testInjected.signer && testInjected.signer.signRaw;
+
+		// @ts-ignore
+		const { signature } = await signRaw({
+			address: address,
+			data: stringToHex(data),
+			type: 'bytes'
+		});
+
+		await client.setSignature(signature, network, getSubstrateAddress(address));
+
+		const voteData = await client.voteOnProposal(multisig ,testInjected,referendumId,{ Standard: { balance: lockedBalance, vote: { aye, conviction } } },() => {},'referendumV2');
+		console.log(voteData);
+		setLoadingStatus({ isLoading: false, message: '' });
+		queueNotification({
+			header: 'Success!',
+			message: `Your vote on Referendum #${referendumId} will be successful once approved by other signatories.`,
+			status: NotificationStatus.SUCCESS
+		});
+	};
+
 	const voteReferendum = async (aye: boolean) => {
-		// console.log(multisig == '','------', address);
-		const signatories = ['5FbW5hCeZWgjfFXZNofSMkXMduS2fzFnfjuq59KmkYt6bDvD', '5CFSybkjCJsddmUoYpCuobzcZntmDqbnNBxknpn8rTRwt7DC', '5Fe8gVNXoNoB5tbTc2jtTPBi5VAoBaRmMcjqZGnSZSYtVXiL'];
-		const threshold = 3;
-		const multisig = { signatories, threshold };
-		const data = client.voteOnProposal('5GmLM8NQRiL47wQji1GjaAdGDLX63fcdrSUDxk8h2yondLCM',testInjected, 11,{ Standard: { balance: lockedBalance, vote: { aye, conviction } } }, () => {},'democracy_proposals', '5FbW5hCeZWgjfFXZNofSMkXMduS2fzFnfjuq59KmkYt6bDvD', 'rococo', multisig);
-		console.log(data);
-		return;
+		if(multisig){
+			voteReferendumByMultisig(aye);
+			return;
+		}
+
 		if (!referendumId && referendumId !== 0) {
 			console.error('referendumId not set');
 			return;
@@ -265,6 +294,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			voteTx = api.tx.fellowshipCollective.vote(referendumId, aye);
 		} else{
 			voteTx = api.tx.democracy.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye, conviction } } });
+			// console.log(voteTx)
+			// return
 		}
 
 		if(network == 'equilibrium'){
@@ -352,46 +383,37 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			>
 				{lastVote == null || lastVote == undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }
 			</Button>
-			{!showPolkasafe ?
-				<Modal
-					open={showModal}
-					onCancel={() => {setShowModal(false);setShowPolkasafe(false);}}
-					footer={false}
-					className={`${poppins.variable} ${poppins.className}`}
-				><>
-						<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
-							<h4 className='dashboard-heading mb-7'>Cast Your Vote</h4>
-							<div className='flex items-center justify-center gap-x-5 mt-5 mb-6'>
-								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
-								{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-								{availableWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
-								{
-									(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
-                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary': ''}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
-								}
-								{
-									['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET]?
-										<WalletButton disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
-										: null
-								}
-								<WalletButton disabled={!apiReady} onClick={(event) => {
-									handleWalletClick((event as any), Wallet.POLKADOT);
-									setShowPolkasafe(true);
-								}} name="SubWallet" icon={<WalletIcon which={Wallet.POLKASAFE} className='h-6 w-6'  />} />
-
-							</div>
+			<Modal
+				open={showModal}
+				onCancel={() => setShowModal(false)}
+				footer={false}
+				className={`${poppins.variable} ${poppins.className}`}
+			>
+				<>
+					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
+						<h4 className='dashboard-heading mb-7'>Cast Your Vote by Polkasafe Multisig</h4>
+						<div className='flex items-center justify-center gap-x-5 mt-5 mb-6'>
+							{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
+							{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+							{availableWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
 							{
-								proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS &&
-						<BalanceInput
-							label={'Lock balance'}
-							helpText={'Amount of you are willing to lock for this vote.'}
-							placeholder={'123'}
-							onChange={onBalanceChange}
-							className='mt-6 text-sm font-normal text-[#485F7D]'
-							inputClassName='text-[#7c899b] text-sm text-red-100'
-						/>
+								(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
+                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary': ''}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
 							}
-							{balanceErr.length > 0 && <div className='-mt-2 text-sm text-red-500'>{balanceErr}</div>}
+							{
+								['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET]?
+									<WalletButton disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
+									: null
+							}
+						</div>
+
+						<button
+							className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-md leading-[22px]'
+							onClick={() => {
+								setShowMultisig(!showMultisig);
+							}}
+						>{showMultisig ? 'Vote By Address' : 'Vote By Multisig'}</button>
+						<div className='flex flex-col gap-[8px]'>
 							{
 								accounts.length > 0 ?
 									showMultisig ?
@@ -405,6 +427,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
 											wallet={multisig}
 											setWallet={setMultisig}
+											classes='gap-[24px]'
 										/>
 										:
 										<AccountSelectionForm
@@ -416,109 +439,49 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											onBalanceChange={handleOnBalanceChange}
 											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
 										/>
+								// <AccountSelectionForm
+								// 	title='Vote with Account'
+								// 	accounts={accounts}
+								// 	address={address}
+								// 	withBalance
+								// 	onAccountChange={onAccountChange}
+								// 	onBalanceChange={handleOnBalanceChange}
+								// 	className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
+								// />
 									: !wallet? <FilteredError text='Please select a wallet.' />: null
 							}
-
-							<button
-								className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-md leading-[22px]'
-								onClick={() => {
-									setShowMultisig(!showMultisig);
-								}}
-							>{showMultisig ? 'Vote By Address' : 'Vote By Multisig'}</button>
 							{accounts.length===0 && wallet && <FilteredError text='No addresses found in the address selection tab.' />}
-
-							{
-								proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && <VoteLock className='mt-6' />
-							}
-
-							<AyeNayButtons
-								className='mt-6 max-w-[156px]'
-								size='large'
-								disabled={!apiReady}
-								onClickAye={() => voteReferendum(true)}
-								onClickNay={() => voteReferendum(false)}
-							/>
-
-						</Spin>
-					</>
-				</Modal>
-				:
-				<Modal
-					open={showModal}
-					onCancel={() => {setShowModal(false);setShowPolkasafe(false);}}
-					footer={false}
-					className={`${poppins.variable} ${poppins.className}`}
-				><>
-						<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
-							<h4 className='dashboard-heading mb-7'>Cast Your Vote by Polkasafe Multisig</h4>
-							<div className='flex items-center justify-center gap-x-5 mt-5 mb-6'>
-								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
-								{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-								{availableWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
-								{
-									(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
-                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary': ''}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
-								}
-								{
-									['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET]?
-										<WalletButton disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
-										: null
-								}
-							</div>
 							{
 								proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS &&
-						<BalanceInput
-							label={'Lock balance'}
-							helpText={'Amount of you are willing to lock for this vote.'}
-							placeholder={'123'}
-							onChange={onBalanceChange}
-							className='mt-6 text-sm font-normal text-[#485F7D]'
-							inputClassName='text-[#7c899b] text-sm text-red-100'
-						/>
-							}
-							{balanceErr.length > 0 && <div className='-mt-2 text-sm text-red-500'>{balanceErr}</div>}
-							{
-								accounts.length > 0 ?
-									<MultisigAccountSelectionForm
-										title='Select Address'
-										accounts={accounts}
-										address={address}
-										withBalance
-										onAccountChange={onAccountChange}
-										onBalanceChange={handleOnBalanceChange}
-										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
-										wallet={multisig}
-										setWallet={setMultisig}
+								<div>
+									<BalanceInput
+										label={'Lock balance'}
+										helpText={'Amount of you are willing to lock for this vote.'}
+										placeholder={'123'}
+										onChange={onBalanceChange}
+										className={`${showMultisig ? 'mt-[32px]':'mt-[8px]'} text-sm font-normal text-[#485F7D]`}
+										inputClassName='text-[#7c899b] text-sm text-red-100'
 									/>
-									// <AccountSelectionForm
-									// 	title='Vote with Account'
-									// 	accounts={accounts}
-									// 	address={address}
-									// 	withBalance
-									// 	onAccountChange={onAccountChange}
-									// 	onBalanceChange={handleOnBalanceChange}
-									// 	className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
-									// />
-									: !wallet? <FilteredError text='Please select a wallet.' />: null
+									{balanceErr.length > 0 && <div className='-mt-2 text-sm text-red-500'>{balanceErr}</div>}
+								</div>
 							}
-							{accounts.length===0 && wallet && <FilteredError text='No addresses found in the address selection tab.' />}
-
 							{
-								proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && <VoteLock className='mt-6' />
+								proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && <VoteLock />
 							}
+						</div>
 
-							<AyeNayButtons
-								className='mt-6 max-w-[156px]'
-								size='large'
-								disabled={!apiReady || multisig===''}
-								onClickAye={() => voteReferendum(true)}
-								onClickNay={() => voteReferendum(false)}
-							/>
+						<AyeNayButtons
+							className='mt-6 max-w-[156px]'
+							size='large'
+							disabled={!apiReady || multisig===''}
+							onClickAye={() => voteReferendum(true)}
+							onClickNay={() => voteReferendum(false)}
+						/>
 
-						</Spin>
-					</>
-				</Modal>
-			}
+					</Spin>
+				</>
+			</Modal>
+
 		</div>
 	</>;
 

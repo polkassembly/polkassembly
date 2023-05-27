@@ -28,7 +28,7 @@ import MetamaskIcon from '~assets/wallet/metamask-icon.svg';
 import PolyWalletIcon from '~assets/wallet/poly-wallet.svg';
 import { ChallengeMessage, TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import PolkasafeIcon from './polkasafe-logo.svg';
+import PolkasafeIcon from '~assets/polkasafe-logo.svg';
 import ExtensionNotDetected from '../ExtensionNotDetected';
 import addEthereumChain from '~src/util/addEthereumChain';
 

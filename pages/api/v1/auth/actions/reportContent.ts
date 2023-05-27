@@ -39,7 +39,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 	const user = await authServiceInstance.GetUser(token);
 	if(!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
-	if (!['post', 'comment'].includes(type)) return res.status(400).json({ message: messages.REPORT_TYPE_INVALID });
+	if (!['post', 'comment','reply'].includes(type)) return res.status(400).json({ message: messages.REPORT_TYPE_INVALID });
 	if (!reason) return res.status(400).json({ message: messages.REPORT_REASON_REQUIRED });
 	if (comments.length > 300) return res.status(400).json({ message: messages.REPORT_COMMENTS_LENGTH_EXCEEDED });
 

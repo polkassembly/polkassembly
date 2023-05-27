@@ -339,6 +339,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 							created_at: created_at?.toDate? created_at.toDate(): created_at,
 							id: id,
 							proposer: '',
+							spam_users_count: 0,
 							updated_at: getUpdatedAt(data),
 							user_id: user_id || user_id,
 							username
@@ -348,9 +349,14 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			});
 
 			const idsSet = new Set<number>();
+			const replyIds: string[] = [];
 			comment.replies.forEach((reply) => {
 				if (reply) {
-					const { user_id } = reply;
+					const { user_id , id } = reply;
+					if (id) {
+						replyIds.push(id);
+					}
+
 					if (typeof user_id === 'number') {
 						idsSet.add(user_id);
 					} else {
@@ -404,7 +410,59 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 					});
 				}
 			}
-			return comment;
+			if (replyIds.length > 0) {
+				const newIdsLen = replyIds.length;
+				let lastIndex = 0;
+				for (let i = 0; i < newIdsLen; i+=30) {
+					lastIndex = i;
+					const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', replyIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
+					reportsQuery.docs.map((doc) => {
+						if (doc && doc.exists) {
+							const data = doc.data();
+							comment.replies = comment.replies.map((v) => {
+								if (v && v.id == data.content_id) {
+									console.log(v);
+									return {
+										...v,
+										spam_users_count:(Number(v.spam_users_count) + 1)
+									};
+								}
+								return v;
+							});
+						}
+					});
+				}
+				console.log(lastIndex , newIdsLen,lastIndex <= newIdsLen );
+				lastIndex += 30;
+				if (lastIndex <= newIdsLen) {
+					const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', replyIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
+					reportsQuery.docs.map((doc) => {
+						if (doc && doc.exists) {
+							const data = doc.data();
+							comment.replies = comment.replies.map((v) => {
+								if (v && v.id == data.content_id) {
+									console.log('in if=> ',v);
+									return {
+										...v,
+										spam_users_count: (Number(v.spam_users_count) + 1)
+									};
+								}
+								return v;
+							});
+						}
+					});
+				}
+			}
+			return {
+				...comment,
+				replies: comment.replies.map((reply) => {
+					console.log(reply.spam_users_count, reply.id);
+					return {
+						...reply,
+						spam_users_count: checkReportThreshold(Number(reply?.spam_users_count))
+					};
+				})
+			};
 		}
 	});
 	let comments = await Promise.all(commentsPromise);
@@ -489,7 +547,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 						if (v && v.id == data.content_id) {
 							return {
 								...v,
-								spam_users_count: checkReportThreshold(Number(v.spam_users_count) + 1)
+								spam_users_count:(Number(v.spam_users_count) + 1)
 							};
 						}
 						return v;
@@ -497,6 +555,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				}
 			});
 		}
+		lastIndex += 30;
 		if (lastIndex <= newIdsLen) {
 			const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', commentIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
 			reportsQuery.docs.map((doc) => {
@@ -506,7 +565,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 						if (v && v.id == data.content_id) {
 							return {
 								...v,
-								spam_users_count: checkReportThreshold(Number(v.spam_users_count) + 1)
+								spam_users_count: (Number(v.spam_users_count) + 1)
 							};
 						}
 						return v;
@@ -516,7 +575,13 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 		}
 	}
 
-	return comments;
+	return comments.map((comment) => {
+
+		return {
+			...comment,
+			spam_users_count: checkReportThreshold(Number(comment?.spam_users_count))
+		};
+	});
 }
 
 export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IApiResponse<IPostResponse>> {

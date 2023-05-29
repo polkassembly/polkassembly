@@ -31,7 +31,7 @@ import SplitGray from '~assets/icons/split-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import checkWalletForNetwork from '~src/util/checkWalletForNetwork';
+import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -158,7 +158,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	}, [address, wallet]);
 
 	useEffect(() => {
-		setWalletErr(checkWalletForNetwork(network) as INetworkWalletErr );
+		setWalletErr(checkWalletForSubstrateNetwork(network) as INetworkWalletErr );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [availableWallets, network]);
 
@@ -282,7 +282,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		return <LoginToVote />;
 	}
 
-	const VoteLock = ({ className }: { className?:string }) =>
+	const ConvictionSelect = ({ className }: { className?:string }) =>
 
 		<Form.Item className={className}>
 			<label  className='inner-headings'>
@@ -561,7 +561,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										className='text-sm font-medium border-[#D2D8E0]'
 									/>
 
-									<VoteLock className={`${className}`} />
+									<ConvictionSelect className={`${className}`} />
 
 									<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>

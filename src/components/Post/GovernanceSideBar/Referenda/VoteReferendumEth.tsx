@@ -342,7 +342,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setShowModal(true);
 	};
 
-	const VoteLock = ({ className }: { className?:string }) =>
+	const ConvictionSelect = ({ className }: { className?:string }) =>
 		<Form.Item className={className}>
 			<label  className='inner-headings'>
 				Vote lock
@@ -455,7 +455,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									onChange={onBalanceChange}
 									inputClassName='text-[#7c899b] text-sm'
 								/>
-								<VoteLock className={`${className}`} />
+								<ConvictionSelect className={`${className}`} />
 
 								<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>

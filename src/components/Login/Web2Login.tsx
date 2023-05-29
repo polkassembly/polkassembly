@@ -37,7 +37,7 @@ interface Props {
   className?: string;
 }
 const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation }) => {
-	const { password, usernameOrEmail, username, email } = validation;
+	const { password, username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -109,10 +109,6 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							{
 								message: messages.VALIDATION_USERNAME_REQUIRED_ERROR,
 								required: username.required
-							},
-							{
-								message: messages.VALIDATION_USERNAME_PATTERN_ERROR,
-								pattern: email.pattern
 							},
 							{
 								max: username.maxLength,

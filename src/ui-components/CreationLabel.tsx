@@ -85,7 +85,6 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					<NameLabel
 						defaultAddress={defaultAddress}
 						username={username}
-						clickable={commentSource === 'polkassembly' }
 					/>
 					{text}&nbsp;
 					{topic &&

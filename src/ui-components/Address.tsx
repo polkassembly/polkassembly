@@ -37,7 +37,6 @@ interface Props {
 	disableAddressClick?: boolean;
 	isSubVisible?: boolean;
   addressClassName?: string;
-  clickable?:boolean
 }
 
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
@@ -45,7 +44,7 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 	ssr: false
 });
 
-const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true, addressClassName, clickable=true }: Props): JSX.Element => {
+const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true, addressClassName }: Props): JSX.Element => {
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useContext(ApiContext);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
@@ -142,10 +141,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 					:
 					null
 			}
-			{!disableAddress && <div className={`content ${clickable ? 'cursor-pointer' : 'cursor-not-allowed' }`} onClick={async () => {
-				if(!clickable){
-					return;
-				}
+			{!disableAddress && <div className='content cursor-pointer' onClick={async () => {
 				if (!disableAddressClick) {
 					await fetchUsername();
 				}

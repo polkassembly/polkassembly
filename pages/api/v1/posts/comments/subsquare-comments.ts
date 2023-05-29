@@ -21,7 +21,7 @@ const urlMapper: any = {
 	[ProposalType.TREASURY_PROPOSALS]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/proposals/${id}/comments`
 };
 
-const getTrimmedUsername = (username?: string) => {
+const getTrimmedUsername = (username: string) => {
 	if (!username) {
 		return uuid().split('-').join('').substring(0, 25);
 	}
@@ -64,11 +64,10 @@ const convertReply = async (subSquareReply: any, network: any) => {
 				content,
 				created_at: reply.createdAt,
 				id: reply._id,
-				proposer: reply.author?.address || '',
 				reply_source: 'subsquare',
 				updated_at: reply.updatedAt,
-				user_id: getTrimmedUsername(),
-				username: getTrimmedUsername(reply.author?.username)
+				user_id: reply.user?.address || uuid(),
+				username: getTrimmedUsername(reply.user?.username)
 			});
 		}
 	}

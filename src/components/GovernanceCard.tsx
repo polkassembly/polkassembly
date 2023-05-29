@@ -135,8 +135,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >
 								{tag}
 							</div>))}
-						{tags.length>2 && <span className='text-pink_primary' style={{ borderBottom:'1px solid #E5007A' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
-            +{tags.length-2} more
+						{tags.length>2 && <span className='text-[#243A57]' style={{ background:'#D2D8E0' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+                +{tags.length-2}
 						</span>}
 						</>}
 						<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
@@ -185,8 +185,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px] padding  justify-center center-aligned`}
 			><div className=''>
 					<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
-					<div className='flex gap-2 border-solid flex-wrap' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
-						(<div key={index} className='rounded-xl px-[16px] py-[2px] border-navBlue border-solid border-[1px] font-normal text-xs text-navBlue' >
+					<div className='flex gap-2 flex-wrap' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
+						(<div key={index} className='rounded-xl px-[16px] py-[2px] font-normal text-xs text-navBlue' >
 							{tag}
 						</div>))}
 					</>}</div></div>

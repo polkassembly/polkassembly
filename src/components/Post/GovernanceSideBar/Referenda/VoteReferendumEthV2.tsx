@@ -565,7 +565,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`max-md:w-full max-h-[675px] rounded-[6px] alignment-close ${poppins.className} ${poppins.variable}`}
+				className={`w-[550px] max-md:w-full max-h-[675px] rounded-[6px] alignment-close ${poppins.className} ${poppins.variable}`}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
 				title={<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.2px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center justify-center gap-2'>
@@ -609,6 +609,13 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 							value={vote}
 							onChange={(value) => {
 								setVote(value as EVoteDecisionType);
+								ayeNayForm.setFieldValue('balance', ZERO_BN);
+								splitForm.setFieldValue('nayVote', ZERO_BN);
+								splitForm.setFieldValue('ayeVote', ZERO_BN);
+								abstainFrom.setFieldValue('abstainVote', ZERO_BN);
+								abstainFrom.setFieldValue('ayeVote', ZERO_BN);
+								abstainFrom.setFieldValue('nayVote', ZERO_BN);
+								setLockedBalance(ZERO_BN);
 							}}
 							options={decisionOptions}
 							disabled={ !apiReady}

@@ -61,6 +61,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 	const [balanceErr, setBalanceErr] = useState('');
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const[ayeNayForm] = Form.useForm();
 
 	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
@@ -395,7 +396,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`max-md:w-full max-h-[675px] rounded-[6px] alignment-close ${poppins.className} ${poppins.variable}`}
+				className={`w-[550px] max-md:w-full max-h-[675px] rounded-[6px] alignment-close ${poppins.className} ${poppins.variable}`}
 				closeIcon={<CloseCross/>}
 				title={ <div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.2px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center justify-center gap-2'>
 					<CastVoteIcon className='mt-1'/>
@@ -438,15 +439,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							value={vote}
 							onChange={(value) => {
 								setVote(value as EVoteDecisionType);
+								ayeNayForm.setFieldValue('balance', ZERO_BN);
 							}}
 							options={decisionOptions}
 							disabled={!apiReady}
 						/>
 						{
-							<Form onFinish={async () => {
-								vote === EVoteDecisionType.AYE && await voteReferendum(true);
-								vote === EVoteDecisionType.AYE && await voteReferendum(false);
-							}}>
+							<Form
+								form={ayeNayForm}
+								name='aye-nay-form'
+								onFinish={async () => {
+									vote === EVoteDecisionType.AYE && await voteReferendum(true);
+									vote === EVoteDecisionType.AYE && await voteReferendum(false);
+								}}>
 
 								<BalanceInput
 									label={'Lock balance'}

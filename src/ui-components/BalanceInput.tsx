@@ -106,7 +106,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 		>
 			<Input
 				addonAfter={chainProperties[network]?.tokenSymbol}
-				name={formItemName}
+				name={formItemName || 'balance'}
 				className={`w-full h-[39px] border-[1px] ${inputClassName} text-sm mt-0 suffixColor hover:border-[#E5007A] balance-input`}
 				onChange={(e) => onBalanceChange(e.target.value)}
 				placeholder={placeholder}

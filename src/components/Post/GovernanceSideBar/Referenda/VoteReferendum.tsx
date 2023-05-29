@@ -74,7 +74,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
 	const [walletErr, setWalletErr] = useState<INetworkWalletErr>({ description: '', error: 0, message: '' });
 
-	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
+	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
 	useEffect(() => {
 		if(!window) return;
@@ -147,7 +147,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	useEffect(() => {
 		getWallet();
 		if(!loginWallet) return ;
-		loginWallet.length === 0 && getAccounts(loginWallet);
+		getAccounts(loginWallet);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[loginWallet]);
 
@@ -200,7 +200,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			setBalanceErr('');
 			setLockedBalance(balance);
 		}
-
 	};
 
 	const onAyeValueChange = (balance: BN) => {
@@ -488,7 +487,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
+				className={`w-[500px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
 				title={<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center justify-center gap-2'>
@@ -541,6 +540,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								value={vote}
 								onChange={(value) => {
 									setVote(value as EVoteDecisionType);
+									ayeNayForm.setFieldValue('balance', ZERO_BN);
+									splitForm.setFieldValue('nayVote',ZERO_BN);
+									splitForm.setFieldValue('ayeVote',ZERO_BN);
+									abstainFrom.setFieldValue('abstainVote', ZERO_BN);
+									abstainFrom.setFieldValue('ayeVote', ZERO_BN);
+									abstainFrom.setFieldValue('nayVote', ZERO_BN);
+									onBalanceChange(ZERO_BN);
 								}}
 								options={decisionOptions}
 								disabled={!api || !apiReady}

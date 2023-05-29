@@ -23,7 +23,6 @@ interface Props{
 	helpText?: string
 	onChange: (balance: BN) => void
 	placeholder?: string
-	size?: 'large' | 'small' | 'middle';
 	address?: string;
 	withBalance?: boolean;
 	onAccountBalanceChange?: (balance: string) => void
@@ -31,6 +30,7 @@ interface Props{
 	inputClassName?: string;
 	noRules?: boolean;
 	formItemName?: string;
+  size?: 'large' | 'small' | 'middle';
 }
 
 const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance' }: Props) => {
@@ -70,8 +70,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 			rules={noRules ? [ {
 				message: 'Invalid Balance',
 				validator(rule, value, callback) {
-					const pattern = /^(?:0(?:\.\d+)?|[1-9]\d*(?:\.\d+)?)$/;
-					if (callback && !value.match(pattern)){
+					if (callback && isNaN(Number(value))){
 						callback(rule?.message?.toString());
 					}else {
 						callback();
@@ -85,17 +84,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 				{
 					message: 'Lock Balance must be greater than 0.',
 					validator(rule, value, callback) {
-						if (callback && Number(value) === 0 ){
-							callback(rule?.message?.toString());
-						}else {
-							callback();
-						}
-					}
-				},
-				{
-					message: 'Please provide a valid balance.',
-					validator(rule, value, callback) {
-						if (callback && chainProperties[network]?.tokenDecimals  < (value?.split('.')[1].length) ){
+						if (callback && Number(value) <= 0 ){
 							callback(rule?.message?.toString());
 						}else {
 							callback();
@@ -106,7 +95,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 					message: 'Invalid Balance',
 					validator(rule, value, callback) {
 
-						if (callback && isNaN(Number(value))){
+						if (callback && (isNaN(Number(value)) || (Number(value) !== 0 && chainProperties[network]?.tokenDecimals  < (value?.split('.')?.[1].length || 0)))){
 							callback(rule?.message?.toString());
 						}else {
 							callback();
@@ -117,12 +106,12 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 		>
 			<Input
 				addonAfter={chainProperties[network]?.tokenSymbol}
-				name={formItemName}
-				className={`text-sm w-full h-[39px] border-[1px] ${inputClassName} mt-0 suffixColor hover:border-[#E5007A] balance-input`}
+				name={formItemName || 'balance'}
+				className={`w-full h-[39px] border-[1px] ${inputClassName} text-sm mt-0 suffixColor hover:border-[#E5007A] balance-input`}
 				onChange={(e) => onBalanceChange(e.target.value)}
 				placeholder={placeholder}
-				size={size || 'large'}
 				value={(formatedBalance(String(balance || ZERO_BN), unit))}
+				size={size || 'middle'}
 			/>
 		</Form.Item>
 	</div>;
@@ -138,6 +127,7 @@ export default styled(BalanceInput)`
 .suffixColor .ant-input{
 	color:#7c899b !important;
   border-radius: 4px 0px 0px 4px !important;
+  height: 40px !important;
 }
 .balance-input .ant-input-number-handler-up{
 	display:none !important;
@@ -153,11 +143,9 @@ export default styled(BalanceInput)`
 .balance-input .ant-input-number{
 	border: 1px solid #D2D8E0 ;
 }
-
 .balance-input .ant-input-number-focused{
 	border: 1px solid #E5007A ;
 }
-
 input::placeholder {
 	color: #576D8B !important;
 	font-weight: 400 !important;

@@ -17,8 +17,8 @@ const useHandleMetaMask = () : string => {
 		setMetaMaskError('');
 
 		// Check for changes in Metamask (account and chain)
-		const ethereum = (window as any).ethereum;
-		if(!ethereum.isMetaMask){
+		const ethereum = (window as any)?.ethereum;
+		if(!ethereum?.isMetaMask){
 			setMetaMaskError('Please install the MetaMask extension to use supported features.');
 
 		}else if(ethereum){

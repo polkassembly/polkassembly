@@ -19,7 +19,6 @@ import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
 import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
-import FilteredError from '~src/ui-components/FilteredError';
 import addEthereumChain from '~src/util/addEthereumChain';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
@@ -30,6 +29,7 @@ import DislikeGray from '~assets/icons/dislike-gray.svg';
 
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
+import { poppins } from 'pages/_app';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -61,15 +61,16 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 	const [balanceErr, setBalanceErr] = useState('');
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const[ayeNayForm] = Form.useForm();
 
 	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
 
 	const convictionOpts = useMemo(() => [
-		<Select.Option key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+		<Select.Option className={`text-[#243A57] ${poppins.variable} ${poppins.className}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
 		...CONVICTIONS.map(([value, lock]) =>
-			<Select.Option key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
+			<Select.Option  key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
 		)
 	],[CONVICTIONS]);
 
@@ -78,7 +79,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setAvailableWallets(injectedWindow.injectedWeb3);
-		setIsMetamaskWallet((injectedWindow as any)?.ethereum);
+		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
+	};
+	const handleDefaultWallet=async(wallet:Wallet) => {
+		setWallet(wallet);
+		await getAccounts(wallet);
+		if (walletConnectProvider) {
+			await getWalletConnectAccounts();
+		}
 	};
 
 	useEffect(() => {
@@ -226,22 +234,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		});
 	};
 
-	const onConvictionChange = (value: any) => {
-		setConviction(Number(value));
-	};
-
 	//const onBalanceChange = (balance: BN) => setLockedBalance(balance);
 
 	const onBalanceChange = (balance: BN) => {
-		if(balance && balance.eq(ZERO_BN)) {
-			setBalanceErr('');
-		}
-		else if(balance && availableBalance.lt(balance)){
+		if(!balance) return;
+
+		else if(availableBalance.lte(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
 			setBalanceErr('');
+			setLockedBalance(balance);
 		}
-		setLockedBalance(balance);
 	};
 
 	const handleOnBalanceChange = (balanceStr: string) => {
@@ -340,33 +343,28 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setShowModal(true);
 	};
 
-	const VoteLock = ({ className }: { className?:string }) =>
+	const ConvictionSelect = ({ className }: { className?:string }) =>
 		<Form.Item className={className}>
 			<label  className='inner-headings'>
 				Vote lock
 			</label>
 
-			<Select onChange={onConvictionChange} size='large' className='rounded-[4px]' defaultValue={conviction} suffixIcon ={<DownIcon/>} >
+			<Select onChange={(key) => setConviction(Number(key))} size='large' className='rounded-[4px]' defaultValue={conviction} suffixIcon ={<DownIcon/>} >
 				{convictionOpts}
 			</Select>
 		</Form.Item>;
 
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
+		setLoadingStatus({ ...loadingStatus, isLoading: true });
 		event.preventDefault();
 		setWallet(wallet);
 		await getAccounts(wallet);
 		if (walletConnectProvider) {
 			await getWalletConnectAccounts();
 		}
+		setLoadingStatus({ ...loadingStatus, isLoading: false });
 	};
 
-	const handleDefaultWallet=async(wallet:Wallet) => {
-		setWallet(wallet);
-		await getAccounts(wallet);
-		if (walletConnectProvider) {
-			await getWalletConnectAccounts();
-		}
-	};
 	// eslint-disable-next-line react-hooks/rules-of-hooks
 	useEffect(() => {
 		getWallet();
@@ -378,18 +376,18 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const decisionOptions = [
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B] w-[131px] h-[32px] rounded-[4px] ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}>{vote === EVoteDecisionType.AYE ? <LikeWhite className='mr-2 mb-[3px]' /> : <LikeGray className='mr-2 mb-[3px]' /> }<span className='font-medium'>Aye</span></div>,
+			label: <div className={`text-[#576D8B] h-[32px] rounded-[4px] ml-1 mr-1 w-full ${vote === 'aye'? 'bg-[#2ED47A] text-white' : ''}`}>{vote === EVoteDecisionType.AYE ? <LikeWhite className='mr-2 mb-[3px]' /> : <LikeGray className='mr-2 mb-[3px]' /> }<span className='font-medium'>Aye</span></div>,
 			value: 'aye'
 		},
 		{
-			label: <div className={`flex items-center justify-center text-[#576D8B] w-[126px] h-[32px] rounded-[4px] ${vote === 'nay'? 'bg-[#F53C3C] text-white' : ''}`}>{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' /> } <span className='font-medium'>Nay</span></div>,
+			label: <div className={` text-[#576D8B] h-[32px] w-full ml-1 mr-1 rounded-[4px] ${vote === 'nay'? 'bg-[#F53C3C] text-white' : ''}`}>{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' /> } <span className='font-medium'>Nay</span></div>,
 			value: 'nay'
 		}];
 
 	return (
 		<div className={className}>
 			<Button
-				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[95%]'
+				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[100%]'
 				onClick={openModal}
 			>
 				{lastVote == null || lastVote == undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }
@@ -398,21 +396,25 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={' w-[604px] max-h-[675px] rounded-[6px] alignment-close'}
+				className={`w-[550px] max-md:w-full max-h-[675px] rounded-[6px] alignment-close ${poppins.className} ${poppins.variable}`}
 				closeIcon={<CloseCross/>}
-				title={ <div className='h-[72px] mt-[-20px] flex align-middle  border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px]'>
-					<CastVoteIcon className='mt-[24px] mr-[11px] ml-[24px]'/>
-					<h4 className='cast-vote-heading mt-[22px]'>Cast Your Vote</h4>
+				title={ <div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.2px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center justify-center gap-2'>
+					<CastVoteIcon className='mt-1'/>
+					<span className='text-[#243A57] font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
 				</div>}
 			>
 				<>
 					<Spin spinning={loadingStatus.isLoading || isAccountLoading} indicator={<LoadingOutlined />}>
-						<div className='flex items-center gap-x-5 mt-[22px] mb-[24px]'>
-							{ availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-							{ isMetamaskWallet &&<WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary': ''}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />}
+
+						<div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>
+						<div className='flex items-center gap-x-5 mt-1 mb-[24px] justify-center'>
+							{ availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+							{ isMetamaskWallet && <WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />}
 						</div>
 
+						{!isTalismanEthereum && <Alert message='Please use Ethereum account via Talisman wallet.' type='info'/>}
 						{balanceErr.length > 0 && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
+						{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 
 						{
 							accounts.length > 0?
@@ -424,28 +426,32 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									onAccountChange={onAccountChange}
 									onBalanceChange={handleOnBalanceChange}
 									className={'text-sidebarBlue mb-[21px]'}
-									inputClassName='bg-[#d2d8e033] px-[12px] rounded-[4px] h-[40px]'
+									inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 									withoutInfo={true}
 								/>
-								: !wallet? <FilteredError text='Please select a wallet.' />: null
+								: !wallet? <Alert message='Please select a wallet.' showIcon type='info' />: null
 						}
-						<h3 className='inner-headings mt-[24px] mb-0'>Choose your vote</h3>
+						<h3 className='inner-headings mt-6 mb-[2px]'>Choose your vote</h3>
 						<Segmented
 							block
-							className={`${className}  mb-[24px] border-solid border-[1px] bg-white hover:bg-white border-[#D2D8E0] rounded-[4px] w-full py-0 px-0`}
+							className={'mb-6 border-solid border-[1px] bg-white hover:bg-white border-[#D2D8E0] rounded-[4px] w-full'}
 							size="large"
 							value={vote}
 							onChange={(value) => {
 								setVote(value as EVoteDecisionType);
+								ayeNayForm.setFieldValue('balance', ZERO_BN);
 							}}
 							options={decisionOptions}
 							disabled={!apiReady}
 						/>
 						{
-							<Form onFinish={async () => {
-								vote === EVoteDecisionType.AYE && await voteReferendum(true);
-								vote === EVoteDecisionType.AYE && await voteReferendum(false);
-							}}>
+							<Form
+								form={ayeNayForm}
+								name='aye-nay-form'
+								onFinish={async () => {
+									vote === EVoteDecisionType.AYE && await voteReferendum(true);
+									vote === EVoteDecisionType.AYE && await voteReferendum(false);
+								}}>
 
 								<BalanceInput
 									label={'Lock balance'}
@@ -454,8 +460,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									onChange={onBalanceChange}
 									inputClassName='text-[#7c899b] text-sm'
 								/>
-								{!isTalismanEthereum && <Alert message='Please use Ethereum account via Talisman wallet.' type='info'/>}
-								<VoteLock className={`${className}`} />
+								<ConvictionSelect className={`${className}`} />
 
 								<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
@@ -532,9 +537,9 @@ export default styled(VoteReferendum)`
 	}
 	
 	.alignment-close .ant-modal-close{
-		margin-top: 6px;
+		margin-top: 4px;
 	}
 	.alignment-close .ant-modal-close:hover{
-		margin-top: 6px;
+		margin-top: 4px;
 	}
 `;

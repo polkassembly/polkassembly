@@ -270,7 +270,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 	const onNayValueChange = (balance: BN) => {
 		if(!balance) return;
-		if(availableBalance.lt(balance)){
+		if(availableBalance.lte(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
 			setBalanceErr('');
@@ -281,7 +281,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 	const onAbstainValueChange = (balance: BN) => {
 		if(!balance) return;
-		if(availableBalance.lt(balance)){
+		if(availableBalance.lte(balance)){
 			setBalanceErr('Insufficient balance.');
 		}else{
 			setBalanceErr('');

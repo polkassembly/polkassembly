@@ -27,5 +27,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", ".cache", "public"]
+  "exclude": ["node_modules", ".cache", "public", "cloud-functions"]
 }

@@ -2,16 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Pagination } from 'antd';
 import { GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
+import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
 import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { FC, useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import TrackListing from '~src/components/Listing/Tracks/TrackListing';
-import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -20,10 +18,17 @@ import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
-import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST ,filterBy } = query;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
+	if (!trackStatus) {
+		return {
+			props: {},
+			redirect: {
+				destination: '/lease-admin?trackStatus=all&page=1'
+			}
+		};
+	}
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	if(!networkTrackInfo[network][PostOrigin.LEASE_ADMIN]) {
@@ -33,48 +38,30 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const { trackId } = networkTrackInfo[network][PostOrigin.LEASE_ADMIN];
 	const proposalType = ProposalType.OPEN_GOV;
 
-	const fetches = {
-		all: getOnChainPosts({
-			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
-			listingLimit: LISTING_LIMIT,
-			network,
-			page,
-			proposalType,
-			sortBy,
-			trackNo: trackId,
-			trackStatus: 'All'
-		}),
-		closed: getOnChainPosts({
-			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
-			listingLimit: LISTING_LIMIT,
-			network,
-			page,
-			proposalType,
-			sortBy,
-			trackNo: trackId,
-			trackStatus: CustomStatus.Closed
-		}),
-		submitted: getOnChainPosts({
-			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
-			listingLimit: LISTING_LIMIT,
-			network,
-			page,
-			proposalType,
-			sortBy,
-			trackNo: trackId,
-			trackStatus: CustomStatus.Submitted
-		}),
-		voting: getOnChainPosts({
-			filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
-			listingLimit: LISTING_LIMIT,
-			network,
-			page,
-			proposalType,
-			sortBy,
-			trackNo: trackId,
-			trackStatus: CustomStatus.Voting
-		})
-	};
+	const fetches = ['CustomStatusSubmitted', 'CustomStatusVoting', 'CustomStatusClosed', 'All'].reduce((prev: any, status) => {
+		const strTrackStatus = String(trackStatus);
+		if (status.toLowerCase().includes(strTrackStatus)) {
+			prev[strTrackStatus] = getOnChainPosts({
+				filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
+				listingLimit: LISTING_LIMIT,
+				network,
+				page,
+				proposalType,
+				sortBy,
+				trackNo: trackId,
+				trackStatus: status
+			});
+		} else {
+			prev[status.toLowerCase().replace('customstatus', '')] = getOnChainPostsCount({
+				network,
+				page,
+				proposalType,
+				trackNo: trackId,
+				trackStatus: status
+			});
+		}
+		return prev;
+	}, {});
 
 	const responseArr = await Promise.allSettled(Object.values(fetches));
 
@@ -112,17 +99,6 @@ const LeaseAdmin: FC<ILeaseAdminProps> = (props) => {
 		setNetwork(props.network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	const router = useRouter();
-	const onPaginationChange = (page:number) => {
-		router.push({
-			query:{
-				page
-			}
-		});
-		handlePaginationChange({ limit: LISTING_LIMIT, page });
-	};
-
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (!posts || Object.keys(posts).length === 0) return null;
@@ -132,16 +108,6 @@ const LeaseAdmin: FC<ILeaseAdminProps> = (props) => {
 			trackName={PostOrigin.LEASE_ADMIN}
 			posts={posts}
 		/>
-		<div className='flex justify-end mt-6'>
-			<Pagination defaultCurrent={1}
-				pageSize={LISTING_LIMIT}
-				total={posts.all?.data?.count || 0}
-				showSizeChanger={false}
-				hideOnSinglePage={true}
-				onChange={onPaginationChange}
-				responsive={true}
-			/>
-		</div>
 	</>;
 };
 

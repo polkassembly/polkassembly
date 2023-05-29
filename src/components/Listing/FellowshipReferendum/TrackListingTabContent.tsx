@@ -5,15 +5,9 @@
 import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
-import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
-
-import { NetworkContext } from '~src/context/NetworkContext';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { ProposalType } from '~src/global/proposalType';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 	loading: () => <Skeleton active /> ,
@@ -22,72 +16,51 @@ const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 
 interface ITrackListingTabContentProps {
 	className?: string;
-	trackName: string;
+	posts: any[];
+	error?: any;
+	count?: number;
 }
 
 const TrackListingTabContent: FC<ITrackListingTabContentProps> = (props) => {
-	const { trackName, className } = props;
-	const { network } = useContext(NetworkContext);
-
-	const { trackId } = networkTrackInfo[network][trackName];
-
-	const [loading, setLoading] = useState(false);
-
-	const [error, setError] = useState('');
-	const [posts, setPosts] = useState<any[]>([]);
-
-	useEffect(() => {
-		setLoading(true);
-		nextApiClientFetch<IPostsListingResponse>(`/api/v1/listing/on-chain-posts?proposalType=${ProposalType.FELLOWSHIP_REFERENDUMS}&trackNo=${trackId}`)
-			.then((res) => {
-				setLoading(false);
-				const { data, error } = res;
-				if (error) {
-					setError(error);
-				} else if (data) {
-					setPosts(data.posts);
-				}
-			})
-			.catch((err) => {
-				setLoading(false);
-				console.log(err);
-			});
-	}, [trackId]);
+	const { className, posts, error , count } = props;
+	if (error) return <ErrorState errorMessage={error} />;
 
 	if(error) return <div className={className}><ErrorAlert errorMsg={error} /></div>;
 
-	if(!posts || loading) return <div className={className}><LoadingState /></div>;
+	const noPosts = count === 0 || isNaN(Number(count));
 
-	const noPost = !posts || !posts.length;
+	if (noPosts) return <div className={className}><PostEmptyState /></div>;
 
-	if (noPost) return <div className={className}><PostEmptyState /></div>;
+	if(posts&& posts.length>0)
+		return (
+			<div className={className}>
+				{posts.map((post) => {
+					return (
+						<div key={post.post_id} className='my-5'>
+							{<Link href={`/member-referenda/${post.post_id}`}>
+								<GovernanceCard
+									postReactionCount={post.post_reactions}
+									address={post.proposer}
+									commentsCount={post.comments_count || 0}
+									method={post.method}
+									onchainId={post.post_id}
+									status={post.status}
+									title={post.title}
+									topic={post.topic.name}
+									created_at={post.created_at}
+									tags={post?.tags}
+									spam_users_count={post?.spam_users_count}
+								/>
+							</Link>}
+						</div>
+					);
+				}
+				)}
+			</div>
+		);
 
-	return (
-		<div className={className}>
-			{posts.map((post) => {
-				return (
-					<div key={post.post_id} className='my-5'>
-						{<Link href={`/member-referenda/${post.post_id}`}>
-							<GovernanceCard
-								postReactionCount={post.post_reactions}
-								address={post.proposer}
-								commentsCount={post.comments_count || 0}
-								method={post.method}
-								onchainId={post.post_id}
-								status={post.status}
-								title={post.title}
-								topic={post.topic.name}
-								created_at={post.created_at}
-								tags={post?.tags}
-								spam_users_count={post?.spam_users_count}
-							/>
-						</Link>}
-					</div>
-				);
-			}
-			)}
-		</div>
-	);
+	return <div className='mt-12'><LoadingState /></div>;
+
 };
 
 export default TrackListingTabContent;

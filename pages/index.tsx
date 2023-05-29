@@ -141,7 +141,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 
 	return (
 		<>
-			{chainProperties[network].gTag ? <><Script
+			{chainProperties[network]?.gTag ? <><Script
 				src={`https://www.googletagmanager.com/gtag/js?id=${chainProperties[network].gTag}`}
 				strategy="afterInteractive" /><Script id="google-analytics" strategy="afterInteractive">
 				{`

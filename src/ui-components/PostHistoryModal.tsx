@@ -72,7 +72,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 					</div>
 					<div className={`mt-1 text-[#243A57] text-sm font-normal tracking-[0.01em] ${!item?.expandedContent && item?.content.length > 100 && 'truncate-content'} leading-6 pr-2`}>
 						{/* {historyData[index+1] ? <div>{difference?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'} ${text?.added && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : item?.content} */}
-						<Markdown md={item?.content}/>
+						<Markdown className='text-sm' md={item?.content}/>
 					</div>
 					{item?.content.length > 100 && <span onClick={() => handleExpand(index, EExpandType.ExpandedContent)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expandedContent ? 'Show less' : 'Show more'}</span>}
 				</div>,

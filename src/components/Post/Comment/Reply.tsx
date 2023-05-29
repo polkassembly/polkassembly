@@ -49,6 +49,7 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 					defaultAddress={proposer}
 					text={'replied'}
 					username={username}
+					commentSource={reply.reply_source}
 				>
 					<UpdateLabel
 						created_at={created_at}

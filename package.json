@@ -14,7 +14,6 @@
     "@apollo/client": "^3.7.3",
     "@ardatan/graphql-tools": "^4.1.0",
     "@metamask/jazzicon": "^2.0.0",
-    "@next/font": "^13.3.1",
     "@polkadot/api": "^10.2.2",
     "@polkadot/api-augment": "^10.2.2",
     "@polkadot/extension-dapp": "^0.45.5",

@@ -13,6 +13,8 @@ import UserAvatar from './UserAvatar';
 import dayjs from 'dayjs';
 import { noTitle } from '~src/global/noTitle';
 import { poppins } from 'pages/_app';
+// import sanitizeMarkdown from '~src/util/sanitizeMarkdown';
+import Markdown from './Markdown';
 
 interface Props{
   className?: string;
@@ -24,12 +26,12 @@ interface Props{
   user_id?: number | null | undefined;
 }
 interface IHistoryData extends IPostHistory{
-  expandContent?: boolean;
-  expand?:boolean;
+  expandedContent?: boolean;
+  expanded?: boolean;
 }
 enum EExpandType {
-  Expand = 'expand',
-  ExpandContent = 'expandContent'
+  Expanded = 'expanded',
+  ExpandedContent = 'expandedContent'
 }
 
 const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, username, user_id }: Props) => {
@@ -40,15 +42,15 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 	{
 		const date = new Date(item?.created_at);
 		const title = item?.title || noTitle;
-		const difference = historyData[index+1] ? diffChars(historyData[index+1]?.content, item?.content) : [];
+		// const difference = historyData[index+1] && historyData[index+1]?.content && item?.expanded ? diffChars(sanitizeMarkdown(historyData[index+1]?.content),  sanitizeMarkdown(item?.content)) : [];
 
 		return {
-			children: !item?.expand ? <div className={'text-[#334D6E] h-[50px] ml-3 text-sm tracking-[0.01em] flex flex-col gap-2 -mt-1 font-medium max-sm:w-full max-sm:ml-0'}>
+			children: !item?.expanded ? <div className={'text-[#334D6E] h-[50px] ml-3 text-sm tracking-[0.01em] flex flex-col gap-2 -mt-1 font-medium max-sm:w-full max-sm:ml-0'}>
           Edited on {dayjs(date).format('DD MMM YYYY')}
-				<div className='text-pink_primary text-sm flex justify-start cursor-pointer -mt-2' onClick={() => handleExpand(index, EExpandType.Expand)}>
+				<div className='text-pink_primary text-sm flex justify-start cursor-pointer -mt-2' onClick={() => handleExpand(index, EExpandType.Expanded)}>
 					<span className='text-xs'>See Details</span></div>
 			</div>
-				: <div className={`py-3 px-3 bg-white rounded-[4px] mt-1 border-solid border-[0.5px] border-[#D2D8E0] ml-3 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'}`}>
+				: <div className={`py-3 px-3 bg-white rounded-[4px] mt-1 border-solid border-[0.5px] border-[#D2D8E0] ml-3 max-sm:w-full max-sm:ml-0 ${item?.expanded && 'active-timeline'}`}>
 					<div className='flex items-center max-sm:flex-col max-sm:justify-start max-sm:gap-2  max-sm:items-start'>
 						<div className='flex items-center max-sm:justify-start'>
 							<span className='mr-1 text-xs text-[#90A0B7]'>By:</span>
@@ -68,10 +70,11 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 					<div className='text-[#334D6E] text-[16px] mt-1 font-medium'>
 						{historyData[index+1] ?  item?.title ? <div>{diffChars( historyData[index+1]?.title, item?.title)?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : title : title}
 					</div>
-					<div className={`mt-1 text-[#243A57] text-sm font-normal tracking-[0.01em] ${!item?.expandContent && item?.content.length > 100 && 'truncate-content'} leading-6 pr-2`}>
-						{historyData[index+1] ? <div>{difference?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'} ${text?.added && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : item?.content}
+					<div className={`mt-1 text-[#243A57] text-sm font-normal tracking-[0.01em] ${!item?.expandedContent && item?.content.length > 100 && 'truncate-content'} leading-6 pr-2`}>
+						{/* {historyData[index+1] ? <div>{difference?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'} ${text?.added && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : item?.content} */}
+						<Markdown md={item?.content}/>
 					</div>
-					{item?.content.length > 100 && <span onClick={() => handleExpand(index, EExpandType.ExpandContent)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expandContent ? 'Show less' : 'Show more'}</span>}
+					{item?.content.length > 100 && <span onClick={() => handleExpand(index, EExpandType.ExpandedContent)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expandedContent ? 'Show less' : 'Show more'}</span>}
 				</div>,
 			dot: username && <UserAvatar
 				className='flex-none hidden sm:inline-block -mb-1 -mt-1'
@@ -81,17 +84,17 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 			,
 			key: index };});
 
-	const handleExpand = (index: number, expandType: EExpandType) => {
+	const handleExpand = (index: number, expandedType: EExpandType) => {
 		const data = historyData.map((item, idx) => {
 			if(idx === index ){
-				if(expandType === EExpandType.Expand){
-					if(item?.expand ){
-						return { ...item, expand: !item?.expand, expandContent: false };
+				if(expandedType === EExpandType.Expanded){
+					if(item?.expanded ){
+						return { ...item, expanded: !item?.expanded, expandedContent: false };
 					}
-					return { ...item, expand: !item?.expand };
+					return { ...item, expanded: !item?.expanded };
 				}
-				else if(expandType === EExpandType.ExpandContent){
-					return { ...item, expandContent: !item?.expandContent };
+				else if(expandedType === EExpandType.ExpandedContent){
+					return { ...item, expandedContent: !item?.expandedContent };
 				}
 			}
 
@@ -101,16 +104,16 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 	};
 
 	useEffect(() => {
-		setHistoryData(history.map((item, index) => {return index === 0 ? { ...item , expand: true } : item; }));
+		setHistoryData(history.map((item, index) => {return index === 0 ? { ...item , expanded: true } : item; }));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open]);
 
 	useEffect(() => {
 		if(!historyData || !historyData.length) return;
 
-		Array.from(document.querySelectorAll('.post-history-timeline .ant-timeline-item-tail'))?.map((element, index) => element.addEventListener('click', () => handleExpand(index, EExpandType.Expand)) );
+		Array.from(document.querySelectorAll('.post-history-timeline .ant-timeline-item-tail'))?.map((element, index) => element.addEventListener('click', () => handleExpand(index, EExpandType.Expanded)) );
 
-		return () => { Array.from(document.querySelectorAll('.post-history-timeline .ant-timeline-item-tail'))?.map((element, index) => element.removeEventListener('click', () => handleExpand(index, EExpandType.Expand)) );};
+		return () => { Array.from(document.querySelectorAll('.post-history-timeline .ant-timeline-item-tail'))?.map((element, index) => element.removeEventListener('click', () => handleExpand(index, EExpandType.Expanded)) );};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [historyData]);

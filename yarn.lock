@@ -9453,9 +9453,9 @@ pnglib@0.0.1:
   resolved "https://registry.npmjs.org/pnglib/-/pnglib-0.0.1.tgz"
   integrity sha512-95ChzOoYLOPIyVmL+Y6X+abKGXUJlvOVLkB1QQkyXl7Uczc6FElUy/x01NS7r2GX6GRezloO/ecCX9h4U9KadA==
 
-"polkasafe@file:../../new_polkasafe-sdk/server-api":
+"polkasafe@file:../server-api":
   version "1.0.0"
-  resolved "file:../../new_polkasafe-sdk/server-api"
+  resolved "file:../server-api"
   dependencies:
     "@polkadot/api" "^10.6.1"
     "@polkadot/extension-dapp" "^0.25.0-beta.1"

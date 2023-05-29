@@ -237,27 +237,38 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			console.error('referendumId not set');
 			return;
 		}
-		const { data }= await client.getConnectAddressToken(address);
+		const substrateAddress = getSubstrateAddress(address);
 
-		const signRaw = testInjected && testInjected.signer && testInjected.signer.signRaw;
+		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
+		const injectedWindow = window as Window & InjectedWindow;
 
-		// @ts-ignore
-		const { signature } = await signRaw({
-			address: address,
-			data: stringToHex(data),
-			type: 'bytes'
-		});
+		if(wallet){
+			const selectedWallet = injectedWindow.injectedWeb3[wallet];
 
-		await client.setSignature(signature, network, getSubstrateAddress(address));
+			if (!selectedWallet) {
+				return;
+			}
+			const injected = selectedWallet && selectedWallet.enable && await selectedWallet.enable(APPNAME);
 
-		const voteData = await client.voteOnProposal(multisig ,testInjected,referendumId,{ Standard: { balance: lockedBalance, vote: { aye, conviction } } },() => {},'referendumV2');
-		console.log(voteData);
-		setLoadingStatus({ isLoading: false, message: '' });
-		queueNotification({
-			header: 'Success!',
-			message: `Your vote on Referendum #${referendumId} will be successful once approved by other signatories.`,
-			status: NotificationStatus.SUCCESS
-		});
+			// @ts-ignore
+			const data = await client.connect(network, substrateAddress, injected);
+			console.log(data);
+			const statusGrabber = (message:string) => {
+				setLoadingStatus({ isLoading: true, message:message });
+			};
+
+			console.log(multisig);
+
+			// @ts-ignore
+			const voteData = await client.voteOnProposal(multisig, referendumId,{ Standard: { balance: lockedBalance, vote: { aye, conviction } } },statusGrabber, proposalType);
+			console.log(voteData);
+			setLoadingStatus({ isLoading: false, message: '' });
+			queueNotification({
+				header: 'Success!',
+				message: `Your vote on Referendum #${referendumId} will be successful once approved by other signatories.`,
+				status: NotificationStatus.SUCCESS
+			});
+		}
 	};
 
 	const voteReferendum = async (aye: boolean) => {

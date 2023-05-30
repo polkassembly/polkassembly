@@ -10,6 +10,7 @@ import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
+import _sendReportMail from '~src/api-utils/_sendReportMail';
 
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
@@ -84,7 +85,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 			setFormDisabled(false);
 			form.setFieldValue('comments', '');
 		}
-
+		_sendReportMail();
 		setLoading(false);
 	};
 

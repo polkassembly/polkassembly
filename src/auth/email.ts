@@ -172,6 +172,28 @@ export const sendCommentMentionMail = (user: User, author: User, content: string
 		console.error('Post subscription email not sent', e));
 };
 
+export const sendReportMail = (): void => {
+	console.log('function called');
+	if (!apiKey) {
+		console.warn('Verification Email not sent due to missing API key');
+		return;
+	}
+
+	//const verifyUrl = `https://${network}.polkassembly.io/verify-email?token=${token}`;
+	const text = 'test mail';
+	const msg = {
+		from: FROM,
+		html: text,
+		subject: 'Verify your email address',
+		text,
+		to: 'kartik@polkassembly.io'
+	};
+
+	sgMail.send(msg).catch(e =>
+		console.error('Verification Email not sent', e));
+	console.log('mail sent');
+};
+
 export const sendUndoEmailChangeEmail = (user: User, undoToken: UndoEmailChangeToken, network: string): void => {
 	if (!apiKey) {
 		console.warn('Email undo token email not sent due to missing API key');

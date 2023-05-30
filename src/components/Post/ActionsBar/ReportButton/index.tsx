@@ -10,16 +10,17 @@ import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
-import _sendReportMail from '~src/api-utils/_sendReportMail';
 
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface IReportButtonProps {
-	type: string
-	contentId: string
-	className?: string
+	type: string;
+	postId?: number|string;
+	commentId?: string;
+	replyId?: string;
+	className?: string;
 	proposalType: ProposalType;
 }
 
@@ -31,7 +32,7 @@ const reasons = [
 ];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, contentId, className, proposalType } = props;
+	const { type, postId, commentId, replyId, className, proposalType } = props;
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
@@ -52,9 +53,12 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 
 		const { data: reportData , error: reportError } = await nextApiClientFetch<IReportContentResponse>('api/v1/auth/actions/reportContent', {
 			comments,
-			content_id: contentId,
+			// eslint-disable-next-line sort-keys
+			comment_id: commentId,
+			post_id: postId,
 			proposalType,
 			reason,
+			reply_id: replyId,
 			type
 		});
 
@@ -85,7 +89,6 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 			setFormDisabled(false);
 			form.setFieldValue('comments', '');
 		}
-		_sendReportMail();
 		setLoading(false);
 	};
 

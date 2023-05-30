@@ -17,6 +17,7 @@ import {
 	postSubscriptionMailTemplate,
 	reportContentEmailTemplate,
 	resetPasswordEmailTemplate,
+	spamCommentReport,
 	transferNoticeEmailTemplate,
 	transferNoticeMistakeEmailTemplate,
 	undoEmailChangeEmailTemplate,
@@ -172,25 +173,63 @@ export const sendCommentMentionMail = (user: User, author: User, content: string
 		console.error('Post subscription email not sent', e));
 };
 
-export const sendReportMail = (): void => {
-	console.log('function called');
+export const sendCommentReportMail = (
+	postType: string,
+	postId: string,
+	commentId: string,
+	commentUrl:string,
+	network:string ): void => {
 	if (!apiKey) {
 		console.warn('Verification Email not sent due to missing API key');
 		return;
 	}
 
-	//const verifyUrl = `https://${network}.polkassembly.io/verify-email?token=${token}`;
-	const text = 'test mail';
+	const text = ejs.render(spamCommentReport, {
+		commentId,
+		commentUrl,
+		network,
+		postId,
+		postType
+	});
 	const msg = {
 		from: FROM,
 		html: text,
-		subject: 'Verify your email address',
+		subject: 'Comment Spam Report',
 		text,
 		to: 'kartik@polkassembly.io'
 	};
 
 	sgMail.send(msg).catch(e =>
-		console.error('Verification Email not sent', e));
+		console.error('Comment Spam Report not sent', e));
+	console.log('mail sent');
+};
+
+export const sendPostSpamReportMail = (
+	postType: string,
+	postId: string,
+	postUrl:string,
+	network:string ): void => {
+	if (!apiKey) {
+		console.warn('Verification Email not sent due to missing API key');
+		return;
+	}
+
+	const text = ejs.render(spamCommentReport, {
+		network,
+		postId,
+		postType,
+		postUrl
+	});
+	const msg = {
+		from: FROM,
+		html: text,
+		subject: 'Post Spam Report',
+		text,
+		to: 'kartik@polkassembly.io'
+	};
+
+	sgMail.send(msg).catch(e =>
+		console.error('Post Spam Report not sent', e));
 	console.log('mail sent');
 };
 

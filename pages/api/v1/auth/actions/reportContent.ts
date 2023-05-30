@@ -13,6 +13,8 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { checkReportThreshold } from '../../posts/on-chain-post';
+import _sendCommentReportMail from '~src/api-utils/_sendCommentReportMail';
+import _sendPostSpamReportMail from '~src/api-utils/_sendPostSpamReportMail';
 
 export interface IReportContentResponse {
 	message: string;
@@ -26,9 +28,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network in request header' });
 
-	const { type, content_id, reason, comments, proposalType } = req.body;
-	if(!type || !content_id || !reason || !comments || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
-
+	const { type, reason, comments, proposalType, post_id,reply_id,comment_id } = req.body;
+	if(!type || !reason || !comments || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if((type === 'post' && !post_id) || (type === 'comment' && !(post_id && comment_id)) || (type === 'reply' && !(post_id && comment_id && reply_id))) {
+		return res.status(400).json({ message: 'Missing parameters in request body' });
+	}
 	if (!isOffChainProposalTypeValid(proposalType) && !isProposalTypeValid(proposalType)) {
 		return res.status(400).json({ message: `Proposal type ${proposalType} is not valid.` });
 	}
@@ -43,9 +47,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 	if (!reason) return res.status(400).json({ message: messages.REPORT_REASON_REQUIRED });
 	if (comments.length > 300) return res.status(400).json({ message: messages.REPORT_COMMENTS_LENGTH_EXCEEDED });
 
-	const contentId = ((type === 'post' && proposalType !== 'tips')? Number(content_id): content_id);
+	const getContentId = () => {
+		switch(type)
+		{
+		case 'post':  return (proposalType !== 'tips'? Number(post_id): post_id);
+		case 'comment': return comment_id;
+		case 'reply': return reply_id;
+		default: return '';
+		}
+	};
+	const contentId = getContentId();
 	const strPostType = String(proposalType);
-	await networkDocRef(network).collection('reports').doc(`${user.id}_${contentId}_${strPostType}`).set({
+	const data:any = {
 		comments,
 		content_id: contentId,
 		proposal_type: strPostType,
@@ -53,18 +66,36 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 		resolved: false,
 		type,
 		user_id: user.id
-	}, { merge: true }).then(async () => {
+	};
+
+	if(type === 'comment'){
+		data.post_id = post_id;
+	}else if(type === 'reply'){
+		data.post_id = post_id;
+		data.comment_id = comment_id;
+	}
+
+	await networkDocRef(network).collection('reports').doc(`${user.id}_${contentId}_${strPostType}`).set(data, { merge: true }).then(async () => {
 		const countQuery = await networkDocRef(network).collection('reports').where('type', '==', type).where('proposal_type', '==', strPostType).where('content_id', '==', contentId).count().get();
 
 		const data = countQuery.data();
 		const totalUsers = data.count || 0;
 
+		if(type == 'post' && checkReportThreshold(totalUsers) ){
+			_sendPostSpamReportMail(network,strPostType,contentId);
+		}
+		if(type == 'comment' && checkReportThreshold(totalUsers) ){
+			_sendCommentReportMail(network,strPostType,contentId,type);
+		}
+		if(type == 'reply' && checkReportThreshold(totalUsers) ){
+			_sendCommentReportMail(network,strPostType,contentId,type);
+		}
+		console.log(type , contentId , strPostType,comment_id,reply_id);
 		return res.status(200).json({ message: messages.CONTENT_REPORT_SUCCESSFUL, spam_users_count: checkReportThreshold(totalUsers) });
 	}).catch((error) => {
 		console.log(' Error while reporting content : ', error);
 		return res.status(500).json({ message: 'Error while reporting content.' });
 	});
-
 }
 
 export default withErrorHandling(handler);

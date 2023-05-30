@@ -221,3 +221,32 @@ export const transferNoticeMistakeEmailTemplate = container(`
 
     Due to a technical mistake, our previous email didn't contain a correct link to Polkassembly account deletion. The correct link to do so is https://kusama.polkassembly.io/settings#deleteAccount<br /><br />
 `);
+
+export const spamCommentReport = container(`
+    <p>
+       Spam Reported.<br />
+
+        <br />
+        Comment <a href="<%= commentUrl %>"><%= commentUrl %></a>. is reported as spam.<br/>
+        Network: <%= network %><br />
+        Post ID: <%= postId %><br />
+        Post Type: <%= postType %><br />
+        Comment ID: <%= commentId %><br /> <br/>
+        
+        Polkassembly Team
+    </p>
+`);
+
+export const spamPostReport = container(`
+    <p>
+       Spam Reported.<br />
+
+        <br />
+        Post <a href="<%= postUrl %>"><%= postUrl %></a>. is reported as spam.<br/>
+        Network: <%= network %><br />
+        Post ID: <%= postId %><br />
+        Post Type: <%= postType %><br />
+        
+        Polkassembly Team
+    </p>
+`);

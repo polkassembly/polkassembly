@@ -25,15 +25,16 @@ const Replies = ({ className, commentId, repliesArr }: Props) => {
 					<div className='text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center' onClick={toggleShowReplies}>Hide replies <UpOutlined className='ml-1' /></div>
 				: null
 			}
-			{showReplies && repliesArr.map((reply: any) =>
-				<div key={reply.id}>
-					<Reply
-						reply={reply}
-						key={reply.id}
-						commentId={commentId}
-						userName={reply.username}
-					/>
-				</div>
+			{showReplies && repliesArr.map((reply: any) => {
+				return(
+					<div key={reply.id}>
+						<Reply
+							reply={reply}
+							key={reply.id}
+							commentId={commentId}
+							userName={reply.username}
+						/>
+					</div>);}
 			)}
 		</div>
 	);

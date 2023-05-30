@@ -114,7 +114,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			{
 				spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
 					<div className='flex items-center mr-2'>
-						<Tooltip color="#E5007A" title="This Comment could be a spam.">
+						<Tooltip color="#E5007A" title={`This comment has been reported as spam by ${spam_users_count} members`}>
 							<WarningMessageIcon className='text-xl text-[#FFA012] scale-75' />
 						</Tooltip>
 					</div>

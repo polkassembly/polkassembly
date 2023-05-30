@@ -492,8 +492,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								onAccountChange={onAccountChange}
 							/>
 						}
-
-						{(post.motion_votes) &&
+						{(post.motion_votes && (post.motion_votes?.length || 0) > 0) &&
 							<MotionVoteInfo
 								councilVotes={post.motion_votes}
 							/>

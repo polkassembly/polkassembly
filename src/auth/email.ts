@@ -180,7 +180,7 @@ export const sendCommentReportMail = (
 	commentUrl:string,
 	network:string ): void => {
 	if (!apiKey) {
-		console.warn('Verification Email not sent due to missing API key');
+		console.warn('Comment Spam Report Email not sent due to missing API key');
 		return;
 	}
 
@@ -210,7 +210,7 @@ export const sendPostSpamReportMail = (
 	postUrl:string,
 	network:string ): void => {
 	if (!apiKey) {
-		console.warn('Verification Email not sent due to missing API key');
+		console.warn('Post Spam Report Email not sent due to missing API key');
 		return;
 	}
 
@@ -229,7 +229,7 @@ export const sendPostSpamReportMail = (
 	};
 
 	sgMail.send(msg).catch(e =>
-		console.error('Post Spam Report not sent', e));
+		console.error(' Spam Report not sent', e));
 	console.log('mail sent');
 };
 

@@ -90,7 +90,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 		if(type == 'reply' && checkReportThreshold(totalUsers) ){
 			_sendCommentReportMail(network,strPostType,contentId,type);
 		}
-		console.log(type , contentId , strPostType,comment_id,reply_id);
+		console.log(type , post_id , strPostType,comment_id,reply_id);
 		return res.status(200).json({ message: messages.CONTENT_REPORT_SUCCESSFUL, spam_users_count: checkReportThreshold(totalUsers) });
 	}).catch((error) => {
 		console.log(' Error while reporting content : ', error);

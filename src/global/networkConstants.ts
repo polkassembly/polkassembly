@@ -178,6 +178,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: '500',
 		externalLinks: 'https://polkadot.api.subscan.io',
+		gTag: 'G-JMMMFDX405',
 		rpcEndpoints: [
 			{
 				label: 'via On-finality',
@@ -219,6 +220,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '0.6666',
 		treasuryProposalMaxBond: '33.3333',
 		externalLinks: 'https://kusama.api.subscan.io',
+		gTag: 'G-HCSSH2HY4H',
 		rpcEndpoints: [
 			{
 				label: 'via On-finality',
@@ -256,6 +258,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '10',
 		treasuryProposalMaxBond: '50',
 		externalLinks: 'https://acala.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.ACUITY]: {
@@ -272,6 +275,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.ALTAIR]: {
@@ -288,6 +292,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond:'500',
 		externalLinks: 'https://altair.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.AMPLITUDE]: {
@@ -304,6 +309,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '10',
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://polkaholic.io',
+		gTag: 'G-CJQ1ZL472N',
 		rpcEndpoints: []
 	},
 	[network.ASTAR]: {
@@ -320,6 +326,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://astar.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.AUTOMATA]: {
@@ -336,6 +343,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.BASILISK]: {
@@ -352,6 +360,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '10000',
 		treasuryProposalMaxBond:'50000',
 		externalLinks: 'https://basilisk.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.PIONEER]: {
@@ -368,6 +377,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond:'50',
 		externalLinks: 'https://pioneer.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.CALAMARI]: {
@@ -384,6 +394,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://calamari.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.CENTRIFUGE]: {
@@ -400,6 +411,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1000',
 		treasuryProposalMaxBond:'5000',
 		externalLinks: 'https://centrifuge.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.CERE]: {
@@ -416,6 +428,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: 'G-7E14M1ZSCB',
 		rpcEndpoints: []
 	},
 	//TODO: Aleem=> Need to update collective network, currently using polkadot data
@@ -433,6 +446,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.COMPOSABLE]: {
@@ -449,6 +463,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '5',
 		treasuryProposalMaxBond:'1000',
 		externalLinks: 'https://composable.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.CRUST]: {
@@ -465,6 +480,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://crust.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.CRUSTSHADOW]: {
@@ -481,6 +497,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.EQUILIBRIUM]: {
@@ -497,6 +514,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://equilibrium.api.subscan.io',
+		gTag: 'G-PPZV91T0GH',
 		rpcEndpoints: []
 
 	},
@@ -514,6 +532,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: 'G-26N0DJ37DD',
 		rpcEndpoints: []
 	},
 	[network.GEAR]: {
@@ -530,6 +549,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.GENSHIRO]: {
@@ -546,6 +566,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://genshiro.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.GMORDIE]: {
@@ -562,6 +583,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.HASHED]: {
@@ -578,6 +600,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '0.000000066666666',
 		treasuryProposalMaxBond: '0.0000033333333',
 		externalLinks: '',
+		gTag: 'G-KQYQ8N8337',
 		rpcEndpoints: []
 	},
 	[network.HEIKO]: {
@@ -594,6 +617,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.HYDRADX]: {
@@ -610,6 +634,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '10000',
 		treasuryProposalMaxBond:'50000',
 		externalLinks: 'https://hydradx.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.INTEGRITEE]: {
@@ -626,6 +651,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '10000',
 		treasuryProposalMaxBond:'50000',
 		externalLinks: 'https://integritee.api.subscan.io',
+		gTag: 'G-D4LGZ5LEGK',
 		rpcEndpoints: []
 	},
 	[network.KARURA]: {
@@ -642,6 +668,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '5',
 		treasuryProposalMaxBond:'25',
 		externalLinks: 'https://karura.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.KYLIN]: {
@@ -658,6 +685,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.KHALA]: {
@@ -674,6 +702,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://khala.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.KILT]: {
@@ -690,6 +719,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '20',
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://spiritnet.api.subscan.io',
+		gTag: 'G-J37GVF0HCS',
 		rpcEndpoints: []
 	},
 	[network.MANTA]: {
@@ -706,6 +736,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.MOONBASE]: {
@@ -722,6 +753,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://moonbase.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.SHIBUYA]: {
@@ -738,6 +770,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://shibuya.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.MOONBEAM]: {
@@ -754,6 +787,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://moonbeam.api.subscan.io',
+		gTag: 'G-FS09G34H85',
 		rpcEndpoints: []
 	},
 	[network.MOONRIVER]: {
@@ -770,6 +804,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://moonriver.api.subscan.io',
+		gTag: 'G-RMV9VEZFF2',
 		rpcEndpoints: []
 	},
 	[network.MYRIAD]: {
@@ -786,6 +821,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://explorer.mainnet.oct.network/myriad',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.PARALLEL]: {
@@ -802,6 +838,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond:'5',
 		externalLinks: 'https://parallel.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.PENDULUM]: {
@@ -818,6 +855,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://polkaholic.io',
+		gTag: 'G-EGV0NKCPZG',
 		rpcEndpoints: []
 	},
 	[network.POLKADEX]: {
@@ -834,6 +872,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: '100',
 		externalLinks: 'https://polkadex.api.subscan.io',
+		gTag: 'G-EB50MSH198',
 		rpcEndpoints: []
 	},
 	[network.POLYMESH]: {
@@ -850,6 +889,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://polymesh.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.POLYMESHTEST]: {
@@ -866,6 +906,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.PICASSO]: {
@@ -882,6 +923,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '5000',
 		treasuryProposalMaxBond: '10000',
 		externalLinks: 'https://picasso.api.subscan.io',
+		gTag: 'G-2MRWG10DTE',
 		rpcEndpoints: []
 	},
 	[network.PICHIUROCOCO]: {
@@ -898,6 +940,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.PICHIU]: {
@@ -914,6 +957,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '5',
 		treasuryProposalMaxBond: '25',
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.ROBONOMICS]: {
@@ -930,6 +974,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '10',
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://robonomics.api.subscan.io',
+		gTag: 'G-P13GPB87GC',
 		rpcEndpoints: []
 	},
 	[network.SHIBUYA]: {
@@ -946,6 +991,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://shibuya.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.SHIDEN]: {
@@ -962,6 +1008,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://shiden.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.SNOW]:{
@@ -978,6 +1025,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://snow.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.TANGANIKA]: {
@@ -994,6 +1042,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.TIDECHAIN]: {
@@ -1010,6 +1059,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.TURING]: {
@@ -1026,6 +1076,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: '5',
 		externalLinks: 'https://turing.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.VARA]: {
@@ -1042,6 +1093,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '20',
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.WESTENDCOLLECTIVES]: {
@@ -1058,6 +1110,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.WESTEND]: {
@@ -1074,6 +1127,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://westend.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	},
 	[network.XX]: {
@@ -1090,6 +1144,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://explorer.xx.network',
+		gTag: 'G-23WF4VNWK4',
 		rpcEndpoints: []
 	}
 };

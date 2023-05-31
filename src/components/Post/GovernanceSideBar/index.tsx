@@ -109,7 +109,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					if (track && Array.isArray(track) && track.length > 1) {
 						const trackInfo = track[1] as any;
 						const { decisionPeriod } = trackInfo;
-						const strArr = blockToTime(decisionPeriod, network).split(' ');
+						const strArr = blockToTime(decisionPeriod, network)['time'].split(' ');
 						let decisionPeriodHrs = 0;
 						if (strArr && Array.isArray(strArr)) {
 							strArr.forEach((str) => {

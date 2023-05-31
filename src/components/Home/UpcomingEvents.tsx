@@ -342,7 +342,7 @@ const UpcomingEvents = ({ className }:Props) => {
 			<Calendar
 				className='border border-solid border-gray-200 rounded-md mb-4'
 				fullscreen={false}
-				dateCellRender={dateCellRender}
+				cellRender={dateCellRender}
 			/>
 		</Spin>
 	);

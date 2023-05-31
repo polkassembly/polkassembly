@@ -109,7 +109,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					if (track && Array.isArray(track) && track.length > 1) {
 						const trackInfo = track[1] as any;
 						const { decisionPeriod } = trackInfo;
-						const strArr = blockToTime(decisionPeriod, network).split(' ');
+						const strArr = blockToTime(decisionPeriod, network)['time'].split(' ');
 						let decisionPeriodHrs = 0;
 						if (strArr && Array.isArray(strArr)) {
 							strArr.forEach((str) => {
@@ -466,7 +466,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						</>
 					}
 
-					{canEdit && graphicOpen && post_link && <div className=' rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] pb-[36px] mb-8'>
+					{canEdit && graphicOpen && post_link && !(post.tags && Array.isArray(post.tags) && post.tags.length > 0) && <div className=' rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] pb-[36px] mb-8'>
 						<div className='flex justify-end py-[17px] px-[20px] items-center' onClick={ () => setGraphicOpen(false)}>
 							<CloseIcon/>
 						</div>
@@ -492,8 +492,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								onAccountChange={onAccountChange}
 							/>
 						}
-
-						{(post.motion_votes) &&
+						{(post.motion_votes && (post.motion_votes?.length || 0) > 0) &&
 							<MotionVoteInfo
 								councilVotes={post.motion_votes}
 							/>

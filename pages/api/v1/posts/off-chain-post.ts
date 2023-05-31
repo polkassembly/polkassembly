@@ -7,7 +7,7 @@ import type { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isFirestoreProposalTypeValid, isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
-import { getSubsquidProposalType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
+import { getFirestoreProposalType, getSubsquidProposalType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import { GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse } from '~src/types';
@@ -59,10 +59,6 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 		const post_reactions = getReactions(postReactionsQuerySnapshot);
 
-		// Comments
-		const commentsSnapshot = await postDocRef.collection('comments').get();
-		const comments = await getComments(commentsSnapshot, postDocRef);
-
 		// Post Data
 		const data = discussionPostDoc.data();
 
@@ -82,13 +78,13 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 
 		const topic = data?.topic;
 		const topic_id = data?.topic_id;
-		const spam_users_count = await getSpamUsersCount(network, proposalType, Number(postId));
+		const spam_users_count = await getSpamUsersCount(network, proposalType, Number(postId), 'post');
 		const tags = data?.tags || [];
 		const gov_type = data?.gov_type;
 		const history = data?.history ? data?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
 		const proposer = getProposerAddressFromFirestorePostData(data, network);
 		const post: IPostResponse = {
-			comments: comments,
+			comments: [],
 			content: data?.content,
 			created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
 			gov_type: gov_type,
@@ -174,6 +170,39 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			post.post_link = post_link;
 		}
 		post.timeline = [...timeline, ...(post.timeline? post.timeline: [])];
+
+		// Comments
+		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+			const commentPromises = post.timeline.map(async (timeline: any) => {
+				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+				const commentsSnapshot = await postDocRef.collection('comments').get();
+				const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+				return comments;
+			});
+			const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
+			commentPromiseSettledResults.forEach((result) => {
+				if (result && result.status === 'fulfilled' && result.value && Array.isArray(result.value)) {
+					if (!post.comments || !Array.isArray(post.comments)) {
+						post.comments = [];
+					}
+					post.comments = post.comments.concat(result.value);
+				}
+			});
+		} else {
+			if (post.post_link) {
+				const { id, type } = post.post_link;
+				const postDocRef = postsByTypeRef(network, type).doc(String(id));
+				const commentsSnapshot = await postDocRef.collection('comments').get();
+				post.comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+			}
+			const commentsSnapshot = await postDocRef.collection('comments').get();
+			const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+			if (post.comments && Array.isArray(post.comments)) {
+				post.comments = post.comments.concat(comments);
+			} else {
+				post.comments = comments;
+			}
+		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,

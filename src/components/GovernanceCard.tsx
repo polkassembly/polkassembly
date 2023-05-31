@@ -17,7 +17,7 @@ import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import TopicTag from 'src/ui-components/TopicTag';
 import { getFormattedLike } from '~src/util/getFormattedLike';
-import NewChatIcon from '~assets/icons/new-chat-icon.svg';
+import NewChatIcon from '~assets/icons/chat-icon.svg';
 
 interface IGovernanceProps {
 	postReactionCount: {
@@ -76,7 +76,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
 
-	const mainTitle = <span className={tipReason ? 'tipTitle' : ''}><div>{titleString}</div></span>;
+	const mainTitle = <span className={tipReason ? 'tipTitle' : ''}><div className='text-[#243A57] font-medium text-sm'>{titleString}</div></span>;
 	const subTitle = title && tipReason && method && <h5>{title}</h5>;
 	const currentBlock = useCurrentBlock()?.toNumber() || 0;
 	const ownProposal = currentUser?.addresses?.includes(address);
@@ -84,89 +84,91 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
 
 	return (
-		<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200  p-3 md:p-6 min-h-[147px] flex`}>
-			<span className='font-medium text-center mr-2 flex-none w-[120px] text-[#334D6E] mt-4'>#{isTip? tip_index: onchainId}</span>
-			<div className="flex flex-col justify-between flex-1 mt-4">
-				<OnchainCreationLabel address={address} username={username} />
-				<div className='flex justify-between gap-x-2  lg:items-start lg:flex-row my-2 '>
-					<div className='mt-3 lg:mt-0'>
-						<h1 className='text-sidebarBlue font-semibold text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
-							{cid ? (!title ?<span className='font-medium mr-2'>#{onchainId}</span> : <span className='break-all'>{ mainTitle }</span>):
-								<><span className='font-medium mr-2'>#{isTip? tip_index: onchainId}</span><span className='break-all'>{ mainTitle }</span></>}
-						</h1>
-						<h2 className='text-navBlue font-medium text-sm'>{subTitle}</h2>
-					</div>
-					<div className='flex justify-between items-center gap-x-2'>
-						{
-							spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
-								<div className='flex items-center justify-center'>
-									<Tooltip color="#E5007A" title="This post could be a spam.">
-										<WarningMessageIcon className='text-xl text-[#FFA012]' />
-									</Tooltip>
-								</div>
-								: null
-						}
-						{status  && <StatusTag className='mt-[-36px]' status={status} />}
-					</div>
-				</div>
-
-				<div className="mt-0 gap-2.5 font-medium text-navBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
-
-					<div className='flex items-center gap-x-2 '>
-						<div className='flex items-center justify-center gap-x-1.5'>
-							<LikeOutlined />
-							<span>{getFormattedLike(postReactionCount['👍'])}</span>
+		<>
+			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200  p-3 md:p-6 min-h-[147px] flex`}>
+				<span className='font-semibold text-center mr-2 flex-none xs:flex-start sm:w-[120px] xs:w-[60px] text-[#243A57] mt-4'>#{isTip? tip_index: onchainId}</span>
+				<div className="flex flex-col justify-between flex-1 mt-4">
+					<OnchainCreationLabel address={address} username={username} />
+					<div className='flex justify-between gap-x-2 lg:items-start lg:flex-row my-2 '>
+						<div className='mt-3 lg:mt-0'>
+							<h1 className='text-[#243A57] text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
+								<span className='break-all text-[#243A57] font-medium text-sm'>{ mainTitle }</span>
+							</h1>
+							<h2 className='text-[#243A57] font-medium text-sm'>{subTitle}</h2>
 						</div>
-						<div className='flex items-center justify-center gap-x-1.5 mr-2'>
-							<DislikeOutlined />
-							<span>{getFormattedLike(postReactionCount['👎'])}</span>
-						</div>
-						{
-							isCommentsVisible?
-								<>
-									<div className='flex items-center'>
-										<NewChatIcon className='mr-1' /> {commentsCount}
+						<div className='flex justify-between items-center gap-x-2'>
+							{
+								spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
+									<div className='flex items-center justify-center'>
+										<Tooltip color="#E5007A" title="This post could be a spam.">
+											<WarningMessageIcon className='text-xl text-[#FFA012]' />
+										</Tooltip>
 									</div>
-								</>
-								: null
-						}
-						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
-						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
-							(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >
-								{tag}
-							</div>))}
-						{tags.length>2 && <span className='text-[#243A57]' style={{ background:'#D2D8E0' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
-                +{tags.length-2}
-						</span>}
-						</>}
-						<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
-						{
-							cid ?
-								<>
-									<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
-									<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
-								</> : null
-						}
-						{relativeCreatedAt && <>
-							<div className='flex items-center'>
-								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
-							</div>
-						</>}
-
-						{
-							topic?
-								<div className='flex items-center '>
-									<div className='mr-1.5 ml-auto hidden min-[340px]:flex'></div>
-									<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
-									<TopicTag topic={topic} />
-								</div>
-								: null
-						}
+									: null
+							}
+							{status  && <StatusTag className='mt-[-36px]' status={status} />}
+						</div>
 					</div>
 
-					{!!end && !!currentBlock &&
-							<div className="flex items-center">
-								<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+					<div className="mt-0 gap-2.5 font-medium text-navBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
+
+						<div className='flex items-center gap-x-2 '>
+							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
+								<LikeOutlined style={{ color: '#485F7D' }} />
+								<span className='text-[#485F7D]'>{getFormattedLike(postReactionCount['👍'])}</span>
+							</div>
+							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5 mr-2'>
+								<DislikeOutlined style={{ color: '#485F7D' }} />
+								<span className='text-[#485F7D]'>{getFormattedLike(postReactionCount['👎'])}</span>
+							</div>
+							{
+								isCommentsVisible?
+									<>
+										<div className='xs:hidden text-[#485F7D] sm:flex items-center'>
+											<NewChatIcon style={{
+												color: '#485F7D'
+											}} className='mr-1 text-[#485F7D]' /> {commentsCount}
+										</div>
+									</>
+									: null
+							}
+							{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
+							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
+								(<div key={index} className='text-[#485F7D] rounded-xl px-[14px] py-[4px] border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
+									{tag}
+								</div>))}
+							{tags.length>2 && <span className='text-[#243A57]' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+                +{tags.length-2}
+							</span>}
+							</>}
+							<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+							{
+								cid ?
+									<>
+										<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
+										<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+									</> : null
+							}
+							{relativeCreatedAt && <>
+								<div className='flex text-[#485F7D] items-center'>
+									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
+								</div>
+							</>}
+
+							{
+								topic?
+									<div className='flex items-center '>
+										<div className='mr-1.5 ml-auto hidden min-[340px]:flex'></div>
+										<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #485F7D' }} />
+										<TopicTag topic={topic} />
+									</div>
+									: null
+							}
+						</div>
+
+						{!!end && !!currentBlock &&
+							<div className="flex text-[#485F7D] items-center">
+								<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 								<ClockCircleOutlined className='mr-1' />
 								{
 									end > currentBlock
@@ -174,24 +176,25 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										: <span>ended <BlockCountdown endBlock={end}/></span>
 								}
 							</div>
-					}
+						}
 
+					</div>
 				</div>
+				<Modal
+					open= {tagsModal}
+					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
+					footer={false}
+					className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px] padding  justify-center center-aligned`}
+				><div className=''>
+						<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
+						<div className='flex gap-2 flex-wrap' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
+							(<div key={index} className='rounded-xl px-[16px] py-[2px] font-normal text-xs text-navBlue' >
+								{tag}
+							</div>))}
+						</>}</div></div>
+				</Modal>
 			</div>
-			<Modal
-				open= {tagsModal}
-				onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
-				footer={false}
-				className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px] padding  justify-center center-aligned`}
-			><div className=''>
-					<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
-					<div className='flex gap-2 flex-wrap' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
-						(<div key={index} className='rounded-xl px-[16px] py-[2px] font-normal text-xs text-navBlue' >
-							{tag}
-						</div>))}
-					</>}</div></div>
-			</Modal>
-		</div>
+		</>
 	);
 };
 

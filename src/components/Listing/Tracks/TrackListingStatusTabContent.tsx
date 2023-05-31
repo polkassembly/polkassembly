@@ -4,6 +4,7 @@
 
 import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
+import { poppins } from 'pages/_app';
 import Link from 'next/link';
 import React, { FC } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
@@ -36,11 +37,12 @@ const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (pr
 	if(posts&& posts.length>0){
 		return (
 			<div className={`${className} proposals__list`}>
-				{posts.map((post) => {
+				{posts.map((post,index) => {
 					return (
-						<div key={post.post_id} className='my-5'>
+						<div key={post.post_id} className='my-0'>
 							{<Link href={`/referenda/${post.post_id}`}>
 								<GovernanceCard
+									className={`${(index+1)%2!==0 && 'bg-[#DCDFE350]'} ${poppins.variable} ${poppins.className}`}
 									postReactionCount={post.post_reactions}
 									address={post.proposer}
 									commentsCount={post.comments_count || 0}

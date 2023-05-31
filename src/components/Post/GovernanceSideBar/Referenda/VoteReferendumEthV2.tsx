@@ -289,39 +289,33 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		}
 	};
 
-	const validate = () => {
-		let error = 0;
+	const voteReferendum = async () => {
+		if (!referendumId && referendumId !== 0) {
+			console.error('referendumId not set');
+			return;
+		}
+
 		if(!isTalismanEthereum){
 			console.error('Please use Ethereum account via Talisman wallet.');
-			error+=1;
+			return;
 		}
 
 		if (!lockedBalance) {
 			console.error('lockedBalance not set');
-			error+=1;
+			return;
 		}
 		if(lockedBalance && availableBalance.lte(lockedBalance)) {
 			setBalanceErr('Insufficient balance.');
-			error+=1;
+			return;
 		}
 		if(ayeVoteValue && availableBalance.lte(ayeVoteValue) || nayVoteValue && availableBalance.lte(nayVoteValue) || abstainVoteValue && availableBalance.lte(abstainVoteValue) ) {
 			setBalanceErr('Insufficient balance.');
-			error+=1;
+			return;
 		}
 
 		const totalVoteValue = ayeVoteValue?.add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN);
 		if (totalVoteValue?.gte(availableBalance)) {
 			setBalanceErr('Insufficient balance.');
-			error+=1;
-		}
-		return error === 0;
-	};
-
-	const voteReferendum = async () => {
-		if(!apiReady) return;
-		if(!validate()) return ;
-		if (!referendumId && referendumId !== 0) {
-			console.error('referendumId not set');
 			return;
 		}
 
@@ -358,7 +352,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			voteContract.methods
 				.voteYes(
 					referendumId,
-					lockedBalance && lockedBalance.toString(),
+					lockedBalance.toString(),
 					conviction
 				)
 				.send({
@@ -388,7 +382,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			voteContract.methods
 				.voteNo(
 					referendumId,
-					lockedBalance && lockedBalance.toString(),
+					lockedBalance.toString(),
 					conviction
 				)
 				.send({
@@ -648,7 +642,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 								<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${!validate() && 'opacity-50'}`} htmlType='submit' disabled={!validate()}>Confirm</Button>
+									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
 								</div>
 							</Form>
 						}
@@ -683,7 +677,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0' htmlType='submit'>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
 									</div>
 								</Form>
 						}
@@ -724,7 +718,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0' htmlType='submit'>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
 									</div>
 								</Form>
 						}

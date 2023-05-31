@@ -292,39 +292,32 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			</Select>
 
 		</Form.Item>;
-	const validate = () =>
-	{let error = 0;
-		if (!api ||!apiReady) {
-			error+=1;
+
+	const handleSubmit = async () => {
+
+		if (!referendumId && referendumId !== 0) {
+			console.error('referendumId not set');
+			return;
 		}
 
-		if(!lockedBalance){error+=1;}
+		if (!api ||!apiReady) {
+			return;
+		}
+
+		if(!lockedBalance) return;
 
 		if(lockedBalance && availableBalance.lte(lockedBalance)) {
 			setBalanceErr('Insufficient balance.');
-			error+=1;
+			return;
 		}
 		if(ayeVoteValue && availableBalance.lte(ayeVoteValue) || nayVoteValue && availableBalance.lte(nayVoteValue) || abstainVoteValue && availableBalance.lte(abstainVoteValue) ) {
 			setBalanceErr('Insufficient balance.');
-			error+=1;
+			return;
 		}
 
 		const totalVoteValue = ayeVoteValue?.add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN);
 		if (totalVoteValue?.gte(availableBalance)) {
 			setBalanceErr('Insufficient balance.');
-			error+=1;
-		}
-		return error === 0;
-	};
-
-	const handleSubmit = async () => {
-
-		if(!validate()) return;
-
-		if (!api ||!apiReady) return;
-
-		if (!referendumId && referendumId !== 0) {
-			console.error('referendumId not set');
 			return;
 		}
 
@@ -519,7 +512,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										: null
 								}
 							</div>
-							{balanceErr.length > 0 && wallet  && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
+							{balanceErr.length > 0 && !wallet && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
 							{walletErr.error === 1 && !loadingStatus.isLoading && <Alert message={walletErr.message} description={walletErr.description} showIcon/>}
 							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 							{
@@ -578,7 +571,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 									<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0' htmlType='submit' disabled={!validate()}>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
 									</div>
 								</Form>
 							}
@@ -610,7 +603,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${!validate() && 'opacity-50'}`} htmlType='submit'>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
 									</div>
 								</Form>
 							}
@@ -649,7 +642,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className='w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0' htmlType='submit'>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
 									</div>
 								</Form>
 							}

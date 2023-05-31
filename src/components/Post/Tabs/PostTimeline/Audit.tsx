@@ -1,6 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState ,useContext } from 'react';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Radio } from 'antd';
@@ -11,7 +14,7 @@ import { NetworkContext } from '~src/context/NetworkContext';
 import PdfIcon from '~assets/icons/pdfs.svg';
 import YouTubeIcon from '~assets/icons/video.svg';
 import ReactPlayer from 'react-player';
-import NoDataFound  from '~assets/No audits.svg';
+import NoDataFound  from '~assets/no-audits.svg';
 import styled from 'styled-components';
 
 const DocumentContainer = styled.div`
@@ -133,6 +136,7 @@ const PostAudit = () => {
 	}
 
 	const networkModified = network.charAt(0).toUpperCase() + network.slice(1);
+
 	const productData = async () => {
 		try {
 			const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postData.postIndex}`);
@@ -169,6 +173,7 @@ const PostAudit = () => {
 	useEffect(() => {
 		productData();
 		videosData();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	// showing count of pdfs and videos
@@ -281,7 +286,7 @@ const PostAudit = () => {
 											</div>
 											<button onClick={() => downloadImage(item.download_url, 'image.png')}>
 												<ImageContainer>
-													<img className="img w-full" src={item.download_url} alt="PNG File" />
+													<img className="img " src={item.download_url} alt="PNG File" />
 												</ImageContainer>
 												<div className="flex justify-start p-2.5 bg-[#F6F7F9] text-small">
 													<PdfIcon className="mr-2" />

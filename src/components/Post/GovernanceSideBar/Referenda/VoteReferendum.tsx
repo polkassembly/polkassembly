@@ -512,7 +512,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										: null
 								}
 							</div>
-							{balanceErr.length > 0 && !wallet && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
+							{balanceErr.length > 0 && wallet && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
 							{walletErr.error === 1 && !loadingStatus.isLoading && <Alert message={walletErr.message} description={walletErr.description} showIcon/>}
 							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 							{

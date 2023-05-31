@@ -23,7 +23,7 @@ interface Props{
   user_id?: number;
 }
 interface IHistoryData extends ICommentHistory{
-  expand?: boolean;
+  expanded?: boolean;
 }
 
 const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress, username, user_id }: Props) => {
@@ -44,7 +44,7 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 		return {
 			children: (
 
-				<div className={`py-3 pl-3 pr-1 bg-[#FAFAFC] rounded-[4px] ml-2 max-sm:w-full max-sm:ml-0 ${item?.expand && 'active-timeline'} ${poppins.variable} ${poppins.className}`}>
+				<div className={`py-3 pl-3 pr-1 bg-[#FAFAFC] rounded-[4px] ml-2 max-sm:w-full max-sm:ml-0 ${item?.expanded && 'active-timeline'} ${poppins.variable} ${poppins.className}`}>
 					<div className='flex justify-between items-center'>
 
 						<div className='flex items-center'>
@@ -68,9 +68,9 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 						{item?.sentiment === 4 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-lg text-white  flex justify-center items-center min-[320px]:mr-2' ><SlightlyForIcon  className='min-[320px]:items-start'/></Dropdown>}
 						{item?.sentiment === 5 && <Dropdown overlayClassName='sentiment-hover' placement="topCenter" menu={{ items }} className='text-[20px] mr-[-1px] mb-[-1px] mt-[-2px] text-white  flex justify-center items-center min-[320px]:mr-2'><ForIcon  className='min-[320px]:items-start'/></Dropdown>}
 					</div>
-					<div className={`mt-2 text-[#243A57] text-sm px-[2px] font-normal ${!item?.expand && item?.content.length > 100 && 'truncate-content'} tracking-[0.01em] ${poppins.className} ${poppins.variable} leading-6 pr-2`}>
+					<div className={`mt-2 text-[#243A57] text-sm px-[2px] font-normal ${!item?.expanded && item?.content.length > 100 && 'truncate-content'} tracking-[0.01em] ${poppins.className} ${poppins.variable} leading-6 pr-2`}>
 						{historyData[index+1] ? <div>{difference?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'} ${text?.added && 'bg-[#fff3b3]' }`}>{text.value}</span>)}</div> : item?.content}</div>
-					{item?.content.length > 100 && <span onClick={() => handleExpand(index, !item?.expand)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expand ? 'Show less' : 'Show more'}</span>}
+					{item?.content.length > 100 && <span onClick={() => handleExpand(index, !item?.expanded)} className='text-xs cursor-pointer text-[#E5007A] font-medium mt-1'>{ item?.expanded ? 'Show less' : 'Show more'}</span>}
 				</div>),
 			dot: username && <UserAvatar
 				className='flex-none hidden sm:inline-block -mt-1 -mb-1'
@@ -79,10 +79,10 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 				id={user_id || 0}/>,
 			key: index };});
 
-	const handleExpand = (index: number, expand: boolean) => {
+	const handleExpand = (index: number, expanded: boolean) => {
 		const data = historyData?.map((item, idx) => {
 			if(idx === index){
-				return { ...item, expand: expand };
+				return { ...item, expanded: expanded };
 			}
 			return item;
 		});

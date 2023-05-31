@@ -50,6 +50,7 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 					text={'replied'}
 					username={username}
 					spam_users_count={reply.spam_users_count}
+					commentSource={reply.reply_source}
 				>
 					<UpdateLabel
 						created_at={created_at}

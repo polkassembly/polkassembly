@@ -109,6 +109,6 @@ exports.onAddressWritten = functions.region('europe-west1').firestore.document('
 			logger.info('Address indexed successfully:', { address });
 		})
 		.catch((error) => {
-			logger.error('Error indexing user:', { address, error });
+			logger.error('Error indexing address:', { address, error });
 		});
 });

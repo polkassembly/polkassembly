@@ -15,6 +15,7 @@ import messages from '~src/auth/utils/messages';
 import { checkReportThreshold } from '../../posts/on-chain-post';
 import _sendCommentReportMail from '~src/api-utils/_sendCommentReportMail';
 import _sendPostSpamReportMail from '~src/api-utils/_sendPostSpamReportMail';
+import _sendReplyReportMail from '~src/api-utils/_sendReplyReportMail';
 
 export interface IReportContentResponse {
 	message: string;
@@ -85,12 +86,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 			_sendPostSpamReportMail(network,strPostType,contentId);
 		}
 		if(type == 'comment' && checkReportThreshold(totalUsers) ){
-			_sendCommentReportMail(network,strPostType,contentId,type);
+			_sendCommentReportMail(network,strPostType,post_id,comment_id);
 		}
 		if(type == 'reply' && checkReportThreshold(totalUsers) ){
-			_sendCommentReportMail(network,strPostType,contentId,type);
+			_sendReplyReportMail(network,strPostType,post_id,comment_id,reply_id);
 		}
-		console.log(type , post_id , strPostType,comment_id,reply_id);
 		return res.status(200).json({ message: messages.CONTENT_REPORT_SUCCESSFUL, spam_users_count: checkReportThreshold(totalUsers) });
 	}).catch((error) => {
 		console.log(' Error while reporting content : ', error);

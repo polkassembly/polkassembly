@@ -17,7 +17,9 @@ import {
 	postSubscriptionMailTemplate,
 	reportContentEmailTemplate,
 	resetPasswordEmailTemplate,
-	spamCommentReport,
+	spamCommentReportTemplate,
+	spamPostReportTemplate,
+	spamReplyReportTemplate,
 	transferNoticeEmailTemplate,
 	transferNoticeMistakeEmailTemplate,
 	undoEmailChangeEmailTemplate,
@@ -184,7 +186,7 @@ export const sendCommentReportMail = (
 		return;
 	}
 
-	const text = ejs.render(spamCommentReport, {
+	const text = ejs.render(spamCommentReportTemplate, {
 		commentId,
 		commentUrl,
 		network,
@@ -196,12 +198,42 @@ export const sendCommentReportMail = (
 		html: text,
 		subject: 'Comment Spam Report',
 		text,
-		to: 'kartik@polkassembly.io'
+		to: 'hello@polkassembly.io,parambir@polkassembly.io'
 	};
 
 	sgMail.send(msg).catch(e =>
 		console.error('Comment Spam Report not sent', e));
-	console.log('mail sent');
+};
+export const sendReplyReportMail = (
+	postType: string,
+	postId: string,
+	commentId: string,
+	replyId:string,
+	commentUrl:string,
+	network:string ): void => {
+	if (!apiKey) {
+		console.warn('Reply Spam Report Email not sent due to missing API key');
+		return;
+	}
+
+	const text = ejs.render(spamReplyReportTemplate, {
+		commentId,
+		commentUrl,
+		network,
+		postId,
+		postType,
+		replyId
+	});
+	const msg = {
+		from: FROM,
+		html: text,
+		subject: 'Reply Spam Report',
+		text,
+		to: 'hello@polkassembly.io,parambir@polkassembly.io'
+	};
+
+	sgMail.send(msg).catch(e =>
+		console.error('Reply Spam Report not sent', e));
 };
 
 export const sendPostSpamReportMail = (
@@ -214,7 +246,7 @@ export const sendPostSpamReportMail = (
 		return;
 	}
 
-	const text = ejs.render(spamCommentReport, {
+	const text = ejs.render(spamPostReportTemplate, {
 		network,
 		postId,
 		postType,
@@ -225,7 +257,7 @@ export const sendPostSpamReportMail = (
 		html: text,
 		subject: 'Post Spam Report',
 		text,
-		to: 'kartik@polkassembly.io'
+		to: 'hello@polkassembly.io,parambir@polkassembly.io'
 	};
 
 	sgMail.send(msg).catch(e =>

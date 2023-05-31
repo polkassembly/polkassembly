@@ -39,12 +39,12 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 
 	return (
 		<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 h-[147px] flex ${className}`}>
-			<span className='font-medium text-center mr-2 flex-none w-[120px] text-[#334D6E] mt-5'>#{post_id}</span>
+			<span className='font-semibold text-center mr-2 flex-none w-[120px] text-[#243A57] mt-5'>#{post_id}</span>
 			<div className="flex-1 flex flex-col justify-between  mt-5">
 				<OnchainCreationLabel address={address} topic={topic} username={username}  />
 				<div className="flex lg:justify-between lg:items-start lg:flex-row flex-col-reverse">
 					<div className='mt-3 lg:mt-0'>
-						<h1 className='text-sidebarBlue font-semibold text-sm flex'>
+						<h1 className='text-[#243A57] font-medium text-sm flex'>
 							{title}
 						</h1>
 					</div>
@@ -73,23 +73,23 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							: null
 					}
 				</div>
-				<div className="mt-3 gap-2.5 font-medium text-navBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
+				<div className="mt-3 gap-2.5 font-medium text-[#243A57] text-xs flex flex-col lg:flex-row items-start lg:items-center">
 
 					<div className='flex items-center gap-x-2'>
 						<div className='flex items-center justify-center gap-x-1.5 mr-2'>
 							<LikeOutlined />
-							<span>{getFormattedLike(postReactionCount['👍'])}</span>
+							<span className='text-[#485F7D]'>{getFormattedLike(postReactionCount['👍'])}</span>
 						</div>
 
 						<div className='flex items-center justify-center gap-x-1.5 mr-2'>
 							<DislikeOutlined />
-							<span>{getFormattedLike(postReactionCount['👎'])}</span>
+							<span className='text-[#485F7D]'>{getFormattedLike(postReactionCount['👎'])}</span>
 						</div>
 
 						<div className='flex items-center'>
-							<CommentOutlined className='mr-1' /> {commentsCount}
+							<CommentOutlined className='mr-1 text-[#485F7D]' /> {commentsCount}
 						</div>
-						<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+						<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 
 						{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
 							(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >
@@ -99,7 +99,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
                 +{tags.length-2}
 						</span>}
 						</>}
-						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
+						{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #485F7D' }} />}
 						{relativeCreatedAt && <>
 							<div className='hidden lg:flex items-center'>
 								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
@@ -116,7 +116,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 			><div>
 					<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
 					<div className='flex gap-2 items-start flex-wrap'>{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
-						(<div key={index} className='rounded-xl px-[16px] py-[2px] border-navBlue border-solid border-[1px] font-normal text-xs text-navBlue' >
+						(<div key={index} className='rounded-xl px-[16px] py-[2px] font-normal text-xs text-[#243A57]' >
 							{tag}
 						</div>))}
 					</>}</div></div>

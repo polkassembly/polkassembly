@@ -86,13 +86,13 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 		<>
 			<SEOHead title='Discussions' network={network}/>
 			<div className='flex justify-between align-middle'>
-				<h1 className='dashboard-heading mt-1 flex'><DiscussionsIcon className='mr-1' />Latest Discussions({count})</h1>
+				<h1 className='text-[#243A57] text-2xl font-semibold mt-1 flex'><DiscussionsIcon className='mr-1' />Latest Discussions({count})</h1>
 				<button onClick={handleClick} className='outline-none border-none h-[40px] w-[120px] px-3 py-2 font-medium  leading-[20px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer -mt-1'>+ Add Post</button>
 			</div>
 			{/* Intro and Create Post Button */}
 			<div className='mt-[25.5px] flex flex-col md:flex-row md:items-center gap-4'>
 				<div className="flex-1 flex items-center rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] px-[20.5px] py-[17.5px]">
-					<p className="text-sidebarBlue text-sm md:text-base font-normal tracking-[0.01em] m-0 p-0">
+					<p className="text-[#243A57] text-sm md:text-base font-normal tracking-[0.01em] m-0 p-0">
 						This is the place to discuss all things polkadot. Anyone can start a new discussion.
 					</p>
 				</div>

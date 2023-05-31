@@ -38,11 +38,14 @@ module.exports = {
 				aye_green: 'var(--aye_green)',
 				nay_red: 'var(--nay_red)',
 				comment_bg: 'var(--comment_bg)'
+			},
+			screens: {
+				'xs': '320px'
 			}
+		},
+		plugins: [],
+		corePlugins: {
+			preflight: false
 		}
-	},
-	plugins: [],
-	corePlugins: {
-		preflight: false
 	}
 };

@@ -20,12 +20,8 @@ const TopicTag = ({ className, topic }: Props) => {
 
 export default styled(TopicTag)`
 	font-weight: 500;
-	background-color: var(--grey_primary);
 	color: white;
-	border-style: solid;
-	border-width: 1px;
-	border-radius: 0.2rem;
-	letter-spacing: 0.05rem;
+	border-radius: 4px;
 	text-transform: capitalize;
 
 	@media only screen and (max-width: 576px) {

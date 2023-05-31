@@ -68,11 +68,11 @@ const Referenda: FC<IReferendaProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Referenda' network={network}/>
-			<h1 className='dashboard-heading mb-4 md:mb-6 flex'><ReferendaIcon /> On Chain Referenda ({count})</h1>
+			<h1 className='text-[#243A57] text-2xl font-semibold mb-4 md:mb-6 flex'><ReferendaIcon /> On Chain Referenda ({count})</h1>
 
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row mb-4">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-[14px] w-full shadow-md mb-4">
+				<p className="text-[#243A57] text-sm md:text-base leading-5 font-medium bg-white p-4 md:p-8 rounded-[14px] w-full shadow-md mb-4">
 					This is the place to discuss on-chain referenda. On-chain posts are automatically generated as soon as they are created on the chain.
 					Only the proposer is able to edit them.
 				</p>

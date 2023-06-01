@@ -1,7 +1,6 @@
-// This file sets a custom webpack configuration to use your Next.js app
-// with Sentry.
-// https://nextjs.org/docs/api-reference/next.config.js/introduction
-// https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
 const { withSentryConfig } = require('@sentry/nextjs');
 
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
@@ -76,5 +75,5 @@ module.exports = nextConfig;
 module.exports = withSentryConfig(
   module.exports,
   { silent: true },
-  { hideSourcemaps: true },
+  { hideSourcemaps: true }
 );

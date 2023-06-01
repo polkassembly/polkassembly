@@ -239,7 +239,7 @@ const PostAudit = () => {
 							className={`${
 								selectedType === 'reports' ? 'bg-pink-50' : 'bg-transparent'
 							} absolute  pl-3 px-2 py-1 rounded-full`}>
-							<PdfIcon className="absolute  bg-cover bg-no-repeat bg-center rounded-full" />
+							<PdfIcon className="absolute  bg-cover bg-no-repeat bg-center rounded-full mt-[-2px]" />
 							<label className="text-#243A57 pl-8 ">Reports ({pdfCount})</label>
 						</Radio>
 						<Radio value="videos"

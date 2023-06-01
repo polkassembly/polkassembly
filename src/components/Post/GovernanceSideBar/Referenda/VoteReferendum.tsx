@@ -305,6 +305,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		}
 
 		if(!lockedBalance) return;
+		if(availableBalance.lte(lockedBalance)) return;
 
 		if(lockedBalance && availableBalance.lte(lockedBalance)) {
 			setBalanceErr('Insufficient balance.');

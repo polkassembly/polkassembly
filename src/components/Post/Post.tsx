@@ -27,9 +27,13 @@ import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
 import SpamAlert from '~src/ui-components/SpamAlert';
-import PostAudit from './Tabs/PostTimeline/Audit';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
+const PostAudit = dynamic(() => import('./Tabs/PostTimeline/Audit'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

@@ -21,7 +21,7 @@ const BlocksToTime = ({ blocks, className }:Props ) => {
 	return (
 		<div className={className}>
 			<>
-				{blockToTime(blocks, network, blocktime)} ({blocks} blocks)
+				{blockToTime(blocks, network, blocktime)['time']} ({blocks} blocks)
 			</>
 		</div>
 	);

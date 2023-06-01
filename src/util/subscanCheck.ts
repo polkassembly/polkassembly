@@ -16,19 +16,25 @@ export function isPolkaholicSupport(network: string) {
 	return ['pendulum', 'amplitude'].includes(network);
 }
 
+export function isCereSupport(network: string) {
+	return ['cere'].includes(network);
+}
+
 export const getBlockLink = (network: string) => {
 	let url = chainProperties[network]?.externalLinks;
 	if (url.includes('subscan')) {
-		url = `${url.replace('.api', '')}/block`;
+		url = `${url.replace('.api', '')}/block/`;
 	}
 	else if(isPolkaholicSupport(network)){
-		url += `/block/${network}`;
+		url += `/block/${network}/`;
 	}
 	else if(isExplorerSupport(network)){
-		url += '/blocks';
+		url += '/blocks/';
+	} else if (isCereSupport(network)) {
+		url += '/block?blockNumber=';
 	}
 	else {
-		url += '/block';
+		url += '/block/';
 	}
 	return url;
 };

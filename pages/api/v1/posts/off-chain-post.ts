@@ -78,7 +78,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 
 		const topic = data?.topic;
 		const topic_id = data?.topic_id;
-		const spam_users_count = await getSpamUsersCount(network, proposalType, Number(postId));
+		const spam_users_count = await getSpamUsersCount(network, proposalType, Number(postId), 'post');
 		const tags = data?.tags || [];
 		const gov_type = data?.gov_type;
 		const history = data?.history ? data?.history.map((item: any) => { return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };}) : [];
@@ -176,7 +176,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			const commentPromises = post.timeline.map(async (timeline: any) => {
 				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
 				const commentsSnapshot = await postDocRef.collection('comments').get();
-				const comments = await getComments(commentsSnapshot, postDocRef);
+				const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
 				return comments;
 			});
 			const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
@@ -193,10 +193,10 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 				const { id, type } = post.post_link;
 				const postDocRef = postsByTypeRef(network, type).doc(String(id));
 				const commentsSnapshot = await postDocRef.collection('comments').get();
-				post.comments = await getComments(commentsSnapshot, postDocRef);
+				post.comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
 			}
 			const commentsSnapshot = await postDocRef.collection('comments').get();
-			const comments = await getComments(commentsSnapshot, postDocRef);
+			const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
 			if (post.comments && Array.isArray(post.comments)) {
 				post.comments = post.comments.concat(comments);
 			} else {

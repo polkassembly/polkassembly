@@ -7,7 +7,7 @@ import { useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 
 import { ProposalType } from '~src/global/proposalType';
-import { isExplorerSupport, isPolkaholicSupport, isSubscanSupport } from '~src/util/subscanCheck';
+import { isCereSupport, isExplorerSupport, isPolkaholicSupport, isSubscanSupport } from '~src/util/subscanCheck';
 
 interface IExternalLinksProps {
 	className?: string
@@ -19,7 +19,8 @@ interface IExternalLinksProps {
 enum EService {
 	EXPLORER = 'explorer',
 	SUBSCAN = 'subscan',
-	POLKAHOLIC = 'polkaholic'
+	POLKAHOLIC = 'polkaholic',
+	CERE = 'cere'
 }
 
 const getService = (network: string) => {
@@ -29,6 +30,8 @@ const getService = (network: string) => {
 		return EService.EXPLORER;
 	}else if (isPolkaholicSupport(network)) {
 		return EService.POLKAHOLIC;
+	} else if (isCereSupport(network)) {
+		return EService.CERE;
 	}
 };
 
@@ -94,6 +97,19 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 
 			return {
 				label: 'Show in Polkaholic',
+				url
+			};
+		},
+		[EService.CERE]: (network: string) => {
+			let url = '';
+			const host = chainProperties[network].externalLinks + '/block';
+
+			if (blockNumber !== undefined && host) {
+				url = `${host}?blockNumber=${blockNumber}`;
+			}
+
+			return {
+				label: 'Show in Cere',
 				url
 			};
 		}

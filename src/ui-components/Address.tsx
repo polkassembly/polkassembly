@@ -167,7 +167,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 				}
 			}}>
 				{displayInline
-					// When inline disregard the extension name.
+				// When inline disregard the extension name.
 					? popupContent
 						? <Space>
 							{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}

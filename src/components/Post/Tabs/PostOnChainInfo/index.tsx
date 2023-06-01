@@ -15,7 +15,6 @@ import styled from 'styled-components';
 import { useNetworkContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { useCurrentBlock } from '~src/hooks';
-import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { getBlockLink } from '~src/util/subscanCheck';
 
 import OnchainInfoWrapper from './OnchainInfoWrapper';
@@ -116,18 +115,12 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 
 	const formattedBlockToTime = (blockNo: number) => {
 		if(!currentBlock) return;
+		const { seconds } = blockToTime(currentBlock.toNumber() - blockNo, network);
 
-		const time = blockToTime(currentBlock.toNumber() - blockNo, network);
-		const daysTimeObj = getDaysTimeObj(time);
-		const { d, h, m } = daysTimeObj;
-
-		if (d === 0 && h === 0 && m === 0) {
+		if (seconds === 0) {
 			return dayjs.utc().format('DD MMM YYYY');
 		}
-		const days = d;
-		const hours = h;
-		const minutes = m;
-		const duration = dayjs.duration({ 'days': days, 'hours': hours, 'minutes': minutes });
+		const duration = dayjs.duration({ seconds });
 		const date = dayjs.utc().subtract(duration).format('DD MMM YYYY');
 		return date;
 	};
@@ -184,7 +177,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								{String(enactment_after_block).length < 8 ? enactment_after_block :
 									<div>
 										<span>{formattedBlockToTime(Number(enactment_after_block))}</span>
-										<a href={`${url}/${enactment_after_block}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{enactment_after_block}</a>
+										<a href={`${url}${enactment_after_block}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{enactment_after_block}</a>
 									</div>
 								}
 							</div>
@@ -195,7 +188,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								{String(enactment_at_block).length < 8 ? enactment_at_block :
 									<div>
 										<span>{formattedBlockToTime(Number(enactment_at_block))}</span>
-										<a href={`${url}/${enactment_at_block}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{enactment_at_block}</a>
+										<a href={`${url}${enactment_at_block}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{enactment_at_block}</a>
 									</div>
 								}
 							</div>
@@ -206,7 +199,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								{`${deciding.since}`.length < 8 ? deciding.since :
 									<div>
 										<span>{formattedBlockToTime(Number(deciding.since))}</span>
-										<a href={`${url}/${deciding.since}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{deciding.since}</a>
+										<a href={`${url}${deciding.since}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{deciding.since}</a>
 									</div>
 								}
 							</div>
@@ -217,7 +210,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								{`${deciding.confirming}`.length < 8 ? deciding.confirming :
 									<div>
 										<span>{formattedBlockToTime(Number(deciding.confirming))}</span>
-										<a href={`${url}/${deciding.confirming}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{deciding.confirming}</a>
+										<a href={`${url}${deciding.confirming}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{deciding.confirming}</a>
 									</div>
 								}
 							</div>

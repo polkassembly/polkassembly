@@ -33,7 +33,7 @@ const ProposalDisplay: FC<IProposalDisplayProps> = (props) => {
 			isLoading: true
 		}));
 		if (!api || !apiReady) return;
-		setDeposit(api.consts.democracy.minimumDeposit.toString());
+		setDeposit(api.consts.democracy?.minimumDeposit?.toString() || '0');
 		setLoadingStatus((prev) => ({
 			...prev,
 			isLoading: false

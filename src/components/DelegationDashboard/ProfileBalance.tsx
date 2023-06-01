@@ -189,7 +189,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				</div>
 			</div>
 		</div>
-		<div className='w-[195px] mr-6'>
+		<div className='w-[195px] mr-6 -mt-6'>
 			{ accounts.length > 0 && <AccountSelectionForm
 				accounts={accounts}
 				address={delegationDashboardAddress}
@@ -199,6 +199,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				inputClassName='text-[#fff] border-[1.5px] border-[#D2D8E0] bg-[#850c4d] text-sm border-solid px-3 rounded-[8px] py-[6px]'
 				isSwitchButton={true}
 				setSwitchModalOpen={setOpenModal}
+				withoutInfo={true}
 			/>}</div>
 		<DelegationWalletConnectModal open={openModal} setOpen={setOpenModal} closable={true}/>
 	</div>;

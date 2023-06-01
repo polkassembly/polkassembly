@@ -29,37 +29,37 @@ import { IVerified } from '~src/auth/types';
 import SpamAlert from '~src/ui-components/SpamAlert';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
-	loading: () => <Skeleton active />,
+	loading: () => <Skeleton active /> ,
 	ssr: false
 });
 
 const PostAudit = dynamic(() => import('./Tabs/PostTimeline/Audit'), {
-	loading: () => <Skeleton active />,
+	loading: () => <Skeleton active /> ,
 	ssr: false
 });
 
 const GovernanceSideBar = dynamic(() => import('./GovernanceSideBar'), {
-	loading: () => <Skeleton active />,
+	loading: () => <Skeleton active /> ,
 	ssr: false
 });
 
 const Poll = dynamic(() => import('./Poll'), {
-	loading: () => <Skeleton active />,
+	loading: () => <Skeleton active /> ,
 	ssr: false
 });
 
 const PostTimeline = dynamic(() => import('./Tabs/PostTimeline'), {
-	loading: () => <Skeleton active />,
+	loading: () => <Skeleton active /> ,
 	ssr: false
 });
 
 const ClaimPayoutModal = dynamic(() => import('./ClaimPayoutModal'), {
-	loading: () => <Skeleton active />,
+	loading: () => <Skeleton active /> ,
 	ssr: false
 });
 
 const PostOnChainInfo = dynamic(() => import('./Tabs/PostOnChainInfo'), {
-	loading: () => <Skeleton active />,
+	loading: () => <Skeleton active /> ,
 	ssr: false
 });
 
@@ -104,36 +104,36 @@ const Post: FC<IPostProps> = (props) => {
 	const isOffchainPost = !isOnchainPost;
 
 	useEffect(() => {
-		if (!post) return;
+		if(!post) return;
 
 		const { post_id, proposer } = post;
 
-		if (isOffchainPost) {
+		if(isOffchainPost) {
 			setCanEdit(post.user_id === id);
 			return;
 		}
 
 		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
 		const network = getNetwork();
-		if (network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23) {
+		if(network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23) {
 			isProposer = addresses?.includes('0xbb1e1722513a8fa80f7593617bb0113b1258b7f1');
 		}
-		if (network == 'moonriver' && proposalType == ProposalType.REFERENDUM_V2 && post_id == 3) {
+		if(network == 'moonriver' && proposalType == ProposalType.REFERENDUM_V2 && post_id == 3) {
 			isProposer = addresses?.includes('0x16095c509f728721ad19a51704fc39116157be3a');
 		}
 
 		const substrateAddress = getSubstrateAddress(proposer);
-		if (!isProposer || !substrateAddress) return;
+		if(!isProposer || !substrateAddress) return;
 
 		(async () => {
 			//check if proposer address is verified
-			const { data, error: fetchError } = await nextApiClientFetch<IVerified>('api/v1/auth/data/isAddressVerified', {
+			const { data , error: fetchError } = await nextApiClientFetch<IVerified>( 'api/v1/auth/data/isAddressVerified', {
 				address: substrateAddress
 			});
 
-			if (fetchError || !data) return console.log('error checking verified address : ', fetchError);
+			if(fetchError || !data) return console.log('error checking verified address : ', fetchError);
 
-			if (data.verified && !isEditing) {
+			if(data.verified && !isEditing) {
 				setCanEdit(true);
 			}
 		})();
@@ -181,7 +181,7 @@ const Post: FC<IPostProps> = (props) => {
 				const link = getSinglePostLinkFromProposalType(proposalType);
 				setRedirection({
 					link: `/${link}/${nextPost.index}`,
-					text: `${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} ${proposalType === ProposalType.ANNOUNCEMENT ? '' : '#' + nextPost.index}`
+					text:`${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} ${proposalType === ProposalType.ANNOUNCEMENT ? '' : '#'+nextPost.index}`
 				});
 			} else {
 				setRedirection({
@@ -201,9 +201,9 @@ const Post: FC<IPostProps> = (props) => {
 	}
 
 	const { post_id, hash, status: postStatus } = post;
-	const onchainId = proposalType === ProposalType.TIPS ? hash : post_id;
+	const onchainId = proposalType === ProposalType.TIPS? hash :post_id;
 
-	const Sidebar = ({ className }: { className?: string }) => {
+	const Sidebar = ({ className } : {className?:string }) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:w-4/12 mx-auto`}>
 				<GovernanceSideBar
@@ -226,7 +226,7 @@ const Post: FC<IPostProps> = (props) => {
 						/>
 						<OptionPoll
 							proposalType={proposalType}
-							postId={proposalType === ProposalType.TIPS ? post.hash : post.post_id}
+							postId={proposalType === ProposalType.TIPS? post.hash: post.post_id}
 							canEdit={post.user_id === id}
 						/>
 					</>
@@ -244,7 +244,7 @@ const Post: FC<IPostProps> = (props) => {
 		}
 	</>;
 
-	const handleOpenSidebar = (address: string) => {
+	const handleOpenSidebar = (address:string) => {
 		setSidebarOpen(true);
 		setProposerAddress(address);
 	};
@@ -346,7 +346,7 @@ const Post: FC<IPostProps> = (props) => {
 			description: post?.description,
 			history: post?.history || [],
 			last_edited_at: post?.last_edited_at,
-			postIndex: proposalType === ProposalType.TIPS ? post.hash : post.post_id,
+			postIndex: proposalType === ProposalType.TIPS? post.hash: post.post_id ,
 			postType: proposalType,
 			post_link: post?.post_link,
 			post_reactions: post?.post_reactions,
@@ -380,7 +380,7 @@ const Post: FC<IPostProps> = (props) => {
 							</Link>
 						}
 
-						{post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
+						{ post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
 							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading flex items-center gap-x-2'>
 								<span>The child bounty payout is ready to be claimed</span>
 								<ClaimPayoutModal
@@ -427,14 +427,14 @@ const Post: FC<IPostProps> = (props) => {
 						</div>
 					</div>
 
-					{!isEditing ? <Sidebar className='hidden xl:block' /> : null}
+					{!isEditing ? <Sidebar className='hidden xl:block' />: null}
 				</div>
 
 				<SidebarRight
 					open={sidebarOpen}
 					closeSidebar={() => setSidebarOpen(false)}
 				>
-					{proposerAddress && <OtherProposals proposerAddress={proposerAddress} currPostOnchainID={Number(onchainId)} closeSidebar={() => setSidebarOpen(false)} />}
+					{ proposerAddress && <OtherProposals proposerAddress={proposerAddress} currPostOnchainID={Number(onchainId)} closeSidebar={() => setSidebarOpen(false)} />}
 				</SidebarRight>
 			</>
 		</PostDataContextProvider>
@@ -442,4 +442,3 @@ const Post: FC<IPostProps> = (props) => {
 };
 
 export default Post;
-

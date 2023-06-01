@@ -16,6 +16,7 @@ import YouTubeIcon from '~assets/icons/video.svg';
 import ReactPlayer from 'react-player';
 import NoDataFound  from '~assets/no-audits.svg';
 import styled from 'styled-components';
+// import Image from 'next/image';
 
 const DocumentContainer = styled.div`
 .react-pdf__Page {
@@ -207,7 +208,7 @@ const PostAudit = () => {
 	const downloadFile = (url: string) => {
 		const link = document.createElement('a');
 		link.href = url;
-		link.target = '_blank';
+		link.target = '_self';
 		link.download = '';
 		document.body.appendChild(link);
 		link.click();
@@ -247,7 +248,7 @@ const PostAudit = () => {
 								selectedType ==='videos' ? 'bg-pink-50' : 'bg-transparent'
 							} pl-3 px-2 py-1 ml-40 rounded-full`}>
 							<YouTubeIcon className="absolute mt-1  bg-cover bg-no-repeat bg-center" />
-							<label className="text-#243A57 pl-8">Videos({videoCount})</label>
+							<label className="text-#243A57 pl-8">Videos ({videoCount})</label>
 						</Radio>
 					</Radio.Group>
 				</div>
@@ -265,7 +266,7 @@ const PostAudit = () => {
 												<ClockCircleOutlined className="mx-2" />
 												<span>{formatDate(item.name.split(' - ')[1])}</span>
 											</div>
-											<a href={item.download_url} target="_blank" download onClick={() => downloadFile(item.download_url)} rel="noreferrer">
+											<a download onClick={() => downloadFile(item.download_url)} rel="noreferrer">
 												<DocumentContainer>
 													<Document file={item.download_url} onLoadSuccess={onDocumentLoadSuccess}>
 														<Page renderAnnotationLayer={false} renderTextLayer={false} renderForms={false} pageNumber={1} />
@@ -286,9 +287,9 @@ const PostAudit = () => {
 											</div>
 											<button onClick={() => downloadImage(item.download_url, 'image.png')}>
 												<ImageContainer>
-													<img className="img " src={item.download_url} alt="PNG File" />
+													<img className="img " src={item.download_url} alt="PNG File" width={100} height={100}/>
 												</ImageContainer>
-												<div className="flex justify-start p-2.5 bg-[#F6F7F9] text-small">
+												<div className="flex justify-start p-2.5 bg-[#F6F7F9] text-small ">
 													<PdfIcon className="mr-2" />
 													{item.name}
 												</div>

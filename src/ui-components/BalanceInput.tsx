@@ -95,7 +95,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 					message: 'Invalid Balance',
 					validator(rule, value, callback) {
 
-						if (callback && (isNaN(Number(value)) || (Number(value) !== 0 && chainProperties[network]?.tokenDecimals  < (value?.split('.')?.[1].length || 0)))){
+						if (callback && (isNaN(Number(value)) || (Number(value) !== 0 && (value?.split('.')?.[1]?.length && chainProperties[network]?.tokenDecimals  < (value?.split('.')?.[1].length))))){
 							callback(rule?.message?.toString());
 						}else {
 							callback();

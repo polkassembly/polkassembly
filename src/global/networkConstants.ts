@@ -427,7 +427,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: null,
-		externalLinks: '',
+		externalLinks: 'https://stats.cere.network',
 		gTag: 'G-7E14M1ZSCB',
 		rpcEndpoints: []
 	},

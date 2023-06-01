@@ -25,6 +25,9 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 		objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
 		postId,
 		network,
+    created_at: post?.created_at?.toData?.() || new Date(),
+    last_comment_at: post?.last_comment_at?.toData?.() || new Date(),
+    last_edited_at: post?.last_edited_at?.toData?.() || new Date(),
 		postType,
 		...post
 	};
@@ -110,5 +113,107 @@ exports.onAddressWritten = functions.region('europe-west1').firestore.document('
 		})
 		.catch((error) => {
 			logger.error('Error indexing address:', { address, error });
+		});
+});
+
+exports.onCommentWritten = functions.region('europe-west1').firestore.document('networks/{network}/post_types/{postType}/posts/{postId}/comments/{commentId}').onWrite(async (change, context) => {
+	const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID;
+	const ALGOLIA_WRITE_API_KEY = process.env.ALGOLIA_WRITE_API_KEY;
+
+	if (!ALGOLIA_APP_ID || !ALGOLIA_WRITE_API_KEY) return;
+
+	const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_WRITE_API_KEY);
+	const index = algoliaClient.initIndex('polkassembly_posts');
+
+	const { network, postType, postId, commentId } = context.params;
+	logger.info('Comment written: ', { network, postType, postId, commentId });
+
+  const post = change.after.data();
+
+	const commentsCountSnapshot = await admin.firestore().collection('networks').doc(network).collection('post_types').doc(postType).collection('posts').doc(postId).collection('comments').count().get();
+	const commentsCount = commentsCountSnapshot.data().count;
+	// Update the Algolia index
+
+  // Create an object to be indexed by Algolia
+	const postRecord = {
+		objectID: `${network}_${postType}_${postId}_${commentsCount}`, // Unique identifier for the object
+		postId,
+		network,
+    created_at: post?.created_at?.toData?.() || new Date(),
+    last_comment_at: post?.last_comment_at?.toData?.() || new Date(),
+    last_edited_at: post?.last_edited_at?.toData?.() || new Date(),
+		postType,
+		...post
+	};
+
+	// CHECK SYNTAX
+	index
+		.partialUpdateObject({...postRecord, commentsCount})
+		.then(() => {
+			logger.info('Post indexed successfully:', { postId });
+		})
+		.catch((error) => {
+			logger.error('Error indexing post:', { postId, error });
+		});
+});
+
+exports.onReactionWritten = functions.region('europe-west1').firestore.document('networks/{network}/post_types/{postType}/posts/{postId}/post_reactions/{reactionId}').onWrite(async (change, context) => {
+	const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID;
+	const ALGOLIA_WRITE_API_KEY = process.env.ALGOLIA_WRITE_API_KEY;
+
+	if (!ALGOLIA_APP_ID || !ALGOLIA_WRITE_API_KEY) return;
+
+	const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_WRITE_API_KEY);
+	const index = algoliaClient.initIndex('polkassembly_posts');
+
+	const { network, postType, postId, reactionId } = context.params;
+	logger.info('Comment written: ', { network, postType, postId, reactionId });
+
+	const firestore_db = admin.firestore();
+
+	const reactionData = change.after.data();
+	if (!reactionData) return;
+
+	const reactionCountSnapshot = await firestore_db.collection('networks')
+		.doc(network)
+		.collection('post_types')
+		.doc(postType)
+		.collection('posts')
+		.doc(postId)
+		.collection('post_reactions')
+		.where('reaction', '==', reactionData.reaction)
+		.count()
+		.get();
+
+	const reactionCount = reactionCountSnapshot.data().count;
+	// Update the Algolia index
+
+  const post = change.after.data();
+ // Create an object to be indexed by Algolia
+	const postRecord = {
+		objectID: `${network}_${postType}_${postId}_${reactionCount}`, // Unique identifier for the object
+		postId,
+		network,
+    created_at: post?.created_at?.toData?.() || new Date(),
+    last_comment_at: post?.last_comment_at?.toData?.() || new Date(),
+    last_edited_at: post?.last_edited_at?.toData?.() || new Date(),
+		postType,
+		...post
+	};
+
+
+	const updatedObject = {
+		...postRecord, // get from algolia
+		[reactionData.reaction]: reactionCount
+	};
+
+	// CHECK SYNTAX
+	index
+		.partialUpdateObject(updatedObject)
+		.then(() => {
+			logger.info('Post indexed successfully:', { postId });
+		})
+		.catch((error) => {
+			logger.error('Error indexing post:', { postId, error });
 		});
 });

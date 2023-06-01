@@ -16,7 +16,6 @@ import YouTubeIcon from '~assets/icons/video.svg';
 import ReactPlayer from 'react-player';
 import NoDataFound  from '~assets/no-audits.svg';
 import styled from 'styled-components';
-// import Image from 'next/image';
 
 const DocumentContainer = styled.div`
 .react-pdf__Page {
@@ -241,14 +240,14 @@ const PostAudit = () => {
 								selectedType === 'reports' ? 'bg-pink-50' : 'bg-transparent'
 							} absolute  pl-3 px-2 py-1 rounded-full`}>
 							<PdfIcon className="absolute  bg-cover bg-no-repeat bg-center rounded-full mt-[-2px]" />
-							<label className="text-#243A57 pl-8 ">Reports ({pdfCount})</label>
+							<label className="text-[#243A57] pl-8 ">Reports ({pdfCount})</label>
 						</Radio>
 						<Radio value="videos"
 							className={`${
 								selectedType ==='videos' ? 'bg-pink-50' : 'bg-transparent'
 							} pl-3 px-2 py-1 ml-40 rounded-full`}>
 							<YouTubeIcon className="absolute mt-1  bg-cover bg-no-repeat bg-center" />
-							<label className="text-#243A57 pl-8">Videos ({videoCount})</label>
+							<label className="text-[#243A57] pl-8">Videos ({videoCount})</label>
 						</Radio>
 					</Radio.Group>
 				</div>

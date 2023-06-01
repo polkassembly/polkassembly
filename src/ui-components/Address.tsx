@@ -137,7 +137,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 			getKiltName();
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [api, apiReady, network]);
 
 	const t1 = kiltName || mainDisplay || (isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr);
 	const t2 = extensionName || mainDisplay;

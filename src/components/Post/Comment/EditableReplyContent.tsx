@@ -290,7 +290,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 									</Button>
 								}
 								{id === userId && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>}
-								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} type='comment' contentId={commentId + '#' + replyId} />}
+								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} type='reply' contentId={replyId} />}
 								{reply.reply_source !== 'subsquare' && id && !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>}
 								{reply.reply_source === 'subsquare' && (
 									<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>

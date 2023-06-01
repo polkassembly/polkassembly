@@ -275,6 +275,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			console.error('lockedBalance not set');
 			return;
 		}
+		if(availableBalance.lte(lockedBalance)) return;
 
 		// const web3 = new Web3(process.env.REACT_APP_WS_PROVIDER || 'wss://wss.testnet.moonbeam.network');
 		let web3 = null;
@@ -390,7 +391,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[100%]'
 				onClick={openModal}
 			>
-				{lastVote == null || lastVote == undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }
+				{lastVote == null || lastVote == undefined ? 'Cast Vote Now' : 'Cast Vote Again' }
 			</Button>
 			<Modal
 				open={showModal}

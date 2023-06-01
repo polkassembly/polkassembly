@@ -84,7 +84,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 				{
 					message: 'Lock Balance must be greater than 0.',
 					validator(rule, value, callback) {
-						if (callback && Number(value) <= 0 ){
+						if (callback && value.length && Number(value) <= 0 ){
 							callback(rule?.message?.toString());
 						}else {
 							callback();

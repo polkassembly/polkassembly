@@ -275,6 +275,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			console.error('lockedBalance not set');
 			return;
 		}
+		if(availableBalance.lte(lockedBalance)) return;
 
 		// const web3 = new Web3(process.env.REACT_APP_WS_PROVIDER || 'wss://wss.testnet.moonbeam.network');
 		let web3 = null;

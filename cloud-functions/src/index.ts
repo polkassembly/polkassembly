@@ -25,9 +25,9 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 		objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
 		postId,
 		network,
-    created_at: post?.created_at?.toData?.() || new Date(),
-    last_comment_at: post?.last_comment_at?.toData?.() || new Date(),
-    last_edited_at: post?.last_edited_at?.toData?.() || new Date(),
+		created_at: post?.created_at?.toDate?.() || new Date(),
+		last_comment_at: post?.last_comment_at?.toData?.() || new Date(),
+		last_edited_at: post?.last_edited_at?.toData?.() || new Date(),
 		postType,
 		...post
 	};
@@ -128,27 +128,27 @@ exports.onCommentWritten = functions.region('europe-west1').firestore.document('
 	const { network, postType, postId, commentId } = context.params;
 	logger.info('Comment written: ', { network, postType, postId, commentId });
 
-  const post = change.after.data();
+	const post = change.after.data();
 
 	const commentsCountSnapshot = await admin.firestore().collection('networks').doc(network).collection('post_types').doc(postType).collection('posts').doc(postId).collection('comments').count().get();
 	const commentsCount = commentsCountSnapshot.data().count;
 	// Update the Algolia index
 
-  // Create an object to be indexed by Algolia
-	const postRecord = {
-		objectID: `${network}_${postType}_${postId}_${commentsCount}`, // Unique identifier for the object
-		postId,
-		network,
-    created_at: post?.created_at?.toData?.() || new Date(),
-    last_comment_at: post?.last_comment_at?.toData?.() || new Date(),
-    last_edited_at: post?.last_edited_at?.toData?.() || new Date(),
-		postType,
-		...post
-	};
+	// Create an object to be indexed by Algolia
+	// const postRecord = {
+	// 	objectID: `${network}_${postType}_${postId}_${commentsCount}`, // Unique identifier for the object
+	// 	postId,
+	// 	network,
+	// 	created_at: post?.created_at?.toData?.() || new Date(),
+	// 	last_comment_at: post?.last_comment_at?.toData?.() || new Date(),
+	// 	last_edited_at: post?.last_edited_at?.toData?.() || new Date(),
+	// 	postType,
+	// 	...post
+	// };
 
 	// CHECK SYNTAX
 	index
-		.partialUpdateObject({...postRecord, commentsCount})
+		.partialUpdateObject({...post, commentsCount})
 		.then(() => {
 			logger.info('Post indexed successfully:', { postId });
 		})
@@ -188,22 +188,22 @@ exports.onReactionWritten = functions.region('europe-west1').firestore.document(
 	const reactionCount = reactionCountSnapshot.data().count;
 	// Update the Algolia index
 
-  const post = change.after.data();
+	const post = change.after.data();
  // Create an object to be indexed by Algolia
-	const postRecord = {
-		objectID: `${network}_${postType}_${postId}_${reactionCount}`, // Unique identifier for the object
-		postId,
-		network,
-    created_at: post?.created_at?.toData?.() || new Date(),
-    last_comment_at: post?.last_comment_at?.toData?.() || new Date(),
-    last_edited_at: post?.last_edited_at?.toData?.() || new Date(),
-		postType,
-		...post
-	};
+	// const postRecord = {
+	// 	objectID: `${network}_${postType}_${postId}_${reactionCount}`, // Unique identifier for the object
+	// 	postId,
+	// 	network,
+	// 	created_at: post?.created_at?.toData?.() || new Date(),
+	// 	last_comment_at: post?.last_comment_at?.toData?.() || new Date(),
+	// 	last_edited_at: post?.last_edited_at?.toData?.() || new Date(),
+	// 	postType,
+	// 	...post
+	// };
 
 
 	const updatedObject = {
-		...postRecord, // get from algolia
+		...post, // get from algolia
 		[reactionData.reaction]: reactionCount
 	};
 

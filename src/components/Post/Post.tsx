@@ -115,10 +115,10 @@ const Post: FC<IPostProps> = (props) => {
 
 		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
 		const network = getNetwork();
-		if(network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23) {
+		if(network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23){
 			isProposer = addresses?.includes('0xbb1e1722513a8fa80f7593617bb0113b1258b7f1');
 		}
-		if(network == 'moonriver' && proposalType == ProposalType.REFERENDUM_V2 && post_id == 3) {
+		if(network == 'moonriver' && proposalType == ProposalType.REFERENDUM_V2 && post_id == 3){
 			isProposer = addresses?.includes('0x16095c509f728721ad19a51704fc39116157be3a');
 		}
 
@@ -137,7 +137,7 @@ const Post: FC<IPostProps> = (props) => {
 				setCanEdit(true);
 			}
 		})();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [addresses, id, isEditing, post, proposalType]);
 
 	useEffect(() => {
@@ -203,7 +203,7 @@ const Post: FC<IPostProps> = (props) => {
 	const { post_id, hash, status: postStatus } = post;
 	const onchainId = proposalType === ProposalType.TIPS? hash :post_id;
 
-	const Sidebar = ({ className } : {className?:string }) => {
+	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:w-4/12 mx-auto`}>
 				<GovernanceSideBar
@@ -373,11 +373,11 @@ const Post: FC<IPostProps> = (props) => {
 						}
 
 						{!isEditing && isOnchainPost && redirection.link &&
-							<Link href={redirection.link}>
-								<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-									This proposal is now <span className='text-pink_primary'>{redirection.text}</span>
-								</div>
-							</Link>
+						<Link href={redirection.link}>
+							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
+								This proposal is now <span className='text-pink_primary'>{redirection.text}</span>
+							</div>
+						</Link>
 						}
 
 						{ post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
@@ -391,26 +391,25 @@ const Post: FC<IPostProps> = (props) => {
 						)}
 						{
 							proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&
-							<Link href={`/bounty/${post.parent_bounty_index}`}>
-								<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-									This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
-								</div>
-							</Link>
+						<Link href={`/bounty/${post.parent_bounty_index}`}>
+							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
+								This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
+							</div>
+						</Link>
 						}
 
 						{
 							proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) &&
-							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-								This grant will be closed in <span className='text-pink_primary'>{
-									formatDuration(duration)
-								}</span>
-							</div>
+						<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
+							This grant will be closed in <span className='text-pink_primary'>{
+								formatDuration(duration)
+							}</span>
+						</div>
 						}
 
 						{/* Post Content */}
 						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-md w-full mb-6'>
-							{isEditing &&
-								<EditablePostContent toggleEdit={toggleEdit} />}
+							{isEditing && <EditablePostContent toggleEdit={toggleEdit} />}
 
 							{!isEditing && <>
 								<PostHeading
@@ -434,7 +433,7 @@ const Post: FC<IPostProps> = (props) => {
 					open={sidebarOpen}
 					closeSidebar={() => setSidebarOpen(false)}
 				>
-					{ proposerAddress && <OtherProposals proposerAddress={proposerAddress} currPostOnchainID={Number(onchainId)} closeSidebar={() => setSidebarOpen(false)} />}
+					{ proposerAddress && <OtherProposals proposerAddress={proposerAddress} currPostOnchainID={Number(onchainId)} closeSidebar={() => setSidebarOpen(false)} /> }
 				</SidebarRight>
 			</>
 		</PostDataContextProvider>

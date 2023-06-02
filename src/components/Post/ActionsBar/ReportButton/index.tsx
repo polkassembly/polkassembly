@@ -89,6 +89,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 			setFormDisabled(false);
 			form.setFieldValue('comments', '');
 		}
+
 		setLoading(false);
 	};
 

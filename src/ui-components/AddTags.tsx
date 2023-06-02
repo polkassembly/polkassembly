@@ -35,7 +35,7 @@ const AddTags=({ tags,setTags,className }:Props) => {
 
 	useEffect(() => {
 
-		inputValue.length >= 20 ? setCharLimitReached(true) : setCharLimitReached(false);
+		inputValue.length >= 65 ? setCharLimitReached(true) : setCharLimitReached(false);
 
 		allTags.length === 0 && getData();
 

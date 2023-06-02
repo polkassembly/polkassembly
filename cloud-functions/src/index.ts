@@ -1,9 +1,16 @@
 import algoliasearch from 'algoliasearch';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import fetchSubsquid from '~src/util/fetchSubsquid';
 
 admin.initializeApp();
 const logger = functions.logger;
+
+const GET_PROPOSAL_TRACKS  = `query MyQuery($index_eq:Int,$type_eq:ProposalType) {
+  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq}) {
+    trackNumber
+  }
+}`;
 
 exports.onPostWritten = functions.region('europe-west1').firestore.document('networks/{network}/post_types/{postType}/posts/{postId}').onWrite((change, context) => {
 	const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID;
@@ -20,17 +27,38 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 	// Retrieve the data from the Firestore event
 	const post = change.after.data();
 
-	// Create an object to be indexed by Algolia
-	const postRecord = {
+  const subsquidRes = fetchSubsquid({
+			network,
+			query: GET_PROPOSAL_TRACKS,
+			variables: {
+        index_eq: Number(postId),
+			  type_eq: "ReferendumV2",
+      }
+		});
+    
+    const subsquidData = subsquidRes?.data?.proposals?.[0];
+
+// Create an object to be indexed by Algolia
+	const postRecord = postType === 'ReferendumV2' ? {
 		objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
 		postId,
 		network,
 		created_at: post?.created_at?.toDate?.() || new Date(),
-		last_comment_at: post?.last_comment_at?.toData?.() || new Date(),
-		last_edited_at: post?.last_edited_at?.toData?.() || new Date(),
+		last_comment_at: post?.last_comment_at?.toDate?.() || new Date(),
+		last_edited_at: post?.last_edited_at?.toDate?.() || new Date(),
+		postType,
+    track_number: subsquidData?.trackNumber,
+		...post
+	} : {
+    objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
+		postId,
+		network,
+		created_at: post?.created_at?.toDate?.() || new Date(),
+		last_comment_at: post?.last_comment_at?.toDate?.() || new Date(),
+		last_edited_at: post?.last_edited_at?.toDate?.() || new Date(),
 		postType,
 		...post
-	};
+  };
 
 	// Update the Algolia index
 	index
@@ -128,32 +156,14 @@ exports.onCommentWritten = functions.region('europe-west1').firestore.document('
 	const { network, postType, postId, commentId } = context.params;
 	logger.info('Comment written: ', { network, postType, postId, commentId });
 
-	const post = change.after.data();
-
 	const commentsCountSnapshot = await admin.firestore().collection('networks').doc(network).collection('post_types').doc(postType).collection('posts').doc(postId).collection('comments').count().get();
-	const commentsCount = commentsCountSnapshot.data().count;
+	const comments_count = commentsCountSnapshot.data().count;
+
 	// Update the Algolia index
-
-	// Create an object to be indexed by Algolia
-	// const postRecord = {
-	// 	objectID: `${network}_${postType}_${postId}_${commentsCount}`, // Unique identifier for the object
-	// 	postId,
-	// 	network,
-	// 	created_at: post?.created_at?.toData?.() || new Date(),
-	// 	last_comment_at: post?.last_comment_at?.toData?.() || new Date(),
-	// 	last_edited_at: post?.last_edited_at?.toData?.() || new Date(),
-	// 	postType,
-	// 	...post
-	// };
-
-	// CHECK SYNTAX
 	index
-		.partialUpdateObject({...post, commentsCount})
-		.then(() => {
-			logger.info('Post indexed successfully:', { postId });
-		})
-		.catch((error) => {
-			logger.error('Error indexing post:', { postId, error });
+		.partialUpdateObject({comments_count, objectID:`${network}_${postType}_${postId}` })
+		.then(({objectID}) => {
+			logger.info('Post indexed successfully:', { objectID });
 		});
 });
 
@@ -186,34 +196,12 @@ exports.onReactionWritten = functions.region('europe-west1').firestore.document(
 		.get();
 
 	const reactionCount = reactionCountSnapshot.data().count;
+
 	// Update the Algolia index
 
-	const post = change.after.data();
- // Create an object to be indexed by Algolia
-	// const postRecord = {
-	// 	objectID: `${network}_${postType}_${postId}_${reactionCount}`, // Unique identifier for the object
-	// 	postId,
-	// 	network,
-	// 	created_at: post?.created_at?.toData?.() || new Date(),
-	// 	last_comment_at: post?.last_comment_at?.toData?.() || new Date(),
-	// 	last_edited_at: post?.last_edited_at?.toData?.() || new Date(),
-	// 	postType,
-	// 	...post
-	// };
-
-
-	const updatedObject = {
-		...post, // get from algolia
-		[reactionData.reaction]: reactionCount
-	};
-
-	// CHECK SYNTAX
 	index
-		.partialUpdateObject(updatedObject)
-		.then(() => {
-			logger.info('Post indexed successfully:', { postId });
-		})
-		.catch((error) => {
-			logger.error('Error indexing post:', { postId, error });
-		});
+		  .partialUpdateObject({[reactionData.reaction]: reactionCount, objectID:`${network}_${postType}_${postId}` })
+    .then(({objectID}) => {
+      logger.info('Post indexed successfully:', { objectID });
+    });
 });

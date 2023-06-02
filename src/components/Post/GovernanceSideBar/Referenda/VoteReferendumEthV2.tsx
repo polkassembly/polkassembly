@@ -34,6 +34,8 @@ import SplitGray from '~assets/icons/split-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
+import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
+import { getCurrentDateTime } from '~src/util/getCurrentDateTime';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -82,11 +84,15 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [abstainVoteValue, setAbstainVoteValue] = useState<BN>(ZERO_BN);
 	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
-
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [balanceErr, setBalanceErr] = useState('');
-
 	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
+	const[ayeVoteVal,setAyeVoteVal] = useState<BN>(ZERO_BN);
+	const[nayVoteVal,setNayVoteVal] = useState<BN>(ZERO_BN);
+	const[abstainVoteVal,setAbstainVoteVal] = useState<BN>(ZERO_BN);
+	const[totalVoteVal,setTotalVoteVal] = useState<BN>(ZERO_BN);
+	const [successModal,setSuccessModal] = useState(false);
+
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow ;
 		setAvailableWallets(injectedWindow.injectedWeb3);
@@ -313,7 +319,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			return;
 		}
 
-		const totalVoteValue = ayeVoteValue?.add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN);
+		const totalVoteValue = new BN(ayeVoteValue || ZERO_BN).add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN).add(lockedBalance || ZERO_BN);
+		setTotalVoteVal(totalVoteValue);
 		if (totalVoteValue?.gte(availableBalance)) {
 			setBalanceErr('Insufficient balance.');
 			return;
@@ -362,6 +369,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
 					setLastVote(vote);
+					setShowModal(false);
+					setSuccessModal(true);
 					queueNotification({
 						header: 'Success!',
 						message: `Vote on referendum #${referendumId} successful.`,
@@ -392,6 +401,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
 					setLastVote(vote);
+					setShowModal(false);
+					setSuccessModal(true);
 					queueNotification({
 						header: 'Success!',
 						message: `Vote on referendum #${referendumId} successful.`,
@@ -410,6 +421,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		}
 
 		else if (vote === EVoteDecisionType.SPLIT){
+			setAyeVoteVal(ayeVoteValue);
+			setNayVoteVal(nayVoteValue);
 			voteContract.methods
 				.voteSplit(
 					referendumId,
@@ -423,6 +436,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
 					setLastVote(vote);
+					setShowModal(false);
+					setSuccessModal(true);
 					queueNotification({
 						header: 'Success!',
 						message: `Vote on referendum #${referendumId} successful.`,
@@ -441,6 +456,9 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		}
 
 		else if (vote === EVoteDecisionType.ABSTAIN){
+			setAyeVoteVal(ayeVoteValue);
+			setNayVoteVal(nayVoteValue);
+			setAbstainVoteVal(abstainVoteValue);
 			voteContract.methods
 				.voteSplitAbstain(
 					referendumId,
@@ -455,6 +473,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
 					setLastVote(vote);
+					setShowModal(false);
+					setSuccessModal(true);
 					queueNotification({
 						header: 'Success!',
 						message: `Vote on referendum #${referendumId} successful.`,
@@ -725,6 +745,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					</Spin>
 				</>
 			</Modal>
+			<DelegationSuccessPopup title='Voted' vote={vote}  balance={totalVoteVal} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={getCurrentDateTime()} ayeVoteValue={ayeVoteVal} nayVoteValue={nayVoteVal} abstainVoteValue={abstainVoteVal} toOrWith={'With'} />
 		</div>
 	);
 };

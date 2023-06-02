@@ -33,6 +33,7 @@ import DownIcon from '~assets/icons/down-icon.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
+import { getCurrentDateTime } from '~src/util/getCurrentDateTime';
 
 const ZERO_BN = new BN(0);
 
@@ -75,6 +76,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
 	const [walletErr, setWalletErr] = useState<INetworkWalletErr>({ description: '', error: 0, message: '' });
+	const[ayeVoteVal,setAyeVoteVal] = useState<BN>(ZERO_BN);
+	const[nayVoteVal,setNayVoteVal] = useState<BN>(ZERO_BN);
+	const[abstainVoteVal,setAbstainVoteVal] = useState<BN>(ZERO_BN);
+	const[totalVoteVal,setTotalVoteVal] = useState<BN>(ZERO_BN);
 
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
@@ -318,7 +323,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			return;
 		}
 
-		const totalVoteValue = ayeVoteValue?.add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN);
+		const totalVoteValue = new BN(ayeVoteValue || ZERO_BN).add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN).add(lockedBalance || ZERO_BN);
+		setTotalVoteVal(totalVoteValue);
 		if (totalVoteValue?.gte(availableBalance)) {
 			setBalanceErr('Insufficient balance.');
 			return;
@@ -348,6 +354,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					// if form is valid
 					const  ayeVote = ayeVoteValue?.toString();
 					const  nayVote = nayVoteValue?.toString();
+					setAyeVoteVal(ayeVoteValue);
+					setNayVoteVal(nayVoteValue);
 					voteTx = api.tx.convictionVoting.vote(referendumId, { Split: { aye:`${ayeVote}`,nay:`${nayVote}` } });
 				} catch (e) {
 					console.log(e);
@@ -365,6 +373,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					const  abstainVote = abstainVoteValue?.toString();
 					const  ayeVote = ayeVoteValue?.toString();
 					const  nayVote = nayVoteValue?.toString();
+					setAyeVoteVal(ayeVoteValue);
+					setNayVoteVal(nayVoteValue);
+					setAbstainVoteVal(abstainVoteValue);
 					voteTx = api.tx.convictionVoting.vote(referendumId, { SplitAbstain: {  abstain:`${abstainVote}`,aye:`${ayeVote}`, nay:`${nayVote}` } });
 				} catch (e) {
 					console.log(e);
@@ -401,7 +412,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					});
 					setLastVote(vote);
 					setShowModal(false);
-					setShowModal(false);
 					setSuccessModal(true);
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
 				} else {
@@ -430,7 +440,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						status: NotificationStatus.SUCCESS
 					});
 					setLastVote(vote);
-					setShowModal(false);
 					setShowModal(false);
 					setSuccessModal(true);
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
@@ -659,7 +668,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
-			<DelegationSuccessPopup title='Voted' vote={'split'} open={true} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={getCurrentDateTime()}/>
+			<DelegationSuccessPopup title='Voted' vote={vote}  balance={totalVoteVal} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={getCurrentDateTime()} ayeVoteValue={ayeVoteVal} nayVoteValue={nayVoteVal} abstainVoteValue={abstainVoteVal} toOrWith={'With'} />
 		</div>
 	</>;
 

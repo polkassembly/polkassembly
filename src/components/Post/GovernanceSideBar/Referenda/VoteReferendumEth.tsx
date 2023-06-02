@@ -30,6 +30,8 @@ import DislikeGray from '~assets/icons/dislike-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import { poppins } from 'pages/_app';
+import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
+import { getCurrentDateTime } from '~src/util/getCurrentDateTime';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -66,6 +68,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
+	const [successModal,setSuccessModal] = useState(false);
 
 	const convictionOpts = useMemo(() => [
 		<Select.Option className={`text-[#243A57] ${poppins.variable} ${poppins.className}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
@@ -320,6 +323,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			.then(() => {
 				setLoadingStatus({ isLoading: false, message: '' });
 				setLastVote(aye ? 'aye' : 'nay');
+				setShowModal(false);
+				setSuccessModal(true);
 				queueNotification({
 					header: 'Success!',
 					message: `Vote on referendum #${referendumId} successful.`,
@@ -472,6 +477,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
+			<DelegationSuccessPopup title='Voted' vote={vote}  balance={lockedBalance} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={getCurrentDateTime()} toOrWith={'With'} />
 		</div>
 	);
 };

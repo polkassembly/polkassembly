@@ -197,6 +197,7 @@ const Post: FC<IPostProps> = (props) => {
 
 	const { post_id, hash, status: postStatus } = post;
 	const onchainId = proposalType === ProposalType.TIPS? hash :post_id;
+
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:w-4/12 mx-auto`}>

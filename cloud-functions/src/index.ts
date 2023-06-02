@@ -39,27 +39,18 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
     const subsquidData = subsquidRes?.data?.proposals?.[0];
 
 // Create an object to be indexed by Algolia
-	const postRecord = postType === 'ReferendumV2' ? {
+	var postRecord = {
 		objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
-		postId,
-		network,
-		created_at: post?.created_at?.toDate?.() || new Date(),
-		last_comment_at: post?.last_comment_at?.toDate?.() || new Date(),
-		last_edited_at: post?.last_edited_at?.toDate?.() || new Date(),
-		postType,
-    track_number: subsquidData?.trackNumber,
-		...post
-	} : {
-    objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
-		postId,
 		network,
 		created_at: post?.created_at?.toDate?.() || new Date(),
 		last_comment_at: post?.last_comment_at?.toDate?.() || new Date(),
 		last_edited_at: post?.last_edited_at?.toDate?.() || new Date(),
 		postType,
 		...post
-  };
+	}
 
+   postRecord = postType === 'ReferendumV2' ? {...postRecord, track_number: subsquidData?.trackNumber} : postRecord;
+   
 	// Update the Algolia index
 	index
 		.saveObject(postRecord)

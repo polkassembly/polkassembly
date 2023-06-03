@@ -40,9 +40,10 @@ interface Props{
   nayVoteValue?:BN;
   abstainVoteValue?:BN;
   toOrWith?:string;
+  isVote?:boolean;
 }
 
-const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction , title = 'Delegated', vote ,time, ayeVoteValue, nayVoteValue, abstainVoteValue, toOrWith = 'To' }: Props) => {
+const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction , title = 'Delegated', vote ,time, ayeVoteValue, nayVoteValue, abstainVoteValue, toOrWith = 'To',isVote }: Props) => {
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const router = useRouter();
@@ -61,7 +62,7 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 		className={`${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'}`}
 		wrapClassName={className}
 		closeIcon={isDelegate ? <CloseIcon/> : <UndelegateCloseIcon/>}
-		onCancel={() => {setOpen(false); router.reload();}}
+		onCancel={() => {!isVote &&  router.reload() ; setOpen(false); }}
 		centered
 		footer={false}
 		maskClosable={false}

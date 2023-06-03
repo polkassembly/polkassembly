@@ -745,7 +745,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					</Spin>
 				</>
 			</Modal>
-			<DelegationSuccessPopup title='Voted' vote={vote}  balance={totalVoteVal} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={getCurrentDateTime()} ayeVoteValue={ayeVoteVal} nayVoteValue={nayVoteVal} abstainVoteValue={abstainVoteVal} toOrWith={'With'} />
+			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true}  balance={totalVoteVal} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={getCurrentDateTime()} ayeVoteValue={ayeVoteVal} nayVoteValue={nayVoteVal} abstainVoteValue={abstainVoteVal} toOrWith={'With'} />
 		</div>
 	);
 };

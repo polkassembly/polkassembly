@@ -48,6 +48,8 @@ import PostEditOrLinkCTA from './PostEditOrLinkCTA';
 import CloseIcon from '~assets/icons/close.svg';
 import { PlusOutlined } from '@ant-design/icons';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
+import SplitGray from '~assets/icons/split-gray.svg';
+import AbstainGray from '~assets/icons/abstain-gray.svg';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -697,8 +699,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									</GovSidebarCard>
 									:
 									<GovSidebarCard className='flex items-center'>
-										You Voted: { lastVote == 'aye' ? <LikeFilled className='text-aye_green ml-2' /> : <DislikeFilled className='text-nay_red ml-2' /> }
+
+										You Voted: { lastVote == 'aye' && <LikeFilled className='text-aye_green ml-2' />}
+										{ lastVote == 'nay' && <DislikeFilled className='text-nay_red ml-2' />}
+										{ lastVote == 'split' && <SplitGray className=' ml-2 mr-1' />}
+										{ lastVote == 'abstain' && <AbstainGray className=' ml-2 mr-1' />}
 										<span className={`last-vote-text ${lastVote == 'aye' ? 'green-text' : 'red-text'}`}>{lastVote}</span>
+
 									</GovSidebarCard>
 									: <></>
 								}

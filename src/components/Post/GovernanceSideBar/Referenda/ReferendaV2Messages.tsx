@@ -356,7 +356,7 @@ const FailedReferendaText: FC<{ status: string; network: string; timeline?: any[
 	const { status, timeline, network, progress } = props;
 	const url = getBlockLink(network);
 	const block = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], status);
-	const BlockElement = <a className='text-pink_primary font-medium' href={`${url}/${block?.block}`} target='_blank' rel="noreferrer">#{block?.block && block?.block}</a>;
+	const BlockElement = <a className='text-pink_primary font-medium' href={`${url}${block?.block}`} target='_blank' rel="noreferrer">#{block?.block && block?.block}</a>;
 	const isSupportLess = Number(progress.support) < Number(progress.supportThreshold);
 	const isApprovalLess = Number(progress.approval) < Number(progress.approvalThreshold);
 	return <>

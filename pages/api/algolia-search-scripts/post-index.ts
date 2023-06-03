@@ -18,33 +18,34 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 	if (!ALGOLIA_APP_ID || !ALGOLIA_WRITE_API_KEY) return;
 
 	const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_WRITE_API_KEY);
-	const index = algoliaClient.initIndex('polkassembly_users_test');
+	const index = algoliaClient.initIndex('polkassembly_posts_test');
 
-	const tagsSnapshots = await firestore_db.collection('users').get();
+	const tagsSnapshots = await firestore_db.collection('posts').get();
 
 	let batch_count = 0;
-	let userRecords = [];
+	let postRecords = [];
 
 	for(let doc = 0 ; doc < tagsSnapshots.docs.length; doc++) {
 
-		const userData = tagsSnapshots.docs[doc].data();
-		const userRecord = {
-			created_at: userData?.created_at?.toDate?.() || new Date(),
-			email: userData?.email || '',
-			profile: userData?.profile || {},
-			username: userData?.username || ''
+		const postData = tagsSnapshots.docs[doc].data();
+
+		const postRecord = {
+			...postData,
+			created_at: postData?.created_at.toDate?.() || new Date(),
+			last_comment_at: postData?.last_comment_at.toDate?.() || new Date(),
+			last_edited_at: postData?.last_edited_at?.toDate?.() || new Date()
 		};
 
-		userRecords.push(userRecord);
+		postRecords.push(postRecord);
 		batch_count++;
 
 		if(batch_count === 300) {
 			///commit batch
-			await index.saveObjects(userRecords).catch((err) => {
+			await index.saveObjects(postRecords).catch((err) => {
 				console.log(err);
 			});
 			batch_count = 0;
-			userRecords = [];
+			postRecords = [];
 		}
 
 	}

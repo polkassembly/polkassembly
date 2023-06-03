@@ -17,12 +17,11 @@ import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useRouter } from 'next/router';
-import AyeGray from '~assets/icons/ayeGray.svg';
-import NayGray from '~assets/icons/nayGray.svg';
-import SplitGray from '~assets/icons/splitGray.svg';
 import AbstainGray from '~assets/icons/abstainGray.svg';
 import { EVoteDecisionType } from '~src/types';
 import formatBnBalance from '~src/util/formatBnBalance';
+import { DislikeFilled, LikeFilled } from '@ant-design/icons';
+import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 
 interface Props{
   className?: string;
@@ -86,7 +85,7 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 					</span>
 					</div>}
 					{vote && <div className='flex h-[21px] gap-[50px] text-sm text-[#485F7D] font-normal'>
-						Vote :{vote === EVoteDecisionType.AYE ? <p><AyeGray/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : vote === EVoteDecisionType.NAY ?  <div><NayGray/> <span className='mb-[5px] capitalize font-medium text-[#243A57]'>{vote}</span></div> : vote === EVoteDecisionType.SPLIT ? <p><SplitGray/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : vote === EVoteDecisionType.ABSTAIN ? <p><AbstainGray/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : null }
+						Vote :{vote === EVoteDecisionType.AYE ? <p><LikeFilled className='text-[green]'/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : vote === EVoteDecisionType.NAY ?  <div><DislikeFilled className='text-[red]'/> <span className='mb-[5px] capitalize font-medium text-[#243A57]'>{vote}</span></div> : vote === EVoteDecisionType.SPLIT ? <p><SplitYellow/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : vote === EVoteDecisionType.ABSTAIN ? <p className='flex align-middle'><AbstainGray className='mr-1'/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : null }
 					</div>
 					}
 					<div className='flex gap-4 text-sm text-[#485F7D] font-normal'> Conviction:<span className='text-[#243A57] font-medium'>{conviction}x</span> </div>

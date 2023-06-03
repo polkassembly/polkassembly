@@ -43,7 +43,7 @@ interface Props{
   isVote?:boolean;
 }
 
-const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction , title = 'Delegated', vote ,time, ayeVoteValue, nayVoteValue, abstainVoteValue, toOrWith = 'To',isVote }: Props) => {
+const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction , title = 'Delegated', vote ,time, ayeVoteValue, nayVoteValue, abstainVoteValue, toOrWith = 'To',isVote = false }: Props) => {
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const router = useRouter();

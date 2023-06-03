@@ -66,7 +66,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 										block?
 											<p className='flex items-center gap-x-1 m-0'>
 												Block:
-												<a className='text-pink_primary font-medium' href={`${url}/${block}`} target='_blank' rel="noreferrer">
+												<a className='text-pink_primary font-medium' href={`${url}${block}`} target='_blank' rel="noreferrer">
 											#{`${block} `}
 												</a>
 											</p>

@@ -39,22 +39,22 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 	const user = await authServiceInstance.GetUser(token);
 	if(!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
-	if (!['post', 'comment'].includes(type)) return res.status(400).json({ message: messages.REPORT_TYPE_INVALID });
+	if (!['post', 'comment','reply'].includes(type)) return res.status(400).json({ message: messages.REPORT_TYPE_INVALID });
 	if (!reason) return res.status(400).json({ message: messages.REPORT_REASON_REQUIRED });
 	if (comments.length > 300) return res.status(400).json({ message: messages.REPORT_COMMENTS_LENGTH_EXCEEDED });
 
-	const postId = ((type === 'post' && proposalType !== 'tips')? Number(content_id): content_id);
+	const contentId = ((type === 'post' && proposalType !== 'tips')? Number(content_id): content_id);
 	const strPostType = String(proposalType);
-	await networkDocRef(network).collection('reports').doc(`${user.id}_${postId}_${strPostType}`).set({
+	await networkDocRef(network).collection('reports').doc(`${user.id}_${contentId}_${strPostType}`).set({
 		comments,
-		content_id: postId,
+		content_id: contentId,
 		proposal_type: strPostType,
 		reason,
 		resolved: false,
 		type,
 		user_id: user.id
 	}, { merge: true }).then(async () => {
-		const countQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', strPostType).where('content_id', '==', postId).count().get();
+		const countQuery = await networkDocRef(network).collection('reports').where('type', '==', type).where('proposal_type', '==', strPostType).where('content_id', '==', contentId).count().get();
 
 		const data = countQuery.data();
 		const totalUsers = data.count || 0;

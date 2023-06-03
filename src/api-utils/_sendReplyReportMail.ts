@@ -9,8 +9,9 @@ export default async function _sendReplyReportMail(
 	postType: string,
 	postId: string,
 	commentId: string,
-	replyId:string ) {
+	replyId:string,
+	spam_users_count:number ) {
 
 	const commentUrl = `https://${network}.polkassembly.io/${getSinglePostLinkFromProposalType(postType as ProposalType)}/${postId}#${commentId}`;
-	sendReplyReportMail(postType,postId,commentId,replyId,commentUrl,network);
+	sendReplyReportMail(postType,postId,commentId,replyId,commentUrl,network,spam_users_count);
 }

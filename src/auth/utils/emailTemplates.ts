@@ -232,6 +232,7 @@ export const spamCommentReportTemplate = container(`
         Post ID: <%= postId %><br />
         Post Type: <%= postType %><br />
         Comment ID: <%= commentId %><br /> <br/>
+        Reported by: <%= spam_users_count %><br />
         
         Polkassembly Team
     </p>
@@ -248,6 +249,7 @@ export const spamReplyReportTemplate = container(`
         Post Type: <%= postType %><br />
         Comment ID: <%= commentId %><br /> <br/>
         Reply ID: <%= replyId %><br /> <br/>
+        Reported by: <%= spam_users_count %><br />
         
         Polkassembly Team
     </p>
@@ -262,6 +264,7 @@ export const spamPostReportTemplate = container(`
         Network: <%= network %><br />
         Post ID: <%= postId %><br />
         Post Type: <%= postType %><br />
+        Reported by: <%= spam_users_count %><br />
         
         Polkassembly Team
     </p>

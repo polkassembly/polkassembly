@@ -83,13 +83,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 		const totalUsers = data.count || 0;
 
 		if(type == 'post' && checkReportThreshold(totalUsers) ){
-			_sendPostSpamReportMail(network,strPostType,contentId);
+			_sendPostSpamReportMail(network,strPostType,contentId,totalUsers);
 		}
 		if(type == 'comment' && checkReportThreshold(totalUsers) ){
-			_sendCommentReportMail(network,strPostType,post_id,comment_id);
+			_sendCommentReportMail(network,strPostType,post_id,comment_id,totalUsers);
 		}
 		if(type == 'reply' && checkReportThreshold(totalUsers) ){
-			_sendReplyReportMail(network,strPostType,post_id,comment_id,reply_id);
+			_sendReplyReportMail(network,strPostType,post_id,comment_id,reply_id,totalUsers);
 		}
 		return res.status(200).json({ message: messages.CONTENT_REPORT_SUCCESSFUL, spam_users_count: checkReportThreshold(totalUsers) });
 	}).catch((error) => {

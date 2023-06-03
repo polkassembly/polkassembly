@@ -180,7 +180,8 @@ export const sendCommentReportMail = (
 	postId: string,
 	commentId: string,
 	commentUrl:string,
-	network:string ): void => {
+	network:string,
+	spam_users_count:number ): void => {
 	if (!apiKey) {
 		console.warn('Comment Spam Report Email not sent due to missing API key');
 		return;
@@ -191,7 +192,8 @@ export const sendCommentReportMail = (
 		commentUrl,
 		network,
 		postId,
-		postType
+		postType,
+		spam_users_count
 	});
 	const msg = {
 		from: FROM,
@@ -210,7 +212,8 @@ export const sendReplyReportMail = (
 	commentId: string,
 	replyId:string,
 	commentUrl:string,
-	network:string ): void => {
+	network:string,
+	spam_users_count:number ): void => {
 	if (!apiKey) {
 		console.warn('Reply Spam Report Email not sent due to missing API key');
 		return;
@@ -222,7 +225,8 @@ export const sendReplyReportMail = (
 		network,
 		postId,
 		postType,
-		replyId
+		replyId,
+		spam_users_count
 	});
 	const msg = {
 		from: FROM,
@@ -240,7 +244,8 @@ export const sendPostSpamReportMail = (
 	postType: string,
 	postId: string,
 	postUrl:string,
-	network:string ): void => {
+	network:string,
+	spam_users_count:number ): void => {
 	if (!apiKey) {
 		console.warn('Post Spam Report Email not sent due to missing API key');
 		return;
@@ -250,7 +255,8 @@ export const sendPostSpamReportMail = (
 		network,
 		postId,
 		postType,
-		postUrl
+		postUrl,
+		spam_users_count
 	});
 	const msg = {
 		from: FROM,

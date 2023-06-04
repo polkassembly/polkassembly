@@ -20,34 +20,49 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 	const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_WRITE_API_KEY);
 	const index = algoliaClient.initIndex('polkassembly_posts_test');
 
-	const tagsSnapshots = await firestore_db.collection('posts').get();
+	const networksSnapshot = await firestore_db.collection('network').get();
 
-	let batch_count = 0;
-	let postRecords = [];
+	// for loop for networksSnapshot
+	for(const networkDoc of networksSnapshot.docs) {
+		//get postTypes for each network
+		const postTypesSnapshot = await networkDoc.ref.collection('post_types').get();
 
-	for(let doc = 0 ; doc < tagsSnapshots.docs.length; doc++) {
+		// for loop for postTypesSnapshot
+		for(const postTypeDoc of postTypesSnapshot.docs) {
+			// get posts for each postType
+			const postsSnapshot = await postTypeDoc.ref.collection('posts').get();
 
-		const postData = tagsSnapshots.docs[doc].data();
+			// setup batch here
 
-		const postRecord = {
-			...postData,
-			created_at: postData?.created_at.toDate?.() || new Date(),
-			last_comment_at: postData?.last_comment_at.toDate?.() || new Date(),
-			last_edited_at: postData?.last_edited_at?.toDate?.() || new Date()
-		};
+			let batch_count = 0;
+			let postRecords = [];
 
-		postRecords.push(postRecord);
-		batch_count++;
+			// for loop for postsSnapshot
+			for(const postDoc of postsSnapshot.docs) {
+				const postDocData = postDoc.data();
 
-		if(batch_count === 300) {
-			///commit batch
-			await index.saveObjects(postRecords).catch((err) => {
-				console.log(err);
-			});
-			batch_count = 0;
-			postRecords = [];
+				const postRecord = {
+					...postDocData,
+					created_at: postDocData?.created_at.toDate?.() || new Date(),
+					last_comment_at: postDocData?.last_comment_at.toDate?.() || new Date(),
+					last_edited_at: postDocData?.last_edited_at?.toDate?.() || new Date(),
+					network: networkDoc.id,
+					objectID: postDoc.id,
+					post_type: postTypeDoc.id
+				};
+				postRecords.push(postRecord);
+				batch_count++;
+
+				if(batch_count === 300) {
+					///commit batch
+					await index.saveObjects(postRecords).catch((err) => {
+						console.log(err);
+					});
+					batch_count = 0;
+					postRecords = [];
+				}
+			}
 		}
-
 	}
 	res.status(200).json({ message: 'Success' });
 

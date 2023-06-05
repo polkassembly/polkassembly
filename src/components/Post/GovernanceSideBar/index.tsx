@@ -583,7 +583,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 											<div className={className}>
 												<ReferendumVoteInfo
 													setOpen={setOpen}
-													voteThreshold={post.vote_threshold}
 													referendumId={onchainId as number}
 												/>
 											</div>

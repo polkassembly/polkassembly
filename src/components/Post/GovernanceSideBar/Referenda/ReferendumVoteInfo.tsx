@@ -112,7 +112,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 									if (lockPeriod === 0) {
 										voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).div(new BN(10)));
 									} else {
-										voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).mul(new BN(lockPeriod || 0.1)));
+										voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).mul(new BN(lockPeriod)));
 									}
 								}
 							}

@@ -9,7 +9,6 @@ import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { FC, useEffect } from 'react';
 import Script from 'next/script';
-import grill from '@subsocial/grill-widget';
 import SEOHead from 'src/global/SEOHead';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -139,13 +138,6 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() => {
-		const config = {
-			hub: { id: '1010' }
-		};
-		grill.init(config);
 	}, []);
 
 	return (

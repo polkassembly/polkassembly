@@ -29,8 +29,8 @@ li {
 `;
 
 interface Props {
-	className?: string, 
-	address: string, 
+	className?: string,
+	address: string,
 	identity: DeriveAccountRegistration,
 	flags?: DeriveAccountFlags,
 	web3Name?: string

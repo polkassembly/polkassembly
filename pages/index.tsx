@@ -139,7 +139,6 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-
 	return (
 		<>
 			{chainProperties[network]?.gTag ? <><Script

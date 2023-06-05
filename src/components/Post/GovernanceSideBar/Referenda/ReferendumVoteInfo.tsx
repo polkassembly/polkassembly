@@ -351,8 +351,8 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							<Spin spinning={isFetchingCereVoteInfo} className='bg-white' indicator={<LoadingOutlined />}>
 								<div className='flex items-center justify-between gap-x-2'>
 									<h6 className='text-sidebarBlue font-semibold text-[20px] leading-[24px] m-0 p-0'>Voting</h6>
-									<div className='flex items-center justify-center gap-x-2'>
-										<div className={'text-sidebarBlue border-solid border-navBlue border xl:max-w-[120px] 2xl:max-w-[100%] text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min'}>
+									<div className='flex items-center justify-center gap-x-2 relative z-50'>
+										<div title={voteInfo?.voteThreshold} className={'text-sidebarBlue border-solid border-navBlue border xl:max-w-[120px] 2xl:max-w-[100%] text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min'}>
 											{ voteInfo?.voteThreshold }
 										</div>
 										{voteInfo !== null && <PassingInfoTag isPassing={voteInfo?.isPassing}/>}

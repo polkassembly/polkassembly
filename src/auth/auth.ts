@@ -173,14 +173,17 @@ class AuthService {
 	}
 
 	public async Login (username: string, password: string): Promise<AuthObjectType> {
-		for (let i = 0; i < nameBlacklist.length; i++) {
-			if (username.toLowerCase().includes(nameBlacklist[i])) throw apiErrorWithStatusCode(messages.USERNAME_BANNED, 401);
-		}
+		const isEmail = username.split('@')[1];
+
+		if(!isEmail){
+			for (let i = 0; i < nameBlacklist.length; i++) {
+				if (username.toLowerCase().includes(nameBlacklist[i])) throw apiErrorWithStatusCode(messages.USERNAME_BANNED, 401);
+			}}
 
 		let userQuery: firebaseAdmin.firestore.QuerySnapshot<firebaseAdmin.firestore.DocumentData>;
 		const collection = firebaseAdmin.firestore().collection('users');
 
-		if(username.split('@')[1]) {
+		if(isEmail) {
 			userQuery = await collection.where('email', '==', username).limit(1).get();
 		} else {
 			userQuery = await collection.where('username', '==', username).limit(1).get();

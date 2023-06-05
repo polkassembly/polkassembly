@@ -4,7 +4,7 @@
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface Props {
@@ -16,10 +16,13 @@ interface Props {
 const PassingInfoTag = ({ className, isPassing, status }:Props ) => {
 	const NO_INFO_TEXT = '-';
 
-	let text = NO_INFO_TEXT;
-	if (isPassing !== null){
-		text = isPassing ? 'Passed' : 'Failed';
-	}
+	const [text, setText] = useState(NO_INFO_TEXT);
+
+	useEffect(() => {
+		if (isPassing !== null){
+			setText(isPassing ? 'Passed' : 'Failed');
+		}
+	}, [isPassing]);
 
 	return (
 		<Spin spinning={text === NO_INFO_TEXT} indicator={<LoadingOutlined />}>

@@ -70,7 +70,7 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 			<SuccessIcon/>
 			<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-6'>{isDelegate ? `${title} successfully` : 'Undelegated successfully' }</h2>
 			{isDelegate && <div className='flex flex-col justify-center items-center gap-[18px]'>
-				{balance && <div className='text-pink_primary text-[24px] font-semibold'>{formatBalance(balance.toString(),{ forceUnit: unit })}</div>}
+				{balance && <div className='text-pink_primary text-[24px] font-semibold'>{formatedBalance(balance.toString(), unit)}</div>}
 				{
 					vote === EVoteDecisionType.SPLIT && <div className=' flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'> Aye: {ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}</span> <span>Nay: {nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit)  : 0}</span></div>
 				}

@@ -30,6 +30,7 @@ import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } fr
 import { getNetworkSocials } from './api/v1/network-socials';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -183,8 +184,8 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					<div className='w-full xl:w-[40%]'>
 						<News twitter={networkSocialsData?.data?.twitter || ''} />
 					</div>
-					<div id="grill"></div>
 				</div>
+				<ChatFloatingModal/>
 			</main>
 		</>
 	);

@@ -115,7 +115,6 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 										voteInfo.nay_without_conviction = voteInfo.nay_without_conviction.add(new BN(balance.value).mul(new BN(lockPeriod || 0.1)));
 									}
 								}
-								console.log(new BN(vote.balance.value).mul(new BN(vote.lockPeriod)).toString());
 							}
 						});
 						if (voteThreshold) {

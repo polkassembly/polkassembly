@@ -6,6 +6,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { usePostDataContext } from '~src/context';
+import { ProposalType } from '~src/global/proposalType';
 
 interface Props {
 	className?: string;
@@ -13,16 +15,33 @@ interface Props {
 	status?: string;
 }
 
-const PassingInfoTag = ({ className, isPassing, status }:Props ) => {
+const PassingInfoTag = ({ className, isPassing }:Props ) => {
 	const NO_INFO_TEXT = '-';
 
 	const [text, setText] = useState(NO_INFO_TEXT);
+	const { postData: { status, postType } } = usePostDataContext();
 
 	useEffect(() => {
-		if (isPassing !== null){
-			setText(isPassing ? 'Passed' : 'Failed');
+		if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS, ProposalType.OPEN_GOV].includes(postType)) {
+			if (isPassing !== null){
+				setText(isPassing ? 'Passed' : 'Failed');
+			}
+		} else {
+			if (isPassing) {
+				if (['Passed', 'Executed'].includes(status)) {
+					setText('Passed');
+				} else {
+					setText('Passing');
+				}
+			} else {
+				if (status === 'NotPassed') {
+					setText('Failed');
+				} else {
+					setText('Failing');
+				}
+			}
 		}
-	}, [isPassing]);
+	}, [isPassing, status, postType]);
 
 	return (
 		<Spin spinning={text === NO_INFO_TEXT} indicator={<LoadingOutlined />}>
@@ -34,6 +53,13 @@ const PassingInfoTag = ({ className, isPassing, status }:Props ) => {
 };
 
 export default styled(PassingInfoTag)`
+	&.passing {
+		background-color: #5BC044;
+	}
+
+	&.failing {
+		background-color: #FF0000;
+	}
 	&.passed {
 		background-color: #5BC044;
 	}

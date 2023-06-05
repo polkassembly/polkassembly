@@ -76,10 +76,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
 	const [walletErr, setWalletErr] = useState<INetworkWalletErr>({ description: '', error: 0, message: '' });
-	const[ayeVoteVal,setAyeVoteVal] = useState<BN>(ZERO_BN);
-	const[nayVoteVal,setNayVoteVal] = useState<BN>(ZERO_BN);
-	const[abstainVoteVal,setAbstainVoteVal] = useState<BN>(ZERO_BN);
 	const[totalVoteVal,setTotalVoteVal] = useState<BN>(ZERO_BN);
+	const [voteValues, setVoteValues] = useState({ abstainVoteValue:ZERO_BN,ayeVoteValue:ZERO_BN , nayVoteValue:ZERO_BN });
 
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
@@ -354,8 +352,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					// if form is valid
 					const  ayeVote = ayeVoteValue?.toString();
 					const  nayVote = nayVoteValue?.toString();
-					setAyeVoteVal(ayeVoteValue);
-					setNayVoteVal(nayVoteValue);
+					setVoteValues((prevState) => ({
+						...prevState,
+						ayeVoteValue:ayeVoteValue,
+						nayVoteValue:nayVoteValue
+					}));
 					voteTx = api.tx.convictionVoting.vote(referendumId, { Split: { aye:`${ayeVote}`,nay:`${nayVote}` } });
 				} catch (e) {
 					console.log(e);
@@ -373,9 +374,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					const  abstainVote = abstainVoteValue?.toString();
 					const  ayeVote = ayeVoteValue?.toString();
 					const  nayVote = nayVoteValue?.toString();
-					setAyeVoteVal(ayeVoteValue);
-					setNayVoteVal(nayVoteValue);
-					setAbstainVoteVal(abstainVoteValue);
+					setVoteValues((prevState) => ({
+						...prevState,
+						abstainVoteValue:abstainVoteValue,
+						ayeVoteValue:ayeVoteValue,
+						nayVoteValue:nayVoteValue
+					}));
 					voteTx = api.tx.convictionVoting.vote(referendumId, { SplitAbstain: {  abstain:`${abstainVote}`,aye:`${ayeVote}`, nay:`${nayVote}` } });
 				} catch (e) {
 					console.log(e);
@@ -668,7 +672,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
-			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true} balance={totalVoteVal} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={ayeVoteVal} nayVoteValue={nayVoteVal} abstainVoteValue={abstainVoteVal} toOrWith={'With'} />
+			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true} balance={totalVoteVal} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} />
 		</div>
 	</>;
 

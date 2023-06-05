@@ -65,6 +65,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
+	const [voteValues, setVoteValues] = useState({ abstainVoteValue:ZERO_BN,ayeVoteValue:ZERO_BN , nayVoteValue:ZERO_BN });
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
@@ -87,9 +88,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [balanceErr, setBalanceErr] = useState('');
 	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
-	const[ayeVoteVal,setAyeVoteVal] = useState<BN>(ZERO_BN);
-	const[nayVoteVal,setNayVoteVal] = useState<BN>(ZERO_BN);
-	const[abstainVoteVal,setAbstainVoteVal] = useState<BN>(ZERO_BN);
 	const[totalVoteVal,setTotalVoteVal] = useState<BN>(ZERO_BN);
 	const [successModal,setSuccessModal] = useState(false);
 
@@ -421,8 +419,11 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		}
 
 		else if (vote === EVoteDecisionType.SPLIT){
-			setAyeVoteVal(ayeVoteValue);
-			setNayVoteVal(nayVoteValue);
+			setVoteValues((prevState) => ({
+				...prevState,
+				ayeVoteValue:ayeVoteValue,
+				nayVoteValue:nayVoteValue
+			}));
 			voteContract.methods
 				.voteSplit(
 					referendumId,
@@ -456,9 +457,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		}
 
 		else if (vote === EVoteDecisionType.ABSTAIN){
-			setAyeVoteVal(ayeVoteValue);
-			setNayVoteVal(nayVoteValue);
-			setAbstainVoteVal(abstainVoteValue);
+			setVoteValues((prevState) => ({
+				...prevState,
+				abstainVoteValue:abstainVoteValue,
+				ayeVoteValue:ayeVoteValue,
+				nayVoteValue:nayVoteValue
+			}));
 			voteContract.methods
 				.voteSplitAbstain(
 					referendumId,
@@ -745,7 +749,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					</Spin>
 				</>
 			</Modal>
-			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true}  balance={totalVoteVal} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={ayeVoteVal} nayVoteValue={nayVoteVal} abstainVoteValue={abstainVoteVal} toOrWith={'With'} />
+			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true}  balance={totalVoteVal} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  votedAt={dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} />
 		</div>
 	);
 };

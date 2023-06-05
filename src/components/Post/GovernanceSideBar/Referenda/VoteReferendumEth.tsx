@@ -477,7 +477,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
-			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true} balance={lockedBalance} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={ dayjs().format('HH:mm, Do MMMM YYYY')} toOrWith={'With'} />
+			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true} balance={lockedBalance} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} />
 		</div>
 	);
 };

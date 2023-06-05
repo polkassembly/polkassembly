@@ -19,9 +19,9 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useRouter } from 'next/router';
 import AbstainGray from '~assets/icons/abstainGray.svg';
 import { EVoteDecisionType } from '~src/types';
-import formatBnBalance from '~src/util/formatBnBalance';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
+import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 
 interface Props{
   className?: string;
@@ -34,16 +34,15 @@ interface Props{
   trackNum?: number;
   conviction?: number;
   title?:string;
-  vote?:string;
-  time?:string;
+  vote?:EVoteDecisionType;
+  votedAt?:string;
   ayeVoteValue?:BN;
   nayVoteValue?:BN;
   abstainVoteValue?:BN;
-  toOrWith?:string;
   isVote?:boolean;
 }
 
-const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction , title = 'Delegated', vote ,time, ayeVoteValue, nayVoteValue, abstainVoteValue, toOrWith = 'To',isVote = false }: Props) => {
+const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction , title = 'Delegated', vote ,votedAt, ayeVoteValue, nayVoteValue, abstainVoteValue,isVote = false }: Props) => {
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const router = useRouter();
@@ -73,13 +72,13 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 			{isDelegate && <div className='flex flex-col justify-center items-center gap-[18px]'>
 				{balance && <div className='text-pink_primary text-[24px] font-semibold'>{formatBalance(balance.toString(),{ forceUnit: unit })}</div>}
 				{
-					vote === EVoteDecisionType.SPLIT && <div className=' flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'> Aye: {ayeVoteValue ? formatBnBalance(ayeVoteValue,{ withUnit:true },network): 0}</span> <span>Nay: {nayVoteValue ? formatBnBalance(nayVoteValue,{ withUnit:true },network) : 0}</span></div>
+					vote === EVoteDecisionType.SPLIT && <div className=' flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'> Aye: {ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}</span> <span>Nay: {nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit)  : 0}</span></div>
 				}
 				{
-					vote === EVoteDecisionType.ABSTAIN &&  <div className='flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'> Abstain: {abstainVoteValue ? formatBnBalance(abstainVoteValue,{ withUnit:true },network): 0}</span>  <span className='mr-3'> Aye: {ayeVoteValue ? formatBnBalance(ayeVoteValue,{ withUnit:true },network): 0}</span> <span>Nay: {nayVoteValue ? formatBnBalance(nayVoteValue,{ withUnit:true },network) : 0}</span></div>
+					vote === EVoteDecisionType.ABSTAIN &&  <div className='flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'> Abstain: {abstainVoteValue ? formatedBalance(abstainVoteValue.toString(), unit) : 0}</span>  <span className='mr-3'> Aye: {ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}</span> <span>Nay: {nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit)  : 0}</span></div>
 				}
 				<div className='flex-col flex items-start justify-center gap-[10px]'>
-					{address && <div className='flex gap-4 text-sm text-[#485F7D] font-normal'>{toOrWith} address:<span>
+					{address && <div className='flex gap-4 text-sm text-[#485F7D] font-normal'>{isVote ? 'With' : 'To'} address:<span>
 						<Address address={address}
 							className='address'
 							displayInline={true}/>
@@ -95,8 +94,8 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 							{tracks.map((track, index) => (<div key={index}>{track} #{networkTrackInfo[network][track.toString()].trackId}</div>))}</div>
 					</span>
 					</div>}
-					{time && <div className='flex h-[21px] gap-[10px] text-sm text-[#485F7D] font-normal'>
-						Time of Vote : <span className='font-medium text-[#243A57]'>{time}</span>
+					{votedAt && <div className='flex h-[21px] gap-[10px] text-sm text-[#485F7D] font-normal'>
+						Time of Vote : <span className='font-medium text-[#243A57]'>{votedAt}</span>
 					</div>
 					}
 				</div></div>}

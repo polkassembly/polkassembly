@@ -16,6 +16,7 @@
   "dependencies": {
     "@apollo/client": "^3.7.3",
     "@ardatan/graphql-tools": "^4.1.0",
+    "@kiltprotocol/type-definitions": "^0.32.1",
     "@metamask/jazzicon": "^2.0.0",
     "@polkadot/api": "^10.2.2",
     "@polkadot/api-augment": "^10.2.2",

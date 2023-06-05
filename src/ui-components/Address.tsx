@@ -19,6 +19,7 @@ import shortenAddress from '../util/shortenAddress';
 import EthIdenticon from './EthIdenticon';
 import IdentityBadge from './IdentityBadge';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { getKiltDidName } from '~src/util/kiltDid';
 
 interface Props {
 	address: string
@@ -54,6 +55,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 	const [flags, setFlags] = useState<DeriveAccountFlags | undefined>(undefined);
 	const router = useRouter();
 	const [username, setUsername] = useState('');
+	const [kiltName, setKiltName] = useState('');
 
 	const encoded_addr = address ? getEncodedAddress(address, network) || '' : '';
 
@@ -70,6 +72,13 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 				router.push(`/user/${data.username}`);
 			}
 		}
+	};
+
+	const getKiltName = async () => {
+		if (!api || !apiReady) return;
+
+		const web3Name = await getKiltDidName(api, address);
+		setKiltName(web3Name || '');
 	};
 
 	useEffect(() => {
@@ -123,7 +132,14 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 		return () => unsubscribe && unsubscribe();
 	}, [encoded_addr, api, apiReady]);
 
-	const t1 = mainDisplay || (isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr);
+	useEffect(() => {
+		if(network === 'kilt') {
+			getKiltName();
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, network]);
+
+	const t1 = kiltName || mainDisplay || (isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr);
 	const t2 = extensionName || mainDisplay;
 
 	return (
@@ -154,7 +170,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 				// When inline disregard the extension name.
 					? popupContent
 						? <Space>
-							{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} />}
+							{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 							<Tooltip color='#E5007A' title={popupContent}>
 								<div className={'header display_inline identityName max-w-[30px] flex flex-col gap-y-1'}>
 									{ t1 && <span className='truncate text-navBlue'>{t1}</span> }
@@ -164,7 +180,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 						</Space>
 						: <>
 							<div className={'description display_inline flex items-center'}>
-								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} className='mr-2' />}
+								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} className='mr-2' />}
 								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[85px] flex gap-x-1 ${textClassName}`}>
 									{ t1 && <span className={`truncate text-navBlue ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
 									{sub && isSubVisible && <span className={'sub truncate text-navBlue'}>{sub}</span>}
@@ -177,7 +193,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 							<Tooltip color='#E5007A' title={popupContent}>
 								<Space>
 									<Space className={'header'}>
-										{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} />}
+										{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 										<span className='bg-red-500 identityName max-w-[85px] flex flex-col gap-y-1'>
 											{ t2 && <span className={`${textClassName} truncate text-navBlue`}>{ t2 }</span> }
 											{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-navBlue`}>{sub}</span>}
@@ -190,7 +206,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 								{
 									!disableHeader ?
 										<Space className={'header'}>
-											{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} />}
+											{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 											<span className='identityName max-w-[85px] flex flex-col gap-y-1'>
 												{ t2 && <span className={`${textClassName} truncate text-navBlue`}>{ t2 }</span> }
 												{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-navBlue`}>{sub}</span>}
@@ -200,7 +216,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 								}
 								<div className={`description text-xs ml-0.5 ${addressClassName}`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 							</div>
-						: <div className={`description text-xs ${addressClassName}`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
+						: <div className={`description text-xs ${addressClassName}`}>{kiltName ? t1 : isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 				}
 			</div>}
 		</div>

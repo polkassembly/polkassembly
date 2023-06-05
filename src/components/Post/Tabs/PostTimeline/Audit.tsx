@@ -18,6 +18,7 @@ import ReactPlayer from 'react-player';
 import NoDataFound  from '~assets/no-audits.svg';
 import styled from 'styled-components';
 import Image from 'next/image';
+import router from 'next/router';
 
 const DocumentContainer = styled.div`
 .react-pdf__Page {
@@ -191,7 +192,7 @@ const PostAudit = () => {
 	// Fetching data
 	const [auditData, setAuditData] = useState<IDataType[]>([]);
 	const [videoData, setVideotData] = useState<IDataVideoType[]>([]);
-	const[loading , setLoading] = useState(true);
+	const [loading , setLoading] = useState(true);
 
 	let postType:any = postData.postType;
 
@@ -376,8 +377,8 @@ const PostAudit = () => {
 							</div>
 						))
 					) : ( !loading && <div className='mt-3 flex flex-col justify-center items-center'><NoDataFound className='w-22 h-22 sm:w-48 sm:h-48 lg:w-1/3 lg:h-auto p-4 mb-5' />
-						<p>No Audits.</p>
-						<button className='bg-pink-600 text-white rounded-sm border-none  text-xs px-4 py-1'>Go to discussion</button>
+						<p>No audit reports available.</p>
+						<button className='bg-pink-600 text-white rounded-sm border-none  text-xs px-4 py-1 cursor-pointer' onClick={() => router.push('/discussions')}>Go to discussion</button>
 					</div>
 					)}
 				</div>
@@ -406,8 +407,8 @@ const PostAudit = () => {
 						))
 					) : (
 						<div className='mt-3 flex flex-col justify-center items-center'><NoDataFound className='w-22 h-22 sm:w-48 sm:h-48 lg:w-1/3 lg:h-auto p-4 mb-5' />
-							<p>No Audits.</p>
-							<button className='bg-pink-600 text-white rounded-sm border-none text-xs px-4 py-1'>Go to discussion</button>
+							<p>No audit reports available</p>
+							<button className='bg-pink-600 text-white rounded-sm border-none text-xs px-4 py-1 cursor-pointer' onClick={() => router.push('/discussions')}>Go to discussion</button>
 						</div>
 					)}
 				</div>

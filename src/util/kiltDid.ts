@@ -7,18 +7,19 @@ import { ApiPromise } from '@polkadot/api';
 export async function getKiltDidName(
 	api: ApiPromise,
 	lookupAccountAddress: string
-): Promise<string | null> {
+): Promise<string | undefined> {
 	const didDetails = await api.call.did.queryByAccount({
 		AccountId32: lookupAccountAddress
 	}) as any;
+
 	if (didDetails.isNone) {
-		return null;
+		return undefined;
 	}
 
 	const { w3n } = didDetails.unwrap();
 
 	if (w3n.isNone) {
-		return null;
+		return undefined;
 	}
 
 	return w3n.unwrap().toHuman();

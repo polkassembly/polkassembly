@@ -216,7 +216,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 								}
 								<div className={`description text-xs ml-0.5 ${addressClassName}`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 							</div>
-						: <div className={`description text-xs ${addressClassName}`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
+						: <div className={`description text-xs ${addressClassName}`}>{kiltName ? t1 : isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 				}
 			</div>}
 		</div>

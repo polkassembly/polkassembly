@@ -220,7 +220,6 @@ const PostAudit = () => {
 		}
 		setLoading(false);
 	};
-	console.log('auditData' , auditData);
 	const videosData = async () => {
 		try {
 			setLoading(true);

@@ -200,10 +200,10 @@ export const sendCommentReportMail = (
 		html: text,
 		subject: 'Comment Spam Report',
 		text,
-		to: 'hello@polkassembly.io,parambir@polkassembly.io'
+		to: ['hello@polkassembly.io','parambir@polkassembly.io']
 	};
 
-	sgMail.send(msg).catch(e =>
+	sgMail.sendMultiple(msg).catch(e =>
 		console.error('Comment Spam Report not sent', e));
 };
 export const sendReplyReportMail = (
@@ -233,10 +233,10 @@ export const sendReplyReportMail = (
 		html: text,
 		subject: 'Reply Spam Report',
 		text,
-		to: 'hello@polkassembly.io,parambir@polkassembly.io'
+		to: ['hello@polkassembly.io','parambir@polkassembly.io']
 	};
 
-	sgMail.send(msg).catch(e =>
+	sgMail.sendMultiple(msg).catch(e =>
 		console.error('Reply Spam Report not sent', e));
 };
 
@@ -263,10 +263,10 @@ export const sendPostSpamReportMail = (
 		html: text,
 		subject: 'Post Spam Report',
 		text,
-		to: 'hello@polkassembly.io,parambir@polkassembly.io'
+		to: ['hello@polkassembly.io','parambir@polkassembly.io']
 	};
 
-	sgMail.send(msg).catch(e =>
+	sgMail.sendMultiple(msg).catch(e =>
 		console.error(' Spam Report not sent', e));
 	console.log('mail sent');
 };

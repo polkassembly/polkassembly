@@ -80,10 +80,55 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				status: NotificationStatus.SUCCESS
 			});
 			setPostData && setPostData((prev) => {
-				return {
-					...prev,
-					spam_users_count: reportData.spam_users_count
-				};
+				if (type === 'post') {
+					return {
+						...prev,
+						spam_reports_count: reportData.spam_users_count
+					};
+				} else if (type === 'comment') {
+					return {
+						...prev,
+						comments: (prev?.comments || []).map((comment) => {
+							if (comment.id === commentId) {
+								return {
+									...comment,
+									spam_users_count: reportData.spam_users_count
+								};
+							} else {
+								return {
+									...comment
+								};
+							}
+						})
+					};
+				} else {
+					return {
+						...prev,
+						comments: (prev?.comments || []).map((comment) => {
+							if (comment?.id === commentId) {
+								return {
+									...comment,
+									replies: (comment?.replies || []).map((reply) => {
+										if (reply?.id === replyId) {
+											return {
+												...reply,
+												spam_users_count: reportData.spam_users_count
+											};
+										} else {
+											return {
+												...reply
+											};
+										}
+									})
+								};
+							} else {
+								return {
+									...comment
+								};
+							}
+						})
+					};
+				}
 			});
 			setShowModal(false);
 			setFormDisabled(false);

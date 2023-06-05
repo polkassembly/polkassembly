@@ -641,6 +641,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const preimage = postData?.preimage;
 		const proposalArguments = postData?.proposalArguments  || postData?.callData;
 		const proposedCall = preimage?.proposedCall;
+		if (proposedCall && proposedCall?.args?.code) {
+			delete proposedCall.args.code;
+		}
 		const status = postData?.status;
 		let proposer = postData?.proposer || preimage?.proposer || postData?.curator;
 		if (!proposer && (postData?.parentBountyIndex || postData?.parentBountyIndex === 0)) {

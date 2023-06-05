@@ -200,7 +200,7 @@ const Post: FC<IPostProps> = (props) => {
 
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
-			<div className={`${className} flex flex-col w-full xl:w-4/12 mx-auto`}>
+			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
 				<GovernanceSideBar
 					toggleEdit={toggleEdit}
 					proposalType={proposalType}
@@ -353,8 +353,8 @@ const Post: FC<IPostProps> = (props) => {
 		}}>
 			<>
 				<SpamAlert />
-				<div className={`${className} flex flex-col xl:flex-row`}>
-					<div className='flex-1 w-full xl:w-8/12 mx-auto xl:mr-9 mb-6 xl:mb-0'>
+				<div className={`${className} grid grid-cols-1 xl:grid-cols-12 gap-9`}>
+					<div className='xl:col-span-8'>
 
 						{
 							!isEditing && <DiscussionLink isOffchainPost={isOffchainPost} />

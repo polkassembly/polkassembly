@@ -7,8 +7,8 @@ import { Alert, Button, Form , Input, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { FC, useEffect, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
+import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AuthForm from 'src/ui-components/AuthForm';
@@ -18,6 +18,7 @@ import * as validation from 'src/util/validation';
 import styled from 'styled-components';
 
 import { TokenType } from '~src/auth/types';
+import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
@@ -35,14 +36,16 @@ interface Props {
 	setSignupOpen?: (pre: boolean)=> void;
   isDelegation?: boolean;
   className?: string;
+  setWithPolkasafe?: Dispatch<SetStateAction<boolean>>;
 }
-const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation }) => {
+const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation, setWithPolkasafe }) => {
 	const { password, username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
+	const { network } = useNetworkContext();
 
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -176,7 +179,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					</Button>
 				</div>
 				<div>
-					<WalletButtons disabled={loading} onWalletSelect={onWalletSelect} />
+					<WalletButtons disabled={loading} onWalletSelect={onWalletSelect} showPolkasafe={canUsePolkasafe(network)} onPolkasafeSelect={setWithPolkasafe} polkasafeText='Login with Polkasafe'/>
 				</div>
 				{error && <FilteredError text={error} />}
 

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CheckOutlined } from '@ant-design/icons';
+import { CheckOutlined  } from '@ant-design/icons';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import {
 	Injected,
@@ -13,7 +13,7 @@ import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
@@ -30,7 +30,10 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ExtensionNotDetected from '../ExtensionNotDetected';
 import { WalletIcon } from './MetamaskLogin';
-
+import WalletButtons from './WalletButtons';
+import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
+import ArrowLeft from '~assets/icons/arrow-left.svg';
+import PolkasafeLogo from '~assets/polkasafe-logo.svg';
 interface Props {
   chosenWallet: Wallet;
   setDisplayWeb2: () => void;
@@ -38,6 +41,8 @@ interface Props {
   isModal?:boolean;
   setLoginOpen?:(pre: boolean) => void;
   setSignupOpen?: (pre: boolean) => void;
+  withPolkasafe?: boolean;
+  setChosenWallet?: any;
 }
 
 const Web3Login: FC<Props> = ({
@@ -46,7 +51,9 @@ const Web3Login: FC<Props> = ({
 	setWalletError,
 	isModal,
 	setLoginOpen,
-	setSignupOpen
+	setSignupOpen,
+	withPolkasafe,
+	setChosenWallet
 }) => {
 	const { network } = useNetworkContext();
 
@@ -62,6 +69,7 @@ const Web3Login: FC<Props> = ({
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
 	const [fetchAccounts, setFetchAccounts] = useState(true);
 	const [isSignUp, setIsSignUp] = useState(false);
+	const [multiWallet, setMultiWallet] = useState<string>('');
 
 	const handleClick=() => {
 		if(isModal && setSignupOpen && setLoginOpen){
@@ -147,7 +155,121 @@ const Web3Login: FC<Props> = ({
 		return;
 	};
 
-	const onAccountChange = (address: string) => setAddress(address);
+	const onAccountChange = (address: string) => {
+		setAddress(address);
+		setMultiWallet('');
+	};
+
+	const loginByMultisig = async (substrate_address:string, signature:any, signRaw:any) => {
+		const { data: addressLoginData, error: addressLoginError } =
+				await nextApiClientFetch<TokenType>(
+					'api/v1/auth/actions/addressLogin',
+					{
+						address: substrate_address,
+						multisig:multiWallet,
+						signature,
+						wallet: chosenWallet
+					}
+				);
+		if (addressLoginError) {
+			setError(addressLoginError);
+			if (
+				addressLoginError ===
+					'Please sign up prior to logging in with a web3 address'
+			) {
+				setIsSignUp(true);
+				try {
+					setLoading(true);
+					const { data, error } =
+							await nextApiClientFetch<ChallengeMessage>(
+								'api/v1/auth/actions/addressSignupStart',
+								{ address: substrate_address, multisig:multiWallet }
+							);
+					if (error || !data) {
+						setError(error || 'Something went wrong');
+						setLoading(false);
+						return;
+					}
+
+					const signMessage = data?.signMessage;
+					if (!signMessage) {
+						setError('Challenge message not found');
+						setLoading(false);
+						return;
+					}
+
+					const { signature } = await signRaw({
+						address: substrate_address,
+						data: stringToHex(signMessage),
+						type: 'bytes'
+					});
+
+					const { data: confirmData, error: confirmError } =
+							await nextApiClientFetch<TokenType>(
+								'api/v1/auth/actions/addressSignupConfirm',
+								{
+									address: substrate_address,
+									multisig: multiWallet,
+									signature: signature,
+									wallet: chosenWallet
+								}
+							);
+
+					if (confirmError || !confirmData) {
+						setError(confirmError || 'Something went wrong');
+						setLoading(false);
+						return;
+					}
+
+					if (confirmData.token) {
+						currentUser.loginWallet = chosenWallet;
+						currentUser.loginAddress = multiWallet;
+						currentUser.delegationDashboardAddress = multiWallet;
+						localStorage.setItem(
+							'delegationWallet',
+							chosenWallet
+						);
+						localStorage.setItem(
+							'delegationDashboardAddress',
+							multiWallet
+						);
+						localStorage.setItem('loginWallet', chosenWallet);
+						handleTokenChange(confirmData.token, currentUser);
+						if (isModal) {
+							setLoginOpen && setLoginOpen(false);
+							setLoading(false);
+							return;
+						}
+						router.push('/');
+					} else {
+						throw new Error('Web3 Login failed');
+					}
+				} catch (error) {
+					setError(error.message);
+					setLoading(false);
+				}
+			}
+			setLoading(false);
+			return;
+		}
+		if (addressLoginData?.token) {
+			currentUser.loginWallet = chosenWallet;
+			currentUser.loginAddress = multiWallet;
+			currentUser.delegationDashboardAddress = multiWallet;
+
+			localStorage.setItem('delegationWallet', chosenWallet);
+			localStorage.setItem('delegationDashboardAddress', multiWallet);
+			localStorage.setItem('loginWallet', chosenWallet);
+
+			handleTokenChange(addressLoginData.token, currentUser);
+			if (isModal) {
+				setLoginOpen && setLoginOpen(false);
+				setLoading(false);
+				return;
+			}
+			router.push('/');
+		}
+	};
 
 	const handleLogin: ( values: React.BaseSyntheticEvent<object, any, any> | undefined ) => void = async  () => {
 		if (!accounts.length) {
@@ -201,6 +323,11 @@ const Web3Login: FC<Props> = ({
 				data: stringToHex(signMessage),
 				type: 'bytes'
 			});
+
+			if(multiWallet){
+				await loginByMultisig(substrate_address, signature, signRaw);
+				return;
+			}
 
 			const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressLogin', { address: substrate_address, signature, wallet: chosenWallet });
 			if(addressLoginError) {
@@ -293,11 +420,34 @@ const Web3Login: FC<Props> = ({
 
 	const handleToggle = () => setDisplayWeb2();
 
+	const handleChangeWalletWithPolkasafe = (wallet:string) => {
+		setChosenWallet(wallet);
+		console.log(wallet);
+		setAccounts([]);
+	};
+	useEffect(() => {
+		if(withPolkasafe && accounts.length === 0 && chosenWallet !== Wallet.POLKASAFE){
+			getAccounts(chosenWallet)
+				.then(() => {setLoading(false);setFetchAccounts(false);})
+				.catch((err) => {
+					console.error(err);
+				});
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[accounts.length, chosenWallet, withPolkasafe]);
+
+	console.log(withPolkasafe);
+
 	return (
 		<article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-3">
-			<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-4">
-				<span>Login</span>
-				<p className='flex gap-x-2 items-center justify-center p-0 m-0'>
+			<div className='flex gap-[16px] items-center mb-3'>
+				<ArrowLeft  onClick={setDisplayWeb2} className='cursor-pointer'/>
+				<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-4 m-0">
+					<span className={withPolkasafe ? 'flex items-center gap-[8px]' : ''}>{withPolkasafe ? <PolkasafeWithIcon/> : 'Login'}</span>
+				</h3>
+			</div>
+			{!withPolkasafe && (
+				<p className='flex gap-x-2 items-center justify-center p-0 m-0 text-2xl font-semibold text-[#1E232C]'>
 					<span className='mt-2'>
 						<WalletIcon which={chosenWallet} />
 					</span>
@@ -307,29 +457,41 @@ const Web3Login: FC<Props> = ({
 						}
 					</span>
 				</p>
-			</h3>
+			)}
+			{!!withPolkasafe && (
+				<WalletButtons
+					disabled={loading}
+					onWalletSelect={handleChangeWalletWithPolkasafe}
+					showPolkasafe={false}
+					onPolkasafeSelect={() => {}}
+					noHeader={true}
+					selectedWallet={chosenWallet}
+				/>
+			)}
 			{
 				fetchAccounts?
 					<div className='flex flex-col justify-center items-center'>
 						<p className='text-base'>
 							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
 						</p>
-						<Button
-							key='got-it'
-							icon={<CheckOutlined />}
-							className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
-							onClick={() => {
-								getAccounts(chosenWallet)
-									.then(() => {
-										setFetchAccounts(false);
-									})
-									.catch((err) => {
-										console.error(err);
-									});
-							}}
-						>
-							Got it!
-						</Button>
+						{!withPolkasafe &&
+							<Button
+								key='got-it'
+								icon={<CheckOutlined />}
+								className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
+								onClick={() => {
+									getAccounts(chosenWallet)
+										.then(() => {
+											setFetchAccounts(false);
+										})
+										.catch((err) => {
+											console.error(err);
+										});
+								}}
+							>
+								Got it!
+							</Button>
+						}
 					</div>
 					: (
 						<>
@@ -361,12 +523,23 @@ const Web3Login: FC<Props> = ({
 								) : accounts.length > 0 && (
 									<>
 										<div className='flex justify-center items-center my-5'>
-											<AccountSelectionForm
-												title='Choose linked account'
-												accounts={accounts}
-												address={address}
-												onAccountChange={onAccountChange}
-											/>
+											{withPolkasafe ? (
+												<MultisigAccountSelectionForm
+													title='Choose linked account'
+													accounts={accounts}
+													address={address}
+													onAccountChange={onAccountChange}
+													wallet={multiWallet}
+													setWallet={setMultiWallet}
+												/>
+											) : (
+												<AccountSelectionForm
+													title='Choose linked account'
+													accounts={accounts}
+													address={address}
+													onAccountChange={onAccountChange}
+												/>
+											)}
 										</div>
 										{isSignUp && <Alert showIcon className='mb-2' type='info' message={<>By Signing up you agree to the terms of the <Link href='/terms-and-conditions' className='text-pink_primary'>Polkassembly end user agreement</Link>.</>} />}
 										<div className="flex justify-center items-center">
@@ -375,6 +548,7 @@ const Web3Login: FC<Props> = ({
 												htmlType="submit"
 												size="large"
 												className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
+												disabled={withPolkasafe && multiWallet===''}
 											>
 								Login
 											</Button>
@@ -413,3 +587,9 @@ const Web3Login: FC<Props> = ({
 };
 
 export default Web3Login;
+
+const PolkasafeWithIcon = () => (
+	<>
+		<PolkasafeLogo /> Login with Polkasafe
+	</>
+);

@@ -5,7 +5,7 @@
 import { LoadingOutlined , StopOutlined } from '@ant-design/icons';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Button, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Alert, Button, Divider, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
 import { EVoteDecisionType, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
@@ -32,6 +32,11 @@ import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
+import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
+import ArrowLeft from '~assets/icons/arrow-left.svg';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { Polkasafe } from 'polkasafe';
+import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 
 const ZERO_BN = new BN(0);
 
@@ -73,8 +78,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
 	const [walletErr, setWalletErr] = useState<INetworkWalletErr>({ description: '', error: 0, message: '' });
+	const [multisig, setMultisig] = useState<string>('');
+	const [showMultisig, setShowMultisig] = useState<boolean>(false);
 
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
+
+	const client = new Polkasafe();
 
 	useEffect(() => {
 		if(!window) return;
@@ -293,6 +302,111 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 		</Form.Item>;
 
+	const voteReferendumByMultisig = async () => {
+		if (!referendumId && referendumId !== 0) {
+			console.error('referendumId not set');
+			return;
+		}
+		const substrateAddress = getSubstrateAddress(address);
+		const injectedWindow = window as Window & InjectedWindow;
+		if(wallet){
+			const selectedWallet = injectedWindow.injectedWeb3[wallet];
+
+			if (!selectedWallet) {
+				return;
+			}
+			let voteObj: any = {};
+			if(proposalType === ProposalType.OPEN_GOV){
+				if(vote === EVoteDecisionType.AYE ) {
+					voteObj = { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } };
+
+				}
+				else if(vote === EVoteDecisionType.NAY ) {
+					voteObj = { Standard: { balance: lockedBalance, vote: { aye:false, conviction } } };
+				}
+				else if(vote === EVoteDecisionType.SPLIT) {
+					try {
+						await splitForm.validateFields();
+
+						// if form is valid
+						const  ayeVote = ayeVoteValue?.toString();
+						const  nayVote = nayVoteValue?.toString();
+						voteObj = { Split: { aye:`${ayeVote}`,nay:`${nayVote}` } };
+					} catch (e) {
+						console.log(e);
+					}
+					finally{
+						setAyeVoteValue(ZERO_BN);
+						setNayVoteValue(ZERO_BN);
+					}
+				}
+				else if(vote === EVoteDecisionType.ABSTAIN && ayeVoteValue && nayVoteValue) {
+					try {
+						await abstainFrom.validateFields();
+						// if form is valid
+						const  abstainVote = abstainVoteValue?.toString();
+						const  ayeVote = ayeVoteValue?.toString();
+						const  nayVote = nayVoteValue?.toString();
+						voteObj = { SplitAbstain: {  abstain:`${abstainVote}`,aye:`${ayeVote}`, nay:`${nayVote}` } };
+					} catch (e) {
+						console.log(e);
+					}
+					finally{
+						setAbstainVoteValue(ZERO_BN);
+						setNayVoteValue(ZERO_BN);
+						setAyeVoteValue(ZERO_BN);
+					}
+				}
+			}
+			else if(proposalType === ProposalType.FELLOWSHIP_REFERENDUMS){
+				if(vote === EVoteDecisionType.AYE){
+					voteObj = true;
+				}else{
+					voteObj = false;
+				}
+			}
+			else{
+				if(vote === EVoteDecisionType.AYE){
+					voteObj = { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } };
+				}
+				else{
+					voteObj = { Standard: { balance: lockedBalance, vote: { aye:false , conviction } } };
+				}
+			}
+			const injected = selectedWallet && selectedWallet.enable && await selectedWallet.enable(APPNAME);
+
+			if(!injected){
+				return;
+			}
+			try{
+				// @ts-ignore
+				await client.connect(network, substrateAddress, injected );
+				const statusGrabber = (message:string) => {
+					setLoadingStatus({ isLoading: true, message:message });
+				};
+				const { error } = await client.voteOnProposal(multisig, referendumId, voteObj, statusGrabber, proposalType);
+				if(error){
+					throw new Error(error);
+				}
+				setLoadingStatus({ isLoading: false, message: '' });
+				queueNotification({
+					header: 'Success!',
+					message: `Your vote on Referendum #${referendumId} will be successful once approved by other signatories.`,
+					status: NotificationStatus.SUCCESS
+				});
+			}catch(error){
+				setLoadingStatus({ isLoading: false, message: '' });
+				console.log(':( transaction failed');
+				console.error('ERROR:', error);
+				queueNotification({
+					header: 'Failed!',
+					message: error.message,
+					status: NotificationStatus.ERROR
+				});
+			}
+		}
+	};
+
 	const handleSubmit = async () => {
 
 		if (!referendumId && referendumId !== 0) {
@@ -323,7 +437,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		}
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
-
+		if(multisig){
+			await voteReferendumByMultisig();
+			return;
+		}
 		let voteTx = null;
 
 		if(proposalType === ProposalType.OPEN_GOV){
@@ -379,8 +496,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			}else{
 				voteTx = api.tx.fellowshipCollective.vote(referendumId, false);
 			}
-		}
-		else{
+		}else{
 			if(vote === EVoteDecisionType.AYE){
 				voteTx = api.tx.democracy.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } });
 			}
@@ -389,7 +505,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			}
 		}
 		if(network == 'equilibrium'){
-			voteTx?.signAndSend(address, { nonce: -1 }, ({ status }) => {
+			voteTx?.signAndSend(address, { nonce: -1 }, ({ status }:{ status:any }) => {
 				if (status.isInBlock) {
 					setLoadingStatus({ isLoading: false, message: '' });
 					queueNotification({
@@ -406,7 +522,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					}
 					console.log(`Current status: ${status.type}`);
 				}
-			}).catch((error) => {
+			}).catch((error:any) => {
 				setLoadingStatus({ isLoading: false, message: '' });
 				console.log(':( transaction failed');
 				console.error('ERROR:', error);
@@ -417,7 +533,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				});
 			});
 		}else{
-			voteTx?.signAndSend(address, ({ status }) => {
+			voteTx?.signAndSend(address, ({ status }:{ status:any }) => {
 				if (status.isInBlock) {
 					setLoadingStatus({ isLoading: false, message: '' });
 					queueNotification({
@@ -434,7 +550,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					}
 					console.log(`Current status: ${status.type}`);
 				}
-			}).catch((error) => {
+			}).catch((error:any) => {
 				setLoadingStatus({ isLoading: false, message: '' });
 				console.log(':( transaction failed');
 				console.error('ERROR:', error);
@@ -491,26 +607,50 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				className={`w-[500px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
-				title={<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center justify-center gap-2'>
-					<CastVoteIcon className='mt-1'/>
-					<span className='text-[#243A57] font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
-				</div>}
+				title={
+					showMultisig ?
+						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 justify-center'>
+							<ArrowLeft onClick={() => {setShowMultisig(false); setMultisig('');}} className='cursor-pointer absolute left-[24px] mt-1'/>
+							<div className='flex gap-[8px] items-center'>
+								<CastVoteIcon className='mt-1'/>
+								<span className='text-[#243A57] font-semibold tracking-[0.0015em] text-xl'>Cast Vote with Polkasafe Multisig</span>
+							</div>
+
+						</div>
+						:
+						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center justify-center gap-2'>
+							<CastVoteIcon className='mt-1'/>
+							<span className='text-[#243A57] font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
+						</div>
+				}
 			><>
 					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
 						<>
-							<div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>
-							<div className='flex items-center gap-x-5 mt-1 mb-6 justify-center'>
-								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
-								{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-								{availableWallets[Wallet.SUBWALLET] &&  <WalletButton className={`${wallet === Wallet.SUBWALLET? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
-								{
-									(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
+							<div className='mb-6'>
+								<div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>
+								<div className='flex items-center gap-x-5 mt-1 justify-center'>
+									{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
+									{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+									{availableWallets[Wallet.SUBWALLET] &&  <WalletButton className={`${wallet === Wallet.SUBWALLET? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
+									{
+										(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
                     <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
-								}
-								{
-									['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET]?
-										<WalletButton disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
-										: null
+									}
+									{
+										['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET]?
+											<WalletButton disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
+											: null
+									}
+								</div>
+								{ canUsePolkasafe(network) && !showMultisig &&
+								<div className='w-[55%] flex flex-col m-auto'>
+									<Divider className='m-0'>OR</Divider>
+									<div className='w-full flex justify-center'>
+										<WalletButton disabled={!apiReady} onClick={() => {
+											setShowMultisig(!showMultisig);
+										}} name="SubWallet" icon={<WalletIcon which={Wallet.POLKASAFE} className='h-6 w-6'/>} text={'Cast Vote with Multisig'} className='text-[18px] font-semibold'/>
+									</div>
+								</div>
 								}
 							</div>
 							{balanceErr.length > 0 && wallet && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
@@ -518,17 +658,31 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 							{
 								accounts.length > 0 ?
-									<AccountSelectionForm
-										title='Vote with Account'
-										accounts={accounts}
-										address={address}
-										withBalance
-										onAccountChange={onAccountChange}
-										onBalanceChange={handleOnBalanceChange}
-										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
-										inputClassName='rounded-[4px] px-3 py-1'
-										withoutInfo={true}
-									/>
+									showMultisig ?
+										<MultisigAccountSelectionForm
+											title='Select Address'
+											accounts={accounts}
+											address={address}
+											withBalance
+											onAccountChange={onAccountChange}
+											onBalanceChange={handleOnBalanceChange}
+											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
+											wallet={multisig}
+											setWallet={setMultisig}
+											classes='gap-[28px]'
+										/>
+										:
+										<AccountSelectionForm
+											title='Vote with Account'
+											accounts={accounts}
+											address={address}
+											withBalance
+											onAccountChange={onAccountChange}
+											onBalanceChange={handleOnBalanceChange}
+											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
+											inputClassName='rounded-[4px] px-3 py-1'
+											withoutInfo={true}
+										/>
 									: walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? <Alert message='Please select a wallet.' showIcon type='info' />: null
 							}
 
@@ -572,7 +726,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 									<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance || (showMultisig && !multisig)}>Confirm</Button>
 									</div>
 								</Form>
 							}
@@ -604,7 +758,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance || (showMultisig && !multisig)}>Confirm</Button>
 									</div>
 								</Form>
 							}
@@ -643,7 +797,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance || (showMultisig && !multisig)}>Confirm</Button>
 									</div>
 								</Form>
 							}

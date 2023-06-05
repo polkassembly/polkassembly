@@ -221,3 +221,51 @@ export const transferNoticeMistakeEmailTemplate = container(`
 
     Due to a technical mistake, our previous email didn't contain a correct link to Polkassembly account deletion. The correct link to do so is https://kusama.polkassembly.io/settings#deleteAccount<br /><br />
 `);
+
+export const spamCommentReportTemplate = container(`
+    <p>
+       Spam Reported.<br />
+
+        <br />
+        Comment <a href="<%= commentUrl %>"><%= commentUrl %></a>. is reported as spam.<br/>
+        Network: <%= network %><br />
+        Post ID: <%= postId %><br />
+        Post Type: <%= postType %><br />
+        Comment ID: <%= commentId %><br /> <br/>
+        Reported by: <%= spam_users_count %><br />
+        
+        Polkassembly Team
+    </p>
+`);
+
+export const spamReplyReportTemplate = container(`
+    <p>
+       Spam Reported.<br />
+
+        <br />
+        Reply on Comment <a href="<%= commentUrl %>"><%= commentUrl %></a>. is reported as spam.<br/>
+        Network: <%= network %><br />
+        Post ID: <%= postId %><br />
+        Post Type: <%= postType %><br />
+        Comment ID: <%= commentId %><br /> <br/>
+        Reply ID: <%= replyId %><br /> <br/>
+        Reported by: <%= spam_users_count %><br />
+        
+        Polkassembly Team
+    </p>
+`);
+
+export const spamPostReportTemplate = container(`
+    <p>
+       Spam Reported.<br />
+
+        <br />
+        Post <a href="<%= postUrl %>"><%= postUrl %></a>. is reported as spam.<br/>
+        Network: <%= network %><br />
+        Post ID: <%= postId %><br />
+        Post Type: <%= postType %><br />
+        Reported by: <%= spam_users_count %><br />
+        
+        Polkassembly Team
+    </p>
+`);

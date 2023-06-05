@@ -17,6 +17,9 @@ import {
 	postSubscriptionMailTemplate,
 	reportContentEmailTemplate,
 	resetPasswordEmailTemplate,
+	spamCommentReportTemplate,
+	spamPostReportTemplate,
+	spamReplyReportTemplate,
 	transferNoticeEmailTemplate,
 	transferNoticeMistakeEmailTemplate,
 	undoEmailChangeEmailTemplate,
@@ -170,6 +173,102 @@ export const sendCommentMentionMail = (user: User, author: User, content: string
 
 	sgMail.send(msg).catch(e =>
 		console.error('Post subscription email not sent', e));
+};
+
+export const sendCommentReportMail = (
+	postType: string,
+	postId: string,
+	commentId: string,
+	commentUrl:string,
+	network:string,
+	spam_users_count:number ): void => {
+	if (!apiKey) {
+		console.warn('Comment Spam Report Email not sent due to missing API key');
+		return;
+	}
+
+	const text = ejs.render(spamCommentReportTemplate, {
+		commentId,
+		commentUrl,
+		network,
+		postId,
+		postType,
+		spam_users_count
+	});
+	const msg = {
+		from: FROM,
+		html: text,
+		subject: 'Comment Spam Report',
+		text,
+		to: 'hello@polkassembly.io,parambir@polkassembly.io'
+	};
+
+	sgMail.send(msg).catch(e =>
+		console.error('Comment Spam Report not sent', e));
+};
+export const sendReplyReportMail = (
+	postType: string,
+	postId: string,
+	commentId: string,
+	replyId:string,
+	commentUrl:string,
+	network:string,
+	spam_users_count:number ): void => {
+	if (!apiKey) {
+		console.warn('Reply Spam Report Email not sent due to missing API key');
+		return;
+	}
+
+	const text = ejs.render(spamReplyReportTemplate, {
+		commentId,
+		commentUrl,
+		network,
+		postId,
+		postType,
+		replyId,
+		spam_users_count
+	});
+	const msg = {
+		from: FROM,
+		html: text,
+		subject: 'Reply Spam Report',
+		text,
+		to: 'hello@polkassembly.io,parambir@polkassembly.io'
+	};
+
+	sgMail.send(msg).catch(e =>
+		console.error('Reply Spam Report not sent', e));
+};
+
+export const sendPostSpamReportMail = (
+	postType: string,
+	postId: string,
+	postUrl:string,
+	network:string,
+	spam_users_count:number ): void => {
+	if (!apiKey) {
+		console.warn('Post Spam Report Email not sent due to missing API key');
+		return;
+	}
+
+	const text = ejs.render(spamPostReportTemplate, {
+		network,
+		postId,
+		postType,
+		postUrl,
+		spam_users_count
+	});
+	const msg = {
+		from: FROM,
+		html: text,
+		subject: 'Post Spam Report',
+		text,
+		to: 'hello@polkassembly.io,parambir@polkassembly.io'
+	};
+
+	sgMail.send(msg).catch(e =>
+		console.error(' Spam Report not sent', e));
+	console.log('mail sent');
 };
 
 export const sendUndoEmailChangeEmail = (user: User, undoToken: UndoEmailChangeToken, network: string): void => {

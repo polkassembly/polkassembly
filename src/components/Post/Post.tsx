@@ -249,7 +249,6 @@ const Post: FC<IPostProps> = (props) => {
 		setSidebarOpen(true);
 		setProposerAddress(address);
 	};
-	if(network==='kusama' || network ==='polkadot'){<PostAudit/>; }
 	const getOnChainTabs = () => {
 		const tabs = [
 			{
@@ -258,15 +257,18 @@ const Post: FC<IPostProps> = (props) => {
 				),
 				key: 'timeline',
 				label: 'Timeline'
-			},
-			{
+			}
+		];
+		if (['polkadot', 'kusama'].includes(network)){
+			tabs.push({
 				children: (
 					<PostAudit />
 				),
 				key: 'audit',
 				label: 'Audit'
-			}
-		];
+			});
+		}
+
 		if (!isOffChainProposalTypeValid(proposalType)) {
 			tabs.push({
 				children: (

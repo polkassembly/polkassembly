@@ -101,18 +101,18 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							if (vote) {
 								const { balance, lockPeriod, decision } = vote;
 								if (decision === 'yes') {
-									voteInfo.aye_amount = voteInfo.aye_amount.add(new BN(balance.value));
+									voteInfo.aye_without_conviction = voteInfo.aye_without_conviction.add(new BN(balance.value));
 									if (lockPeriod === 0) {
-										voteInfo.aye_without_conviction = voteInfo.aye_without_conviction.add(new BN(balance.value).div(new BN(10)));
+										voteInfo.aye_amount = voteInfo.aye_amount.add(new BN(balance.value).div(new BN(10)));
 									} else {
-										voteInfo.aye_without_conviction = voteInfo.aye_without_conviction.add(new BN(balance.value).mul(new BN(lockPeriod)));
+										voteInfo.aye_amount = voteInfo.aye_amount.add(new BN(balance.value).mul(new BN(lockPeriod)));
 									}
 								} else {
-									voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value));
+									voteInfo.nay_without_conviction = voteInfo.nay_without_conviction.add(new BN(balance.value));
 									if (lockPeriod === 0) {
-										voteInfo.nay_without_conviction = voteInfo.nay_without_conviction.add(new BN(balance.value).div(new BN(10)));
+										voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).div(new BN(10)));
 									} else {
-										voteInfo.nay_without_conviction = voteInfo.nay_without_conviction.add(new BN(balance.value).mul(new BN(lockPeriod || 0.1)));
+										voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).mul(new BN(lockPeriod || 0.1)));
 									}
 								}
 							}
@@ -373,7 +373,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 										<div
 											className='text-navBlue text-xs font-medium leading-[22px]'
 										>
-											{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_without_conviction || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+											{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 										</div>
 									</article>
 									<article className='flex items-center justify-between gap-x-2'>
@@ -385,7 +385,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 										<div
 											className='text-navBlue text-xs font-medium leading-[22px]'
 										>
-											{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_without_conviction || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+											{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 										</div>
 									</article>
 									{

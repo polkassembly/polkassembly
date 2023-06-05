@@ -33,7 +33,7 @@ import DownIcon from '~assets/icons/down-icon.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
-import { getCurrentDateTime } from '~src/util/getCurrentDateTime';
+import dayjs from 'dayjs';
 
 const ZERO_BN = new BN(0);
 
@@ -668,7 +668,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
-			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true} balance={totalVoteVal} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={getCurrentDateTime()} ayeVoteValue={ayeVoteVal} nayVoteValue={nayVoteVal} abstainVoteValue={abstainVoteVal} toOrWith={'With'} />
+			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true} balance={totalVoteVal} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={ayeVoteVal} nayVoteValue={nayVoteVal} abstainVoteValue={abstainVoteVal} toOrWith={'With'} />
 		</div>
 	</>;
 

@@ -31,7 +31,7 @@ import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import { poppins } from 'pages/_app';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
-import { getCurrentDateTime } from '~src/util/getCurrentDateTime';
+import dayjs from 'dayjs';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -477,7 +477,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
-			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true} balance={lockedBalance} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={getCurrentDateTime()} toOrWith={'With'} />
+			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true} balance={lockedBalance} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={ dayjs().format('HH:mm, Do MMMM YYYY')} toOrWith={'With'} />
 		</div>
 	);
 };

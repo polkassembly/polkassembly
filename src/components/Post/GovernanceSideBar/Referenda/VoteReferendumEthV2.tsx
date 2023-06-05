@@ -35,7 +35,7 @@ import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
-import { getCurrentDateTime } from '~src/util/getCurrentDateTime';
+import dayjs from 'dayjs';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -745,7 +745,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					</Spin>
 				</>
 			</Modal>
-			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true}  balance={totalVoteVal} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={getCurrentDateTime()} ayeVoteValue={ayeVoteVal} nayVoteValue={nayVoteVal} abstainVoteValue={abstainVoteVal} toOrWith={'With'} />
+			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true}  balance={totalVoteVal} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  time={dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={ayeVoteVal} nayVoteValue={nayVoteVal} abstainVoteValue={abstainVoteVal} toOrWith={'With'} />
 		</div>
 	);
 };

@@ -39,13 +39,14 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 
 	const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_WRITE_API_KEY);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const index = algoliaClient.initIndex('polkassembly_posts_test');
+	const index = algoliaClient.initIndex('polkassembly_posts');
 
 	// this would be networks not network -> should work
 	const networksSnapshot = await firestore_db.collection('networks').get();
 
 	// for loop for networksSnapshot
 	for(const networkDoc of networksSnapshot.docs) {
+		// console.log(networkDoc.id,'docID')
 		//get postTypes for each network
 		const postTypesSnapshot = await networkDoc.ref.collection('post_types').get();
 
@@ -55,7 +56,7 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 			const postsSnapshot = await postTypeDoc.ref.collection('posts').get();
 
 			// setup batch here
-
+			let counter = 0;
 			const chunksArray = chunkArray(postsSnapshot.docs, 300);
 			// for loop for postsSnapshot
 			for(const postsArr of chunksArray) {
@@ -75,10 +76,12 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 				});
 
 				///commit batch
-				console.log(postRecords,'commiting');
-				// await index.saveObjects(postRecords).catch((err) => {
-				// console.log(err);
-				// });
+
+				counter++;
+				console.log('hereee =>', networkDoc.id, postTypeDoc.id, postsSnapshot.size,counter);
+				await index.saveObjects(postRecords).catch((err) => {
+					console.log(err);
+				});
 			}
 		}
 	}

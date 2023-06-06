@@ -38,12 +38,13 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 
 	const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_WRITE_API_KEY);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const index = algoliaClient.initIndex('polkassembly_users_test');
+	const index = algoliaClient.initIndex('polkassembly_users');
 
 	const usersSnapshots = await firestore_db.collection('users').get();
 
 	const chunksArray = chunkArray(usersSnapshots.docs, 300);
 
+	let counter = 0;
 	for(const userArr of chunksArray) {
 		const userRecord = userArr.map((userDoc: any) => {
 			const userDocData = userDoc.data();
@@ -55,11 +56,12 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 				username: userDocData?.username || ''
 			};
 		});
+		counter++;
+		console.log(counter,usersSnapshots.size);
 
-		///commit batch
-		console.log(userRecord,'commiting');
-		// await index.saveObjects(postRecords).catch((err) => {
-		// console.log(err);
+		// commit batch
+		// await index.saveObjects(userRecord).catch((err) => {
+		// 	console.log(err);
 		// });
 	}
 	res.status(200).json({ message: 'Success' });

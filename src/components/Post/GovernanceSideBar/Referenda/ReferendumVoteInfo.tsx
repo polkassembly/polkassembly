@@ -117,6 +117,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 								}
 							}
 						});
+						voteInfo.turnout = voteInfo.aye_without_conviction.add(voteInfo.nay_without_conviction);
 						if (voteThreshold) {
 							voteInfo.voteThreshold = voteThreshold?.split(/(?=[A-Z])/).join(' ');
 							if(totalIssuance !== null) {
@@ -386,6 +387,18 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 											className='text-navBlue text-xs font-medium leading-[22px]'
 										>
 											{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+										</div>
+									</article>
+									<article className='flex items-center justify-between gap-x-2'>
+										<div className='flex items-center gap-x-1'>
+											<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+												Turnout
+											</span>
+										</div>
+										<div
+											className='text-navBlue text-xs font-medium leading-[22px]'
+										>
+											{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 										</div>
 									</article>
 									{

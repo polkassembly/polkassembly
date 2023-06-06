@@ -16,9 +16,11 @@ import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface IReportButtonProps {
-	type: string
-	contentId: string
-	className?: string
+	type: string;
+	postId?: number|string;
+	commentId?: string;
+	replyId?: string;
+	className?: string;
 	proposalType: ProposalType;
 }
 
@@ -30,7 +32,7 @@ const reasons = [
 ];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, contentId, className, proposalType } = props;
+	const { type, postId, commentId, replyId, className, proposalType } = props;
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
@@ -51,9 +53,12 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 
 		const { data: reportData , error: reportError } = await nextApiClientFetch<IReportContentResponse>('api/v1/auth/actions/reportContent', {
 			comments,
-			content_id: contentId,
+			// eslint-disable-next-line sort-keys
+			comment_id: commentId,
+			post_id: postId,
 			proposalType,
 			reason,
+			reply_id: replyId,
 			type
 		});
 
@@ -75,10 +80,55 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				status: NotificationStatus.SUCCESS
 			});
 			setPostData && setPostData((prev) => {
-				return {
-					...prev,
-					spam_users_count: reportData.spam_users_count
-				};
+				if (type === 'post') {
+					return {
+						...prev,
+						spam_reports_count: reportData.spam_users_count
+					};
+				} else if (type === 'comment') {
+					return {
+						...prev,
+						comments: (prev?.comments || []).map((comment) => {
+							if (comment.id === commentId) {
+								return {
+									...comment,
+									spam_users_count: reportData.spam_users_count
+								};
+							} else {
+								return {
+									...comment
+								};
+							}
+						})
+					};
+				} else {
+					return {
+						...prev,
+						comments: (prev?.comments || []).map((comment) => {
+							if (comment?.id === commentId) {
+								return {
+									...comment,
+									replies: (comment?.replies || []).map((reply) => {
+										if (reply?.id === replyId) {
+											return {
+												...reply,
+												spam_users_count: reportData.spam_users_count
+											};
+										} else {
+											return {
+												...reply
+											};
+										}
+									})
+								};
+							} else {
+								return {
+									...comment
+								};
+							}
+						})
+					};
+				}
 			});
 			setShowModal(false);
 			setFormDisabled(false);

@@ -30,6 +30,7 @@ export interface IComment {
   sentiment?:number;
   comment_source?:'polkassembly' | 'subsquare';
   history?: ICommentHistory[];
+  spam_users_count?:number;
 }
 
 interface ICommentProps {
@@ -40,7 +41,7 @@ interface ICommentProps {
 
 export const Comment: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
-	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history } = comment;
+	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history ,spam_users_count } = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
@@ -85,6 +86,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					username={comment.username}
 					sentiment={newSentiment}
 					commentSource={comment_source}
+					spam_users_count={spam_users_count}
 				>
 					<div className='cursor-pointer' onClick={() => setOpenModal(true)}>
 						<UpdateLabel

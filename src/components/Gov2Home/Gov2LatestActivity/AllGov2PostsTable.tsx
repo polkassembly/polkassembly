@@ -90,12 +90,16 @@ interface IAllGov2PostsTableProps {
 const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 	const router = useRouter();
 
-	function gotoPost(rowData: IPostsRowData){
+	function gotoPost(rowData: IPostsRowData): void{
 		let path = 'referenda';
 		if(!rowData.origin) {
 			path = 'post';
 		}
-		router.push(`/${path}/${rowData.post_id}`);
+		if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
+			window?.open(`/${path}/${rowData.post_id}`, '_blank');
+		} else {
+			router.push(`/${path}/${rowData.post_id}`);
+		}
 	}
 
 	//error state
@@ -136,11 +140,16 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 		return (
 			<>
 				<div className='hidden lg:block'>
-					<PopulatedLatestActivity columns={columns} tableData={tableData} onClick={(rowData) => gotoPost(rowData)} />
+					<PopulatedLatestActivity columns={columns} tableData={tableData}
+						// modify the tableData to add the onClick event
+						onClick={(rowData) => gotoPost(rowData)}
+					/>
 				</div>
 
 				<div className="block lg:hidden h-[520px] overflow-y-auto">
-					<Gov2PopulatedLatestActivityCard tableData={tableData} onClick={(rowData) => gotoPost(rowData)} />
+					<Gov2PopulatedLatestActivityCard tableData={tableData}
+						onClick={(rowData) => gotoPost(rowData)}
+					/>
 				</div>
 			</>
 		);

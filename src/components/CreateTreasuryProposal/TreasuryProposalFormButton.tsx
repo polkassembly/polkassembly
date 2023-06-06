@@ -411,7 +411,6 @@ const TreasuryProposalFormButton = ({
 											placeholder={'0'}
 											className=' w-full m-0'
 											onChange={onBalanceChange}
-											size='middle'
 										/>
 									</ div>
 

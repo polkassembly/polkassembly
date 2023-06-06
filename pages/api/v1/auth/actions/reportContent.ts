@@ -13,6 +13,10 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { checkReportThreshold } from '../../posts/on-chain-post';
+import _sendCommentReportMail from '~src/api-utils/_sendCommentReportMail';
+import _sendPostSpamReportMail from '~src/api-utils/_sendPostSpamReportMail';
+import _sendReplyReportMail from '~src/api-utils/_sendReplyReportMail';
+import { redisGet, redisSetex } from 'src/auth/redis';
 
 export interface IReportContentResponse {
 	message: string;
@@ -24,11 +28,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
+	const TTL_DURATION = 3600*6; // 6 Hours or 21600 seconds
 	if(!network) return res.status(400).json({ message: 'Missing network in request header' });
 
-	const { type, content_id, reason, comments, proposalType } = req.body;
-	if(!type || !content_id || !reason || !comments || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
-
+	const { type, reason, comments, proposalType, post_id,reply_id,comment_id } = req.body;
+	if(!type || !reason || !comments || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if((type === 'post' && !post_id) || (type === 'comment' && !(post_id && comment_id)) || (type === 'reply' && !(post_id && comment_id && reply_id))) {
+		return res.status(400).json({ message: 'Missing parameters in request body' });
+	}
 	if (!isOffChainProposalTypeValid(proposalType) && !isProposalTypeValid(proposalType)) {
 		return res.status(400).json({ message: `Proposal type ${proposalType} is not valid.` });
 	}
@@ -39,32 +46,71 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 	const user = await authServiceInstance.GetUser(token);
 	if(!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
-	if (!['post', 'comment'].includes(type)) return res.status(400).json({ message: messages.REPORT_TYPE_INVALID });
+	if (!['post', 'comment','reply'].includes(type)) return res.status(400).json({ message: messages.REPORT_TYPE_INVALID });
 	if (!reason) return res.status(400).json({ message: messages.REPORT_REASON_REQUIRED });
 	if (comments.length > 300) return res.status(400).json({ message: messages.REPORT_COMMENTS_LENGTH_EXCEEDED });
 
-	const postId = ((type === 'post' && proposalType !== 'tips')? Number(content_id): content_id);
+	const getContentId = () => {
+		switch(type)
+		{
+		case 'post':  return (proposalType !== 'tips'? Number(post_id): post_id);
+		case 'comment': return comment_id;
+		case 'reply': return reply_id;
+		default: return '';
+		}
+	};
+	const contentId = getContentId();
 	const strPostType = String(proposalType);
-	await networkDocRef(network).collection('reports').doc(`${user.id}_${postId}_${strPostType}`).set({
+	const data:any = {
 		comments,
-		content_id: postId,
+		content_id: contentId,
 		proposal_type: strPostType,
 		reason,
 		resolved: false,
 		type,
 		user_id: user.id
-	}, { merge: true }).then(async () => {
-		const countQuery = await networkDocRef(network).collection('reports').where('type', '==', 'post').where('proposal_type', '==', strPostType).where('content_id', '==', postId).count().get();
+	};
+
+	if(type === 'comment'){
+		data.post_id = post_id;
+	}else if(type === 'reply'){
+		data.post_id = post_id;
+		data.comment_id = comment_id;
+	}
+
+	await networkDocRef(network).collection('reports').doc(`${user.id}_${contentId}_${strPostType}`).set(data, { merge: true }).then(async () => {
+		const countQuery = await networkDocRef(network).collection('reports').where('type', '==', type).where('proposal_type', '==', strPostType).where('content_id', '==', contentId).count().get();
 
 		const data = countQuery.data();
 		const totalUsers = data.count || 0;
 
+		if(type == 'post' && checkReportThreshold(totalUsers) ){
+			const postReportKey = await redisGet(`postReportKey-${network}_${strPostType}_${post_id}`);
+			if(!postReportKey){
+				_sendPostSpamReportMail(network,strPostType,contentId,totalUsers);
+				await redisSetex(`postReportKey-${network}_${strPostType}_${post_id}`,TTL_DURATION,'true');
+			}
+		}
+		if(type == 'comment' && checkReportThreshold(totalUsers) ){
+
+			const commentReportKey = await redisGet(`commentReportKey-${network}_${strPostType}_${post_id}_${comment_id}`);
+			if(!commentReportKey){
+				_sendCommentReportMail(network,strPostType,post_id,comment_id,totalUsers);
+				await redisSetex(`commentReportKey-${network}_${strPostType}_${post_id}_${comment_id}`,TTL_DURATION,'true');
+			}
+		}
+		if(type == 'reply' && checkReportThreshold(totalUsers) ){
+			const replyReportKey = await redisGet(`replyReportKey-${network}_${strPostType}_${post_id}_${comment_id}_${reply_id}`);
+			if(!replyReportKey){
+				_sendReplyReportMail(network,strPostType,post_id,comment_id,reply_id,totalUsers);
+				await redisSetex(`replyReportKey-${network}_${strPostType}_${post_id}_${comment_id}_${reply_id}`,TTL_DURATION,'true');
+			}
+		}
 		return res.status(200).json({ message: messages.CONTENT_REPORT_SUCCESSFUL, spam_users_count: checkReportThreshold(totalUsers) });
 	}).catch((error) => {
 		console.log(' Error while reporting content : ', error);
 		return res.status(500).json({ message: 'Error while reporting content.' });
 	});
-
 }
 
 export default withErrorHandling(handler);

@@ -12,7 +12,7 @@ interface Props {
 
 const GovSidebarCard = ({ className, children } : Props) => {
 	return (
-		<div className={`${className} bg-white overflow-y-auto mx-auto max-h-[500px] xl:max-h-full xl:drop-shadow-md md:py-6 md:px-6 rounded-xl mb-9 lg:max-w-[512px]`}>
+		<div className={`${className} bg-white overflow-y-auto max-h-[500px] xl:max-h-full xl:shadow md:py-4 md:px-6 rounded-md mb-9 lg:max-w-[512px]`}>
 			{children}
 		</div>
 	);

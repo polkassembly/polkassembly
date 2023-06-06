@@ -86,6 +86,7 @@ export interface ChainProps {
   'treasuryProposalMaxBond': string | null;
   'externalLinks': string;
   'rpcEndpoints': TRPCEndpoint[];
+  'gTag': string | null;
 }
 
 export type TRPCEndpoint = {
@@ -385,4 +386,11 @@ export interface IDelegate {
 	active_delegation_count: number
 	voted_proposals_count: number
   isNovaWalletDelegate?: boolean
+}
+
+export enum EVoteDecisionType {
+  AYE = 'aye',
+  NAY = 'nay',
+  ABSTAIN = 'abstain',
+  SPLIT = 'split'
 }

@@ -28,6 +28,14 @@ query ProposalsListingByType($limit: Int, $index_in: [Int!]) {
 }
 `;
 
+export const GET_PROPOSALS_LISTING_COUNT_BY_TYPE = `
+query ProposalsListingByType($type_in: [ProposalType!], $trackNumber_in: [Int!], $status_in: [ProposalStatus!]) {
+  proposalsConnection(orderBy: id_ASC, where: {type_in: $type_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
+    totalCount
+  }
+}
+`;
+
 export const GET_PROPOSALS_LISTING_BY_TYPE = `
 query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrderByInput!] = createdAtBlock_DESC, $limit: Int = 10, $offset: Int = 0, $index_in: [Int!], $hash_in: [String!], $trackNumber_in: [Int!], $status_in: [ProposalStatus!]) {
   proposalsConnection(orderBy: id_ASC, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
@@ -412,6 +420,34 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
     }
   }
 }`;
+
+export const GET_TOTAL_VOTES_COUNT = `
+query TotalVotesCount($index_eq: Int = 0, $type_eq: VoteType = Referendum) {
+  votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}}) {
+    totalCount
+  }
+}
+`;
+
+export const GET_VOTES_WITH_LIMIT = `
+query VotesWithLimit($index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 100) {
+  votes(where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}}, limit: $limit, offset: 0) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+  }
+}
+`;
 
 export const GET_VOTES_LISTING_BY_TYPE_AND_INDEX = `
 query VotesListingByTypeAndIndex($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes) {

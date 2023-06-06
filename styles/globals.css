@@ -285,6 +285,16 @@ a.command-palette-list-item svg {
   width: 186px;
 }
 
+.inner-headings {
+  height: 21px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: 0.0025em;
+  color: #485f7d;
+}
+
 .delegate .ant-modal-content {
   background: white;
   box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.06);

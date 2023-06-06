@@ -90,7 +90,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				const goneBlocks = currentBlock.toNumber() % spendPeriod;
 				// const spendPeriodElapsed: number = blockToDays(goneBlocks, network, blockTime);
 				// const spendPeriodRemaining: number = totalSpendPeriod - spendPeriodElapsed;
-				const time = blockToTime(spendPeriod - goneBlocks, network, blockTime);
+				const { time } = blockToTime(spendPeriod - goneBlocks, network, blockTime);
 				const { d, h, m } = getDaysTimeObj(time);
 
 				const percentage = ((goneBlocks/spendPeriod) * 100).toFixed(0);

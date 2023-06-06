@@ -29,6 +29,7 @@ import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } fr
 import { getNetworkSocials } from './api/v1/network-socials';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -141,19 +142,17 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 
 	return (
 		<>
-			<Script
-				src="https://www.googletagmanager.com/gtag/js?id=G-KC3HDQMJSE"
-				strategy="afterInteractive"
-			/>
-			<Script id="google-analytics" strategy="afterInteractive">
+			{chainProperties[network]?.gTag ? <><Script
+				src={`https://www.googletagmanager.com/gtag/js?id=${chainProperties[network].gTag}`}
+				strategy="afterInteractive" /><Script id="google-analytics" strategy="afterInteractive">
 				{`
 					window.dataLayer = window.dataLayer || [];
 					function gtag(){dataLayer.push(arguments);}
 					gtag('js', new Date());
 
-					gtag('config', 'G-KC3HDQMJSE');
+					gtag('config', ${chainProperties[network].gTag});
 				`}
-			</Script>
+			</Script></> : null}
 			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network}/>
 			<main>
 				<div className="mt-6 mx-1">
@@ -178,6 +177,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 						<News twitter={networkSocialsData?.data?.twitter || ''} />
 					</div>
 				</div>
+				<ChatFloatingModal/>
 			</main>
 		</>
 	);

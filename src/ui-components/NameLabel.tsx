@@ -13,14 +13,17 @@ interface Props {
 	username?: string
 	disableIdenticon?: boolean
 	textClassName?: string
+	clickable?:boolean
 }
 
-const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, textClassName } : Props) => {
+const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, textClassName, clickable=true } : Props) => {
 	const router = useRouter();
 	return (
 		<div className={`${className}`}>
-			{!defaultAddress ? <span className='username text-[#243A57] font-normal mr-1.5 cursor-pointer' onClick={() => {
-				router.push(`/user/${username}`);
+			{!defaultAddress ? <span className={`username text-[#243A57] font-normal mr-1.5 ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`} onClick={() => {
+				if(clickable){
+					router.push(`/user/${username}`);
+				}
 			}}> { username } </span> :
 				<Address
 					address={defaultAddress}
@@ -28,7 +31,9 @@ const NameLabel = ({ className, defaultAddress, username, disableIdenticon = fal
 					textClassName={textClassName}
 					displayInline={true}
 					disableIdenticon={disableIdenticon}
-				/>}
+					clickable={clickable}
+				/>
+			}
 		</div>
 	);
 };

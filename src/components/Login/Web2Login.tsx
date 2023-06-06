@@ -139,16 +139,6 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					</label>
 					<Form.Item
 						name="password"
-						rules={[
-							{
-								message: messages.VALIDATION_PASSWORD_ERROR,
-								required: password.required
-							},
-							{
-								message: messages.VALIDATION_PASSWORD_ERROR,
-								min: password.minLength
-							}
-						]}
 						validateTrigger="onSubmit"
 					>
 						<Input.Password

@@ -45,6 +45,7 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 		created_at: post?.created_at?.toDate?.() || new Date(),
 		last_comment_at: post?.last_comment_at?.toDate?.() || new Date(),
 		last_edited_at: post?.last_edited_at?.toDate?.() || new Date(),
+    updated_at: post?.updated_at?.toDate?.() || new Date(),
 		postType,
 		...post
 	}
@@ -191,7 +192,7 @@ exports.onReactionWritten = functions.region('europe-west1').firestore.document(
 	// Update the Algolia index
 
 	index
-		  .partialUpdateObject({[reactionData.reaction]: reactionCount, objectID:`${network}_${postType}_${postId}` })
+		  .partialUpdateObject({reaction_count : { [reactionData.reaction]: reactionCount }, objectID:`${network}_${postType}_${postId}` })
     .then(({objectID}) => {
       logger.info('Post indexed successfully:', { objectID });
     });

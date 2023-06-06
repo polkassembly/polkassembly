@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ProposalType } from '~src/global/proposalType';
-import { Role } from '~src/types';
+import { IUserNotificationSettings, Role } from '~src/types';
 
 export interface MessageType {
 	message: string;
@@ -121,10 +121,7 @@ export interface User {
 	username: string;
 	web3_signup: boolean;
 	primary_network?: string;
-}
-
-export interface ISignedTokenParams extends User {
-	notification_settings: NotificationSettings;
+	notification_settings?: IUserNotificationSettings;
 }
 
 export  interface Roles {

@@ -394,3 +394,33 @@ export enum EVoteDecisionType {
   ABSTAIN = 'abstain',
   SPLIT = 'split'
 }
+
+export enum NOTIFICATION_CHANNEL {
+	EMAIL = 'email',
+	TELEGRAM = 'telegram',
+	DISCORD = 'discord',
+	ELEMENT = 'element',
+	SLACK = 'slack',
+	IN_APP = 'in_app'
+}
+
+export interface IUserNotificationChannelPreferences {
+	name: NOTIFICATION_CHANNEL;
+	enabled: boolean;
+	handle: string;
+	verified: boolean;
+	verification_token?: string;
+}
+
+export interface IUserNotificationTriggerPreferences {
+	name: string;
+	enabled: boolean;
+	[additionalProperties: string]: any; // trigger specific properties
+}
+
+export interface IUserNotificationSettings {
+	channelPreferences: {[channel:string]: IUserNotificationChannelPreferences},
+	triggerPreferences: {
+		[network:string] : {[index:string] : IUserNotificationTriggerPreferences}
+	}
+}

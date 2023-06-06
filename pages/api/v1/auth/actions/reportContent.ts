@@ -16,7 +16,7 @@ import { checkReportThreshold } from '../../posts/on-chain-post';
 import _sendCommentReportMail from '~src/api-utils/_sendCommentReportMail';
 import _sendPostSpamReportMail from '~src/api-utils/_sendPostSpamReportMail';
 import _sendReplyReportMail from '~src/api-utils/_sendReplyReportMail';
-import {redisGet, redisSetex } from 'src/auth/redis';
+import { redisGet, redisSetex } from 'src/auth/redis';
 
 export interface IReportContentResponse {
 	message: string;
@@ -84,27 +84,27 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 		const totalUsers = data.count || 0;
 
 		if(type == 'post' && checkReportThreshold(totalUsers) ){
-			const postReportKey = await redisGet('postReportKey');
+			const postReportKey = await redisGet(`postReportKey-${post_id}`);
 			if(!postReportKey){
-				console.log('keySet');
 				_sendPostSpamReportMail(network,strPostType,contentId,totalUsers);
-				await redisSetex('postReportKey',21600,'true');
+				await redisSetex(`postReportKey-${post_id}`,21600,'true');
 			}
 		}
 		if(type == 'comment' && checkReportThreshold(totalUsers) ){
 
-			const commentReportKey = await redisGet('commentReportKey');
+			const commentReportKey = await redisGet(`commentReportKey-${comment_id}`);
 			if(!commentReportKey){
-				console.log('keySet comment');
 				_sendCommentReportMail(network,strPostType,post_id,comment_id,totalUsers);
-				await redisSetex('commentReportKey',60,'true');
+				await redisSetex(`commentReportKey-${comment_id}`,21600,'true');
 			}
 		}
 		if(type == 'reply' && checkReportThreshold(totalUsers) ){
-			_sendReplyReportMail(network,strPostType,post_id,comment_id,reply_id,totalUsers);
+			const replyReportKey = await redisGet(`replyReportKey-${reply_id}`);
+			if(!replyReportKey){
+				_sendReplyReportMail(network,strPostType,post_id,comment_id,reply_id,totalUsers);
+				await redisSetex(`replyReportKey-${reply_id}`,21600,'true');
+			}
 		}
-		//const key =  await redisGet('emailKey');
-		console.log('email key =>',key);
 		return res.status(200).json({ message: messages.CONTENT_REPORT_SUCCESSFUL, spam_users_count: checkReportThreshold(totalUsers) });
 	}).catch((error) => {
 		console.log(' Error while reporting content : ', error);

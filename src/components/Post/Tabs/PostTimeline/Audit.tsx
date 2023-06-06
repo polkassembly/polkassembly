@@ -13,6 +13,7 @@ import { usePostDataContext } from 'src/context';
 import { NetworkContext } from '~src/context/NetworkContext';
 import LodingEffect from '~assets/wired-outline-334-loader-5.gif';
 import PdfIcon from '~assets/icons/pdfs.svg';
+import CautionSVG from '~assets/icons/caution.svg';
 import YouTubeIcon from '~assets/icons/video.svg';
 import ReactPlayer from 'react-player';
 import NoDataFound  from '~assets/no-audits.svg';
@@ -117,27 +118,6 @@ const VideoContainer = styled.div`
 	}
 `;
 
-const RadioContainer = styled.div`
-@media (max-width: 280px) {
-    .btns {
-		display: flex;
-		flex-direction: column;
-		flex-wrap: wrap;
-		align-content: flex-end;
-		justify-content: space-between;
-		align-items: stretch;
-    }
-    
-	.reportBtn{
-		margin-left: 27px;
-	}
-    .videoBtn {
-       margin-top: 35px; 
-	   position: relative;
-	    left:-53px;
-    }
-  }
-`;
 interface IDataType {
   download_url: string;
   url: string;
@@ -208,7 +188,15 @@ const PostAudit = () => {
 	const productData = async () => {
 		try {
 			setLoading(true);
-			const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postData.postIndex}`);
+			const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postData.postIndex}`,
+				{
+					headers: {
+						'Accept': 'application/vnd.github.v3+json',
+						'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+						'X-GitHub-Api-Version': '2022-11-28'
+					}
+				}
+			);
 			if (response.ok) {
 				const data = await response.json();
 				setAuditData(data);
@@ -229,7 +217,6 @@ const PostAudit = () => {
 				const data = await response.json();
 				const decoded = atob(data.content);
 				const decodedContent = decoded.split('}').join('},');
-				// console.log(decodedContent.split(']')[0].trim().slice(0,decodedContent.split(']')[0].trim().length-1)+']');
 				setVideotData(JSON.parse(decodedContent.split(']')[0].trim().slice(0,decodedContent.split(']')[0].trim().length-1)+']') as IDataVideoType[]);
 			} else {
 				throw new Error('Request failed');
@@ -274,18 +261,18 @@ const PostAudit = () => {
 		console.log('Total number of pages:', numPages);
 	};
 
-	//Downloding pdf
+	//Downloading pdf
 	const downloadFile = (url: string) => {
 		const link = document.createElement('a');
 		link.href = url;
-		link.target = '_self';
+		link.target = '_blank';
 		link.download = '';
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
 	};
 
-	//Downloding Image
+	//Downloading Image
 	function downloadImage(url:string, name:string){
 		fetch(url)
 			.then(resp => resp.blob())
@@ -303,79 +290,97 @@ const PostAudit = () => {
 	}
 	return (
 		<Spin spinning={loading} indicator={<LoadingOutlined/>}>
-			<div>
-				<RadioContainer className= 'ml-2 ' >
-					<Radio.Group  className='flex mb-6 btns' onChange={handleChange} value={selectedType} >
-						{auditData.length !== 0  && <Radio value="reports"
-							className={`${
-								selectedType === 'reports' ? 'bg-pink-50' : 'bg-transparent'
-							} absolute  pl-3 px-2 py-1  rounded-full reportBtn`}>
-							<div className='flex flex-shrink-0'>
-								<PdfIcon className="absolute  bg-cover bg-no-repeat bg-center rounded-full mt-[-2px] " />
-								<span className="text-[#243A57] pl-6">Reports({pdfCount})</span>
-							</div>
-						</Radio>}
-						{videoData.length !== 0 &&<Radio value="videos"
-							className={`${
-								selectedType ==='videos' ? 'bg-pink-50' : 'bg-transparent'
-							} pl-3 px-2 py-1 ml-40 rounded-full videoBtn`}>
-							<div className='flex flex-shrink-0'>
-								<YouTubeIcon className="absolute mt-1 mr-3 bg-cover bg-no-repeat bg-center" />
-								<span className="text-[#243A57] pl-6">Videos({videoCount})</span>
-							</div>
-						</Radio>}
-
-					</Radio.Group>
-				</RadioContainer>
+			{
+				auditData.length && videoData.length?
+					<div
+						className='flex items-center gap-x-[11px] p-[15px] rounded-[6px] bg-[#E6F4FF] mt-3'
+					>
+						<span
+							className='flex items-center justify-center'
+						>
+							<CautionSVG />
+						</span>
+						<p className='m-0 font-normal text-sm leading-[21px] text-[#243A57]'>
+							The reports provided here does not represent our views and we do not endorse them.
+						</p>
+					</div>
+					: null
+			}
+			<div
+				className='mt-4'
+			>
+				<Radio.Group className='flex m-0' onChange={handleChange} value={selectedType} >
+					{auditData.length !== 0  && <Radio value="reports"
+						className={`${selectedType === 'reports' ? 'bg-pink-50' : 'bg-transparent'} rounded-full flex items-center px-4 py-[7px]`}>
+						<div className='flex items-center'>
+							<PdfIcon className="bg-cover bg-no-repeat bg-center" />
+							<span className="text-[#243A57] pl-1">Reports{' '}({pdfCount})</span>
+						</div>
+					</Radio>}
+					{videoData.length !== 0 && <Radio value="videos"
+						className={`${selectedType ==='videos' ? 'bg-pink-50' : 'bg-transparent'} rounded-full flex items-center px-4 py-[7px]`}>
+						<div className='flex'>
+							<YouTubeIcon className="bg-cover bg-no-repeat bg-center" />
+							<span className="text-[#243A57] pl-1">Videos({videoCount})</span>
+						</div>
+					</Radio>}
+				</Radio.Group>
 			</div>
 			{selectedType === 'reports' ? (
-				<div>
+				<div className='mt-[26px]'>
 					{auditData.length > 0 ? (
-						auditData.map((item) => (
-							<div key={item.sha}>
-								<div style={{ marginBottom:'55px' }}>
-									{item.name.endsWith('.pdf') ? (
-										<><div>
-											<div className="text-sm mb-3 ">
-												<span className="ml-2 text-sm">{item.name.split(' - ')[0]}</span> |
-												<ClockCircleOutlined className="mx-2" />
-												<span>{formatDate(item.name.split(' - ')[1])}</span>
-											</div>
-											<a download onClick={() => downloadFile(item.download_url)} rel="noreferrer">
-												<DocumentContainer>
-													<Document file={item.download_url}
-														onLoadSuccess={onDocumentLoadSuccess}
-														loading= {<div className='felx justify-center items-center h-full'><Image src={LodingEffect} height={100} width={100} alt='loder'/></div>}>
-														<Page renderAnnotationLayer={false} renderTextLayer={false} renderForms={false} pageNumber={1} />
-													</Document>
-													<div className="documentContainerdiv">
+						auditData.map((item) => {
+							return (
+								<div key={item.sha}>
+									<div style={{
+										margin: '0'
+									}}>
+										{item.name.endsWith('.pdf') ? (
+											<><div
+												className='flex flex-col gap-y-6'
+											>
+												<div className="text-sm">
+													<span className="ml-2 text-sm">{item.name.split(' - ')[0]}</span> |
+													<ClockCircleOutlined className="mx-2" />
+													<span>{formatDate(item.name.split(' - ')[1])}</span>
+												</div>
+												<a className='flex' download onClick={() => downloadFile(item.download_url)} rel="noreferrer">
+													<DocumentContainer>
+														<Document file={item.download_url}
+															onLoadSuccess={onDocumentLoadSuccess}
+															loading= {<div className='flex justify-center items-center h-full'><Image src={LodingEffect} height={100} width={100} alt='loader'/></div>}>
+															<Page renderAnnotationLayer={false} renderTextLayer={false} renderForms={false} pageNumber={1} />
+														</Document>
+														<div className="documentContainerdiv">
+															<PdfIcon className="mr-2" />
+															{item.name}
+														</div>
+													</DocumentContainer>
+												</a>
+											</div><hr className='mt-6'/></>
+										) : item.name.endsWith('.png') ?(
+											<><div>
+												<div className="text-sm mb-3">
+													<span className="ml-2 text-sm">{item.name.split(' - ')[0]}</span> |
+													<ClockCircleOutlined className="mx-2" />
+													<span>{formatDate(item.name.split(' - ')[1])}</span>
+												</div>
+												<button onClick={() => downloadImage(item.download_url, 'image.png')}>
+													<ImageContainer>
+														{/* eslint-disable-next-line @next/next/no-img-element */}
+														<img className="img" src={item.download_url} alt="PNG File" width={100} height={100}/>
+													</ImageContainer>
+													<div className="flex justify-start items-center p-2.5 bg-[#F6F7F9]" style={{ fontSize:'10px' }} >
 														<PdfIcon className="mr-2" />
 														{item.name}
 													</div>
-												</DocumentContainer>
-											</a>
-										</div><hr className='mt-6'/></>
-									) : item.name.endsWith('.png') ?(
-										<><div>
-											<div className="text-sm mb-3">
-												<span className="ml-2 text-sm">{item.name.split(' - ')[0]}</span> |
-												<ClockCircleOutlined className="mx-2" />
-												<span>{formatDate(item.name.split(' - ')[1])}</span>
-											</div>
-											<button onClick={() => downloadImage(item.download_url, 'image.png')}>
-												<ImageContainer>
-													<img className="img " src={item.download_url} alt="PNG File" width={100} height={100}/>
-												</ImageContainer>
-												<div className="flex justify-start items-center p-2.5 bg-[#F6F7F9]" style={{ fontSize:'10px' }} >
-													<PdfIcon className="mr-2" />
-													{item.name}
-												</div>
-											</button>
-										</div><hr className='mt-6'/></>
-									) :<></>}
+												</button>
+											</div><hr className='mt-6'/></>
+										) :<></>}
+									</div>
 								</div>
-							</div>
-						))
+							);
+						})
 					) : ( !loading && <div className='mt-3 flex flex-col justify-center items-center'><NoDataFound className='w-22 h-22 sm:w-48 sm:h-48 lg:w-1/3 lg:h-auto p-4 mb-5' />
 						<p>No audit reports available.</p>
 						<button className='bg-pink-600 text-white rounded-sm border-none  text-xs px-4 py-1 cursor-pointer' onClick={() => router.push('/discussions')}>Go to discussion</button>

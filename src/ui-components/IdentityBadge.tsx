@@ -44,12 +44,12 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const CouncilEmoji = () => <span aria-label="council member" className='-mt-1' role="img">👑</span>;
 	const infoElem = <span className='flex items-center'>
-		{isGood ? <CheckCircleFilled style={ { color } } /> : <MinusCircleFilled style={ { color } } />}
+		{isGood ? <CheckCircleFilled style={{ color }} /> : <MinusCircleFilled style={{ color }} />}
 		<span className='w-1'></span>
-		{flags?.isCouncil && <CouncilEmoji/>}
+		{flags?.isCouncil && <CouncilEmoji />}
 	</span>;
 
-	const displayJudgements = JSON.stringify(judgements.map(([,jud]) => jud.toString()));
+	const displayJudgements = JSON.stringify(judgements.map(([, jud]) => jud.toString()));
 
 	const popupContent = <StyledPopup>
 		{identity?.legal && <li><span className='desc'>legal:</span>{identity.legal}</li>}
@@ -59,7 +59,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 		{identity?.riot && <li><span className='desc'>riot:</span>{identity.riot}</li>}
 		{identity?.twitter && <li><span className='desc'>twitter:</span>{identity.twitter}</li>}
 		{identity?.web && <li><span className='desc'>web:</span>{identity.web}</li>}
-		{flags?.isCouncil && <li><span className='desc'>Council member</span><CouncilEmoji/></li>}
+		{flags?.isCouncil && <li><span className='desc'>Council member</span><CouncilEmoji /></li>}
 		{<li><span className='desc'><a href={`https://polkaverse.com/accounts/${address}`} target='_blank' rel='noreferrer'>Polkaverse Profile</a></span></li>}
 		{web3Name && <li><span className='desc'><a href={`https://w3n.id/${web3Name}`} target='_blank' rel='noreferrer'>Web3 Name Profile</a></span></li>}
 	</StyledPopup>;

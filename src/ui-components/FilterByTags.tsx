@@ -112,10 +112,12 @@ const FilterByTags=({ className, isSearch, setSelectedTags }:Props) => {
 			setDisplayTags([...tags, ...(filteredTags?.slice(0, 5).map((tag) => tag?.name) || filteredTags.map((tag) => tag?.name))]);}
 	}, [filteredTags, searchInput.length, tags, trendingTags,allTags]);
 
-	const content = <div>
-		{!isSearch ? <div className={`text-sidebarBlue cursor-auto flex text-sm justify-between font-medium mb-[-2px] mt-[-2px]  tracking-wide ${poppins.variable} ${poppins.className}`}>Tags <span className='text-pink_primary font-normal text-[10px] flex justify-center cursor-pointer' onClick={() => {setTags([]); !isSearch && handleFilterByClick([]);setSearchInput('');}}>
-			{!isSearch && 'Clear Filters'}
-		</span>
+	const content = <>
+		{!isSearch ? <div className={`text-sidebarBlue cursor-auto flex text-sm justify-between font-medium mb-[-2px] mt-[-2px] tracking-wide ${poppins.variable} ${poppins.className}`}>
+      Tags
+			<span className='text-pink_primary font-normal text-[10px] flex justify-center cursor-pointer' onClick={() => {setTags([]); !isSearch && handleFilterByClick([]);setSearchInput('');}}>
+				{!isSearch && 'Clear Filters'}
+			</span>
 		</div> : ''}
 
 		<Input allowClear={{ clearIcon:<ClearIcon/> }} type='search' className='mt-[4px]' value={searchInput} onChange={(e) => setSearchInput(e.target.value)} prefix={<SearchIcon/>} />
@@ -139,7 +141,7 @@ const FilterByTags=({ className, isSearch, setSelectedTags }:Props) => {
 				</Checkbox>)}
 			</Checkbox.Group>}
 		{filteredTags.length === 0 && searchInput.length > 0 ? <div className='h-[100%] flex items-center justify-center flex-col gap-2 mt-2'><NoTagsFoundIcon/><span className={`text-[10px] text-navBlue tracking-wide ${poppins.className} ${poppins.variable} `}>No tag found.</span></div> : null }
-	</div>;
+	</>;
 
 	return (
 

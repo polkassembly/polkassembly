@@ -33,6 +33,7 @@ export default styled(Markdown)`
 		p, blockquote, ul, ol, dl, table {
 			line-height: 160%;
 			margin: 0 0 0.5rem 0;
+      color:#243A57 !important;
 		}
 
 		h1 {
@@ -136,4 +137,8 @@ export default styled(Markdown)`
 			font-family: font_default !important;
 		}
 	}
+  mark{
+    color: #485F7D !important;
+    background:none !important;
+  }
 `;

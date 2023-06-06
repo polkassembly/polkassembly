@@ -14,6 +14,7 @@ import CopyIcon from '~assets/icons/content-copy.svg';
 import MessengerIcon from '~assets/icons/messenger.svg';
 import EditProfileModal from '~src/components/UserProfile/EditProfile';
 import dynamic from 'next/dynamic';
+import { useUserDetailsContext } from '~src/context';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
@@ -28,7 +29,7 @@ interface Props {
 }
 
 const DelegationProfile = ({ username, address, isSearch, className }: Props) => {
-
+	const userProfile = useUserDetailsContext();
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
 		addresses: [],
 		badges: [],
@@ -40,7 +41,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 		username: ''
 	});
 
-	const { image, social_links, bio , username: userName } = profileDetails;
+	const { image, social_links, bio , username: userName, addresses } = profileDetails;
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [messageApi, contextHolder] = message.useMessage();
 
@@ -53,10 +54,6 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 		}
 
 	};
-
-	// useEffect(() => {
-	// fetchUsername.length === 0 && fetchUsername();
-	// }, []);
 
 	useEffect(() => {
 		getData();
@@ -84,23 +81,23 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 			/>
 			<div className='text-[#243A57]'>
 				<span className='text-[#243A57] font-semibold mb-4 tracking-wide text-lg'>{username || userName}</span >
-				{address && address.length > 0 ? <div className='flex gap-2 items-center'>
-					<Address address={address} displayInline className='text-[14px] text-[#243A57]' identiconSize={34} />
-					<span className='flex items-center cursor-pointer' onClick={() => {address && copyLink(address) ;success();}}>
+				{((address && address.length > 0 ) || addresses.length > 0) && <div className='flex gap-2 items-center'>
+					<Address address={address || addresses[0]} displayInline className='text-[14px] text-[#243A57]' identiconSize={34} />
+					<span className='flex items-center cursor-pointer' onClick={() => {copyLink(address || addresses[0]) ;success();}}>
 						{contextHolder}
 						<CopyIcon/>
 					</span>
-				</div> : <Skeleton className='mt-4'/>}
+				</div> }
 
 				{bio?.length === 0
-					? <h2 className={`text-sm font-normal text-[#576D8BCC] mt-2  ${username === userName && 'cursor-pointer'}`} onClick={() => setOpenEditModal(true)}>
-						{username === userName ? 'Click here to add bio' : 'No Bio' }
+					? <h2 className={`text-sm font-normal text-[#576D8BCC] mt-2 ${username === userProfile.username && 'cursor-pointer'}`} onClick={() => setOpenEditModal(true)}>
+						{username === userProfile.username ? 'Click here to add bio' : 'No Bio' }
 					</h2>
-					: <h2  onClick={() => setOpenEditModal(true)} className='text-sm mt-2 text-[#243A57] tracking-[0.01em] cursor-pointer font-normal'>{bio}</h2>
+					: <h2  onClick={() => setOpenEditModal(true)} className={`text-sm mt-2 text-[#243A57] tracking-[0.01em] cursor-pointer font-normal ${username === userProfile.username && 'cursor-pointer'}`}>{bio}</h2>
 				}
 
 				<div
-					className='flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-[10px]'
+					className={`flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-[10px] ${isSearch && 'mt-0'}`}
 				>
 					{
 						socialLinks?.map((social: any, index: number) => {
@@ -128,7 +125,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 				<MessengerIcon/>
 			</Tooltip>
 			<span>
-				{username === userName && <Button onClick={() => setOpenEditModal(true)} className='text-[#E5007A] border-[1px] border-solid border-[#E5007A] h-[40px] w-[87px] max-lg:w-auto font-medium'>
+				{username === userProfile.username && <Button onClick={() => setOpenEditModal(true)} className='text-[#E5007A] border-[1px] border-solid border-[#E5007A] h-[40px] w-[87px] max-lg:w-auto font-medium'>
 					<EditIcon className='text-[#E5007A] text-[14px] tracking-wide ' />
 					<span className='max-md:hidden'>
 					Edit
@@ -137,9 +134,9 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 				}
 			</span>
 		</div>}
-		{openEditModal  && username === userName &&
+		{openEditModal  && username === userProfile.username &&
 				<EditProfileModal openModal={openEditModal} setOpenModal={setOpenEditModal} data={profileDetails} setProfileDetails={setProfileDetails}/>
 		}
-	</div> : <Skeleton/>;
+	</div> : <div className='p-6'><Skeleton/></div>;
 };
 export default DelegationProfile;

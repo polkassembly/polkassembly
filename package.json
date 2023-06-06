@@ -11,6 +11,7 @@
     "api:bump": "yarn add @polkadot/api @polkadot/api-augment @polkadot/extension-dapp @polkadot/extension-inject @polkadot/react-identicon @polkadot/ui-settings @polkadot/util @polkadot/util-crypto"
   },
   "dependencies": {
+    "@algolia/autocomplete-js": "^1.9.2",
     "@apollo/client": "^3.7.3",
     "@ardatan/graphql-tools": "^4.1.0",
     "@metamask/jazzicon": "^2.0.0",

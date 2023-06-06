@@ -10,7 +10,6 @@ import styled from 'styled-components';
 import NameLabel from './NameLabel';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import UserAvatar from './UserAvatar';
-import dayjs from 'dayjs';
 import { noTitle } from '~src/global/noTitle';
 import { poppins } from 'pages/_app';
 // import sanitizeMarkdown from '~src/util/sanitizeMarkdown';
@@ -46,7 +45,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 
 		return {
 			children: !item?.expanded ? <div className={'text-[#334D6E] h-[50px] ml-3 text-sm tracking-[0.01em] flex flex-col gap-2 -mt-1 font-medium max-sm:w-full max-sm:ml-0'}>
-          Edited on {dayjs(date).format('DD MMM YYYY')}
+          Edited on {getRelativeCreatedAt(date)}
 				<div className='text-pink_primary text-sm flex justify-start cursor-pointer -mt-2' onClick={() => handleExpand(index, EExpandType.Expanded)}>
 					<span className='text-xs'>See Details</span></div>
 			</div>

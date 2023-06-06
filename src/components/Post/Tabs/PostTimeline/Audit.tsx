@@ -188,7 +188,15 @@ const PostAudit = () => {
 	const productData = async () => {
 		try {
 			setLoading(true);
-			const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postData.postIndex}`);
+			const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postData.postIndex}`,
+				{
+					headers: {
+						'Accept': 'application/vnd.github.v3+json',
+						'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+						'X-GitHub-Api-Version': '2022-11-28'
+					}
+				}
+			);
 			if (response.ok) {
 				const data = await response.json();
 				setAuditData(data);
@@ -209,7 +217,6 @@ const PostAudit = () => {
 				const data = await response.json();
 				const decoded = atob(data.content);
 				const decodedContent = decoded.split('}').join('},');
-				// console.log(decodedContent.split(']')[0].trim().slice(0,decodedContent.split(']')[0].trim().length-1)+']');
 				setVideotData(JSON.parse(decodedContent.split(']')[0].trim().slice(0,decodedContent.split(']')[0].trim().length-1)+']') as IDataVideoType[]);
 			} else {
 				throw new Error('Request failed');
@@ -323,7 +330,6 @@ const PostAudit = () => {
 				<div className='mt-[26px]'>
 					{auditData.length > 0 ? (
 						auditData.map((item) => {
-							console.log(item);
 							return (
 								<div key={item.sha}>
 									<div style={{

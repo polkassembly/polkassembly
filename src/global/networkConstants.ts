@@ -211,7 +211,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'kusama',
 		chainId: 0,
 		logo: kusamaLogo,
-		rpcEndpoint: 'wss://kusama.api.onfinality.io/public-ws',
+		rpcEndpoint: 'wss://rpc.ibp.network/kusama',
 		ss58Format: 2,
 		subsquidUrl: 'https://squid.subsquid.io/kusama-polkassembly/graphql',
 		tokenDecimals: 12,

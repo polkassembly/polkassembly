@@ -7,6 +7,7 @@ import React from 'react';
 import Balance from 'src/components/Balance';
 
 import AddressDropdown from './AddressDropdown';
+import styled from 'styled-components';
 import HelperTooltip from './HelperTooltip';
 
 interface Props{
@@ -27,10 +28,13 @@ interface Props{
 
 const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isBalanceUpdated, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo }: Props) =>
 	<article className={`w-full flex flex-col ${className}`}>
-		{title && <div className='flex items-center mb-[2px] gap-2'>
-			<h3 className='text-sm mb-0 font-normal'>{title}</h3>
+		<div className='flex items-center gap-x-2 ml-[-6px]'>
+			<h3 className='inner-headings mb-[2px] ml-1.5'>{title}</h3>
 			{!withoutInfo && <HelperTooltip text='You can choose an account from the extension.' />}
-		</div>}
+			{address && withBalance &&
+			<Balance address={address} onChange={onBalanceChange} isBalanceUpdated={isBalanceUpdated} />
+			}
+		</div>
 		<AddressDropdown
 			isDisabled={isDisabled}
 			accounts={accounts}
@@ -40,9 +44,12 @@ const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withB
 			isSwitchButton={isSwitchButton}
 			setSwitchModalOpen={setSwitchModalOpen}
 		/>
-		{address && withBalance &&
-			<Balance address={address} onChange={onBalanceChange} isBalanceUpdated={isBalanceUpdated} />
-		}
+
 	</article>;
 
-export default AccountSelectionForm;
+export default styled(AccountSelectionForm)`
+.ant-dropdown-trigger{
+	border: 1px solid #D2D8E0 !important;
+}
+
+`;

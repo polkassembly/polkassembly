@@ -182,12 +182,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 			errors.push('');
 		}
 		if(bnBalance.lte(ZERO_BN)) {
-			setBalanceErr('Please provide a valid balance.');
-			errors.push('');
-		}
-
-		if(bnBalance.eq(ZERO_BN)){
-			setBalanceErr('Balance must be greater than 0.');
+			setBalanceErr('Please provide a valid balance.Balance must be greater than 0.');
 			errors.push('');
 		}
 
@@ -370,7 +365,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 							{targetErr.length > 0 && <div className='-mt-1 text-sm text-red-500'>{targetErr}</div>}
 							{addressAlert && <Alert className='mb mt-2' showIcon message='The substrate address has been changed to Kusama address.'/> }
 
-							<div className='flex justify-between items-center mt-6 cursor-pointer -mb-1 text-[#485F7D]' >
+							<div className='flex justify-between items-center mt-6 cursor-pointer -mb-6 text-[#485F7D]' >
                 Balance<span onClick={() => {
 									setBnBalance(availableBalance);
 									form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));
@@ -383,14 +378,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 								onAccountBalanceChange={handleOnBalanceChange}
 								onChange={(balance) => setBnBalance(balance)}
 								balance={ bnBalance }
-								size='large'
 								inputClassName={`text-[#7c899b] text-sm ${balanceErr.length > 0 && 'border-red-500'}`}
 								noRules={true}
 							/>
 							{/* errors */}
 							{balanceErr.length > 0 && <div className='-mt-5 text-sm text-red-500'>{balanceErr}</div>}
 
-							<div className='mb-2 border-solid border-white mt-4'>
+							<div className='mb-2 border-solid border-white mt-2'>
 								<label  className='text-[#485F7D] flex items-center text-sm'>
                   Conviction
 									<span>
@@ -469,7 +463,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 
 export default styled(DelegateModal)`
 
-.padding  .ant-modal-close{
+.padding .ant-modal-close{
   margin-top: 4px;
 }
 .padding  .ant-modal-close:hover{

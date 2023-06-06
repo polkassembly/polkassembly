@@ -185,11 +185,11 @@ class AuthService {
 
 		if(isEmail) {
 			userQuery = await collection.where('email', '==', username).limit(1).get();
+			if (userQuery.size === 0) throw apiErrorWithStatusCode(messages.NO_USER_FOUND_WITH_EMAIL, 404);
 		} else {
 			userQuery = await collection.where('username', '==', username).limit(1).get();
+			if (userQuery.size === 0) throw apiErrorWithStatusCode(messages.NO_USER_FOUND_WITH_USERNAME, 404);
 		}
-
-		if (userQuery.size === 0) throw apiErrorWithStatusCode(messages.NO_USER_FOUND_WITH_USERNAME, 404);
 
 		const user = userQuery.docs[0].data() as User;
 

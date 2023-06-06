@@ -119,6 +119,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								min: username.minLength
 							}
 						]}
+						validateTrigger="onSubmit"
 					>
 						<Input
 							disabled={loading}
@@ -148,6 +149,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								min: password.minLength
 							}
 						]}
+						validateTrigger="onSubmit"
 					>
 						<Input.Password
 							disabled={loading}

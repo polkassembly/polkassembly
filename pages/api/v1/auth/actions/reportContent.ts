@@ -28,7 +28,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentR
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	const TTL_DURATION = 3600*6; // 6 Hours
+	const TTL_DURATION = 3600*6; // 6 Hours or 21600 seconds
 	if(!network) return res.status(400).json({ message: 'Missing network in request header' });
 
 	const { type, reason, comments, proposalType, post_id,reply_id,comment_id } = req.body;

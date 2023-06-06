@@ -27,6 +27,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<PublicUser | Me
 	const user: PublicUser = {
 		default_address: default_address?.address || '',
 		id: userDoc.id,
+		primary_network: userDoc.primary_network || '',
 		username: userDoc.username
 	};
 

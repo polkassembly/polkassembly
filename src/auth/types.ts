@@ -47,6 +47,7 @@ export interface PublicUser {
 	id: number;
 	default_address?: string;
 	username: string;
+	primary_network?: string;
 }
 
 export enum ESocialType {
@@ -119,6 +120,7 @@ export interface User {
 	salt: string;
 	username: string;
 	web3_signup: boolean;
+	primary_network?: string;
 }
 
 export interface ISignedTokenParams extends User {

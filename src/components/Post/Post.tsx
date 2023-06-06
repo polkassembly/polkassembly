@@ -356,17 +356,21 @@ const Post: FC<IPostProps> = (props) => {
 				<div className={`${className} grid grid-cols-1 xl:grid-cols-12 gap-9`}>
 					<div className='xl:col-span-8'>
 
-						{
-							!isEditing && <DiscussionLink isOffchainPost={isOffchainPost} />
-						}
-
-						{!isEditing && isOnchainPost && redirection.link &&
-						<Link href={redirection.link}>
-							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-								This proposal is now <span className='text-pink_primary'>{redirection.text}</span>
-							</div>
-						</Link>
-						}
+						{!isEditing && (
+							<>
+								<div>
+									<DiscussionLink isOffchainPost={isOffchainPost} />
+									{!isEditing && isOnchainPost && redirection.link && (
+										<Link href={redirection.link}>
+											<div className= 'bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
+                        This proposal is now{' '}
+												<span className="text-pink_primary">{redirection.text}</span>
+											</div>
+										</Link>
+									)}
+								</div>
+							</>
+						)}
 
 						{ post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
 							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading flex items-center gap-x-2'>

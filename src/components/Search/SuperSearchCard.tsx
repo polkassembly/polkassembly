@@ -4,9 +4,9 @@
 import { Button, Divider } from 'antd';
 import React from 'react';
 import SuperSearchIcon from '~assets/icons/super-search.svg';
-import { EFilterBy } from './SearchFilters';
 import EmptyResultsIcon from '~assets/search/empty-search.svg';
 import Link from 'next/link';
+import { EFilterBy } from '.';
 
 interface Props{
   setIsSuperSearch: (pre: boolean) => void;

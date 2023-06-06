@@ -34,18 +34,18 @@ interface Props{
   isSuperSearch: boolean;
   setIsSuperSearch: ( pre: boolean) => void;
 }
-enum EFilterBy {
+export enum EFilterBy {
   Referenda = 'on-chain-posts',
   Users = 'users',
   Discussions = 'off-chain-posts'
 }
-enum EMultipleCheckFilters {
+export enum EMultipleCheckFilters {
   Tracks = 'track',
   Tags = 'tags',
   Topic = 'topic',
   Chain = 'chains'
 }
-enum EDateFilter {
+export enum EDateFilter {
   Today = 'today',
   Yesterday = 'yesterday',
   Last_7_days = 'last_7_days',

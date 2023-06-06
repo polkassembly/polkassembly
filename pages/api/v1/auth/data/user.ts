@@ -8,28 +8,30 @@ import { MessageType, PublicUser, User } from '~src/auth/types';
 import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
 import firebaseAdmin from '~src/services/firebaseInit';
 
-async function handler(req: NextApiRequest, res: NextApiResponse<PublicUser | MessageType>) {
+export async function getUser(userId: number): Promise<PublicUser | null> {
 	const firestore = firebaseAdmin.firestore();
-	const { userId = null } = req.query;
 
-	if (!userId || isNaN(Number(userId))) return res.status(400).json({ message: 'Invalid id.' });
-
-	const userQuerySnapshot = await firestore.collection('users').where('id', '==', Number(userId)).limit(1).get();
-
-	if(userQuerySnapshot.size == 0) return res.status(404).json({ message: `No user found with the id '${userId}'.` });
-
-	const userDoc = userQuerySnapshot.docs[0].data() as User;
+	const userDoc = await firestore.collection('users').doc(String(userId)).get();
+	if(!userDoc.exists) return null;
+	const userData = userDoc.data() as User;
 
 	const addresses = await getAddressesFromUserId(Number(userId));
-
 	const default_address = addresses.find((address: any) => address.default === true);
 
-	const user: PublicUser = {
+	return {
 		default_address: default_address?.address || '',
-		id: userDoc.id,
-		primary_network: userDoc.primary_network || '',
-		username: userDoc.username
-	};
+		id: userData.id,
+		primary_network: userData.primary_network || '',
+		username: userData.username
+	} as PublicUser;
+}
+
+async function handler(req: NextApiRequest, res: NextApiResponse<PublicUser | MessageType>) {
+	const { userId = null } = req.query;
+	if (!userId || isNaN(Number(userId))) return res.status(400).json({ message: 'Invalid id.' });
+
+	const user = await getUser(Number(userId));
+	if(!user) return res.status(404).json({ message: `No user found with the id '${userId}'.` });
 
 	res.status(200).json(user);
 }

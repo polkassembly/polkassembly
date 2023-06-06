@@ -8,6 +8,26 @@ import { MessageType } from '~src/auth/types';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IPostTag } from '~src/types';
 import algoliasearch from 'algoliasearch';
+import { getTopicFromType } from '~src/util/getTopicFromType';
+
+function chunkArray(array: any[], chunkSize: number) {
+	if (array.length === 0) {
+		return [];
+	}
+
+	if (chunkSize >= array.length) {
+		return [array];
+	}
+
+	const chunkedArray = [];
+	let index = 0;
+
+	while (index < array.length) {
+		chunkedArray.push(array.slice(index, index + chunkSize));
+		index += chunkSize;
+	}
+	return chunkedArray;
+}
 
 const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 
@@ -18,9 +38,11 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 	if (!ALGOLIA_APP_ID || !ALGOLIA_WRITE_API_KEY) return;
 
 	const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_WRITE_API_KEY);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const index = algoliaClient.initIndex('polkassembly_posts_test');
 
-	const networksSnapshot = await firestore_db.collection('network').get();
+	// this would be networks not network -> should work
+	const networksSnapshot = await firestore_db.collection('networks').get();
 
 	// for loop for networksSnapshot
 	for(const networkDoc of networksSnapshot.docs) {
@@ -34,33 +56,29 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 
 			// setup batch here
 
-			let batch_count = 0;
-			let postRecords = [];
-
+			const chunksArray = chunkArray(postsSnapshot.docs, 300);
 			// for loop for postsSnapshot
-			for(const postDoc of postsSnapshot.docs) {
-				const postDocData = postDoc.data();
+			for(const postsArr of chunksArray) {
+				const postRecords = postsArr.map((postDoc: any) => {
+					const postDocData = postDoc.data();
+					return {
+						...postDocData,
+						created_at: postDocData?.created_at?.toDate?.() || new Date(),
+						last_comment_at: postDocData?.last_comment_at?.toDate?.() || new Date(),
+						last_edited_at: postDocData?.last_edited_at?.toDate?.() || new Date(),
+						network: networkDoc.id,
+						objectID: `${networkDoc.id}_${postTypeDoc.id}_${postDoc.id}`,
+						post_type: postTypeDoc.id,
+						topic_id: postDocData?.topic?.id || postDocData?.topic_id || getTopicFromType(postDocData?.id ).id,
+						updated_at: postDocData?.updated_at?.toDate?.() || new Date()
+					};
+				});
 
-				const postRecord = {
-					...postDocData,
-					created_at: postDocData?.created_at.toDate?.() || new Date(),
-					last_comment_at: postDocData?.last_comment_at.toDate?.() || new Date(),
-					last_edited_at: postDocData?.last_edited_at?.toDate?.() || new Date(),
-					network: networkDoc.id,
-					objectID: postDoc.id,
-					post_type: postTypeDoc.id
-				};
-				postRecords.push(postRecord);
-				batch_count++;
-
-				if(batch_count === 300) {
-					///commit batch
-					await index.saveObjects(postRecords).catch((err) => {
-						console.log(err);
-					});
-					batch_count = 0;
-					postRecords = [];
-				}
+				///commit batch
+				console.log(postRecords,'commiting');
+				// await index.saveObjects(postRecords).catch((err) => {
+				// console.log(err);
+				// });
 			}
 		}
 	}

@@ -9,6 +9,25 @@ import { firestore_db } from '~src/services/firebaseInit';
 import { IPostTag } from '~src/types';
 import algoliasearch from 'algoliasearch';
 
+function chunkArray(array: any[], chunkSize: number) {
+	if (array.length === 0) {
+		return [];
+	}
+
+	if (chunkSize >= array.length) {
+		return [array];
+	}
+
+	const chunkedArray = [];
+	let index = 0;
+
+	while (index < array.length) {
+		chunkedArray.push(array.slice(index, index + chunkSize));
+		index += chunkSize;
+	}
+	return chunkedArray;
+}
+
 const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 
 	//init algolia client
@@ -18,35 +37,30 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 	if (!ALGOLIA_APP_ID || !ALGOLIA_WRITE_API_KEY) return;
 
 	const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_WRITE_API_KEY);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const index = algoliaClient.initIndex('polkassembly_users_test');
 
-	const tagsSnapshots = await firestore_db.collection('users').get();
+	const usersSnapshots = await firestore_db.collection('users').get();
 
-	let batch_count = 0;
-	let userRecords = [];
+	const chunksArray = chunkArray(usersSnapshots.docs, 300);
 
-	for(let doc = 0 ; doc < tagsSnapshots.docs.length; doc++) {
+	for(const userArr of chunksArray) {
+		const userRecord = userArr.map((userDoc: any) => {
+			const userDocData = userDoc.data();
+			return {
+				created_at: userDocData?.created_at?.toDate?.() || new Date(),
+				email: userDocData?.email || '',
+				objectID: userDocData.id, // Unique identifier for the object
+				profile: userDocData?.profile || {},
+				username: userDocData?.username || ''
+			};
+		});
 
-		const userData = tagsSnapshots.docs[doc].data();
-		const userRecord = {
-			created_at: userData?.created_at?.toDate?.() || new Date(),
-			email: userData?.email || '',
-			profile: userData?.profile || {},
-			username: userData?.username || ''
-		};
-
-		userRecords.push(userRecord);
-		batch_count++;
-
-		if(batch_count === 300) {
-			///commit batch
-			await index.saveObjects(userRecords).catch((err) => {
-				console.log(err);
-			});
-			batch_count = 0;
-			userRecords = [];
-		}
-
+		///commit batch
+		console.log(userRecord,'commiting');
+		// await index.saveObjects(postRecords).catch((err) => {
+		// console.log(err);
+		// });
 	}
 	res.status(200).json({ message: 'Success' });
 

@@ -78,7 +78,7 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 
 		<BackToListingView postCategory={PostCategory.REFERENDA} />
 
-		<div>
+		<div className='mt-6'>
 			<Post post={post} proposalType={proposalType} />
 		</div>
 	</>);

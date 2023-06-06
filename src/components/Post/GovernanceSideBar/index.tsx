@@ -48,6 +48,8 @@ import PostEditOrLinkCTA from './PostEditOrLinkCTA';
 import CloseIcon from '~assets/icons/close.svg';
 import { PlusOutlined } from '@ant-design/icons';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
+import SplitGray from '~assets/icons/split-gray.svg';
+import AbstainGray from '~assets/icons/abstain-gray.svg';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -109,7 +111,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					if (track && Array.isArray(track) && track.length > 1) {
 						const trackInfo = track[1] as any;
 						const { decisionPeriod } = trackInfo;
-						const strArr = blockToTime(decisionPeriod, network).split(' ');
+						const strArr = blockToTime(decisionPeriod, network)['time'].split(' ');
 						let decisionPeriodHrs = 0;
 						if (strArr && Array.isArray(strArr)) {
 							strArr.forEach((str) => {
@@ -492,8 +494,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								onAccountChange={onAccountChange}
 							/>
 						}
-
-						{(post.motion_votes) &&
+						{(post.motion_votes && (post.motion_votes?.length || 0) > 0) &&
 							<MotionVoteInfo
 								councilVotes={post.motion_votes}
 							/>
@@ -582,6 +583,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 											<div className={className}>
 												<ReferendumVoteInfo
 													setOpen={setOpen}
+													voteThreshold={post.vote_threshold}
 													referendumId={onchainId as number}
 												/>
 											</div>
@@ -698,8 +700,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									</GovSidebarCard>
 									:
 									<GovSidebarCard className='flex items-center'>
-										You Voted: { lastVote == 'aye' ? <LikeFilled className='text-aye_green ml-2' /> : <DislikeFilled className='text-nay_red ml-2' /> }
+
+										You Voted: { lastVote == 'aye' && <LikeFilled className='text-aye_green ml-2' />}
+										{ lastVote == 'nay' && <DislikeFilled className='text-nay_red ml-2' />}
+										{ lastVote == 'split' && <SplitGray className=' ml-2 mr-1' />}
+										{ lastVote == 'abstain' && <AbstainGray className=' ml-2 mr-1' />}
 										<span className={`last-vote-text ${lastVote == 'aye' ? 'green-text' : 'red-text'}`}>{lastVote}</span>
+
 									</GovSidebarCard>
 									: <></>
 								}

@@ -50,7 +50,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 			dataIndex:'blockNumber',
 			key: 'block',
 			render: (block) => (
-				<a target='_blank' href={`${url}/${block}`} rel="noreferrer">
+				<a target='_blank' href={`${url}${block}`} rel="noreferrer">
 					<div className='text-sidebarBlue'>#{block}</div>
 				</a>
 			),

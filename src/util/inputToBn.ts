@@ -44,8 +44,12 @@ export function inputToBn (input: string, network:string, isZeroable?: boolean):
 
 	if (isDecimalValue) {
 		// return -1 if the amount of decimal is higher than supported
-		if (isDecimalValue[2].length < tokenDecimal) {
+		if (isDecimalValue[2].length > tokenDecimal) {
 			result = new BN(-1);
+			return [
+				result,
+				isValidNumber(result, isZeroable)
+			];
 		}
 
 		//get what is before the point and replace what isn't a number

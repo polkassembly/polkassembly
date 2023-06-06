@@ -17,7 +17,7 @@ function secondsToDhm(seconds: number) {
 	return dDisplay + hDisplay + mDisplay;
 }
 
-export default function blockToTime (blocks: BN |  number, network:string, blocktime?: number ): string {
+export default function blockToTime (blocks: BN |  number, network:string, blocktime?: number ): {time:string, seconds:number} {
 
 	if (!blocktime) {
 		blocktime = chainProperties?.[network]?.blockTime / 1000;
@@ -32,5 +32,5 @@ export default function blockToTime (blocks: BN |  number, network:string, block
 
 	const time = secondsToDhm(blocks * blocktime);
 
-	return time;
+	return { seconds:blocks * blocktime , time };
 }

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { DownOutlined } from '@ant-design/icons';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { Button, Dropdown } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
@@ -9,6 +8,7 @@ import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
 import Address from 'src/ui-components/Address';
 import { useUserDetailsContext } from '~src/context';
+import DownIcon from '~assets/icons/down-icon.svg';
 
 interface Props {
 	defaultAddress?: string;
@@ -69,7 +69,6 @@ const AddressDropdown = ({
 			trigger={['click']}
 			className={className}
 			disabled={isDisabled}
-
 			menu={{
 				items: addressItems,
 				onClick: (e) => {
@@ -83,7 +82,7 @@ const AddressDropdown = ({
 				}
 			}}
 		>
-			<div className="flex justify-between items-center">
+			<div className="flex justify-between items-center ">
 
 				<Address
 					disableAddressClick={true}
@@ -91,7 +90,7 @@ const AddressDropdown = ({
 					address={defaultAddress || selectedAddress}
 				/>
 				<span>
-					<DownOutlined />
+					<DownIcon className='mr-2'/>
 				</span>
 			</div>
 		</Dropdown>

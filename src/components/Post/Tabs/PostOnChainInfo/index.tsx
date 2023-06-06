@@ -177,7 +177,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								{String(enactment_after_block).length < 8 ? enactment_after_block :
 									<div>
 										<span>{formattedBlockToTime(Number(enactment_after_block))}</span>
-										<a href={`${url}/${enactment_after_block}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{enactment_after_block}</a>
+										<a href={`${url}${enactment_after_block}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{enactment_after_block}</a>
 									</div>
 								}
 							</div>
@@ -188,7 +188,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								{String(enactment_at_block).length < 8 ? enactment_at_block :
 									<div>
 										<span>{formattedBlockToTime(Number(enactment_at_block))}</span>
-										<a href={`${url}/${enactment_at_block}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{enactment_at_block}</a>
+										<a href={`${url}${enactment_at_block}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{enactment_at_block}</a>
 									</div>
 								}
 							</div>
@@ -199,7 +199,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								{`${deciding.since}`.length < 8 ? deciding.since :
 									<div>
 										<span>{formattedBlockToTime(Number(deciding.since))}</span>
-										<a href={`${url}/${deciding.since}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{deciding.since}</a>
+										<a href={`${url}${deciding.since}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{deciding.since}</a>
 									</div>
 								}
 							</div>
@@ -210,7 +210,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 								{`${deciding.confirming}`.length < 8 ? deciding.confirming :
 									<div>
 										<span>{formattedBlockToTime(Number(deciding.confirming))}</span>
-										<a href={`${url}/${deciding.confirming}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{deciding.confirming}</a>
+										<a href={`${url}${deciding.confirming}`} target='_blank' rel='noreferrer' className='ml-3 text-pink_secondary'>#{deciding.confirming}</a>
 									</div>
 								}
 							</div>

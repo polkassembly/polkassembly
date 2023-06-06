@@ -17,9 +17,11 @@ const useHandleMetaMask = () : string => {
 		setMetaMaskError('');
 
 		// Check for changes in Metamask (account and chain)
-		const ethereum = (window as any).ethereum;
+		const ethereum = (window as any)?.ethereum;
+		if(!ethereum?.isMetaMask){
+			setMetaMaskError('Please install the MetaMask extension to use supported features.');
 
-		if (ethereum) {
+		}else if(ethereum){
 			ethereum.on('chainChanged', () => {
 				window.location.reload();
 			});
@@ -29,8 +31,6 @@ const useHandleMetaMask = () : string => {
 			});
 
 			setMetaMaskNetworkChainID(ethereum.networkVersion);
-		} else {
-			setMetaMaskError('Please install the MetaMask extension to use supported features.');
 		}
 	}, [metaMaskNetworkChainID, networkChainID, network]);
 

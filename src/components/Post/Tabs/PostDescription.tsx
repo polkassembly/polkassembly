@@ -81,7 +81,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					{canEdit && <Button className={'text-pink_primary flex items-center border-none shadow-none px-1.5'} onClick={toggleEdit}><FormOutlined />Edit</Button>}
 				</div>
 				<div className='flex items-center'>
-					{id && !isEditing && <ReportButton proposalType={postType} type='post' contentId={`${postIndex}`} />}
+					{id && !isEditing && <ReportButton proposalType={postType} type='post' postId={`${postIndex}`} />}
 					{canEdit && !isEditing && <CreateOptionPoll proposalType={postType} postId={postIndex} />}
 					{TrackerButtonComp}
 					<ShareButton title={title} />

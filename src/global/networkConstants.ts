@@ -211,7 +211,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'kusama',
 		chainId: 0,
 		logo: kusamaLogo,
-		rpcEndpoint: 'wss://kusama.api.onfinality.io/public-ws',
+		rpcEndpoint: 'wss://rpc.ibp.network/kusama',
 		ss58Format: 2,
 		subsquidUrl: 'https://squid.subsquid.io/kusama-polkassembly/graphql',
 		tokenDecimals: 12,
@@ -427,7 +427,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: null,
-		externalLinks: '',
+		externalLinks: 'https://stats.cere.network',
 		gTag: 'G-7E14M1ZSCB',
 		rpcEndpoints: []
 	},

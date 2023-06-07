@@ -55,6 +55,7 @@ const messages = {
 	EVENT_USER_NOTIFICATION_PREFERENCE_FALSE: 'Notification preference is set to not send email.',
 	EVENT_USER_NOT_FOUND: 'User not found.',
 	INCORRECT_PASSWORD: 'Your password is incorrect.',
+	INTERNAL: 'Something went wrong. Please try again later.',
 	INVALID_ADDRESS: 'Invalid address provided.',
 	INVALID_EMAIL: 'Please enter a valid email.',
 	INVALID_EMAIL_UNDO_TOKEN: 'Invalid email change undo token.',

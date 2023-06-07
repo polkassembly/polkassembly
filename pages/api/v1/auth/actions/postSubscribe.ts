@@ -7,11 +7,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isFirestoreProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef } from '~src/api-utils/firestore_refs';
-import authServiceInstance, { NOTIFICATION_DEFAULTS } from '~src/auth/auth';
-import { ChangeResponseType, IUserPreference, MessageType } from '~src/auth/types';
+import authServiceInstance from '~src/auth/auth';
+import { ChangeResponseType, MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
-import { offChainProposalTypes } from '~src/global/proposalType';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseType | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
@@ -19,68 +18,40 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { post_id, proposalType } = req.body;
+	const { post_id = null, proposalType } = req.body;
 
 	const strProposalType = String(proposalType);
 	if (!isFirestoreProposalTypeValid(strProposalType)) {
 		return res.status(400).json({ message: `The proposal type "${proposalType}" is invalid.` });
 	}
-	if(!post_id) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if(post_id === null) return res.status(400).json({ message: 'Missing parameters in request body' });
 
+	// get user
 	const token = getTokenFromReq(req);
 	if(!token) return res.status(400).json({ message: 'Invalid token' });
-
 	const user = await authServiceInstance.GetUser(token);
-
 	if(!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
-	if (!user.email_verified) return res.status(400).json({ message: messages.SUBSCRIPTION_EMAIL_UNVERIFIED });
 
-	const userPreferenceRef = networkDocRef(network).collection('user_preferences').doc(String(user.id));
-	const userPreference = await userPreferenceRef.get();
+	// get post author
+	const postRef = networkDocRef(network).collection('post_types').doc(strProposalType).collection('posts').doc(String(post_id));
+	const post = await postRef.get();
+	if(!post.exists) return res.status(400).json({ message: 'Post not found' });
+	const postAuthorId = post.data()?.user_id;
 
-	const strPostId = String(post_id);
-	if (!userPreference.exists) {
-		await userPreferenceRef.set({
-			notification_settings: NOTIFICATION_DEFAULTS,
-			post_subscriptions: {
-				[strProposalType]: [strPostId]
-			},
-			user_id: user.id
-		}).then(() => {
-			return res.status(200).json({ message: messages.SUBSCRIPTION_SUCCESSFUL });
-		}).catch((error) => {
-			console.log(' Error while adding subscription : ', error);
-			return res.status(400).json({ message: 'Error while adding subscription.' });
-		});
-	} else {
-		const data = userPreference.data() as IUserPreference;
+	// check if user is the author of the post
+	if (Number(postAuthorId) === user.id) return res.status(400).json({ message: 'You cannot subscribe to your own post.' });
 
-		const notification_settings = data?.notification_settings;
-		if (offChainProposalTypes.includes(strProposalType) && !notification_settings?.post_created) {
-			return res.status(400).json({ message: 'Restricted subscribe to the post because of "Subscribe to post you created" is off.' });
-		}
-		if (!notification_settings?.post_participated) {
-			return res.status(400).json({ message: 'Restricted subscribe to the post because of "Subscribe to post you participate in" is off.' });
-		}
+	const postSubs = post.data()?.subscribers || [];
+	if(postSubs.includes(user.id)) return res.status(400).json({ message: messages.SUBSCRIPTION_ALREADY_EXISTS });
 
-		const post_subscriptions = data?.post_subscriptions || {};
-		const proposalTypePostSubscriptions = post_subscriptions?.[strProposalType as keyof typeof data.post_subscriptions] || [];
-		if(proposalTypePostSubscriptions?.some((id) => String(id) === strPostId)) return res.status(400).json({ message: messages.SUBSCRIPTION_ALREADY_EXISTS });
+	postSubs.push(Number(user.id));
 
-		proposalTypePostSubscriptions.push(strPostId);
-		await userPreferenceRef.update({
-			post_subscriptions: {
-				...post_subscriptions,
-				[strProposalType]: proposalTypePostSubscriptions
-			}
-		}).then(() => {
-			return res.status(200).json({ message: messages.SUBSCRIPTION_SUCCESSFUL });
-		}).catch((error) => {
-			console.log(' Error while adding subscription : ', error);
-			return res.status(400).json({ message: 'Error while adding subscription.' });
-		});
-	}
+	await postRef.update({ subscribers: postSubs }).catch((e) => {
+		console.error(e);
+		return res.status(500).json({ message: messages.INTERNAL });
+	});
 
+	return res.status(200).json({ message: messages.SUBSCRIPTION_SUCCESSFUL });
 }
 
 export default withErrorHandling(handler);

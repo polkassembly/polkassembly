@@ -99,8 +99,8 @@ const DiscussionLink: FC<IDiscussionLinkProps> = (props) => {
 						<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
                             This post is linked with {' '}
 							<span className='text-pink_primary'>
-								{latestState?.text}
-							</span> {' >> '}
+								{latestState?.text} {' >> '}
+							</span>
 						</div>
 					</Link>
 					: null

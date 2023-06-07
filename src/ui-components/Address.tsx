@@ -56,6 +56,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 	const router = useRouter();
 	const [username, setUsername] = useState('');
 	const [kiltName, setKiltName] = useState('');
+	const[manualUserName,setManualUserName] = useState('');
 
 	const encoded_addr = address ? getEncodedAddress(address, network) || '' : '';
 
@@ -70,6 +71,26 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 			if (data && data.username) {
 				setUsername(data.username);
 				router.push(`/user/${data.username}`);
+			}
+		}
+	};
+
+	const fetchManualUsername = async () => {
+		const substrateAddress = getSubstrateAddress(address);
+		console.log('manual user');
+		if (substrateAddress) {
+			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`);
+			if (error) {
+				console.error(error);
+				return;
+			}
+			if (data && data.username) {
+				if(data.username.length !== 25){
+					console.log('data=>', data);
+					setManualUserName(data.username);
+				}else{
+					setManualUserName('');
+				}
 			}
 		}
 	};
@@ -92,9 +113,11 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 
 		let unsubscribe: () => void;
 
+		fetchManualUsername();
+
 		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
 			setIdentity(info.identity);
-
+			console.log('identity ',info);
 			if (info.identity.displayParent && info.identity.display){
 				// when an identity is a sub identity `displayParent` is set
 				// and `display` get the sub identity
@@ -103,7 +126,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 			} else {
 				// There should not be a `displayParent` without a `display`
 				// but we can't be too sure.
-				setMainDisplay(info.identity.displayParent || info.identity.display || info.nickname || '');
+				setMainDisplay(info.identity.displayParent || info.identity.display || manualUserName || info.nickname || '' );
 			}
 		})
 			.then(unsub => { unsubscribe = unsub; })
@@ -139,9 +162,13 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
 
-	const t1 = kiltName || mainDisplay || (isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr);
+	const t1 = kiltName || mainDisplay || manualUserName || (isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr);
 	const t2 = extensionName || mainDisplay;
 
+	//console.log('encoded adrr ', encoded_addr);
+	console.log('t1 = ',t1 ,'t2 = ' ,t2);
+	///console.log('sub ',sub);
+	console.log('main display',mainDisplay);
 	return (
 		<div className={displayInline ? `${className} display_inline`: className}>
 			{

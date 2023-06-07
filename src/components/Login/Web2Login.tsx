@@ -37,7 +37,7 @@ interface Props {
   className?: string;
 }
 const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation }) => {
-	const { password, username } = validation;
+	const { username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
 	const [loading, setLoading] = useState<boolean>(false);

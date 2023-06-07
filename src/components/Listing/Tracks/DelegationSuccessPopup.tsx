@@ -68,17 +68,17 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 	>
 		<div className='flex justify-center items-center flex-col -mt-[132px]'>
 			<SuccessIcon/>
-			<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-6'>{isDelegate ? `${title} successfully` : 'Undelegated successfully' }</h2>
-			{isDelegate && <div className='flex flex-col justify-center items-center gap-[18px]'>
+			<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-4'>{isDelegate ? `${title} successfully` : 'Undelegated successfully' }</h2>
+			{isDelegate && <div className='flex flex-col justify-center items-center gap-[14px]'>
 				{balance && <div className='text-pink_primary text-[24px] font-semibold'>{formatedBalance(balance.toString(), unit)}{` ${unit}`}</div>}
 				{
-					vote === EVoteDecisionType.SPLIT && <div className=' flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'> Aye: {ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}{` ${unit}`}</span> <span>Nay: {nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit)  : 0}{` ${unit}`}</span></div>
+					vote === EVoteDecisionType.SPLIT && <div className=' flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'><span className='font-semibold'> Aye: </span><span className='font-normal'>{ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}{` ${unit}`}</span></span> <span className='mr-3'><span className='font-semibold'>Nay: </span><span className='font-normal'>{nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit)  : 0}{` ${unit}`}</span></span></div>
 				}
 				{
-					vote === EVoteDecisionType.ABSTAIN &&  <div className='flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'> Abstain: {abstainVoteValue ? formatedBalance(abstainVoteValue.toString(), unit) : 0}{` ${unit}`}</span>  <span className='mr-3'> Aye: {ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}{` ${unit}`}</span> <span>Nay: {nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit)  : 0}{` ${unit}`}</span></div>
+					vote === EVoteDecisionType.ABSTAIN &&  <div className='flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'><span className='font-semibold'> Abstain:</span> <span className='font-normal'>{abstainVoteValue ? formatedBalance(abstainVoteValue.toString(), unit) : 0}{` ${unit}`}</span></span> <span className='mr-3'> <span className='font-semibold'>Aye:</span> <span className='font-normal'> {ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}{` ${unit}`}</span></span> <span className='mr-3'><span className='font-semibold'>Nay:</span> <span className='font-normal'>{nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit)  : 0}{` ${unit}`}</span></span></div>
 				}
 				<div className='flex-col flex items-start justify-center gap-[10px]'>
-					{address && <div className='flex gap-3 text-sm text-[#485F7D] font-normal'>{isVote ? 'With' : 'To'} address:<span>
+					{address && <div className='flex gap-3 text-sm text-[#485F7D] font-normal'>{isVote ? 'With' : 'To'} address:<span className='font-medium'>
 						<Address address={address}
 							className='address'
 							displayInline={true}/>

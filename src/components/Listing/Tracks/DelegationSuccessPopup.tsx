@@ -70,25 +70,25 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 			<SuccessIcon/>
 			<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-6'>{isDelegate ? `${title} successfully` : 'Undelegated successfully' }</h2>
 			{isDelegate && <div className='flex flex-col justify-center items-center gap-[18px]'>
-				{balance && <div className='text-pink_primary text-[24px] font-semibold'>{formatedBalance(balance.toString(), unit)}</div>}
+				{balance && <div className='text-pink_primary text-[24px] font-semibold'>{formatedBalance(balance.toString(), unit)}{` ${unit}`}</div>}
 				{
-					vote === EVoteDecisionType.SPLIT && <div className=' flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'> Aye: {ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}</span> <span>Nay: {nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit)  : 0}</span></div>
+					vote === EVoteDecisionType.SPLIT && <div className=' flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'> Aye: {ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}{` ${unit}`}</span> <span>Nay: {nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit)  : 0}{` ${unit}`}</span></div>
 				}
 				{
-					vote === EVoteDecisionType.ABSTAIN &&  <div className='flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'> Abstain: {abstainVoteValue ? formatedBalance(abstainVoteValue.toString(), unit) : 0}</span>  <span className='mr-3'> Aye: {ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}</span> <span>Nay: {nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit)  : 0}</span></div>
+					vote === EVoteDecisionType.ABSTAIN &&  <div className='flex flex-wrap justify-center font-normal text-sm text-[#243A57]'> <span className='mr-3'> Abstain: {abstainVoteValue ? formatedBalance(abstainVoteValue.toString(), unit) : 0}{` ${unit}`}</span>  <span className='mr-3'> Aye: {ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}{` ${unit}`}</span> <span>Nay: {nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit)  : 0}{` ${unit}`}</span></div>
 				}
 				<div className='flex-col flex items-start justify-center gap-[10px]'>
-					{address && <div className='flex gap-4 text-sm text-[#485F7D] font-normal'>{isVote ? 'With' : 'To'} address:<span>
+					{address && <div className='flex gap-3 text-sm text-[#485F7D] font-normal'>{isVote ? 'With' : 'To'} address:<span>
 						<Address address={address}
 							className='address'
 							displayInline={true}/>
 					</span>
 					</div>}
-					{vote && <div className='flex h-[21px] gap-[50px] text-sm text-[#485F7D] font-normal'>
+					{vote && <div className='flex h-[21px] gap-[63px] text-sm text-[#485F7D] font-normal'>
 						Vote :{vote === EVoteDecisionType.AYE ? <p><LikeFilled className='text-[green]'/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : vote === EVoteDecisionType.NAY ?  <div><DislikeFilled className='text-[red]'/> <span className='mb-[5px] capitalize font-medium text-[#243A57]'>{vote}</span></div> : vote === EVoteDecisionType.SPLIT ? <p><SplitYellow/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : vote === EVoteDecisionType.ABSTAIN ? <p className='flex align-middle'><AbstainGray className='mr-1'/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : null }
 					</div>
 					}
-					<div className='flex gap-4 text-sm text-[#485F7D] font-normal'> Conviction:<span className='text-[#243A57] font-medium'>{conviction}x</span> </div>
+					<div className='flex gap-[30px] text-sm text-[#485F7D] font-normal'> Conviction:<span className='text-[#243A57] font-medium'>{conviction}x</span> </div>
 					{tracks && <div className='flex gap-[35px] text-sm text-[#485F7D]'>Track(s):<span>
 						<div className={`flex flex-col gap-1 min-h-[50px] max-h-[100px] text-[#243A57] pr-2 font-medium ${tracks.length > 4 && 'overflow-y-scroll'}`}>
 							{tracks.map((track, index) => (<div key={index}>{track} #{networkTrackInfo[network][track.toString()].trackId}</div>))}</div>

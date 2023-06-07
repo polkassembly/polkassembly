@@ -15,6 +15,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { dropdownLabel } from '~src/ui-components/RPCDropdown';
+import { typesBundle } from '@kiltprotocol/type-definitions';
 
 export interface ApiContextType {
 	api: ApiPromise | undefined;
@@ -43,28 +44,31 @@ export function ApiContextProvider(
 	const [wsProvider, setWsProvider] = useState<string>(props.network ? chainProperties?.[props.network]?.rpcEndpoint : '');
 
 	useEffect(() => {
-		if(!wsProvider && !props.network) return;
+		if (!wsProvider && !props.network) return;
 		const provider = new WsProvider(wsProvider || chainProperties?.[props.network!]?.rpcEndpoint);
 		setApiReady(false);
 		setApi(undefined);
 		let api = undefined;
-		if (props.network == 'genshiro'){
+		if (props.network == 'genshiro') {
 			api = new ApiPromise({ provider, typesBundle: typesBundleGenshiro });
 		}
-		if (props.network == 'crust'){
+		if (props.network == 'crust') {
 			api = new ApiPromise({ provider, typesBundle: typesBundleCrust });
 		}
-		if (props.network == 'equilibrium'){
+		if (props.network == 'equilibrium') {
 			api = new ApiPromise({ provider, typesBundle: typesBundleEquilibrium });
 		}
-		else{
-			api = new ApiPromise({ provider });
+		if (props.network == 'kilt') {
+			api = new ApiPromise({ provider, typesBundle });
+		}
+		else {
+			api = new ApiPromise({ provider, typesBundle });
 		}
 		setApi(api);
-	},[props.network, wsProvider]);
+	}, [props.network, wsProvider]);
 
 	useEffect(() => {
-		if(api) {
+		if (api) {
 			setIsApiLoading(true);
 			const timer = setTimeout(async () => {
 				queueNotification({
@@ -122,7 +126,7 @@ export function ApiContextProvider(
 				});
 			return () => clearTimeout(timer);
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api]);
 
 	return (

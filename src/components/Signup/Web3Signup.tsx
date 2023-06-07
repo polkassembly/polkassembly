@@ -37,6 +37,7 @@ interface Props {
    isModal?:boolean;
   setSignupOpen?: (pre: boolean) => void;
   setLoginOpen?: (pre: boolean) => void;
+  onWalletUpdate?: () => void;
 }
 
 const Web3Signup: FC<Props> = ({
@@ -45,7 +46,8 @@ const Web3Signup: FC<Props> = ({
 	setWalletError,
 	isModal,
 	setSignupOpen,
-	setLoginOpen
+	setLoginOpen,
+	onWalletUpdate
 }) => {
 	const { network } = useNetworkContext();
 
@@ -235,7 +237,9 @@ const Web3Signup: FC<Props> = ({
 	};
 
 	const handleToggle = () => setDisplayWeb2();
-
+	const handleBackToSignUp = ():void => {
+		onWalletUpdate && onWalletUpdate();
+	};
 	return (
 		<article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-3">
 			<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-4 justify-center">
@@ -257,22 +261,26 @@ const Web3Signup: FC<Props> = ({
 						<p className='text-base'>
 							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
 						</p>
-						<Button
-							key='got-it'
-							icon={<CheckOutlined />}
-							className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
-							onClick={() => {
-								getAccounts(chosenWallet)
-									.then(() => {
-										setFetchAccounts(false);
-									})
-									.catch((err) => {
-										console.error(err);
-									});
-							}}
-						>
+						<div className='flex'>
+							<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-4 px-7 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() =>  handleBackToSignUp()}>
+								Go Back</Button>
+							<Button
+								key='got-it'
+								icon={<CheckOutlined />}
+								className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
+								onClick={() => {
+									getAccounts(chosenWallet)
+										.then(() => {
+											setFetchAccounts(false);
+										})
+										.catch((err) => {
+											console.error(err);
+										});
+								}}
+							>
 							Got it!
-						</Button>
+							</Button>
+						</div>
 					</div>
 					: (
 						<>
@@ -339,6 +347,11 @@ const Web3Signup: FC<Props> = ({
 								)}
 								{error && <FilteredError text={error}/>}
 							</AuthForm>
+							<div className='flex items-center justify-center'>
+								<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-2 px-6 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() =>  handleBackToSignUp()}>
+								Go Back
+								</Button>
+							</div>
 						</>
 					)
 			}

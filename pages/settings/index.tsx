@@ -11,6 +11,7 @@ import Notifications from '~src/components/Settings/Notifications';
 import UserAccount from '~src/components/Settings/UserAccount';
 import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
+import Tracker from '~src/components/Tracker/Tracker';
 
 interface Props {
 	network: string
@@ -24,7 +25,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 const tabItems = [
 	{ children:<UserAccount/> , key:'Account', label:'Account' },
 	{ children:<Notifications/> , key:'Notifications', label:'Notifications' },
-	{ children:<h1>this is Activity</h1>, key:'Activity', label:'Activity' }
+	{ children:<Tracker />, key:'Activity', label:'Tracker' }
 ];
 
 const Settings: FC<Props> = (props) => {

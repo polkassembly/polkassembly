@@ -15,10 +15,6 @@ const categoryOptions = [
 	{
 		label: 'Comments on my posts',
 		value: 'Comments on my posts'
-	},
-	{
-		label: 'Daily updates of new likes, dislikes and comments on my posts',
-		value: 'Daily updates of new likes, dislikes and comments on my posts'
 	}
 ];
 

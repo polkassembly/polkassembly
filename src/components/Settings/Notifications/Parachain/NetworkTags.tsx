@@ -5,10 +5,12 @@ import { Tag as AntdTag } from 'antd';
 import Image from 'next/image';
 import React from 'react';
 import styled from 'styled-components';
-
+import { PlusCircleOutlined } from '@ant-design/icons';
 type Props = {
-    icon: any;
+    icon?: any;
     name: any;
+	selected?:boolean;
+	onActionClick?:any;
 };
 
 const Tag = styled(AntdTag)`
@@ -17,15 +19,23 @@ padding:8px;
 }
 `;
 
-export default function NetworkTags({ icon, name }: Props) {
+const PlusIcon = styled(PlusCircleOutlined)`
+svg {
+	width:25px;
+	height:25px;
+	color:#E5007A;
+}
+`;
+
+export default function NetworkTags({ icon, name, selected=true, onActionClick }: Props) {
 	return (
-		<Tag className='flex items-center justify-between text-navBlue hover:text-[red] border-solid border rounded-[34px] bg-[rgba(210,216,224,0.2)] px-[24px] py-[8px] hover:border-[#E5007A] hover:bg-[#FEF2F8]'>
-			<Image
+		<Tag onClick={onActionClick} className={`flex items-center justify-between text-navBlue border-solid border rounded-[34px] px-[24px] py-[8px] border-[#E5007A] ${selected ? 'bg-[#FEF2F8]': 'bg-white px-[12px] py-[14px]' } cursor-pointer`}>
+			{icon ? <Image
 				className='w-[40px] h-[40px] rounded-full'
 				src={icon}
 				alt='Logo'
-			/>
-			<span className='items-center justify-center ml-[9.25px] mr-[13.35px] font-semibold text-[#243A57] text-lg leading-[18px] tracking-[0.02em] capitalize'>
+			/>: <PlusIcon/>}
+			<span className={`items-center justify-center ml-[9.25px] mr-[13.35px] font-semibold ${selected ? 'text-[#243A57]' : 'text-pink_primary'} text-lg leading-[18px] tracking-[0.02em] capitalize`}>
 				{name}
 			</span>
 		</Tag>

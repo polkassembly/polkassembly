@@ -7,6 +7,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 export const gov2Routes = [
 	'gov-2',
+	'opengov',
 	'track',
 	'preimages',
 	'referenda',

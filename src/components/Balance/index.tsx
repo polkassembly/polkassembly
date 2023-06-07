@@ -25,6 +25,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance }: P
 	const { postData } = usePostDataContext();
 
 	const isReferendum = [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(postData?.postType);
+	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
 
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;
@@ -63,18 +64,24 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance }: P
 				}).catch(e => console.error(e));
 		}
 		else{
-
 			api.query.system.account(address)
 				.then((result: any) => {
+					const frozen = result.data?.miscFrozen?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
+					const reserved = result.data?.reserved?.toBigInt() || BigInt(0);
 					if(isReferendum){
 						setBalance(result.data?.free?.toString() || '0');
 						setAvailableBalance &&	setAvailableBalance(result.data?.free?.toString() || '0');
 						onChange && onChange(result.data?.free?.toString() || '0');
 					}
-					else if (result.data.free && result.data?.free?.toBigInt() >= result.data?.frozen?.toBigInt()){
-						setBalance((result.data?.free?.toBigInt() - result.data?.frozen?.toBigInt()).toString() || '0');
-						setAvailableBalance &&	setAvailableBalance((result.data?.free?.toBigInt() - result.data?.frozen?.toBigInt()).toString() || '0');
-						onChange && onChange((result.data?.free?.toBigInt() - result.data?.frozen?.toBigInt()).toString() || '0');
+					else if(isDemocracyProposal && result.data.free && result.data?.free?.toBigInt() >= frozen){
+						setBalance((result.data?.free?.toBigInt() + reserved - frozen).toString()  || '0');
+						setAvailableBalance && setAvailableBalance((result.data?.free?.toBigInt() + reserved).toString()  || '0');
+						onChange && onChange((result.data?.free?.toBigInt() + reserved).toString()  || '0');
+					}
+					else if (result.data.free && result.data?.free?.toBigInt() >= frozen){
+						setBalance((result.data?.free?.toBigInt() - frozen).toString() || '0');
+						setAvailableBalance &&	setAvailableBalance((result.data?.free?.toBigInt() - frozen).toString() || '0');
+						onChange && onChange((result.data?.free?.toBigInt() - frozen).toString() || '0');
 					}
 					else{
 						setBalance('0');

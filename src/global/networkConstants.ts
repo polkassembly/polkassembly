@@ -169,7 +169,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: polkadotLogo,
-		rpcEndpoint: 'wss://polkadot.api.onfinality.io/public-ws',
+		rpcEndpoint: 'wss://rpc.ibp.network/polkadot',
 		ss58Format: 0,
 		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
 		tokenDecimals: 10,

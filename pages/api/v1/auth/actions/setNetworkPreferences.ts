@@ -10,6 +10,7 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import firebaseAdmin from '~src/services/firebaseInit';
+import { IUserNotificationSettings } from '~src/types';
 
 function isValidNetworkPreferences(network_preferences: any): boolean {
 	if (!network_preferences || typeof network_preferences !== 'object' || Array.isArray(network_preferences)) return false;
@@ -38,8 +39,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const firestore = firebaseAdmin.firestore();
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
-	const { network, network_preferences } = req.body;
-	if(!network || !network_preferences) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { networks, network_preferences } = req.body;
+	if(!networks || !Array.isArray(networks) || !network_preferences) return res.status(400).json({ message: 'Missing parameters in request body' });
+
+	// network_preferences should be {[index: string]: IUserNotificationTriggerPreferences}
 	if (!isValidNetworkPreferences(network_preferences)) return res.status(400).json({ message: 'Invalid network_preferences' });
 
 	const token = getTokenFromReq(req);
@@ -52,9 +55,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const userDoc = await userRef.get();
 	if (!userDoc.exists) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
-	await userRef.update({ notification_settings: {
-		[network]: network_preferences
-	} }).then(() => {
+	const userData = userDoc.data();
+
+	const newNotificationSettings: IUserNotificationSettings = {
+		...(userData?.notification_settings || {}),
+		triggerPreferences: {
+			...(userData?.notification_settings?.triggerPreferences || {}),
+			...networks.map((network) => ({
+				[network]: network_preferences
+			}))
+		}
+	};
+
+	await userRef.update({ notification_settings: newNotificationSettings }).then(() => {
 		return res.status(200).json({ message: 'Success' });
 	}).catch((error) => {
 		console.error('Error updating network preferences: ', error);

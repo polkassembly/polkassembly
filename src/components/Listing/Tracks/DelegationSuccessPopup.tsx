@@ -84,7 +84,7 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 							displayInline={true}/>
 					</span>
 					</div>}
-					{vote && <div className='flex h-[21px] gap-[66px] text-sm text-[#485F7D] font-normal'>
+					{vote && <div className='flex h-[21px] gap-[70px] text-sm text-[#485F7D] font-normal'>
 						Vote :{vote === EVoteDecisionType.AYE ? <p><LikeFilled className='text-[green]'/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : vote === EVoteDecisionType.NAY ?  <div><DislikeFilled className='text-[red]'/> <span className='mb-[5px] capitalize font-medium text-[#243A57]'>{vote}</span></div> : vote === EVoteDecisionType.SPLIT ? <p><SplitYellow/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : vote === EVoteDecisionType.ABSTAIN ? <p className='flex align-middle'><AbstainGray className='mr-1'/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : null }
 					</div>
 					}

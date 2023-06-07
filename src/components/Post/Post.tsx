@@ -358,12 +358,14 @@ const Post: FC<IPostProps> = (props) => {
 
 						{!isEditing && (
 							<>
-								<div>
-									<DiscussionLink isOffchainPost={isOffchainPost} />
+								<div className='flex flex-row items-center'>
+									<div className='mr-4'>
+										<DiscussionLink isOffchainPost={isOffchainPost} />
+									</div>
 									{!isEditing && isOnchainPost && redirection.link && (
 										<Link href={redirection.link}>
-											<div className= 'bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-                        This proposal is now{' '}
+											<div className=' bg-white drop-shadow-md p-3 md:p-6 rounded-md mb-6 dashboard-heading'>
+                                               This proposal is now{' '}
 												<span className="text-pink_primary">{redirection.text}</span>
 											</div>
 										</Link>

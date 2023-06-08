@@ -189,7 +189,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	if(typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) {
 		gov1Items.overviewItems = [
-			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'gov-2', ''),
+			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'opengov', ''),
 			...gov1Items.overviewItems
 		];
 	}
@@ -282,7 +282,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let gov2OverviewItems = [
-		getSiderMenuItem('Overview', '/gov-2', <OverviewIcon className='text-white' />),
+		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-white' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),

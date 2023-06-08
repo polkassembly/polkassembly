@@ -18,6 +18,9 @@ import { getTopicFromType } from '~src/util/getTopicFromType';
 import Link from 'next/link';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
+import LikeIcon from '~assets/search/search-like.svg';
+import DislikeIcon from '~assets/search/search-dislike.svg';
+import CommentIcon from '~assets/search/search-comment.svg';
 
 interface Props {
   className?: string;
@@ -43,11 +46,23 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 					key={index}
 					target='_blank'>
 					<div className={`py-8 px-9 border-[#f3f4f5] border-solid flex-col border-[1px] shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] rounded-none border-b-[0px] hover:border-[#E5007A] hover:border-b-[1px] cursor-pointer min-h-[200px] ${index % 2 === 1 && 'bg-[#fafafb]'} ${index === postsData.length-1 && 'border-b-[1px]'} max-md:flex-wrap`}>
-						{post?.proposer_address ? <Address address={post?.proposer_address} displayInline textClassName='text-xs text-[#485F7D]'/> : <div className='text-xs text-[#485F7D] font-medium mb-1'>{post?.username}</div>}
+						{post?.proposer_address ? <Address address={post?.proposer_address} displayInline textClassName='text-xs text-[#]'/> : <div className='text-xs text-[#485F7D] font-medium mb-1'>{post?.username}</div>}
 						<span className='text-[#243A57] text-sm font-medium mt-2'>{titleString}</span>
-						<Markdown md={post?.content} className={`text-[#8696a9] text-sm font-normal my-2 tracking-[0.01em] ${!expandContent && 'expand-content'}`}/>
+						<Markdown md={expandContent ? post?.content : post?.content.slice(0, 250)} className={`text-[#8696a9] text-sm font-normal my-2 tracking-[0.01em] ${!expandContent && 'expand-content'}`}/>
 						<p className='text-[#E5007A] text-xs font-medium my-2' onClick={() => setExpandContent(!expandContent)}>{expandContent ? 'Show less' : 'Show More'}</p>
 						<div className='my-2 flex flex-shrink-0 gap-1'>
+							<div className='flex gap-2 items-center text-xs text-[#485F7D]'>
+								<div className='flex gap-1 items-center text-xs text-[#485F7D]'>
+									<LikeIcon/><span>2k</span>
+								</div>
+								<div className='flex gap-1 items-center text-xs text-[#485F7D]'>
+									<DislikeIcon/><span>2k</span>
+								</div>
+								<div className='flex gap-1 items-center text-xs text-[#485F7D]'>
+									<CommentIcon/><span>2k</span>
+								</div>
+								<Divider style={{ border: '1px solid #485F7D' }} type="vertical"/>
+							</div>
 							{post?.tags && post?.tags.length > 0 && <div className='flex gap-1 items-center' >
 								{ post?.tags?.slice(0,2).map((tag: string, index: number) =>
 									(<div key={index} className='rounded-[50px] px-[14px] py-1 border-[#D2D8E0] bg-white border-solid border-[1px] font-medium text-[#485F7D] text-[10px]' >

@@ -250,6 +250,7 @@ export default styled(Address)`
 	.description {
 		color: nav_blue;
 		margin-right: 0.4rem;
+		
 	}
 
 	.display_inline {

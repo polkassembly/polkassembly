@@ -2,16 +2,16 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-// import { DownOutlined } from '@ant-design/icons';
 import { Card, Col, Dropdown, Row } from 'antd';
 import Image from 'next/image';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { chainProperties, network } from 'src/global/networkConstants';
-
-import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import { useNetworkContext } from '~src/context';
 import { ArrowDownIcon } from './CustomIcons';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { useRouter } from 'next/router';
+import DownOutlined from '~assets/search/dropdown-down.svg';
+import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 
 type DropdownMenuItemType = {
 	key: any,
@@ -23,25 +23,27 @@ const kusamaChains: DropdownMenuItemType[] = [];
 const soloChains: DropdownMenuItemType[] = [];
 const testChains: DropdownMenuItemType[] = [];
 
+let link = '';
+
 for (const key of Object.keys(network)) {
 	const keyVal = network[key as keyof typeof network];
 	if(key === 'TANGANIKA') continue;
 
-	let link = ['MOONBASE', 'MOONRIVER', 'MOONBEAM', 'KILT'].includes(key) ? `https://${key}.polkassembly.network` : `https://${key === 'POLYMESHTEST'? 'polymesh-test': keyVal}.polkassembly.io`;
+	link = ['MOONBASE', 'MOONRIVER', 'MOONBEAM', 'KILT'].includes(key) ? `https://${key}.polkassembly.network` : `https://${key === 'POLYMESHTEST'? 'polymesh-test': keyVal}.polkassembly.io`;
 
 	if (isOpenGovSupported(keyVal)) {
-		link = `${link}/gov-2`;
+		link = `${link}/opengov`;
 	}
 	const optionObj: DropdownMenuItemType = {
 		key,
-		label: <a href={link} className='flex items-center my-2'>
+		label: <div className='flex items-center my-2'>
 			<Image
 				className='w-5 h-5 mr-3 object-contain rounded-full'
 				src={chainProperties[keyVal]?.logo ? chainProperties[keyVal].logo : chainLogo}
 				alt='Logo'
 			/>
 			<span className='capitalize'> {keyVal == 'hydradx' ? 'HydraDX' : keyVal} </span>
-		</a>
+		</div>
 	};
 
 	switch(chainProperties[keyVal]?.category) {
@@ -63,16 +65,36 @@ interface INetworkDropdown {
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>;
 	isSmallScreen?: boolean;
   isSearch?: boolean;
+  setSelectedNetworks?: (pre: string[]) => void;
+  selectedNetworks?: string[];
 }
 
 const NetworkDropdown: FC<INetworkDropdown> = (props) => {
-	const { isSmallScreen, setSidedrawer, isSearch } = props;
+	const { isSmallScreen, setSidedrawer, isSearch, setSelectedNetworks, selectedNetworks = [] } = props;
 	const { network } = useNetworkContext();
+	const [openFilter, setOpenFilter] = useState<boolean>(false);
+	const router = useRouter();
+
+	const handleLink = (option: DropdownMenuItemType) => {
+
+		if(isSearch && setSelectedNetworks && selectedNetworks){
+			const filterArr = selectedNetworks.filter((network) => network !== option?.key);
+			if(filterArr?.length < selectedNetworks.length){
+				setSelectedNetworks([...filterArr]);
+			}else{
+				setSelectedNetworks([...selectedNetworks, option.key]);}
+		}
+		else {
+			router.push(link);
+		}
+	};
 
 	return (
 		<Dropdown
-			open={isSearch}
-			trigger={['click']}
+			open={openFilter}
+			onOpenChange={() => setOpenFilter(!openFilter)}
+			placement={'bottomLeft'}
+			trigger={[isSearch ? 'hover' :'click']}
 			dropdownRender={() => {
 				return (
 					<Card className='max-w-[356px] max-h-[52vh] overflow-y-auto'>
@@ -81,7 +103,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 							<Row className="mt-2">
 								{
 									polkadotChains.map(optionObj => (
-										<Col span={12} key={optionObj.key} className="flex">{optionObj.label}</Col>
+										<Col span={12} key={optionObj.key} className={`flex cursor-pointer ${isSearch && selectedNetworks?.includes(optionObj.key) && 'text-pink_primary font-medium' }`} onClick={() => handleLink(optionObj) }>{optionObj.label}</Col>
 									))
 								}
 							</Row>
@@ -90,7 +112,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 							<Row className="mt-2">
 								{
 									kusamaChains.map(optionObj => (
-										<Col span={12} key={optionObj.key} className="flex">{optionObj.label}</Col>
+										<Col span={12} key={optionObj.key} className={`flex cursor-pointer ${isSearch && selectedNetworks?.includes(optionObj.key) && 'text-pink_primary font-medium' }`} onClick={() => handleLink(optionObj) }>{optionObj.label}</Col>
 									))
 								}
 							</Row>
@@ -99,7 +121,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 							<Row className="mt-2">
 								{
 									soloChains.map(optionObj => (
-										<Col span={12} key={optionObj.key} className="flex">{optionObj.label}</Col>
+										<Col span={12} key={optionObj.key} className={`flex cursor-pointer ${isSearch && selectedNetworks?.includes(optionObj.key) && 'text-pink_primary font-medium' }`} onClick={() => handleLink(optionObj) }>{optionObj.label}</Col>
 									))
 								}
 							</Row>
@@ -108,7 +130,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 							<Row className="mt-2">
 								{
 									testChains.map(optionObj => (
-										<Col span={12} key={optionObj.key} className="flex">{optionObj.label}</Col>
+										<Col span={12} key={optionObj.key} className={`flex cursor-pointer ${isSearch && selectedNetworks?.includes(optionObj.key) && 'text-pink_primary font-medium' }`} onClick={() => handleLink(optionObj) }>{optionObj.label}</Col>
 									))
 								}
 							</Row>
@@ -117,14 +139,20 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				);}
 			}
 		>
-			{
+			{isSearch ? <div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter || selectedNetworks.length > 0 ) && 'text-pink_primary' }`}>
+                             Network
+				<span className='text-[#96A4B6]'>
+					<DownOutlined className='ml-2.5 mt-1'/>
+				</span>
+			</div>
+				:
 				isSmallScreen?
 					<a className='flex items-center justify-between gap-x-2 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] h-10 px-[18px]' onClick={e => {
 						e.preventDefault();
 						setSidedrawer(false);
 					}}
 					>
-						<div className='flex items-center gap-x-[6px]'>
+						<div className='flex items-center gap-x-[6px] border-solid'>
 							<Image
 								className='w-[20px] h-[20px] rounded-full'
 								src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}

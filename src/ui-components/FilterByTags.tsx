@@ -6,7 +6,7 @@ import { Checkbox, Input, Popover } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import useGetFilterByFromUrl from '~src/hooks/useGetFilterbyFromUrl';
-import { DownOutlined } from '@ant-design/icons';
+import DownOutlined from '~assets/search/dropdown-down.svg';
 import { IPostTag } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { poppins } from 'pages/_app';
@@ -159,9 +159,9 @@ const FilterByTags=({ className, isSearch, setSelectedTags }:Props) => {
 				<span className='text-xl ml-2 mt-[2px]'>
 					{openFilter?<FilterIcon/>:<FilterUnfilledIcon/>}
 				</span>
-			</div> : <div className={`flex items-center justify-center text-xs  ${openFilter ? 'text-pink_primary':'text-[#667589]'}`}>
+			</div> : <div className={`flex items-center justify-center text-xs cursor-pointer ${openFilter ? 'text-pink_primary':'text-[#667589]'}`}>
           Tags
-				<span className='text-[#96A4B6] font-semibold'><DownOutlined className='ml-2.5'/></span>
+				<span className='text-[#96A4B6] font-semibold'><DownOutlined className='ml-2.5 mt-1'/></span>
 			</div> }
 
 		</Popover> );

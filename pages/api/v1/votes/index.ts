@@ -73,18 +73,10 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 
 	// if nays count,
 
-	let votesQuery = GET_VOTES_LISTING_BY_TYPE_AND_INDEX;
-
-	if (network === 'moonbeam') {
-		votesQuery = GET_VOTES_LISTING_BY_TYPE_AND_INDEX_MOONBEAM;
-	}
+	let votesQuery = network === 'moonbeam' ? GET_VOTES_LISTING_BY_TYPE_AND_INDEX_MOONBEAM : GET_VOTES_LISTING_BY_TYPE_AND_INDEX;
 
 	if(address) {
-		votesQuery = GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
-
-		if(network === 'moonbeam') {
-			votesQuery = GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_MOONBEAM;
-		}
+		votesQuery = network === 'moonbeam' ? GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_MOONBEAM : GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
 
 		variables['voter_eq'] = address;
 	}

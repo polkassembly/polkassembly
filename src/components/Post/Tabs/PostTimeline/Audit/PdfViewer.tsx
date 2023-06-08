@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import { DownloadOutlined } from '@ant-design/icons';
 import React, { FC } from 'react';
 import { Document, Page, pdfjs  } from 'react-pdf';
 import Image from 'next/image';
@@ -21,6 +22,16 @@ interface IPdfViewerProps {
 const PdfViewer: FC<IPdfViewerProps> = (props) => {
 	const { className, item } = props;
 	const [open, setOpen] = React.useState(false);
+	const downloadFile = (url: string) => {
+		const link = document.createElement('a');
+		link.href = url;
+		link.target = '_self';
+		link.target = '_blank';
+		link.download = '';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	};
 	return (
 		<>
 			<a className={`flex border border-solid border-[#D2D8E0] rounded-[6px] overflow-hidden items-center justify-center ${className}`} onClick={() => setOpen(true)} rel="noreferrer">
@@ -51,9 +62,14 @@ const PdfViewer: FC<IPdfViewerProps> = (props) => {
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={false}
-				className='w-full'
+				className='w-full lg:max-w-[1024px]'
+				title={<button onClick={() => {
+					downloadFile(item.download_url);
+				}} className='cursor-pointer text-base flex items-center m-0 border-none outline-none bg-transparent'>
+					<DownloadOutlined />
+				</button>}
 			>
-				<div className='overflow-hidden pdf w-auto'>
+				<div className='overflow-hidden overflow-y-auto max-h-[calc(100vh-200px)] pdf w-auto'>
 					<Document
 						file={item.download_url}
 						loading= {

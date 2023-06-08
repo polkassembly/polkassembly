@@ -39,7 +39,7 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
     const subsquidData = subsquidRes?.data?.proposals?.[0];
 
 // Create an object to be indexed by Algolia
-	var postRecord = {
+	let postRecord = {
 		objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
 		network,
 		created_at: post?.created_at?.toDate?.() || new Date(),

@@ -16,17 +16,20 @@ const { Panel } = Collapse;
 type Props = {
     onSetNotification: any;
     userNotification: any;
-	onSetCurrentNetworkNotifications:any
+    onSetCurrentNetworkNotifications: any;
+	sendAllCategoryRequest:any
 };
 
 // eslint-disable-next-line no-empty-pattern
 export default function OpenGovNotification({
 	onSetNotification,
 	userNotification,
-	onSetCurrentNetworkNotifications
+	onSetCurrentNetworkNotifications,
+	sendAllCategoryRequest
 }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
+	const { network } = useNetworkContext();
 
 	const [userData, setUserData] = useState(types);
 	useEffect(() => {
@@ -36,7 +39,9 @@ export default function OpenGovNotification({
 					item.options = options.map((opt: any) => ({
 						...opt,
 						selected:
-                            userNotification[opt.triggerName]?.tracks.includes(item.label) || false
+                            userNotification[opt.triggerName]?.tracks.includes(
+                            	item.label
+                            ) || false
 					}));
 					return item;
 				});
@@ -48,7 +53,20 @@ export default function OpenGovNotification({
 		setAll(checked);
 	};
 
-	const { network } = useNetworkContext();
+	const handleCategoryAllClick = (checked:boolean, categoryOptions:any, title:any) => {
+		if(categoryOptions){
+			return;
+		}
+		const payload = Object.assign({}, userData);
+		payload[title] = categoryOptions.map((category: any) => {
+			return {
+				...category,
+				selected: checked
+			};
+		});
+		setUserData(payload);
+		sendAllCategoryRequest(payload[title], checked, title);
+	};
 
 	const handleChange = (
 		categoryOptions: any,
@@ -63,8 +81,7 @@ export default function OpenGovNotification({
 		}
 		let tracks = notification?.[option.triggerName]?.tracks || [];
 		if (checked) {
-			if(!tracks.includes(title))
-				tracks.push(title);
+			if (!tracks.includes(title)) tracks.push(title);
 		} else {
 			tracks = tracks.filter((track: string) => track !== title);
 		}
@@ -77,7 +94,12 @@ export default function OpenGovNotification({
 				tracks
 			}
 		};
-		notification[option.triggerName].tracks = tracks;
+
+		notification[option.triggerName] = {
+			enabled: tracks.length > 0,
+			name: option?.triggerPreferencesName,
+			tracks
+		};
 		const userPayload = userData.map((type: any) => {
 			return type.map((item: any) => {
 				item.options = options.map((opt: any) =>
@@ -89,7 +111,9 @@ export default function OpenGovNotification({
 						: {
 							...opt,
 							selected:
-					userNotification[opt.triggerName]?.tracks.includes(item.label) || false
+                                  userNotification[
+                                  	opt.triggerName
+                                  ]?.tracks.includes(item.label) || false
 						}
 				);
 				return item;
@@ -156,6 +180,7 @@ export default function OpenGovNotification({
 												}
 												Icon={proposal.Icon}
 												onChange={handleChange}
+												handleCategoryAllClick={handleCategoryAllClick}
 												sectionAll={all}
 											/>
 										);
@@ -184,10 +209,10 @@ const options = [
 		value: 'New Referendum submitted'
 	},
 	{
-		label: 'Referendum in voting ',
+		label: 'Referendum in voting',
 		triggerName: 'openGovReferendumInVoting',
 		triggerPreferencesName: 'openGovReferendumInVoting',
-		value: 'Referendum in voting '
+		value: 'Referendum in voting'
 	},
 	{
 		label: 'Referendum closed',

@@ -97,7 +97,11 @@ export default function Gov1Notification({
 				post_types: postTypes
 			}
 		};
-		notification[option.triggerName].post_types = postTypes;
+		notification[option.triggerName] = {
+			enabled: postTypes.length > 0,
+			name: option?.triggerPreferencesName,
+			post_types: postTypes
+		};
 		const userPayload: any = {};
 		let allSelected = true;
 		for (const key in userData) {

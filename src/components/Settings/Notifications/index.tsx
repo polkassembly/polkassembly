@@ -126,17 +126,20 @@ export default function Notifications() {
 		}
 	};
 
-	const sendAllCategoryRequest = (payload:any, checked:boolean, title:string) => {
+	const sendAllCategoryRequest = (
+		payload: any,
+		checked: boolean,
+		title: string
+	) => {
 		const notification = Object.assign({}, currentNetworkNotifications);
 		const promises = payload.map((option: any) => {
 			if (!option?.triggerName) {
 				return;
 			}
 			let postTypes =
-			notification?.[option.triggerName]?.post_types || [];
+                notification?.[option.triggerName]?.post_types || [];
 			if (checked) {
-				if(!postTypes.includes(title))
-					postTypes.push(title);
+				if (!postTypes.includes(title)) postTypes.push(title);
 			} else {
 				postTypes = postTypes.filter((postType: string) => {
 					return postType !== title;
@@ -151,7 +154,49 @@ export default function Notifications() {
 					post_types: postTypes
 				}
 			};
-			notification[option.triggerName].post_types = postTypes;
+			notification[option.triggerName] = {
+				enabled: postTypes.length > 0,
+				name: option?.triggerPreferencesName,
+				post_types: postTypes
+			};
+			return handleSetNotification(payload);
+		});
+		setCurrentNetworkNotifications(notification);
+		Promise.all(promises);
+	};
+
+	const sendAllCategoryRequestForOpenGov = (
+		payload: any,
+		checked: boolean,
+		title: string
+	) => {
+		const notification = Object.assign({}, currentNetworkNotifications);
+		const promises = payload.map((option: any) => {
+			if (!option?.triggerName) {
+				return;
+			}
+			let tracks = notification?.[option.triggerName]?.tracks || [];
+			if (checked) {
+				if (!tracks.includes(title)) tracks.push(title);
+			} else {
+				tracks = tracks.filter((tracks: string) => {
+					return tracks !== title;
+				});
+			}
+			const payload = {
+				network,
+				trigger_name: option?.triggerName,
+				trigger_preferences: {
+					enabled: tracks.length > 0,
+					name: option?.triggerPreferencesName,
+					tracks: tracks
+				}
+			};
+			notification[option.triggerName] = {
+				enabled: tracks.length > 0,
+				name: option?.triggerPreferencesName,
+				tracks: tracks
+			};
 			return handleSetNotification(payload);
 		});
 		setCurrentNetworkNotifications(notification);
@@ -188,12 +233,17 @@ export default function Notifications() {
 				userNotification={currentNetworkNotifications}
 				onSetNotification={handleSetNotification}
 				sendAllCategoryRequest={sendAllCategoryRequest}
-				onSetCurrentNetworkNotifications={setCurrentNetworkNotifications}
+				onSetCurrentNetworkNotifications={
+					setCurrentNetworkNotifications
+				}
 			/>
 			<OpenGovNotification
 				userNotification={currentNetworkNotifications}
 				onSetNotification={handleSetNotification}
-				onSetCurrentNetworkNotifications={setCurrentNetworkNotifications}
+				sendAllCategoryRequest={sendAllCategoryRequestForOpenGov}
+				onSetCurrentNetworkNotifications={
+					setCurrentNetworkNotifications
+				}
 			/>
 		</div>
 	);

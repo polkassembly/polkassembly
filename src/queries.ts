@@ -472,12 +472,57 @@ query VotesListingByTypeAndIndex($orderBy: [VoteOrderByInput!] = timestamp_DESC,
 }
 `;
 
+export const GET_VOTES_LISTING_BY_TYPE_AND_INDEX_MOONBEAM = `
+query VotesListingByTypeAndIndexMoonbeam($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes) {
+  votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}) {
+    totalCount
+  }
+  votes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}, limit: $limit, offset: $offset) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+  }
+}
+`;
+
 export const GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX = `
 query VotesListingForAddressByTypeAndIndex($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "") {
   votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, voter_eq: $voter_eq}) {
     totalCount
   }
   votes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, voter_eq: $voter_eq}, limit: $limit, offset: $offset) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+  }
+}`;
+
+export const GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_MOONBEAM = `
+query VotesListingForAddressByTypeAndIndexMoonbeam($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "") {
+  votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, voter_eq: $voter_eq, removedAtBlock_isNull: true}) {
+    totalCount
+  }
+  votes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, voter_eq: $voter_eq, removedAtBlock_isNull: true}, limit: $limit, offset: $offset) {
     decision
     voter
     balance {
@@ -672,6 +717,23 @@ query VotingHistoryByVoterAddress($offset: Int = 0, $limit: Int = 10, $voter_eq:
     }
   }
   votesConnection(where: {voter_eq: $voter_eq}, orderBy: proposal_index_DESC) {
+    totalCount
+  }
+}
+`;
+
+export const VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM = `
+query VotingHistoryByVoterAddressMoonbeam($offset: Int = 0, $limit: Int = 10, $voter_eq: String) {
+  votes(limit: $limit, offset: $offset, orderBy: proposal_index_DESC, where: {voter_eq: $voter_eq, removedAtBlock_isNull: true}) {
+    decision
+    type
+    blockNumber
+    proposal {
+      index
+      type
+    }
+  }
+  votesConnection(where: {voter_eq: $voter_eq, removedAtBlock_isNull: true}, orderBy: proposal_index_DESC) {
     totalCount
   }
 }

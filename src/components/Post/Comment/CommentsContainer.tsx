@@ -217,10 +217,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			}
-			<div className='mb-5 flex justify-between items-center text-base tooltip-design text-[#485F7D] max-sm:flex-col max-sm:items-start max-sm:gap-1'>
-				<span className='text-base font-medium text-[#243A57]'>
+			<div className='mb-5 flex justify-between items-center text-base tooltip-design text-[#243A57] max-sm:flex-col max-sm:items-start max-sm:gap-1'>
+				<span className='text-[18px] font-medium text-[#243A57]'>
 					{filteredComments?.length}
-					<span className='ml-1'>Comments</span>
+					<span className='ml-1 text-[18px]'>Comments</span>
 				</span>
 				{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2'>
 					<Tooltip color='#E5007A'
@@ -301,26 +301,24 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						</Anchor>
 					</div>
 				}
-
-				<div className={`col-start-1 ${timelines.length > 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
-					{ !!comments?.length &&
+				<div className='text-[#243A57] text-sm font-medium mb-5'>{comments?.length} comments</div>
+				{ !!comments?.length &&
 						<>
 							<Comments disableEdit={isGrantClosed} comments={filteredComments} />
 						</>
-					}
-					{filteredComments.length === 0 && comments.length > 0 && <div className='mt-4 mb-4'>
-						<Empty  description='No comments available'/>
-					</div>}
-					{
-						<RefendaLoginPrompts
-							modalOpen={openLoginModal}
-							setModalOpen={setOpenLoginModal}
-							image="/assets/post-comment.png"
-							title="Join Polkassembly to Comment on this proposal."
-							subtitle="Discuss, contribute and get regular updates from Polkassembly."
-						/>
-					}
-				</div>
+				}
+				{filteredComments.length === 0 && comments.length > 0 && <div className='mt-4 mb-4'>
+					<Empty  description='No comments available'/>
+				</div>}
+				{
+					<RefendaLoginPrompts
+						modalOpen={openLoginModal}
+						setModalOpen={setOpenLoginModal}
+						image="/assets/post-comment.png"
+						title="Join Polkassembly to Comment on this proposal."
+						subtitle="Discuss, contribute and get regular updates from Polkassembly."
+					/>
+				}
 			</div>
 		</div>
 	);

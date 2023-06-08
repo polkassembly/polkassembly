@@ -36,7 +36,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 						<div key={post.post_id} className='my-0'>
 							{<Link href={`/referenda/${post.post_id}`}>
 								<GovernanceCard
-									className={`${(index+1)%2!==0 && 'bg-[#DCDFE350]'} ${poppins.variable} ${poppins.className}`}
+									className={`${(index+1)%2!==0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
 									postReactionCount={post?.post_reactions}
 									address={post.proposer}
 									commentsCount={post.comments_count || 0}

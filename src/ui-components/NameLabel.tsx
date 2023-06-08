@@ -20,7 +20,7 @@ const NameLabel = ({ className, defaultAddress, username, disableIdenticon = fal
 	const router = useRouter();
 	return (
 		<div className={`${className}`}>
-			{!defaultAddress ? <span className={`username text-navBlue font-medium mr-1.5 ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`} onClick={() => {
+			{!defaultAddress ? <span className={`username text-[#243A57] font-normal mr-1.5 ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`} onClick={() => {
 				if(clickable){
 					router.push(`/user/${username}`);
 				}

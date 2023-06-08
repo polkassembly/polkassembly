@@ -236,9 +236,7 @@ export default styled(Address)`
 	.identicon {
 		margin-right: 0.25rem;
 	}
-
 	.header {
-		color: black_text;
 		font-weight: 500;
 		margin-right: 0.4rem;
 	}

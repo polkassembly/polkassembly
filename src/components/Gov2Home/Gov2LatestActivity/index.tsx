@@ -78,15 +78,15 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string,
 	}
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-2 lg:p-6 rounded-md`}>
+		<div className={`${className} bg-white drop-shadow-md p-2 lg:p-6 rounded-xl`}>
 			<div className="flex justify-between items-center">
-				<h2 className='dashboard-heading mb-6'>Latest Activity</h2>
+				<h2 className='dashboard-heading mb-6 mt-2 sm:mt-0'>Latest Activity</h2>
 				{currentTab !== 'all' && <Link className='text-sidebarBlue font-medium hover:text-pink_primary py-0.5 px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
 			</div>
 			<Tabs
 				type="card"
 				items={tabItems}
-				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+				className='ant-tabs-tab-bg-white text-[#243A57] text-sm font-medium'
 				onChange={(key) => setCurrentTab(key)}
 			/>
 		</div>
@@ -95,18 +95,36 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string,
 
 export default React.memo(styled(Gov2LatestActivity)`
 	th {
-		color: var(--navBlue) !important;
+		color: #485F7D !important;
+		font-weight: 600 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
 	}
 
-	td.ant-table-cell {
-		color: var(--sidebarBlue) !important;
+	th.ant-table-cell {
+		color: #485F7D !important;
+		font-weight: 600 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
 	}
 
-	tr:nth-child(2n) td {
-    background-color: #fbfbfb !important;
+	.ant-table-thead > tr > th {
+		color: #485F7D !important;
+		font-weight: 600 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
 	}
 
-	tr {
+	.ant-table-row{
+		color: #243A57 !important;
+		font-size: 14px !important;
+		font-weight: 400 !important;
+	}
+
+	tr{
+		color: #243A57 !important;
+		font-size: 14px !important;
+		font-weight: 400 !important;
 		cursor: pointer !important;
 	}
 

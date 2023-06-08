@@ -362,7 +362,7 @@ const Post: FC<IPostProps> = (props) => {
 
 						{!isEditing && isOnchainPost && redirection.link &&
 						<Link href={redirection.link}>
-							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
+							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-xl w-full mb-6 dashboard-heading'>
 								This proposal is now <span className='text-pink_primary'>{redirection.text}</span>
 							</div>
 						</Link>
@@ -396,7 +396,7 @@ const Post: FC<IPostProps> = (props) => {
 						}
 
 						{/* Post Content */}
-						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-md w-full mb-6'>
+						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xl w-full mb-6'>
 							{isEditing &&
               <EditablePostContent toggleEdit={toggleEdit} />}
 
@@ -406,7 +406,7 @@ const Post: FC<IPostProps> = (props) => {
 								/>
 								<Tabs
 									type="card"
-									className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+									className='ant-tabs-tab-bg-white text-[#243A57] font-medium'
 									items={tabItems}
 								/>
 

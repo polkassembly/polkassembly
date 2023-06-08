@@ -102,7 +102,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
 	return (
-		<div className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue `}>
+		<div className={`${className} bg-white drop-shadow-md rounded-[14px] sm:py-8 xs:py-5 px-0 text-sidebarBlue `}>
 			<div className='flex items-center justify-between mb-10'>
 				<div>
 					<FilteredTags/>
@@ -114,7 +114,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 				items={items}
 				onTabClick={onTabClick}
 				type="card"
-				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium mt-[-70px]'
+				className='ant-tabs-tab-bg-white text-[#243A57] font-medium mt-[-70px]'
 			/>
 			{
 				(posts?.all?.data?.count||0) > 10  && activeTab === 'All' || (posts?.submitted?.data?.count||0) > 10 && activeTab === 'Submitted' || (posts?.voting?.data?.count||0) > 10 && activeTab === 'Voting' || (posts?.closed?.data?.count||0) > 10 && activeTab === 'Closed' ?

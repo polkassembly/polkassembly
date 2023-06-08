@@ -456,7 +456,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								name='aye-nay-form'
 								onFinish={async () => {
 									vote === EVoteDecisionType.AYE && await voteReferendum(true);
-									vote === EVoteDecisionType.AYE && await voteReferendum(false);
+									vote === EVoteDecisionType.NAY && await voteReferendum(false);
 								}}>
 
 								<BalanceInput

@@ -42,10 +42,10 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 	let postRecord = {
 		objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
 		network,
-		created_at: post?.created_at?.toDate?.() || new Date(),
-		last_comment_at: post?.last_comment_at?.toDate?.() || new Date(),
-		last_edited_at: post?.last_edited_at?.toDate?.() || new Date(),
-    updated_at: post?.updated_at?.toDate?.() || new Date(),
+		created_at: post?.created_at || new Date(),
+		last_comment_at: post?.last_comment_at || new Date(),
+		last_edited_at: post?.last_edited_at || new Date(),
+    updated_at: post?.updated_at || new Date(),
 		postType,
 		...post
 	}

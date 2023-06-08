@@ -27,7 +27,7 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 	// Retrieve the data from the Firestore event
 	const post = change.after.data();
 
-  const subsquidRes = fetchSubsquid({
+  const subsquidRes = postType === 'ReferendumV2' && fetchSubsquid({
 			network,
 			query: GET_PROPOSAL_TRACKS,
 			variables: {
@@ -36,7 +36,7 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
       }
 		});
     
-    const subsquidData = subsquidRes?.data?.proposals?.[0];
+    const subsquidData = subsquidRes && subsquidRes?.data?.proposals?.[0];
 
 // Create an object to be indexed by Algolia
 	let postRecord = {
@@ -126,8 +126,8 @@ exports.onAddressWritten = functions.region('europe-west1').firestore.document('
 
 	// Update the Algolia index
 	index
-		.saveObject(addressRecord)
-		.then(() => {
+  .saveObject(addressRecord)
+  .then(() => {
 			logger.info('Address indexed successfully:', { address });
 		})
 		.catch((error) => {
@@ -152,8 +152,8 @@ exports.onCommentWritten = functions.region('europe-west1').firestore.document('
 
 	// Update the Algolia index
 	index
-		.partialUpdateObject({comments_count, objectID:`${network}_${postType}_${postId}` })
-		.then(({objectID}) => {
+  .partialUpdateObject({comments_count, objectID:`${network}_${postType}_${postId}` })
+  .then(({objectID}) => {
 			logger.info('Post indexed successfully:', { objectID });
 		});
 });
@@ -189,10 +189,9 @@ exports.onReactionWritten = functions.region('europe-west1').firestore.document(
 	const reactionCount = reactionCountSnapshot.data().count;
 
 	// Update the Algolia index
-
 	index
-		  .partialUpdateObject({reaction_count : { [reactionData.reaction]: reactionCount }, objectID:`${network}_${postType}_${postId}` })
-    .then(({objectID}) => {
+  .partialUpdateObject({reaction_count : { [reactionData.reaction]: reactionCount }, objectID:`${network}_${postType}_${postId}` })
+  .then(({objectID}) => {
       logger.info('Post indexed successfully:', { objectID });
     });
 });

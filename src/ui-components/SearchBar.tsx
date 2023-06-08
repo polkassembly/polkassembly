@@ -3,12 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { SearchOutlined } from '@ant-design/icons';
-import { Modal } from 'antd';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
-import { useNetworkContext } from '~src/context';
-
-import ClientOnly, { Search } from './ClientOnly';
+// import { useNetworkContext } from '~src/context';
+// import ClientOnly, { Search } from './ClientOnly';
+import Search from 'src/components/Search';
 
 interface ISearchBarProps {
 	className?: string;
@@ -17,36 +16,25 @@ interface ISearchBarProps {
 
 const SearchBar: FC<ISearchBarProps> = (props) => {
 	const { className, isSmallScreen } = props;
-	const { network } = useNetworkContext();
+	// const { network } = useNetworkContext();
 	const [open, setOpen] = useState(false);
+	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
+
 	return (
 		<div className={className}>
 			{
 				isSmallScreen?
 					<div className='small-client relative'>
 						<SearchOutlined className='absolute top-[11px] left-2.5 z-50' />
-						<ClientOnly>
+						{/* <ClientOnly>
 							<Search network={network} />
-						</ClientOnly>
+						</ClientOnly> */}
 					</div>
 					: <>
 						<button className='flex items-center justify-center outline-none border-none bg-transparent cursor-pointer text-[18px] text-[#485F7D]' onClick={() => setOpen(true)}>
 							<SearchOutlined />
 						</button>
-						<Modal
-							title='Search'
-							closable={false}
-							open={open}
-							onCancel={() => setOpen(false)}
-							footer={[]}
-							className={className}
-						>
-							<div className='client'>
-								<ClientOnly>
-									<Search network={network} />
-								</ClientOnly>
-							</div>
-						</Modal>
+						<Search openModal={open} setOpenModal={setOpen} isSuperSearch={isSuperSearch} setIsSuperSearch={setIsSuperSearch}/>
 					</>
 			}
 		</div>

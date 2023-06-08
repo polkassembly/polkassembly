@@ -70,6 +70,7 @@ const messages = {
 	MULTISIG_SIGN_MESSAGE_EXPIRED: 'Session expired, please start again',
 	NEW_PROPOSAL_CREATED_MAIL_SENT: 'New Proposal created mail sent.',
 	NOTIFICATION_PREFERENCE_CHANGE_SUCCESSFUL: 'Notification preference changed successfully.',
+	NO_USER_FOUND_WITH_EMAIL: 'No user found with this email',
 	NO_USER_FOUND_WITH_USERNAME: 'No user found with this username',
 	OLD_AND_NEW_PASSWORD_MUST_DIFFER: 'Your new password must be different from your old one.',
 	PASSWORD_CHANGE_SUCCESSFUL: 'Password successfully changed.',

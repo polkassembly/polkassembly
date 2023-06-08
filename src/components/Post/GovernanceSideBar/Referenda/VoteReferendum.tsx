@@ -32,6 +32,8 @@ import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
+import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
+import dayjs from 'dayjs';
 
 const ZERO_BN = new BN(0);
 
@@ -66,6 +68,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [balanceErr, setBalanceErr] = useState('');
+	const [successModal,setSuccessModal] = useState(false);
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
 	const[ayeNayForm] = Form.useForm();
@@ -73,6 +76,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
 	const [walletErr, setWalletErr] = useState<INetworkWalletErr>({ description: '', error: 0, message: '' });
+	const [voteValues, setVoteValues] = useState({ abstainVoteValue:ZERO_BN,ayeVoteValue:ZERO_BN , nayVoteValue:ZERO_BN ,totalVoteValue:ZERO_BN });
 
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
@@ -316,7 +320,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			return;
 		}
 
-		const totalVoteValue = ayeVoteValue?.add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN);
+		const totalVoteValue = new BN(ayeVoteValue || ZERO_BN).add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN).add(lockedBalance || ZERO_BN);
+		setVoteValues((prevState) => ({
+			...prevState,
+			totalVoteValue:totalVoteValue
+		}));
 		if (totalVoteValue?.gte(availableBalance)) {
 			setBalanceErr('Insufficient balance.');
 			return;
@@ -346,6 +354,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					// if form is valid
 					const  ayeVote = ayeVoteValue?.toString();
 					const  nayVote = nayVoteValue?.toString();
+					setVoteValues((prevState) => ({
+						...prevState,
+						ayeVoteValue:ayeVoteValue,
+						nayVoteValue:nayVoteValue
+					}));
 					voteTx = api.tx.convictionVoting.vote(referendumId, { Split: { aye:`${ayeVote}`,nay:`${nayVote}` } });
 				} catch (e) {
 					console.log(e);
@@ -363,6 +376,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					const  abstainVote = abstainVoteValue?.toString();
 					const  ayeVote = ayeVoteValue?.toString();
 					const  nayVote = nayVoteValue?.toString();
+					setVoteValues((prevState) => ({
+						...prevState,
+						abstainVoteValue:abstainVoteValue,
+						ayeVoteValue:ayeVoteValue,
+						nayVoteValue:nayVoteValue
+					}));
 					voteTx = api.tx.convictionVoting.vote(referendumId, { SplitAbstain: {  abstain:`${abstainVote}`,aye:`${ayeVote}`, nay:`${nayVote}` } });
 				} catch (e) {
 					console.log(e);
@@ -399,6 +418,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					});
 					setLastVote(vote);
 					setShowModal(false);
+					setSuccessModal(true);
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
 				} else {
 					if (status.isBroadcast){
@@ -427,6 +447,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					});
 					setLastVote(vote);
 					setShowModal(false);
+					setSuccessModal(true);
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
 				} else {
 					if (status.isBroadcast){
@@ -653,6 +674,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
+			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} />
 		</div>
 	</>;
 

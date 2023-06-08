@@ -34,6 +34,8 @@ import SplitGray from '~assets/icons/split-gray.svg';
 import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
+import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
+import dayjs from 'dayjs';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -63,6 +65,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
+	const [voteValues, setVoteValues] = useState({ abstainVoteValue:ZERO_BN,ayeVoteValue:ZERO_BN , nayVoteValue:ZERO_BN ,totalVoteValue:ZERO_BN });
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
@@ -82,11 +85,11 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [abstainVoteValue, setAbstainVoteValue] = useState<BN>(ZERO_BN);
 	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
-
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [balanceErr, setBalanceErr] = useState('');
-
 	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
+	const [successModal,setSuccessModal] = useState(false);
+
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow ;
 		setAvailableWallets(injectedWindow.injectedWeb3);
@@ -313,7 +316,11 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			return;
 		}
 
-		const totalVoteValue = ayeVoteValue?.add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN);
+		const totalVoteValue = new BN(ayeVoteValue || ZERO_BN).add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN).add(lockedBalance || ZERO_BN);
+		setVoteValues((prevState) => ({
+			...prevState,
+			totalVoteValue:totalVoteValue
+		}));
 		if (totalVoteValue?.gte(availableBalance)) {
 			setBalanceErr('Insufficient balance.');
 			return;
@@ -362,6 +369,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
 					setLastVote(vote);
+					setShowModal(false);
+					setSuccessModal(true);
 					queueNotification({
 						header: 'Success!',
 						message: `Vote on referendum #${referendumId} successful.`,
@@ -392,6 +401,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
 					setLastVote(vote);
+					setShowModal(false);
+					setSuccessModal(true);
 					queueNotification({
 						header: 'Success!',
 						message: `Vote on referendum #${referendumId} successful.`,
@@ -410,6 +421,11 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		}
 
 		else if (vote === EVoteDecisionType.SPLIT){
+			setVoteValues((prevState) => ({
+				...prevState,
+				ayeVoteValue:ayeVoteValue,
+				nayVoteValue:nayVoteValue
+			}));
 			voteContract.methods
 				.voteSplit(
 					referendumId,
@@ -423,6 +439,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
 					setLastVote(vote);
+					setShowModal(false);
+					setSuccessModal(true);
 					queueNotification({
 						header: 'Success!',
 						message: `Vote on referendum #${referendumId} successful.`,
@@ -441,6 +459,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		}
 
 		else if (vote === EVoteDecisionType.ABSTAIN){
+			setVoteValues((prevState) => ({
+				...prevState,
+				abstainVoteValue:abstainVoteValue,
+				ayeVoteValue:ayeVoteValue,
+				nayVoteValue:nayVoteValue
+			}));
 			voteContract.methods
 				.voteSplitAbstain(
 					referendumId,
@@ -455,6 +479,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
 					setLastVote(vote);
+					setShowModal(false);
+					setSuccessModal(true);
 					queueNotification({
 						header: 'Success!',
 						message: `Vote on referendum #${referendumId} successful.`,
@@ -725,6 +751,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					</Spin>
 				</>
 			</Modal>
+			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true}  balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  votedAt={dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} />
 		</div>
 	);
 };

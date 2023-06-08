@@ -27,8 +27,14 @@ import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
 import SpamAlert from '~src/ui-components/SpamAlert';
+import { useNetworkContext } from '~src/context';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
+
+const PostAudit = dynamic(() => import('./Tabs/PostTimeline/Audit'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
@@ -92,7 +98,7 @@ const Post: FC<IPostProps> = (props) => {
 		text: ''
 	});
 	const [canEdit, setCanEdit] = useState(false);
-
+	const { network } = useNetworkContext();
 	const [duration, setDuration] = useState(dayjs.duration(0));
 
 	const isOnchainPost = checkIsOnChainPost(proposalType);
@@ -243,7 +249,6 @@ const Post: FC<IPostProps> = (props) => {
 		setSidebarOpen(true);
 		setProposerAddress(address);
 	};
-
 	const getOnChainTabs = () => {
 		const tabs = [
 			{
@@ -254,6 +259,16 @@ const Post: FC<IPostProps> = (props) => {
 				label: 'Timeline'
 			}
 		];
+		if (['polkadot', 'kusama'].includes(network)){
+			tabs.push({
+				children: (
+					<PostAudit />
+				),
+				key: 'audit',
+				label: 'Audit'
+			});
+		}
+
 		if (!isOffChainProposalTypeValid(proposalType)) {
 			tabs.push({
 				children: (

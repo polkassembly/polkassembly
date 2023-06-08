@@ -6,4 +6,5 @@ export const username = { maxLength:30, minLength:3, pattern: /^[A-Za-z0-9._-]*$
 export const email = {
 	pattern: /^[A-Z0-9_'%=+!`#~$*?^{}&|-]+([.][A-Z0-9_'%=+!`#~$*?^{}&|-]+)*@[A-Z0-9-]+(\.[A-Z0-9-]+)+$/i
 };
+
 export const password = { minLength: 6, required: true };

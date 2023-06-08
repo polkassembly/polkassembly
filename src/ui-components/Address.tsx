@@ -244,6 +244,7 @@ export default styled(Address)`
 	.description {
 		color: #485F7D;
 		margin-right: 0.4rem;
+		
 	}
 
 	.display_inline {

@@ -31,6 +31,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useContext(NetworkContext);
 	const [modalOpen,setModalOpen]=useState(false);
+	const [seconds, setSeconds] = useState<number>(0);
 	const { id }=useUserDetailsContext();
 
 	const secondProposal = async () => {
@@ -48,7 +49,16 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 		}
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
-		const second = api.tx.democracy.second(proposalId);
+		let second = null;
+		if(network == 'cere'){
+			api.query.democracy.depositOf(proposalId).then((result: any) => {
+				setSeconds(result.toHuman()[0].length);
+			});
+			// @ts-ignore
+			second = api.tx.democracy.second(proposalId, seconds);
+		}else{
+			second = api.tx.democracy.second(proposalId);
+		}
 
 		if(network == 'equilibrium'){
 			second.signAndSend(address, { nonce : -1 }, ({ status }: any) => {

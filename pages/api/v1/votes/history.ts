@@ -8,7 +8,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { TSubsquidProposalType, VoteType } from '~src/global/proposalType';
-import { VOTING_HISTORY_BY_VOTER_ADDRESS } from '~src/queries';
+import { VOTING_HISTORY_BY_VOTER_ADDRESS, VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -57,7 +57,7 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 
 		const subsquidRes = await fetchSubsquid({
 			network,
-			query: VOTING_HISTORY_BY_VOTER_ADDRESS,
+			query: network === 'moonbeam' ? VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM : VOTING_HISTORY_BY_VOTER_ADDRESS,
 			variables: {
 				limit: numListingLimit,
 				offset: numListingLimit * (numPage - 1),

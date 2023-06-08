@@ -62,14 +62,16 @@ for (const key of Object.keys(network)) {
 interface INetworkDropdown {
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>;
 	isSmallScreen?: boolean;
+  isSearch?: boolean;
 }
 
 const NetworkDropdown: FC<INetworkDropdown> = (props) => {
-	const { isSmallScreen, setSidedrawer } = props;
+	const { isSmallScreen, setSidedrawer, isSearch } = props;
 	const { network } = useNetworkContext();
 
 	return (
 		<Dropdown
+			open={isSearch}
 			trigger={['click']}
 			dropdownRender={() => {
 				return (

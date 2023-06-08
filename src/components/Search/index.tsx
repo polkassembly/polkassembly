@@ -21,6 +21,7 @@ import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import CloseIcon from '~assets/icons/close.svg';
 import LoaderIcon from '~assets/search/search-loader.svg';
+import NetworkDropdown from '~src/ui-components/NetworkDropdown';
 // import Autocomplete from './Autocomplete';
 // import { getAlgoliaResults } from '@algolia/autocomplete-js';
 
@@ -88,7 +89,12 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	};
 
 	const getResultData = async() => {
-		if(searchInput.length <= 2 ){setLoading(false);return;}
+
+		if(searchInput.length <= 2 || !userIndex || !postIndex ){
+			setLoading(false);
+			return;
+		}
+
 		setLoading(true);
 		if(filterBy !== EFilterBy.Users){
 
@@ -106,7 +112,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 				onChainFilter.push([`postType:${ProposalType.DISCUSSIONS}`,`postType:${ProposalType.GRANTS}`]);
 			}
 
-			const networkFilter = [!isSuperSearch ? [`network:${network}`] : []];
+			const networkFilter = [!isSuperSearch ? ['network:acala'] : []];
 			const facetFilters = [...networkFilter, ...onChainFilter, ...tagsFilter, ...topicFilter];
 			await postIndex.search(searchInput, { facetFilters, hitsPerPage: LISTING_LIMIT, page: postsPage.page-1 }).then(({ hits, nbHits }) => {
 				console.log(hits,'postResults');
@@ -147,7 +153,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	};
 
 	return <Modal
-		title={<label className='text-[#334D6E] text-xl font-semibold'>{isSuperSearch ? 'Super Search':'Search'} {searchInput.length > 0 && `Results for "${searchInput}"`}</label>}
+		title={<label className='text-[#243A57] text-xl font-semibold'>{isSuperSearch ? 'Super Search':'Search'} {searchInput.length > 0 && `Results for "${searchInput}"`}</label>}
 		open={openModal}
 		onCancel={handleModalClose}
 		footer={false}
@@ -167,7 +173,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 							<Radio value={EFilterBy.Discussions} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Discussions ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'}`}>Discussions {filterBy === EFilterBy.Discussions && !loading && `(${postResults?.length})`}</Radio>
 						</Radio.Group>
 						{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && <div className='flex text-xs font-medium tracking-[0.02em] text-[#667589] gap-3.5 max-md:px-4'>
-							{isSuperSearch && <Popover content={<div>hello</div>} placement="bottomLeft">
+							{isSuperSearch && <Popover content={<div className='border-solid radius-[50px]'><NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} isSearch={true} /></div>} placement="bottomLeft">
 								<div className='flex items-center justify-center text-xs'>
                              Chain
 									<span className='text-[#96A4B6]'>

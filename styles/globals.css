@@ -308,3 +308,9 @@ a.command-palette-list-item svg {
   color: white;
   height: 216px !important;
 }
+
+.pdf .react-pdf__Page__canvas {
+  width: 100% !important;
+  height: 100% !important;
+  scale: 1.05 !important;
+}

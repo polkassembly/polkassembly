@@ -347,23 +347,23 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	return (
 		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col gap-4 lg:flex`}>
 			{/* Available */}
-			<div className="flex-1 flex  justify-between  drop-shadow-md p-3 lg:p-6 rounded-[14px] gap-y-2 bg-white ">
+			<div className="flex-1 flex  justify-between  drop-shadow-md p-3 lg:p-5 rounded-[14px] gap-y-2 bg-white ">
 				<div className=' flex-1 flex flex-col justify-around gap-x-0'>
 					{
 						!available.isLoading ?
 							<>
-								<div className=" text-xs flex items-center ">
-									<span className="mr-2 text-[#485F7D] font-semibold">
+								<div className="flex items-center ">
+									<span className="mr-2 text-xs leading-5 text-[#485F7D] font-medium">
 									Available
 									</span>
 								</div>
-								<div className=" font-semibold text-lg leading-6 tracking-normal">
+								<div className="text-lg leading-6 tracking-normal font-medium">
 									{
 										available.value ?
-											<span className='flex gap-2'>
+											<span className='flex gap-2 text-[#243A57] text-[18px]'>
 												{available.value}
 												{' '}
-												<span className='text-navBlue'>
+												<span className='text-[#485F7D]'>
 													{chainProperties[network]?.tokenSymbol}
 												</span>
 											</span>
@@ -371,9 +371,9 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									}
 								</div>
 								{!['polymesh', 'polymesh-test'].includes(network) && <>
-									<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
+									<div className='flex flex-col justify-center font-medium gap-y-3'>
 
-										<span className='flex flex-col justify-center text-sidebarBlue font-medium'>
+										<span className='flex flex-col justify-center text-[#243A57] font-medium'>
 											{
 												available.valueUSD
 													? `~ $${available.valueUSD}`
@@ -401,8 +401,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							{
 								!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading)?
 									<div className=' flex-1 flex flex-col justify-around'>
-										<div className="text-[#485F7D] font-semibold font-poppins items-center">
-											<span className='hidden md:block md:break-keep'>
+										<div className="text-[#485F7D] font-medium font-poppins items-center">
+											<span className='hidden md:block text-xs md:break-keep'>
 							Current Price of {chainProperties[network]?.tokenSymbol}
 											</span>
 											<span className='flex md:hidden'>
@@ -459,13 +459,13 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							{
 								!spendPeriod.isLoading?
 									<>
-										<div className="text-navBlue text-xs flex items-center gap-x-2 mb-2">
-											<span className='text-[#485F7D] font-semibold font-poppins'>
+										<div className="text-xs flex items-center gap-x-2 mb-2">
+											<span className='text-[#485F7D] font-medium font-poppins mt-1'>
 										Spend Period Remaining
 											</span>
 										</div>
 
-										<div className="text-sidebarBlue font-medium text-lg">
+										<div className="text-sidebarBlue leading-6 mt-4 font-medium text-lg">
 											{spendPeriod.value?.total
 												? <>
 													{
@@ -500,7 +500,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						</div>
 						<ElipseIcon />
 					</div>
-					<div className="font-poppins font-semibold text-base leading-6 text-[#334D6E;] text-[14px]">
+					<div className="font-poppins font-semibold text-base leading-6 text-[#334D6E] text-[14px]">
 						{spendPeriod.value?.total
 							? <>
 								{
@@ -527,8 +527,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							{
 								!nextBurn.isLoading?
 									<div className='flex flex-col justify-around'>
-										<div className="text-[#485F7D] font-semibold font-poppins flex items-center">
-											<span className="mr-2">
+										<div className="text-[#485F7D] font-poppins flex items-center">
+											<span className="mr-2 font-medium text-xs">
 										Next Burn
 											</span>
 

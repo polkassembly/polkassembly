@@ -17,7 +17,7 @@ const News: FC<INewsProps> = (props) => {
 	}
 	return (
 		<div className='bg-white drop-shadow-md p-4 lg:p-6 rounded-xl h-[520px] lg:h-[550px]'>
-			<h2 className='dashboard-heading mb-6'>News</h2>
+			<h2 className='text-[#243A57] text-[20px] font-semibold leading-8 mb-6'>News</h2>
 
 			<div>
 				<TwitterTimelineEmbed

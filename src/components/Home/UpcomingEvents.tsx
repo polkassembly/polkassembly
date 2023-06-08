@@ -340,7 +340,7 @@ const UpcomingEvents = ({ className }:Props) => {
 	const CalendarElement = () => (
 		<Spin spinning={loading}>
 			<Calendar
-				className='border border-solid border-gray-200 rounded-md mb-4'
+				className='border border-solid border-[#D2D8E0] rounded-[8px] mb-4'
 				fullscreen={false}
 				cellRender={dateCellRender}
 			/>
@@ -355,7 +355,7 @@ const UpcomingEvents = ({ className }:Props) => {
 				dataSource={calendarEvents.sort((a,b) => (a?.end_time?.getTime() || a?.start_time?.getTime())- (b?.end_time?.getTime() || b?.start_time?.getTime()))}
 				renderItem={item => {
 					return (<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-[#243A57]`}>
-						<a {...(item.url ? { href: item.url } : {})} target='_blank' rel='noreferrer' className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-sidebarBlue`}>
+						<a {...(item.url ? { href: item.url } : {})} target='_blank' rel='noreferrer' className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-[#243A57]`}>
 							<div className='text-xs mb-1 flex items-center text-[#485F7D]'>
 								{dayjs(item.end_time).format('MMM D, YYYY')}
 								<span className="h-[4px] w-[4px] bg-navBlue mx-2 rounded-full inline-block"></span>
@@ -380,7 +380,7 @@ const UpcomingEvents = ({ className }:Props) => {
 	return (
 		<div className={`${className} bg-white drop-shadow-md p-4 lg:p-6 rounded-xl h-[520px] lg:h-[550px]`}>
 			<div className="flex items-center justify-between mb-5">
-				<h2 className='dashboard-heading mx-3'>Upcoming Events</h2>
+				<h2 className='text-[#243A57] text-[20px] font-semibold leading-8 mx-3'>Upcoming Events</h2>
 				<CalendarFilled className='cursor-pointer inline-block lg:hidden' onClick={() => setShowCalendar(!showCalendar)} />
 			</div>
 

@@ -82,7 +82,6 @@ exports.onUserWritten = functions.region('europe-west1').firestore.document('use
 	const userRecord = {
 		objectID: userId, // Unique identifier for the object
 		created_at: userData?.created_at || new Date(),
-		email: userData?.email || '',
 		username: userData?.username || '',
 		profile: userData?.profile || {}
 	};

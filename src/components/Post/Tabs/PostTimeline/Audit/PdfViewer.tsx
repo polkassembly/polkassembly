@@ -5,7 +5,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 import React, { FC } from 'react';
 import { Document, Page, pdfjs  } from 'react-pdf';
 import Image from 'next/image';
-import LoadingEffect from '~assets/wired-outline-334-loader-5.gif';
+import LoadingEffect from '~assets/audit-loader.gif';
 import PdfIcon from '~assets/icons/pdfs.svg';
 import { IDataType } from '.';
 import styled from 'styled-components';

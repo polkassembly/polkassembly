@@ -355,7 +355,7 @@ const Post: FC<IPostProps> = (props) => {
 				<SpamAlert />
 				{!isEditing && (
 					<>
-						{(isOffchainPost || (isOnchainPost && redirection.link)) && <div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-[95vw] lg:w-[85vw] mb-6 dashboard-heading border-black'>
+						{(isOffchainPost || (isOnchainPost && redirection.link)) && <div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-[94vw] lg:w-[85vw] mb-6 dashboard-heading border-black'>
 							<DiscussionLink isOffchainPost={isOffchainPost} />
 							{!isEditing && isOnchainPost && redirection.link && (
 								<Link href={redirection.link}>

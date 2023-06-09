@@ -40,7 +40,7 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 	const subsquidData = subsquidRes && subsquidRes?.data?.proposals?.[0];
 
 	// Create an object to be indexed by Algolia
-	let postRecord = {
+	let postRecord: {[index: string]: any} = {
 		objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
 		network,
 		created_at: dayjs(post?.created_at?.toDate?.() || new Date()).unix(),
@@ -50,6 +50,12 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 		postType,
 		...post
 	};
+
+	if (post?.topic) delete post?.topic;
+	if (post?.history) delete post?.history;
+	if (post?.post_link) delete post?.post_link;
+	if (post?.subscribers) delete post?.subscribers;
+	if (post?.author_id) delete post?.author_id;
 
 	postRecord = postType === 'ReferendumV2' ? { ...postRecord, track_number: subsquidData?.trackNumber } : postRecord;
 
@@ -115,6 +121,7 @@ exports.onAddressWritten = functions.region('europe-west1').firestore.document('
 
 	// Create an object to be indexed by Algolia
 	const addressRecord = {
+		address: address || '',
 		objectID: address, // Unique identifier for the object
 		default: addressData?.default || false,
 		is_erc20: addressData?.is_erc20 || address.startsWith('0x') || false,

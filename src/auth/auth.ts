@@ -173,12 +173,23 @@ class AuthService {
 	}
 
 	public async Login (username: string, password: string): Promise<AuthObjectType> {
-		for (let i = 0; i < nameBlacklist.length; i++) {
-			if (username.toLowerCase().includes(nameBlacklist[i])) throw apiErrorWithStatusCode(messages.USERNAME_BANNED, 401);
-		}
+		const isEmail = username.split('@')[1];
 
-		const userQuery = await firebaseAdmin.firestore().collection('users').where('username', '==', username).limit(1).get();
-		if (userQuery.size === 0) throw apiErrorWithStatusCode(messages.NO_USER_FOUND_WITH_USERNAME, 404);
+		if(!isEmail){
+			for (let i = 0; i < nameBlacklist.length; i++) {
+				if (username.toLowerCase().includes(nameBlacklist[i])) throw apiErrorWithStatusCode(messages.USERNAME_BANNED, 401);
+			}}
+
+		let userQuery: firebaseAdmin.firestore.QuerySnapshot<firebaseAdmin.firestore.DocumentData>;
+		const collection = firebaseAdmin.firestore().collection('users');
+
+		if(isEmail) {
+			userQuery = await collection.where('email', '==', username).limit(1).get();
+			if (userQuery.size === 0) throw apiErrorWithStatusCode(messages.NO_USER_FOUND_WITH_EMAIL, 404);
+		} else {
+			userQuery = await collection.where('username', '==', username).limit(1).get();
+			if (userQuery.size === 0) throw apiErrorWithStatusCode(messages.NO_USER_FOUND_WITH_USERNAME, 404);
+		}
 
 		const user = userQuery.docs[0].data() as User;
 

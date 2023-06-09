@@ -11,13 +11,15 @@ import BountiesIcon from '~assets/icons/bounties.svg';
 import ReferendumsIcon from '~assets/icons/referndums.svg';
 import TechCommiteeIcon from '~assets/icons/tech-commitee.svg';
 import { useNetworkContext } from '~src/context';
+import { PostOrigin } from '~src/types';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 const { Panel } = Collapse;
 type Props = {
     onSetNotification: any;
     userNotification: any;
     onSetCurrentNetworkNotifications: any;
-	sendAllCategoryRequest:any
+    sendAllCategoryRequest: any;
 };
 
 // eslint-disable-next-line no-empty-pattern
@@ -31,32 +33,36 @@ export default function OpenGovNotification({
 	const [all, setAll] = useState(false);
 	const { network } = useNetworkContext();
 
-	const [userData, setUserData] = useState(types);
+	const [userData, setUserData] = useState<any>(openGov);
 	useEffect(() => {
-		setUserData(
-			types.map((type: any) => {
-				return type.map((item: any) => {
-					item.options = options.map((opt: any) => ({
-						...opt,
-						selected:
-                            userNotification[opt.triggerName]?.tracks.includes(
-                            	item.label
-                            ) || false
-					}));
-					return item;
-				});
-			})
-		);
+		const payload: any = {};
+		for (const key in userData) {
+			payload[key] = userData[key].map((category: any) => {
+				return {
+					...category,
+					selected:
+                        userNotification?.[category.triggerName]?.tracks.includes(networkTrackInfo[network][key].trackId) || false
+				};
+			});
+		}
+		setUserData(payload);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userNotification]);
 
 	const handleAllClick = (checked: boolean) => {
+		console.log(checked);
+		Object.keys(userData).map((key) => {
+			handleCategoryAllClick(checked, userData[key], key);
+		});
 		setAll(checked);
 	};
 
-	const handleCategoryAllClick = (checked:boolean, categoryOptions:any, title:any) => {
-		if(categoryOptions){
-			return;
-		}
+	const handleCategoryAllClick = (
+		checked: boolean,
+		categoryOptions: any,
+		title: any
+	) => {
+		title = titleMapper(title) as string;
 		const payload = Object.assign({}, userData);
 		payload[title] = categoryOptions.map((category: any) => {
 			return {
@@ -75,15 +81,17 @@ export default function OpenGovNotification({
 		title: string
 	) => {
 		const notification = Object.assign({}, userNotification);
+		title = titleMapper(title) as string;
+		const id = networkTrackInfo[network][title].trackId;
 		const option = categoryOptions.find((opt: any) => opt.label === value);
 		if (!option?.triggerName) {
 			return;
 		}
 		let tracks = notification?.[option.triggerName]?.tracks || [];
 		if (checked) {
-			if (!tracks.includes(title)) tracks.push(title);
+			if (!tracks.includes(id)) tracks.push(id);
 		} else {
-			tracks = tracks.filter((track: string) => track !== title);
+			tracks = tracks.filter((track: number) => track !== id);
 		}
 		const payload = {
 			network,
@@ -100,26 +108,27 @@ export default function OpenGovNotification({
 			name: option?.triggerPreferencesName,
 			tracks
 		};
-		const userPayload = userData.map((type: any) => {
-			return type.map((item: any) => {
-				item.options = options.map((opt: any) =>
-					opt.label === value && item.label === title
-						? {
-							...opt,
-							selected: checked
-						}
-						: {
-							...opt,
-							selected:
-                                  userNotification[
-                                  	opt.triggerName
-                                  ]?.tracks.includes(item.label) || false
-						}
-				);
-				return item;
+		const userPayload: any = {};
+		let allSelected = true;
+		for (const key in userData) {
+			userPayload[key] = userData[key].map((category: any) => {
+				const isSelected =
+                    category.label === value && key === title? checked : userNotification[ category.triggerName]?.tracks.includes(key) || false;
+
+				if (!isSelected) {
+					allSelected = false;
+				}
+
+				return category.label === value && key === title
+					? {
+						...category,
+						selected: checked
+					}
+					: category;
 			});
-		});
+		}
 		setUserData(userPayload);
+		setAll(allSelected);
 		onSetNotification(payload);
 		onSetCurrentNetworkNotifications(notification);
 	};
@@ -161,40 +170,174 @@ export default function OpenGovNotification({
 				key='6'
 			>
 				<div className='flex flex-col'>
-					{userData.map((data, i) => {
-						return (
-							<>
-								<div className='flex'>
-									{data.map((proposal, i) => {
-										return (
-											<GroupCheckbox
-												key={proposal.label}
-												categoryOptions={
-													proposal.options
-												}
-												title={proposal.label}
-												classname={
-													i === 0
-														? 'basis-[50%]'
-														: 'border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
-												}
-												Icon={proposal.Icon}
-												onChange={handleChange}
-												handleCategoryAllClick={handleCategoryAllClick}
-												sectionAll={all}
-											/>
-										);
-									})}
-								</div>
-								{i < types.length - 1 && (
-									<Divider
-										className='border-[#D2D8E0] border-2'
-										dashed
-									/>
-								)}
-							</>
-						);
-					})}
+					<div className='flex'>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.ROOT]}
+							title='Root'
+							classname='basis-[50%]'
+							Icon={BountiesIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.SMALL_TIPPER]}
+							title='Small Tipper'
+							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							Icon={ReferendumsIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+					</div>
+					<Divider className='border-[#D2D8E0] border-2' dashed />
+					<div className='flex'>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.STAKING_ADMIN]}
+							title='Staking Admin'
+							classname='basis-[50%]'
+							Icon={TechCommiteeIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.BIG_TIPPER]}
+							title='Big Tipper'
+							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							Icon={BountiesIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+					</div>
+					<Divider className='border-[#D2D8E0] border-2' dashed />
+					<div className='flex'>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.AUCTION_ADMIN]}
+							title='Auction Admin'
+							classname='basis-[50%]'
+							Icon={ReferendumsIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.SMALL_SPENDER]}
+							title='Small Spender'
+							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							Icon={ReferendumsIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+					</div>
+					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
+					<div className='flex'>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.TREASURER]}
+							title='Treasurer'
+							classname='basis-[50%]'
+							Icon={ReferendumsIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.MEDIUM_SPENDER]}
+							title='Medium Spender'
+							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							Icon={TechCommiteeIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+					</div>
+					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
+					<div className='flex'>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.REFERENDUM_CANCELLER]}
+							title='Referendum Canceler'
+							classname='basis-[50%]'
+							Icon={BountiesIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.BIG_SPENDER]}
+							title='Big Spender'
+							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							Icon={ReferendumsIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+					</div>
+					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
+					<div className='flex'>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.REFERENDUM_KILLER]}
+							title='Referendum Killer'
+							classname='basis-[50%]'
+							Icon={ReferendumsIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.FELLOWSHIP_ADMIN]}
+							title='Fellowship Admin'
+							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							Icon={ReferendumsIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+					</div>
+					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
+					<div className='flex'>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.LEASE_ADMIN]}
+							title='Lease Admin'
+							classname='basis-[50%]'
+							Icon={TechCommiteeIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.GENERAL_ADMIN]}
+							title='General Admin'
+							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							Icon={BountiesIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+					</div>
+					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
+					<div className='flex'>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.MEMBERS]}
+							title='Member Referenda'
+							classname='basis-[50%]'
+							Icon={ReferendumsIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+						<GroupCheckbox
+							categoryOptions={userData[PostOrigin.WHITELISTED_CALLER]}
+							title='Whitelisted Call'
+							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							Icon={ReferendumsIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+							sectionAll={all}
+						/>
+					</div>
+
 				</div>
 			</Panel>
 		</Collapse>
@@ -222,101 +365,83 @@ const options = [
 	}
 ];
 
-const types = [
-	[
-		{
-			Icon: BountiesIcon,
-			label: 'Root',
-			options
-		},
-		{
-			Icon: ReferendumsIcon,
-			label: 'Small Tipper',
-			options
-		}
-	],
-	[
-		{
-			Icon: TechCommiteeIcon,
-			label: 'Staking Admin',
-			options
-		},
-		{
-			Icon: BountiesIcon,
-			label: 'Big Tipper',
-			options
-		}
-	],
-	[
-		{
-			Icon: ReferendumsIcon,
-			label: 'Auction Admin',
-			options
-		},
-		{
-			Icon: ReferendumsIcon,
-			label: 'Small Spender',
-			options
-		}
-	],
-	[
-		{
-			Icon: ReferendumsIcon,
-			label: 'Treasurer',
-			options
-		},
-		{
-			Icon: TechCommiteeIcon,
-			label: 'Medium Spender',
-			options
-		}
-	],
-	[
-		{
-			Icon: BountiesIcon,
-			label: 'Referendum Canceler',
-			options
-		},
-		{
-			Icon: ReferendumsIcon,
-			label: 'Big Spender',
-			options
-		}
-	],
-	[
-		{
-			Icon: ReferendumsIcon,
-			label: 'Referendum Killer',
-			options
-		},
-		{
-			Icon: ReferendumsIcon,
-			label: 'Fellowship Admin',
-			options
-		}
-	],
-	[
-		{
-			Icon: TechCommiteeIcon,
-			label: 'Lease Admin',
-			options
-		},
-		{
-			Icon: BountiesIcon,
-			label: 'General Admin',
-			options
-		}
-	],
-	[
-		{
-			Icon: ReferendumsIcon,
-			label: 'Member Referenda',
-			options
-		},
-		{
-			Icon: ReferendumsIcon,
-			label: 'Whitelisted Call',
-			options
-		}
-	]
-];
+const openGov = {
+	[PostOrigin.ROOT]: options,
+	[PostOrigin.SMALL_TIPPER]: options,
+	[PostOrigin.STAKING_ADMIN]: options,
+	// eslint-disable-next-line sort-keys
+	[PostOrigin.BIG_TIPPER]: options,
+	// eslint-disable-next-line sort-keys
+	[PostOrigin.AUCTION_ADMIN]: options,
+	[PostOrigin.SMALL_SPENDER]: options,
+	[PostOrigin.TREASURER]: options,
+	// eslint-disable-next-line sort-keys
+	[PostOrigin.MEDIUM_SPENDER]: options,
+	[PostOrigin.REFERENDUM_CANCELLER]: options,
+	// eslint-disable-next-line sort-keys
+	[PostOrigin.BIG_SPENDER]: options,
+	[PostOrigin.REFERENDUM_KILLER]: options,
+	// eslint-disable-next-line sort-keys
+	[PostOrigin.FELLOWSHIP_ADMIN]: options,
+	[PostOrigin.LEASE_ADMIN]: options,
+	// eslint-disable-next-line sort-keys
+	[PostOrigin.GENERAL_ADMIN]: options,
+	[PostOrigin.MEMBERS]: options,
+	[PostOrigin.WHITELISTED_CALLER]: options
+};
+
+const titleMapper = (title:string) => {
+	switch(title){
+	case 'Root': {
+		return PostOrigin.ROOT;
+	}
+	case 'Small Tipper': {
+		return PostOrigin.SMALL_TIPPER;
+	}
+	case 'Staking Admin': {
+		return PostOrigin.STAKING_ADMIN;
+	}
+	case 'Big Tipper': {
+		return PostOrigin.BIG_TIPPER;
+	}
+	case 'Auction Admin': {
+		return PostOrigin.AUCTION_ADMIN;
+	}
+	case 'Small Spender': {
+		return PostOrigin.SMALL_SPENDER;
+	}
+	case 'Treasurer': {
+		return PostOrigin.TREASURER;
+	}
+	case 'Medium Spender': {
+		return PostOrigin.MEDIUM_SPENDER;
+	}
+	case 'Referendum Canceler': {
+		return PostOrigin.REFERENDUM_CANCELLER;
+	}
+	case 'Big Spender': {
+		return PostOrigin.BIG_SPENDER;
+	}
+	case 'Referendum Killer': {
+		return PostOrigin.REFERENDUM_KILLER;
+	}
+	case 'Fellowship Admin': {
+		return PostOrigin.FELLOWSHIP_ADMIN;
+	}
+	case 'Lease Admin': {
+		return PostOrigin.LEASE_ADMIN;
+	}
+	case 'General Admin': {
+		return PostOrigin.GENERAL_ADMIN;
+	}
+	case 'Member Referenda': {
+		return PostOrigin.MEMBERS;
+	}
+	case 'Whitelisted Call': {
+		return PostOrigin.WHITELISTED_CALLER;
+	}
+	default: {
+		return title;
+	}
+	}
+};

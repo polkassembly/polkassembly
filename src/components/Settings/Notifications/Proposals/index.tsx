@@ -38,7 +38,7 @@ export default function Proposals({
 			return {
 				...category,
 				selected:
-					userNotification[category.triggerName]?.enabled ||
+					userNotification?.[category.triggerName]?.enabled ||
 					false
 			};
 		});

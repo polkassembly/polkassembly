@@ -25,8 +25,21 @@ export interface UserDetailsContextType {
   loginWallet: Wallet | null;
   delegationDashboardAddress: string;
   loginAddress: string;
+  networkPreferences: INetworkPreferences
 }
 
+export interface INetworkPreferences {
+  channelPreferences: {};
+  triggerPreferences:{
+    [index:string]: {
+      enabled: boolean;
+      name: string;
+      post_types?:Array<string>,
+      tracks?:Array<number>,
+    }
+  },
+  primaryNetwork:string
+}
 export enum Role {
   ANONYMOUS = 'anonymous',
   ADMIN = 'admin',

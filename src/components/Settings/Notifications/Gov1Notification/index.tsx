@@ -14,6 +14,7 @@ import TechCommiteeIcon from '~assets/icons/tech-commitee.svg';
 import TreasuryProposalIcon from '~assets/icons/treasury-proposal.svg';
 import { allGov1, titleMapper } from './utils';
 import { useNetworkContext } from '~src/context';
+import { ProposalType } from '~src/global/proposalType';
 
 const { Panel } = Collapse;
 type Props = {
@@ -37,11 +38,11 @@ export default function Gov1Notification({
 	useEffect(() => {
 		const payload: any = {};
 		for (const key in userData) {
-			payload[key] = userData[key].map((category: any) => {
+			payload[key] = userData?.[key].map((category: any) => {
 				return {
 					...category,
 					selected:
-                        userNotification[category.triggerName]?.post_types.includes(key) || false
+                        userNotification?.[category.triggerName]?.post_types.includes(key) || false
 				};
 			});
 		}
@@ -50,6 +51,9 @@ export default function Gov1Notification({
 	}, [userNotification]);
 
 	const handleAllClick = (checked: boolean) => {
+		Object.keys(userData).map((key) => {
+			handleCategoryAllClick(checked, userData[key], key);
+		});
 		setAll(checked);
 	};
 
@@ -167,7 +171,7 @@ export default function Gov1Notification({
 				<div className='flex flex-col'>
 					<div className='flex'>
 						<GroupCheckbox
-							categoryOptions={userData.referendumsV1}
+							categoryOptions={userData[ProposalType.REFERENDUMS]}
 							title='Referendums'
 							classname='basis-[50%]'
 							Icon={ReferendumsIcon}
@@ -176,7 +180,7 @@ export default function Gov1Notification({
 							sectionAll={all}
 						/>
 						<GroupCheckbox
-							categoryOptions={userData.proposal}
+							categoryOptions={userData[ProposalType.DEMOCRACY_PROPOSALS]}
 							title='Proposal'
 							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
 							Icon={TreasuryProposalIcon}
@@ -188,7 +192,7 @@ export default function Gov1Notification({
 					<Divider className='border-[#D2D8E0] border-2' dashed />
 					<div className='flex'>
 						<GroupCheckbox
-							categoryOptions={userData.bounties}
+							categoryOptions={userData[ProposalType.BOUNTIES]}
 							title='Bounties'
 							classname='basis-[50%]'
 							Icon={BountiesIcon}
@@ -197,7 +201,7 @@ export default function Gov1Notification({
 							sectionAll={all}
 						/>
 						<GroupCheckbox
-							categoryOptions={userData.childBounties}
+							categoryOptions={userData[ProposalType.CHILD_BOUNTIES]}
 							title='Child Bounties'
 							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
 							Icon={BountiesIcon}
@@ -209,7 +213,7 @@ export default function Gov1Notification({
 					<Divider className='border-[#D2D8E0] border-2' dashed />
 					<div className='flex'>
 						<GroupCheckbox
-							categoryOptions={userData.tips}
+							categoryOptions={userData[ProposalType.TIPS]}
 							title='Tips'
 							classname='basis-[50%]'
 							Icon={TipsIcon}
@@ -218,7 +222,7 @@ export default function Gov1Notification({
 							sectionAll={all}
 						/>
 						<GroupCheckbox
-							categoryOptions={userData.techCommittee}
+							categoryOptions={userData[ProposalType.TECH_COMMITTEE_PROPOSALS]}
 							title='Tech Committee'
 							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
 							Icon={TechCommiteeIcon}
@@ -231,7 +235,7 @@ export default function Gov1Notification({
 					<div className='flex'>
 						<div className='basis-[50%] flex flex-col gap-[16px]'>
 							<GroupCheckbox
-								categoryOptions={userData.councilMotion}
+								categoryOptions={userData[ProposalType.COUNCIL_MOTIONS]}
 								title='Council Motion'
 								Icon={TipsIcon}
 								onChange={handleChange}

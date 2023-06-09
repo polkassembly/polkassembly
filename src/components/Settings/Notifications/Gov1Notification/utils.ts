@@ -1,6 +1,10 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
+import { ProposalType } from '~src/global/proposalType';
+
+// of the Apache-2.0 license. See the LICENSE file for details.
 const tips = [
 	{
 		label: 'New Tips submitted',
@@ -131,37 +135,37 @@ const councilMotion = [
 ];
 
 const allGov1 = {
-	bounties,
-	childBounties,
-	councilMotion,
-	proposal,
-	referendumsV1,
-	techCommittee,
-	tips
+	[ProposalType.BOUNTIES]:bounties,
+	[ProposalType.CHILD_BOUNTIES]:childBounties,
+	[ProposalType.COUNCIL_MOTIONS]:councilMotion,
+	[ProposalType.DEMOCRACY_PROPOSALS]:proposal,
+	[ProposalType.REFERENDUMS]:referendumsV1,
+	[ProposalType.TECH_COMMITTEE_PROPOSALS]:techCommittee,
+	[ProposalType.TIPS]:tips
 };
 
 const titleMapper = (title: string) => {
 	switch (title) {
 	case 'Tips': {
-		return 'tips';
+		return ProposalType.TIPS;
 	}
 	case 'Tech Committee': {
-		return 'techCommittee';
+		return ProposalType.TECH_COMMITTEE_PROPOSALS;
 	}
 	case 'Bounties': {
-		return 'bounties';
+		return ProposalType.BOUNTIES;
 	}
 	case 'Child Bounties': {
-		return 'childBounties';
+		return ProposalType.CHILD_BOUNTIES;
 	}
 	case 'Referendums': {
-		return 'referendumsV1';
+		return ProposalType.REFERENDUMS;
 	}
 	case 'Proposal': {
-		return 'proposal';
+		return ProposalType.DEMOCRACY_PROPOSALS;
 	}
 	case 'Council Motion': {
-		return 'councilMotion';
+		return ProposalType.COUNCIL_MOTIONS;
 	}
 	}
 };

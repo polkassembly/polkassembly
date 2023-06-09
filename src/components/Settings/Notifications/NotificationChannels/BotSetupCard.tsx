@@ -3,14 +3,17 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import { CHANNEL } from '.';
 
 type Props = {
     title: string;
     description: string;
     Icon: any;
+	onClick:any;
+	channel:CHANNEL
 };
 
-export default function BotSetupCard({ title, description, Icon }: Props) {
+export default function BotSetupCard({ title, description, Icon, onClick, channel }: Props) {
 	return (
 		<div className='flex items-start gap-2'>
 			<div>{Icon}</div>
@@ -22,7 +25,7 @@ export default function BotSetupCard({ title, description, Icon }: Props) {
 				</h3>
 				{description && (
 					<p className='font-normal m-0'>
-						<span className='text-pink_primary font-medium'>
+						<span className='text-pink_primary font-medium' onClick={() => onClick(channel)}>
 							<PlusCircleOutlined /> ADD THE POLKASSEMBLY BOT
 						</span>{' '}
                         to {description}

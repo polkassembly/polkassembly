@@ -37,7 +37,7 @@ export default function SubscribedPosts({
 			return {
 				...category,
 				selected:
-                    userNotification[category.triggerName]?.enabled || false
+                    userNotification?.[category.triggerName]?.enabled || false
 			};
 		});
 		setUserData(payload);

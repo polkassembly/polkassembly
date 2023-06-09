@@ -12,6 +12,8 @@ import NetworkTags from './NetworkTags';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkContext } from '~src/context';
 import AddNetworkModal from './AddNetworkModal';
+import ImportPrimaryNetworkSettingModal from './ImportPrinaryBetwork';
+import SetPrimaryNetworkSettingModal from './PrimaryNetworkConfirmModal';
 
 const { Panel } = Collapse;
 type Props = {
@@ -19,6 +21,8 @@ type Props = {
     onSetPrimaryNetwork: any;
     onSetNetworkPreferences: any;
     onCopyPrimaryNetworkNotification: any;
+	selectedNetwork:any,
+	setSelectedNetwork:any
 };
 
 // eslint-disable-next-line no-empty-pattern
@@ -26,12 +30,11 @@ export default function Parachain({
 	primaryNetwork,
 	onSetPrimaryNetwork,
 	onSetNetworkPreferences,
-	onCopyPrimaryNetworkNotification
+	onCopyPrimaryNetworkNotification,
+	selectedNetwork,
+	setSelectedNetwork
 }: Props) {
 	const { network } = useNetworkContext();
-	const [selectedNetwork, setSelectedNetwork] = useState([
-		{ name: network, selected: true }
-	]);
 	const [primaryNetworkCheck, setPrimaryNetworkCheck] = useState(
 		primaryNetwork ? true : false
 	);
@@ -42,11 +45,16 @@ export default function Parachain({
 		onSetNetworkPreferences(networks.map((net: any) => net.name));
 	};
 
+	const [copyPreferencesModal, setCopyPreferencesModal] = useState(false);
+	const [primaryPreferencesModal, setPrimaryPreferencesModal] =
+        useState(false);
+
 	const handlePrimaryNetworkChange = () => {
 		if (!primaryNetworkCheck) {
 			onSetPrimaryNetwork(network);
 			setPrimaryNetworkCheck(!primaryNetworkCheck);
 		}
+		setPrimaryPreferencesModal(false);
 	};
 
 	useEffect(() => {
@@ -79,8 +87,8 @@ export default function Parachain({
 						name={network}
 					/>
 					{selectedNetwork
-						.filter(({ name }) => name !== network)
-						.map(({ name }) => (
+						.filter(({ name }:{ name:string }) => name !== network)
+						.map(({ name }:{ name:string }) => (
 							<NetworkTags
 								key={name}
 								icon={chainProperties[name].logo}
@@ -97,7 +105,12 @@ export default function Parachain({
 				<div className='flex flex-col item-center gap-2'>
 					<Checkbox
 						value={false}
-						onChange={handlePrimaryNetworkChange}
+						onChange={() => {
+							if(primaryNetwork === network){
+								return;
+							}
+							setPrimaryPreferencesModal(true);
+						}}
 						checked={primaryNetworkCheck}
 						className='text-pink_primary text-[16px] flex item-center'
 					>
@@ -106,16 +119,11 @@ export default function Parachain({
 					<p
 						className={`flex item-center gap-2 text-[16px] ${
 							primaryNetwork
-								? 'text-pink_primary'
+								? 'text-pink_primary cursor-pointer'
 								: 'text-[#96A4B6] cursor-not-allowed'
 						}`}
 						onClick={() => {
-							if (!primaryNetwork) {
-								return;
-							}
-							onCopyPrimaryNetworkNotification(
-								selectedNetwork.map((net) => net.name)
-							);
+							setCopyPreferencesModal(true);
 						}}
 					>
 						{primaryNetwork ? (
@@ -132,6 +140,28 @@ export default function Parachain({
 				open={openModal}
 				onConfirm={handleModalConfirm}
 				onCancel={() => setOpenModal(false)}
+			/>
+			{primaryNetwork && (
+				<ImportPrimaryNetworkSettingModal
+					open={copyPreferencesModal}
+					primaryNetwork={primaryNetwork}
+					onConfirm={() => {
+						if (!primaryNetwork) {
+							return;
+						}
+						onCopyPrimaryNetworkNotification(
+							selectedNetwork.map(({ name }:{name:string}) => name)
+						);
+						setCopyPreferencesModal(false);
+					}}
+					onCancel={() => setCopyPreferencesModal(false)}
+				/>
+			)}
+			<SetPrimaryNetworkSettingModal
+				open={primaryPreferencesModal}
+				network={network}
+				onConfirm={handlePrimaryNetworkChange}
+				onCancel={() => setPrimaryPreferencesModal(false)}
 			/>
 		</Collapse>
 	);

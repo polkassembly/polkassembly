@@ -2,10 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { Divider, Image, Modal, Tag } from 'antd';
+import { Divider, Image, Modal, Switch, Tag } from 'antd';
 import SmallParachainIcon from '~assets/icons/parachain-small.svg';
 import { chainProperties } from '~src/global/networkConstants';
-import Toggler from '../common-ui/Toggler';
 import { useNetworkContext } from '~src/context';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { networkLabel, networks } from './utils';
@@ -62,7 +61,7 @@ const AddNetworkModal = ({
 		setShowSureModal(false);
 	};
 
-	const handleAllClick = (checked:boolean, chain:string) => {
+	const handleAllClick = (checked: boolean, chain: string) => {
 		const payload = allNetworks[chain].map((net: any) => ({
 			...net,
 			selected: checked
@@ -151,13 +150,17 @@ const AddNetworkModal = ({
 										? `${networkLabel[chain]} and Parachains`
 										: networkLabel[chain]}
 								</h3>
-								<Toggler
-									label='All'
-									selected
-									onClick={(checked: boolean) =>
-										handleAllClick(checked, chain)
-									}
-								/>
+								<span className='flex gap-[8px] items-center'>
+									<Switch
+										size='small'
+										id='postParticipated'
+										onChange={(checked) =>
+											handleAllClick(checked, chain)
+										}
+										checked={allNetworks[chain].every((network:any) => network.selected)}
+									/>
+									<p className='m-0 text-[#243A57B2]'>All</p>
+								</span>
 							</div>
 							<div className='flex gap-[10px] flex-wrap'>
 								{allNetworks[chain].map(

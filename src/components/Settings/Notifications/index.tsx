@@ -11,15 +11,28 @@ import NotificationChannels from './NotificationChannels';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import { PublicUser } from '~src/auth/types';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
+import Loader from '~src/ui-components/Loader';
 
 export default function Notifications() {
-	const { id } = useUserDetailsContext();
+	const { id, networkPreferences, setUserDetailsContextState } =
+        useUserDetailsContext();
 	const { network } = useNetworkContext();
-	const [primaryNetwork, setPrimaryNetwork] = useState('');
-	const [primaryNetworkNotifications, setPrimaryNetworkNotifications] =
-        useState<any>({});
-	const [currentNetworkNotifications, setCurrentNetworkNotifications] =
-        useState<any>({});
+	const [selectedNetwork, setSelectedNetwork] = useState([{ name: network, selected: true }]);
+	const [loading, setLoading] = useState(true);
+	const HandleCurrentNetworkNotifications = (obj:any) => {
+		setUserDetailsContextState(
+			(prev) => ({
+				...prev,
+				networkPreferences: {
+					...prev.networkPreferences,
+					triggerPreferences:{
+						...prev.networkPreferences.triggerPreferences,
+						[network]:obj
+					}
+				}
+			}));
+	};
 
 	const handleSetNotification = async (payload: any) => {
 		const { data, error } = await nextApiClientFetch(
@@ -27,6 +40,8 @@ export default function Notifications() {
 			payload
 		);
 		console.log(data, error);
+		if(selectedNetwork.length>1)
+			handleSetNetworkPreferences(selectedNetwork.map(({ name }) => name));
 	};
 
 	const getNotificationSettings = async () => {
@@ -37,23 +52,17 @@ export default function Notifications() {
 			if (error) {
 				throw new Error(error);
 			}
-			if (data?.notification_settings?.triggerPreferences?.[network]) {
-				setCurrentNetworkNotifications(
-					data?.notification_settings?.triggerPreferences?.[network]
-				);
+			if (data?.notification_settings?.triggerPreferences) {
+				setUserDetailsContextState((prev) => ({
+					...prev,
+					networkPreferences: {
+						...prev.networkPreferences,
+						triggerPreferences:
+                            data?.notification_settings?.triggerPreferences
+					}
+				}));
 			}
-			// const primaryNetworkPreferences = data.notification_settings.triggerPreferences.
-			if (
-				data?.notification_settings?.triggerPreferences?.[
-					primaryNetwork
-				]
-			) {
-				setPrimaryNetworkNotifications(
-					data?.notification_settings?.triggerPreferences?.[
-						primaryNetwork
-					]
-				);
-			}
+			return data?.notification_settings;
 		} catch (e) {
 			console.log(e);
 		}
@@ -68,7 +77,13 @@ export default function Notifications() {
 				throw new Error(error);
 			}
 			if (data.primary_network) {
-				setPrimaryNetwork(data.primary_network);
+				setUserDetailsContextState((prev) => ({
+					...prev,
+					networkPreferences: {
+						...prev.networkPreferences,
+						primaryNetwork: data.primary_network || ''
+					}
+				}));
 			}
 		} catch (e) {
 			console.log(e);
@@ -85,7 +100,13 @@ export default function Notifications() {
 				throw new Error(error);
 			}
 			if (data?.primary_network) {
-				setPrimaryNetwork(data?.primary_network);
+				setUserDetailsContextState((prev) => ({
+					...prev,
+					networkPreferences: {
+						...prev.networkPreferences,
+						primaryNetwork: data.primary_network || ''
+					}
+				}));
 			}
 		} catch (e) {
 			console.log(e);
@@ -94,10 +115,14 @@ export default function Notifications() {
 
 	const handleSetNetworkPreferences = async (networks: Array<string>) => {
 		try {
-			console.log(currentNetworkNotifications);
+			console.log(networkPreferences.triggerPreferences[network]);
 			const { data, error } = (await nextApiClientFetch(
 				'api/v1/auth/actions/setNetworkPreferences',
-				{ network_preferences: currentNetworkNotifications, networks }
+				{
+					network_preferences:
+                        networkPreferences.triggerPreferences[network],
+					networks
+				}
 			)) as {data: {message: string}; error: string | null};
 			if (error || !data.message) {
 				throw new Error(error || '');
@@ -111,10 +136,12 @@ export default function Notifications() {
 		selectedNetwork: any
 	) => {
 		try {
+			const primarySettings =
+                networkPreferences.triggerPreferences?.[networkPreferences.primaryNetwork];
 			const { data, error } = (await nextApiClientFetch(
 				'api/v1/auth/actions/setNetworkPreferences',
 				{
-					network_preferences: primaryNetworkNotifications,
+					network_preferences: primarySettings,
 					networks: selectedNetwork
 				}
 			)) as {data: {message: string}; error: string | null};
@@ -131,17 +158,20 @@ export default function Notifications() {
 		checked: boolean,
 		title: string
 	) => {
-		const notification = Object.assign({}, currentNetworkNotifications);
+		const notification = Object.assign({}, networkPreferences.triggerPreferences[network]);
 		const promises = payload.map((option: any) => {
 			if (!option?.triggerName) {
 				return;
 			}
+
 			let postTypes =
-                notification?.[option.triggerName]?.post_types || [];
+			//@ts-ignore
+			notification?.[option.triggerName]?.post_types || [];
 			if (checked) {
 				if (!postTypes.includes(title)) postTypes.push(title);
 			} else {
 				postTypes = postTypes.filter((postType: string) => {
+					// console.log(postType, title);
 					return postType !== title;
 				});
 			}
@@ -154,6 +184,7 @@ export default function Notifications() {
 					post_types: postTypes
 				}
 			};
+			//@ts-ignore
 			notification[option.triggerName] = {
 				enabled: postTypes.length > 0,
 				name: option?.triggerPreferencesName,
@@ -161,7 +192,7 @@ export default function Notifications() {
 			};
 			return handleSetNotification(payload);
 		});
-		setCurrentNetworkNotifications(notification);
+		HandleCurrentNetworkNotifications(notification);
 		Promise.all(promises);
 	};
 
@@ -170,17 +201,20 @@ export default function Notifications() {
 		checked: boolean,
 		title: string
 	) => {
-		const notification = Object.assign({}, currentNetworkNotifications);
+		const id = networkTrackInfo[network][title].trackId;
+		const notification = Object.assign({}, networkPreferences.triggerPreferences[network]);
 		const promises = payload.map((option: any) => {
 			if (!option?.triggerName) {
 				return;
 			}
-			let tracks = notification?.[option.triggerName]?.tracks || [];
+			let tracks =
+			//@ts-ignore
+			notification?.[option.triggerName]?.tracks || [];
 			if (checked) {
-				if (!tracks.includes(title)) tracks.push(title);
+				if (!tracks.includes(id)) tracks.push(id);
 			} else {
-				tracks = tracks.filter((tracks: string) => {
-					return tracks !== title;
+				tracks = tracks.filter((tracks: number) => {
+					return tracks !== id;
 				});
 			}
 			const payload = {
@@ -192,6 +226,7 @@ export default function Notifications() {
 					tracks: tracks
 				}
 			};
+			//@ts-ignore
 			notification[option.triggerName] = {
 				enabled: tracks.length > 0,
 				name: option?.triggerPreferencesName,
@@ -199,50 +234,62 @@ export default function Notifications() {
 			};
 			return handleSetNotification(payload);
 		});
-		setCurrentNetworkNotifications(notification);
+		HandleCurrentNetworkNotifications(notification);
 		Promise.all(promises);
 	};
 
 	useEffect(() => {
 		getPrimaryNetwork().then(() => {
-			getNotificationSettings();
+			getNotificationSettings().then(() => {
+				setLoading(false);
+			});
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	return (
+	return loading? <Loader/>: (
 		<div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 			<NotificationChannels />
 			<Parachain
-				primaryNetwork={primaryNetwork}
+				primaryNetwork={networkPreferences.primaryNetwork}
 				onSetPrimaryNetwork={handleSetPrimaryNetwork}
 				onSetNetworkPreferences={handleSetNetworkPreferences}
 				onCopyPrimaryNetworkNotification={
 					handleCopyPrimaryNetworkNotification
 				}
+				selectedNetwork={selectedNetwork}
+				setSelectedNetwork={setSelectedNetwork}
 			/>
 			<Proposals
-				userNotification={currentNetworkNotifications}
+				userNotification={
+					networkPreferences.triggerPreferences[network]
+				}
 				onSetNotification={handleSetNotification}
 			/>
 			<SubscribedPosts
-				userNotification={currentNetworkNotifications}
+				userNotification={
+					networkPreferences.triggerPreferences[network]
+				}
 				onSetNotification={handleSetNotification}
 			/>
 			<Gov1Notification
-				userNotification={currentNetworkNotifications}
+				userNotification={
+					networkPreferences.triggerPreferences[network]
+				}
 				onSetNotification={handleSetNotification}
 				sendAllCategoryRequest={sendAllCategoryRequest}
 				onSetCurrentNetworkNotifications={
-					setCurrentNetworkNotifications
+					HandleCurrentNetworkNotifications
 				}
 			/>
 			<OpenGovNotification
-				userNotification={currentNetworkNotifications}
+				userNotification={
+					networkPreferences.triggerPreferences[network]
+				}
 				onSetNotification={handleSetNotification}
 				sendAllCategoryRequest={sendAllCategoryRequestForOpenGov}
 				onSetCurrentNetworkNotifications={
-					setCurrentNetworkNotifications
+					HandleCurrentNetworkNotifications
 				}
 			/>
 		</div>

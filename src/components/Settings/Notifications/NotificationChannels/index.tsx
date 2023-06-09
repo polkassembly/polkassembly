@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useState } from 'react';
 import { Collapse, Divider } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
@@ -11,12 +11,82 @@ import ElementIcon from '~assets/icons/element.svg';
 import EmailNotificationCard from './EmailNotificationCard';
 import BotSetupCard from './BotSetupCard';
 import { DiscordIcon, TelegramIcon } from '~src/ui-components/CustomIcons';
+import TelegramInfoModal from './Modals/Telegram';
+import queueNotification from '~src/ui-components/QueueNotification';
+import { NotificationStatus } from '~src/types';
+import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '../utils';
+import { useNetworkContext, useUserDetailsContext } from '~src/context';
+import DiscordInfoModal from './Modals/Discord';
+import SlackInfoModal from './Modals/Slack';
 
 const { Panel } = Collapse;
 type Props = {};
 
+export enum CHANNEL {
+	TELEGRAM = 'telegram',
+	DISCORD = 'discord',
+	EMAIL = 'email',
+	SLACK = 'slack',
+	ELEMENT='element'
+}
+
 // eslint-disable-next-line no-empty-pattern
 export default function NotificationChannels({}: Props) {
+	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
+	const { network } = useNetworkContext();
+	const { id } = useUserDetailsContext();
+	const handleClick = (channelName:CHANNEL) => {
+		console.log(channelName);
+		setShowModal(channelName);
+	};
+
+	const getVerifyToken = async (channel: CHANNEL) => {
+		try{
+			const userAddress = localStorage.getItem('address');
+			const signature = localStorage.getItem('signature');
+			console.log(userAddress, signature);
+
+			if(!userAddress || !signature) {
+				console.log('ERROR');
+				return;
+			}
+			else{
+
+				const verifyTokenRes = await fetch(`${FIREBASE_FUNCTIONS_URL}/getChannelVerifyToken`, {
+					body: JSON.stringify({
+						channel,
+						userId:id
+					}),
+					headers: firebaseFunctionsHeader(network),
+					method: 'POST'
+				});
+
+				const { data: verifyToken, error: verifyTokenError } = await verifyTokenRes.json() as { data: string, error: string };
+
+				if(verifyTokenError) {
+					queueNotification({
+						header: 'Failed!',
+						message: verifyTokenError,
+						status: NotificationStatus.ERROR
+					});
+					return;
+				}
+
+				if(verifyToken){
+					return verifyToken;
+				}
+
+			}
+		} catch (error){
+			console.log('ERROR', error);
+			queueNotification({
+				header: 'Failed!',
+				message: 'Error in generating token.',
+				status: NotificationStatus.ERROR
+			});
+		}
+	};
+
 	return (
 		<Collapse
 			size='large'
@@ -46,7 +116,7 @@ export default function NotificationChannels({}: Props) {
 					<Divider className='border-[#D2D8E0] border-2' dashed />
 					{Bots.map((bot, i) => (
 						<div key={bot.title}>
-							<BotSetupCard {...bot} />
+							<BotSetupCard {...bot} onClick={handleClick} />
 							{Bots.length - 1 > i && (
 								<Divider
 									className='border-[#D2D8E0] border-[2px]'
@@ -56,6 +126,25 @@ export default function NotificationChannels({}: Props) {
 						</div>
 					))}
 				</div>
+				<TelegramInfoModal
+					icon={<TelegramIcon/>}
+					title='How to add Den to Telegram'
+					open={showModal === CHANNEL.TELEGRAM}
+					getVerifyToken={getVerifyToken}
+				/>
+
+				<DiscordInfoModal
+					icon={<DiscordIcon/>}
+					title='How to add Den to Telegram'
+					open={showModal === CHANNEL.DISCORD}
+					getVerifyToken={getVerifyToken}
+				/>
+				<SlackInfoModal
+					icon={<SlackIcon/>}
+					title='How to add Den to Telegram'
+					open={showModal === CHANNEL.SLACK}
+					getVerifyToken={getVerifyToken}
+				/>
 			</Panel>
 		</Collapse>
 	);
@@ -64,21 +153,25 @@ export default function NotificationChannels({}: Props) {
 const Bots = [
 	{
 		Icon: <TelegramIcon />,
+		channel:CHANNEL.TELEGRAM,
 		description: 'a Telegram chat to get Telegram notifications',
 		title: 'Telegram'
 	},
 	{
 		Icon: <DiscordIcon />,
+		channel:CHANNEL.DISCORD,
 		description: 'to a Discord Channel chat to get Discord notifications',
 		title: 'Discord'
 	},
 	{
 		Icon: <SlackIcon />,
+		channel:CHANNEL.SLACK,
 		description: 'to a Slack Channel chat to get Slack notifications',
 		title: 'Slack'
 	},
 	{
 		Icon: <ElementIcon />,
+		channel:CHANNEL.ELEMENT,
 		description: '',
 		title: 'Element'
 	}

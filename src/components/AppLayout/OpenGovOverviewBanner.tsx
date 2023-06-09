@@ -21,8 +21,8 @@ const OpenGovOverviewBanner = () => {
 				<div className='absolute bottom-40 md:bottom-60 flex items-center justify-center'>
 					<OpenGovBannerIcon className='text-[134px] md:text-[300px]' />
 				</div>
-				<h2 className='m-0 p-0 font-medium text-[18px] leading-[27px] md:text-[32px] md:leading-[48px] text-[#243A57] mb-3 md:mb-8 flex flex-col md:flex-row items-center justify-center text-center'>
-					<span>OpenGov going LIVE on</span> <span>Polkadot in</span>
+				<h2 className='m-0 p-0 font-medium text-[18px] leading-[27px] md:text-[32px] md:leading-[48px] text-[#243A57] mb-3 md:mb-8 flex flex-col md:flex-row items-center justify-center text-center gap-x-2'>
+					<span>OpenGov going LIVE on</span> {' '} <span>Polkadot in</span>
 				</h2>
 				<div className='flex items-center justify-center gap-x-2 md:gap-x-[38px] opengov_banner px-[35px] py-[9px] md:px-[70px] md:py-[19px] rounded-[14px] md:rounded-[20px]'>
 					<p className='m-0 flex flex-col justify-center items-center'>

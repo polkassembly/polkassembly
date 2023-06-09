@@ -6,6 +6,7 @@ import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import React, { FC } from 'react';
+import { poppins } from 'pages/_app';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 
 interface ITrackListingAllTabContentProps {
@@ -30,11 +31,12 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 	if(posts&& posts.length>0)
 		return (
 			<div className={`${className} proposals__list`}>
-				{posts.map((post: any) => {
+				{posts.map((post, index) => {
 					return (
 						<div key={post.post_id} className='my-5'>
 							{<Link href={`/referenda/${post.post_id}`}>
 								<GovernanceCard
+									className={`${(index+1)%2!==0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
 									postReactionCount={post?.post_reactions}
 									address={post.proposer}
 									commentsCount={post.comments_count || 0}

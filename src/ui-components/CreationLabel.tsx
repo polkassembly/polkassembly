@@ -82,7 +82,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		<div className='text-navBlue text-xs flex flex-col md:flex-row md:items-center'>
 			<div className={'flex min-[320px]:flex-row min-[320px]:items-center w-full min-[320px]:w-auto '}>
 				<div className={'flex items-center '}>
-					{!text && <span className='mr-1 text-[#485F7D]'>By:</span>}
+					{!text && <span className='mr-1 text-lightBlue'>By:</span>}
 					<NameLabel
 						defaultAddress={defaultAddress}
 						username={username}
@@ -90,7 +90,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					/>
 					{text}&nbsp;
 					{topic &&
-			<div className='flex items-center text-[#485F7D]'> <span>in</span> &nbsp; &nbsp; <TopicTag topic={topic} className={topic} /></div>
+			<div className='flex items-center'> <span className='text-lightBlue -mt-1'>in</span> <TopicTag topic={topic} className={topic} /></div>
 					}
 					{cid ?
 						<>
@@ -99,7 +99,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						</> : null}
 				</div>
 			</div>
-			<div className='flex items-center text-[#485F7D] mt-2 md:mt-0'>
+			<div className='flex items-center text-lightBlue mt-2 md:mt-0'>
 				{(topic || text) && <>
 				&nbsp;
 					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />

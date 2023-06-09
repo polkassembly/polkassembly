@@ -14,7 +14,7 @@ interface Props{
 const TopicTag = ({ className, topic }: Props) => {
 
 	return (
-		<Tag className={`${className} ${topic} text-[10px] py-[0.1em] px-2 m-0`}>{topic}</Tag>
+		<Tag className={`${className} ${topic} text-xs py-0.5 px-2 m-0`}>{topic}</Tag>
 	);
 };
 

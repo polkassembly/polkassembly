@@ -51,7 +51,6 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 			const userDocData = userDoc.data();
 			return {
 				created_at: dayjs(userDocData?.created_at?.toDate?.() || new Date()).unix(),
-				email: userDocData?.email || '',
 				objectID: userDocData.id, // Unique identifier for the object
 				profile: userDocData?.profile || {},
 				username: userDocData?.username || ''

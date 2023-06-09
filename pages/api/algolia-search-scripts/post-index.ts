@@ -10,6 +10,7 @@ import { IPostTag } from '~src/types';
 import algoliasearch from 'algoliasearch';
 import { getTopicFromType } from '~src/util/getTopicFromType';
 import dayjs from 'dayjs';
+import fetchSubsquid from '~src/util/fetchSubsquid';
 
 function chunkArray(array: any[], chunkSize: number) {
 	if (array.length === 0) {
@@ -29,6 +30,12 @@ function chunkArray(array: any[], chunkSize: number) {
 	}
 	return chunkedArray;
 }
+
+const GET_PROPOSAL_TRACKS = `query MyQuery($index_eq:Int,$type_eq:ProposalType) {
+  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq}) {
+    trackNumber
+  }
+}`;
 
 const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 
@@ -57,13 +64,29 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 			const postsSnapshot = await postTypeDoc.ref.collection('posts').get();
 
 			// setup batch here
-			let counter = 0;
 			const chunksArray = chunkArray(postsSnapshot.docs, 300);
 			// for loop for postsSnapshot
 			for(const postsArr of chunksArray) {
-				const postRecords = postsArr.map((postDoc: any) => {
+				const postRecords = [];
+				for(const postDoc of postsArr){
+
 					const postDocData = postDoc.data();
-					return {
+
+					let subsquidRes: any;
+					if( postTypeDoc.id === 'referendums_v2')
+					{
+						subsquidRes= await fetchSubsquid({
+							network : networkDoc?.id,
+							query: GET_PROPOSAL_TRACKS,
+							variables: {
+								index_eq: Number(postDocData?.id),
+								type_eq: 'ReferendumV2'
+							}
+						}).catch((error) => console.log(error));
+					}
+					const subsquidData = subsquidRes && subsquidRes?.data?.proposals?.[0];
+
+					const postData = {
 						...postDocData,
 						created_at: dayjs(postDocData?.created_at?.toDate?.() || new Date()).unix(),
 						last_comment_at: dayjs(postDocData?.last_comment_at?.toDate?.() || new Date()).unix(),
@@ -74,12 +97,24 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 						topic_id: postDocData?.topic?.id || postDocData?.topic_id || getTopicFromType(postDocData?.id ).id,
 						updated_at: dayjs(postDocData?.updated_at?.toDate?.() || new Date()).unix()
 					};
-				});
 
+					if(postData.topic) delete postData.topic;
+					if(postData.history) delete postData.history;
+					if(postData.post_link) delete postData.post_link;
+					if(postData.subscribers) delete postData.subscribers;
+					if(postData.author_id) delete postData.author_id;
+
+					postRecords.push(
+						subsquidData && subsquidData?.trackNumber
+							? { ...postData, track_number: subsquidData?.trackNumber }
+							: postData
+					);
+				}
+
+				console.log(postTypeDoc.id, networkDoc.id, postRecords);
 				///commit batch
 
-				counter++;
-				console.log('hereee =>', networkDoc.id, postTypeDoc.id, postsSnapshot.size,counter);
+				// console.log('hereee =>', networkDoc.id, postTypeDoc.id, postsSnapshot.size,counter,postRecords);
 				await index.saveObjects(postRecords).catch((err) => {
 					console.log(err);
 				});

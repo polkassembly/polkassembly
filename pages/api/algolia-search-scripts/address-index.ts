@@ -50,11 +50,12 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 		const addressRecord = addressArr.map((addressDoc: any) => {
 			const addressData = addressDoc.data();
 			return {
+				address: addressData?.address || '',
 				created_at: dayjs(addressData?.created_at?.toDate?.() || new Date()).unix(),
 				default: addressData?.default || false,
 				is_erc20: addressData?.is_erc20 || addressData.address.startsWith('0x') || false,
 				network: addressData?.network || '',
-				objectID: addressData?.address, // Unique identifier for the object
+				objectID: addressData?.address || '', // Unique identifier for the object
 				public_key: addressData?.public_key || '',
 				user_id: addressData?.user_id || '',
 				verified: addressData?.verified || false,

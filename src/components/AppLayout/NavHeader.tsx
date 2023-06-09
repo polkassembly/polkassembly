@@ -25,7 +25,6 @@ import PaLogo from './PaLogo';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
-import OpenGovPolkadotSwitchButton from './OpenGovPolkadotSwitchButton';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -71,15 +70,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 				</div>
 
 				{
-					isOpenGovSupported(network) ?
+					isOpenGovSupported(network) || network === 'polkadot' ?
 						<>
 							<GovernanceSwitchButton previousRoute={previousRoute} className='hidden lg:flex' />
 						</> :
-						network === 'polkadot' ?
-							<>
-								<OpenGovPolkadotSwitchButton className='hidden lg:flex' />
-							</>
-							: <div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
+						<div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
 				}
 				<div className="flex items-center justify-between gap-x-2 md:gap-x-4">
 

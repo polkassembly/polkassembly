@@ -17,6 +17,8 @@ module.exports = {
 			colors: {
 				navBlue: 'var(--navBlue)',
 				sidebarBlue: 'var(--sidebarBlue)',
+				bodyBlue: 'var(--bodyBlue)',
+				lightBlue: 'var(--lightBlue)',
 				blue_primary: 'var(--blue_primary)',
 				blue_secondary: 'var(--blue_secondary)',
 				green_primary: 'var(--green_primary)',
@@ -41,6 +43,9 @@ module.exports = {
 			},
 			screens: {
 				'xs': '320px'
+			},
+			borderRadius: {
+				'xxl': '0.875rem'
 			}
 		}
 	},

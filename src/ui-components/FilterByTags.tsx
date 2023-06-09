@@ -13,7 +13,7 @@ import { poppins } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
 import NoTagsFoundIcon from '~assets/icons/no-tag.svg';
 
-import { CheckOutlineIcon, CheckedIcon, FilterIcon, FilterUnfilledIcon, SearchIcon, TrendingIcon } from './CustomIcons';
+import { CheckOutlineIcon, CheckedIcon, FilterIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close-tags.svg';
 
 interface Props {
@@ -132,10 +132,10 @@ const FilterByTags=({ className }:Props) => {
 			placement="bottomRight"
 		>
 
-			<div className={`text-sm tracking-wide font-normal flex items-center ${openFilter ? 'text-pink_primary':'text-grey_primary'} mt-[3.5px] cursor-pointer`}>
+			<div className='text-sm tracking-wide font-normal flex items-center text-pink_primary mt-[3.5px] cursor-pointer'>
         Filter
 				<span className='text-xl ml-2 mt-[2px]'>
-					{openFilter?<FilterIcon/>:<FilterUnfilledIcon/>}
+					<FilterIcon/>
 				</span>
 			</div>
 

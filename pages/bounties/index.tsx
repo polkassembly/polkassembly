@@ -68,17 +68,17 @@ const Bounties: FC<IBountiesProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Bounties' network={network}/>
-			<h1 className='dashboard-heading mb-4 md:mb-6'>On Chain Bounties</h1>
+			<h1 className='text-bodyBlue font-semibold text-2xl leading-7 mb-4 md:mb-6'>On Chain Bounties</h1>
 
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+				<p className="text-bodyBlue text-sm font-medium bg-white p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
 					This is the place to discuss on-chain bounties. Bounty posts are automatically generated as soon as they are created on-chain.
 					Only the proposer is able to edit them.
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white p-3 md:p-8 rounded-md'>
+			<div className='shadow-md bg-white p-3 md:p-8 rounded-xxl'>
 				<div className='flex items-center justify-between'>
 					<div>
 						<h1 className='dashboard-heading'>{ count } Bounties</h1>

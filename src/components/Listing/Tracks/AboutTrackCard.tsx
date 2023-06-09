@@ -99,14 +99,14 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	}, [network, trackName]);
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue`}>
-			<div className="flex justify-between capitalize font-medium">
+		<div className={`${className} bg-white drop-shadow-md rounded-xxl p-4 md:p-8`}>
+			<div className="flex justify-between">
 				<div className='flex items-center gap-x-2'>
-					<h2 className="text-lg capitalize">
+					<h2 className="text-xl font-semibold leading-8 text-bodyBlue">
 						About {trackName.split(/(?=[A-Z])/).join(' ')}
 					</h2>
 					<Tooltip color='#E5007A' title='Track Number' className='cursor-pointer'>
-						<h4 className=' text-[#B70062] text-sm font-medium leading-[18px] tracking-[0.01em]'>
+						<h4 className=' text-[#E5007A] text-xl font-semibold leading-8 tracking-[0.01em]'>
 							#{trackMetaData.trackId}
 						</h4>
 					</Tooltip>
@@ -115,20 +115,20 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<h2 className="text-sm text-pink_primary">{trackMetaData?.group}</h2>
 			</div>
 
-			<p className="mt-5 text-sm font-normal">{trackMetaData?.description}</p>
+			<p className="mt-0 font-normal text-base leading-6 text-bodyBlue">{trackMetaData?.description}</p>
 
 			<div className="mt-8 text-xs w-full max-w-[1000px]">
 				<Row gutter={[{ lg: 32, md: 16, sm: 4, xl: 32, xs: 4, xxl: 32 }, 16]}>
 					<Col xs={24} sm={24} md={12} lg={12} xl={8}>
-						{trackMetaData.maxDeciding && <Row>
-							<Col span={15} className='font-bold'>Capacity:</Col>
-							<Col span={9}>{trackMetaData.maxDeciding}</Col>
+						{trackMetaData.maxDeciding && <Row className='flex flex-col'>
+							<Col span={15} className='font-medium leading-5 text-sm text-lightBlue'>MAX DECIDING</Col>
+							<Col span={9} className='text-lg font-medium leading-7 text-bodyBlue'>{trackMetaData.maxDeciding}</Col>
 						</Row>
 						}
 
-						{trackMetaData.decisionDeposit && <Row className='mt-3'>
-							<Col span={15} className='font-bold'>Decision Deposit:</Col>
-							<Col span={9}>
+						{trackMetaData.decisionDeposit && <Row className='lg:mt-12 mt-5 flex flex-col'>
+							<Col span={15} className='font-medium leading-5 text-sm text-lightBlue'>DECISION DEPOSIT</Col>
+							<Col span={9} className='text-lg font-medium leading-7 text-bodyBlue' >
 								{trackMetaData.decisionDeposit &&
 									formatUSDWithUnits(formatBnBalance(`${trackMetaData.decisionDeposit}`.startsWith('0x') ? new BN(`${trackMetaData.decisionDeposit}`.slice(2), 'hex') : trackMetaData.decisionDeposit, { numberAfterComma: 2,
 										withThousandDelimitor: false, withUnit: true }, network), 1)
@@ -139,32 +139,35 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					</Col>
 
 					<Col xs={24} sm={24} md={12} lg={12} xl={8}>
-						{trackMetaData.preparePeriod && <Row>
-							<Col span={15} className='font-bold'>Prepare Period:</Col>
-							<Col span={9} className='whitespace-pre'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</Col>
+						{trackMetaData.confirmPeriod && <Row className='flex flex-col'>
+							<Col span={15} className='font-medium leading-5 text-sm text-lightBlue'>CONFIRM PERIOD</Col>
+							<Col span={9} className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue'>{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}</Col>
 						</Row>}
 
-						{trackMetaData.confirmPeriod && <Row className='mt-3'>
-							<Col span={15} className='font-bold'>Confirm Period:</Col>
-							<Col span={9} className='whitespace-pre'>{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}</Col>
+						{trackMetaData.preparePeriod && <Row className='lg:mt-12 mt-5 flex flex-col'>
+							<Col span={15} className='font-medium leading-5 text-sm text-lightBlue'>PREPARE PERIOD</Col>
+							<Col span={9} className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</Col>
 						</Row>}
 					</Col>
 
 					<Col xs={24} sm={24} md={12} lg={12} xl={8}>
-						{trackMetaData.minEnactmentPeriod &&<Row>
-							<Col xs={15} xl={19} className='font-bold'>Min Enactment Period:</Col>
-							<Col xs={9} xl={5} className='whitespace-pre'>{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}</Col>
+						{trackMetaData.minEnactmentPeriod &&<Row className='flex flex-col'>
+							<Col xs={15} xl={19} className='font-medium leading-5 text-sm text-lightBlue'>MIN ENACTMENT PERIOD</Col>
+							<Col xs={9} xl={5} className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue'>{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}</Col>
 						</Row>}
 
-						{trackMetaData.decisionPeriod && <Row className='mt-3'>
-							<Col xs={15} xl={19} className='font-bold'>Decision Period:</Col>
-							<Col xs={9} xl={5} className='whitespace-pre'>{blocksToRelevantTime(network,Number(trackMetaData.decisionPeriod))}</Col>
+						{trackMetaData.decisionPeriod && <Row className='lg:mt-12 mt-5 flex flex-col'>
+							<Col xs={15} xl={19} className='font-medium leading-5 text-sm text-lightBlue'>DECISION PERIOD</Col>
+							<Col xs={9} xl={5} className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue'>{blocksToRelevantTime(network,Number(trackMetaData.decisionPeriod))}</Col>
 						</Row>}
 					</Col>
 				</Row>
 			</div>
 
-			<Divider />
+			<Divider style={{
+				backgroundColor: '#F8E3EE',
+				border: '2px solid #F8E3EE'
+			}} />
 
 			<div className="flex justify-end">
 				{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&

@@ -33,19 +33,19 @@ export default styled(TopicTag)`
 	}
 
 	&.Democracy {
-		background-color: var(--blue_primary) !important;
-		color: white;
+		background-color: #EEF8FF !important;
+		color: #093874;
 	}
 	&.Council {
-		background-color: var(--pink_secondary) !important;
-		color: white;
+		background-color: #FFEDF2 !important;
+		color: #CD1F59;
 	}
 	&.Treasury {
-		background-color: var(--pink_primary) !important;
-		color: white;
+		background-color: #FFF4EB !important;
+		color: #AC6A30;
 	}
 	&.Technical, &.Tech {
-		background-color: var(--pink_primary) !important;
-		color: white;
+		background-color: #FEF7DD !important;
+		color: #75610E;
 	}
 `;

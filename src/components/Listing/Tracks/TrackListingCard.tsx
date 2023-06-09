@@ -102,10 +102,9 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
 	return (
-		<div className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue `}>
-			<div className='flex items-center justify-between mb-10'>
+		<div className={`${className} bg-white drop-shadow-md rounded-xxl p-4 md:p-8`}>
+			<div className='flex items-center justify-between mb-0'>
 				<div>
-					<h1 className='dashboard-heading'>Referenda</h1>
 					<FilteredTags/>
 				</div>
 				<FilterByTags className='mr-[2px] mt-[-10px]'/>
@@ -115,7 +114,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 				items={items}
 				onTabClick={onTabClick}
 				type="card"
-				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+				className='ant-tabs-tab-bg-white text-bodyBlue font-medium'
 			/>
 			{
 				(posts?.all?.data?.count||0) > 10  && activeTab === 'All' || (posts?.submitted?.data?.count||0) > 10 && activeTab === 'Submitted' || (posts?.voting?.data?.count||0) > 10 && activeTab === 'Voting' || (posts?.closed?.data?.count||0) > 10 && activeTab === 'Closed' ?

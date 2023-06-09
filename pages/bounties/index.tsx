@@ -19,6 +19,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
+import DollarIcon from '~assets/icons/dollar-icon.svg';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
@@ -68,7 +69,10 @@ const Bounties: FC<IBountiesProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Bounties' network={network}/>
-			<h1 className='text-bodyBlue font-semibold text-2xl leading-7 mb-4 md:mb-6'>On Chain Bounties</h1>
+			<div className='flex items-center'>
+				<DollarIcon  className='-mt-3.5'/>
+				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>On Chain Bounties ({count})</h1>
+			</div>
 
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row">
@@ -78,13 +82,12 @@ const Bounties: FC<IBountiesProps> = (props) => {
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white p-3 md:p-8 rounded-xxl'>
+			<div className='shadow-md bg-white py-5 px-0 rounded-xxl'>
 				<div className='flex items-center justify-between'>
 					<div>
-						<h1 className='dashboard-heading'>{ count } Bounties</h1>
 						<FilteredTags/>
 					</div>
-					<FilterByTags className='mr-[2px]'/>
+					<FilterByTags className='mr-[25px]'/>
 				</div>
 
 				<div>

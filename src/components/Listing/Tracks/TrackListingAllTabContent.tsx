@@ -33,7 +33,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 			<div className={`${className} proposals__list`}>
 				{posts.map((post, index) => {
 					return (
-						<div key={post.post_id} className='my-5'>
+						<div key={post.post_id} className='my-0'>
 							{<Link href={`/referenda/${post.post_id}`}>
 								<GovernanceCard
 									className={`${(index+1)%2!==0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}

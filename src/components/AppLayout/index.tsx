@@ -189,7 +189,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if(typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) {
+	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network) || network === 'polkadot')) {
 		gov1Items.overviewItems = [
 			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'opengov', ''),
 			...gov1Items.overviewItems
@@ -301,7 +301,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if(typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) {
+	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network) || network === 'polkadot')) {
 		gov2OverviewItems = [
 			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, '/', ''),
 			...gov2OverviewItems

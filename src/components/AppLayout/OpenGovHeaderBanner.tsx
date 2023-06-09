@@ -4,23 +4,28 @@
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 
+const futureDate = dayjs('2023-06-15 17:35:30');
+
+export function getTime() {
+	const currentDate = dayjs();
+	const countdownDuration = dayjs.duration(futureDate.diff(currentDate));
+	let days: any = countdownDuration.days();
+	let hours: any = countdownDuration.hours();
+	let minutes: any = countdownDuration.minutes();
+	let seconds: any = countdownDuration.seconds();
+	if (days < 10) days = '0' + days;
+	if (hours < 10) hours = '0' + hours;
+	if (minutes < 10) minutes = '0' + minutes;
+	if (seconds < 10) seconds = '0' + seconds;
+	return [days, hours, minutes, seconds];
+}
+
 const OpenGovHeaderBanner = () => {
-	const [[days, hrs, mins, secs], setTime] = useState([0, 0, 0, 0]);
+	const [[days, hrs, mins, secs], setTime] = useState(getTime());
 	useEffect(() => {
-		const futureDate = dayjs('2023-06-15 17:35:30');
 		const timer = setInterval(() => {
 			setTime(() => {
-				const currentDate = dayjs();
-				const countdownDuration = dayjs.duration(futureDate.diff(currentDate));
-				let days: any = countdownDuration.days();
-				let hours: any = countdownDuration.hours();
-				let minutes: any = countdownDuration.minutes();
-				let seconds: any = countdownDuration.seconds();
-				if (days < 10) days = '0' + days;
-				if (hours < 10) hours = '0' + hours;
-				if (minutes < 10) minutes = '0' + minutes;
-				if (seconds < 10) seconds = '0' + seconds;
-				return [days, hours, minutes, seconds];
+				return getTime();
 			});
 		}, 1000);
 		return () => clearInterval(timer);

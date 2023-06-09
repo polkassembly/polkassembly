@@ -187,7 +187,7 @@ const Details: FC<IDetailsProps> = (props) => {
 					setOnChainIdentity(onChainIdentity);
 				}
 			})
-				.then(unsub => { unsubscribes.push(unsub); })
+				.then(unsub => { unsubscribes?.push(unsub); })
 				.catch(e => console.error(e));
 		});
 

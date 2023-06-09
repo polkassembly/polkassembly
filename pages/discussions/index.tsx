@@ -17,6 +17,7 @@ import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 import { ErrorState } from '~src/ui-components/UIStates';
+import DiscussionsIcon from '~assets/icons/discussions-icon.svg';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -85,16 +86,16 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 		<>
 			<SEOHead title='Discussions' network={network}/>
 
-			<h1 className='dashboard-heading'>Latest Discussions</h1>
+			<div className='flex justify-between align-middle'>
+				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2 mt-1 flex'><DiscussionsIcon className='mr-2 mt-1.5' />Latest Discussions({count})</h1>
+				<button onClick={handleClick} className='outline-none border-none h-[40px] w-[120px] px-3 py-2 font-medium  leading-[20px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer -mt-1'>+ Add Post</button>
+			</div>
 
 			{/* Intro and Create Post Button */}
-			<div className='mt-[29.5px] flex flex-col md:flex-row md:items-center gap-4'>
-				<div className="flex-1 flex items-center rounded-[4px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] px-[20.5px] py-[17.5px]">
-					<p className="text-sidebarBlue text-sm md:text-base font-normal tracking-[0.01em] m-0 p-0">
+			<div className="flex flex-col md:flex-row mt-3">
+				<p className="text-bodyBlue text-sm font-medium bg-white p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
 						This is the place to discuss all things polkadot. Anyone can start a new discussion.
-					</p>
-				</div>
-				<button onClick={handleClick} className='outline-none border-none h-[59px] w-[174px] px-6 py-4 font-medium text-lg leading-[27px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer'>Add New Post</button>
+				</p>
 			</div>
 			<OffChainPostsContainer proposalType={OffChainProposalType.DISCUSSIONS} posts={posts} count={count} className='mt-7' />
 			<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title="Join Polkassembly to Start a New Discussion." subtitle="Discuss, contribute and get regular updates from Polkassembly."/>

@@ -290,8 +290,8 @@ const TreasuryProposalFormButton = ({
 		}
 	};
 
-	const triggerBtn = <button disabled={!id} className='font-medium text-lg leading-[27px] bg-pink_primary px-[19x] py-6 rounded-[4px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-white border-none outline-none h-[75px] min-w-[226px] cursor-pointer'  onClick={() => setModalOpen(true)}>+ Add New Proposal</button>;
-	const triggerBtnLoginDisabled = <Tooltip  color='#E5007A' title='Please signup/login to create treasury proposal'> <button disabled={true} className='font-medium text-lg leading-[27px] px-[19x] py-6 rounded-[4px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-white border-none outline-none h-[75px] min-w-[226px] cursor-not-allowed bg-grey_secondary'>+ Add New Proposal</button></Tooltip>;
+	const triggerBtn = <button disabled={!id} className='font-medium text-sm bg-pink_primary h-[40px] w-[120px] px-3 py-2 rounded-[6px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-white border-none outline-none cursor-pointer' onClick={() => setModalOpen(true)}>+ Add New Proposal</button>;
+	const triggerBtnLoginDisabled = <Tooltip  color='#E5007A' title='Please signup/login to create treasury proposal'> <button disabled={true} className='font-medium text-sm p-4 rounded-[6px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-white border-none outline-none cursor-pointer text-white border-none outline-none h-[60px] w-[120px] cursor-not-allowed bg-grey_secondary'>+ Add New Proposal</button></Tooltip>;
 	return (
 		loadingStatus.isLoading
 			? <Spin indicator={<LoadingOutlined />} >

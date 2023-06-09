@@ -7,63 +7,45 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import SubscribedPostsNotification from '~assets/icons/subscribed-posts-notification-icon.svg';
 import GroupCheckbox from '../common-ui/GroupCheckbox';
-import { useNetworkContext } from '~src/context';
+import { ACTIONS } from '../Reducer/action';
 
 const { Panel } = Collapse;
 type Props = {
     onSetNotification: any;
-    userNotification: any;
+    dispatch: any;
+    options: any;
+	userNotification:any
 };
-
-const categoryOptions = [
-	{
-		label: 'Comments on my posts',
-		triggerName: 'commentsOnSubscribedPosts',
-		triggerPreferencesName: 'newCommentAdded',
-		value: 'Comments on my posts'
-	}
-];
 
 export default function SubscribedPosts({
 	onSetNotification,
+	dispatch,
+	options,
 	userNotification
 }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
-	const { network } = useNetworkContext();
-	const [userData, setUserData] = useState(categoryOptions);
+
 	useEffect(() => {
-		const payload = categoryOptions.map((category: any) => {
-			return {
-				...category,
-				selected:
-                    userNotification?.[category.triggerName]?.enabled || false
-			};
-		});
-		setUserData(payload);
-		setAll(payload.every((category: any) => category.selected));
-	}, [userNotification]);
+		setAll(options.every((category: any) => category.selected));
+	}, [options]);
 
 	const handleAllClick = (checked: boolean) => {
-		setUserData(
-			categoryOptions.map((category: any) => ({
-				...category,
-				selected: checked
-			}))
-		);
-		const promises = categoryOptions.map((option: any) => {
-			const payload = {
-				network,
-				trigger_name: option?.triggerName,
-				trigger_preferences: {
-					enabled: checked,
-					name: option?.triggerPreferencesName
-				}
-			};
-			return onSetNotification(payload);
+		dispatch({
+			payload: {
+				params: { checked }
+			},
+			type: ACTIONS.SUBSCRIBED_PROPOSAL_ALL_CHANGE
 		});
+		const notification = Object.assign({}, userNotification);
+		options.forEach((option: any) => {
+			notification[option.triggerName] = {
+				enabled: checked,
+				name: option?.triggerPreferencesName
+			};
+		});
+		onSetNotification(notification);
 		setAll(checked);
-		Promise.all(promises);
 	};
 
 	const handleChange = (
@@ -71,23 +53,19 @@ export default function SubscribedPosts({
 		checked: boolean,
 		value: string
 	) => {
+		dispatch({
+			payload: {
+				params: { categoryOptions, checked, value }
+			},
+			type: ACTIONS.SUBSCRIBED_PROPOSAL_SINGLE_CHANGE
+		});
+		const notification = Object.assign({}, userNotification);
 		const option = categoryOptions.find((opt: any) => opt.label === value);
-		const payload = {
-			network,
-			trigger_name: option?.triggerName,
-			trigger_preferences: {
-				enabled: checked,
-				name: option?.triggerPreferencesName
-			}
+		notification[option.triggerName] = {
+			enabled: checked,
+			name: option?.triggerPreferencesName
 		};
-		const userPayload = categoryOptions.map((category: any) =>
-			category.label === value
-				? { ...category, selected: checked }
-				: category
-		);
-		setUserData(userPayload);
-		onSetNotification(payload);
-		setAll(userPayload.every((category: any) => category.selected));
+		onSetNotification(notification);
 	};
 
 	return (
@@ -128,9 +106,8 @@ export default function SubscribedPosts({
 				key='4'
 			>
 				<GroupCheckbox
-					categoryOptions={userData}
+					categoryOptions={options}
 					onChange={handleChange}
-					sectionAll={all}
 				/>
 			</Panel>
 		</Collapse>

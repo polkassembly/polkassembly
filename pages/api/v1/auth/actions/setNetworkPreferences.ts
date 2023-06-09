@@ -65,14 +65,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		payload[network]= network_preferences;
 	});
 	const newNotificationSettings: IUserNotificationSettings = {
-		...(userData?.notification_settings || {}),
+		...(userData?.notification_preferences || {}),
 		triggerPreferences: {
-			...(userData?.notification_settings?.triggerPreferences || {}),
+			...(userData?.notification_preferences?.triggerPreferences || {}),
 			...payload
 		}
 	};
 
-	await userRef.update({ notification_settings: newNotificationSettings }).then(() => {
+	await userRef.update({ notification_preferences: newNotificationSettings }).then(() => {
 		return res.status(200).json({ message: 'Success' });
 	}).catch((error) => {
 		console.error('Error updating network preferences: ', error);

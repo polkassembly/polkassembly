@@ -25,7 +25,8 @@ export interface UserDetailsContextType {
   loginWallet: Wallet | null;
   delegationDashboardAddress: string;
   loginAddress: string;
-  networkPreferences: INetworkPreferences
+  networkPreferences: INetworkPreferences;
+  primaryNetwork:string
 }
 
 export interface INetworkPreferences {
@@ -38,7 +39,6 @@ export interface INetworkPreferences {
       tracks?:Array<number>,
     }
   },
-  primaryNetwork:string
 }
 export enum Role {
   ANONYMOUS = 'anonymous',

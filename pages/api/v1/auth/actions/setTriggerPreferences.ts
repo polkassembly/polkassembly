@@ -37,12 +37,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const userData = userDoc.data();
 
 	await userRef.update({
-		notification_settings: {
-			...(userData?.notification_settings || {}),
+		notification_preferences: {
+			...(userData?.notification_preferences || {}),
 			triggerPreferences: {
-				...(userData?.notification_settings?.triggerPreferences || {}),
+				...(userData?.notification_preferences?.triggerPreferences || {}),
 				[network]: {
-					...(userData?.notification_settings?.triggerPreferences?.[network] || {}),
+					...(userData?.notification_preferences?.triggerPreferences?.[network] || {}),
 					[trigger_name]: trigger_preferences
 				}
 			}

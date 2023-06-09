@@ -20,17 +20,17 @@ export async function getNotificationSettings(token: string){
 	if(!userDoc.exists) return null;
 
 	const userData = userDoc.data() as User;
-	return userData.notification_settings || {} as IUserNotificationSettings;
+	return userData.notification_preferences || {} as IUserNotificationSettings;
 }
 
-async function handler(req: NextApiRequest, res: NextApiResponse<{notification_settings: IUserNotificationSettings} | MessageType>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<{notification_preferences: IUserNotificationSettings} | MessageType>) {
 	const token = getTokenFromReq(req);
 	if (!token) res.status(400).json({ message: 'Token not found' });
 
-	const notification_settings = await getNotificationSettings(token);
-	if(!notification_settings) return res.status(400).json({ message: messages.USER_NOT_FOUND });
+	const notification_preferences = await getNotificationSettings(token);
+	if(!notification_preferences) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
-	res.status(200).json({ notification_settings });
+	res.status(200).json({ notification_preferences });
 }
 
 export default withErrorHandling(handler);

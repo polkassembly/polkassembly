@@ -11,7 +11,6 @@ type Props = {
     classname?: string;
     Icon?: any;
     onChange: any;
-    sectionAll: boolean;
 	handleCategoryAllClick?:any
 };
 
@@ -21,14 +20,9 @@ export default function GroupCheckbox({
 	classname,
 	Icon,
 	onChange,
-	sectionAll,
 	handleCategoryAllClick
 }: Props) {
 	const [all, setAll] = useState(false);
-
-	useEffect(() => {
-		setAll(sectionAll);
-	}, [sectionAll]);
 
 	const handleAllClick = (checked: boolean) => {
 		handleCategoryAllClick(checked, categoryOptions, title);

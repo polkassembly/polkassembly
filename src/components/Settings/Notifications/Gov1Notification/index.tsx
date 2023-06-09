@@ -12,62 +12,102 @@ import BountiesIcon from '~assets/icons/bounties.svg';
 import ReferendumsIcon from '~assets/icons/referndums.svg';
 import TechCommiteeIcon from '~assets/icons/tech-commitee.svg';
 import TreasuryProposalIcon from '~assets/icons/treasury-proposal.svg';
-import { allGov1, titleMapper } from './utils';
-import { useNetworkContext } from '~src/context';
+import { titleMapper } from './utils';
 import { ProposalType } from '~src/global/proposalType';
+import { ACTIONS } from '../Reducer/action';
 
 const { Panel } = Collapse;
 type Props = {
     onSetNotification: any;
     userNotification: any;
-	sendAllCategoryRequest:any;
-	onSetCurrentNetworkNotifications:any
+    dispatch: any;
+    options: any;
 };
 
 export default function Gov1Notification({
 	onSetNotification,
 	userNotification,
-	sendAllCategoryRequest,
-	onSetCurrentNetworkNotifications
+	dispatch,
+	options
 }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
-	const { network } = useNetworkContext();
-	const [userData, setUserData] = useState<any>(allGov1);
-
-	useEffect(() => {
-		const payload: any = {};
-		for (const key in userData) {
-			payload[key] = userData?.[key].map((category: any) => {
-				return {
-					...category,
-					selected:
-                        userNotification?.[category.triggerName]?.post_types.includes(key) || false
-				};
-			});
-		}
-		setUserData(payload);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userNotification]);
 
 	const handleAllClick = (checked: boolean) => {
-		Object.keys(userData).map((key) => {
-			handleCategoryAllClick(checked, userData[key], key);
+		dispatch({
+			payload: {
+				params: { checked }
+			},
+			type: ACTIONS.GOV_ONE_ALL_CHANGE
 		});
+		const notification = Object.assign({}, userNotification);
+		Object.keys(options).forEach((key) => {
+			options[key].forEach((option: any) => {
+				if (!option?.triggerName) {
+					return;
+				}
+				let postTypes =
+                    notification?.[option.triggerName]?.post_types || [];
+				if (checked) {
+					if (!postTypes.includes(key)) postTypes.push(key);
+				} else {
+					postTypes = postTypes.filter((postType: string) => {
+						// console.log(postType, title);
+						return postType !== key;
+					});
+				}
+				notification[option.triggerName] = {
+					enabled: postTypes.length > 0,
+					name: option?.triggerPreferencesName,
+					post_types: postTypes
+				};
+			});
+		});
+		onSetNotification(notification);
 		setAll(checked);
 	};
 
-	const handleCategoryAllClick = (checked:boolean, categoryOptions:any, title:string) => {
+	useEffect(() => {
+		const allSelected = Object.values(options).every((option: any) =>
+			option.every((item: any) => item.selected)
+		);
+		setAll(allSelected);
+	}, [options]);
+
+	const handleCategoryAllClick = (
+		checked: boolean,
+		categoryOptions: any,
+		title: string
+	) => {
 		title = titleMapper(title) as string;
-		const payload = Object.assign({}, userData);
-		payload[title] = categoryOptions.map((category: any) => {
-			return {
-				...category,
-				selected: checked
+		dispatch({
+			payload: {
+				params: { checked, key: title }
+			},
+			type: ACTIONS.GOV_ONE_PROPOSAL_ALL_CHANGE
+		});
+		const notification = Object.assign({}, userNotification);
+		options[title].forEach((option: any) => {
+			if (!option?.triggerName) {
+				return;
+			}
+			let postTypes =
+                notification?.[option.triggerName]?.post_types || [];
+			if (checked) {
+				if (!postTypes.includes(title)) postTypes.push(title);
+			} else {
+				postTypes = postTypes.filter((postType: string) => {
+					// console.log(postType, title);
+					return postType !== title;
+				});
+			}
+			notification[option.triggerName] = {
+				enabled: postTypes.length > 0,
+				name: option?.triggerPreferencesName,
+				post_types: postTypes
 			};
 		});
-		setUserData(payload);
-		sendAllCategoryRequest(payload[title], checked, title);
+		onSetNotification(notification);
 	};
 
 	const handleChange = (
@@ -76,59 +116,30 @@ export default function Gov1Notification({
 		value: string,
 		title: string
 	) => {
-		const notification = Object.assign({}, userNotification);
 		title = titleMapper(title) as string;
+		dispatch({
+			payload: {
+				params: { checked, key: title, value }
+			},
+			type: ACTIONS.GOV_ONE_PROPOSAL_SINGLE_CHANGE
+		});
+		const notification = Object.assign({}, userNotification);
 		const option = categoryOptions.find((opt: any) => opt.label === value);
 		if (!option?.triggerName) {
 			return;
 		}
-		let postTypes =
-		notification?.[option.triggerName]?.post_types || [];
+		let postTypes = notification?.[option.triggerName]?.post_types || [];
 		if (checked) {
-			if(!postTypes.includes(title))
-				postTypes.push(title);
+			if (!postTypes.includes(title)) postTypes.push(title);
 		} else {
-			postTypes = postTypes.filter((postType: string) => {
-				return postType !== title;
-			});
+			postTypes = postTypes.filter((postType: string) => postType !== title);
 		}
-		const payload = {
-			network,
-			trigger_name: option?.triggerName,
-			trigger_preferences: {
-				enabled: postTypes.length > 0,
-				name: option?.triggerPreferencesName,
-				post_types: postTypes
-			}
-		};
 		notification[option.triggerName] = {
 			enabled: postTypes.length > 0,
 			name: option?.triggerPreferencesName,
 			post_types: postTypes
 		};
-		const userPayload: any = {};
-		let allSelected = true;
-		for (const key in userData) {
-			userPayload[key] = userData[key].map((category: any) => {
-				const isSelected =
-				category.label === value && key === title? checked: userNotification[category.triggerName]?.post_types.includes(key) || false;
-
-				if (!isSelected) {
-					allSelected = false;
-				}
-
-				return category.label === value && key === title
-					? {
-						...category,
-						selected: checked
-					}
-					: category;
-			});
-		}
-		setUserData(userPayload);
-		setAll(allSelected);
-		onSetNotification(payload);
-		onSetCurrentNetworkNotifications(notification);
+		onSetNotification(notification);
 	};
 
 	return (
@@ -171,76 +182,77 @@ export default function Gov1Notification({
 				<div className='flex flex-col'>
 					<div className='flex'>
 						<GroupCheckbox
-							categoryOptions={userData[ProposalType.REFERENDUMS]}
+							categoryOptions={options[ProposalType.REFERENDUMS]}
 							title='Referendums'
 							classname='basis-[50%]'
 							Icon={ReferendumsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
-							sectionAll={all}
 						/>
 						<GroupCheckbox
-							categoryOptions={userData[ProposalType.DEMOCRACY_PROPOSALS]}
+							categoryOptions={
+								options[ProposalType.DEMOCRACY_PROPOSALS]
+							}
 							title='Proposal'
 							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
 							Icon={TreasuryProposalIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
-							sectionAll={all}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-2' dashed />
 					<div className='flex'>
 						<GroupCheckbox
-							categoryOptions={userData[ProposalType.BOUNTIES]}
+							categoryOptions={options[ProposalType.BOUNTIES]}
 							title='Bounties'
 							classname='basis-[50%]'
 							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
-							sectionAll={all}
 						/>
 						<GroupCheckbox
-							categoryOptions={userData[ProposalType.CHILD_BOUNTIES]}
+							categoryOptions={
+								options[ProposalType.CHILD_BOUNTIES]
+							}
 							title='Child Bounties'
 							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
 							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
-							sectionAll={all}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-2' dashed />
 					<div className='flex'>
 						<GroupCheckbox
-							categoryOptions={userData[ProposalType.TIPS]}
+							categoryOptions={options[ProposalType.TIPS]}
 							title='Tips'
 							classname='basis-[50%]'
 							Icon={TipsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
-							sectionAll={all}
 						/>
 						<GroupCheckbox
-							categoryOptions={userData[ProposalType.TECH_COMMITTEE_PROPOSALS]}
+							categoryOptions={
+								options[ProposalType.TECH_COMMITTEE_PROPOSALS]
+							}
 							title='Tech Committee'
 							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
 							Icon={TechCommiteeIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
-							sectionAll={all}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
 					<div className='flex'>
 						<div className='basis-[50%] flex flex-col gap-[16px]'>
 							<GroupCheckbox
-								categoryOptions={userData[ProposalType.COUNCIL_MOTIONS]}
+								categoryOptions={
+									options[ProposalType.COUNCIL_MOTIONS]
+								}
 								title='Council Motion'
 								Icon={TipsIcon}
 								onChange={handleChange}
 								handleCategoryAllClick={handleCategoryAllClick}
-								sectionAll={all}
 							/>
 						</div>
 					</div>

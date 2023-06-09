@@ -37,7 +37,7 @@ export default async function sendCommentMailToPostSubs(
 		if(userPreferenceDoc.exists) {
 			const userPreference = userPreferenceDoc.data() as IUserPreference;
 
-			if(!userPreference?.notification_settings?.post_participated) continue;
+			if(!userPreference?.notification_preferences?.post_participated) continue;
 		}
 
 		sendPostSubscriptionMail(user, commentAuthor, content, String(postId), commentUrl, network);

@@ -115,7 +115,7 @@ class AuthService {
 		});
 
 		const newUserPreference: IUserPreference = {
-			notification_settings: NOTIFICATION_DEFAULTS,
+			notification_preferences: NOTIFICATION_DEFAULTS,
 			post_subscriptions: {},
 			user_id: newUserId
 		};
@@ -532,28 +532,28 @@ class AuthService {
 		const userPreferenceRef = networkDocRef(network).collection('user_preferences').doc(String(userId));
 		const userPreferenceSnapshot = await userPreferenceRef.get();
 
-		const getUpdatedNotificationSettings: (notification_settings: NotificationSettings) => NotificationSettings = (notification_settings) => {
+		const getUpdatedNotificationSettings: (notification_preferences: NotificationSettings) => NotificationSettings = (notification_preferences) => {
 			return {
-				new_proposal: new_proposal === undefined ? notification_settings.new_proposal : new_proposal,
-				own_proposal: own_proposal === undefined ? notification_settings.own_proposal : own_proposal,
-				post_created: post_created === undefined ? notification_settings.post_created : post_created,
-				post_participated: post_participated === undefined ? notification_settings.post_participated : post_participated
+				new_proposal: new_proposal === undefined ? notification_preferences.new_proposal : new_proposal,
+				own_proposal: own_proposal === undefined ? notification_preferences.own_proposal : own_proposal,
+				post_created: post_created === undefined ? notification_preferences.post_created : post_created,
+				post_participated: post_participated === undefined ? notification_preferences.post_participated : post_participated
 			};
 		};
 
 		let update: NotificationSettings = getUpdatedNotificationSettings(NOTIFICATION_DEFAULTS);
 		if (userPreferenceSnapshot.exists) {
-			const { notification_settings } = userPreferenceSnapshot.data() as IUserPreference;
-			update = getUpdatedNotificationSettings(notification_settings);
+			const { notification_preferences } = userPreferenceSnapshot.data() as IUserPreference;
+			update = getUpdatedNotificationSettings(notification_preferences);
 			await userPreferenceRef.update({
-				notification_settings: update
+				notification_preferences: update
 			}).catch(err => {
 				console.log('error in updating user preference', err);
 				throw apiErrorWithStatusCode(messages.ERROR_UPDATING_USER_PREFERENCE, 500);
 			});
 		} else {
 			await userPreferenceRef.set({
-				notification_settings: update,
+				notification_preferences: update,
 				post_subscriptions: {},
 				user_id: userId
 			}).catch(err => {
@@ -570,10 +570,10 @@ class AuthService {
 		const userPreferenceRef = networkDocRef(network).collection('user_preferences').doc(String(userId));
 		const userPreferenceSnapshot = await userPreferenceRef.get();
 
-		let notification_settings = NOTIFICATION_DEFAULTS;
+		let notification_preferences = NOTIFICATION_DEFAULTS;
 		if (!userPreferenceSnapshot.exists) {
 			await userPreferenceRef.set({
-				notification_settings: notification_settings,
+				notification_preferences: notification_preferences,
 				post_subscriptions: {},
 				user_id: userId
 			}).catch(err => {
@@ -581,9 +581,9 @@ class AuthService {
 				throw apiErrorWithStatusCode(messages.ERROR_CREATING_USER_PREFERENCE, 500);
 			});
 		} else {
-			notification_settings = (userPreferenceSnapshot.data() as IUserPreference).notification_settings;
+			notification_preferences = (userPreferenceSnapshot.data() as IUserPreference).notification_preferences;
 		}
-		return notification_settings;
+		return notification_preferences;
 	}
 
 	public async resendVerifyEmailToken (token: string, network: string): Promise<void> {

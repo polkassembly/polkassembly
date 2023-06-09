@@ -97,7 +97,7 @@ export interface NotificationSettings {
 
 export interface IUserPreference {
 	user_id: number;
-	notification_settings: NotificationSettings;
+	notification_preferences: NotificationSettings;
 	post_subscriptions: {
 		[key in ProposalType]?: (number | string)[];
 	}
@@ -121,7 +121,7 @@ export interface User {
 	username: string;
 	web3_signup: boolean;
 	primary_network?: string;
-	notification_settings?: IUserNotificationSettings;
+	notification_preferences?: IUserNotificationSettings;
 }
 
 export  interface Roles {

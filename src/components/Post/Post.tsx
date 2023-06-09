@@ -353,24 +353,36 @@ const Post: FC<IPostProps> = (props) => {
 		}}>
 			<>
 				<SpamAlert />
+				{!isEditing && (
+					<>
+						{(isOffchainPost || (isOnchainPost && redirection.link)) && <div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-[95vw] lg:w-[85vw] mb-6 dashboard-heading border-black'>
+							<DiscussionLink isOffchainPost={isOffchainPost} />
+							{!isEditing && isOnchainPost && redirection.link && (
+								<Link href={redirection.link}>
+									<span className="text-[#334D6E]">
+										{redirection?.text.split('#').map((part, index) => {
+											if (index === 0) {
+												return part;
+											} else {
+												const id = part.match(/^\d+/)?.[0];
+												return (
+													<span key={index}>
+														<span className="text-pink_primary"> #{id}</span>
+													</span>
+												);
+											}
+										})}
+									</span>{' >> '}
+									<span className="text-[#334D6E]">Referendum
+										<span className="text-pink_primary"> #{post_id}</span>
+									</span>
+								</Link>
+							)}
+						</div>}
+					</>
+				)}
 				<div className={`${className} grid grid-cols-1 xl:grid-cols-12 gap-9`}>
 					<div className='xl:col-span-8'>
-
-						{!isEditing && (
-							<>
-								<div className='flex flex-row w-full'>
-									<DiscussionLink isOffchainPost={isOffchainPost} />
-									{!isEditing && isOnchainPost && redirection.link && (
-										<Link href={redirection.link}>
-											<div className= 'bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-                                               This proposal is now{' '}
-												<span className="text-pink_primary">{redirection.text}</span>
-											</div>
-										</Link>
-									)}
-								</div>
-							</>
-						)}
 
 						{ post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
 							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading flex items-center gap-x-2'>

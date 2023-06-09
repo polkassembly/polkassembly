@@ -18,7 +18,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import ReferendaIcon from '~assets/icons/Discussion_icon.svg';
+import ReferendaIcon from '~assets/icons/discussion_icon.svg';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;

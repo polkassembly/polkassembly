@@ -46,7 +46,8 @@ const Creator: any = {
 	key: 'creator',
 	onCell: (record: any) => {
 		return {
-			onClick: async () => {
+			onClick: async (e: any) => {
+				e.stopPropagation();
 				if(record.username) {
 					Router.push(`/user/${record.username}`);
 				}else {
@@ -129,7 +130,8 @@ const allColumns: ColumnsType<IPostsRowData> = [
 		key: 'postedBy',
 		onCell: (record) => {
 			return {
-				onClick: async () => {
+				onClick: async (e) => {
+					e.stopPropagation();
 					if(record.username) {
 						Router.push(`/user/${record.username}`);
 					}else {

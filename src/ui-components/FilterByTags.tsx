@@ -20,7 +20,7 @@ interface Props {
   className?: string;
   isSearch?: boolean;
   setSelectedTags?: (pre: string[]) => void;
-  selectedTags: string[];
+  selectedTags?: string[];
 }
 
 const FilterByTags=({ className, isSearch, setSelectedTags, selectedTags }:Props) => {

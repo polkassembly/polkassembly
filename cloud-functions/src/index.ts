@@ -2,6 +2,7 @@ import algoliasearch from 'algoliasearch';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import fetchSubsquid from '~src/util/fetchSubsquid';
+import dayjs from 'dayjs';
 
 admin.initializeApp();
 const logger = functions.logger;
@@ -42,10 +43,10 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 	let postRecord = {
 		objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
 		network,
-		created_at: post?.created_at || new Date(),
-		last_comment_at: post?.last_comment_at || new Date(),
-		last_edited_at: post?.last_edited_at || new Date(),
-    updated_at: post?.updated_at || new Date(),
+		created_at: dayjs(post?.created_at?.toDate?.() || new Date()).unix(),
+		last_comment_at: dayjs(post?.last_comment_at?.toDate?.() || new Date()).unix(),
+		last_edited_at: dayjs(post?.last_edited_at?.toDate?.() || new Date()).unix(),
+    updated_at: dayjs(post?.updated_at?.toDate?.() || new Date()).unix(),
 		postType,
 		...post
 	}
@@ -81,7 +82,7 @@ exports.onUserWritten = functions.region('europe-west1').firestore.document('use
 	// Create an object to be indexed by Algolia
 	const userRecord = {
 		objectID: userId, // Unique identifier for the object
-		created_at: userData?.created_at || new Date(),
+		created_at: dayjs(userData?.created_at.toDate?.() || new Date()).unix(),
 		username: userData?.username || '',
 		profile: userData?.profile || {}
 	};
@@ -121,7 +122,8 @@ exports.onAddressWritten = functions.region('europe-west1').firestore.document('
 		public_key: addressData?.public_key || '',
 		user_id: addressData?.user_id || '',
 		verified: addressData?.verified || false,
-		wallet: addressData?.wallet || ''
+		wallet: addressData?.wallet || '',
+    created_at: dayjs(addressData.created_at?.toData?.() || new Date()).unix()
 	};
 
 	// Update the Algolia index

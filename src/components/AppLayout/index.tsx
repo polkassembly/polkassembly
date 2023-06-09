@@ -428,7 +428,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				</Drawer>
 				{
-					(network === 'polkadot' && router.asPath === '/') && dayjs('2023-06-15 17:35:30').diff(dayjs()) > 0?
+					((network === 'polkadot' && router.asPath === '/') || (network === 'kusama' && ['/', '/opengov', '/gov-2'].includes(router.asPath))) && dayjs('2023-06-15 17:35:30').diff(dayjs()) > 0?
 						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#EFF2F5]'>
 							{/* Dummy Collapsed Sidebar for auto margins */}
 							<OpenGovHeaderBanner />

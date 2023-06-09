@@ -9,6 +9,7 @@ import { firestore_db } from '~src/services/firebaseInit';
 import { IPostTag } from '~src/types';
 import algoliasearch from 'algoliasearch';
 import { getTopicFromType } from '~src/util/getTopicFromType';
+import dayjs from 'dayjs';
 
 function chunkArray(array: any[], chunkSize: number) {
 	if (array.length === 0) {
@@ -64,14 +65,14 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 					const postDocData = postDoc.data();
 					return {
 						...postDocData,
-						created_at: postDocData?.created_at?.toDate?.() || new Date(),
-						last_comment_at: postDocData?.last_comment_at?.toDate?.() || new Date(),
-						last_edited_at: postDocData?.last_edited_at?.toDate?.() || new Date(),
+						created_at: dayjs(postDocData?.created_at?.toDate?.() || new Date()).unix(),
+						last_comment_at: dayjs(postDocData?.last_comment_at?.toDate?.() || new Date()).unix(),
+						last_edited_at: dayjs(postDocData?.last_edited_at?.toDate?.() || new Date()).unix(),
 						network: networkDoc.id,
 						objectID: `${networkDoc.id}_${postTypeDoc.id}_${postDoc.id}`,
 						post_type: postTypeDoc.id,
 						topic_id: postDocData?.topic?.id || postDocData?.topic_id || getTopicFromType(postDocData?.id ).id,
-						updated_at: postDocData?.updated_at?.toDate?.() || new Date()
+						updated_at: dayjs(postDocData?.updated_at?.toDate?.() || new Date()).unix()
 					};
 				});
 

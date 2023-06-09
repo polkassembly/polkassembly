@@ -39,29 +39,33 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 
 	const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_WRITE_API_KEY);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const index = algoliaClient.initIndex('polkassembly_users');
+	const index = algoliaClient.initIndex('polkassembly_addresses');
 
-	const usersSnapshots = await firestore_db.collection('users').get();
+	const addressesSnapshots = await firestore_db.collection('addresses').get();
 
-	const chunksArray = chunkArray(usersSnapshots.docs, 300);
+	const chunksArray = chunkArray(addressesSnapshots.docs, 300);
 
 	let counter = 0;
-	for(const userArr of chunksArray) {
-		const userRecord = userArr.map((userDoc: any) => {
-			const userDocData = userDoc.data();
+	for(const addressArr of chunksArray) {
+		const addressRecord = addressArr.map((addressDoc: any) => {
+			const addressData = addressDoc.data();
 			return {
-				created_at: dayjs(userDocData?.created_at?.toDate?.() || new Date()).unix(),
-				email: userDocData?.email || '',
-				objectID: userDocData.id, // Unique identifier for the object
-				profile: userDocData?.profile || {},
-				username: userDocData?.username || ''
+				created_at: dayjs(addressData?.created_at?.toDate?.() || new Date()).unix(),
+				default: addressData?.default || false,
+				is_erc20: addressData?.is_erc20 || addressData.address.startsWith('0x') || false,
+				network: addressData?.network || '',
+				objectID: addressData?.address, // Unique identifier for the object
+				public_key: addressData?.public_key || '',
+				user_id: addressData?.user_id || '',
+				verified: addressData?.verified || false,
+				wallet: addressData?.wallet || ''
 			};
 		});
 		counter++;
-		console.log(counter,usersSnapshots.size);
+		console.log(counter,addressesSnapshots.size, addressRecord);
 
 		// commit batch
-		await index.saveObjects(userRecord).catch((err) => {
+		await index.saveObjects(addressRecord).catch((err) => {
 			console.log(err);
 		});
 	}

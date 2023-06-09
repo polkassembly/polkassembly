@@ -123,7 +123,7 @@ exports.onAddressWritten = functions.region('europe-west1').firestore.document('
 		user_id: addressData?.user_id || '',
 		verified: addressData?.verified || false,
 		wallet: addressData?.wallet || '',
-    created_at: dayjs(addressData.created_at?.toData?.() || new Date()).unix()
+    created_at: dayjs(addressData.created_at?.toDate?.() || new Date()).unix()
 	};
 
 	// Update the Algolia index

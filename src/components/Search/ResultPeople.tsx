@@ -6,15 +6,45 @@ import Link from 'next/link';
 import React from 'react';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
+// import { algolia_client } from '.';
+import { ProfileDetails } from '~src/auth/types';
+
+interface IUser{
+  username: string;
+  profile: ProfileDetails;
+  created_at: Date;
+  objectID : string | number;
+  addresses?: string[];
+}
 
 interface Props {
   className?: string;
-  peopleData: any[];
+  peopleData: IUser[];
   setOpenModal: (pre: boolean) => void;
   setUsersPage: (pre: any) => void;
   usersPage: {page: number, totalUsers: number};
+  searchInput: string;
 }
+
 const ResultPeople = ({ className, peopleData, usersPage, setUsersPage }: Props) => {
+	// const addressIndex = algolia_client?.initIndex('polkassembly_addresses');
+	// const [peopleDataWithAddress, setPeopleDataWithAddress] = useState(peopleData);
+
+	// const getDefaultAddress= async() => {
+	// if(!addressIndex) return ;
+
+	// const userIds = peopleData.map((people) => `user_id:${Number(people.objectID)}`);
+
+	// addressIndex.search('', { facetFilters: userIds, hitsPerPage: LISTING_LIMIT  }).then(({ hits }) => {
+	// console.log(hits,'addrsss');
+	// });
+	// };
+
+	// useEffect(() => {
+	// getDefaultAddress();
+	// // eslint-disable-next-line react-hooks/exhaustive-deps
+	// },[peopleData]);
+
 	return <div className={`${className} mt-4 -mx-6`}>
 		{peopleData.map((user, index) => <Link href={`/user/${user?.username}`} target='_blank' key={index}>
 			<DelegationProfile address={user?.addresses?.[0] || ''} username={user?.username} isSearch = {true}

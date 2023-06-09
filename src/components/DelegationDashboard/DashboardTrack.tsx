@@ -247,7 +247,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 				disabled={status.includes(ETrackDelegationStatus.Delegated)}
 				trackDetails={trackDetails}
 			/>
-		</div> : <Skeleton className='mt-'/>}
+		</div> : <Skeleton />}
 
 		{!openLoginModal && !openSignupModal && !loginWallet && <WalletConnectModal open={openModal} setOpen={setOpenModal} />}
 		<LoginPopup closable={false} setSignupOpen={setOpenSignupModal} modalOpen={openLoginModal} setModalOpen={setOpenLoginModal} isModal={true} isDelegation={true}/>

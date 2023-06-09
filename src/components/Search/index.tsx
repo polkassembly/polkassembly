@@ -28,6 +28,7 @@ import CloseIcon from '~assets/icons/close.svg';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
+export const algolia_client = algoliasearch(ALGOLIA_APP_ID || '', ALGOLIA_SEARCH_API_KEY || '');
 
 interface Props{
   className?: string;
@@ -57,10 +58,8 @@ export enum EDateFilter {
 }
 
 const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperSearch }: Props) => {
-
-	const client = algoliasearch(ALGOLIA_APP_ID || '', ALGOLIA_SEARCH_API_KEY || '');
-	const userIndex = client.initIndex('polkassembly_users');
-	const postIndex = client.initIndex('polkassembly_posts');
+	const userIndex = algolia_client.initIndex('polkassembly_users');
+	const postIndex = algolia_client.initIndex('polkassembly_posts');
 
 	const { network } = useNetworkContext();
 	const [searchInput, setSearchInput] = useState<string>('');
@@ -99,6 +98,8 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 
 		// const datefilter = [`created_at:${currentDate} - ${dateBefore30Days}`];
 
+		// const tracksFilter = [selectedTracks.map((trackId) => `track_id:${Number(trackId)}`)];
+
 		const topicFilter = [selectedTopics.map((topic) => {
 			const topicStr = optionTextToTopic(String(topic));
 			return `topic_id:${post_topic[topicStr as keyof typeof post_topic]}`;
@@ -113,6 +114,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		}
 
 		const networkFilter = [!isSuperSearch ? [`network:${network}`] : selectedNetworks.map((networkStr) => `network:${(networkStr).toLowerCase()}` )];
+
 		return  [...networkFilter, ...postTypeFilter, ...tagsFilter, ...topicFilter];
 	};
 
@@ -199,10 +201,10 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 										<DownOutlined className='ml-2.5 mt-1'/></span>
 								</div>
 							</Popover>
-							<FilterByTags isSearch={true} setSelectedTags={setSelectedTags}/>
+							<FilterByTags isSearch={true} setSelectedTags={setSelectedTags} selectedTags={selectedTags}/>
 							{filterBy === EFilterBy.Referenda && <Popover  open={openFilter.track} onOpenChange={() => setOpenFilter({ ...openFilter, track: !openFilter.track })} content={
 								<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => handleFilterChange(list, EMultipleCheckFilters.Tracks)} value={selectedTracks} >
-									{tracksArr && tracksArr?.map((track) => <Checkbox key={track?.name} value={track?.name} className={`text-xs font-normal py-1.5 ml-0 ${selectedTracks.includes(track?.name) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
+									{tracksArr && tracksArr?.map((track) => <Checkbox key={track?.name} value={track?.trackId} className={`text-xs font-normal py-1.5 ml-0 ${selectedTracks.includes(track?.name) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
 										<div className='mt-[2px]'>{track?.name}</div>
 									</Checkbox> )}
 								</Checkbox.Group>} placement="bottomLeft">
@@ -228,7 +230,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
           && postResults && <ResultPosts setOpenModal={setOpenModal} isSuperSearch={isSuperSearch} postsData={postResults} className='mt-6' postsPage={postsPage} setPostsPage={setPostsPage}/>
 					}
 
-					{filterBy === EFilterBy.Users && userResults &&  <ResultPeople setOpenModal={setOpenModal} peopleData={userResults} usersPage={usersPage} setUsersPage={setUsersPage} />}
+					{filterBy === EFilterBy.Users && userResults &&  <ResultPeople searchInput={searchInput} setOpenModal={setOpenModal} peopleData={userResults} usersPage={usersPage} setUsersPage={setUsersPage} />}
 
 					{
 						!loading && (postResults || userResults) && <SuperSearchCard

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider, Pagination } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { noTitle } from '~src/global/noTitle';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
@@ -31,7 +31,6 @@ interface Props {
   postsPage: {page: number, totalPosts: number};
 }
 const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsPage }: Props) => {
-	const [expandContent, setExpandContent] = useState<boolean>(false);
 
 	return <div className={ `${className} mt-4 -mx-6`}>
 		{ postsData.map((post, index: number) => {
@@ -48,8 +47,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 					<div className={`py-8 px-9 border-[#f3f4f5] border-solid flex-col border-[1px] shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] rounded-none border-b-[0px] hover:border-[#E5007A] hover:border-b-[1px] cursor-pointer min-h-[200px] ${index % 2 === 1 && 'bg-[#fafafb]'} ${index === postsData.length-1 && 'border-b-[1px]'} max-md:flex-wrap`}>
 						{post?.proposer_address ? <Address address={post?.proposer_address} displayInline textClassName='text-xs text-[#]'/> : <div className='text-xs text-[#485F7D] font-medium mb-1'>{post?.username}</div>}
 						<span className='text-[#243A57] text-sm font-medium mt-2'>{titleString}</span>
-						<Markdown md={expandContent ? post?.content : post?.content.slice(0, 250)} className={`text-[#8696a9] text-sm font-normal my-2 tracking-[0.01em] ${!expandContent && 'expand-content'}`}/>
-						<p className='text-[#E5007A] text-xs font-medium my-2' onClick={() => setExpandContent(!expandContent)}>{expandContent ? 'Show less' : 'Show More'}</p>
+						<Markdown md={post?.content.slice(0, 250)} className='text-[#8696a9] text-sm font-normal my-2 tracking-[0.01em] expand-content'/>
 						<div className='my-2 flex flex-shrink-0 gap-1'>
 							<div className='flex gap-2 items-center text-xs text-[#485F7D]'>
 								<div className='flex gap-1 items-center text-xs text-[#485F7D]'>
@@ -88,7 +86,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 									alt='Logo'
 								/></div> }
 							<div className='flex gap-2 items-center text-xs text-[#485F7D]'>
-                in <span className='text-[#E5007A]'>{post?.postType as ProposalType}</span>
+                in <span className='text-[#E5007A] capitalize'>{(post?.postType as ProposalType)?.split('_')?.join(' ')}</span>
 							</div>
 						</div>
 					</div>

@@ -48,7 +48,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 	const getData = async() => {
 		const { data, error } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
 
-		if(data){console.log(data); setProfileDetails({ ...profileDetails, ...data });}
+		if(data){setProfileDetails({ ...profileDetails, ...data });}
 		else{
 			console.log(error);
 		}

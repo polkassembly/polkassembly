@@ -97,8 +97,8 @@ class AuthService {
 		const newUserId = (await this.getLatestUserCount()) + 1;
 
 		const userId = String(newUserId);
-
 		const newUser: User = {
+			created_at: new Date(),
 			email,
 			email_verified: false,
 			id: newUserId,
@@ -343,7 +343,7 @@ class AuthService {
 		const addressDoc = await firebaseAdmin.firestore().collection('addresses').doc(address).get();
 		if (addressDoc.exists) throw apiErrorWithStatusCode(messages.ADDRESS_SIGNUP_ALREADY_EXISTS, 400);
 
-		const username = uuidv4().split('-').join('').substring(0, 25);
+		const username = address;
 		const password = uuidv4();
 
 		const user = await this.createUser('', password, username, true, network);

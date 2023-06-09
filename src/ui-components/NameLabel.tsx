@@ -14,9 +14,10 @@ interface Props {
 	disableIdenticon?: boolean
 	textClassName?: string
 	clickable?:boolean
+	truncateUsername?:boolean;
 }
 
-const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, textClassName, clickable=true } : Props) => {
+const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, textClassName, clickable=true , truncateUsername } : Props) => {
 	const router = useRouter();
 	return (
 		<div className={`${className}`}>
@@ -32,6 +33,7 @@ const NameLabel = ({ className, defaultAddress, username, disableIdenticon = fal
 					displayInline={true}
 					disableIdenticon={disableIdenticon}
 					clickable={clickable}
+					truncateUsername={truncateUsername}
 				/>
 			}
 		</div>

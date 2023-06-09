@@ -11,9 +11,10 @@ interface Props {
 	address: string
 	topic?: string
 	username?: string;
+	truncateUsername?:boolean;
 }
 
-const OnchainCreationLabel = ({ address, topic, username }:Props ) => {
+const OnchainCreationLabel = ({ address, topic, username, truncateUsername }:Props ) => {
 	return (
 		<div className='flex justify-between min-[340px]:flex-row min-[340px]:items-center text-xs text-navBlue w-full min-[340px]:w-auto'>
 			<div className='flex items-center'>
@@ -27,6 +28,7 @@ const OnchainCreationLabel = ({ address, topic, username }:Props ) => {
 										address={address}
 										className='address ml-1.5'
 										displayInline={true}
+										truncateUsername={truncateUsername}
 									/>
 									: <span
 										className='mx-1.5'

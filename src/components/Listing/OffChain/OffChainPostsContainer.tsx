@@ -63,20 +63,17 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 		</Dropdown>);
 
 	return (
-		<div className={`${className} bg-white p-3 md:p-8 rounded-[4px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)]`}>
-			<div className='flex items-center justify-between'>
+		<div className={`${className} bg-white p-3 md:p-0 rounded-[14px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)]`}>
+			<div className='flex items-center justify-between align-middle h-[59px] '>
 				<div>
-					<h1 className='dashboard-heading'>{ count } {
-						getTitle(proposalType)
-					}</h1>
 					<FilteredTags/>
 				</div>
 				<div className='flex gap-1'>
-					<FilterByTags/>
+					<FilterByTags className='mr-[25px]'/>
 					{sortByDropdown}
 				</div>
 			</div>
-			<OffChainPostsListingContainer proposalType={proposalType} sortBy={sortBy} count={count} posts={posts} className='mt-8' />
+			<OffChainPostsListingContainer proposalType={proposalType} sortBy={sortBy} count={count} posts={posts} className='' />
 		</div>
 	);
 };

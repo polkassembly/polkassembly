@@ -173,8 +173,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 							{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 							<Tooltip color='#E5007A' title={popupContent}>
 								<div className={'header display_inline identityName max-w-[30px] flex flex-col gap-y-1'}>
-									{ t1 && <span className='truncate text-[#243A57]'>{t1}</span> }
-									{sub && isSubVisible && <span className='sub truncate text-[#243A57]'>{sub}</span>}
+									{ t1 && <span className='truncate text-lightBlue text-xs'>{t1}</span> }
+									{sub && isSubVisible && <span className='sub truncate text-lightBlue text-xs'>{sub}</span>}
 								</div>
 							</Tooltip>
 						</Space>
@@ -182,8 +182,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 							<div className={'description display_inline flex items-center'}>
 								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} className='mr-2' />}
 								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[85px] flex gap-x-1 ${textClassName}`}>
-									{ t1 && <span className={`truncate text-[#243A57] font-medium ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
-									{sub && isSubVisible && <span className={'sub truncate text-[#243A57]'}>{sub}</span>}
+									{ t1 && <span className={`truncate text-xs text-lightBlue font-medium ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
+									{sub && isSubVisible && <span className={'sub truncate text-xs text-lightBlue'}>{sub}</span>}
 								</span>
 							</div>
 						</>
@@ -195,8 +195,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 									<Space className={'header'}>
 										{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 										<span className='bg-red-500 identityName max-w-[85px] flex flex-col gap-y-1'>
-											{ t2 && <span className={`${textClassName} truncate text-[#243A57]`}>{ t2 }</span> }
-											{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-[#243A57]`}>{sub}</span>}
+											{ t2 && <span className={`${textClassName} truncate text-xs text-lightBlue`}>{ t2 }</span> }
+											{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-lightBlue text-xs`}>{sub}</span>}
 										</span>
 									</Space>
 									<div className={'description display_inline'}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
@@ -208,8 +208,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 										<Space className={'header'}>
 											{identity && mainDisplay && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 											<span className='identityName max-w-[85px] flex flex-col gap-y-1'>
-												{ t2 && <span className={`${textClassName} truncate text-[#243A57]`}>{ t2 }</span> }
-												{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-[#243A57]`}>{sub}</span>}
+												{ t2 && <span className={`${textClassName} truncate text-xs text-lightBlue`}>{ t2 }</span> }
+												{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-lightBlue text-xs`}>{sub}</span>}
 											</span>
 										</Space>
 										: null
@@ -230,7 +230,7 @@ export default styled(Address)`
 
 	.content {
 		display: inline-block;
-		color: #243A57 !important;
+		color: #485F7D !important;
 		font-weight: 400 !important;
 	}
 
@@ -243,7 +243,7 @@ export default styled(Address)`
 	}
 
 	.description {
-		color: #243A57;
+		color: #485F7D;
 		margin-right: 0.4rem;
 		
 	}
@@ -253,7 +253,7 @@ export default styled(Address)`
 	}
 
 	.sub {
-		color: #243A57;
+		color: #485F7D;
 		line-height: inherit;
 	}
 `;

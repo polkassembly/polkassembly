@@ -14,7 +14,7 @@ interface Props{
 const TopicTag = ({ className, topic }: Props) => {
 
 	return (
-		<Tag className={`${className} ${topic} text-xs py-0.5 px-2 m-0`}>{topic}</Tag>
+		<Tag className={`${className} ${topic} text-xs py-1 px-3 -mt-2`}>{topic}</Tag>
 	);
 };
 
@@ -24,8 +24,7 @@ export default styled(TopicTag)`
 	color: white;
 	border-style: solid;
 	border-width: 1px;
-	border-radius: 0.2rem;
-	letter-spacing: 0.05rem;
+	border-radius: 4px;
 	text-transform: capitalize;
 
 	@media only screen and (max-width: 576px) {

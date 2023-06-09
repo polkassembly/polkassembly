@@ -223,7 +223,8 @@ export default styled(Address)`
 	}
 
 	.identicon {
-		margin-right: 0.25rem;
+		margin-top: -6px;
+		margin-right: 0.3rem;
 	}
 	.header {
 		font-weight: 500;
@@ -232,6 +233,7 @@ export default styled(Address)`
 
 	.description {
 		color: #485F7D;
+		margin-top: -3px;
 		margin-right: 0.4rem;
 		
 	}

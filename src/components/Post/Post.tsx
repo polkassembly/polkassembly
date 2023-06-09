@@ -411,7 +411,7 @@ const Post: FC<IPostProps> = (props) => {
 						}
 
 						{/* Post Content */}
-						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xl w-full mb-6'>
+						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6'>
 							{isEditing &&
               <EditablePostContent toggleEdit={toggleEdit} />}
 
@@ -421,7 +421,7 @@ const Post: FC<IPostProps> = (props) => {
 								/>
 								<Tabs
 									type="card"
-									className='ant-tabs-tab-bg-white text-[#243A57] font-medium'
+									className='ant-tabs-tab-bg-white text-bodyBlue font-medium'
 									items={tabItems}
 								/>
 

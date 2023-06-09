@@ -555,7 +555,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
 													<GovSidebarCard>
-														<h6 className="text-[#243A57] font-semibold text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
+														<h6 className="text-bodyBlue font-semibold text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendumEth
 															referendumId={onchainId as number}
 															onAccountChange={onAccountChange}
@@ -565,7 +565,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														}
 													</> : <GovSidebarCard>
-														<h6 className="text-[#243A57] font-semibold text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
+														<h6 className="text-bodyBlue font-semibold text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -599,7 +599,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
 													<GovSidebarCard>
-														<h6 className="text-[#243A57] font-semibold text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
+														<h6 className="text-bodyBlue font-semibold text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendumEthV2
 															referendumId={onchainId as number}
 															onAccountChange={onAccountChange}
@@ -609,7 +609,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														}
 													</> : <GovSidebarCard>
-														<h6 className="text-[#243A57] font-semibold text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
+														<h6 className="text-bodyBlue font-semibold text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -645,7 +645,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															className='md:min-w-[700px]'
 															closeIcon={<CloseIcon />}
 															title={
-																<h2 className='text-[#243A57] tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
+																<h2 className='text-bodyBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
 															}
 														>
 															<div className='mt-5'>

@@ -6,6 +6,7 @@ import React from 'react';
 
 import Address from './Address';
 import TopicTag from './TopicTag';
+import Link from 'next/link';
 
 interface Props {
 	address: string
@@ -33,7 +34,7 @@ const OnchainCreationLabel = ({ address, topic, username, truncateUsername }:Pro
 									: <span
 										className='mx-1.5'
 									>
-										{username}
+										<Link href={`/user/${username}`}>{username}</Link>
 									</span>
 							}
 						</>

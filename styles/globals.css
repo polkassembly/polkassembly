@@ -314,3 +314,12 @@ background-color: white !important;
   height: 100% !important;
   scale: 1.05 !important;
 }
+
+.opengov_banner {
+  background: radial-gradient(99.69% 25520% at 1.22% 0%, #42122C 0%, #A6075C 32.81%, #952863 77.08%, #E5007A 100%) !important;
+  box-shadow: 0px 5px 8px rgba(35, 18, 24, 0.04) !important;
+}
+
+.opengov_modal .ant-modal-content {
+  background-color: #FFF3FA !important;
+}

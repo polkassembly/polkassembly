@@ -60,13 +60,13 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 	});
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-4 lg:p-6 rounded-xl`}>
+		<div className={`${className} bg-white drop-shadow-md p-4 lg:p-6 rounded-xxl`}>
 			<div className="flex justify-between items-center">
-				<h2 className='dashboard-heading mb-6 mt-2 sm:mt-0'>Latest Activity</h2>
+				<h2 className='text-bodyBlue text-xl font-semibold leading-8 mb-6 mt-2 sm:mt-0'>Latest Activity</h2>
 				{currentTab !== 'all' && <Link className='text-sidebarBlue font-medium hover:text-pink_primary py-0.5 px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
 			</div>
 			<Tabs
-				className='ant-tabs-tab-bg-white text-[#243A57] text-sm font-medium'
+				className='ant-tabs-tab-bg-white text-bodyBlue text-sm font-medium'
 				type="card"
 				items={tabItems}
 				onChange={(key) => setCurrentTab(key)}
@@ -78,13 +78,23 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 export default styled(LatestActivity)`
 	th {
 		color: #485F7D !important;
-		font-weight: 600 !important;
+		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 	}
 
-	td.ant-table-cell {
-		color: var(--sidebarBlue) !important;
+	th.ant-table-cell {
+		color: #485F7D !important;
+		font-weight: 500 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
+	}
+
+	.ant-table-thead > tr > th {
+		color: #485F7D !important;
+		font-weight: 500 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
 	}
 
 	.ant-table-row{

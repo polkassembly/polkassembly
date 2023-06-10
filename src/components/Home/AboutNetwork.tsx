@@ -89,13 +89,13 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links } : { class
 	return (
 		<div className={`${className} bg-white drop-shadow-md p-5 md:p-6 rounded-xxl`}>
 			<div className="flex items-center justify-between">
-				<h2 className='text-[#243A57] text-[20px] font-semibold leading-8'>About</h2>
+				<h2 className='text-bodyBlue text-xl font-semibold leading-8'>About</h2>
 				<div className='hidden lg:inline-block'>
 					{networkSocialsData && socialLinks(networkSocialsData)}
 				</div>
 			</div>
 
-			<p className='text-[#243A57] mt-1.5 medium text-[14px]'>Join our Community to discuss, contribute and get regular updates from us!</p>
+			<p className='text-bodyBlue mt-1.5 medium text-sm'>Join our Community to discuss, contribute and get regular updates from us!</p>
 
 			<div className='mt-5 lg:hidden flex'>
 				{networkSocialsData && socialLinks(networkSocialsData)}

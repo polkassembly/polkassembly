@@ -340,7 +340,7 @@ const UpcomingEvents = ({ className }:Props) => {
 	const CalendarElement = () => (
 		<Spin spinning={loading}>
 			<Calendar
-				className='border border-solid border-gray-200 rounded-md mb-4'
+				className='border border-solid border-gray-200 rounded-xl mb-4'
 				fullscreen={false}
 				cellRender={dateCellRender}
 			/>
@@ -356,14 +356,13 @@ const UpcomingEvents = ({ className }:Props) => {
 				renderItem={item => {
 					return (<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-[#243A57]`}>
 						<a {...(item.url ? { href: item.url } : {})} target='_blank' rel='noreferrer' className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-sidebarBlue`}>
-							<div className='text-xs mb-1 flex items-center text-[#485F7D]'>
+							<div className='text-xs mb-1 flex items-center text-lightBlue'>
 								{dayjs(item.end_time).format('MMM D, YYYY')}
-								<span className="h-[4px] w-[4px] bg-navBlue mx-2 rounded-full inline-block"></span>
+								<span className="h-[4px] w-[4px] bg-bodyBlue mx-2 rounded-full inline-block"></span>
 								{dayjs(item.end_time).format('h:mm a')}
 							</div>
 
-							<div className='font-medium text-sm'>{item.title}</div>
-							<div className="text-sm">
+							<div className="text-sm text-bodyBlue">
 								{item.content}
 							</div>
 						</a>

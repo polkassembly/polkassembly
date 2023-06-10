@@ -34,9 +34,8 @@ export enum CHANNEL {
 export default function NotificationChannels({}: Props) {
 	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
 	const { network } = useNetworkContext();
-	const { id } = useUserDetailsContext();
+	const { id, networkPreferences } = useUserDetailsContext();
 	const handleClick = (channelName:CHANNEL) => {
-		console.log(channelName);
 		setShowModal(channelName);
 	};
 
@@ -44,7 +43,6 @@ export default function NotificationChannels({}: Props) {
 		try{
 			const userAddress = localStorage.getItem('address');
 			const signature = localStorage.getItem('signature');
-			console.log(userAddress, signature);
 
 			if(!userAddress || !signature) {
 				console.log('ERROR');
@@ -78,7 +76,6 @@ export default function NotificationChannels({}: Props) {
 
 			}
 		} catch (error){
-			console.log('ERROR', error);
 			queueNotification({
 				header: 'Failed!',
 				message: 'Error in generating token.',
@@ -112,11 +109,11 @@ export default function NotificationChannels({}: Props) {
                         Please select the socials where you would like to
                         receive notifications:
 					</p>
-					<EmailNotificationCard onClick={() => {}} />
+					<EmailNotificationCard onClick={(email:string) => {console.log(email);}} />
 					<Divider className='border-[#D2D8E0] border-2' dashed />
 					{Bots.map((bot, i) => (
 						<div key={bot.title}>
-							<BotSetupCard {...bot} onClick={handleClick} />
+							<BotSetupCard {...bot} onClick={handleClick} enabled={networkPreferences?.channelPreferences?.[bot.channel]?.enabled || false}/>
 							{Bots.length - 1 > i && (
 								<Divider
 									className='border-[#D2D8E0] border-[2px]'
@@ -128,22 +125,27 @@ export default function NotificationChannels({}: Props) {
 				</div>
 				<TelegramInfoModal
 					icon={<TelegramIcon/>}
-					title='How to add Den to Telegram'
+					title='How to add Bot to Telegram'
 					open={showModal === CHANNEL.TELEGRAM}
 					getVerifyToken={getVerifyToken}
+					onClose={() => setShowModal(null)}
+					generatedToken={networkPreferences?.channelPreferences?.[CHANNEL.TELEGRAM]?.verification_token || ''}
 				/>
-
 				<DiscordInfoModal
 					icon={<DiscordIcon/>}
-					title='How to add Den to Telegram'
+					title='How to add Bot to Discord'
 					open={showModal === CHANNEL.DISCORD}
 					getVerifyToken={getVerifyToken}
+					onClose={() => setShowModal(null)}
+					generatedToken={networkPreferences?.channelPreferences?.[CHANNEL.DISCORD]?.verification_token || ''}
 				/>
 				<SlackInfoModal
 					icon={<SlackIcon/>}
-					title='How to add Den to Telegram'
+					title='How to add Bot to Slack'
 					open={showModal === CHANNEL.SLACK}
 					getVerifyToken={getVerifyToken}
+					onClose={() => setShowModal(null)}
+					generatedToken={networkPreferences?.channelPreferences?.[CHANNEL.DISCORD]?.verification_token || ''}
 				/>
 			</Panel>
 		</Collapse>

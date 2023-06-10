@@ -8,14 +8,15 @@ import CollapseIcon from '~assets/icons/collapse.svg';
 import ChatActive from '~assets/icons/chat-active.svg';
 import GroupCheckbox from '../common-ui/GroupCheckbox';
 import { ACTIONS } from '../Reducer/action';
+import { INotificationObject } from '../types';
 
 const { Panel } = Collapse;
 
 type Props = {
-    onSetNotification: any;
-    dispatch: any;
+    onSetNotification:  (obj: INotificationObject) => void;
+    dispatch: React.Dispatch<any>;
     options: any;
-	userNotification:any
+	userNotification:INotificationObject
 };
 
 export default function Proposals({
@@ -44,7 +45,6 @@ export default function Proposals({
 				name: option?.triggerPreferencesName
 			};
 		});
-		console.log(notification);
 		onSetNotification(notification);
 		setAll(checked);
 	};

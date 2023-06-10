@@ -52,7 +52,6 @@ export default function Gov1Notification({
 					if (!postTypes.includes(key)) postTypes.push(key);
 				} else {
 					postTypes = postTypes.filter((postType: string) => {
-						// console.log(postType, title);
 						return postType !== key;
 					});
 				}
@@ -97,7 +96,6 @@ export default function Gov1Notification({
 				if (!postTypes.includes(title)) postTypes.push(title);
 			} else {
 				postTypes = postTypes.filter((postType: string) => {
-					// console.log(postType, title);
 					return postType !== title;
 				});
 			}

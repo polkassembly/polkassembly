@@ -13,9 +13,9 @@ const ImportPrimaryNetworkSettingModal = ({
 	primaryNetwork
 }: {
     open: boolean;
-    onConfirm: any;
-    onCancel: any;
-    primaryNetwork: any;
+    onConfirm: () => void;
+    onCancel: () => void;
+    primaryNetwork: string;
 }) => {
 	return (
 		<Modal
@@ -59,7 +59,8 @@ const ImportPrimaryNetworkSettingModal = ({
 				</p>
 			</div>
 			<p className='text-[16px] font-normal'>
-                Are you sure you want to import Kusama’s Network settings to all selected networks?
+                Are you sure you want to import Kusama’s Network settings to all
+                selected networks?
 			</p>
 		</Modal>
 	);

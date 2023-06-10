@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Modal } from 'antd';
+import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
@@ -11,8 +11,9 @@ type Props = {
     icon: any;
     title: string;
     open: boolean;
-    getVerifyToken: any;
+    getVerifyToken:  (channel: CHANNEL) => Promise<any>;
     generatedToken?: string;
+    onClose: () => void;
 };
 
 const DiscordInfoModal = ({
@@ -20,7 +21,8 @@ const DiscordInfoModal = ({
 	title,
 	open,
 	getVerifyToken,
-	generatedToken = ''
+	generatedToken = '',
+	onClose
 }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [token, setToken] = useState(generatedToken);
@@ -29,6 +31,10 @@ const DiscordInfoModal = ({
 		const data = await getVerifyToken(CHANNEL.DISCORD);
 		setToken(data);
 		setLoading(false);
+	};
+	const handleCopyClicked = (text: string) => {
+		navigator.clipboard.writeText(text);
+		message.success('Copied');
 	};
 	return (
 		<Modal
@@ -39,6 +45,8 @@ const DiscordInfoModal = ({
 			}
 			open={open}
 			closable
+			onCancel={onClose}
+			footer={null}
 		>
 			<div className=''>
 				<ol>
@@ -58,7 +66,11 @@ const DiscordInfoModal = ({
                         Send this command to the chat with the bot:
 						<br />
 						<span
-							onClick={() => {}}
+							onClick={() =>
+								handleCopyClicked(
+									'/add <web3Address> <verificationToken>'
+								)
+							}
 							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
 						>
 							<CopyIcon className='relative top-[6px]' />{' '}
@@ -75,7 +87,10 @@ const DiscordInfoModal = ({
 						{token && (
 							<>
 								<span>Verification Token: </span>
-								<span className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'>
+								<span
+									onClick={() => handleCopyClicked(token)}
+									className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
+								>
 									<CopyIcon className='relative top-[6px]' />{' '}
 									{token}
 								</span>

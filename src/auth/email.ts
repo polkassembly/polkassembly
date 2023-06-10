@@ -28,6 +28,7 @@ import {
 import shortenHash from '~src/auth/utils/shortenHash';
 
 import { UndoEmailChangeToken, User } from './types';
+import { FIREBASE_FUNCTIONS_URL } from '~src/components/Settings/Notifications/utils';
 
 const apiKey = process.env.SENDGRID_API_KEY;
 const FROM = {
@@ -58,6 +59,38 @@ export const sendVerificationEmail = (user: User, token: string, network: string
 
 	sgMail.send(msg).catch(e =>
 		console.error('Verification Email not sent', e));
+};
+
+export const sendVerificationEmailForNotification =async (user:User, token:string, network:string) => {
+	const verifyUrl = `https://${network}.polkassembly.io/verify-email?token=${token}`;
+	try{
+		const emailResponse = await fetch(
+			`${FIREBASE_FUNCTIONS_URL}/notify`,
+			{
+				body: JSON.stringify({
+					args: {
+						email:user.email,
+						verifyUrl
+					},
+					trigger: 'verifyEmail'
+				}),
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'x-api-key': '47c058d8-2ddc-421e-aeb5-e2aa99001949',
+					'x-source': 'polkassembly'
+				},
+				method: 'POST'
+			}
+		);
+		const { data, error } = await emailResponse.json()as {data:any, error:string};
+		if(error){
+			throw new Error(error);
+		}
+		return { data, error: null };
+	}catch(e){
+		return { data:null, error:  e };
+	}
 };
 
 export const sendResetPasswordEmail = (user: User, token: string, network: string): void => {

@@ -15,8 +15,8 @@ const AddNetworkModal = ({
 	onCancel
 }: {
     open: boolean;
-    onConfirm: any;
-    onCancel: any;
+    onConfirm: (networks: any) => void;
+    onCancel: () => void
 }) => {
 	//@ts-ignore
 	const [allNetworks, setAllNetworks] = useState(networks);
@@ -157,7 +157,9 @@ const AddNetworkModal = ({
 										onChange={(checked) =>
 											handleAllClick(checked, chain)
 										}
-										checked={allNetworks[chain].every((network:any) => network.selected)}
+										checked={allNetworks[chain].every(
+											(network: any) => network.selected
+										)}
 									/>
 									<p className='m-0 text-[#243A57B2]'>All</p>
 								</span>

@@ -9,33 +9,51 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 type Props = {
     icon?: any;
     name: any;
-	selected?:boolean;
-	onActionClick?:any;
+    selected?: boolean;
+    onActionClick?: any;
 };
 
 const Tag = styled(AntdTag)`
-&.ant-tag{
-padding:8px;
-}
+    &.ant-tag {
+        padding: 8px;
+    }
 `;
 
 const PlusIcon = styled(PlusCircleOutlined)`
-svg {
-	width:25px;
-	height:25px;
-	color:#E5007A;
-}
+    svg {
+        width: 25px;
+        height: 25px;
+        color: #e5007a;
+    }
 `;
 
-export default function NetworkTags({ icon, name, selected=true, onActionClick }: Props) {
+export default function NetworkTags({
+	icon,
+	name,
+	selected = true,
+	onActionClick
+}: Props) {
 	return (
-		<Tag onClick={onActionClick} className={`flex items-center justify-between text-navBlue border-solid border rounded-[34px] px-[24px] py-[8px] border-[#E5007A] ${selected ? 'bg-[#FEF2F8]': 'bg-white px-[12px] py-[15px]' } cursor-pointer`}>
-			{icon ? <Image
-				className='w-[40px] h-[40px] rounded-full'
-				src={icon}
-				alt='Logo'
-			/>: <PlusIcon/>}
-			<span className={`items-center justify-center ml-[9.25px] mr-[13.35px] font-semibold ${selected ? 'text-[#243A57]' : 'text-pink_primary'} text-lg leading-[18px] tracking-[0.02em] capitalize`}>
+		<Tag
+			onClick={onActionClick}
+			className={`flex items-center justify-between text-navBlue border-solid border rounded-[34px] px-[24px] py-[8px] border-[#E5007A] ${
+				selected ? 'bg-[#FEF2F8]' : 'bg-white px-[12px] py-[15px]'
+			} cursor-pointer`}
+		>
+			{icon ? (
+				<Image
+					className='w-[40px] h-[40px] rounded-full'
+					src={icon}
+					alt='Logo'
+				/>
+			) : (
+				<PlusIcon />
+			)}
+			<span
+				className={`items-center justify-center ml-[9.25px] mr-[13.35px] font-semibold ${
+					selected ? 'text-[#243A57]' : 'text-pink_primary'
+				} text-lg leading-[18px] tracking-[0.02em] capitalize`}
+			>
 				{name}
 			</span>
 		</Tag>

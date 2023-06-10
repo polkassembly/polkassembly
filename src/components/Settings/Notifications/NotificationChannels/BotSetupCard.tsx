@@ -9,19 +9,21 @@ type Props = {
     title: string;
     description: string;
     Icon: any;
-	onClick:any;
+	onClick:(channelName: CHANNEL) => void;
 	channel:CHANNEL
+	enabled:boolean
 };
 
-export default function BotSetupCard({ title, description, Icon, onClick, channel }: Props) {
+export default function BotSetupCard({ title, description, Icon, onClick, channel, enabled }: Props) {
 	return (
 		<div className='flex items-start gap-2'>
-			<div>{Icon}</div>
+			<div className={`${title === 'Slack' || title === 'Element' ? 'relative top-[2px]' :''}`}>{Icon}</div>
 			<div>
 				<h3 className='text-base font-semibold m-0'>
 					{title} Notifications {!description && (
-						<span className='text-[10px] px-[2px] py-[4px] border'>Coming Soon</span>
+						<span className='text-[10px] px-[4px] py-[2px] bg-[#407BFF] border-[#5A46FF] border-2 text-[#FFFFFF] rounded-tr-lg rounded-bl-lg'>Coming Soon</span>
 					)}
+					{!!enabled && <span className='text-[10px] px-[4px] py-[2px] bg-[#407BFF] border-[#5A46FF] border-2 text-[#FFFFFF] rounded-tr-lg rounded-bl-lg'>Enabled</span>}
 				</h3>
 				{description && (
 					<p className='font-normal m-0'>

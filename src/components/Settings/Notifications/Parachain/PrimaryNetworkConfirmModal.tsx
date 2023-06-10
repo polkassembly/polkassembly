@@ -7,14 +7,13 @@ import styled from 'styled-components';
 import { CheckOutlineIcon } from '~src/ui-components/CustomIcons';
 
 const StyledAlert = styled(Alert)`
+    svg {
+        color: white;
+    }
 
-svg{
-    color:white
-}
-
-.ant-alert-message {
-    color:white
-}
+    .ant-alert-message {
+        color: white;
+    }
 `;
 
 const SetPrimaryNetworkSettingModal = ({
@@ -24,9 +23,9 @@ const SetPrimaryNetworkSettingModal = ({
 	network
 }: {
     open: boolean;
-    onConfirm: any;
-    onCancel: any;
-    network: any;
+    onConfirm:() => void;
+    onCancel: () => void;
+    network: string;
 }) => {
 	return (
 		<Modal
@@ -45,13 +44,16 @@ const SetPrimaryNetworkSettingModal = ({
 			onOk={onConfirm}
 		>
 			<p className='text-[16px] font-normal m-0 m-6'>
-                Are you sure you want ${network} as your Primary Network for settings?
+                Are you sure you want ${network} as your Primary Network for
+                settings?
 			</p>
 			<StyledAlert
 				showIcon
 				type='info'
 				className='text-[14px] bg-[#4E75FF] text-[#fff] '
-				message={'Primary Network Settings allow you to copy settings to other networks by just one click. You can also change the Primary Network later.'}
+				message={
+					'Primary Network Settings allow you to copy settings to other networks by just one click. You can also change the Primary Network later.'
+				}
 			/>
 		</Modal>
 	);

@@ -26,17 +26,25 @@ export interface UserDetailsContextType {
   delegationDashboardAddress: string;
   loginAddress: string;
   networkPreferences: INetworkPreferences;
-  primaryNetwork:string
+  primaryNetwork: string
 }
 
 export interface INetworkPreferences {
-  channelPreferences: {};
-  triggerPreferences:{
-    [index:string]: {
+  channelPreferences: {
+    [index: string]: {
+      verification_token: string,
+      verification_token_expires: Date
       enabled: boolean;
-      name: string;
-      post_types?:Array<string>,
-      tracks?:Array<number>,
+    }
+  },
+  triggerPreferences: {
+    [index: string]: {
+      [index: string]:{
+        enabled: boolean;
+        name: string;
+        post_types?: Array<string>,
+        tracks?: Array<number>,
+      }
     }
   },
 }
@@ -49,7 +57,7 @@ export enum Role {
 }
 
 export enum NotificationStatus {
-  SUCCESS= 'success',
+  SUCCESS = 'success',
   ERROR = 'error',
   WARNING = 'warning',
   INFO = 'info'
@@ -176,31 +184,31 @@ export enum Wallet {
 }
 
 export const PostOrigin = {
-	AUCTION_ADMIN : 'AuctionAdmin',
-	BIG_SPENDER : 'BigSpender',
-	BIG_TIPPER : 'BigTipper',
-	CANDIDATES : 'Candidates',
-	EXPERTS : 'Experts',
-	FELLOWS : 'Fellows',
-	FELLOWSHIP_ADMIN : 'FellowshipAdmin',
-	GENERAL_ADMIN : 'GeneralAdmin',
-	GRAND_MASTERS : 'GrandMasters',
-	LEASE_ADMIN : 'LeaseAdmin',
-	MASTERS : 'Masters',
-	MEDIUM_SPENDER : 'MediumSpender',
-	MEMBERS : 'Members',
-	PROFICIENTS : 'Proficients',
-	REFERENDUM_CANCELLER : 'ReferendumCanceller',
-	REFERENDUM_KILLER : 'ReferendumKiller',
-	ROOT : 'root',
-	SENIOR_EXPERTS : 'SeniorExperts',
-	SENIOR_FELLOWS : 'SeniorFellows',
-	SENIOR_MASTERS : 'SeniorMasters',
-	SMALL_SPENDER : 'SmallSpender',
-	SMALL_TIPPER : 'SmallTipper',
-	STAKING_ADMIN : 'StakingAdmin',
-	TREASURER : 'Treasurer',
-	WHITELISTED_CALLER : 'WhitelistedCaller'
+	AUCTION_ADMIN: 'AuctionAdmin',
+	BIG_SPENDER: 'BigSpender',
+	BIG_TIPPER: 'BigTipper',
+	CANDIDATES: 'Candidates',
+	EXPERTS: 'Experts',
+	FELLOWS: 'Fellows',
+	FELLOWSHIP_ADMIN: 'FellowshipAdmin',
+	GENERAL_ADMIN: 'GeneralAdmin',
+	GRAND_MASTERS: 'GrandMasters',
+	LEASE_ADMIN: 'LeaseAdmin',
+	MASTERS: 'Masters',
+	MEDIUM_SPENDER: 'MediumSpender',
+	MEMBERS: 'Members',
+	PROFICIENTS: 'Proficients',
+	REFERENDUM_CANCELLER: 'ReferendumCanceller',
+	REFERENDUM_KILLER: 'ReferendumKiller',
+	ROOT: 'root',
+	SENIOR_EXPERTS: 'SeniorExperts',
+	SENIOR_FELLOWS: 'SeniorFellows',
+	SENIOR_MASTERS: 'SeniorMasters',
+	SMALL_SPENDER: 'SmallSpender',
+	SMALL_TIPPER: 'SmallTipper',
+	STAKING_ADMIN: 'StakingAdmin',
+	TREASURER: 'Treasurer',
+	WHITELISTED_CALLER: 'WhitelistedCaller'
 };
 
 export type TrackInfoType = {
@@ -241,7 +249,7 @@ export interface NetworkEvent {
   user_id: number
 }
 
-export interface ICommentHistory{
+export interface ICommentHistory {
   content: string,
   created_at: Date,
   sentiment: number | 0,
@@ -263,7 +271,7 @@ export interface IPollVote {
   created_at: Date;
   updated_at: Date;
   vote: Vote;
-  user_id : number;
+  user_id: number;
 }
 
 export interface IOptionPollVote {
@@ -296,7 +304,7 @@ export interface PostLink {
   id: number
 }
 
-export interface IPostHistory{
+export interface IPostHistory {
   created_at: Date | string;
   content: string;
   title: string;
@@ -320,16 +328,16 @@ export interface Post {
   subscribers?: number[]
 }
 export interface IPostTag {
-  name:string;
-  last_used_at:Date;
+  name: string;
+  last_used_at: Date;
 }
 
 export enum ESentiments {
-Against = 1,
-SlightlyAgainst = 2,
-Neutral = 3,
-SlightlyFor = 4,
-For = 5
+  Against = 1,
+  SlightlyAgainst = 2,
+  Neutral = 3,
+  SlightlyFor = 4,
+  For = 5
 }
 
 export interface CommentReply {
@@ -379,9 +387,9 @@ export type PjsCalendarItem = PjsCalendarItemDuration & {
 
 export enum ETrackDelegationStatus {
   All = 'all',
-	Delegated = 'delegated',
-	Received_Delegation = 'received_delegation',
-	Undelegated = 'undelegated'
+  Delegated = 'delegated',
+  Received_Delegation = 'received_delegation',
+  Undelegated = 'undelegated'
 }
 
 export interface IDelegation {
@@ -394,11 +402,11 @@ export interface IDelegation {
 }
 
 export interface IDelegate {
-	name?: string
-	address: string
-	bio: string
-	active_delegation_count: number
-	voted_proposals_count: number
+  name?: string
+  address: string
+  bio: string
+  active_delegation_count: number
+  voted_proposals_count: number
   isNovaWalletDelegate?: boolean
 }
 
@@ -410,31 +418,31 @@ export enum EVoteDecisionType {
 }
 
 export enum NOTIFICATION_CHANNEL {
-	EMAIL = 'email',
-	TELEGRAM = 'telegram',
-	DISCORD = 'discord',
-	ELEMENT = 'element',
-	SLACK = 'slack',
-	IN_APP = 'in_app'
+  EMAIL = 'email',
+  TELEGRAM = 'telegram',
+  DISCORD = 'discord',
+  ELEMENT = 'element',
+  SLACK = 'slack',
+  IN_APP = 'in_app'
 }
 
 export interface IUserNotificationChannelPreferences {
-	name: NOTIFICATION_CHANNEL;
-	enabled: boolean;
-	handle: string;
-	verified: boolean;
-	verification_token?: string;
+  name: NOTIFICATION_CHANNEL;
+  enabled: boolean;
+  handle: string;
+  verified: boolean;
+  verification_token?: string;
 }
 
 export interface IUserNotificationTriggerPreferences {
-	name: string;
-	enabled: boolean;
-	[additionalProperties: string]: any; // trigger specific properties
+  name: string;
+  enabled: boolean;
+  [additionalProperties: string]: any; // trigger specific properties
 }
 
 export interface IUserNotificationSettings {
-	channelPreferences: {[channel:string]: IUserNotificationChannelPreferences},
-	triggerPreferences: {
-		[network:string] : {[index:string] : IUserNotificationTriggerPreferences}
-	}
+  channelPreferences: { [channel: string]: IUserNotificationChannelPreferences },
+  triggerPreferences: {
+    [network: string]: { [index: string]: IUserNotificationTriggerPreferences }
+  }
 }

@@ -18,11 +18,21 @@ import SetPrimaryNetworkSettingModal from './PrimaryNetworkConfirmModal';
 const { Panel } = Collapse;
 type Props = {
     primaryNetwork: string;
-    onSetPrimaryNetwork: any;
-    onSetNetworkPreferences: any;
-    onCopyPrimaryNetworkNotification: any;
-	selectedNetwork:any,
-	setSelectedNetwork:any
+    onSetPrimaryNetwork: (network: string) => Promise<void>;
+    onSetNetworkPreferences: (networks: Array<string>) => Promise<void>;
+    onCopyPrimaryNetworkNotification: (selectedNetwork: Array<string>) => Promise<void>;
+    selectedNetwork: Array<{
+        name: string;
+        selected: boolean;
+    }>;
+    setSelectedNetwork: React.Dispatch<
+        React.SetStateAction<
+            Array<{
+                name: string;
+                selected: boolean;
+            }>
+        >
+    >;
 };
 
 // eslint-disable-next-line no-empty-pattern
@@ -87,8 +97,8 @@ export default function Parachain({
 						name={network}
 					/>
 					{selectedNetwork
-						.filter(({ name }:{ name:string }) => name !== network)
-						.map(({ name }:{ name:string }) => (
+						.filter(({ name }: {name: string}) => name !== network)
+						.map(({ name }: {name: string}) => (
 							<NetworkTags
 								key={name}
 								icon={chainProperties[name].logo}
@@ -106,7 +116,7 @@ export default function Parachain({
 					<Checkbox
 						value={false}
 						onChange={() => {
-							if(primaryNetwork === network){
+							if (primaryNetwork === network) {
 								return;
 							}
 							setPrimaryPreferencesModal(true);
@@ -150,7 +160,9 @@ export default function Parachain({
 							return;
 						}
 						onCopyPrimaryNetworkNotification(
-							selectedNetwork.map(({ name }:{name:string}) => name)
+							selectedNetwork.map(
+								({ name }: {name: string}) => name
+							)
 						);
 						setCopyPreferencesModal(false);
 					}}

@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { IReducerState } from '../types';
 
 // of the Apache-2.0 license. See the LICENSE file for details.
 const ACTIONS = {
@@ -20,7 +21,7 @@ const ACTIONS = {
 	SUBSCRIBED_PROPOSAL_SINGLE_CHANGE:'subscribed_proposal_single_change'
 };
 
-const updateOpenGovAll = (payload, state) => {
+const updateOpenGovAll = (payload:any, state:IReducerState) => {
 	const { checked } = payload.params;
 	const updatedOpenGov:any = {};
 	Object.keys(state.openGov).forEach((key) => {
@@ -31,13 +32,13 @@ const updateOpenGovAll = (payload, state) => {
 	return { ...state, openGov: updatedOpenGov };
 };
 
-const updateOpenGovProposalAll = (payload, state) => {
+const updateOpenGovProposalAll = (payload:any, state:IReducerState) => {
 	const { checked, key } = payload.params;
 	const updatedOpenGov = state.openGov[key].map((category: any) => ({ ...category, selected: checked }));
 	return { ...state, openGov: { ...state.openGov, [key]: updatedOpenGov } };
 };
 
-const updateOpenGovProposal = (payload, state) => {
+const updateOpenGovProposal = (payload:any, state:IReducerState) => {
 	const { checked, value, key } = payload.params;
 	const updatedOpenGov = state.openGov[key].map((category: any) =>
 		category.label === value ? { ...category, selected: checked } : category
@@ -45,7 +46,7 @@ const updateOpenGovProposal = (payload, state) => {
 	return { ...state, openGov: { ...state.openGov, [key]: updatedOpenGov } };
 };
 
-const updateGovOneAll = (payload, state) => {
+const updateGovOneAll = (payload:any, state:IReducerState) => {
 	const { checked } = payload.params;
 	const updatedGovOne:any = {};
 	Object.keys(state.gov1Post).forEach((key) => {
@@ -56,13 +57,13 @@ const updateGovOneAll = (payload, state) => {
 	return { ...state, gov1Post: updatedGovOne };
 };
 
-const updateGovOneProposalAll = (payload, state) => {
+const updateGovOneProposalAll = (payload:any, state:IReducerState) => {
 	const { checked, key } = payload.params;
 	const updatedGovOneKey = state.gov1Post[key].map((category: any) => ({ ...category, selected: checked }));
 	return { ...state, gov1Post: { ...state.gov1Post, [key]: updatedGovOneKey } };
 };
 
-const updateGovOneProposal = (payload, state) => {
+const updateGovOneProposal = (payload:any, state:IReducerState) => {
 	const { checked, value, key } = payload.params;
 	const updatedGovOneKey = state.gov1Post[key].map((category: any) =>
 		category.label === value ? { ...category, selected: checked } : category
@@ -70,7 +71,7 @@ const updateGovOneProposal = (payload, state) => {
 	return { ...state, gov1Post: { ...state.gov1Post, [key]: updatedGovOneKey } };
 };
 
-const updateALLSubscribedProposal = (payload, state) => {
+const updateALLSubscribedProposal = (payload:any, state:IReducerState) => {
 	const { checked } = payload.params;
 	const subscribePostPayload = state.subscribePost.map((category: any) => ({
 		...category,
@@ -79,7 +80,7 @@ const updateALLSubscribedProposal = (payload, state) => {
 	return { ...state, subscribePost: subscribePostPayload };
 };
 
-const updateSubscribedProposal = (payload, state) => {
+const updateSubscribedProposal = (payload:any, state:IReducerState) => {
 	const { categoryOptions, checked, value } = payload.params;
 	const subscribePostPayload = categoryOptions.map((category: any) =>
 		category.label === value ? { ...category, selected: checked } : category
@@ -87,7 +88,7 @@ const updateSubscribedProposal = (payload, state) => {
 	return { ...state, subscribePost: subscribePostPayload };
 };
 
-const updateALLMyProposal = (payload, state) => {
+const updateALLMyProposal = (payload:any, state:IReducerState) => {
 	const { checked } = payload.params;
 	const myProposalPayload = state.myProposal.map((category: any) => ({
 		...category,
@@ -96,7 +97,7 @@ const updateALLMyProposal = (payload, state) => {
 	return { ...state, myProposal: myProposalPayload };
 };
 
-const updateMyProposal = (payload, state) => {
+const updateMyProposal = (payload:any, state:IReducerState) => {
 	const { categoryOptions, checked, value } = payload.params;
 	const myProposalPayload = categoryOptions.map((category: any) =>
 		category.label === value ? { ...category, selected: checked } : category
@@ -104,7 +105,7 @@ const updateMyProposal = (payload, state) => {
 	return { ...state, myProposal: myProposalPayload };
 };
 
-const updateAll = (payload, state) => {
+const updateAll = (payload:any, state:IReducerState) => {
 	const myProposal = state.myProposal.map((category: any) => {
 		return {
 			...category,

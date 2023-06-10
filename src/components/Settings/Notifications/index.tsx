@@ -15,6 +15,7 @@ import Loader from '~src/ui-components/Loader';
 import { notificationInitialState } from './Reducer/initState';
 import { reducer } from './Reducer/reducer';
 import { ACTIONS } from './Reducer/action';
+import { INotificationObject } from './types';
 
 export default function Notifications() {
 	const { id, networkPreferences, setUserDetailsContextState, primaryNetwork } =
@@ -25,14 +26,13 @@ export default function Notifications() {
 		reducer,
 		notificationInitialState
 	);
-	console.log(notificationPreferences);
 
 	const [selectedNetwork, setSelectedNetwork] = useState([
 		{ name: network, selected: true }
 	]);
 	const [loading, setLoading] = useState(true);
 
-	const handleCurrentNetworkNotifications = (obj: any) => {
+	const handleCurrentNetworkNotifications = (obj: INotificationObject) => {
 		setUserDetailsContextState((prev) => ({
 			...prev,
 			networkPreferences: {
@@ -58,6 +58,8 @@ export default function Notifications() {
 					...prev,
 					networkPreferences: {
 						...prev.networkPreferences,
+						channelPreferences:
+                            data?.notification_preferences?.channelPreferences,
 						triggerPreferences:
                             data?.notification_preferences?.triggerPreferences
 					}
@@ -113,7 +115,6 @@ export default function Notifications() {
 
 	const handleSetNetworkPreferences = async (networks: Array<string>) => {
 		try {
-			console.log(networkPreferences.triggerPreferences[network]);
 			const { data, error } = (await nextApiClientFetch(
 				'api/v1/auth/actions/setNetworkPreferences',
 				{
@@ -131,13 +132,12 @@ export default function Notifications() {
 	};
 
 	useEffect(() => {
-		console.log('called');
 		handleSetNetworkPreferences(selectedNetwork.map(({ name }) => name));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [networkPreferences.triggerPreferences]);
 
 	const handleCopyPrimaryNetworkNotification = async (
-		selectedNetwork: any
+		selectedNetwork: Array<string>
 	) => {
 		try {
 			const primarySettings =
@@ -161,7 +161,10 @@ export default function Notifications() {
 		getPrimaryNetwork().then(() => {
 			getNotificationSettings().then((res) => {
 				dispatch({
-					payload: { data: res.triggerPreferences?.[network] || {}, network },
+					payload: {
+						data: res.triggerPreferences?.[network] || {},
+						network
+					},
 					type: ACTIONS.GET_NOTIFICATION_OBJECT
 				});
 				setLoading(false);

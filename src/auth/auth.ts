@@ -22,7 +22,8 @@ import { Network, Role, Wallet } from '../types';
 import {
 	sendResetPasswordEmail,
 	sendUndoEmailChangeEmail,
-	sendVerificationEmail
+	sendVerificationEmail,
+	sendVerificationEmailForNotification
 } from './email';
 import { redisDel, redisGet, redisSetex } from './redis';
 import { Address, AuthObjectType, CalendarEvent, HashedPassword, IUserPreference, JWTPayloadType, NotificationSettings, ProfileDetails, UndoEmailChangeToken, User } from './types';
@@ -154,11 +155,18 @@ class AuthService {
 	private async createAndSendEmailVerificationToken (user: User, network:string): Promise<void> {
 		if (user.email) {
 			const verifyToken = uuidv4();
-
 			await redisSetex(getEmailVerificationTokenKey(verifyToken), ONE_DAY, user.email);
 
 			// send verification email in background
 			sendVerificationEmail(user, verifyToken, network);
+		}
+	}
+
+	private async sendEmailVerificationToken (user: User, network:string): Promise<any> {
+		if (user.email) {
+			const verifyToken = uuidv4();
+			// send verification email in background
+			return await sendVerificationEmailForNotification(user, verifyToken, network);
 		}
 	}
 
@@ -1032,6 +1040,54 @@ class AuthService {
 		proposalEventDoc.ref.update({
 			status: status
 		});
+	}
+	public async SendVerifyEmail (token: string, email: string, network: string): Promise<any> {
+		const userId = getUserIdFromJWT(token, jwtPublicKey);
+		const firestore = firebaseAdmin.firestore();
+
+		if (email !== '') {
+			const alreadyExists = !(await firestore.collection('users').where('email', '==', email).limit(1).get()).empty;
+			if (alreadyExists) throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
+		}
+
+		let user = await getUserFromUserId(userId);
+
+		const existingUndoTokenDoc = await firestore.collection('undo_email_change_tokens').where('user_id', '==', userId).limit(1).get();
+
+		if (existingUndoTokenDoc.size > 0 && existingUndoTokenDoc.docs[0].data().valid) {
+			const now = dayjs();
+			const last = dayjs(existingUndoTokenDoc.docs[0].data().created_at);
+			const hours = dayjs.duration(now.diff(last)).asHours();
+
+			if (hours < 48) {
+				throw apiErrorWithStatusCode(messages.EMAIL_CHANGE_NOT_ALLOWED_YET, 403);
+			}
+		}
+
+		const newUndoEmailChangeToken: UndoEmailChangeToken = {
+			created_at: new Date(),
+			email: user.email,
+			token: uuidv4(),
+			user_id: user.id,
+			valid: true
+		};
+
+		await firestore.collection('undo_email_change_tokens').add(newUndoEmailChangeToken);
+
+		await firestore.collection('users').doc(String(user.id)).update({
+			email,
+			email_verified: false
+		});
+
+		user = await getUserFromUserId(userId);
+
+		const { data, error } = await this.sendEmailVerificationToken(user, network);
+
+		console.log(data, error);
+		// send undo token in background
+		sendUndoEmailChangeEmail(user, newUndoEmailChangeToken, network);
+
+		return { data, error };
 	}
 }
 

@@ -37,7 +37,7 @@ const OpenGovHeaderBanner = () => {
 			<h2
 				className='m-0 p-0 text-white font-medium font-poppins text-sm md:text-[24px] leading-[21px] md:leading-[36px]'
 			>
-                OpenGov going LIVE on Polkadot
+                OpenGov expected to go LIVE on Polkadot
 			</h2>
 			<div className='flex items-center gap-x-1 md:gap-x-3'>
 				<span className='font-medium text-sm leading-[21px] md:text-[28px] md:leading-[42px] text-white w-[32px] md:w-[37px] flex items-center justify-center'>{days}</span>

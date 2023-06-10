@@ -51,7 +51,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						</div>
 						<div className='flex justify-between items-center'>
 							{relativeCreatedAt &&
-							<div className='flex items-center text-navBlue lg:hidden'>
+							<div className='flex items-center text-lightBlue lg:hidden'>
 								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 							</div>}
 							{
@@ -102,7 +102,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							</>}
 							{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #485F7D' }} />}
 							{relativeCreatedAt && <>
-								<div className='hidden lg:flex items-center'>
+								<div className='hidden text-lightBlue lg:flex items-center'>
 									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 								</div>
 							</>}
@@ -126,9 +126,9 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 xs:p-2 md:p-4 xs:h-[150px] xs:flex sm:hidden ${className}`}>
 				<div className="sm:hidden xs:flex flex-col flex-1 xs:mt-1">
 					<div className="sm:hidden xs:flex xs:justify-start gap-x-2 lg:items-start lg:flex-row my-2">
-						<span className='font-medium text-center mr-2 flex-none xs:w-[45px] text-bodyBlue xs:mt-3'>#{post_id}</span>
-						<div className='xs:mt-3 lg:mt-0'>
-							<h1 className='text-bodyBlue font-medium text-sm flex'>
+						<span className='font-medium text-center mr-2 flex-none xs:w-[45px] text-bodyBlue xs:mt-0'>#{post_id}</span>
+						<div className='xs:mt-0 lg:mt-0'>
+							<h1 className='text-bodyBlue font-medium flex'>
 								{title}
 							</h1>
 						</div>
@@ -158,9 +158,9 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 
 						<div className='sm:hidden xs:flex xs:justify-start'>
 							<OnchainCreationLabel address={address} username={username} />
-							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-1' style={{ borderLeft: '1px solid #485F7D' }} />
+							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
 							{relativeCreatedAt && <>
-								<div className='xs:flex lg:flex items-center'>
+								<div className='xs:flex xs:text-lightBlue lg:flex items-center'>
 									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 								</div>
 							</>}

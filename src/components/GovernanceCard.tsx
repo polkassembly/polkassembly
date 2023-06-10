@@ -86,15 +86,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	return (
 		<>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200  sm:p-3 md:p-6 min-h-[147px] sm:flex xs:hidden`}>
-				<span className='font-medium text-center mr-2 flex-none sm:w-[120px] text-[#243A57] sm:mt-4'>#{isTip? tip_index: onchainId}</span>
+				<span className='font-medium text-center mr-2 flex-none sm:w-[120px] text-bodyBlue sm:mt-4'>#{isTip? tip_index: onchainId}</span>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-4">
 					<OnchainCreationLabel address={address} username={username} />
 					<div className='hidden sm:flex sm:justify-between gap-x-2 lg:items-start lg:flex-row my-2 '>
 						<div className='mt-3 lg:mt-0'>
-							<h1 className='text-[#243A57] text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
-								<span className='break-all text-[#243A57] font-medium text-sm'>{ mainTitle }</span>
+							<h1 className='text-bodyBlue text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
+								<span className='break-all text-bodyBlue font-medium text-sm'>{ mainTitle }</span>
 							</h1>
-							<h2 className='text-[#243A57] font-medium text-sm'>{subTitle}</h2>
+							<h2 className='text-bodyBlue font-medium text-sm'>{subTitle}</h2>
 						</div>
 						<div className='flex justify-between items-center gap-x-2'>
 							{
@@ -115,29 +115,29 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						<div className='flex items-center gap-x-2 '>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
 								<LikeOutlined style={{ color: '#485F7D' }} />
-								<span className='text-[#485F7D]'>{getFormattedLike(postReactionCount['👍'])}</span>
+								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5 mr-2'>
 								<DislikeOutlined style={{ color: '#485F7D' }} />
-								<span className='text-[#485F7D]'>{getFormattedLike(postReactionCount['👎'])}</span>
+								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>
 							{
 								isCommentsVisible?
 									<>
-										<div className='xs:hidden text-[#485F7D] sm:flex items-center'>
+										<div className='xs:hidden text-lightBlue sm:flex items-center'>
 											<NewChatIcon style={{
 												color: '#485F7D'
-											}} className='mr-1 text-[#485F7D]' /> {commentsCount}
+											}} className='mr-1 text-lightBlue' /> {commentsCount}
 										</div>
 									</>
 									: null
 							}
 							{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
 							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
-								(<div key={index} className='text-[#485F7D] rounded-xl px-[14px] py-[4px] border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
+								(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-[4px] border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
 									{tag}
 								</div>))}
-							{tags.length>2 && <span className='text-[#243A57]' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+							{tags.length>2 && <span className='text-bodyBlue' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
                 +{tags.length-2}
 							</span>}
 							</>}
@@ -150,7 +150,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</> : null
 							}
 							{relativeCreatedAt && <>
-								<div className='flex text-[#485F7D] items-center'>
+								<div className='flex text-lightBlue items-center'>
 									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 								</div>
 							</>}
@@ -158,16 +158,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{
 								topic?
 									<div className='flex items-center '>
-										<div className='mr-1.5 ml-auto hidden min-[340px]:flex'></div>
+										<div className='mr-0.5 ml-auto hidden min-[340px]:flex'></div>
 										<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #485F7D' }} />
-										<TopicTag topic={topic} />
+										<TopicTag className='sm:mt-1' topic={topic} />
 									</div>
 									: null
 							}
 						</div>
 
 						{!!end && !!currentBlock &&
-							<div className="flex text-[#485F7D] items-center">
+							<div className="flex text-lightBlue items-center">
 								<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 								<ClockCircleOutlined className='mr-1' />
 								{
@@ -197,12 +197,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200  xs:px-2 xs:py-2 md:pb-6 min-h-[147px] xs:flex sm:hidden`}>
 				<div className="sm:hidden xs:flex flex-col flex-1 xs:mt-1">
 					<div className='sm:hidden xs:flex xs:justify-start gap-x-2 lg:items-start lg:flex-row my-2 '>
-						<span className='font-medium text-center xs:w-[45px] text-[#243A57] xs:mt-3.5'>#{isTip? tip_index: onchainId}</span>
-						<div className='xs:mt-3.5 lg:mt-0'>
-							<h1 className='text-[#243A57] text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
-								<span className='break-all text-[#243A57] font-medium text-sm'>{ mainTitle }</span>
+						<span className='font-medium text-center xs:w-[45px] text-bodyBlue xs:mt-0'>#{isTip? tip_index: onchainId}</span>
+						<div className='xs:mt-0 lg:mt-0'>
+							<h1 className='text-bodyBlue flex max-w-[250px] overflow-hidden lg:max-w-none'>
+								<span className='text-bodyBlue text-sm  font-medium'>{ mainTitle }</span>
 							</h1>
-							<h2 className='text-[#243A57] font-medium text-sm'>{subTitle}</h2>
+							<h2 className='text-bodyBlue font-medium text-sm'>{subTitle}</h2>
 						</div>
 						<div className='sm:hidden xs:flex justify-between items-center gap-x-2'>
 							{
@@ -218,35 +218,35 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 					</div>
 
-					<div className="mt-0 sm:gap-2.5 xs:gap-0 font-medium text-[#243A57] text-xs sm:hidden xs:flex flex-col lg:flex-row items-start lg:items-center">
+					<div className="mt-0 sm:gap-2.5 xs:gap-0 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row items-start lg:items-center">
 						<div className="sm:hidden xs:flex xs:justify-start xs:flex-wrap">
 							<OnchainCreationLabel address={address} username={username} />
-							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-2' style={{ borderLeft: '1px solid #485F7D' }} />
+							<Divider type="vertical" className='max-lg:hidden xs:inline-block' style={{ borderLeft: '1px solid #485F7D' }} />
 							{relativeCreatedAt && <>
-								<div className='flex text-[#485F7D] items-center'>
+								<div className='flex text-lightBlue xs:-mt-1 mt-0 items-center'>
 									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 								</div>
 							</>}
-							{
-								!tags || tags.length === 0?
-									status  &&
-									<StatusTag className='mt-0 mx-3' status={status} />
-									: null
-							}
 						</div>
-						<div className='xs:flex justify-between items-center xs:mt-2 xs:gap-x-2'>
+						<div className='xs:flex justify-between items-center xs:mt-3 xs:gap-x-2'>
 							{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
 							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
-								(<div key={index} className='text-[#485F7D] rounded-xl px-[14px] py-[4px] border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
+								(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-[4px] border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
 									{tag}
 								</div>))}
-							{tags.length>2 && <span className='text-[#243A57]' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+							{tags.length>2 && <span className='text-bodyBlue' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
                 +{tags.length-2}
 							</span>}
 							</>}
 							{tags && tags.length > 0?
 								status  && <StatusTag className='xs:mt-0' status={status} />
 								: null}
+							{
+								!tags || tags.length === 0?
+									status  &&
+									<StatusTag className='mt-1' status={status} />
+									: null
+							}
 						</div>
 
 					</div>

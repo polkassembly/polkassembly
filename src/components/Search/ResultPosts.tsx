@@ -42,7 +42,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 
 			return (
 				<Link
-					href={`${post?.network}.polkassembly.io/${getSinglePostLinkFromProposalType(post?.postType)}${post?.id}`}
+					href={`http://${post?.network}.polkassembly.io/${getSinglePostLinkFromProposalType(post?.post_type)}/${post?.id}`}
 					key={index}
 					target='_blank'>
 					<div className={`py-8 px-9 border-[#f3f4f5] border-solid flex-col border-[1px] shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] rounded-none border-b-[0px] hover:border-[#E5007A] hover:border-b-[1px] cursor-pointer min-h-[200px] ${index % 2 === 1 && 'bg-[#fafafb]'} ${index === postsData.length-1 && 'border-b-[1px]'} max-md:flex-wrap`}>
@@ -87,7 +87,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 									alt='Logo'
 								/></div> }
 							<div className='flex gap-2 items-center text-xs text-[#485F7D]'>
-                in <span className='text-[#E5007A] capitalize'>{(post?.post_type as ProposalType)?.split('_')?.join(' ')}</span>
+                in <span className='text-[#E5007A] capitalize'>{post?.post_type === 'referendums_v2' ? 'Opengov referenda' : (post?.post_type as ProposalType)?.split('_')?.join(' ')}</span>
 							</div>
 						</div>
 					</div>

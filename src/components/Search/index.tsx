@@ -64,8 +64,9 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 
 	const { network } = useNetworkContext();
 	const [searchInput, setSearchInput] = useState<string>('');
+	const [finalSearchInput, setFinalSearchInput] = useState<string>('');
 	const [filterBy, setFilterBy] = useState<EFilterBy>(EFilterBy.Referenda);
-	const [dateFilter, setDateFilter] = useState<EDateFilter | null>();
+	const [dateFilter, setDateFilter] = useState<EDateFilter | null>(null);
 	const [selectedTags, setSelectedTags] =  useState<string[]>([]);
 	const [selectedTracks, setSelectedTracks] = useState<CheckboxValueType[]>([]);
 	const [selectedTopics, setSelectedTopics] = useState<CheckboxValueType[]>([]);
@@ -95,16 +96,20 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		const postTypeFilter = [];
 
 		if(filterBy === EFilterBy.Referenda){
-			postTypeFilter.push([`postType:-${ProposalType.DISCUSSIONS}`],[`postType:-${ProposalType.GRANTS}`]);
+			postTypeFilter.push([`post_type:-${ProposalType.DISCUSSIONS}`],[`post_type:-${ProposalType.GRANTS}`]);
 		}else if(filterBy === EFilterBy.Discussions){
-			postTypeFilter.push([`postType:${ProposalType.DISCUSSIONS}`,`postType:${ProposalType.GRANTS}`]);
+			postTypeFilter.push([`post_type:${ProposalType.DISCUSSIONS}`,`post_type:${ProposalType.GRANTS}`]);
 		}
+		const tracksFilter = [
+			(isOpenGovSupported(network)|| isSuperSearch) && filterBy !== EFilterBy.Discussions ?  selectedTracks.map((trackId) => `track_number:${Number(trackId)}`) : []
+		];
 
-		return  [ ...postTypeFilter,
+		return  [
+			...postTypeFilter,
+			...tracksFilter,
 			!isSuperSearch ? [`network:${network}`] : selectedNetworks.map((networkStr) => `network:${(networkStr).toLowerCase()}` ),
 			selectedTags.map((tag) => { return `tags:${tag}`;}),
-			selectedTopics.map((topic) => `topic_id:${post_topic[optionTextToTopic(String(topic)) as keyof typeof post_topic]}`),
-			filterBy === EFilterBy.Discussions ? [] :!isSuperSearch ? isOpenGovSupported(network) ? selectedTracks.map((trackId) => `track_number:${Number(trackId)}`) : [] : []];
+			selectedTopics.map((topic) => `topic_id:${post_topic[optionTextToTopic(String(topic)) as keyof typeof post_topic]}`)];
 	};
 
 	const getDateFilter = () => {
@@ -135,7 +140,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 
 	const getResultData = async() => {
 
-		if(searchInput.length <= 2 || !userIndex || !postIndex ){
+		if(finalSearchInput.length <= 2 || !userIndex || !postIndex ){
 			setLoading(false);
 			return;
 		}
@@ -143,7 +148,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		setLoading(true);
 		if(filterBy !== EFilterBy.Users){
 			const facetFilters = getFacetFileters();
-			await postIndex.search(searchInput, { facetFilters, filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage.page-1 }).then(({ hits, nbHits }) => {
+			await postIndex.search(finalSearchInput, { facetFilters, filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage.page-1 }).then(({ hits, nbHits }) => {
 				setPostsPage({ ...postsPage, totalPosts: nbHits });
 				setPostResults(hits);
 
@@ -153,7 +158,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 			});
 		}
 		else{
-			await userIndex.search(searchInput, { filters : '', hitsPerPage: LISTING_LIMIT, page: usersPage.page-1 }).then(({ hits, nbHits }) => {
+			await userIndex.search(finalSearchInput, { filters : '', hitsPerPage: LISTING_LIMIT, page: usersPage.page-1 }).then(({ hits, nbHits }) => {
 				setUsersPage({ ...usersPage, totalUsers: nbHits });
 				setPeopleResults(hits);
 			}).catch((error) => {
@@ -166,30 +171,32 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedSearchFn = useCallback(_.debounce(getResultData, 5000), [searchInput, selectedTags, filterBy, selectedTopics, usersPage.page, postsPage.page, isSuperSearch, selectedNetworks, selectedTracks, dateFilter]);
+	const debouncedSearchFn = useCallback(_.debounce(getResultData, 5000), [finalSearchInput, selectedTags, filterBy, selectedTopics, usersPage.page, postsPage.page, isSuperSearch, selectedNetworks, selectedTracks, dateFilter]);
 
 	useEffect(() => {
-		if(searchInput.length<=2)return;
+		if(finalSearchInput.length <= 2)return;
 		setOpenFilter({ date: false, topic: false, track: false });
 		setLoading(true);
 		debouncedSearchFn();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearchFn]);
+	},[debouncedSearchFn]);
 
 	const handleModalClose = () => {
 		setSearchInput('');
+		setFinalSearchInput('');
 		setPostResults([]);
 		setPeopleResults([]);
 		setFilterBy(EFilterBy.Referenda);
 		setSelectedTags([]);
 		setSelectedTopics([]);
+		setSelectedTracks([]);
 		setDateFilter(null);
 		setIsSuperSearch(false);
 		setOpenModal(false);
 	};
 
 	return <Modal
-		title={<label className='text-[#243A57] text-xl font-semibold'>{isSuperSearch ? 'Super Search':'Search'} {searchInput.length > 0 && `Results for "${searchInput}"`}</label>}
+		title={<label className='text-[#243A57] text-xl font-semibold'>{isSuperSearch ? 'Super Search':'Search'} {finalSearchInput.length > 0 && `Results for "${finalSearchInput}"`}</label>}
 		open={openModal}
 		onCancel={handleModalClose}
 		footer={false}
@@ -197,9 +204,9 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		closeIcon={<CloseIcon/>}
 	>
 		<div className={`${className} ${isSuperSearch && !loading && 'pb-20'}`}>
-			<Input className='placeholderColor mt-4' type='search' value={searchInput} onChange={(e) => setSearchInput(e.target.value)} allowClear placeholder='Type here to search for something' addonAfter= {<SearchOutlined className='text-white text-[18px] tracking-[0.02em]'/>}/>
+			<Input className='placeholderColor mt-4' type='search' value={searchInput} onChange={(e) => setSearchInput(e.target.value)} allowClear placeholder='Type here to search for something' addonAfter= {<div onClick={() => setFinalSearchInput(searchInput)} className='text-white text-[18px] tracking-[0.02em] cursor-pointer'><SearchOutlined/></div>}/>
 
-			{searchInput.length > 2 && (postResults || userResults) && <div className={`${loading && 'hidden'}`}>
+			{finalSearchInput.length > 2 && (postResults || userResults) && <div className={`${loading && 'hidden'}`}>
 				<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2 ' }`}>
 					<Radio.Group onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage({ page: 1, totalPosts: 0 }); setUsersPage({ page: 1, totalUsers: 0 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className}`}>
 						<Radio value={EFilterBy.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Referenda ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'}`}>Referenda {filterBy === EFilterBy.Referenda && !loading && `(${postResults?.length})`}</Radio>
@@ -216,8 +223,9 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 								<Radio value={EDateFilter.Last_30_days} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_30_days ? 'text-[#243A57]' : 'text-[#667589]'}`}>Last 30 days</Radio>
 								<Radio value={EDateFilter.Last_3_months} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_3_months ? 'text-[#243A57]' : 'text-[#667589]'}`}>Last 3 months</Radio>
 								<Radio value={EDateFilter.Last_12_months} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_12_months ? 'text-[#243A57]' : 'text-[#667589]'}`}>Last 12 months</Radio>
+								<Radio value={null} className={`text-xs font-normal py-1.5 ${!dateFilter ? 'text-[#243A57]' : 'text-[#667589]'}`}>All time</Radio>
 							</Radio.Group></div>} placement="bottomLeft" >
-							<div className={`flex items-center justify-center text-xs cursor-pointer ${openFilter.date && 'text-pink_primary' }`}>
+							<div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter.date || dateFilter) && 'text-pink_primary' }`}>
                                Date
 								<span className='text-[#96A4B6]'>
 									<DownOutlined className='ml-2.5 mt-1'/></span>
@@ -230,7 +238,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 									<div className='mt-[2px]'>{track?.name}</div>
 								</Checkbox> )}
 							</Checkbox.Group>} placement="bottomLeft">
-							<div className={`flex items-center justify-center text-xs cursor-pointer ${openFilter.track && 'text-pink_primary' }`}>
+							<div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter.track || selectedTracks.length > 0 ) && 'text-pink_primary' }`}>
                             Tracks
 								<span className='text-[#96A4B6]'>
 									<DownOutlined className='ml-2.5 mt-1'/></span>
@@ -240,7 +248,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 							{topicOptions && topicOptions?.map((topic) => <Checkbox key={topic} value={topic} className={`text-xs font-normal py-1.5 ml-0 ${selectedTopics.includes(topic) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
 								<div className='mt-[2px]'>{topic}</div>
 							</Checkbox>)}</Checkbox.Group>} placement="bottomLeft" >
-							<div className={`flex items-center justify-center text-xs cursor-pointer ${openFilter.topic && 'text-pink_primary' }`}>
+							<div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter.topic || selectedTopics.length > 0 ) && 'text-pink_primary' }`}>
                  Topic
 								<span className='text-[#96A4B6]'><DownOutlined className='ml-2.5 mt-1'/></span>
 							</div>
@@ -252,7 +260,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
           && postResults && <ResultPosts setOpenModal={setOpenModal} isSuperSearch={isSuperSearch} postsData={postResults} className='mt-6' postsPage={postsPage} setPostsPage={setPostsPage}/>
 				}
 
-				{filterBy === EFilterBy.Users && userResults &&  <ResultPeople searchInput={searchInput} setOpenModal={setOpenModal} peopleData={userResults} usersPage={usersPage} setUsersPage={setUsersPage} />}
+				{filterBy === EFilterBy.Users && userResults &&  <ResultPeople searchInput={finalSearchInput} setOpenModal={setOpenModal} peopleData={userResults} usersPage={usersPage} setUsersPage={setUsersPage} />}
 
 				{
 					!loading && (postResults || userResults) && <SuperSearchCard

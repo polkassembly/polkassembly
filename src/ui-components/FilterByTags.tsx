@@ -162,7 +162,7 @@ const FilterByTags=({ className, isSearch, setSelectedTags }:Props) => {
 				<span className='text-xl ml-2 mt-[2px]'>
 					{openFilter?<FilterIcon/>:<FilterUnfilledIcon/>}
 				</span>
-			</div> : <div className={`flex items-center justify-center text-xs cursor-pointer ${openFilter ? 'text-pink_primary':'text-[#667589]'}`}>
+			</div> : <div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter || tags?.length > 0) ? 'text-pink_primary':'text-[#667589]'}`}>
           Tags
 				<span className='text-[#96A4B6] font-semibold'><DownOutlined className='ml-2.5 mt-1'/></span>
 			</div> }

@@ -39,7 +39,7 @@ interface Props {
 
 export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
-	if(isOpenGovSupported(network) && !req.headers.referer) {
+	if(isOpenGovSupported(network) && !req.headers.referer || network === 'polkadot') {
 		return {
 			props: {},
 			redirect: {

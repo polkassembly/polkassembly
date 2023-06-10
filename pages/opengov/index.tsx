@@ -16,6 +16,7 @@ import News from 'src/components/Home/News';
 import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
+import OpenGovOverviewBanner from '~src/components/AppLayout/OpenGovOverviewBanner';
 import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
 import { useNetworkContext } from '~src/context';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -41,6 +42,12 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 
 	const network = getNetworkFromReqHeaders(req.headers);
 	const networkSocialsData = await getNetworkSocials({ network });
+
+	if (network === 'polkadot') {
+		return { props: {
+			network
+		} };
+	}
 
 	if(!networkTrackInfo[network]) {
 		return { props: { error: 'Network does not support OpenGov yet.' } };
@@ -103,27 +110,39 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 		<>
 			<SEOHead title='OpenGov' network={network}/>
 
-			<div className="mt-6 mx-1">
-				{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData?.data} showGov2Links />}
-			</div>
+			{
+				network === 'polkadot' ? (
+					<>
+						<OpenGovOverviewBanner />
+					</>
+				)
+					: (
+						<>
+							<div className="mt-6 mx-1">
+								{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData?.data} showGov2Links />}
+							</div>
 
-			<div className="mt-8 mx-1">
-				<TreasuryOverview />
-			</div>
+							<div className="mt-8 mx-1">
+								<TreasuryOverview />
+							</div>
 
-			<div className="mt-8 mx-1">
-				<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
-			</div>
+							<div className="mt-8 mx-1">
+								<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
+							</div>
 
-			<div className="mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">
-				<div className='w-full xl:w-[60%]'>
-					<UpcomingEvents />
-				</div>
+							<div className="mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">
+								<div className='w-full xl:w-[60%]'>
+									<UpcomingEvents />
+								</div>
 
-				<div className='w-full xl:w-[40%]'>
-					<News twitter={networkSocialsData?.data?.twitter || ''} />
-				</div>
-			</div>
+								<div className='w-full xl:w-[40%]'>
+									<News twitter={networkSocialsData?.data?.twitter || ''} />
+								</div>
+							</div>
+						</>
+					)
+			}
+
 			<ChatFloatingModal/>
 		</>
 	);

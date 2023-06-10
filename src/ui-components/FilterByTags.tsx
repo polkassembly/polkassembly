@@ -33,6 +33,7 @@ const FilterByTags=({ className, isSearch, setSelectedTags, selectedTags }:Props
 	const [trendingTags, setTrendingTags] = useState<IPostTag[]>([]);
 	const router = useRouter();
 	const [displayTags, setDisplayTags] = useState<string[]>([]);
+
 	const getData= async() => {
 		const { data , error } = await nextApiClientFetch<IPostTag[]>('api/v1/all-tags');
 		if(error) console.error('Error in getting all-tags', error);
@@ -106,11 +107,11 @@ const FilterByTags=({ className, isSearch, setSelectedTags, selectedTags }:Props
 	},[searchInput, tags]);
 
 	useEffect(() => {
-		if(searchInput.length === 0 && (isSearch ? selectedTags.length === 0 :tags.length === 0) && filteredTags.length === 0){
+		if(searchInput.length === 0 && (isSearch ? selectedTags?.length === 0 :tags.length === 0) && filteredTags.length === 0){
 			setDisplayTags(trendingTags.slice(0, 5).map((tag) => tag?.name));
 		}else{
 			setDisplayTags([...tags, ...(filteredTags?.slice(0, 5).map((tag) => tag?.name) || filteredTags.map((tag) => tag?.name))]);}
-	}, [filteredTags, searchInput.length, tags, trendingTags, allTags, selectedTags.length, isSearch]);
+	}, [filteredTags, searchInput.length, tags, trendingTags, allTags, selectedTags?.length, isSearch]);
 
 	const content = <>
 		{!isSearch ? <div className={`text-sidebarBlue cursor-auto flex text-sm justify-between font-medium mb-[-2px] mt-[-2px] tracking-wide ${poppins.variable} ${poppins.className}`}>

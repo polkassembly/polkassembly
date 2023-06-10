@@ -114,7 +114,6 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		}
 
 		const networkFilter = [!isSuperSearch ? [`network:${network}`] : selectedNetworks.map((networkStr) => `network:${(networkStr).toLowerCase()}` )];
-
 		return  [...networkFilter, ...postTypeFilter, ...tagsFilter, ...topicFilter];
 	};
 

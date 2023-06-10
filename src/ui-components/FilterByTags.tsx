@@ -20,10 +20,9 @@ interface Props {
   className?: string;
   isSearch?: boolean;
   setSelectedTags?: (pre: string[]) => void;
-  selectedTags?: string[];
 }
 
-const FilterByTags=({ className, isSearch, setSelectedTags, selectedTags }:Props) => {
+const FilterByTags=({ className, isSearch, setSelectedTags }:Props) => {
 	const defaultTags = useGetFilterByFromUrl();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
 	const [filteredTags, setFilteredTags] = useState<IPostTag[]>([]);
@@ -82,8 +81,8 @@ const FilterByTags=({ className, isSearch, setSelectedTags, selectedTags }:Props
 		return false;
 	};
 
-	const handleSetTags=(tag:string) => {
-
+	const handleSetTags=(tag: string) => {
+		setOpenFilter(false);
 		if (tag && tags.indexOf( tag.toLowerCase() ) === -1 && tags.length<5){
 			setTags([...tags, tag.toLowerCase()]);
 			setSelectedTags && setSelectedTags([...tags, tag.toLowerCase()]);
@@ -94,6 +93,7 @@ const FilterByTags=({ className, isSearch, setSelectedTags, selectedTags }:Props
 	};
 
 	const handleRemoveTag= ( removedTag: string ) => {
+		setOpenFilter(false);
 		const newTags = tags.filter((tag) => tag !== removedTag);
 		setTags(newTags);
 		setSelectedTags && setSelectedTags(newTags);
@@ -107,13 +107,15 @@ const FilterByTags=({ className, isSearch, setSelectedTags, selectedTags }:Props
 	},[searchInput, tags]);
 
 	useEffect(() => {
-		if(searchInput.length === 0 && (isSearch ? selectedTags?.length === 0 :tags.length === 0) && filteredTags.length === 0){
+		setOpenFilter(false);
+		if(searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0){
 			setDisplayTags(trendingTags.slice(0, 5).map((tag) => tag?.name));
 		}else{
-			setDisplayTags([...tags, ...(filteredTags?.slice(0, 5).map((tag) => tag?.name) || filteredTags.map((tag) => tag?.name))]);}
-	}, [filteredTags, searchInput.length, tags, trendingTags, allTags, selectedTags?.length, isSearch]);
+			setDisplayTags([...tags, ...(filteredTags?.slice(0, 5).map((tag) => tag?.name) || filteredTags.map((tag) => tag?.name))]);
+		}
+	}, [filteredTags, searchInput.length, tags, trendingTags, allTags]);
 
-	const content = <>
+	const content = <div className='min-h-[150px]'>
 		{!isSearch ? <div className={`text-sidebarBlue cursor-auto flex text-sm justify-between font-medium mb-[-2px] mt-[-2px] tracking-wide ${poppins.variable} ${poppins.className}`}>
       Tags
 			{!isSearch && <span className='text-pink_primary font-normal text-[10px] flex justify-center cursor-pointer' onClick={() => {setTags([]); !isSearch && handleFilterByClick([]);setSearchInput('');}}>
@@ -134,7 +136,7 @@ const FilterByTags=({ className, isSearch, setSelectedTags, selectedTags }:Props
 					</span>
 				</div> )}
 			</div>
-			: <Checkbox.Group className={`flex flex-col mt-1.5 tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll  ${poppins.className} ${poppins.variable}`} value={isSearch ? selectedTags : tags}>
+			: <Checkbox.Group className={`flex flex-col mt-1.5 tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll  ${poppins.className} ${poppins.variable}`} value={tags}>
 				{displayTags.map((item, index) => <Checkbox onClick={() => handleExits(item) ? handleRemoveTag(item) : handleSetTags(item) }
 					className={`text-xs font-normal ml-0 ${tags.includes(item) ? 'text-[#243A57]' : 'text-[#667589]'} ${index !== 0 ? 'py-1.5' : 'pb-1.5'}`}
 					key={index} value={item}>
@@ -142,7 +144,7 @@ const FilterByTags=({ className, isSearch, setSelectedTags, selectedTags }:Props
 				</Checkbox>)}
 			</Checkbox.Group>}
 		{filteredTags.length === 0 && searchInput.length > 0 ? <div className='h-[100%] flex items-center justify-center flex-col gap-2 mt-2'><NoTagsFoundIcon/><span className={`text-[10px] text-navBlue tracking-wide ${poppins.className} ${poppins.variable} `}>No tag found.</span></div> : null }
-	</>;
+	</div>;
 
 	return (
 
@@ -155,7 +157,7 @@ const FilterByTags=({ className, isSearch, setSelectedTags, selectedTags }:Props
 			arrow={isSearch}
 		>
 
-			{!isSearch ? <div className={`text-sm tracking-wide font-normal min-h-[200px] flex items-center ${openFilter ? 'text-pink_primary':'text-grey_primary'} mt-[3.5px] cursor-pointer`}>
+			{!isSearch ? <div className={`text-sm tracking-wide font-normal flex items-center ${openFilter ? 'text-pink_primary':'text-grey_primary'} mt-[3.5px] cursor-pointer`}>
         Filter
 				<span className='text-xl ml-2 mt-[2px]'>
 					{openFilter?<FilterIcon/>:<FilterUnfilledIcon/>}

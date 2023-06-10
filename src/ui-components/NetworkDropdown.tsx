@@ -77,6 +77,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 
 	const handleLink = (option: DropdownMenuItemType) => {
 
+		setOpenFilter(false);
 		if(isSearch && setSelectedNetworks && selectedNetworks){
 			const filterArr = selectedNetworks.filter((network) => network !== option?.key);
 			if(filterArr?.length < selectedNetworks.length){

@@ -21,6 +21,7 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import LikeIcon from '~assets/search/search-like.svg';
 import DislikeIcon from '~assets/search/search-dislike.svg';
 import CommentIcon from '~assets/search/search-comment.svg';
+import dayjs from 'dayjs';
 
 interface Props {
   className?: string;
@@ -41,7 +42,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 
 			return (
 				<Link
-					href={`https://${post?.network}.polkassembly.io/${getSinglePostLinkFromProposalType(post?.postType)}/${post.postId}`}
+					href={`${post?.network}.polkassembly.io/${getSinglePostLinkFromProposalType(post?.postType)}${post?.id}`}
 					key={index}
 					target='_blank'>
 					<div className={`py-8 px-9 border-[#f3f4f5] border-solid flex-col border-[1px] shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] rounded-none border-b-[0px] hover:border-[#E5007A] hover:border-b-[1px] cursor-pointer min-h-[200px] ${index % 2 === 1 && 'bg-[#fafafb]'} ${index === postsData.length-1 && 'border-b-[1px]'} max-md:flex-wrap`}>
@@ -72,7 +73,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 							}
 							<div className='flex gap-2 items-center text-xs text-[#485F7D]'>
 								<ClockCircleOutlined className='-mr-1'/>
-								{getRelativeCreatedAt(post?.created_at)}
+								{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
 								<Divider style={{ border: '1px solid #485F7D' }} type="vertical"/>
 							</div>
 							{(post?.topic || post?.topic_id) && <div className='flex gap-2 items-center'>
@@ -86,7 +87,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 									alt='Logo'
 								/></div> }
 							<div className='flex gap-2 items-center text-xs text-[#485F7D]'>
-                in <span className='text-[#E5007A] capitalize'>{(post?.postType as ProposalType)?.split('_')?.join(' ')}</span>
+                in <span className='text-[#E5007A] capitalize'>{(post?.post_type as ProposalType)?.split('_')?.join(' ')}</span>
 							</div>
 						</div>
 					</div>

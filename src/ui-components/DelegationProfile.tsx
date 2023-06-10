@@ -81,9 +81,9 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 			/>
 			<div className='text-[#243A57]'>
 				<span className='text-[#243A57] font-semibold mb-4 tracking-wide text-lg'>{username || userName}</span >
-				{((address && address.length > 0 ) || addresses.length > 0) && <div className='flex gap-2 items-center'>
-					<Address address={address || addresses[0]} displayInline className='text-[14px] text-[#243A57]' identiconSize={34} />
-					<span className='flex items-center cursor-pointer' onClick={() => {copyLink(address || addresses[0]) ;success();}}>
+				{address && address.length > 0  && <div className='flex gap-2 items-center'>
+					<Address address={address} displayInline className='text-[14px] text-[#243A57]' identiconSize={34} />
+					<span className='flex items-center cursor-pointer' onClick={(e) => {isSearch && e.preventDefault(); copyLink(address || addresses[0]) ;success();}}>
 						{contextHolder}
 						<CopyIcon/>
 					</span>

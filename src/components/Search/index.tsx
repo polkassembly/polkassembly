@@ -61,6 +61,7 @@ export enum EDateFilter {
 const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperSearch }: Props) => {
 	const userIndex = algolia_client.initIndex('polkassembly_users');
 	const postIndex = algolia_client.initIndex('polkassembly_posts');
+	const addressIndex = algolia_client?.initIndex('polkassembly_addresses');
 
 	const { network } = useNetworkContext();
 	const [searchInput, setSearchInput] = useState<string>('');
@@ -71,13 +72,14 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	const [selectedTracks, setSelectedTracks] = useState<CheckboxValueType[]>([]);
 	const [selectedTopics, setSelectedTopics] = useState<CheckboxValueType[]>([]);
 	const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
-	const [userResults, setPeopleResults] = useState<any[] | null>(null);
+	const [peopleResults, setPeopleResults] = useState<any[] | null>(null);
 	const [postResults, setPostResults] = useState<any[] | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const topicOptions: string[] = [];
 	const [usersPage, setUsersPage] = useState({ page: 1, totalUsers: 0 });
 	const [postsPage, setPostsPage] = useState({ page: 1, totalPosts: 0 });
 	const [openFilter, setOpenFilter] = useState<{ date: boolean , topic: boolean, track: boolean }>({ date: false , topic: false, track: false });
+	const [searchInputErr, setSearchInputErr] = useState({ clicked :false, err:'' });
 
 	Object.keys(post_topic).map((topic) => topicOptions.push(topicToOptionText(topic)));
 
@@ -138,9 +140,38 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 
 	};
 
+	const getpeopleDatawithAddress = (addressData: any[], postsData: any[]) => {
+		if(!addressData || !postsData) return;
+		const results = postsData?.map((people: any) =>
+		{
+			let result = people;
+			for(const data of addressData){
+				if(Number(data?.objectID) === Number(data?.objectID) && data?.default){
+					result = { ...people, defaultAddress: data?.address || '' };
+				}
+
+			}
+			return result;
+		}
+		);
+		setPeopleResults(results);
+	};
+
+	const getDefaultAddress= async(data: any[]) => {
+		if(!addressIndex) return ;
+
+		const userIds = data.map((people: any) => `user_id:${Number(people?.objectID)}`);
+
+		addressIndex.search('', { facetFilters: userIds, hitsPerPage: LISTING_LIMIT  }).then(({ hits }) => {
+			getpeopleDatawithAddress(hits, data);
+		}).catch((err) => {
+			console.log(err);
+		});
+	};
+
 	const getResultData = async() => {
 
-		if(finalSearchInput.length <= 2 || !userIndex || !postIndex ){
+		if(finalSearchInput.length <= 3 || !userIndex || !postIndex ){
 			setLoading(false);
 			return;
 		}
@@ -158,9 +189,12 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 			});
 		}
 		else{
-			await userIndex.search(finalSearchInput, { filters : '', hitsPerPage: LISTING_LIMIT, page: usersPage.page-1 }).then(({ hits, nbHits }) => {
+			await userIndex.search(finalSearchInput, { hitsPerPage: LISTING_LIMIT, page: usersPage.page-1 }).then(({ hits, nbHits }) => {
 				setUsersPage({ ...usersPage, totalUsers: nbHits });
+
 				setPeopleResults(hits);
+				getDefaultAddress(hits);
+
 			}).catch((error) => {
 				console.log(error);
 				setLoading(false);
@@ -174,16 +208,33 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	const debouncedSearchFn = useCallback(_.debounce(getResultData, 5000), [finalSearchInput, selectedTags, filterBy, selectedTopics, usersPage.page, postsPage.page, isSuperSearch, selectedNetworks, selectedTracks, dateFilter]);
 
 	useEffect(() => {
-		if(finalSearchInput.length <= 2)return;
-		setOpenFilter({ date: false, topic: false, track: false });
-		setLoading(true);
-		debouncedSearchFn();
+		if(finalSearchInput.length > 3){
+			setSearchInputErr({ ...searchInputErr, err:'' });
+			setOpenFilter({ date: false, topic: false, track: false });
+			setLoading(true);
+			debouncedSearchFn();}
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[debouncedSearchFn]);
+
+	useEffect(() => {
+		if( (finalSearchInput.length <= 3 || searchInput.length <=3) && searchInputErr.clicked){
+			setSearchInputErr({ ...searchInputErr, err:'Please type a search ' });
+			return;
+		}
+	},[finalSearchInput, searchInput, searchInputErr]);
+
+	useEffect(() => {
+
+		setUsersPage({ page: 1, totalUsers: 0 });
+		setPostsPage({ page: 1, totalPosts: 0 });
+
+	},[finalSearchInput]);
 
 	const handleModalClose = () => {
 		setSearchInput('');
 		setFinalSearchInput('');
+		setSearchInputErr({ clicked: false, err: '' });
 		setPostResults([]);
 		setPeopleResults([]);
 		setFilterBy(EFilterBy.Referenda);
@@ -204,13 +255,16 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		closeIcon={<CloseIcon/>}
 	>
 		<div className={`${className} ${isSuperSearch && !loading && 'pb-20'}`}>
-			<Input className='placeholderColor mt-4' type='search' value={searchInput} onChange={(e) => setSearchInput(e.target.value)} allowClear placeholder='Type here to search for something' addonAfter= {<div onClick={() => setFinalSearchInput(searchInput)} className='text-white text-[18px] tracking-[0.02em] cursor-pointer'><SearchOutlined/></div>}/>
+			<Input className='placeholderColor mt-4' type='search' value={searchInput} onChange={(e) => setSearchInput(e.target.value)} allowClear placeholder='Type here to search for something'
+				addonAfter= {<div onClick={() => {!loading && searchInput.length >= 3 && setFinalSearchInput(searchInput); setSearchInputErr({ ...searchInputErr,clicked:true });} } className={`text-white text-[18px] tracking-[0.02em] ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}><SearchOutlined/></div>}/>
+			{/* input error */}
+			{(searchInputErr.err.length > 0) &&<span className='text-[red] text-xs mt-1'>{searchInputErr.err}</span>}
 
-			{finalSearchInput.length > 2 && (postResults || userResults) && <div className={`${loading && 'hidden'}`}>
+			{finalSearchInput.length > 3 && (postResults || peopleResults) && <div className={`${loading && 'hidden'}`}>
 				<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2 ' }`}>
 					<Radio.Group onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage({ page: 1, totalPosts: 0 }); setUsersPage({ page: 1, totalUsers: 0 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className}`}>
 						<Radio value={EFilterBy.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Referenda ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'}`}>Referenda {filterBy === EFilterBy.Referenda && !loading && `(${postResults?.length})`}</Radio>
-						<Radio value={EFilterBy.Users} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Users ? 'bg-[#FEF2F8] text-[#243A57] px-4' : 'text-[#667589] px-1'}`}>People {filterBy === EFilterBy.Users && !loading && `(${userResults?.length})`}</Radio>
+						<Radio value={EFilterBy.Users} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Users ? 'bg-[#FEF2F8] text-[#243A57] px-4' : 'text-[#667589] px-1'}`}>People {filterBy === EFilterBy.Users && !loading && `(${peopleResults?.length})`}</Radio>
 						<Radio value={EFilterBy.Discussions} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Discussions ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'}`}>Discussions {filterBy === EFilterBy.Discussions && !loading && `(${postResults?.length})`}</Radio>
 					</Radio.Group>
 					{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && <div className='flex text-xs font-medium tracking-[0.02em] text-[#667589] gap-3.5 max-md:px-4'>
@@ -260,19 +314,21 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
           && postResults && <ResultPosts setOpenModal={setOpenModal} isSuperSearch={isSuperSearch} postsData={postResults} className='mt-6' postsPage={postsPage} setPostsPage={setPostsPage}/>
 				}
 
-				{filterBy === EFilterBy.Users && userResults &&  <ResultPeople searchInput={finalSearchInput} setOpenModal={setOpenModal} peopleData={userResults} usersPage={usersPage} setUsersPage={setUsersPage} />}
+				{filterBy === EFilterBy.Users
+        && peopleResults && <ResultPeople searchInput={finalSearchInput} setOpenModal={setOpenModal} peopleData={peopleResults} usersPage={usersPage} setUsersPage={setUsersPage} />
+				}
 
 				{
-					!loading && (postResults || userResults) && <SuperSearchCard
+					!loading && (postResults || peopleResults) && <SuperSearchCard
 						setFilterBy={setFilterBy}
 						setIsSuperSearch={setIsSuperSearch}
 						postResultsCounts={postResults?.length || 0}
-						userResultsCounts={userResults?.length || 0}
+						peopleResultsCounts={peopleResults?.length || 0}
 						isSuperSearch= {isSuperSearch}
 						filterBy={filterBy}/>}
 			</div>}
 			<div className={`flex flex-col justify-center items-center pt-10 pb-8 gap-4 ${!loading && 'hidden'}`}>
-				<Image src={SearchLoader} alt='' height={200} width={200}/>
+				<Image src={SearchLoader} alt='' height={150} width={150}/>
 				<span className='font-medium text-sm text-[#243A57] tracking-[0.01em]'>
 					{isSuperSearch ? 'Looking for results across the Polkassembly Universe.': 'Looking for results.'}
 				</span>

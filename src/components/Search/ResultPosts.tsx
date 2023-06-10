@@ -15,7 +15,6 @@ import TopicTag from '~src/ui-components/TopicTag';
 import { getTopicNameFromTopicId } from '~src/util/getTopicFromType';
 import { ProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { getTopicFromType } from '~src/util/getTopicFromType';
-import Link from 'next/link';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import LikeIcon from '~assets/search/search-like.svg';
@@ -41,14 +40,15 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 			titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
 
 			return (
-				<Link
+				<a
+					rel="noreferrer"
 					href={`https://${post?.network}.polkassembly.io/${getSinglePostLinkFromProposalType(post?.post_type)}/${post?.id}`}
 					key={index}
 					target='_blank'>
 					<div className={`py-8 px-9 border-[#f3f4f5] border-solid flex-col border-[1px] shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] rounded-none border-b-[0px] hover:border-[#E5007A] hover:border-b-[1px] cursor-pointer min-h-[200px] ${index % 2 === 1 && 'bg-[#fafafb]'} ${index === postsData.length-1 && 'border-b-[1px]'} max-md:flex-wrap`}>
-						{post?.proposer_address ? <Address address={post?.proposer_address} displayInline textClassName='text-xs text-[#]'/> : <div className='text-xs text-[#485F7D] font-medium mb-1'>{post?.username}</div>}
+						{post?.proposer_address ? <Address address={post?.proposer_address} displayInline textClassName='text-xs text-[#485F7D]'/> : <div className='text-xs text-[#485F7D] font-medium mb-1'>{post?.username}</div>}
 						<span className='text-[#243A57] text-sm font-medium mt-2'>{titleString}</span>
-						<Markdown md={post?.content.slice(0, 250)} className='text-[#8696a9] text-sm font-normal my-2 tracking-[0.01em] expand-content'/>
+						<Markdown md={post?.content?.slice(0, 250)} className='text-[#8696a9] text-sm font-normal my-2 tracking-[0.01em] expand-content'/>
 						<div className='my-2 flex flex-shrink-0 gap-1'>
 							<div className='flex gap-2 items-center text-xs text-[#485F7D]'>
 								<div className='flex gap-1 items-center text-xs text-[#485F7D]'>
@@ -91,9 +91,9 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 							</div>
 						</div>
 					</div>
-				</Link>);
+				</a>);
 		})}
-		<div className='flex justify-end items-center py-4 px-4'>
+		<div className='flex justify-center items-center py-4 px-4'>
 			<Pagination
 				defaultCurrent={1}
 				current={postsPage.page}

@@ -13,14 +13,14 @@ interface Props{
   setFilterBy: (pre: EFilterBy) => void;
   filterBy: EFilterBy;
   postResultsCounts: number;
-  userResultsCounts: number;
+  peopleResultsCounts: number;
   isSuperSearch: boolean;
 }
 
-const SuperSearchCard = ({ setIsSuperSearch, setFilterBy, isSuperSearch, filterBy, postResultsCounts, userResultsCounts }: Props) =>
+const SuperSearchCard = ({ setIsSuperSearch, setFilterBy, isSuperSearch, filterBy, postResultsCounts, peopleResultsCounts }: Props) =>
 {
 	return (((filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && postResultsCounts === 0)
-      || (filterBy ===  EFilterBy.Users && userResultsCounts === 0 )
+      || (filterBy ===  EFilterBy.Users && peopleResultsCounts === 0 )
 		? <div className='flex flex-col justify-center items-center mt-7 mb-5'>
 			<div className='text-[#243A57] text-sm font-medium tracking-[0.01em]'>
 				<div className='flex flex-col mt-5 justify-center items-center'>

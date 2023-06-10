@@ -160,18 +160,18 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 						? <Space>
 							{(kiltName || identity && mainDisplay) && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 							<Tooltip color='#E5007A' title={popupContent}>
-								<div className={'header display_inline identityName max-w-[30px] flex flex-col gap-y-1'}>
-									{ t1 && <span className='truncate text-navBlue'>{t1}</span> }
-									{sub && isSubVisible && <span className='sub truncate text-navBlue'>{sub}</span>}
+								<div className={'header display_inline identityName max-w-[30px] flex flex-col gap-y-1  text-navBlue'}>
+									{ t1 && <span className={`truncate ${textClassName}`}>{t1}</span> }
+									{sub && isSubVisible && <span className={`sub truncate ${textClassName}`}>{sub}</span>}
 								</div>
 							</Tooltip>
 						</Space>
 						: <>
 							<div className={'description display_inline flex items-center'}>
-								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} className='mr-2' />}
-								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[85px] flex gap-x-1 text-navBlue ${textClassName}`}>
+								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} className='mr-2 text-navBlue' />}
+								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[85px] flex gap-x-1 ${textClassName}`}>
 									{ t1 && <span className={`truncate ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
-									{sub && isSubVisible && <span className={'sub truncate text-navBlue'}>{sub}</span>}
+									{sub && isSubVisible && <span className={`sub truncate ${textClassName}`}>{sub}</span>}
 								</span>
 							</div>
 						</>
@@ -182,8 +182,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 								<Space>
 									<Space className={'header'}>
 										{(kiltName || identity && mainDisplay) && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
-										<span className='bg-red-500 identityName max-w-[85px] flex flex-col gap-y-1'>
-											{ t2 && <span className={`${textClassName} truncate text-navBlue`}>{ t2 }</span> }
+										<span className='bg-red-500 identityName max-w-[85px] flex flex-col gap-y-1 text-navBlue'>
+											{ t2 && <span className={`${textClassName} truncate `}>{ t2 }</span> }
 											{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-navBlue`}>{sub}</span>}
 										</span>
 									</Space>

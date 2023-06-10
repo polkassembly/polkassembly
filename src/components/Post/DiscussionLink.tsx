@@ -96,7 +96,7 @@ const DiscussionLink: FC<IDiscussionLinkProps> = (props) => {
 			{
 				latestState?.link?
 					<Link href={latestState?.link!}>
-						<span className="text-[#334D6E]">
+						<span className="text-[#334D6E] flex">
 							{latestState?.text.split('#').map((part, index) => {
 								if (index === 0) {
 									return part;
@@ -109,7 +109,8 @@ const DiscussionLink: FC<IDiscussionLinkProps> = (props) => {
 									);
 								}
 							})}
-						</span>{' >> '}
+							<span>{' >> '}</span>
+						</span>
 					</Link>
 					: null
 			}

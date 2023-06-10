@@ -353,34 +353,45 @@ const Post: FC<IPostProps> = (props) => {
 		}}>
 			<>
 				<SpamAlert />
-				{!isEditing && (
-					<>
-						{(isOffchainPost || (isOnchainPost && redirection.link)) && <div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-[94vw] lg:w-[85vw] mb-6 dashboard-heading'>
-							<DiscussionLink isOffchainPost={isOffchainPost} />
-							{!isEditing && isOnchainPost && redirection.link && (
-								<Link href={redirection.link}>
-									<span className="text-[#334D6E]">
-										{redirection?.text.split('#').map((part, index) => {
-											if (index === 0) {
-												return part;
-											} else {
-												const id = part.match(/^\d+/)?.[0];
-												return (
-													<span key={index}>
-														<span className="text-pink_primary"> #{id}</span>
-													</span>
-												);
-											}
-										})}
-									</span>{' >> '}
-									<span className="text-[#334D6E]">Referendum
-										<span className="text-pink_primary"> #{post_id}</span>
-									</span>
-								</Link>
-							)}
-						</div>}
-					</>
-				)}
+				{!isEditing && (isOffchainPost || (isOnchainPost && redirection.link)) &&<div className='bg-white flex  flex-wrap drop-shadow-md p-3 md:p-6 rounded-md w-[94vw] lg:w-[85vw] mb-6 dashboard-heading'>
+					{post?.timeline && post?.timeline.map(obj =>
+						<>
+							{
+								obj.type==='Discussions' && <DiscussionLink isOffchainPost={isOffchainPost} /> }
+							{
+								isOnchainPost && redirection.link && (
+									<>
+										{obj.type === 'ReferendumV2' && (
+											<span className="text-[#334D6E] flex">Referendum
+												<span> #{post_id}</span>{' >> '}
+											</span>
+										)}
+										{obj.type === 'TreasuryProposal' && (
+											<Link href={redirection.link}>
+												<span className="text-[#334D6E] flex">
+													{redirection?.text.split('#').map((part, index) => {
+														if (index === 0) {
+															return part;
+														} else {
+															const id = part.match(/^\d+/)?.[0];
+															return (
+																<span key={index}>
+																	<span className="text-pink_primary"> #{id}</span>
+																</span>
+															);
+														}
+													})}
+												</span>
+											</Link>
+										)}
+									</>
+								)
+							}
+
+						</>
+					)}
+				</div>
+				}
 				<div className={`${className} grid grid-cols-1 xl:grid-cols-12 gap-9`}>
 					<div className='xl:col-span-8'>
 

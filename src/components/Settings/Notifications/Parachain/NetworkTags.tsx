@@ -6,11 +6,13 @@ import Image from 'next/image';
 import React from 'react';
 import styled from 'styled-components';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import CloseIcon from '~assets/icons/close.svg';
 type Props = {
     icon?: any;
     name: any;
     selected?: boolean;
     onActionClick?: any;
+    onClose?: any;
 };
 
 const Tag = styled(AntdTag)`
@@ -31,7 +33,8 @@ export default function NetworkTags({
 	icon,
 	name,
 	selected = true,
-	onActionClick
+	onActionClick,
+	onClose
 }: Props) {
 	return (
 		<Tag
@@ -56,6 +59,11 @@ export default function NetworkTags({
 			>
 				{name}
 			</span>
+			{onClose && (
+				<span onClick={() => onClose(name)}>
+					<CloseIcon />
+				</span>
+			)}
 		</Tag>
 	);
 }

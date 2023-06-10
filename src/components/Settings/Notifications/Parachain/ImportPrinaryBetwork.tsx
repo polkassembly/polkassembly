@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import { Divider, Image, Modal, Tag } from 'antd';
+import { Button, Divider, Image, Modal, Tag } from 'antd';
 import { chainProperties } from '~src/global/networkConstants';
 import DisabledImportIcon from '~assets/icons/disabled-state-import-icon.svg';
 
@@ -32,6 +32,22 @@ const ImportPrimaryNetworkSettingModal = ({
 			className='min-w-[600px]'
 			onCancel={onCancel}
 			onOk={onConfirm}
+			footer={[
+				<Button
+					key='1'
+					onClick={onCancel}
+					className='h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+				>
+                    Cancel
+				</Button>,
+				<Button
+					onClick={onConfirm}
+					key='2'
+					className='h-10 rounded-[6px] bg-[#E5007A] border border-solid border-pink_primary px-[36px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+				>
+                    Confirm
+				</Button>
+			]}
 		>
 			<div className='flex gap-[10px] flex-wrap items-center mb-6'>
 				<Tag
@@ -62,6 +78,9 @@ const ImportPrimaryNetworkSettingModal = ({
                 Are you sure you want to import Kusama’s Network settings to all
                 selected networks?
 			</p>
+			<div className='mr-[-24px] ml-[-24px]'>
+				<Divider className='my-4'/>
+			</div>
 		</Modal>
 	);
 };

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { Divider, Image, Modal, Switch, Tag } from 'antd';
+import { Button, Divider, Image, Modal, Switch, Tag } from 'antd';
 import SmallParachainIcon from '~assets/icons/parachain-small.svg';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkContext } from '~src/context';
@@ -16,7 +16,7 @@ const AddNetworkModal = ({
 }: {
     open: boolean;
     onConfirm: (networks: any) => void;
-    onCancel: () => void
+    onCancel: () => void;
 }) => {
 	//@ts-ignore
 	const [allNetworks, setAllNetworks] = useState(networks);
@@ -90,6 +90,28 @@ const AddNetworkModal = ({
 				onCancel();
 			}}
 			onOk={handleConfirm}
+			footer={[
+				<Button
+					key='1'
+					onClick={() => {
+						if (showSureModal) {
+							setShowSureModal(false);
+							return;
+						}
+						onCancel();
+					}}
+					className='h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+				>
+                    Cancel
+				</Button>,
+				<Button
+					onClick={handleConfirm}
+					key='2'
+					className='h-10 rounded-[6px] bg-[#E5007A] border border-solid border-pink_primary px-[36px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+				>
+                    Confirm
+				</Button>
+			]}
 		>
 			<p className='font-semibold text-[#243A57] text-[16px]'>
 				{showSureModal
@@ -139,7 +161,7 @@ const AddNetworkModal = ({
 					})}
 				</div>
 			) : (
-				Object.keys(allNetworks).map((chain) => {
+				Object.keys(allNetworks).map((chain, i) => {
 					return (
 						<div key={chain}>
 							<div className='flex items-center gap-[8px] m-1'>
@@ -213,14 +235,19 @@ const AddNetworkModal = ({
 									}
 								)}
 							</div>
-							<Divider
-								className='border-[#D2D8E0] border-2'
-								dashed
-							/>
+							{i < (Object.keys(allNetworks).length-1) && (
+								<Divider
+									className='border-[#D2D8E0] border-2'
+									dashed
+								/>
+							)}
 						</div>
 					);
 				})
 			)}
+			<div className='mr-[-24px] ml-[-24px]'>
+				<Divider className='my-4' />
+			</div>
 		</Modal>
 	);
 };

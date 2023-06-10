@@ -87,7 +87,6 @@ export default function EmailNotificationCard({ onClick }: Props) {
 						htmlType='submit'
 						loading={loading}
 						className='h-10 rounded-[6px] bg-[#E5007A] flex items-center justify-center border border-solid border-pink_primary px-[22px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
-						// onClick={handleClick}
 					>
                         Verify
 					</Button>

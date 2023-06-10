@@ -15,12 +15,13 @@ import { PostOrigin } from '~src/types';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { titleMapper } from './utils';
 import { ACTIONS } from '../Reducer/action';
+import { INotificationObject } from '../types';
 
 const { Panel } = Collapse;
 type Props = {
-    onSetNotification: any;
-    userNotification: any;
-    dispatch: any;
+    onSetNotification:  (obj: INotificationObject) => void;
+    userNotification:INotificationObject;
+    dispatch:  React.Dispatch<any>;
     options: any;
 };
 

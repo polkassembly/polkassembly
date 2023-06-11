@@ -51,7 +51,7 @@ export default function NetworkTags({
 					selected ? 'text-[#243A57]' : 'text-pink_primary'
 				} text-lg leading-[18px] tracking-[0.02em] capitalize`}
 			>
-				{name}
+				{name === 'xx' ? 'XX' : name}
 			</span>
 			{onClose && (
 				<span onClick={() => onClose(name)} className='mt-1'>

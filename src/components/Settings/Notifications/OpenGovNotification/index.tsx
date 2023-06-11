@@ -291,7 +291,7 @@ export default function OpenGovNotification({
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
-								<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
+						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={
 								options[PostOrigin.FELLOWSHIP_ADMIN]

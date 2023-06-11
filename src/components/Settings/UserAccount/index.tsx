@@ -9,9 +9,7 @@ import Profile from '~src/components/Settings/Profile';
 import Unlock from '~src/components/Settings/Unlock';
 import { Divider } from 'antd';
 
-type Props = {};
-
-export default function UserAccount({}: Props) {
+export default function UserAccount() {
 	const { network } = useNetworkContext();
 	const { web3signup } = useUserDetailsContext();
 	return (

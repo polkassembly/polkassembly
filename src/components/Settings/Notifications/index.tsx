@@ -114,8 +114,8 @@ export default function Notifications() {
 			await nextApiClientFetch(
 				'api/v1/auth/actions/setPrimaryNetwork',
 				{ primary_network: network }
-			)
-			
+			);
+
 		} catch (e) {
 			console.log(e);
 		}

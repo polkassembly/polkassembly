@@ -21,7 +21,7 @@ const ImportPrimaryNetworkSettingModal = ({
 		<Modal
 			title={
 				<div className='mr-[-24px] ml-[-24px]'>
-					<h3 className='ml-[24px] mb-0 flex items-center gap-3'>
+					<h3 className='ml-[24px] mb-0 flex items-center gap-3 text-base md:text-md'>
 						<DisabledImportIcon /> Import Primary Network Settings
 					</h3>
 					<Divider />
@@ -29,7 +29,6 @@ const ImportPrimaryNetworkSettingModal = ({
 			}
 			open={open}
 			closable
-			className='min-w-[600px]'
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={[

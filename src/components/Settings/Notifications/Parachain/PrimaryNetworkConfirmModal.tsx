@@ -39,7 +39,6 @@ const SetPrimaryNetworkSettingModal = ({
 			}
 			open={open}
 			closable
-			className='min-w-[600px]'
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={[

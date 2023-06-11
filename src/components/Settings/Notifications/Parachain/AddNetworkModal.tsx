@@ -76,7 +76,7 @@ const AddNetworkModal = ({
 			}
 			open={open}
 			closable
-			className='min-w-[600px]'
+			className='min-w-[350px] md:min-w-[600px]'
 			onCancel={() => {
 				if (showSureModal) {
 					setShowSureModal(false);

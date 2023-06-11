@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Collapse, Divider, Switch } from 'antd';
+import { Divider, Switch } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import OverallPostsNotification from '~assets/icons/overall-posts-notification-icon.svg';
@@ -15,6 +15,7 @@ import TreasuryProposalIcon from '~assets/icons/treasury-proposal.svg';
 import { titleMapper } from './utils';
 import { ProposalType } from '~src/global/proposalType';
 import { ACTIONS } from '../Reducer/action';
+import { Collapse } from '../common-ui/Collapse';
 
 const { Panel } = Collapse;
 type Props = {
@@ -154,7 +155,7 @@ export default function Gov1Notification({
 				header={
 					<div className='flex items-center gap-[8px]'>
 						<OverallPostsNotification />
-						<h3 className='font-semibold text-xl tracking-wide leading-7 text-sidebarBlue mb-0'>
+						<h3 className='font-semibold text-[16px] md:text-xl tracking-wide leading-7 text-sidebarBlue mb-0'>
                             Gov 1 Notifications
 						</h3>
 						{!!active && (
@@ -178,71 +179,74 @@ export default function Gov1Notification({
 				key='5'
 			>
 				<div className='flex flex-col'>
-					<div className='flex'>
+					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[ProposalType.REFERENDUMS]}
 							title='Referendums'
-							classname='basis-[50%]'
+							classname='md:basis-[50%]'
 							Icon={ReferendumsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={
 								options[ProposalType.DEMOCRACY_PROPOSALS]
 							}
 							title='Proposal'
-							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
 							Icon={TreasuryProposalIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-2' dashed />
-					<div className='flex'>
+					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[ProposalType.BOUNTIES]}
 							title='Bounties'
-							classname='basis-[50%]'
+							classname='md:basis-[50%]'
 							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={
 								options[ProposalType.CHILD_BOUNTIES]
 							}
 							title='Child Bounties'
-							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
 							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-2' dashed />
-					<div className='flex'>
+					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[ProposalType.TIPS]}
 							title='Tips'
-							classname='basis-[50%]'
+							classname='md:basis-[50%]'
 							Icon={TipsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={
 								options[ProposalType.TECH_COMMITTEE_PROPOSALS]
 							}
 							title='Tech Committee'
-							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
 							Icon={TechCommiteeIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
-					<div className='flex'>
-						<div className='basis-[50%] flex flex-col gap-[16px]'>
+					<div className='flex flex-wrap'>
+						<div className='md:basis-[50%] flex flex-col gap-[16px]'>
 							<GroupCheckbox
 								categoryOptions={
 									options[ProposalType.COUNCIL_MOTIONS]

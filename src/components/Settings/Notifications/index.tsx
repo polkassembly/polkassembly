@@ -16,6 +16,21 @@ import { notificationInitialState } from './Reducer/initState';
 import { reducer } from './Reducer/reducer';
 import { ACTIONS } from './Reducer/action';
 import { INotificationObject } from './types';
+import { networks } from './Parachain/utils';
+
+const getAllNetworks = (network: string) => {
+	for (const category of Object.keys(networks)) {
+		const chains = networks[category];
+		const chainToUpdate = chains.find(
+			(chain: any) => chain.name === network
+		);
+		if (chainToUpdate) {
+			chainToUpdate.selected = true;
+			break;
+		}
+	}
+	return networks;
+};
 
 export default function Notifications() {
 	const { id, networkPreferences, setUserDetailsContextState, primaryNetwork } =
@@ -27,9 +42,9 @@ export default function Notifications() {
 		notificationInitialState
 	);
 
-	const [selectedNetwork, setSelectedNetwork] = useState([
-		{ name: network, selected: true }
-	]);
+	const [selectedNetwork, setSelectedNetwork] = useState<{
+        [index: string]: Array<{name: string; selected: boolean}>;
+    }>(getAllNetworks(network));
 	const [loading, setLoading] = useState(true);
 
 	const handleCurrentNetworkNotifications = (obj: INotificationObject) => {
@@ -92,22 +107,15 @@ export default function Notifications() {
 
 	const handleSetPrimaryNetwork = async (network: string) => {
 		try {
-			const { data, error } = (await nextApiClientFetch(
+			setUserDetailsContextState((prev) => ({
+				...prev,
+				primaryNetwork: network
+			}));
+			await nextApiClientFetch(
 				'api/v1/auth/actions/setPrimaryNetwork',
 				{ primary_network: network }
-			)) as {data: PublicUser; error: null | string};
-			if (error) {
-				throw new Error(error);
-			}
-			if (data?.primary_network) {
-				setUserDetailsContextState((prev) => ({
-					...prev,
-					networkPreferences: {
-						...prev.networkPreferences,
-						primaryNetwork: data.primary_network || ''
-					}
-				}));
-			}
+			)
+			
 		} catch (e) {
 			console.log(e);
 		}
@@ -132,7 +140,13 @@ export default function Notifications() {
 	};
 
 	useEffect(() => {
-		handleSetNetworkPreferences(selectedNetwork.map(({ name }) => name));
+		const selectedNames:Array<string> = [];
+		for (const category of Object.values(selectedNetwork)) {
+			category.forEach((chain) => {
+				if(chain.selected) selectedNames.push(chain.name);
+			});
+		}
+		handleSetNetworkPreferences(selectedNames);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [networkPreferences.triggerPreferences]);
 

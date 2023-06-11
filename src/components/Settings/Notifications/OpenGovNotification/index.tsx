@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Collapse, Divider, Switch } from 'antd';
+import { Divider, Switch } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import OverallPostsNotification from '~assets/icons/overall-posts-notification-icon.svg';
@@ -16,6 +16,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { titleMapper } from './utils';
 import { ACTIONS } from '../Reducer/action';
 import { INotificationObject } from '../types';
+import { Collapse } from '../common-ui/Collapse';
 
 const { Panel } = Collapse;
 type Props = {
@@ -153,7 +154,7 @@ export default function OpenGovNotification({
 				header={
 					<div className='flex items-center gap-[8px]'>
 						<OverallPostsNotification />
-						<h3 className='font-semibold text-xl tracking-wide leading-7 text-sidebarBlue mb-0'>
+						<h3 className='font-semibold text-[16px] md:text-xl tracking-wide leading-7 text-sidebarBlue mb-0 whitespace-nowrap'>
                             OpenGov Notifications
 						</h3>
 						{!!active && (
@@ -177,160 +178,169 @@ export default function OpenGovNotification({
 				key='6'
 			>
 				<div className='flex flex-col'>
-					<div className='flex'>
+					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[PostOrigin.ROOT]}
 							title='Root'
-							classname='basis-[50%]'
+							classname='md:basis-[50%]'
 							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={options[PostOrigin.SMALL_TIPPER]}
 							title='Small Tipper'
-							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
 							Icon={ReferendumsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-2' dashed />
-					<div className='flex'>
+					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[PostOrigin.STAKING_ADMIN]}
 							title='Staking Admin'
-							classname='basis-[50%]'
+							classname='md:basis-[50%]'
 							Icon={TechCommiteeIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={options[PostOrigin.BIG_TIPPER]}
 							title='Big Tipper'
-							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
 							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-2' dashed />
-					<div className='flex'>
+					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[PostOrigin.AUCTION_ADMIN]}
 							title='Auction Admin'
-							classname='basis-[50%]'
+							classname='md:basis-[50%]'
 							Icon={ReferendumsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={options[PostOrigin.SMALL_SPENDER]}
 							title='Small Spender'
-							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
 							Icon={ReferendumsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
-					<div className='flex'>
+					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[PostOrigin.TREASURER]}
 							title='Treasurer'
-							classname='basis-[50%]'
+							classname='md:basis-[50%]'
 							Icon={ReferendumsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={options[PostOrigin.MEDIUM_SPENDER]}
 							title='Medium Spender'
-							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
 							Icon={TechCommiteeIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
-					<div className='flex'>
+					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={
 								options[PostOrigin.REFERENDUM_CANCELLER]
 							}
 							title='Referendum Canceler'
-							classname='basis-[50%]'
+							classname='md:basis-[50%]'
 							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={options[PostOrigin.BIG_SPENDER]}
 							title='Big Spender'
-							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
 							Icon={ReferendumsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
-					<div className='flex'>
+					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={
 								options[PostOrigin.REFERENDUM_KILLER]
 							}
 							title='Referendum Killer'
-							classname='basis-[50%]'
+							classname='md:basis-[50%]'
 							Icon={ReferendumsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+								<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={
 								options[PostOrigin.FELLOWSHIP_ADMIN]
 							}
 							title='Fellowship Admin'
-							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
 							Icon={ReferendumsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
-					<div className='flex'>
+					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[PostOrigin.LEASE_ADMIN]}
 							title='Lease Admin'
-							classname='basis-[50%]'
+							classname='md:basis-[50%]'
 							Icon={TechCommiteeIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={options[PostOrigin.GENERAL_ADMIN]}
 							title='General Admin'
-							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
 							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
 					</div>
 					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
-					<div className='flex'>
+					<div className='flex flex-wrap'>
 						<GroupCheckbox
 							categoryOptions={options[PostOrigin.MEMBERS]}
 							title='Member Referenda'
-							classname='basis-[50%]'
+							classname='md:basis-[50%]'
 							Icon={ReferendumsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
+						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={
+
 								options[PostOrigin.WHITELISTED_CALLER]
 							}
 							title='Whitelisted Call'
-							classname='border-dashed border-x-0 border-y-0 border-l-2 border-[#D2D8E0] pl-[48px]'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
 							Icon={ReferendumsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}

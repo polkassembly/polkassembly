@@ -165,8 +165,10 @@ class AuthService {
 	private async sendEmailVerificationToken (user: User, network:string): Promise<any> {
 		if (user.email) {
 			const verifyToken = uuidv4();
+			await redisSetex(getEmailVerificationTokenKey(verifyToken), ONE_DAY, user.email);
+
 			// send verification email in background
-			return await sendVerificationEmailForNotification(user, verifyToken, network);
+			sendVerificationEmailForNotification(user, verifyToken, network);
 		}
 	}
 
@@ -525,8 +527,19 @@ class AuthService {
 		if (userQuerySnapshot.empty) throw apiErrorWithStatusCode(messages.EMAIL_VERIFICATION_USER_NOT_FOUND, 400);
 
 		const userDoc = userQuerySnapshot.docs[0];
-
-		await userDoc.ref.update({ email_verified: true });
+		const userDocData = userDoc.data();
+		await userDoc.ref.update({
+			email_verified: true,
+			notification_preferences:{ ...userDocData.notification_preferences,
+				channelPreferences:{
+					...userDocData.notification_preferences.channelPreferences,
+					email:{
+						...userDocData.notification_preferences.channelPreferences.email,
+						email:email
+					}
+				}
+			}
+		});
 		await redisDel(getEmailVerificationTokenKey(token));
 
 		const user = await getUserFromUserId(Number(userDoc.id));
@@ -1081,13 +1094,11 @@ class AuthService {
 
 		user = await getUserFromUserId(userId);
 
-		const { data, error } = await this.sendEmailVerificationToken(user, network);
-
-		console.log(data, error);
+		await this.sendEmailVerificationToken(user, network);
 		// send undo token in background
 		sendUndoEmailChangeEmail(user, newUndoEmailChangeToken, network);
 
-		return { data, error };
+		return this.getSignedToken(user);
 	}
 }
 

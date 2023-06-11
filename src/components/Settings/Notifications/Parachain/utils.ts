@@ -6,17 +6,17 @@
 import { chainProperties, network } from '~src/global/networkConstants';
 
 const networks: any = {
-	kusamaChains: [],
-	polkadotChains: [],
-	soloChains: [],
-	testChains: []
+	kusama: [],
+	polkadot: [],
+	solo: [],
+	test: []
 };
 
 const networkLabel: {[index: string]: string} = {
-	kusamaChains: 'Kusama',
-	polkadotChains: 'Polkadot',
-	soloChains: 'Solo Chains',
-	testChains: 'Test Chains'
+	kusama: 'Kusama',
+	polkadot: 'Polkadot',
+	solo: 'Solo Chains',
+	test: 'Test Chains'
 };
 
 for (const key of Object.keys(network)) {
@@ -30,16 +30,16 @@ for (const key of Object.keys(network)) {
 
 	switch (chainProperties[keyVal]?.category) {
 	case 'polkadot':
-		networks.polkadotChains.push(optionObj);
+		networks.polkadot.push(optionObj);
 		break;
 	case 'kusama':
-		networks.kusamaChains.push(optionObj);
+		networks.kusama.push(optionObj);
 		break;
 	case 'test':
-		networks.testChains.push(optionObj);
+		networks.test.push(optionObj);
 		break;
 	default:
-		networks.soloChains.push(optionObj);
+		networks.solo.push(optionObj);
 	}
 }
 export { networks, networkLabel };

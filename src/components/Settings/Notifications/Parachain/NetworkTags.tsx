@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Tag as AntdTag } from 'antd';
+import { Tag } from 'antd';
 import Image from 'next/image';
 import React from 'react';
 import styled from 'styled-components';
@@ -14,12 +14,6 @@ type Props = {
     onActionClick?: any;
     onClose?: any;
 };
-
-const Tag = styled(AntdTag)`
-    &.ant-tag {
-        padding: 8px;
-    }
-`;
 
 const PlusIcon = styled(PlusCircleOutlined)`
     svg {
@@ -39,8 +33,8 @@ export default function NetworkTags({
 	return (
 		<Tag
 			onClick={onActionClick}
-			className={`flex items-center justify-between text-navBlue border-solid border rounded-[34px] px-[24px] py-[8px] border-[#E5007A] ${
-				selected ? 'bg-[#FEF2F8]' : 'bg-white px-[12px] py-[15px]'
+			className={`flex items-center justify-between text-navBlue border-solid border rounded-[34px] border-[#E5007A] px-[24px] ${
+				selected ? 'bg-[#FEF2F8] py-[8px]' : 'bg-white py-[14px]'
 			} cursor-pointer`}
 		>
 			{icon ? (
@@ -60,7 +54,7 @@ export default function NetworkTags({
 				{name}
 			</span>
 			{onClose && (
-				<span onClick={() => onClose(name)}>
+				<span onClick={() => onClose(name)} className='mt-1'>
 					<CloseIcon />
 				</span>
 			)}

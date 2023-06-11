@@ -27,7 +27,7 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 				</h3>
 				{description && (
 					<p className='font-normal m-0'>
-						<span className='text-pink_primary font-medium' onClick={() => onClick(channel)}>
+						<span className='text-pink_primary font-medium cursor-pointer' onClick={() => onClick(channel)}>
 							<PlusCircleOutlined /> ADD THE POLKASSEMBLY BOT
 						</span>{' '}
                         to {description}

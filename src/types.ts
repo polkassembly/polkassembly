@@ -35,6 +35,7 @@ export interface INetworkPreferences {
       verification_token: string,
       verification_token_expires: Date
       enabled: boolean;
+      email?:string;
     }
   },
   triggerPreferences: {

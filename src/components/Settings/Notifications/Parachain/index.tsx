@@ -1,180 +1,202 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState } from 'react';
-import { Checkbox, Collapse, Divider, Space } from 'antd';
+import React, {useState} from 'react';
+import {Checkbox, Divider, Space} from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import ParachainNotification from '~assets/icons/parachain-notification-icon.svg';
 import ImportIcon from '~assets/icons/import-icon.svg';
 import DisabledImportIcon from '~assets/icons/disabled-state-import-icon.svg';
 import NetworkTags from './NetworkTags';
-import { chainProperties } from '~src/global/networkConstants';
-import { useNetworkContext } from '~src/context';
+import {chainProperties} from '~src/global/networkConstants';
+import {useNetworkContext} from '~src/context';
 import AddNetworkModal from './AddNetworkModal';
 import ImportPrimaryNetworkSettingModal from './ImportPrinaryBetwork';
 import SetPrimaryNetworkSettingModal from './PrimaryNetworkConfirmModal';
+import {ISelectedNetwork} from '../types';
+import Image from 'next/image';
+import {Collapse} from '../common-ui/Collapse';
 
-const { Panel } = Collapse;
+const {Panel} = Collapse;
 type Props = {
     primaryNetwork: string;
     onSetPrimaryNetwork: (network: string) => Promise<void>;
     onSetNetworkPreferences: (networks: Array<string>) => Promise<void>;
-    onCopyPrimaryNetworkNotification: (selectedNetwork: Array<string>) => Promise<void>;
-    selectedNetwork: Array<{
-        name: string;
-        selected: boolean;
-    }>;
-    setSelectedNetwork: React.Dispatch<
-        React.SetStateAction<
-            Array<{
-                name: string;
-                selected: boolean;
-            }>
-        >
-    >;
+    onCopyPrimaryNetworkNotification: (
+        selectedNetwork: Array<string>
+    ) => Promise<void>;
+    selectedNetwork: ISelectedNetwork;
+    setSelectedNetwork: React.Dispatch<React.SetStateAction<ISelectedNetwork>>;
 };
 
 // eslint-disable-next-line no-empty-pattern
 export default function Parachain({
-	primaryNetwork,
-	onSetPrimaryNetwork,
-	onSetNetworkPreferences,
-	onCopyPrimaryNetworkNotification,
-	selectedNetwork,
-	setSelectedNetwork
+    primaryNetwork,
+    onSetPrimaryNetwork,
+    onSetNetworkPreferences,
+    onCopyPrimaryNetworkNotification,
+    selectedNetwork,
+    setSelectedNetwork,
 }: Props) {
-	const { network } = useNetworkContext();
-	const [primaryNetworkCheck, setPrimaryNetworkCheck] = useState(
-		primaryNetwork ? true : false
-	);
-	const [openModal, setOpenModal] = useState(false);
-	const handleModalConfirm = (networks: any) => {
-		setSelectedNetwork(networks);
-		setOpenModal(false);
-		onSetNetworkPreferences(networks.map((net: any) => net.name));
-	};
+    const {network} = useNetworkContext();
+    const [openModal, setOpenModal] = useState(false);
+    const [active, setActive] = useState<boolean | undefined>(false);
+    const handleModalConfirm = (networks: ISelectedNetwork) => {
+        setSelectedNetwork(networks);
+        setOpenModal(false);
+        onSetNetworkPreferences(
+            Object.values(networks)
+                .flatMap((chain) => chain)
+                .filter((net: any) => net.selected)
+                .map((net) => net.name)
+        );
+    };
 
-	const [copyPreferencesModal, setCopyPreferencesModal] = useState(false);
-	const [primaryPreferencesModal, setPrimaryPreferencesModal] =
+    const [copyPreferencesModal, setCopyPreferencesModal] = useState(false);
+    const [primaryPreferencesModal, setPrimaryPreferencesModal] =
         useState(false);
 
-	const handlePrimaryNetworkChange = () => {
-		if (!primaryNetworkCheck) {
-			onSetPrimaryNetwork(network);
-			setPrimaryNetworkCheck(!primaryNetworkCheck);
-		}
-		setPrimaryPreferencesModal(false);
-	};
+    const handlePrimaryNetworkChange = () => {
+        onSetPrimaryNetwork(network);
+        setPrimaryPreferencesModal(false);
+    };
 
-	useEffect(() => {
-		setPrimaryNetworkCheck(primaryNetwork === network ? true : false);
-	}, [primaryNetwork, network]);
+    const handleClose = (name: string) => {
+        const networks = selectedNetwork[chainProperties[name].category].map(
+            (net) => (net.name == name ? {...net, selected: false} : net)
+        );
+        setSelectedNetwork({
+            ...selectedNetwork,
+            [chainProperties[name].category]: networks,
+        });
+    };
 
-	return (
-		<Collapse
-			className='bg-white'
-			size='large'
-			expandIconPosition='end'
-			expandIcon={({ isActive }) => {
-				return isActive ? <CollapseIcon /> : <ExpandIcon />;
-			}}
-		>
-			<Panel
-				header={
-					<div className='flex items-center gap-[8px]'>
-						<ParachainNotification />
-						<h3 className='font-semibold text-xl tracking-wide leading-7 text-sidebarBlue mb-0'>
-                            Parachains
-						</h3>
-					</div>
-				}
-				key='2'
-			>
-				<Space size={[16, 16]} wrap>
-					<NetworkTags
-						icon={chainProperties[network].logo}
-						name={network}
-					/>
-					{selectedNetwork
-						.filter(({ name }: {name: string}) => name !== network)
-						.map(({ name }: {name: string}) => (
-							<NetworkTags
-								key={name}
-								icon={chainProperties[name].logo}
-								name={name}
-							/>
-						))}
-					<NetworkTags
-						name={'Add Networks'}
-						selected={false}
-						onActionClick={() => setOpenModal(true)}
-					/>
-				</Space>
-				<Divider className='border-[#D2D8E0] border-2' dashed />
-				<div className='flex flex-col item-center gap-2'>
-					<Checkbox
-						value={false}
-						onChange={() => {
-							if (primaryNetwork === network) {
-								return;
-							}
-							setPrimaryPreferencesModal(true);
-						}}
-						checked={primaryNetworkCheck}
-						className='text-pink_primary text-[16px] flex item-center'
-					>
+    const selectedNetworkArray = Object.values(selectedNetwork)
+        .flatMap((chain) => chain)
+        .filter(({selected}: {selected: boolean}) => selected);
+
+    return (
+        <Collapse
+            className='bg-white'
+            size='large'
+            expandIconPosition='end'
+            expandIcon={({isActive}) => {
+                setActive(isActive);
+                return isActive ? <CollapseIcon /> : <ExpandIcon />;
+            }}
+        >
+            <Panel
+                header={
+                    <div className='flex justify-between gap-[8px] items-center'>
+                        <div className='flex items-center gap-[8px]'>
+                            <ParachainNotification />
+                            <h3 className='font-semibold text-[16px] md:text-xl tracking-wide leading-7 text-sidebarBlue mb-0'>
+                                Parachains
+                            </h3>
+                        </div>
+                        {!!active && (
+                            <div className='gap-2 hidden md:flex'>
+                                {selectedNetworkArray.slice(0, 5).map((net) => (
+                                    <Image
+                                        className='w-[20px] h-[20px] rounded-full'
+                                        src={chainProperties[net.name].logo}
+                                        alt='Logo'
+                                    />
+                                ))}
+                                {selectedNetworkArray.length > 5 && (
+                                    <span className='text-[10px] bg-[#D2D8E080] px-2 py-[3px] rounded-xl'>
+                                        +{selectedNetworkArray.length - 5}
+                                    </span>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                }
+                key='2'
+            >
+                <Space size={[16, 16]} wrap>
+                    {selectedNetworkArray.map(({name}: {name: string}) => (
+                        <NetworkTags
+                            key={name}
+                            icon={chainProperties[name].logo}
+                            name={name}
+                            onClose={name === network ? undefined : handleClose}
+                        />
+                    ))}
+                    <NetworkTags
+                        name={'Add Networks'}
+                        selected={false}
+                        onActionClick={() => setOpenModal(true)}
+                    />
+                </Space>
+                <Divider className='border-[#D2D8E0] border-2' dashed />
+                <div className='flex flex-col item-center gap-2'>
+                    <Checkbox
+                        value={false}
+                        onChange={() => {
+                            if (primaryNetwork === network) {
+                                return;
+                            }
+                            setPrimaryPreferencesModal(true);
+                        }}
+                        checked={primaryNetwork === network}
+                        className='text-pink_primary text-[16px] flex item-center'
+                    >
                         Set as Primary Network Settings
-					</Checkbox>
-					<p
-						className={`flex item-center gap-2 text-[16px] ${
-							primaryNetwork
-								? 'text-pink_primary cursor-pointer'
-								: 'text-[#96A4B6] cursor-not-allowed'
-						}`}
-						onClick={() => {
-							setCopyPreferencesModal(true);
-						}}
-					>
-						{primaryNetwork ? (
-							<ImportIcon />
-						) : (
-							<DisabledImportIcon />
-						)}{' '}
+                    </Checkbox>
+                    <div
+                        className={`flex item-center gap-2 text-[16px] ${
+                            primaryNetwork
+                                ? 'text-pink_primary cursor-pointer'
+                                : 'text-[#96A4B6] cursor-not-allowed'
+                        }`}
+                        onClick={() => {
+                            setCopyPreferencesModal(true);
+                        }}
+                    >
+                        <span>
+                            {primaryNetwork ? (
+                                <ImportIcon />
+                            ) : (
+                                <DisabledImportIcon />
+                            )}
+                        </span>
                         Importing Primary Network Settings to the networks
                         selected above
-					</p>
-				</div>
-			</Panel>
-			<AddNetworkModal
-				open={openModal}
-				onConfirm={handleModalConfirm}
-				onCancel={() => setOpenModal(false)}
-			/>
-			{primaryNetwork && (
-				<ImportPrimaryNetworkSettingModal
-					open={copyPreferencesModal}
-					primaryNetwork={primaryNetwork}
-					onConfirm={() => {
-						if (!primaryNetwork) {
-							return;
-						}
-						onCopyPrimaryNetworkNotification(
-							selectedNetwork.map(
-								({ name }: {name: string}) => name
-							)
-						);
-						setCopyPreferencesModal(false);
-					}}
-					onCancel={() => setCopyPreferencesModal(false)}
-				/>
-			)}
-			<SetPrimaryNetworkSettingModal
-				open={primaryPreferencesModal}
-				network={network}
-				onConfirm={handlePrimaryNetworkChange}
-				onCancel={() => setPrimaryPreferencesModal(false)}
-			/>
-		</Collapse>
-	);
+                    </div>
+                </div>
+            </Panel>
+            <AddNetworkModal
+                open={openModal}
+                onConfirm={handleModalConfirm}
+                onCancel={() => setOpenModal(false)}
+                selectedNetwork={selectedNetwork}
+            />
+            {primaryNetwork && (
+                <ImportPrimaryNetworkSettingModal
+                    open={copyPreferencesModal}
+                    primaryNetwork={primaryNetwork}
+                    onConfirm={() => {
+                        if (!primaryNetwork) {
+                            return;
+                        }
+                        onCopyPrimaryNetworkNotification(
+                            Object.values(selectedNetwork)
+                                .flatMap((chain) => chain)
+                                .map(({name}: {name: string}) => name)
+                        );
+                        setCopyPreferencesModal(false);
+                    }}
+                    onCancel={() => setCopyPreferencesModal(false)}
+                />
+            )}
+            <SetPrimaryNetworkSettingModal
+                open={primaryPreferencesModal}
+                network={network}
+                onConfirm={handlePrimaryNetworkChange}
+                onCancel={() => setPrimaryPreferencesModal(false)}
+            />
+        </Collapse>
+    );
 }

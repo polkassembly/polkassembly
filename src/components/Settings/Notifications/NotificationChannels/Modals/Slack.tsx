@@ -71,13 +71,13 @@ const SlackInfoModal = ({
 						<span
 							onClick={() =>
 								handleCopyClicked(
-									'/add <web3Address> <verificationToken>'
+									'/add <username> <verificationToken>'
 								)
 							}
 							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
 						>
 							<CopyIcon className='relative top-[6px]' />{' '}
-							{'<web3Address>'} {'<verificationToken>'}
+							{'<username>'} {'<verificationToken>'}
 						</span>
 						<Button
 							loading={loading}

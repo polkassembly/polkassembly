@@ -40,3 +40,10 @@ export interface IReducerState {
         value: string;
     }[]
 }
+
+export interface ISelectedNetwork {
+    [index: string]: Array<{
+        name: string;
+        selected: boolean;
+    }>;
+}

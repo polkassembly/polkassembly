@@ -53,7 +53,11 @@ export default function EmailNotificationCard({ verifiedEmail }: Props) {
 				}
 			);
 			if (error) {
-				throw new Error('Error on sending email');
+				queueNotification({
+					header: 'Failed!',
+					message: error,
+					status: NotificationStatus.ERROR
+				});
 			}
 			if (data) {
 				queueNotification({

@@ -71,7 +71,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 		copyToClipboard(address);
 	};
 
-	return  userName?.length > 0 ? <div className={`flex justify-between shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white rounded-[14px] ${className}`}>
+	return ((username?.length > 0 || username.length > 0)? <div className={`flex justify-between shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white rounded-[14px] ${className}`}>
 		<div className='flex justify-center gap-[34px] '>
 			<ImageComponent
 				src={image}
@@ -104,7 +104,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 							const link = (social_links && Array.isArray(social_links))? social_links?.find((s) => s.type === social)?.link || '': '';
 							return (
 								<SocialLink
-									className='flex items-center justify-center text-2xl text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] rounded-[20px] h-[39px] w-[40px] mt-4'
+									className={`flex items-center justify-center text-2xl text-[#96A4B6] hover:text-[#576D8B] p-[10px] bg-[#edeff3] rounded-[20px] h-[39px] w-[40px] ${isSearch ? 'mt-2' : 'mt-4'}`}
 									key={index}
 									link={link}
 									disable={!link}
@@ -137,6 +137,6 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 		{openEditModal  && username === userProfile.username &&
 				<EditProfileModal openModal={openEditModal} setOpenModal={setOpenEditModal} data={profileDetails} setProfileDetails={setProfileDetails}/>
 		}
-	</div> : <div className='p-6'><Skeleton/></div>;
+	</div> : <div className='p-6'><Skeleton/></div>);
 };
 export default DelegationProfile;

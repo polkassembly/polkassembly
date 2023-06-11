@@ -12,6 +12,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { poppins } from 'pages/_app';
 import handleFilterResults from '~src/util/handleFilterResults';
 import NoTagsFoundIcon from '~assets/icons/no-tag.svg';
+import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 
 import { FilterIcon, FilterUnfilledIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close-tags.svg';
@@ -164,7 +165,7 @@ const FilterByTags=({ className, isSearch, setSelectedTags }:Props) => {
 				</span>
 			</div> : <div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter || tags?.length > 0) ? 'text-pink_primary':'text-[#667589]'}`}>
           Tags
-				<span className='text-[#96A4B6] font-semibold'><DownOutlined className='ml-2.5 mt-1'/></span>
+				<span className='text-[#96A4B6] font-semibold'>{openFilter ? <HightlightDownOutlined className='ml-2.5 mt-1 max-md:ml-1'/> :<DownOutlined className='ml-2.5 mt-1 max-md:ml-1'/>}</span>
 			</div> }
 
 		</Popover> );

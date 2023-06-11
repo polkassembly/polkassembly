@@ -24,11 +24,9 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 		<div className={className}>
 			{
 				isSmallScreen?
-					<div className='small-client relative'>
+					<div className='small-client relative '>
 						<SearchOutlined className='absolute top-[11px] left-2.5 z-50' />
-						{/* <ClientOnly>
-							<Search network={network} />
-						</ClientOnly> */}
+						<Search openModal={open} setOpenModal={setOpen} isSuperSearch={isSuperSearch} setIsSuperSearch={setIsSuperSearch}/>
 					</div>
 					: <>
 						<button className='flex items-center justify-center outline-none border-none bg-transparent cursor-pointer text-[18px] text-[#485F7D]' onClick={() => setOpen(true)}>

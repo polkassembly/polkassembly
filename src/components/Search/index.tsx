@@ -23,6 +23,7 @@ import dayjs from 'dayjs';
 import Image from 'next/image';
 import SearchLoader from '~assets/search/search-loader.gif';
 import DownOutlined from '~assets/search/dropdown-down.svg';
+import HighlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import { SearchOutlined } from '@ant-design/icons';
 import CloseIcon from '~assets/icons/close.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -51,12 +52,24 @@ export enum EMultipleCheckFilters {
 }
 export enum EDateFilter {
   Today = 'today',
-  Yesterday = 'yesterday',
   Last_7_days = 'last_7_days',
   Last_30_days = 'last_30_days' ,
   Last_3_months = 'last_3_months',
-  Last_12_months = 'last_12_months'
+
 }
+const getTrackNameFromId = (network: string, trackId: number ) => {
+
+	let trackName = '';
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
+		if(value?.trackId === trackId && !value?.fellowshipOrigin){
+			console.log(value?.name);
+			trackName = value?.name;
+		}
+	}
+	);
+	return trackName;
+};
 
 const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperSearch }: Props) => {
 	const userIndex = algolia_client.initIndex('polkassembly_users');
@@ -86,7 +99,12 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	const tracksArr: { name: string; trackId: number; }[] = [];
 
 	if (networkTrackInfo?.[network]) {
-		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => tracksArr.push({ name: key === 'root' ? 'Root' : key, trackId: value?.trackId }));
+		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) =>
+		{
+			if(!value.fellowshipOrigin){
+				tracksArr.push({ name: key === 'root' ? 'Root' : value?.name, trackId: value?.trackId });
+			}
+		});
 	}
 
 	const handleFilterChange = (list: CheckboxValueType[], filter: EMultipleCheckFilters) => {
@@ -126,16 +144,12 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		switch (dateFilter){
 		case EDateFilter.Today:
 			return `created_at:${currentDate.unix()} TO ${currentDate.unix()}`;
-		case EDateFilter.Yesterday:
-			return `created_at:${currentDate.unix()} TO ${getPreviousDate(1)}`;
 		case EDateFilter.Last_7_days:
 			return `created_at:${currentDate.unix()} TO ${getPreviousDate(7)}`;
 		case EDateFilter.Last_30_days:
 			return `created_at:${currentDate.unix()} TO ${getPreviousDate(30)}`;
 		case EDateFilter.Last_3_months:
 			return `created_at:${currentDate.unix()} TO ${getPreviousDate(91)}`;
-		case EDateFilter.Last_12_months:
-			return `created_at:${currentDate.unix()} TO ${getPreviousDate(365)}`;
 		}
 
 	};
@@ -231,25 +245,25 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 
 	},[finalSearchInput]);
 
-	const handleModalClose = () => {
-		setSearchInput('');
-		setFinalSearchInput('');
+	const handleClearFilters = (close?: boolean) => {
+		close && searchInput.length > 0 && setSearchInput('');
+		close && finalSearchInput.length > 0 && setFinalSearchInput('');
 		setSearchInputErr({ clicked: false, err: '' });
-		setPostResults([]);
-		setPeopleResults([]);
+		postResults && postResults?.length > 0 && setPostResults([]);
+		peopleResults && peopleResults?.length > 0 && setPeopleResults([]);
 		setFilterBy(EFilterBy.Referenda);
-		setSelectedTags([]);
-		setSelectedTopics([]);
-		setSelectedTracks([]);
-		setDateFilter(null);
-		setIsSuperSearch(false);
-		setOpenModal(false);
+		selectedTags && selectedTags.length > 0 && setSelectedTags([]);
+		selectedTopics.length > 0 && setSelectedTopics([]);
+		selectedTracks.length> 0 && setSelectedTracks([]);
+		dateFilter && setDateFilter(null);
+		isSuperSearch && setIsSuperSearch(false);
+		close && setOpenModal(false);
 	};
 
 	return <Modal
-		title={<label className='text-[#243A57] text-xl font-semibold'>{isSuperSearch ? 'Super Search':'Search'} {finalSearchInput.length > 0 && `Results for "${finalSearchInput}"`}</label>}
+		title={<label className='text-[#243A57] text-xl font-semibold flex flex-wrap'>{isSuperSearch ? 'Super Search':'Search'} {finalSearchInput.length > 0 && `Results for "${finalSearchInput}"`}</label>}
 		open={openModal}
-		onCancel={handleModalClose}
+		onCancel={() => handleClearFilters(true)}
 		footer={false}
 		className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable}`}
 		closeIcon={<CloseIcon/>}
@@ -261,57 +275,85 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 			{(searchInputErr.err.length > 0) &&<span className='text-[red] text-xs mt-1'>{searchInputErr.err}</span>}
 
 			{finalSearchInput.length > 3 && (postResults || peopleResults) && <div className={`${loading && 'hidden'}`}>
-				<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2 ' }`}>
-					<Radio.Group onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage({ page: 1, totalPosts: 0 }); setUsersPage({ page: 1, totalUsers: 0 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className}`}>
-						<Radio value={EFilterBy.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Referenda ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'}`}>Referenda {filterBy === EFilterBy.Referenda && !loading && `(${postResults?.length})`}</Radio>
-						<Radio value={EFilterBy.Users} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Users ? 'bg-[#FEF2F8] text-[#243A57] px-4' : 'text-[#667589] px-1'}`}>People {filterBy === EFilterBy.Users && !loading && `(${peopleResults?.length})`}</Radio>
-						<Radio value={EFilterBy.Discussions} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Discussions ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'}`}>Discussions {filterBy === EFilterBy.Discussions && !loading && `(${postResults?.length})`}</Radio>
+				<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2' }`}>
+					<Radio.Group onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage({ page: 1, totalPosts: 0 }); setUsersPage({ page: 1, totalUsers: 0 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-md:flex-col`}>
+						<Radio value={EFilterBy.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Referenda ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'} max-md:px-4`}>Referenda {filterBy === EFilterBy.Referenda && !loading && `(${postsPage?.totalPosts})`}</Radio>
+						<Radio value={EFilterBy.Users} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Users ? 'bg-[#FEF2F8] text-[#243A57] px-4' : 'text-[#667589] px-1'} max-md:px-4`}>People {filterBy === EFilterBy.Users && !loading && `(${usersPage?.totalUsers})`}</Radio>
+						<Radio value={EFilterBy.Discussions} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Discussions ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'} max-md:px-4`}>Discussions {filterBy === EFilterBy.Discussions && !loading && `(${postsPage?.totalPosts})`}</Radio>
 					</Radio.Group>
-					{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && <div className='flex text-xs font-medium tracking-[0.02em] text-[#667589] gap-3.5 max-md:px-4'>
+					{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && <div className='flex text-xs font-medium tracking-[0.02em] text-[#667589] gap-3.5 max-md:px-0 max-md:gap-1.5'>
 						{ isSuperSearch && <NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} isSearch={true} setSelectedNetworks={setSelectedNetworks} selectedNetworks={selectedNetworks}/>}
 						<Popover open={openFilter.date} onOpenChange={() => setOpenFilter({ ...openFilter,date: !openFilter.date })} content={<div className='flex flex-col gap-1'>
 							<Radio.Group size='large' onChange={(e: RadioChangeEvent) => setDateFilter(e.target.value)} value={dateFilter} className={`gap-[1px] flex flex-col ${poppins.variable} ${poppins.className}`}>
 								<Radio value={EDateFilter.Today} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Today ? 'text-[#243A57]' : 'text-[#667589]'}`}>Today</Radio>
-								<Radio value={EDateFilter.Yesterday} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Yesterday ? 'text-[#243A57]' : 'text-[#667589]'}`}>Yesterday</Radio>
 								<Radio value={EDateFilter.Last_7_days} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_7_days ? 'text-[#243A57]' : 'text-[#667589]'}`}>Last 7 days</Radio>
 								<Radio value={EDateFilter.Last_30_days} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_30_days ? 'text-[#243A57]' : 'text-[#667589]'}`}>Last 30 days</Radio>
 								<Radio value={EDateFilter.Last_3_months} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_3_months ? 'text-[#243A57]' : 'text-[#667589]'}`}>Last 3 months</Radio>
-								<Radio value={EDateFilter.Last_12_months} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_12_months ? 'text-[#243A57]' : 'text-[#667589]'}`}>Last 12 months</Radio>
 								<Radio value={null} className={`text-xs font-normal py-1.5 ${!dateFilter ? 'text-[#243A57]' : 'text-[#667589]'}`}>All time</Radio>
 							</Radio.Group></div>} placement="bottomLeft" >
-							<div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter.date || dateFilter) && 'text-pink_primary' }`}>
+							<div className={`flex items-center justify-center text-xs cursor-pointer ${openFilter.date && 'text-pink_primary' }`}>
                                Date
 								<span className='text-[#96A4B6]'>
-									<DownOutlined className='ml-2.5 mt-1'/></span>
+									{openFilter.date ?<HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> :<DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}
+								</span>
 							</div>
 						</Popover>
 						<FilterByTags isSearch={true} setSelectedTags={setSelectedTags} />
 						{filterBy === EFilterBy.Referenda && <Popover  open={openFilter.track} onOpenChange={() => setOpenFilter({ ...openFilter, track: !openFilter.track })} content={
 							<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => handleFilterChange(list, EMultipleCheckFilters.Tracks)} value={selectedTracks} >
 								{tracksArr && tracksArr?.map((track) => <Checkbox key={track?.name} value={track?.trackId} className={`text-xs font-normal py-1.5 ml-0 ${selectedTracks.includes(track?.name) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
-									<div className='mt-[2px]'>{track?.name}</div>
+									<div className='mt-[2px] capitalize'>{track?.name?.split('_')?.join(' ')}</div>
 								</Checkbox> )}
 							</Checkbox.Group>} placement="bottomLeft">
-							<div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter.track || selectedTracks.length > 0 ) && 'text-pink_primary' }`}>
+							<div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter.track) && 'text-pink_primary' }`}>
                             Tracks
 								<span className='text-[#96A4B6]'>
-									<DownOutlined className='ml-2.5 mt-1'/></span>
+									{openFilter.track ?<HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> : <DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}</span>
 							</div>
 						</Popover>}
 						<Popover open={openFilter.topic} onOpenChange={() => setOpenFilter({ ...openFilter, topic: !openFilter.topic })} content={<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start ${poppins.className} ${poppins.variable}`} onChange={(list) => handleFilterChange(list, EMultipleCheckFilters.Topic)} value={selectedTopics} >
 							{topicOptions && topicOptions?.map((topic) => <Checkbox key={topic} value={topic} className={`text-xs font-normal py-1.5 ml-0 ${selectedTopics.includes(topic) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
 								<div className='mt-[2px]'>{topic}</div>
 							</Checkbox>)}</Checkbox.Group>} placement="bottomLeft" >
-							<div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter.topic || selectedTopics.length > 0 ) && 'text-pink_primary' }`}>
+							<div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter.topic) && 'text-pink_primary' }`}>
                  Topic
-								<span className='text-[#96A4B6]'><DownOutlined className='ml-2.5 mt-1'/></span>
+								<span className='text-[#96A4B6]'>
+									{openFilter.topic ? <HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> :<DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}
+								</span>
 							</div>
 						</Popover>
 					</div>}
 				</div>
+				<div className='mt-3 flex justify-between text-xs font-medium text-[#243A57] '>
+					<div className='flex gap-1'>
+						{isSuperSearch && selectedNetworks.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
+							<span className='text-pink_primary'>Network:</span>
+							<span>{selectedNetworks?.join(',')}</span>
+						</div>}
+						{dateFilter && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px] font-medium'>
+							<span className='text-pink_primary'>Date:</span>
+							<span className='capitalize'>{dateFilter?.split('_')?.join(' ')}</span>
+						</div>}
+						{selectedTags.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
+							<span className='text-pink_primary'>Tags:</span>
+							<span className='capitalize'>{selectedTags?.join(',')}</span>
+						</div>}
+						{selectedTracks.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
+							<span className='text-pink_primary'>Tracks:</span>
+							<>
+								{selectedTracks?.map((trackId, index) => <span key={index} className="capitalize gap-[2px]">{ getTrackNameFromId(network, Number(trackId))?.split('_')?.join(' ')}{index !== selectedTracks.length - 1 && ','}</span> )}
+							</>
+						</div>}
+						{selectedTopics.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
+							<span className='text-pink_primary'>Topics:</span>
+							<span>{selectedTopics?.join(',')}</span>
+						</div>}
+					</div>
+					<span className='text-pink_primary cursor-pointer' onClick={() => handleClearFilters()}>Clear All Filters</span>
+				</div>
 				{
 					(filterBy === EFilterBy.Referenda || filterBy ===  EFilterBy.Discussions)
-          && postResults && <ResultPosts setOpenModal={setOpenModal} isSuperSearch={isSuperSearch} postsData={postResults} className='mt-6' postsPage={postsPage} setPostsPage={setPostsPage}/>
+          && postResults && <ResultPosts setOpenModal={setOpenModal} isSuperSearch={isSuperSearch} postsData={postResults} className='mt-3' postsPage={postsPage} setPostsPage={setPostsPage}/>
 				}
 
 				{filterBy === EFilterBy.Users

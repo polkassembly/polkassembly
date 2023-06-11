@@ -5,8 +5,9 @@ import { Button, Divider } from 'antd';
 import React from 'react';
 import SuperSearchIcon from '~assets/icons/super-search.svg';
 import EmptyResultsIcon from '~assets/search/empty-search.svg';
-import Link from 'next/link';
 import { EFilterBy } from '.';
+import { useRouter } from 'next/router';
+import checkGov2Route from '~src/util/checkGov2Route';
 
 interface Props{
   setIsSuperSearch: (pre: boolean) => void;
@@ -19,6 +20,8 @@ interface Props{
 
 const SuperSearchCard = ({ setIsSuperSearch, setFilterBy, isSuperSearch, filterBy, postResultsCounts, peopleResultsCounts }: Props) =>
 {
+	const router = useRouter();
+
 	return (((filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && postResultsCounts === 0)
       || (filterBy ===  EFilterBy.Users && peopleResultsCounts === 0 )
 		? <div className='flex flex-col justify-center items-center mt-7 mb-5'>
@@ -35,7 +38,7 @@ const SuperSearchCard = ({ setIsSuperSearch, setFilterBy, isSuperSearch, filterB
 			<div className='w-[50%] max-md:w-[80%] my-8'>
 				<Divider className='text-[#90A0B7] border-[1px]'><span className='text-[10px] font-medium'>OR</span></Divider>
 			</div>
-			<div className='text-sm text-[#243A57] font-medium tracking-[0.01em]'>See latest<Link href='/discussion' className='text-[#E5007A] mx-[2px]'> Discussions</Link> on Polkassembly.</div>
+			<div className='text-sm text-[#243A57] font-medium tracking-[0.01em] flex gap-1'><span>See latest</span><span onClick={() =>  router.push(checkGov2Route(router?.pathname) ? '/open-gov' : '/') } className='text-[#E5007A] mx-[2px] border-solid border-[0px] border-b-[1px] leading-[-8px]'>Latest Activity</span><span >on Polkassembly.</span></div>
 		</div>
 		:!isSuperSearch ?
 			<div className='flex flex-col justify-center items-center mb-5'>

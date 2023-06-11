@@ -2,13 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-const redis = require('redis');
+import Redis from 'ioredis';
 
 if (!process.env.REDIS_URL) {
 	throw new Error('REDIS_URL is not set');
 }
 
-export const client = redis.createClient(process.env.REDIS_URL);
+export const client = new Redis(process.env.REDIS_URL);
 
 /**
  * get from redis

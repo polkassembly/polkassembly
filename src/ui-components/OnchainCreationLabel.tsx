@@ -29,7 +29,7 @@ const OnchainCreationLabel = ({ address, topic, username, truncateUsername }:Pro
 										address={address}
 										className='address ml-1.5'
 										displayInline={true}
-										truncateUsername={truncateUsername}
+										isShortenAddressLength={truncateUsername}
 									/>
 									: <span
 										className='mx-1.5'

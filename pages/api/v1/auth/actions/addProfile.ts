@@ -17,7 +17,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const firestore = firebaseAdmin.firestore();
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
-	const { badges: badgesString, bio, image, title, social_links: socialLinksString, username } = req.body;
+	const { badges: badgesString, bio, image, title, social_links: socialLinksString, username, custom_username } = req.body;
 	if(!username) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	for (let i = 0; i < nameBlacklist.length; i++) {
@@ -59,6 +59,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const profile = {
 		badges,
 		bio: bio || '',
+		custom_username:custom_username,
 		image: image || '',
 		social_links: newSocialLinks || [],
 		title: title || ''

@@ -111,7 +111,8 @@ export interface UndoEmailChangeToken {
 }
 
 export interface User {
-	created_at:Date,
+	created_at?:Date,
+	custom_username?:boolean,
 	email: string;
 	email_verified: boolean;
 	id: number;

@@ -91,7 +91,7 @@ class AuthService {
 		}
 	}
 
-	private async createUser (email: string, newPassword: string, username: string, web3signup: boolean, network: string): Promise<User> {
+	private async createUser (email: string, newPassword: string, username: string, web3signup: boolean, network: string ,custom_username?: boolean): Promise<User> {
 		const { password, salt } = await this.getSaltAndHashedPassword(newPassword);
 
 		const newUserId = (await this.getLatestUserCount()) + 1;
@@ -99,6 +99,7 @@ class AuthService {
 		const userId = String(newUserId);
 		const newUser: User = {
 			created_at: new Date(),
+			custom_username:custom_username,
 			email,
 			email_verified: false,
 			id: newUserId,
@@ -354,10 +355,10 @@ class AuthService {
 		const addressDoc = await firebaseAdmin.firestore().collection('addresses').doc(address).get();
 		if (addressDoc.exists) throw apiErrorWithStatusCode(messages.ADDRESS_SIGNUP_ALREADY_EXISTS, 400);
 
-		const username = address;
+		const username = uuidv4().split('-').join('').substring(0, 25);
 		const password = uuidv4();
 
-		const user = await this.createUser('', password, username, true, network);
+		const user = await this.createUser('', password, username, true, network,false);
 
 		await this.createAddress(network, address, true, user.id, address.startsWith('0x'), wallet);
 		await redisDel(getAddressSignupKey(address));

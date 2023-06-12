@@ -17,7 +17,8 @@ interface IGetProfileWithAddress {
 }
 
 export interface IGetProfileWithAddressResponse {
-	created_at:Date,
+	created_at?:Date,
+	custom_username:boolean;
 	profile: ProfileDetails;
 	username: string;
 	web3Signup:boolean,
@@ -46,6 +47,7 @@ export async function getProfileWithAddress(params: IGetProfileWithAddress): Pro
 		const profile = userData.profile as ProfileDetails;
 		const data: IGetProfileWithAddressResponse = {
 			created_at: dayjs((userData.created_at as any)?.toDate?.() || userData.created_at).toDate(),
+			custom_username:userData.custom_username || false,
 			profile,
 			username: userData.username || '',
 			web3Signup: userData.web3_signup

@@ -17,6 +17,7 @@ import { reducer } from './Reducer/reducer';
 import { ACTIONS } from './Reducer/action';
 import { INotificationObject } from './types';
 import { networks } from './Parachain/utils';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 const getAllNetworks = (network: string) => {
 	for (const category of Object.keys(networks)) {
@@ -34,7 +35,7 @@ const getAllNetworks = (network: string) => {
 
 export default function Notifications() {
 	const { id, networkPreferences, setUserDetailsContextState, primaryNetwork } =
-        useUserDetailsContext();
+		useUserDetailsContext();
 	const { network } = useNetworkContext();
 
 	const [notificationPreferences, dispatch] = useReducer(
@@ -43,8 +44,8 @@ export default function Notifications() {
 	);
 
 	const [selectedNetwork, setSelectedNetwork] = useState<{
-        [index: string]: Array<{name: string; selected: boolean}>;
-    }>(getAllNetworks(network));
+		[index: string]: Array<{ name: string; selected: boolean }>;
+	}>(getAllNetworks(network));
 	const [loading, setLoading] = useState(true);
 
 	const handleCurrentNetworkNotifications = (obj: INotificationObject) => {
@@ -64,7 +65,7 @@ export default function Notifications() {
 		try {
 			const { data, error } = (await nextApiClientFetch(
 				'api/v1/auth/data/notificationSettings'
-			)) as {data: any; error: null | string};
+			)) as { data: any; error: null | string };
 			if (error) {
 				throw new Error(error);
 			}
@@ -74,9 +75,9 @@ export default function Notifications() {
 					networkPreferences: {
 						...prev.networkPreferences,
 						channelPreferences:
-                            data?.notification_preferences?.channelPreferences,
+							data?.notification_preferences?.channelPreferences,
 						triggerPreferences:
-                            data?.notification_preferences?.triggerPreferences
+							data?.notification_preferences?.triggerPreferences
 					}
 				}));
 			}
@@ -90,7 +91,7 @@ export default function Notifications() {
 		try {
 			const { data, error } = (await nextApiClientFetch(
 				`api/v1/auth/data/user?userId=${id}`
-			)) as {data: PublicUser; error: null | string};
+			)) as { data: PublicUser; error: null | string };
 			if (error) {
 				throw new Error(error);
 			}
@@ -127,10 +128,10 @@ export default function Notifications() {
 				'api/v1/auth/actions/setNetworkPreferences',
 				{
 					network_preferences:
-                        networkPreferences.triggerPreferences[network],
+						networkPreferences.triggerPreferences[network],
 					networks
 				}
-			)) as {data: {message: string}; error: string | null};
+			)) as { data: { message: string }; error: string | null };
 			if (error || !data.message) {
 				throw new Error(error || '');
 			}
@@ -140,10 +141,10 @@ export default function Notifications() {
 	};
 
 	useEffect(() => {
-		const selectedNames:Array<string> = [];
+		const selectedNames: Array<string> = [];
 		for (const category of Object.values(selectedNetwork)) {
 			category.forEach((chain) => {
-				if(chain.selected) selectedNames.push(chain.name);
+				if (chain.selected) selectedNames.push(chain.name);
 			});
 		}
 		handleSetNetworkPreferences(selectedNames);
@@ -155,14 +156,14 @@ export default function Notifications() {
 	) => {
 		try {
 			const primarySettings =
-                networkPreferences.triggerPreferences?.[primaryNetwork];
+				networkPreferences.triggerPreferences?.[primaryNetwork];
 			const { data, error } = (await nextApiClientFetch(
 				'api/v1/auth/actions/setNetworkPreferences',
 				{
 					network_preferences: primarySettings,
 					networks: selectedNetwork
 				}
-			)) as {data: {message: string}; error: string | null};
+			)) as { data: { message: string }; error: string | null };
 			if (error || !data.message) {
 				throw new Error(error || '');
 			}
@@ -226,14 +227,14 @@ export default function Notifications() {
 				dispatch={dispatch}
 				onSetNotification={handleCurrentNetworkNotifications}
 			/>
-			<OpenGovNotification
+			{Object.keys(networkTrackInfo).includes(network) && <OpenGovNotification
 				userNotification={
 					networkPreferences.triggerPreferences[network]
 				}
 				options={notificationPreferences.openGov}
 				dispatch={dispatch}
 				onSetNotification={handleCurrentNetworkNotifications}
-			/>
+			/>}
 		</div>
 	);
 }

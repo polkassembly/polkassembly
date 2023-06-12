@@ -22,7 +22,7 @@ import AuthForm from 'src/ui-components/AuthForm';
 import FilteredError from 'src/ui-components/FilteredError';
 import Loader from 'src/ui-components/Loader';
 import getEncodedAddress from 'src/util/getEncodedAddress';
-
+import LoginLogo from '~assets/icons/login-logo.svg';
 import { ChallengeMessage, TokenType } from '~src/auth/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -241,127 +241,123 @@ const Web3Signup: FC<Props> = ({
 		onWalletUpdate && onWalletUpdate();
 	};
 	return (
-		<article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-3">
-			<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-4 justify-center">
-				<span>Sign Up</span>
-				<p className='flex gap-x-2 items-center justify-center p-0 m-0'>
-					<span>
+		<><div className='flex items-center'>
+			<LoginLogo className='ml-6 mr-2' />
+			<h3 className="text-[20px] font-semibold text-[#243A57] mt-3">Sign Up</h3>
+		</div><hr className='text-[#D2D8E0]'/>
+		<article className="bg-white shadow-md rounded-md p-8 flex flex-col ">
+			<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-1 justify-center">
+				{/* <span>Sign Up</span> */}
+				<p className='flex gap-x-2 items-center justify-start p-0 m-0'>
+					<span className='mt-2'>
 						<WalletIcon which={chosenWallet} />
 					</span>
-					<span className='text-navBlue text-lg sm:text-xl'>
-						{
-							chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')
-						}
+					<span className='text-[#243A57] text-lg sm:text-xl'>
+						{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
 					</span>
 				</p>
 			</h3>
-			{
-				fetchAccounts?
-					<div className='flex flex-col justify-center items-center'>
-						<p className='text-base'>
+			{fetchAccounts ?
+				<div className='flex flex-col justify-center items-center'>
+					<p className='text-base text-[#243A57]'>
 							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
-						</p>
-						<div className='flex'>
-							<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-4 px-7 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() =>  handleBackToSignUp()}>
+					</p>
+					<div className='flex'>
+						<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() => handleBackToSignUp()}>
 								Go Back</Button>
-							<Button
-								key='got-it'
-								icon={<CheckOutlined />}
-								className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
-								onClick={() => {
-									getAccounts(chosenWallet)
-										.then(() => {
-											setFetchAccounts(false);
-										})
-										.catch((err) => {
-											console.error(err);
-										});
-								}}
-							>
-							Got it!
+						<Button
+							key='got-it'
+							icon={<CheckOutlined />}
+							className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-5 px-8 font-medium text-lg leading-none flex items-center justify-center'
+							onClick={() => {
+								getAccounts(chosenWallet)
+									.then(() => {
+										setFetchAccounts(false);
+									})
+									.catch((err) => {
+										console.error(err);
+									});
+							} }
+						>
+								Got it!
+						</Button>
+					</div>
+				</div>
+				: (
+					<>
+						<AuthForm onSubmit={handleSignup} className="flex flex-col gap-y-6">
+							{extensionNotFound ?
+								<div className='flex justify-center items-center my-5'>
+									<ExtensionNotDetected chosenWallet={chosenWallet} />
+								</div>
+								: null}
+							{accountsNotFound && (
+								<div className='flex justify-center items-center my-5'>
+									<Alert
+										message="You need at least one account in Polkadot-js extension to login."
+										description="Please reload this page after adding accounts."
+										type="info"
+										showIcon />
+								</div>
+							)}
+							{isAccountLoading ? (
+								<div className="my-5">
+									<Loader
+										size="large"
+										timeout={3000}
+										text="Requesting Web3 accounts" />
+								</div>
+							) : accounts.length > 0 && (
+								<>
+									<div className='flex justify-center items-center my-5'>
+										<AccountSelectionForm
+											title='Choose linked account'
+											accounts={accounts}
+											address={address}
+											onAccountChange={onAccountChange} />
+									</div>
+									<div className="flex justify-center items-center">
+										<Button
+											disabled={loading}
+											htmlType="submit"
+											size="large"
+											className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
+										>
+												Sign-up
+										</Button>
+									</div>
+									<div>
+										<Divider>
+											<div className="flex gap-x-2 items-center">
+												<span className="text-grey_primary text-md">Or</span>
+												<Button
+													className="p-0 border-none outline-none text-pink_primary text-md font-semibold"
+													disabled={loading}
+													onClick={handleToggle}
+												>
+														Sign-up with Username
+												</Button>
+											</div>
+										</Divider>
+									</div>
+								</>
+							)}
+							{error && <FilteredError text={error} />}
+						</AuthForm>
+						<div className='flex items-center justify-center'>
+							<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() => handleBackToSignUp()}>
+								Go Back
 							</Button>
 						</div>
-					</div>
-					: (
-						<>
-							<AuthForm onSubmit={handleSignup} className="flex flex-col gap-y-6">
-								{extensionNotFound?
-									<div className='flex justify-center items-center my-5'>
-										<ExtensionNotDetected chosenWallet={chosenWallet} />
-									</div>
-									: null
-								}
-								{accountsNotFound && (
-									<div className='flex justify-center items-center my-5'>
-										<Alert
-											message="You need at least one account in Polkadot-js extension to login."
-											description="Please reload this page after adding accounts."
-											type="info"
-											showIcon
-										/>
-									</div>
-								)}
-								{isAccountLoading ? (
-									<div className="my-5">
-										<Loader
-											size="large"
-											timeout={3000}
-											text="Requesting Web3 accounts"
-										/>
-									</div>
-								) : accounts.length > 0 && (
-									<>
-										<div className='flex justify-center items-center my-5'>
-											<AccountSelectionForm
-												title='Choose linked account'
-												accounts={accounts}
-												address={address}
-												onAccountChange={onAccountChange}
-											/>
-										</div>
-										<div className="flex justify-center items-center">
-											<Button
-												disabled={loading}
-												htmlType="submit"
-												size="large"
-												className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
-											>
-							Sign-up
-											</Button>
-										</div>
-										<div>
-											<Divider>
-												<div className="flex gap-x-2 items-center">
-													<span className="text-grey_primary text-md">Or</span>
-													<Button
-														className="p-0 border-none outline-none text-pink_primary text-md font-semibold"
-														disabled={loading}
-														onClick={handleToggle}
-													>
-								Sign-up with Username
-													</Button>
-												</div>
-											</Divider>
-										</div>
-									</>
-								)}
-								{error && <FilteredError text={error}/>}
-							</AuthForm>
-							<div className='flex items-center justify-center'>
-								<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-2 px-6 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() =>  handleBackToSignUp()}>
-								Go Back
-								</Button>
-							</div>
-						</>
-					)
-			}
+					</>
+				)}
 			<div className="flex justify-center items-center gap-x-2 font-semibold mt-6">
-				<label className="text-md text-grey_primary">
-					Already have an account?
+				<label className="text-md text-[#243A57]">
+						Already have an account?
 				</label>
 				<div onClick={() => handleClick()} className='text-pink_primary text-md'>Login</div>
 			</div>
-		</article>
+		</article></>
 	);
 };
 

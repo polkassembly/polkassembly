@@ -50,6 +50,9 @@ import { PlusOutlined } from '@ant-design/icons';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
+import { IVotesHistoryResponse } from 'pages/api/v1/votes/history';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -298,6 +301,36 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		api?.setSigner(signer);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
+
+	useEffect( () => {
+		if (!api) {
+			return;
+		}
+
+		if (!apiReady) {
+			return;
+		}
+		const encoded = getEncodedAddress(address, network);
+		const substrateAddress = getSubstrateAddress(address);
+
+		nextApiClientFetch<IVotesHistoryResponse>(`api/v1/votes/history?page=${2}&voterAddress=${substrateAddress}&network=${network}&numListingLimit=${2}`)
+			.then((res) => {
+				if (res.error) {
+					console.log('error');
+				} else {
+					console.log('address = ',substrateAddress);
+					console.log('encoded = ',encoded);
+					console.log('info = ',res.data);
+					//setCount(res.data?.count || 0);
+				}
+				//setLoading(false);
+			})
+			.catch((err) => {
+				console.error(err);
+				//setLoading(false);
+			});
+
+	}, [address,api,apiReady,network]);
 
 	const getWalletAccounts = async (chosenWallet: Wallet): Promise<InjectedAccount[] | undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;

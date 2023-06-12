@@ -22,6 +22,7 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { isCreationOfTreasuryProposalSupported } from '~src/util/isCreationOfTreasuryProposalSupported';
 import DiamondIcon from '~assets/icons/diamond-icon.svg';
+import FilteredTags from '~src/ui-components/filteredTags';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TreasuryProposalFormButton = dynamic(() => import('src/components/CreateTreasuryProposal/TreasuryProposalFormButton'), {
@@ -107,8 +108,11 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 			<TreasuryOverview inTreasuryProposals={true} className='my-8'/>
 
 			<div className='shadow-md bg-white py-5 px-0 rounded-xxl'>
-				<div className='flex items-center justify-end px-5'>
-					<FilterByTags/>
+				<div className='flex items-center justify-between'>
+					<div>
+						<FilteredTags/>
+					</div>
+					<FilterByTags className='m-6'/>
 				</div>
 
 				<div>

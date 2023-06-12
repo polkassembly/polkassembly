@@ -252,6 +252,7 @@ export default styled(DashboardTrackListing)`
   font-size: 14px;
   font-weight: 600px;
   line-height: 21px;
+  white-space: nowrap;
 }
 .column .ant-table-thead > tr > th:nth-child(1){
   text-align: center;

@@ -87,7 +87,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 					<div>
 						<FilteredTags/>
 					</div>
-					<FilterByTags className='mr-[2px]'/>
+					<FilterByTags className='m-6'/>
 				</div>
 
 				<div>

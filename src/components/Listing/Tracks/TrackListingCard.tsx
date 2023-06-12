@@ -16,6 +16,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
+import styled from 'styled-components';
 
 interface Props {
 	className?: string;
@@ -102,12 +103,12 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
 	return (
-		<div className={`${className} bg-white drop-shadow-md rounded-xxl p-4 md:p-8`}>
+		<div className={`${className} bg-white drop-shadow-md rounded-xxl md:py-8 px-0`}>
 			<div className='flex items-center justify-between mb-0'>
 				<div>
 					<FilteredTags/>
 				</div>
-				<FilterByTags className='mr-[2px] mt-[-10px]'/>
+				<FilterByTags className='mr-10 mt-[-10px]'/>
 			</div>
 			<Tabs
 				activeKey={activeTab}
@@ -134,4 +135,9 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 	);
 };
 
-export default TrackListingCard;
+export default styled(TrackListingCard)`
+	.ant-tabs-nav{
+		margin-left: 15px;
+		margin-top: -10px;
+	}
+`;

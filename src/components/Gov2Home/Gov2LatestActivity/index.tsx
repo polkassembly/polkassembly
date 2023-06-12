@@ -99,6 +99,7 @@ export default React.memo(styled(Gov2LatestActivity)`
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
+		white-space: nowrap;
 	}
 
 	th.ant-table-cell {
@@ -106,6 +107,7 @@ export default React.memo(styled(Gov2LatestActivity)`
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
+		white-space: nowrap;
 	}
 
 	.ant-table-thead > tr > th {
@@ -113,6 +115,7 @@ export default React.memo(styled(Gov2LatestActivity)`
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
+		white-space: nowrap;
 	}
 
 	.ant-table-row{
@@ -126,6 +129,7 @@ export default React.memo(styled(Gov2LatestActivity)`
 		font-size: 14px !important;
 		font-weight: 400 !important;
 		cursor: pointer !important;
+		white-space: nowrap;
 	}
 
 	.ant-tabs-tab-bg-white .ant-tabs-tab:not(.ant-tabs-tab-active) {

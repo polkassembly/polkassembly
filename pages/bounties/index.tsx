@@ -87,7 +87,7 @@ const Bounties: FC<IBountiesProps> = (props) => {
 					<div>
 						<FilteredTags/>
 					</div>
-					<FilterByTags className='mr-[25px]'/>
+					<FilterByTags className='m-6'/>
 				</div>
 
 				<div>

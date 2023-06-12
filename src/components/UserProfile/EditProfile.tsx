@@ -72,7 +72,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const validateUserName = (username: string) => {
 
 		let error = 0;
-		const format = /^[a-zA-Z0-9]*$/;
+		const format = /^[a-zA-Z0-9_@-]*$/;
 		if(!format.test(username) || username.length > 30 || username.length < 3){
 			queueNotification({
 				header: 'Error',

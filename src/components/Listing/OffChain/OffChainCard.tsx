@@ -40,7 +40,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 	return (
 		<>
 			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 h-[147px] sm:flex xs:hidden ${className}`}>
-				<span className='font-medium text-center mr-2 flex-none sm:w-[120px] text-bodyBlue sm:mt-5'>#{post_id}</span>
+				<span className='font-medium text-center mr-2 flex-none sm:w-[120px] text-bodyBlue sm:mt-4'>#{post_id}</span>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-4">
 					<OnchainCreationLabel address={address} topic={topic} username={username}  />
 					<div className="hidden sm:flex sm:justify-between lg:items-start lg:flex-row">
@@ -74,7 +74,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								: null
 						}
 					</div>
-					<div className="mt-3 gap-2.5 font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
+					<div className="-mt-2 font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
 
 						<div className='flex items-center gap-x-2'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5 mr-2'>
@@ -93,7 +93,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 
 							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
-								(<div key={index} className='rounded-xl px-[14px] py-[4px] border-navBlue border-solid border-[1px] font-medium text-[10px]' >
+								(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-[4px] border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
 									{tag}
 								</div>))}
 							{tags.length>2 && <span className='text-bodyBlue' style={{ background:'#D2D8E0' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>

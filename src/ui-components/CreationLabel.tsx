@@ -99,7 +99,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						</> : null}
 				</div>
 			</div>
-			<div className='flex items-center text-lightBlue sm:-mt-1'>
+			<div className='flex items-center text-lightBlue -mt-1'>
 				{(topic || text) && <>
 				&nbsp;
 					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />

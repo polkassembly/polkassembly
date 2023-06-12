@@ -86,12 +86,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	return (
 		<>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200  sm:p-3 md:p-6 min-h-[147px] sm:flex xs:hidden`}>
-				<span className='font-medium text-center mr-2 flex-none sm:w-[120px] text-bodyBlue sm:mt-4'>#{isTip? tip_index: onchainId}</span>
+				<span className='font-medium text-center mr-2 flex-none sm:w-[120px] text-bodyBlue sm:mt-3'>#{isTip? tip_index: onchainId}</span>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-4">
 					<OnchainCreationLabel address={address} username={username} />
 					<div className='hidden sm:flex sm:justify-between gap-x-2 lg:items-start lg:flex-row my-2 '>
 						<div className='mt-3 lg:mt-0'>
-							<h1 className='text-bodyBlue text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
+							<h1 className='text-bodyBlue mt-3 text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
 								<span className='break-all text-bodyBlue font-medium text-sm'>{ mainTitle }</span>
 							</h1>
 							<h2 className='text-bodyBlue font-medium text-sm'>{subTitle}</h2>
@@ -110,9 +110,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 					</div>
 
-					<div className="mt-0 gap-2.5 font-medium text-navBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
+					<div className="font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
 
-						<div className='flex items-center gap-x-2 '>
+						<div className='flex items-center gap-x-2 mt-1'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
 								<LikeOutlined style={{ color: '#485F7D' }} />
 								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>

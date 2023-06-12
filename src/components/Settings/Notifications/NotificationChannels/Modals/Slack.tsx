@@ -61,7 +61,7 @@ const SlackInfoModal = ({
 								target='_blank'
 								rel='noreferrer'
 							>
-                                https://premiurly.slack.com/apps/A057XPP28G4-polkassembly
+                                https://premiurly.slack.com/apps/A059VBVGL59-polkassembly-bot
 							</a>
 						</span>
 					</li>

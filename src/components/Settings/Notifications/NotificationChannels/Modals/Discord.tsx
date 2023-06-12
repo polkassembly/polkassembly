@@ -54,7 +54,7 @@ const DiscordInfoModal = ({
                         Click this invite link
 						<span className='p-1 mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'>
 							<a
-								href='https://discord.com/oauth2/authorize?client_id=1110547234262614056&permissions=397284485120&scope=bot'
+								href='https://discord.com/oauth2/authorize?client_id=1112538708219007017&permissions=397284485120&scope=bot'
 								target='_blank'
 								rel='noreferrer'
 							>

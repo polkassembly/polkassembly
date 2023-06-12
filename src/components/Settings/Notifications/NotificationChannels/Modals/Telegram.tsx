@@ -66,7 +66,7 @@ const TelegramInfoModal = ({
 						<br />
                         or Add
 						<span
-							onClick={() => handleCopyClicked('@PolkasafeBot')}
+							onClick={() => handleCopyClicked('@PolkassemblyBot')}
 							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
 						>
 							<CopyIcon className='relative top-[6px] color-pink_primary' />{' '}

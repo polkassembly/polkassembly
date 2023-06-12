@@ -347,203 +347,231 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	return (
 		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col gap-4 lg:flex`}>
 			{/* Available */}
-			<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-xxl gap-y-2">
-				{
-					!available.isLoading ?
-						<>
-							<div className="text-lightBlue text-xs flex items-center">
-								<span className="mr-2">
+			<div className="flex flex-1 justify-between bg-white drop-shadow-md p-3 h-40 w-52 lg:px-6 lg:py-3 rounded-xxl">
+				<div className='flex flex-col justify-evenly gap-x-0'>
+					{
+						!available.isLoading ?
+							<>
+								<div className="flex items-center">
+									<span className="mr-2 text-xs leading-5 text-lightBlue font-medium">
 									Available
-								</span>
-
-								<HelperTooltip
-									text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
-								/>
-							</div>
-							<div className="flex justify-between font-medium">
-								{
-									available.value ?
-										<span className='text-lg text-bodyBlue'>
-											{available.value}
-											{' '}
-											<span className='text-lightBlue text-sm'>
-												{chainProperties[network]?.tokenSymbol}
-											</span>
-										</span>
-										: <span>N/A</span>
-								}
-								<Available className="mr-2 -mt-5"/>
-							</div>
-							{!['polymesh', 'polymesh-test'].includes(network) && <>
-								<div className='flex flex-col justify-center text-bodyBlue font-medium gap-y-3'>
-									<Divider className='m-0 p-0' />
-									<span className='flex flex-col justify-center text-bodyBlue font-medium'>
-										{
-											available.valueUSD
-												? `~ $${available.valueUSD}`
-												: 'N/A'
-										}
 									</span>
+									<HelperTooltip
+										text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
+										className='text-xs leading-5 text-lightBlue font-medium'
+									/>
 								</div>
-							</>}
-						</>
-						: <div className='min-h-[89px] w-full flex items-center justify-center'>
-							<LoadingOutlined />
-						</div>
-				}
+								<div className="flex justify-between lg:-mt-2 font-medium">
+									{
+										available.value ?
+											<span className='text-lg text-bodyBlue font-medium'>
+												{available.value}
+												{' '}
+												<span className='text-lightBlue text-sm'>
+													{chainProperties[network]?.tokenSymbol}
+												</span>
+											</span>
+											: <span>N/A</span>
+									}
+								</div>
+								{!['polymesh', 'polymesh-test'].includes(network) && <>
+									<div className='flex flex-col justify-center text-bodyBlue font-medium gap-y-3'>
+										<Divider
+											style={{
+												background: '#D2D8E0',
+												width: '100%'
+											}}
+											className='m-0 p-0' />
+										<span className='flex flex-col justify-center text-lightBlue text-xs font-medium'>
+											{
+												available.valueUSD
+													? `~ $${available.valueUSD}`
+													: 'N/A'
+											}
+										</span>
+									</div>
+								</>}
+							</>
+							: <div className='min-h-[89px] w-full flex items-center justify-center'>
+								<LoadingOutlined />
+							</div>
+					}
+				</div>
+				<Available className='mt-3.5'/>
 			</div>
 
 			{/* CurrentPrice */}
 			{network !== 'moonbase' &&
-				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-xxl gap-y-2">
-					{
-						!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading)?
-							<>
-								<div className="text-xs flex items-center">
-									<span className='hidden text-lightBlue md:flex'>
+				<div className="flex-1 flex justify-between bg-white drop-shadow-md p-3 h-40 w-52 lg:px-6 lg:py-3 rounded-xxl">
+					<div className='flex flex-col justify-evenly gap-x-0'>
+						{
+							!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading)?
+								<>
+									<div className="flex items-center">
+										<span className='hidden mr-2 text-xs leading-5 text-lightBlue font-medium md:flex'>
 							Current Price of {chainProperties[network]?.tokenSymbol}
-									</span>
-									<span className='flex md:hidden'>
+										</span>
+										<span className='flex md:hidden'>
 							Price {chainProperties[network]?.tokenSymbol}
-									</span>
-								</div>
-								<div className="flex justify-between text-sidebarBlue font-medium text-lg">
-									{currentTokenPrice.value === 'N/A' ? <span>N/A</span> : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value))
-										? <span>${currentTokenPrice.value}</span>
-										: null
-									}
-									<CurrentPrice className="mr-2 -mt-5"/>
-								</div>
-								<div className="flex flex-col justify-center text-sidebarBlue font-medium gap-y-3">
-									<Divider className='m-0 p-0' />
-									<span className='flex items-center gap-x-1'>
-										{priceWeeklyChange.value === 'N/A' ? 'N/A' : priceWeeklyChange.value ?
-											<>
-												<span>
-													Weekly{' '}
-													<span className='hidden xl:inline-block'>
-														Change
-													</span>
-												</span>
-												<span>
-													{Math.abs(Number(priceWeeklyChange.value))}%
-												</span>
-												{typeof priceWeeklyChange.value === 'number' && priceWeeklyChange.value < 0 ? <CaretDownOutlined color='red' /> : <CaretUpOutlined color='green' /> }
-											</>
+										</span>
+									</div>
+									<div className="flex justify-between text-lightBlue font-medium text-lg lg:-mt-2">
+										{currentTokenPrice.value === 'N/A' ? <span>N/A</span> : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value))
+											?
+											<div className='flex'>
+												<span className='text-lightBlue'>$</span>
+												<span className='text-bodyBlue'> {currentTokenPrice.value}</span>
+											</div>
 											: null
 										}
-									</span>
+									</div>
+									<div className="flex flex-col justify-center text-bodyBlue font-medium gap-y-3">
+										<Divider
+											style={{
+												background: '#D2D8E0'
+											}}
+											className='m-0 p-0' />
+										<div className='flex justify-between text-xs text-lightBlue whitespace-pre items-center'>
+											{priceWeeklyChange.value === 'N/A' ? 'N/A' : priceWeeklyChange.value ?
+												<>
+													<span>
+													Weekly Change &nbsp;
+													</span>
+													<span className='font-semibold'>
+														{Math.abs(Number(priceWeeklyChange.value))}%
+													</span>
+													{typeof priceWeeklyChange.value === 'number' && priceWeeklyChange.value < 0 ? <CaretDownOutlined style={{ color: 'red' , marginLeft: '1.5px' }} /> :
+														<CaretUpOutlined style={{ color: '#52C41A' , marginLeft: '1.5px' }} /> }
+												</>
+												: null
+											}
+										</div>
+									</div>
+								</>
+								:  <div className='min-h-[89px] w-full flex items-center justify-center'>
+									<LoadingOutlined />
 								</div>
-							</>
-							:  <div className='min-h-[89px] w-full flex items-center justify-center'>
-								<LoadingOutlined />
-							</div>
-					}
+						}
+					</div>
+					<CurrentPrice className="mt-3 -mr-2"/>
 				</div>
 			}
 
 			{/* Spend Period */}
 			{!['polymesh', 'polymesh-test'].includes(network) && <>
 				{!inTreasuryProposals &&
-				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-xxl gap-y-2">
-					{
-						!spendPeriod.isLoading?
-							<>
-								<div className="text-lightBlue text-xs flex items-center gap-x-2">
-									<span>
+				<div className="flex-1 flex justify-between bg-white drop-shadow-md p-3 h-40 w-52 lg:px-6 lg:py-3 rounded-xxl">
+					<div className='flex flex-col justify-evenly gap-x-0'>
+						{
+							!spendPeriod.isLoading?
+								<>
+									<div className="flex items-center">
+										<span className='mr-2 text-xs leading-5 text-lightBlue font-medium'>
 										Spend Period
-									</span>
-
-									<HelperTooltip
-										text='Funds held in the treasury can be spent by making a spending proposal that, if approved by the Council, will enter a spend period before distribution, it is subject to governance, with the current default set to 24 days.'
-									/>
-								</div>
-
-								<div className="text-bodyBlue flex justify-between font-medium text-lg -mt-5">
-									{spendPeriod.value?.total
-										? <>
-											{
-												spendPeriod.value?.days?
-													<>
-														<span>{spendPeriod.value.days} </span>
-														<span className='text-lightBlue'>days </span>
-													</>
-													: null
-											}
-											<span>{spendPeriod.value.hours} </span>
-											<span className='text-lightBlue'>hrs </span>
-											{
-												!spendPeriod.value?.days?
-													<>
-														<span>{spendPeriod.value.minutes} </span>
-														<span className='text-lightBlue'>mins </span>
-													</>
-													: null
-											}
-											<span className="text-lightBlue text-xs mt-2"> / {spendPeriod.value.total} days </span>
-										</>
-										: 'N/A'
-									}
-									<SpendPeriod className="mr-2 -mt-3"/>
-								</div>
-								{
-									<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
-										<Divider className='m-0 p-0' />
-										<span className='flex items-center'>
-											<Progress className='m-0 p-0 flex items-center' percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0} strokeColor='#E5007A' size="small" />
 										</span>
+
+										<HelperTooltip
+											text='Funds held in the treasury can be spent by making a spending proposal that, if approved by the Council, will enter a spend period before distribution, it is subject to governance, with the current default set to 24 days.'
+											className='text-xs leading-5 text-lightBlue font-medium'
+										/>
 									</div>
-								}
-							</>
-							:  <div className='min-h-[89px] w-full flex items-center justify-center'>
-								<LoadingOutlined />
-							</div>
-					}
+
+									<div className="text-bodyBlue flex justify-between font-medium lg:-mt-2">
+										{spendPeriod.value?.total
+											? <>
+												{
+													spendPeriod.value?.days?
+														<>
+															<span className='text-lg'>{spendPeriod.value.days}&nbsp; </span>
+															<span className='text-lightBlue text-xs mt-2'> days&nbsp; </span>
+														</>
+														: null
+												}
+												<span className='text-lg'>{spendPeriod.value.hours}&nbsp; </span>
+												<span className='text-lightBlue text-xs mt-2'>hrs&nbsp; </span>
+												{
+													!spendPeriod.value?.days?
+														<>
+															<span className='text-lg'>{spendPeriod.value.minutes}&nbsp; </span>
+															<span className='text-lightBlue text-xs mt-2'>mins&nbsp; </span>
+														</>
+														: null
+												}
+												<span className="text-lightBlue text-xs mt-2"> / {spendPeriod.value.total} days </span>
+											</>
+											: 'N/A'
+										}
+									</div>
+									{
+										<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
+											<Divider
+												style={{
+													background: '#D2D8E0'
+												}}
+												className='m-0 p-0' />
+											<span className='flex items-center'>
+												<Progress className='m-0 p-0 flex items-center' percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0} trailColor='#E1E6EB' strokeColor='#E5007A' size="small" />
+											</span>
+										</div>
+									}
+								</>
+								:  <div className='min-h-[89px] w-full flex items-center justify-center'>
+									<LoadingOutlined />
+								</div>
+						}
+					</div>
+					<SpendPeriod className="mt-5"/>
 				</div>
 				}
 			</>}
 
 			{/* Next Burn */}
 			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
-				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-xl gap-y-2">
-					{
-						!nextBurn.isLoading?
-							<>
-								<div className="text-lightBlue text-xs flex items-center">
-									<span className="mr-2">
+				<div className="flex-1 flex justify-between bg-white drop-shadow-md p-3 h-40 w-52 lg:px-6 lg:py-3 rounded-xxl">
+					<div className='flex flex-col justify-evenly gap-x-0'>
+						{
+							!nextBurn.isLoading?
+								<>
+									<div className="text-lightBlue text-xs flex items-center">
+										<span className="mr-2">
 										Next Burn
-									</span>
+										</span>
 
-									<HelperTooltip
-										text='If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.'
-									/>
-								</div>
+										<HelperTooltip
+											text='If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.'
+										/>
+									</div>
 
-								<div className="text-bodyBlue flex justify-between font-medium text-lg">
-									{
-										nextBurn.value ? (
-											<span>
-												{nextBurn.value} <span className='text-lightBlue'>{chainProperties[network]?.tokenSymbol}</span>
-											</span>
-										) : null
-									}
-									<NextBurn className="mr-2 -mt-3"/>
-								</div>
-								<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
-									<Divider className='m-0 p-0' />
-									<span className='mr-2 text-lightBlue font-medium'>
+									<div className="text-bodyBlue flex justify-between font-medium text-lg">
 										{
-											nextBurn.valueUSD
-												? `~ $${nextBurn.valueUSD}`
-												: 'N/A'
+											nextBurn.value ? (
+												<span>
+													{nextBurn.value} <span className='text-lightBlue text-sm'>{chainProperties[network]?.tokenSymbol}</span>
+												</span>
+											) : null
 										}
-									</span>
+									</div>
+									<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
+										<Divider
+											style={{
+												background: '#D2D8E0'
+											}}
+											className='m-0 p-0' />
+										<span className='mr-2 text-lightBlue text-xs font-medium'>
+											{
+												nextBurn.valueUSD
+													? `~ $${nextBurn.valueUSD}`
+													: 'N/A'
+											}
+										</span>
+									</div>
+								</>
+								: <div className='min-h-[89px] w-full flex items-center justify-center'>
+									<LoadingOutlined />
 								</div>
-							</>
-							: <div className='min-h-[89px] w-full flex items-center justify-center'>
-								<LoadingOutlined />
-							</div>
-					}
+						}
+					</div>
+					<NextBurn className="mt-3"/>
 				</div>
 			}
 		</div>

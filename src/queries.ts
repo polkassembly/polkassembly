@@ -722,6 +722,36 @@ query VotingHistoryByVoterAddress($offset: Int = 0, $limit: Int = 10, $voter_eq:
 }
 `;
 
+export const CONVICTION_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX = `
+query ConvictionVotingHistoryByVoterAddressAndProposalTypeAndProposalIndex($offset: Int = 0, $limit: Int = 10, $voter_eq: String, $type_eq: ProposalType, $index_eq: Int) {
+  convictionVotes(limit: $limit, offset: $offset, where: {voter_eq: $voter_eq, proposal: {type_eq: $type_eq, index_eq: $index_eq}}, orderBy: createdAt_DESC) {
+    type
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        nay
+        aye
+        abstain
+      }
+    }
+    createdAt
+    createdAtBlock
+    decision
+    lockPeriod
+    isDelegated
+    removedAtBlock
+    removedAt
+    voter
+    delegatedTo
+  }
+  convictionVotesConnection(where: {voter_eq: $voter_eq, proposal: {type_eq: $type_eq, index_eq: $index_eq}}, orderBy: createdAt_DESC) {
+    totalCount
+  }
+}
+`;
+
 export const VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM = `
 query VotingHistoryByVoterAddressMoonbeam($offset: Int = 0, $limit: Int = 10, $voter_eq: String) {
   votes(limit: $limit, offset: $offset, orderBy: proposal_index_DESC, where: {voter_eq: $voter_eq, removedAtBlock_isNull: true}) {

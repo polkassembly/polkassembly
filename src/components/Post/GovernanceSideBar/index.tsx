@@ -313,7 +313,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		const encoded = getEncodedAddress(address, network);
 		const substrateAddress = getSubstrateAddress(address);
 
-		nextApiClientFetch<IVotesHistoryResponse>(`api/v1/votes/history?page=${2}&voterAddress=${substrateAddress}&network=${network}&numListingLimit=${2}`)
+		nextApiClientFetch<IVotesHistoryResponse>(`api/v1/votes/history?page=${1}&voterAddress=${encoded}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${onchainId}`)
 			.then((res) => {
 				if (res.error) {
 					console.log('error');

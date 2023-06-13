@@ -112,6 +112,7 @@ const updateAll = (payload:any, state:IReducerState) => {
 			selected: payload?.data?.[category.triggerName]?.enabled || false
 		};
 	});
+
 	const subscribePost = state.subscribePost.map((category: any) => {
 		return {
 			...category,

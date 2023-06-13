@@ -186,7 +186,7 @@ export default function Notifications() {
 			});
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	return loading ? (
 		<Loader />

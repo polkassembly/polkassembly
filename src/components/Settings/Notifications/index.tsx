@@ -191,7 +191,7 @@ export default function Notifications() {
 	return loading ? (
 		<Loader />
 	) : (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+		<div className='flex flex-col gap-[24px] text-[#243A57]'>
 			<NotificationChannels />
 			<Parachain
 				primaryNetwork={primaryNetwork}

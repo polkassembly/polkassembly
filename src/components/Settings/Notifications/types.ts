@@ -14,7 +14,7 @@ export interface INotificationObject {
         post_types?: Array<string> | undefined;
         tracks?: Array<number> | undefined;
         sub_triggers?: Array<string> | undefined;
-        mention_types?: EMentionType[],
+        mention_types?: Array<string> | EMentionType[],
     };
 }
 

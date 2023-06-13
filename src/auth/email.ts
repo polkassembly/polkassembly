@@ -196,6 +196,7 @@ export const sendUndoEmailChangeEmail = (user: User, undoToken: UndoEmailChangeT
 			body: JSON.stringify({
 				args: {
 					email:user.email,
+					undoEmail: undoToken.email,
 					undoUrl,
 					username:user.username
 				},

@@ -154,7 +154,7 @@ export default function OpenGovNotification({
 				header={
 					<div className='flex items-center gap-[8px]'>
 						<OverallPostsNotification />
-						<h3 className='font-semibold text-[16px] md:text-xl tracking-wide leading-7 text-sidebarBlue mb-0 whitespace-nowrap'>
+						<h3 className='font-semibold text-[16px] md:text-xl tracking-wide leading-7 mb-0 whitespace-nowrap'>
                             OpenGov Notifications
 						</h3>
 						{!!active && (

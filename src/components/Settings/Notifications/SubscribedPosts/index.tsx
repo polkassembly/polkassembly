@@ -99,7 +99,7 @@ export default function SubscribedPosts({
 				header={
 					<div className='flex items-center gap-[8px]'>
 						<SubscribedPostsNotification />
-						<h3 className='font-semibold text-[16px] md:text-xl tracking-wide leading-7 text-sidebarBlue mb-0'>
+						<h3 className='font-semibold text-[16px] md:text-[18px] tracking-wide leading-7 mb-0'>
 							Subscribed Posts <span className='hidden md:inline'>(Others proposals)</span>
 						</h3>
 						{!!active && (

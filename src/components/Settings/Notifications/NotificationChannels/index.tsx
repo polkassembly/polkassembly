@@ -24,15 +24,15 @@ const { Panel } = Collapse;
 type Props = {};
 
 export enum CHANNEL {
-    TELEGRAM = 'telegram',
-    DISCORD = 'discord',
-    EMAIL = 'email',
-    SLACK = 'slack',
-    ELEMENT = 'element',
+	TELEGRAM = 'telegram',
+	DISCORD = 'discord',
+	EMAIL = 'email',
+	SLACK = 'slack',
+	ELEMENT = 'element',
 }
 
 // eslint-disable-next-line no-empty-pattern
-export default function NotificationChannels({}: Props) {
+export default function NotificationChannels({ }: Props) {
 	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
 	const { network } = useNetworkContext();
 	const { id, networkPreferences } = useUserDetailsContext();
@@ -44,43 +44,35 @@ export default function NotificationChannels({}: Props) {
 
 	const getVerifyToken = async (channel: CHANNEL) => {
 		try {
-			const userAddress = localStorage.getItem('address');
-			const signature = localStorage.getItem('signature');
+			const verifyTokenRes = await fetch(
+				`${FIREBASE_FUNCTIONS_URL}/getChannelVerifyToken`,
+				{
+					body: JSON.stringify({
+						channel,
+						userId: id
+					}),
+					headers: firebaseFunctionsHeader(network),
+					method: 'POST'
+				}
+			);
 
-			if (!userAddress || !signature) {
-				console.log('ERROR');
+			const { data: verifyToken, error: verifyTokenError } =
+				(await verifyTokenRes.json()) as {
+					data: string;
+					error: string;
+				};
+
+			if (verifyTokenError) {
+				queueNotification({
+					header: 'Failed!',
+					message: verifyTokenError,
+					status: NotificationStatus.ERROR
+				});
 				return;
-			} else {
-				const verifyTokenRes = await fetch(
-					`${FIREBASE_FUNCTIONS_URL}/getChannelVerifyToken`,
-					{
-						body: JSON.stringify({
-							channel,
-							userId: id
-						}),
-						headers: firebaseFunctionsHeader(network),
-						method: 'POST'
-					}
-				);
+			}
 
-				const { data: verifyToken, error: verifyTokenError } =
-                    (await verifyTokenRes.json()) as {
-                        data: string;
-                        error: string;
-                    };
-
-				if (verifyTokenError) {
-					queueNotification({
-						header: 'Failed!',
-						message: verifyTokenError,
-						status: NotificationStatus.ERROR
-					});
-					return;
-				}
-
-				if (verifyToken) {
-					return verifyToken;
-				}
+			if (verifyToken) {
+				return verifyToken;
 			}
 		} catch (error) {
 			queueNotification({
@@ -107,7 +99,7 @@ export default function NotificationChannels({}: Props) {
 						<div className='flex items-center gap-[8px]'>
 							<NotificationChannelsIcon />
 							<h3 className='font-semibold text-[16px] md:text-xl tracking-wide leading-7 text-sidebarBlue mb-0'>
-                                Notification Channels
+								Notification Channels
 							</h3>
 						</div>
 						{!!active && (
@@ -122,8 +114,8 @@ export default function NotificationChannels({}: Props) {
 			>
 				<div className='flex flex-col'>
 					<p className='font-semibold text-[#243A57] text-[16px]'>
-                        Please select the socials where you would like to
-                        receive notifications:
+						Please select the socials where you would like to
+						receive notifications:
 					</p>
 					<EmailNotificationCard
 						verifiedEmail={

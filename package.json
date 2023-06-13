@@ -14,7 +14,6 @@
     "node": "18"
   },
   "dependencies": {
-    "@algolia/autocomplete-js": "^1.9.2",
     "@apollo/client": "^3.7.3",
     "@ardatan/graphql-tools": "^4.1.0",
     "@kiltprotocol/type-definitions": "^0.32.1",

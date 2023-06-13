@@ -1,8 +1,10 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useCallback, useEffect, useState } from 'react';
-import { Checkbox, Input, Modal, Popover, Radio, RadioChangeEvent } from 'antd';
+
+/* eslint-disable sort-keys */
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Checkbox, Input, List, Modal, Popover, Radio, RadioChangeEvent } from 'antd';
 import _ from 'lodash';
 import { useNetworkContext } from '~src/context';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
@@ -27,10 +29,23 @@ import HighlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import { SearchOutlined } from '@ant-design/icons';
 import CloseIcon from '~assets/icons/close.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import Markdown from '~src/ui-components/Markdown';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
 export const algolia_client = algoliasearch(ALGOLIA_APP_ID || '', ALGOLIA_SEARCH_API_KEY || '');
+
+const AUTOCOMPLETE_INDEX_LIMIT = 5;
+
+interface IAutocompleteResults {
+	posts: {[index: string]: any}[],
+	users: {[index: string]: any}[]
+}
+
+const initAutocompleteResults: IAutocompleteResults = {
+	posts: [],
+	users: []
+};
 
 interface Props{
   className?: string;
@@ -39,17 +54,20 @@ interface Props{
   isSuperSearch: boolean;
   setIsSuperSearch: ( pre: boolean) => void;
 }
+
 export enum EFilterBy {
   Referenda = 'on-chain-posts',
   Users = 'users',
   Discussions = 'off-chain-posts'
 }
+
 export enum EMultipleCheckFilters {
   Tracks = 'track',
   Tags = 'tags',
   Topic = 'topic',
   Chain = 'chains'
 }
+
 export enum EDateFilter {
   Today = 'today',
   Last_7_days = 'last_7_days',
@@ -57,13 +75,13 @@ export enum EDateFilter {
   Last_3_months = 'last_3_months',
 
 }
+
 const getTrackNameFromId = (network: string, trackId: number ) => {
 
 	let trackName = '';
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
 		if(value?.trackId === trackId && !value?.fellowshipOrigin){
-			console.log(value?.name);
 			trackName = value?.name;
 		}
 	}
@@ -93,6 +111,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	const [postsPage, setPostsPage] = useState({ page: 1, totalPosts: 0 });
 	const [openFilter, setOpenFilter] = useState<{ date: boolean , topic: boolean, track: boolean }>({ date: false , topic: false, track: false });
 	const [searchInputErr, setSearchInputErr] = useState({ clicked :false, err:'' });
+	const [autoCompleteResults, setAutoCompleteResults] = useState<IAutocompleteResults>(initAutocompleteResults);
 
 	Object.keys(post_topic).map((topic) => topicOptions.push(topicToOptionText(topic)));
 
@@ -196,7 +215,6 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 			await postIndex.search(finalSearchInput, { facetFilters, filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage.page-1 }).then(({ hits, nbHits }) => {
 				setPostsPage({ ...postsPage, totalPosts: nbHits });
 				setPostResults(hits);
-
 			}).catch((error) => {
 				console.log(error);
 				setLoading(false);
@@ -239,10 +257,8 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	},[finalSearchInput, searchInput, searchInputErr]);
 
 	useEffect(() => {
-
 		setUsersPage({ page: 1, totalUsers: 0 });
 		setPostsPage({ page: 1, totalPosts: 0 });
-
 	},[finalSearchInput]);
 
 	const handleClearFilters = (close?: boolean) => {
@@ -260,6 +276,97 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		close && setOpenModal(false);
 	};
 
+	const getAutoCompleteData = async (queryStr: string) => {
+		if(!queryStr) {
+			setAutoCompleteResults({ posts: [], users: [] });
+			return;
+		}
+
+		const postResults = await postIndex.search(queryStr, {
+			hitsPerPage: AUTOCOMPLETE_INDEX_LIMIT,
+			highlightPreTag:'<mark>',
+			highlightPostTag:'</mark>',
+			page: 1,
+			restrictSearchableAttributes: ['title', 'content']
+		}).catch((error) => console.log('Posts autocomplete fetch error: ', error));
+
+		const userResults = await userIndex.search(queryStr, {
+			hitsPerPage: AUTOCOMPLETE_INDEX_LIMIT,
+			page: 1,
+			highlightPreTag:'<mark>',
+			highlightPostTag:'</mark>',
+			restrictSearchableAttributes: ['username', 'profile.bio', 'profile.title']
+		}).catch((error) => console.log('Users autocomplete fetch error: ', error));
+
+		setAutoCompleteResults({ posts: postResults?.hits || [], users: userResults?.hits || [] });
+	};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const debouncedAutoCompleteFn = useCallback(_.debounce(getAutoCompleteData, 500), []);
+
+	const handleSearchOnChange = async (queryStr: string) => {
+		setSearchInput(queryStr);
+		debouncedAutoCompleteFn(queryStr);
+	};
+
+	function getMatchedWordsLength(hitObject: any) {
+		let matchedWordsLength = 0;
+
+		matchedWordsLength += hitObject._highlightResult?.title?.matchedWords?.length || 0;
+		matchedWordsLength += hitObject._highlightResult?.content?.matchedWords?.length || 0;
+		matchedWordsLength += hitObject._highlightResult?.username?.matchedWords?.length || 0;
+		matchedWordsLength += hitObject._highlightResult?.profile?.bio?.matchedWords?.length || 0;
+		matchedWordsLength += hitObject._highlightResult?.profile?.title?.matchedWords?.length || 0;
+
+		return matchedWordsLength;
+	}
+
+	const sortedAutoCompleteResults = useMemo(() => {
+		return autoCompleteResults.posts.concat(autoCompleteResults.users).sort((a, b) => {
+			const aMatchedWordsLength = getMatchedWordsLength(a);
+			const bMatchedWordsLength = getMatchedWordsLength(b);
+			return aMatchedWordsLength - bMatchedWordsLength;
+		});
+	},[autoCompleteResults]);
+
+	const getCleanString = (str: string) => {
+		return str.replace(/<[^>]+>|\n|<br\s*\/?>|[*_~`]|(?:^|\s)#\S+|!\[.*?\]\(.*?\)|\[.*?\]\(.*?\)/g, '');
+	};
+
+	const getAutocompleteMarkedText = (highlightResult: {[index: string]: any}) => {
+		const keysToCheck = ['content', 'title', 'profile', 'username'];
+		let maxMatchedWordsLength = 0;
+		let maxMatchedWordsObject = null;
+
+		for (const key of keysToCheck) {
+			const result = highlightResult[key];
+
+			if (result && result.matchedWords && result.matchedWords.length > maxMatchedWordsLength) {
+				maxMatchedWordsLength = result.matchedWords.length;
+				maxMatchedWordsObject = result;
+			}
+		}
+
+		function extractContent(str: string, extraContentLength: number = 40): string {
+			// Find the first occurrence of <mark> tag in the input string
+			const match = str.match(/<mark>(.*?)<\/mark>/);
+			if (!match) return str.substring(0, extraContentLength);
+
+			const markIndex = match.index || 0;
+			const endIndex = markIndex + (match?.[0]?.length || 0);
+
+			const subStrAfterMark = str.substring(endIndex) || '';
+
+			// Remove all other tags
+			const cleanSubStrAfterMark = getCleanString(subStrAfterMark);
+
+			// Extract the substring including the first <mark> tag and its content
+			return `${str.substring(markIndex, endIndex)}${cleanSubStrAfterMark.substring(0, extraContentLength)}${cleanSubStrAfterMark.length > extraContentLength ? '...' : ''}`;
+		}
+
+		return extractContent(maxMatchedWordsObject?.value || 'Untitled');
+	};
+
 	return <Modal
 		title={<label className='text-[#243A57] text-xl font-semibold flex flex-wrap'>{isSuperSearch ? 'Super Search':'Search'} {finalSearchInput.length > 0 && `Results for "${finalSearchInput}"`}</label>}
 		open={openModal}
@@ -269,10 +376,56 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		closeIcon={<CloseIcon/>}
 	>
 		<div className={`${className} ${isSuperSearch && !loading && 'pb-20'}`}>
-			<Input className='placeholderColor mt-4' type='search' value={searchInput} onChange={(e) => setSearchInput(e.target.value)} allowClear placeholder='Type here to search for something'
-				addonAfter= {<div onClick={() => {!loading && searchInput.length >= 3 && setFinalSearchInput(searchInput); setSearchInputErr({ ...searchInputErr,clicked:true });} } className={`text-white text-[18px] tracking-[0.02em] ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}><SearchOutlined/></div>}/>
+			<Input
+				className='placeholderColor mt-4'
+				type='search'
+				value={searchInput}
+				onChange={(e) => handleSearchOnChange(e.target.value)}
+				allowClear
+				placeholder='Type here to search for something'
+				addonAfter={
+					<div onClick={() => {
+						!loading && searchInput.length >= 3 && setFinalSearchInput(searchInput);
+						setSearchInputErr({ ...searchInputErr, clicked:true });
+					}}
+					className={`text-white text-[18px] tracking-[0.02em] ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+						<SearchOutlined/>
+					</div>
+				}
+			/>
+
 			{/* input error */}
-			{(searchInputErr.err.length > 0) &&<span className='text-[red] text-xs mt-1'>{searchInputErr.err}</span>}
+			{(searchInputErr?.err?.length > 0) && <span className='text-[red] text-xs mt-1'>{searchInputErr.err}</span>}
+
+			{/* Autocomplete results */}
+			{
+				((autoCompleteResults.posts.length > 0 || autoCompleteResults.users.length > 0) && searchInputErr?.err?.length == 0) &&
+				<section className='border-solid border-1 border-gray-200 rounded-b-md'>
+					{/* Posts List */}
+					<List
+						size="small"
+						dataSource={sortedAutoCompleteResults}
+						renderItem={(item) => {
+							const isPost = Boolean('title' in item);
+							const str = getAutocompleteMarkedText(item._highlightResult) || 'No title';
+							const cleanStr = getCleanString(str);
+
+							return(
+								<List.Item className='flex justify-start hover:cursor-pointer whitespace-nowrap hover:bg-[#FEF2F8]' onClick={() => {
+									!isPost && setFilterBy(EFilterBy.Users);
+									handleSearchOnChange(cleanStr.endsWith('...') ? cleanStr.slice(0, -3) : cleanStr);
+									setFinalSearchInput(searchInput);
+								}}>
+									<Markdown className='hover:text-pink_primary' md={str} isAutoComplete />
+									<span className='text-[9px] mx-2 text-gray-400'>&#9679;</span>
+									<span className='text-xs text-gray-500'>{isPost ? 'in Posts' : 'in People'}</span>
+								</List.Item>
+							);
+						}
+						}
+					/>
+				</section>
+			}
 
 			{finalSearchInput.length > 3 && (postResults || peopleResults) && <div className={`${loading && 'hidden'}`}>
 				<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2' }`}>
@@ -390,5 +543,7 @@ border: 1px solid #E5007A;
 .checkboxStyle .ant-checkbox-wrapper+.ant-checkbox-wrapper{
   margin-inline-start: 0px !important;
 }
-
+.ant-input-affix-wrapper {
+	border-width: 2px !important;
+}
 `;

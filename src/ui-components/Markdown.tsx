@@ -10,12 +10,13 @@ import styled from 'styled-components';
 interface Props {
 	className?: string;
 	isPreview?: boolean;
+	isAutoComplete?: boolean;
 	md: string;
 }
 
-const Markdown = ({ className, isPreview=false, md }: Props) => {
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md }: Props) => {
 	return <ReactMarkdown
-		className={isPreview ? `${className} mde-preview-content` : className}
+		className={`${className} ${isPreview && 'mde-preview-content'} ${isAutoComplete && 'mde-autocomplete-content'}`}
 		rehypePlugins={[rehypeRaw]}
 		linkTarget='_blank'
 	>
@@ -137,8 +138,22 @@ export default styled(Markdown)`
 			font-family: font_default !important;
 		}
 	}
-  mark{
-    color: #485F7D !important;
-    background:none !important;
-  }
+
+	&.mde-autocomplete-content {
+		margin-top: 4px !important;
+		color: #243A57;
+		font-weight: 700;
+
+		mark {
+			margin-top: -3px;
+			margin-right: -2px;
+			font-weight: 500;
+			color: #485F7D !important;
+			background:none !important;
+		}
+
+		&:hover {
+			color: pink_primary !important;
+		}
+	}
 `;

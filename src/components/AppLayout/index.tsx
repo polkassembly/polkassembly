@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import { BellOutlined, BookOutlined, DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
@@ -51,29 +51,8 @@ function getSiderMenuItem(
 const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [
 		{
-			key: 'notification settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/notification-settings'>
-				<BellOutlined />
-				<span>Notifications</span>
-			</Link>
-		},
-		{
-			key: 'view profile',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
-				<UserOutlined />
-				<span>View Profile</span>
-			</Link>
-		},
-		{
-			key: 'tracker',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/tracker'>
-				<BookOutlined />
-				<span>Tracker</span>
-			</Link>
-		},
-		{
 			key: 'settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings'>
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=notifications'>
 				<SettingOutlined />
 				<span>Settings</span>
 			</Link>

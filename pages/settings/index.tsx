@@ -1,10 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { Col, Tabs } from 'antd';
 import { GetServerSideProps } from 'next';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Notifications from '~src/components/Settings/Notifications';
@@ -12,6 +11,7 @@ import UserAccount from '~src/components/Settings/UserAccount';
 import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import Tracker from '~src/components/Tracker/Tracker';
+import { useRouter } from 'next/router';
 
 interface Props {
 	network: string
@@ -23,22 +23,40 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const tabItems = [
-	{ children:<UserAccount/> , key:'Account', label:'Account' },
-	{ children:<Notifications/> , key:'Notifications', label:'Notifications' },
-	{ children:<Tracker />, key:'Activity', label:'Tracker' }
+	{ children: <UserAccount />, key: 'account', label: 'Account' },
+	{ children: <Notifications />, key: 'notifications', label: 'Notifications' },
+	{ children: <Tracker />, key: 'tracker', label: 'Tracker' }
 ];
 
 const Settings: FC<Props> = (props) => {
 	const { setNetwork, network } = useNetworkContext();
+	const router = useRouter();
+	const tab = router.query?.tab as string;
+	const [searchQuery, setSearchQuery] = useState<string>('');
+
+	const handleTabClick =(key:string) => {
+		router.push(`/settings?tab=${key}`);
+	};
+
+	useEffect(() => {
+		if (router.isReady) {
+			if (!tabItems.map(t => t.key).includes(tab)) {
+				router.replace('/settings?tab=account');
+				setSearchQuery('account');
+				return;
+			}
+			setSearchQuery(tab as string);
+		}
+	}, [router, router.isReady, searchQuery, tab]);
 
 	useEffect(() => {
 		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
 		<>
-			<SEOHead title='Settings' network={network}/>
+			<SEOHead title='Settings' network={network} />
 			<Col className='w-full h-full'>
 				<div className='mt-6 w-full bg-white shadow-md p-8 rounded-md'>
 					<h3
@@ -49,7 +67,8 @@ const Settings: FC<Props> = (props) => {
 					<Tabs
 						className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
 						type="card"
-						defaultActiveKey='Notification'
+						defaultActiveKey={tab || 'account'}
+						onTabClick={handleTabClick}
 						items={tabItems}
 					/>
 				</div>

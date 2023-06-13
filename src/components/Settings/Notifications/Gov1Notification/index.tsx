@@ -19,10 +19,10 @@ import { Collapse } from '../common-ui/Collapse';
 
 const { Panel } = Collapse;
 type Props = {
-    onSetNotification: any;
-    userNotification: any;
-    dispatch: any;
-    options: any;
+	onSetNotification: any;
+	userNotification: any;
+	dispatch: any;
+	options: any;
 };
 
 export default function Gov1Notification({
@@ -48,7 +48,7 @@ export default function Gov1Notification({
 					return;
 				}
 				let postTypes =
-                    notification?.[option.triggerName]?.post_types || [];
+					notification?.[option.triggerName]?.post_types || [];
 				if (checked) {
 					if (!postTypes.includes(key)) postTypes.push(key);
 				} else {
@@ -92,7 +92,7 @@ export default function Gov1Notification({
 				return;
 			}
 			let postTypes =
-                notification?.[option.triggerName]?.post_types || [];
+				notification?.[option.triggerName]?.post_types || [];
 			if (checked) {
 				if (!postTypes.includes(title)) postTypes.push(title);
 			} else {
@@ -156,7 +156,7 @@ export default function Gov1Notification({
 					<div className='flex items-center gap-[8px]'>
 						<OverallPostsNotification />
 						<h3 className='font-semibold text-[16px] md:text-xl tracking-wide leading-7 text-sidebarBlue mb-0'>
-                            Gov 1 Notifications
+							Gov 1 Notifications
 						</h3>
 						{!!active && (
 							<>
@@ -191,11 +191,35 @@ export default function Gov1Notification({
 						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
 						<GroupCheckbox
 							categoryOptions={
+								options[ProposalType.COUNCIL_MOTIONS]
+							}
+							title='Council Motion'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+							Icon={TechCommiteeIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+						/>
+					</div>
+					<Divider className='border-[#D2D8E0] border-2' dashed />
+					<div className='flex flex-wrap'>
+						<GroupCheckbox
+							categoryOptions={
 								options[ProposalType.DEMOCRACY_PROPOSALS]
 							}
 							title='Proposal'
-							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+							classname='md:basis-[50%]'
 							Icon={TreasuryProposalIcon}
+							onChange={handleChange}
+							handleCategoryAllClick={handleCategoryAllClick}
+						/>
+						<Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />
+						<GroupCheckbox
+							categoryOptions={
+								options[ProposalType.TREASURY_PROPOSALS]
+							}
+							title='Treasury Proposal'
+							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+							Icon={BountiesIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -243,20 +267,6 @@ export default function Gov1Notification({
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
-					</div>
-					<Divider className='border-[#D2D8E0] border-[2px]' dashed />
-					<div className='flex flex-wrap'>
-						<div className='md:basis-[50%] flex flex-col gap-[16px]'>
-							<GroupCheckbox
-								categoryOptions={
-									options[ProposalType.COUNCIL_MOTIONS]
-								}
-								title='Council Motion'
-								Icon={TipsIcon}
-								onChange={handleChange}
-								handleCategoryAllClick={handleCategoryAllClick}
-							/>
-						</div>
 					</div>
 				</div>
 			</Panel>

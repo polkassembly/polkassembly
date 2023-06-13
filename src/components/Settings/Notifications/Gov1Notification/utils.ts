@@ -113,6 +113,27 @@ const proposal = [
 	}
 ];
 
+const treasuryProposal = [
+	{
+		label: 'New Proposal submitted',
+		triggerName: 'gov1ProposalSubmitted',
+		triggerPreferencesName: 'gov1ProposalSubmitted',
+		value: 'New Proposal submitted'
+	},
+	{
+		label: 'Proposal in Voting',
+		triggerName: 'gov1ProposalInVoting',
+		triggerPreferencesName: 'gov1ProposalInVoting',
+		value: 'Proposal in Voting'
+	},
+	{
+		label: 'Proposal closed',
+		triggerName: 'gov1ProposalClosed',
+		triggerPreferencesName: 'gov1ProposalClosed',
+		value: 'Proposal closed'
+	}
+];
+
 const councilMotion = [
 	{
 		label: 'New Motions submitted',
@@ -135,13 +156,14 @@ const councilMotion = [
 ];
 
 const allGov1 = {
-	[ProposalType.BOUNTIES]:bounties,
-	[ProposalType.CHILD_BOUNTIES]:childBounties,
-	[ProposalType.COUNCIL_MOTIONS]:councilMotion,
-	[ProposalType.DEMOCRACY_PROPOSALS]:proposal,
-	[ProposalType.REFERENDUMS]:referendumsV1,
-	[ProposalType.TECH_COMMITTEE_PROPOSALS]:techCommittee,
-	[ProposalType.TIPS]:tips
+	[ProposalType.BOUNTIES]: bounties,
+	[ProposalType.CHILD_BOUNTIES]: childBounties,
+	[ProposalType.COUNCIL_MOTIONS]: councilMotion,
+	[ProposalType.DEMOCRACY_PROPOSALS]: proposal,
+	[ProposalType.TREASURY_PROPOSALS]: treasuryProposal,
+	[ProposalType.REFERENDUMS]: referendumsV1,
+	[ProposalType.TECH_COMMITTEE_PROPOSALS]: techCommittee,
+	[ProposalType.TIPS]: tips
 };
 
 const titleMapper = (title: string) => {
@@ -164,10 +186,13 @@ const titleMapper = (title: string) => {
 	case 'Proposal': {
 		return ProposalType.DEMOCRACY_PROPOSALS;
 	}
+	case 'Treasury Proposal': {
+		return ProposalType.TREASURY_PROPOSALS;
+	}
 	case 'Council Motion': {
 		return ProposalType.COUNCIL_MOTIONS;
 	}
 	}
 };
 
-export { techCommittee, tips, childBounties, bounties, proposal, referendumsV1, councilMotion, allGov1, titleMapper };
+export { techCommittee, tips, childBounties, bounties, proposal, treasuryProposal, referendumsV1, councilMotion, allGov1, titleMapper };

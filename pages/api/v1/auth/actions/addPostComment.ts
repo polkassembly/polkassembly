@@ -15,6 +15,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { PostComment } from '~src/types';
+import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -57,6 +58,8 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		user_profile_img: user?.profile?.image || '',
 		username: user.username
 	};
+	const triggerName = 'newCommentAdded';
+
 	await newCommentRef.set(newComment).then(() => {
 		postRef.update({
 			last_comment_at
@@ -65,6 +68,22 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		sendCommentMailToPostSubs(network, strProposalType, String(postId), content, newCommentRef.id, user);
 		const mentions = getMentionedUsernames(content).filter((username) => username !== user.username);
 		_sendCommentMentionMail(network, strProposalType, String(postId), content, newCommentRef.id, user, mentions);
+
+		const args = {
+			commentId:newComment.id,
+			network,
+			postId,
+			strProposalType
+		};
+
+		fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
+			body: JSON.stringify({
+				args,
+				trigger: triggerName
+			}),
+			headers: firebaseFunctionsHeader(network),
+			method: 'POST'
+		});
 
 		return res.status(200).json({
 			id: newComment.id

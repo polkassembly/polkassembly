@@ -293,7 +293,7 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
       }
     }
   }
-  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $index_eq}) {
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $index_eq}, first: 200) {
     totalCount
     edges {
       node {

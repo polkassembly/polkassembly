@@ -122,8 +122,6 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 
 		let unsubscribe: () => void;
 
-		//fetchManualUsername();
-
 		api.derive.accounts.info(encoded_addr, (info: DeriveAccountInfo) => {
 			setIdentity(info.identity);
 			if (info.identity.displayParent && info.identity.display){

@@ -203,11 +203,8 @@ const PostAudit = () => {
 							</div>
 							{selectedType === 'reports' ? (
 								<section>
-									{auditData.length > 0 ? (
-										auditData.filter((item) => (item.name.endsWith('.pdf') || item.name.endsWith('.png'))).map((item, index) => {
-											if (!(item.name.endsWith('.pdf') || item.name.endsWith('.png'))) {
-												return null;
-											}
+									{auditData.length > 0 && auditData.some((item) => item.name.endsWith('.pdf') || item.name.endsWith('.png')) ?
+										(auditData.filter((item) => item.name.endsWith('.pdf') || item.name.endsWith('.png')).map((item, index) => {
 											const date = formatDate(item.name.split(' - ')[1]);
 											return (
 												<article key={item.sha} className={`flex flex-col gap-y-6 py-[26px] ${index !== 0? 'border-0 border-t border-solid border-[#D2D8E0]': ''}`}>
@@ -236,7 +233,7 @@ const PostAudit = () => {
 												</article>
 											);
 										})
-									) :
+										) :
 										<NoAuditReport />
 									}
 								</section>

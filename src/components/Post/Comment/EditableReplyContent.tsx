@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Form, Tooltip } from 'antd';
+import { Button, Form } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
@@ -291,16 +291,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								}
 								{id === userId && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>}
 								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} postId={postIndex} commentId={commentId} type='reply' replyId={replyId} />}
-								{id && !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>}
-
 								{reply.reply_source !== 'subsquare' && id && !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>}
-								{reply.reply_source === 'subsquare' && (
-									<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
-										<Button className='text-pink_primary flex items-center border-none shadow-none text-xs disabled-reply'>
-											<ReplyIcon className='mr-1'/> Reply
-										</Button>
-									</Tooltip>
-								)}
 							</div>
 							{
 								isReplying

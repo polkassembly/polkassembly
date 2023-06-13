@@ -57,7 +57,7 @@ const SlackInfoModal = ({
                         Click this invite link <br />
 						<span className='p-1 mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'>
 							<a
-								href='https://premiurly.slack.com/apps/A057XPP28G4-polkassembly'
+								href='https://premiurly.slack.com/apps/A059VBVGL59-polkassembly-bot'
 								target='_blank'
 								rel='noreferrer'
 							>

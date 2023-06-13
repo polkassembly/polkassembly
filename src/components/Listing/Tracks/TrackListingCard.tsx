@@ -108,7 +108,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 				<div>
 					<FilteredTags/>
 				</div>
-				<FilterByTags className='sm:mr-12 sm:-mt-8 xs:mr-2 xs:mt-2'/>
+				<FilterByTags className='sm:mr-12 sm:mt-2 xs:mr-1 xs:mt-1 xs:mb-2'/>
 			</div>
 			<Tabs
 				activeKey={activeTab}
@@ -138,11 +138,12 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 export default styled(TrackListingCard)`
 	.ant-tabs-nav{
 		margin-left: 15px;
-		margin-top: -15px;
+		margin-top: -40px;
 	}
 	@media only screen and (max-width: 640px){
 		.ant-tabs-nav{
 			margin-left: 0px;
+			margin-top: -25px;
 		}
 	}
 `;

@@ -85,7 +85,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	return (
 		<>
-			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200  sm:p-3 md:p-6 min-h-[147px] sm:flex xs:hidden`}>
+			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200  sm:p-3 md:p-6 min-h-[147px] sm:flex xs:hidden`}>
 				<span className='font-medium text-center mr-2 flex-none sm:w-[120px] text-bodyBlue sm:mt-3'>#{isTip? tip_index: onchainId}</span>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-4">
 					<OnchainCreationLabel address={address} username={username} />
@@ -106,7 +106,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</div>
 									: null
 							}
-							{status  && <StatusTag className='sm:mt-[-36px]' status={status} />}
+							{status  && <StatusTag className='sm:mt-[-36px] sm:mr-10' status={status} />}
 						</div>
 					</div>
 

@@ -19,49 +19,49 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 		<Space size={19} className='items-center'>
 			{blockchain_socials.homepage?
 				<a href={blockchain_socials.homepage} target='_blank' rel='noreferrer'>
-					<HomeFilled className='text-sm md:text-lg md:mr-1 text-bodyBlue' />
+					<HomeFilled className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.twitter?
 				<a href={blockchain_socials.twitter} target='_blank' rel='noreferrer'>
-					<TwitterOutlined className='text-sm md:text-lg md:mr-1 text-bodyBlue' />
+					<TwitterOutlined className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.discord?
 				<a href={blockchain_socials.discord} target='_blank' rel='noreferrer'>
-					<DiscordIcon className='text-sm md:text-lg md:mr-1 text-bodyBlue' />
+					<DiscordIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.github?
 				<a href={blockchain_socials.github} target='_blank' rel='noreferrer'>
-					<GithubIcon className='text-sm md:text-lg md:mr-1 text-bodyBlue' />
+					<GithubIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.youtube?
 				<a href={blockchain_socials.youtube} target='_blank' rel='noreferrer'>
-					<YoutubeFilled className='text-sm md:text-lg md:mr-1 text-bodyBlue' />
+					<YoutubeFilled className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.reddit?
 				<a href={blockchain_socials.reddit} target='_blank' rel='noreferrer'>
-					<RedditIcon className='text-sm md:text-lg md:mr-1 text-bodyBlue' />
+					<RedditIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.telegram?
 				<a href={blockchain_socials.telegram} target='_blank' rel='noreferrer'>
-					<TelegramIcon className='text-sm md:text-lg md:mr-1 text-bodyBlue' />
+					<TelegramIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.block_explorer?
 				<a href={blockchain_socials.block_explorer} target='_blank' rel='noreferrer'>
-					<CubeIcon className='text-sm md:text-lg md:mr-1 text-bodyBlue' />
+					<CubeIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
@@ -79,7 +79,7 @@ const gov2Link = ({ className, bgImage, icon, link, text, subText } : { classNam
 		</div>
 
 		<div className='flex flex-col justify-between'>
-			<div className="text-bodyBlue font-medium text-sm group-hover:text-pink_secondary leading-[150%]">{text}</div>
+			<div className="text-bodyBlue font-semibold text-sm group-hover:text-pink_secondary leading-[150%]">{text}</div>
 			<div className="text-lightBlue font-medium text-xs group-hover:text-pink_secondary">{subText}</div>
 		</div>
 	</a>;

@@ -57,19 +57,19 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 			}}
 			trigger={['click']}>
 			<div className='dropdown-div text-grey_primary flex items-center cursor-pointer hover:text-pink_primary py-1 px-2 rounded'>
-				<span className='mr-2'>Sort By</span>
-				<SwapOutlined rotate={90} style={ { fontSize: '14px' } } />
+				<span className='mr-1 mt-0.5'>Sort By</span>
+				<SwapOutlined rotate={90} style={ { fontSize: '14px' , marginRight: '10px' } } />
 			</div>
 		</Dropdown>);
 
 	return (
 		<div className={`${className} bg-white p-3 md:p-0 rounded-[14px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)]`}>
-			<div className='flex items-center justify-between align-middle h-[59px] '>
+			<div className='flex items-center justify-between align-middle p-5'>
 				<div>
 					<FilteredTags/>
 				</div>
-				<div className='flex gap-1'>
-					<FilterByTags className='mr-[25px]'/>
+				<div className='flex'>
+					<FilterByTags className='mr-4'/>
 					{sortByDropdown}
 				</div>
 			</div>

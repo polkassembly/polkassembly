@@ -39,7 +39,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 
 	return (
 		<>
-			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 h-[147px] sm:flex xs:hidden ${className}`}>
+			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 h-[147px] sm:flex xs:hidden ${className}`}>
 				<span className='font-medium text-center mr-2 flex-none sm:w-[120px] text-bodyBlue sm:mt-4'>#{post_id}</span>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-4">
 					<OnchainCreationLabel address={address} topic={topic} username={username}  />
@@ -78,25 +78,25 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 
 						<div className='flex items-center gap-x-2'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5 mr-2'>
-								<LikeOutlined />
+								<LikeOutlined style={{ color: '#485F7D' }} />
 								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
 
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5 mr-2'>
-								<DislikeOutlined />
+								<DislikeOutlined style={{ color: '#485F7D' }} />
 								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>
 
 							<div className='xs:hidden sm:flex items-center'>
-								<CommentOutlined className='mr-1 text-lightBlue' /> {commentsCount}
+								<CommentOutlined className='mr-1' style={{ color: '#485F7D' }} /> {commentsCount}
 							</div>
 							<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 
 							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
-								(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-[4px] border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
+								(<div key={index} style={{ fontSize: '10px' }} className='text-lightBlue rounded-xl px-[14px] py-[4px] border-[#D2D8E0] border-solid border-[1px] font-medium' >
 									{tag}
 								</div>))}
-							{tags.length>2 && <span className='text-bodyBlue' style={{ background:'#D2D8E0' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+							{tags.length>2 && <span className='text-bodyBlue' style={{ background:'#D2D8E050' , borderRadius:'20px', fontSize:'10px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
                 +{tags.length-2}
 							</span>}
 							</>}
@@ -169,10 +169,10 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						<div className='xs:flex justify-between items-center xs:mt-3.5 xs:gap-x-2'>
 							{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
 							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
-								(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-[4px] border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
+								(<div key={index} style={{ fontSize:'10px' }} className='text-lightBlue rounded-xl px-[14px] py-[4px] border-[#D2D8E0] border-solid border-[1px] font-medium' >
 									{tag}
 								</div>))}
-							{tags.length>2 && <span className='text-bodyBlue' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+							{tags.length>2 && <span className='text-bodyBlue' style={{ background:'#D2D8E050' , borderRadius:'20px', fontSize:'10px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
                 +{tags.length-2}
 							</span>}
 							</>}

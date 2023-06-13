@@ -104,11 +104,11 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 	};
 	return (
 		<div className={`${className} bg-white drop-shadow-md rounded-xxl md:py-8 px-0`}>
-			<div className='flex items-center justify-between mb-0'>
+			<div className='flex items-center justify-between mb-0 xs:p-4'>
 				<div>
 					<FilteredTags/>
 				</div>
-				<FilterByTags className='mr-10 mt-[-10px]'/>
+				<FilterByTags className='sm:mr-12 sm:-mt-8 xs:mr-2 xs:mt-2'/>
 			</div>
 			<Tabs
 				activeKey={activeTab}
@@ -138,6 +138,11 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 export default styled(TrackListingCard)`
 	.ant-tabs-nav{
 		margin-left: 15px;
-		margin-top: -10px;
+		margin-top: -15px;
+	}
+	@media only screen and (max-width: 640px){
+		.ant-tabs-nav{
+			margin-left: 0px;
+		}
 	}
 `;

@@ -158,7 +158,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											<Address textClassName='w-[75px]' isSubVisible={false} displayInline={true} isShortenAddressLength={false} address={voteData?.voter} />
 										</div>}
 
-									<div className='w-[80px] max-w-[80px] overflow-ellipsis'>
+									<div className='w-[80px] max-w-[80px] overflow-ellipsis bg-red-300'>
 										{
 											formatUSDWithUnits(formatBnBalance(voteData?.decision === 'abstain'? voteData?.balance?.abstain || 0:voteData?.balance?.value || 0, { numberAfterComma: 1, withThousandDelimitor: false,withUnit: true }, network), 1)
 										}

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DislikeFilled, LikeFilled } from '@ant-design/icons';
+import { DislikeFilled, LikeFilled, ClockCircleOutlined } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
@@ -54,6 +54,11 @@ import { IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
+import BN from 'bn.js';
+import { chainProperties } from '~src/global/networkConstants';
+import MoneyIcon from '~assets/icons/money-icon-gray.svg';
+import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
+import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -103,14 +108,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [vote,setVote] = useState({
 		balance:{},
 		conviction:'',
-		desision:'',
+		decision:'',
 		lastVote:'',
 		time:''
 	});
 	const [votingHistory,setVotingHistory] = useState([]);
 
 	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
-
+	const unit =`${chainProperties[network]?.tokenSymbol}`;
+	
 	useEffect(() => {
 		if ([ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
 			if (!api || !apiReady) {
@@ -311,6 +317,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		api?.setSigner(signer);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
+const balance  = Object.values(vote.balance).reduce((prev, ele) => {
+	return prev.add(new BN(ele));
+}, new BN(0)).toString();
 
 	useEffect( () => {
 		if (!api) {
@@ -331,16 +340,20 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					console.log('address = ',substrateAddress);
 					console.log('encoded = ',encoded);
 					console.log('info = ',res.data?.votes);
-					// if(res.data?.votes){
-					// 	setVotingHistory(res.data?.votes);
-					// 	setVote({
-					// 		balance:res.data?.votes[0].balance,
+					//setVotingHistory(res.data?.votes);
+					if(res.data?.votes){
+						setVotingHistory(res.data?.votes);
+						setVote({
+							conviction:res.data?.votes[0].lockPeriod || 0,
+							decision:res.data?.votes[0].decision,
+							time:res.data?.votes[0].createdAt,
+							balance:res.data?.votes[0].balance
 
-					// 	})
-					// }
+						});
+					}
 					//setCount(res.data?.count || 0);
 				}
-				//setLoading(false);
+
 			})
 			.catch((err) => {
 				console.error(err);
@@ -669,10 +682,24 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															proposalType={proposalType}
 														/>
 														<div>
-															<p>Last Vote:</p>
-															<span>
-																{/* {votingHistory[0].decision === 'yes' ? <p><LikeFilled className='text-[green]'/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : vote === EVoteDecisionType.NAY ?  <div><DislikeFilled className='text-[red]'/> <span className='mb-[5px] capitalize font-medium text-[#243A57]'>{vote}</span></div> : vote === EVoteDecisionType.SPLIT ? <p><SplitYellow/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : vote === EVoteDecisionType.ABSTAIN ? <p className='flex align-middle'><AbstainGray className='mr-1'/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : null } */}
-															</span>
+															<p className='font-medium text-[12px] leading-6 text-[#243A57]'>Last Vote:</p>
+															<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6'>
+
+																{vote.decision == 'yes' ? <p><LikeFilled className='text-[green]'/> <span className='capitalize font-medium text-[#243A57]'>{vote.decision}</span></p> :vote.decision == 'no' ?  <div><DislikeFilled className='text-[red]'/> <span className='mb-[5px] capitalize font-medium text-[#243A57]'>{vote.decision}</span></div> : vote.decision == 'abstain' ? <p><SplitYellow/> <span className='capitalize font-medium text-[#243A57]'>{vote.decision}</span></p>  : null }
+
+																<p><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
+
+																<p>
+																	<MoneyIcon className='mr-1'/>
+																	{formatedBalance(balance.toString(), unit)}{` ${unit}`}
+
+																</p>
+
+																<p>
+																	<ConvictionIcon className='mr-1'/>
+																	{vote.conviction}x
+																</p>
+															</div>
 														</div>
 													</GovSidebarCard>}
 											</>

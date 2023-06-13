@@ -22,8 +22,7 @@ import { Network, Role, Wallet } from '../types';
 import {
 	sendResetPasswordEmail,
 	sendUndoEmailChangeEmail,
-	sendVerificationEmail,
-	sendVerificationEmailForNotification
+	sendVerificationEmail
 } from './email';
 import { redisDel, redisGet, redisSetex } from './redis';
 import { Address, AuthObjectType, CalendarEvent, HashedPassword, IUserPreference, JWTPayloadType, NotificationSettings, ProfileDetails, UndoEmailChangeToken, User } from './types';
@@ -168,7 +167,7 @@ class AuthService {
 			await redisSetex(getEmailVerificationTokenKey(verifyToken), ONE_DAY, user.email);
 
 			// send verification email in background
-			sendVerificationEmailForNotification(user, verifyToken, network);
+			sendVerificationEmail(user, verifyToken, network);
 		}
 	}
 

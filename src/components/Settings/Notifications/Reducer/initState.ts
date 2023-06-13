@@ -11,15 +11,21 @@ const myProposal = [
 		triggerName: 'newCommentAdded',
 		triggerPreferencesName: 'commentsOnMyPosts',
 		value: 'Comments on my posts'
+	},
+	{
+		label: 'Own proposal Created',
+		triggerName: 'ownProposalCreated',
+		triggerPreferencesName: 'ownProposalCreated',
+		value: 'Own proposal Created'
 	}
 ];
 
 const subscribePost = [
 	{
-		label: 'Comments on my posts',
+		label: 'Comments on subscribed posts',
 		triggerName: 'newCommentAdded',
 		triggerPreferencesName: 'commentsOnSubscribedPosts',
-		value: 'Comments on my posts'
+		value: 'Comments on subscribed posts'
 	}
 ];
 export const notificationInitialState = {

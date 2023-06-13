@@ -32,7 +32,6 @@ export default function SubscribedPosts({
 	}, [options]);
 
 	const handleAllClick = (checked: boolean) => {
-		const trigger = 'commentsOnSubscribedPosts';
 		dispatch({
 			payload: {
 				params: { checked }
@@ -41,6 +40,7 @@ export default function SubscribedPosts({
 		});
 		const notification = Object.assign({}, userNotification);
 		options.forEach((option: any) => {
+			const trigger = option.triggerPreferencesName;
 			let subTriggers = notification?.[option.triggerName]?.sub_triggers || [];
 			if (checked) {
 				if (!subTriggers.includes(trigger)) subTriggers.push(trigger);
@@ -62,7 +62,6 @@ export default function SubscribedPosts({
 		checked: boolean,
 		value: string
 	) => {
-		const trigger = 'commentsOnSubscribedPosts';
 		dispatch({
 			payload: {
 				params: { categoryOptions, checked, value }
@@ -71,6 +70,7 @@ export default function SubscribedPosts({
 		});
 		const notification = Object.assign({}, userNotification);
 		const option = categoryOptions.find((opt: any) => opt.label === value);
+		const trigger = option.triggerPreferencesName;
 		let subTriggers = notification?.[option.triggerName]?.sub_triggers || [];
 		if (checked) {
 			if (!subTriggers.includes(trigger)) subTriggers.push(trigger);

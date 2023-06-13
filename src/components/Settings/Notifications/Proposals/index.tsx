@@ -33,7 +33,6 @@ export default function Proposals({
 	}, [options]);
 
 	const handleAllClick = (checked: boolean) => {
-		const trigger = 'commentsOnMyPosts';
 		dispatch({
 			payload: {
 				params: { checked }
@@ -42,17 +41,25 @@ export default function Proposals({
 		});
 		const notification = Object.assign({}, userNotification);
 		options.forEach((option: any) => {
-			let subTriggers = notification?.[option.triggerName]?.sub_triggers || [];
-			if (checked) {
-				if (!subTriggers.includes(trigger)) subTriggers.push(trigger);
+			const trigger = option.triggerPreferencesName;
+			if (trigger === 'ownProposalCreated') {
+				notification[option.triggerName] = {
+					enabled: checked,
+					name: option?.triggerPreferencesName
+				};
 			} else {
-				subTriggers = subTriggers.filter((postType: string) => postType !== trigger);
+				let subTriggers = notification?.[option.triggerName]?.sub_triggers || [];
+				if (checked) {
+					if (!subTriggers.includes(trigger)) subTriggers.push(trigger);
+				} else {
+					subTriggers = subTriggers.filter((postType: string) => postType !== trigger);
+				}
+				notification[option.triggerName] = {
+					enabled: subTriggers.length > 0,
+					name: option?.triggerName,
+					sub_triggers: subTriggers
+				};
 			}
-			notification[option.triggerName] = {
-				enabled: subTriggers.length > 0,
-				name: option?.triggerPreferencesName,
-				sub_triggers: subTriggers
-			};
 		});
 		onSetNotification(notification);
 		setAll(checked);
@@ -63,7 +70,6 @@ export default function Proposals({
 		checked: boolean,
 		value: string
 	) => {
-		const trigger = 'commentsOnMyPosts';
 		dispatch({
 			payload: {
 				params: { categoryOptions, checked, value }
@@ -72,17 +78,25 @@ export default function Proposals({
 		});
 		const notification = Object.assign({}, userNotification);
 		const option = categoryOptions.find((opt: any) => opt.label === value);
-		let subTriggers = notification?.[option.triggerName]?.sub_triggers || [];
-		if (checked) {
-			if (!subTriggers.includes(trigger)) subTriggers.push(trigger);
+		const trigger = option.triggerPreferencesName;
+		if (trigger === 'ownProposalCreated') {
+			notification[option.triggerName] = {
+				enabled: checked,
+				name: option?.triggerPreferencesName
+			};
 		} else {
-			subTriggers = subTriggers.filter((postType: string) => postType !== trigger);
+			let subTriggers = notification?.[option.triggerName]?.sub_triggers || [];
+			if (checked) {
+				if (!subTriggers.includes(trigger)) subTriggers.push(trigger);
+			} else {
+				subTriggers = subTriggers.filter((postType: string) => postType !== trigger);
+			}
+			notification[option.triggerName] = {
+				enabled: subTriggers.length > 0,
+				name: option?.triggerName,
+				sub_triggers: subTriggers
+			};
 		}
-		notification[option.triggerName] = {
-			enabled: subTriggers.length > 0,
-			name: option?.triggerPreferencesName,
-			sub_triggers: subTriggers
-		};
 		onSetNotification(notification);
 	};
 

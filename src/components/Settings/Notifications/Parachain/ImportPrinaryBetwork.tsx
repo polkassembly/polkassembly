@@ -74,8 +74,7 @@ const ImportPrimaryNetworkSettingModal = ({
 				</p>
 			</div>
 			<p className='text-[16px] font-normal'>
-                Are you sure you want to import Kusama’s Network settings to all
-                selected networks?
+                Are you sure you want to import your primary network settings to all selected networks?
 			</p>
 			<div className='mr-[-24px] ml-[-24px]'>
 				<Divider className='my-4'/>

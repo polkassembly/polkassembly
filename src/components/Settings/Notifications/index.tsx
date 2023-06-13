@@ -156,7 +156,7 @@ export default function Notifications() {
 	) => {
 		try {
 			const primarySettings =
-				networkPreferences.triggerPreferences?.[primaryNetwork];
+				networkPreferences.triggerPreferences?.[primaryNetwork] || {};
 			const { data, error } = (await nextApiClientFetch(
 				'api/v1/auth/actions/setNetworkPreferences',
 				{

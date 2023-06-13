@@ -184,7 +184,7 @@ export default function Parachain({
 						}
 						onCopyPrimaryNetworkNotification(
 							Object.values(selectedNetwork)
-								.flatMap((chain) => chain)
+								.flatMap((chain) => chain).filter((network) => network.selected)
 								.map(({ name }: {name: string}) => name)
 						);
 						setCopyPreferencesModal(false);

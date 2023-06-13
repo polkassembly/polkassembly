@@ -45,6 +45,8 @@ export interface INetworkPreferences {
         name: string;
         post_types?: Array<string>,
         tracks?: Array<number>,
+        mention_types?:Array<string>,
+        sub_triggers?: Array<string>,
       }
     }
   },

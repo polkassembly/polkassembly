@@ -17,6 +17,12 @@ const myProposal = [
 		triggerName: 'ownProposalCreated',
 		triggerPreferencesName: 'ownProposalCreated',
 		value: 'Own proposal Created'
+	},
+	{
+		label: 'Mentions',
+		triggerName: 'newMention',
+		triggerPreferencesName: 'newMention',
+		value: 'Mentions'
 	}
 ];
 

@@ -8,7 +8,7 @@ import CollapseIcon from '~assets/icons/collapse.svg';
 import ChatActive from '~assets/icons/chat-active.svg';
 import GroupCheckbox from '../common-ui/GroupCheckbox';
 import { ACTIONS } from '../Reducer/action';
-import { INotificationObject } from '../types';
+import { EMentionType, INotificationObject } from '../types';
 import { Collapse } from '../common-ui/Collapse';
 
 const { Panel } = Collapse;
@@ -42,7 +42,14 @@ export default function Proposals({
 		const notification = Object.assign({}, userNotification);
 		options.forEach((option: any) => {
 			const trigger = option.triggerPreferencesName;
-			if (trigger === 'ownProposalCreated') {
+			if(trigger === 'newMention'){
+				notification[option.triggerName] = {
+					enabled: checked,
+					mention_types: [EMentionType.COMMENT, EMentionType.REPLY],
+					name: option?.triggerPreferencesName
+				};
+			}
+			else if (trigger === 'ownProposalCreated') {
 				notification[option.triggerName] = {
 					enabled: checked,
 					name: option?.triggerPreferencesName
@@ -79,7 +86,14 @@ export default function Proposals({
 		const notification = Object.assign({}, userNotification);
 		const option = categoryOptions.find((opt: any) => opt.label === value);
 		const trigger = option.triggerPreferencesName;
-		if (trigger === 'ownProposalCreated') {
+		if(trigger === 'newMention'){
+			notification[option.triggerName] = {
+				enabled: checked,
+				mention_types: [EMentionType.COMMENT, EMentionType.REPLY],
+				name: option?.triggerPreferencesName
+			};
+		}
+		else if (trigger === 'ownProposalCreated') {
 			notification[option.triggerName] = {
 				enabled: checked,
 				name: option?.triggerPreferencesName

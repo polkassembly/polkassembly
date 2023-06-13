@@ -1,6 +1,12 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
+export enum EMentionType {
+	COMMENT = 'comment',
+	REPLY = 'reply',
+	POST = 'post'
+}
 export interface INotificationObject {
     [index: string]: {
         enabled: boolean;
@@ -8,6 +14,7 @@ export interface INotificationObject {
         post_types?: Array<string> | undefined;
         tracks?: Array<number> | undefined;
         sub_triggers?: Array<string> | undefined;
+        mention_types?: EMentionType[],
     };
 }
 

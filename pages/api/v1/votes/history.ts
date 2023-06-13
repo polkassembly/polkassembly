@@ -93,16 +93,18 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 		});
 		const subsquidData = subsquidRes?.data;
 		console.log( 'sub data = ',subsquidData);
-		if (!subsquidData || !subsquidData?.votes) {
+		const isDataAbsent = proposalType === ProposalType.REFERENDUM_V2 ? !subsquidData?.convictionVotes : !subsquidData?.votes;
+		if (!subsquidData || isDataAbsent) {
 			throw apiErrorWithStatusCode(`Votes history of voter "${voterAddress}" is not found.`, 404);
 		}
 
-		const votes = subsquidData.votes;
+		const votes = proposalType === ProposalType.REFERENDUM_V2 ? subsquidData?.convictionVotes : subsquidData?.votes;
 		const res: IVotesHistoryResponse = {
 			count: 0,
 			votes: []
 		};
-		const numCount = Number(subsquidData?.votesConnection?.totalCount);
+		const count = proposalType === ProposalType.REFERENDUM_V2 ? subsquidData?.convictionVotesConnection?.totalCount : subsquidData?.votesConnection?.totalCount;
+		const numCount = Number(count);
 		if (!isNaN(numCount)) {
 			res.count = numCount;
 		}

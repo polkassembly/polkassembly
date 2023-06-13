@@ -11,7 +11,7 @@ import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
-import { Wallet } from 'src/types';
+import { EVoteDecisionType, Wallet } from 'src/types';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
@@ -53,6 +53,7 @@ import AbstainGray from '~assets/icons/abstain-gray.svg';
 import { IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -98,6 +99,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		support: 0,
 		supportThreshold: 0
 	});
+
+	const [vote,setVote] = useState({
+		balance:{},
+		conviction:'',
+		desision:'',
+		lastVote:'',
+		time:''
+	});
+	const [votingHistory,setVotingHistory] = useState([]);
 
 	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
 
@@ -320,7 +330,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				} else {
 					console.log('address = ',substrateAddress);
 					console.log('encoded = ',encoded);
-					console.log('info = ',res.data);
+					console.log('info = ',res.data?.votes);
+					// if(res.data?.votes){
+					// 	setVotingHistory(res.data?.votes);
+					// 	setVote({
+					// 		balance:res.data?.votes[0].balance,
+
+					// 	})
+					// }
 					//setCount(res.data?.count || 0);
 				}
 				//setLoading(false);
@@ -651,6 +668,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															referendumId={onchainId  as number}
 															proposalType={proposalType}
 														/>
+														<div>
+															<p>Last Vote:</p>
+															<span>
+																{/* {votingHistory[0].decision === 'yes' ? <p><LikeFilled className='text-[green]'/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : vote === EVoteDecisionType.NAY ?  <div><DislikeFilled className='text-[red]'/> <span className='mb-[5px] capitalize font-medium text-[#243A57]'>{vote}</span></div> : vote === EVoteDecisionType.SPLIT ? <p><SplitYellow/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : vote === EVoteDecisionType.ABSTAIN ? <p className='flex align-middle'><AbstainGray className='mr-1'/> <span className='capitalize font-medium text-[#243A57]'>{vote}</span></p> : null } */}
+															</span>
+														</div>
 													</GovSidebarCard>}
 											</>
 										}

@@ -311,7 +311,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				);
 				const responseJSON = await response.json();
 				if (responseJSON['message'] == 'Success') {
-					const weekAgoPrice = responseJSON['data']['average'];
+					const weekAgoPrice = responseJSON['data']['ema7_average'];
 					const currentTokenPriceNum : number = parseFloat(currentTokenPrice.value);
 					const weekAgoPriceNum : number = parseFloat(weekAgoPrice);
 					if(weekAgoPriceNum == 0) {
@@ -381,7 +381,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 												background: '#D2D8E0',
 												width: '100%'
 											}}
-											className='m-0 p-0' />
+											className='m-0 p-0 w-40' />
 										<span className='flex flex-col justify-center text-lightBlue text-xs font-medium'>
 											{
 												available.valueUSD
@@ -415,13 +415,9 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							Price {chainProperties[network]?.tokenSymbol}
 										</span>
 									</div>
-									<div className="flex justify-between text-lightBlue font-medium text-lg lg:-mt-2">
+									<div className="text-lightBlue font-medium text-lg">
 										{currentTokenPrice.value === 'N/A' ? <span>N/A</span> : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value))
-											?
-											<div className='flex'>
-												<span className='text-lightBlue'>$</span>
-												<span className='text-bodyBlue'> {currentTokenPrice.value}</span>
-											</div>
+											? <span>${currentTokenPrice.value}</span>
 											: null
 										}
 									</div>
@@ -430,7 +426,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											style={{
 												background: '#D2D8E0'
 											}}
-											className='m-0 p-0' />
+											className='m-0 p-0 w-40' />
 										<div className='flex justify-between text-xs text-lightBlue whitespace-pre items-center'>
 											{priceWeeklyChange.value === 'N/A' ? 'N/A' : priceWeeklyChange.value ?
 												<>
@@ -440,7 +436,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 													<span className='font-semibold'>
 														{Math.abs(Number(priceWeeklyChange.value))}%
 													</span>
-													{typeof priceWeeklyChange.value === 'number' && priceWeeklyChange.value < 0 ? <CaretDownOutlined style={{ color: 'red' , marginLeft: '1.5px' }} /> :
+													{Number(priceWeeklyChange.value) < 0 ? <CaretDownOutlined style={{ color: 'red' , marginLeft: '1.5px' }} /> :
 														<CaretUpOutlined style={{ color: '#52C41A' , marginLeft: '1.5px' }} /> }
 												</>
 												: null
@@ -453,7 +449,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								</div>
 						}
 					</div>
-					<CurrentPrice className="mt-3 -mr-2"/>
+					<CurrentPrice className="mt-4 -mr-2"/>
 				</div>
 			}
 
@@ -482,18 +478,18 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 												{
 													spendPeriod.value?.days?
 														<>
-															<span className='text-lg'>{spendPeriod.value.days}&nbsp; </span>
-															<span className='text-lightBlue text-xs mt-2'> days&nbsp; </span>
+															<span className='text-lg'>{spendPeriod.value.days}</span>
+															<span className='text-lightBlue text-xs mt-2'>days</span>
 														</>
 														: null
 												}
-												<span className='text-lg'>{spendPeriod.value.hours}&nbsp; </span>
-												<span className='text-lightBlue text-xs mt-2'>hrs&nbsp; </span>
+												<span className='text-lg'>{spendPeriod.value.hours}</span>
+												<span className='text-lightBlue text-xs mt-2'>hrs</span>
 												{
 													!spendPeriod.value?.days?
 														<>
-															<span className='text-lg'>{spendPeriod.value.minutes}&nbsp; </span>
-															<span className='text-lightBlue text-xs mt-2'>mins&nbsp; </span>
+															<span className='text-lg'>{spendPeriod.value.minutes}</span>
+															<span className='text-lightBlue text-xs mt-2'>mins</span>
 														</>
 														: null
 												}
@@ -508,7 +504,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 												style={{
 													background: '#D2D8E0'
 												}}
-												className='m-0 p-0' />
+												className='m-0 p-0 w-40' />
 											<span className='flex items-center'>
 												<Progress className='m-0 p-0 flex items-center' percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0} trailColor='#E1E6EB' strokeColor='#E5007A' size="small" />
 											</span>
@@ -520,7 +516,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								</div>
 						}
 					</div>
-					<SpendPeriod className="mt-5"/>
+					<SpendPeriod className="mt-6"/>
 				</div>
 				}
 			</>}
@@ -556,7 +552,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											style={{
 												background: '#D2D8E0'
 											}}
-											className='m-0 p-0' />
+											className='m-0 p-0 w-40' />
 										<span className='mr-2 text-lightBlue text-xs font-medium'>
 											{
 												nextBurn.valueUSD
@@ -581,7 +577,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 export default styled(TreasuryOverview)`
 
 .ant-progress-text{
-	color: #90A0B7 !important;
+	color: #485F7D !important;
+	font-size: 12px !important;
 }
 .ant-progress-outer {
 	display: flex !important;

@@ -62,6 +62,7 @@ export interface ISocial {
 	link: string;
 }
 export interface ProfileDetails {
+	custom_username?: boolean;
 	bio?: string;
 	badges?: string[];
 	title?: string;

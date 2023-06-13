@@ -423,7 +423,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 												<span>
 													{Math.abs(Number(priceWeeklyChange.value))}%
 												</span>
-												{typeof priceWeeklyChange.value === 'number' && priceWeeklyChange.value < 0 ? <CaretDownOutlined color='red' /> : <CaretUpOutlined color='green' /> }
+												{(Number(priceWeeklyChange.value) < 0 ? <CaretDownOutlined color='red' /> : <CaretUpOutlined color='green' />) }
 											</>
 											: null
 										}

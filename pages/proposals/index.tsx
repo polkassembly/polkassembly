@@ -86,7 +86,7 @@ const Proposals: FC<IProposalsProps> = (props) => {
 					<div>
 						<FilteredTags/>
 					</div>
-					<FilterByTags className='m-6'/>
+					<FilterByTags className='my-6 sm:mr-16 xs:mx-6 xs:my-2'/>
 				</div>
 
 				<div>

@@ -87,7 +87,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 			<SEOHead title='Discussions' network={network}/>
 
 			<div className='flex justify-between align-middle'>
-				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2 mt-1 flex'><DiscussionsIcon className='mr-2 mt-1.5' />Latest Discussions({count})</h1>
+				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2 flex'><DiscussionsIcon className='mr-2 mt-1.5' />Latest Discussions({count})</h1>
 				<button onClick={handleClick} className='outline-none border-none h-[40px] w-[120px] px-3 py-2 font-medium  leading-[20px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer -mt-1'>+ Add Post</button>
 			</div>
 

@@ -134,7 +134,7 @@ const FilterByTags=({ className }:Props) => {
 
 			<div className='text-sm tracking-wide font-normal flex items-center text-pink_primary mt-[3.5px] cursor-pointer'>
         Filter
-				<span className='text-xl ml-2 mt-[2px]'>
+				<span className='text-xl ml-1 mt-[1px]'>
 					<FilterIcon/>
 				</span>
 			</div>

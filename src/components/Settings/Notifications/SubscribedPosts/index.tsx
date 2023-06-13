@@ -12,10 +12,10 @@ import { Collapse } from '../common-ui/Collapse';
 
 const { Panel } = Collapse;
 type Props = {
-    onSetNotification: any;
-    dispatch: any;
-    options: any;
-	userNotification:any
+	onSetNotification: any;
+	dispatch: any;
+	options: any;
+	userNotification: any
 };
 
 export default function SubscribedPosts({
@@ -32,6 +32,7 @@ export default function SubscribedPosts({
 	}, [options]);
 
 	const handleAllClick = (checked: boolean) => {
+		const trigger = 'commentsOnSubscribedPosts';
 		dispatch({
 			payload: {
 				params: { checked }
@@ -40,9 +41,16 @@ export default function SubscribedPosts({
 		});
 		const notification = Object.assign({}, userNotification);
 		options.forEach((option: any) => {
+			let subTriggers = notification?.[option.triggerName]?.sub_triggers || [];
+			if (checked) {
+				if (!subTriggers.includes(trigger)) subTriggers.push(trigger);
+			} else {
+				subTriggers = subTriggers.filter((postType: string) => postType !== trigger);
+			}
 			notification[option.triggerName] = {
-				enabled: checked,
-				name: option?.triggerPreferencesName
+				enabled: subTriggers.length > 0,
+				name: option?.triggerPreferencesName,
+				sub_triggers: subTriggers
 			};
 		});
 		onSetNotification(notification);
@@ -54,6 +62,7 @@ export default function SubscribedPosts({
 		checked: boolean,
 		value: string
 	) => {
+		const trigger = 'commentsOnSubscribedPosts';
 		dispatch({
 			payload: {
 				params: { categoryOptions, checked, value }
@@ -62,9 +71,16 @@ export default function SubscribedPosts({
 		});
 		const notification = Object.assign({}, userNotification);
 		const option = categoryOptions.find((opt: any) => opt.label === value);
+		let subTriggers = notification?.[option.triggerName]?.sub_triggers || [];
+		if (checked) {
+			if (!subTriggers.includes(trigger)) subTriggers.push(trigger);
+		} else {
+			subTriggers = subTriggers.filter((postType: string) => postType !== trigger);
+		}
 		notification[option.triggerName] = {
-			enabled: checked,
-			name: option?.triggerPreferencesName
+			enabled: subTriggers.length > 0,
+			name: option?.triggerPreferencesName,
+			sub_triggers: subTriggers
 		};
 		onSetNotification(notification);
 	};
@@ -84,7 +100,7 @@ export default function SubscribedPosts({
 					<div className='flex items-center gap-[8px]'>
 						<SubscribedPostsNotification />
 						<h3 className='font-semibold text-[16px] md:text-xl tracking-wide leading-7 text-sidebarBlue mb-0'>
-                            Subscribed Posts <span className='hidden md:inline'>(Others proposals)</span>
+							Subscribed Posts <span className='hidden md:inline'>(Others proposals)</span>
 						</h3>
 						{!!active && (
 							<>

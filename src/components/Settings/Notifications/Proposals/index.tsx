@@ -14,10 +14,10 @@ import { Collapse } from '../common-ui/Collapse';
 const { Panel } = Collapse;
 
 type Props = {
-    onSetNotification:  (obj: INotificationObject) => void;
-    dispatch: React.Dispatch<any>;
-    options: any;
-	userNotification:INotificationObject
+	onSetNotification: (obj: INotificationObject) => void;
+	dispatch: React.Dispatch<any>;
+	options: any;
+	userNotification: INotificationObject
 };
 
 export default function Proposals({
@@ -33,6 +33,7 @@ export default function Proposals({
 	}, [options]);
 
 	const handleAllClick = (checked: boolean) => {
+		const trigger = 'commentsOnMyPosts';
 		dispatch({
 			payload: {
 				params: { checked }
@@ -41,9 +42,16 @@ export default function Proposals({
 		});
 		const notification = Object.assign({}, userNotification);
 		options.forEach((option: any) => {
+			let subTriggers = notification?.[option.triggerName]?.sub_triggers || [];
+			if (checked) {
+				if (!subTriggers.includes(trigger)) subTriggers.push(trigger);
+			} else {
+				subTriggers = subTriggers.filter((postType: string) => postType !== trigger);
+			}
 			notification[option.triggerName] = {
-				enabled: checked,
-				name: option?.triggerPreferencesName
+				enabled: subTriggers.length > 0,
+				name: option?.triggerPreferencesName,
+				sub_triggers: subTriggers
 			};
 		});
 		onSetNotification(notification);
@@ -55,6 +63,7 @@ export default function Proposals({
 		checked: boolean,
 		value: string
 	) => {
+		const trigger = 'commentsOnMyPosts';
 		dispatch({
 			payload: {
 				params: { categoryOptions, checked, value }
@@ -63,9 +72,16 @@ export default function Proposals({
 		});
 		const notification = Object.assign({}, userNotification);
 		const option = categoryOptions.find((opt: any) => opt.label === value);
+		let subTriggers = notification?.[option.triggerName]?.sub_triggers || [];
+		if (checked) {
+			if (!subTriggers.includes(trigger)) subTriggers.push(trigger);
+		} else {
+			subTriggers = subTriggers.filter((postType: string) => postType !== trigger);
+		}
 		notification[option.triggerName] = {
-			enabled: checked,
-			name: option?.triggerPreferencesName
+			enabled: subTriggers.length > 0,
+			name: option?.triggerPreferencesName,
+			sub_triggers: subTriggers
 		};
 		onSetNotification(notification);
 	};
@@ -85,7 +101,7 @@ export default function Proposals({
 					<div className='flex items-center gap-[8px]'>
 						<ChatActive />
 						<h3 className='font-semibold text-[16px] md:text-xl tracking-wide leading-7 text-sidebarBlue mb-0'>
-                            My Proposals
+							My Proposals
 						</h3>
 						{!!active && (
 							<>

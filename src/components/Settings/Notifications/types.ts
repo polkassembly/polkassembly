@@ -7,6 +7,7 @@ export interface INotificationObject {
         name: string;
         post_types?: Array<string> | undefined;
         tracks?: Array<number> | undefined;
+        sub_triggers?: Array<string> | undefined;
     };
 }
 

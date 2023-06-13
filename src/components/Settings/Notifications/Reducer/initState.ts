@@ -8,8 +8,8 @@ import { openGov } from '../OpenGovNotification/utils';
 const myProposal = [
 	{
 		label: 'Comments on my posts',
-		triggerName: 'commentsOnMyPosts',
-		triggerPreferencesName: 'newCommentAdded',
+		triggerName: 'newCommentAdded',
+		triggerPreferencesName: 'commentsOnMyPosts',
 		value: 'Comments on my posts'
 	}
 ];
@@ -17,8 +17,8 @@ const myProposal = [
 const subscribePost = [
 	{
 		label: 'Comments on my posts',
-		triggerName: 'commentsOnSubscribedPosts',
-		triggerPreferencesName: 'newCommentAdded',
+		triggerName: 'newCommentAdded',
+		triggerPreferencesName: 'commentsOnSubscribedPosts',
 		value: 'Comments on my posts'
 	}
 ];

@@ -105,7 +105,7 @@ export default function NotificationChannels({ }: Props) {
 						{!!active && (
 							<div className='gap-2 hidden md:flex'>
 								<MailFilled />
-								{Bots.map((bot) => bot.Icon)}
+								{Bots.map((bot,i) => <React.Fragment key={i}>{bot.Icon}</React.Fragment> )}
 							</div>
 						)}
 					</div>

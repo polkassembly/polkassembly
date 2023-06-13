@@ -141,6 +141,9 @@ export default function Notifications() {
 	};
 
 	useEffect(() => {
+		if(loading){
+			return;
+		}
 		const selectedNames: Array<string> = [];
 		for (const category of Object.values(selectedNetwork)) {
 			category.forEach((chain) => {
@@ -182,6 +185,7 @@ export default function Notifications() {
 					},
 					type: ACTIONS.GET_NOTIFICATION_OBJECT
 				});
+				handleCurrentNetworkNotifications(res.triggerPreferences?.[network]);
 				setLoading(false);
 			});
 		});

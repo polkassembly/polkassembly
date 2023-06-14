@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Divider, Switch } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
-import OverallPostsNotification from '~assets/icons/overall-posts-notification-icon.svg';
+import OverallPostsNotification from '~assets/icons/gov-icon.svg';
 import GroupCheckbox from '../common-ui/GroupCheckbox';
 import TipsIcon from '~assets/icons/tips.svg';
 import BountiesIcon from '~assets/icons/bounties.svg';
@@ -155,7 +155,7 @@ export default function Gov1Notification({
 				header={
 					<div className='flex items-center gap-[8px]'>
 						<OverallPostsNotification />
-						<h3 className='font-semibold text-[16px] md:text-[18px] tracking-wide leading-7 text-sidebarBlue mb-0'>
+						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
 							Gov 1 Notifications
 						</h3>
 						{!!active && (
@@ -176,7 +176,7 @@ export default function Gov1Notification({
 						)}
 					</div>
 				}
-				key='5'
+				key='1'
 			>
 				<div className='flex flex-col'>
 					<div className='flex flex-wrap'>
@@ -195,7 +195,7 @@ export default function Gov1Notification({
 							}
 							title='Council Motion'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
-							Icon={TechCommiteeIcon}
+							Icon={TipsIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>

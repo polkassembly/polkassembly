@@ -128,7 +128,7 @@ export default function Proposals({
 				header={
 					<div className='flex items-center gap-[8px]'>
 						<ChatActive />
-						<h3 className='font-semibold text-[16px] md:text-[18px] tracking-wide leading-7 mb-0'>
+						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
 							My Proposals
 						</h3>
 						{!!active && (
@@ -149,7 +149,7 @@ export default function Proposals({
 						)}
 					</div>
 				}
-				key='3'
+				key='1'
 			>
 				<GroupCheckbox
 					categoryOptions={options}

@@ -3,12 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Col, Tabs } from 'antd';
 import { GetServerSideProps } from 'next';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Notifications from '~src/components/Settings/Notifications';
 import UserAccount from '~src/components/Settings/UserAccount';
-import { useNetworkContext } from '~src/context';
+import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import Tracker from '~src/components/Tracker/Tracker';
 import { useRouter } from 'next/router';
@@ -22,24 +22,26 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	return { props: { network } };
 };
 
-const tabItems = [
-	{ children: <UserAccount />, key: 'account', label: 'Account' },
-	{ children: <Notifications />, key: 'notifications', label: 'Notifications' },
-	{ children: <Tracker />, key: 'tracker', label: 'Tracker' }
-];
-
 const Settings: FC<Props> = (props) => {
 	const { setNetwork, network } = useNetworkContext();
 	const router = useRouter();
 	const tab = router.query?.tab as string;
+	const { id } = useUserDetailsContext();
 	const [searchQuery, setSearchQuery] = useState<string>('');
-
 	const handleTabClick =(key:string) => {
 		router.push(`/settings?tab=${key}`);
 	};
+	const tabItems =useMemo(() => [
+		{ children: <UserAccount network={network}/>, key: 'account', label: 'Account' },
+		{ children: <Notifications network={network}/>, key: 'notifications', label: 'Notifications' },
+		{ children: <Tracker network={network}/>, key: 'tracker', label: 'Tracker' }
+	],[network]) ;
 
 	useEffect(() => {
 		if (router.isReady) {
+			if(!id){
+				router.push('/login');
+			}
 			if (!tabItems.map(t => t.key).includes(tab)) {
 				router.replace('/settings?tab=account');
 				setSearchQuery('account');
@@ -47,7 +49,7 @@ const Settings: FC<Props> = (props) => {
 			}
 			setSearchQuery(tab as string);
 		}
-	}, [router, router.isReady, searchQuery, tab]);
+	}, [id, router, router.isReady, searchQuery, tab, tabItems]);
 
 	useEffect(() => {
 		setNetwork(props.network);

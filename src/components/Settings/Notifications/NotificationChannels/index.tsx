@@ -98,7 +98,7 @@ export default function NotificationChannels({ }: Props) {
 					<div className='flex justify-between gap-[8px] items-center p-0'>
 						<div className='flex items-center gap-[8px]'>
 							<NotificationChannelsIcon />
-							<h3 className='font-semibold text-[16px] md:text-[18px] tracking-wide leading-7 mb-0'>
+							<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
 								Notification Channels
 							</h3>
 						</div>
@@ -113,9 +113,8 @@ export default function NotificationChannels({ }: Props) {
 				key='1'
 			>
 				<div className='flex flex-col'>
-					<p className='font-semibold text-[#243A57] text-[16px]'>
-						Please select the socials where you would like to
-						receive notifications:
+					<p className='font-medium text-[16px] leading-[21px] mb-[22px]'>
+						Please select the socials where you would like to receive notifications:
 					</p>
 					<EmailNotificationCard
 						verifiedEmail={
@@ -124,7 +123,7 @@ export default function NotificationChannels({ }: Props) {
 							]?.email || ''
 						}
 					/>
-					<Divider className='border-[#D2D8E0] border-2' dashed />
+					<Divider className='border-[#D2D8E0] border-2 my-[30px]' dashed />
 					{Bots.map((bot, i) => (
 						<div key={bot.title}>
 							<BotSetupCard
@@ -138,7 +137,7 @@ export default function NotificationChannels({ }: Props) {
 							/>
 							{Bots.length - 1 > i && (
 								<Divider
-									className='border-[#D2D8E0] border-[2px]'
+									className='border-[#D2D8E0] border-[2px] my-[30px]'
 									dashed
 								/>
 							)}

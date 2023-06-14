@@ -10,13 +10,13 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 type Props = {
-    verifiedEmail: string;
+	verifiedEmail: string;
 };
 
 const Container = styled.div`
-    .ant-form-item-explain-error {
-        position: absolute;
-    }
+	// #email_help {
+    //     position: absolute;
+    // }
 `;
 
 const validationRules: Rule[] = [
@@ -32,12 +32,15 @@ export default function EmailNotificationCard({ verifiedEmail }: Props) {
 		callback: (error?: string) => void
 	) => {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (verifiedEmail === value) {
-			callback('This email is already verified.');
-		} else if (!value || emailRegex.test(value)) {
+		if (!value || emailRegex.test(value)) {
 			callback();
+			return;
+		} else if (verifiedEmail === value) {
+			callback('This email is already verified.');
+			return;
 		} else {
 			callback('Please enter a valid email address.'); // Validation failed
+			return;
 		}
 	};
 
@@ -80,11 +83,11 @@ export default function EmailNotificationCard({ verifiedEmail }: Props) {
 
 	return (
 		<div className='flex flex-col mb-2'>
-			<h3 className='text-base font-semibold m-0'>
+			<h3 className='text-base font-medium m-0 gap-1'>
 				<MailFilled /> Email Notifications{' '}
 				{verifiedEmail && (
 					<span className='text-[10px] px-[4px] py-[2px] bg-[#407BFF] border-[#5A46FF] border-2 text-[#FFFFFF] rounded-tr-lg rounded-bl-lg'>
-                        Verified
+						Verified
 					</span>
 				)}
 			</h3>
@@ -92,7 +95,7 @@ export default function EmailNotificationCard({ verifiedEmail }: Props) {
 				<Form
 					onFinish={handleClick}
 					form={form}
-					className='flex gap-2 items-center w-2/3 flex-wrap lg:flex-nowrap'
+					className='flex gap-2 w-2/3 flex-wrap lg:flex-nowrap'
 				>
 					<Form.Item
 						name={'email'}
@@ -114,7 +117,7 @@ export default function EmailNotificationCard({ verifiedEmail }: Props) {
 						loading={loading}
 						className='h-10 rounded-[6px] bg-[#E5007A] flex items-center justify-center border border-solid border-pink_primary px-[22px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
 					>
-                        Verify
+						Verify
 					</Button>
 				</Form>
 			</Container>

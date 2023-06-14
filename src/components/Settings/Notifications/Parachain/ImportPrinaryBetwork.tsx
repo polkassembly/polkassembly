@@ -20,7 +20,7 @@ const ImportPrimaryNetworkSettingModal = ({
 	return (
 		<Modal
 			title={
-				<div className='mr-[-24px] ml-[-24px]'>
+				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
 					<h3 className='ml-[24px] mb-0 flex items-center gap-3 text-base md:text-md'>
 						<DisabledImportIcon /> Import Primary Network Settings
 					</h3>
@@ -29,6 +29,7 @@ const ImportPrimaryNetworkSettingModal = ({
 			}
 			open={open}
 			closable
+			className='min-w-[350px] md:min-w-[600px]'
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={[
@@ -61,7 +62,7 @@ const ImportPrimaryNetworkSettingModal = ({
 					/>
 					<span
 						className={
-							'items-center justify-center ml-[10px] mr-[12px] font-semibold text-[#243A57] text-sm leading-[18px] tracking-[0.02em]'
+							'items-center justify-center ml-[10px] mr-[12px] font-medium text-[#243A57] text-sm leading-[18px] tracking-[0.02em]'
 						}
 					>
 						<span className='inline-block capitalize max-w-[100px] overflow-hidden text-ellipsis m-0'>
@@ -69,11 +70,11 @@ const ImportPrimaryNetworkSettingModal = ({
 						</span>
 					</span>
 				</Tag>
-				<p className='font-semibold text-[#243A57] text-[16px] m-0'>
+				<p className='font-medium text-[#243A57] text-[16px] m-0'>
                     is set as your Primary Network.
 				</p>
 			</div>
-			<p className='text-[16px] font-normal'>
+			<p className='text-[16px] font-medium text-[#243A57]'>
                 Are you sure you want to import your primary network settings to all selected networks?
 			</p>
 			<div className='mr-[-24px] ml-[-24px]'>

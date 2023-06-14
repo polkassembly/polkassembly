@@ -5,11 +5,15 @@ import React, { useEffect, useState } from 'react';
 import { Divider, Switch } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
-import OverallPostsNotification from '~assets/icons/overall-posts-notification-icon.svg';
+import OverallPostsNotification from '~assets/icons/gov-icon.svg';
 import GroupCheckbox from '../common-ui/GroupCheckbox';
-import BountiesIcon from '~assets/icons/bounties.svg';
-import ReferendumsIcon from '~assets/icons/referndums.svg';
-import TechCommiteeIcon from '~assets/icons/tech-commitee.svg';
+import Root from '~assets/icons/root-open-gov.svg';
+import Tips from '~assets/icons/tips.svg';
+import Tipper from '~assets/icons/small-tipper.svg';
+import Stacking from '~assets/icons/stacking-admin.svg';
+import Auction from '~assets/icons/action-admin.svg';
+import Referendum from '~assets/icons/referendum-canceller.svg';
+import Fellowship from '~assets/icons/fellowship-admin.svg';
 import { useNetworkContext } from '~src/context';
 import { PostOrigin } from '~src/types';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -154,7 +158,7 @@ export default function OpenGovNotification({
 				header={
 					<div className='flex items-center gap-[8px]'>
 						<OverallPostsNotification />
-						<h3 className='font-semibold text-[16px] md:text-xl tracking-wide leading-7 mb-0 whitespace-nowrap'>
+						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
                             OpenGov Notifications
 						</h3>
 						{!!active && (
@@ -175,7 +179,7 @@ export default function OpenGovNotification({
 						)}
 					</div>
 				}
-				key='6'
+				key='1'
 			>
 				<div className='flex flex-col'>
 					<div className='flex flex-wrap'>
@@ -183,7 +187,7 @@ export default function OpenGovNotification({
 							categoryOptions={options[PostOrigin.ROOT]}
 							title='Root'
 							classname='md:basis-[50%]'
-							Icon={BountiesIcon}
+							Icon={Root}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -192,7 +196,7 @@ export default function OpenGovNotification({
 							categoryOptions={options[PostOrigin.SMALL_TIPPER]}
 							title='Small Tipper'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
-							Icon={ReferendumsIcon}
+							Icon={Tipper}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -203,7 +207,7 @@ export default function OpenGovNotification({
 							categoryOptions={options[PostOrigin.STAKING_ADMIN]}
 							title='Staking Admin'
 							classname='md:basis-[50%]'
-							Icon={TechCommiteeIcon}
+							Icon={Stacking}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -212,7 +216,7 @@ export default function OpenGovNotification({
 							categoryOptions={options[PostOrigin.BIG_TIPPER]}
 							title='Big Tipper'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
-							Icon={BountiesIcon}
+							Icon={Tipper}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -223,7 +227,7 @@ export default function OpenGovNotification({
 							categoryOptions={options[PostOrigin.AUCTION_ADMIN]}
 							title='Auction Admin'
 							classname='md:basis-[50%]'
-							Icon={ReferendumsIcon}
+							Icon={Auction}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -232,7 +236,7 @@ export default function OpenGovNotification({
 							categoryOptions={options[PostOrigin.SMALL_SPENDER]}
 							title='Small Spender'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
-							Icon={ReferendumsIcon}
+							Icon={Tipper}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -243,7 +247,7 @@ export default function OpenGovNotification({
 							categoryOptions={options[PostOrigin.TREASURER]}
 							title='Treasurer'
 							classname='md:basis-[50%]'
-							Icon={ReferendumsIcon}
+							Icon={Tips}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -252,7 +256,7 @@ export default function OpenGovNotification({
 							categoryOptions={options[PostOrigin.MEDIUM_SPENDER]}
 							title='Medium Spender'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
-							Icon={TechCommiteeIcon}
+							Icon={Tipper}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -265,7 +269,7 @@ export default function OpenGovNotification({
 							}
 							title='Referendum Canceler'
 							classname='md:basis-[50%]'
-							Icon={BountiesIcon}
+							Icon={Referendum}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -274,7 +278,7 @@ export default function OpenGovNotification({
 							categoryOptions={options[PostOrigin.BIG_SPENDER]}
 							title='Big Spender'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
-							Icon={ReferendumsIcon}
+							Icon={Tipper}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -287,7 +291,7 @@ export default function OpenGovNotification({
 							}
 							title='Referendum Killer'
 							classname='md:basis-[50%]'
-							Icon={ReferendumsIcon}
+							Icon={Referendum}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -298,7 +302,7 @@ export default function OpenGovNotification({
 							}
 							title='Fellowship Admin'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
-							Icon={ReferendumsIcon}
+							Icon={Fellowship}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -309,7 +313,7 @@ export default function OpenGovNotification({
 							categoryOptions={options[PostOrigin.LEASE_ADMIN]}
 							title='Lease Admin'
 							classname='md:basis-[50%]'
-							Icon={TechCommiteeIcon}
+							Icon={Referendum}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -318,7 +322,7 @@ export default function OpenGovNotification({
 							categoryOptions={options[PostOrigin.GENERAL_ADMIN]}
 							title='General Admin'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
-							Icon={BountiesIcon}
+							Icon={Referendum}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -329,7 +333,7 @@ export default function OpenGovNotification({
 							categoryOptions={options[PostOrigin.MEMBERS]}
 							title='Member Referenda'
 							classname='md:basis-[50%]'
-							Icon={ReferendumsIcon}
+							Icon={Fellowship}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -341,7 +345,7 @@ export default function OpenGovNotification({
 							}
 							title='Whitelisted Call'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
-							Icon={ReferendumsIcon}
+							Icon={Fellowship}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>

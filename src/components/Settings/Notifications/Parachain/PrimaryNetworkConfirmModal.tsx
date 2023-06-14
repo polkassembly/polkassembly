@@ -5,12 +5,16 @@ import React from 'react';
 import { Alert, Button, Divider, Modal } from 'antd';
 import styled from 'styled-components';
 import { CheckOutlineIcon } from '~src/ui-components/CustomIcons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const StyledAlert = styled(Alert)`
+	display:flex;
+	align-items: flex-start;
+	padding:14px;
     svg {
         color: white;
+		margin-top:4px;
     }
-
     .ant-alert-message {
         color: white;
     }
@@ -30,7 +34,7 @@ const SetPrimaryNetworkSettingModal = ({
 	return (
 		<Modal
 			title={
-				<div className='mr-[-24px] ml-[-24px]'>
+				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
 					<h3 className='ml-[24px] mb-0 flex items-center gap-3'>
 						<CheckOutlineIcon /> Confirmation
 					</h3>
@@ -39,6 +43,7 @@ const SetPrimaryNetworkSettingModal = ({
 			}
 			open={open}
 			closable
+			className='min-w-[350px] md:min-w-[600px]'
 			onCancel={onCancel}
 			onOk={onConfirm}
 			footer={[
@@ -57,11 +62,12 @@ const SetPrimaryNetworkSettingModal = ({
 				</Button>
 			]}
 		>
-			<p className='text-[16px] font-normal m-0 m-6'>
-                Are you sure you want ${network} as your Primary Network for
-                settings?
+			<p className='text-[16px] font-medium m-0 my-6 leading-[21px] text-[#243A57]'>
+				{`Are you sure you want ${network} as your Primary Network for
+                settings?`}
 			</p>
 			<StyledAlert
+				icon={<InfoCircleOutlined/>}
 				showIcon
 				type='info'
 				className='text-[14px] bg-[#4E75FF] text-[#fff] '

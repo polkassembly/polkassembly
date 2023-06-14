@@ -41,14 +41,14 @@ export default function GroupCheckbox({
 	return (
 		<div className={classname}>
 			{!!title && (
-				<div className='flex items-center gap-[4px] mb-[16px]'>
+				<div className='flex items-center gap-[8px] mb-[16px] text-[#243A57]'>
 					{title && Icon ? (
 						<Icon />
 					) : (
 						<Tips className='w-[20px] h-[20px]' />
 					)}
 
-					<h3 className='font-semibold text-[14px] tracking-wide leading-7 text-sidebarBlue mb-[1px]'>
+					<h3 className='font-semibold text-[14px] tracking-wide leading-[21px] mb-[1px]'>
 						{title}
 					</h3>
 					<Toggler
@@ -58,20 +58,22 @@ export default function GroupCheckbox({
 					/>
 				</div>
 			)}
-			{categoryOptions.map((item: any) => (
-				<Row key={item.value} style={{ display: 'block' }}>
-					<Col>
-						<Checkbox
-							value={item.value}
-							name={item.value}
-							onChange={(e) => handleChange(e, item.value)}
-							checked={item.selected}
-						>
-							{item.label}
-						</Checkbox>
-					</Col>
-				</Row>
-			))}
+			<div className='flex flex-col gap-[19px] text-[#243A57]'>
+				{categoryOptions.map((item: any) => (
+					<Row key={item.value} style={{ display: 'block' }}>
+						<Col>
+							<Checkbox
+								value={item.value}
+								name={item.value}
+								onChange={(e) => handleChange(e, item.value)}
+								checked={item.selected}
+							>
+								{item.label}
+							</Checkbox>
+						</Col>
+					</Row>
+				))}
+			</div>
 		</div>
 	);
 }

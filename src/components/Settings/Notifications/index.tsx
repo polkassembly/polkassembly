@@ -9,7 +9,7 @@ import Gov1Notification from './Gov1Notification';
 import OpenGovNotification from './OpenGovNotification';
 import NotificationChannels from './NotificationChannels';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useUserDetailsContext } from '~src/context';
 import { PublicUser } from '~src/auth/types';
 import Loader from '~src/ui-components/Loader';
 import { notificationInitialState } from './Reducer/initState';
@@ -33,16 +33,14 @@ const getAllNetworks = (network: string) => {
 	return networks;
 };
 
-export default function Notifications() {
+export default function Notifications({ network }:{network:string}) {
 	const { id, networkPreferences, setUserDetailsContextState, primaryNetwork } =
 		useUserDetailsContext();
-	const { network } = useNetworkContext();
 
 	const [notificationPreferences, dispatch] = useReducer(
 		reducer,
 		notificationInitialState
 	);
-
 	const [selectedNetwork, setSelectedNetwork] = useState<{
 		[index: string]: Array<{ name: string; selected: boolean }>;
 	}>(getAllNetworks(network));
@@ -61,7 +59,10 @@ export default function Notifications() {
 		}));
 	};
 
-	const getNotificationSettings = async () => {
+	const getNotificationSettings = async (network:string) => {
+		if(!network){
+			return;
+		}
 		try {
 			const { data, error } = (await nextApiClientFetch(
 				'api/v1/auth/data/notificationSettings'
@@ -80,8 +81,15 @@ export default function Notifications() {
 							data?.notification_preferences?.triggerPreferences
 					}
 				}));
+				dispatch({
+					payload: {
+						data: data?.notification_preferences?.triggerPreferences?.[network],
+						network
+					},
+					type: ACTIONS.GET_NOTIFICATION_OBJECT
+				});
 			}
-			return data?.notification_preferences;
+			setLoading(false);
 		} catch (e) {
 			console.log(e);
 		}
@@ -176,20 +184,9 @@ export default function Notifications() {
 	};
 
 	useEffect(() => {
-		getPrimaryNetwork().then(() => {
-			getNotificationSettings().then((res) => {
-				dispatch({
-					payload: {
-						data: res.triggerPreferences?.[network] || {},
-						network
-					},
-					type: ACTIONS.GET_NOTIFICATION_OBJECT
-				});
-				handleCurrentNetworkNotifications(res.triggerPreferences?.[network]);
-				setLoading(false);
-			});
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		getPrimaryNetwork().catch((e) => console.log(e));
+		getNotificationSettings(network);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	return loading ? (

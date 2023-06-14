@@ -67,8 +67,8 @@ const AddNetworkModal = ({
 	return (
 		<Modal
 			title={
-				<div className='mr-[-24px] ml-[-24px]'>
-					<h3 className='ml-[24px] mb-0'>
+				<div className='mr-[-24px] ml-[-24px] text-[18px]'>
+					<h3 className='ml-[24px] mb-0 font-semibold text-[#243A57] mt-1'>
 						<PlusCircleOutlined /> Add Networks
 					</h3>
 					<Divider />
@@ -108,7 +108,7 @@ const AddNetworkModal = ({
 				</Button>
 			]}
 		>
-			<p className='font-semibold text-[#243A57] text-[16px]'>
+			<p className='font-medium text-[#243A57] text-[16px]'>
 				{showSureModal
 					? 'Pre-existing settings will be changed for the following networks:'
 					: 'Please select network(s) for which you want to replicate settings:'}
@@ -116,18 +116,12 @@ const AddNetworkModal = ({
 			{showSureModal ? (
 				<div className='flex gap-[10px] flex-wrap'>
 					{Object.keys(allNetworks).map((chain) => {
-						return allNetworks[chain].map(
+						return allNetworks[chain].filter(net => net.selected).map(
 							({
-								name,
-								selected
+								name
 							}: {
                                 name: string;
-                                selected: boolean;
                             }) => {
-								selected = selected || name === network;
-								if (!selected) {
-									return <></>;
-								}
 								return (
 									<Tag
 										key={name}
@@ -159,9 +153,9 @@ const AddNetworkModal = ({
 				Object.keys(allNetworks).map((chain, i) => {
 					return (
 						<div key={chain}>
-							<div className='flex items-center gap-[8px] m-1'>
+							<div className='flex items-center gap-[8px] mb-2'>
 								<SmallParachainIcon />
-								<h3 className='font-semibold text-sm tracking-wide leading-7 text-sidebarBlue mb-0'>
+								<h3 className='font-semibold text-sm tracking-wide leading-[21px] text-sidebarBlue mb-0'>
 									{networkLabel[chain] === 'Kusama' ||
                                     networkLabel[chain] === 'Polkadot'
 										? `${networkLabel[chain]} and Parachains`
@@ -193,7 +187,7 @@ const AddNetworkModal = ({
 										selected = selected || name === network;
 										return (
 											<div
-												className='flex-[30%] w-auto max-w-[200px]'
+												className='flex-[170px] w-auto max-w-[175px]'
 												key={name}
 											>
 												<Tag
@@ -217,7 +211,7 @@ const AddNetworkModal = ({
 													/>
 													<span
 														className={
-															'items-center justify-center ml-[10px] mr-[12px] font-semibold text-[#243A57] text-sm leading-[18px] tracking-[0.02em] '
+															'items-center justify-center ml-[10px] mr-[12px] font-normal text-[#243A57] text-sm leading-[21px] tracking-[0.02em] '
 														}
 													>
 														<span className='inline-block capitalize max-w-[100px] overflow-hidden text-ellipsis m-0'>

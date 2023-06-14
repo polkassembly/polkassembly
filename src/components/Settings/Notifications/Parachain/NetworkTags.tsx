@@ -33,7 +33,7 @@ export default function NetworkTags({
 	return (
 		<Tag
 			onClick={onActionClick}
-			className={`flex items-center justify-between text-navBlue border-solid border rounded-[34px] border-[#E5007A] px-[24px] ${
+			className={`flex items-center justify-between border-solid border rounded-[34px] border-[#E5007A] px-[24px] ${
 				selected ? 'bg-[#FEF2F8] py-[8px]' : 'bg-white py-[14px]'
 			} cursor-pointer`}
 		>
@@ -49,7 +49,7 @@ export default function NetworkTags({
 			<span
 				className={`items-center justify-center ml-[9.25px] mr-[13.35px] font-semibold ${
 					selected ? 'text-[#243A57]' : 'text-pink_primary'
-				} text-lg leading-[18px] tracking-[0.02em] capitalize`}
+				} text-lg leading-[21px] tracking-[0.02em] capitalize`}
 			>
 				{name === 'xx' ? 'XX' : name}
 			</span>

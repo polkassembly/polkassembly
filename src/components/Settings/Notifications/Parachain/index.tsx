@@ -89,7 +89,7 @@ export default function Parachain({
 			<Panel
 				header={
 					<div className='flex justify-between gap-[8px] items-center'>
-						<div className='flex items-center gap-[8px]'>
+						<div className='flex items-center gap-[6px] channel-header'>
 							<ParachainNotification />
 							<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
 								Parachains

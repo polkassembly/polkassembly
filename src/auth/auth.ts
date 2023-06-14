@@ -533,7 +533,9 @@ class AuthService {
 				channelPreferences:{
 					...userDocData.notification_preferences.channelPreferences,
 					email:{
-						email:email
+						email: email,
+						enabled: true,
+						verified: true
 					}
 				}
 			}

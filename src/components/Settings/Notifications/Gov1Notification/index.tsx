@@ -153,9 +153,9 @@ export default function Gov1Notification({
 		>
 			<Panel
 				header={
-					<div className='flex items-center gap-[8px]'>
+					<div className='flex items-center gap-[6px] channel-header'>
 						<OverallPostsNotification />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
+						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
 							Gov 1 Notifications
 						</h3>
 						{!!active && (

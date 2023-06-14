@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { Divider } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
-import NotificationChannelsIcon from '~assets/icons/notification-channels-icon.svg';
+import NotificationChannelsIcon from '~assets/icons/notification-channel-svg.svg';
 import SlackIcon from '~assets/icons/slack.svg';
 import ElementIcon from '~assets/icons/element.svg';
 import EmailNotificationCard from './EmailNotificationCard';
@@ -97,10 +97,10 @@ export default function NotificationChannels({ handleDisabled }: Props) {
 		>
 			<Panel
 				header={
-					<div className='flex justify-between gap-[8px] items-center p-0'>
-						<div className='flex items-center gap-[8px]'>
-							<NotificationChannelsIcon />
-							<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[1px]'>
+					<div className='flex justify-between gap-[8px] items-center'>
+						<div className='flex items-center gap-[6px] channel-header'>
+							<NotificationChannelsIcon/>
+							<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 pt-1'>
 								Notification Channels
 							</h3>
 						</div>
@@ -108,7 +108,6 @@ export default function NotificationChannels({ handleDisabled }: Props) {
 							<div className='gap-4 hidden items-center md:flex'>
 								<div className={`${!networkPreferences?.channelPreferences?.[
 									CHANNEL.EMAIL]?.enabled ? '[&>svg]:opacity-50' : ''}`}>
-
 									<MailFilled />
 								</div>
 								{Bots.map((bot, i) => <div className={`${!networkPreferences?.channelPreferences?.[

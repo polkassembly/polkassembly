@@ -345,9 +345,9 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	}, [currentTokenPrice, network]);
 
 	return (
-		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col gap-4 lg:flex`}>
+		<div className={`${className} sm:grid ${!['polymesh', 'polymesh-test'].includes(network) && 'sm:grid-rows-2'} sm:grid-cols-2 sm:grid-flow-col sm:gap-4 lg:flex`}>
 			{/* Available */}
-			<div className="flex flex-1 justify-between bg-white drop-shadow-md p-3 h-40 w-52 lg:px-6 lg:py-3 rounded-xxl">
+			<div className="xs:my-3 sm:my-0 flex flex-1 justify-between bg-white drop-shadow-md p-3 h-40 sm:w-52 lg:px-6 lg:py-3 rounded-xxl">
 				<div className='flex flex-col justify-evenly gap-x-0'>
 					{
 						!available.isLoading ?
@@ -402,7 +402,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 			{/* CurrentPrice */}
 			{network !== 'moonbase' &&
-				<div className="flex-1 flex justify-between bg-white drop-shadow-md p-3 h-40 w-52 lg:px-6 lg:py-3 rounded-xxl">
+				<div className="xs:my-3 sm:my-0 flex-1 flex justify-between bg-white drop-shadow-md p-3 h-40 sm:w-52 lg:px-6 lg:py-3 rounded-xxl">
 					<div className='flex flex-col justify-evenly gap-x-0'>
 						{
 							!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading)?
@@ -415,9 +415,10 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							Price {chainProperties[network]?.tokenSymbol}
 										</span>
 									</div>
-									<div className="text-lightBlue font-medium text-lg">
+									<div className="font-medium text-lg">
 										{currentTokenPrice.value === 'N/A' ? <span>N/A</span> : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value))
-											? <span>${currentTokenPrice.value}</span>
+											?
+											<><span className='text-lightBlue'>$ </span><span className='text-bodyBlue'>{currentTokenPrice.value}</span></>
 											: null
 										}
 									</div>
@@ -456,7 +457,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			{/* Spend Period */}
 			{!['polymesh', 'polymesh-test'].includes(network) && <>
 				{!inTreasuryProposals &&
-				<div className="flex-1 flex justify-between bg-white drop-shadow-md p-3 h-40 w-52 lg:px-6 lg:py-3 rounded-xxl">
+				<div className="xs:my-3 sm:my-0 flex-1 flex justify-between bg-white drop-shadow-md p-3 h-40 sm:w-52 lg:px-6 lg:py-3 rounded-xxl">
 					<div className='flex flex-col justify-evenly gap-x-0'>
 						{
 							!spendPeriod.isLoading?
@@ -523,7 +524,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 			{/* Next Burn */}
 			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
-				<div className="flex-1 flex justify-between bg-white drop-shadow-md p-3 h-40 w-52 lg:px-6 lg:py-3 rounded-xxl">
+				<div className="xs:my-3 sm:my-0 flex-1 flex justify-between bg-white drop-shadow-md p-3 h-40 sm:w-52 lg:px-6 lg:py-3 rounded-xxl">
 					<div className='flex flex-col justify-evenly gap-x-0'>
 						{
 							!nextBurn.isLoading?

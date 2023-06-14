@@ -308,7 +308,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				);
 				const responseJSON = await response.json();
 				if (responseJSON['message'] == 'Success') {
-					const weekAgoPrice = responseJSON['data']['ema7_average'];
+					const weekAgoPrice = responseJSON['data']['average'];
 					const currentTokenPriceNum : number = parseFloat(currentTokenPrice.value);
 					const weekAgoPriceNum : number = parseFloat(weekAgoPrice);
 					if(weekAgoPriceNum == 0) {
@@ -423,7 +423,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 												<span>
 													{Math.abs(Number(priceWeeklyChange.value))}%
 												</span>
-												{(Number(priceWeeklyChange.value) < 0 ? <CaretDownOutlined color='red' /> : <CaretUpOutlined color='green' />) }
+												{typeof priceWeeklyChange.value === 'number' && priceWeeklyChange.value < 0 ? <CaretDownOutlined color='red' /> : <CaretUpOutlined color='green' /> }
 											</>
 											: null
 										}

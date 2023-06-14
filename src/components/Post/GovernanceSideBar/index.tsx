@@ -6,7 +6,7 @@ import { DislikeFilled, LikeFilled, ClockCircleOutlined } from '@ant-design/icon
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Form, Modal } from 'antd';
+import { Button, Divider, Form, Modal } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -59,6 +59,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import MoneyIcon from '~assets/icons/money-icon-gray.svg';
 import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
+import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -116,7 +117,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
-	
+
 	useEffect(() => {
 		if ([ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
 			if (!api || !apiReady) {
@@ -317,9 +318,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		api?.setSigner(signer);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
-const balance  = Object.values(vote.balance).reduce((prev, ele) => {
-	return prev.add(new BN(ele));
-}, new BN(0)).toString();
+	const balance  = Object.values(vote.balance).reduce((prev, ele) => {
+		return prev.add(new BN(ele));
+	}, new BN(0)).toString();
 
 	useEffect( () => {
 		if (!api) {
@@ -339,9 +340,9 @@ const balance  = Object.values(vote.balance).reduce((prev, ele) => {
 				} else {
 					console.log('address = ',substrateAddress);
 					console.log('encoded = ',encoded);
-					console.log('info = ',res.data?.votes);
+					console.log('info = ',res.data);
 					//setVotingHistory(res.data?.votes);
-					if(res.data?.votes){
+					if(res.data?.count){
 						setVotingHistory(res.data?.votes);
 						setVote({
 							conviction:res.data?.votes[0].lockPeriod || 0,
@@ -351,13 +352,11 @@ const balance  = Object.values(vote.balance).reduce((prev, ele) => {
 
 						});
 					}
-					//setCount(res.data?.count || 0);
 				}
 
 			})
 			.catch((err) => {
 				console.error(err);
-				//setLoading(false);
 			});
 
 	}, [address,api,apiReady,network]);
@@ -681,26 +680,43 @@ const balance  = Object.values(vote.balance).reduce((prev, ele) => {
 															referendumId={onchainId  as number}
 															proposalType={proposalType}
 														/>
-														<div>
-															<p className='font-medium text-[12px] leading-6 text-[#243A57]'>Last Vote:</p>
-															<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6'>
+														{ votingHistory.length &&
+															<div>
+																<p className='font-medium text-[12px] leading-6 text-[#243A57]'>Last Vote:</p>
+																<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6'>
 
-																{vote.decision == 'yes' ? <p><LikeFilled className='text-[green]'/> <span className='capitalize font-medium text-[#243A57]'>{vote.decision}</span></p> :vote.decision == 'no' ?  <div><DislikeFilled className='text-[red]'/> <span className='mb-[5px] capitalize font-medium text-[#243A57]'>{vote.decision}</span></div> : vote.decision == 'abstain' ? <p><SplitYellow/> <span className='capitalize font-medium text-[#243A57]'>{vote.decision}</span></p>  : null }
+																	{vote.decision == 'yes' ? <p><LikeFilled className='text-[green]'/> <span className='capitalize font-medium text-[#243A57]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeFilled className='text-[red]'/> <span className='mb-[5px] capitalize font-medium text-[#243A57]'>{'Nay'}</span></div> : vote.decision == 'abstain' &&( !vote.balance?.abstain)  ? <p><SplitYellow/> <span className='capitalize font-medium text-[#243A57]'>{'Split'}</span></p>  : vote.decision == 'abstain' &&( vote.balance?.abstain) ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }
 
-																<p><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
+																	<p><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
 
-																<p>
-																	<MoneyIcon className='mr-1'/>
-																	{formatedBalance(balance.toString(), unit)}{` ${unit}`}
+																	<p>
+																		<MoneyIcon className='mr-1'/>
+																		{formatedBalance(balance.toString(), unit)}{` ${unit}`}
 
-																</p>
+																	</p>
 
-																<p>
-																	<ConvictionIcon className='mr-1'/>
-																	{vote.conviction}x
-																</p>
+																	<p>
+																		<ConvictionIcon className='mr-1'/>
+																		{vote.conviction}x
+																	</p>
+																</div>
+																{
+																	votingHistory.length > 1 && <div>
+																		<Divider className='mt-0 mb-0' style={{ border: '1px solid #D2D8E0' }} />
+																		<button
+																			className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
+																			onClick={() => {
+																				//setOpen(true);
+																			}}
+																		>
+																			<VotingHistoryIcon />
+																			<span>View History</span>
+																		</button>
+																	</div>
+																}
 															</div>
-														</div>
+														}
+
 													</GovSidebarCard>}
 											</>
 										}

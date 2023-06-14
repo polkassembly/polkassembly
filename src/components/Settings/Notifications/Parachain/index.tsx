@@ -147,15 +147,15 @@ export default function Parachain({
 						Set as Primary Network Settings
 					</Checkbox>
 					<div
-						className={`flex item-center gap-2 text-[16px] ${(primaryNetwork !== network) || selectedNetworkArray.length > 1
+						className={`flex item-center gap-2 max-w-[520px] text-[16px] ${primaryNetwork !== network
 							? 'text-pink_primary cursor-pointer'
 							: 'text-[#96A4B6] cursor-not-allowed'}`}
-						onClick={(primaryNetwork !== network) || selectedNetworkArray.length > 1 ? () => {
+						onClick={primaryNetwork !== network ? () => {
 							setCopyPreferencesModal(true);
 						} : () => { }}
 					>
 						<span>
-							{(primaryNetwork !== network) || selectedNetworkArray.length > 1 ? (
+							{primaryNetwork !== network ? (
 								<ImportIcon />
 							) : (
 								<DisabledImportIcon />

@@ -126,7 +126,7 @@ const updateAll = (payload:any, state:IReducerState) => {
 			return {
 				...category,
 				selected:
-                    payload?.data?.[category.triggerName]?.tracks.includes(networkTrackInfo[payload.network][key].trackId) || false
+                    payload?.data?.[category.triggerName]?.tracks.includes(networkTrackInfo?.[payload.network]?.[key]?.trackId) || false
 			};
 		});
 	}

@@ -170,7 +170,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				(!decidingStatusBlock) && !isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='m-0 text-bodyBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
+							<h3 className='m-0 text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
 							<Button>1</Button>
 						</div>
 						<div className='mt-[20px]'>
@@ -189,7 +189,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				(decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='m-0 text-bodyBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
+							<h3 className='m-0 text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
 							<Button>2</Button>
 						</div>
 						<div className='mt-[30px]'>
@@ -218,7 +218,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							(isDisbursalPeriodCardVisible || minEnactment.periodCardVisible)
 								? <GovSidebarCard>
 									<div className='flex items-center justify-between'>
-										<h3 className='m-0 text-bodyBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
+										<h3 className='m-0 text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
 										<Button>3</Button>
 									</div>
 									<div className='mt-[20px]'>
@@ -250,7 +250,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				): isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='m-0 text-bodyBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal { status === 'Cancelled'? 'Cancelled': status === 'Killed'? 'Killer': status === 'TimedOut'? 'Timed Out': 'Failed'}</h3>
+							<h3 className='m-0 text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Proposal { status === 'Cancelled'? 'Cancelled': status === 'Killed'? 'Killer': status === 'TimedOut'? 'Timed Out': 'Failed'}</h3>
 							<Button>3</Button>
 						</div>
 						<div className='mt-[18px] text-bodyBlue text-sm font-normal leading-[22px] tracking-[0.01em]'>
@@ -262,7 +262,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			<Modal
 				open={open}
 				title={<div className='flex items-center justify-between gap-x-5 py-3 px-2'>
-					<h3 className='text-sidebarBlue font-semibold text-xl leading-[24px] tracking-[0.0015em] m-0 p-0'>Status</h3>
+					<h3 className='text-bodyBlue font-medium text-xl leading-[24px] tracking-[0.0015em] m-0 p-0'>Status</h3>
 					<button onClick={() => setOpen(false)} className='border-none outline-none cursor-pointer bg-transparent flex items-center justify-center'><CloseIcon /></button>
 				</div>}
 				onCancel={() => setOpen(false)}

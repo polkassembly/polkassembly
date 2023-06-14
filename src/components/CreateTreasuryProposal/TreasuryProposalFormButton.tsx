@@ -290,7 +290,7 @@ const TreasuryProposalFormButton = ({
 		}
 	};
 
-	const triggerBtn = <button disabled={!id} className='font-medium text-sm bg-pink_primary h-[40px] w-[120px] px-3 py-2 rounded-[6px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-white border-none outline-none cursor-pointer' onClick={() => setModalOpen(true)}>+ Add New Proposal</button>;
+	const triggerBtn = <button disabled={!id} className='outline-none whitespace-pre border-none px-3 py-2 font-medium  leading-[20px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer -mt-1' onClick={() => setModalOpen(true)}>+ Add New Proposal</button>;
 	const triggerBtnLoginDisabled = <Tooltip  color='#E5007A' title='Please signup/login to create treasury proposal'> <button disabled={true} className='font-medium text-sm p-4 rounded-[6px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-white border-none outline-none cursor-pointer text-white border-none outline-none h-[60px] w-[120px] cursor-not-allowed bg-grey_secondary'>+ Add New Proposal</button></Tooltip>;
 	return (
 		loadingStatus.isLoading

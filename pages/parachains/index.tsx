@@ -69,7 +69,7 @@ const Parachains = ({ className, network }: Props) => {
 				</Row>
 
 				<div className={`${className} bg-white drop-shadow-md p-2 lg:p-6 rounded-xl h-[650px]`}>
-					<h2 className='dashboard-heading mb-6'>Projects</h2>
+					<h2 className='text-bodyBlue text-xl font-medium leading-8 mb-6 mt-2 sm:mt-0'>Projects</h2>
 					<Tabs
 						tabBarStyle={{ color:'#243A57' }}
 						type="card"

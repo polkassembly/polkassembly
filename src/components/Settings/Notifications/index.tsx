@@ -7,7 +7,7 @@ import Proposals from './Proposals';
 import SubscribedPosts from './SubscribedPosts';
 import Gov1Notification from './Gov1Notification';
 import OpenGovNotification from './OpenGovNotification';
-import NotificationChannels from './NotificationChannels';
+import NotificationChannels, { CHANNEL } from './NotificationChannels';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsContext } from '~src/context';
 import { PublicUser } from '~src/auth/types';
@@ -108,6 +108,8 @@ export default function Notifications({ network }:{network:string}) {
 					...prev,
 					primaryNetwork: data.primary_network || ''
 				}));
+			}else{
+				handleSetPrimaryNetwork(network);
 			}
 		} catch (e) {
 			console.log(e);
@@ -148,20 +150,6 @@ export default function Notifications({ network }:{network:string}) {
 		}
 	};
 
-	useEffect(() => {
-		if(loading){
-			return;
-		}
-		const selectedNames: Array<string> = [];
-		for (const category of Object.values(selectedNetwork)) {
-			category.forEach((chain) => {
-				if (chain.selected) selectedNames.push(chain.name);
-			});
-		}
-		handleSetNetworkPreferences(selectedNames);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [networkPreferences.triggerPreferences]);
-
 	const handleCopyPrimaryNetworkNotification = async (
 		selectedNetwork: Array<string>
 	) => {
@@ -183,6 +171,53 @@ export default function Notifications({ network }:{network:string}) {
 		}
 	};
 
+	const handleDisabled = async (channel:CHANNEL) => {
+		try {
+			setUserDetailsContextState((prev) => ({
+				...prev,
+				networkPreferences: {
+					...prev.networkPreferences,
+					channelPreferences: {
+						...prev.networkPreferences.channelPreferences,
+						[channel]: {
+							...prev.networkPreferences.channelPreferences.channel,
+							enabled:false
+						}
+					}
+				}
+			}));
+			const { data, error } = (await nextApiClientFetch(
+				'api/v1/auth/actions/disabledChannelNotification',
+				{
+					channel,
+					enabled:false
+				}
+			)) as { data: { message: string }; error: string | null };
+			if (error || !data.message) {
+				throw new Error(error || '');
+			}
+
+			return true;
+
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	useEffect(() => {
+		if(loading){
+			return;
+		}
+		const selectedNames: Array<string> = [];
+		for (const category of Object.values(selectedNetwork)) {
+			category.forEach((chain) => {
+				if (chain.selected) selectedNames.push(chain.name);
+			});
+		}
+		handleSetNetworkPreferences(selectedNames);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [networkPreferences.triggerPreferences]);
+
 	useEffect(() => {
 		getPrimaryNetwork().catch((e) => console.log(e));
 		getNotificationSettings(network);
@@ -193,7 +228,7 @@ export default function Notifications({ network }:{network:string}) {
 		<Loader />
 	) : (
 		<div className='flex flex-col gap-[24px] text-[#243A57]'>
-			<NotificationChannels />
+			<NotificationChannels handleDisabled={handleDisabled} />
 			<Parachain
 				primaryNetwork={primaryNetwork}
 				onSetPrimaryNetwork={handleSetPrimaryNetwork}

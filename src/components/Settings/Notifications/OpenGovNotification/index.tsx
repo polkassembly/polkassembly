@@ -343,7 +343,7 @@ export default function OpenGovNotification({
 
 								options[PostOrigin.WHITELISTED_CALLER]
 							}
-							title='Whitelisted Call'
+							title='Whitelisted Caller'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
 							Icon={Fellowship}
 							onChange={handleChange}

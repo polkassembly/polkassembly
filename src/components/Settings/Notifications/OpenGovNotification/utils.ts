@@ -98,7 +98,7 @@ export const titleMapper = (title:string) => {
 	case 'Member Referenda': {
 		return PostOrigin.MEMBERS;
 	}
-	case 'Whitelisted Call': {
+	case 'Whitelisted Caller': {
 		return PostOrigin.WHITELISTED_CALLER;
 	}
 	default: {

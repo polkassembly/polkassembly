@@ -12,6 +12,9 @@ import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import Tracker from '~src/components/Tracker/Tracker';
 import { useRouter } from 'next/router';
+import { PageLink } from '~src/global/post_categories';
+import BackToListingView from '~src/ui-components/BackToListingView';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 interface Props {
 	network: string
@@ -59,6 +62,11 @@ const Settings: FC<Props> = (props) => {
 	return (
 		<>
 			<SEOHead title='Settings' network={network} />
+			{Object.keys(networkTrackInfo).includes(network) ?
+				<BackToListingView postCategory={PageLink.OVERVIEW_GOV_2} trackName='Overview'/>:
+				<BackToListingView postCategory={PageLink.OVERVIEW} trackName='Overview'/>
+			}
+
 			<Col className='w-full h-full'>
 				<div className='mt-6 w-full bg-white shadow-md p-8 rounded-md'>
 					<h3

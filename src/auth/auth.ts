@@ -1057,7 +1057,7 @@ class AuthService {
 		const firestore = firebaseAdmin.firestore();
 
 		if (email !== '') {
-			const alreadyExists = !(await firestore.collection('users').where('email', '==', email).limit(1).get()).empty;
+			const alreadyExists = !(await firestore.collection('users').where('id', '!=', userId).where('email', '==', email).limit(1).get()).empty;
 			if (alreadyExists) throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
 		}
 

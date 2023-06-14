@@ -23,7 +23,7 @@ import TelegramIcon from '~assets/icons/telegram-notification.svg';
 import DiscordIcon from '~assets/icons/discord-notification.svg';
 
 const { Panel } = Collapse;
-type Props = {};
+type Props = { handleDisabled: any };
 
 export enum CHANNEL {
 	TELEGRAM = 'telegram',
@@ -34,7 +34,7 @@ export enum CHANNEL {
 }
 
 // eslint-disable-next-line no-empty-pattern
-export default function NotificationChannels({ }: Props) {
+export default function NotificationChannels({ handleDisabled }: Props) {
 	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
 	const { network } = useNetworkContext();
 	const { id, networkPreferences } = useUserDetailsContext();
@@ -141,6 +141,7 @@ export default function NotificationChannels({ }: Props) {
 										bot.channel
 									]?.enabled || false
 								}
+								handleDisabled={handleDisabled}
 							/>
 							{Bots.length - 1 > i && (
 								<Divider
@@ -206,13 +207,13 @@ const Bots = [
 		title: 'Discord'
 	},
 	{
-		Icon: <SlackIcon style={{ marginTop:4, transform: 'scale(0.9)' }} />,
+		Icon: <SlackIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
 		channel: CHANNEL.SLACK,
 		description: 'a Slack Channel chat to get Slack notifications',
 		title: 'Slack'
 	},
 	{
-		Icon: <ElementIcon style={{ marginTop:4, transform: 'scale(0.9)' }} />,
+		Icon: <ElementIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
 		channel: CHANNEL.ELEMENT,
 		description: '',
 		title: 'Element'

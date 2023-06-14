@@ -20,14 +20,14 @@ import { Collapse } from '../common-ui/Collapse';
 
 const { Panel } = Collapse;
 type Props = {
-    primaryNetwork: string;
-    onSetPrimaryNetwork: (network: string) => Promise<void>;
-    onSetNetworkPreferences: (networks: Array<string>) => Promise<void>;
-    onCopyPrimaryNetworkNotification: (
-        selectedNetwork: Array<string>
-    ) => Promise<void>;
-    selectedNetwork: ISelectedNetwork;
-    setSelectedNetwork: React.Dispatch<React.SetStateAction<ISelectedNetwork>>;
+	primaryNetwork: string;
+	onSetPrimaryNetwork: (network: string) => Promise<void>;
+	onSetNetworkPreferences: (networks: Array<string>) => Promise<void>;
+	onCopyPrimaryNetworkNotification: (
+		selectedNetwork: Array<string>
+	) => Promise<void>;
+	selectedNetwork: ISelectedNetwork;
+	setSelectedNetwork: React.Dispatch<React.SetStateAction<ISelectedNetwork>>;
 };
 
 // eslint-disable-next-line no-empty-pattern
@@ -55,7 +55,7 @@ export default function Parachain({
 
 	const [copyPreferencesModal, setCopyPreferencesModal] = useState(false);
 	const [primaryPreferencesModal, setPrimaryPreferencesModal] =
-        useState(false);
+		useState(false);
 
 	const handlePrimaryNetworkChange = () => {
 		onSetPrimaryNetwork(network);
@@ -74,7 +74,7 @@ export default function Parachain({
 
 	const selectedNetworkArray = Object.values(selectedNetwork)
 		.flatMap((chain) => chain)
-		.filter(({ selected }: {selected: boolean}) => selected);
+		.filter(({ selected }: { selected: boolean }) => selected);
 
 	return (
 		<Collapse
@@ -92,7 +92,7 @@ export default function Parachain({
 						<div className='flex items-center gap-[8px]'>
 							<ParachainNotification />
 							<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
-                                Parachains
+								Parachains
 							</h3>
 						</div>
 						{!!active && (
@@ -107,7 +107,7 @@ export default function Parachain({
 								))}
 								{selectedNetworkArray.length > 5 && (
 									<span className='text-[10px] bg-[#D2D8E080] px-2 py-[3px] rounded-xl'>
-                                        +{selectedNetworkArray.length - 5}
+										+{selectedNetworkArray.length - 5}
 									</span>
 								)}
 							</div>
@@ -117,7 +117,7 @@ export default function Parachain({
 				key={13}
 			>
 				<Space size={[16, 16]} wrap>
-					{selectedNetworkArray.map(({ name }: {name: string}) => (
+					{selectedNetworkArray.map(({ name }: { name: string }) => (
 						<NetworkTags
 							key={name}
 							icon={chainProperties[name].logo}
@@ -144,27 +144,25 @@ export default function Parachain({
 						checked={primaryNetwork === network}
 						className='text-pink_primary text-[16px] flex item-center'
 					>
-                        Set as Primary Network Settings
+						Set as Primary Network Settings
 					</Checkbox>
 					<div
-						className={`flex item-center gap-2 text-[16px] ${
-							primaryNetwork
-								? 'text-pink_primary cursor-pointer'
-								: 'text-[#96A4B6] cursor-not-allowed'
-						}`}
-						onClick={() => {
+						className={`flex item-center gap-2 text-[16px] ${(primaryNetwork !== network) || selectedNetworkArray.length > 1
+							? 'text-pink_primary cursor-pointer'
+							: 'text-[#96A4B6] cursor-not-allowed'}`}
+						onClick={(primaryNetwork !== network) || selectedNetworkArray.length > 1 ? () => {
 							setCopyPreferencesModal(true);
-						}}
+						} : () => { }}
 					>
 						<span>
-							{primaryNetwork ? (
+							{(primaryNetwork !== network) || selectedNetworkArray.length > 1 ? (
 								<ImportIcon />
 							) : (
 								<DisabledImportIcon />
 							)}
 						</span>
-                        Importing Primary Network Settings to the networks
-                        selected above
+						Importing Primary Network Settings to the networks
+						selected above
 					</div>
 				</div>
 			</Panel>
@@ -185,7 +183,7 @@ export default function Parachain({
 						onCopyPrimaryNetworkNotification(
 							Object.values(selectedNetwork)
 								.flatMap((chain) => chain).filter((network) => network.selected)
-								.map(({ name }: {name: string}) => name)
+								.map(({ name }: { name: string }) => name)
 						);
 						setCopyPreferencesModal(false);
 					}}

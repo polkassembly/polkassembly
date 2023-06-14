@@ -51,6 +51,13 @@ function getSiderMenuItem(
 const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [
 		{
+			key: 'view profile',
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+				<UserOutlined />
+				<span>View Profile</span>
+			</Link>
+		},
+		{
 			key: 'settings',
 			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=notifications'>
 				<SettingOutlined />

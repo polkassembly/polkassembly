@@ -11,7 +11,6 @@ import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
-import { EVoteDecisionType, Wallet } from 'src/types';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
@@ -50,9 +49,8 @@ import { PlusOutlined } from '@ant-design/icons';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
-import { IVotesHistoryResponse } from 'pages/api/v1/votes/history';
+import { EDecision, IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
@@ -60,6 +58,11 @@ import MoneyIcon from '~assets/icons/money-icon-gray.svg';
 import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
+import CloseCross from '~assets/icons/close-cross-icon.svg';
+import MyVoteIcon from '~assets/icons/my-vote-icon.svg';
+import { Wallet } from '~src/types';
+import AyeGreen from '~assets/icons/aye-green-icon.svg';
+import { DislikeIcon } from '~src/ui-components/CustomIcons';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -106,14 +109,30 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		supportThreshold: 0
 	});
 
-	const [vote,setVote] = useState({
-		balance:{},
-		conviction:'',
-		decision:'',
-		lastVote:'',
+	const [vote,setVote] = useState<{
+		balance?: {
+			value: string | null;
+		} | {
+			nay: string | null;
+			aye: string | null;
+			abstain: string | null;
+		},
+		conviction:string | number,
+		decision:EDecision,
+		time?:string
+	}>({
+		balance:{
+			abstain:'',
+			aye:'',
+			nay:'',
+			value:''
+		},
+		conviction:0,
+		decision:EDecision.YES,
 		time:''
 	});
-	const [votingHistory,setVotingHistory] = useState([]);
+	const [votingHistory,setVotingHistory] = useState<IVoteHistory[]>([]);
+	const [showModal,setShowModal] = useState(false);
 
 	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
@@ -318,9 +337,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		api?.setSigner(signer);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
-	const balance  = Object.values(vote.balance).reduce((prev, ele) => {
-		return prev.add(new BN(ele));
-	}, new BN(0)).toString();
 
 	useEffect( () => {
 		if (!api) {
@@ -331,25 +347,18 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			return;
 		}
 		const encoded = getEncodedAddress(address, network);
-		const substrateAddress = getSubstrateAddress(address);
-
 		nextApiClientFetch<IVotesHistoryResponse>(`api/v1/votes/history?page=${1}&voterAddress=${encoded}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${onchainId}`)
 			.then((res) => {
 				if (res.error) {
 					console.log('error');
 				} else {
-					console.log('address = ',substrateAddress);
-					console.log('encoded = ',encoded);
-					console.log('info = ',res.data);
-					//setVotingHistory(res.data?.votes);
 					if(res.data?.count){
 						setVotingHistory(res.data?.votes);
 						setVote({
-							conviction:res.data?.votes[0].lockPeriod || 0,
+							balance:res.data?.votes[0].balance,
+							conviction:res.data?.votes[0].lockPeriod||0,
 							decision:res.data?.votes[0].decision,
-							time:res.data?.votes[0].createdAt,
-							balance:res.data?.votes[0].balance
-
+							time:res.data?.votes[0].createdAt
 						});
 					}
 				}
@@ -359,7 +368,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				console.error(err);
 			});
 
-	}, [address,api,apiReady,network]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address,api,apiReady,network,proposalType]);
+
+	const balance  = vote.balance ? Object.values(vote.balance).reduce((prev, ele) => {
+		if(!ele){
+			return prev;
+		}
+		return prev.add(new BN(ele));
+	}, new BN(0)).toString() : '';
 
 	const getWalletAccounts = async (chosenWallet: Wallet): Promise<InjectedAccount[] | undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -680,12 +697,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															referendumId={onchainId  as number}
 															proposalType={proposalType}
 														/>
-														{ votingHistory.length &&
+														{ votingHistory.length ?
 															<div>
-																<p className='font-medium text-[12px] leading-6 text-[#243A57]'>Last Vote:</p>
-																<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6'>
+																<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
+																<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
 
-																	{vote.decision == 'yes' ? <p><LikeFilled className='text-[green]'/> <span className='capitalize font-medium text-[#243A57]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeFilled className='text-[red]'/> <span className='mb-[5px] capitalize font-medium text-[#243A57]'>{'Nay'}</span></div> : vote.decision == 'abstain' &&( !vote.balance?.abstain)  ? <p><SplitYellow/> <span className='capitalize font-medium text-[#243A57]'>{'Split'}</span></p>  : vote.decision == 'abstain' &&( vote.balance?.abstain) ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }
+																	{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }
 
 																	<p><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
 
@@ -704,9 +721,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																	votingHistory.length > 1 && <div>
 																		<Divider className='mt-0 mb-0' style={{ border: '1px solid #D2D8E0' }} />
 																		<button
-																			className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
+																			className='bg-transparent p-0 mt-1 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
 																			onClick={() => {
-																				//setOpen(true);
+																				setShowModal(true);
 																			}}
 																		>
 																			<VotingHistoryIcon />
@@ -714,7 +731,48 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																		</button>
 																	</div>
 																}
-															</div>
+																<Modal
+																	open={showModal}
+																	onCancel={() => setShowModal(false)}
+																	footer={false}
+																	className={'w-[500px]  max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum '}
+																	closeIcon={<CloseCross/>}
+																	wrapClassName={className}
+																	title={<div className='h-[72px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center  gap-2'>
+																		<MyVoteIcon className='ml-[27px]'/>
+																		<span className='text-[#243A57] font-semibold tracking-[0.0015em] text-xl'>My Votes</span>
+																	</div>}
+																>
+																	<div className='flex justify-between font-semibold text-[16px] text-[#243A57] leading-6 tracking-[0.0015em]'>
+																		<span>#</span>
+																		<span>Vote</span>
+																		<span>Amount</span>
+																		<span>Conviction</span>
+																	</div>
+																	<div >
+																		{
+																			votingHistory.map((ele,index) => {
+																				return(
+																					<div className='flex justify-between' key = {index}>
+																						<span className='text-[#485F7D] font-medium leading-6 tracking-[0.0015em]  w-[20%]'>#{index+1}</span>
+
+																						{
+																							ele.decision == 'yes' ? <span className='font-semibold text-[14px] text-[#2ED47A] w-[25%] pl-1'>AYE</span> : ele.decision == 'no' ? <span className='font-semibold text-[14px] text-[#F53C3C] w-[25%] pl-1'>NAY</span> : ele.decision == 'abstain' && (!(ele.balance as any).abstain) ? <span className='font-semibold text-[14px] text-[#FFBF60] w-[25%] pl-1'>SPLIT</span> : ele.decision == 'abstain' && (ele.balance as any).abstain ? <span className='font-semibold text-[14px] text-[#407BFF] w-[25%] pl-1'>ABSTAIN</span> : null
+																						}
+																						<span className='text-[#485F7D] font-medium leading-6 tracking-[0.0015em]  w-[30%] pl-3'>{ele.decision == 'abstain' ? formatedBalance( Object.values(ele.balance || {}).reduce((prev, ele) => {
+																							if(!ele){
+																								return prev;
+																							}
+																							return prev.add(new BN(ele));}, new BN(0)).toString(), unit)  :formatedBalance((ele.balance as any).value.toString(), unit)}{` ${unit}` }</span>
+																						<span className='text-[#485F7D] font-medium leading-6 tracking-[0.0015em]  w-[25%] pl-6'>{ele.lockPeriod || 0}x</span>
+																					</div>
+																				);
+																			})
+																		}
+																	</div>
+
+																</Modal>
+															</div>: null
 														}
 
 													</GovSidebarCard>}

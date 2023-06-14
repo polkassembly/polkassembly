@@ -13,7 +13,7 @@ import React, { memo, ReactNode, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
-import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, DelegationSidebarIcon } from 'src/ui-components/CustomIcons';
+import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, DelegationSidebarIcon, ChildBountiesIcon, TechComProposalIcon } from 'src/ui-components/CustomIcons';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 
@@ -171,11 +171,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		treasuryItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
 			getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
-			getSiderMenuItem('Child Bounties', '/child_bounties', <BountiesIcon className='text-white' />),
+			getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='text-white' />),
 			getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
 		] : [],
 		techCommItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Proposals', '/tech-comm-proposals', <DemocracyProposalsIcon className='text-white' />)
+			getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
 		] : [],
 		allianceItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-white' />),
@@ -510,7 +510,7 @@ margin-top: -17px !important;
 }
 
 .ant-menu-title-content {
-	color: #334D6E !important;
+	color: #485F7D !important;
 	font-weight: 500;
 	font-size: 14px;
 	line-height: 21px;

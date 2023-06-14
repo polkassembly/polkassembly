@@ -21,7 +21,7 @@ const ImportPrimaryNetworkSettingModal = ({
 		<Modal
 			title={
 				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
-					<h3 className='ml-[24px] mb-0 flex items-center gap-3 text-base md:text-md'>
+					<h3 className='ml-[24px] mb-0 flex items-center gap-2 text-base md:text-md'>
 						<DisabledImportIcon /> Import Primary Network Settings
 					</h3>
 					<Divider />

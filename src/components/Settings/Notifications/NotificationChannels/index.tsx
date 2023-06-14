@@ -10,7 +10,6 @@ import SlackIcon from '~assets/icons/slack.svg';
 import ElementIcon from '~assets/icons/element.svg';
 import EmailNotificationCard from './EmailNotificationCard';
 import BotSetupCard from './BotSetupCard';
-import { DiscordIcon, TelegramIcon } from '~src/ui-components/CustomIcons';
 import TelegramInfoModal from './Modals/Telegram';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
@@ -18,8 +17,11 @@ import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '../utils';
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import DiscordInfoModal from './Modals/Discord';
 import SlackInfoModal from './Modals/Slack';
-import { MailFilled } from '@ant-design/icons';
 import { Collapse } from '../common-ui/Collapse';
+import MailFilled from '~assets/icons/email-notification.svg';
+import TelegramIcon from '~assets/icons/telegram-notification.svg';
+import DiscordIcon from '~assets/icons/discord-notification.svg';
+
 const { Panel } = Collapse;
 type Props = {};
 
@@ -98,14 +100,19 @@ export default function NotificationChannels({ }: Props) {
 					<div className='flex justify-between gap-[8px] items-center p-0'>
 						<div className='flex items-center gap-[8px]'>
 							<NotificationChannelsIcon />
-							<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
+							<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[1px]'>
 								Notification Channels
 							</h3>
 						</div>
 						{!!active && (
-							<div className='gap-2 hidden md:flex'>
-								<MailFilled />
-								{Bots.map((bot,i) => <React.Fragment key={i}>{bot.Icon}</React.Fragment> )}
+							<div className='gap-4 hidden items-center md:flex'>
+								<div className={`${!networkPreferences?.channelPreferences?.[
+									CHANNEL.EMAIL]?.enabled ? '[&>svg]:opacity-50' : ''}`}>
+
+									<MailFilled />
+								</div>
+								{Bots.map((bot, i) => <div className={`${!networkPreferences?.channelPreferences?.[
+									bot.channel]?.enabled ? '[&>svg]:opacity-50' : ''}`} key={i}>{bot.Icon}</div>)}
 							</div>
 						)}
 					</div>
@@ -195,17 +202,17 @@ const Bots = [
 	{
 		Icon: <DiscordIcon />,
 		channel: CHANNEL.DISCORD,
-		description: 'to a Discord Channel chat to get Discord notifications',
+		description: 'a Discord Channel chat to get Discord notifications',
 		title: 'Discord'
 	},
 	{
-		Icon: <SlackIcon style={{ transform: 'scale(0.8)' }} />,
+		Icon: <SlackIcon style={{ marginTop:4, transform: 'scale(0.9)' }} />,
 		channel: CHANNEL.SLACK,
-		description: 'to a Slack Channel chat to get Slack notifications',
+		description: 'a Slack Channel chat to get Slack notifications',
 		title: 'Slack'
 	},
 	{
-		Icon: <ElementIcon style={{ transform: 'scale(0.8)' }} />,
+		Icon: <ElementIcon style={{ marginTop:4, transform: 'scale(0.9)' }} />,
 		channel: CHANNEL.ELEMENT,
 		description: '',
 		title: 'Element'

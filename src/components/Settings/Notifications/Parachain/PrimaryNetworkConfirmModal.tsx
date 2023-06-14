@@ -4,7 +4,7 @@
 import React from 'react';
 import { Alert, Button, Divider, Modal } from 'antd';
 import styled from 'styled-components';
-import { CheckOutlineIcon } from '~src/ui-components/CustomIcons';
+import CheckOutlineIcon from '~assets/icons/check-icon.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 const StyledAlert = styled(Alert)`
@@ -35,7 +35,7 @@ const SetPrimaryNetworkSettingModal = ({
 		<Modal
 			title={
 				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
-					<h3 className='ml-[24px] mb-0 flex items-center gap-3'>
+					<h3 className='ml-[24px] mb-0 flex items-center gap-2'>
 						<CheckOutlineIcon /> Confirmation
 					</h3>
 					<Divider />

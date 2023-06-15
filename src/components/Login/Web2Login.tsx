@@ -37,7 +37,7 @@ interface Props {
   className?: string;
 }
 const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation }) => {
-	const { password, username } = validation;
+	const { username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -101,7 +101,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 						className="text-base text-sidebarBlue font-medium"
 						htmlFor="username"
 					>
-													Username
+						Enter Username or Email
 					</label>
 					<Form.Item
 						name="username"
@@ -109,10 +109,6 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							{
 								message: messages.VALIDATION_USERNAME_REQUIRED_ERROR,
 								required: username.required
-							},
-							{
-								message: messages.VALIDATION_USERNAME_PATTERN_ERROR,
-								pattern: username.pattern
 							},
 							{
 								max: username.maxLength,
@@ -123,10 +119,11 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								min: username.minLength
 							}
 						]}
+						validateTrigger="onSubmit"
 					>
 						<Input
 							disabled={loading}
-							placeholder="John"
+							placeholder="Type here"
 							className="rounded-md py-3 px-4"
 							id="username"
 						/>
@@ -138,24 +135,15 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 						className="text-base text-sidebarBlue font-medium"
 						htmlFor="password"
 					>
-							Password
+						Enter Password
 					</label>
 					<Form.Item
 						name="password"
-						rules={[
-							{
-								message: messages.VALIDATION_PASSWORD_ERROR,
-								required: password.required
-							},
-							{
-								message: messages.VALIDATION_PASSWORD_ERROR,
-								min: password.minLength
-							}
-						]}
+						validateTrigger="onSubmit"
 					>
 						<Input.Password
 							disabled={loading}
-							placeholder='Password'
+							placeholder="Type here"
 							className="rounded-md py-3 px-4"
 							id="password"
 						/>

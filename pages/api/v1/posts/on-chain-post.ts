@@ -375,39 +375,45 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				let lastIndex = 0;
 				for (let i = 0; i < newIdsLen; i+=30) {
 					lastIndex = i;
-					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
-					addressesQuery.docs.map((doc) => {
-						if (doc && doc.exists) {
-							const data = doc.data();
-							comment.replies = comment.replies.map((v) => {
-								if (v && v.user_id == data.user_id) {
-									return {
-										...v,
-										proposer: data.address
-									};
-								}
-								return v;
-							});
-						}
-					});
+					const slice = newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen);
+					if (slice.length > 0) {
+						const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
+						addressesQuery.docs.map((doc) => {
+							if (doc && doc.exists) {
+								const data = doc.data();
+								comment.replies = comment.replies.map((v) => {
+									if (v && v.user_id == data.user_id) {
+										return {
+											...v,
+											proposer: data.address
+										};
+									}
+									return v;
+								});
+							}
+						});
+					}
 				}
 				lastIndex += 30;
 				if (lastIndex <= newIdsLen) {
-					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
-					addressesQuery.docs.map((doc) => {
-						if (doc && doc.exists) {
-							const data = doc.data();
-							comment.replies = comment.replies.map((v) => {
-								if (v && v.user_id == data.user_id) {
-									return {
-										...v,
-										proposer: data.address
-									};
-								}
-								return v;
-							});
-						}
-					});
+					const slice = newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen);
+					if (slice.length > 0) {
+						const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
+						addressesQuery.docs.map((doc) => {
+							if (doc && doc.exists) {
+								const data = doc.data();
+								comment.replies = comment.replies.map((v) => {
+									if (v && v.user_id == data.user_id) {
+										return {
+											...v,
+											proposer: data.address
+										};
+									}
+									return v;
+								});
+							}
+						});
+					}
 				}
 			}
 			if (replyIds.length > 0) {
@@ -415,39 +421,45 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				let lastIndex = 0;
 				for (let i = 0; i < newIdsLen; i+=30) {
 					lastIndex = i;
-					const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', replyIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
-					reportsQuery.docs.map((doc) => {
-						if (doc && doc.exists) {
-							const data = doc.data();
-							comment.replies = comment.replies.map((v) => {
-								if (v && v.id == data.content_id) {
-									return {
-										...v,
-										spam_users_count:(Number(v.spam_users_count) + 1)
-									};
-								}
-								return v;
-							});
-						}
-					});
+					const slice = replyIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen);
+					if (slice.length > 0) {
+						const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+						reportsQuery.docs.map((doc) => {
+							if (doc && doc.exists) {
+								const data = doc.data();
+								comment.replies = comment.replies.map((v) => {
+									if (v && v.id == data.content_id) {
+										return {
+											...v,
+											spam_users_count:(Number(v.spam_users_count) + 1)
+										};
+									}
+									return v;
+								});
+							}
+						});
+					}
 				}
 				lastIndex += 30;
 				if (lastIndex <= newIdsLen) {
-					const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', replyIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
-					reportsQuery.docs.map((doc) => {
-						if (doc && doc.exists) {
-							const data = doc.data();
-							comment.replies = comment.replies.map((v) => {
-								if (v && v.id == data.content_id) {
-									return {
-										...v,
-										spam_users_count: (Number(v.spam_users_count) + 1)
-									};
-								}
-								return v;
-							});
-						}
-					});
+					const slice = replyIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen);
+					if (slice.length > 0) {
+						const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+						reportsQuery.docs.map((doc) => {
+							if (doc && doc.exists) {
+								const data = doc.data();
+								comment.replies = comment.replies.map((v) => {
+									if (v && v.id == data.content_id) {
+										return {
+											...v,
+											spam_users_count: (Number(v.spam_users_count) + 1)
+										};
+									}
+									return v;
+								});
+							}
+						});
+					}
 				}
 			}
 			return {
@@ -495,38 +507,44 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 		let lastIndex = 0;
 		for (let i = 0; i < newIdsLen; i+=30) {
 			lastIndex = i;
-			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
-			addressesQuery.docs.map((doc) => {
-				if (doc && doc.exists) {
-					const data = doc.data();
-					comments = comments.map((v) => {
-						if (v && v.user_id == data.user_id) {
-							return {
-								...v,
-								proposer: data.address
-							};
-						}
-						return v;
-					});
-				}
-			});
+			const slice = newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen);
+			if (slice.length > 0) {
+				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
+				addressesQuery.docs.map((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						comments = comments.map((v) => {
+							if (v && v.user_id == data.user_id) {
+								return {
+									...v,
+									proposer: data.address
+								};
+							}
+							return v;
+						});
+					}
+				});
+			}
 		}
 		if (lastIndex <= newIdsLen) {
-			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
-			addressesQuery.docs.map((doc) => {
-				if (doc && doc.exists) {
-					const data = doc.data();
-					comments = comments.map((v) => {
-						if (v && v.user_id == data.user_id) {
-							return {
-								...v,
-								proposer: data.address
-							};
-						}
-						return v;
-					});
-				}
-			});
+			const slice = newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen);
+			if (slice.length > 0) {
+				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
+				addressesQuery.docs.map((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						comments = comments.map((v) => {
+							if (v && v.user_id == data.user_id) {
+								return {
+									...v,
+									proposer: data.address
+								};
+							}
+							return v;
+						});
+					}
+				});
+			}
 		}
 	}
 
@@ -535,39 +553,45 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 		let lastIndex = 0;
 		for (let i = 0; i < newIdsLen; i+=30) {
 			lastIndex = i;
-			const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', commentIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
-			reportsQuery.docs.map((doc) => {
-				if (doc && doc.exists) {
-					const data = doc.data();
-					comments = comments.map((v) => {
-						if (v && v.id == data.content_id) {
-							return {
-								...v,
-								spam_users_count:(Number(v.spam_users_count) + 1)
-							};
-						}
-						return v;
-					});
-				}
-			});
+			const slice = commentIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen);
+			if (slice.length > 0) {
+				const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+				reportsQuery.docs.map((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						comments = comments.map((v) => {
+							if (v && v.id == data.content_id) {
+								return {
+									...v,
+									spam_users_count:(Number(v.spam_users_count) + 1)
+								};
+							}
+							return v;
+						});
+					}
+				});
+			}
 		}
 		lastIndex += 30;
 		if (lastIndex <= newIdsLen) {
-			const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', commentIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
-			reportsQuery.docs.map((doc) => {
-				if (doc && doc.exists) {
-					const data = doc.data();
-					comments = comments.map((v) => {
-						if (v && v.id == data.content_id) {
-							return {
-								...v,
-								spam_users_count: (Number(v.spam_users_count) + 1)
-							};
-						}
-						return v;
-					});
-				}
-			});
+			const slice = commentIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen);
+			if (slice.length > 0) {
+				const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+				reportsQuery.docs.map((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						comments = comments.map((v) => {
+							if (v && v.id == data.content_id) {
+								return {
+									...v,
+									spam_users_count: (Number(v.spam_users_count) + 1)
+								};
+							}
+							return v;
+						});
+					}
+				});
+			}
 		}
 	}
 

@@ -6,6 +6,7 @@ import Icon from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import React from 'react';
 
+import OpenGovBannerSVG from '~assets/icons/opengov_banner.svg';
 import CubeSVG from '~assets/icons/cube.svg';
 import DiscordSVG from '~assets/icons/discord.svg';
 import GithubSVG from '~assets/icons/github.svg';
@@ -89,6 +90,10 @@ import BigSpenderSVG from '~assets/delegation-tracks/big-spender.svg';
 import BigTipperSVG from '~assets/delegation-tracks/big-tipper.svg';
 import SmallSpenderSVG from '~assets/delegation-tracks/small-spender.svg';
 import DelegationSVG from '~assets/sidebar/delegation-icon.svg';
+
+export const OpenGovBannerIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={OpenGovBannerSVG} {...props} />
+);
 
 export const OverviewIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={OverviewSVG} {...props} />

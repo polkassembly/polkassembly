@@ -102,11 +102,15 @@ export function ApiContextProvider(
 				setIsApiLoading(false);
 				setApiReady(true);
 				console.log('API ready');
-				if (isOpenGovSupported(props.network || '')) {
-					const value = api.consts.referenda.tracks.toJSON();
-					localStorage.setItem('tracks', JSON.stringify(value));
-				} else {
-					localStorage.removeItem('tracks');
+				try {
+					if (isOpenGovSupported(props.network || '')) {
+						const value = api.consts.referenda.tracks.toJSON();
+						localStorage.setItem('tracks', JSON.stringify(value));
+					} else {
+						localStorage.removeItem('tracks');
+					}
+				} catch (error) {
+					console.log({ error });
 				}
 			})
 				.catch(async (error) => {

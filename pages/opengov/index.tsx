@@ -18,7 +18,6 @@ import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
 import { useNetworkContext } from '~src/context';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -38,17 +37,9 @@ interface Props {
 }
 
 export const getServerSideProps:GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
-	if(isOpenGovSupported(network) && !req.headers.referer || network === 'polkadot') {
-		return {
-			props: {},
-			redirect: {
-				destination: '/opengov'
-			}
-		};
-	}
 	const LATEST_POSTS_LIMIT = 8;
 
+	const network = getNetworkFromReqHeaders(req.headers);
 	const networkSocialsData = await getNetworkSocials({ network });
 
 	if(!networkTrackInfo[network]) {
@@ -111,7 +102,6 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 	return (
 		<>
 			<SEOHead title='OpenGov' network={network}/>
-
 			<div className="mt-6 mx-1">
 				{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData?.data} showGov2Links />}
 			</div>

@@ -28,6 +28,7 @@ import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 
 const { Content, Sider } = Layout;
 
@@ -173,9 +174,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if(typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) {
+	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network) || network === 'polkadot')) {
 		gov1Items.overviewItems = [
-			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'gov-2', ''),
+			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'opengov', ''),
 			...gov1Items.overviewItems
 		];
 	}
@@ -268,7 +269,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let gov2OverviewItems = [
-		getSiderMenuItem('Overview', '/gov-2', <OverviewIcon className='text-white' />),
+		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-white' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
@@ -285,7 +286,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if(typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) {
+	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network) || network === 'polkadot')) {
 		gov2OverviewItems = [
 			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, '/', ''),
 			...gov2OverviewItems
@@ -411,11 +412,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onMouseLeave={() => setSidedrawer(false)}
 					/>
 				</Drawer>
-				<Layout className='min-h-[calc(100vh - 10rem)] bg-[#EFF2F5] flex flex-row'>
-					{/* Dummy Collapsed Sidebar for auto margins */}
-					<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
-					<CustomContent Component={Component} pageProps={pageProps} />
-				</Layout>
+				{
+					((['kusama', 'polkadot'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
+						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#EFF2F5]'>
+							{/* Dummy Collapsed Sidebar for auto margins */}
+							<OpenGovHeaderBanner />
+							<div className='flex flex-row'>
+								<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
+								<CustomContent Component={Component} pageProps={pageProps} />
+							</div>
+						</Layout>
+						: <Layout className={`min-h-[calc(100vh - 10rem)] bg-[#EFF2F5] flex flex-row ${(network === 'polkadot' && router.asPath === '/opengov')? 'bg-[rgba(0,0,0,0.65)]': ''}`}>
+							{/* Dummy Collapsed Sidebar for auto margins */}
+							<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
+							<CustomContent Component={Component} pageProps={pageProps} />
+						</Layout>
+				}
 			</Layout>
 			<Footer />
 		</Layout>

@@ -61,7 +61,6 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 		}
 
 		const subsquidRes = await fetchSubsquid({
-			customSubsquidUrl: network === 'polkadot' && proposalType == ProposalType.OPEN_GOV ? 'https://squid.subsquid.io/polkadot-polkassembly/v/v4/graphql' : '',
 			network,
 			query: GET_PROPOSALS_LISTING_BY_TYPE,
 			variables: postsVariables

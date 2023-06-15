@@ -28,8 +28,6 @@ import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import OpenGovHeaderBanner from './OpenGovHeaderBanner';
-import dayjs from 'dayjs';
 
 const { Content, Sider } = Layout;
 
@@ -427,22 +425,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onMouseLeave={() => setSidedrawer(false)}
 					/>
 				</Drawer>
-				{
-					((network === 'polkadot' && router.asPath === '/') || (network === 'kusama' && ['/', '/opengov', '/gov-2'].includes(router.asPath))) && dayjs('2023-06-15 17:35:30').diff(dayjs()) > 0?
-						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#EFF2F5]'>
-							{/* Dummy Collapsed Sidebar for auto margins */}
-							<OpenGovHeaderBanner />
-							<div className='flex flex-row'>
-								<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
-								<CustomContent Component={Component} pageProps={pageProps} />
-							</div>
-						</Layout>
-						: <Layout className={`min-h-[calc(100vh - 10rem)] bg-[#EFF2F5] flex flex-row ${(network === 'polkadot' && router.asPath === '/opengov')? 'bg-[rgba(0,0,0,0.65)]': ''}`}>
-							{/* Dummy Collapsed Sidebar for auto margins */}
-							<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
-							<CustomContent Component={Component} pageProps={pageProps} />
-						</Layout>
-				}
+				<Layout className={'min-h-[calc(100vh - 10rem)] bg-[#EFF2F5] flex flex-row'}>
+					{/* Dummy Collapsed Sidebar for auto margins */}
+					<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
+					<CustomContent Component={Component} pageProps={pageProps} />
+				</Layout>
 			</Layout>
 			<Footer />
 		</Layout>

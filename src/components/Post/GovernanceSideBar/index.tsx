@@ -634,7 +634,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
 													<GovSidebarCard>
-														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
 														<VoteReferendumEth
 															referendumId={onchainId as number}
 															onAccountChange={onAccountChange}
@@ -724,7 +724,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														}
 													</> : <GovSidebarCard>
-														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -838,7 +838,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
 													<GovSidebarCard>
-														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
 														<VoteReferendumEthV2
 															referendumId={onchainId as number}
 															onAccountChange={onAccountChange}
@@ -928,7 +928,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														}
 													</> : <GovSidebarCard>
-														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}

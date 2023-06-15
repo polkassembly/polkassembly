@@ -28,6 +28,7 @@ import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 
 const { Content, Sider } = Layout;
 
@@ -425,11 +426,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onMouseLeave={() => setSidedrawer(false)}
 					/>
 				</Drawer>
-				<Layout className={'min-h-[calc(100vh - 10rem)] bg-[#EFF2F5] flex flex-row'}>
-					{/* Dummy Collapsed Sidebar for auto margins */}
-					<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
-					<CustomContent Component={Component} pageProps={pageProps} />
-				</Layout>
+				{
+					((['kusama', 'polkadot'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
+						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#EFF2F5]'>
+							{/* Dummy Collapsed Sidebar for auto margins */}
+							<OpenGovHeaderBanner />
+							<div className='flex flex-row'>
+								<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
+								<CustomContent Component={Component} pageProps={pageProps} />
+							</div>
+						</Layout>
+						: <Layout className={`min-h-[calc(100vh - 10rem)] bg-[#EFF2F5] flex flex-row ${(network === 'polkadot' && router.asPath === '/opengov')? 'bg-[rgba(0,0,0,0.65)]': ''}`}>
+							{/* Dummy Collapsed Sidebar for auto margins */}
+							<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
+							<CustomContent Component={Component} pageProps={pageProps} />
+						</Layout>
+				}
 			</Layout>
 			<Footer />
 		</Layout>

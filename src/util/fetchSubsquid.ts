@@ -15,7 +15,10 @@ interface Args {
 
 export default async function fetchSubsquid({ query, variables, network } : Args) {
 	const body = variables ? { query, variables } : { query };
-	const subsquidUrl = chainProperties[network]?.subsquidUrl;
+	let subsquidUrl = chainProperties[network]?.subsquidUrl;
+	if (network === 'polkadot' && variables && typeof variables === 'object' && (variables as any)?.type_eq === 'ReferendumV2') {
+		subsquidUrl = 'https://squid.subsquid.io/polkadot-polkassembly/v/v4/graphql';
+	}
 	return fetch(`${subsquidUrl}`, {
 		body : JSON.stringify(body),
 		headers: {

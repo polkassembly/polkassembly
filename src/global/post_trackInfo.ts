@@ -692,7 +692,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.WHITELISTED_CALLER] : {
 			'trackId': 1,
-			'description': 'Origin able to dispatch a whitelisted call.',
+			'description': 'Origin commanded by any members of the Polkadot Fellowship (no Dan grade needed)',
 			'group': 'Whitelist',
 			'name': 'whitelisted_caller',
 			'maxDeciding': 100,
@@ -744,7 +744,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.TREASURER] : {
 			'trackId': 11,
-			'description': 'Origin for spending (any amount of) funds.',
+			'description': 'Origin for spending (any amount of) funds until the upper limit of  10,000,000 DOT',
 			'group': 'Treasury',
 			'name': 'treasurer',
 			'maxDeciding': 10,
@@ -770,7 +770,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.LEASE_ADMIN] : {
 			'trackId': 12,
-			'description': 'Origin able to force slot leases.',
+			'description': 'Origin able to force slot leases',
 			'group': 'Governance',
 			'name': 'lease_admin',
 			'maxDeciding': 10,
@@ -796,7 +796,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.FELLOWSHIP_ADMIN] : {
 			'trackId': 13,
-			'description': 'Origin for managing the composition of the fellowship.',
+			'description': 'Origin for managing the composition of the fellowship',
 			'group': 'Whitelist',
 			'name': 'fellowship_admin',
 			'maxDeciding': 10,
@@ -822,7 +822,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.GENERAL_ADMIN] : {
 			'trackId': 14,
-			'description': 'Origin for managing the registrar.',
+			'description': 'Origin for managing the registrar',
 			'group': 'Governance',
 			'name': 'general_admin',
 			'maxDeciding': 10,
@@ -926,7 +926,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.SMALL_TIPPER] : {
 			'trackId': 30,
-			'description': 'Origin able to spend up to 1 KSM from the treasury at once.',
+			'description': 'Origin able to spend up to 250 DOT from the treasury at once',
 			'group': 'Treasury',
 			'name': 'small_tipper',
 			'maxDeciding': 200,
@@ -952,7 +952,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.BIG_TIPPER] : {
 			'trackId': 31,
-			'description': 'Origin able to spend up to 5 KSM from the treasury at once.',
+			'description': 'Origin able to spend up to 1000 DOT from the treasury at once',
 			'group': 'Treasury',
 			'name': 'big_tipper',
 			'maxDeciding': 100,
@@ -978,7 +978,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.SMALL_SPENDER] : {
 			'trackId': 32,
-			'description': 'Origin able to spend up to 333 KSM from the treasury at once.',
+			'description': 'Origin able to spend up to 10,000 DOT from the treasury at once',
 			'group': 'Treasury',
 			'name': 'small_spender',
 			'maxDeciding': 50,
@@ -1004,7 +1004,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.MEDIUM_SPENDER] : {
 			'trackId': 33,
-			'description': 'Origin able to spend up to 3,333 KSM from the treasury at once.',
+			'description': 'Origin able to spend up to 100,000 DOT from the treasury at once',
 			'group': 'Treasury',
 			'name': 'medium_spender',
 			'maxDeciding': 50,
@@ -1030,7 +1030,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.BIG_SPENDER] : {
 			'trackId': 34,
-			'description': 'Origin able to spend up to 33,333 KSM from the treasury at once.',
+			'description': 'Origin able to spend up to 1,000,000 DOT from the treasury at once',
 			'group': 'Treasury',
 			'name': 'big_spender',
 			'maxDeciding': 50,

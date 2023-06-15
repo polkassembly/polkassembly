@@ -11,11 +11,14 @@ import { MessageType, TokenType } from '~src/auth/types';
 async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
+	const network = String(req.headers['x-network']);
+	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
+
 	const { address, signature, wallet } = req.body;
 
 	if(!address || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	const { token } = await authServiceInstance.AddressLogin(address, signature, wallet);
+	const { token } = await authServiceInstance.AddressLogin(address, signature, wallet, network);
 
 	return res.status(200).json({ token });
 }

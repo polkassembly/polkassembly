@@ -13,8 +13,9 @@ import BalanceInput from 'src/ui-components/BalanceInput';
 import Loader from 'src/ui-components/Loader';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import LoginToEndorse from '../LoginToVoteOrEndorse';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
 	accounts: InjectedAccount[]
@@ -43,6 +44,7 @@ const EndorseTip = ({
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
 	const { isLoggedOut } = useUserDetailsContext();
+	const { network } = useNetworkContext();
 
 	useEffect( () => {
 		// it will iterate through all accounts
@@ -74,7 +76,8 @@ const EndorseTip = ({
 		}
 
 		api.query.council.members().then((memberAccounts) => {
-			setCurrentCouncil(memberAccounts.map(member => member.toString()));
+			const members = memberAccounts.map(member => getEncodedAddress(member.toString(), network));
+			setCurrentCouncil(members.filter((member) => !!member) as string[]);
 		});
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps

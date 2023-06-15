@@ -13,8 +13,9 @@ import AyeNayButtons from 'src/ui-components/AyeNayButtons';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import LoginToVote from '../LoginToVoteOrEndorse';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
 	accounts: InjectedAccount[]
@@ -44,6 +45,7 @@ const VoteMotion = ({
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
 	const { isLoggedOut } = useUserDetailsContext();
+	const { network } = useNetworkContext();
 
 	useEffect(() => {
 		if (!api) {
@@ -59,7 +61,8 @@ const VoteMotion = ({
 		}
 
 		api.query.council.members().then((memberAccounts) => {
-			setCurrentCouncil(memberAccounts.map(member => member.toString()));
+			const members = memberAccounts.map(member => getEncodedAddress(member.toString(), network));
+			setCurrentCouncil(members.filter((member) => !!member) as string[]);
 		});
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps

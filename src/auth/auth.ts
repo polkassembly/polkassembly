@@ -33,6 +33,7 @@ import getUserFromUserId from './utils/getUserFromUserId';
 import nameBlacklist from './utils/nameBlacklist';
 import { verifyMetamaskSignature } from './utils/verifyMetamaskSignature';
 import verifyUserPassword from './utils/verifyUserPassword';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 process.env.JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY && process.env.JWT_PRIVATE_KEY.replace(/\\n/gm, '\n');
 process.env.JWT_PUBLIC_KEY = process.env.JWT_PUBLIC_KEY && process.env.JWT_PUBLIC_KEY.replace(/\\n/gm, '\n');
@@ -270,7 +271,7 @@ class AuthService {
 		return signMessage;
 	}
 
-	public async AddressLogin (address: string, signature: string, wallet: Wallet): Promise<AuthObjectType> {
+	public async AddressLogin (address: string, signature: string, wallet: Wallet, network: string): Promise<AuthObjectType> {
 		const signMessage = await redisGet(getAddressLoginKey(address));
 		if (!signMessage) throw apiErrorWithStatusCode(messages.ADDRESS_LOGIN_SIGN_MESSAGE_EXPIRED, 401);
 
@@ -297,7 +298,7 @@ class AuthService {
 		return {
 			token: await this.getSignedToken({
 				...user,
-				login_address: address,
+				login_address: getEncodedAddress(address, network) || '',
 				login_wallet: wallet
 			})
 		};
@@ -377,7 +378,7 @@ class AuthService {
 		return {
 			token: await this.getSignedToken({
 				...user,
-				login_address: address,
+				login_address: getEncodedAddress(address, network) || '',
 				login_wallet: wallet
 			}),
 			user_id: user.id

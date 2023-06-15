@@ -46,9 +46,9 @@ const AddressDropdown = ({
 		addressItems.push({
 			key: account.address,
 			label: (
-				<Address disableAddressClick={true} className='flex items-center' otherText={account.address.toLowerCase() === loginAddress? 'Logged in address': ''} otherTextClassName='ml-auto' extensionName={account.name} address={account.address} />
+				<Address disableAddressClick={true} className='flex items-center' otherText={account.address.toLowerCase() === (loginAddress || '').toLowerCase()? 'Logged in address': ''} otherTextClassName='ml-auto' extensionName={account.name} address={account.address} />
 			),
-			title: account.address.toLowerCase() === loginAddress? 'Logged in address': ''
+			title: account.address.toLowerCase() === (loginAddress || '').toLowerCase()? 'Logged in address': ''
 		});
 
 		if (account.address && account.name){

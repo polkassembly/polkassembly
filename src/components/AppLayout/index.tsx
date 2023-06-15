@@ -233,12 +233,17 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]);
 	}
 
-	if(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES){
+	if(network === AllNetworks.COLLECTIVES){
 		const fellowshipItems = [getSiderMenuItem('Members', '/fellowship', <MembersIcon className='text-white' />), getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='text-sidebarBlue' />)];
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
 			...gov1Items.allianceItems
 		]), getSiderMenuItem('Fellowship', 'fellowship_group', null, fellowshipItems)];
 		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems, ...fellowshipItems];
+	} else if (network === AllNetworks.WESTENDCOLLECTIVES) {
+		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
+			...gov1Items.allianceItems
+		])];
+		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems];
 	}
 
 	const gov2TrackItems: {[x:string]: ItemType[]} = {

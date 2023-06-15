@@ -26,6 +26,27 @@ const options = [
 	}
 ];
 
+export const fellowShipOptions = [
+	{
+		label: 'New Referendum submitted',
+		triggerName: 'fellowShipReferendumSubmitted',
+		triggerPreferencesName: 'fellowShipReferendumSubmitted',
+		value: 'New Referendum submitted'
+	},
+	{
+		label: 'Referendum in voting',
+		triggerName: 'fellowShipReferendumInVoting',
+		triggerPreferencesName: 'fellowShipReferendumInVoting',
+		value: 'Referendum in voting'
+	},
+	{
+		label: 'Referendum closed',
+		triggerName: 'fellowShipReferendumClosed',
+		triggerPreferencesName: 'fellowShipReferendumClosed',
+		value: 'Referendum closed'
+	}
+];
+
 export const openGov = {
 	[PostOrigin.ROOT]: options,
 	[PostOrigin.SMALL_TIPPER]: options,

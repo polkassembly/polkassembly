@@ -4,6 +4,7 @@
 
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { IReducerState } from '../types';
+import { fellowShipOptions } from '../OpenGovNotification/utils';
 
 // of the Apache-2.0 license. See the LICENSE file for details.
 const ACTIONS = {
@@ -122,6 +123,7 @@ const updateAll = (payload:any, state:IReducerState) => {
 
 	const openGov: any = {};
 	for (const key in state.openGov) {
+		state.openGov[key] = networkTrackInfo?.[payload.network]?.[key]?.fellowshipOrigin ? fellowShipOptions : state.openGov[key];
 		openGov[key] = state.openGov[key].map((category: any) => {
 			return {
 				...category,

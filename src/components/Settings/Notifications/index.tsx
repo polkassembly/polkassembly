@@ -33,7 +33,7 @@ const getAllNetworks = (network: string) => {
 	return networks;
 };
 
-export default function Notifications({ network }:{network:string}) {
+export default function Notifications({ network }: { network: string }) {
 	const { id, networkPreferences, setUserDetailsContextState, primaryNetwork } =
 		useUserDetailsContext();
 
@@ -59,8 +59,8 @@ export default function Notifications({ network }:{network:string}) {
 		}));
 	};
 
-	const getNotificationSettings = async (network:string) => {
-		if(!network){
+	const getNotificationSettings = async (network: string) => {
+		if (!network) {
 			return;
 		}
 		try {
@@ -108,7 +108,7 @@ export default function Notifications({ network }:{network:string}) {
 					...prev,
 					primaryNetwork: data.primary_network || ''
 				}));
-			}else{
+			} else {
 				handleSetPrimaryNetwork(network);
 			}
 		} catch (e) {
@@ -171,7 +171,7 @@ export default function Notifications({ network }:{network:string}) {
 		}
 	};
 
-	const handleDisabled = async (channel:CHANNEL) => {
+	const handleDisabled = async (channel: CHANNEL) => {
 		try {
 			setUserDetailsContextState((prev) => ({
 				...prev,
@@ -181,7 +181,7 @@ export default function Notifications({ network }:{network:string}) {
 						...prev.networkPreferences.channelPreferences,
 						[channel]: {
 							...prev.networkPreferences.channelPreferences.channel,
-							enabled:false
+							enabled: false
 						}
 					}
 				}
@@ -221,7 +221,7 @@ export default function Notifications({ network }:{network:string}) {
 	useEffect(() => {
 		getPrimaryNetwork().catch((e) => console.log(e));
 		getNotificationSettings(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	return loading ? (

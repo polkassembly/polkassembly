@@ -740,7 +740,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					{proposalType === ProposalType.BOUNTIES && <>
 						<BountyChildBounties
 							childBounties={post.child_bounties}
-							childBountiesCount={post.child_bounties_count}
+							child_bounties_count={post.child_bounties_count}
 						/>
 					</>
 					}

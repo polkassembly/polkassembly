@@ -105,7 +105,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			}
 			setCurvesLoading(true);
 			const getData = async () => {
-				const tracks = api.consts.referenda.tracks.toJSON();
+				const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
 				if (tracks && Array.isArray(tracks)) {
 					const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
 					if (track && Array.isArray(track) && track.length > 1) {

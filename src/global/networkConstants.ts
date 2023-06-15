@@ -437,7 +437,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: collectivesLogo,
-		rpcEndpoint: 'wss://polkadot-collectives-rpc.polkadot.io',
+		rpcEndpoint: 'wss://sys.dotters.network/collectives-polkadot',
 		ss58Format: 0,
 		subsquidUrl: 'https://squid.subsquid.io/collectives-polkassembly/graphql',
 		tokenDecimals: 10,

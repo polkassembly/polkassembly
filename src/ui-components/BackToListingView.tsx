@@ -68,7 +68,7 @@ const BackToListingView = ({ postCategory, trackName } : Props) => {
 			path = 'whitelist';
 			break;
 		case PageLink.OVERVIEW_GOV_2:
-			path = '/gov-2';
+			path = '/opengov';
 			break;
 		}
 	}

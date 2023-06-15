@@ -4,11 +4,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
-import { isValidNetwork } from '~src/api-utils';
+import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType, TSubsquidProposalType, VoteType, getSubsquidProposalType } from '~src/global/proposalType';
-import { CONVICTION_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX, VOTING_HISTORY_BY_VOTER_ADDRESS, VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM } from '~src/queries';
+import { CONVICTION_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX, MOONBEAM_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX, VOTING_HISTORY_BY_VOTER_ADDRESS, VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX, VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -78,13 +78,21 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 			voter_eq: String(voterAddress)
 		};
 
-		if (proposalType === ProposalType.REFERENDUM_V2 && (proposalIndex || proposalIndex === 0)) {
-			query = CONVICTION_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX;
+		if (typeof proposalType === 'string' && isProposalTypeValid(proposalType) && (proposalIndex || proposalIndex === 0) && !isNaN(Number(proposalIndex))) {
 			variables = {
 				...variables,
 				index_eq: Number(proposalIndex),
-				type_eq: getSubsquidProposalType(proposalType)
+				type_eq: getSubsquidProposalType(proposalType as any)
 			};
+			if (proposalType === ProposalType.REFERENDUM_V2) {
+				query = CONVICTION_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX;
+			} else {
+				if (network === 'moonbeam') {
+					query = MOONBEAM_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX;
+				} else {
+					query = VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX;
+				}
+			}
 		}
 		const subsquidRes = await fetchSubsquid({
 			network,
@@ -92,7 +100,6 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 			variables: variables
 		});
 		const subsquidData = subsquidRes?.data;
-		console.log( 'sub data = ',subsquidData);
 		const isDataAbsent = proposalType === ProposalType.REFERENDUM_V2 ? !subsquidData?.convictionVotes : !subsquidData?.votes;
 		if (!subsquidData || isDataAbsent) {
 			throw apiErrorWithStatusCode(`Votes history of voter "${voterAddress}" is not found.`, 404);

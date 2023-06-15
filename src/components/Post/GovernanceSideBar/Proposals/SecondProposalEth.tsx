@@ -170,7 +170,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			return;
 		}
 
-		setAccounts(addresses.map((address: string): InjectedAccountWithMeta => {
+		const accounts = addresses.map((address: string): InjectedAccountWithMeta => {
 			const account = {
 				address,
 				meta: {
@@ -180,7 +180,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 				}
 			};
 			return account;
-		}));
+		});
 
 		if (accounts && Array.isArray(accounts)) {
 			const index = accounts.findIndex((account) => (account?.address || '').toLowerCase() === (loginAddress || '').toLowerCase());
@@ -191,6 +191,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			}
 		}
 
+		setAccounts(accounts);
 		if (addresses.length > 0) {
 			setAddress(addresses[0]);
 		}

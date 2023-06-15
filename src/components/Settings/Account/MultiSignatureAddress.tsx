@@ -198,6 +198,8 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/multisigLinkConfirm', {
 			address: substrate_address,
 			addresses: getSignatoriesArray().join(','),
+			loginAddress: currentUser?.loginAddress,
+			loginWallet: currentUser?.loginWallet,
 			signatory,
 			signature,
 			ss58Prefix: chainProperties?.[network]?.ss58Format,

@@ -14,7 +14,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseType | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
-	const { address, signature , wallet } = req.body;
+	const { address, signature , wallet, loginAddress } = req.body;
 	if(!address || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
@@ -23,7 +23,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	const substrateAddress = getSubstrateAddress(address);
 	if(!substrateAddress) return res.status(400).json({ message: messages.INVALID_ADDRESS });
 
-	const updatedJWT = await authServiceInstance.AddressLinkConfirm(token, substrateAddress, signature, wallet);
+	const updatedJWT = await authServiceInstance.AddressLinkConfirm(token, substrateAddress, signature, loginAddress, wallet);
 
 	return res.status(200).json({ message: messages.ADDRESS_LINKING_SUCCESSFUL, token: updatedJWT });
 }

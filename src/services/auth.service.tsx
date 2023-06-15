@@ -59,7 +59,9 @@ export const handleTokenChange = (token: string, currentUser: UserDetailsContext
 				username,
 				email,
 				email_verified,
-				web3signup
+				web3signup,
+				login_address,
+				login_wallet
 			} = tokenPayload as JWTPayloadType;
 
 			currentUser.setUserDetailsContextState((prevState) => {
@@ -71,8 +73,8 @@ export const handleTokenChange = (token: string, currentUser: UserDetailsContext
 					email,
 					email_verified,
 					id: Number(id),
-					loginAddress: currentUser?.loginAddress || '',
-					loginWallet:currentUser.loginWallet || prevState.loginWallet,
+					loginAddress: login_address || currentUser?.loginAddress || '',
+					loginWallet: login_wallet || currentUser.loginWallet || prevState.loginWallet,
 					username,
 					web3signup
 				};
@@ -99,6 +101,8 @@ export const logout = (setUserDetailsContextState: UserDetailsContextType['setUs
 			email: null,
 			email_verified: false,
 			id: null,
+			loginAddress: '',
+			loginWallet: null,
 			username: null,
 			web3signup: false
 		};

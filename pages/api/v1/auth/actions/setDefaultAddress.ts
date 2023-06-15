@@ -16,12 +16,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	const token = getTokenFromReq(req);
 	if(!token) return res.status(400).json({ message: 'Invalid token' });
 
-	const { address } = req.body;
+	const { address, loginAddress, loginWallet } = req.body;
 	if(!address) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	return res.status(200).json({
 		message: messages.ADDRESS_DEFAULT_SUCCESS,
-		token: await authServiceInstance.SetDefaultAddress(token, address)
+		token: await authServiceInstance.SetDefaultAddress(token, address, loginAddress, loginWallet)
 	});
 }
 

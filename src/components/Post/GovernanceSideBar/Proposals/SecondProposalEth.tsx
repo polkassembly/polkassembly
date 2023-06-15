@@ -32,7 +32,7 @@ const currentNetwork = getNetwork();
 const abi = require('src/moonbeamAbi.json');
 
 const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalProps) => {
-	const { walletConnectProvider, setWalletConnectProvider,id } = useUserDetailsContext();
+	const { walletConnectProvider, setWalletConnectProvider,id, loginAddress } = useUserDetailsContext();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
 	const { api, apiReady } = useApiContext();
@@ -181,6 +181,15 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			};
 			return account;
 		}));
+
+		if (accounts && Array.isArray(accounts)) {
+			const index = accounts.findIndex((account) => (account?.address || '').toLowerCase() === (loginAddress || '').toLowerCase());
+			if (index >= 0) {
+				const account = accounts[index];
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+			}
+		}
 
 		if (addresses.length > 0) {
 			setAddress(addresses[0]);

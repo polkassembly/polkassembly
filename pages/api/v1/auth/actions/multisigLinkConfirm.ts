@@ -15,7 +15,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network in request header' });
 
-	const { address, addresses, ss58Prefix, threshold, signatory, signature } = req.body;
+	const { address, addresses, ss58Prefix, threshold, signatory, signature, loginAddress, loginWallet } = req.body;
 	if(!address || !addresses || !ss58Prefix || !threshold || ! signatory || !signature) res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
@@ -29,7 +29,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 		ss58Prefix,
 		threshold,
 		signatory,
-		signature
+		signature,
+		loginAddress,
+		loginWallet
 	);
 
 	return res.status(200).json({ message: messages.ADDRESS_LINKING_SUCCESSFUL, token: updatedJWT });

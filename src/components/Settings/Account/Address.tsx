@@ -64,7 +64,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 			substrate_address = address;
 		}
 
-		const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/setDefaultAddress', { address: substrate_address, network });
+		const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/setDefaultAddress', { address: substrate_address, loginAddress: currentUser.loginAddress, loginWallet: currentUser.loginWallet, network });
 		if(error) {
 			console.error(error);
 			queueNotification({
@@ -126,6 +126,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 
 				const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/addressLinkConfirm', {
 					address: substrate_address,
+					loginAddress: currentUser.loginAddress,
 					signature,
 					wallet
 				});
@@ -159,6 +160,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 
 				const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/addressLinkConfirm', {
 					address: substrate_address,
+					loginAddress: currentUser.loginAddress,
 					signature,
 					wallet
 				});
@@ -193,7 +195,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 			substrate_address = address;
 		}
 
-		const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/addressUnlink', { address: substrate_address });
+		const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/addressUnlink', { address: substrate_address, loginAddress: currentUser?.loginAddress, loginWallet: currentUser?.loginWallet });
 
 		if(error) {
 			console.error(error);

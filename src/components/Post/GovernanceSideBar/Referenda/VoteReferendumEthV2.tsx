@@ -52,7 +52,8 @@ const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
 const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut } = useUserDetailsContext();
+	const userDetails = useUserDetailsContext();
+	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress } = userDetails;
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const { apiReady } = useApiContext();
 	const [address, setAddress] = useState<string>('');
@@ -105,12 +106,17 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	};
 
 	useEffect(() => {
-		if(!window) return;
-		const defaultWallet = localStorage.getItem('loginWallet') as Wallet ;
-		if(defaultWallet){
-			if(defaultWallet === Wallet.METAMASK){setWallet(Wallet.METAMASK);handleDefaultWallet(Wallet.METAMASK);}
-			else if(defaultWallet === Wallet.TALISMAN){setWallet(Wallet.TALISMAN);handleDefaultWallet(Wallet.TALISMAN);}
-			setLoginWallet(defaultWallet as  Wallet);
+		if (userDetails.loginWallet && [Wallet.TALISMAN, Wallet.METAMASK].includes(userDetails.loginWallet)) {
+			setLoginWallet(userDetails.loginWallet);
+			setWallet(userDetails.loginWallet);
+		} else {
+			if(!window) return;
+			const defaultWallet = localStorage.getItem('loginWallet') as Wallet ;
+			if(defaultWallet){
+				if(defaultWallet === Wallet.METAMASK){setWallet(Wallet.METAMASK);handleDefaultWallet(Wallet.METAMASK);}
+				else if(defaultWallet === Wallet.TALISMAN){setWallet(Wallet.TALISMAN);handleDefaultWallet(Wallet.TALISMAN);}
+				setLoginWallet(defaultWallet as  Wallet);
+			}
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [apiReady]);
@@ -167,6 +173,15 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 			return account;
 		}));
+
+		if (accounts && Array.isArray(accounts)) {
+			const index = accounts.findIndex((account) => (account?.address || '').toLowerCase() === (loginAddress || '').toLowerCase());
+			if (index >= 0) {
+				const account = accounts[index];
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+			}
+		}
 
 		if (addresses.length > 0) {
 			setAddress(addresses[0]);

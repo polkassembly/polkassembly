@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ProposalType } from '~src/global/proposalType';
-import { Role } from '~src/types';
+import { Role, Wallet } from '~src/types';
 
 export interface MessageType {
 	message: string;
@@ -119,6 +119,8 @@ export interface User {
 	salt: string;
 	username: string;
 	web3_signup: boolean;
+	login_address?: string;
+	login_wallet?: Wallet;
 }
 
 export interface ISignedTokenParams extends User {
@@ -141,6 +143,8 @@ export interface JWTPayloadType {
 	id: number;
 	roles: Roles;
 	web3signup: boolean;
+	login_address?: string;
+	login_wallet?: Wallet;
 }
 
 export interface AuthObjectType extends TokenType {

@@ -78,7 +78,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const [lastVote, setLastVote] = useState<string | null | undefined>(undefined);
 
-	const { walletConnectProvider } = useUserDetailsContext();
+	const { walletConnectProvider, loginAddress } = useUserDetailsContext();
 	const { postData: { created_at, track_number, post_link } } = usePostDataContext();
 	const [thresholdOpen, setThresholdOpen] = useState(false);
 
@@ -430,6 +430,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			setSignersMap(signersMapLocal);
 		}
 
+		if (accounts && Array.isArray(accounts)) {
+			const index = accounts.findIndex((account) => (account?.address || '').toLowerCase() === (loginAddress || '').toLowerCase());
+			if (index >= 0) {
+				const account = accounts[index];
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+			}
+		}
+
 		setAccounts(accounts);
 		if (accounts.length > 0) {
 			setAddress(accounts[0].address);
@@ -486,6 +495,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					{proposalType === ProposalType.COUNCIL_MOTIONS && <>
 						{canVote &&
 							<VoteMotion
+								setAccounts={setAccounts}
 								accounts={accounts}
 								address={address}
 								getAccounts={getAccounts}
@@ -503,6 +513,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					{proposalType === ProposalType.ALLIANCE_MOTION && <>
 						{canVote &&
 							<VoteMotion
+								setAccounts={setAccounts}
 								accounts={accounts}
 								address={address}
 								getAccounts={getAccounts}
@@ -718,6 +729,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					<GovSidebarCard>
 						{
 							canVote && <EndorseTip
+								setAccounts={setAccounts}
 								className='mb-8'
 								accounts={accounts}
 								address={address}

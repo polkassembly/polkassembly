@@ -230,7 +230,7 @@ class AuthService {
 		});
 	}
 
-	public async SetDefaultAddress (token: string, address: string): Promise<string> {
+	public async SetDefaultAddress (token: string, address: string, loginAddress: string, loginWallet: Wallet): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const user = await getUserFromUserId(userId);
 
@@ -254,7 +254,11 @@ class AuthService {
 
 		await batch.commit();
 
-		return this.getSignedToken(user);
+		return this.getSignedToken({
+			...user,
+			login_address: loginAddress,
+			login_wallet: loginWallet
+		});
 	}
 
 	public async AddressLoginStart (address: string): Promise<string> {
@@ -291,7 +295,11 @@ class AuthService {
 		await redisDel(getAddressLoginKey(address));
 
 		return {
-			token: await this.getSignedToken(user)
+			token: await this.getSignedToken({
+				...user,
+				login_address: address,
+				login_wallet: wallet
+			})
 		};
 	}
 
@@ -306,7 +314,7 @@ class AuthService {
 		return signMessage;
 	}
 
-	public async LinkProxyAddress (token: string, network: Network, proxied: string, proxy: string, message: string, signature: string): Promise<string> {
+	public async LinkProxyAddress (token: string, network: Network, proxied: string, proxy: string, message: string, signature: string, loginAddress: string, loginWallet: Wallet): Promise<string> {
 		if (!message) throw apiErrorWithStatusCode('Sign message not provided', 400);
 
 		const isValidSr = verifySignature(message, proxy, signature);
@@ -340,7 +348,11 @@ class AuthService {
 		await this.createAddress(network, proxied, setAsDefault, userId);
 
 		const user = await getUserFromUserId(userId);
-		return this.getSignedToken(user);
+		return this.getSignedToken({
+			...user,
+			login_address: loginAddress,
+			login_wallet: loginWallet
+		});
 	}
 
 	public async AddressSignupConfirm (network: Network, address: string, signature: string, wallet: Wallet): Promise<AuthObjectType> {
@@ -363,7 +375,11 @@ class AuthService {
 		await redisDel(getAddressSignupKey(address));
 
 		return {
-			token: await this.getSignedToken(user),
+			token: await this.getSignedToken({
+				...user,
+				login_address: address,
+				login_wallet: wallet
+			}),
 			user_id: user.id
 		};
 	}
@@ -408,7 +424,7 @@ class AuthService {
 		});
 	}
 
-	public async AddressUnlink (token: string, address: string): Promise<string> {
+	public async AddressUnlink (token: string, address: string, loginAddress: string, loginWallet: Wallet): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const user = await getUserFromUserId(userId);
 
@@ -426,10 +442,14 @@ class AuthService {
 
 		await firestore.collection('addresses').doc(address).delete();
 
-		return this.getSignedToken(user);
+		return this.getSignedToken({
+			...user,
+			login_address: loginAddress,
+			login_wallet: loginWallet
+		});
 	}
 
-	public async AddressLinkConfirm (token: string, address: string, signature: string, wallet: Wallet): Promise<string> {
+	public async AddressLinkConfirm (token: string, address: string, signature: string, loginAddress: string, wallet: Wallet): Promise<string> {
 		const user = await this.GetUser(token);
 		if(!user) throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
 
@@ -467,7 +487,11 @@ class AuthService {
 
 		await firestore.collection('addresses').doc(address).set(newAddress);
 
-		return this.getSignedToken(user);
+		return this.getSignedToken({
+			...user,
+			login_address: loginAddress,
+			login_wallet: wallet
+		});
 	}
 
 	public async MultisigAddressSignupStart (address: string): Promise<string> {
@@ -489,7 +513,9 @@ class AuthService {
 		ss58Prefix: number,
 		threshold: number,
 		signatory: string,
-		signature: string
+		signature: string,
+		loginAddress: string,
+		loginWallet: Wallet
 	): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 
@@ -515,7 +541,11 @@ class AuthService {
 		await redisDel(getMultisigAddressKey(address));
 
 		const user = await getUserFromUserId(userId);
-		return this.getSignedToken(user);
+		return this.getSignedToken({
+			...user,
+			login_address: loginAddress,
+			login_wallet: loginWallet
+		});
 	}
 
 	public async VerifyEmail (token: string): Promise<string> {
@@ -789,7 +819,7 @@ class AuthService {
 		return { email: user.email, updatedToken: await this.getSignedToken(user) };
 	}
 
-	public async getSignedToken ({ email, email_verified, id, username, web3_signup }: User): Promise<string> {
+	public async getSignedToken ({ email, email_verified, id, username, web3_signup, login_address, login_wallet }: User): Promise<string> {
 		if (!privateKey) {
 			const key = process.env.NODE_ENV === 'test' ? process.env.JWT_PRIVATE_KEY_TEST : process.env.JWT_PRIVATE_KEY?.replace(/\\n/gm, '\n');
 			throw apiErrorWithStatusCode(`${key} not set. Aborting.`, 403);
@@ -832,6 +862,8 @@ class AuthService {
 			email_verified: email_verified || false,
 			iat: Math.floor(Date.now() / 1000),
 			id,
+			login_address,
+			login_wallet,
 			roles: {
 				allowedRoles,
 				currentRole

@@ -108,6 +108,8 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 		setLoading(true);
 
 		const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/linkProxyAddress', {
+			loginAddress: currentUser?.loginAddress,
+			loginWallet: currentUser?.loginWallet,
 			message,
 			proxied: substrate_address,
 			proxy: proxyAddress,

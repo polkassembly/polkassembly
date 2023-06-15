@@ -49,7 +49,9 @@ try {
 			username,
 			email,
 			email_verified,
-			web3signup
+			web3signup,
+			login_address,
+			login_wallet
 		} = tokenPayload as JWTPayloadType;
 
 		if (id) {
@@ -67,6 +69,8 @@ try {
 		initialUserDetailsContext.defaultAddress = default_address;
 		initialUserDetailsContext.allowed_roles = roles.allowedRoles;
 		initialUserDetailsContext.web3signup = web3signup || false;
+		initialUserDetailsContext.loginAddress = login_address || '';
+		initialUserDetailsContext.loginWallet = login_wallet || null;
 	}
 } catch {
 	//do nothing, the user will be authenticated as soon as there's a new call to the server.

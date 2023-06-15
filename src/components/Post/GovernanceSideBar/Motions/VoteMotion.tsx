@@ -24,6 +24,7 @@ interface Props {
 	motionId?: number | null
 	motionProposalHash?: string
 	onAccountChange: (address: string) => void
+	setAccounts: React.Dispatch<React.SetStateAction<InjectedAccount[]>>;
 }
 
 const VoteMotion = ({
@@ -33,7 +34,8 @@ const VoteMotion = ({
 	getAccounts,
 	motionId,
 	motionProposalHash,
-	onAccountChange
+	onAccountChange,
+	setAccounts
 }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
@@ -41,7 +43,7 @@ const VoteMotion = ({
 	const [forceVote, setForceVote] = useState(false);
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
-	const { addresses, isLoggedOut } = useUserDetailsContext();
+	const { isLoggedOut } = useUserDetailsContext();
 
 	useEffect(() => {
 		if (!api) {
@@ -52,23 +54,32 @@ const VoteMotion = ({
 			return;
 		}
 
+		if (accounts.length === 0) {
+			getAccounts();
+		}
+
 		api.query.council.members().then((memberAccounts) => {
 			setCurrentCouncil(memberAccounts.map(member => member.toString()));
 		});
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
 	useEffect( () => {
-		// it will iterate through all addresses
-		addresses && addresses.some(address => {
-			if (currentCouncil.includes(address)) {
+		// it will iterate through all accounts
+		if (accounts && Array.isArray(accounts)) {
+			const index = accounts.findIndex((account) => currentCouncil.includes(account.address));
+			if (index >= 0) {
+				const account = accounts[index];
 				setIsCouncil(true);
-				// this breaks the loop as soon as we find a matching address
-				return true;
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+				setAccounts(accounts);
+				onAccountChange(account.address);
 			}
-			return false;
-		});
-	}, [addresses, currentCouncil]);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentCouncil, accounts]);
 
 	const voteMotion = async (aye: boolean) => {
 		if (!motionId && motionId !== 0) {

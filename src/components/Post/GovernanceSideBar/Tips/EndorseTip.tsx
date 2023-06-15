@@ -23,6 +23,7 @@ interface Props {
 	getAccounts: () => Promise<undefined>
 	tipHash?: string
 	onAccountChange: (address: string) => void
+	setAccounts: React.Dispatch<React.SetStateAction<InjectedAccount[]>>;
 }
 
 const EndorseTip = ({
@@ -31,7 +32,8 @@ const EndorseTip = ({
 	className,
 	getAccounts,
 	tipHash,
-	onAccountChange
+	onAccountChange,
+	setAccounts
 }: Props) => {
 	const ZERO = new BN(0);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
@@ -40,19 +42,23 @@ const EndorseTip = ({
 	const [forceEndorse, setForceEndorse] = useState(false);
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
-	const { addresses, isLoggedOut } = useUserDetailsContext();
+	const { isLoggedOut } = useUserDetailsContext();
 
-	useEffect(() => {
-		// it will iterate through all addresses
-		addresses && addresses.some(address => {
-			if (currentCouncil.includes(address)) {
+	useEffect( () => {
+		// it will iterate through all accounts
+		if (accounts && Array.isArray(accounts)) {
+			const index = accounts.findIndex((account) => currentCouncil.includes(account.address));
+			if (index >= 0) {
+				const account = accounts[index];
 				setIsCouncil(true);
-				// this breaks the loop as soon as we find a matching address
-				return true;
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+				setAccounts(accounts);
+				onAccountChange(account.address);
 			}
-			return false;
-		});
-	}, [addresses, currentCouncil]);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentCouncil, accounts]);
 
 	useEffect(() => {
 		if (!api) {
@@ -63,10 +69,15 @@ const EndorseTip = ({
 			return;
 		}
 
+		if (accounts.length === 0) {
+			getAccounts();
+		}
+
 		api.query.council.members().then((memberAccounts) => {
 			setCurrentCouncil(memberAccounts.map(member => member.toString()));
 		});
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
 	const onValueChange = (balance: BN) => setEndorseValue(balance);

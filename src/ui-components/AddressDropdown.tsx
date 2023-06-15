@@ -40,14 +40,15 @@ const AddressDropdown = ({
 
 	const dropdownList: {[index: string]: string} = {};
 	const addressItems: ItemType[] = [];
-	const { setUserDetailsContextState } = useUserDetailsContext();
+	const { setUserDetailsContextState, loginAddress } = useUserDetailsContext();
 
 	filteredAccounts.forEach(account => {
 		addressItems.push({
 			key: account.address,
 			label: (
-				<Address disableAddressClick={true} extensionName={account.name} address={account.address} />
-			)
+				<Address disableAddressClick={true} className='flex items-center' otherText={account.address.toLowerCase() === loginAddress? 'Logged in address': ''} otherTextClassName='ml-auto' extensionName={account.name} address={account.address} />
+			),
+			title: account.address.toLowerCase() === loginAddress? 'Logged in address': ''
 		});
 
 		if (account.address && account.name){

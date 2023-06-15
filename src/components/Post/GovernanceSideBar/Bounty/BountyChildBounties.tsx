@@ -84,7 +84,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = () => {
 						/>
 					</PaginationContainer>
 				</GovSidebarCard>
-			) : null}
+			) : <></>}
 		</Spin>
 
 	);

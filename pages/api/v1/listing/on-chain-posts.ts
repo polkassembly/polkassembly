@@ -192,6 +192,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			};
 
 			const subsquidRes = await fetchSubsquid({
+				customSubsquidUrl: network === 'polkadot' && proposalType == ProposalType.REFERENDUM_V2 ? 'https://squid.subsquid.io/polkadot-polkassembly/v/v4/graphql' : '',
 				network,
 				query: GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
 				variables: postsVariables
@@ -348,6 +349,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			}
 
 			const subsquidRes = await fetchSubsquid({
+				customSubsquidUrl: network === 'polkadot' && proposalType == ProposalType.REFERENDUM_V2 ? 'https://squid.subsquid.io/polkadot-polkassembly/v/v4/graphql' : '',
 				network,
 				query: query,
 				variables: postsVariables

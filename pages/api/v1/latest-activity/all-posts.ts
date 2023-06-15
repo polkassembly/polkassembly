@@ -111,6 +111,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 		if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
 
 			const subsquidRes = await fetchSubsquid({
+				customSubsquidUrl: network === 'polkadot' && govType == 'open_gov' ? 'https://squid.subsquid.io/polkadot-polkassembly/v/v4/graphql' : '',
 				network,
 				query: GET_PROPOSALS_LISTING_BY_TYPE,
 				variables
@@ -189,6 +190,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 			if (parentBounties.size > 0) {
 				const subsquidRes = await fetchSubsquid({
+					customSubsquidUrl: network === 'polkadot' && govType == 'open_gov' ? 'https://squid.subsquid.io/polkadot-polkassembly/v/v4/graphql' : '',
 					network,
 					query: GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
 					variables: {

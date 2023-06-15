@@ -100,6 +100,7 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 	const promiseResults = await Promise.allSettled(decisions.map((decision) => {
 		variables['decision_eq'] = decision;
 		return fetchSubsquid({
+			customSubsquidUrl: network === 'polkadot' && voteType == VoteType.REFERENDUM_V2 ? 'https://squid.subsquid.io/polkadot-polkassembly/v/v4/graphql' : '',
 			network,
 			query: votesQuery,
 			variables

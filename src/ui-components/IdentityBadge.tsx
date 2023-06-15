@@ -31,15 +31,15 @@ li {
 interface Props {
 	className?: string,
 	address: string,
-	identity: DeriveAccountRegistration,
+	identity?: DeriveAccountRegistration | null,
 	flags?: DeriveAccountFlags,
 	web3Name?: string
 }
 
 const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props) => {
-	const judgements = identity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
-	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
-	const isBad = judgements.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
+	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
+	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
+	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
 
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const CouncilEmoji = () => <span aria-label="council member" className='-mt-1' role="img">👑</span>;
@@ -49,12 +49,12 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 		{flags?.isCouncil && <CouncilEmoji/>}
 	</span>;
 
-	const displayJudgements = JSON.stringify(judgements.map(([,jud]) => jud.toString()));
+	const displayJudgements = JSON.stringify(judgements?.map(([,jud]) => jud.toString()));
 
 	const popupContent = <StyledPopup>
 		{identity?.legal && <li><span className='desc'>legal:</span>{identity.legal}</li>}
 		{identity?.email && <li><span className='desc'>email:</span>{identity.email}</li>}
-		{identity?.judgements?.length > 0 && <li><span className='desc'>judgements:</span><span className='judgments'>{displayJudgements}</span></li>}
+		{(identity?.judgements?.length || 0) > 0 && <li><span className='desc'>judgements:</span><span className='judgments'>{displayJudgements}</span></li>}
 		{identity?.pgp && <li><span className='desc'>pgp:</span>{identity.pgp}</li>}
 		{identity?.riot && <li><span className='desc'>riot:</span>{identity.riot}</li>}
 		{identity?.twitter && <li><span className='desc'>twitter:</span>{identity.twitter}</li>}

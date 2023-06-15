@@ -6,7 +6,7 @@ import { DislikeFilled, LikeFilled, ClockCircleOutlined } from '@ant-design/icon
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Divider, Form, Modal } from 'antd';
+import { Button, Divider, Form, Modal, Tooltip } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -701,21 +701,24 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															<div>
 																<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
 																<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+																	<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'}>
+																		<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
+																	</Tooltip>
+																	<Tooltip placement="bottom"  title="Time"  color={'#E5007A'}><p><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</p></Tooltip>
 
-																	{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }
+																	<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}>
+																		<p>
+																			<MoneyIcon className='mr-1'/>
+																			{formatedBalance(balance.toString(), unit)}{` ${unit}`}
+																		</p>
+																	</Tooltip>
 
-																	<p><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
-
-																	<p>
-																		<MoneyIcon className='mr-1'/>
-																		{formatedBalance(balance.toString(), unit)}{` ${unit}`}
-
-																	</p>
-
-																	<p>
-																		<ConvictionIcon className='mr-1'/>
-																		{vote.conviction}x
-																	</p>
+																	<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'}>
+																		<p title='Conviction'>
+																			<ConvictionIcon className='mr-1'/>
+																			{vote.conviction}x
+																		</p>
+																	</Tooltip>
 																</div>
 																{
 																	votingHistory.length > 1 && <div>
@@ -925,4 +928,8 @@ export default styled(GovernanceSideBar)`
 	.edit-icon-wrapper:hover .edit-icon{
 		display: block;
 	}
+
+	 .ant-tooltip-open{
+		text-transform:none !important;
+	  }
 `;

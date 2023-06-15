@@ -128,6 +128,7 @@ export default function NotificationChannels({ handleDisabled }: Props) {
 								CHANNEL.EMAIL
 							]?.email || ''
 						}
+						handleDisabled={handleDisabled}
 					/>
 					<Divider className='border-[#D2D8E0] border-2 my-[30px]' dashed />
 					{Bots.map((bot, i) => (

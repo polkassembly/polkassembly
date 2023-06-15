@@ -3,14 +3,17 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import MailFilled from '~assets/icons/email-notification.svg';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, Switch } from 'antd';
 import { Rule } from 'antd/es/form';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
+import DisabledConfirmation from './Modals/Confirmation';
+import { CHANNEL } from '.';
 type Props = {
 	verifiedEmail: string;
+	handleDisabled: any
 };
 
 const Container = styled.div`
@@ -23,9 +26,13 @@ const validationRules: Rule[] = [
 	{ message: 'Email is required, Please enter an email', required: true }
 ];
 
-export default function EmailNotificationCard({ verifiedEmail }: Props) {
+export default function EmailNotificationCard({ verifiedEmail, handleDisabled }: Props) {
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
+	const [showModal, setShowModal] = useState<boolean>(false);
+	const handleToggleClick = () => {
+		setShowModal(true);
+	};
 	const validateEmailFormat = (
 		_: Rule,
 		value: string,
@@ -83,13 +90,21 @@ export default function EmailNotificationCard({ verifiedEmail }: Props) {
 
 	return (
 		<div className='flex flex-col mb-2'>
-			<h3 className='text-base font-medium m-0 gap-1'>
-				<MailFilled /> Email Notifications{' '}
-				{verifiedEmail && (
-					<span className='text-[10px] px-[4px] py-[2px] bg-[#407BFF] border-[#5A46FF] border-2 text-[#FFFFFF] rounded-tr-lg rounded-bl-lg'>
-						Verified
+			<h3 className='flex gap-2 items-center text-base font-medium m-0 gap-1'>
+				<span>
+					<MailFilled /> Email Notifications{' '}
+				</span>
+				{!!verifiedEmail &&
+					<span onClick={handleToggleClick} className='flex gap-1 items-center'>
+						<Switch
+							checked={!!verifiedEmail}
+							size='small'
+						/>
+						<label className='cursor-pointer'>
+							<span className='text-[14px] font-medium text-pink_primary cursor-pointer'>Enabled</span>
+						</label>
 					</span>
-				)}
+				}
 			</h3>
 			<Container>
 				<Form
@@ -121,6 +136,15 @@ export default function EmailNotificationCard({ verifiedEmail }: Props) {
 					</Button>
 				</Form>
 			</Container>
+			<DisabledConfirmation
+				open={showModal}
+				onConfirm={() => {
+					setShowModal(false);
+					handleDisabled(CHANNEL.EMAIL);
+				}}
+				onCancel={() => setShowModal(false)}
+				channel={CHANNEL.EMAIL} />
+
 		</div>
 	);
 }

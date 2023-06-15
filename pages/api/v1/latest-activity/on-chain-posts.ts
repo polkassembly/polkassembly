@@ -37,7 +37,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 			throw apiErrorWithStatusCode( `Invalid listingLimit "${listingLimit}"`, 400);
 		}
 
-		let strProposalType = String(proposalType);
+		const strProposalType = String(proposalType);
 		if (!isProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(`The proposal type of the name "${proposalType}" does not exist.`, 400);
 		}
@@ -55,9 +55,8 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 			type_in: subsquidProposalType
 		};
 
-		if (proposalType === ProposalType.OPEN_GOV) {
-			strProposalType = 'referendums_v2';
-			postsVariables.trackNumber_in = numTrackNo;
+		if (proposalType && [ProposalType.OPEN_GOV.toString(), ProposalType.FELLOWSHIP_REFERENDUMS.toString()].includes(strProposalType)) {
+			postsVariables.trackNumber_in = [numTrackNo];
 		}
 
 		const subsquidRes = await fetchSubsquid({

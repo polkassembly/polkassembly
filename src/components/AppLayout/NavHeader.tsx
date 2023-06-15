@@ -48,7 +48,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 	const [openLogin,setLoginOpen]=useState<boolean>(false);
 	const [openSignup,setSignupOpen]=useState<boolean>(false);
 
-	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute);
+	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute, network);
 	const isClicked = useRef(false);
 
 	return (

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 import checkGov2Route from 'src/util/checkGov2Route';
+import { useNetworkContext } from '~src/context';
 import { SyncIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
@@ -15,9 +16,10 @@ interface Props {
 
 const GovernanceSwitchButton = ({ className, previousRoute } : Props) => {
 
+	const { network } = useNetworkContext();
 	const router = useRouter();
 	const { pathname , query } = router;
-	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute );
+	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute, network);
 
 	return (
 		<div className={`${className}`}>

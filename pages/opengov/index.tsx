@@ -63,7 +63,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		fetches [trackName as keyof typeof fetches] =  getLatestActivityOnChainPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
 			network,
-			proposalType: ProposalType.OPEN_GOV,
+			proposalType: networkTrackInfo[network][trackName]?.fellowshipOrigin? ProposalType.FELLOWSHIP_REFERENDUMS: ProposalType.OPEN_GOV,
 			trackNo: networkTrackInfo[network][trackName].trackId
 		});
 	}

@@ -161,7 +161,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 		wallet === Wallet.TALISMAN && addresses.filter((address: string) => address.slice(0,2) === '0x').length === 0 ? setIsTalismanEthereum(false) : setIsTalismanEthereum(true);
 
-		setAccounts(addresses.map((address: string): InjectedAccountWithMeta => {
+		const accounts = addresses.map((address: string): InjectedAccountWithMeta => {
 			const account = {
 				address,
 				meta: {
@@ -172,7 +172,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			};
 
 			return account;
-		}));
+		});
 
 		if (accounts && Array.isArray(accounts)) {
 			const index = accounts.findIndex((account) => (account?.address || '').toLowerCase() === (loginAddress || '').toLowerCase());
@@ -183,6 +183,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			}
 		}
 
+		setAccounts(accounts);
 		if (addresses.length > 0) {
 			setAddress(addresses[0]);
 		}

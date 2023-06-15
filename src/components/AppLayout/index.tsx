@@ -29,7 +29,6 @@ import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
-import dayjs from 'dayjs';
 
 const { Content, Sider } = Layout;
 
@@ -434,7 +433,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				</Drawer>
 				{
-					((network === 'polkadot' && router.asPath === '/') || (network === 'kusama' && ['/', '/opengov', '/gov-2'].includes(router.asPath))) && dayjs('2023-06-15 17:35:30').diff(dayjs()) > 0?
+					((['kusama', 'polkadot'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
 						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#EFF2F5]'>
 							{/* Dummy Collapsed Sidebar for auto margins */}
 							<OpenGovHeaderBanner />

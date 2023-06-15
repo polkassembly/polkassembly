@@ -650,7 +650,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
 		}
 		const subsquidRes = await fetchSubsquid({
-			customSubsquidUrl: network === 'polkadot' && proposalType == ProposalType.REFERENDUM_V2 ? 'https://squid.subsquid.io/polkadot-polkassembly/v/v4/graphql' : '',
 			network,
 			query: postQuery,
 			variables: postVariables
@@ -670,7 +669,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		let proposer = postData?.proposer || preimage?.proposer || postData?.curator;
 		if (!proposer && (postData?.parentBountyIndex || postData?.parentBountyIndex === 0)) {
 			const subsquidRes = await fetchSubsquid({
-				customSubsquidUrl: network === 'polkadot' && proposalType == ProposalType.REFERENDUM_V2 ? 'https://squid.subsquid.io/polkadot-polkassembly/v/v4/graphql' : '',
 				network,
 				query: GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
 				variables: {

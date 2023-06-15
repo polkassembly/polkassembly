@@ -65,7 +65,6 @@ export async function getOnChainPostsCount(params: IGetOnChainPostsCountParams):
 		}
 
 		const subsquidRes = await fetchSubsquid({
-			customSubsquidUrl: network === 'polkadot' && proposalType == ProposalType.REFERENDUM_V2 ? 'https://squid.subsquid.io/polkadot-polkassembly/v/v4/graphql' : '',
 			network,
 			query: GET_PROPOSALS_LISTING_COUNT_BY_TYPE,
 			variables: postsVariables

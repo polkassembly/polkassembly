@@ -234,10 +234,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES){
+		const fellowshipItems = [getSiderMenuItem('Members', '/fellowship', <MembersIcon className='text-white' />), getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='text-sidebarBlue' />)];
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
 			...gov1Items.allianceItems
-		])];
-		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems];
+		]), getSiderMenuItem('Fellowship', 'fellowship_group', null, fellowshipItems)];
+		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems, ...fellowshipItems];
 	}
 
 	const gov2TrackItems: {[x:string]: ItemType[]} = {
@@ -356,7 +357,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]));
 	}
 
-	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute );
+	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
 
 	const handleMenuClick = (menuItem: any) => {
 		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;

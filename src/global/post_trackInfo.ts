@@ -1241,5 +1241,267 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				}
 			}
 		}
+	},
+	collectives: {
+		[PostOrigin.CANDIDATES] : {
+			'fellowshipOrigin': true,
+			'description': 'Origin commanded by any members of the Polkadot Fellowship (no Dan grade needed)',
+			'trackId': 0,
+			'name': 'candidates',
+			'maxDeciding': 10,
+			'decisionDeposit': 1000000000000,
+			'preparePeriod': 150,
+			'decisionPeriod': 50400,
+			'confirmPeriod': 150,
+			'minEnactmentPeriod': 5,
+			'minApproval': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 500000000,
+					'ceil': 1000000000
+				}
+			},
+			'minSupport': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 0,
+					'ceil': 500000000
+				}
+			}
+		},
+		[PostOrigin.MEMBERS] : {
+			'fellowshipOrigin': true,
+			'trackId': 1,
+			'description': 'Origin commanded by rank 1 of the Polkadot Fellowship and with a success of 1',
+			'name': 'members',
+			'maxDeciding': 10,
+			'decisionDeposit': 100000000000,
+			'preparePeriod': 150,
+			'decisionPeriod': 50400,
+			'confirmPeriod': 150,
+			'minEnactmentPeriod': 5,
+			'minApproval': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 500000000,
+					'ceil': 1000000000
+				}
+			},
+			'minSupport': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 0,
+					'ceil': 500000000
+				}
+			}
+		},
+		[PostOrigin.PROFICIENTS] : {
+			'fellowshipOrigin': true,
+			'trackId': 2,
+			'description': 'Origin commanded by rank 2 of the Polkadot Fellowship and with a success of 2',
+			'name': 'proficients',
+			'maxDeciding': 10,
+			'decisionDeposit': 100000000000,
+			'preparePeriod': 150,
+			'decisionPeriod': 50400,
+			'confirmPeriod': 150,
+			'minEnactmentPeriod': 5,
+			'minApproval': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 500000000,
+					'ceil': 1000000000
+				}
+			},
+			'minSupport': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 0,
+					'ceil': 500000000
+				}
+			}
+		},
+		[PostOrigin.FELLOWS] : {
+			'fellowshipOrigin': true,
+			'trackId': 3,
+			'description': 'Origin commanded by Polkadot Fellows (3rd Dan fellows or greater)',
+			'name': 'fellows',
+			'maxDeciding': 10,
+			'decisionDeposit': 100000000000,
+			'preparePeriod': 150,
+			'decisionPeriod': 50400,
+			'confirmPeriod': 150,
+			'minEnactmentPeriod': 5,
+			'minApproval': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 500000000,
+					'ceil': 1000000000
+				}
+			},
+			'minSupport': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 0,
+					'ceil': 500000000
+				}
+			}
+		},
+		[PostOrigin.SENIOR_FELLOWS] : {
+			'fellowshipOrigin': true,
+			'trackId': 4,
+			'description': 'Origin commanded by rank 4 of the Polkadot Fellowship and with a success of 4',
+			'name': 'fellows',
+			'maxDeciding': 10,
+			'decisionDeposit': 100000000000,
+			'preparePeriod': 150,
+			'decisionPeriod': 50400,
+			'confirmPeriod': 150,
+			'minEnactmentPeriod': 5,
+			'minApproval': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 500000000,
+					'ceil': 1000000000
+				}
+			},
+			'minSupport': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 0,
+					'ceil': 500000000
+				}
+			}
+		},
+		[PostOrigin.EXPERTS] : {
+			'fellowshipOrigin': true,
+			'trackId': 5,
+			'description': 'Origin commanded by Polkadot Experts (5th Dan fellows or greater)',
+			'name': 'fellows',
+			'maxDeciding': 10,
+			'decisionDeposit': 100000000000,
+			'preparePeriod': 150,
+			'decisionPeriod': 50400,
+			'confirmPeriod': 150,
+			'minEnactmentPeriod': 5,
+			'minApproval': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 500000000,
+					'ceil': 1000000000
+				}
+			},
+			'minSupport': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 0,
+					'ceil': 500000000
+				}
+			}
+		},
+		[PostOrigin.SENIOR_EXPERTS] : {
+			'fellowshipOrigin': true,
+			'trackId': 6,
+			'description': 'Origin commanded by rank 6 of the Polkadot Fellowship and with a success of 6',
+			'name': 'fellows',
+			'maxDeciding': 10,
+			'decisionDeposit': 100000000000,
+			'preparePeriod': 150,
+			'decisionPeriod': 50400,
+			'confirmPeriod': 150,
+			'minEnactmentPeriod': 5,
+			'minApproval': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 500000000,
+					'ceil': 1000000000
+				}
+			},
+			'minSupport': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 0,
+					'ceil': 500000000
+				}
+			}
+		},
+		[PostOrigin.MASTERS] : {
+			'fellowshipOrigin': true,
+			'trackId': 7,
+			'description': 'Origin commanded by Polkadot Masters (7th Dan fellows of greater)',
+			'name': 'fellows',
+			'maxDeciding': 10,
+			'decisionDeposit': 100000000000,
+			'preparePeriod': 150,
+			'decisionPeriod': 50400,
+			'confirmPeriod': 150,
+			'minEnactmentPeriod': 5,
+			'minApproval': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 500000000,
+					'ceil': 1000000000
+				}
+			},
+			'minSupport': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 0,
+					'ceil': 500000000
+				}
+			}
+		},
+		[PostOrigin.SENIOR_MASTERS] : {
+			'fellowshipOrigin': true,
+			'trackId': 8,
+			'description': 'Origin commanded by rank 8 of the Polkadot Fellowship and with a success of 8',
+			'name': 'fellows',
+			'maxDeciding': 10,
+			'decisionDeposit': 100000000000,
+			'preparePeriod': 150,
+			'decisionPeriod': 50400,
+			'confirmPeriod': 150,
+			'minEnactmentPeriod': 5,
+			'minApproval': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 500000000,
+					'ceil': 1000000000
+				}
+			},
+			'minSupport': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 0,
+					'ceil': 500000000
+				}
+			}
+		},
+		[PostOrigin.GRAND_MASTERS] : {
+			'fellowshipOrigin': true,
+			'trackId': 9,
+			'description': 'Origin commanded by rank 9 of the Polkadot Fellowship and with a success of 9',
+			'name': 'fellows',
+			'maxDeciding': 10,
+			'decisionDeposit': 100000000000,
+			'preparePeriod': 150,
+			'decisionPeriod': 50400,
+			'confirmPeriod': 150,
+			'minEnactmentPeriod': 5,
+			'minApproval': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 500000000,
+					'ceil': 1000000000
+				}
+			},
+			'minSupport': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 0,
+					'ceil': 500000000
+				}
+			}
+		}
 	}
 };

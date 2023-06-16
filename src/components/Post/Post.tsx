@@ -324,7 +324,7 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
-	console.log('postTimeline' , post.timeline);
+
 	return (
 		<PostDataContextProvider initialPostData={{
 			cid: post?.cid || '',

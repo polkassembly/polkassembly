@@ -2,14 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { ClockCircleOutlined, CommentOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, DislikeOutlined, LikeOutlined } from '@ant-design/icons';
 import { Divider, Modal, Tooltip } from 'antd';
 import { poppins } from 'pages/_app';
 import React, { FC, useContext, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
-
+import NewChatIcon from '~assets/icons/chat-icon.svg';
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 
@@ -39,7 +39,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 
 	return (
 		<>
-			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 h-[147px] sm:flex xs:hidden ${className}`}>
+			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 min-h-[130px] sm:flex xs:hidden ${className}`}>
 				<span className='font-medium text-center mr-2 flex-none sm:w-[120px] text-bodyBlue sm:mt-4'>#{post_id}</span>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-4">
 					<OnchainCreationLabel address={address} topic={topic} username={username}  />
@@ -88,7 +88,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							</div>
 
 							<div className='xs:hidden sm:flex items-center'>
-								<CommentOutlined className='mr-1' style={{ color: '#485F7D' }} /> {commentsCount}
+								<NewChatIcon className='mr-1' style={{ color: '#485F7D' }} /> {commentsCount}
 							</div>
 							<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 

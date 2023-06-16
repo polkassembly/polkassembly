@@ -13,7 +13,6 @@ import CountBadgePill from '~src/ui-components/CountBadgePill';
 import TrackListingAllTabContent from './TrackListingAllTabContent';
 import TrackListingStatusTabContent from './TrackListingStatusTabContent';
 import FilterByTags from '~src/ui-components/FilterByTags';
-import FilteredTags from '~src/ui-components/filteredTags';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import styled from 'styled-components';
@@ -73,6 +72,11 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 				count={posts?.closed?.data?.count || 0}
 				status={CustomStatus.Closed}
 			/>
+		},
+		{
+			label:
+				<FilterByTags className='xs:hidden sm:block sm:mr-5'/>,
+			key: 'Filter'
 		}
 	];
 	const router = useRouter();
@@ -104,11 +108,8 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 	};
 	return (
 		<div className={`${className} bg-white drop-shadow-md rounded-xxl md:py-8 px-0`}>
-			<div className='flex items-center justify-between mb-0 xs:p-4'>
-				<div>
-					<FilteredTags/>
-				</div>
-				<FilterByTags className='sm:mr-12 sm:mt-2 xs:mr-1 xs:mt-1 xs:mb-2'/>
+			<div className='sm:hidden xs:flex xs:items-center xs:justify-end xs:mb-0 xs:px-4 xs:pt-2'>
+				<FilterByTags className='sm:hidden xs:mr-1 xs:mt-1 xs:mb-2'/>
 			</div>
 			<Tabs
 				activeKey={activeTab}
@@ -138,12 +139,24 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 export default styled(TrackListingCard)`
 	.ant-tabs-nav{
 		margin-left: 15px;
-		margin-top: -40px;
 	}
+	.ant-tabs-nav-list {
+		width: 100%;
+		[data-node-key="Filter"] {
+		position: absolute;
+		right: 0;
+	}
+}
 	@media only screen and (max-width: 640px){
 		.ant-tabs-nav{
 			margin-left: 0px;
-			margin-top: -25px;
+			margin-top: 0px;
 		}
-	}
+		.ant-tabs-nav-list {
+			width: auto;
+			[data-node-key="Filter"] {
+				display: none;
+			}
+		}
+}
 `;

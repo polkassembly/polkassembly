@@ -85,13 +85,13 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	return (
 		<>
-			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 sm:p-3 min-h-[100px] sm:flex xs:hidden`}>
-				<span className='font-medium text-center mr-2 flex-none sm:w-[120px] text-bodyBlue sm:mt-3'>#{isTip? tip_index: onchainId}</span>
+			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 sm:p-3 min-h-[80px] sm:flex xs:hidden`}>
+				<span className='font-medium text-center flex-none sm:w-[120px] text-bodyBlue sm:mt-3'>#{isTip? tip_index: onchainId}</span>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-4">
 					<OnchainCreationLabel address={address} username={username} />
-					<div className='hidden sm:flex sm:justify-between gap-x-2 lg:items-start lg:flex-row my-2 '>
+					<div className='hidden sm:flex sm:justify-between gap-x-2 lg:items-start lg:flex-row my-1.5'>
 						<div className='mt-3 lg:mt-0'>
-							<h1 className='text-bodyBlue mt-3 text-sm flex max-w-[250px] max-h-10 overflow-hidden lg:max-w-none'>
+							<h1 className='text-bodyBlue text-sm mt-1 flex overflow-hidden lg:max-w-none'>
 								<span className='break-all text-bodyBlue font-medium text-sm'>{ mainTitle }</span>
 							</h1>
 							<h2 className='text-bodyBlue font-medium text-sm'>{subTitle}</h2>
@@ -110,14 +110,14 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 					</div>
 
-					<div className="font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center sm:mb-2">
+					<div className="font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center sm:mb-1">
 
 						<div className='flex items-center gap-x-2'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
 								<LikeOutlined style={{ color: '#485F7D' }} />
 								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
-							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5 mr-2'>
+							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5 mr-0.5'>
 								<DislikeOutlined style={{ color: '#485F7D' }} />
 								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>
@@ -150,17 +150,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</> : null
 							}
 							{relativeCreatedAt && <>
-								<div className='flex text-lightBlue items-center'>
+								<div className='flex text-lightBlue items-center sm:mt-0'>
 									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 								</div>
 							</>}
 
 							{
 								topic?
-									<div className='flex items-center '>
-										<div className='mr-0.5 ml-auto hidden min-[340px]:flex'></div>
-										<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #485F7D' }} />
-										<TopicTag className='sm:mt-1' topic={topic} />
+									<div className='flex items-center sm:-mt-1'>
+										<Divider type="vertical" className='max-lg:hidden sm:mt-1' style={{ borderLeft: '1px solid #485F7D' }} />
+										<TopicTag className='sm:mt-0' topic={topic} />
 									</div>
 									: null
 							}

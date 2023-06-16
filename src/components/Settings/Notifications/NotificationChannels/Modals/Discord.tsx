@@ -6,6 +6,7 @@ import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
+import { useUserDetailsContext } from '~src/context';
 
 type Props = {
     icon: any;
@@ -26,6 +27,7 @@ const DiscordInfoModal = ({
 }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [token, setToken] = useState(generatedToken);
+	const { username } = useUserDetailsContext();
 	const handleGenerateToken = async () => {
 		setLoading(true);
 		const data = await getVerifyToken(CHANNEL.DISCORD);
@@ -47,6 +49,7 @@ const DiscordInfoModal = ({
 			closable
 			onCancel={onClose}
 			footer={null}
+			className='min-[550px]'
 		>
 			<div className=''>
 				<ol>
@@ -86,14 +89,29 @@ const DiscordInfoModal = ({
 						<br />
 						{token && (
 							<>
-								<span>Verification Token: </span>
-								<span
-									onClick={() => handleCopyClicked(token)}
-									className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
-								>
-									<CopyIcon className='relative top-[6px]' />{' '}
-									{token}
-								</span>
+								<div className='list-inside leading-[40px]'>
+                        Copy your username:
+									<span
+										onClick={() =>
+											handleCopyClicked(username as string)
+										}
+										className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
+									>
+										<CopyIcon className='relative top-[6px]' />{' '}
+										{username}
+									</span>
+								</div>
+
+								<div className=''>
+									<span>Verification Token: </span>
+									<span
+										onClick={() => handleCopyClicked(token)}
+										className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
+									>
+										<CopyIcon className='relative top-[6px]' />{' '}
+										{token}
+									</span>
+								</div>
 							</>
 						)}
 					</li>

@@ -32,9 +32,9 @@ export interface UserDetailsContextType {
 export interface INetworkPreferences {
   channelPreferences: {
     [index: string]: {
-      verification_token: string,
-      verification_token_expires: Date
-      enabled: boolean;
+      verification_token?: string,
+      verification_token_expires?: Date
+      enabled?: boolean;
       email?:string;
     }
   },

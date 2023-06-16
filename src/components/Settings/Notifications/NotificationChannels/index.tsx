@@ -23,7 +23,7 @@ import TelegramIcon from '~assets/icons/telegram-notification.svg';
 import DiscordIcon from '~assets/icons/discord-notification.svg';
 
 const { Panel } = Collapse;
-type Props = { handleDisabled: any };
+type Props = { handleEnableDisabled: any, handleReset: any };
 
 export enum CHANNEL {
 	TELEGRAM = 'telegram',
@@ -34,7 +34,7 @@ export enum CHANNEL {
 }
 
 // eslint-disable-next-line no-empty-pattern
-export default function NotificationChannels({ handleDisabled }: Props) {
+export default function NotificationChannels({ handleEnableDisabled, handleReset }: Props) {
 	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
 	const { network } = useNetworkContext();
 	const { id, networkPreferences } = useUserDetailsContext();
@@ -99,7 +99,7 @@ export default function NotificationChannels({ handleDisabled }: Props) {
 				header={
 					<div className='flex justify-between gap-[8px] items-center'>
 						<div className='flex items-center gap-[6px] channel-header'>
-							<NotificationChannelsIcon/>
+							<NotificationChannelsIcon />
 							<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 pt-1'>
 								Notification Channels
 							</h3>
@@ -128,7 +128,7 @@ export default function NotificationChannels({ handleDisabled }: Props) {
 								CHANNEL.EMAIL
 							]?.email || ''
 						}
-						handleDisabled={handleDisabled}
+						handleDisabled={handleEnableDisabled}
 					/>
 					<Divider className='border-[#D2D8E0] border-2 my-[30px]' dashed />
 					{Bots.map((bot, i) => (
@@ -141,7 +141,14 @@ export default function NotificationChannels({ handleDisabled }: Props) {
 										bot.channel
 									]?.enabled || false
 								}
-								handleDisabled={handleDisabled}
+								isBotSetup={
+									networkPreferences?.channelPreferences?.[
+										bot.channel
+									]?.enabled === undefined
+										? false: true
+								}
+								handleEnableDisabled={handleEnableDisabled}
+								handleReset={handleReset}
 							/>
 							{Bots.length - 1 > i && (
 								<Divider
@@ -209,7 +216,7 @@ const Bots = [
 	{
 		Icon: <SlackIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
 		channel: CHANNEL.SLACK,
-		description: 'a Slack Channel chat to get Slack notifications',
+		description: '',
 		title: 'Slack'
 	},
 	{

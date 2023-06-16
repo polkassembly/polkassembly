@@ -171,7 +171,36 @@ export default function Notifications({ network }: { network: string }) {
 		}
 	};
 
-	const handleDisabled = async (channel: CHANNEL) => {
+	const handleReset = async (channel: CHANNEL) => {
+		try {
+			setUserDetailsContextState((prev) => ({
+				...prev,
+				networkPreferences: {
+					...prev.networkPreferences,
+					channelPreferences: {
+						...prev.networkPreferences.channelPreferences,
+						[channel]: {}
+					}
+				}
+			}));
+			const { data, error } = (await nextApiClientFetch(
+				'api/v1/auth/actions/resetChannelNotification',
+				{
+					channel
+				}
+			)) as { data: { message: string }; error: string | null };
+			if (error || !data.message) {
+				throw new Error(error || '');
+			}
+
+			return true;
+
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	const handleEnableDisabled = async (channel: CHANNEL, enabled = false) => {
 		try {
 			setUserDetailsContextState((prev) => ({
 				...prev,
@@ -181,16 +210,16 @@ export default function Notifications({ network }: { network: string }) {
 						...prev.networkPreferences.channelPreferences,
 						[channel]: {
 							...prev.networkPreferences.channelPreferences.channel,
-							enabled: false
+							enabled: enabled
 						}
 					}
 				}
 			}));
 			const { data, error } = (await nextApiClientFetch(
-				'api/v1/auth/actions/disabledChannelNotification',
+				'api/v1/auth/actions/updateChannelNotification',
 				{
 					channel,
-					enabled:false
+					enabled
 				}
 			)) as { data: { message: string }; error: string | null };
 			if (error || !data.message) {
@@ -228,7 +257,7 @@ export default function Notifications({ network }: { network: string }) {
 		<Loader />
 	) : (
 		<div className='flex flex-col gap-[24px] text-[#243A57]'>
-			<NotificationChannels handleDisabled={handleDisabled} />
+			<NotificationChannels handleEnableDisabled={handleEnableDisabled} handleReset={handleReset}/>
 			<Parachain
 				primaryNetwork={primaryNetwork}
 				onSetPrimaryNetwork={handleSetPrimaryNetwork}

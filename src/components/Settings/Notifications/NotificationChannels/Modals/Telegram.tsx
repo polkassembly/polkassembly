@@ -6,14 +6,15 @@ import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { CHANNEL } from '..';
+import { useUserDetailsContext } from '~src/context';
 
 type Props = {
-    icon: any;
-    title: string;
-    open: boolean;
-    getVerifyToken:  (channel: CHANNEL) => Promise<any>;
-    generatedToken?: string;
-    onClose: () => void;
+	icon: any;
+	title: string;
+	open: boolean;
+	getVerifyToken: (channel: CHANNEL) => Promise<any>;
+	generatedToken?: string;
+	onClose: () => void;
 };
 
 const TelegramInfoModal = ({
@@ -26,6 +27,7 @@ const TelegramInfoModal = ({
 }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [token, setToken] = useState(generatedToken);
+	const { username } = useUserDetailsContext();
 	const handleGenerateToken = async () => {
 		setLoading(true);
 		const data = await getVerifyToken(CHANNEL.TELEGRAM);
@@ -53,29 +55,29 @@ const TelegramInfoModal = ({
 			<div className=''>
 				<ol>
 					<li className='list-inside leading-[40px]'>
-                        Click this invite link
+						Click this invite link
 						<span className='p-1 mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'>
 							<a
 								href='https://t.me/PolkassemblyBot'
 								target='_blank'
 								rel='noreferrer'
 							>
-                                t.me/PolkassemblyBot
+								t.me/PolkassemblyBot
 							</a>
 						</span>
 						<br />
-                        or Add
+						or Add
 						<span
 							onClick={() => handleCopyClicked('@PolkassemblyBot')}
 							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
 						>
 							<CopyIcon className='relative top-[6px] color-pink_primary' />{' '}
-                            @PolkassemblyBot
+							@PolkassemblyBot
 						</span>
-                        to your Telegram Chat as a member
+						to your Telegram Chat as a member
 					</li>
 					<li className='list-inside leading-[40px]'>
-                        Send this command to the chat with the bot:
+						Send this command to the chat with the bot:
 						<br />
 						<span
 							onClick={() =>
@@ -93,24 +95,29 @@ const TelegramInfoModal = ({
 							onClick={handleGenerateToken}
 							className='bg-pink_primary text-white font-normal'
 						>
-                            Generate Token
+							Generate Token
 						</Button>
 						<br />
 						{token && (
-							<>
-								<span>Verification Token: </span>
-								<span
-									onClick={() => handleCopyClicked(token)}
-									className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
+							<div className='flex items-center'>
+								<span>Username & Verification Token: </span>
+								<div
+									onClick={() => handleCopyClicked(`/add ${username} ${token}`)}
+									className='flex items-center w-[230px] p-0 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary h-[30px]'
 								>
-									<CopyIcon className='relative top-[6px]' />{' '}
-									{token}
-								</span>
-							</>
+									<CopyIcon className='relative' />{' '}
+									<span className='w-[100px] text-ellipsis overflow-hidden whitespace-nowrap inline-block'>
+										{username}
+									</span>{' '}
+									<span className='w-[100px] text-ellipsis overflow-hidden whitespace-nowrap inline-block'>
+										{token}
+									</span>
+								</div>
+							</div>
 						)}
 					</li>
 					<li className='list-inside'>
-                        (Optional) Send this command to get help:
+						(Optional) Send this command to get help:
 						<span
 							onClick={() => handleCopyClicked('/start')}
 							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'

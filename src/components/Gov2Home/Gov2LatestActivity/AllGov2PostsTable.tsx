@@ -92,7 +92,11 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 
 	function gotoPost(rowData: IPostsRowData): void{
 		let path = 'referenda';
-		if(!rowData.origin) {
+		if (rowData.type === 'FellowshipReferendum') {
+			path = 'member-referenda';
+		} else if (rowData.type === 'ReferendumV2') {
+			path = 'referenda';
+		} else if(!rowData.origin) {
 			path = 'post';
 		}
 		if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {

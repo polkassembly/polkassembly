@@ -76,11 +76,15 @@ const TrackPostsTable: FC<ITrackPostsTableProps> = ({ posts, error }) => {
 	const router = useRouter();
 
 	function gotoPost(rowData: IPostsRowData){
+		let urlPrefix = '/referenda';
+		if (rowData.type === 'FellowshipReferendum') {
+			urlPrefix = '/member-referenda';
+		}
 		if(rowData.origin) {
 			if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
-				window?.open(`/referenda/${rowData.post_id}`, '_blank');
+				window?.open(`${urlPrefix}/${rowData.post_id}`, '_blank');
 			} else {
-				router.push(`/referenda/${rowData.post_id}`);
+				router.push(`${urlPrefix}/${rowData.post_id}`);
 			}
 		}
 	}

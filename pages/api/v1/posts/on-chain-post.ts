@@ -8,7 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
+import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -637,6 +637,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		};
 
 		let postQuery =(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES ) ? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE : GET_PROPOSAL_BY_INDEX_AND_TYPE;
+
+		if(network === AllNetworks.COLLECTIVES && proposalType === ProposalType.FELLOWSHIP_REFERENDUMS){
+			postQuery = GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE;
+		}
+
 		if(proposalType === ProposalType.ANNOUNCEMENT){
 			postQuery = GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE;
 		}

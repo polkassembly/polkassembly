@@ -29,7 +29,6 @@ import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
-import dayjs from 'dayjs';
 
 const { Content, Sider } = Layout;
 
@@ -189,7 +188,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network) || network === 'polkadot')) {
+	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network))) {
 		gov1Items.overviewItems = [
 			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'opengov', ''),
 			...gov1Items.overviewItems
@@ -233,7 +232,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]);
 	}
 
-	if(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES){
+	if(network === AllNetworks.COLLECTIVES){
+		const fellowshipItems = [getSiderMenuItem('Members', '/fellowship', <MembersIcon className='text-white' />), getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='text-sidebarBlue' />)];
+		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
+			...gov1Items.allianceItems
+		]), getSiderMenuItem('Fellowship', 'fellowship_group', null, fellowshipItems)];
+		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems, ...fellowshipItems];
+	} else if (network === AllNetworks.WESTENDCOLLECTIVES) {
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
 			...gov1Items.allianceItems
 		])];
@@ -356,7 +361,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]));
 	}
 
-	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute );
+	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
 
 	const handleMenuClick = (menuItem: any) => {
 		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
@@ -428,7 +433,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				</Drawer>
 				{
-					((network === 'polkadot' && router.asPath === '/') || (network === 'kusama' && ['/', '/opengov', '/gov-2'].includes(router.asPath))) && dayjs('2023-06-15 17:35:30').diff(dayjs()) > 0?
+					((['kusama', 'polkadot'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
 						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#EFF2F5]'>
 							{/* Dummy Collapsed Sidebar for auto margins */}
 							<OpenGovHeaderBanner />

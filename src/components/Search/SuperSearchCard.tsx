@@ -28,7 +28,7 @@ const SuperSearchCard = ({ setIsSuperSearch, setFilterBy, isSuperSearch, filterB
 			<div className='text-[#243A57] text-sm font-medium tracking-[0.01em]'>
 				<div className='flex flex-col mt-5 justify-center items-center'>
 					<EmptyResultsIcon/>
-					<span className='text-sm font-medium text-[#243A57] mt-8 tracking-[0.01em]'>No search results found. You may want to try using different keywords,.</span>
+					<span className='text-sm font-medium text-[#243A57] mt-8 tracking-[0.01em]'>No search results found. You may want to try using different keywords.</span>
 				</div>
 			</div>
 			{!isSuperSearch && <Button onClick={() => {setIsSuperSearch(true); setFilterBy(EFilterBy.Referenda);}} className='flex items-center justify-center gap-1.5 bg-[#E5007A] text-white text-sm font-medium rounded-[4px] mt-6'>

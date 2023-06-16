@@ -203,12 +203,11 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	};
 
 	const getResultData = async() => {
-
 		if(finalSearchInput.length <= 3 || !userIndex || !postIndex ){
 			setLoading(false);
 			return;
 		}
-
+		setAutoCompleteResults(initAutocompleteResults);
 		setLoading(true);
 		if(filterBy !== EFilterBy.Users){
 			const facetFilters = getFacetFileters();
@@ -306,7 +305,13 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 
 	const handleSearchOnChange = async (queryStr: string) => {
 		setSearchInput(queryStr);
-		debouncedAutoCompleteFn(queryStr);
+
+		if(autoCompleteResults.posts.length || autoCompleteResults.users.length){
+			setAutoCompleteResults(initAutocompleteResults);
+		}else {
+			debouncedAutoCompleteFn(queryStr);
+		}
+
 	};
 
 	function getMatchedWordsLength(hitObject: any) {
@@ -400,7 +405,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 			{/* Autocomplete results */}
 			{
 				((autoCompleteResults.posts.length > 0 || autoCompleteResults.users.length > 0) && searchInputErr?.err?.length == 0) &&
-				<section className='border-solid border-1 border-gray-200 rounded-b-md'>
+				<section className='border-solid border-1 border-gray-200 rounded-b-md absolute z-50 bg-white w-[90%]'>
 					{/* Posts List */}
 					<List
 						size="small"
@@ -414,7 +419,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 								<List.Item className='flex justify-start hover:cursor-pointer whitespace-nowrap hover:bg-[#FEF2F8]' onClick={() => {
 									setFilterBy(!isPost ? EFilterBy.Users : item.post_type === 'discussions' ? EFilterBy.Discussions : EFilterBy.Referenda);
 									handleSearchOnChange(cleanStr.endsWith('...') ? cleanStr.slice(0, -3) : cleanStr);
-									setFinalSearchInput(searchInput);
+									setFinalSearchInput(cleanStr);
 								}}>
 									<Markdown className='hover:text-pink_primary' md={str} isAutoComplete />
 									<span className='text-[9px] mx-2 text-gray-400'>&#9679;</span>
@@ -427,15 +432,17 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 				</section>
 			}
 
-			{finalSearchInput.length > 3 && (postResults || peopleResults) && <div className={`${loading && 'hidden'}`}>
+			{finalSearchInput.length > 3 && (postResults || peopleResults) && <div className={`${loading && 'hidden'} z-10`}>
 				<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2' }`}>
 					<Radio.Group onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage({ page: 1, totalPosts: 0 }); setUsersPage({ page: 1, totalUsers: 0 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-md:flex-col`}>
 						<Radio value={EFilterBy.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Referenda ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'} max-md:px-4`}>Referenda {filterBy === EFilterBy.Referenda && !loading && `(${postsPage?.totalPosts})`}</Radio>
 						<Radio value={EFilterBy.Users} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Users ? 'bg-[#FEF2F8] text-[#243A57] px-4' : 'text-[#667589] px-1'} max-md:px-4`}>People {filterBy === EFilterBy.Users && !loading && `(${usersPage?.totalUsers})`}</Radio>
 						<Radio value={EFilterBy.Discussions} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Discussions ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'} max-md:px-4`}>Discussions {filterBy === EFilterBy.Discussions && !loading && `(${postsPage?.totalPosts})`}</Radio>
 					</Radio.Group>
+
 					{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && <div className='flex text-xs font-medium tracking-[0.02em] text-[#667589] gap-3.5 max-md:px-0 max-md:gap-1.5'>
 						{ isSuperSearch && <NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} isSearch={true} setSelectedNetworks={setSelectedNetworks} selectedNetworks={selectedNetworks}/>}
+
 						<Popover open={openFilter.date} onOpenChange={() => setOpenFilter({ ...openFilter,date: !openFilter.date })} content={<div className='flex flex-col gap-1'>
 							<Radio.Group size='large' onChange={(e: RadioChangeEvent) => setDateFilter(e.target.value)} value={dateFilter} className={`gap-[1px] flex flex-col ${poppins.variable} ${poppins.className}`}>
 								<Radio value={EDateFilter.Today} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Today ? 'text-[#243A57]' : 'text-[#667589]'}`}>Today</Radio>
@@ -451,7 +458,9 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 								</span>
 							</div>
 						</Popover>
+
 						<FilterByTags isSearch={true} setSelectedTags={setSelectedTags} />
+
 						{filterBy === EFilterBy.Referenda && <Popover  open={openFilter.track} onOpenChange={() => setOpenFilter({ ...openFilter, track: !openFilter.track })} content={
 							<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => handleFilterChange(list, EMultipleCheckFilters.Tracks)} value={selectedTracks} >
 								{tracksArr && tracksArr?.map((track) => <Checkbox key={track?.name} value={track?.trackId} className={`text-xs font-normal py-1.5 ml-0 ${selectedTracks.includes(track?.name) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
@@ -464,6 +473,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 									{openFilter.track ?<HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> : <DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}</span>
 							</div>
 						</Popover>}
+
 						<Popover open={openFilter.topic} onOpenChange={() => setOpenFilter({ ...openFilter, topic: !openFilter.topic })} content={<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start ${poppins.className} ${poppins.variable}`} onChange={(list) => handleFilterChange(list, EMultipleCheckFilters.Topic)} value={selectedTopics} >
 							{topicOptions && topicOptions?.map((topic) => <Checkbox key={topic} value={topic} className={`text-xs font-normal py-1.5 ml-0 ${selectedTopics.includes(topic) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
 								<div className='mt-[2px]'>{topic}</div>
@@ -477,6 +487,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 						</Popover>
 					</div>}
 				</div>
+
 				<div className='mt-3 flex justify-between text-xs font-medium text-[#243A57] '>
 					<div className='flex gap-1'>
 						{isSuperSearch && selectedNetworks.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
@@ -504,13 +515,14 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 					</div>
 					<span className='text-pink_primary cursor-pointer' onClick={() => handleClearFilters()}>Clear All Filters</span>
 				</div>
+
 				{
 					(filterBy === EFilterBy.Referenda || filterBy ===  EFilterBy.Discussions)
-          && postResults && <ResultPosts setOpenModal={setOpenModal} isSuperSearch={isSuperSearch} postsData={postResults} className='mt-3' postsPage={postsPage} setPostsPage={setPostsPage}/>
+						&& postResults && <ResultPosts setOpenModal={setOpenModal} isSuperSearch={isSuperSearch} postsData={postResults} className='mt-3' postsPage={postsPage} setPostsPage={setPostsPage}/>
 				}
 
 				{filterBy === EFilterBy.Users
-        && peopleResults && <ResultPeople searchInput={finalSearchInput} setOpenModal={setOpenModal} peopleData={peopleResults} usersPage={usersPage} setUsersPage={setUsersPage} />
+					&& peopleResults && <ResultPeople searchInput={finalSearchInput} setOpenModal={setOpenModal} peopleData={peopleResults} usersPage={usersPage} setUsersPage={setUsersPage} />
 				}
 
 				{
@@ -520,8 +532,10 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 						postResultsCounts={postResults?.length || 0}
 						peopleResultsCounts={peopleResults?.length || 0}
 						isSuperSearch= {isSuperSearch}
-						filterBy={filterBy}/>}
+						filterBy={filterBy}/>
+				}
 			</div>}
+
 			<div className={`flex flex-col justify-center items-center pt-10 pb-8 gap-4 ${!loading && 'hidden'}`}>
 				<Image src={SearchLoader} alt='' height={150} width={150}/>
 				<span className='font-medium text-sm text-[#243A57] tracking-[0.01em]'>

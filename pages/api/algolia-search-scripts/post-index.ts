@@ -11,6 +11,7 @@ import algoliasearch from 'algoliasearch';
 import { getTopicFromType } from '~src/util/getTopicFromType';
 import dayjs from 'dayjs';
 import fetchSubsquid from '~src/util/fetchSubsquid';
+import { htmlOrMarkdownToText } from './htmlOrMarkdownToText';
 
 function chunkArray(array: any[], chunkSize: number) {
 	if (array.length === 0) {
@@ -86,6 +87,8 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 					}
 					const subsquidData = subsquidRes && subsquidRes?.data?.proposals?.[0];
 
+					const parsedContent = htmlOrMarkdownToText(postDocData?.content || '');
+
 					const postData = {
 						...postDocData,
 						created_at: dayjs(postDocData?.created_at?.toDate?.() || new Date()).unix(),
@@ -93,6 +96,7 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 						last_edited_at: dayjs(postDocData?.last_edited_at?.toDate?.() || new Date()).unix(),
 						network: networkDoc.id,
 						objectID: `${networkDoc.id}_${postTypeDoc.id}_${postDoc.id}`,
+						parsed_content: parsedContent || postDocData?.content || '',
 						post_type: postTypeDoc.id,
 						topic_id: postDocData?.topic?.id || postDocData?.topic_id || getTopicFromType(postDocData?.id ).id,
 						updated_at: dayjs(postDocData?.updated_at?.toDate?.() || new Date()).unix()
@@ -111,10 +115,10 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 					);
 				}
 
-				console.log(postTypeDoc.id, networkDoc.id, postRecords);
+				// console.log(postTypeDoc.id, networkDoc.id, postRecords);
 				///commit batch
 
-				// console.log('hereee =>', networkDoc.id, postTypeDoc.id, postsSnapshot.size,counter,postRecords);
+				console.log('hereee =>', networkDoc.id, postsSnapshot.size);
 				await index.saveObjects(postRecords).catch((err) => {
 					console.log(err);
 				});

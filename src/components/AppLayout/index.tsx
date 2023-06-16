@@ -486,11 +486,11 @@ export default styled(AppLayout)`
 }
 
 .ant-menu-item .anticon, .ant-menu-item-icon{
-	font-size: 18px !important;
+	font-size: 20px !important;
 }
 
 .ant-menu-item .delegation{
-font-size: 18px !important;
+font-size: 20px !important;
 }
 .ant-menu-item .delegation .opacity{
 opacity:1 !important;

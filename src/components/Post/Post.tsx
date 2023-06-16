@@ -324,7 +324,7 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
-
+	console.log('postTimeline' , post.timeline);
 	return (
 		<PostDataContextProvider initialPostData={{
 			cid: post?.cid || '',
@@ -382,14 +382,6 @@ const Post: FC<IPostProps> = (props) => {
 								/>
 							</div>
 						)}
-						{
-							proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&
-						<Link href={`/bounty/${post.parent_bounty_index}`}>
-							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-								This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
-							</div>
-						</Link>
-						}
 
 						{
 							proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) &&

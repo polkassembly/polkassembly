@@ -287,7 +287,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 			highlightPreTag:'<mark>',
 			highlightPostTag:'</mark>',
 			page: 1,
-			restrictSearchableAttributes: ['title', 'content']
+			restrictSearchableAttributes: ['title', 'parsed_content']
 		}).catch((error) => console.log('Posts autocomplete fetch error: ', error));
 
 		const userResults = await userIndex.search(queryStr, {
@@ -334,7 +334,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	};
 
 	const getAutocompleteMarkedText = (highlightResult: {[index: string]: any}) => {
-		const keysToCheck = ['content', 'title', 'profile', 'username'];
+		const keysToCheck = ['parsed_content', 'title', 'profile', 'username'];
 		let maxMatchedWordsLength = 0;
 		let maxMatchedWordsObject = null;
 
@@ -406,13 +406,13 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 						size="small"
 						dataSource={sortedAutoCompleteResults}
 						renderItem={(item) => {
-							const isPost = Boolean('title' in item);
+							const isPost = ('post_type' in item);
 							const str = getAutocompleteMarkedText(item._highlightResult) || 'No title';
 							const cleanStr = getCleanString(str);
 
 							return(
 								<List.Item className='flex justify-start hover:cursor-pointer whitespace-nowrap hover:bg-[#FEF2F8]' onClick={() => {
-									!isPost && setFilterBy(EFilterBy.Users);
+									setFilterBy(!isPost ? EFilterBy.Users : item.post_type === 'discussions' ? EFilterBy.Discussions : EFilterBy.Referenda);
 									handleSearchOnChange(cleanStr.endsWith('...') ? cleanStr.slice(0, -3) : cleanStr);
 									setFinalSearchInput(searchInput);
 								}}>

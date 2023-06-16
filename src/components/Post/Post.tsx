@@ -20,7 +20,7 @@ import OtherProposals from '../OtherProposals';
 import SidebarRight from '../SidebarRight';
 import OptionPoll from './ActionsBar/OptionPoll';
 import TrackerButton from './ActionsBar/TrackerButton';
-import DiscussionLink from './DiscussionLink';
+// import DiscussionLink from './DiscussionLink';
 import EditablePostContent from './EditablePostContent';
 import PostHeading from './PostHeading';
 import getNetwork from '~src/util/getNetwork';
@@ -87,6 +87,7 @@ const Post: FC<IPostProps> = (props) => {
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [redirection, setRedirection] = useState({
 		link: '',
 		text: ''
@@ -323,7 +324,7 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
-
+	console.log('postTimeline' , post.timeline);
 	return (
 		<PostDataContextProvider initialPostData={{
 			cid: post?.cid || '',
@@ -353,45 +354,22 @@ const Post: FC<IPostProps> = (props) => {
 		}}>
 			<>
 				<SpamAlert />
-				{!isEditing && (isOffchainPost || (isOnchainPost && redirection.link)) &&<div className='bg-white flex  flex-wrap drop-shadow-md p-3 md:p-6 rounded-md w-[94vw] lg:w-[85vw] mb-6 dashboard-heading'>
-					{post?.timeline && post?.timeline.map(obj =>
-						<>
-							{
-								obj.type==='Discussions' && <DiscussionLink isOffchainPost={isOffchainPost} /> }
-							{
-								isOnchainPost && redirection.link && (
-									<>
-										{obj.type === 'ReferendumV2' && (
-											<span className="text-[#334D6E] flex">Referendum
-												<span> #{post_id}</span>{' >> '}
-											</span>
-										)}
-										{obj.type === 'TreasuryProposal' && (
-											<Link href={redirection.link}>
-												<span className="text-[#334D6E] flex">
-													{redirection?.text.split('#').map((part, index) => {
-														if (index === 0) {
-															return part;
-														} else {
-															const id = part.match(/^\d+/)?.[0];
-															return (
-																<span key={index}>
-																	<span className="text-pink_primary"> #{id}</span>
-																</span>
-															);
-														}
-													})}
-												</span>
-											</Link>
-										)}
-									</>
-								)
-							}
-
-						</>
-					)}
-				</div>
+				{
+					!isEditing && Boolean(post.timeline?.length) && <div className='bg-white flex flex-wrap drop-shadow-md p-3 md:p-6 rounded-md w-[94vw] lg:w-[85vw] mb-6 dashboard-heading '>
+						{
+							post.timeline.map((item: any, index: number) => {
+								const type = item.type;
+								return (
+									<Link key={index} href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? item.hash: item.index}`} className='mr-4'>
+										<span className="text-[#334D6E] ">{item.type}{' >> '}</span>
+										<span className="text-pink_primary">{item.index}</span>
+									</Link>
+								);
+							})
+						}
+					</div>
 				}
+
 				<div className={`${className} grid grid-cols-1 xl:grid-cols-12 gap-9`}>
 					<div className='xl:col-span-8'>
 

@@ -433,7 +433,7 @@ export const chainProperties: types.ChainPropType = {
 	},
 	//TODO: Aleem=> Need to update collective network, currently using polkadot data
 	[network.COLLECTIVES]: {
-		blockTime: 6000,
+		blockTime: 12000,
 		category: 'polkadot',
 		chainId: 0,
 		logo: collectivesLogo,

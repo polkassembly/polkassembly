@@ -670,9 +670,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Main',
 			'name': 'root',
 			'maxDeciding': 1,
-			'decisionDeposit': 3333333333300000,
+			'decisionDeposit': 1000000000000000,
 			'preparePeriod': 1200,
-			'decisionPeriod': 201600,
+			'decisionPeriod': 403200,
 			'confirmPeriod': 14400,
 			'minEnactmentPeriod': 14400,
 			'minApproval': {
@@ -696,9 +696,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Whitelist',
 			'name': 'whitelisted_caller',
 			'maxDeciding': 100,
-			'decisionDeposit': 333333333330000,
+			'decisionDeposit': 100000000000000,
 			'preparePeriod': 300,
-			'decisionPeriod': 201600,
+			'decisionPeriod': 403200,
 			'confirmPeriod': 100,
 			'minEnactmentPeriod': 100,
 			'minApproval': {
@@ -722,9 +722,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Main',
 			'name': 'staking_admin',
 			'maxDeciding': 10,
-			'decisionDeposit': 166666666665000,
+			'decisionDeposit': 50000000000000,
 			'preparePeriod': 1200,
-			'decisionPeriod': 201600,
+			'decisionPeriod': 403200,
 			'confirmPeriod': 1800,
 			'minEnactmentPeriod': 100,
 			'minApproval': {
@@ -748,9 +748,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Treasury',
 			'name': 'treasurer',
 			'maxDeciding': 10,
-			'decisionDeposit': 33333333333000,
+			'decisionDeposit': 10000000000000,
 			'preparePeriod': 1200,
-			'decisionPeriod': 201600,
+			'decisionPeriod': 403200,
 			'confirmPeriod': 1800,
 			'minEnactmentPeriod': 14400,
 			'minApproval': {
@@ -774,9 +774,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Governance',
 			'name': 'lease_admin',
 			'maxDeciding': 10,
-			'decisionDeposit': 166666666665000,
+			'decisionDeposit': 50000000000000,
 			'preparePeriod': 1200,
-			'decisionPeriod': 201600,
+			'decisionPeriod': 403200,
 			'confirmPeriod': 1800,
 			'minEnactmentPeriod': 100,
 			'minApproval': {
@@ -800,9 +800,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Whitelist',
 			'name': 'fellowship_admin',
 			'maxDeciding': 10,
-			'decisionDeposit': 166666666665000,
+			'decisionDeposit': 50000000000000,
 			'preparePeriod': 1200,
-			'decisionPeriod': 201600,
+			'decisionPeriod': 403200,
 			'confirmPeriod': 1800,
 			'minEnactmentPeriod': 100,
 			'minApproval': {
@@ -826,9 +826,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Governance',
 			'name': 'general_admin',
 			'maxDeciding': 10,
-			'decisionDeposit': 166666666665000,
+			'decisionDeposit': 50000000000000,
 			'preparePeriod': 1200,
-			'decisionPeriod': 201600,
+			'decisionPeriod': 403200,
 			'confirmPeriod': 1800,
 			'minEnactmentPeriod': 100,
 			'minApproval': {
@@ -852,9 +852,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Main',
 			'name': 'auction_admin',
 			'maxDeciding': 10,
-			'decisionDeposit': 166666666665000,
+			'decisionDeposit': 50000000000000,
 			'preparePeriod': 1200,
-			'decisionPeriod': 201600,
+			'decisionPeriod': 403200,
 			'confirmPeriod': 1800,
 			'minEnactmentPeriod': 100,
 			'minApproval': {
@@ -878,7 +878,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Governance',
 			'name': 'referendum_canceller',
 			'maxDeciding': 1000,
-			'decisionDeposit': 333333333330000,
+			'decisionDeposit': 100000000000000,
 			'preparePeriod': 1200,
 			'decisionPeriod': 100800,
 			'confirmPeriod': 1800,
@@ -904,9 +904,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Governance',
 			'name': 'referendum_killer',
 			'maxDeciding': 1000,
-			'decisionDeposit': 1666666666650000,
+			'decisionDeposit': 500000000000000,
 			'preparePeriod': 1200,
-			'decisionPeriod': 201600,
+			'decisionPeriod': 403200,
 			'confirmPeriod': 1800,
 			'minEnactmentPeriod': 100,
 			'minApproval': {
@@ -930,7 +930,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Treasury',
 			'name': 'small_tipper',
 			'maxDeciding': 200,
-			'decisionDeposit': 33333333333,
+			'decisionDeposit': 10000000000,
 			'preparePeriod': 10,
 			'decisionPeriod': 100800,
 			'confirmPeriod': 100,
@@ -956,7 +956,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Treasury',
 			'name': 'big_tipper',
 			'maxDeciding': 100,
-			'decisionDeposit': 333333333330,
+			'decisionDeposit': 100000000000,
 			'preparePeriod': 100,
 			'decisionPeriod': 100800,
 			'confirmPeriod': 600,
@@ -982,9 +982,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Treasury',
 			'name': 'small_spender',
 			'maxDeciding': 50,
-			'decisionDeposit': 3333333333300,
+			'decisionDeposit': 1000000000000,
 			'preparePeriod': 2400,
-			'decisionPeriod': 201600,
+			'decisionPeriod': 403200,
 			'confirmPeriod': 7200,
 			'minEnactmentPeriod': 14400,
 			'minApproval': {
@@ -1008,9 +1008,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Treasury',
 			'name': 'medium_spender',
 			'maxDeciding': 50,
-			'decisionDeposit': 6666666666600,
+			'decisionDeposit': 2000000000000,
 			'preparePeriod': 2400,
-			'decisionPeriod': 201600,
+			'decisionPeriod': 403200,
 			'confirmPeriod': 14400,
 			'minEnactmentPeriod': 14400,
 			'minApproval': {
@@ -1034,9 +1034,9 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'group': 'Treasury',
 			'name': 'big_spender',
 			'maxDeciding': 50,
-			'decisionDeposit': 13333333333200,
+			'decisionDeposit': 4000000000000,
 			'preparePeriod': 2400,
-			'decisionPeriod': 201600,
+			'decisionPeriod': 403200,
 			'confirmPeriod': 28800,
 			'minEnactmentPeriod': 14400,
 			'minApproval': {
@@ -1051,266 +1051,6 @@ export const networkTrackInfo: INetworkTrackInfo = {
 					'factor': 28326977,
 					'xOffset': 53763445,
 					'yOffset': -26881723
-				}
-			}
-		},
-		[PostOrigin.CANDIDATES] : {
-			'fellowshipOrigin': true,
-			'description': 'Origin commanded by any members of the Polkadot Fellowship (no Dan grade needed)',
-			'trackId': 0,
-			'name': 'candidates',
-			'maxDeciding': 10,
-			'decisionDeposit': 3333333333300,
-			'preparePeriod': 300,
-			'decisionPeriod': 100800,
-			'confirmPeriod': 300,
-			'minEnactmentPeriod': 10,
-			'minApproval': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 500000000,
-					'ceil': 1000000000
-				}
-			},
-			'minSupport': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 0,
-					'ceil': 500000000
-				}
-			}
-		},
-		[PostOrigin.MEMBERS] : {
-			'fellowshipOrigin': true,
-			'trackId': 1,
-			'description': 'Origin commanded by rank 1 of the Polkadot Fellowship and with a success of 1',
-			'name': 'members',
-			'maxDeciding': 10,
-			'decisionDeposit': 333333333330,
-			'preparePeriod': 300,
-			'decisionPeriod': 100800,
-			'confirmPeriod': 300,
-			'minEnactmentPeriod': 10,
-			'minApproval': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 500000000,
-					'ceil': 1000000000
-				}
-			},
-			'minSupport': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 0,
-					'ceil': 500000000
-				}
-			}
-		},
-		[PostOrigin.PROFICIENTS] : {
-			'fellowshipOrigin': true,
-			'trackId': 2,
-			'description': 'Origin commanded by rank 2 of the Polkadot Fellowship and with a success of 2',
-			'name': 'proficients',
-			'maxDeciding': 10,
-			'decisionDeposit': 333333333330,
-			'preparePeriod': 300,
-			'decisionPeriod': 100800,
-			'confirmPeriod': 300,
-			'minEnactmentPeriod': 10,
-			'minApproval': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 500000000,
-					'ceil': 1000000000
-				}
-			},
-			'minSupport': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 0,
-					'ceil': 500000000
-				}
-			}
-		},
-		[PostOrigin.FELLOWS] : {
-			'fellowshipOrigin': true,
-			'trackId': 3,
-			'description': 'Origin commanded by Polkadot Fellows (3rd Dan fellows or greater)',
-			'name': 'fellows',
-			'maxDeciding': 10,
-			'decisionDeposit': 333333333330,
-			'preparePeriod': 300,
-			'decisionPeriod': 100800,
-			'confirmPeriod': 300,
-			'minEnactmentPeriod': 10,
-			'minApproval': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 500000000,
-					'ceil': 1000000000
-				}
-			},
-			'minSupport': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 0,
-					'ceil': 500000000
-				}
-			}
-		},
-		[PostOrigin.SENIOR_FELLOWS] : {
-			'fellowshipOrigin': true,
-			'trackId': 4,
-			'description': 'Origin commanded by rank 4 of the Polkadot Fellowship and with a success of 4',
-			'name': 'senior fellows',
-			'maxDeciding': 10,
-			'decisionDeposit': 333333333330,
-			'preparePeriod': 300,
-			'decisionPeriod': 100800,
-			'confirmPeriod': 300,
-			'minEnactmentPeriod': 10,
-			'minApproval': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 500000000,
-					'ceil': 1000000000
-				}
-			},
-			'minSupport': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 0,
-					'ceil': 500000000
-				}
-			}
-		},
-		[PostOrigin.EXPERTS] : {
-			'fellowshipOrigin': true,
-			'trackId': 5,
-			'description': 'Origin commanded by Polkadot Experts (5th Dan fellows or greater)',
-			'name': 'experts',
-			'maxDeciding': 10,
-			'decisionDeposit': 33333333333,
-			'preparePeriod': 300,
-			'decisionPeriod': 100800,
-			'confirmPeriod': 300,
-			'minEnactmentPeriod': 10,
-			'minApproval': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 500000000,
-					'ceil': 1000000000
-				}
-			},
-			'minSupport': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 0,
-					'ceil': 500000000
-				}
-			}
-		},
-		[PostOrigin.SENIOR_EXPERTS] : {
-			'fellowshipOrigin': true,
-			'trackId': 6,
-			'description': 'Origin commanded by rank 6 of the Polkadot Fellowship and with a success of 6',
-			'name': 'senior experts',
-			'maxDeciding': 10,
-			'decisionDeposit': 33333333333,
-			'preparePeriod': 300,
-			'decisionPeriod': 100800,
-			'confirmPeriod': 300,
-			'minEnactmentPeriod': 10,
-			'minApproval': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 500000000,
-					'ceil': 1000000000
-				}
-			},
-			'minSupport': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 0,
-					'ceil': 500000000
-				}
-			}
-		},
-		[PostOrigin.MASTERS] : {
-			'fellowshipOrigin': true,
-			'trackId': 7,
-			'description': 'Origin commanded by Polkadot Masters (7th Dan fellows of greater)',
-			'name': 'masters',
-			'maxDeciding': 10,
-			'decisionDeposit': 33333333333,
-			'preparePeriod': 300,
-			'decisionPeriod': 100800,
-			'confirmPeriod': 300,
-			'minEnactmentPeriod': 10,
-			'minApproval': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 500000000,
-					'ceil': 1000000000
-				}
-			},
-			'minSupport': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 0,
-					'ceil': 500000000
-				}
-			}
-		},
-		[PostOrigin.SENIOR_MASTERS] : {
-			'fellowshipOrigin': true,
-			'trackId': 8,
-			'description': 'Origin commanded by rank 8 of the Polkadot Fellowship and with a success of 8',
-			'name': 'senior masters',
-			'maxDeciding': 10,
-			'decisionDeposit': 33333333333,
-			'preparePeriod': 300,
-			'decisionPeriod': 100800,
-			'confirmPeriod': 300,
-			'minEnactmentPeriod': 10,
-			'minApproval': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 500000000,
-					'ceil': 1000000000
-				}
-			},
-			'minSupport': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 0,
-					'ceil': 500000000
-				}
-			}
-		},
-		[PostOrigin.GRAND_MASTERS] : {
-			'fellowshipOrigin': true,
-			'trackId': 9,
-			'description': 'Origin commanded by rank 9 of the Polkadot Fellowship and with a success of 9',
-			'name': 'grand masters',
-			'maxDeciding': 10,
-			'decisionDeposit': 33333333333,
-			'preparePeriod': 300,
-			'decisionPeriod': 100800,
-			'confirmPeriod': 300,
-			'minEnactmentPeriod': 10,
-			'minApproval': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 500000000,
-					'ceil': 1000000000
-				}
-			},
-			'minSupport': {
-				'linearDecreasing': {
-					'length': 1000000000,
-					'floor': 0,
-					'ceil': 500000000
 				}
 			}
 		}

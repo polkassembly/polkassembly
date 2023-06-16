@@ -101,7 +101,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	return (
 		<div className={`${className} bg-white drop-shadow-md rounded-xxl p-4 md:p-8`}>
 			<div className="flex justify-between">
-				<div className='flex items-center gap-x-2'>
+				<div className='flex items-center gap-x-2 xs:flex-wrap'>
 					<h2 className="text-xl font-semibold leading-8 text-bodyBlue">
 						About {trackName.split(/(?=[A-Z])/).join(' ')}
 					</h2>

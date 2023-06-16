@@ -383,7 +383,7 @@ class AuthService {
 			if (!userQuerySnapshot.empty) throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
 		}
 
-		const user = await this.createUser(email, password, username, false, network);
+		const user = await this.createUser(email, password, username, false, network, true);
 
 		await this.createAndSendEmailVerificationToken(user, network);
 

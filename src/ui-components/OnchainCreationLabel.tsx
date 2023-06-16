@@ -29,10 +29,10 @@ const OnchainCreationLabel = ({ address, topic, username, truncateUsername }:Pro
 										address={address}
 										className='address ml-1.5'
 										displayInline={true}
-										isShortenAddressLength={truncateUsername}
+										truncateUsername={truncateUsername}
 									/>
 									: <span
-										className='mx-1.5'
+										className='mx-1.5 max-w-[150px] text-ellipsis overflow-hidden'
 									>
 										<Link href={`/user/${username}`}>{username}</Link>
 									</span>

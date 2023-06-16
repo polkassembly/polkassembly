@@ -59,15 +59,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const profile = {
 		badges,
 		bio: bio || '',
-		custom_username:custom_username,
 		image: image || '',
 		social_links: newSocialLinks || [],
 		title: title || ''
 	};
 
-	const updated_token = await authServiceInstance.getSignedToken({ ...user, profile, username });
+	const updated_token = await authServiceInstance.getSignedToken({ ...user, custom_username: custom_username, profile, username });
 
-	await userRef.update({ profile, username }).then(() => {
+	await userRef.update({ custom_username: custom_username, profile, username }).then(() => {
 		return res.status(200).json({ token: updated_token });
 	}).catch((error) => {
 		// The document probably doesn't exist.

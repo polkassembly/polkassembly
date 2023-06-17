@@ -15,10 +15,13 @@ import { useRouter } from 'next/router';
 import { PageLink } from '~src/global/post_categories';
 import BackToListingView from '~src/ui-components/BackToListingView';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import NotificationUpgradingState from '~src/components/Settings/Notifications/NotificationChannels/NotificationUpgradingState';
 
 interface Props {
 	network: string
 }
+
+const AVAILABLE_NETWORK = ['pendulum', 'cere'];
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -31,18 +34,18 @@ const Settings: FC<Props> = (props) => {
 	const tab = router.query?.tab as string;
 	const { id } = useUserDetailsContext();
 	const [searchQuery, setSearchQuery] = useState<string>('');
-	const handleTabClick =(key:string) => {
+	const handleTabClick = (key: string) => {
 		router.push(`/settings?tab=${key}`);
 	};
-	const tabItems =useMemo(() => [
-		{ children: <UserAccount network={network}/>, key: 'account', label: 'Account' },
-		{ children: <Notifications network={network}/>, key: 'notifications', label: 'Notifications' },
-		{ children: <Tracker network={network}/>, key: 'tracker', label: 'Tracker' }
-	],[network]) ;
+	const tabItems = useMemo(() => [
+		{ children: <UserAccount network={network} />, key: 'account', label: 'Account' },
+		{ children: AVAILABLE_NETWORK.includes(network) ? <Notifications network={network} /> : <NotificationUpgradingState />, key: 'notifications', label: 'Notifications' },
+		{ children: <Tracker network={network} />, key: 'tracker', label: 'Tracker' }
+	], [network]);
 
 	useEffect(() => {
 		if (router.isReady) {
-			if(!id){
+			if (!id) {
 				router.push('/login');
 			}
 			if (!tabItems.map(t => t.key).includes(tab)) {
@@ -63,8 +66,8 @@ const Settings: FC<Props> = (props) => {
 		<>
 			<SEOHead title='Settings' network={network} />
 			{Object.keys(networkTrackInfo).includes(network) ?
-				<BackToListingView postCategory={PageLink.OVERVIEW_GOV_2} trackName='Overview'/>:
-				<BackToListingView postCategory={PageLink.OVERVIEW} trackName='Overview'/>
+				<BackToListingView postCategory={PageLink.OVERVIEW_GOV_2} trackName='Overview' /> :
+				<BackToListingView postCategory={PageLink.OVERVIEW} trackName='Overview' />
 			}
 
 			<Col className='w-full h-full'>

@@ -347,13 +347,13 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	return (
 		<div className={`${className} sm:grid ${!['polymesh', 'polymesh-test'].includes(network) && 'sm:grid-rows-2'} sm:grid-cols-2 sm:grid-flow-col sm:gap-4 lg:flex`}>
 			{/* Available */}
-			<div className="xs:my-3 sm:my-0 flex flex-1 justify-between bg-white drop-shadow-md p-3 h-40 sm:w-52 lg:px-6 lg:py-3 rounded-xxl">
+			<div className="xs:my-3 sm:my-0 sm:mr-4 flex flex-1 justify-between bg-white drop-shadow-md p-3 h-36 sm:w-52 lg:px-6 lg:py-2 rounded-xxl">
 				<div className='flex flex-col justify-evenly gap-x-0'>
 					{
 						!available.isLoading ?
 							<>
 								<div className="flex items-center">
-									<span className="mr-2 text-xs leading-5 text-lightBlue font-medium">
+									<span className="mr-2 text-xs leading-5 text-lightBlue font-medium p-0">
 									Available
 									</span>
 									<HelperTooltip
@@ -361,7 +361,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										className='text-xs leading-5 text-lightBlue font-medium'
 									/>
 								</div>
-								<div className="flex justify-between lg:-mt-2 font-medium">
+								<div className="flex justify-between font-medium">
 									{
 										available.value ?
 											<span className='text-lg text-bodyBlue font-medium'>
@@ -402,7 +402,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 			{/* CurrentPrice */}
 			{network !== 'moonbase' &&
-				<div className="xs:my-3 sm:my-0 flex-1 flex justify-between bg-white drop-shadow-md p-3 h-40 sm:w-52 lg:px-6 lg:py-3 rounded-xxl">
+				<div className="xs:my-3 sm:my-0 sm:mr-4 flex flex-1 justify-between bg-white drop-shadow-md p-3 h-36 sm:w-52 lg:px-6 lg:py-2 rounded-xxl">
 					<div className='flex flex-col justify-evenly gap-x-0'>
 						{
 							!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading)?
@@ -454,77 +454,9 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				</div>
 			}
 
-			{/* Spend Period */}
-			{!['polymesh', 'polymesh-test'].includes(network) && <>
-				{!inTreasuryProposals &&
-				<div className="xs:my-3 sm:my-0 flex-1 flex justify-between bg-white drop-shadow-md p-3 h-40 sm:w-52 lg:px-6 lg:py-3 rounded-xxl">
-					<div className='flex flex-col justify-evenly gap-x-0'>
-						{
-							!spendPeriod.isLoading?
-								<>
-									<div className="flex items-center">
-										<span className='mr-2 text-xs leading-5 text-lightBlue font-medium'>
-										Spend Period
-										</span>
-
-										<HelperTooltip
-											text='Funds held in the treasury can be spent by making a spending proposal that, if approved by the Council, will enter a spend period before distribution, it is subject to governance, with the current default set to 24 days.'
-											className='text-xs leading-5 text-lightBlue font-medium'
-										/>
-									</div>
-
-									<div className="text-bodyBlue flex justify-between font-medium lg:-mt-2">
-										{spendPeriod.value?.total
-											? <>
-												{
-													spendPeriod.value?.days?
-														<>
-															<span className='text-lg'>{spendPeriod.value.days}</span>
-															<span className='text-lightBlue text-xs mt-2'>days</span>
-														</>
-														: null
-												}
-												<span className='text-lg'>{spendPeriod.value.hours}</span>
-												<span className='text-lightBlue text-xs mt-2'>hrs</span>
-												{
-													!spendPeriod.value?.days?
-														<>
-															<span className='text-lg'>{spendPeriod.value.minutes}</span>
-															<span className='text-lightBlue text-xs mt-2'>mins</span>
-														</>
-														: null
-												}
-												<span className="text-lightBlue text-xs mt-2"> / {spendPeriod.value.total} days </span>
-											</>
-											: 'N/A'
-										}
-									</div>
-									{
-										<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
-											<Divider
-												style={{
-													background: '#D2D8E0'
-												}}
-												className='m-0 p-0 w-40' />
-											<span className='flex items-center'>
-												<Progress className='m-0 p-0 flex items-center' percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0} trailColor='#E1E6EB' strokeColor='#E5007A' size="small" />
-											</span>
-										</div>
-									}
-								</>
-								:  <div className='min-h-[89px] w-full flex items-center justify-center'>
-									<LoadingOutlined />
-								</div>
-						}
-					</div>
-					<SpendPeriod className="mt-6"/>
-				</div>
-				}
-			</>}
-
 			{/* Next Burn */}
 			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
-				<div className="xs:my-3 sm:my-0 flex-1 flex justify-between bg-white drop-shadow-md p-3 h-40 sm:w-52 lg:px-6 lg:py-3 rounded-xxl">
+				<div className="xs:my-3 sm:my-0 flex flex-1 justify-between bg-white drop-shadow-md p-3 h-36 sm:w-52 lg:px-6 lg:py-2 rounded-xxl">
 					<div className='flex flex-col justify-evenly gap-x-0'>
 						{
 							!nextBurn.isLoading?
@@ -571,6 +503,74 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					<NextBurn className="mt-3"/>
 				</div>
 			}
+
+			{/* Spend Period */}
+			{!['polymesh', 'polymesh-test'].includes(network) && <>
+				{!inTreasuryProposals &&
+				<div className="xs:my-3 sm:my-0 sm:mr-4 flex flex-1 justify-between bg-white drop-shadow-md p-3 h-36 sm:w-52 lg:px-6 lg:py-2 rounded-xxl">
+					<div className='flex flex-col justify-evenly gap-x-0'>
+						{
+							!spendPeriod.isLoading?
+								<>
+									<div className="flex items-center">
+										<span className='mr-2 text-xs leading-5 text-lightBlue font-medium'>
+										Spend Period
+										</span>
+
+										<HelperTooltip
+											text='Funds held in the treasury can be spent by making a spending proposal that, if approved by the Council, will enter a spend period before distribution, it is subject to governance, with the current default set to 24 days.'
+											className='text-xs leading-5 text-lightBlue font-medium'
+										/>
+									</div>
+
+									<div className="text-bodyBlue flex justify-between font-medium">
+										{spendPeriod.value?.total
+											? <>
+												{
+													spendPeriod.value?.days?
+														<>
+															<span className='text-lg'>{spendPeriod.value.days}</span>
+															<span className='text-lightBlue text-xs mt-2'>days</span>
+														</>
+														: null
+												}
+												<span className='text-lg'>{spendPeriod.value.hours}</span>
+												<span className='text-lightBlue text-xs mt-2'>hrs</span>
+												{
+													!spendPeriod.value?.days?
+														<>
+															<span className='text-lg'>{spendPeriod.value.minutes}</span>
+															<span className='text-lightBlue text-xs mt-2'>mins</span>
+														</>
+														: null
+												}
+												<span className="text-lightBlue text-xs mt-2">/{spendPeriod.value.total} days </span>
+											</>
+											: 'N/A'
+										}
+									</div>
+									{
+										<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3 lg:my-1'>
+											<Divider
+												style={{
+													background: '#D2D8E0'
+												}}
+												className='m-0 p-0 w-40' />
+											<span className='flex items-center'>
+												<Progress className='m-0 p-0 flex items-center' percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0} trailColor='#E1E6EB' strokeColor='#E5007A' size="small" />
+											</span>
+										</div>
+									}
+								</>
+								:  <div className='min-h-[89px] w-full flex items-center justify-center'>
+									<LoadingOutlined />
+								</div>
+						}
+					</div>
+					<SpendPeriod className="mt-6"/>
+				</div>
+				}
+			</>}
 		</div>
 	);
 };

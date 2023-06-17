@@ -140,10 +140,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const gov1Items: {[x:string]: ItemType[]} = {
 		overviewItems: [
 			getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white' />),
-			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white' />),
+			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1' />),
 			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
-			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white' />)
+			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-2' />)
 		],
 		democracyItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
@@ -276,17 +276,17 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	let gov2OverviewItems = [
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-white' />),
-		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white' />),
+		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
-		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white' />),
+		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-2' />),
 		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='text-sidebarBlue' />)
 	];
 
 	if(['kusama', 'polkadot'].includes(network)){
-		gov2OverviewItems.splice(1, 0, getSiderMenuItem(<div className='flex gap-2 items-center'>Delegation <span className='px-[6px] py-[2px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-xs'>New</span></div>, '/delegation',  !sidedrawer ? <div className='flex flex-col items-center gap-0 delegation'><DelegatedIcon className= '-ml-1'/>
+		gov2OverviewItems.splice(1, 0, getSiderMenuItem(<div className='flex gap-2 items-center'>Delegation <span className='px-[6px] py-[2px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-xs'>New</span></div>, '/delegation',  !sidedrawer ? <div className='flex flex-col items-center gap-0 delegation'><DelegatedIcon className= 'ml-0.5'/>
 			<span className='px-[4px] py-[1px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-[10px] -mt-1 ml-[-2px] opacity'>New</span>
-		</div> : <DelegatedIcon className= '-ml-1 mr-1'/> ));
+		</div> : <DelegatedIcon className= 'mt-1'/> ));
 	}
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
@@ -313,7 +313,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	];
 
 	if (isFellowshipSupported(network)) {
-		gov2Items.splice(gov2Items.length - 1, 1, getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [
+		gov2Items.splice(gov2Items.length - 1, 1, getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue mt-1' />, [
 			...gov2TrackItems.fellowshipItems
 		]));
 	}

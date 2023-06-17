@@ -78,12 +78,12 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					<div className="-mt-2 font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
 
 						<div className='flex items-center gap-x-2'>
-							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5 mr-2'>
+							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
 								<LikeOutlined style={{ color: '#485F7D' }} />
 								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
 
-							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5 mr-2'>
+							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
 								<DislikeOutlined style={{ color: '#485F7D' }} />
 								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>

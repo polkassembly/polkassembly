@@ -6,15 +6,13 @@ import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isProposalTypeValid } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
-import getMentionedUsernames from '~src/api-utils/getMentionedUsernames';
-import _sendCommentMentionMail from '~src/api-utils/_sendCommentMentionMail';
-import sendCommentMailToPostSubs from '~src/api-utils/sendCommentMailToPostSubs';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { PostComment } from '~src/types';
+import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -57,14 +55,29 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		user_profile_img: user?.profile?.image || '',
 		username: user.username
 	};
+
 	await newCommentRef.set(newComment).then(() => {
 		postRef.update({
 			last_comment_at
 		});
 
-		sendCommentMailToPostSubs(network, strProposalType, String(postId), content, newCommentRef.id, user);
-		const mentions = getMentionedUsernames(content).filter((username) => username !== user.username);
-		_sendCommentMentionMail(network, strProposalType, String(postId), content, newCommentRef.id, user, mentions);
+		const triggerName = 'newCommentAdded';
+
+		const args = {
+			commentId:String(newComment.id),
+			network,
+			postId:String(postId),
+			postType:strProposalType
+		};
+
+		fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
+			body: JSON.stringify({
+				args,
+				trigger: triggerName
+			}),
+			headers: firebaseFunctionsHeader(network),
+			method: 'POST'
+		});
 
 		return res.status(200).json({
 			id: newComment.id

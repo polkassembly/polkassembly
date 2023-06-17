@@ -47,7 +47,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:
 	}, []);
 
 	const [displayWeb, setDisplayWeb] = useState(2);
-	const [chosenWallet, setChosenWallet] = useState<Wallet>();
+	const [chosenWallet, setChosenWallet] = useState<Wallet |null>(null);
 	const [walletError, setWalletError] =  useState<string | undefined>();
 
 	const setDisplayWeb2 = () => setDisplayWeb(2);
@@ -55,6 +55,10 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:
 	const onWalletSelect = (wallet: Wallet) => {
 		setChosenWallet(wallet);
 		setDisplayWeb(3);
+	};
+	const onWalletUpdate = () => {
+		setChosenWallet(null);
+		setDisplayWeb(2);
 	};
 	const [method, setMethod] = useState('');
 
@@ -90,6 +94,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:
 											chosenWallet={chosenWallet}
 											setDisplayWeb2={setDisplayWeb2}
 											setWalletError={setWalletError}
+											onWalletUpdate={onWalletUpdate}
 										/>
 							}
 						</>

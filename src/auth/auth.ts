@@ -116,7 +116,7 @@ class AuthService {
 		});
 
 		const newUserPreference: IUserPreference = {
-			notification_settings: NOTIFICATION_DEFAULTS,
+			notification_preferences: NOTIFICATION_DEFAULTS,
 			post_subscriptions: {},
 			user_id: newUserId
 		};
@@ -155,7 +155,16 @@ class AuthService {
 	private async createAndSendEmailVerificationToken (user: User, network:string): Promise<void> {
 		if (user.email) {
 			const verifyToken = uuidv4();
+			await redisSetex(getEmailVerificationTokenKey(verifyToken), ONE_DAY, user.email);
 
+			// send verification email in background
+			sendVerificationEmail(user, verifyToken, network);
+		}
+	}
+
+	private async sendEmailVerificationToken (user: User, network:string): Promise<any> {
+		if (user.email) {
+			const verifyToken = uuidv4();
 			await redisSetex(getEmailVerificationTokenKey(verifyToken), ONE_DAY, user.email);
 
 			// send verification email in background
@@ -529,8 +538,20 @@ class AuthService {
 		if (userQuerySnapshot.empty) throw apiErrorWithStatusCode(messages.EMAIL_VERIFICATION_USER_NOT_FOUND, 400);
 
 		const userDoc = userQuerySnapshot.docs[0];
-
-		await userDoc.ref.update({ email_verified: true });
+		const userDocData = userDoc.data();
+		await userDoc.ref.update({
+			email_verified: true,
+			notification_preferences:{ ...userDocData.notification_preferences,
+				channelPreferences:{
+					...userDocData.notification_preferences.channelPreferences,
+					email:{
+						email: email,
+						enabled: true,
+						verified: true
+					}
+				}
+			}
+		});
 		await redisDel(getEmailVerificationTokenKey(token));
 
 		const user = await getUserFromUserId(Number(userDoc.id));
@@ -544,28 +565,28 @@ class AuthService {
 		const userPreferenceRef = networkDocRef(network).collection('user_preferences').doc(String(userId));
 		const userPreferenceSnapshot = await userPreferenceRef.get();
 
-		const getUpdatedNotificationSettings: (notification_settings: NotificationSettings) => NotificationSettings = (notification_settings) => {
+		const getUpdatedNotificationSettings: (notification_preferences: NotificationSettings) => NotificationSettings = (notification_preferences) => {
 			return {
-				new_proposal: new_proposal === undefined ? notification_settings.new_proposal : new_proposal,
-				own_proposal: own_proposal === undefined ? notification_settings.own_proposal : own_proposal,
-				post_created: post_created === undefined ? notification_settings.post_created : post_created,
-				post_participated: post_participated === undefined ? notification_settings.post_participated : post_participated
+				new_proposal: new_proposal === undefined ? notification_preferences.new_proposal : new_proposal,
+				own_proposal: own_proposal === undefined ? notification_preferences.own_proposal : own_proposal,
+				post_created: post_created === undefined ? notification_preferences.post_created : post_created,
+				post_participated: post_participated === undefined ? notification_preferences.post_participated : post_participated
 			};
 		};
 
 		let update: NotificationSettings = getUpdatedNotificationSettings(NOTIFICATION_DEFAULTS);
 		if (userPreferenceSnapshot.exists) {
-			const { notification_settings } = userPreferenceSnapshot.data() as IUserPreference;
-			update = getUpdatedNotificationSettings(notification_settings);
+			const { notification_preferences } = userPreferenceSnapshot.data() as IUserPreference;
+			update = getUpdatedNotificationSettings(notification_preferences);
 			await userPreferenceRef.update({
-				notification_settings: update
+				notification_preferences: update
 			}).catch(err => {
 				console.log('error in updating user preference', err);
 				throw apiErrorWithStatusCode(messages.ERROR_UPDATING_USER_PREFERENCE, 500);
 			});
 		} else {
 			await userPreferenceRef.set({
-				notification_settings: update,
+				notification_preferences: update,
 				post_subscriptions: {},
 				user_id: userId
 			}).catch(err => {
@@ -582,10 +603,10 @@ class AuthService {
 		const userPreferenceRef = networkDocRef(network).collection('user_preferences').doc(String(userId));
 		const userPreferenceSnapshot = await userPreferenceRef.get();
 
-		let notification_settings = NOTIFICATION_DEFAULTS;
+		let notification_preferences = NOTIFICATION_DEFAULTS;
 		if (!userPreferenceSnapshot.exists) {
 			await userPreferenceRef.set({
-				notification_settings: notification_settings,
+				notification_preferences: notification_preferences,
 				post_subscriptions: {},
 				user_id: userId
 			}).catch(err => {
@@ -593,9 +614,9 @@ class AuthService {
 				throw apiErrorWithStatusCode(messages.ERROR_CREATING_USER_PREFERENCE, 500);
 			});
 		} else {
-			notification_settings = (userPreferenceSnapshot.data() as IUserPreference).notification_settings;
+			notification_preferences = (userPreferenceSnapshot.data() as IUserPreference).notification_preferences;
 		}
-		return notification_settings;
+		return notification_preferences;
 	}
 
 	public async resendVerifyEmailToken (token: string, network: string): Promise<void> {
@@ -1044,6 +1065,52 @@ class AuthService {
 		proposalEventDoc.ref.update({
 			status: status
 		});
+	}
+	public async SendVerifyEmail (token: string, email: string, network: string): Promise<any> {
+		const userId = getUserIdFromJWT(token, jwtPublicKey);
+		const firestore = firebaseAdmin.firestore();
+
+		if (email !== '') {
+			const alreadyExists = !(await firestore.collection('users').where('id', '!=', userId).where('email', '==', email).limit(1).get()).empty;
+			if (alreadyExists) throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
+		}
+
+		let user = await getUserFromUserId(userId);
+
+		const existingUndoTokenDoc = await firestore.collection('undo_email_change_tokens').where('user_id', '==', userId).limit(1).get();
+
+		if (existingUndoTokenDoc.size > 0 && existingUndoTokenDoc.docs[0].data().valid) {
+			const now = dayjs();
+			const last = dayjs(existingUndoTokenDoc.docs[0].data().created_at);
+			const hours = dayjs.duration(now.diff(last)).asHours();
+
+			if (hours < 48) {
+				throw apiErrorWithStatusCode(messages.EMAIL_CHANGE_NOT_ALLOWED_YET, 403);
+			}
+		}
+
+		const newUndoEmailChangeToken: UndoEmailChangeToken = {
+			created_at: new Date(),
+			email: user.email,
+			token: uuidv4(),
+			user_id: user.id,
+			valid: true
+		};
+
+		await firestore.collection('undo_email_change_tokens').add(newUndoEmailChangeToken);
+
+		await firestore.collection('users').doc(String(user.id)).update({
+			email,
+			email_verified: false
+		});
+
+		user = await getUserFromUserId(userId);
+
+		await this.sendEmailVerificationToken(user, network);
+		// send undo token in background
+		sendUndoEmailChangeEmail(user, newUndoEmailChangeToken, network);
+
+		return this.getSignedToken(user);
 	}
 }
 

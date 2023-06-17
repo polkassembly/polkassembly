@@ -52,7 +52,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 	const currentUser = useUserDetailsContext();
 	const router = useRouter();
 	const [displayWeb, setDisplayWeb] = useState(2);
-	const [chosenWallet, setChosenWallet] = useState<Wallet>();
+	const [chosenWallet, setChosenWallet] = useState<Wallet |null>(null);
 	const [walletError, setWalletError] =  useState<string | undefined>();
 
 	const setDisplayWeb2 = () => setDisplayWeb(2);
@@ -60,6 +60,11 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 	const onWalletSelect = (wallet: Wallet) => {
 		setChosenWallet(wallet);
 		setDisplayWeb(3);
+	};
+
+	const onWalletUpdate = () => {
+		setChosenWallet(null);
+		setDisplayWeb(2);
 	};
 
 	const setPolkadotWallet = () => {
@@ -94,6 +99,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 											chosenWallet={chosenWallet}
 											setDisplayWeb2={setDisplayWeb2}
 											setWalletError={setWalletError}
+											onWalletUpdate={onWalletUpdate}
 										/>
 							}
 						</>

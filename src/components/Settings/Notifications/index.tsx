@@ -133,6 +133,9 @@ export default function Notifications({ network }: { network: string }) {
 	};
 
 	const handleSetNetworkPreferences = async (networks: Array<string>) => {
+		if(!networkPreferences?.triggerPreferences?.[network]){
+			return;
+		}
 		try {
 			const { data, error } = (await nextApiClientFetch(
 				'api/v1/auth/actions/setNetworkPreferences',

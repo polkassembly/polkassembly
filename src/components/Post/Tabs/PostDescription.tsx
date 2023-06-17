@@ -77,7 +77,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 						className='reactions'
 						post_reactions={post_reactions}
 					/>
-					{id && !isEditing && <SubscriptionButton postId={postIndex} proposalType={postType} />}
+					{!canEdit && id && !isEditing && <SubscriptionButton postId={postIndex} proposalType={postType} />}
 					{canEdit && <Button className={'text-pink_primary flex items-center border-none shadow-none px-1.5'} onClick={toggleEdit}><FormOutlined />Edit</Button>}
 				</div>
 				<div className='flex items-center'>

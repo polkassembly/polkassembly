@@ -27,13 +27,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<UpdatedDataResp
 	if(!token) return res.status(400).json({ message: 'Invalid token' });
 
 	try {
-		const notification_settings = await authServiceInstance.ChangeNotificationPreference(token, {
+		const notification_preferences = await authServiceInstance.ChangeNotificationPreference(token, {
 			new_proposal,
 			own_proposal,
 			post_created,
 			post_participated
 		}, network);
-		return res.status(200).json({ message: messages.NOTIFICATION_PREFERENCE_CHANGE_SUCCESSFUL, updated: notification_settings });
+		return res.status(200).json({ message: messages.NOTIFICATION_PREFERENCE_CHANGE_SUCCESSFUL, updated: notification_preferences });
 	} catch (error) {
 		return res.status(Number(error.name)).json({ message: error?.message });
 	}

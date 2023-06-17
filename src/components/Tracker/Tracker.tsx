@@ -2,34 +2,18 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Col,Row } from 'antd';
-import { GetServerSideProps } from 'next';
+import { Col, Row } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
-
-import { getNetworkFromReqHeaders } from '~src/api-utils';
 import ListingContainer from '~src/components/Tracker/ListingContainer';
-import { useNetworkContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 
-interface ITrackerContainerProps {
+interface ITrackerProps {
 	className?: string;
-	network: string;
+	network: string
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
-	return { props: { network } };
-};
-
-const TrackerContainer: FC<ITrackerContainerProps> = (props) => {
-	const { className, network } = props;
-	const { setNetwork } = useNetworkContext();
-
-	useEffect(() => {
-		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+const Tracker: FC<ITrackerProps> = ({ className, network }) => {
 
 	const [ids, setIds] = useState({
 		bounty: [],
@@ -43,7 +27,7 @@ const TrackerContainer: FC<ITrackerContainerProps> = (props) => {
 
 	useEffect(() => {
 		let trackerMap: any = {};
-		if(typeof window !== undefined) {
+		if (typeof window !== undefined) {
 			trackerMap = JSON.parse(global.window?.localStorage.getItem('trackMap') || '{}');
 		}
 		const ids: any = {
@@ -56,21 +40,21 @@ const TrackerContainer: FC<ITrackerContainerProps> = (props) => {
 			treasuryProposal: []
 		};
 		Object.entries(trackerMap || {}).forEach(([key, value]) => {
-			ids[key] = Object.keys(value || {}).map((k) => key === 'tipProposal'? String(k): Number(k));
+			ids[key] = Object.keys(value || {}).map((k) => key === 'tipProposal' ? String(k) : Number(k));
 		});
 		setIds(ids);
 	}, []);
 
 	return (
 		<>
-			<SEOHead title='Tracker' network={network}/>
+			<SEOHead title='Tracker' network={network} />
 			<div className={className}>
 				<h1 className='dashboard-heading mb-4 md:mb-6'> Tracker</h1>
 
 				{/* Intro and Create Post Button */}
 				<div className="flex flex-col md:flex-row">
 					<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
-					This is a place to keep track of on chain posts.
+						This is a place to keep track of on chain posts.
 					</p>
 				</div>
 				<Row gutter={[0, 16]}>
@@ -117,7 +101,7 @@ const TrackerContainer: FC<ITrackerContainerProps> = (props) => {
 							proposalType={ProposalType.TIPS}
 						/>
 					</Col>
-					<Col  span={24}>
+					<Col span={24}>
 						<ListingContainer
 							title='Bounties'
 							postIds={ids.bounty}
@@ -131,4 +115,4 @@ const TrackerContainer: FC<ITrackerContainerProps> = (props) => {
 
 };
 
-export default TrackerContainer;
+export default Tracker;

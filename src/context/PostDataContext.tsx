@@ -52,7 +52,8 @@ export interface IPostData {
             name: string;
         };
         tags?: string[]
-    }
+    },
+    subscribers: number[],
     track_name?: string;
     track_number?: number;
     tags: string[] | [];

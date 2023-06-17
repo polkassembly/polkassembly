@@ -737,6 +737,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			statusHistory: postData?.statusHistory,
 			submission_deposit_amount: postData?.submissionDeposit?.amount,
 			submitted_amount: postData?.submissionDeposit?.amount,
+			subscribers: [],
 			tally: postData?.tally,
 			timeline: [],
 			topic: topicFromType,
@@ -867,6 +868,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.last_edited_at = getUpdatedAt(data);
 				post.tags = data?.tags;
 				post.gov_type = data?.gov_type;
+				post.subscribers = data?.subscribers || [];
 				const post_link = data?.post_link;
 				if (post_link) {
 					const { id, type } = post_link;

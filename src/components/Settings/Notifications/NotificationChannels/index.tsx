@@ -39,8 +39,6 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 	const { network } = useNetworkContext();
 	const { id, networkPreferences, email, email_verified } = useUserDetailsContext();
 	const [active, setActive] = useState<boolean | undefined>(false);
-
-	console.log(email_verified, 'This is ii,...........');
 	const handleClick = (channelName: CHANNEL) => {
 		setShowModal(channelName);
 	};

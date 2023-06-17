@@ -249,13 +249,6 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	},[debouncedSearchFn]);
 
 	useEffect(() => {
-		if( (finalSearchInput.length <= 3 || searchInput.length <=3) && searchInputErr.clicked){
-			setSearchInputErr({ ...searchInputErr, err:'Please type a search ' });
-			return;
-		}
-	},[finalSearchInput, searchInput, searchInputErr]);
-
-	useEffect(() => {
 		setUsersPage({ page: 1, totalUsers: 0 });
 		setPostsPage({ page: 1, totalPosts: 0 });
 	},[finalSearchInput]);
@@ -282,6 +275,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		}
 
 		const postResults = await postIndex.search(queryStr, {
+			facetFilters: getFacetFileters(),
 			hitsPerPage: AUTOCOMPLETE_INDEX_LIMIT,
 			highlightPreTag:'<mark>',
 			highlightPostTag:'</mark>',
@@ -372,6 +366,12 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		return extractContent(maxMatchedWordsObject?.value || 'Untitled');
 	};
 
+	const handleSearchSubmit = () => {
+		setAutoCompleteResults(initAutocompleteResults);
+		!loading && searchInput.length >= 3 && setFinalSearchInput(searchInput);
+		setSearchInputErr({ ...searchInputErr, clicked:true });
+	};
+
 	return <Modal
 		title={<label className='text-[#243A57] text-xl font-semibold flex flex-wrap'>{isSuperSearch ? 'Super Search':'Search'} {finalSearchInput.length > 0 && `Results for "${finalSearchInput}"`}</label>}
 		open={openModal}
@@ -388,12 +388,10 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 				onChange={(e) => handleSearchOnChange(e.target.value)}
 				allowClear
 				placeholder='Type here to search for something'
+				onPressEnter={handleSearchSubmit}
 				addonAfter={
-					<div onClick={() => {
-						!loading && searchInput.length >= 3 && setFinalSearchInput(searchInput);
-						setSearchInputErr({ ...searchInputErr, clicked:true });
-					}}
-					className={`text-white text-[18px] tracking-[0.02em] ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+					<div onClick={handleSearchSubmit}
+						className={`text-white text-[18px] tracking-[0.02em] ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
 						<SearchOutlined/>
 					</div>
 				}

@@ -140,7 +140,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const gov1Items: {[x:string]: ItemType[]} = {
 		overviewItems: [
 			getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white' />),
-			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1' />),
+			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
 			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-3' />)
@@ -275,11 +275,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let gov2OverviewItems = [
-		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-white' />),
-		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1' />),
+		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-white mt-1' />),
+		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
-		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-2' />),
+		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-2.5' />),
 		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1' />)
 	];
 

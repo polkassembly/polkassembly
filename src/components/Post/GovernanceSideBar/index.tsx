@@ -2,11 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DislikeFilled, LikeFilled, ClockCircleOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined,LoadingOutlined } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Divider, Form, Modal, Tooltip } from 'antd';
+import { Button, Divider, Form, Modal, Spin, Tooltip } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -47,7 +47,6 @@ import PostEditOrLinkCTA from './PostEditOrLinkCTA';
 import CloseIcon from '~assets/icons/close.svg';
 import { PlusOutlined } from '@ant-design/icons';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
-import SplitGray from '~assets/icons/split-gray.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
 import { EDecision, IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -133,6 +132,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	});
 	const [votingHistory,setVotingHistory] = useState<IVoteHistory[]>([]);
 	const [showModal,setShowModal] = useState(false);
+	const[isLastVoteLoading,setIsLastVoteLoading] = useState(true);
 
 	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
@@ -352,6 +352,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				if (res.error) {
 					console.log('error');
 				} else {
+					console.log('data',res.data);
 					if(res.data?.count){
 						setVotingHistory(res.data?.votes);
 						setVote({
@@ -360,6 +361,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							decision:res.data?.votes[0].decision,
 							time:res.data?.votes[0].createdAt
 						});
+						setIsLastVoteLoading(false);
 					}
 				}
 
@@ -369,7 +371,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			});
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address,api,apiReady,network,proposalType]);
+	}, [address,api,apiReady,network,proposalType,vote]);
 
 	const balance  = vote.balance ? Object.values(vote.balance).reduce((prev, ele) => {
 		if(!ele){
@@ -938,84 +940,72 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															proposalType={proposalType}
 														/>
 														{ votingHistory.length ?
-															<div>
-																<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-																<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
-																	<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'}>
-																		<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
-																	</Tooltip>
-																	<Tooltip placement="bottom"  title="Time"  color={'#E5007A'}><p><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</p></Tooltip>
+															<Spin spinning={ isLastVoteLoading } indicator={<LoadingOutlined />}>
+																<div>
+																	<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
+																	<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+																		<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='w-[20%] max-[345px]:w-auto'>
+																			<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye111'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
+																		</Tooltip>
+																		<Tooltip placement="bottom"  title="Time"  color={'#E5007A'} className='w-[30%] max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
 
-																	<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}>
-																		<p>
-																			<MoneyIcon className='mr-1'/>
-																			{formatedBalance(balance.toString(), unit)}{` ${unit}`}
-																		</p>
-																	</Tooltip>
+																		<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className='w-[35%] max-[345px]:w-auto'>
+																			<span>
+																				<MoneyIcon className='mr-1'/>
+																				{formatedBalance(balance.toString(), unit)}{` ${unit}`}
+																			</span>
+																		</Tooltip>
 
-																	<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'}>
-																		<p title='Conviction'>
-																			<ConvictionIcon className='mr-1'/>
-																			{vote.conviction}x
-																		</p>
-																	</Tooltip>
-																</div>
-																{
-																	votingHistory.length > 1 && <div>
-																		<Divider className='mt-0 mb-0' style={{ border: '1px solid #D2D8E0' }} />
-																		<button
-																			className='bg-transparent p-0 mt-1 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
-																			onClick={() => {
-																				setShowModal(true);
-																			}}
-																		>
-																			<VotingHistoryIcon />
-																			<span>View History</span>
-																		</button>
+																		<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='w-[10%] max-[345px]:w-auto'>
+																			<span title='Conviction'>
+																				<ConvictionIcon className='mr-1'/>
+																				{vote.conviction}x
+																			</span>
+																		</Tooltip>
 																	</div>
-																}
-																<Modal
-																	open={showModal}
-																	onCancel={() => setShowModal(false)}
-																	footer={false}
-																	className={'w-[500px]  max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum '}
-																	closeIcon={<CloseCross/>}
-																	wrapClassName={className}
-																	title={<div className='h-[72px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center  gap-2'>
-																		<MyVoteIcon className='ml-[27px]'/>
-																		<span className='text-[#243A57] font-semibold tracking-[0.0015em] text-xl'>My Votes</span>
-																	</div>}
-																>
-																	<div className='flex justify-between font-semibold text-[16px] text-[#243A57] leading-6 tracking-[0.0015em]'>
-																		<span>#</span>
-																		<span>Vote</span>
-																		<span>Amount</span>
-																		<span>Conviction</span>
-																	</div>
-																	<div >
-																		{
-																			votingHistory.map((ele,index) => {
-																				return(
-																					<div className='flex justify-between' key = {index}>
-																						<span className='text-[#485F7D] font-medium leading-6 tracking-[0.0015em]  w-[20%]'>#{index+1}</span>
 
-																						{
-																							ele.decision == 'yes' ? <span className='font-semibold text-[14px] text-[#2ED47A] w-[25%] pl-1'>AYE</span> : ele.decision == 'no' ? <span className='font-semibold text-[14px] text-[#F53C3C] w-[25%] pl-1'>NAY</span> : ele.decision == 'abstain' && (!(ele.balance as any).abstain) ? <span className='font-semibold text-[14px] text-[#FFBF60] w-[25%] pl-1'>SPLIT</span> : ele.decision == 'abstain' && (ele.balance as any).abstain ? <span className='font-semibold text-[14px] text-[#407BFF] w-[25%] pl-1'>ABSTAIN</span> : null
-																						}
-																						<span className='text-[#485F7D] font-medium leading-6 tracking-[0.0015em]  w-[30%] pl-3'>{ele.decision == 'abstain' ? formatedBalance( Object.values(ele.balance || {}).reduce((prev, ele) => {
-																							if(!ele){
-																								return prev;
+																	<Modal
+																		open={showModal}
+																		onCancel={() => setShowModal(false)}
+																		footer={false}
+																		className={'w-[500px]  max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum '}
+																		closeIcon={<CloseCross/>}
+																		wrapClassName={className}
+																		title={<div className='h-[72px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center  gap-2'>
+																			<MyVoteIcon className='ml-[27px]'/>
+																			<span className='text-[#243A57] font-semibold tracking-[0.0015em] text-xl'>My Votes</span>
+																		</div>}
+																	>
+																		<div className='flex justify-between font-semibold text-[16px] text-[#243A57] leading-6 tracking-[0.0015em]'>
+																			<span>#</span>
+																			<span>Vote</span>
+																			<span>Amount</span>
+																			<span>Conviction</span>
+																		</div>
+																		<div >
+																			{
+																				votingHistory.map((ele,index) => {
+																					return(
+																						<div className='flex justify-between' key = {index}>
+																							<span className='text-[#485F7D] font-medium leading-6 tracking-[0.0015em]  w-[20%]'>#{index+1}</span>
+
+																							{
+																								ele.decision == 'yes' ? <span className='font-semibold text-[14px] text-[#2ED47A] w-[25%] pl-1'>AYE</span> : ele.decision == 'no' ? <span className='font-semibold text-[14px] text-[#F53C3C] w-[25%] pl-1'>NAY</span> : ele.decision == 'abstain' && (!(ele.balance as any).abstain) ? <span className='font-semibold text-[14px] text-[#FFBF60] w-[25%] pl-1'>SPLIT</span> : ele.decision == 'abstain' && (ele.balance as any).abstain ? <span className='font-semibold text-[14px] text-[#407BFF] w-[25%] pl-1'>ABSTAIN</span> : null
 																							}
-																							return prev.add(new BN(ele));}, new BN(0)).toString(), unit)  :formatedBalance((ele.balance as any).value.toString(), unit)}{` ${unit}` }</span>
-																						<span className='text-[#485F7D] font-medium leading-6 tracking-[0.0015em]  w-[25%] pl-6'>{ele.lockPeriod || 0}x</span>
-																					</div>
-																				);
-																			})
-																		}
-																	</div>
+																							<span className='text-[#485F7D] font-medium leading-6 tracking-[0.0015em]  w-[30%] pl-3'>{ele.decision == 'abstain' ? formatedBalance( Object.values(ele.balance || {}).reduce((prev, ele) => {
+																								if(!ele){
+																									return prev;
+																								}
+																								return prev.add(new BN(ele));}, new BN(0)).toString(), unit)  :formatedBalance((ele.balance as any).value.toString(), unit)}{` ${unit}` }</span>
+																							<span className='text-[#485F7D] font-medium leading-6 tracking-[0.0015em]  w-[25%] pl-6'>{ele.lockPeriod || 0}x</span>
+																						</div>
+																					);
+																				})
+																			}
+																		</div>
 
-																</Modal>
-															</div>: null
+																	</Modal>
+																</div></Spin>: null
 														}
 
 													</GovSidebarCard>}
@@ -1099,15 +1089,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										You haven&apos;t voted yet, vote now and do your bit for the community
 									</GovSidebarCard>
 									:
-									<GovSidebarCard className='flex items-center'>
-
-										You Voted: { lastVote == 'aye' && <LikeFilled className='text-aye_green ml-2' />}
-										{ lastVote == 'nay' && <DislikeFilled className='text-nay_red ml-2' />}
-										{ lastVote == 'split' && <SplitGray className=' ml-2 mr-1' />}
-										{ lastVote == 'abstain' && <AbstainGray className=' ml-2 mr-1' />}
-										<span className={`last-vote-text ${lastVote == 'aye' ? 'green-text' : 'red-text'}`}>{lastVote}</span>
-
-									</GovSidebarCard>
+									<></>
 									: <></>
 								}
 							</div>
@@ -1170,6 +1152,6 @@ export default styled(GovernanceSideBar)`
 	}
 
 	 .ant-tooltip-open{
-		text-transform:none !important;
+		background-color:yellow !important;
 	  }
 `;

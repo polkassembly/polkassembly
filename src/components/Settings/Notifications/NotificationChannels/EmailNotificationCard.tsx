@@ -13,7 +13,9 @@ import DisabledConfirmation from './Modals/Confirmation';
 import { CHANNEL } from '.';
 type Props = {
 	verifiedEmail: string;
-	handleDisabled: any
+	handleEnableDisabled: any
+	verified:boolean
+	notificationEnabled:boolean
 };
 
 const Container = styled.div`
@@ -26,7 +28,7 @@ const validationRules: Rule[] = [
 	{ message: 'Email is required, Please enter an email', required: true }
 ];
 
-export default function EmailNotificationCard({ verifiedEmail, handleDisabled }: Props) {
+export default function EmailNotificationCard({ verifiedEmail, handleEnableDisabled, verified, notificationEnabled }: Props) {
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -93,15 +95,18 @@ export default function EmailNotificationCard({ verifiedEmail, handleDisabled }:
 			<h3 className='flex gap-2 items-center text-base font-medium m-0 gap-1'>
 				<span>
 					<MailFilled /> Email Notifications{' '}
+					{!verified && <span className='text-[10px] px-[4px] py-[2px] bg-[red] border-[#5A46FF] border-2 text-[#FFFFFF] rounded-tr-lg rounded-bl-lg'>Not Verified</span>}
+
 				</span>
-				{!!verifiedEmail &&
-					<span onClick={handleToggleClick} className='flex gap-1 items-center'>
+				{(!!verifiedEmail && verified) &&
+					<span className='flex gap-1 items-center'>
 						<Switch
-							checked={!!verifiedEmail}
+							checked={!!notificationEnabled}
 							size='small'
+							onChange={(checked) => !checked ? handleToggleClick() : handleEnableDisabled(CHANNEL.EMAIL, true)}
 						/>
-						<label className='cursor-pointer'>
-							<span className='text-[14px] font-medium text-pink_primary cursor-pointer'>Enabled</span>
+						<label>
+							<span className={`text-[14px] font-medium  ${notificationEnabled ? 'text-pink_primary' : 'text-[#485F7D]'}`}>{notificationEnabled ? 'Enabled' : 'Disabled'}</span>
 						</label>
 					</span>
 				}
@@ -124,23 +129,26 @@ export default function EmailNotificationCard({ verifiedEmail, handleDisabled }:
 						<Input
 							className='p-2 text-sm leading-[21px]'
 							placeholder='Account Address'
-							disabled={loading}
+							disabled={verified || loading}
 						/>
 					</Form.Item>
-					<Button
-						htmlType='submit'
-						loading={loading}
-						className='h-10 rounded-[6px] bg-[#E5007A] flex items-center justify-center border border-solid border-pink_primary px-[22px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
-					>
+					{
+						!verified &&
+						<Button
+							htmlType='submit'
+							loading={loading}
+							className='h-10 rounded-[6px] bg-[#E5007A] flex items-center justify-center border border-solid border-pink_primary px-[22px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+						>
 						Verify
-					</Button>
+						</Button>
+					}
 				</Form>
 			</Container>
 			<DisabledConfirmation
 				open={showModal}
 				onConfirm={() => {
 					setShowModal(false);
-					handleDisabled(CHANNEL.EMAIL);
+					handleEnableDisabled(CHANNEL.EMAIL);
 				}}
 				onCancel={() => setShowModal(false)}
 				channel={CHANNEL.EMAIL} />

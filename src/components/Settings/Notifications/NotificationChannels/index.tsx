@@ -37,9 +37,10 @@ export enum CHANNEL {
 export default function NotificationChannels({ handleEnableDisabled, handleReset }: Props) {
 	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
 	const { network } = useNetworkContext();
-	const { id, networkPreferences } = useUserDetailsContext();
+	const { id, networkPreferences, email, email_verified } = useUserDetailsContext();
 	const [active, setActive] = useState<boolean | undefined>(false);
 
+	console.log(email_verified, 'This is ii,...........');
 	const handleClick = (channelName: CHANNEL) => {
 		setShowModal(channelName);
 	};
@@ -126,9 +127,13 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 						verifiedEmail={
 							networkPreferences?.channelPreferences?.[
 								CHANNEL.EMAIL
-							]?.email || ''
+							]?.email || email ||''
 						}
-						handleDisabled={handleEnableDisabled}
+						verified={email_verified || false}
+						notificationEnabled={networkPreferences?.channelPreferences?.[
+							CHANNEL.EMAIL
+						]?.enabled ||false}
+						handleEnableDisabled={handleEnableDisabled}
 					/>
 					<Divider className='border-[#D2D8E0] border-2 my-[30px]' dashed />
 					{Bots.map((bot, i) => (

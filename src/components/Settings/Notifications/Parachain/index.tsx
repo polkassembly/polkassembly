@@ -147,9 +147,9 @@ export default function Parachain({
 						Set as Primary Network Settings
 					</Checkbox>
 					<div
-						className={`flex item-center gap-2 max-w-[520px] text-[16px] ${primaryNetwork !== network
+						className={`flex item-center gap-2 max-w-[560px] text-[16px] ${primaryNetwork !== network
 							? 'text-pink_primary cursor-pointer'
-							: 'text-[#96A4B6] cursor-not-allowed'}`}
+							: 'text-[#96A4B6] cursor-not-allowed'} whitespace-normal md:whitespace-nowrap`}
 						onClick={primaryNetwork !== network ? () => {
 							setCopyPreferencesModal(true);
 						} : () => { }}

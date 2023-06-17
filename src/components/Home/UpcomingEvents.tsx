@@ -331,7 +331,7 @@ const UpcomingEvents = ({ className }:Props) => {
 
 			return (
 				<Tooltip color='#E5007A' title={eventList}>
-					<Badge count={value.format('D')} color='transparent' className='bg-pink-400 rounded-full absolute -ml-3 mt-[-22px] w-full' />
+					<Badge count={value.format('D')} color='transparent' className='bg-pink-400 rounded-full absolute -ml-3 mt-[-22px]' />
 				</Tooltip>
 			);
 		}
@@ -421,5 +421,7 @@ export default styled(UpcomingEvents)`
 
 	.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
 		border-radius: 50% !important;
+		border:2px solid #e5007a;
+	   width:110%;
 	}
 `;

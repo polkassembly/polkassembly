@@ -107,7 +107,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
 	return (
-		<div className={`${className} bg-white drop-shadow-md rounded-xxl md:py-8 px-0`}>
+		<div className={`${className} bg-white drop-shadow-md rounded-xxl sm:py-8 px-0 xs:py-4`}>
 			<div className='sm:hidden xs:flex xs:items-center xs:justify-end xs:mb-0 xs:px-4 xs:pt-2'>
 				<FilterByTags className='sm:hidden xs:mr-1 xs:mt-1 xs:mb-2'/>
 			</div>
@@ -121,7 +121,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 			{
 				(posts?.all?.data?.count||0) > 10  && activeTab === 'All' || (posts?.submitted?.data?.count||0) > 10 && activeTab === 'Submitted' || (posts?.voting?.data?.count||0) > 10 && activeTab === 'Voting' || (posts?.closed?.data?.count||0) > 10 && activeTab === 'Closed' ?
 					<Pagination
-						className='flex justify-end mt-6'
+						className='flex justify-end sm:mt-6 mt-4 mb-2'
 						defaultCurrent={1}
 						current={router.query.page ? parseInt(router.query.page as string, 10) : 1}
 						onChange={onPaginationChange}

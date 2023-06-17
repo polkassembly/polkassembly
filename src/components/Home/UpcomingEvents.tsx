@@ -379,7 +379,7 @@ const UpcomingEvents = ({ className }:Props) => {
 	return (
 		<div className={`${className} bg-white drop-shadow-md p-4 lg:p-6 rounded-xxl h-[520px] lg:h-[550px]`}>
 			<div className="flex items-center justify-between mb-5">
-				<h2 className='text-bodyBlue text-xl font-medium leading-8 mx-3'>Upcoming Events</h2>
+				<h2 className='text-bodyBlue text-xl font-medium leading-8 sm:mx-3 xs:mx-1 sm:my-0 xs:my-2'>Upcoming Events</h2>
 				<CalendarFilled className='cursor-pointer inline-block lg:hidden' onClick={() => setShowCalendar(!showCalendar)} />
 			</div>
 

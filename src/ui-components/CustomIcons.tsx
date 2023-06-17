@@ -67,7 +67,7 @@ import SlightlyAgainstUnfilledSVG from '~assets/icons/slightly-against-unfilled.
 import NeutralUnfilledSVG from '~assets/icons/neutral-unfilled.svg';
 import SlightlyForUnfilledSVG from '~assets/icons/slightly-for-unfilled.svg';
 import ForUnfilleSVG from '~assets/icons/for-unfilled.svg';
-import DelegatedSVG from '~assets/icons/delegated.svg';
+import DelegatedSVG from '~assets/sidebar/delegate-icon-gov2.svg';
 import UndelegatedSVG from '~assets/icons/undelegated.svg';
 import ReceivedDelegationSVG from '~assets/icons/received-delegation.svg';
 import FilterSVG from '~assets/icons/filter-icon.svg';

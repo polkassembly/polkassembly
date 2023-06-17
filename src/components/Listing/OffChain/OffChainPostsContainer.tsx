@@ -65,7 +65,7 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 	return (
 		<div className={`${className} bg-white p-3 md:p-0 rounded-[14px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)]`}>
 			<div className='flex items-center justify-between align-middle p-5'>
-				<div className='sm:mx-8'>
+				<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-7'>
 					<FilteredTags/>
 				</div>
 				<div className='flex'>

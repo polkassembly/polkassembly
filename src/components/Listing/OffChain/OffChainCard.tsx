@@ -12,6 +12,7 @@ import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import NewChatIcon from '~assets/icons/chat-icon.svg';
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
 import { getFormattedLike } from '~src/util/getFormattedLike';
+import TopicTag from '~src/ui-components/TopicTag';
 
 export interface IDiscussionProps {
 	created_at: Date
@@ -106,6 +107,14 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 								</div>
 							</>}
+							{
+								topic?
+									<div className='flex items-center sm:-mt-1'>
+										<Divider type="vertical" className='max-lg:hidden sm:mt-1' style={{ borderLeft: '1px solid #485F7D' }} />
+										<TopicTag className='sm:mt-0' topic={topic} />
+									</div>
+									: null
+							}
 						</div>
 					</div>
 				</div>

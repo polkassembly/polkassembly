@@ -411,7 +411,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										<span className='hidden mr-2 text-xs leading-5 text-lightBlue font-medium md:flex'>
 							Current Price of {chainProperties[network]?.tokenSymbol}
 										</span>
-										<span className='flex md:hidden'>
+										<span className='flex md:hidden text-xs text-lightBlue font-medium'>
 							Price {chainProperties[network]?.tokenSymbol}
 										</span>
 									</div>

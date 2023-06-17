@@ -83,10 +83,10 @@ const Proposals: FC<IProposalsProps> = (props) => {
 
 			<div className='shadow-md bg-white py-5 px-0 rounded-xxl'>
 				<div className='flex items-center justify-between'>
-					<div>
+					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-3'>
 						<FilteredTags/>
 					</div>
-					<FilterByTags className='my-6 sm:mr-16 xs:mx-6 xs:my-2'/>
+					<FilterByTags className='my-6 sm:mr-[54px] xs:mx-6 xs:my-2'/>
 				</div>
 
 				<div>

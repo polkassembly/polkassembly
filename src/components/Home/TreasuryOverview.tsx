@@ -550,7 +550,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										}
 									</div>
 									{
-										<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3 lg:my-1'>
+										<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3 lg:my-1 2xl:w-[150%]'>
 											<Divider
 												style={{
 													background: '#D2D8E0'

@@ -143,7 +143,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1' />),
 			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
-			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-2' />)
+			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-3' />)
 		],
 		democracyItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
@@ -156,7 +156,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		treasuryItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
 			getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
-			getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='text-white' />),
+			getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />),
 			getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
 		] : [],
 		techCommItems: chainProperties[network]?.subsquidUrl ? [
@@ -265,7 +265,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				);
 				break;
 			default: {
-				const icon = trackName === PostOrigin.ROOT ? <RootIcon /> : trackName === PostOrigin.AUCTION_ADMIN ? <AuctionAdminIcon /> :  <StakingAdminIcon />;
+				const icon = trackName === PostOrigin.ROOT ? <RootIcon /> : trackName === PostOrigin.AUCTION_ADMIN ? <AuctionAdminIcon className='ml-0.5' /> :  <StakingAdminIcon />;
 				gov2TrackItems.mainItems.push(
 					getSiderMenuItem(trackName.split(/(?=[A-Z])/).join(' '), `/${trackName.split(/(?=[A-Z])/).join('-').toLowerCase()}`, icon)
 				);
@@ -280,7 +280,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
 		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-2' />),
-		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='text-sidebarBlue' />)
+		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1' />)
 	];
 
 	if(['kusama', 'polkadot'].includes(network)){

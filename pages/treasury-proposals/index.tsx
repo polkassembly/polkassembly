@@ -105,7 +105,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 			</div>
 
 			{/* Treasury Overview Cards */}
-			<TreasuryOverview inTreasuryProposals={true} className='my-8'/>
+			<TreasuryOverview className='my-8'/>
 
 			<div className='shadow-md bg-white py-5 px-0 rounded-xxl'>
 				<div className='flex items-center justify-between'>

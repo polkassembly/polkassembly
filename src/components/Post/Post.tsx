@@ -358,6 +358,7 @@ const Post: FC<IPostProps> = (props) => {
 			reward: post?.reward,
 			spam_users_count: post?.spam_users_count,
 			status: post?.status,
+			subscribers: post?.subscribers || [],
 			tags: post?.tags || [],
 			timeline: post?.timeline,
 			title: post?.title,

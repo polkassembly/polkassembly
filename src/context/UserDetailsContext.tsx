@@ -24,7 +24,12 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	},
 	loginAddress: '',
 	loginWallet: null,
+	networkPreferences:{
+		channelPreferences: {},
+		triggerPreferences:{}
+	},
 	picture: null,
+	primaryNetwork:'',
 	setUserDetailsContextState : (): void => {
 		throw new Error('setUserDetailsContextState function must be overridden');
 	},

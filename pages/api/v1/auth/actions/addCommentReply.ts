@@ -7,13 +7,13 @@ import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isProposalTypeValid } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
-import _sendCommentReplyMail from '~src/api-utils/_sendCommentReplyMail';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { CommentReply } from '~src/types';
+import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 
 export interface IAddCommentReplyResponse {
 	id: string;
@@ -61,7 +61,24 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 			last_comment_at
 		});
 
-		_sendCommentReplyMail(network, strProposalType, String(postId), content, String(commentId), user);
+		const triggerName = 'newReplyAdded';
+
+		const args = {
+			commentId:String(commentId),
+			network,
+			postId:String(postId),
+			postType:strProposalType,
+			replyId:newReplyRef.id
+		};
+
+		fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
+			body: JSON.stringify({
+				args,
+				trigger: triggerName
+			}),
+			headers: firebaseFunctionsHeader(network),
+			method: 'POST'
+		});
 
 		return res.status(200).json({
 			id: newReply.id

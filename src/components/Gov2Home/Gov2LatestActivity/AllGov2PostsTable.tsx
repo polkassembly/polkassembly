@@ -28,7 +28,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Title',
 		dataIndex: 'title',
 		key: 'title',
-		width: 400,
+		width: 340,
 		fixed: 'left',
 		render: (title) => {
 			return (
@@ -46,7 +46,8 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Posted By',
 		dataIndex: 'username',
 		key: 'postedBy',
-		render: (username, { proposer }) => <NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={false} />
+		render: (username, { proposer }) => <NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={false} />,
+		width: 180
 	},
 	{
 		title: 'Created',
@@ -56,6 +57,18 @@ const columns: ColumnsType<IPostsRowData> = [
 			const relativeCreatedAt = getRelativeCreatedAt(createdAt);
 			return (
 				<span>{relativeCreatedAt}</span>
+			);
+		},
+		width: 140
+	},
+	{
+		title: 'Origin',
+		dataIndex: 'origin',
+		key: 'type',
+		render: (postOrigin) => {
+			return (
+				<span className='flex items-center'>
+					<span className='capitalize'>{postOrigin?.split(/(?=[A-Z])/).join(' ')}</span></span>
 			);
 		},
 		width: 160
@@ -68,17 +81,6 @@ const columns: ColumnsType<IPostsRowData> = [
 			if(status) return <StatusTag status={status} />;
 		},
 		width: 160
-	},
-	{
-		title: 'Origin',
-		dataIndex: 'origin',
-		key: 'type',
-		render: (postOrigin) => {
-			return (
-				<span className='flex items-center'>
-					<span className='capitalize ml-3'>{postOrigin?.split(/(?=[A-Z])/).join(' ')}</span></span>
-			);
-		}
 	}
 ];
 
@@ -130,8 +132,8 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					proposer: post.proposer,
 					username: post?.username,
 					created_at: post.created_at,
-					origin: post.origin || null,
-					status: post.status,
+					origin: post.origin || post.type ||null,
+					status: post.status || '-',
 					sub_title: subTitle,
 					track: Number(post.track_number),
 					type: post.type

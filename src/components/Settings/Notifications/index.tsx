@@ -207,9 +207,9 @@ export default function Notifications({ network }: { network: string }) {
 				networkPreferences: {
 					...prev.networkPreferences,
 					channelPreferences: {
-						...prev.networkPreferences.channelPreferences,
+						...prev.networkPreferences?.channelPreferences,
 						[channel]: {
-							...prev.networkPreferences.channelPreferences.channel,
+							...prev.networkPreferences?.channelPreferences?.channel,
 							enabled: enabled
 						}
 					}

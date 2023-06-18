@@ -125,7 +125,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				});
 			});
 
-			if(timelines.length > 1) {
+			if(timelines.length >= 1) {
 				const newComments = comments.sort((a, b) => dayjs(a.created_at).diff(b.created_at));
 				timelines = timelines.map((timelineObj, i) => {
 					const { count, firstCommentId } = getCommentCountAndFirstIdBetweenDates(i === 0 ? dayjs(newComments[0].created_at) : timelineObj.date, timelines[i + 1]?.date || dayjs(), newComments);
@@ -273,7 +273,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			</div>
 			<div  className={'block xl:grid grid-cols-12'}>
 				{
-					!!comments?.length && timelines.length > 1 &&
+					!!comments?.length && timelines.length >= 1 &&
 					<div className='hidden h-screen xl:block col-start-1 col-end-2 min-w-[100px] sticky top-[10%] ml-1'>
 						<Anchor targetOffset={targetOffset} className='h-full min-w-[140px]' onClick={handleTimelineClick}>
 							{timelines.map(({ commentsCount, date, firstCommentId, id, status }) => {
@@ -301,7 +301,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						</Anchor>
 					</div>
 				}
-				<div className={`col-start-1 ${timelines.length > 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
+				<div className={`col-start-1 ${timelines.length >= 1 && 'xl:col-start-3'} col-end-13 mt-0`}>
 					{ !!comments?.length &&
 						<>
 							<Comments disableEdit={isGrantClosed} comments={filteredComments} />

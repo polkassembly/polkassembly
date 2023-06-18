@@ -148,6 +148,7 @@ export interface JWTPayloadType {
 	id: number;
 	roles: Roles;
 	web3signup: boolean;
+	is2FAEnabled?: boolean;
 }
 
 export interface AuthObjectType extends TokenType {

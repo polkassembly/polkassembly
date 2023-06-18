@@ -810,7 +810,7 @@ class AuthService {
 		return { email: user.email, updatedToken: await this.getSignedToken(user) };
 	}
 
-	public async getSignedToken ({ email, email_verified, id, username, web3_signup }: User): Promise<string> {
+	public async getSignedToken ({ email, email_verified, id, username, web3_signup, two_factor_auth }: User): Promise<string> {
 		if (!privateKey) {
 			const key = process.env.NODE_ENV === 'test' ? process.env.JWT_PRIVATE_KEY_TEST : process.env.JWT_PRIVATE_KEY?.replace(/\\n/gm, '\n');
 			throw apiErrorWithStatusCode(`${key} not set. Aborting.`, 403);
@@ -846,7 +846,7 @@ class AuthService {
 			currentRole = Role.EVENT_BOT;
 		}
 
-		const tokenContent: JWTPayloadType = {
+		let tokenContent: JWTPayloadType = {
 			addresses: addresses || [],
 			default_address: default_address?.address || '',
 			email,
@@ -861,6 +861,13 @@ class AuthService {
 			username,
 			web3signup: web3_signup || false
 		};
+
+		if(two_factor_auth?.enabled && two_factor_auth?.verified) {
+			tokenContent = {
+				...tokenContent,
+				is2FAEnabled: true
+			};
+		}
 
 		return jwt.sign(
 			tokenContent,

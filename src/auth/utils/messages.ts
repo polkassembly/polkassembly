@@ -97,6 +97,8 @@ const messages = {
 	SUBSCRIPTION_REMOVE_SUCCESSFUL: 'You have been unsubscribed successfuly.',
 	SUBSCRIPTION_SUCCESSFUL: 'You successfully subscribed to new comments.',
 	SUCCESS: 'Success.',
+	TWO_FACTOR_AUTH_INVALID_TOKEN: 'Invalid two factor authentication token.',
+	TWO_FACTOR_AUTH_NOT_INIT: 'Two factor authentication not initialised.',
 	UNAUTHORISED: 'Unauthorised.',
 	USERNAME_ALREADY_EXISTS: 'Username already exists. Please choose a different username.',
 	USERNAME_BANNED: 'Username is banned. Please use a different username.',

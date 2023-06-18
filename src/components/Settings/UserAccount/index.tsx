@@ -8,17 +8,20 @@ import Delete from '~src/components/Settings/Delete';
 import Profile from '~src/components/Settings/Profile';
 import Unlock from '~src/components/Settings/Unlock';
 import { Divider } from 'antd';
+import TwoFactorAuth from '../TwoFactorAuth';
 
 export default function UserAccount({ network }: { network: string }) {
 	const { web3signup } = useUserDetailsContext();
 	return (
 		<div>
 			{!web3signup && (
-				<>
+				<div className='mb-6'>
 					<Profile />
 					<Divider />
-				</>
+				</div>
 			)}
+			<TwoFactorAuth className='mt-2 mb-8' />
+			<Divider />
 			<Account />
 			<Divider />
 			<Unlock network={network} />

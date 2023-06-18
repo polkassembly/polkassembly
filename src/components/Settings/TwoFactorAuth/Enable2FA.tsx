@@ -11,7 +11,6 @@ import { I2FAGenerateResponse, TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import CopyIcon from '~assets/icons/content-copy.svg';
 
-import Header from './Header';
 import { poppins } from 'pages/_app';
 import { handleTokenChange } from '~src/services/auth.service';
 import { useUserDetailsContext } from '~src/context';
@@ -26,7 +25,7 @@ const init2FARes: I2FAGenerateResponse = {
 	url: ''
 };
 
-const TwoFactorAuth: FC<{className?: string}> = ({ className }) => {
+const Enable2FA: FC<{className?: string}> = ({ className }) => {
 	const [error, setError] = useState('');
 	const [showModal, setShowModal] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -112,8 +111,6 @@ const TwoFactorAuth: FC<{className?: string}> = ({ className }) => {
 
 	return (
 		<Form className={className} form={form} disabled={loading || currentUser.is2FAEnabled} onFinish={handleSubmit}>
-			<Header heading='Two Factor Authentication' subHeading='Enhance account security with two factor authentication. Verify your identity with an extra step for added protection.' />
-
 			<Modal
 				className={`${className} ${poppins.variable} ${poppins.className}`}
 				closable={false}
@@ -124,17 +121,17 @@ const TwoFactorAuth: FC<{className?: string}> = ({ className }) => {
 						key="cancel"
 						onClick={dismissModal}
 						className='rounded-lg font-semibold text-md leading-7 text-white py-5 outline-none border-none px-7 inline-flex items-center justify-center bg-pink_primary'
-						loading={loading}
+						disabled={loading}
 					>
 						Cancel
 					</Button>,
 					<Button
 						htmlType='submit'
-						key="delete"
+						key="enable"
 						onClick={() => {
 							form.submit();
 						}}
-						loading={loading}
+						disabled={loading}
 						className='rounded-lg font-semibold text-md leading-7 text-white py-5 outline-none border-none px-7 inline-flex items-center justify-center bg-pink_primary'
 					>
            Enable
@@ -206,7 +203,7 @@ const TwoFactorAuth: FC<{className?: string}> = ({ className }) => {
 							</div>
 						</section>
 					</Spin>
-					: <div className='text-center my-12'>Two factor authentication enabled successfully.</div>
+					: <div className='text-center my-10'>Two factor authentication enabled successfully.</div>
 				}
 			</Modal>
 
@@ -221,4 +218,4 @@ const TwoFactorAuth: FC<{className?: string}> = ({ className }) => {
 	);
 };
 
-export default TwoFactorAuth;
+export default Enable2FA;

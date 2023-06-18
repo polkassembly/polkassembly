@@ -11,7 +11,7 @@ import { Divider } from 'antd';
 import TwoFactorAuth from '../TwoFactorAuth';
 
 export default function UserAccount({ network }: { network: string }) {
-	const { web3signup } = useUserDetailsContext();
+	const { web3signup, id } = useUserDetailsContext();
 	return (
 		<div>
 			{!web3signup && (
@@ -20,7 +20,7 @@ export default function UserAccount({ network }: { network: string }) {
 					<Divider />
 				</div>
 			)}
-			<TwoFactorAuth className='mt-2 mb-8' />
+			{id && <TwoFactorAuth className='mt-2 mb-8' />}
 			<Divider />
 			<Account />
 			<Divider />

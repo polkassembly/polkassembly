@@ -70,13 +70,21 @@ export default function Notifications({ network }: { network: string }) {
 			if (error) {
 				throw new Error(error);
 			}
-			if (data?.notification_preferences?.triggerPreferences) {
+			if (data?.notification_preferences?.channelPreferences) {
 				setUserDetailsContextState((prev) => ({
 					...prev,
 					networkPreferences: {
 						...prev.networkPreferences,
 						channelPreferences:
-							data?.notification_preferences?.channelPreferences,
+							data?.notification_preferences?.channelPreferences
+					}
+				}));
+			}
+			if (data?.notification_preferences?.triggerPreferences) {
+				setUserDetailsContextState((prev) => ({
+					...prev,
+					networkPreferences: {
+						...prev.networkPreferences,
 						triggerPreferences:
 							data?.notification_preferences?.triggerPreferences
 					}

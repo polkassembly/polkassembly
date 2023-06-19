@@ -421,7 +421,7 @@ export default styled(UpcomingEvents)`
 
 	.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
 		border-radius: 50% !important;
-		border:2px solid #e5007a;
-	   width:110%;
+		border:1px solid #e5007a;
+	  width:112%;
 	}
 `;

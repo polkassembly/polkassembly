@@ -13,7 +13,7 @@ import dayjs from 'dayjs';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { htmlOrMarkdownToText } from './htmlOrMarkdownToText';
 
-function chunkArray(array: any[], chunkSize: number) {
+function chunkArray<T>(array: T[], chunkSize: number) {
 	if (array.length === 0) {
 		return [];
 	}
@@ -65,7 +65,7 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 			const postsSnapshot = await postTypeDoc.ref.collection('posts').get();
 
 			// setup batch here
-			const chunksArray = chunkArray(postsSnapshot.docs, 300);
+			const chunksArray = chunkArray<FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>>(postsSnapshot.docs, 300);
 			// for loop for postsSnapshot
 			for(const postsArr of chunksArray) {
 				const postRecords = [];
@@ -89,8 +89,14 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 
 					const parsedContent = htmlOrMarkdownToText(postDocData?.content || '');
 
-					const postData = {
+					const reaction_count = {
+						'👍': (await postDoc.ref.collection('post_reactions').where('reaction', '==', '👍').count().get())?.data()?.count || 0,
+						'👎': (await postDoc.ref.collection('post_reactions').where('reaction', '==', '👍').count().get())?.data()?.count || 0
+					};
+
+					const postData: {[i:string]: any} = {
 						...postDocData,
+						comments_count : (await postDoc.ref.collection('comments').count().get())?.data()?.count || 0,
 						created_at: dayjs(postDocData?.created_at?.toDate?.() || new Date()).unix(),
 						last_comment_at: dayjs(postDocData?.last_comment_at?.toDate?.() || new Date()).unix(),
 						last_edited_at: dayjs(postDocData?.last_edited_at?.toDate?.() || new Date()).unix(),
@@ -98,6 +104,7 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 						objectID: `${networkDoc.id}_${postTypeDoc.id}_${postDoc.id}`,
 						parsed_content: parsedContent || postDocData?.content || '',
 						post_type: postTypeDoc.id,
+						reaction_count,
 						topic_id: postDocData?.topic?.id || postDocData?.topic_id || getTopicFromType(postDocData?.id ).id,
 						updated_at: dayjs(postDocData?.updated_at?.toDate?.() || new Date()).unix()
 					};

@@ -7,6 +7,8 @@ import grill from '@subsocial/grill-widget';
 import Image from 'next/image';
 import GrillChatIcon from '~assets/grillchat.png';
 import styled from 'styled-components';
+import { useNetworkContext } from '~src/context';
+import { network as globalNework } from '~src/global/networkConstants';
 
 const Container = styled.div`
 .ChatFloatingModal {
@@ -73,19 +75,46 @@ export default function ChatFloatingModal () {
 	const toggleChat = () => {
 		setIsOpen((prev) => !prev);
 	};
+
+	const { network } = useNetworkContext();
+	const grillData = {
+		[globalNework.CERE]: ['5145', '5139'],
+		[globalNework.KILT]: ['2035', '5144'],
+		[globalNework.KUSAMA]: ['2027', '5138'],
+		[globalNework.MOONBEAM]: ['2065', '5140'],
+		[globalNework.POLKADOT]: ['3638', '754']
+	};
 	const hasOpened = useRef(false);
 	useEffect(() => {
 		if (!isOpen) return;
 
 		if (!hasOpened.current) {
-			grill.init({ hub: { id: 'polka' }, theme: 'light' });
+
+			let filterArray: string[] = [];
+			if ((grillData as any)[network]) {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				filterArray = (grillData as any)[network];
+			}
+			grill.init(
+				{
+					hub: { id: 'polkassembly' },
+					onWidgetCreated: (iframe) => {
+						const channelsQuery = new URLSearchParams();
+						const filterChannels = filterArray;
+						channelsQuery.set('channels', filterChannels.join(','));
+						iframe.src += `&${channelsQuery.toString()}`;
+						return iframe;
+					}
+				}
+			);
 		}
 		hasOpened.current = true;
-	}, [ isOpen ]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [grillData,network]);
 
 	return (
 		<Container>
-			<div className={'ChatFloatingModal'}>
+			{(grillData as any)[network] && <div className={'ChatFloatingModal'}>
 				{(isOpen || hasOpened.current) && (
 					<div
 						id='grill'
@@ -96,7 +125,7 @@ export default function ChatFloatingModal () {
 				<Button className={'ChatFloatingButton'} onClick={toggleChat}>
 					<Image src={GrillChatIcon} alt='GrillChat' className='w-[50px] h-[50px]'/>
 				</Button>
-			</div>
+			</div>}
 		</Container>
 	);
 }

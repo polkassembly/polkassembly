@@ -17,9 +17,10 @@ import Loader from 'src/ui-components/Loader';
 import getNetwork from 'src/util/getNetwork';
 import styled from 'styled-components';
 
-import { ChallengeMessage, TokenType } from '~src/auth/types';
+import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
 import { Wallet } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import TFALoginForm from './TFALoginForm';
 
 interface Props {
 	className?: string
@@ -29,9 +30,19 @@ interface Props {
   setLoginOpen?:(pre:boolean)=>void;
 }
 
+const initAuthResponse: IAuthResponse = {
+	isTFAEnabled: false,
+	tfa_token: '',
+	token: '',
+	user_id: 0
+};
+
 const NETWORK = getNetwork();
 
 const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isModal, setLoginOpen }:Props): JSX.Element => {
+	const currentUser = useContext(UserDetailsContext);
+	const { setWalletConnectProvider } = currentUser;
+
 	const [error, setError] = useState('');
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -40,9 +51,8 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
-	const currentUser = useContext(UserDetailsContext);
 	const [provider, setProvider] = useState<WalletConnectProvider | null>(null);
-	const { setWalletConnectProvider } = currentUser;
+	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
 
 	const connect = async () => {
 
@@ -204,11 +214,13 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 				.sendCustomRequest(tx)
 				.then(async (result: any) => {
 					try {
+						const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<IAuthResponse>( 'api/v1/auth/actions/addressLogin', { address, signature: result, wallet: Wallet.WALLETCONNECT });
 
-						const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressLogin', { address, signature: result, wallet: Wallet.WALLETCONNECT });
 						if(addressLoginError) {
 							console.log('Error in address login', addressLoginError);
 							setError(addressLoginError);
+
+							// TODO: change method of checking if user/address needs signup
 							if(addressLoginError === 'Login with web3 account failed. Address not linked to any account.'){
 								try {
 
@@ -286,6 +298,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 								}
 							}
 						}
+
 						if (addressLoginData?.token) {
 							setWalletConnectProvider(provider);
 							currentUser.loginWallet=Wallet.WALLETCONNECT;
@@ -297,11 +310,20 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 
 							handleTokenChange(addressLoginData.token, currentUser);
 							if(isModal){
-								setLoginOpen && setLoginOpen(false);
+								setLoginOpen?.(false);
 								setLoading(false);
 								return;
 							}
 							router.back();
+						} else if(addressLoginData?.isTFAEnabled) {
+							if(!addressLoginData?.tfa_token) {
+								setError(error || 'TFA token missing. Please try again.');
+								setLoading(false);
+								return;
+							}
+
+							setAuthResponse(addressLoginData);
+							setLoading(false);
 						} else {
 							throw new Error('WalletConnect Login failed');
 						}
@@ -323,6 +345,44 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 		}
 	};
 
+	const handleSubmitAuthCode = async (formData: any) => {
+		const { authCode } = formData;
+		if(isNaN(authCode)) return;
+		setLoading(true);
+
+		const { data , error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/2fa/validate', {
+			auth_code: String(authCode), //use string for if it starts with 0
+			tfa_token: authResponse.tfa_token,
+			user_id: Number(authResponse.user_id)
+		});
+
+		if(error || !data) {
+			setError(error || 'Login failed. Please try again later.');
+			setLoading(false);
+			return;
+		}
+
+		if (data?.token) {
+			setError('');
+
+			setWalletConnectProvider(provider);
+			currentUser.loginWallet=Wallet.WALLETCONNECT;
+			currentUser.loginAddress = address;
+			currentUser.delegationDashboardAddress = address;
+			localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
+			localStorage.setItem('delegationDashboardAddress', address);
+			localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
+
+			handleTokenChange(data.token, currentUser);
+			if(isModal){
+				setLoginOpen?.(false);
+				setLoading(false);
+				return;
+			}
+			router.back();
+		}
+	};
+
 	return (<div className={className}>
 		<h3>WalletConnect Login</h3>
 		{accountsNotFound?
@@ -339,24 +399,34 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 			</div>
 			:
 			accounts.length > 0 &&
-				<>
-					<div>
-						<AccountSelectionForm
-							title='Choose linked account'
-							accounts={accounts}
-							address={address}
-							onAccountChange={onAccountChange}
-						/>
-					</div>
-					<div className={'mainButtonContainer'}>
-						<Button
-							disabled={loading}
-							onClick={handleLogin}
-						>
+			<>
+				{
+					authResponse.isTFAEnabled ?
+						<TFALoginForm
+							onBack={() => {setAuthResponse(initAuthResponse); setError(''); }}
+							onSubmit={handleSubmitAuthCode}
+							error={error || ''}
+							loading={loading}
+							userId={authResponse.user_id}
+						/> : <>
+							<div>
+								<AccountSelectionForm
+									title='Choose linked account'
+									accounts={accounts}
+									address={address}
+									onAccountChange={onAccountChange}
+								/>
+							</div>
+							<div className={'mainButtonContainer'}>
+								<Button
+									disabled={loading}
+									onClick={handleLogin}
+								>
 							Login
-						</Button>
-					</div>
-				</>
+								</Button>
+							</div>
+						</>}
+			</>
 		}
 		<div className='mt-4'>
 			{error&& <FilteredError text={error} />}

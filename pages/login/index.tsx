@@ -84,7 +84,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px]'>
 					{displayWeb === 2 ? (
-						<Web2Login  isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} />
+						<Web2Login isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} />
 					) : null}
 
 					{

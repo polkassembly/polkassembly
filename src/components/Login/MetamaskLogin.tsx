@@ -26,11 +26,12 @@ import SubWalletIcon from '~assets/wallet/subwallet-icon.svg';
 import TalismanIcon from '~assets/wallet/talisman-icon.svg';
 import MetamaskIcon from '~assets/wallet/metamask-icon.svg';
 import PolyWalletIcon from '~assets/wallet/poly-wallet.svg';
-import { ChallengeMessage, TokenType } from '~src/auth/types';
+import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ExtensionNotDetected from '../ExtensionNotDetected';
 import addEthereumChain from '~src/util/addEthereumChain';
+import TFALoginForm from './TFALoginForm';
 
 interface Props {
   chosenWallet: Wallet;
@@ -45,6 +46,13 @@ interface IWalletIconProps {
   which: Wallet;
   className?: string;
 }
+
+const initAuthResponse: IAuthResponse = {
+	isTFAEnabled: false,
+	tfa_token: '',
+	token: '',
+	user_id: 0
+};
 
 export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 	switch (which) {
@@ -73,6 +81,7 @@ const MetamaskLogin: FC<Props> = ({
 }) => {
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
+	const { network } = useNetworkContext();
 
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -83,7 +92,7 @@ const MetamaskLogin: FC<Props> = ({
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
 	const [fetchAccounts, setFetchAccounts] = useState(true);
 	const [isSignUp, setIsSignUp] = useState(false);
-	const { network } = useNetworkContext();
+	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
 
 	const handleClick=() => {
 		if(isModal && setSignupOpen && setLoginOpen){
@@ -112,6 +121,7 @@ const MetamaskLogin: FC<Props> = ({
 			setIsAccountLoading(false);
 			return;
 		}
+
 		let addresses = await ethereum.request({ method: 'eth_requestAccounts' });
 		addresses = addresses.map((address: string) => address);
 
@@ -144,16 +154,24 @@ const MetamaskLogin: FC<Props> = ({
 	const onAccountChange = (address: string) => setAddress(address);
 
 	const handleLogin: ( values: React.BaseSyntheticEvent<object, any, any> | undefined ) => void = async  () => {
+		setError('');
+		if(!(window as any).ethereum.isMetaMask){
+			setError('Please install metamask');
+			return;
+		}
+
 		try {
 			setLoading(true);
 
 			const { data: loginStartData , error: loginStartError } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressLoginStart', { address });
+
 			if(loginStartError) {
 				console.log('Error in address login start', loginStartError);
 				setError(loginStartError);
 				setLoading(false);
 				return;
 			}
+
 			const signMessage = loginStartData?.signMessage;
 
 			if (!signMessage) {
@@ -166,7 +184,7 @@ const MetamaskLogin: FC<Props> = ({
 			const params = [msg, from];
 			const method = 'personal_sign';
 
-			(window as any).web3.currentProvider.sendAsync({
+			(window as any).ethereum.sendAsync({
 				from,
 				method,
 				params
@@ -177,10 +195,12 @@ const MetamaskLogin: FC<Props> = ({
 					return;
 				}
 
-				const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressLogin', { address, signature: result.result, wallet: Wallet.METAMASK });
+				const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<IAuthResponse>( 'api/v1/auth/actions/addressLogin', { address, signature: result.result, wallet: Wallet.METAMASK });
+
 				if(addressLoginError) {
 					console.log('Error in address login', addressLoginError);
 					setError(addressLoginError);
+					// TODO: change this method of checking if user is already signed up
 					if(addressLoginError === 'Please sign up prior to logging in with a web3 address'){
 						setIsSignUp(true);
 						try {
@@ -256,6 +276,7 @@ const MetamaskLogin: FC<Props> = ({
 						}
 					}
 				}
+
 				if(addressLoginData?.token){
 					currentUser.loginWallet = Wallet.METAMASK;
 					currentUser.loginAddress = address;
@@ -266,11 +287,20 @@ const MetamaskLogin: FC<Props> = ({
 
 					handleTokenChange(addressLoginData.token, currentUser);
 					if(isModal){
-						setLoginOpen && setLoginOpen(false);
+						setLoginOpen?.(false);
 						setLoading(false);
 						return;
 					}
 					router.push('/');
+				}else if(addressLoginData?.isTFAEnabled) {
+					if(!addressLoginData?.tfa_token) {
+						setError(error || 'TFA token missing. Please try again.');
+						setLoading(false);
+						return;
+					}
+
+					setAuthResponse(addressLoginData);
+					setLoading(false);
 				}
 
 			});
@@ -278,6 +308,44 @@ const MetamaskLogin: FC<Props> = ({
 		} catch (error) {
 			setError(error.message);
 			setLoading(false);
+		}
+	};
+
+	const handleSubmitAuthCode = async (formData: any) => {
+		const { authCode } = formData;
+		if(isNaN(authCode)) return;
+		setLoading(true);
+
+		const { data , error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/2fa/validate', {
+			auth_code: String(authCode), //use string for if it starts with 0
+			tfa_token: authResponse.tfa_token,
+			user_id: Number(authResponse.user_id)
+		});
+
+		if(error || !data) {
+			setError(error || 'Login failed. Please try again later.');
+			setLoading(false);
+			return;
+		}
+
+		if (data?.token) {
+			setError('');
+
+			currentUser.loginWallet = Wallet.METAMASK;
+			currentUser.loginAddress = address;
+			currentUser.delegationDashboardAddress = address;
+			localStorage.setItem('delegationWallet', Wallet.METAMASK);
+			localStorage.setItem('delegationDashboardAddress', address);
+			localStorage.setItem('loginWallet', Wallet.METAMASK);
+
+			handleTokenChange(data.token, currentUser);
+			if(isModal){
+				setLoading(false);
+				setAuthResponse(initAuthResponse);
+				setLoginOpen?.(false);
+				return;
+			}
+			router.push('/');
 		}
 	};
 
@@ -299,7 +367,7 @@ const MetamaskLogin: FC<Props> = ({
 				</p>
 			</h3>
 			{
-				fetchAccounts?
+				fetchAccounts ?
 					<div className='flex flex-col justify-center items-center'>
 						<p className='text-base'>
 							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
@@ -323,72 +391,80 @@ const MetamaskLogin: FC<Props> = ({
 					</div>
 					: (
 						<>
-							<AuthForm onSubmit={handleLogin} className="flex flex-col gap-y-6">
-								{extensionNotFound?
-									<div className='flex justify-center items-center my-5'>
-										<ExtensionNotDetected chosenWallet={chosenWallet} />
-									</div>
-									: null
-								}
-								{accountsNotFound && (
-									<div className='flex justify-center items-center my-5'>
-										<Alert
-											message="You need at least one account in Polkadot-js extension to login."
-											description="Please reload this page after adding accounts."
-											type="info"
-											showIcon
-										/>
-									</div>
-								)}
-								{isAccountLoading ? (
-									<div className="my-5">
-										<Loader
-											size="large"
-											timeout={3000}
-											text="Requesting Web3 accounts"
-										/>
-									</div>
-								) : accounts.length > 0 && (
-									<>
+							{authResponse.isTFAEnabled ?
+								<TFALoginForm
+									onBack={() => {setAuthResponse(initAuthResponse); setError(''); }}
+									onSubmit={handleSubmitAuthCode}
+									error={error || ''}
+									loading={loading}
+									userId={authResponse.user_id}
+								/> :
+								<AuthForm onSubmit={handleLogin} className="flex flex-col gap-y-6">
+									{extensionNotFound?
 										<div className='flex justify-center items-center my-5'>
-											<AccountSelectionForm
-												title='Choose linked account'
-												accounts={accounts}
-												address={address}
-												onAccountChange={onAccountChange}
+											<ExtensionNotDetected chosenWallet={chosenWallet} />
+										</div>
+										: null
+									}
+									{accountsNotFound && (
+										<div className='flex justify-center items-center my-5'>
+											<Alert
+												message="You need at least one account in Polkadot-js extension to login."
+												description="Please reload this page after adding accounts."
+												type="info"
+												showIcon
 											/>
 										</div>
-										{isSignUp && <Alert showIcon className='mb-2' type='info' message={<>By Signing up you agree to the terms of the <Link href='/terms-and-conditions' className='text-pink_primary'>Polkassembly end user agreement</Link>.</>} />}
-										<div className="flex justify-center items-center">
-											<Button
-												loading={loading}
-												htmlType="submit"
+									)}
+									{isAccountLoading ? (
+										<div className="my-5">
+											<Loader
 												size="large"
-												className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
-											>
+												timeout={3000}
+												text="Requesting Web3 accounts"
+											/>
+										</div>
+									) : accounts.length > 0 && (
+										<>
+											<div className='flex justify-center items-center my-5'>
+												<AccountSelectionForm
+													title='Choose linked account'
+													accounts={accounts}
+													address={address}
+													onAccountChange={onAccountChange}
+												/>
+											</div>
+											{isSignUp && <Alert showIcon className='mb-2' type='info' message={<>By Signing up you agree to the terms of the <Link href='/terms-and-conditions' className='text-pink_primary'>Polkassembly end user agreement</Link>.</>} />}
+											<div className="flex justify-center items-center">
+												<Button
+													loading={loading}
+													htmlType="submit"
+													size="large"
+													className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
+												>
                 Login
-											</Button>
-										</div>
-										<div>
-											<Divider>
-												<div className="flex gap-x-2 items-center">
-													<span className="text-grey_primary text-md">Or</span>
-													<Button
-														className="p-0 border-none outline-none text-pink_primary text-md font-semibold"
-														disabled={loading}
-														onClick={handleToggle}
-													>
+												</Button>
+											</div>
+											<div>
+												<Divider>
+													<div className="flex gap-x-2 items-center">
+														<span className="text-grey_primary text-md">Or</span>
+														<Button
+															className="p-0 border-none outline-none text-pink_primary text-md font-semibold"
+															disabled={loading}
+															onClick={handleToggle}
+														>
                     Login with Username
-													</Button>
-												</div>
-											</Divider>
-										</div>
-									</>
-								)}
-								<div>
-									{error ? <FilteredError text={error}/> : <></>}
-								</div>
-							</AuthForm>
+														</Button>
+													</div>
+												</Divider>
+											</div>
+										</>
+									)}
+									<div>
+										{error ? <FilteredError text={error}/> : <></>}
+									</div>
+								</AuthForm>}
 						</>
 					)
 			}

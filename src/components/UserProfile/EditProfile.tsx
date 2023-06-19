@@ -51,7 +51,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const validateData = ( image: string | undefined, social_links: ISocial[] | undefined) => {
 
 		// eslint-disable-next-line no-useless-escape
-		const regex = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi);
+		const regex = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{0,256}\.[a-zA-Z0-9()]{0,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi);
 
 		if(image && image.trim() && !image?.match(regex)) {
 			setError('Image URL is invalid.');

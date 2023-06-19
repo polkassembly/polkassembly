@@ -159,7 +159,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								topic?
 									<div className='flex items-center sm:-mt-1'>
 										<Divider type="vertical" className='max-lg:hidden sm:mt-1' style={{ borderLeft: '1px solid #485F7D' }} />
-										<TopicTag className='sm:mt-0' topic={topic} />
+										<TopicTag className='sm:mt-0 sm:mx-1' topic={topic} />
 									</div>
 									: null
 							}
@@ -199,7 +199,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						<span className='font-medium text-center xs:w-[45px] text-bodyBlue xs:mt-0'>#{isTip? tip_index: onchainId}</span>
 						<div className='xs:mt-0 lg:mt-0'>
 							<h1 className='text-bodyBlue flex max-w-[250px] overflow-hidden lg:max-w-none'>
-								<span className='text-bodyBlue text-sm font-medium mt-0 xs:-mt-0.5'>{ mainTitle }</span>
+								<span className='text-bodyBlue text-sm font-medium mt-0 xs:mt-[-1.5px]'>{ mainTitle }</span>
 							</h1>
 							<h2 className='text-bodyBlue font-medium text-sm'>{subTitle}</h2>
 						</div>

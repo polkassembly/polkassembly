@@ -111,7 +111,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								topic?
 									<div className='flex items-center sm:-mt-1'>
 										<Divider type="vertical" className='max-lg:hidden sm:mt-1' style={{ borderLeft: '1px solid #485F7D' }} />
-										<TopicTag className='sm:mt-0' topic={topic} />
+										<TopicTag className='sm:mt-0 sm:mx-2' topic={topic} />
 									</div>
 									: null
 							}

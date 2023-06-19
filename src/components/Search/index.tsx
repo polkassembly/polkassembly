@@ -312,7 +312,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		let matchedWordsLength = 0;
 
 		matchedWordsLength += hitObject._highlightResult?.title?.matchedWords?.length || 0;
-		matchedWordsLength += hitObject._highlightResult?.content?.matchedWords?.length || 0;
+		matchedWordsLength += hitObject._highlightResult?.pasrsed_content?.matchedWords?.length || 0;
 		matchedWordsLength += hitObject._highlightResult?.username?.matchedWords?.length || 0;
 		matchedWordsLength += hitObject._highlightResult?.profile?.bio?.matchedWords?.length || 0;
 		matchedWordsLength += hitObject._highlightResult?.profile?.title?.matchedWords?.length || 0;

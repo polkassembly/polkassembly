@@ -1089,7 +1089,7 @@ class AuthService {
 		}
 
 		const oldMail = user.email;
-		const shouldSendUndoEmailChangeEmail = oldMail !== email;
+		const shouldSendUndoEmailChangeEmail = !oldMail ? false : oldMail !== email ? true : false;
 
 		await firestore.collection('users').doc(String(user.id)).update({
 			email,

@@ -95,7 +95,7 @@ const Disable2FA: FC<{className?: string}> = ({ className }) => {
 
 						<section className='text-center my-10'>
 							<p className='mb-3'>Are you sure you want to disable two factor authentication ?</p>
-							<small><em>(Please remember to remove the entry from Google authenticator app too)</em></small>
+							<small><em>Note: Please remember to remove the <span className='font-semibold'>&apos;Polkassembly: {currentUser.id}&apos;</span> entry from your authenticator app too</em></small>
 						</section>
 					</Spin>
 					: <section className='text-center my-10'>Two factor authentication disabled successfully.</section>

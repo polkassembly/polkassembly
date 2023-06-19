@@ -44,7 +44,8 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 			const authCode = formData.authCode || null;
 			if(!authCode || isNaN(authCode)) throw new Error('Please input a valid auth code');
 
-			const { data, error } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/2fa/verify', { authCode: Number(authCode) });
+			// send as string just in case it starts with 0
+			const { data, error } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/2fa/verify', { authCode: String(authCode) });
 
 			if (error || !data || !data.token) {
 				setError(error || 'Error verifying 2FA. Please try again.');
@@ -169,12 +170,12 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 							{/* Secret Key code */}
 							<article className='mt-4'>
 								<h2 className='text-base text-sidebarBlue'>Or Enter the Code to Your App (base32 encoded) :</h2>
-								<span
+								{tfaResponse.base32_secret && <span
 									onClick={() => handleCopyClicked(tfaResponse.base32_secret)}
 									className='p-1 px-2 cursor-pointer rounded-md text-pink_primary border border-solid border-text_secondary text-sm'
 								>
 									<CopyIcon className='relative top-[6px]' />{tfaResponse.base32_secret}
-								</span>
+								</span>}
 							</article>
 
 							{/* Code Input */}
@@ -189,7 +190,8 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 										{
 											message: 'Invalid authentication code',
 											validator(rule, value = '', callback) {
-												if (callback && (!value || value.length < 3 || isNaN(Number(value)))){
+												// 7 is just in case the user inputs with a space in between (Google auth formats it with a space)
+												if (callback && (!value || value.length !== 6 || isNaN(Number(value)))){
 													callback(rule?.message?.toString());
 												}else {
 													callback();

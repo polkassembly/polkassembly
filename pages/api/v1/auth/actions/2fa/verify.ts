@@ -16,7 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const { authCode = null } = req.body;
-	if (!authCode || isNaN(authCode)) return res.status(400).json({ message: 'Invalid auth code in request body.' });
+	if (isNaN(authCode)) return res.status(400).json({ message: 'Invalid auth code in request body.' });
 
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Missing user token' });

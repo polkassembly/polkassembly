@@ -151,6 +151,13 @@ export interface JWTPayloadType {
 	is2FAEnabled?: boolean;
 }
 
+export interface IAuthResponse {
+	token?: string
+	user_id?: number;
+	isTFAEnabled?: boolean;
+	tfa_token?: string;
+}
+
 export interface AuthObjectType extends TokenType {
 	user_id?: number;
 }

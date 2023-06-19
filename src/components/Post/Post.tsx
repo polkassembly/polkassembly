@@ -361,7 +361,7 @@ const Post: FC<IPostProps> = (props) => {
 								const type = item.type;
 								return (
 									<Link key={index} href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? item.hash: item.index}`} className='mr-4'>
-										<span className="text-[#334D6E] ">{item.type}{' >> '}</span>
+										<span className="text-[#334D6E] ">{item.type ?.split(/(?=[A-Z])/).join(' ')}{' >> '}</span>
 										<span className="text-pink_primary">{item.index}</span>
 									</Link>
 								);

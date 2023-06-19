@@ -1089,15 +1089,8 @@ class AuthService {
 			}
 		}
 
-		const newUndoEmailChangeToken: UndoEmailChangeToken = {
-			created_at: new Date(),
-			email: user.email,
-			token: uuidv4(),
-			user_id: user.id,
-			valid: true
-		};
-
-		await firestore.collection('undo_email_change_tokens').add(newUndoEmailChangeToken);
+		const oldMail = user.email;
+		const shouldSendUndoEmailChangeEmail = oldMail !== email;
 
 		await firestore.collection('users').doc(String(user.id)).update({
 			email,
@@ -1108,7 +1101,17 @@ class AuthService {
 
 		await this.sendEmailVerificationToken(user, network);
 		// send undo token in background
-		sendUndoEmailChangeEmail(user, newUndoEmailChangeToken, network);
+		if(shouldSendUndoEmailChangeEmail){
+			const newUndoEmailChangeToken: UndoEmailChangeToken = {
+				created_at: new Date(),
+				email: oldMail,
+				token: uuidv4(),
+				user_id: user.id,
+				valid: true
+			};
+			await firestore.collection('undo_email_change_tokens').add(newUndoEmailChangeToken);
+			sendUndoEmailChangeEmail(user, newUndoEmailChangeToken, network);
+		}
 
 		return this.getSignedToken(user);
 	}

@@ -103,13 +103,13 @@ const TelegramInfoModal = ({
 								<span>Username & Verification Token: </span>
 								<div
 									onClick={() => handleCopyClicked(`/add ${username} ${token}`)}
-									className='flex items-center w-[230px] p-0 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary h-[30px]'
+									className='flex items-center max-w-[230px] p-0 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary h-[30px]'
 								>
 									<CopyIcon className='relative' />{' '}
-									<span className='w-[100px] text-ellipsis overflow-hidden whitespace-nowrap inline-block'>
+									<span className='max-w-[100px] text-ellipsis overflow-hidden whitespace-nowrap inline-block mr-2'>
 										{username}
-									</span>{' '}
-									<span className='w-[100px] text-ellipsis overflow-hidden whitespace-nowrap inline-block'>
+									</span>
+									<span className='max-w-[100px] text-ellipsis overflow-hidden whitespace-nowrap inline-block'>
 										{token}
 									</span>
 								</div>

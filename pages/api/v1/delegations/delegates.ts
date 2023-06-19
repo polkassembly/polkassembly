@@ -10,7 +10,8 @@ import { RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import Web3 from 'web3';
-import novaDelegates from './nova-delegates-kusama.json';
+import novaDelegatesKusama from './nova-delegates-kusama.json';
+import novaDelegatesPolkadot from './nova-delegates-polkadot.json';
 import { IDelegate } from '~src/types';
 import { getProfileWithAddress } from '../auth/data/profileWithAddress';
 
@@ -18,6 +19,8 @@ export const getDelegatesData = async (network: string, address?: string) => {
 	if(!network || !isOpenGovSupported(network)) return [];
 
 	const encodedAddr = getEncodedAddress(String(address), network);
+
+	const novaDelegates = network === 'kusama' ? novaDelegatesKusama : novaDelegatesPolkadot;
 
 	if(address && !(encodedAddr || Web3.utils.isAddress(String(address)))) return [];
 

@@ -97,7 +97,7 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
 			/>
 			{
-				posts?.[activeTab]?.data?.count && (posts as any)[activeTab].data.count > LISTING_LIMIT &&
+				((posts?.[activeTab]?.data?.count || 0) > 0 && (posts as any)[activeTab].data.count > LISTING_LIMIT) &&
 				<Pagination
 					className='flex justify-end mt-6'
 					defaultCurrent={1}

@@ -9,7 +9,7 @@ import { isProposalTypeValid, isTrackNoValid, isValidNetwork } from '~src/api-ut
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
-import { GET_PROPOSALS_LISTING_BY_TYPE } from '~src/queries';
+import { GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -37,7 +37,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 			throw apiErrorWithStatusCode( `Invalid listingLimit "${listingLimit}"`, 400);
 		}
 
-		let strProposalType = String(proposalType);
+		const strProposalType = String(proposalType);
 		if (!isProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(`The proposal type of the name "${proposalType}" does not exist.`, 400);
 		}
@@ -55,14 +55,18 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 			type_in: subsquidProposalType
 		};
 
-		if (proposalType === ProposalType.OPEN_GOV) {
-			strProposalType = 'referendums_v2';
-			postsVariables.trackNumber_in = numTrackNo;
+		if (proposalType && [ProposalType.OPEN_GOV.toString(), ProposalType.FELLOWSHIP_REFERENDUMS.toString()].includes(strProposalType)) {
+			postsVariables.trackNumber_in = [numTrackNo];
+		}
+
+		let query = GET_PROPOSALS_LISTING_BY_TYPE;
+		if (network === 'collectives') {
+			query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES;
 		}
 
 		const subsquidRes = await fetchSubsquid({
 			network,
-			query: GET_PROPOSALS_LISTING_BY_TYPE,
+			query: query,
 			variables: postsVariables
 		});
 

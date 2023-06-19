@@ -101,6 +101,10 @@ export const logout = (setUserDetailsContextState: UserDetailsContextType['setUs
 			email: null,
 			email_verified: false,
 			id: null,
+			networkPreferences:{
+				channelPreferences:{},
+				triggerPreferences:{}
+			},
 			username: null,
 			web3signup: false
 		};

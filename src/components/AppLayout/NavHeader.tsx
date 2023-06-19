@@ -70,7 +70,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 				</div>
 
 				{
-					isOpenGovSupported(network) || network === 'polkadot' ?
+					isOpenGovSupported(network)?
 						<>
 							<GovernanceSwitchButton previousRoute={previousRoute} className='hidden lg:flex' />
 						</> :

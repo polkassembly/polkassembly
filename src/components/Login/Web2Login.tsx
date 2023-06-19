@@ -16,7 +16,7 @@ import FilteredError from 'src/ui-components/FilteredError';
 import messages from 'src/util/messages';
 import * as validation from 'src/util/validation';
 import styled from 'styled-components';
-
+import LoginLogo from '~assets/icons/login-logo.svg';
 import { TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -86,94 +86,97 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	}, [isDelegation]);
 
 	return (
-		<article className={`bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className} `}>
-			<h3 className="text-2xl font-semibold text-[#1E232C]">Login</h3>
+		<>
+			<div className='flex items-center'>
+				<LoginLogo className='ml-6 mr-2' />
+				<h3 className="text-[20px] font-semibold text-[#243A57] mt-3">Login</h3>
+			</div>
+			<hr className='text-[#D2D8E0] ' />
+			<article className={`bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className} `}>
+				{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor' />}
 
-			{ defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
-
-			{walletError && <Alert message={walletError} type="error" />}
-			<AuthForm
-				onSubmit={handleSubmitForm}
-				className="flex flex-col gap-y-6"
-			>
-				<div className="flex flex-col gap-y-1">
-					<label
-						className="text-base text-sidebarBlue font-medium"
-						htmlFor="username"
-					>
-						Enter Username or Email
-					</label>
-					<Form.Item
-						name="username"
-						rules={[
-							{
-								message: messages.VALIDATION_USERNAME_REQUIRED_ERROR,
-								required: username.required
-							},
-							{
-								max: username.maxLength,
-								message: messages.VALIDATION_USERNAME_MAXLENGTH_ERROR
-							},
-							{
-								message: messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
-								min: username.minLength
-							}
-						]}
-						validateTrigger="onSubmit"
-					>
-						<Input
-							disabled={loading}
-							placeholder="Type here"
-							className="rounded-md py-3 px-4"
-							id="username"
-						/>
-					</Form.Item>
-				</div>
-
-				<div className="flex flex-col gap-y-1 -mt-6">
-					<label
-						className="text-base text-sidebarBlue font-medium"
-						htmlFor="password"
-					>
-						Enter Password
-					</label>
-					<Form.Item
-						name="password"
-						validateTrigger="onSubmit"
-					>
-						<Input.Password
-							disabled={loading}
-							placeholder="Type here"
-							className="rounded-md py-3 px-4"
-							id="password"
-						/>
-					</Form.Item>
-					<div className="text-right text-pink_primary">
-						<Link href="/request-reset-password">Forgot Password?</Link>
+				{walletError && <Alert message={walletError} type="error" />}
+				<AuthForm
+					onSubmit={handleSubmitForm}
+					className="flex flex-col gap-y-3"
+				>
+					<div className="flex flex-col gap-y-1">
+						<label
+							className="text-base text-[#485F7D] "
+							htmlFor="username"
+						>
+							Enter Username or Email
+						</label>
+						<Form.Item
+							name="username"
+							rules={[
+								{
+									message: messages.VALIDATION_USERNAME_REQUIRED_ERROR,
+									required: username.required
+								},
+								{
+									max: username.maxLength,
+									message: messages.VALIDATION_USERNAME_MAXLENGTH_ERROR
+								},
+								{
+									message: messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
+									min: username.minLength
+								}
+							]}
+							validateTrigger="onSubmit"
+						>
+							<Input
+								disabled={loading}
+								placeholder="Type here"
+								className="rounded-md py-3 px-4"
+								id="username" />
+						</Form.Item>
 					</div>
-				</div>
 
-				<div className="flex justify-center items-center">
-					<Button
-						loading={loading}
-						htmlType="submit"
-						size="large"
-						className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
-					>
+					<div className="flex flex-col gap-y-1 -mt-4">
+						<label
+							className="text-base text-[#485F7D]"
+							htmlFor="password"
+						>
+							Enter Password
+						</label>
+						<Form.Item
+							name="password"
+							validateTrigger="onSubmit"
+						>
+							<Input.Password
+								disabled={loading}
+								placeholder="Type here"
+								className="rounded-md py-3 px-4"
+								id="password" />
+						</Form.Item>
+						<div className="text-right text-pink_primary mt-[-20px]">
+							<Link href="/request-reset-password">Forgot Password?</Link>
+						</div>
+					</div>
+
+					<div className="flex justify-center items-center">
+						<Button
+							loading={loading}
+							htmlType="submit"
+							size="large"
+							className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
+						>
 							Login
-					</Button>
-				</div>
-				<div>
-					<WalletButtons disabled={loading} onWalletSelect={onWalletSelect} />
-				</div>
-				{error && <FilteredError text={error} />}
+						</Button>
+					</div>
+					<div>
+						<WalletButtons disabled={loading} onWalletSelect={onWalletSelect} />
+					</div>
+					{error && <FilteredError text={error} />}
 
-				<div className='flex justify-center items-center gap-x-2 font-semibold'>
-					<label className='text-md text-grey_primary'>Don&apos;t have an account?</label>
-					<div onClick={handleClick} className='text-pink_primary text-md'> Sign Up </div>
-				</div>
-			</AuthForm>
-		</article>
+					<div className='flex justify-center items-center gap-x-2 font-semibold'>
+						<label className='text-md text-[#243A57]'>Don&apos;t have an account?</label>
+						<div onClick={handleClick} className='text-pink_primary text-md'> Sign Up </div>
+					</div>
+				</AuthForm>
+			</article>
+		</>
 	);
 };
 

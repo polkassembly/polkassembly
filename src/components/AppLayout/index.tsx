@@ -174,7 +174,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network) || network === 'polkadot')) {
+	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network))) {
 		gov1Items.overviewItems = [
 			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'opengov', ''),
 			...gov1Items.overviewItems
@@ -283,7 +283,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='text-sidebarBlue' />)
 	];
 
-	if(network === 'kusama'){
+	if(['kusama', 'polkadot'].includes(network)){
 		gov2OverviewItems.splice(1, 0, getSiderMenuItem(<div className='flex gap-2 items-center'>Delegation <span className='px-[6px] py-[2px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-xs'>New</span></div>, '/delegation',  !sidedrawer ? <div className='flex flex-col items-center gap-0 delegation'><DelegationSidebarIcon className= 'text-white -ml-1'/>
 			<span className='px-[4px] py-[1px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-[10px] -mt-1 ml-[-2px] opacity'>New</span>
 		</div> : <DelegationSidebarIcon className= 'text-white -ml-1 mr-1'/> ));

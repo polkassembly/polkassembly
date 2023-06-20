@@ -125,7 +125,7 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 				// console.log(postTypeDoc.id, networkDoc.id, postRecords);
 				///commit batch
 
-				console.log('hereee =>', networkDoc.id, postsSnapshot.size);
+				console.log('hereee =>', networkDoc.id, postsSnapshot.size, postRecords);
 				await index.saveObjects(postRecords).catch((err) => {
 					console.log(err);
 				});

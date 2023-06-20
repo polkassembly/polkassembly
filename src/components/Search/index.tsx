@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Checkbox, Input, List, Modal, Popover, Radio, RadioChangeEvent } from 'antd';
+import { Checkbox, Input, List, Modal, Popover, Radio, RadioChangeEvent, Collapse } from 'antd';
 import _ from 'lodash';
 import { useNetworkContext } from '~src/context';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
@@ -14,7 +14,7 @@ import ResultPosts from './ResultPosts';
 import ResultPeople from './ResultPeople';
 import algoliasearch from 'algoliasearch/lite';
 import { ProposalType } from '~src/global/proposalType';
-import SuperSearchCard from './SuperSearchCard';
+import SearchErrorsCard from './SearchErrorsCard';
 import { post_topic } from '~src/global/post_topics';
 import { optionTextToTopic, topicToOptionText } from '../Post/CreatePost/TopicsRadio';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
@@ -26,6 +26,7 @@ import Image from 'next/image';
 import SearchLoader from '~assets/search/search-loader.gif';
 import DownOutlined from '~assets/search/dropdown-down.svg';
 import HighlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
+import InputClearIcon from '~assets/icons/close-tags.svg';
 import { SearchOutlined } from '@ant-design/icons';
 import CloseIcon from '~assets/icons/close.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -76,6 +77,7 @@ export enum EDateFilter {
 
 }
 
+const gov1Tracks =['tips','council_motions','bounties','child_bounties','treasury_proposals','democracy_proposals','tech_committee_proposals','referendums'];
 const getTrackNameFromId = (network: string, trackId: number ) => {
 
 	let trackName = '';
@@ -100,47 +102,46 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	const [filterBy, setFilterBy] = useState<EFilterBy>(EFilterBy.Referenda);
 	const [dateFilter, setDateFilter] = useState<EDateFilter | null>(null);
 	const [selectedTags, setSelectedTags] =  useState<string[]>([]);
-	const [selectedTracks, setSelectedTracks] = useState<CheckboxValueType[]>([]);
+	const [selectedOpengovTracks, setSelectedOpengovTracks] = useState<CheckboxValueType[]>([]);
+	const [selectedGov1Tracks, setSelectedGov1Tracks] = useState<CheckboxValueType[]>([]);
 	const [selectedTopics, setSelectedTopics] = useState<CheckboxValueType[]>([]);
 	const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
 	const [peopleResults, setPeopleResults] = useState<any[] | null>(null);
 	const [postResults, setPostResults] = useState<any[] | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const topicOptions: string[] = [];
-	const [usersPage, setUsersPage] = useState({ page: 1, totalUsers: 0 });
+	const [usersPage, setUsersPage] = useState({ page: 1, totalPeople: 0 });
 	const [postsPage, setPostsPage] = useState({ page: 1, totalPosts: 0 });
 	const [openFilter, setOpenFilter] = useState<{ date: boolean , topic: boolean, track: boolean }>({ date: false , topic: false, track: false });
-	const [searchInputErr, setSearchInputErr] = useState({ clicked :false, err:'' });
+	const [searchInputErr, setSearchInputErr] = useState({ clicked :false, err: false });
 	const [autoCompleteResults, setAutoCompleteResults] = useState<IAutocompleteResults>(initAutocompleteResults);
 
 	Object.keys(post_topic).map((topic) => topicOptions.push(topicToOptionText(topic)));
 
-	const tracksArr: { name: string; trackId: number; }[] = [];
+	const openGovTracks: { name: string; trackId: number; }[] = [];
 
 	if (networkTrackInfo?.[network]) {
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) =>
 		{
 			if(!value.fellowshipOrigin){
-				tracksArr.push({ name: key === 'root' ? 'Root' : value?.name, trackId: value?.trackId });
+				openGovTracks.push({ name: key === 'root' ? 'Root' : value?.name, trackId: value?.trackId });
 			}
 		});
 	}
-
-	const handleFilterChange = (list: CheckboxValueType[], filter: EMultipleCheckFilters) => {
-		if(filter === EMultipleCheckFilters.Tracks){ setSelectedTracks(list); }
-		else if(filter === EMultipleCheckFilters.Topic) {setSelectedTopics(list);}
-	};
 
 	const getFacetFileters = () => {
 		const postTypeFilter = [];
 
 		if(filterBy === EFilterBy.Referenda){
 			postTypeFilter.push([`post_type:-${ProposalType.DISCUSSIONS}`],[`post_type:-${ProposalType.GRANTS}`]);
+			if(selectedGov1Tracks.length > 0 ){
+				postTypeFilter.push(...selectedGov1Tracks.map((track) => [`post_type:${track}`] ));
+			}
 		}else if(filterBy === EFilterBy.Discussions){
 			postTypeFilter.push([`post_type:${ProposalType.DISCUSSIONS}`,`post_type:${ProposalType.GRANTS}`]);
 		}
 		const tracksFilter = [
-			(isOpenGovSupported(network)|| isSuperSearch) && filterBy !== EFilterBy.Discussions ?  selectedTracks.map((trackId) => `track_number:${Number(trackId)}`) : []
+			(isOpenGovSupported(network)|| isSuperSearch) && filterBy !== EFilterBy.Discussions ?  selectedOpengovTracks.map((trackId) => `track_number:${Number(trackId)}`) : []
 		];
 
 		return  [
@@ -214,6 +215,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 			await postIndex.search(finalSearchInput, { facetFilters, filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage.page-1 }).then(({ hits, nbHits }) => {
 				setPostsPage({ ...postsPage, totalPosts: nbHits });
 				setPostResults(hits);
+				console.log('here');
 			}).catch((error) => {
 				console.log(error);
 				setLoading(false);
@@ -221,7 +223,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		}
 		else{
 			await userIndex.search(finalSearchInput, { hitsPerPage: LISTING_LIMIT, page: usersPage.page-1 }).then(({ hits, nbHits }) => {
-				setUsersPage({ ...usersPage, totalUsers: nbHits });
+				setUsersPage({ ...usersPage, totalPeople: nbHits });
 
 				setPeopleResults(hits);
 				getDefaultAddress(hits);
@@ -236,33 +238,28 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedSearchFn = useCallback(_.debounce(getResultData, 5000), [finalSearchInput, selectedTags, filterBy, selectedTopics, usersPage.page, postsPage.page, isSuperSearch, selectedNetworks, selectedTracks, dateFilter]);
+	const debouncedSearchFn = useCallback(_.debounce(getResultData, 5000), [finalSearchInput, selectedTags, filterBy, selectedTopics, usersPage.page, postsPage.page, isSuperSearch, selectedNetworks, selectedGov1Tracks , selectedOpengovTracks, dateFilter]);
 
 	useEffect(() => {
 		if(finalSearchInput.length > 3){
-			setSearchInputErr({ ...searchInputErr, err:'' });
+			setSearchInputErr({ ...searchInputErr, err: false });
 			setOpenFilter({ date: false, topic: false, track: false });
 			setLoading(true);
-			debouncedSearchFn();}
-
+			debouncedSearchFn();
+		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[debouncedSearchFn]);
-
-	useEffect(() => {
-		setUsersPage({ page: 1, totalUsers: 0 });
-		setPostsPage({ page: 1, totalPosts: 0 });
-	},[finalSearchInput]);
 
 	const handleClearFilters = (close?: boolean) => {
 		close && searchInput.length > 0 && setSearchInput('');
 		close && finalSearchInput.length > 0 && setFinalSearchInput('');
-		setSearchInputErr({ clicked: false, err: '' });
+		setSearchInputErr({ clicked: false, err: false });
 		postResults && postResults?.length > 0 && setPostResults([]);
 		peopleResults && peopleResults?.length > 0 && setPeopleResults([]);
 		setFilterBy(EFilterBy.Referenda);
 		selectedTags && selectedTags.length > 0 && setSelectedTags([]);
 		selectedTopics.length > 0 && setSelectedTopics([]);
-		selectedTracks.length> 0 && setSelectedTracks([]);
+		selectedOpengovTracks.length > 0 && setSelectedOpengovTracks([]);
 		dateFilter && setDateFilter(null);
 		isSuperSearch && setIsSuperSearch(false);
 		close && setOpenModal(false);
@@ -299,6 +296,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 
 	const handleSearchOnChange = async (queryStr: string) => {
 		setSearchInput(queryStr);
+		setSearchInputErr({ ...searchInputErr, clicked:false });
 
 		if(autoCompleteResults.posts.length || autoCompleteResults.users.length){
 			setAutoCompleteResults(initAutocompleteResults);
@@ -367,9 +365,20 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	};
 
 	const handleSearchSubmit = () => {
+		if(loading) return;
 		setAutoCompleteResults(initAutocompleteResults);
-		!loading && searchInput.length >= 3 && setFinalSearchInput(searchInput);
-		setSearchInputErr({ ...searchInputErr, clicked:true });
+		if(searchInput.length > 3){
+			setFinalSearchInput(searchInput);
+			setSearchInputErr({ err: false, clicked: true });
+		}
+		else {
+			setPostResults([]);
+			setPeopleResults([]);
+			setSearchInputErr({ err: true, clicked: true });
+		}
+		setUsersPage({ page: 1, totalPeople: 0 });
+		setPostsPage({ page: 1, totalPosts: 0 });
+
 	};
 
 	return <Modal
@@ -382,11 +391,11 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	>
 		<div className={`${className} ${isSuperSearch && !loading && 'pb-20'}`}>
 			<Input
-				className='placeholderColor mt-4'
+				className='placeholderColor mt-4 rounded-[4px]'
 				type='search'
 				value={searchInput}
 				onChange={(e) => handleSearchOnChange(e.target.value)}
-				allowClear
+				allowClear={{ clearIcon:<InputClearIcon/> }}
 				placeholder='Type here to search for something'
 				onPressEnter={handleSearchSubmit}
 				addonAfter={
@@ -397,24 +406,22 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 				}
 			/>
 
-			{/* input error */}
-			{(searchInputErr?.err?.length > 0) && <span className='text-[red] text-xs mt-1'>{searchInputErr.err}</span>}
-
 			{/* Autocomplete results */}
 			{
-				((autoCompleteResults.posts.length > 0 || autoCompleteResults.users.length > 0) && searchInputErr?.err?.length == 0) &&
-				<section className='border-solid border-1 border-gray-200 rounded-b-md absolute z-50 bg-white w-[90%]'>
+				((autoCompleteResults.posts.length > 0 || autoCompleteResults.users.length > 0) && !searchInputErr?.err) &&
+				<section className='border-solid border-[1px] border-gray-200 rounded-b-[4px] absolute z-50 w-[94.3%] bg-white'>
 					{/* Posts List */}
 					<List
 						size="small"
 						dataSource={sortedAutoCompleteResults}
+						className='listing'
 						renderItem={(item) => {
 							const isPost = ('post_type' in item);
 							const str = getAutocompleteMarkedText(item._highlightResult) || 'No title';
 							const cleanStr = getCleanString(str);
 
 							return(
-								<List.Item className='flex justify-start hover:cursor-pointer whitespace-nowrap hover:bg-[#FEF2F8]' onClick={() => {
+								<List.Item className='flex justify-start hover:cursor-pointer whitespace-nowrap hover:bg-[#FEF2F8] ' onClick={() => {
 									setFilterBy(!isPost ? EFilterBy.Users : item.post_type === 'discussions' ? EFilterBy.Discussions : EFilterBy.Referenda);
 									handleSearchOnChange(cleanStr.endsWith('...') ? cleanStr.slice(0, -3) : cleanStr);
 									setFinalSearchInput(cleanStr);
@@ -430,11 +437,11 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 				</section>
 			}
 
-			{finalSearchInput.length > 3 && (postResults || peopleResults) && <div className={`${loading && 'hidden'} z-10`}>
+			{(finalSearchInput.length > 3 || searchInputErr.err ) && <div className={`${loading && 'hidden'} z-10`}>
 				<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2' }`}>
-					<Radio.Group onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage({ page: 1, totalPosts: 0 }); setUsersPage({ page: 1, totalUsers: 0 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-md:flex-col`}>
+					<Radio.Group onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage({ page: 1, totalPosts: 0 }); setUsersPage({ page: 1, totalPeople: 0 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-md:flex-col`}>
 						<Radio value={EFilterBy.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Referenda ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'} max-md:px-4`}>Referenda {filterBy === EFilterBy.Referenda && !loading && `(${postsPage?.totalPosts})`}</Radio>
-						<Radio value={EFilterBy.Users} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Users ? 'bg-[#FEF2F8] text-[#243A57] px-4' : 'text-[#667589] px-1'} max-md:px-4`}>People {filterBy === EFilterBy.Users && !loading && `(${usersPage?.totalUsers})`}</Radio>
+						<Radio value={EFilterBy.Users} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Users ? 'bg-[#FEF2F8] text-[#243A57] px-4' : 'text-[#667589] px-1'} max-md:px-4`}>People {filterBy === EFilterBy.Users && !loading && `(${usersPage?.totalPeople})`}</Radio>
 						<Radio value={EFilterBy.Discussions} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Discussions ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'} max-md:px-4`}>Discussions {filterBy === EFilterBy.Discussions && !loading && `(${postsPage?.totalPosts})`}</Radio>
 					</Radio.Group>
 
@@ -459,12 +466,25 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 
 						<FilterByTags isSearch={true} setSelectedTags={setSelectedTags} />
 
-						{filterBy === EFilterBy.Referenda && <Popover  open={openFilter.track} onOpenChange={() => setOpenFilter({ ...openFilter, track: !openFilter.track })} content={
-							<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => handleFilterChange(list, EMultipleCheckFilters.Tracks)} value={selectedTracks} >
-								{tracksArr && tracksArr?.map((track) => <Checkbox key={track?.name} value={track?.trackId} className={`text-xs font-normal py-1.5 ml-0 ${selectedTracks.includes(track?.name) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
-									<div className='mt-[2px] capitalize'>{track?.name?.split('_')?.join(' ')}</div>
-								</Checkbox> )}
-							</Checkbox.Group>} placement="bottomLeft">
+						{filterBy === EFilterBy.Referenda && <Popover rootClassName='track-popover' open={openFilter.track} onOpenChange={() => setOpenFilter({ ...openFilter, track: !openFilter.track })} content={
+							<Collapse collapsible='header' className={`${poppins.className} ${poppins.variable} cursor-pointer`}>
+								<Collapse.Panel key={1} header='Gov1' className='cursor-pointer'>
+									<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedGov1Tracks(list)} value={selectedGov1Tracks} >
+										{gov1Tracks && gov1Tracks?.map((track) => <Checkbox key={track} value={track} className={`text-xs font-normal py-1.5 ml-0 ${selectedGov1Tracks.includes(track) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
+											<div className='mt-[2px] capitalize'>{track?.split('_')?.join(' ')}</div>
+										</Checkbox> )}
+									</Checkbox.Group>
+								</Collapse.Panel>
+								<Collapse.Panel key={2} header='OpenGov' className='cursor-pointer'>
+									<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedOpengovTracks(list)} value={selectedOpengovTracks} >
+										{openGovTracks && openGovTracks?.map((track) => <Checkbox key={track?.name} value={track?.trackId} className={`text-xs font-normal py-1.5 ml-0 ${selectedOpengovTracks.includes(track?.name) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
+											<div className='mt-[2px] capitalize'>{track?.name?.split('_')?.join(' ')}</div>
+										</Checkbox> )}
+									</Checkbox.Group>
+								</Collapse.Panel>
+							</Collapse>
+
+						} placement="bottomLeft">
 							<div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter.track) && 'text-pink_primary' }`}>
                             Tracks
 								<span className='text-[#96A4B6]'>
@@ -472,7 +492,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 							</div>
 						</Popover>}
 
-						<Popover open={openFilter.topic} onOpenChange={() => setOpenFilter({ ...openFilter, topic: !openFilter.topic })} content={<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start ${poppins.className} ${poppins.variable}`} onChange={(list) => handleFilterChange(list, EMultipleCheckFilters.Topic)} value={selectedTopics} >
+						<Popover open={openFilter.topic} onOpenChange={() => setOpenFilter({ ...openFilter, topic: !openFilter.topic })} content={<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedTopics(list)} value={selectedTopics} >
 							{topicOptions && topicOptions?.map((topic) => <Checkbox key={topic} value={topic} className={`text-xs font-normal py-1.5 ml-0 ${selectedTopics.includes(topic) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
 								<div className='mt-[2px]'>{topic}</div>
 							</Checkbox>)}</Checkbox.Group>} placement="bottomLeft" >
@@ -500,10 +520,10 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 							<span className='text-pink_primary'>Tags:</span>
 							<span className='capitalize'>{selectedTags?.join(',')}</span>
 						</div>}
-						{selectedTracks.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
+						{selectedOpengovTracks.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
 							<span className='text-pink_primary'>Tracks:</span>
 							<>
-								{selectedTracks?.map((trackId, index) => <span key={index} className="capitalize gap-[2px]">{ getTrackNameFromId(network, Number(trackId))?.split('_')?.join(' ')}{index !== selectedTracks.length - 1 && ','}</span> )}
+								{selectedOpengovTracks?.map((trackId, index) => <span key={index} className="capitalize gap-[2px]">{ getTrackNameFromId(network, Number(trackId))?.split('_')?.join(' ')}{index !== selectedOpengovTracks.length - 1 && ','}</span> )}
 							</>
 						</div>}
 						{selectedTopics.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
@@ -511,26 +531,29 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 							<span>{selectedTopics?.join(',')}</span>
 						</div>}
 					</div>
-					<span className='text-pink_primary cursor-pointer' onClick={() => handleClearFilters()}>Clear All Filters</span>
+					{filterBy !== EFilterBy.Users && <span className='text-pink_primary cursor-pointer' onClick={() => handleClearFilters()}>Clear All Filters</span>}
 				</div>
 
 				{
-					(filterBy === EFilterBy.Referenda || filterBy ===  EFilterBy.Discussions)
+					(filterBy === EFilterBy.Referenda || filterBy ===  EFilterBy.Discussions) && !searchInputErr.err
 						&& postResults && <ResultPosts setOpenModal={setOpenModal} isSuperSearch={isSuperSearch} postsData={postResults} className='mt-3' postsPage={postsPage} setPostsPage={setPostsPage}/>
 				}
 
-				{filterBy === EFilterBy.Users
+				{filterBy === EFilterBy.Users && !searchInputErr.err
 					&& peopleResults && <ResultPeople searchInput={finalSearchInput} setOpenModal={setOpenModal} peopleData={peopleResults} usersPage={usersPage} setUsersPage={setUsersPage} />
 				}
 
 				{
-					!loading && (postResults || peopleResults) && <SuperSearchCard
+					!loading && (searchInputErr.err || postResults || peopleResults)  && <SearchErrorsCard
+						isSearchErr = {searchInput.length <= 3 && searchInputErr.clicked ? true : searchInputErr?.err}
+						filterBy={filterBy}
 						setFilterBy={setFilterBy}
+						setOpenModal= {setOpenModal}
 						setIsSuperSearch={setIsSuperSearch}
-						postResultsCounts={postResults?.length || 0}
-						peopleResultsCounts={peopleResults?.length || 0}
+						postResultsCounts={ isSuperSearch ? 0 : postsPage.totalPosts || 0}
+						peopleResultsCounts={isSuperSearch ? 0 : usersPage.totalPeople || 0}
 						isSuperSearch= {isSuperSearch}
-						filterBy={filterBy}/>
+					/>
 				}
 			</div>}
 
@@ -556,6 +579,20 @@ border: 1px solid #E5007A;
   margin-inline-start: 0px !important;
 }
 .ant-input-affix-wrapper {
-	border-width: 2px !important;
+	border-width: 1px !important;
+  border-radius:4px 0px 0px 4px !important;
+}
+.listing .ant-spin-nested-loading .ant-spin-container .ant-list-items .ant-list-item{
+  padding:0px 18px !important;
+}
+.track-popover .ant-popover-content .ant-popover-inner {
+  padding:0px !important;
+  border-radius: 4px !important;
+
+}
+.track-popover .ant-popover-content .ant-popover-inner .ant-collapse{
+  padding:0px !important;
+  border-radius: 4px !important;
+  border:none !important;
 }
 `;

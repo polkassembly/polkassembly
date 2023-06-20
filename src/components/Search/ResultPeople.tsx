@@ -21,7 +21,7 @@ interface Props {
   peopleData: IUser[];
   setOpenModal: (pre: boolean) => void;
   setUsersPage: (pre: any) => void;
-  usersPage: {page: number, totalUsers: number};
+  usersPage: {page: number, totalPeople: number};
   searchInput: string;
 }
 
@@ -37,7 +37,7 @@ const ResultPeople = ({ className, peopleData, usersPage, setUsersPage }: Props)
 				defaultCurrent={1}
 				current={usersPage?.page}
 				pageSize={LISTING_LIMIT}
-				total={usersPage?.totalUsers}
+				total={usersPage?.totalPeople}
 				showSizeChanger={false}
 				hideOnSinglePage={true}
 				onChange={(page: number) => setUsersPage((prev: any) => { return { ...prev, page };})}

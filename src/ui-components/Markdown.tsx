@@ -27,7 +27,7 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md }: 
 export default styled(Markdown)`
 
 	&, &.mde-preview-content {
-		font-size: 15px;
+		font-size: 14px;
 		margin-bottom: 0;
 		overflow-wrap: break-word;
 

@@ -52,13 +52,13 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 						<div className='my-2 flex flex-shrink-0 gap-1'>
 							<div className='flex gap-2 items-center text-xs text-[#485F7D]'>
 								<div className='flex gap-1 items-center text-xs text-[#485F7D]'>
-									<LikeIcon/><span>2k</span>
+									<LikeIcon/><span>{post?.reaction_count['👍'] || 0}</span>
 								</div>
 								<div className='flex gap-1 items-center text-xs text-[#485F7D]'>
-									<DislikeIcon/><span>2k</span>
+									<DislikeIcon/><span>{post?.reaction_count['👎'] || 0}</span>
 								</div>
 								<div className='flex gap-1 items-center text-xs text-[#485F7D]'>
-									<CommentIcon/><span>2k</span>
+									<CommentIcon/><span>{post?.comments_count || 0}</span>
 								</div>
 								<Divider style={{ border: '1px solid #485F7D' }} type="vertical"/>
 							</div>

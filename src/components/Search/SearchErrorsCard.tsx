@@ -12,13 +12,15 @@ import checkGov2Route from '~src/util/checkGov2Route';
 interface Props{
   setIsSuperSearch: (pre: boolean) => void;
   setFilterBy: (pre: EFilterBy) => void;
+  setOpenModal: (pre: boolean) => void;
   filterBy: EFilterBy;
+  isSearchErr: boolean;
   postResultsCounts: number;
   peopleResultsCounts: number;
   isSuperSearch: boolean;
 }
 
-const SuperSearchCard = ({ setIsSuperSearch, setFilterBy, isSuperSearch, filterBy, postResultsCounts, peopleResultsCounts }: Props) =>
+const SearchErrorsCard = ({ isSearchErr, setIsSuperSearch, setOpenModal, setFilterBy, isSuperSearch, filterBy, postResultsCounts, peopleResultsCounts }: Props) =>
 {
 	const router = useRouter();
 
@@ -28,7 +30,7 @@ const SuperSearchCard = ({ setIsSuperSearch, setFilterBy, isSuperSearch, filterB
 			<div className='text-[#243A57] text-sm font-medium tracking-[0.01em]'>
 				<div className='flex flex-col mt-5 justify-center items-center'>
 					<EmptyResultsIcon/>
-					<span className='text-sm font-medium text-[#243A57] mt-8 tracking-[0.01em]'>No search results found. You may want to try using different keywords.</span>
+					<span className='text-sm font-medium text-[#243A57] mt-8 tracking-[0.01em]'>{!isSearchErr ? 'No search results found. You may want to try using different keywords.' : 'Please enter at least 3 characters to proceed.'}</span>
 				</div>
 			</div>
 			{!isSuperSearch && <Button onClick={() => {setIsSuperSearch(true); setFilterBy(EFilterBy.Referenda);}} className='flex items-center justify-center gap-1.5 bg-[#E5007A] text-white text-sm font-medium rounded-[4px] mt-6'>
@@ -38,7 +40,7 @@ const SuperSearchCard = ({ setIsSuperSearch, setFilterBy, isSuperSearch, filterB
 			<div className='w-[50%] max-md:w-[80%] my-8'>
 				<Divider className='text-[#90A0B7] border-[1px]'><span className='text-[10px] font-medium'>OR</span></Divider>
 			</div>
-			<div className='text-sm text-[#243A57] font-medium tracking-[0.01em] flex gap-1'><span>See latest</span><span onClick={() =>  router.push(checkGov2Route(router?.pathname) ? '/open-gov' : '/') } className='text-[#E5007A] mx-[2px] border-solid border-[0px] border-b-[1px] leading-[-8px]'>Latest Activity</span><span >on Polkassembly.</span></div>
+			<div className='text-sm text-[#243A57] font-medium tracking-[0.01em] flex gap-1'><span>See latest</span><span onClick={() =>  {router.push(checkGov2Route(router?.pathname) ? '/opengov' : '/'); setOpenModal(false);}} className='text-[#E5007A] mx-[2px] border-solid border-[0px] border-b-[1px] leading-[-8px] cursor-pointer'>Latest Activity</span><span >on Polkassembly.</span></div>
 		</div>
 		:!isSuperSearch ?
 			<div className='flex flex-col justify-center items-center mb-5'>
@@ -50,4 +52,4 @@ const SuperSearchCard = ({ setIsSuperSearch, setFilterBy, isSuperSearch, filterB
 			</div>: null
 	);
 };
-export default SuperSearchCard;
+export default SearchErrorsCard;

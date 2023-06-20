@@ -118,7 +118,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 		if (!api || !apiReady) return;
 
 		const web3Name = await getKiltDidName(api, address);
-		setKiltName(web3Name || '');
+		setKiltName(web3Name ? `w3n:${web3Name}` : '');
 	};
 
 	useEffect(() => {

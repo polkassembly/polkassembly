@@ -10,7 +10,7 @@ import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
-import { GET_ALLIANCE_ANNOUNCEMENTS, GET_ALLIANCE_LATEST_ACTIVITY, GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES } from '~src/queries';
+import { GET_ALLIANCE_ANNOUNCEMENTS, GET_ALLIANCE_LATEST_ACTIVITY, GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES, GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -339,6 +339,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			if (network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES) {
 				if (proposalType === ProposalType.ANNOUNCEMENT) {
 					query = GET_ALLIANCE_ANNOUNCEMENTS;
+				} else if (proposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
+					query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES;
 				} else {
 					query = GET_ALLIANCE_LATEST_ACTIVITY;
 				}

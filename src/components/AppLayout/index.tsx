@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import { BellOutlined, BookOutlined, DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
@@ -29,7 +29,6 @@ import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
-import dayjs from 'dayjs';
 
 const { Content, Sider } = Layout;
 
@@ -53,13 +52,6 @@ function getSiderMenuItem(
 const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [
 		{
-			key: 'notification settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/notification-settings'>
-				<BellOutlined />
-				<span>Notifications</span>
-			</Link>
-		},
-		{
 			key: 'view profile',
 			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
 				<UserOutlined />
@@ -67,15 +59,8 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 			</Link>
 		},
 		{
-			key: 'tracker',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/tracker'>
-				<BookOutlined />
-				<span>Tracker</span>
-			</Link>
-		},
-		{
 			key: 'settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings'>
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=notifications'>
 				<SettingOutlined />
 				<span>Settings</span>
 			</Link>
@@ -189,7 +174,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network) || network === 'polkadot')) {
+	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network))) {
 		gov1Items.overviewItems = [
 			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'opengov', ''),
 			...gov1Items.overviewItems
@@ -233,7 +218,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]);
 	}
 
-	if(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES){
+	if(network === AllNetworks.COLLECTIVES){
+		const fellowshipItems = [getSiderMenuItem('Members', '/fellowship', <MembersIcon className='text-white' />), getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='text-sidebarBlue' />)];
+		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
+			...gov1Items.allianceItems
+		]), getSiderMenuItem('Fellowship', 'fellowship_group', null, fellowshipItems)];
+		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems, ...fellowshipItems];
+	} else if (network === AllNetworks.WESTENDCOLLECTIVES) {
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
 			...gov1Items.allianceItems
 		])];
@@ -292,7 +283,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='text-sidebarBlue' />)
 	];
 
-	if(network === 'kusama'){
+	if(['kusama', 'polkadot'].includes(network)){
 		gov2OverviewItems.splice(1, 0, getSiderMenuItem(<div className='flex gap-2 items-center'>Delegation <span className='px-[6px] py-[2px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-xs'>New</span></div>, '/delegation',  !sidedrawer ? <div className='flex flex-col items-center gap-0 delegation'><DelegationSidebarIcon className= 'text-white -ml-1'/>
 			<span className='px-[4px] py-[1px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-[10px] -mt-1 ml-[-2px] opacity'>New</span>
 		</div> : <DelegationSidebarIcon className= 'text-white -ml-1 mr-1'/> ));
@@ -356,7 +347,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]));
 	}
 
-	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute );
+	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
 
 	const handleMenuClick = (menuItem: any) => {
 		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
@@ -428,7 +419,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				</Drawer>
 				{
-					((network === 'polkadot' && router.asPath === '/') || (network === 'kusama' && ['/', '/opengov', '/gov-2'].includes(router.asPath))) && dayjs('2023-06-15 17:35:30').diff(dayjs()) > 0?
+					((['kusama', 'polkadot'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
 						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#EFF2F5]'>
 							{/* Dummy Collapsed Sidebar for auto margins */}
 							<OpenGovHeaderBanner />

@@ -6,10 +6,10 @@ import { LeftOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { EMembersType } from 'pages/members';
 import React from 'react';
-import { PostCategory } from 'src/global/post_categories';
+import { PageLink, PostCategory } from 'src/global/post_categories';
 
 interface Props {
-	postCategory?:PostCategory | EMembersType;
+	postCategory?:PostCategory | EMembersType | PageLink;
 	trackName?:string
 }
 
@@ -66,6 +66,9 @@ const BackToListingView = ({ postCategory, trackName } : Props) => {
 			break;
 		case EMembersType.WHITELIST:
 			path = 'whitelist';
+			break;
+		case PageLink.OVERVIEW_GOV_2:
+			path = 'opengov';
 			break;
 		}
 	}

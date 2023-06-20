@@ -150,7 +150,6 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 						onSubmit={handleSubmitAuthCode}
 						error={error || ''}
 						loading={loading}
-						userId={authResponse.user_id}
 					/> :
 					<AuthForm
 						onSubmit={handleSubmitForm}

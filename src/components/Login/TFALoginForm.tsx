@@ -11,12 +11,11 @@ interface Props {
 	className?: string;
 	error?: string;
 	loading?: boolean;
-	userId?: number;
 	onSubmit: (data: any) => void;
 	onBack: () => void;
 }
 
-const TFALoginForm = ({ className, error, loading, userId, onSubmit, onBack }: Props) => {
+const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) => {
 	return (
 		<AuthForm
 			onSubmit={onSubmit}
@@ -24,7 +23,7 @@ const TFALoginForm = ({ className, error, loading, userId, onSubmit, onBack }: P
 		>
 			<div className="flex flex-col gap-y-1">
 				<h1 className='text-sidebarBlue'>Two Factor Authentication</h1>
-				<p className='text-sidebarBlue'>Please open the two-step verification app or extension and input the authentication code for <span className='font-semibold'>&apos;Polkassembly: {userId}&apos;</span></p>
+				<p className='text-sidebarBlue'>Please open the two-step verification app or extension and input the authentication code for your Polkassembly account.</p>
 
 				{error && <FilteredError className='mt-2 mb-6' text={error} />}
 
@@ -36,7 +35,7 @@ const TFALoginForm = ({ className, error, loading, userId, onSubmit, onBack }: P
 				</label>
 				<Form.Item
 					name="authCode"
-					validateTrigger={['onChange', 'onBlur']}
+					validateTrigger={['onSubmit']}
 					rules={[
 						{
 							message: 'Please provide a valid authentication code.',

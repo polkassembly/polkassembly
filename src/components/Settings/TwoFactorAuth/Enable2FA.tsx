@@ -121,7 +121,7 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 					<Button
 						key="cancel"
 						onClick={dismissModal}
-						className='rounded-lg font-semibold text-md leading-7 text-white py-5 outline-none border-none px-7 inline-flex items-center justify-center bg-pink_primary'
+						className='rounded-lg font-semibold text-md leading-7 text-pink_primary py-5 outline-none border-solid border-pink_primary px-7 inline-flex items-center justify-center bg-white'
 						disabled={loading}
 					>
 						Cancel
@@ -149,7 +149,7 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 								<h2 className='text-base text-sidebarBlue'>Configuring Google Authenticator</h2>
 
 								<ol className='ml-4'>
-									<li className='mb-1'>Install Google Authenticator (IOS/Android).</li>
+									<li className='mb-1'>Install Google Authenticator (iOS/Android).</li>
 									<li className='mb-1'>In the authenticator app, select the &quot;+&quot; icon.</li>
 									<li className='mb-1'>Select &quot;Scan a QR code&quot; and use the phone&apos;s camera to scan this QR code.</li>
 								</ol>
@@ -185,7 +185,7 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 
 								<Form.Item
 									name='authCode'
-									validateTrigger={['onChange', 'onBlur']}
+									validateTrigger={['onSubmit']}
 									rules={[
 										{
 											message: 'Invalid authentication code',

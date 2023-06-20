@@ -75,7 +75,7 @@ const Disable2FA: FC<{className?: string}> = ({ className }) => {
 						key="disable"
 						onClick={handleSubmit}
 						disabled={loading}
-						className='rounded-lg font-semibold text-md leading-7 text-white py-5 outline-none border-none px-7 inline-flex items-center justify-center bg-pink_primary'
+						className='rounded-lg font-semibold text-md leading-7 text-pink_primary py-5 outline-none border-solid border-pink_primary px-7 inline-flex items-center justify-center bg-white'
 					>
            Disable
 					</Button>,
@@ -95,7 +95,7 @@ const Disable2FA: FC<{className?: string}> = ({ className }) => {
 
 						<section className='text-center my-10'>
 							<p className='mb-3'>Are you sure you want to disable two factor authentication ?</p>
-							<small><em>Note: Please remember to remove the <span className='font-semibold'>&apos;Polkassembly: {currentUser.id}&apos;</span> entry from your authenticator app too</em></small>
+							<small><em>Note: Please remember to remove the auth account from your authenticator app too</em></small>
 						</section>
 					</Spin>
 					: <section className='text-center my-10'>Two factor authentication disabled successfully.</section>

@@ -407,7 +407,6 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 							onSubmit={handleSubmitAuthCode}
 							error={error || ''}
 							loading={loading}
-							userId={authResponse.user_id}
 						/> : <>
 							<div>
 								<AccountSelectionForm

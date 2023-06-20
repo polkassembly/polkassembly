@@ -399,7 +399,6 @@ const Web3Login: FC<Props> = ({
 								onSubmit={handleSubmitAuthCode}
 								error={error || ''}
 								loading={loading}
-								userId={authResponse.user_id}
 							/> :
 							<AuthForm onSubmit={handleLogin} className="flex flex-col">
 								{extensionNotFound ?

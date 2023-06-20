@@ -21,6 +21,7 @@ export enum EDecision {
 }
 
 export interface IVoteHistory {
+	timestamp?: string | undefined;
     decision: EDecision;
     type: VoteType;
     blockNumber: number;

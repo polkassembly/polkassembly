@@ -150,7 +150,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					/>
 				</div>
 
-				<div className="block lg:hidden h-[520px] overflow-y-auto">
+				<div className="block lg:hidden h-[520px] overflow-y-auto px-0">
 					<Gov2PopulatedLatestActivityCard tableData={tableData}
 						onClick={(rowData) => gotoPost(rowData)}
 					/>

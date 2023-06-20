@@ -66,7 +66,10 @@ const Motions: FC<IMotionsProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Motions' network={network}/>
-			<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2 flex align-middle '><MotionsIcon className='mr-1 mt-[-2px]'/> On Chain Motions ({ count })</h1>
+			<div className='flex items-center mt-3'>
+				<MotionsIcon className='-mt-3.5'/>
+				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>On Chain Motions ({count})</h1>
+			</div>
 
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row">
@@ -76,7 +79,7 @@ const Motions: FC<IMotionsProps> = (props) => {
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white py-5 px-0 rounded-xxl'>
+			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-6'>
 				<div className='flex items-center justify-between'>
 					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
 						<FilteredTags/>

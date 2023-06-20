@@ -69,7 +69,7 @@ const Bounties: FC<IBountiesProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Bounties' network={network}/>
-			<div className='flex items-center'>
+			<div className='flex items-center mt-3'>
 				<DollarIcon  className='-mt-3.5'/>
 				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>On Chain Bounties ({count})</h1>
 			</div>
@@ -82,7 +82,7 @@ const Bounties: FC<IBountiesProps> = (props) => {
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white py-5 px-0 rounded-xxl'>
+			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-6'>
 				<div className='flex items-center justify-between'>
 					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
 						<FilteredTags/>

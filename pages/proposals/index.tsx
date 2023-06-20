@@ -68,7 +68,7 @@ const Proposals: FC<IProposalsProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Proposals' network={network}/>
-			<div className='flex items-center'>
+			<div className='flex items-center mt-3'>
 				<ProposalsIcon className='-mt-3.5' />
 				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>On Chain Proposals</h1>
 			</div>
@@ -81,12 +81,12 @@ const Proposals: FC<IProposalsProps> = (props) => {
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white py-5 px-0 rounded-xxl'>
+			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-6'>
 				<div className='flex items-center justify-between'>
-					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-3'>
+					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
 						<FilteredTags/>
 					</div>
-					<FilterByTags className='my-6 sm:mr-[54px] xs:mx-6 xs:my-2'/>
+					<FilterByTags className='my-6 sm:mr-14 xs:mx-6 xs:my-2'/>
 				</div>
 
 				<div>

@@ -520,10 +520,11 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 							<span className='text-pink_primary'>Tags:</span>
 							<span className='capitalize'>{selectedTags?.join(',')}</span>
 						</div>}
-						{selectedOpengovTracks.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
+						{(selectedOpengovTracks.length > 0 || selectedGov1Tracks.length > 0) && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
 							<span className='text-pink_primary'>Tracks:</span>
 							<>
-								{selectedOpengovTracks?.map((trackId, index) => <span key={index} className="capitalize gap-[2px]">{ getTrackNameFromId(network, Number(trackId))?.split('_')?.join(' ')}{index !== selectedOpengovTracks.length - 1 && ','}</span> )}
+								{selectedOpengovTracks?.map((trackId, index) => <span key={index} className="capitalize gap-[2px]">{ getTrackNameFromId(network, Number(trackId))?.split('_')?.join(' ')}{index !== selectedOpengovTracks.length - 1 && ','} </span> )}
+								{selectedGov1Tracks.map((track, index) => <span key={index} className="capitalize gap-[2px]"> {selectedOpengovTracks.length > 0 && ', '}{ (track as string)?.split('_')?.join(' ')}{index !== selectedGov1Tracks.length - 1 && ','} </span>)}
 							</>
 						</div>}
 						{selectedTopics.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>

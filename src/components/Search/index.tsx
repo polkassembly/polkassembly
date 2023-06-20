@@ -260,6 +260,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		selectedTags && selectedTags.length > 0 && setSelectedTags([]);
 		selectedTopics.length > 0 && setSelectedTopics([]);
 		selectedOpengovTracks.length > 0 && setSelectedOpengovTracks([]);
+		selectedGov1Tracks.length > 0 && setSelectedGov1Tracks([]);
 		dateFilter && setDateFilter(null);
 		isSuperSearch && setIsSuperSearch(false);
 		close && setOpenModal(false);

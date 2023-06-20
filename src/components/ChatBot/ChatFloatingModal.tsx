@@ -77,7 +77,7 @@ export default function ChatFloatingModal () {
 	};
 
 	const { network } = useNetworkContext();
-	const grillData = {
+	const grillData: { [index: string]: string[] } ={
 		[globalNework.CERE]: ['5145', '5139'],
 		[globalNework.KILT]: ['2035', '5144'],
 		[globalNework.KUSAMA]: ['2027', '5138'],
@@ -113,19 +113,21 @@ export default function ChatFloatingModal () {
 	}, [grillData,network]);
 
 	return (
-		<Container>
-			{(grillData as any)[network] && <div className={'ChatFloatingModal'}>
-				{(isOpen || hasOpened.current) && (
-					<div
-						id='grill'
-						className={`ChatFloatingIframe ${!isOpen ? 'ChatFloatingIframeHidden':''}`
-						}
-					/>
-				)}
-				<Button className={'ChatFloatingButton'} onClick={toggleChat}>
-					<Image src={GrillChatIcon} alt='GrillChat' className='w-[50px] h-[50px]'/>
-				</Button>
-			</div>}
-		</Container>
+		<>
+			{(grillData as any)[network] ? <Container>
+				<div className={'ChatFloatingModal'}>
+					{(isOpen || hasOpened.current) && (
+						<div
+							id='grill'
+							className={`ChatFloatingIframe ${!isOpen ? 'ChatFloatingIframeHidden':''}`
+							}
+						/>
+					)}
+					<Button className={'ChatFloatingButton'} onClick={toggleChat}>
+						<Image src={GrillChatIcon} alt='GrillChat' className='w-[50px] h-[50px]'/>
+					</Button>
+				</div>
+			</Container>: null}
+		</>
 	);
 }

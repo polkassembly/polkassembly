@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import axios from 'axios';
 
 const subsquidUrlMap = {
 	kusama: 'https://squid.subsquid.io/kusama-polkassembly/graphql',
@@ -22,14 +23,12 @@ export default async function fetchSubsquid({ query, variables, network } : Args
 	if (network !== ('kusama' || 'polkadot' || 'moonriver' || 'moonbeam' || 'vara') ) return;
 
 	const subsquidUrl = subsquidUrlMap[network];
-	return fetch(`${subsquidUrl}`, {
+	return axios.post(`${subsquidUrl}`, {
 		body: JSON.stringify(body),
 		headers: {
 			'Content-Type': 'application/json'
-		},
-		method: 'POST'
+		}
 	})
-		.then((res) => res.json())
 		.then((result) => result)
 		.catch((e) => {
 			console.error('error in fetchSubsquid : ', e);

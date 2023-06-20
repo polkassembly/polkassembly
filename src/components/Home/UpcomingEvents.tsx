@@ -429,17 +429,13 @@ export default styled(UpcomingEvents)`
 		margin-top : -24px;
 		background-color: #ff7ab4;
 		color : #fff;
-		padding: 0px 4px;
 		border-radius : 50%;
-    display : flex;
+		display : flex;
 		align-items: center;
-    justify-content: center;
+		justify-content: center;
 		position: relative;
 	}
 	.calenderDate::before {
-	content: "0";
 	position: absolute;
-	top: 0;
-	left: -17px; 
 	}
 `;

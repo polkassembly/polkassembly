@@ -86,6 +86,7 @@ export interface Address {
 	verified: boolean;
 	is_erc20?: boolean;
 	wallet?: string;
+	isMultisig?:boolean
 }
 
 export interface NotificationSettings {

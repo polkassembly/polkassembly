@@ -36,9 +36,10 @@ interface Props {
 	setSignupOpen?: (pre: boolean)=> void;
   isDelegation?: boolean;
   className?: string;
+  setWithPolkasafe?: any;
 }
 
-const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation }) => {
+const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation, setWithPolkasafe }) => {
 	const { password, username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
@@ -293,6 +294,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					<WalletButtons
 						disabled={loading}
 						onWalletSelect={onWalletSelect}
+						showPolkasafe={true}
+						onPolkasafeSelect={setWithPolkasafe}
 					/>
 				</div>
 				{error && <FilteredError text={error} />}

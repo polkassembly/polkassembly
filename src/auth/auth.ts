@@ -543,7 +543,7 @@ class AuthService {
 			email_verified: true,
 			notification_preferences:{ ...userDocData.notification_preferences,
 				channelPreferences:{
-					...userDocData.notification_preferences.channelPreferences,
+					...userDocData.notification_preferences?.channelPreferences,
 					email:{
 						email: email,
 						enabled: true,
@@ -1090,7 +1090,7 @@ class AuthService {
 		}
 
 		const oldMail = user.email;
-		const shouldSendUndoEmailChangeEmail = oldMail !== email;
+		const shouldSendUndoEmailChangeEmail = !oldMail ? false : oldMail !== email ? true : false;
 
 		await firestore.collection('users').doc(String(user.id)).update({
 			email,

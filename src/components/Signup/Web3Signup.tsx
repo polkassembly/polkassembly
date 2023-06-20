@@ -410,7 +410,7 @@ const Web3Signup: FC<Props> = ({
 };
 const PolkasafeWithIcon = () => (
 	<>
-		Signup by Polkasafe <Image width={25} height={25} src='/assets/polkasafe-logo.png' alt='polkasafe'/>
+		Signup by Polkasafe <Image width={25} height={25} src='/assets/polkasafe-logo.svg' alt='polkasafe'/>
 	</>
 );
 

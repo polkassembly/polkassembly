@@ -473,7 +473,7 @@ const Web3Login: FC<Props> = ({
 
 const PolkasafeWithIcon = () => (
 	<>
-		Login by Polkasafe <Image width={25} height={25} src='/assets/polkasafe-logo.png' alt='polkasafe'/>
+		Login by Polkasafe <Image width={25} height={25} src='/assets/polkasafe-logo.svg' alt='polkasafe'/>
 	</>
 );
 

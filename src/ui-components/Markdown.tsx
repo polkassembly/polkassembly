@@ -64,7 +64,7 @@ export default styled(Markdown)`
 		}
 
 		a {
-			color: pink_primary;
+			color: pink_primary !important;
 
 			&:hover {
 				text-decoration: none;

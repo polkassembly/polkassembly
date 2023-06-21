@@ -64,7 +64,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 		title: title || ''
 	};
 
-	const updated_token = await authServiceInstance.getSignedToken({ ...user, custom_username: custom_username, profile, username });
+	const updated_token = await authServiceInstance.getSignedToken({ ...user, custom_username:false, profile, username });
 
 	await userRef.update({ custom_username: custom_username, profile, username }).then(() => {
 		return res.status(200).json({ token: updated_token });

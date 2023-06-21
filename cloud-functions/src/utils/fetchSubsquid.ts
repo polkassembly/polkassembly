@@ -20,9 +20,9 @@ interface Args {
 export default async function fetchSubsquid({ query, variables, network } : Args) {
 	const body = variables ? { query, variables } : { query };
 
-	if (network !== ('kusama' || 'polkadot' || 'moonriver' || 'moonbeam' || 'vara') ) return;
+	if (!(network in subsquidUrlMap) ) return;
 
-	const subsquidUrl = subsquidUrlMap[network];
+	const subsquidUrl = subsquidUrlMap[network as keyof typeof subsquidUrlMap];
 	return axios.post(`${subsquidUrl}`, {
 		body: JSON.stringify(body),
 		headers: {

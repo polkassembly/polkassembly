@@ -80,6 +80,20 @@ export function getReferendumVotingFinishHeight(timeline: any[], openGovType: TO
 	return height;
 }
 
+export function checkVotingStart(timeline: any[], openGovType: TOpenGov) {
+	let isVotingStart = false;
+	if (timeline && Array.isArray(timeline) && timeline.length > 0) {
+		const singleTimeline = timeline.find((item) => item.type === getSubsquidProposalType(openGovType));
+		if (singleTimeline && singleTimeline.statuses && Array.isArray(singleTimeline.statuses)) {
+			const finishItem = singleTimeline.statuses.find((obj: any) => obj.status === 'Deciding');
+			if (finishItem) {
+				isVotingStart = true;
+			}
+		}
+	}
+	return isVotingStart;
+}
+
 export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: number, endHeight: number) {
 	const gone = endHeight - decidingSince;
 	return Math.min(gone / decisionPeriod, 1);
@@ -148,6 +162,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
 
 	useEffect(() => {
+		console.log('hi');
 		if ([ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
 			if (!api || !apiReady) {
 				return;
@@ -317,6 +332,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	useEffect(() => {
 		if (trackInfo) {
+			const isVotingStart = checkVotingStart(post?.timeline, proposalType as TOpenGov);
+			if (!isVotingStart) {
+				setProgress((prev) => ({
+					...prev,
+					approvalThreshold: 100,
+					supportThreshold: 50
+				}));
+				return;
+			}
 			const endHeight = (currentBlock? currentBlock?.toNumber(): getReferendumVotingFinishHeight(post?.timeline, proposalType as TOpenGov));
 			const percentage = getDecidingEndPercentage(Number(trackInfo.decisionPeriod || 0), Number(post?.deciding?.since || 0), Number(endHeight || 0));
 			const { approvalCalc, supportCalc } = getTrackFunctions(trackInfo);

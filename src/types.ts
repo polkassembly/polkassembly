@@ -27,7 +27,8 @@ export interface UserDetailsContextType {
   delegationDashboardAddress: string;
   loginAddress: string;
   networkPreferences: INetworkPreferences;
-  primaryNetwork: string
+  primaryNetwork: string;
+  is2FAEnabled?: boolean;
 }
 
 export interface INetworkPreferences {

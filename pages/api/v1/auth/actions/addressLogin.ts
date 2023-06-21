@@ -6,18 +6,20 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import authServiceInstance from '~src/auth/auth';
-import { MessageType, TokenType } from '~src/auth/types';
+import { MessageType, IAuthResponse } from '~src/auth/types';
 
-async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | MessageType>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<IAuthResponse | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const { address, signature, wallet } = req.body;
-
 	if(!address || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	const { token } = await authServiceInstance.AddressLogin(address, signature, wallet);
+	const { isTFAEnabled = false, tfa_token = '', token = '', user_id } = await authServiceInstance.AddressLogin(address, signature, wallet);
+	if(!token && !isTFAEnabled) return res.status(401).json({ message: 'Something went wrong. Please try again.' });
 
-	return res.status(200).json({ token });
+	if(isTFAEnabled) return res.status(200).json({ isTFAEnabled, tfa_token, user_id });
+
+	return res.status(200).json({ isTFAEnabled, token });
 }
 
 export default withErrorHandling(handler);

@@ -34,9 +34,11 @@ const Settings: FC<Props> = (props) => {
 	const tab = router.query?.tab as string;
 	const { id } = useUserDetailsContext();
 	const [searchQuery, setSearchQuery] = useState<string>('');
+
 	const handleTabClick = (key: string) => {
 		router.push(`/settings?tab=${key}`);
 	};
+
 	const tabItems = useMemo(() => [
 		{ children: <UserAccount network={network} />, key: 'account', label: 'Account' },
 		{ children: AVAILABLE_NETWORK.includes(network) ? <Notifications network={network} /> : <NotificationUpgradingState />, key: 'notifications', label: 'Notifications' },

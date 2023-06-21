@@ -101,8 +101,9 @@ const Profile = () => {
 	const [passwords, setPasswords] = useState(initialPasswordsState);
 	const [err, setErr] = useState('');
 	const [loading, setLoading] = useState(false);
+	const { web3signup } = useUserDetailsContext();
 
-	const isSubmitDisabled = isChange ? (!passwords.old || !passwords.new) : (!currentPassword || currentEmail === email);
+	const isSubmitDisabled =web3signup ? email === '' : isChange ? (!passwords.old || !passwords.new) : (!currentPassword || currentEmail === email);
 
 	const handleSubmit = async (values: any) => {
 		try {
@@ -115,8 +116,42 @@ const Profile = () => {
 
 		//validation is successful
 		setErr('');
-		const { new_password, old_password } = values;
+		if(web3signup){
+			try {
+				setLoading(true);
+				const { data, error } = await nextApiClientFetch<any>(
+					'api/v1/auth/actions/sendVerificationEmail',
+					{
+						email
+					}
+				);
+				if (error) {
+					queueNotification({
+						header: 'Failed!',
+						message: error,
+						status: NotificationStatus.ERROR
+					});
+				}
+				if (data) {
+					queueNotification({
+						header: 'Success!',
+						message: 'Verification Email Sent.',
+						status: NotificationStatus.SUCCESS
+					});
+				}
+				setLoading(false);
+			} catch (error) {
+				console.log('Validation error:', error);
+				setLoading(false);
+				queueNotification({
+					header: 'Failed!',
+					message: error,
+					status: NotificationStatus.ERROR
+				});
+			}
+		}
 
+		const { new_password, old_password } = values;
 		if(currentEmail !== email && currentPassword){
 			setLoading(true);
 			// nextApiClientFetch<ChangeResponseType | MessageType>
@@ -219,7 +254,8 @@ const Profile = () => {
 				</article>
 
 				{
-					isChange // only allow to change password if not changing email
+					!web3signup &&
+					(isChange // only allow to change password if not changing email
 						? <article className='flex flex-col lg:flex-row gap-x-5'>
 							<Password
 								onChange={
@@ -297,7 +333,7 @@ const Profile = () => {
 							>
                Change
 							</Button>
-						</article>
+						</article>)
 				}
 
 				<Button

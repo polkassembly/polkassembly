@@ -86,10 +86,10 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 						{/* Meta Data Row */}
 						<div className="flex items-center justify-between text-bodyBlue">
 							<div className="flex my-3">
-								<span className='mx-2'>#{
+								<span className='mx-3'>#{
 									rowData.tip_id ? rowData.tip_id : rowData.post_id
 								}</span>
-								<span className='mx-2'>
+								<span className='mx-0.5'>
 									{/* truncate rowData.title to 50 characters */}
 									{rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
 								</span>
@@ -103,7 +103,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 									!rowData.proposer ? <span className='username text-bodyBlue mx-2'> { rowData.username } </span> :
 										<Address
 											address={rowData.proposer}
-											className='text-sm'
+											className='text-sm mx-2'
 											displayInline={true}
 											disableIdenticon={false}
 										/>
@@ -114,7 +114,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 						</div>
 						<div className='flex items-center justify-between my-2 mx-1'>
 							{
-								rowData.status && <StatusTag status={rowData.status} />
+								rowData.status && <StatusTag className='my-1.5' status={rowData.status} />
 							}
 						</div>
 					</div>
@@ -133,8 +133,8 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 						{/* Meta Data Row */}
 						<div className="flex items-center justify-between text-bodyBlue">
 							<div className="flex my-3">
-								<span className='mx-2'>#{rowData.post_id}</span>
-								<span className='mx-2'>
+								<span className='mx-3'>#{rowData.post_id}</span>
+								<span className='mx-0.5'>
 									{rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
 								</span>
 								{rowData.sub_title && <div className='text-sm text-bodyBlue'>{rowData.sub_title}</div>}
@@ -147,7 +147,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 									!rowData.proposer ? <span className='username text-bodyBlue mx-2'> { rowData.username } </span> :
 										<Address
 											address={rowData.proposer}
-											className='text-sm'
+											className='text-sm mx-2'
 											displayInline={true}
 											disableIdenticon={false}
 										/>
@@ -158,7 +158,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 						</div>
 						<div className='flex items-center justify-between my-2 mx-1'>
 							{
-								rowData.status && <StatusTag status={rowData.status} />
+								rowData.status && <StatusTag className='my-1.5' status={rowData.status} />
 							}
 						</div>
 					</div>

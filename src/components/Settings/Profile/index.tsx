@@ -106,6 +106,10 @@ const Profile = () => {
 	const isSubmitDisabled =web3signup ? email === '' : isChange ? (!passwords.old || !passwords.new) : (!currentPassword || currentEmail === email);
 
 	const handleSubmit = async (values: any) => {
+		if(email === currentEmail){
+			setErr('You already verified this email');
+			return;
+		}
 		try {
 			await form.validateFields();
 		} catch (error) {

@@ -25,7 +25,7 @@ import {
 	sendVerificationEmail
 } from './email';
 import { redisDel, redisGet, redisSetex } from './redis';
-import { Address, AuthObjectType, CalendarEvent, HashedPassword, IUserPreference, JWTPayloadType, NotificationSettings, ProfileDetails, UndoEmailChangeToken, User } from './types';
+import { Address, AuthObjectType, CalendarEvent, HashedPassword, IAuthResponse, IUserPreference, JWTPayloadType, NotificationSettings, ProfileDetails, UndoEmailChangeToken, User } from './types';
 import getAddressesFromUserId from './utils/getAddressesFromUserId';
 import getDefaultUserAddressFromId from './utils/getDefaultUserAddressFromId';
 import getMultisigAddress from './utils/getMultisigAddress';
@@ -71,6 +71,7 @@ export const getEmailVerificationTokenKey = (token: string): string => `EVT-${to
 export const getMultisigAddressKey = (address: string): string => `MLA-${address}`;
 export const getCreatePostKey = (address: string): string => `CPT-${address}`;
 export const getEditPostKey = (address: string): string => `EPT-${address}`;
+export const get2FAKey = (userId: number): string => `TFA-${userId}`;
 
 class AuthService {
 	public async GetUser (token: string): Promise<User | null> {
@@ -182,7 +183,7 @@ class AuthService {
 		};
 	}
 
-	public async Login (username: string, password: string): Promise<AuthObjectType> {
+	public async Login (username: string, password: string): Promise<IAuthResponse> {
 		const isEmail = username.split('@')[1];
 
 		if(!isEmail){
@@ -206,7 +207,21 @@ class AuthService {
 		const isCorrectPassword = await verifyUserPassword(user.password, password);
 		if (!isCorrectPassword) throw apiErrorWithStatusCode(messages.INCORRECT_PASSWORD, 401);
 
+		const isTFAEnabled = user.two_factor_auth?.enabled || false;
+
+		if (isTFAEnabled) {
+			const tfa_token = uuidv4();
+			await redisSetex(get2FAKey(Number(user.id)), FIVE_MIN, tfa_token);
+
+			return {
+				isTFAEnabled,
+				tfa_token,
+				user_id: user.id
+			};
+		}
+
 		return {
+			isTFAEnabled,
 			token: await this.getSignedToken(user)
 		};
 	}
@@ -302,7 +317,21 @@ class AuthService {
 
 		await redisDel(getAddressLoginKey(address));
 
+		const isTFAEnabled = user.two_factor_auth?.enabled || false;
+
+		if (isTFAEnabled) {
+			const tfa_token = uuidv4();
+			await redisSetex(get2FAKey(Number(user.id)), FIVE_MIN, tfa_token);
+
+			return {
+				isTFAEnabled,
+				tfa_token,
+				user_id: user.id
+			};
+		}
+
 		return {
+			isTFAEnabled,
 			token: await this.getSignedToken(user)
 		};
 	}
@@ -815,7 +844,7 @@ class AuthService {
 		return { email: user.email, updatedToken: await this.getSignedToken(user) };
 	}
 
-	public async getSignedToken ({ email, email_verified, id, username, web3_signup }: User): Promise<string> {
+	public async getSignedToken ({ email, email_verified, id, username, web3_signup, two_factor_auth }: User): Promise<string> {
 		if (!privateKey) {
 			const key = process.env.NODE_ENV === 'test' ? process.env.JWT_PRIVATE_KEY_TEST : process.env.JWT_PRIVATE_KEY?.replace(/\\n/gm, '\n');
 			throw apiErrorWithStatusCode(`${key} not set. Aborting.`, 403);
@@ -851,7 +880,7 @@ class AuthService {
 			currentRole = Role.EVENT_BOT;
 		}
 
-		const tokenContent: JWTPayloadType = {
+		let tokenContent: JWTPayloadType = {
 			addresses: addresses || [],
 			default_address: default_address?.address || '',
 			email,
@@ -866,6 +895,13 @@ class AuthService {
 			username,
 			web3signup: web3_signup || false
 		};
+
+		if(two_factor_auth?.enabled && two_factor_auth?.verified) {
+			tokenContent = {
+				...tokenContent,
+				is2FAEnabled: true
+			};
+		}
 
 		return jwt.sign(
 			tokenContent,

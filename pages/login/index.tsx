@@ -63,6 +63,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 		setDisplayWeb(3);
 	};
 
+	// TODO: FIX ambiguous function name
 	const onWalletUpdate = () => {
 		setChosenWallet(null);
 		setDisplayWeb(2);
@@ -91,7 +92,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 						displayWeb === 3 && chosenWallet && <>
 							{
 								chosenWallet === Wallet.METAMASK ?
-									<MetamaskLogin isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
+									<MetamaskLogin isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet} onWalletUpdate={onWalletUpdate} />
 									: chosenWallet == Wallet.WALLETCONNECT ?
 										<WalletConnectLogin isModal={isModal} setLoginOpen={setLoginOpen} setDisplayWeb2={setDisplayWeb2} setPolkadotWallet={setPolkadotWallet} /> :
 										<Web3Login

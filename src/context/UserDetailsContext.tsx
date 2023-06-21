@@ -19,6 +19,7 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	email: null,
 	email_verified: false,
 	id: null,
+	is2FAEnabled: false,
 	isLoggedOut: (): boolean => {
 		throw new Error('isLoggedIn function must be overridden');
 	},
@@ -49,6 +50,7 @@ try {
 		const {
 			addresses,
 			default_address,
+			is2FAEnabled = false,
 			roles,
 			sub: id,
 			username,
@@ -72,6 +74,7 @@ try {
 		initialUserDetailsContext.defaultAddress = default_address;
 		initialUserDetailsContext.allowed_roles = roles.allowedRoles;
 		initialUserDetailsContext.web3signup = web3signup || false;
+		initialUserDetailsContext.is2FAEnabled = is2FAEnabled;
 	}
 } catch {
 	//do nothing, the user will be authenticated as soon as there's a new call to the server.

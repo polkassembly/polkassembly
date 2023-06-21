@@ -244,7 +244,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</span>}
 							</>}
 							{tags && tags.length > 0?
-								status  && <StatusTag className='xs:mt-0' status={status} />
+								status  && <StatusTag className='xs:mt-0 xs:absolute xs:right-[5%]' status={status} />
 								: null}
 							{
 								!tags || tags.length === 0?

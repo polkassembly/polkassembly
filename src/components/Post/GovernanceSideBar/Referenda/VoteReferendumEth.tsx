@@ -9,7 +9,7 @@ import { Button, Form, Modal, Segmented, Select, Spin, Alert } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
-import { EVoteDecisionType, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
+import { EVoteDecisionType, ILastVote, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -38,8 +38,8 @@ interface Props {
 	className?: string
 	referendumId?: number | null | undefined
 	onAccountChange: (address: string) => void
-	lastVote: string | null | undefined
-	setLastVote: React.Dispatch<React.SetStateAction<string | null | undefined>>
+	lastVote:ILastVote | undefined
+	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
 }
 
 const abi = require('../../../../moonbeamAbi.json');
@@ -322,7 +322,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			})
 			.then(() => {
 				setLoadingStatus({ isLoading: false, message: '' });
-				setLastVote(aye ? 'aye' : 'nay');
+				setLastVote({
+					balance: lockedBalance,
+					conviction: conviction,
+					decision: vote,
+					time: new Date()
+				});
 				setShowModal(false);
 				setSuccessModal(true);
 				queueNotification({

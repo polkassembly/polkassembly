@@ -8,7 +8,7 @@ import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-i
 import { Alert, Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
-import { EVoteDecisionType, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
+import { EVoteDecisionType, ILastVote, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -41,8 +41,8 @@ interface Props {
 	className?: string
 	referendumId?: number | null | undefined
 	onAccountChange: (address: string) => void
-	lastVote: string | null | undefined
-	setLastVote: React.Dispatch<React.SetStateAction<string | null | undefined>>
+	lastVote: ILastVote | undefined
+	setLastVote: React.Dispatch<React.SetStateAction< ILastVote | undefined >>
 	proposalType: ProposalType;
   address: string;
 }
@@ -416,7 +416,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						message: `Vote on referendum #${referendumId} successful.`,
 						status: NotificationStatus.SUCCESS
 					});
-					setLastVote(vote);
+					setLastVote({
+						balance: totalVoteValue,
+						conviction: conviction,
+						decision: vote,
+						time: new Date()
+					});
 					setShowModal(false);
 					setSuccessModal(true);
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
@@ -445,7 +450,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						message: `Vote on referendum #${referendumId} successful.`,
 						status: NotificationStatus.SUCCESS
 					});
-					setLastVote(vote);
+					setLastVote({
+						balance: totalVoteValue,
+						conviction: conviction,
+						decision: vote,
+						time: new Date()
+					});
 					setShowModal(false);
 					setSuccessModal(true);
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);

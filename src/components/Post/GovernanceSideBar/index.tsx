@@ -56,7 +56,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import MoneyIcon from '~assets/icons/money-icon-gray.svg';
 import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
-import { Wallet } from '~src/types';
+import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import _ from 'lodash';
@@ -86,7 +86,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [graphicOpen, setGraphicOpen] = useState<boolean>(true);
 
 	const { api, apiReady } = useApiContext();
-	const [lastVote, setLastVote] = useState<string | null | undefined>(undefined);
+	const [lastVote, setLastVote] = useState< ILastVote | undefined >();
 
 	const { walletConnectProvider } = useUserDetailsContext();
 	const { postData: { created_at, track_number, post_link } } = usePostDataContext();
@@ -361,7 +361,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedVotingHistory = useCallback(_.debounce(getVotingHistoy, 20000), [address,api,apiReady,network,proposalType,lastVote]);
+	const debouncedVotingHistory = useCallback(_.debounce(getVotingHistoy, 3000), [address,api,apiReady,network,proposalType,lastVote]);
 
 	useEffect( () => {
 		if (!api) {
@@ -784,7 +784,35 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															referendumId={onchainId  as number}
 															proposalType={proposalType}
 														/>
-														{ voteCount ?
+
+														{
+															lastVote ? <div>
+																<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
+																<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+																	<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='w-[20%] max-[345px]:w-auto'>
+																		<span className='h-[25px]'>{lastVote?.decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :lastVote?.decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : lastVote?.decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : lastVote?.decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
+																	</Tooltip>
+																	<Tooltip placement="bottom"  title="Time"  color={'#E5007A'} className='w-[30%] max-[345px]:w-auto'>
+																		<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
+																	</Tooltip>
+
+																	<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className='w-[35%] max-[345px]:w-auto'>
+																		<span>
+																			<MoneyIcon className='mr-1'/>
+																			{formatedBalance(lastVote?.balance.toString(), unit)}{` ${unit}`}
+																		</span>
+																	</Tooltip>
+
+																	<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='w-[10%] max-[345px]:w-auto'>
+																		<span title='Conviction'>
+																			<ConvictionIcon className='mr-1'/>
+																			{lastVote?.conviction}x
+																		</span>
+																	</Tooltip>
+																</div>
+															</div> : null
+														}
+														{!lastVote && voteCount ?
 															<Spin spinning={ isLastVoteLoading } indicator={<LoadingOutlined />}>
 																<div>
 																	<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
@@ -808,7 +836,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																			</span>
 																		</Tooltip>
 																	</div>
-																</div></Spin>: null
+																</div></Spin>:null
 														}
 
 													</GovSidebarCard>}

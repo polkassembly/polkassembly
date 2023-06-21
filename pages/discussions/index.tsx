@@ -86,9 +86,9 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 		<>
 			<SEOHead title='Discussions' network={network}/>
 
-			<div className='flex justify-between align-middle mt-3'>
-				<div className='text-bodyBlue font-semibold text-2xl leading-9 mx-2 flex'><DiscussionsIcon className='xs:mr-5 sm:mr-2 sm:mt-1.5' />Latest Discussions({count})</div>
-				<button onClick={handleClick} className='outline-none border-none h-[40px] w-[120px] px-3 py-2 font-medium  leading-[20px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer -mt-1.5'>+ Add Post</button>
+			<div className='flex flex-col sm:flex-row w-full justify-between align-middle mt-3'>
+				<div className='text-bodyBlue font-semibold text-2xl leading-9 mx-2 flex'><DiscussionsIcon className='xs:mr-3 mt-2 sm:mr-2 sm:mt-1.5' />Latest Discussions({count})</div>
+				<button onClick={handleClick} className='outline-none whitespace-pre border-none p-3 sm:w-[120px] sm:h-[40px] font-medium  leading-[20px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] rounded-[4px] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer sm:-mt-1 xs:mt-3'>+ Add Post</button>
 			</div>
 
 			{/* Intro and Create Post Button */}

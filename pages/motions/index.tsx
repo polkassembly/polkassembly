@@ -66,8 +66,8 @@ const Motions: FC<IMotionsProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Motions' network={network}/>
-			<div className='flex items-center mt-3'>
-				<MotionsIcon className='-mt-3.5'/>
+			<div className='flex sm:items-center mt-3'>
+				<MotionsIcon className='sm:-mt-3.5 xs:mt-0.5'/>
 				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>On Chain Motions ({count})</h1>
 			</div>
 

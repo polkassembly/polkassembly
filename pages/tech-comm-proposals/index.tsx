@@ -68,8 +68,8 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Tech Committee Proposals' network={network}/>
-			<div className='flex items-center mt-3'>
-				<TechComIcon className='-mt-3.5' />
+			<div className='flex sm:items-center mt-3'>
+				<TechComIcon className='sm:-mt-3.5 xs:mt-1' />
 				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Tech Committee Proposals</h1>
 			</div>
 			{/* Intro and Create Post Button */}

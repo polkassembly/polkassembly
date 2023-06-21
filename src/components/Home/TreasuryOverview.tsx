@@ -523,28 +523,28 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										/>
 									</div>
 
-									<div className="text-bodyBlue flex justify-between font-medium">
+									<div className="text-bodyBlue flex font-medium">
 										{spendPeriod.value?.total
 											? <>
 												{
 													spendPeriod.value?.days?
 														<>
-															<span className='text-lg'>{spendPeriod.value.days}</span>
-															<span className='text-lightBlue text-xs mt-2'>days</span>
+															<span className='text-lg'>{spendPeriod.value.days}&nbsp;</span>
+															<span className='text-lightBlue text-xs mt-2'>days&nbsp;</span>
 														</>
 														: null
 												}
-												<span className='text-lg'>{spendPeriod.value.hours}</span>
-												<span className='text-lightBlue text-xs mt-2'>hrs</span>
+												<span className='text-lg'>{spendPeriod.value.hours}&nbsp;</span>
+												<span className='text-lightBlue text-xs mt-2'>hrs&nbsp;</span>
 												{
 													!spendPeriod.value?.days?
 														<>
-															<span className='text-lg'>{spendPeriod.value.minutes}</span>
-															<span className='text-lightBlue text-xs mt-2'>mins</span>
+															<span className='text-lg'>{spendPeriod.value.minutes}&nbsp;</span>
+															<span className='text-lightBlue text-xs mt-2'>mins&nbsp;</span>
 														</>
 														: null
 												}
-												<span className="text-lightBlue text-xs mt-2">/{spendPeriod.value.total} days </span>
+												<span className="text-lightBlue text-xs mt-2">/ {spendPeriod.value.total} days </span>
 											</>
 											: 'N/A'
 										}

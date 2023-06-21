@@ -38,17 +38,40 @@ const SocialLink: FC<ISocialLink> = (props) => {
 	const { link: handle, className, type, disable, iconClassName } = props;
 
 	let link = '';
+	let username = '';
+
 	switch (type) {
 	case ESocialType.TWITTER:
-		link = `https://twitter.com/${handle}`;
+		if (handle.startsWith('https://')) {
+			const url = new URL(handle);
+			username = url.pathname.split('/')[1];
+		}
+		link = `https://twitter.com/${username}`;
 		break;
 	case ESocialType.TELEGRAM:
-		link = `https:/t.me/${handle}`;
+		if (handle.startsWith('https://')) {
+			const url = new URL(handle);
+			username = url.pathname.split('/')[1];
+		}
+		link = `https:/t.me/${username}`;
 		break;
 	case ESocialType.EMAIL:
 		link = `mailto:${handle}`;
+		// No need to extract username from an email handle
 		break;
-
+	case ESocialType.RIOT:
+		if (handle.startsWith('https://')) {
+			const url = new URL(handle);
+			username = url.pathname.split('/')[2];
+		}
+		link = `https://riot.im/app/#/user/${username}`;
+		break;
+	case ESocialType.DISCORD:
+		if (handle.startsWith('https://')) {
+			const url = new URL(handle);
+			username = url.pathname.split('/')[2];
+		}
+		link = `https://discordapp.com/users/${username}`;
 	}
 
 	return (

@@ -64,10 +64,11 @@ interface ICreationLabelProps {
   commentSource?:'polkassembly' | 'subsquare';
   cid?:string;
   spam_users_count?:number;
+  truncateUsername?:boolean;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource='polkassembly', cid ,spam_users_count = 0 } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource='polkassembly', cid ,spam_users_count = 0, truncateUsername } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 
 	const items : MenuProps['items']=[
@@ -87,6 +88,9 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						defaultAddress={defaultAddress}
 						username={username}
 						clickable={commentSource === 'polkassembly' }
+						truncateUsername={truncateUsername}
+						textClassName={'text-[12px]'}
+						className='-mt-0.5'
 					/>
 					{text}&nbsp;
 					{topic &&
@@ -99,7 +103,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						</> : null}
 				</div>
 			</div>
-			<div className='flex items-center text-lightBlue -mt-1'>
+			<div className='flex items-center text-lightBlue -mt-2'>
 				{(topic || text) && <>
 				&nbsp;
 					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />

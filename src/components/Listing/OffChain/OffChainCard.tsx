@@ -10,6 +10,7 @@ import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import NewChatIcon from '~assets/icons/chat-icon.svg';
+import TagsIcon from '~assets/icons/tags-icon.svg';
 import OnchainCreationLabel from '~src/ui-components/OnchainCreationLabel';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 import TopicTag from '~src/ui-components/TopicTag';
@@ -122,14 +123,19 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					open= {tagsModal}
 					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 					footer={false}
-					className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 max-sm:w-[100%] h-[120px] padding  justify-center center-aligned`}
-				><div>
-						<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
-						<div className='flex gap-2 items-start flex-wrap'>{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
-							(<div key={index} className='rounded-xl px-[16px] py-[2px] font-normal text-xs text-bodyBlue' >
-								{tag}
-							</div>))}
-						</>}</div></div>
+					className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
+				><div className='flex'>
+						<h2 className='text-lg tracking-wide font-medium text-bodyBlue mb-2'>
+							<TagsIcon className='mr-2' />
+							Tags
+						</h2>
+					</div>
+					<div className='w-full h-[1px] bg-[#D2D8E0]' />
+					<div className='flex gap-2 flex-wrap mt-4' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
+						(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] px-[16px] py-[2px] font-normal text-[10px] text-lightBlue' >
+							{tag}
+						</div>))}
+					</>}</div>
 				</Modal>
 			</div>
 			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 xs:p-2 md:p-4 xs:h-[150px] xs:flex sm:hidden ${className}`}>
@@ -192,14 +198,17 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					open= {tagsModal}
 					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 					footer={false}
-					className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 max-sm:w-[100%] h-[120px] padding  justify-center center-aligned`}
-				><div>
-						<h2 className='text-lg tracking-wide font-medium text-sidebarBlue mb-4'>Tags</h2>
-						<div className='flex gap-2 items-start flex-wrap'>{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
-							(<div key={index} className='rounded-xl px-[16px] py-[2px] font-normal text-xs text-bodyBlue' >
-								{tag}
-							</div>))}
-						</>}</div></div>
+					className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
+				><div className='flex'>
+						<TagsIcon className='mr-2 mt-1.5' />
+						<h2 className='text-lg tracking-wide font-semibold text-bodyBlue mb-2'>Tags</h2>
+					</div>
+					<div className='w-full h-[1px] bg-[#D2D8E0]' />
+					<div className='flex gap-2 flex-wrap mt-4' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
+						(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] px-[16px] py-[2px] font-normal text-[10px] text-lightBlue' >
+							{tag}
+						</div>))}
+					</>}</div>
 				</Modal>
 			</div>
 		</>

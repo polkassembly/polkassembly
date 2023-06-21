@@ -265,7 +265,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						<TagsIcon className='mr-2 mt-1.5' />
 						<h2 className='text-lg tracking-wide font-semibold text-bodyBlue mb-2'>Tags</h2>
 					</div>
-					{/* a line should be here which spans the full width of the modal */}
 					<div className='w-full h-[1px] bg-[#D2D8E0]' />
 					<div className='flex gap-2 flex-wrap mt-4' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
 						(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] px-[16px] py-[2px] font-normal text-[10px] text-lightBlue' >

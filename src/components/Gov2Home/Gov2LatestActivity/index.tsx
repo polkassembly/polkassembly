@@ -78,9 +78,9 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string,
 	}
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-2 lg:p-6 rounded-xxl`}>
-			<div className="flex justify-between items-center">
-				<h2 className='text-bodyBlue text-xl font-medium leading-8 sm:mb-6 sm:mt-2 sm:mt-0 xs:mx-2 xs:my-3 sm:mx-0 sm:my-0'>Latest Activity</h2>
+		<div className={`${className} bg-white drop-shadow-md p-0 lg:p-6 rounded-xxl`}>
+			<div className="flex justify-between items-center px-4">
+				<h2 className='text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 sm:mt-0'>Latest Activity</h2>
 				{currentTab !== 'all' && <Link className='text-sidebarBlue font-medium hover:text-pink_primary py-0.5 px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
 			</div>
 			<Tabs

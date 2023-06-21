@@ -205,7 +205,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	};
 
 	const getResultData = async() => {
-		if(finalSearchInput.length <= 3 || !userIndex || !postIndex ){
+		if(finalSearchInput.length <= 2 || !userIndex || !postIndex ){
 			setLoading(false);
 			return;
 		}
@@ -240,14 +240,14 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debouncedSearchFn = useCallback(_.debounce(getResultData, 5000), [finalSearchInput, selectedTags, filterBy, selectedTopics, usersPage.page, postsPage.page, isSuperSearch, selectedNetworks, selectedGov1Tracks , selectedOpengovTracks, dateFilter, searchInputErr.err]);
-	console.log(isFilter);
+
 	useEffect(() => {
 		if(filterBy === EFilterBy.Discussions){
 			(Boolean(dateFilter) || selectedTags.length > 0 ||  selectedTopics.length > 0 || selectedNetworks.length > 0) ? setIsFilter(true) : setIsFilter(false);
 		}else{
 			(Boolean(dateFilter)  || selectedGov1Tracks.length > 0 || selectedOpengovTracks.length > 0 || selectedTags.length > 0 ||  selectedTopics.length > 0 || selectedNetworks.length > 0) ? setIsFilter(true) : setIsFilter(false);
 		}
-		if(finalSearchInput.length > 3 && !searchInputErr.err){
+		if(finalSearchInput.length > 2 && !searchInputErr.err){
 			console.log('here', searchInputErr);
 			setOpenFilter({ date: false, topic: false, track: false });
 			setLoading(true);
@@ -373,14 +373,14 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	};
 
 	const handleSearchSubmit = () => {
-		if(loading) return;
+		if(loading || finalSearchInput === searchInput.trim()) return;
 		setAutoCompleteResults(initAutocompleteResults);
 		console.log(searchInput.length);
-		if(searchInput?.trim().length > 3){
+		if(searchInput?.trim().length > 2){
 			setFinalSearchInput(searchInput?.trim());
 			setSearchInputErr({ err: false, clicked: true });
 		}
-		else if(searchInput?.trim().length <= 3) {
+		else if(searchInput?.trim().length <= 2) {
 			setPostResults([]);
 			setPeopleResults([]);
 			setSearchInputErr({ err: true, clicked: true });
@@ -418,7 +418,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 			{/* Autocomplete results */}
 			{
 				((autoCompleteResults.posts.length > 0 || autoCompleteResults.users.length > 0) && !searchInputErr?.err) &&
-				<section className='border-solid border-[1px] border-gray-200 rounded-b-[4px] absolute z-50 w-[94.3%] bg-white'>
+				<section className='border-solid border-[1px] border-gray-200 rounded-b-[4px] absolute z-50 w-[94.3%] max-md:w-[87%] bg-white'>
 					{/* Posts List */}
 					<List
 						size="small"
@@ -430,12 +430,12 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 							const cleanStr = getCleanString(str);
 
 							return(
-								<List.Item className='flex justify-start hover:cursor-pointer whitespace-nowrap hover:bg-[#FEF2F8] ' onClick={() => {
+								<List.Item className='flex justify-start flex-wrap hover:cursor-pointer whitespace-nowrap hover:bg-[#FEF2F8] ' onClick={() => {
 									setFilterBy(!isPost ? EFilterBy.Users : item.post_type === 'discussions' ? EFilterBy.Discussions : EFilterBy.Referenda);
 									handleSearchOnChange(cleanStr.endsWith('...') ? cleanStr.slice(0, -3) : cleanStr);
 									setFinalSearchInput(cleanStr);
 								}}>
-									<Markdown className='hover:text-pink_primary' md={str} isAutoComplete />
+									<Markdown className='hover:text-pink_primary flex flex-wrap max-md:truncate' md={str} isAutoComplete />
 									<span className='text-[9px] mx-2 text-gray-400'>&#9679;</span>
 									<span className='text-xs text-gray-500'>{isPost ? 'in Posts' : 'in People'}</span>
 								</List.Item>
@@ -446,7 +446,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 				</section>
 			}
 
-			{(finalSearchInput.length > 3 || searchInputErr.err ) && <div className={`${loading && 'hidden'} z-10`}>
+			{(finalSearchInput.length > 2 || searchInputErr.err ) && <div className={`${loading && 'hidden'} z-10`}>
 				<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2 flex-wrap' }`}>
 					<Radio.Group onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage({ page: 1, totalPosts: 0 }); setUsersPage({ page: 1, totalPeople: 0 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-md:flex-col`}>
 						<Radio value={EFilterBy.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Referenda ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'} max-md:px-4`}>Referenda {filterBy === EFilterBy.Referenda && !loading && `(${postsPage?.totalPosts})`}</Radio>
@@ -555,7 +555,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 
 				{
 					!loading && (searchInputErr.err || postResults || peopleResults)  && <SearchErrorsCard
-						isSearchErr = {searchInput?.trim().length <= 3 && searchInputErr.clicked ? true : searchInputErr?.err}
+						isSearchErr = {searchInput?.trim().length <= 2 && searchInputErr.clicked ? true : searchInputErr?.err}
 						filterBy={filterBy}
 						setFilterBy={setFilterBy}
 						setOpenModal= {setOpenModal}

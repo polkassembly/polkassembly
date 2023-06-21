@@ -11,8 +11,8 @@ import { post_topic } from '~src/global/post_topics';
 
 interface Props {
     className?: string;
-    topicId: undefined | number;
-    onTopicSelection: (id: number | undefined)=> void;
+    topicId: number;
+    onTopicSelection: (id: number)=> void;
     govType?: 'gov_1' | 'open_gov';
 }
 
@@ -43,11 +43,12 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 	const [ topicOptions, setTopicOptions] = useState<string[]>([]);
 
 	useEffect(() => {
-		onTopicSelection(undefined);
 		if( govType === 'gov_1' ){
+			onTopicSelection(2);
 			setTopicOptions([topicToOptionText('COUNCIL'),topicToOptionText('DEMOCRACY'),topicToOptionText('GENERAL'),topicToOptionText('TECHNICAL_COMMITTEE'), topicToOptionText('TREASURY')]);
 		}else if( govType === 'open_gov' ){
-			setTopicOptions([topicToOptionText('ROOT'),topicToOptionText('STAKING_ADMIN'),topicToOptionText('AUCTION_ADMIN'),topicToOptionText('FELLOWSHIP'), topicToOptionText('TREASURY'),topicToOptionText('GOVERNANCE')]);
+			onTopicSelection(8);
+			setTopicOptions([topicToOptionText('AUCTION_ADMIN'),topicToOptionText('FELLOWSHIP'), topicToOptionText('GOVERNANCE'), topicToOptionText('ROOT'),topicToOptionText('STAKING_ADMIN'), topicToOptionText('TREASURY')]);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [govType]);

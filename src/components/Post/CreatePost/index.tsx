@@ -33,7 +33,7 @@ const CreatePost = ({ className, proposalType } : Props) => {
 
 	const [form] = Form.useForm();
 	const pollEndBlock = usePollEndBlock();
-	const [topicId, setTopicId] = useState<number | undefined>(undefined);
+	const [topicId, setTopicId] = useState<number>(2);
 	const [hasPoll, setHasPoll] = useState<boolean>(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [loading, setLoading] = useState(false);
@@ -163,7 +163,7 @@ const CreatePost = ({ className, proposalType } : Props) => {
 						<span className='ml-2 text-sidebarBlue text-sm'>Add poll to {proposalType === ProposalType.DISCUSSIONS? 'discussion': 'grant'}</span>
 					</div>
 					<h5 className='text-sm text-color mt-8 font-normal'>Select Governance version <span className='text-red-500'>*</span></h5>
-					<Radio.Group className='font-normal text-xs p-1' onChange={(e) => { setTopicId(undefined); setGovType(e.target.value);}} value={govType}>
+					<Radio.Group className='font-normal text-xs p-1' onChange={(e) => setGovType(e.target.value)} value={govType}>
 						<Radio className={`font-normal text-xs text-navBlue ${ govType === 'gov_1' && 'text-pink_primary' }`} value='gov_1' defaultChecked >Governance V1</Radio>
 						<Radio className={`font-normal text-xs text-navBlue ${ govType ==='open_gov' && 'text-pink_primary' }`} value='open_gov' defaultChecked={false}>Governance V2</Radio>
 					</Radio.Group>
@@ -185,7 +185,7 @@ const CreatePost = ({ className, proposalType } : Props) => {
 								]}>
 								<>
 									<label className='text-sidebarBlue font-normal text-sm mb-1 tracking-wide'>Select Topic <span className='text-red-500 ml-1'>*</span></label>
-									<TopicsRadio govType={govType} onTopicSelection={(id) => setTopicId(id)} topicId={topicId ? topicId : undefined} />
+									<TopicsRadio govType={govType} onTopicSelection={(id) => setTopicId(id)} topicId={topicId} />
 								</>
 							</Form.Item>
 							: null

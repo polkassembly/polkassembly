@@ -336,7 +336,7 @@ class AuthService {
 		};
 	}
 
-	public async AddressSignupStart (address: string, multisig:string): Promise<string> {
+	public async AddressSignupStart (address: string, multisig?:string): Promise<string> {
 		const addressDoc = await firebaseAdmin.firestore().collection('addresses').doc(multisig && multisig !== '' ? multisig: address).get();
 		if (addressDoc.exists) throw apiErrorWithStatusCode(messages.ADDRESS_SIGNUP_ALREADY_EXISTS, 401);
 
@@ -384,7 +384,7 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async AddressSignupConfirm (network: Network, address: string, signature: string, wallet: Wallet, multisig:string): Promise<AuthObjectType> {
+	public async AddressSignupConfirm (network: Network, address: string, signature: string, wallet: Wallet, multisig?:string): Promise<AuthObjectType> {
 		const signMessage = await redisGet(getAddressSignupKey(address));
 		if (!signMessage) throw apiErrorWithStatusCode(messages.ADDRESS_SIGNUP_SIGN_MESSAGE_EXPIRED, 403);
 

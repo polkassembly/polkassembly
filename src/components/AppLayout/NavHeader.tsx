@@ -48,7 +48,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 	const [openLogin,setLoginOpen]=useState<boolean>(false);
 	const [openSignup,setSignupOpen]=useState<boolean>(false);
 
-	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute);
+	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute, network);
 	const isClicked = useRef(false);
 
 	return (
@@ -58,7 +58,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 			}} />
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<Link className='flex' href={isGov2Route ? '/gov-2' : '/'}><PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' /></Link>
+					<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' /></Link>
 					<div className='flex items-center'>
 						<span className='bg-pink_primary h-5 md:h-10 w-[1.5px] ml-[2px] mr-[8px] md:mr-[10px]'></span>
 						<h2 className='m-0 p-0 text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
@@ -70,7 +70,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 				</div>
 
 				{
-					isOpenGovSupported(network) ?
+					isOpenGovSupported(network)?
 						<>
 							<GovernanceSwitchButton previousRoute={previousRoute} className='hidden lg:flex' />
 						</> :

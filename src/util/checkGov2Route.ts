@@ -7,6 +7,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 export const gov2Routes = [
 	'gov-2',
+	'opengov',
 	'track',
 	'preimages',
 	'referenda',
@@ -19,8 +20,10 @@ for (const trackName of Object.keys(networkTrackInfo.kusama)) {
 	gov2Routes.push(trackName.split(/(?=[A-Z])/).join('-').toLowerCase());
 }
 
-export default function checkGov2Route(pathname: string, query?: ParsedUrlQuery, prevRoute?: string): boolean {
-
+export default function checkGov2Route(pathname: string, query?: ParsedUrlQuery, prevRoute?: string, network?: string): boolean {
+	if (network === 'collectives') {
+		return false;
+	}
 	if(pathname === '/referenda'){
 		return false;
 	}

@@ -8,7 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
+import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -375,39 +375,45 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				let lastIndex = 0;
 				for (let i = 0; i < newIdsLen; i+=30) {
 					lastIndex = i;
-					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
-					addressesQuery.docs.map((doc) => {
-						if (doc && doc.exists) {
-							const data = doc.data();
-							comment.replies = comment.replies.map((v) => {
-								if (v && v.user_id == data.user_id) {
-									return {
-										...v,
-										proposer: data.address
-									};
-								}
-								return v;
-							});
-						}
-					});
+					const slice = newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen);
+					if (slice.length > 0) {
+						const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
+						addressesQuery.docs.map((doc) => {
+							if (doc && doc.exists) {
+								const data = doc.data();
+								comment.replies = comment.replies.map((v) => {
+									if (v && v.user_id == data.user_id) {
+										return {
+											...v,
+											proposer: data.address
+										};
+									}
+									return v;
+								});
+							}
+						});
+					}
 				}
 				lastIndex += 30;
 				if (lastIndex <= newIdsLen) {
-					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
-					addressesQuery.docs.map((doc) => {
-						if (doc && doc.exists) {
-							const data = doc.data();
-							comment.replies = comment.replies.map((v) => {
-								if (v && v.user_id == data.user_id) {
-									return {
-										...v,
-										proposer: data.address
-									};
-								}
-								return v;
-							});
-						}
-					});
+					const slice = newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen);
+					if (slice.length > 0) {
+						const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
+						addressesQuery.docs.map((doc) => {
+							if (doc && doc.exists) {
+								const data = doc.data();
+								comment.replies = comment.replies.map((v) => {
+									if (v && v.user_id == data.user_id) {
+										return {
+											...v,
+											proposer: data.address
+										};
+									}
+									return v;
+								});
+							}
+						});
+					}
 				}
 			}
 			if (replyIds.length > 0) {
@@ -415,39 +421,45 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				let lastIndex = 0;
 				for (let i = 0; i < newIdsLen; i+=30) {
 					lastIndex = i;
-					const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', replyIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
-					reportsQuery.docs.map((doc) => {
-						if (doc && doc.exists) {
-							const data = doc.data();
-							comment.replies = comment.replies.map((v) => {
-								if (v && v.id == data.content_id) {
-									return {
-										...v,
-										spam_users_count:(Number(v.spam_users_count) + 1)
-									};
-								}
-								return v;
-							});
-						}
-					});
+					const slice = replyIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen);
+					if (slice.length > 0) {
+						const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+						reportsQuery.docs.map((doc) => {
+							if (doc && doc.exists) {
+								const data = doc.data();
+								comment.replies = comment.replies.map((v) => {
+									if (v && v.id == data.content_id) {
+										return {
+											...v,
+											spam_users_count:(Number(v.spam_users_count) + 1)
+										};
+									}
+									return v;
+								});
+							}
+						});
+					}
 				}
 				lastIndex += 30;
 				if (lastIndex <= newIdsLen) {
-					const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', replyIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
-					reportsQuery.docs.map((doc) => {
-						if (doc && doc.exists) {
-							const data = doc.data();
-							comment.replies = comment.replies.map((v) => {
-								if (v && v.id == data.content_id) {
-									return {
-										...v,
-										spam_users_count: (Number(v.spam_users_count) + 1)
-									};
-								}
-								return v;
-							});
-						}
-					});
+					const slice = replyIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen);
+					if (slice.length > 0) {
+						const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+						reportsQuery.docs.map((doc) => {
+							if (doc && doc.exists) {
+								const data = doc.data();
+								comment.replies = comment.replies.map((v) => {
+									if (v && v.id == data.content_id) {
+										return {
+											...v,
+											spam_users_count: (Number(v.spam_users_count) + 1)
+										};
+									}
+									return v;
+								});
+							}
+						});
+					}
 				}
 			}
 			return {
@@ -495,38 +507,44 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 		let lastIndex = 0;
 		for (let i = 0; i < newIdsLen; i+=30) {
 			lastIndex = i;
-			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).where('default', '==', true).get();
-			addressesQuery.docs.map((doc) => {
-				if (doc && doc.exists) {
-					const data = doc.data();
-					comments = comments.map((v) => {
-						if (v && v.user_id == data.user_id) {
-							return {
-								...v,
-								proposer: data.address
-							};
-						}
-						return v;
-					});
-				}
-			});
+			const slice = newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen);
+			if (slice.length > 0) {
+				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
+				addressesQuery.docs.map((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						comments = comments.map((v) => {
+							if (v && v.user_id == data.user_id) {
+								return {
+									...v,
+									proposer: data.address
+								};
+							}
+							return v;
+						});
+					}
+				});
+			}
 		}
 		if (lastIndex <= newIdsLen) {
-			const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).where('default', '==', true).get();
-			addressesQuery.docs.map((doc) => {
-				if (doc && doc.exists) {
-					const data = doc.data();
-					comments = comments.map((v) => {
-						if (v && v.user_id == data.user_id) {
-							return {
-								...v,
-								proposer: data.address
-							};
-						}
-						return v;
-					});
-				}
-			});
+			const slice = newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen);
+			if (slice.length > 0) {
+				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
+				addressesQuery.docs.map((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						comments = comments.map((v) => {
+							if (v && v.user_id == data.user_id) {
+								return {
+									...v,
+									proposer: data.address
+								};
+							}
+							return v;
+						});
+					}
+				});
+			}
 		}
 	}
 
@@ -535,39 +553,45 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 		let lastIndex = 0;
 		for (let i = 0; i < newIdsLen; i+=30) {
 			lastIndex = i;
-			const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', commentIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen)).get();
-			reportsQuery.docs.map((doc) => {
-				if (doc && doc.exists) {
-					const data = doc.data();
-					comments = comments.map((v) => {
-						if (v && v.id == data.content_id) {
-							return {
-								...v,
-								spam_users_count:(Number(v.spam_users_count) + 1)
-							};
-						}
-						return v;
-					});
-				}
-			});
+			const slice = commentIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen);
+			if (slice.length > 0) {
+				const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+				reportsQuery.docs.map((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						comments = comments.map((v) => {
+							if (v && v.id == data.content_id) {
+								return {
+									...v,
+									spam_users_count:(Number(v.spam_users_count) + 1)
+								};
+							}
+							return v;
+						});
+					}
+				});
+			}
 		}
 		lastIndex += 30;
 		if (lastIndex <= newIdsLen) {
-			const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', commentIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen)).get();
-			reportsQuery.docs.map((doc) => {
-				if (doc && doc.exists) {
-					const data = doc.data();
-					comments = comments.map((v) => {
-						if (v && v.id == data.content_id) {
-							return {
-								...v,
-								spam_users_count: (Number(v.spam_users_count) + 1)
-							};
-						}
-						return v;
-					});
-				}
-			});
+			const slice = commentIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen);
+			if (slice.length > 0) {
+				const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+				reportsQuery.docs.map((doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						comments = comments.map((v) => {
+							if (v && v.id == data.content_id) {
+								return {
+									...v,
+									spam_users_count: (Number(v.spam_users_count) + 1)
+								};
+							}
+							return v;
+						});
+					}
+				});
+			}
 		}
 	}
 
@@ -613,6 +637,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		};
 
 		let postQuery =(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES ) ? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE : GET_PROPOSAL_BY_INDEX_AND_TYPE;
+
+		if(network === AllNetworks.COLLECTIVES && proposalType === ProposalType.FELLOWSHIP_REFERENDUMS){
+			postQuery = GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE;
+		}
+
 		if(proposalType === ProposalType.ANNOUNCEMENT){
 			postQuery = GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE;
 		}
@@ -708,6 +737,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			statusHistory: postData?.statusHistory,
 			submission_deposit_amount: postData?.submissionDeposit?.amount,
 			submitted_amount: postData?.submissionDeposit?.amount,
+			subscribers: [],
 			tally: postData?.tally,
 			timeline: [],
 			topic: topicFromType,
@@ -838,6 +868,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.last_edited_at = getUpdatedAt(data);
 				post.tags = data?.tags;
 				post.gov_type = data?.gov_type;
+				post.subscribers = data?.subscribers || [];
 				const post_link = data?.post_link;
 				if (post_link) {
 					const { id, type } = post_link;

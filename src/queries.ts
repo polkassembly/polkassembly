@@ -36,6 +36,42 @@ query ProposalsListingByType($type_in: [ProposalType!], $trackNumber_in: [Int!],
 }
 `;
 
+export const GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES = `
+query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrderByInput!] = createdAtBlock_DESC, $limit: Int = 10, $offset: Int = 0, $index_in: [Int!], $hash_in: [String!], $trackNumber_in: [Int!], $status_in: [ProposalStatus!]) {
+  proposalsConnection(orderBy: id_ASC, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
+    totalCount
+  }
+  proposals(orderBy: $orderBy, limit: $limit, offset: $offset, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
+    proposer
+    curator
+    createdAt
+    updatedAt
+    status
+    preimage {
+      method
+      proposer
+    }
+    index
+    end
+    hash
+    description
+    type
+    origin
+    trackNumber
+    proposalArguments {
+      method
+      description
+    }
+    parentBountyIndex
+    statusHistory {
+      block
+      status
+      timestamp
+    }
+  }
+}
+`;
+
 export const GET_PROPOSALS_LISTING_BY_TYPE = `
 query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrderByInput!] = createdAtBlock_DESC, $limit: Int = 10, $offset: Int = 0, $index_in: [Int!], $hash_in: [String!], $trackNumber_in: [Int!], $status_in: [ProposalStatus!]) {
   proposalsConnection(orderBy: id_ASC, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
@@ -293,17 +329,21 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
       }
     }
   }
-  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $index_eq}) {
-    totalCount
-    edges {
-      node {
-        description
-        index
-        status
-      }
-    }
-  }
 }`;
+
+export const GET_CHILD_BOUNTIES_BY_PARENT_INDEX = `
+query ChildBountiesByParentIndex($parentBountyIndex_eq: Int = 11, $limit: Int, $offset: Int) {
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq}) {
+    totalCount
+  }  
+	proposals(orderBy: createdAtBlock_DESC, limit: $limit, offset: $offset, where: {parentBountyIndex_eq: $parentBountyIndex_eq}) {
+    description
+    index
+    status
+  }
+}
+
+`;
 
 export const GET_PROPOSAL_BY_INDEX_AND_TYPE_V2 = `
 query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal, $voter_eq: String = "") {
@@ -421,6 +461,34 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
   }
 }`;
 
+export const GET_TOTAL_VOTES_COUNT = `
+query TotalVotesCount($index_eq: Int = 0, $type_eq: VoteType = Referendum) {
+  votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}}) {
+    totalCount
+  }
+}
+`;
+
+export const GET_VOTES_WITH_LIMIT = `
+query VotesWithLimit($index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 100) {
+  votes(where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}}, limit: $limit, offset: 0) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+  }
+}
+`;
+
 export const GET_VOTES_LISTING_BY_TYPE_AND_INDEX = `
 query VotesListingByTypeAndIndex($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes) {
   votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}}) {
@@ -444,12 +512,57 @@ query VotesListingByTypeAndIndex($orderBy: [VoteOrderByInput!] = timestamp_DESC,
 }
 `;
 
+export const GET_VOTES_LISTING_BY_TYPE_AND_INDEX_MOONBEAM = `
+query VotesListingByTypeAndIndexMoonbeam($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes) {
+  votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}) {
+    totalCount
+  }
+  votes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}, limit: $limit, offset: $offset) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+  }
+}
+`;
+
 export const GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX = `
 query VotesListingForAddressByTypeAndIndex($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "") {
   votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, voter_eq: $voter_eq}) {
     totalCount
   }
   votes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, voter_eq: $voter_eq}, limit: $limit, offset: $offset) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+  }
+}`;
+
+export const GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_MOONBEAM = `
+query VotesListingForAddressByTypeAndIndexMoonbeam($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "") {
+  votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, voter_eq: $voter_eq, removedAtBlock_isNull: true}) {
+    totalCount
+  }
+  votes(orderBy: $orderBy, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, voter_eq: $voter_eq, removedAtBlock_isNull: true}, limit: $limit, offset: $offset) {
     decision
     voter
     balance {
@@ -649,6 +762,23 @@ query VotingHistoryByVoterAddress($offset: Int = 0, $limit: Int = 10, $voter_eq:
 }
 `;
 
+export const VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM = `
+query VotingHistoryByVoterAddressMoonbeam($offset: Int = 0, $limit: Int = 10, $voter_eq: String) {
+  votes(limit: $limit, offset: $offset, orderBy: proposal_index_DESC, where: {voter_eq: $voter_eq, removedAtBlock_isNull: true}) {
+    decision
+    type
+    blockNumber
+    proposal {
+      index
+      type
+    }
+  }
+  votesConnection(where: {voter_eq: $voter_eq, removedAtBlock_isNull: true}, orderBy: proposal_index_DESC) {
+    totalCount
+  }
+}
+`;
+
 export const ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK = `
 query ActiveDelegationsToOrFromAddressForTrack($track_eq: Int = 0, $address: String = "") {
   votingDelegations(orderBy: createdAt_DESC, where: {track_eq: $track_eq, endedAtBlock_isNull: true, AND: {from_eq: $address, OR: {to_eq: $address}}}) {
@@ -770,6 +900,101 @@ query AlliancePostByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Pro
       hash
       type
       createdAt
+    }
+  }
+}
+`;
+
+export const GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE = `query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = FellowshipReferendum, $vote_type_eq: VoteType = Fellowship) {
+  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, hash_eq: $hash_eq}) {
+    index
+    proposer
+    status
+    preimage {
+      proposer
+      method
+      hash
+      proposedCall {
+        method
+        args
+        description
+        section
+      }
+    }
+    description
+    hash
+    type
+    threshold {
+      ... on MotionThreshold {
+        __typename
+        value
+      }
+      ... on ReferendumThreshold {
+        __typename
+        type
+      }
+    }
+    origin
+    trackNumber
+    end
+    createdAt
+    updatedAt
+    delay
+    endedAt
+    deposit
+    bond
+    reward
+    payee
+    fee
+    proposalArguments {
+      method
+      args
+      description
+      section
+    }
+    statusHistory(limit: 10) {
+      timestamp
+      status
+      block
+    }
+    tally {
+      ayes
+      bareAyes
+      nays
+      support
+    }
+    enactmentAfterBlock
+    enactmentAtBlock
+    decisionDeposit {
+      amount
+      who
+    }
+    submissionDeposit {
+      amount
+      who
+    }
+    deciding {
+      confirming
+      since
+    }
+  }
+  votesConnection(orderBy: blockNumber_DESC, where: {type_eq: $vote_type_eq, proposal: {index_eq: $index_eq, type_eq: $type_eq}}) {
+    totalCount
+    edges {
+      node {
+        voter
+        decision
+      }
+    }
+  }
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $index_eq}) {
+    totalCount
+    edges {
+      node {
+        description
+        index
+        status
+      }
     }
   }
 }

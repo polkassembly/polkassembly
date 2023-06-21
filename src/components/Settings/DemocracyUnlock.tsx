@@ -72,61 +72,58 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 			return;
 		}
 
-		try{
-			const votingInfo = await api.query.democracy.votingOf(address);
+		const votingInfo = await api.query.democracy.votingOf(address);
 
-			setUnlocksAt(votingInfo.asDirect.prior[0].toString());
+		setUnlocksAt(votingInfo.asDirect.prior[0].toString());
 
-			setVotes(votingInfo.asDirect.votes.map((vote) => {
-				const refIndex = vote[0];
+		setVotes(votingInfo.asDirect.votes.map((vote) => {
+			const refIndex = vote[0];
 
-				let conviction = 0;
+			let conviction = 0;
 
-				if(vote[1].asStandard.vote.conviction.isLocked1x){
-					conviction = 1;
-				}
-				else if(vote[1].asStandard.vote.conviction.isLocked2x){
-					conviction = 2;
-				}
-				else if(vote[1].asStandard.vote.conviction.isLocked3x){
-					conviction = 3;
-				}
-				else if(vote[1].asStandard.vote.conviction.isLocked4x){
-					conviction = 4;
-				}
-				else if(vote[1].asStandard.vote.conviction.isLocked5x){
-					conviction = 5;
-				}
-				else if(vote[1].asStandard.vote.conviction.isLocked6x){
-					conviction = 6;
-				}
-				else{
-					conviction = 0;
-				}
+			if(vote[1].asStandard.vote.conviction.isLocked1x){
+				conviction = 1;
+			}
+			else if(vote[1].asStandard.vote.conviction.isLocked2x){
+				conviction = 2;
+			}
+			else if(vote[1].asStandard.vote.conviction.isLocked3x){
+				conviction = 3;
+			}
+			else if(vote[1].asStandard.vote.conviction.isLocked4x){
+				conviction = 4;
+			}
+			else if(vote[1].asStandard.vote.conviction.isLocked5x){
+				conviction = 5;
+			}
+			else if(vote[1].asStandard.vote.conviction.isLocked6x){
+				conviction = 6;
+			}
+			else{
+				conviction = 0;
+			}
 
-				return {
-					amount: vote[1].asStandard.balance,
-					conviction: conviction,
-					refIndex,
-					vote: vote[1].asStandard.vote.isAye
-				};
-			}));
+			return {
+				amount: vote[1].asStandard.balance,
+				conviction: conviction,
+				refIndex,
+				vote: vote[1].asStandard.vote.isAye
+			};
+		}));
 
-			votes.sort((a, b) => a.conviction - b.conviction);
+		votes.sort((a, b) => a.conviction - b.conviction);
 
-			const balances = await api.query.balances.locks(address);
+		const balances = await api.query.balances.locks(address);
 
-			let lockedBalance = new BN(0);
-			balances.forEach((balance) => {
-				if (balance.id.toHuman() === 'democrac') {
-					lockedBalance = lockedBalance.add(balance.amount);
-				}
-			});
+		let lockedBalance = new BN(0);
+		balances.forEach((balance) => {
+			if (balance.id.toHuman() === 'democrac') {
+				lockedBalance = lockedBalance.add(balance.amount);
+			}
+		});
 
-			setLockedBalance(lockedBalance);
-			setIsBalanceUpdated((prev) => !prev);
-		}
-		catch(err){console.log(err);}
+		setLockedBalance(lockedBalance);
+		setIsBalanceUpdated((prev) => !prev);
 	};
 
 	const getAccounts = async () => {

@@ -1,0 +1,34 @@
+[
+    {
+        "address": "13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K",
+        "name": "ChaosDAO",
+        "image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/chaosdao.png",
+        "shortDescription": "Community org with a dedicated internal voting process and multisig for OpenGov referenda",
+        "longDescription": "## About us\nChaosDAO is a curated community of Polkadot & Kusama natives. Our members are involved with every aspect of the ecosystem as developers, community organizers, [Twitter](https://twitter.com/ChaosDAO) and YouTube educators, and as ordinary retail investors.\n\n## Voting Process\nAs part of our own organization’s evolution we have developed a robust [internal governance mechanism](https://github.com/ChaosDAO-org/ChaosDAO_docs/blob/main/governance/OpenGov.md) to determine how our community will publicly vote on referenda. By voting on behalf of the long-time Dotsama community we strive to ensure that all votes we cast reflect the true best interests of our native ecosystem.\n\n![ChaosDAO Manifesto image](https://raw.githubusercontent.com/ChaosDAO-org/ChaosDAO_docs/main/.gitbook/assets/ChaosDAO_Manifesto_600px.jpg)",
+        "isOrganization": true
+    },
+    {
+        "address": "15D2JM548bqRuE45aDmeF2WqiKC56WtNnRmCxVSree9YKwVb",
+        "name": "Will | Paradox | ParaNodes.io",
+        "image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/paradox.png",
+        "shortDescription": "Former Kusama Council Member & Validator Operator at ParaNodes.io",
+        "longDescription": "## About me\nMy name is Will and I was a member of Kusama's council.  My council experience allows me to better understand the technical aspects of governance and appreciate the general 'values' of the chain.\n\nI am also a well known within the validator community and operate validators under the moniker [ParaNodes.io](https://paranodes.io).\n\nIf you'll like to hear my thoughts on governance, please tune in to [AAG](https://www.youtube.com/playlist?list=PLtyd7v_I7PGkXbJmKojrZ1KXwspR1JkpV) I make live appearances on the first Monday of each month.",
+        "isOrganization": false
+    },
+    {
+        "address": "15cfSaBcTxNr8rV59cbhdMNCRagFr3GE6B3zZRsCp4QHHKPu",
+        "name": "Anton Khvorov",
+        "image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/day_7.jpg",
+        "shortDescription": "CEO @ Novasama Technologies",
+        "longDescription": "## About me\nMy name is Anton Khvorov, I’m CEO of [Novasama Technologies](https://novasama.io) & Head of Engineering @ [Nova Wallet](https://novawallet.io).\nPassionate to build new innovative & amazing\nproducts, with a mindset to make the world a better place.\n\n## Voting strategy \n\nI do support referendums focused on the core values of Polkadot (decentralization, democracy, interoperability, reliability), as well as referendums that are focused on brining the power of Polkadot to mass adoption (products with great UX, open source, etc). \n\nI do not support entities that are active against any of these values and/or human rights. \n\nI often express my opinion on Polkassembly, especially in the case of controversial referendums.\n\n## Incentives\nEach month I’m going to mint & send NFT with my cat to each of my fellow delegators! 🐊\n\n![](https://i.ibb.co/5YtW1hn/Pelmeshka-small.jpg)\n\n## Stay in touch!\nIf you have any questions regarding my votes, feel free to contact me via email: anton@novawallet.io",
+        "isOrganization": false
+    },
+    {
+        "address": "15wepZh1jWNqxBjsgErm8HmYiE21n79c5krQJeTsYAjHddeM",
+        "name": "Sik | crifferent.de",
+        "image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/sik-crifferent.png",
+        "shortDescription": "DotSama native node operator and community supporter",
+        "longDescription": "## About Sik\nFounder of [Crifferent Staking Services](https://crifferent.de) \n\nDeveloper for [Staking Facilities](https://stakingfacilities.com) \n\nMember of [DOT Validator Alliance DAO](https://dotvalidators.org) \n\nTeam member @[HydraDX](https://hydradx.io)/[Basilisk](https://bsx.fi) \n\nRPC provider @[UnitedBloc](https://unitedbloc.com/) \n\n---\n\n**From within the ecosystem - for the ecosystem!** \n\nI'm evaluating proposals by taking different views into consideration. I'm not only looking at it from the perspective of a community member, but also as a developer/founder/infra-provider/human being. \n\n---\n## Contact me \n\n@dev0_sik @[Twitter](https://twitter.com/dev0_sik) \n\n@dev0_sik @[Telegram](https://t.me/dev0_sik) \n\nsik#3706 @[Discord](https://discord.com/) \n\n@dev0_sik:matrix.org @[Element](https://element.io/) \n\n[simon.kraus@crifferent.de](mailto:simon.kraus@crifferent.de) \n\nWhatsApp/Callboy +49 157 377 309 02",
+        "isOrganization": false
+    }
+]

@@ -12,6 +12,16 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { IPostsRowData } from './PostsTable';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import { Tooltip } from 'antd';
+import Router from 'next/router';
+import getUsernameByAddress from '~src/util/getUsernameByAddress';
+
+async function goToProfileByAddress (address: string) {
+	if(!address) return;
+	const username = await getUsernameByAddress(address);
+	if (!username) return;
+
+	Router.push(`/user/${username}`);
+}
 
 const Index: any = {
 	dataIndex: 'post_id',
@@ -34,6 +44,18 @@ const Title: any = {
 const Creator: any = {
 	dataIndex: 'username',
 	key: 'creator',
+	onCell: (record: any) => {
+		return {
+			onClick: async (e: any) => {
+				e.stopPropagation();
+				if(record.username) {
+					Router.push(`/user/${record.username}`);
+				}else {
+					await goToProfileByAddress(record.proposer || '');
+				}
+			}
+		};
+	},
 	render: (username: any, { proposer }: { proposer: any }) => <div className='truncate'><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={true} /></div>,
 	title: 'Creator'
 };
@@ -106,7 +128,19 @@ const allColumns: ColumnsType<IPostsRowData> = [
 	{
 		dataIndex: 'username',
 		key: 'postedBy',
-		render: (username, { proposer }) => <div className='truncate'><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={true} /></div>,
+		onCell: (record) => {
+			return {
+				onClick: async (e) => {
+					e.stopPropagation();
+					if(record.username) {
+						Router.push(`/user/${record.username}`);
+					}else {
+						await goToProfileByAddress(record.proposer || '');
+					}
+				}
+			};
+		},
+		render: (username, { proposer }) => <div className='truncate' ><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={true} /></div>,
 		title: 'Posted By'
 	},
 	CreatedAt,

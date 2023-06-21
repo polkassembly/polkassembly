@@ -17,7 +17,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
 import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
-import { ProposalType, VoteType } from '~src/global/proposalType';
+import { ProposalType, VoteType, getSubsquidProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 import ExtensionNotDetected from '../../ExtensionNotDetected';
@@ -50,6 +50,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import SplitGray from '~assets/icons/split-gray.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
+import { useCurrentBlock } from '~src/hooks';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -63,6 +64,66 @@ interface IGovernanceSidebarProps {
 	toggleEdit?: () => void;
 }
 
+type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
+
+export function getReferendumVotingFinishHeight(timeline: any[], openGovType: TOpenGov) {
+	let height = 0;
+	if (timeline && Array.isArray(timeline) && timeline.length > 0) {
+		const singleTimeline = timeline.find((item) => item.type === getSubsquidProposalType(openGovType));
+		if (singleTimeline && singleTimeline.statuses && Array.isArray(singleTimeline.statuses)) {
+			const finishItem = singleTimeline.statuses.find((obj: any) => ['Approved', 'Rejected', 'TimedOut', 'Cancelled', 'Killed', 'Confirmed'].includes(obj.status));
+			if (finishItem && finishItem?.block) {
+				height = finishItem?.block;
+			}
+		}
+	}
+	return height;
+}
+
+export function checkVotingStart(timeline: any[], openGovType: TOpenGov) {
+	let isVotingStart = false;
+	if (timeline && Array.isArray(timeline) && timeline.length > 0) {
+		const singleTimeline = timeline.find((item) => item.type === getSubsquidProposalType(openGovType));
+		if (singleTimeline && singleTimeline.statuses && Array.isArray(singleTimeline.statuses)) {
+			const finishItem = singleTimeline.statuses.find((obj: any) => obj.status === 'Deciding');
+			if (finishItem) {
+				isVotingStart = true;
+			}
+		}
+	}
+	return isVotingStart;
+}
+
+export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: number, endHeight: number) {
+	const gone = endHeight - decidingSince;
+	return Math.min(gone / decisionPeriod, 1);
+}
+
+export function getTrackFunctions(trackInfo: any) {
+	let supportCalc: any = null;
+	let approvalCalc: any = null;
+	if (trackInfo) {
+		if (trackInfo.minApproval) {
+			if (trackInfo.minApproval.reciprocal) {
+				approvalCalc = makeReciprocalCurve(trackInfo.minApproval.reciprocal);
+			} else if (trackInfo.minApproval.linearDecreasing) {
+				approvalCalc = makeLinearCurve(trackInfo.minApproval.linearDecreasing);
+			}
+		}
+		if (trackInfo.minSupport) {
+			if (trackInfo.minSupport.reciprocal) {
+				supportCalc = makeReciprocalCurve(trackInfo.minSupport.reciprocal);
+			} else if (trackInfo.minSupport.linearDecreasing) {
+				supportCalc = makeLinearCurve(trackInfo.minSupport.linearDecreasing);
+			}
+		}
+	}
+	return {
+		approvalCalc,
+		supportCalc
+	};
+}
+
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { network } = useNetworkContext();
 	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit } = props;
@@ -74,6 +135,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [signersMap, setSignersMap] = useState<{[key:string]: Signer}>({});
 	const [open, setOpen] = useState(false);
 	const [graphicOpen, setGraphicOpen] = useState<boolean>(true);
+	const currentBlock = useCurrentBlock();
 
 	const { api, apiReady } = useApiContext();
 	const [lastVote, setLastVote] = useState<string | null | undefined>(undefined);
@@ -89,6 +151,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		datasets: [],
 		labels: []
 	});
+	const [trackInfo, setTrackInfo] = useState<any>({});
 	const [progress, setProgress] = useState({
 		approval: 0,
 		approvalThreshold: 0,
@@ -105,7 +168,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			}
 			setCurvesLoading(true);
 			const getData = async () => {
-				const tracks = api.consts.referenda.tracks.toJSON();
+				const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
 				if (tracks && Array.isArray(tracks)) {
 					const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
 					if (track && Array.isArray(track) && track.length > 1) {
@@ -127,24 +190,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						let approvalData: { x: number; y: number; }[] = [];
 						const currentApprovalData: { x: number; y: number; }[] = [];
 						const currentSupportData: { x: number; y: number; }[] = [];
-						let supportCalc: any = null;
-						let approvalCalc: any = null;
-						if (trackInfo) {
-							if (trackInfo.minApproval) {
-								if (trackInfo.minApproval.reciprocal) {
-									approvalCalc = makeReciprocalCurve(trackInfo.minApproval.reciprocal);
-								} else if (trackInfo.minApproval.linearDecreasing) {
-									approvalCalc = makeLinearCurve(trackInfo.minApproval.linearDecreasing);
-								}
-							}
-							if (trackInfo.minSupport) {
-								if (trackInfo.minSupport.reciprocal) {
-									supportCalc = makeReciprocalCurve(trackInfo.minSupport.reciprocal);
-								} else if (trackInfo.minSupport.linearDecreasing) {
-									supportCalc = makeLinearCurve(trackInfo.minSupport.linearDecreasing);
-								}
-							}
-						}
+						const { approvalCalc, supportCalc } = getTrackFunctions(trackInfo);
+
+						setTrackInfo(trackInfo);
 						for (let i = 0; i < (decisionPeriodHrs * 60); i++) {
 							labels.push(i);
 							if (supportCalc) {
@@ -280,6 +328,34 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			getData();
 		}
 	}, [api, apiReady, created_at, network, onchainId, proposalType, track_number]);
+
+	useEffect(() => {
+		if (trackInfo) {
+			const isVotingStart = checkVotingStart(post?.timeline, proposalType as TOpenGov);
+			if (!isVotingStart) {
+				setProgress((prev) => ({
+					...prev,
+					approvalThreshold: 100,
+					supportThreshold: 50
+				}));
+				return;
+			}
+			const endHeight = (currentBlock? currentBlock?.toNumber(): getReferendumVotingFinishHeight(post?.timeline, proposalType as TOpenGov));
+			const percentage = getDecidingEndPercentage(Number(trackInfo.decisionPeriod || 0), Number(post?.deciding?.since || 0), Number(endHeight || 0));
+			const { approvalCalc, supportCalc } = getTrackFunctions(trackInfo);
+			if (typeof approvalCalc === 'function' && typeof supportCalc === 'function') {
+				const approvalThreshold = approvalCalc(percentage) * 100;
+				const supportThreshold = supportCalc(percentage) * 100;
+				setProgress((prev) => {
+					return {
+						...prev,
+						approvalThreshold,
+						supportThreshold
+					};
+				});
+			}
+		}
+	}, [currentBlock, post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
 
 	const onAccountChange = (address: string) => {
 		setAddress(address);
@@ -583,6 +659,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 											<div className={className}>
 												<ReferendumVoteInfo
 													setOpen={setOpen}
+													voteThreshold={post.vote_threshold}
 													referendumId={onchainId as number}
 												/>
 											</div>
@@ -737,10 +814,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					}
 
 					{proposalType === ProposalType.BOUNTIES && <>
-						<BountyChildBounties
-							childBounties={post.child_bounties}
-							childBountiesCount={post.child_bounties_count}
-						/>
+						<BountyChildBounties bountyId={onchainId} />
 					</>
 					}
 				</Form>

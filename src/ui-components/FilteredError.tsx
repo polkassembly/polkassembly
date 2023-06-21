@@ -5,13 +5,14 @@ import { Alert } from 'antd';
 import React from 'react';
 
 interface ErrorProps{
-	text: string
+	text: string;
+	className?: string;
 }
 // TODO: Remove the file
-const FilteredError = ({ text } : ErrorProps) => {
+const FilteredError = ({ className, text } : ErrorProps) => {
 	return (
 		<div className='flex place-content-center'>
-			<Alert className='text-center  max-w-sm' message={text} type='error' />
+			<Alert className={`${className} text-center max-w-sm`} message={text} type='error' />
 		</div>
 	);
 };

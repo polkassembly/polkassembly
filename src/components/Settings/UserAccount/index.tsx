@@ -7,11 +7,16 @@ import Delete from '~src/components/Settings/Delete';
 import Profile from '~src/components/Settings/Profile';
 import Unlock from '~src/components/Settings/Unlock';
 import { Divider } from 'antd';
+import TwoFactorAuth from '../TwoFactorAuth';
+import { useUserDetailsContext } from '~src/context';
 
 export default function UserAccount({ network }: { network: string }) {
+	const {  id } = useUserDetailsContext();
 	return (
 		<div>
 			<Profile />
+			<Divider />
+			{id && <TwoFactorAuth className='mt-2 mb-8' />}
 			<Divider />
 			<Account />
 			<Divider />

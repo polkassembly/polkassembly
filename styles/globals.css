@@ -110,6 +110,10 @@ p > a {
   color: var(--pink_primary);
 }
 
+li > a {
+  color: var(--pink_primary);
+}
+
 p > a:hover {
   color: var(--pink_secondary);
 }

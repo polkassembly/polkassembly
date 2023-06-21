@@ -15,13 +15,10 @@ import { useRouter } from 'next/router';
 import { PageLink } from '~src/global/post_categories';
 import BackToListingView from '~src/ui-components/BackToListingView';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import NotificationUpgradingState from '~src/components/Settings/Notifications/NotificationChannels/NotificationUpgradingState';
 
 interface Props {
 	network: string
 }
-
-const AVAILABLE_NETWORK = ['pendulum', 'cere'];
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -41,7 +38,7 @@ const Settings: FC<Props> = (props) => {
 
 	const tabItems = useMemo(() => [
 		{ children: <UserAccount network={network} />, key: 'account', label: 'Account' },
-		{ children: AVAILABLE_NETWORK.includes(network) ? <Notifications network={network} /> : <NotificationUpgradingState />, key: 'notifications', label: 'Notifications' },
+		{ children: <Notifications network={network} />, key: 'notifications', label: 'Notifications' },
 		{ children: <Tracker network={network} />, key: 'tracker', label: 'Tracker' }
 	], [network]);
 

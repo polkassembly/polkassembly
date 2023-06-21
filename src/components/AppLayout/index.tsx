@@ -60,7 +60,7 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 		},
 		{
 			key: 'settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=notifications'>
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
 				<SettingOutlined />
 				<span>Settings</span>
 			</Link>

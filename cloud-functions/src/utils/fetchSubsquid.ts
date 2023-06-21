@@ -20,7 +20,7 @@ interface Args {
 export default async function fetchSubsquid({ query, variables, network } : Args) {
 	const body = variables ? { query, variables } : { query };
 
-	if (!(network in subsquidUrlMap) ) return;
+	if (!(network in subsquidUrlMap)) return;
 
 	const subsquidUrl = subsquidUrlMap[network as keyof typeof subsquidUrlMap];
 	return axios.post(`${subsquidUrl}`, {

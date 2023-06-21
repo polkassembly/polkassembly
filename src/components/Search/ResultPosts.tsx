@@ -49,7 +49,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 						{post?.proposer_address ? <Address address={post?.proposer_address} displayInline textClassName='text-xs text-[#485F7D]'/> : <div className='text-xs text-[#485F7D] font-medium mb-1'>{post?.username}</div>}
 						<span className='text-[#243A57] text-sm font-medium mt-2'>{titleString}</span>
 						<Markdown md={post?.content?.slice(0, 250)} className='text-[#8696a9] text-sm font-normal my-2 tracking-[0.01em] expand-content'/>
-						<div className='my-2 flex flex-shrink-0 gap-1'>
+						<div className='my-2 flex flex-shrink-0 gap-1 flex-wrap'>
 							<div className='flex gap-2 items-center text-xs text-[#485F7D]'>
 								<div className='flex gap-1 items-center text-xs text-[#485F7D]'>
 									<LikeIcon/><span>{post?.reaction_count['👍'] || 0}</span>

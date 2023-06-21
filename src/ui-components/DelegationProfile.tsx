@@ -97,7 +97,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 				}
 
 				<div
-					className={`flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-[10px] ${isSearch && 'mt-0'}`}
+					className={`flex flex-wrap items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-[10px] ${isSearch && 'mt-0'}`}
 				>
 					{
 						socialLinks?.map((social: any, index: number) => {

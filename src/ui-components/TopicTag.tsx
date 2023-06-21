@@ -22,7 +22,8 @@ export default styled(TopicTag)`
 	font-weight: 500;
 	background-color: var(--grey_primary);
 	color: white;
-	border:none;
+	border: none;
+	border-radius: 5px;
 	text-transform: capitalize;
 
 	@media only screen and (max-width: 576px) {

@@ -28,7 +28,7 @@ const optionTextToTopic = (optionText: string) => {
 	return optionText.replace(/ /g, '_').toUpperCase();
 };
 
-const topicIdToTopictext = (topicId : undefined | number) => {
+const topicIdToTopictext = (topicId : number) => {
 	let text = '';
 	Object.entries(post_topic).forEach(([key, value]) => {
 		if(value === topicId){

@@ -248,7 +248,6 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 			(Boolean(dateFilter)  || selectedGov1Tracks.length > 0 || selectedOpengovTracks.length > 0 || selectedTags.length > 0 ||  selectedTopics.length > 0 || selectedNetworks.length > 0) ? setIsFilter(true) : setIsFilter(false);
 		}
 		if(finalSearchInput.length > 2 && !searchInputErr.err){
-			console.log('here', searchInputErr);
 			setOpenFilter({ date: false, topic: false, track: false });
 			setLoading(true);
 			debouncedSearchFn();
@@ -375,7 +374,6 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	const handleSearchSubmit = () => {
 		if(loading || finalSearchInput === searchInput.trim()) return;
 		setAutoCompleteResults(initAutocompleteResults);
-		console.log(searchInput.length);
 		if(searchInput?.trim().length > 2){
 			setFinalSearchInput(searchInput?.trim());
 			setSearchInputErr({ err: false, clicked: true });

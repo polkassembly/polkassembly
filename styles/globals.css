@@ -351,5 +351,7 @@ background-color: white !important;
 .html-content a {
   color: var(--blue_primary) !important;
 }
-
+.tox-notifications-container {
+  display: none !important;
+}
 /* TINY MCE CSS */

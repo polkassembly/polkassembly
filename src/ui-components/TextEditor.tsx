@@ -84,7 +84,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							}
 						}
 					}}
-					apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
+					// apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
 					init={{
 						block_unsupported_drop: false,
 						branding: false,

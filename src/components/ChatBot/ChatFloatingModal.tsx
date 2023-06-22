@@ -70,7 +70,7 @@ const Container = styled.div`
 }
 `;
 
-export default function ChatFloatingModal() {
+export default function ChatFloatingModal({ network }:{network:string}) {
 	const [isOpen, setIsOpen] = useState(false);
 	const toggleChat = () => {
 		setIsOpen((prev:boolean) => !prev);
@@ -84,7 +84,6 @@ export default function ChatFloatingModal() {
 		[globalNework.POLKADOT]: ['3638', '754']
 	};
 
-	const { network } = useNetworkContext();
 	const hasOpened = useRef(false);
 	useEffect(() => {
 		if (!isOpen) return;

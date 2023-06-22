@@ -151,7 +151,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	return (
 		<>
@@ -198,7 +198,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 						<News twitter={networkSocialsData?.data?.twitter || ''} />
 					</div>
 				</div>
-				<ChatFloatingModal/>
+				<ChatFloatingModal network={network}/>
 			</main>
 		</>
 	);

@@ -227,7 +227,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 						{error && <FilteredError text={error} />}
 
-						<div className='flex justify-center items-center gap-x-2 mt-2 mb-5 font-semibold'>
+						<div className='flex justify-center items-center gap-x-2 mt-2 mb-5 font-medium'>
 							<label className='text-lg text-[#243A57]'>Don&apos;t have an account?</label>
 							<div onClick={handleClick} className='text-lg text-pink_primary cursor-pointer'> Sign Up </div>
 						</div>

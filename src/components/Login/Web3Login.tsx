@@ -471,7 +471,7 @@ const Web3Login: FC<Props> = ({
 						</div>}
 					</>
 				)}
-			<div className="flex justify-center items-center pb-5 font-semibold mt-6">
+			<div className="flex justify-center items-center pb-5 font-medium mt-6">
 				<label className="text-lg text-[#243A57]">
 						Don&apos;t have an account?
 				</label>

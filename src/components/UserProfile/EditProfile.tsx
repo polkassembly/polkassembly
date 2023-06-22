@@ -55,7 +55,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 		if(image && image.trim() && !image?.match(regex)) {
 			setError('Image URL is invalid.');
-			return;
+			return true;
 		}
 
 		if (social_links && Array.isArray(social_links)) {
@@ -63,10 +63,11 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				const link = social_links[i];
 				if(link.link && !link.link?.match(regex)) {
 					setError(`${link.type} ${link.type === 'Email'? '': 'URL'} is invalid.`);
-					return;
+					return true;
 				}
 			}
 		}
+		return false;
 	};
 
 	const validateUserName = (username: string) => {
@@ -101,7 +102,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 		if(!profile) return;
 
-		validateData(profile?.image, profile?.social_links);
+		if(validateData(profile?.image, profile?.social_links)) return;
 
 	}, [profile]);
 
@@ -131,7 +132,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		}
 
 		const { badges, bio, image, social_links, title } = profile;
-		validateData(image, social_links);
+		if(validateData(profile?.image, profile?.social_links)) return;
 		if(!validateUserName(username)) return ;
 
 		setLoading(true);

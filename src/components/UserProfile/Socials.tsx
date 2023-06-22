@@ -40,7 +40,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 								prefix={<LinkOutlined className='text-[rgba(72,95,125,0.2)] mr-1.5 text-base' />}
 								placeholder={`Enter ${strLink} ${strLink === 'Email'? '': 'URL'}`}
 								onChange={(e) => {
-									const value = e.target.value;
+									const value = e.target.value.trim();
 									setProfile((prev) => {
 										let isUpdated = false;
 										const social_links = prev?.social_links?.map((link) => {

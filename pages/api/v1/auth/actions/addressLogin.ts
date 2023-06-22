@@ -11,9 +11,7 @@ import { MessageType, IAuthResponse } from '~src/auth/types';
 async function handler(req: NextApiRequest, res: NextApiResponse<IAuthResponse | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
-	const { address, signature, wallet, multisig } = req.body;
-
-	if(!address || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { address, signature, wallet, multisig = null } = req.body;
 
 	if(!address || !signature || !wallet) return res.status(400).json({ message: 'Missing parameters in request body' });
 

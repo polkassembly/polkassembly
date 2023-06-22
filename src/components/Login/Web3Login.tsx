@@ -223,7 +223,7 @@ const Web3Login: FC<Props> = ({
 				type: 'bytes'
 			});
 
-			const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressLogin', { address: substrate_address,multisig:multiWallet, signature, wallet: chosenWallet });
+			const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<IAuthResponse>( 'api/v1/auth/actions/addressLogin', { address: substrate_address,multisig:multiWallet, signature, wallet: chosenWallet });
 			if(addressLoginError) {
 				setError(addressLoginError);
 				// TODO: change this method of checking if user is already signed up
@@ -392,12 +392,11 @@ const Web3Login: FC<Props> = ({
 						{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
 					</span>
 				</p>}
-				{!!withPolkasafe && (
+				{withPolkasafe && (
 					<WalletButtons
 						disabled={loading}
 						onWalletSelect={handleChangeWalletWithPolkasafe}
 						showPolkasafe={false}
-						onPolkasafeSelect={() => {}}
 						noHeader={true}
 						selectedWallet={chosenWallet}
 					/>

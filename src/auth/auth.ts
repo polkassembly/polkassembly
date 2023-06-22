@@ -92,14 +92,15 @@ class AuthService {
 		}
 	}
 
-	private async createUser (email: string, newPassword: string, username: string, web3signup: boolean, network: string): Promise<User> {
+	private async createUser (email: string, newPassword: string, username: string, web3signup: boolean, network: string ,custom_username:boolean = false): Promise<User> {
 		const { password, salt } = await this.getSaltAndHashedPassword(newPassword);
 
 		const newUserId = (await this.getLatestUserCount()) + 1;
 
 		const userId = String(newUserId);
-
 		const newUser: User = {
+			created_at: new Date(),
+			custom_username:custom_username,
 			email,
 			email_verified: false,
 			id: newUserId,
@@ -395,7 +396,7 @@ class AuthService {
 		const username = uuidv4().split('-').join('').substring(0, 25);
 		const password = uuidv4();
 
-		const user = await this.createUser('', password, username, true, network);
+		const user = await this.createUser('', password, username, true, network,false);
 
 		await this.createAddress(network, address, true, user.id, address.startsWith('0x'), wallet);
 		await redisDel(getAddressSignupKey(address));
@@ -420,7 +421,7 @@ class AuthService {
 			if (!userQuerySnapshot.empty) throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
 		}
 
-		const user = await this.createUser(email, password, username, false, network);
+		const user = await this.createUser(email, password, username, false, network, true);
 
 		await this.createAndSendEmailVerificationToken(user, network);
 

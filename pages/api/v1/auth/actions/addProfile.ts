@@ -17,7 +17,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const firestore = firebaseAdmin.firestore();
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
-	const { badges: badgesString, bio, image, title, social_links: socialLinksString, username } = req.body;
+	const { badges: badgesString, bio, image, title, social_links: socialLinksString, username, custom_username = false } = req.body;
 	if(!username) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	for (let i = 0; i < nameBlacklist.length; i++) {
@@ -64,9 +64,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 		title: title || ''
 	};
 
-	const updated_token = await authServiceInstance.getSignedToken({ ...user, profile, username });
+	const updated_token = await authServiceInstance.getSignedToken({ ...user, custom_username, profile, username });
 
-	await userRef.update({ profile, username }).then(() => {
+	await userRef.update({ custom_username, profile, username }).then(() => {
 		return res.status(200).json({ token: updated_token });
 	}).catch((error) => {
 		// The document probably doesn't exist.

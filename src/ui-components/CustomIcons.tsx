@@ -68,6 +68,7 @@ import NeutralUnfilledSVG from '~assets/icons/neutral-unfilled.svg';
 import SlightlyForUnfilledSVG from '~assets/icons/slightly-for-unfilled.svg';
 import ForUnfilleSVG from '~assets/icons/for-unfilled.svg';
 import DelegatedSVG from '~assets/sidebar/delegate-icon-gov2.svg';
+import DelegatedSVGDelegation from '~assets/icons/delegated.svg';
 import UndelegatedSVG from '~assets/icons/undelegated.svg';
 import ReceivedDelegationSVG from '~assets/icons/received-delegation.svg';
 import FilterSVG from '~assets/icons/filter-icon.svg';
@@ -328,6 +329,11 @@ export const ForUnfilledIcon = (props: Partial<CustomIconComponentProps>) => (
 export const DelegatedIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DelegatedSVG} {...props} />
 );
+
+export const DelegatedSVGDelegationIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DelegatedSVGDelegation} {...props} />
+);
+
 export const UnDelegatedIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={UndelegatedSVG} {...props} />
 );

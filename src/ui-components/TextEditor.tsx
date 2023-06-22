@@ -8,6 +8,8 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import { Spin } from 'antd';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
+import showdown from 'showdown';
+const converter = new showdown.Converter();
 
 interface ITextEditorProps {
     className?: string;
@@ -46,7 +48,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 
 	useEffect(() => {
 		if (localStorageKey) {
-			const storedValue = localStorage.getItem(localStorageKey) || '';
+			const storedValue = converter.makeHtml(localStorage.getItem(localStorageKey) || '');
 			onChange(storedValue || '');
 			isFirstTime.current = false;
 			if (ref.current.editor) {
@@ -69,7 +71,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						if (isFirstTime.current) {
 							isFirstTime.current = false;
 							if (localStorageKey) {
-								const storedValue = localStorage.getItem(localStorageKey) || '';
+								const storedValue = converter.makeHtml(localStorage.getItem(localStorageKey) || '');
 								onChange(storedValue || '');
 								if  (ref.current.editor) {
 									ref.current.editor.setContent(storedValue || '');

@@ -353,7 +353,7 @@ const Web3Login: FC<Props> = ({
 		<><div className='flex items-center'>
 			<LoginLogo className='ml-6 mr-2' />
 			<h3 className="text-[20px] font-semibold text-[#243A57] mt-3">Login</h3>
-		</div><hr className='text-[#D2D8E0] ' /><article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-3">
+		</div><Divider style={{ background: '#D2D8E0' }} className='mt-1' /><article className="bg-white shadow-md rounded-md px-8 flex flex-col gap-y-3">
 			<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-2">
 				{/* <span>Login</span> */}
 				<p className='flex gap-x-2 items-center justify-start p-0 m-0'>
@@ -471,11 +471,11 @@ const Web3Login: FC<Props> = ({
 						</div>}
 					</>
 				)}
-			<div className="flex justify-center items-center gap-x-2 font-semibold mt-6">
-				<label className="text-md text-[#243A57]">
+			<div className="flex justify-center items-center pb-5 font-semibold mt-6">
+				<label className="text-lg text-[#243A57]">
 						Don&apos;t have an account?
 				</label>
-				<div onClick={handleClick} className='text-pink_primary text-md'> Sign Up </div>
+				<div onClick={handleClick} className='text-lg text-pink_primary cursor-pointer'>&nbsp; Sign Up </div>
 			</div>
 		</article></>
 	);

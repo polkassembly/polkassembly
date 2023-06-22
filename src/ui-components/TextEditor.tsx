@@ -137,7 +137,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							'insertdatetime', 'media', 'table'
 						],
 						// skin: '',
-						toolbar: 'undo redo | ' +
+						toolbar: 'undo redo preview | ' +
 							'bold italic backcolor | ' +
 							'bullist numlist table | ' +
 							'removeformat link image code',

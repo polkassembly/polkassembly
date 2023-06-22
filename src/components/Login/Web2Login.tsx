@@ -135,12 +135,12 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 	return (
 		<>
-			<div className='flex bg-white items-center'>
-				<LoginLogo className='ml-6 mr-2' />
-				<h3 className="text-[20px] font-semibold text-[#243A57] mt-3">Login</h3>
-			</div>
-			<Divider style={{ background: '#D2D8E0' }} className='mt-1' />
-			<article className={`bg-white shadow-md rounded-md px-8 flex flex-col gap-y-6 ${className} `}>
+			<article className={`bg-white shadow-md rounded-md flex flex-col ${className} `}>
+				<div className='flex items-center px-8'>
+					<LoginLogo className='mr-3' />
+					<h3 className="text-[20px] font-semibold text-[#243A57] mt-3">Login</h3>
+				</div>
+				<Divider style={{ background: '#D2D8E0', flexGrow: 1 }} className='mt-1 px-0' />
 				{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor' />}
 
 				{walletError && <Alert message={walletError} type="error" />}
@@ -153,7 +153,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					/> :
 					<AuthForm
 						onSubmit={handleSubmitForm}
-						className="flex flex-col gap-y-3"
+						className="flex flex-col gap-y-3 px-8"
 					>
 						<div className="flex flex-col gap-y-1">
 							<label
@@ -227,9 +227,9 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 						{error && <FilteredError text={error} />}
 
-						<div className='flex justify-center items-center gap-x-2 mt-2 mb-5 font-medium'>
-							<label className='text-lg text-[#243A57]'>Don&apos;t have an account?</label>
-							<div onClick={handleClick} className='text-lg text-pink_primary cursor-pointer'> Sign Up </div>
+						<div className='flex justify-center items-center gap-x-2 mt-2 mb-5 font-semibold'>
+							<label className='text-md text-[#243A57]'>Don&apos;t have an account?</label>
+							<div onClick={handleClick} className='text-md text-pink_primary cursor-pointer'> Sign Up </div>
 						</div>
 					</AuthForm>}
 			</article>

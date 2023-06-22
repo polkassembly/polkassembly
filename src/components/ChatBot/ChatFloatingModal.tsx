@@ -70,27 +70,25 @@ const Container = styled.div`
 }
 `;
 
-const grillData: { [index: string]: string[] } = {
-	[globalNework.CERE]: ['5145', '5139'],
-	[globalNework.KILT]: ['2035', '5144'],
-	[globalNework.KUSAMA]: ['2027', '5138'],
-	[globalNework.MOONBEAM]: ['2065', '5140'],
-	[globalNework.POLKADOT]: ['3638', '754']
-};
-
 export default function ChatFloatingModal() {
 	const [isOpen, setIsOpen] = useState(false);
 	const toggleChat = () => {
 		setIsOpen((prev:boolean) => !prev);
 	};
 
+	const grillData: { [index: string]: string[] } = {
+		[globalNework.CERE]: ['5145', '5139'],
+		[globalNework.KILT]: ['2035', '5144'],
+		[globalNework.KUSAMA]: ['2027', '5138'],
+		[globalNework.MOONBEAM]: ['2065', '5140'],
+		[globalNework.POLKADOT]: ['3638', '754']
+	};
+
 	const { network } = useNetworkContext();
 	const hasOpened = useRef(false);
 	useEffect(() => {
 		if (!isOpen) return;
-
 		if (!hasOpened.current) {
-
 			let filterArray: string[] = [];
 			if (grillData?.[network]) {
 				filterArray = grillData?.[network];

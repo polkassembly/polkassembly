@@ -28,9 +28,10 @@ interface Props {
   setOpenModal: (pre: boolean) => void;
   isSuperSearch: boolean;
   setPostsPage: (postsPage: any) => void;
-  postsPage: {page: number, totalPosts: number};
+  postsPage: number;
+  totalPage: number;
 }
-const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsPage }: Props) => {
+const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsPage, totalPage }: Props) => {
 
 	return <div className={ `${className} mt-4 -mx-6`}>
 		{ postsData.map((post, index: number) => {
@@ -96,12 +97,12 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 		<div className='flex justify-center items-center py-4 px-4'>
 			<Pagination
 				defaultCurrent={1}
-				current={postsPage.page}
+				current={postsPage}
 				pageSize={LISTING_LIMIT}
-				total={postsPage?.totalPosts}
+				total={totalPage}
 				showSizeChanger={false}
 				hideOnSinglePage={true}
-				onChange={(page: number) => setPostsPage((prev: any) => { return { ...prev, page };})}
+				onChange={(page: number) => setPostsPage(page)}
 				responsive={true}
 			/>
 		</div>

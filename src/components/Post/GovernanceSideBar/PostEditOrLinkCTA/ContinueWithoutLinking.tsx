@@ -5,13 +5,14 @@ import { Button, Form, Input, Modal } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
-import ContentForm from '~src/components/ContentForm';
 import { usePostDataContext } from '~src/context';
 import { NotificationStatus } from '~src/types';
 import AddTags from '~src/ui-components/AddTags';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import queueNotification from '~src/ui-components/QueueNotification';
+import TextEditor from '~src/ui-components/TextEditor';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { editPostKey } from '../../PostContentForm';
 
 interface IContinueWithoutLinking {
     setEditModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,20 +30,23 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 		postType: proposalType,
 		postIndex,
 		timeline,
-		tags: oldTags
+		tags: oldTags,
+		content
 	}, setPostData } = usePostDataContext();
+	const [newContent, setNewContent] = useState(content || '');
+	const [isClean, setIsClean] = useState(false);
 
 	const [tags,setTags]=useState<string[]>(oldTags);
 
-	const onFinish = async ({ title, content }: any) => {
+	const onFinish = async ({ title }: any) => {
 		setError('');
 		await form.validateFields();
-		if(!title || !content) return;
+		if(!title || !newContent) return;
 
 		setFormDisabled(true);
 		setLoading(true);
 		const { data , error: editError } = await nextApiClientFetch<IEditPostResponse>('api/v1/auth/actions/editPost', {
-			content,
+			content: newContent,
 			postId: postIndex,
 			proposalType,
 			tags: ((tags && Array.isArray(tags))? tags: []),
@@ -78,6 +82,12 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 				title,
 				topic
 			}));
+			setNewContent('');
+			global.window.localStorage.removeItem(editPostKey(postIndex));
+			setIsClean(true);
+			setTimeout(() => {
+				setIsClean(false);
+			}, 1000);
 			setFormDisabled(false);
 			setEditModalOpen(false);
 		}
@@ -134,7 +144,20 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 						className='mt-[30px]'
 					>
 						<label className='text-[#475F7D] font-semibold text-lg leading-[27px] tracking-[0.01em] flex items-center mb-2'>Description</label>
-						<ContentForm />
+						{
+							editModalOpen?
+								<TextEditor
+									isDisabled={loading}
+									isClean={isClean}
+									value={newContent}
+									imageNamePrefix={editPostKey(postIndex)}
+									localStorageKey={editPostKey(postIndex)}
+									onChange={(v) => {
+										setNewContent(v);
+									}}
+								/>
+								: null
+						}
 					</div>
 					<div
 						className='mt-[30px]'

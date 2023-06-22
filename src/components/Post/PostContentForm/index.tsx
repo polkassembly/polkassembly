@@ -5,7 +5,7 @@
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -14,15 +14,16 @@ import { usePostDataContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-import ContentForm from '../../ContentForm';
 import AddTags from '~src/ui-components/AddTags';
 import styled from 'styled-components';
+import TextEditor from '~src/ui-components/TextEditor';
 
 interface Props {
 	className?: string;
 	toggleEdit: () => void;
 }
 
+export const editPostKey = (postId: string | number) => `editPost:${postId}:${global.window.location.href}`;
 const PostContentForm = ({ className, toggleEdit } : Props) => {
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [form] = Form.useForm();
@@ -37,17 +38,27 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 		cid,
 		timeline,tags:oldTags
 	}, setPostData } = usePostDataContext();
+	const [newContent, setNewContent] = useState(content || '');
+	const [isClean, setIsClean] = useState(false);
 
 	const [tags,setTags]=useState<string[]>(oldTags);
 
-	const onFinish = async ({ title, content }: any) => {
+	useEffect(() => {
+		if (content) {
+			setNewContent(content);
+			localStorage.setItem(editPostKey(postIndex), content);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const onFinish = async ({ title }: any) => {
 		await form.validateFields();
-		if(!title || !content) return;
+		if(!title || !newContent) return;
 
 		setFormDisabled(true);
 		setLoading(true);
 		const { data , error: editError } = await nextApiClientFetch<IEditPostResponse>('api/v1/auth/actions/editPost', {
-			content,
+			content: newContent,
 			postId: postIndex || cid,
 			proposalType,
 			tags,
@@ -85,6 +96,12 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 				topic
 			}));
 			setFormDisabled(false);
+			setNewContent('');
+			global.window.localStorage.removeItem(editPostKey(postIndex));
+			setIsClean(true);
+			setTimeout(() => {
+				setIsClean(false);
+			}, 1000);
 			toggleEdit();
 		}
 		setLoading(false);
@@ -110,13 +127,30 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 				<Form.Item name="title" label="Title" rules={[{ required: true }]}>
 					<Input autoFocus placeholder='Your title...' className='text-black' />
 				</Form.Item>
-				<ContentForm />
+				<TextEditor
+					isDisabled={loading}
+					isClean={isClean}
+					value={newContent}
+					imageNamePrefix={editPostKey(postIndex)}
+					localStorageKey={editPostKey(postIndex)}
+					onChange={(v) => {
+						setNewContent(v);
+					}}
+				/>
 				<h5 className='text-sm text-color mt-8 font-normal'>Tags</h5>
 				<AddTags tags={tags} setTags={setTags} className='mb-8' />
 				<Form.Item>
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center justify-end'>
-							<Button htmlType="button" loading={loading} onClick={toggleEdit} className='mr-2 flex items-center'>
+							<Button htmlType="button" loading={loading} onClick={() => {
+								setNewContent('');
+								global.window.localStorage.removeItem(editPostKey(postIndex));
+								setIsClean(true);
+								setTimeout(() => {
+									setIsClean(false);
+								}, 1000);
+								toggleEdit();
+							}} className='mr-2 flex items-center'>
 								<CloseOutlined /> Cancel
 							</Button>
 							<Button htmlType="submit" loading={loading} className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>

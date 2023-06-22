@@ -5,7 +5,6 @@
 import { Button, Form, Input, Radio, Switch } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
-import ContentForm from 'src/components/ContentForm';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { PostCategory } from 'src/global/post_categories';
 import { usePollEndBlock } from 'src/hooks';
@@ -21,12 +20,14 @@ import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TopicsRadio from './TopicsRadio';
 import AddTags from '~src/ui-components/AddTags';
+import TextEditor from '~src/ui-components/TextEditor';
 
 interface Props {
 	className?: string;
 	proposalType: ProposalType;
 }
 
+const createPostKey = () => `createPost:${global.window.location.href}`;
 const CreatePost = ({ className, proposalType } : Props) => {
 	const router = useRouter();
 	const currentUser = useContext(UserDetailsContext);
@@ -40,6 +41,8 @@ const CreatePost = ({ className, proposalType } : Props) => {
 	const [error, setError] = useState('');
 	const [govType, setGovType]=useState<'gov_1' | 'open_gov'>('gov_1');
 	const [tags, setTags] = useState<string[]>([]);
+	const [content, setContent] = useState<string>('');
+	const [isClean, setIsClean] = useState(false);
 
 	useEffect(() => {
 		if (!currentUser?.id) {
@@ -86,7 +89,6 @@ const CreatePost = ({ className, proposalType } : Props) => {
 		try {
 			await form.validateFields();
 			// Validation is successful
-			const content = form.getFieldValue('content');
 			const title = form.getFieldValue('title');
 
 			if(!title || !content) return;
@@ -124,6 +126,12 @@ const CreatePost = ({ className, proposalType } : Props) => {
 				});
 				createSubscription(postId);
 				createPoll(postId);
+				setContent('');
+				global.window.localStorage.removeItem(createPostKey());
+				setIsClean(true);
+				setTimeout(() => {
+					setIsClean(false);
+				}, 1000);
 			}
 			setFormDisabled(false);
 			setLoading(false);
@@ -157,8 +165,17 @@ const CreatePost = ({ className, proposalType } : Props) => {
 
 						<Input name='title' autoFocus placeholder='Enter Title' className='text-black' />
 					</Form.Item>
-					<ContentForm />
-					<div className="flex items-center">
+					<TextEditor
+						isDisabled={loading}
+						isClean={isClean}
+						value={content}
+						imageNamePrefix={createPostKey()}
+						localStorageKey={createPostKey()}
+						onChange={(v) => {
+							setContent(v);
+						}}
+					/>
+					<div className="flex items-center mt-4">
 						<Switch size="small" onChange={checked => setHasPoll(checked)} />
 						<span className='ml-2 text-sidebarBlue text-sm'>Add poll to {proposalType === ProposalType.DISCUSSIONS? 'discussion': 'grant'}</span>
 					</div>

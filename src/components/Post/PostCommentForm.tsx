@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined } from '@ant-design/icons';
-import { Button, Form } from 'antd';
+import { Button } from 'antd';
 import { IAddPostCommentResponse } from 'pages/api/v1/auth/actions/addPostComment';
 import React, { FC, useEffect, useState } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
@@ -15,7 +15,7 @@ import { usePostDataContext, useUserDetailsContext } from '~src/context';
 import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-import ContentForm from '../ContentForm';
+import TextEditor from '~src/ui-components/TextEditor';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -27,20 +27,14 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className } = props;
 	const { id, username } = useUserDetailsContext();
 	const { postData: { postIndex, postType }, setPostData } = usePostDataContext();
-	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
-	const [form] = Form.useForm();
+	const [content, setContent] = useState('');
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [openModal,setModalOpen]=useState(false);
 	const [isComment,setIsComment]=useState(false);
 	const [sentiment,setSentiment]=useState<number>(3);
 	const [isSentimentPost,setIsSentimentPost]=useState(false);
-
-	const onContentChange = (content: string) => {
-		setContent(content);
-		global.window.localStorage.setItem(commentKey(), content);
-		return content.length ? content : null;
-	};
+	const [isClean, setIsClean] = useState(false);
 
 	const createSubscription = async (postId: number | string) => {
 		const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType: postType });
@@ -49,15 +43,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	};
 
 	const handleModalOpen=async() => {
-		await form.validateFields();
-		const content = form.getFieldValue('content');
 		if(!content) return;
 		setModalOpen(true);
 	};
 
 	const handleSave = async () => {
-		await form.validateFields();
-		const content = form.getFieldValue('content');
 		if(!content) return;
 
 		setLoading(true);
@@ -75,10 +65,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		}
 
 		if(data) {
-			setContent('');
-			form.resetFields();
-			form.setFieldValue('content', '');
-			global.window.localStorage.removeItem(commentKey());
 			postIndex && createSubscription(postIndex);
 			setPostData((prev) => ({
 				...prev,
@@ -104,6 +90,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					username: username || ''
 				}]
 			}));
+			setContent('');
+			setIsClean(true);
+			setTimeout(() => {
+				setIsClean(false);
+			}, 1000);
+			global.window.localStorage.removeItem(commentKey());
 		}
 		setLoading(false);
 		setIsComment(false);
@@ -128,29 +120,21 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 
 			<div className='comment-box bg-white p-[1rem]'>
 				{error && <ErrorAlert errorMsg={error} className='mb-2' />}
-				<Form
-					form={form}
-					name="comment-content-form"
-					layout="vertical"
-					onFinish={handleModalOpen}
-					initialValues={{
-						content
+				<TextEditor
+					isDisabled={loading}
+					isClean={isClean}
+					value={content}
+					imageNamePrefix={commentKey()}
+					localStorageKey={commentKey()}
+					onChange={(v) => {
+						setContent(v);
 					}}
-					disabled={loading}
-
-					validateMessages= {
-						{ required: "Please add the  '${name}'" }
-					}
-				>
-					<ContentForm  onChange = {(content : any) => onContentChange(content)} height={200} />
-					<Form.Item>
-						<div className='flex items-center justify-end mt-[-40px]'>
-							<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center my-0 ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>
-								<CheckOutlined /> Comment
-							</Button>
-						</div>
-					</Form.Item>
-				</Form>
+				/>
+				<div className='flex items-center justify-end mt-4'>
+					<Button disabled={!content} loading={loading} onClick={handleModalOpen} className={`bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center my-0 ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>
+						<CheckOutlined /> Comment
+					</Button>
+				</div>
 			</div>
 			{openModal && <CommentSentimentModal
 				setSentiment={setSentiment}

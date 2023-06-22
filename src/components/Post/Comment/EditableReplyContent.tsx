@@ -3,9 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Form, Tooltip } from 'antd';
-import React, { useContext, useEffect, useState } from 'react';
-import ContentForm from 'src/components/ContentForm';
+import { Button, Tooltip } from 'antd';
+import React, { useContext, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { NotificationStatus } from 'src/types';
 import Markdown from 'src/ui-components/Markdown';
@@ -20,6 +19,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ReportButton from '../ActionsBar/ReportButton';
 import { IComment } from './Comment';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
+import TextEditor from '~src/ui-components/TextEditor';
 
 interface Props {
 	userId: number,
@@ -37,47 +37,55 @@ const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.l
 const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply }: Props) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const { id , username ,picture } = useContext(UserDetailsContext);
-	const toggleEdit = () => setIsEditing(!isEditing);
-	const [form] = Form.useForm();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [isReplying,setIsReplying] = useState(false);
-	const [replyToreplyForm] = Form.useForm();
+	const [newContent, setNewContent] = useState('');
+	const [replyContent, setReplyContent] = useState('');
+	const [isClean, setIsClean] = useState(false);
 
 	const { setPostData, postData: {
 		postType, postIndex
 	} } = usePostDataContext();
 
-	useEffect(() => {
-		const localContent = global.window.localStorage.getItem(editReplyKey(replyId)) || '';
-		form.setFieldValue('content', localContent || content || ''); //
-	}, [content, form, replyId]);
-
-	useEffect(() => {
-		replyToreplyForm.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})` || '');
-	}, [replyToreplyForm, userName]);
-
-	const handleCancel = () => {
-		toggleEdit();
-		global.window.localStorage.removeItem(editReplyKey(replyId));
-		form.setFieldValue('content', '');
+	const toggleEdit = () => {
+		setIsClean(false);
+		global.window.localStorage.setItem(editReplyKey(replyId), content || '');
+		setIsEditing(!isEditing);
 	};
-	const handleReplyCancel = () => {
-		global.window.localStorage.removeItem(newReplyKey(commentId));
+
+	const toggleReply = () => {
+		setIsClean(false);
+		localStorage.setItem(newReplyKey(commentId),`<p><a title="${userName}" href="${global.window.location.origin}/user/${userName}" target="_blank" rel="noopener">@${userName}</a></p>`);
 		setIsReplying(!isReplying);
 	};
 
+	const handleCancel = () => {
+		setIsEditing(false);
+		global.window.localStorage.removeItem(editReplyKey(replyId));
+		setIsClean(true);
+		setTimeout(() => {
+			setIsClean(false);
+		}, 1000);
+	};
+	const handleReplyCancel = () => {
+		setIsReplying(false);
+		global.window.localStorage.removeItem(newReplyKey(commentId));
+		setIsClean(true);
+		setTimeout(() => {
+			setIsClean(false);
+		}, 1000);
+	};
+
 	const handleSave = async () => {
-		await form.validateFields();
-		const newContent = form.getFieldValue('content');
-		if(!newContent) return;
+		if(!replyContent) return;
 
 		setIsEditing(false);
 
 		setLoading(true);
 		const { data, error: editReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/editCommentReply', {
 			commentId,
-			content: newContent,
+			content: replyContent,
 			postId: postIndex,
 			postType: postType,
 			replyId,
@@ -97,7 +105,6 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		if (data) {
 			setError('');
 			global.window.localStorage.removeItem(editReplyKey(replyId));
-			form.setFieldValue('content', '');
 			setPostData((prev) => {
 				let comments: IComment[] = [];
 				if (prev?.comments && Array.isArray(prev.comments)) {
@@ -106,7 +113,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 							if (comment?.replies && Array.isArray(comment.replies)) {
 								comment.replies = comment.replies.map((reply) => {
 									if (reply.id === replyId) {
-										reply.content = newContent;
+										reply.content = replyContent;
 										reply.updated_at = new Date();
 									}
 									return {
@@ -125,6 +132,10 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 					comments: comments
 				};
 			});
+			setIsClean(true);
+			setTimeout(() => {
+				setIsClean(false);
+			}, 1000);
 			queueNotification({
 				header: 'Success!',
 				message: 'Your reply was edited.',
@@ -136,14 +147,12 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	};
 
 	const handleReplySave = async () => {
-		await replyToreplyForm.validateFields();
-		const replyContent = replyToreplyForm.getFieldValue('content');
-		if(!replyContent) return;
+		if(!newContent) return;
 		setLoading(true);
 		if(id){
 			const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
 				commentId: commentId,
-				content: replyContent,
+				content: newContent,
 				postId: postIndex,
 				postType: postType,
 				userId: id
@@ -167,7 +176,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 							if (comment.id === commentId) {
 								if (comment?.replies && Array.isArray(comment.replies)) {
 									comment.replies = [...comment.replies,{
-										content: replyContent,
+										content: newContent,
 										created_at: new Date(),
 										id:data.id,
 										updated_at: new Date(),
@@ -187,7 +196,10 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 						comments: comments
 					};
 				});
-				replyToreplyForm.resetFields();
+				setIsClean(true);
+				setTimeout(() => {
+					setIsClean(false);
+				}, 1000);
 				setIsReplying(false);
 				queueNotification({
 					header: 'Success!',
@@ -251,35 +263,30 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 				{
 					isEditing
 						?
-						<Form
-							form={form}
-							name="reply-content-form"
-							onFinish={handleSave}
-							layout="vertical"
-							// disabled={formDisabled}
-							validateMessages= {
-								{ required: "Please add the '${name}'" }
-							}
-						>
-							<ContentForm onChange={(content: string) => {
-								global.window.localStorage.setItem(editReplyKey(replyId), content);
-								return content.length ? content : null;
-							}} />
-							<Form.Item>
-								<div className='flex items-center justify-end'>
-									<Button htmlType="button" onClick={handleCancel} className='mr-2 flex items-center'>
-										<CloseOutlined /> Cancel
-									</Button>
-									<Button htmlType="submit" className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
-										<CheckOutlined /> Reply
-									</Button>
-								</div>
-							</Form.Item>
-						</Form>
+						<>
+							<TextEditor
+								isDisabled={loading}
+								isClean={isClean}
+								value={replyContent}
+								imageNamePrefix={editReplyKey(replyId)}
+								localStorageKey={editReplyKey(replyId)}
+								onChange={(v) => {
+									setReplyContent(v);
+								}}
+							/>
+							<div className='flex items-center justify-end mt-4'>
+								<Button loading={loading} onClick={handleCancel} className='mr-2 flex items-center'>
+									<CloseOutlined /> Cancel
+								</Button>
+								<Button loading={loading} onClick={() => handleSave()} className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
+									<CheckOutlined /> Reply
+								</Button>
+							</div>
+						</>
 						:
 						<>
 							<Markdown className='py-2 px-2 md:px-4 bg-blue-grey rounded-b-md text-sm' md={content} />
-							<div className='flex items-center flex-wrap'>
+							<div className='flex items-center flex-wrap mt-2'>
 								{id === userId &&
 									<Button className={'text-pink_primary flex items-center border-none shadow-none'} disabled={loading} onClick={toggleEdit}>
 										{
@@ -291,44 +298,39 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								}
 								{id === userId && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>}
 								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} postId={postIndex} commentId={commentId} type='reply' replyId={replyId} />}
-								{id && !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>}
 
-								{reply.reply_source !== 'subsquare' && id && !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>}
-								{reply.reply_source === 'subsquare' && (
+								{id? (reply.reply_source === 'subsquare'? (
 									<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
-										<Button className='text-pink_primary flex items-center border-none shadow-none text-xs disabled-reply'>
+										<Button disabled={true} className='text-pink_primary flex items-center border-none shadow-none text-xs disabled-reply'>
 											<ReplyIcon className='mr-1'/> Reply
 										</Button>
-									</Tooltip>
-								)}
+									</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={toggleReply}><ReplyIcon className='mr-1'/>Reply</Button>)
+									: null
+								}
 							</div>
 							{
 								isReplying
 										&&
-										<Form
-											form={replyToreplyForm}
-											name="reply-to-reply-form"
-											layout="vertical"
-											disabled={loading}
-											validateMessages= {
-												{ required: "Please add the '${name}'" }
-											}
-										>
-											<ContentForm onChange={(content: string) => {
-												global.window.localStorage.setItem(newReplyKey(commentId), content);
-												return content.length ? content : null;
-											}}  />
-											<Form.Item>
-												<div className='flex items-center justify-end '>
-													<Button htmlType="button" onClick={() => handleReplyCancel()} className='mr-2 flex items-center'>
-														<CloseOutlined /> Cancel
-													</Button>
-													<Button loading={loading} onClick={() => handleReplySave()} className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
-														<CheckOutlined />Reply
-													</Button>
-												</div>
-											</Form.Item>
-										</Form>
+										<>
+											<TextEditor
+												isDisabled={loading}
+												isClean={isClean}
+												value={newContent}
+												imageNamePrefix={newReplyKey(commentId)}
+												localStorageKey={newReplyKey(commentId)}
+												onChange={(v) => {
+													setNewContent(v);
+												}}
+											/>
+											<div className='flex items-center justify-end mt-4'>
+												<Button loading={loading} onClick={() => handleReplyCancel()} className='mr-2 flex items-center'>
+													<CloseOutlined /> Cancel
+												</Button>
+												<Button loading={loading} onClick={() => handleReplySave()} className='bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center'>
+													<CheckOutlined />Reply
+												</Button>
+											</div>
+										</>
 							}
 						</>
 				}

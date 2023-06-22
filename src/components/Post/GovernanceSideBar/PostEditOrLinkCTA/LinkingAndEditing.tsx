@@ -5,7 +5,6 @@
 import { Button, Form, Input, Modal } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
 import React, { FC, useEffect, useState } from 'react';
-import ContentForm from '~src/components/ContentForm';
 import { useNetworkContext, usePostDataContext } from '~src/context';
 import { NotificationStatus } from '~src/types';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
@@ -16,6 +15,8 @@ import { ILinkPostStartResponse } from 'pages/api/v1/auth/actions/linkPostStart'
 import LinkPostPreview from './LinkPostPreview';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import AddTags from '~src/ui-components/AddTags';
+import TextEditor from '~src/ui-components/TextEditor';
+import { editPostKey } from '../../PostContentForm';
 
 interface ILinkingAndEditingProps {
     setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -49,6 +50,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 	const { network } = useNetworkContext();
 
 	const [tags, setTags] = useState<string[]>(oldTags);
+	const [isClean, setIsClean] = useState(false);
 
 	useEffect(() => {
 		setEditPostValue({
@@ -72,14 +74,14 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 		}
 	}, [post_link]);
 
-	const onFinish = async ({ url, content: updatedContent, title: updatedTitle  }: any) => {
+	const onFinish = async ({ url, title: updatedTitle  }: any) => {
 		setError('');
 		setFormDisabled(true);
 		setLoading(true);
 		try {
 			if ((!url || !url.trim())) {
 				const { data , error: editError } = await nextApiClientFetch<IEditPostResponse>('api/v1/auth/actions/editPost', {
-					content: updatedContent,
+					content: editPostValue.content,
 					postId: postIndex,
 					proposalType: postType,
 					tags: ((tags && Array.isArray(tags))? tags: []),
@@ -116,6 +118,15 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					setPrevUrl('');
 					form.setFieldValue('url', '');
 					setLinkingAndEditingOpen(false);
+					setEditPostValue({
+						content: '',
+						title: ''
+					});
+					global.window.localStorage.removeItem(editPostKey(postIndex));
+					setIsClean(true);
+					setTimeout(() => {
+						setIsClean(false);
+					}, 1000);
 					return;
 				}
 			} else {
@@ -188,6 +199,15 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 							timeline: data.timeline,
 							title: isOnchainPost? post?.title || '': prev.title
 						}));
+						setEditPostValue({
+							content: '',
+							title: ''
+						});
+						global.window.localStorage.removeItem(editPostKey(postIndex));
+						setIsClean(true);
+						setTimeout(() => {
+							setIsClean(false);
+						}, 1000);
 					}
 				}
 			}
@@ -273,13 +293,17 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						className='mt-[30px]'
 					>
 						<label className='text-[#475F7D] font-semibold text-lg leading-[27px] tracking-[0.01em] flex items-center mb-2'>Description</label>
-						<ContentForm
-							onChange={(content) => {
+						<TextEditor
+							isDisabled={loading}
+							isClean={isClean}
+							value={editPostValue.content}
+							imageNamePrefix={editPostKey(postIndex)}
+							localStorageKey={editPostKey(postIndex)}
+							onChange={(v) => {
 								setEditPostValue((prev) => ({
 									...prev,
-									content: content
+									content: v
 								}));
-								return content.length ? content : null;
 							}}
 						/>
 					</div>

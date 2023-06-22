@@ -25,8 +25,8 @@ import EthIdenticon from '~src/ui-components/EthIdenticon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import AddressComponent from '../../ui-components/Address';
-import ContentForm from '../ContentForm';
 import TitleForm from '../TitleForm';
+import TextEditor from '~src/ui-components/TextEditor';
 
 interface Props {
 	className?: string
@@ -37,6 +37,8 @@ enum AvailableAccountsInput {
 	submitWithAccount,
 	beneficiary
 }
+
+const createTreasuryProposalKey = () => `createTreasuryProposal:${global.window.location.href}`;
 
 const TreasuryProposalFormButton = ({
 	className
@@ -59,6 +61,7 @@ const TreasuryProposalFormButton = ({
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
 	// const [addPolkassemblyProposalMutation] = useAddPolkassemblyProposalMutation();
 
+	const [isClean, setIsClean] = useState(false);
 	const [errorsFound, setErrorsFound] = useState<string[]>([]);
 	const [treasuryProposal, setTreasuryProposal] = useState<{
 		bondPercent: null | string;
@@ -162,7 +165,6 @@ const TreasuryProposalFormButton = ({
 	const onBalanceChange = (balance: BN) => setValue(balance);
 
 	const onTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {setPostTitle(event.currentTarget.value); return event.currentTarget.value;};
-	const onPostDescriptionChange = (data: string) => {setPostDescription(data); return data.length ? data : null;};
 
 	const isFormValid = () => {
 		const errorsFound: string[] = [];
@@ -259,6 +261,11 @@ const TreasuryProposalFormButton = ({
 						return;
 					}
 					await saveProposal(userId, postTitle, postDescription, submitWithAccount);
+					global.window.localStorage.removeItem(createTreasuryProposalKey());
+					setIsClean(true);
+					setTimeout(() => {
+						setIsClean(false);
+					}, 1000);
 				} else {
 					if (status.isBroadcast){
 						setLoadingStatus({ isLoading: true, message: 'Broadcasting the endorsement' });
@@ -456,8 +463,14 @@ const TreasuryProposalFormButton = ({
 									<TitleForm
 										onChange={onTitleChange}
 									/>
-									<ContentForm
-										onChange={onPostDescriptionChange}
+									<TextEditor
+										isClean={isClean}
+										value={postDescription}
+										imageNamePrefix={createTreasuryProposalKey()}
+										localStorageKey={createTreasuryProposalKey()}
+										onChange={(v) => {
+											setPostDescription(v);
+										}}
 									/>
 								</div>
 							</Form>

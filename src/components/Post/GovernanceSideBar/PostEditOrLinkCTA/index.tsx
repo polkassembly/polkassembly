@@ -16,13 +16,14 @@ import ContinueWithoutLinking from './ContinueWithoutLinking';
 import ContinueWithLinking from './ContinueWithLinking';
 import LinkingAndEditing from './LinkingAndEditing';
 import { checkIsOnChainPost } from '~src/global/proposalType';
+import { editPostKey } from '../../PostContentForm';
 
 interface IPostEditOrLinkCTA {
 	className?: string;
 }
 
 const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
-	const { postData: { created_at, last_edited_at, postType } } = usePostDataContext();
+	const { postData: { created_at, last_edited_at, postType, postIndex, content } } = usePostDataContext();
 	const isEditCTA = (last_edited_at? (dayjs(last_edited_at).diff(dayjs(created_at)) < 0): true);
 	const [open, setOpen] = useState(false);
 	const [linkingAndEditingOpen, setLinkingAndEditingOpen] = useState(false);
@@ -78,6 +79,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 						<button
 							className='md:min-w-[314px] outline-none rounded-[4px] border border-solid border-pink_primary py-1 px-4 bg-pink_primary text-white cursor-pointer font-medium text-sm leading-[21px] tracking-[0.0125em]'
 							onClick={() => {
+								localStorage.setItem(editPostKey(postIndex), content);
 								setOpen(false);
 								setLinkingModalOpen(true);
 							}}
@@ -87,6 +89,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 						<button
 							className='md:min-w-[314px] outline-none rounded-[4px] border border-solid border-pink_primary py-1 px-4 bg-white text-pink_primary cursor-pointer font-medium text-sm leading-[21px] tracking-[0.0125em]'
 							onClick={() => {
+								localStorage.setItem(editPostKey(postIndex), content);
 								setOpen(false);
 								setEditModalOpen(true);
 							}}

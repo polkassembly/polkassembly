@@ -8,11 +8,11 @@ import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-da
 import { InjectedExtension } from '@polkadot/extension-inject/types' ;
 import { stringToHex } from '@polkadot/util';
 import { Button, Col, Form, Row, Skeleton, Tabs } from 'antd';
+import TextArea from 'antd/es/input/TextArea';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { EMembersType } from 'pages/members';
 import React, { useContext, useEffect, useState } from 'react';
-import ContentForm from 'src/components/ContentForm';
 import CouncilVotes from 'src/components/Profile/CouncilVotes';
 import TitleForm from 'src/components/TitleForm';
 import { ApiContext } from 'src/context/ApiContext';
@@ -150,7 +150,6 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	const icon = isGood ? <CheckCircleFilled style={{ color: color, verticalAlign:'middle' }} /> : <MinusCircleFilled style={{ color: color, verticalAlign:'middle' }} />;
 
 	const onTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {setTitle(event.currentTarget.value); return event.currentTarget.value;};
-	const onDescriptionChange = (data: string) => {setDescription(data); return data.length ? data : null;};
 
 	const handleEdit = () => {
 		setIsEditing(true);
@@ -263,16 +262,16 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 	const votingTab = (
 		<div>
-			{isEditing ? <Form>
+			{!isEditing ? <Form>
 				<h3>Update Profile</h3>
 				<TitleForm
 					onChange={onTitleChange}
 				/>
-				<ContentForm
-					onChange={onDescriptionChange}
-				/>
+				<TextArea value={description} onChange={(v) => {
+					setDescription(v.target.value);
+				}}></TextArea>
 
-				<div className={'flex flex-col items-center mt-[3rem] justify-center'}>
+				<div className={'flex flex-col items-center my-[2rem] justify-center'}>
 					<Button
 						onClick={handleSend}
 						disabled={loading}

@@ -20,8 +20,8 @@ const FilteredTags = () => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
 
-	return tags.length > 0 ? <div className='flex items-center px-2 pb-4'>
-		<span className='rounded-xl text-bodyBlue font-medium flex items-center text-sm' >Filters: &nbsp;</span>
+	return tags.length > 0 ? <div className='flex flex-wrap items-center xs:px-1 sm:px-2 sm:pb-4'>
+		<span className='rounded-xl text-bodyBlue font-medium text-sm' >Filters: &nbsp;</span>
 		{tags.map((tag, index) => (
 			<div className='rounded-xl text-lightBlue text-sm font-normal xs:flex xs:flex-wrap' key= {index}>
 				{tag.charAt(0).toUpperCase()+tag.slice(1)} {tags.length === index+1 ? null :','}

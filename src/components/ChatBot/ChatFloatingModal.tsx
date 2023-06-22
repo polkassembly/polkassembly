@@ -1,12 +1,14 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState, useRef, useEffect } from 'react';
 import { Button } from 'antd';
-import grill from '@subsocial/grill-widget';
 import Image from 'next/image';
 import GrillChatIcon from '~assets/grillchat.png';
 import styled from 'styled-components';
+import { useNetworkContext } from '~src/context';
+import { network as globalNework } from '~src/global/networkConstants';
+import { useEffect, useRef, useState } from 'react';
+import grill from '@subsocial/grill-widget';
 
 const Container = styled.div`
 .ChatFloatingModal {
@@ -68,35 +70,60 @@ const Container = styled.div`
 }
 `;
 
-export default function ChatFloatingModal () {
-	const [ isOpen, setIsOpen ] = useState(false);
+export default function ChatFloatingModal() {
+	const [isOpen, setIsOpen] = useState(false);
 	const toggleChat = () => {
-		setIsOpen((prev) => !prev);
+		setIsOpen((prev:boolean) => !prev);
 	};
+
+	const grillData: { [index: string]: string[] } = {
+		[globalNework.CERE]: ['5145', '5139'],
+		[globalNework.KILT]: ['2035', '5144'],
+		[globalNework.KUSAMA]: ['2027', '5138'],
+		[globalNework.MOONBEAM]: ['2065', '5140'],
+		[globalNework.POLKADOT]: ['3638', '754']
+	};
+
+	const { network } = useNetworkContext();
 	const hasOpened = useRef(false);
 	useEffect(() => {
 		if (!isOpen) return;
-
 		if (!hasOpened.current) {
-			grill.init({ hub: { id: 'polka' }, theme: 'light' });
+			let filterArray: string[] = [];
+			if (grillData?.[network]) {
+				filterArray = grillData?.[network];
+			}
+			grill.init(
+				{
+					hub: { id: 'polkassembly' },
+					onWidgetCreated: (iframe:any) => {
+						const channelsQuery = new URLSearchParams();
+						const filterChannels = filterArray;
+						channelsQuery.set('channels', filterChannels.join(','));
+						iframe.src += `&${channelsQuery.toString()}`;
+						return iframe;
+					}
+				}
+			);
 		}
 		hasOpened.current = true;
-	}, [ isOpen ]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [grillData, network]);
 
-	return (
+	return grillData?.[network] ? (
 		<Container>
 			<div className={'ChatFloatingModal'}>
 				{(isOpen || hasOpened.current) && (
 					<div
 						id='grill'
-						className={`ChatFloatingIframe ${!isOpen ? 'ChatFloatingIframeHidden':''}`
+						className={`ChatFloatingIframe ${!isOpen ? 'ChatFloatingIframeHidden' : ''}`
 						}
 					/>
 				)}
 				<Button className={'ChatFloatingButton'} onClick={toggleChat}>
-					<Image src={GrillChatIcon} alt='GrillChat' className='w-[50px] h-[50px]'/>
+					<Image src={GrillChatIcon} alt='GrillChat' className='w-[50px] h-[50px]' />
 				</Button>
 			</div>
 		</Container>
-	);
+	) : null;
 }

@@ -245,20 +245,25 @@ export default styled(Address)`
 
 	.content {
 		display: inline-block;
-		color: #485F7D !important;
-		font-weight: 400 !important;
+		color: nav_blue !important;
 	}
 
 	.identicon {
-		margin-right: 0.3rem;
+		margin-right: 0.25rem;
 	}
+
+	.identityName {
+		filter: grayscale(100%);
+	}
+
 	.header {
+		color: black_text;
 		font-weight: 500;
 		margin-right: 0.4rem;
 	}
 
 	.description {
-		color: #485F7D;
+		color: nav_blue;
 		margin-right: 0.4rem;
 		
 	}
@@ -268,7 +273,7 @@ export default styled(Address)`
 	}
 
 	.sub {
-		color: #485F7D;
+		color: nav_blue;
 		line-height: inherit;
 	}
 `;

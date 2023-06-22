@@ -31,7 +31,7 @@ const OnchainCreationLabel = ({ address, username, truncateUsername }:Props ) =>
 										truncateUsername={truncateUsername}
 									/>
 									: <span
-										className='mx-1.5 max-w-[150px] text-ellipsis overflow-hidden text-[#243a57] font-semibold'
+										className='max-w-[150px] text-ellipsis overflow-hidden text-[#243a57] font-semibold'
 									>
 										<Link href={`/user/${username}`}>{username}</Link>
 									</span>

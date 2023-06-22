@@ -100,7 +100,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 						<div className='flex mt-2'>
 							<span>
 								{
-									!rowData.proposer ? <span className='username text-[#243a57] font-semibold'> { rowData.username } </span> :
+									!rowData.proposer ? <span className='username mx-2 text-[#243a57] font-semibold'> { rowData.username } </span> :
 										<Address
 											address={rowData.proposer}
 											className='text-sm mx-2'
@@ -109,8 +109,8 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 										/>
 								}
 							</span>
-							<Divider type="vertical" className='mt-0' style={{ borderLeft: '1px solid #485F7D' }} />
-							<span className='-mt-1 text-lightBlue'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
+							<Divider type="vertical" className='mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
+							<span className='text-lightBlue mx-1.5'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
 						</div>
 						<div className='flex items-center justify-between my-2 mx-1'>
 							{
@@ -144,7 +144,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 						<div className='flex mt-2'>
 							<span>
 								{
-									!rowData.proposer ? <span className='username text-[#243a57] font-semibold'> { rowData.username } </span> :
+									!rowData.proposer ? <span className='username mx-2 text-[#243a57] font-semibold'> { rowData.username } </span> :
 										<Address
 											address={rowData.proposer}
 											className='text-sm mx-2'
@@ -153,8 +153,8 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 										/>
 								}
 							</span>
-							<Divider type="vertical" className='mt-0' style={{ borderLeft: '1px solid #485F7D' }} />
-							<span className='-mt-1 text-lightBlue'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
+							<Divider type="vertical" className='mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
+							<span className='text-lightBlue mx-1.5'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
 						</div>
 						<div className='flex items-center justify-between my-2 mx-1'>
 							{

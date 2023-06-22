@@ -46,7 +46,8 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Posted By',
 		dataIndex: 'username',
 		key: 'postedBy',
-		render: (username, { proposer }) => <NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' className='max-w-[120px] truncate' defaultAddress={proposer} username={username} disableIdenticon={false} />
+		render: (username, { proposer }) => <div className='truncate' ><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={false} /></div>,
+		width: 200
 	},
 	{
 		title: 'Created',

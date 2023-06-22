@@ -41,12 +41,12 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 
 	return (
 		<>
-			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 min-h-[130px] sm:flex xs:hidden ${className}`}>
-				<span className='font-medium text-center mr-2 flex-none sm:w-[120px] text-bodyBlue sm:mt-4'>#{post_id}</span>
-				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-4">
-					<OnchainCreationLabel address={address} topic={topic} username={username}  />
-					<div className="hidden sm:flex sm:justify-between lg:items-start lg:flex-row">
-						<div className='mt-3 lg:mt-0'>
+			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 min-h-[120px] sm:flex xs:hidden ${className}`}>
+				<span className='font-medium text-center flex-none sm:w-[120px] text-bodyBlue sm:mt-2'>#{post_id}</span>
+				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-2">
+					<OnchainCreationLabel address={address} topic={topic} username={username} />
+					<div className="hidden sm:mt-2 sm:mb-1 sm:flex sm:justify-between lg:items-start lg:flex-row">
+						<div className='mt-3 lg:mt-1'>
 							<h1 className='text-bodyBlue font-medium text-sm flex'>
 								{title}
 							</h1>
@@ -76,7 +76,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								: null
 						}
 					</div>
-					<div className="-mt-2 font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
+					<div className="font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
 
 						<div className='flex items-center gap-x-2'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
@@ -175,8 +175,8 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							<OnchainCreationLabel address={address} username={username} />
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
 							{relativeCreatedAt && <>
-								<div className='xs:flex xs:text-lightBlue lg:flex items-center'>
-									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
+								<div className='xs:flex xs:text-lightBlue xs:-mt-0.5 mt-0 lg:flex items-center'>
+									<ClockCircleOutlined className='mr-1 mt-0' /> {relativeCreatedAt}
 								</div>
 							</>}
 						</div>

@@ -80,21 +80,20 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	];
 
 	return <div className={`${className} flex justify-between w-[100%]`} >
-		<div className='text-navBlue text-xs flex flex-col md:flex-row md:items-center'>
+		<div className='text-xs flex flex-col md:flex-row md:items-center'>
 			<div className={'flex min-[320px]:flex-row min-[320px]:items-center w-full min-[320px]:w-auto '}>
 				<div className={'flex items-center '}>
-					{!text && <span className='mr-2 text-lightBlue -mt-1.5'>By:</span>}
+					{!text && <span className='mr-2 text-lightBlue'>By:</span>}
 					<NameLabel
 						defaultAddress={defaultAddress}
 						username={username}
 						clickable={commentSource === 'polkassembly' }
 						truncateUsername={truncateUsername}
 						textClassName={'text-[12px]'}
-						className='-mt-0.5'
 					/>
 					{text}&nbsp;
 					{topic &&
-			<div className='flex items-center'> <span className='text-lightBlue -mt-2 mr-2'>in</span> <TopicTag topic={topic} className={topic} /></div>
+			<div className='flex sm:-mt-0.5'> <span className='text-lightBlue mr-2 mt-1'>in</span> <TopicTag topic={topic} className={topic} /></div>
 					}
 					{cid ?
 						<>
@@ -103,12 +102,12 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						</> : null}
 				</div>
 			</div>
-			<div className='flex items-center text-lightBlue -mt-2'>
-				{(topic || text) && <>
+			<div className='flex items-center text-lightBlue'>
+				{(topic || text || created_at) && <>
 				&nbsp;
 					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 				</>}
-				{created_at && <span className='flex items-center'><ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>}
+				{created_at && <span className='flex items-center'><ClockCircleOutlined className='sm:mx-1' />{relativeCreatedAt}</span>}
 				{children}
 			</div>
 		</div>

@@ -88,11 +88,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		<>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 sm:p-3 min-h-[80px] sm:flex xs:hidden`}>
 				<span className='font-medium text-center flex-none sm:w-[120px] text-bodyBlue sm:mt-3'>#{isTip? tip_index: onchainId}</span>
-				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-4">
+				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-2.5">
 					<OnchainCreationLabel address={address} username={username} />
 					<div className='hidden sm:flex sm:justify-between gap-x-2 lg:items-start lg:flex-row my-1.5'>
 						<div className='mt-3 lg:mt-0'>
-							<h1 className='text-bodyBlue text-sm mt-1 flex overflow-hidden lg:max-w-none'>
+							<h1 className='text-bodyBlue text-sm mt-2 flex overflow-hidden lg:max-w-none'>
 								<span className='break-all text-bodyBlue font-medium text-sm'>{ mainTitle }</span>
 							</h1>
 							<h2 className='text-bodyBlue font-medium text-sm'>{subTitle}</h2>
@@ -111,7 +111,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 					</div>
 
-					<div className="font-medium text-bodyBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
+					<div className="font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center sm:mb-1 sm:mt-0">
 						<div className='flex items-center gap-x-2'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
 								<LikeOutlined style={{ color: '#485F7D' }} />
@@ -225,10 +225,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<div className="mt-0 sm:gap-2.5 xs:gap-0 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row items-start lg:items-center">
 						<div className="sm:hidden xs:flex xs:justify-start xs:flex-wrap">
 							<OnchainCreationLabel address={address} username={username} />
-							<Divider type="vertical" className='max-lg:hidden xs:inline-block' style={{ borderLeft: '1px solid #485F7D' }} />
+							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
 							{relativeCreatedAt && <>
-								<div className='flex text-lightBlue xs:-mt-1 mt-0 items-center'>
-									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
+								<div className='flex text-lightBlue xs:-mt-0.5 mt-0 items-center'>
+									<ClockCircleOutlined className='mr-1 mt-0 xs:-mt-0.5' /> {relativeCreatedAt}
 								</div>
 							</>}
 						</div>

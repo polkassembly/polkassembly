@@ -63,6 +63,7 @@ export interface ISocial {
 	link: string;
 }
 export interface ProfileDetails {
+	custom_username?: boolean;
 	bio?: string;
 	badges?: string[];
 	title?: string;
@@ -111,7 +112,16 @@ export interface UndoEmailChangeToken {
   token: string;
 }
 
+export interface IUser2FADetails {
+	url: string;
+	base32_secret: string;
+	enabled: boolean;
+	verified: boolean;
+}
+
 export interface User {
+	created_at?:Date,
+	custom_username?:boolean,
 	email: string;
 	email_verified: boolean;
 	id: number;
@@ -122,6 +132,7 @@ export interface User {
 	web3_signup: boolean;
 	primary_network?: string;
 	notification_preferences?: IUserNotificationSettings;
+	two_factor_auth?: IUser2FADetails
 }
 
 export  interface Roles {
@@ -140,6 +151,14 @@ export interface JWTPayloadType {
 	id: number;
 	roles: Roles;
 	web3signup: boolean;
+	is2FAEnabled?: boolean;
+}
+
+export interface IAuthResponse {
+	token?: string
+	user_id?: number;
+	isTFAEnabled?: boolean;
+	tfa_token?: string;
 }
 
 export interface AuthObjectType extends TokenType {
@@ -178,4 +197,9 @@ export interface CalendarEvent {
 	url: string;
 	post_id: number;
 	user_id: number;
+}
+
+export interface I2FAGenerateResponse {
+	url: string;
+	base32_secret: string;
 }

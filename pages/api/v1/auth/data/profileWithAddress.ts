@@ -11,13 +11,17 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import messages from '~src/util/messages';
 
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import dayjs from 'dayjs';
 interface IGetProfileWithAddress {
 	address?: string | string[];
 }
 
 export interface IGetProfileWithAddressResponse {
+	created_at?:Date,
+	custom_username:boolean;
 	profile: ProfileDetails;
 	username: string;
+	web3Signup:boolean,
 }
 
 export async function getProfileWithAddress(params: IGetProfileWithAddress): Promise<IApiResponse<IGetProfileWithAddressResponse>> {
@@ -40,11 +44,13 @@ export async function getProfileWithAddress(params: IGetProfileWithAddress): Pro
 			throw apiErrorWithStatusCode(`No user found with the address '${address}'.`, 404);
 		}
 		const userData = userDoc.data() as User;
-
 		const profile = userData.profile as ProfileDetails;
 		const data: IGetProfileWithAddressResponse = {
+			created_at: dayjs((userData.created_at as any)?.toDate?.() || userData.created_at).toDate(),
+			custom_username:userData.custom_username || false,
 			profile,
-			username: userData.username || ''
+			username: userData.username || '',
+			web3Signup: userData.web3_signup
 		};
 		return {
 			data: JSON.parse(JSON.stringify(data)),

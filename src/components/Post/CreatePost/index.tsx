@@ -33,13 +33,13 @@ const CreatePost = ({ className, proposalType } : Props) => {
 
 	const [form] = Form.useForm();
 	const pollEndBlock = usePollEndBlock();
-	const [topicId, setTopicId] = useState<number>(1);
+	const [topicId, setTopicId] = useState<number>(2);
 	const [hasPoll, setHasPoll] = useState<boolean>(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
-	const [govType,setGovType]=useState<'gov_1' | 'open_gov'>('gov_1');
-	const [tags,setTags]=useState<string[]>([]);
+	const [govType, setGovType]=useState<'gov_1' | 'open_gov'>('gov_1');
+	const [tags, setTags] = useState<string[]>([]);
 
 	useEffect(() => {
 		if (!currentUser?.id) {
@@ -81,7 +81,7 @@ const CreatePost = ({ className, proposalType } : Props) => {
 	};
 
 	const handleSend = async () => {
-		if(!currentUser.id) return;
+		if(!currentUser.id || !topicId) return;
 
 		try {
 			await form.validateFields();
@@ -152,7 +152,9 @@ const CreatePost = ({ className, proposalType } : Props) => {
 						{ required: "Please add the '${name}'" }
 					}
 				>
-					<Form.Item name="title" label='Title' rules={[{ required: true }]}>
+					<label className='text-sidebarBlue font-normal text-sm mb-1 tracking-wide'>Title<span className='text-red-500 ml-1'>*</span></label>
+					<Form.Item name="title" rules={[{ required: true }]}>
+
 						<Input name='title' autoFocus placeholder='Enter Title' className='text-black' />
 					</Form.Item>
 					<ContentForm />
@@ -161,24 +163,37 @@ const CreatePost = ({ className, proposalType } : Props) => {
 						<span className='ml-2 text-sidebarBlue text-sm'>Add poll to {proposalType === ProposalType.DISCUSSIONS? 'discussion': 'grant'}</span>
 					</div>
 					<h5 className='text-sm text-color mt-8 font-normal'>Select Governance version <span className='text-red-500'>*</span></h5>
-					<Radio.Group className='font-normal text-xs p-1' onChange={(e) => { setTopicId(1); setGovType(e.target.value);}} value={govType}>
+					<Radio.Group className='font-normal text-xs p-1' onChange={(e) => setGovType(e.target.value)} value={govType}>
 						<Radio className={`font-normal text-xs text-navBlue ${ govType === 'gov_1' && 'text-pink_primary' }`} value='gov_1' defaultChecked >Governance V1</Radio>
 						<Radio className={`font-normal text-xs text-navBlue ${ govType ==='open_gov' && 'text-pink_primary' }`} value='open_gov' defaultChecked={false}>Governance V2</Radio>
 					</Radio.Group>
 					{
 						proposalType === ProposalType.DISCUSSIONS?
-							<div className='mt-8'>
-								<h5 className="text-color tracking-wide text-sm mb-3 font-normal">
-									Select Topic<span className='text-red-500 ml-1'>*</span>
-								</h5>
-								<TopicsRadio govType={govType} onTopicSelection={(id) => setTopicId(id)} />
-							</div>
+							<Form.Item className='mt-8'
+								name="topic"
+								rules={[
+									{
+										message: "Please select a 'topic'",
+										validator(rule, value = topicId, callback) {
+											if (callback && !value){
+												callback(rule?.message?.toString());
+											}else {
+												callback();
+											}
+										}
+									}
+								]}>
+								<>
+									<label className='text-sidebarBlue font-normal text-sm mb-1 tracking-wide'>Select Topic <span className='text-red-500 ml-1'>*</span></label>
+									<TopicsRadio govType={govType} onTopicSelection={(id) => setTopicId(id)} topicId={topicId} />
+								</>
+							</Form.Item>
 							: null
 					}
 					<h5 className='text-sm text-color mt-8 font-normal'>Add Tags</h5>
 					<AddTags tags={tags} setTags={setTags} />
 					<Form.Item>
-						<Button htmlType="submit" disabled={!currentUser.id || formDisabled || loading} className='mt-10 bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center justify-center rounded-md text-lg h-[50px] w-[215px]'>
+						<Button htmlType="submit" disabled={!currentUser.id || formDisabled || loading } className='mt-10 bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center justify-center rounded-md text-lg h-[50px] w-[215px]'>
 							Create Post
 						</Button>
 					</Form.Item>

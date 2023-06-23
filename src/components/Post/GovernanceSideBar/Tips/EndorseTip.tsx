@@ -63,9 +63,13 @@ const EndorseTip = ({
 			return;
 		}
 
-		api.query.council.members().then((memberAccounts) => {
-			setCurrentCouncil(memberAccounts.map(member => member.toString()));
-		});
+		try {
+			api.query.council.members().then((memberAccounts) => {
+				setCurrentCouncil(memberAccounts.map(member => member.toString()));
+			});
+		} catch (error) {
+			// console.log(error);
+		}
 
 	}, [api, apiReady]);
 

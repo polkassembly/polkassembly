@@ -335,7 +335,6 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
-
 	return (
 		<PostDataContextProvider initialPostData={{
 			cid: post?.cid || '',
@@ -367,7 +366,8 @@ const Post: FC<IPostProps> = (props) => {
 			<>
 				<SpamAlert />
 				{
-					!isEditing && Boolean(post.timeline?.length) && proposalType !==  ProposalType.CHILD_BOUNTIES && <div className='bg-white flex flex-wrap drop-shadow-md min-h-[69px] rounded-md w-full mb-6 items-center px-4'>
+					!isEditing && Boolean(post.timeline?.length) && proposalType !==  ProposalType.CHILD_BOUNTIES &&
+          ( post?.timeline.length === 1 ? getFirestoreProposalType(post?.timeline[0]?.type) !== proposalType : true  ) && <div className='bg-white flex flex-wrap drop-shadow-md min-h-[69px] rounded-md w-full mb-6 items-center px-4'>
 						{
 							post?.timeline?.map((timeline: any, index: number) => {
 								const proposal_type = getFirestoreProposalType(timeline?.type);

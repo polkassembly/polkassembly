@@ -125,7 +125,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 						verifiedEmail={
 							networkPreferences?.channelPreferences?.[
 								CHANNEL.EMAIL
-							]?.email || email ||''
+							]?.handle || email ||''
 						}
 						verified={email_verified || false}
 						notificationEnabled={networkPreferences?.channelPreferences?.[

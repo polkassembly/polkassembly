@@ -5,7 +5,6 @@
 import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
@@ -20,7 +19,6 @@ import OtherProposals from '../OtherProposals';
 import SidebarRight from '../SidebarRight';
 import OptionPoll from './ActionsBar/OptionPoll';
 import TrackerButton from './ActionsBar/TrackerButton';
-// import DiscussionLink from './DiscussionLink';
 import EditablePostContent from './EditablePostContent';
 import PostHeading from './PostHeading';
 import getNetwork from '~src/util/getNetwork';
@@ -28,6 +26,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
 import SpamAlert from '~src/ui-components/SpamAlert';
 import { useNetworkContext } from '~src/context';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -88,16 +88,12 @@ const Post: FC<IPostProps> = (props) => {
 		proposalType
 	} = props;
 
+	const router = useRouter();
 	const { id, addresses } = useContext(UserDetailsContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [redirection, setRedirection] = useState({
-		link: '',
-		text: ''
-	});
 	const [canEdit, setCanEdit] = useState(false);
 	const { network } = useNetworkContext();
 	const [duration, setDuration] = useState(dayjs.duration(0));
@@ -178,19 +174,19 @@ const Post: FC<IPostProps> = (props) => {
 					nextPost = v;
 				}
 			});
-			if (nextPost) {
-				const proposalType = getFirestoreProposalType(nextPost.type) as ProposalType;
-				const link = getSinglePostLinkFromProposalType(proposalType);
-				setRedirection({
-					link: `/${link}/${nextPost.index}`,
-					text:`${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} ${proposalType === ProposalType.ANNOUNCEMENT ? '' : '#'+nextPost.index}`
-				});
-			} else {
-				setRedirection({
-					link: '',
-					text: ''
-				});
-			}
+			// if (nextPost) {
+			//const proposalType = getFirestoreProposalType(nextPost.type) as ProposalType;
+			//const link = getSinglePostLinkFromProposalType(proposalType);
+			//setRedirection({
+			//link: `/${link}/${nextPost.index}`,
+			//text:`${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} ${proposalType === ProposalType.ANNOUNCEMENT ? '' : '#'+nextPost.index}`
+			// });
+			// } else {
+			// setRedirection({
+			// link: '',
+			// text: ''
+			// });
+			// }
 		}
 	}, [post]);
 
@@ -371,34 +367,43 @@ const Post: FC<IPostProps> = (props) => {
 			<>
 				<SpamAlert />
 				{
-					!isEditing && Boolean(post.timeline?.length) && <div className='bg-white flex flex-wrap drop-shadow-md p-3 md:p-6 rounded-md w-[94vw] lg:w-[85vw] mb-6 dashboard-heading '>
+					!isEditing && Boolean(post.timeline?.length) && proposalType !==  ProposalType.CHILD_BOUNTIES && <div className='bg-white flex flex-wrap drop-shadow-md min-h-[69px] rounded-md w-full mb-6 items-center px-4'>
 						{
-							post.timeline.map((item: any, index: number) => {
-								const type = item.type;
+							post?.timeline?.map((timeline: any, index: number) => {
+								const proposal_type = getFirestoreProposalType(timeline?.type);
 								return (
-									<Link key={index} href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? item.hash: item.index}`} className='mr-4'>
-										<span className="text-[#334D6E] ">{item.type ?.split(/(?=[A-Z])/).join(' ')}{' >> '}</span>
-										<span className="text-pink_primary">{item.index}</span>
-									</Link>
+									<div key={index}
+										onClick={() => proposalType !== proposal_type && router.push(`/${getSinglePostLinkFromProposalType(proposal_type as any)}/${timeline?.type === 'Tip' ? timeline?.hash : timeline?.index}`)}
+										className={`flex gap-2 text-lg font-medium text-[#243A57] ${proposalType ===  proposal_type && 'cursor-pointer'}`}>
+										<span>{timeline?.type === 'ReferendumV2' ? 'Opengov Referenda' : timeline?.type?.split(/(?=[A-Z])/).join(' ')}</span>
+										<span className={`${proposalType ===  proposal_type ? 'text-[#243A57] ' : 'text-pink_primary'}`}>#{timeline?.index}</span>
+										<span className='mr-2'>{ index !== post?.timeline.length - 1 && ' >> '}</span>
+									</div>
 								);
 							})
 						}
 					</div>
 				}
+				{
+					proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&
+						<Link href={`/bounty/${post.parent_bounty_index}`}>
+							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
+								This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
+							</div>
+						</Link>
+				}
+				{ post && proposalType ===  ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
+					<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md  mb-6 dashboard-heading flex items-center gap-x-2 w-full'>
+						<span>The child bounty payout is ready to be claimed</span>
+						<ClaimPayoutModal
+							parentBountyId={post?.parentBountyId}
+							childBountyId={onchainId}
+						/>
+					</div>
+				)}
 
 				<div className={`${className} grid grid-cols-1 xl:grid-cols-12 gap-9`}>
 					<div className='xl:col-span-8'>
-
-						{ post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
-							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading flex items-center gap-x-2'>
-								<span>The child bounty payout is ready to be claimed</span>
-								<ClaimPayoutModal
-									parentBountyId={post?.parentBountyId}
-									childBountyId={onchainId}
-								/>
-							</div>
-						)}
-
 						{
 							proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) &&
 						<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>

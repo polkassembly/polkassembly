@@ -3,16 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { BookFilled, BookOutlined } from '@ant-design/icons';
-import { Button, Tooltip } from 'antd';
-import Link from 'next/link';
-import React, { FC, useCallback, useContext,useEffect, useState } from 'react';
+import { Button } from 'antd';
+import React, { FC, useContext, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { NotificationStatus } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
-import styled from 'styled-components';
 
-import { ChangeResponseType, Subscription } from '~src/auth/types';
+import { ChangeResponseType } from '~src/auth/types';
+import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -21,34 +20,19 @@ interface ISubscriptionButtonProps {
 	proposalType: ProposalType;
 }
 
-const PopupContent = styled.span`
-	font-size: 12px;
-	color: var(--grey_primary);
-	a {
-		color: var(--pink_primary);
-
-		&:hover {
-			text-decoration: none;
-			color: var(--pink_secondary);
-		}
-	}
-`;
 const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 	const { postId, proposalType } = props;
 
-	const { email_verified } = useContext(UserDetailsContext);
-	const [subscribed, setSubscribed] = useState(false);
+	const { postData: { subscribers }, setPostData } = usePostDataContext();
 
-	const getSubscriptionStatus = useCallback(async () => {
-		const { data: subData } = await nextApiClientFetch<Subscription>( 'api/v1/auth/data/subscription', { post_id: postId, proposalType });
-		if (subData?.subscribed) setSubscribed(subData?.subscribed);
-	}, [postId, proposalType]);
-
-	useEffect(() => {
-		getSubscriptionStatus();
-	},[getSubscriptionStatus]);
+	const { id } = useContext(UserDetailsContext);
+	const [subscribed, setSubscribed] = useState<boolean>(Boolean(id && subscribers.includes(id)));
+	const [loading, setLoading] = useState(false);
 
 	const handleSubscribe = async () => {
+		if(!id) return;
+		setLoading(true);
+
 		if (subscribed) {
 			const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/postUnsubscribe', { post_id: postId, proposalType });
 			if (error) {
@@ -66,6 +50,10 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 					status: NotificationStatus.SUCCESS
 				});
 				setSubscribed(false);
+				setPostData((prev) => ({
+					...prev,
+					subscribers: prev.subscribers.filter((subscriber) => subscriber !== id)
+				}));
 			}
 		} else {
 			const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/postSubscribe', { post_id: postId, proposalType });
@@ -84,25 +72,28 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 					status: NotificationStatus.SUCCESS
 				});
 				setSubscribed(true);
+				setPostData((prev) => ({
+					...prev,
+					subscribers: [...prev.subscribers, Number(id)]
+				}));
 			}
 		}
 
+		setLoading(false);
 	};
 
 	const SubscribeButton = () => <Button
-		className={`${subscribed && email_verified ? ' negative' : ''} text-pink_primary flex items-center border-none shadow-none disabled:opacity-[0.5] px-1.5 disabled:bg-transparent`}
-		disabled={email_verified ? false : true}
+		className={`${subscribed && id ? ' negative' : ''} text-pink_primary flex items-center border-none shadow-none disabled:opacity-[0.5] px-1.5 disabled:bg-transparent`}
+		disabled={loading || !id}
 		onClick={handleSubscribe}
 	>
-		{subscribed && email_verified ? <BookFilled /> : <BookOutlined />}
-		{subscribed && email_verified ? 'Unsubscribe' : 'Subscribe'}
+		{subscribed && id ? <BookFilled /> : <BookOutlined />}
+		{subscribed && id ? 'Unsubscribe' : 'Subscribe'}
 	</Button>;
 
-	return email_verified
+	return id
 		?  <SubscribeButton />
-		: <Tooltip color='#fff' title={<PopupContent>Set and verify an email <Link href="/settings">in your settings</Link> to be able to subscribe</PopupContent>}>
-			<span><SubscribeButton/></span>
-		</Tooltip>;
+		: <></>;
 
 };
 

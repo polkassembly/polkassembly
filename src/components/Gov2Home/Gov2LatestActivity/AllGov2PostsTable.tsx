@@ -46,7 +46,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Posted By',
 		dataIndex: 'username',
 		key: 'postedBy',
-		render: (username, { proposer }) => <NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={false} />
+		render: (username, { proposer }) => <NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' className='max-w-[120px] truncate' defaultAddress={proposer} username={username} disableIdenticon={false} />
 	},
 	{
 		title: 'Created',
@@ -92,7 +92,11 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 
 	function gotoPost(rowData: IPostsRowData): void{
 		let path = 'referenda';
-		if(!rowData.origin) {
+		if (rowData.type === 'FellowshipReferendum') {
+			path = 'member-referenda';
+		} else if (rowData.type === 'ReferendumV2') {
+			path = 'referenda';
+		} else if(!rowData.origin) {
 			path = 'post';
 		}
 		if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {

@@ -173,9 +173,9 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 			<Button
 				onClick={openModal}
 				htmlType="submit"
-				className='mt-5 rounded-lg font-semibold text-lg leading-7 text-white py-5 outline-none border-none px-7 flex items-center justify-center bg-red_primary'
+				className='mt-5 rounded-lg font-semibold text-md leading-7 text-white py-5 outline-none border-none px-7 flex items-center justify-center bg-red_primary'
 			>
-                    Delete My Account
+				Delete My Account
 			</Button>
 		</Form>
 	);

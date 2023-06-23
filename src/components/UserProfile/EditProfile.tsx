@@ -139,6 +139,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		const { data , error } = await nextApiClientFetch<IAddProfileResponse>( 'api/v1/auth/actions/addProfile', {
 			badges: JSON.stringify(badges || []),
 			bio: bio,
+			custom_username:true,
 			image: image,
 			social_links: JSON.stringify(social_links || []),
 			title: title,

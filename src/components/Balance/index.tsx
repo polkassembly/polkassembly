@@ -74,8 +74,8 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance }: P
 						onChange && onChange(result.data?.free?.toString() || '0');
 					}
 					else if(isDemocracyProposal && result.data.free && result.data?.free?.toBigInt() >= frozen){
-						setBalance((result.data?.free?.toBigInt() + reserved - frozen).toString()  || '0');
-						setAvailableBalance && setAvailableBalance((result.data?.free?.toBigInt() + reserved).toString()  || '0');
+						setBalance((result.data?.free?.toBigInt() + reserved).toString()  || '0');
+						setAvailableBalance && setAvailableBalance((result.data?.free?.toBigInt() + reserved - frozen).toString()  || '0');
 						onChange && onChange((result.data?.free?.toBigInt() + reserved).toString()  || '0');
 					}
 					else if (result.data.free && result.data?.free?.toBigInt() >= frozen){

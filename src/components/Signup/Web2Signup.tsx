@@ -158,7 +158,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						<>
 							<div className="flex flex-col gap-y-1">
 								<label
-									className="text-base text-sidebarBlue font-medium"
+									className="text-base text-[#485F7D]"
 									htmlFor="first_password"
 								>
 									Set Password
@@ -181,14 +181,14 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 											setFirstPassword(e.target.value);
 										}}
 										placeholder='Password'
-										className="rounded-md py-3 px-4"
+										className="rounded-md py-2 px-4"
 										id="first_password"
 									/>
 								</Form.Item>
 							</div>
 							<div className="flex flex-col gap-y-1 -mt-6">
 								<label
-									className="text-base text-sidebarBlue font-medium"
+									className="text-base text-[#485F7D] "
 									htmlFor="second_password"
 								>
 									Re-enter Password
@@ -210,7 +210,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input.Password
 										placeholder='Password'
-										className="rounded-md py-3 px-4"
+										className="rounded-md py-2 px-4"
 										id="second_password"
 									/>
 								</Form.Item>
@@ -219,7 +219,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						:<>
 							<div className="flex flex-col gap-y-1">
 								<label
-									className="text-base text-sidebarBlue font-medium tracking-wide"
+									className="text-base text-[#485F7D]  tracking-wide"
 									htmlFor="username"
 								>
 									Username
@@ -247,7 +247,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder="John"
-										className="rounded-md py-3 px-4"
+										className="rounded-md py-2 px-4"
 										id="username"
 									/>
 								</Form.Item>
@@ -255,7 +255,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							<div className="flex flex-col gap-y-1 -mt-6">
 								<label
 									htmlFor="email"
-									className="text-base text-sidebarBlue font-medium tracking-wide"
+									className="text-base text-[#485F7D] tracking-wide"
 								>
 									Email
 								</label>
@@ -272,7 +272,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								>
 									<Input
 										placeholder="email@example.com"
-										className="rounded-md py-3 px-4"
+										className="rounded-md py-2 px-4"
 										id="email"
 									/>
 								</Form.Item>
@@ -297,7 +297,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				</div>
 				{error && <FilteredError text={error} />}
 				<div className='flex justify-center items-center gap-x-2 font-semibold'>
-					<label className='text-md text-grey_primary'>Already have an account?</label>
+					<label className='text-md text-[#243A57]'>Already have an account?</label>
 					<div onClick={() => handleClick()} className='text-pink_primary text-md'>Login</div>
 				</div>
 			</AuthForm>

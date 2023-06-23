@@ -36,6 +36,42 @@ query ProposalsListingByType($type_in: [ProposalType!], $trackNumber_in: [Int!],
 }
 `;
 
+export const GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES = `
+query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrderByInput!] = createdAtBlock_DESC, $limit: Int = 10, $offset: Int = 0, $index_in: [Int!], $hash_in: [String!], $trackNumber_in: [Int!], $status_in: [ProposalStatus!]) {
+  proposalsConnection(orderBy: id_ASC, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
+    totalCount
+  }
+  proposals(orderBy: $orderBy, limit: $limit, offset: $offset, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
+    proposer
+    curator
+    createdAt
+    updatedAt
+    status
+    preimage {
+      method
+      proposer
+    }
+    index
+    end
+    hash
+    description
+    type
+    origin
+    trackNumber
+    proposalArguments {
+      method
+      description
+    }
+    parentBountyIndex
+    statusHistory {
+      block
+      status
+      timestamp
+    }
+  }
+}
+`;
+
 export const GET_PROPOSALS_LISTING_BY_TYPE = `
 query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrderByInput!] = createdAtBlock_DESC, $limit: Int = 10, $offset: Int = 0, $index_in: [Int!], $hash_in: [String!], $trackNumber_in: [Int!], $status_in: [ProposalStatus!]) {
   proposalsConnection(orderBy: id_ASC, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
@@ -293,17 +329,21 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
       }
     }
   }
-  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $index_eq}) {
-    totalCount
-    edges {
-      node {
-        description
-        index
-        status
-      }
-    }
-  }
 }`;
+
+export const GET_CHILD_BOUNTIES_BY_PARENT_INDEX = `
+query ChildBountiesByParentIndex($parentBountyIndex_eq: Int = 11, $limit: Int, $offset: Int) {
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $parentBountyIndex_eq}) {
+    totalCount
+  }  
+	proposals(orderBy: createdAtBlock_DESC, limit: $limit, offset: $offset, where: {parentBountyIndex_eq: $parentBountyIndex_eq}) {
+    description
+    index
+    status
+  }
+}
+
+`;
 
 export const GET_PROPOSAL_BY_INDEX_AND_TYPE_V2 = `
 query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal, $voter_eq: String = "") {
@@ -860,6 +900,101 @@ query AlliancePostByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Pro
       hash
       type
       createdAt
+    }
+  }
+}
+`;
+
+export const GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE = `query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = FellowshipReferendum, $vote_type_eq: VoteType = Fellowship) {
+  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, hash_eq: $hash_eq}) {
+    index
+    proposer
+    status
+    preimage {
+      proposer
+      method
+      hash
+      proposedCall {
+        method
+        args
+        description
+        section
+      }
+    }
+    description
+    hash
+    type
+    threshold {
+      ... on MotionThreshold {
+        __typename
+        value
+      }
+      ... on ReferendumThreshold {
+        __typename
+        type
+      }
+    }
+    origin
+    trackNumber
+    end
+    createdAt
+    updatedAt
+    delay
+    endedAt
+    deposit
+    bond
+    reward
+    payee
+    fee
+    proposalArguments {
+      method
+      args
+      description
+      section
+    }
+    statusHistory(limit: 10) {
+      timestamp
+      status
+      block
+    }
+    tally {
+      ayes
+      bareAyes
+      nays
+      support
+    }
+    enactmentAfterBlock
+    enactmentAtBlock
+    decisionDeposit {
+      amount
+      who
+    }
+    submissionDeposit {
+      amount
+      who
+    }
+    deciding {
+      confirming
+      since
+    }
+  }
+  votesConnection(orderBy: blockNumber_DESC, where: {type_eq: $vote_type_eq, proposal: {index_eq: $index_eq, type_eq: $type_eq}}) {
+    totalCount
+    edges {
+      node {
+        voter
+        decision
+      }
+    }
+  }
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {parentBountyIndex_eq: $index_eq}) {
+    totalCount
+    edges {
+      node {
+        description
+        index
+        status
+      }
     }
   }
 }

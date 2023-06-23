@@ -150,7 +150,7 @@ export function getSinglePostLinkFromProposalType(proposalType: ProposalType | O
 	case ProposalType.GRANTS:
 		return 'grant';
 	case ProposalType.FELLOWSHIP_REFERENDUMS:
-		return 'fellowship_referendum';
+		return 'member-referenda';
 	case ProposalType.OPEN_GOV:
 		return 'referenda';
 	case ProposalType.REFERENDUMS:

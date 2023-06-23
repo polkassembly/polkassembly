@@ -121,8 +121,7 @@ const PostAudit = () => {
 			if (response.ok) {
 				const data = await response.json();
 				const decoded = atob(data.content);
-				const decodedContent = decoded.split('}').join('},');
-				setVideoData(JSON.parse(decodedContent.split(']')[0].trim().slice(0,decodedContent.split(']')[0].trim().length-1)+']') as IDataVideoType[]);
+				setVideoData(JSON.parse(decoded) as IDataVideoType[]);
 			} else {
 				throw new Error('Request failed');
 			}
@@ -158,7 +157,11 @@ const PostAudit = () => {
 	const handleChange = (e: any) => {
 		setSelectedType(e.target.value);
 	};
-
+	useEffect(() => {
+		const pdfCount = getCountByType(auditData);
+		const selectedValue = pdfCount === 0 ?'videos':'reports';
+		setSelectedType(selectedValue);
+	},[auditData,videoData]);
 	return (
 		<Spin spinning={loadingAudit || loadingVideo} indicator={<LoadingOutlined/>}>
 			<div className='min-h-[400px]'>
@@ -166,7 +169,7 @@ const PostAudit = () => {
 					!(loadingAudit || loadingVideo)?
 						<>
 							{
-								auditData.length || videoData.length?
+								pdfCount || videoData.length?
 									<div
 										className='flex items-center gap-x-[11px] p-[15px] rounded-[6px] bg-[#E6F4FF] mt-3'
 									>
@@ -179,13 +182,13 @@ const PostAudit = () => {
 							The reports provided here does not represent our views and we do not endorse them.
 										</p>
 									</div>
-									: null
+									: <NoAuditReport />
 							}
 							<div
 								className='mt-4'
 							>
 								<Radio.Group className='flex m-0' onChange={handleChange} value={selectedType} >
-									{auditData.length !== 0  && <Radio value="reports"
+									{pdfCount !== 0  && <Radio value="reports"
 										className={`${selectedType === 'reports' ? 'bg-pink-50' : 'bg-transparent'} rounded-full flex items-center px-4 py-[7px]`}>
 										<div className='flex items-center'>
 											<PdfIcon className="bg-cover bg-no-repeat bg-center" />
@@ -201,13 +204,10 @@ const PostAudit = () => {
 									</Radio>}
 								</Radio.Group>
 							</div>
-							{selectedType === 'reports' ? (
+							{selectedType === 'reports' && pdfCount > 0 ? (
 								<section>
-									{auditData.length > 0 ? (
+									{ (
 										auditData.filter((item) => (item.name.endsWith('.pdf') || item.name.endsWith('.png'))).map((item, index) => {
-											if (!(item.name.endsWith('.pdf') || item.name.endsWith('.png'))) {
-												return null;
-											}
 											const date = formatDate(item.name.split(' - ')[1]);
 											return (
 												<article key={item.sha} className={`flex flex-col gap-y-6 py-[26px] ${index !== 0? 'border-0 border-t border-solid border-[#D2D8E0]': ''}`}>
@@ -235,33 +235,28 @@ const PostAudit = () => {
 														) : null}
 												</article>
 											);
-										})
-									) :
-										<NoAuditReport />
+										}))
 									}
 								</section>
 							) : (
 								<></>
 							)}
 							{
-								selectedType === 'videos' ? (
+								selectedType === 'videos' && videoData.length > 0 ? (
 									<section>
 										{
-											videoData.length > 0 ? (
-												videoData.map((item, index) => (
-													<article key={item.title} className={`flex flex-col gap-y-6 py-[26px] ${index !== 0? 'border-0 border-t border-solid border-[#D2D8E0]': ''}`}>
-														<p className="text-[#485F7D] m-0 text-sm leading-[18px] font-normal flex items-center gap-x-2">
-															<span>{item.name}</span> |
-															<ClockCircleOutlined />
-															<span>{formatDate(item.date)}</span>
-														</p>
-														<VideoViewer
-															item={item}
-														/>
-													</article>
-												))
-											) :
-												<NoAuditReport />
+											videoData.map((item, index) => (
+												<article key={item.title} className={`flex flex-col gap-y-6 py-[26px] ${index !== 0? 'border-0 border-t border-solid border-[#D2D8E0]': ''}`}>
+													<p className="text-[#485F7D] m-0 text-sm leading-[18px] font-normal flex items-center gap-x-2">
+														<span>{item.name}</span> |
+														<ClockCircleOutlined />
+														<span>{formatDate(item.date)}</span>
+													</p>
+													<VideoViewer
+														item={item}
+													/>
+												</article>
+											))
 										}
 									</section>
 								) : null

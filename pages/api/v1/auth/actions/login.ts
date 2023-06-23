@@ -6,19 +6,20 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import authServiceInstance from '~src/auth/auth';
-import { MessageType, TokenType } from '~src/auth/types';
+import { MessageType, IAuthResponse } from '~src/auth/types';
 
-async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | MessageType>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<IAuthResponse | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
-	const body = req.body;
+	const { username = '', password = '' } = req.body;
 
-	const { username, password } = body;
+	if(!username || !password) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	if(!body || !username || !password) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { isTFAEnabled = false, tfa_token = '', token = '', user_id } = await authServiceInstance.Login(username, password);
+	if(!token && !isTFAEnabled) return res.status(401).json({ message: 'Invalid username or password' });
 
-	const { token } = await authServiceInstance.Login(username, password);
+	if(isTFAEnabled) return res.status(200).json({ isTFAEnabled, tfa_token, user_id });
 
-	return res.status(200).json({ token });
+	return res.status(200).json({ isTFAEnabled, token });
 }
 
 export default withErrorHandling(handler);

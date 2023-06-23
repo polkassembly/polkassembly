@@ -1,18 +1,19 @@
 import algoliasearch from 'algoliasearch';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import fetchSubsquid from '~src/util/fetchSubsquid';
+import fetchSubsquid from './utils/fetchSubsquid';
+import dayjs from 'dayjs';
 
 admin.initializeApp();
 const logger = functions.logger;
 
-const GET_PROPOSAL_TRACKS  = `query MyQuery($index_eq:Int,$type_eq:ProposalType) {
+const GET_PROPOSAL_TRACKS = `query MyQuery($index_eq:Int,$type_eq:ProposalType) {
   proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq}) {
     trackNumber
   }
 }`;
 
-exports.onPostWritten = functions.region('europe-west1').firestore.document('networks/{network}/post_types/{postType}/posts/{postId}').onWrite((change, context) => {
+exports.onPostWritten = functions.region('europe-west1').firestore.document('networks/{network}/post_types/{postType}/posts/{postId}').onWrite(async (change, context) => {
 	const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID;
 	const ALGOLIA_WRITE_API_KEY = process.env.ALGOLIA_WRITE_API_KEY;
 
@@ -27,31 +28,37 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 	// Retrieve the data from the Firestore event
 	const post = change.after.data();
 
-  const subsquidRes = postType === 'ReferendumV2' && fetchSubsquid({
-			network,
-			query: GET_PROPOSAL_TRACKS,
-			variables: {
-        index_eq: Number(postId),
-			  type_eq: "ReferendumV2",
-      }
-		});
-    
-    const subsquidData = subsquidRes && subsquidRes?.data?.proposals?.[0];
+	const subsquidRes = postType === 'ReferendumV2' && await fetchSubsquid({
+		network,
+		query: GET_PROPOSAL_TRACKS,
+		variables: {
+			index_eq: Number(postId),
+			type_eq: 'ReferendumV2'
+		}
+	});
 
-// Create an object to be indexed by Algolia
-	let postRecord = {
+	const subsquidData = subsquidRes && subsquidRes?.data?.proposals?.[0];
+
+	// Create an object to be indexed by Algolia
+	let postRecord: {[index: string]: any} = {
 		objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
 		network,
-		created_at: post?.created_at || new Date(),
-		last_comment_at: post?.last_comment_at || new Date(),
-		last_edited_at: post?.last_edited_at || new Date(),
-    updated_at: post?.updated_at || new Date(),
+		created_at: dayjs(post?.created_at?.toDate?.() || new Date()).unix(),
+		last_comment_at: dayjs(post?.last_comment_at?.toDate?.() || new Date()).unix(),
+		last_edited_at: dayjs(post?.last_edited_at?.toDate?.() || new Date()).unix(),
+		updated_at: dayjs(post?.updated_at?.toDate?.() || new Date()).unix(),
 		postType,
 		...post
-	}
+	};
 
-   postRecord = postType === 'ReferendumV2' ? {...postRecord, track_number: subsquidData?.trackNumber} : postRecord;
-   
+	if (post?.topic) delete post?.topic;
+	if (post?.history) delete post?.history;
+	if (post?.post_link) delete post?.post_link;
+	if (post?.subscribers) delete post?.subscribers;
+	if (post?.author_id) delete post?.author_id;
+
+	postRecord = postType === 'ReferendumV2' ? { ...postRecord, track_number: subsquidData?.trackNumber } : postRecord;
+
 	// Update the Algolia index
 	index
 		.saveObject(postRecord)
@@ -81,7 +88,7 @@ exports.onUserWritten = functions.region('europe-west1').firestore.document('use
 	// Create an object to be indexed by Algolia
 	const userRecord = {
 		objectID: userId, // Unique identifier for the object
-		created_at: userData?.created_at || new Date(),
+		created_at: dayjs(userData?.created_at.toDate?.() || new Date()).unix(),
 		username: userData?.username || '',
 		profile: userData?.profile || {}
 	};
@@ -114,6 +121,7 @@ exports.onAddressWritten = functions.region('europe-west1').firestore.document('
 
 	// Create an object to be indexed by Algolia
 	const addressRecord = {
+		address: address || '',
 		objectID: address, // Unique identifier for the object
 		default: addressData?.default || false,
 		is_erc20: addressData?.is_erc20 || address.startsWith('0x') || false,
@@ -121,13 +129,14 @@ exports.onAddressWritten = functions.region('europe-west1').firestore.document('
 		public_key: addressData?.public_key || '',
 		user_id: addressData?.user_id || '',
 		verified: addressData?.verified || false,
-		wallet: addressData?.wallet || ''
+		wallet: addressData?.wallet || '',
+		created_at: dayjs(addressData?.created_at?.toDate?.() || new Date()).unix()
 	};
 
 	// Update the Algolia index
 	index
-  .saveObject(addressRecord)
-  .then(() => {
+		.saveObject(addressRecord)
+		.then(() => {
 			logger.info('Address indexed successfully:', { address });
 		})
 		.catch((error) => {
@@ -152,8 +161,8 @@ exports.onCommentWritten = functions.region('europe-west1').firestore.document('
 
 	// Update the Algolia index
 	index
-  .partialUpdateObject({comments_count, objectID:`${network}_${postType}_${postId}` })
-  .then(({objectID}) => {
+		.partialUpdateObject({ comments_count, objectID: `${network}_${postType}_${postId}` })
+		.then(({ objectID }) => {
 			logger.info('Post indexed successfully:', { objectID });
 		});
 });
@@ -190,8 +199,8 @@ exports.onReactionWritten = functions.region('europe-west1').firestore.document(
 
 	// Update the Algolia index
 	index
-  .partialUpdateObject({reaction_count : { [reactionData.reaction]: reactionCount }, objectID:`${network}_${postType}_${postId}` })
-  .then(({objectID}) => {
-      logger.info('Post indexed successfully:', { objectID });
-    });
+		.partialUpdateObject({ reaction_count: { [reactionData.reaction]: reactionCount }, objectID: `${network}_${postType}_${postId}` })
+		.then(({ objectID }) => {
+			logger.info('Post indexed successfully:', { objectID });
+		});
 });

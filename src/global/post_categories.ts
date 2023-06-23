@@ -16,3 +16,8 @@ export enum PostCategory {
 	ALLIANCE_MOTION = 'alliance motion',
 	ANNOUNCEMENT = 'alliance announcement'
 }
+
+export enum PageLink {
+	OVERVIEW = 'overview',
+	OVERVIEW_GOV_2 = 'overview gov 2'
+}

@@ -102,10 +102,17 @@ export function ApiContextProvider(
 				setIsApiLoading(false);
 				setApiReady(true);
 				console.log('API ready');
-				if (isOpenGovSupported(props.network || '')) {
-					const value = api.consts.referenda.tracks.toJSON();
-					localStorage.setItem('tracks', JSON.stringify(value));
-				} else {
+				try {
+					if (props.network === 'collectives') {
+						const value = api.consts.fellowshipReferenda.tracks.toJSON();
+						localStorage.setItem('tracks', JSON.stringify(value));
+					} else if (isOpenGovSupported(props.network || '')) {
+						const value = api.consts.referenda.tracks.toJSON();
+						localStorage.setItem('tracks', JSON.stringify(value));
+					} else {
+						localStorage.removeItem('tracks');
+					}
+				} catch (error) {
 					localStorage.removeItem('tracks');
 				}
 			})

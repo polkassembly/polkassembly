@@ -108,7 +108,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				</div>
 
 				<div className="mt-3 font-medium text-navBlue text-xs flex flex-col lg:flex-row items-start lg:items-center">
-					<OnchainCreationLabel address={address} username={username} topic={topic}/>
+					<OnchainCreationLabel address={address} username={username} topic={topic} truncateUsername={false}/>
 					<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
 
 					<div className='flex items-center gap-x-2 '>

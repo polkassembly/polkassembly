@@ -59,10 +59,14 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 			return;
 		}
 		let cancel = false;
-		api.query.council.members().then((members) => {
-			if (cancel) return;
-			setMembers(members?.map(member => member.toString()));
-		});
+		try {
+			api.query.council.members().then((members) => {
+				if (cancel) return;
+				setMembers(members?.map(member => member.toString()));
+			});
+		} catch (error) {
+			// console.log(error);
+		}
 		return () => {
 			cancel = true;
 		};

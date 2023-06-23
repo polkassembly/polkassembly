@@ -113,7 +113,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 						<div className='flex items-center justify-between'>
 							<span>
 								{
-									!rowData.proposer ? <span className='username text-sidebarBlue'> { rowData.username } </span> :
+									!rowData.proposer ? <span className='username text-[#243a57] font-semibold'> { rowData.username } </span> :
 										<Address
 											address={rowData.proposer}
 											className='text-sm'
@@ -170,7 +170,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 						<div className='flex items-center justify-between'>
 							<span>
 								{
-									!rowData.proposer ? <span className='username text-sidebarBlue'> { rowData.username } </span> :
+									!rowData.proposer ? <span className='username text-[#243a57] font-semibold'> { rowData.username } </span> :
 										<Address
 											address={rowData.proposer}
 											className='text-sm'

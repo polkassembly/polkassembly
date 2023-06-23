@@ -25,7 +25,7 @@ import {
 	sendVerificationEmail
 } from './email';
 import { redisDel, redisGet, redisSetex } from './redis';
-import { Address, AuthObjectType, CalendarEvent, HashedPassword, IUserPreference, JWTPayloadType, NotificationSettings, ProfileDetails, UndoEmailChangeToken, User } from './types';
+import { Address, AuthObjectType, CalendarEvent, HashedPassword, IAuthResponse, IUserPreference, JWTPayloadType, NotificationSettings, ProfileDetails, UndoEmailChangeToken, User } from './types';
 import getAddressesFromUserId from './utils/getAddressesFromUserId';
 import getDefaultUserAddressFromId from './utils/getDefaultUserAddressFromId';
 import getMultisigAddress from './utils/getMultisigAddress';
@@ -71,6 +71,7 @@ export const getEmailVerificationTokenKey = (token: string): string => `EVT-${to
 export const getMultisigAddressKey = (address: string): string => `MLA-${address}`;
 export const getCreatePostKey = (address: string): string => `CPT-${address}`;
 export const getEditPostKey = (address: string): string => `EPT-${address}`;
+export const get2FAKey = (userId: number): string => `TFA-${userId}`;
 
 class AuthService {
 	public async GetUser (token: string): Promise<User | null> {
@@ -91,14 +92,15 @@ class AuthService {
 		}
 	}
 
-	private async createUser (email: string, newPassword: string, username: string, web3signup: boolean, network: string): Promise<User> {
+	private async createUser (email: string, newPassword: string, username: string, web3signup: boolean, network: string ,custom_username:boolean = false): Promise<User> {
 		const { password, salt } = await this.getSaltAndHashedPassword(newPassword);
 
 		const newUserId = (await this.getLatestUserCount()) + 1;
 
 		const userId = String(newUserId);
-
 		const newUser: User = {
+			created_at: new Date(),
+			custom_username:custom_username,
 			email,
 			email_verified: false,
 			id: newUserId,
@@ -181,7 +183,7 @@ class AuthService {
 		};
 	}
 
-	public async Login (username: string, password: string): Promise<AuthObjectType> {
+	public async Login (username: string, password: string): Promise<IAuthResponse> {
 		const isEmail = username.split('@')[1];
 
 		if(!isEmail){
@@ -205,7 +207,21 @@ class AuthService {
 		const isCorrectPassword = await verifyUserPassword(user.password, password);
 		if (!isCorrectPassword) throw apiErrorWithStatusCode(messages.INCORRECT_PASSWORD, 401);
 
+		const isTFAEnabled = user.two_factor_auth?.enabled || false;
+
+		if (isTFAEnabled) {
+			const tfa_token = uuidv4();
+			await redisSetex(get2FAKey(Number(user.id)), FIVE_MIN, tfa_token);
+
+			return {
+				isTFAEnabled,
+				tfa_token,
+				user_id: user.id
+			};
+		}
+
 		return {
+			isTFAEnabled,
 			token: await this.getSignedToken(user)
 		};
 	}
@@ -275,7 +291,7 @@ class AuthService {
 		return signMessage;
 	}
 
-	public async AddressLogin (address: string, signature: string, wallet: Wallet): Promise<AuthObjectType> {
+	public async AddressLogin (address: string, signature: string, wallet: Wallet): Promise<IAuthResponse> {
 		const signMessage = await redisGet(getAddressLoginKey(address));
 		if (!signMessage) throw apiErrorWithStatusCode(messages.ADDRESS_LOGIN_SIGN_MESSAGE_EXPIRED, 401);
 
@@ -299,7 +315,21 @@ class AuthService {
 
 		await redisDel(getAddressLoginKey(address));
 
+		const isTFAEnabled = user.two_factor_auth?.enabled || false;
+
+		if (isTFAEnabled) {
+			const tfa_token = uuidv4();
+			await redisSetex(get2FAKey(Number(user.id)), FIVE_MIN, tfa_token);
+
+			return {
+				isTFAEnabled,
+				tfa_token,
+				user_id: user.id
+			};
+		}
+
 		return {
+			isTFAEnabled,
 			token: await this.getSignedToken(user)
 		};
 	}
@@ -366,7 +396,7 @@ class AuthService {
 		const username = uuidv4().split('-').join('').substring(0, 25);
 		const password = uuidv4();
 
-		const user = await this.createUser('', password, username, true, network);
+		const user = await this.createUser('', password, username, true, network,false);
 
 		await this.createAddress(network, address, true, user.id, address.startsWith('0x'), wallet);
 		await redisDel(getAddressSignupKey(address));
@@ -391,7 +421,7 @@ class AuthService {
 			if (!userQuerySnapshot.empty) throw apiErrorWithStatusCode(messages.USER_EMAIL_ALREADY_EXISTS, 400);
 		}
 
-		const user = await this.createUser(email, password, username, false, network);
+		const user = await this.createUser(email, password, username, false, network, true);
 
 		await this.createAndSendEmailVerificationToken(user, network);
 
@@ -542,7 +572,7 @@ class AuthService {
 			email_verified: true,
 			notification_preferences:{ ...userDocData.notification_preferences,
 				channelPreferences:{
-					...userDocData.notification_preferences.channelPreferences,
+					...userDocData.notification_preferences?.channelPreferences,
 					email:{
 						email: email,
 						enabled: true,
@@ -810,7 +840,7 @@ class AuthService {
 		return { email: user.email, updatedToken: await this.getSignedToken(user) };
 	}
 
-	public async getSignedToken ({ email, email_verified, id, username, web3_signup }: User): Promise<string> {
+	public async getSignedToken ({ email, email_verified, id, username, web3_signup, two_factor_auth }: User): Promise<string> {
 		if (!privateKey) {
 			const key = process.env.NODE_ENV === 'test' ? process.env.JWT_PRIVATE_KEY_TEST : process.env.JWT_PRIVATE_KEY?.replace(/\\n/gm, '\n');
 			throw apiErrorWithStatusCode(`${key} not set. Aborting.`, 403);
@@ -846,7 +876,7 @@ class AuthService {
 			currentRole = Role.EVENT_BOT;
 		}
 
-		const tokenContent: JWTPayloadType = {
+		let tokenContent: JWTPayloadType = {
 			addresses: addresses || [],
 			default_address: default_address?.address || '',
 			email,
@@ -861,6 +891,13 @@ class AuthService {
 			username,
 			web3signup: web3_signup || false
 		};
+
+		if(two_factor_auth?.enabled && two_factor_auth?.verified) {
+			tokenContent = {
+				...tokenContent,
+				is2FAEnabled: true
+			};
+		}
 
 		return jwt.sign(
 			tokenContent,
@@ -1088,15 +1125,8 @@ class AuthService {
 			}
 		}
 
-		const newUndoEmailChangeToken: UndoEmailChangeToken = {
-			created_at: new Date(),
-			email: user.email,
-			token: uuidv4(),
-			user_id: user.id,
-			valid: true
-		};
-
-		await firestore.collection('undo_email_change_tokens').add(newUndoEmailChangeToken);
+		const oldMail = user.email;
+		const shouldSendUndoEmailChangeEmail = !oldMail ? false : oldMail !== email ? true : false;
 
 		await firestore.collection('users').doc(String(user.id)).update({
 			email,
@@ -1107,7 +1137,17 @@ class AuthService {
 
 		await this.sendEmailVerificationToken(user, network);
 		// send undo token in background
-		sendUndoEmailChangeEmail(user, newUndoEmailChangeToken, network);
+		if(shouldSendUndoEmailChangeEmail){
+			const newUndoEmailChangeToken: UndoEmailChangeToken = {
+				created_at: new Date(),
+				email: oldMail,
+				token: uuidv4(),
+				user_id: user.id,
+				valid: true
+			};
+			await firestore.collection('undo_email_change_tokens').add(newUndoEmailChangeToken);
+			sendUndoEmailChangeEmail(user, newUndoEmailChangeToken, network);
+		}
 
 		return this.getSignedToken(user);
 	}

@@ -435,7 +435,4 @@ export default styled(UpcomingEvents)`
 		justify-content: center;
 		position: relative;
 	}
-	.calenderDate::before {
-	position: absolute;
-	}
 `;

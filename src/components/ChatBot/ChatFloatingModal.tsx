@@ -80,7 +80,7 @@ export default function ChatFloatingModal() {
 		[globalNework.CERE]: ['5145', '5139'],
 		[globalNework.KILT]: ['2035', '5144'],
 		[globalNework.KUSAMA]: ['2027', '5138'],
-		[globalNework.MOONBEAM]: ['2065', '5140'],
+		[globalNework.MOONBEAM]: ['2065', '5142'],
 		[globalNework.POLKADOT]: ['3638', '754']
 	};
 

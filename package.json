@@ -42,6 +42,7 @@
     "@walletconnect/web3-provider": "^1.8.0",
     "antd": "^5.0.7",
     "argon2": "^0.30.3",
+    "bignumber.js": "^9.1.1",
     "bn.js": "^5.2.1",
     "chart.js": "^4.2.1",
     "classnames": "^2.3.2",

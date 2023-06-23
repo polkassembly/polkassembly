@@ -82,10 +82,24 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 		<div>
 			{
 				tableData.map(rowData => (
-					<div key={rowData.key} className="bg-white rounded shadow-md mb-6 p-3 border border-gray-200 cursor-pointer" onClick={() => onClick(rowData)}>
+					<div key={rowData.key} className="bg-white rounded shadow-md mb-6 p-3 border border-gray-200 cursor-pointer h-[150px]" onClick={() => onClick(rowData)}>
 						{/* Meta Data Row */}
 						<div className="flex items-center justify-between text-sidebarBlue">
-							<span>{rowData.status && <StatusTag status={rowData.status} />}</span>
+							{rowData.status && rowData.status!== '-' && <StatusTag status={rowData.status} />}
+							{
+								rowData.status === '-' && <div className="my-4">
+									<h4>
+										<div style={{
+											lineHeight: '1.5em',
+											overflow: 'hidden',
+											textAlign: 'justify',
+											textOverflow: 'ellipsis'
+										}}>
+											{rowData.title}
+										</div>
+									</h4>
+								</div>
+							}
 							<div className="flex items-center">
 								{/* {rowData.icon} */}
 								<span className='capitalize ml-2 flex items-center'>
@@ -95,20 +109,22 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 						</div>
 
 						{/* Title */}
-						<div className="my-4">
-							<h4>
-								<div style={{
-									height: '3em',
-									lineHeight: '1.5em',
-									overflow: 'hidden',
-									textAlign: 'justify',
-									textOverflow: 'ellipsis'
-								}}>
-									{rowData.title}
+						{
+							rowData.status === '-' ? '' :
+								<div className="my-4">
+									<h4>
+										<div style={{
+											height: '3em',
+											lineHeight: '1.5em',
+											overflow: 'hidden',
+											textAlign: 'justify',
+											textOverflow: 'ellipsis'
+										}}>
+											{rowData.title}
+										</div>
+									</h4>
 								</div>
-							</h4>
-						</div>
-
+						}
 						{/* Created by and on */}
 						<div className='flex items-center justify-between'>
 							<span>

@@ -96,12 +96,21 @@ const DiscussionLink: FC<IDiscussionLinkProps> = (props) => {
 			{
 				latestState?.link?
 					<Link href={latestState?.link!}>
-						<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-                            This post is linked with {' '}
-							<span className='text-pink_primary'>
-								{latestState?.text}
-							</span>
-						</div>
+						<span className="text-[#334D6E] flex">
+							{latestState?.text.split('#').map((part, index) => {
+								if (index === 0) {
+									return part;
+								} else {
+									const id = part.match(/^\d+/)?.[0];
+									return (
+										<span key={index}>
+											<span className="text-pink_primary"> #{id}</span>
+										</span>
+									);
+								}
+							})}
+							<span>{' >> '}</span>
+						</span>
 					</Link>
 					: null
 			}

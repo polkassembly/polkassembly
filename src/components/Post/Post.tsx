@@ -20,7 +20,7 @@ import OtherProposals from '../OtherProposals';
 import SidebarRight from '../SidebarRight';
 import OptionPoll from './ActionsBar/OptionPoll';
 import TrackerButton from './ActionsBar/TrackerButton';
-import DiscussionLink from './DiscussionLink';
+// import DiscussionLink from './DiscussionLink';
 import EditablePostContent from './EditablePostContent';
 import PostHeading from './PostHeading';
 import getNetwork from '~src/util/getNetwork';
@@ -93,6 +93,7 @@ const Post: FC<IPostProps> = (props) => {
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [redirection, setRedirection] = useState({
 		link: '',
 		text: ''
@@ -369,20 +370,24 @@ const Post: FC<IPostProps> = (props) => {
 		}}>
 			<>
 				<SpamAlert />
+				{
+					!isEditing && Boolean(post.timeline?.length) && <div className='bg-white flex flex-wrap drop-shadow-md p-3 md:p-6 rounded-md w-[94vw] lg:w-[85vw] mb-6 dashboard-heading '>
+						{
+							post.timeline.map((item: any, index: number) => {
+								const type = item.type;
+								return (
+									<Link key={index} href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? item.hash: item.index}`} className='mr-4'>
+										<span className="text-[#334D6E] ">{item.type ?.split(/(?=[A-Z])/).join(' ')}{' >> '}</span>
+										<span className="text-pink_primary">{item.index}</span>
+									</Link>
+								);
+							})
+						}
+					</div>
+				}
+
 				<div className={`${className} grid grid-cols-1 xl:grid-cols-12 gap-9`}>
 					<div className='xl:col-span-8'>
-
-						{
-							!isEditing && <DiscussionLink isOffchainPost={isOffchainPost} />
-						}
-
-						{!isEditing && isOnchainPost && redirection.link &&
-						<Link href={redirection.link}>
-							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-								This proposal is now <span className='text-pink_primary'>{redirection.text}</span>
-							</div>
-						</Link>
-						}
 
 						{ post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
 							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading flex items-center gap-x-2'>
@@ -393,14 +398,6 @@ const Post: FC<IPostProps> = (props) => {
 								/>
 							</div>
 						)}
-						{
-							proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&
-						<Link href={`/bounty/${post.parent_bounty_index}`}>
-							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-								This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
-							</div>
-						</Link>
-						}
 
 						{
 							proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) &&

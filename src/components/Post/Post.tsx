@@ -28,6 +28,7 @@ import SpamAlert from '~src/ui-components/SpamAlert';
 import { useNetworkContext } from '~src/context';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import DiscussionLink from './DiscussionLink';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -372,7 +373,7 @@ const Post: FC<IPostProps> = (props) => {
 							post?.timeline?.map((timeline: any, index: number) => {
 								const proposal_type = getFirestoreProposalType(timeline?.type);
 								return (
-									<div key={index}
+									timeline?.type === 'Discussions' ? <DiscussionLink isOffchainPost={isOffchainPost}/> : <div key={index}
 										onClick={() => proposalType !== proposal_type && router.push(`/${getSinglePostLinkFromProposalType(proposal_type as any)}/${timeline?.type === 'Tip' ? timeline?.hash : timeline?.index}`)}
 										className={`flex gap-2 text-lg font-medium text-[#243A57] ${proposalType ===  proposal_type ? 'cursor-default' :'cursor-pointer'}`}>
 										<span>{timeline?.type === 'ReferendumV2' ? 'Opengov Referenda' : timeline?.type?.split(/(?=[A-Z])/).join(' ')}</span>

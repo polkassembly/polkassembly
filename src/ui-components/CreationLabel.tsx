@@ -89,6 +89,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						username={username}
 						clickable={commentSource === 'polkassembly' }
 						truncateUsername={truncateUsername}
+						textClassName={'text-[12px]'}
 					/>
 					{text}&nbsp;
 					{topic &&

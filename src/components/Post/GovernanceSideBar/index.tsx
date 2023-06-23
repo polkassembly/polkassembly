@@ -199,7 +199,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 
 	useEffect(() => {
-		console.log('hi');
 		if ([ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
 			if (!api || !apiReady) {
 				return;

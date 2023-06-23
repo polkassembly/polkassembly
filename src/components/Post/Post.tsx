@@ -374,7 +374,7 @@ const Post: FC<IPostProps> = (props) => {
 								return (
 									<div key={index}
 										onClick={() => proposalType !== proposal_type && router.push(`/${getSinglePostLinkFromProposalType(proposal_type as any)}/${timeline?.type === 'Tip' ? timeline?.hash : timeline?.index}`)}
-										className={`flex gap-2 text-lg font-medium text-[#243A57] ${proposalType ===  proposal_type && 'cursor-pointer'}`}>
+										className={`flex gap-2 text-lg font-medium text-[#243A57] ${proposalType ===  proposal_type ? 'cursor-default' :'cursor-pointer'}`}>
 										<span>{timeline?.type === 'ReferendumV2' ? 'Opengov Referenda' : timeline?.type?.split(/(?=[A-Z])/).join(' ')}</span>
 										<span className={`${proposalType ===  proposal_type ? 'text-[#243A57] ' : 'text-pink_primary'}`}>#{timeline?.index}</span>
 										<span className='mr-2'>{ index !== post?.timeline.length - 1 && ' >> '}</span>

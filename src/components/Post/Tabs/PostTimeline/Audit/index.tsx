@@ -121,8 +121,7 @@ const PostAudit = () => {
 			if (response.ok) {
 				const data = await response.json();
 				const decoded = atob(data.content);
-				const decodedContent = decoded.split('}').join('},');
-				setVideoData(JSON.parse(decodedContent.split(']')[0].trim().slice(0,decodedContent.split(']')[0].trim().length-1)+']') as IDataVideoType[]);
+				setVideoData(JSON.parse(decoded) as IDataVideoType[]);
 			} else {
 				throw new Error('Request failed');
 			}

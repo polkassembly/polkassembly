@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ProposalType } from '~src/global/proposalType';
-import { Role } from '~src/types';
+import { IUserNotificationSettings, Role } from '~src/types';
 
 export interface MessageType {
 	message: string;
@@ -47,6 +47,7 @@ export interface PublicUser {
 	id: number;
 	default_address?: string;
 	username: string;
+	primary_network?: string;
 }
 
 export enum ESocialType {
@@ -62,6 +63,7 @@ export interface ISocial {
 	link: string;
 }
 export interface ProfileDetails {
+	custom_username?: boolean;
 	bio?: string;
 	badges?: string[];
 	title?: string;
@@ -96,7 +98,7 @@ export interface NotificationSettings {
 
 export interface IUserPreference {
 	user_id: number;
-	notification_settings: NotificationSettings;
+	notification_preferences: NotificationSettings;
 	post_subscriptions: {
 		[key in ProposalType]?: (number | string)[];
 	}
@@ -110,7 +112,16 @@ export interface UndoEmailChangeToken {
   token: string;
 }
 
+export interface IUser2FADetails {
+	url: string;
+	base32_secret: string;
+	enabled: boolean;
+	verified: boolean;
+}
+
 export interface User {
+	created_at?:Date,
+	custom_username?:boolean,
 	email: string;
 	email_verified: boolean;
 	id: number;
@@ -119,10 +130,9 @@ export interface User {
 	salt: string;
 	username: string;
 	web3_signup: boolean;
-}
-
-export interface ISignedTokenParams extends User {
-	notification_settings: NotificationSettings;
+	primary_network?: string;
+	notification_preferences?: IUserNotificationSettings;
+	two_factor_auth?: IUser2FADetails
 }
 
 export  interface Roles {
@@ -141,6 +151,14 @@ export interface JWTPayloadType {
 	id: number;
 	roles: Roles;
 	web3signup: boolean;
+	is2FAEnabled?: boolean;
+}
+
+export interface IAuthResponse {
+	token?: string
+	user_id?: number;
+	isTFAEnabled?: boolean;
+	tfa_token?: string;
 }
 
 export interface AuthObjectType extends TokenType {
@@ -179,4 +197,9 @@ export interface CalendarEvent {
 	url: string;
 	post_id: number;
 	user_id: number;
+}
+
+export interface I2FAGenerateResponse {
+	url: string;
+	base32_secret: string;
 }

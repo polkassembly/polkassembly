@@ -21,6 +21,7 @@ import messages from '~src/util/messages';
 import { checkReportThreshold, getReactions } from '../posts/on-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
+import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 
 export interface IPostListing {
 	user_id?: string | number;
@@ -100,6 +101,10 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
 		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy } = params;
+		// let subsquareTitle = '';
+		// await getSubSquareContentAndTitle(proposalType,network,postIds).then((response) => {
+		// 	subsquareTitle = response.title;
+		// });
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(`Invalid listingLimit "${listingLimit}"`, 400);

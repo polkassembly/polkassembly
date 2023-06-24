@@ -21,6 +21,7 @@ import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-pos
 import { getUpdatedAt } from './off-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
+import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -611,6 +612,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
+		let subsquareTitle = '';
+		let subsquareContent = '';
+		await getSubSquareContentAndTitle(proposalType,network,numPostId).then((response) => {
+			subsquareTitle = response.title;subsquareContent = response.content;
+		});
 		if (proposalType === ProposalType.TIPS) {
 			if (!strPostId) {
 				throw apiErrorWithStatusCode(`The Tip hash "${postId} is invalid."`, 400);
@@ -859,12 +865,21 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
-				post.content = data.content;
+				console.log('data',data);
+				if( data.content === '' || data.content.endsWith('login and tell us more about your proposal.')){
+					post.content = subsquareContent;
+				}else{
+					post.content = data.content;
+				}
 				if (!post.proposer) {
 					post.proposer = getProposerAddressFromFirestorePostData(data, network);
 				}
 				post.user_id = data.user_id;
-				post.title = data?.title;
+				if( data?.title === '' && subsquareTitle !== ''){
+					post.title = subsquareTitle;
+				}else{
+					post.title = data?.title;
+				}
 				post.last_edited_at = getUpdatedAt(data);
 				post.tags = data?.tags;
 				post.gov_type = data?.gov_type;

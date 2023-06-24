@@ -12,7 +12,7 @@ import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import PostDataContextProvider from '~src/context/PostDataContext';
-import { checkIsOnChainPost, getFirestoreProposalType, getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
+import { checkIsOnChainPost, getFirestoreProposalType, ProposalType } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 import OtherProposals from '../OtherProposals';
@@ -26,9 +26,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
 import SpamAlert from '~src/ui-components/SpamAlert';
 import { useNetworkContext } from '~src/context';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
-import DiscussionLink from './DiscussionLink';
+import LinkCard from './LinkCard';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -89,7 +88,6 @@ const Post: FC<IPostProps> = (props) => {
 		proposalType
 	} = props;
 
-	const router = useRouter();
 	const { id, addresses } = useContext(UserDetailsContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
@@ -368,22 +366,7 @@ const Post: FC<IPostProps> = (props) => {
 				<SpamAlert />
 				{
 					!isEditing && Boolean(post.timeline?.length) && proposalType !==  ProposalType.CHILD_BOUNTIES &&
-          ( post?.timeline.length === 1 ? getFirestoreProposalType(post?.timeline[0]?.type) !== proposalType : true  ) && <div className='bg-white flex flex-wrap drop-shadow-md min-h-[69px] rounded-md w-full mb-6 items-center px-4'>
-						{
-							post?.timeline?.map((timeline: any, index: number) => {
-								const proposal_type = getFirestoreProposalType(timeline?.type);
-								return (
-									timeline?.type === 'Discussions' ? <DiscussionLink isOffchainPost={isOffchainPost}/> : <div key={index}
-										onClick={() => proposalType !== proposal_type && router.push(`/${getSinglePostLinkFromProposalType(proposal_type as any)}/${timeline?.type === 'Tip' ? timeline?.hash : timeline?.index}`)}
-										className={`flex gap-2 text-lg font-medium text-[#243A57] ${proposalType ===  proposal_type ? 'cursor-default' :'cursor-pointer'}`}>
-										<span>{timeline?.type === 'ReferendumV2' ? 'Opengov Referenda' : timeline?.type?.split(/(?=[A-Z])/).join(' ')}</span>
-										<span className={`${proposalType ===  proposal_type ? 'text-[#243A57] ' : 'text-pink_primary'}`}>#{timeline?.index}</span>
-										<span className='mr-2'>{ index !== post?.timeline.length - 1 && ' >> '}</span>
-									</div>
-								);
-							})
-						}
-					</div>
+          ( post?.timeline.length === 1 ? getFirestoreProposalType(post?.timeline[0]?.type) !== proposalType : true  ) && <LinkCard timeline={post?.timeline} proposalType={proposalType}/>
 				}
 				{
 					proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&

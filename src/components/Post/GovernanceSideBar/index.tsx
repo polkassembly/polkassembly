@@ -716,7 +716,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
-													<GovSidebarCard>
+													<GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
 														<VoteReferendumEth
 															referendumId={onchainId as number}
@@ -731,7 +731,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																	<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
 																		<span className='h-[25px]'>{lastVote?.decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :lastVote?.decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : lastVote?.decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : lastVote?.decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
 																	</Tooltip>
-																	<Tooltip placement="bottom"  title="Time"  color={'#E5007A'} className=''>
+																	<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
 																		<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
 																	</Tooltip>
 
@@ -757,7 +757,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																			<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
 																				<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
 																			</Tooltip>
-																			<Tooltip placement="bottom"  title="Time"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
+																			<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
 
 																			<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
 																				<span>
@@ -778,7 +778,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</GovSidebarCard>
 
 														}
-													</> : <GovSidebarCard>
+													</> : <GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
@@ -796,7 +796,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																	<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
 																		<span className='h-[25px]'>{lastVote?.decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :lastVote?.decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : lastVote?.decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : lastVote?.decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
 																	</Tooltip>
-																	<Tooltip placement="bottom"  title="Time"  color={'#E5007A'} className=''>
+																	<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
 																		<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
 																	</Tooltip>
 
@@ -822,7 +822,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																			<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
 																				<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
 																			</Tooltip>
-																			<Tooltip placement="bottom"  title="Time"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
+																			<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
 
 																			<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
 																				<span>
@@ -864,7 +864,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
-													<GovSidebarCard>
+													<GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
 														<VoteReferendumEthV2
 															referendumId={onchainId as number}
@@ -879,7 +879,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																	<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
 																		<span className='h-[25px]'>{lastVote?.decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :lastVote?.decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : lastVote?.decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : lastVote?.decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
 																	</Tooltip>
-																	<Tooltip placement="bottom"  title="Time"  color={'#E5007A'} className=''>
+																	<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
 																		<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
 																	</Tooltip>
 
@@ -905,7 +905,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																			<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
 																				<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
 																			</Tooltip>
-																			<Tooltip placement="bottom"  title="Time"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
+																			<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
 
 																			<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
 																				<span>
@@ -926,7 +926,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</GovSidebarCard>
 
 														}
-													</> : <GovSidebarCard>
+													</> : <GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
@@ -944,7 +944,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																	<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
 																		<span className='h-[25px]'>{lastVote?.decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :lastVote?.decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : lastVote?.decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : lastVote?.decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
 																	</Tooltip>
-																	<Tooltip placement="bottom"  title="Time"  color={'#E5007A'} className=''>
+																	<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
 																		<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
 																	</Tooltip>
 
@@ -970,7 +970,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																			<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
 																				<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
 																			</Tooltip>
-																			<Tooltip placement="bottom"  title="Time"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
+																			<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
 
 																			<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
 																				<span>

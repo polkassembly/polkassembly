@@ -259,7 +259,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					open= {tagsModal}
 					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
 					footer={false}
-					className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
+					className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 max-sm:w-[100%] h-[120px]`}
 				><div className='flex'>
 						<TagsIcon className='mr-2 mt-1.5' />
 						<h2 className='text-lg tracking-wide font-semibold text-bodyBlue mb-2'>Tags</h2>

@@ -439,7 +439,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 };
 
 const CustomContent = memo(function CustomContent({ Component, pageProps } : Props) {
-	return <Content className={'lg:opacity-100 flex-initial mx-auto min-h-[90vh] w-[94vw] lg:w-[85vw] 2xl:w-5/6 my-6'}>
+	return <Content className={'lg:opacity-100 flex-initial mx-auto min-h-[90vh] w-[94vw] lg:w-[85vw] 2xl:w-5/6 my-6 max-w-7xl'}>
 		<Component {...pageProps} />
 	</Content>;
 });

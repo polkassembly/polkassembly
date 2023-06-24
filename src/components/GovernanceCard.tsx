@@ -203,7 +203,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<div className='sm:hidden xs:flex xs:justify-start gap-x-2 lg:items-start lg:flex-row my-2 '>
 						<span className='font-medium text-center xs:w-[45px] text-bodyBlue xs:mt-0'>#{isTip? tip_index: onchainId}</span>
 						<div className='xs:mt-0 lg:mt-0'>
-							<h1 className='text-bodyBlue flex max-w-[250px] overflow-hidden lg:max-w-none'>
+							<h1 className='text-bodyBlue flex overflow-hidden lg:max-w-none'>
 								<span className='text-bodyBlue text-sm font-medium mt-0 xs:mt-[-1.5px]'>{ mainTitle }</span>
 							</h1>
 							<h2 className='text-bodyBlue font-medium text-sm'>{subTitle}</h2>

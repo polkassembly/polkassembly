@@ -173,19 +173,6 @@ const Post: FC<IPostProps> = (props) => {
 					nextPost = v;
 				}
 			});
-			// if (nextPost) {
-			//const proposalType = getFirestoreProposalType(nextPost.type) as ProposalType;
-			//const link = getSinglePostLinkFromProposalType(proposalType);
-			//setRedirection({
-			//link: `/${link}/${nextPost.index}`,
-			//text:`${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} ${proposalType === ProposalType.ANNOUNCEMENT ? '' : '#'+nextPost.index}`
-			// });
-			// } else {
-			// setRedirection({
-			// link: '',
-			// text: ''
-			// });
-			// }
 		}
 	}, [post]);
 

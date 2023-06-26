@@ -19,11 +19,13 @@ const urlMapper: any = {
 	[ProposalType.TREASURY_PROPOSALS]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/proposals/${id}`
 };
 
-export const getSubSquareContentAndTitle = async (proposalType: string, network: string | string[] | undefined, id: string | string[] | undefined) => {
+export const getSubSquareContentAndTitle = async (proposalType: string | string[], network: string | string[] | undefined, id: string | string[] | number |undefined) => {
 	try {
 		const url = urlMapper[proposalType]?.(id, network);
 		const data = await (await fetch(url)).json();
-		const subsqTitle = data.title.includes('Untitled') ? '' : data.title;
+		let subsqTitle = data.title.includes('Untitled') ? '' : data.title;
+		subsqTitle.includes('[Root] Referendum #') ? subsqTitle = subsqTitle.replace(/\[Root\] Referendum #\d+: /, '') : '';
+
 		const comments = { content : data.content ,title:subsqTitle };
 		console.log('api data = ',comments);
 		return comments;

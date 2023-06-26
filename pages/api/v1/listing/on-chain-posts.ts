@@ -101,10 +101,6 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
 		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy } = params;
-		// let subsquareTitle = '';
-		// await getSubSquareContentAndTitle(proposalType,network,postIds).then((response) => {
-		// 	subsquareTitle = response.title;
-		// });
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(`Invalid listingLimit "${listingLimit}"`, 400);
@@ -512,6 +508,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					if (postDoc && postDoc.exists) {
 						const data = postDoc.data();
 						if (data) {
+							//console.log('single post ',data);
+							let subsquareTitle = '';
+							await getSubSquareContentAndTitle(strProposalType,network,postId).then((response) => {
+								subsquareTitle = response.title;
+							});
 							const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 							const topic = data?.topic;
 							const topic_id = data?.topic_id;
@@ -530,7 +531,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 								status,
 								tags: data?.tags || [],
-								title: data?.title || null,
+								title: subsquareTitle || null,
 								topic: topic ? topic : isTopicIdValid(topic_id) ? {
 									id: topic_id,
 									name: getTopicNameFromTopicId(topic_id)
@@ -541,6 +542,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						}
 					}
 
+					let subsquareTitle = '';
+					await getSubSquareContentAndTitle(strProposalType,network,postId).then((response) => {
+						subsquareTitle = response.title;
+					});
 					return {
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: createdAt,
@@ -554,7 +559,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						post_reactions,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 						status: status,
-						title: '',
+						title: subsquareTitle,
 						topic: topicFromType,
 						type: type || subsquidProposalType,
 						user_id: 1

@@ -614,9 +614,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const strPostId = String(postId);
 		let subsquareTitle = '';
 		let subsquareContent = '';
-		await getSubSquareContentAndTitle(proposalType,network,numPostId).then((response) => {
-			subsquareTitle = response.title;subsquareContent = response.content;
-		});
 		if (proposalType === ProposalType.TIPS) {
 			if (!strPostId) {
 				throw apiErrorWithStatusCode(`The Tip hash "${postId} is invalid."`, 400);
@@ -709,7 +706,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			code:postData?.code,
 			codec:postData?.codec,
 			comments: [],
-			content: '',
+			content: '1234',
 			created_at: postData?.createdAt,
 			curator: postData?.curator,
 			curator_deposit: postData?.curatorDeposit,
@@ -862,11 +859,15 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}catch(e){
 				data=undefined;
 			}
+
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
-				console.log('data',data);
-				if( data.content === '' || data.content.endsWith('login and tell us more about your proposal.')){
+				console.log('data from subsquid',data);
+				if( (!data.title) || data.content === '' || data.content.endsWith('login and tell us more about your proposal.')){
+					await getSubSquareContentAndTitle(proposalType,network,numPostId).then((response) => {
+						subsquareTitle = response.title;subsquareContent = response.content;
+					});
 					post.content = subsquareContent;
 				}else{
 					post.content = data.content;
@@ -875,7 +876,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					post.proposer = getProposerAddressFromFirestorePostData(data, network);
 				}
 				post.user_id = data.user_id;
-				if( data?.title === '' && subsquareTitle !== ''){
+				if(data?.title === null || data?.title === '' && subsquareTitle !== ''){
 					post.title = subsquareTitle;
 				}else{
 					post.title = data?.title;
@@ -916,6 +917,14 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					}
 				}
 				post.post_link = post_link;
+			}
+			else{
+				console.log('no data in firestore');
+				await getSubSquareContentAndTitle(proposalType,network,numPostId).then((response) => {
+					subsquareTitle = response.title;subsquareContent = response.content;
+				});
+				post.content = subsquareContent;
+				post.title = subsquareTitle;
 			}
 		}
 

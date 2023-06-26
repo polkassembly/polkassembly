@@ -712,12 +712,12 @@ class AuthService {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const firestore = firebaseAdmin.firestore();
 
-		const alreadyExists = (await firestore.collection('users').where('username', '==', username.toLowerCase()).get()).size > 0;
+		const alreadyExists = (await firestore.collection('users').where('username', '==', username).get()).size > 0;
 		if (alreadyExists) throw apiErrorWithStatusCode(messages.USERNAME_ALREADY_EXISTS, 400);
 
 		let user = await getUserFromUserId(userId);
 
-		await firestore.collection('users').doc(String(userId)).update({ username: username.toLowerCase() });
+		await firestore.collection('users').doc(String(userId)).update({ username: username });
 		user = await getUserFromUserId(userId);
 
 		return this.getSignedToken(user);

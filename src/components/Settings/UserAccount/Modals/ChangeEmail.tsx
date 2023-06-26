@@ -7,7 +7,6 @@ import ChangeEmailIcon from '~assets/icons/change-email.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
-import { useUserDetailsContext } from '~src/context';
 import { Rule } from 'antd/es/form';
 
 const validationRules: Rule[] = [
@@ -27,7 +26,6 @@ const ChangeEmail = ({
 }) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
-	const { setUserDetailsContextState } = useUserDetailsContext();
 	const validateEmailFormat = (
 		_: Rule,
 		value: string,
@@ -62,7 +60,6 @@ const ChangeEmail = ({
 				});
 			}
 			if (data) {
-				setUserDetailsContextState(prev => ({ ...prev, email: newEmail }));
 				queueNotification({
 					header: 'Success!',
 					message: 'Verification Email Sent.',

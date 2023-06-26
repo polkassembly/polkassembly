@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Col, Divider, Row, Tooltip } from 'antd';
+import { Divider, Tooltip } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -116,54 +116,52 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 			<p className="mt-0 font-normal text-base leading-6 text-bodyBlue">{trackMetaData?.description}</p>
 
-			<div className="mt-8 text-xs w-full max-w-[1000px]">
-				<Row gutter={[16, 16]}>
-					<Col xs={24} sm={12} md={8} lg={4} xl={4}>
-						<Row className='flex flex-col'>
-							<Col span={15} className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Max Deciding</Col>
-							<Col span={9} className='text-lg font-medium leading-7 text-bodyBlue mt-2 whitespace-pre'>{trackMetaData.maxDeciding}</Col>
-						</Row>
-					</Col>
+			<div className="mt-8 text-xs w-full flex flex-wrap lg:gap-x-24">
+				<div className="w-full sm:w-1/2 md:w-1/3 lg:w-auto">
+					<div className="flex flex-col">
+						<div className="font-medium text-sm text-lightBlue whitespace-pre">Max Deciding</div>
+						<div className="text-lg font-medium leading-7 text-bodyBlue mt-2 whitespace-pre">{trackMetaData.maxDeciding}</div>
+					</div>
+				</div>
 
-					<Col xs={24} sm={12} md={8} lg={4} xl={4}>
-						<Row className='flex flex-col'>
-							<Col span={15} className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Confirm Period</Col>
-							<Col span={9} className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue mt-2'>{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}</Col>
-						</Row>
-					</Col>
+				<div className="w-full sm:w-1/2 md:w-1/3 lg:w-auto">
+					<div className="flex flex-col">
+						<div className="font-medium text-sm text-lightBlue whitespace-pre">Confirm Period</div>
+						<div className="text-lg font-medium leading-7 text-bodyBlue mt-2 whitespace-pre">{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}</div>
+					</div>
+				</div>
 
-					<Col xs={24} sm={12} md={8} lg={4} xl={4}>
-						<Row className='flex flex-col'>
-							<Col span={15} className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Min. Enactment Period</Col>
-							<Col span={9} className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue mt-2'>{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}</Col>
-						</Row>
-					</Col>
+				<div className="w-full sm:w-1/2 md:w-1/3 lg:w-auto">
+					<div className='flex flex-col'>
+						<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Min. Enactment Period</div>
+						<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue mt-2'>{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}</div>
+					</div>
+				</div>
 
-					<Col xs={24} sm={12} md={8} lg={4} xl={4}>
-						<Row className='flex flex-col lg:mx-16'>
-							<Col span={15} className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Period</Col>
-							<Col span={9} className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue mt-2'>{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}</Col>
-						</Row>
-					</Col>
+				<div className="w-full sm:w-1/2 md:w-1/3 lg:w-auto">
+					<div className='flex flex-col'>
+						<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Period</div>
+						<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue mt-2'>{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}</div>
+					</div>
+				</div>
 
-					<Col xs={24} sm={12} md={8} lg={4} xl={4}>
-						<Row className='flex flex-col lg:mx-20'>
-							<Col span={15} className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Deposit</Col>
-							<Col span={9} className='text-lg font-medium leading-7 text-bodyBlue mt-2 whitespace-pre'>
-								{trackMetaData.decisionDeposit &&
+				<div className="w-full sm:w-1/2 md:w-1/3 lg:w-auto gap-6">
+					<div className='flex flex-col'>
+						<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Deposit</div>
+						<div className='text-lg font-medium leading-7 text-bodyBlue mt-2 whitespace-pre'>
+							{trackMetaData.decisionDeposit &&
               formatUSDWithUnits(formatBnBalance(`${trackMetaData.decisionDeposit}`.startsWith('0x') ? new BN(`${trackMetaData.decisionDeposit}`.slice(2), 'hex') : trackMetaData.decisionDeposit, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)
-								}
-							</Col>
-						</Row>
-					</Col>
+							}
+						</div>
+					</div>
+				</div>
 
-					<Col xs={24} sm={12} md={8} lg={4} xl={4}>
-						<Row className='flex flex-col lg:mx-24'>
-							<Col span={15} className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Prepare Period</Col>
-							<Col span={9} className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue mt-2 whitespace-pre'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</Col>
-						</Row>
-					</Col>
-				</Row>
+				<div className="w-full sm:w-1/2 md:w-1/3 lg:w-auto gap-6">
+					<div className='flex flex-col'>
+						<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Prepare Period</div>
+						<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue mt-2 whitespace-pre'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</div>
+					</div>
+				</div>
 			</div>
 
 			<Divider />

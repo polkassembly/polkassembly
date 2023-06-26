@@ -145,6 +145,7 @@ export default styled(TrackListingCard)`
 		[data-node-key="Filter"] {
 		position: absolute;
 		right: 0;
+		margin-top: -6px;
 	}
 }
 	@media only screen and (max-width: 640px){

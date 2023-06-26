@@ -146,9 +146,9 @@ const FilterByTags=({ className }:Props) => {
 
 			<div className='text-sm tracking-wide font-normal flex items-center text-pink_primary cursor-pointer'>
 			Filter
-				<span className='text-xl ml-1'>
+				<div className='text-xl ml-1 inline-block'>
 					<FilterIcon className='mt-0'/>
-				</span>
+				</div>
 			</div>
 
 		</Dropdown> );

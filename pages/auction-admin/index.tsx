@@ -25,7 +25,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: '/staking-admin?trackStatus=all&page=1'
+				destination: '/auction-admin?trackStatus=all&page=1'
 			}
 		};
 	}

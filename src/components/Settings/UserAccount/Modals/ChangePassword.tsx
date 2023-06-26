@@ -22,14 +22,13 @@ const ChangePassword = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
 	const { password } = validation;
-	const [err, setErr] = useState('');
 
 	const handleClick = async () => {
 		try {
 			const values = await form.validateFields();
 			const { currentPassword, newPassword, confirmPassword } = values;
+
 			if (newPassword !== confirmPassword) {
-				setErr("Password doesn't matched");
 				return;
 			}
 

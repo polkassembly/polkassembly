@@ -76,6 +76,28 @@ interface IGovernanceSidebarProps {
 	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
 }
 
+interface ILastVoteInfoOnchainProps{
+	isLastVoteLoading: boolean;
+	decision:string
+	balance: BN | string
+	conviction:string | number
+	vote:{
+		balance?: {
+			value: string | null;
+		} | {
+			nay: string | null;
+			aye: string | null;
+			abstain: string | null;
+		},
+		conviction:string | number,
+		time?:string
+	}
+}
+
+interface ILastVoteInfoLocalStateProps {
+	lastVote: ILastVote
+}
+
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
 
 export function getReferendumVotingFinishHeight(timeline: any[], openGovType: TOpenGov) {
@@ -197,6 +219,65 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
+
+	const LastVoteInfoOnChain : FC <ILastVoteInfoOnchainProps>  = ({ isLastVoteLoading , decision , balance , conviction , vote }) => {
+		const unit =`${chainProperties[network]?.tokenSymbol}`;
+		return(
+			<Spin spinning={ isLastVoteLoading } indicator={<LoadingOutlined />}>
+				<div className=''>
+					<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
+					<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+						<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
+							<span className='h-[25px]'>{decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> : decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
+						</Tooltip>
+						<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
+
+						<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
+							<span>
+								<MoneyIcon className='mr-1'/>
+								{formatedBalance(balance.toString(), unit)}{` ${unit}`}
+							</span>
+						</Tooltip>
+
+						<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
+							<span title='Conviction'>
+								<ConvictionIcon className='mr-1'/>
+								{conviction}x
+							</span>
+						</Tooltip>
+					</div>
+				</div></Spin>);
+	};
+
+	const LastVoteInfoLocalState :FC<ILastVoteInfoLocalStateProps> = ({ lastVote }) => {
+		return (
+			<div>
+				<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
+				<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+					<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
+						<span className='h-[25px]'>{lastVote?.decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :lastVote?.decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : lastVote?.decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : lastVote?.decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
+					</Tooltip>
+					<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
+						<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
+					</Tooltip>
+
+					<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=''>
+						<span>
+							<MoneyIcon className='mr-1'/>
+							{formatedBalance(lastVote?.balance.toString(), unit)}{` ${unit}`}
+						</span>
+					</Tooltip>
+
+					<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
+						<span title='Conviction'>
+							<ConvictionIcon className='mr-1'/>
+							{lastVote?.conviction}x
+						</span>
+					</Tooltip>
+				</div>
+			</div>
+		);
+	};
 
 	useEffect(() => {
 		if ([ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
@@ -725,55 +806,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															lastVote={lastVote} />
 
 														{
-															lastVote ? <div>
-																<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-																<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
-																	<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
-																		<span className='h-[25px]'>{lastVote?.decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :lastVote?.decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : lastVote?.decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : lastVote?.decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
-																	</Tooltip>
-																	<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
-																		<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
-																	</Tooltip>
-
-																	<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=''>
-																		<span>
-																			<MoneyIcon className='mr-1'/>
-																			{formatedBalance(lastVote?.balance.toString(), unit)}{` ${unit}`}
-																		</span>
-																	</Tooltip>
-
-																	<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
-																		<span title='Conviction'>
-																			<ConvictionIcon className='mr-1'/>
-																			{lastVote?.conviction}x
-																		</span>
-																	</Tooltip>
-																</div>
-															</div> : voteCount > 0 ?
-																<Spin spinning={ isLastVoteLoading } indicator={<LoadingOutlined />}>
-																	<div className=''>
-																		<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-																		<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
-																			<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
-																				<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
-																			</Tooltip>
-																			<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
-
-																			<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
-																				<span>
-																					<MoneyIcon className='mr-1'/>
-																					{formatedBalance(balance.toString(), unit)}{` ${unit}`}
-																				</span>
-																			</Tooltip>
-
-																			<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
-																				<span title='Conviction'>
-																					<ConvictionIcon className='mr-1'/>
-																					{vote.conviction}x
-																				</span>
-																			</Tooltip>
-																		</div>
-																	</div></Spin>:null
+															lastVote ? < LastVoteInfoLocalState lastVote={lastVote} /> : voteCount > 0 ? <LastVoteInfoOnChain isLastVoteLoading={isLastVoteLoading} vote={vote} balance={balance} conviction={vote.conviction} decision={vote.decision}/> : null
 														}
 													</GovSidebarCard>
 
@@ -790,55 +823,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														/>
 
 														{
-															lastVote ? <div>
-																<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-																<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
-																	<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
-																		<span className='h-[25px]'>{lastVote?.decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :lastVote?.decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : lastVote?.decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : lastVote?.decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
-																	</Tooltip>
-																	<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
-																		<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
-																	</Tooltip>
-
-																	<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=''>
-																		<span>
-																			<MoneyIcon className='mr-1'/>
-																			{formatedBalance(lastVote?.balance.toString(), unit)}{` ${unit}`}
-																		</span>
-																	</Tooltip>
-
-																	<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
-																		<span title='Conviction'>
-																			<ConvictionIcon className='mr-1'/>
-																			{lastVote?.conviction}x
-																		</span>
-																	</Tooltip>
-																</div>
-															</div> : voteCount > 0 ?
-																<Spin spinning={ isLastVoteLoading } indicator={<LoadingOutlined />}>
-																	<div className=''>
-																		<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-																		<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
-																			<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
-																				<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
-																			</Tooltip>
-																			<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
-
-																			<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
-																				<span>
-																					<MoneyIcon className='mr-1'/>
-																					{formatedBalance(balance.toString(), unit)}{` ${unit}`}
-																				</span>
-																			</Tooltip>
-
-																			<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
-																				<span title='Conviction'>
-																					<ConvictionIcon className='mr-1'/>
-																					{vote.conviction}x
-																				</span>
-																			</Tooltip>
-																		</div>
-																	</div></Spin>:null
+															lastVote ? < LastVoteInfoLocalState lastVote={lastVote} /> : voteCount > 0 ? <LastVoteInfoOnChain isLastVoteLoading={isLastVoteLoading} vote={vote} balance={balance} conviction={vote.conviction} decision={vote.decision}/> : null
 														}
 													</GovSidebarCard>
 												}
@@ -873,55 +858,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															lastVote={lastVote} />
 
 														{
-															lastVote ? <div>
-																<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-																<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
-																	<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
-																		<span className='h-[25px]'>{lastVote?.decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :lastVote?.decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : lastVote?.decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : lastVote?.decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
-																	</Tooltip>
-																	<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
-																		<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
-																	</Tooltip>
-
-																	<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=''>
-																		<span>
-																			<MoneyIcon className='mr-1'/>
-																			{formatedBalance(lastVote?.balance.toString(), unit)}{` ${unit}`}
-																		</span>
-																	</Tooltip>
-
-																	<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
-																		<span title='Conviction'>
-																			<ConvictionIcon className='mr-1'/>
-																			{lastVote?.conviction}x
-																		</span>
-																	</Tooltip>
-																</div>
-															</div> : voteCount > 0 ?
-																<Spin spinning={ isLastVoteLoading } indicator={<LoadingOutlined />}>
-																	<div className=''>
-																		<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-																		<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
-																			<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
-																				<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
-																			</Tooltip>
-																			<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
-
-																			<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
-																				<span>
-																					<MoneyIcon className='mr-1'/>
-																					{formatedBalance(balance.toString(), unit)}{` ${unit}`}
-																				</span>
-																			</Tooltip>
-
-																			<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
-																				<span title='Conviction'>
-																					<ConvictionIcon className='mr-1'/>
-																					{vote.conviction}x
-																				</span>
-																			</Tooltip>
-																		</div>
-																	</div></Spin>:null
+															lastVote ? < LastVoteInfoLocalState lastVote={lastVote} /> : voteCount > 0 ? <LastVoteInfoOnChain isLastVoteLoading={isLastVoteLoading} vote={vote} balance={balance} conviction={vote.conviction} decision={vote.decision}/> : null
 														}
 													</GovSidebarCard>
 
@@ -938,55 +875,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														/>
 
 														{
-															lastVote ? <div>
-																<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-																<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
-																	<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
-																		<span className='h-[25px]'>{lastVote?.decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :lastVote?.decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : lastVote?.decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : lastVote?.decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
-																	</Tooltip>
-																	<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
-																		<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
-																	</Tooltip>
-
-																	<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=''>
-																		<span>
-																			<MoneyIcon className='mr-1'/>
-																			{formatedBalance(lastVote?.balance.toString(), unit)}{` ${unit}`}
-																		</span>
-																	</Tooltip>
-
-																	<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
-																		<span title='Conviction'>
-																			<ConvictionIcon className='mr-1'/>
-																			{lastVote?.conviction}x
-																		</span>
-																	</Tooltip>
-																</div>
-															</div> : voteCount > 0 ?
-																<Spin spinning={ isLastVoteLoading } indicator={<LoadingOutlined />}>
-																	<div className=''>
-																		<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-																		<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
-																			<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
-																				<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : vote.decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : vote.decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
-																			</Tooltip>
-																			<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
-
-																			<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
-																				<span>
-																					<MoneyIcon className='mr-1'/>
-																					{formatedBalance(balance.toString(), unit)}{` ${unit}`}
-																				</span>
-																			</Tooltip>
-
-																			<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
-																				<span title='Conviction'>
-																					<ConvictionIcon className='mr-1'/>
-																					{vote.conviction}x
-																				</span>
-																			</Tooltip>
-																		</div>
-																	</div></Spin>:null
+															lastVote ? < LastVoteInfoLocalState lastVote={lastVote} /> : voteCount > 0 ? <LastVoteInfoOnChain isLastVoteLoading={isLastVoteLoading} vote={vote} balance={balance} conviction={vote.conviction} decision={vote.decision}/> : null
 														}
 
 													</GovSidebarCard>}

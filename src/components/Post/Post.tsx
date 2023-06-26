@@ -385,8 +385,9 @@ const Post: FC<IPostProps> = (props) => {
 						}
 
 						{/* Post Content */}
-						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-md w-full mb-6'>
-							{isEditing && <EditablePostContent toggleEdit={toggleEdit} />}
+						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6'>
+							{isEditing &&
+              <EditablePostContent toggleEdit={toggleEdit} />}
 
 							{!isEditing && <>
 								<PostHeading
@@ -394,7 +395,7 @@ const Post: FC<IPostProps> = (props) => {
 								/>
 								<Tabs
 									type="card"
-									className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+									className='ant-tabs-tab-bg-white text-bodyBlue font-medium'
 									items={tabItems}
 								/>
 

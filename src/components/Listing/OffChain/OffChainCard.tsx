@@ -138,7 +138,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					</>}</div>
 				</Modal>
 			</div>
-			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 xs:p-2 md:p-4 xs:h-[150px] xs:flex sm:hidden ${className}`}>
+			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 xs:p-2 md:p-4 min-h-[150px] h-auto xs:flex sm:hidden ${className}`}>
 				<div className="sm:hidden xs:flex flex-col flex-1 xs:mt-1">
 					<div className="sm:hidden xs:flex xs:justify-start gap-x-2 lg:items-start lg:flex-row my-2">
 						<span className='font-medium text-center mr-2 flex-none xs:w-[45px] text-bodyBlue xs:mt-0'>#{post_id}</span>

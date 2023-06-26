@@ -35,18 +35,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	// get post author
 	const postRef = networkDocRef(network).collection('post_types').doc(strProposalType).collection('posts').doc(String(post_id));
 	const post = await postRef.get();
-	if(!post.exists) return res.status(400).json({ message: 'Post not found' });
-	const postAuthorId = post.data()?.user_id;
+	const postAuthorId = post.data()?.user_id as number || null;
 
 	// check if user is the author of the post
-	if (Number(postAuthorId) === user.id) return res.status(400).json({ message: 'You cannot subscribe to your own post.' });
+	if (postAuthorId === user.id) return res.status(400).json({ message: 'You cannot subscribe to your own post.' });
 
 	const postSubs = post.data()?.subscribers || [];
 	if(postSubs.includes(user.id)) return res.status(400).json({ message: messages.SUBSCRIPTION_ALREADY_EXISTS });
 
 	postSubs.push(Number(user.id));
 
-	await postRef.update({ subscribers: postSubs }).catch((e) => {
+	await postRef.set({ subscribers: postSubs }, { merge: true }).catch((e) => {
 		console.error(e);
 		return res.status(500).json({ message: messages.INTERNAL });
 	});

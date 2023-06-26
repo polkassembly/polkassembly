@@ -708,7 +708,7 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async ChangeUsername (token: string, username: string, password: string): Promise<string> {
+	public async ChangeUsername (token: string, username: string ): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const firestore = firebaseAdmin.firestore();
 
@@ -716,9 +716,6 @@ class AuthService {
 		if (alreadyExists) throw apiErrorWithStatusCode(messages.USERNAME_ALREADY_EXISTS, 400);
 
 		let user = await getUserFromUserId(userId);
-
-		const isCorrectPassword = await verifyUserPassword(user.password, password);
-		if (!isCorrectPassword) throw apiErrorWithStatusCode(messages.INCORRECT_PASSWORD, 403);
 
 		await firestore.collection('users').doc(String(userId)).update({ username: username.toLowerCase() });
 		user = await getUserFromUserId(userId);

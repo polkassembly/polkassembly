@@ -4,6 +4,7 @@
 
 import Link from 'next/link';
 import React, { FC } from 'react';
+import { poppins } from 'pages/_app';
 import GovernanceCard from 'src/components/GovernanceCard';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
@@ -29,7 +30,7 @@ const Listing: FC<IListingProps> = (props) => {
 	}
 
 	return (
-		<div className={`${className}`}>
+		<div className={`${className} proposals__list`}>
 			{posts.map((post, index) => {
 				const {
 					cid,
@@ -51,10 +52,11 @@ const Listing: FC<IListingProps> = (props) => {
 				} = post;
 				const id = isTip ? hash : post_id;
 				return (
-					<div key={id} className="my-5">
+					<div key={id} className="my-0">
 						{
 							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${id}`}>
 								<GovernanceCard
+									className={`${(index+1)%2!==0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
 									cid={cid}
 									postReactionCount={post_reactions}
 									address={proposer || curator}

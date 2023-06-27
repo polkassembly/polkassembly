@@ -179,7 +179,7 @@ const PostAudit = () => {
 											<CautionSVG />
 										</span>
 										<p className='m-0 font-normal text-sm leading-[21px] text-[#243A57]'>
-							The reports provided here does not represent our views and we do not endorse them.
+							The reports provided here does not represent Polkassembly&apos;s views and we do not endorse them.
 										</p>
 									</div>
 									: <NoAuditReport />

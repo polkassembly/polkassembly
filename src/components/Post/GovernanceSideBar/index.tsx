@@ -170,7 +170,17 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [onChainLastVote, setOnChainLastVote] = useState<IVoteHistory | null>(null);
 	const[isLastVoteLoading, setIsLastVoteLoading] = useState(true);
 
-	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
+	const canVote = Boolean(post.status) &&
+	[proposalStatus.PROPOSED,
+		referendumStatus.STARTED,
+		motionStatus.PROPOSED,
+		tipStatus.OPENED,
+		gov2ReferendumStatus.SUBMITTED,
+		gov2ReferendumStatus.DECIDING,
+		gov2ReferendumStatus.CONFIRM_STARTED,
+		gov2ReferendumStatus.DECISION_DEPOSIT_PLACED
+	].includes(post.status);
+
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 
 	const balance  = useMemo(() => {
@@ -756,20 +766,20 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														{
 															(!metaMaskError || walletConnectProvider?.wc.connected) &&
-																<GovSidebarCard className='overflow-y-hidden'>
-																	<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
-																	<VoteReferendumEth
-																		referendumId={onchainId as number}
-																		onAccountChange={onAccountChange}
-																		setLastVote={setLastVote}
-																		lastVote={lastVote} />
 
-																	{RenderLastVote}
-																</GovSidebarCard>
+													<GovSidebarCard className='overflow-y-hidden'>
+														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
+														<VoteReferendumEth
+															referendumId={onchainId as number}
+															onAccountChange={onAccountChange}
+															setLastVote={setLastVote}
+															lastVote={lastVote} />
+														{RenderLastVote}
+													</GovSidebarCard>
 														}
 													</> :
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
+														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -804,8 +814,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
-													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
+													<GovSidebarCard>
+														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
 														<VoteReferendumEthV2
 															referendumId={onchainId as number}
 															onAccountChange={onAccountChange}
@@ -817,7 +827,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														}
 													</> : <GovSidebarCard className='overflow-y-hidden'>
-														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
+														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -856,7 +866,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															className='md:min-w-[700px]'
 															closeIcon={<CloseIcon />}
 															title={
-																<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
+																<h2 className='text-bodyBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
 															}
 														>
 															<div className='mt-5'>

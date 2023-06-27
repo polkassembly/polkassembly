@@ -36,25 +36,27 @@ import ThresholdGraphSVG from '~assets/icons/threshold-graph.svg';
 import PostEditSVG from '~assets/icons/post-edit.svg';
 import PostLinkingSVG from '~assets/icons/post-linking.svg';
 import WarningMessageSVG from '~assets/icons/warning-message.svg';
-import BountiesSVG from '~assets/sidebar/bounties.svg';
-import CalendarSVG from '~assets/sidebar/calendar.svg';
-import DemocracyProposalsSVG from '~assets/sidebar/democracy_proposals.svg';
-import DiscussionsSVG from '~assets/sidebar/discussions.svg';
-import AuctionAdminSVG from '~assets/sidebar/gov2_auction_admin.svg';
+import BountiesSVG from '~assets/sidebar/treasury-bounties-icon.svg';
+import ChildBountiesSVG from '~assets/sidebar/treasury-child-bounties-icon.svg';
+import TechCommProposalSVG from '~assets/sidebar/tech-comm-proposals-icon.svg';
+import CalendarSVG from '~assets/sidebar/calendar-icon.svg';
+import DemocracyProposalsSVG from '~assets/sidebar/democracy-proposal-icon.svg';
+import DiscussionsSVG from '~assets/sidebar/discussion-icon.svg';
+import AuctionAdminSVG from '~assets/sidebar/auction-admin-gov2.svg';
 import FellowshipGroupSVG from '~assets/sidebar/gov2_fellowship_group.svg';
 import GovernanceGroupSVG from '~assets/sidebar/gov2_governance_group.svg';
 import PreimagesSVG from '~assets/sidebar/gov2_preimages.svg';
-import RootSVG from '~assets/sidebar/gov2_root.svg';
-import StakingAdminSVG from '~assets/sidebar/gov2_staking_admin.svg';
-import TreasuryGroupSVG from '~assets/sidebar/gov2_treasury_group.svg';
-import MembersSVG from '~assets/sidebar/members.svg';
-import MotionsSVG from '~assets/sidebar/motions.svg';
-import NewsSVG from '~assets/sidebar/news.svg';
-import OverviewSVG from '~assets/sidebar/overview.svg';
-import ParachainsSVG from '~assets/sidebar/parachains.svg';
-import ReferendaSVG from '~assets/sidebar/referenda.svg';
-import TipsSVG from '~assets/sidebar/tips.svg';
-import TreasuryProposalsSVG from '~assets/sidebar/treasury_proposals.svg';
+import RootSVG from '~assets/sidebar/root-icon-gov2.svg';
+import StakingAdminSVG from '~assets/sidebar/staking-admin-gov2.svg';
+import TreasuryGroupSVG from '~assets/sidebar/treasury-groupicon-gov2.svg';
+import MembersSVG from '~assets/sidebar/council-members-icon.svg';
+import MotionsSVG from '~assets/sidebar/council-motion-icon.svg';
+import NewsSVG from '~assets/sidebar/news-icon.svg';
+import OverviewSVG from '~assets/sidebar/overview-icon.svg';
+import ParachainsSVG from '~assets/sidebar/parachains-icon.svg';
+import ReferendaSVG from '~assets/sidebar/democracy-referenda-icon.svg';
+import TipsSVG from '~assets/sidebar/tips-icon.svg';
+import TreasuryProposalsSVG from '~assets/sidebar/treasury-proposal-icon.svg';
 import AgainstSVG from '~assets/icons/against.svg';
 import SlightlyAgainstSVG from '~assets/icons/slightly-against.svg';
 import NeutralSVG from '~assets/icons/neutral.svg';
@@ -65,7 +67,8 @@ import SlightlyAgainstUnfilledSVG from '~assets/icons/slightly-against-unfilled.
 import NeutralUnfilledSVG from '~assets/icons/neutral-unfilled.svg';
 import SlightlyForUnfilledSVG from '~assets/icons/slightly-for-unfilled.svg';
 import ForUnfilleSVG from '~assets/icons/for-unfilled.svg';
-import DelegatedSVG from '~assets/icons/delegated.svg';
+import DelegatedSVG from '~assets/sidebar/delegate-icon-gov2.svg';
+import DelegatedSVGDelegation from '~assets/icons/delegated.svg';
 import UndelegatedSVG from '~assets/icons/undelegated.svg';
 import ReceivedDelegationSVG from '~assets/icons/received-delegation.svg';
 import FilterSVG from '~assets/icons/filter-icon.svg';
@@ -120,6 +123,10 @@ export const BountiesIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={BountiesSVG} {...props} />
 );
 
+export const ChildBountiesIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ChildBountiesSVG} {...props} />
+);
+
 export const TipsIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={TipsSVG} {...props} />
 );
@@ -134,6 +141,10 @@ export const MembersIcon = (props: Partial<CustomIconComponentProps>) => (
 
 export const MotionsIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={MotionsSVG} {...props} />
+);
+
+export const TechComProposalIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={TechCommProposalSVG} {...props} />
 );
 
 export const ParachainsIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -323,6 +334,11 @@ export const ForUnfilledIcon = (props: Partial<CustomIconComponentProps>) => (
 export const DelegatedIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DelegatedSVG} {...props} />
 );
+
+export const DelegatedSVGDelegationIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DelegatedSVGDelegation} {...props} />
+);
+
 export const UnDelegatedIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={UndelegatedSVG} {...props} />
 );

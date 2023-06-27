@@ -136,9 +136,9 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	return (
 		<>
 			<article className={`bg-white shadow-md rounded-md flex flex-col ${className} `}>
-				<div className='flex items-center px-8'>
+				<div className='flex items-center justify-start px-8 py-2'>
 					<LoginLogo className='mr-3' />
-					<h3 className="text-[20px] font-semibold text-bodyBlue mt-3">Login</h3>
+					<span className="text-[20px] font-semibold text-bodyBlue">Login</span>
 				</div>
 				<Divider style={{ background: '#D2D8E0', flexGrow: 1 }} className='mt-1 px-0' />
 				{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-bodyBlue changeColor' />}

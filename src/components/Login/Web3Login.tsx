@@ -352,15 +352,15 @@ const Web3Login: FC<Props> = ({
 	return (
 		<>
 			<article className="bg-white shadow-md rounded-md flex flex-col gap-y-3">
-				<div className='flex items-center px-4'>
+				<div className='flex items-center px-4 py-2'>
 					<LoginLogo className='mr-2' />
-					<h3 className="text-[20px] font-semibold text-bodyBlue mt-3">Login</h3>
+					<span className="text-[20px] font-semibold text-bodyBlue">Login</span>
 				</div>
-				<hr className='border-[#D2D8E0] border-opacity-30' />
+				<hr className='border-[#D2D8E0] border-opacity-30 -mt-2' />
 				<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col px-4 mb-0">
 					{/* <span>Login</span> */}
 					<p className='flex gap-x-2 items-center justify-start p-0 m-0'>
-						<span className='mt-2'>
+						<span>
 							<WalletIcon which={chosenWallet} />
 						</span>
 						<span className='text-bodyBlue text-lg sm:text-xl'>

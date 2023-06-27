@@ -2,10 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import { Alert, Button, Divider, Modal } from 'antd';
+import { Alert, Button, Divider } from 'antd';
 import styled from 'styled-components';
 import CheckOutlineIcon from '~assets/icons/check-icon.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import Modal from '~src/ui-components/Modal';
 
 const StyledAlert = styled(Alert)`
 	display:flex;
@@ -33,19 +34,11 @@ const DisabledConfirmation = ({
 }) => {
 	return (
 		<Modal
-			title={
-				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
-					<h3 className='ml-[24px] mb-0 flex items-center gap-2'>
-						<CheckOutlineIcon /> Confirmation
-					</h3>
-					<Divider />
-				</div>
-			}
+			title='Confirmation'
+			titleIcon={<CheckOutlineIcon /> }
 			open={open}
-			closable
-			className='min-w-[350px] md:min-w-[600px]'
 			onCancel={onCancel}
-			onOk={onConfirm}
+			onConfirm={onConfirm}
 			footer={[
 				<Button
 					key='1' onClick={onCancel}

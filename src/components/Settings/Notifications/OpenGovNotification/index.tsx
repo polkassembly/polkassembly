@@ -173,7 +173,7 @@ export default function OpenGovNotification({
 										}}
 										checked={all}
 									/>
-									<p className='m-0 text-[#243A57B2]'>All</p>
+									<p className='m-0 text-[#485F7D]'>All</p>
 								</span>
 							</>
 						)}

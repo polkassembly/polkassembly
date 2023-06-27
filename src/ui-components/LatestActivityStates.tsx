@@ -114,7 +114,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 						</div>
 						<div className='flex items-center justify-between my-2 mx-1'>
 							{
-								rowData.status && <StatusTag className='my-1.5' status={rowData.status} />
+								rowData.status !== '-' ? <StatusTag className='my-1.5' status={rowData.status} /> : ''
 							}
 						</div>
 					</div>
@@ -158,7 +158,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 						</div>
 						<div className='flex items-center justify-between my-2 mx-1'>
 							{
-								rowData.status && <StatusTag className='my-1.5' status={rowData.status} />
+								rowData.status!=='-' && <StatusTag className='my-1.5' status={rowData.status} />
 							}
 						</div>
 					</div>

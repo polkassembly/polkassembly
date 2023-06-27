@@ -10,7 +10,7 @@ interface Props{
 	children?: ReactNode;
 	className?: string;
 	content?: string;
-	status: string;
+	status: string | undefined;
 	colorInverted?: boolean;
 	type?: string;
 }

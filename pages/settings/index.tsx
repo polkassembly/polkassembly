@@ -15,8 +15,8 @@ import { useRouter } from 'next/router';
 import { PageLink } from '~src/global/post_categories';
 import BackToListingView from '~src/ui-components/BackToListingView';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import NotificationUpgradingState from '~src/components/Settings/Notifications/NotificationChannels/NotificationUpgradingState';
+import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
 
 interface Props {
 	network: string
@@ -26,8 +26,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 	return { props: { network } };
 };
-
-const AVAILABLE_NETWORK = [AllNetworks.PENDULUM, AllNetworks.CERE, AllNetworks.KUSAMA, AllNetworks.POLKADOT];
 
 const Settings: FC<Props> = (props) => {
 	const { setNetwork, network } = useNetworkContext();

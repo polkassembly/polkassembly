@@ -7,7 +7,6 @@ import ChangeEmailIcon from '~assets/icons/change-email.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
-import * as validation from 'src/util/validation';
 import messages from '~src/util/messages';
 
 const ChangeEmail = ({
@@ -17,13 +16,12 @@ const ChangeEmail = ({
 	email
 }: {
     open: boolean;
-    onConfirm: () => void;
+    onConfirm?: () => void;
     onCancel: () => void;
     email: string;
 }) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
-	const { email: emailValidation } = validation;
 
 	const handleClick = async () => {
 		try {
@@ -105,7 +103,8 @@ const ChangeEmail = ({
 							rules={[
 								{
 									message: messages.VALIDATION_EMAIL_ERROR,
-									pattern: emailValidation.pattern
+									required:true,
+									type:'email'
 								}
 							]}
 						>
@@ -113,7 +112,6 @@ const ChangeEmail = ({
 								disabled={loading}
 								className='p-2 text-sm leading-[21px]'
 								placeholder='Enter your email'
-								required
 							/>
 						</Form.Item>
 					</div>

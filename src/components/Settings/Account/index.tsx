@@ -40,7 +40,7 @@ const AddressHeader: FC<IAddressHeaderProps> = ({ checked, header, id, onChange,
 	return (
 		<>
 			<article className='flex items-center gap-1 text-xs font-normal tracking-wide leading-6 align-center'>
-				<label className='cursor-pointer text-pink_primary font-medium text-sm' htmlFor={id} onClick={(e:any) => onChange? onChange(e): null} >
+				<label className='cursor-pointer text-pink_primary font-medium text-sm' htmlFor={id} onClick={(e:any) => onChange?.(e)}>
 					{header}
 				</label>
 				<span>{subHeading}</span>
@@ -129,28 +129,6 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						{/* Removed as per the design */}
-						{/* {currentUser && currentUser.addresses && currentUser.addresses.length > 0?
-							<>
-								<Divider className='m-0 text-[#D2D8E0]' />
-								<section>
-									<p className='text-sm font-normal tracking-wide leading-6'>
-						Linked Addresses
-									</p>
-									<ul className='list-none flex flex-col gap-y-3 mt-3'>
-										{currentUser.addresses?.map((address) => {
-											return <li key={address}>
-												<AddressComponent
-													ethIdenticonSize={35}
-													identiconSize={28}
-													address={address}
-												/>
-											</li>;
-										})}
-									</ul>
-								</section>
-							</>
-							: null} */}
 					</div>
 				</Row>
 			</Panel>

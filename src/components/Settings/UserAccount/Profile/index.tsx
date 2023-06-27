@@ -16,7 +16,6 @@ import ChangePassword from '../Modals/ChangePassword';
 import TwoFactorAuth from '../../TwoFactorAuth';
 
 const { Panel } = Collapse;
-type Props = {};
 
 const Row = ({ label, data, handleEdit }: { label: string, data: string, handleEdit: any }) => (
 	<div className='flex justify-between items-baseline'>
@@ -38,8 +37,7 @@ export enum ModalType {
 	PASSWORD = 'password',
 }
 
-// eslint-disable-next-line no-empty-pattern
-export default function ProfileSettings({ }: Props) {
+export default function ProfileSettings() {
 	const { username, email, web3signup } = useUserDetailsContext();
 	const [showModal, setShowModal] = useState<ModalType | null>(null);
 	const { id } = useUserDetailsContext();
@@ -73,16 +71,13 @@ export default function ProfileSettings({ }: Props) {
 				<ChangeUsername
 					onCancel={() => setShowModal(null)}
 					username={username || ''}
-					onConfirm={() => { }}
 					open={showModal === ModalType.USERNAME} />
 				<ChangePassword
 					onCancel={() => setShowModal(null)}
-					onConfirm={() => { }}
 					open={showModal === ModalType.PASSWORD} />
 				<ChangeEmail
 					onCancel={() => setShowModal(null)}
 					email={email || ''}
-					onConfirm={() => { }}
 					open={showModal === ModalType.EMAIL} />
 				{id && <TwoFactorAuth className='mt-2' />}
 			</Panel>

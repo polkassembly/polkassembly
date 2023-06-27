@@ -16,7 +16,7 @@ const ChangePassword = ({
 	onCancel
 }: {
 	open: boolean;
-	onConfirm: () => void;
+	onConfirm?: () => void;
 	onCancel: () => void;
 }) => {
 	const [loading, setLoading] = useState<boolean>(false);

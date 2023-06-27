@@ -18,7 +18,7 @@ const ChangeUsername = ({
 	username
 }: {
     open: boolean;
-    onConfirm: () => void;
+    onConfirm?: () => void;
     onCancel: () => void;
     username: string;
 }) => {

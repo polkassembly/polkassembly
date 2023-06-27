@@ -112,11 +112,12 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 							<Divider type="vertical" className='mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
 							<span className='text-lightBlue mx-1.5'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
 						</div>
-						<div className='flex items-center justify-between my-2 mx-1'>
-							{
-								rowData.status !== '-' ? <StatusTag className='my-1.5' status={rowData.status} /> : ''
-							}
-						</div>
+						{
+							rowData.status !== '-' &&
+								<div className='flex items-center justify-between my-2 mx-1'>
+									<StatusTag className='my-1.5' status={rowData.status} />
+								</div>
+						}
 					</div>
 				))
 			}
@@ -156,11 +157,12 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 							<Divider type="vertical" className='mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
 							<span className='text-lightBlue mx-1.5'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
 						</div>
-						<div className='flex items-center justify-between my-2 mx-1'>
-							{
-								rowData.status!=='-' && <StatusTag className='my-1.5' status={rowData.status} />
-							}
-						</div>
+						{
+							rowData.status !== '-' &&
+								<div className='flex items-center justify-between my-2 mx-1'>
+									<StatusTag className='my-1.5' status={rowData.status} />
+								</div>
+						}
 					</div>
 				))
 			}

@@ -538,7 +538,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						{
 							!spendPeriod.isLoading?
 								<>
-									<div className='mb-4'>
+									<div className='mb-5 sm:mb-4'>
 										<div className="flex items-center my-1">
 											<span className='mr-2 text-xs mt-1 lg:mt-0 leading-5 text-lightBlue font-medium'>
 										Spend Period
@@ -550,30 +550,30 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											/>
 										</div>
 
-										<div className="text-bodyBlue flex whitespace-pre font-medium items-baseline">
+										<div className="text-bodyBlue flex whitespace-pre font-medium items-baseline mt-1 sm:mt-0">
 											{spendPeriod.value?.total
 												? <>
 													{
 														spendPeriod.value?.days?
 															<>
-																<span className='text-lg'>{spendPeriod.value.days}&nbsp;</span>
+																<span className='text-base sm:text-lg'>{spendPeriod.value.days}&nbsp;</span>
 																<span className='text-lightBlue text-xs'>days&nbsp;</span>
 															</>
 															: null
 													}
 													<>
-														<span className='text-lg'>{spendPeriod.value.hours}&nbsp;</span>
+														<span className='text-base sm:text-lg'>{spendPeriod.value.hours}&nbsp;</span>
 														<span className='text-lightBlue text-xs'>hrs&nbsp;</span>
 													</>
 													{
 														!spendPeriod.value?.days?
 															<>
-																<span className='text-lg'>{spendPeriod.value.minutes}&nbsp;</span>
+																<span className='text-base sm:text-lg'>{spendPeriod.value.minutes}&nbsp;</span>
 																<span className='text-lightBlue text-xs'>mins&nbsp;</span>
 															</>
 															: null
 													}
-													<span className="text-lightBlue text-xs">/ {spendPeriod.value.total} days </span>
+													<span className="text-lightBlue text-[10px] sm:text-xs">/ {spendPeriod.value.total} days </span>
 												</>
 												: 'N/A'
 											}

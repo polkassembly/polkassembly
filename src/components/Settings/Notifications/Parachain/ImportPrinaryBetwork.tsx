@@ -2,9 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import { Button, Divider, Image, Modal, Tag } from 'antd';
+import { Button, Divider, Image, Tag } from 'antd';
 import { chainProperties } from '~src/global/networkConstants';
 import DisabledImportIcon from '~assets/icons/disabled-state-import-icon.svg';
+import Modal from '~src/ui-components/Modal';
 
 const ImportPrimaryNetworkSettingModal = ({
 	open,
@@ -19,19 +20,11 @@ const ImportPrimaryNetworkSettingModal = ({
 }) => {
 	return (
 		<Modal
-			title={
-				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
-					<h3 className='ml-[24px] mb-0 flex items-center gap-2 text-base md:text-md'>
-						<DisabledImportIcon /> Import Primary Network Settings
-					</h3>
-					<Divider />
-				</div>
-			}
+			title='Import Primary Network Settings'
+			titleIcon={<DisabledImportIcon />}
 			open={open}
-			closable
-			className='min-w-[350px] md:min-w-[600px]'
 			onCancel={onCancel}
-			onOk={onConfirm}
+			onConfirm={onConfirm}
 			footer={[
 				<Button
 					key='1'

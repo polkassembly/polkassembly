@@ -92,7 +92,7 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 
 	return (
 		<div className='flex flex-col mb-2'>
-			<h3 className='flex gap-2 items-center text-base font-medium m-0 gap-1'>
+			<h3 className='flex gap-2 items-center text-base text-[#243A57] font-medium m-0 gap-1'>
 				<span>
 					<MailFilled /> Email Notifications{' '}
 					{!verified && <span className='text-[10px] px-[4px] py-[2px] bg-[red] border-[#5A46FF] border-2 text-[#FFFFFF] rounded-tr-lg rounded-bl-lg'>Not Verified</span>}

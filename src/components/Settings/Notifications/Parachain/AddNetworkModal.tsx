@@ -195,7 +195,7 @@ const AddNetworkModal = ({
 														} cursor-pointer hover:bg-[#FEF2F8] max-w-[200px] pb-[5px]`}
 													>
 														<Image
-															className='w-[20px] h-[20px] rounded-full -mt-[10px]'
+															className='w-[20px] h-[20px] rounded-full -mt-[12px]'
 															src={
 																chainProperties[
 																	name
@@ -205,7 +205,7 @@ const AddNetworkModal = ({
 														/>
 														<span
 															className={
-																'items-center justify-center ml-[10px] mr-[12px] font-normal text-[#243A57] text-sm leading-[21px] tracking-[0.02em] '
+																'items-center justify-center ml-[10px] mr-[12px] font-normal text-[#243A57] text-sm leading-[21px] tracking-[0.02em]'
 															}
 														>
 															<span className='inline-block capitalize max-w-[100px] overflow-hidden text-ellipsis m-0'>

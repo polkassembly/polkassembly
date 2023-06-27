@@ -13,9 +13,9 @@ import CountBadgePill from '~src/ui-components/CountBadgePill';
 import TrackListingAllTabContent from './TrackListingAllTabContent';
 import TrackListingStatusTabContent from './TrackListingStatusTabContent';
 import FilterByTags from '~src/ui-components/FilterByTags';
-import FilteredTags from '~src/ui-components/filteredTags';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
+import styled from 'styled-components';
 
 interface Props {
 	className?: string;
@@ -72,6 +72,11 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 				count={posts?.closed?.data?.count || 0}
 				status={CustomStatus.Closed}
 			/>
+		},
+		{
+			label:
+				<FilterByTags className='xs:hidden sm:block sm:mr-5'/>,
+			key: 'Filter'
 		}
 	];
 	const router = useRouter();
@@ -102,25 +107,21 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
 	return (
-		<div className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue `}>
-			<div className='flex items-center justify-between mb-10'>
-				<div>
-					<h1 className='dashboard-heading'>Referenda</h1>
-					<FilteredTags/>
-				</div>
-				<FilterByTags className='mr-[2px] mt-[-10px]'/>
+		<div className={`${className} bg-white drop-shadow-md rounded-xxl sm:py-8 px-0 xs:py-4`}>
+			<div className='sm:hidden xs:flex xs:items-center xs:justify-end xs:mb-0 xs:px-4 xs:pt-2'>
+				<FilterByTags className='sm:hidden xs:mr-1 xs:mt-1 xs:mb-2'/>
 			</div>
 			<Tabs
 				activeKey={activeTab}
 				items={items}
 				onTabClick={onTabClick}
 				type="card"
-				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+				className='ant-tabs-tab-bg-white text-bodyBlue font-medium'
 			/>
 			{
 				(posts?.all?.data?.count||0) > 10  && activeTab === 'All' || (posts?.submitted?.data?.count||0) > 10 && activeTab === 'Submitted' || (posts?.voting?.data?.count||0) > 10 && activeTab === 'Voting' || (posts?.closed?.data?.count||0) > 10 && activeTab === 'Closed' ?
 					<Pagination
-						className='flex justify-end mt-6'
+						className='flex justify-end sm:mt-6 mt-4 mb-2'
 						defaultCurrent={1}
 						current={router.query.page ? parseInt(router.query.page as string, 10) : 1}
 						onChange={onPaginationChange}
@@ -135,4 +136,28 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 	);
 };
 
-export default TrackListingCard;
+export default styled(TrackListingCard)`
+	.ant-tabs-nav{
+		margin-left: 15px;
+	}
+	.ant-tabs-nav-list {
+		width: 100%;
+		[data-node-key="Filter"] {
+		position: absolute;
+		right: 0;
+		margin-top: -6px;
+	}
+}
+	@media only screen and (max-width: 640px){
+		.ant-tabs-nav{
+			margin-left: 0px;
+			margin-top: 0px;
+		}
+		.ant-tabs-nav-list {
+			width: auto;
+			[data-node-key="Filter"] {
+				display: none;
+			}
+		}
+}
+`;

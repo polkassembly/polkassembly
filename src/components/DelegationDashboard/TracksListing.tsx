@@ -11,7 +11,7 @@ import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/co
 import  { GetColumns } from './Coloumn';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 
-import { DelegatedIcon, UnDelegatedIcon, ReceivedDelegationIcon } from '~src/ui-components/CustomIcons';
+import { DelegatedSVGDelegationIcon, UnDelegatedIcon, ReceivedDelegationIcon } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
 import { ETrackDelegationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -210,8 +210,8 @@ const DashboardTrackListing = ({ className }: Props) => {
 		</Table>}
 
 		{status === ETrackDelegationStatus.Delegated && delegatedCount === 0 && <div className='h-[550px] bg-white flex pt-[56px] items-center flex-col text-[258px] rounded-b-[14px]'>
-			<DelegatedIcon/>
 			<div className='text-[#243A57] mt-5 text-center'>
+				<DelegatedSVGDelegationIcon />
 				<h4 className='text-base font-medium tracking-[0.005em] mt-0'>No Delegated Tracks</h4>
 				<div className='text-sm tracking-[0.01em] font-normal mt-1 flex justify-center items-center max-md:flex-col'>
           You can see a track here once it has been delegated
@@ -252,6 +252,7 @@ export default styled(DashboardTrackListing)`
   font-size: 14px;
   font-weight: 600px;
   line-height: 21px;
+  white-space: nowrap;
 }
 .column .ant-table-thead > tr > th:nth-child(1){
   text-align: center;

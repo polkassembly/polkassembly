@@ -34,9 +34,11 @@ const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = (
 	};
 
 	return (
-		<div className={className}>
-			<OffChainPostsListing proposalType={proposalType} posts={posts} />
-			<div className='flex justify-end mt-6'>
+		<>
+			<div className={className}>
+				<OffChainPostsListing proposalType={proposalType} posts={posts} />
+			</div>
+			<div className='flex justify-end mt-6 pb-5'>
 				{
 					!!count && count > 0 && count > LIMIT &&
 						<Pagination
@@ -50,7 +52,7 @@ const OffChainPostsListingContainer: FC<IOffChainPostsListingContainerProps> = (
 						/>
 				}
 			</div>
-		</div>
+		</>
 	);
 };
 

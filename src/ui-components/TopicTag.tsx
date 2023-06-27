@@ -14,7 +14,7 @@ interface Props{
 const TopicTag = ({ className, topic }: Props) => {
 
 	return (
-		<Tag className={`${className} ${topic} text-[10px] py-[0.1em] px-2 m-0`}>{topic}</Tag>
+		<Tag className={`${className} ${topic} text-xs py-1 px-3`}>{topic}</Tag>
 	);
 };
 
@@ -22,10 +22,8 @@ export default styled(TopicTag)`
 	font-weight: 500;
 	background-color: var(--grey_primary);
 	color: white;
-	border-style: solid;
-	border-width: 1px;
-	border-radius: 0.2rem;
-	letter-spacing: 0.05rem;
+	border: none;
+	border-radius: 5px;
 	text-transform: capitalize;
 
 	@media only screen and (max-width: 576px) {
@@ -33,19 +31,19 @@ export default styled(TopicTag)`
 	}
 
 	&.Democracy {
-		background-color: var(--blue_primary) !important;
-		color: white;
+		background-color: #EEF8FF !important;
+		color: #093874;
 	}
 	&.Council {
-		background-color: var(--pink_secondary) !important;
-		color: white;
+		background-color: #FFEDF2 !important;
+		color: #CD1F59;
 	}
 	&.Treasury {
-		background-color: var(--pink_primary) !important;
-		color: white;
+		background-color: #FFF4EB !important;
+		color: #AC6A30;
 	}
 	&.Technical, &.Tech {
-		background-color: var(--pink_primary) !important;
-		color: white;
+		background-color: #FEF7DD !important;
+		color: #75610E;
 	}
 `;

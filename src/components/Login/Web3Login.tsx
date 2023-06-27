@@ -352,7 +352,7 @@ const Web3Login: FC<Props> = ({
 	return (
 		<>
 			<article className="bg-white shadow-md rounded-md flex flex-col gap-y-3">
-				<div className='flex items-center px-4 py-2'>
+				<div className='flex items-center px-4 pt-4 pb-2'>
 					<LoginLogo className='mr-2' />
 					<span className="text-[20px] font-semibold text-bodyBlue">Login</span>
 				</div>

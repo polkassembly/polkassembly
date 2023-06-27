@@ -136,7 +136,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	return (
 		<>
 			<article className={`bg-white shadow-md rounded-md flex flex-col ${className} `}>
-				<div className='flex items-center justify-start px-8 py-2'>
+				<div className='flex items-center justify-start px-8 pt-4 pb-2'>
 					<LoginLogo className='mr-3' />
 					<span className="text-[20px] font-semibold text-bodyBlue">Login</span>
 				</div>

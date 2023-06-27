@@ -61,9 +61,9 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 
 	return (
 		<div className={`${className} bg-white drop-shadow-md p-0 lg:p-6 rounded-xxl`}>
-			<div className="flex justify-between items-center px-4">
+			<div className="flex justify-between items-center pr-4 pl-1">
 				<h2 className='text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 sm:mt-0'>Latest Activity</h2>
-				{currentTab !== 'all' && <Link className='text-bodyBlue font-medium hover:text-pink_primary py-0.5 px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
+				{currentTab !== 'all' && <Link className='text-bodyBlue font-medium hover:text-pink_primary px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
 			</div>
 			<Tabs
 				className='ant-tabs-tab-bg-white text-bodyBlue text-sm font-medium'

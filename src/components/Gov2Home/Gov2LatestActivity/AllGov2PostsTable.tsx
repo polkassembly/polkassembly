@@ -33,11 +33,11 @@ const columns: ColumnsType<IPostsRowData> = [
 		render: (title) => {
 			return (
 				<>
-					<div
-						className='truncate'
+					<h4
+						className='truncate m-0'
 					>
 						{title}
-					</div>
+					</h4>
 				</>
 			);
 		}

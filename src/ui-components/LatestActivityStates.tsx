@@ -82,7 +82,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 		<div>
 			{
 				tableData.map((rowData,index) => (
-					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 ${poppins.variable} ${poppins.className}`} style={{ height: '140px' }} onClick={() => onClick(rowData)}>
+					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 h-auto min-h-[140px] ${poppins.variable} ${poppins.className}`} onClick={() => onClick(rowData)}>
 						{/* Meta Data Row */}
 						<div className="flex items-center justify-between text-bodyBlue">
 							<div className="flex my-3">
@@ -129,7 +129,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 		<div>
 			{
 				tableData.map((rowData,index) => (
-					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 ${poppins.variable} ${poppins.className}`} style={{ height: '140px' }} onClick={() => onClick(rowData)}>
+					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 h-auto min-h-[140px] ${poppins.variable} ${poppins.className}`} onClick={() => onClick(rowData)}>
 						{/* Meta Data Row */}
 						<div className="flex items-center justify-between text-bodyBlue">
 							<div className="flex my-3">

@@ -57,7 +57,7 @@ const Parachains = ({ className, network }: Props) => {
 		<>
 			<SEOHead title='Parachains' network={network}/>
 			<div className={className}>
-				<h1 className='dashboard-heading mb-4 md:mb-6'>Polkadot and Kusama ecosystem and directory</h1>
+				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Polkadot and Kusama ecosystem and directory</h1>
 
 				<Row gutter={[{ lg:16 }, 16]} className='mb-4 md:mb-6'>
 					<Col span={24} lg={{ span:12 }}>
@@ -69,11 +69,10 @@ const Parachains = ({ className, network }: Props) => {
 				</Row>
 
 				<div className={`${className} bg-white drop-shadow-md p-2 lg:p-6 rounded-xl h-[650px]`}>
-					<h2 className='text-bodyBlue text-xl font-medium leading-8 mb-6 mt-2 sm:mt-0'>Projects</h2>
+					<h2 className='text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 sm:mt-0'>Projects</h2>
 					<Tabs
-						tabBarStyle={{ color:'#243A57' }}
 						type="card"
-						className='ant-tabs-tab-bg-white text-[#243A57] font-medium'
+						className='ant-tabs-tab-bg-white text-bodyBlue font-medium'
 						items={tabItems}
 					/>
 				</div>
@@ -123,7 +122,7 @@ export default styled(Parachains)`
 	}
 
 	.ant-table-thead{
-		color: #243A57 !important;
+		color: var(--bodyBlue) !important;
 		font-weight: 500;
 	}
 

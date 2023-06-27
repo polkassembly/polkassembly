@@ -5,7 +5,7 @@ import { DownOutlined, PlusOutlined, UpOutlined, MinusCircleOutlined } from '@an
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Button, Checkbox, Form, Input, InputNumber, Modal } from 'antd';
+import { Alert, Button, Checkbox, Divider, Form, Input, InputNumber, Modal } from 'antd';
 import React, { FC, useState } from 'react';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
@@ -35,7 +35,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 	const [form] = Form.useForm();
 	const currentUser = useUserDetailsContext();
 	const [linkStarted, setLinkStarted] = useState(false);
-	const [signatories, setSignatories] = useState<{[key: number| string]: string}>({ 0: '' });
+	const [signatories, setSignatories] = useState<{ [key: number | string]: string }>({ 0: '' });
 	const [signatoryAccounts, setSignatoryAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [showSignatoryAccounts, setShowSignatoryAccounts] = useState(false);
 	const [extensionNotAvailable, setExtensionNotAvailable] = useState(false);
@@ -97,22 +97,22 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 					const address = getEncodedAddress(account.address, network);
 
 					return address &&
-							<div
-								key={address}
-								className='flex items-center gap-x-2'
-							>
-								<Checkbox
-									checked={isSelected(address)}
-									onChange={(e) => {
-										handleAddSignatories(e.target.checked, address);
-									}}
-								/>
-								<AddressComponent
-									className='item'
-									address={address}
-									extensionName={account.meta.name}
-								/>
-							</div>;
+						<div
+							key={address}
+							className='flex items-center gap-x-2'
+						>
+							<Checkbox
+								checked={isSelected(address)}
+								onChange={(e) => {
+									handleAddSignatories(e.target.checked, address);
+								}}
+							/>
+							<AddressComponent
+								className='item'
+								address={address}
+								extensionName={account.meta.name}
+							/>
+						</div>;
 				})}
 			</>
 		);
@@ -121,7 +121,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 	const getSignatoriesArray = () => {
 		const signatoriesArray: any[] = [];
 		Object.keys(signatories).forEach((key) => {
-			if(signatories[key] !== '') {
+			if (signatories[key] !== '') {
 				signatoriesArray.push(signatories[key]);
 			}
 		});
@@ -177,17 +177,17 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		if (!signRaw) return console.error('Signer not available');
 
 		let substrate_address: string | null;
-		if(!multisigAddress.startsWith('0x')) {
+		if (!multisigAddress.startsWith('0x')) {
 			substrate_address = getSubstrateAddress(multisigAddress);
-			if(!substrate_address) return console.error('Invalid address');
-		}else {
+			if (!substrate_address) return console.error('Invalid address');
+		} else {
 			substrate_address = multisigAddress;
 		}
 
 		setLoading(true);
 
-		const { data , error } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/multisigLinkStart', { address: substrate_address });
-		if (error || !data){ setLoading(false); setError(error || 'Error in linking'); console.error('Multisig link start query failed'); return;}
+		const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/multisigLinkStart', { address: substrate_address });
+		if (error || !data) { setLoading(false); setError(error || 'Error in linking'); console.error('Multisig link start query failed'); return; }
 
 		const { signature } = await signRaw({
 			address: signatory,
@@ -195,7 +195,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 			type: 'bytes'
 		});
 
-		const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/multisigLinkConfirm', {
+		const { data: confirmData, error: confirmError } = await nextApiClientFetch<ChangeResponseType>('api/v1/auth/actions/multisigLinkConfirm', {
 			address: substrate_address,
 			addresses: getSignatoriesArray().join(','),
 			signatory,
@@ -204,17 +204,17 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 			threshold
 		});
 
-		if(confirmError || !confirmData) {
+		if (confirmError || !confirmData) {
 			console.error(confirmError);
 			setError(confirmError || 'Error in linking');
 			queueNotification({
 				header: 'Failed!',
-				message: cleanError(confirmError  || ''),
+				message: cleanError(confirmError || ''),
 				status: NotificationStatus.ERROR
 			});
 		}
 
-		if(confirmData?.token) {
+		if (confirmData?.token) {
 			handleTokenChange(confirmData?.token, currentUser);
 			queueNotification({
 				header: 'Success!',
@@ -247,14 +247,19 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		setSignatories(newSignatories);
 	};
 
-	const onSignatoriesAddressChange = (e:any) => {
+	const onSignatoriesAddressChange = (e: any) => {
 		setSignatories((prev) => ({ ...prev, [e.target.id]: e.target.value }));
 	};
 
 	return (
 		<Modal
 			closable={false}
-			title={<span className='font-medium text-lg tracking-wide text-sidebarBlue'>Link Multisig address</span>}
+			title={
+				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
+					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue'>Link Multisig address</span>
+					<Divider />
+				</div>
+			}
 			open={open}
 			className='mb-8 md:min-w-[600px]'
 			footer={
@@ -271,7 +276,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 								loading={loading}
 								className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
 							>
-								{linkStarted? 'Sign': 'Link'}
+								{linkStarted ? 'Sign' : 'Link'}
 							</Button>,
 							<Button
 								key="cancel"
@@ -285,14 +290,16 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 				</div>
 			}
 		>
-			<div className='flex flex-col gap-y-2 mb-5'>
-				{error && <FilteredError text={error} />}
-				{extensionNotAvailable && <Alert message='Please install polkadot.js extension' type='error' />}
-			</div>
+			{
+				(error || extensionNotAvailable ) && <div className='flex flex-col gap-y-2 mb-5'>
+					{error && <FilteredError text={error} />}
+					{extensionNotAvailable && <Alert message='Please install polkadot.js extension' type='error' />}
+				</div>
+			}
 			<Form
 				form={form}
 				onFinish={handleFinish}
-				className='flex flex-col gap-y-8'
+				className='flex flex-col gap-y-6 mb-4'
 			>
 				<section className='flex flex-col gap-y-4 w-full'>
 					<label
@@ -344,9 +351,10 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 							</Button>
 						</div>
 					}
-					<article className='flex flex-col gap-y-3'>
-						{showSignatoryAccounts && signatoryAccounts.length > 0 && getSignatoryAccounts()}
+					{showSignatoryAccounts && signatoryAccounts.length > 0 && <article className='flex flex-col gap-y-3'>
+						{getSignatoryAccounts()}
 					</article>
+					}
 				</section>
 				<section>
 					<label
@@ -414,6 +422,9 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 					/>
 				</section>}
 			</Form>
+			<div className='mr-[-24px] ml-[-24px]'>
+				<Divider className='my-4 mt-0' />
+			</div>
 		</Modal>
 	);
 };

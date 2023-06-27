@@ -33,6 +33,9 @@ export default styled(Markdown)`
 		p, blockquote, ul, ol, dl, table {
 			line-height: 160%;
 			margin: 0 0 0.5rem 0;
+			color: #243A57 !important;
+			font-weight: 500 !important;
+			font-size: 14px !important;
 		}
 
 		h1 {

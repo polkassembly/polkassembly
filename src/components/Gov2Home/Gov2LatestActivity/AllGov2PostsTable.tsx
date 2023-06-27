@@ -34,7 +34,7 @@ const columns: ColumnsType<IPostsRowData> = [
 			return (
 				<>
 					<h4
-						className='truncate'
+						className='truncate m-0'
 					>
 						{title}
 					</h4>
@@ -46,7 +46,8 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Posted By',
 		dataIndex: 'username',
 		key: 'postedBy',
-		render: (username, { proposer }) => <NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' className='max-w-[120px] truncate' defaultAddress={proposer} username={username} disableIdenticon={false} />
+		render: (username, { proposer }) => <div className='truncate' ><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={false} /></div>,
+		width: 200
 	},
 	{
 		title: 'Created',
@@ -151,7 +152,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					/>
 				</div>
 
-				<div className="block lg:hidden h-[520px] overflow-y-auto">
+				<div className="block lg:hidden h-[520px] overflow-y-auto px-0">
 					<Gov2PopulatedLatestActivityCard tableData={tableData}
 						onClick={(rowData) => gotoPost(rowData)}
 					/>

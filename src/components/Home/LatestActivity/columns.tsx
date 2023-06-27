@@ -36,7 +36,7 @@ const Title: any = {
 	dataIndex: 'title',
 	fixed: 'left',
 	key: 'title',
-	render: (title: any) => <h4 className='truncate'>{title}</h4>,
+	render: (title: any) => <div className='truncate'>{title}</div>,
 	title: 'Title',
 	width: 420
 };
@@ -114,11 +114,11 @@ const allColumns: ColumnsType<IPostsRowData> = [
 		render: (title) => {
 			return (
 				<>
-					<h4
+					<div
 						className='truncate'
 					>
 						{title}
-					</h4>
+					</div>
 				</>
 			);
 		},
@@ -183,11 +183,11 @@ const offChainColumns: ColumnsType<IPostsRowData> = [
 		render: (title) => {
 			return (
 				<>
-					<h4
+					<div
 						className='truncate'
 					>
 						{title}
-					</h4>
+					</div>
 				</>
 			);
 		},

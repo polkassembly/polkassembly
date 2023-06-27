@@ -40,7 +40,7 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 					</span>
 				}
 			</h3>
-			<div className='flex items-center gap-2'>
+			<div className='ml-5'>
 				<h3 className='m-0 text-[#243A57] text-[14px]'>{verifiedEmail ? verifiedEmail: 'Please add your email on account page.'}</h3>
 			</div>
 			<DisabledConfirmation

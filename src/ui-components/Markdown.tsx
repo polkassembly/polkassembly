@@ -6,6 +6,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import styled from 'styled-components';
+import remarkGfm from 'remark-gfm';
 
 interface Props {
 	className?: string;
@@ -16,7 +17,7 @@ interface Props {
 const Markdown = ({ className, isPreview=false, md }: Props) => {
 	return <ReactMarkdown
 		className={isPreview ? `${className} mde-preview-content` : className}
-		rehypePlugins={[rehypeRaw]}
+		rehypePlugins={[rehypeRaw, remarkGfm]}
 		linkTarget='_blank'
 	>
 		{md}
@@ -24,6 +25,10 @@ const Markdown = ({ className, isPreview=false, md }: Props) => {
 };
 
 export default styled(Markdown)`
+	table, th, td {
+		border: 1px solid;
+		padding: 0.5rem;
+	}
 
 	&, &.mde-preview-content {
 		font-size: 15px;

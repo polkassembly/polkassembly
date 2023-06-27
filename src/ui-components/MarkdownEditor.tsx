@@ -6,7 +6,6 @@ import 'react-mde/lib/styles/css/react-mde-all.css';
 import React, { useCallback } from 'react';
 import ReactMde, { Suggestion } from 'react-mde';
 import styled from 'styled-components';
-import Markdown from './Markdown';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import { useUserDetailsContext } from '~src/context';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
@@ -14,6 +13,7 @@ import { useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import debounce from 'lodash/debounce';
+import Showdown from 'showdown';
 
 const StyledTextArea = styled.div`
 
@@ -175,6 +175,13 @@ interface Props {
 	value: string
 }
 
+const converter = new Showdown.Converter({
+	simplifiedAutoLink: true,
+	strikethrough: true,
+	tables: true,
+	tasklists: true
+});
+
 function MarkdownEditor(props: Props): React.ReactElement {
 	const { id, username } = useUserDetailsContext();
 	const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
@@ -278,7 +285,6 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	return (
 		<StyledTextArea className='container'>
 			<ReactMde
-				generateMarkdownPreview={markdown => Promise.resolve(<Markdown isPreview={true} md={markdown} />)}
 				minEditorHeight={props.height}
 				minPreviewHeight={props.height}
 				name={props.name}
@@ -292,6 +298,9 @@ function MarkdownEditor(props: Props): React.ReactElement {
 				}}
 				onChange={ onChange }
 				value={input}
+				generateMarkdownPreview={markdown =>
+					Promise.resolve(converter.makeHtml(markdown))
+				}
 			/>
 			<HelperTooltip className='ml-2' text='Attach images by dragging & dropping, selecting or pasting them.' />
 		</StyledTextArea>

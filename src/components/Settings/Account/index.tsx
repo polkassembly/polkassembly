@@ -58,13 +58,14 @@ const Account: FC<Props> = ({ className }) => {
 	const [isLinkAddress, setIsLinkAddress] = useState(false);
 	const [isMultiSigAddress, setIsMultiSigAddress] = useState(false);
 	const [isLinkProxy, setIsLinkProxy] = useState(false);
-
+	const [active, setActive] = useState(false);
 	return (
 		<Collapse
 			size='large'
 			className='bg-white'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
+				setActive(isActive || false);
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
 			}}
 		>
@@ -73,7 +74,7 @@ const Account: FC<Props> = ({ className }) => {
 					<div className='flex items-center gap-[6px] channel-header'>
 						<AccountIcon />
 						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
-						Account Settings
+						Account Settings {active && <span className='text-[#243A57] text-sm font-normal'>Update your account settings here</span>}
 						</h3>
 					</div>
 				}
@@ -96,7 +97,7 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						<Divider className='m-0' />
+						<Divider className='m-0 text-[#D2D8E0]' />
 						<section>
 							<AddressHeader
 								checked={isMultiSigAddress}
@@ -112,7 +113,7 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						<Divider className='m-0' />
+						<Divider className='m-0 text-[#D2D8E0]' />
 						<section>
 							<AddressHeader
 								checked={isLinkProxy}
@@ -131,7 +132,7 @@ const Account: FC<Props> = ({ className }) => {
 						{/* Removed as per the design */}
 						{/* {currentUser && currentUser.addresses && currentUser.addresses.length > 0?
 							<>
-								<Divider className='m-0' />
+								<Divider className='m-0 text-[#D2D8E0]' />
 								<section>
 									<p className='text-sm font-normal tracking-wide leading-6'>
 						Linked Addresses

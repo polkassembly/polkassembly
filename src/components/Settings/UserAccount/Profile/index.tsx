@@ -26,7 +26,7 @@ const Row = ({ label, data, handleEdit }: { label: string, data: string, handleE
 			</div>
 				: data}</p>
 		</div>
-		<span className='text-[14px] font-medium text-pink_primary cursor-pointer flex items-center gap-1' onClick={handleEdit}>
+		<span className='text-[14px] font-medium text-pink_primary cursor-pointer flex items-center gap-1 text-[#485F7D]' onClick={handleEdit}>
 			<EditPencilIcon /> Edit
 		</span>
 	</div>
@@ -65,9 +65,9 @@ export default function ProfileSettings({ }: Props) {
 			>
 				<div className='flex flex-col gap-6'>
 					<Row label='Username' data={username || ''} handleEdit={() => setShowModal(ModalType.USERNAME)} />
-					<Divider className='m-0' />
+					<Divider className='m-0 text-[#D2D8E0]' />
 					<Row label='Email' data={email || ''} handleEdit={() => setShowModal(ModalType.EMAIL)} />
-					<Divider className='m-0' />
+					<Divider className='m-0 text-[#D2D8E0]' />
 					{!web3signup && <Row label='Password' data={username || ''} handleEdit={() => setShowModal(ModalType.PASSWORD)} />}
 				</div>
 				<ChangeUsername

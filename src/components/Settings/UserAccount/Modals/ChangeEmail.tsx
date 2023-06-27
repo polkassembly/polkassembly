@@ -7,11 +7,8 @@ import ChangeEmailIcon from '~assets/icons/change-email.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
-import { Rule } from 'antd/es/form';
-
-const validationRules: Rule[] = [
-	{ message: 'Email is required, Please enter an email', required: true }
-];
+import * as validation from 'src/util/validation';
+import messages from '~src/util/messages';
 
 const ChangeEmail = ({
 	open,
@@ -26,20 +23,7 @@ const ChangeEmail = ({
 }) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
-	const validateEmailFormat = (
-		_: Rule,
-		value: string,
-		callback: (error?: string) => void
-	) => {
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!value || emailRegex.test(value)) {
-			callback();
-			return;
-		} else {
-			callback('Please enter a valid email address.'); // Validation failed
-			return;
-		}
-	};
+	const { email: emailValidation } = validation;
 
 	const handleClick = async () => {
 		try {
@@ -119,14 +103,17 @@ const ChangeEmail = ({
 							name={'newEmail'}
 							className='m-0 w-full min-w-[250px]'
 							rules={[
-								...validationRules,
-								{ validator: validateEmailFormat }
+								{
+									message: messages.VALIDATION_EMAIL_ERROR,
+									pattern: emailValidation.pattern
+								}
 							]}
 						>
 							<Input
 								disabled={loading}
 								className='p-2 text-sm leading-[21px]'
 								placeholder='Enter your email'
+								required
 							/>
 						</Form.Item>
 					</div>

@@ -6,8 +6,6 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import dynamic from 'next/dynamic';
 import React, { FC, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
-import AddressComponent from 'src/ui-components/Address';
 import styled from 'styled-components';
 import AccountIcon from '~assets/icons/account-icon.svg';
 import { Collapse } from '../Notifications/common-ui/Collapse';
@@ -60,7 +58,6 @@ const Account: FC<Props> = ({ className }) => {
 	const [isLinkAddress, setIsLinkAddress] = useState(false);
 	const [isMultiSigAddress, setIsMultiSigAddress] = useState(false);
 	const [isLinkProxy, setIsLinkProxy] = useState(false);
-	const currentUser = useUserDetailsContext();
 
 	return (
 		<Collapse
@@ -131,7 +128,8 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						{currentUser && currentUser.addresses && currentUser.addresses.length > 0?
+						{/* Removed as per the design */}
+						{/* {currentUser && currentUser.addresses && currentUser.addresses.length > 0?
 							<>
 								<Divider className='m-0' />
 								<section>
@@ -151,7 +149,7 @@ const Account: FC<Props> = ({ className }) => {
 									</ul>
 								</section>
 							</>
-							: null}
+							: null} */}
 					</div>
 				</Row>
 			</Panel>

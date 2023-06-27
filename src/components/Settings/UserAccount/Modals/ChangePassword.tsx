@@ -57,6 +57,7 @@ const ChangePassword = ({
 							status: NotificationStatus.SUCCESS
 						});
 					}
+					onCancel();
 				}
 				setLoading(false);
 			}

@@ -13,9 +13,10 @@ import messages from '~src/auth/utils/messages';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseType | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
-	const body = JSON.parse(JSON.stringify(req.body));
-	const { username } = body;
-	if(!body || !username ) return res.status(400).json({ message: 'Missing parameters in request body' });
+
+	const { username } = req.body;
+
+	if( !username ) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
 	if(!token) return res.status(400).json({ message: 'Invalid token' });

@@ -572,10 +572,10 @@ class AuthService {
 			email_verified: true,
 			notification_preferences:{ ...userDocData.notification_preferences,
 				channelPreferences:{
-					...userDocData.notification_preferences?.channelPreferences,
+					...(userDocData.notification_preferences?.channelPreferences || {}),
 					email:{
-						email: email,
 						enabled: true,
+						handle: email.toLowerCase(),
 						verified: true
 					}
 				}

@@ -85,8 +85,8 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 
 	return (
 		<GovSidebarCard className={className}>
-			<div className='flex items-center justify-between gap-x-2 relative z-50'>
-				<h6 className='text-sidebarBlue font-semibold text-[20px] leading-[24px] m-0 p-0'>Voting</h6>
+			<div className='flex items-center justify-between relative z-50'>
+				<h6 className='text-bodyBlue font-medium text-xl leading-6 m-0 p-0'>Voting</h6>
 				<div className='flex items-center gap-x-2'>
 					{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && <PassingInfoTag status={status} isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}/>}
 					<button onClick={() => setVoteCalculationModalOpen(true)} className='border-none outline-none bg-transparent flex items-center cursor-pointer justify-center text-lg text-navBlue hover:text-pink_primary'><VoteCalculationIcon /></button>
@@ -100,7 +100,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						nayVotes={tallyData.nays}
 					/>
 				</div>
-				<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] -mt-4'>
+				<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue -mt-4'>
 					<article className='flex items-center justify-between gap-x-2'>
 						<div className='flex items-center gap-x-1'>
 							<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>

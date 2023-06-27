@@ -22,17 +22,16 @@ export enum EDecision {
 
 export interface IVoteHistory {
 	timestamp?: string | undefined;
-    decision: EDecision;
-    type: VoteType;
-    blockNumber: number;
-    index: number;
-    proposalType: TSubsquidProposalType;
+	decision: EDecision;
+	type: VoteType;
+	blockNumber: number;
+	index: number;
+	proposalType: TSubsquidProposalType;
 	balance?: {
-		value: string | null;
-	} | {
-		nay: string | null;
-		aye: string | null;
-		abstain: string | null;
+		value?: string;
+		nay?: string;
+		aye?: string;
+		abstain?: string;
 	},
 	createdAt?: string;
 	createdAtBlock?: number,

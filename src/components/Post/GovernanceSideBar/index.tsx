@@ -8,7 +8,7 @@ import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Spin, Tooltip } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
@@ -49,7 +49,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
 import { useCurrentBlock } from '~src/hooks';
-import { EDecision, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
+import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import BN from 'bn.js';
@@ -60,7 +60,6 @@ import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBala
 import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
-import _ from 'lodash';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -74,28 +73,6 @@ interface IGovernanceSidebarProps {
 	toggleEdit?: () => void;
 	lastVote: ILastVote | undefined;
 	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
-}
-
-interface ILastVoteInfoOnchainProps{
-	isLastVoteLoading: boolean;
-	decision:string
-	balance: BN | string
-	conviction:string | number
-	vote:{
-		balance?: {
-			value: string | null;
-		} | {
-			nay: string | null;
-			aye: string | null;
-			abstain: string | null;
-		},
-		conviction:string | number,
-		time?:string
-	}
-}
-
-interface ILastVoteInfoLocalStateProps {
-	lastVote: ILastVote
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -159,8 +136,15 @@ export function getTrackFunctions(trackInfo: any) {
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { network } = useNetworkContext();
 	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, lastVote ,setLastVote } = props;
+
+	const { network } = useNetworkContext();
+	const currentBlock = useCurrentBlock();
+	const { api, apiReady } = useApiContext();
+	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();
+	const { postData: { created_at, track_number, post_link } } = usePostDataContext();
+	const metaMaskError = useHandleMetaMask();
+
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [extensionNotFound, setExtensionNotFound] = useState(false);
@@ -169,15 +153,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [signersMap, setSignersMap] = useState<{[key:string]: Signer}>({});
 	const [open, setOpen] = useState(false);
 	const [graphicOpen, setGraphicOpen] = useState<boolean>(true);
-	const currentBlock = useCurrentBlock();
-
-	const { api, apiReady } = useApiContext();
-
-	const { walletConnectProvider } = useUserDetailsContext();
-	const { postData: { created_at, track_number, post_link } } = usePostDataContext();
 	const [thresholdOpen, setThresholdOpen] = useState(false);
-
-	const metaMaskError = useHandleMetaMask();
 	const [curvesLoading, setCurvesLoading] = useState(true);
 	const [curvesError, setCurvesError] = useState('');
 	const [data, setData] = useState<any>({
@@ -191,93 +167,181 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		support: 0,
 		supportThreshold: 0
 	});
-
-	const [vote,setVote] = useState<{
-		balance?: {
-			value: string | null;
-		} | {
-			nay: string | null;
-			aye: string | null;
-			abstain: string | null;
-		},
-		conviction:string | number,
-		decision:EDecision,
-		time?:string
-	}>({
-		balance:{
-			abstain:'',
-			aye:'',
-			nay:'',
-			value:''
-		},
-		conviction:0,
-		decision:EDecision.YES,
-		time:''
-	});
-	const[isLastVoteLoading,setIsLastVoteLoading] = useState(true);
-	const [voteCount,setVoteCount] = useState<number>(0);
+	const [onChainLastVote, setOnChainLastVote] = useState<IVoteHistory | null>(null);
+	const[isLastVoteLoading, setIsLastVoteLoading] = useState(true);
 
 	const canVote = !!post.status && !![proposalStatus.PROPOSED, referendumStatus.STARTED, motionStatus.PROPOSED, tipStatus.OPENED, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.DECIDING, gov2ReferendumStatus.SUBMITTED, gov2ReferendumStatus.CONFIRM_STARTED].includes(post.status);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 
-	const LastVoteInfoOnChain : FC <ILastVoteInfoOnchainProps>  = ({ isLastVoteLoading , decision , balance , conviction , vote }) => {
-		const unit =`${chainProperties[network]?.tokenSymbol}`;
-		return(
-			<Spin spinning={ isLastVoteLoading } indicator={<LoadingOutlined />}>
-				<div className=''>
-					<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-					<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
-						<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
-							<span className='h-[25px]'>{decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> : decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : decision == 'abstain' && (!(vote.balance as any).abstain)  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : decision == 'abstain' && (vote.balance as any).abstain ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
-						</Tooltip>
-						<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.time, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
+	const balance  = useMemo(() => {
+		return onChainLastVote?.balance ? Object.values(onChainLastVote.balance).reduce((prev, curr) => {
+			if(!curr) return prev;
+			return prev.add(new BN(curr));
+		}, new BN(0)).toString() : '';
+	}, [onChainLastVote?.balance]);
 
-						<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
-							<span>
-								<MoneyIcon className='mr-1'/>
-								{formatedBalance(balance.toString(), unit)}{` ${unit}`}
-							</span>
-						</Tooltip>
+	const onAccountChange = (address: string) => setAddress(address);
 
-						<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
-							<span title='Conviction'>
-								<ConvictionIcon className='mr-1'/>
-								{conviction}x
-							</span>
-						</Tooltip>
-					</div>
-				</div></Spin>);
+	const getWalletAccounts = async (chosenWallet: Wallet): Promise<InjectedAccount[] | undefined> => {
+		const injectedWindow = window as Window & InjectedWindow;
+
+		let wallet = isWeb3Injected
+			? injectedWindow.injectedWeb3[chosenWallet]
+			: null;
+
+		if (!wallet) {
+			wallet = Object.values(injectedWindow.injectedWeb3)[0];
+		}
+
+		if (!wallet) {
+			return;
+		}
+
+		let injected: Injected | undefined;
+
+		try {
+			injected = await new Promise((resolve, reject) => {
+				const timeoutId = setTimeout(() => {
+					reject(new Error('Wallet Timeout'));
+				}, 60000); // wait 60 sec
+
+				if(wallet && wallet.enable) {
+					wallet!.enable(APPNAME).then(value => {
+						clearTimeout(timeoutId);
+						resolve(value);
+					}).catch(error => {
+						reject(error);
+					});
+				}
+			});
+		} catch (err) {
+			console.log('Error fetching wallet accounts : ', err);
+		}
+
+		if(!injected) {
+			return;
+		}
+
+		const accounts = await injected.accounts.get();
+
+		if (accounts.length === 0) return;
+
+		accounts.forEach((account) => {
+			account.address = getEncodedAddress(account.address, network) || account.address;
+		});
+
+		return accounts;
 	};
 
-	const LastVoteInfoLocalState :FC<ILastVoteInfoLocalStateProps> = ({ lastVote }) => {
-		return (
-			<div>
-				<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-				<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
-					<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
-						<span className='h-[25px]'>{lastVote?.decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :lastVote?.decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : lastVote?.decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : lastVote?.decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
-					</Tooltip>
-					<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
-						<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
-					</Tooltip>
+	const getAccounts = async (): Promise<undefined> => {
+		if (!api) {
+			return;
+		}
 
-					<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=''>
-						<span>
-							<MoneyIcon className='mr-1'/>
-							{formatedBalance(lastVote?.balance.toString(), unit)}{` ${unit}`}
-						</span>
-					</Tooltip>
+		if (!apiReady) {
+			return;
+		}
 
-					<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
-						<span title='Conviction'>
-							<ConvictionIcon className='mr-1'/>
-							{lastVote?.conviction}x
-						</span>
-					</Tooltip>
-				</div>
-			</div>
-		);
+		const extensions = await web3Enable(APPNAME);
+
+		if (extensions.length === 0) {
+			setExtensionNotFound(true);
+			return;
+		} else {
+			setExtensionNotFound(false);
+		}
+
+		let accounts: InjectedAccount[] = [];
+		let polakadotJSAccounts : InjectedAccount[] | undefined;
+		let polywalletJSAccounts : InjectedAccount[] | undefined;
+		let subwalletAccounts: InjectedAccount[] | undefined;
+		let talismanAccounts: InjectedAccount[] | undefined;
+
+		const signersMapLocal = signersMap as {[key:string]: Signer};
+		const accountsMapLocal = accountsMap as {[key:string]: string};
+
+		for (const extObj of extensions) {
+			if(extObj.name == 'polkadot-js') {
+				signersMapLocal['polkadot-js'] = extObj.signer;
+				polakadotJSAccounts = await getWalletAccounts(Wallet.POLKADOT);
+			} else if(extObj.name == 'subwallet-js') {
+				signersMapLocal['subwallet-js'] = extObj.signer;
+				subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
+			} else if(extObj.name == 'talisman') {
+				signersMapLocal['talisman'] = extObj.signer;
+				talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
+			} else if (['polymesh'].includes(network) && extObj.name === 'polywallet') {
+				signersMapLocal['polywallet'] = extObj.signer;
+				polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
+			}
+		}
+
+		if(polakadotJSAccounts) {
+			accounts = accounts.concat(polakadotJSAccounts);
+			polakadotJSAccounts.forEach((acc: InjectedAccount) => {
+				accountsMapLocal[acc.address] = 'polkadot-js';
+			});
+		}
+
+		if(['polymesh'].includes(network) && polywalletJSAccounts) {
+			accounts = accounts.concat(polywalletJSAccounts);
+			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
+				accountsMapLocal[acc.address] = 'polywallet';
+			});
+		}
+
+		if(subwalletAccounts) {
+			accounts = accounts.concat(subwalletAccounts);
+			subwalletAccounts.forEach((acc: InjectedAccount) => {
+				accountsMapLocal[acc.address] = 'subwallet-js';
+			});
+		}
+
+		if(talismanAccounts) {
+			accounts = accounts.concat(talismanAccounts);
+			talismanAccounts.forEach((acc: InjectedAccount) => {
+				accountsMapLocal[acc.address] = 'talisman';
+			});
+		}
+
+		if (accounts.length === 0) {
+			setAccountsNotFound(true);
+			return;
+		} else {
+			setAccountsNotFound(false);
+			setAccountsMap(accountsMapLocal);
+			setSignersMap(signersMapLocal);
+		}
+
+		setAccounts(accounts);
+		if (accounts.length > 0) {
+			setAddress(accounts[0].address);
+			const signer: Signer = signersMapLocal[accountsMapLocal[accounts[0].address]];
+			api.setSigner(signer);
+		}
+
+		return;
 	};
+
+	const getVotingHistoy = useCallback(async () => {
+		setIsLastVoteLoading(true);
+		const encoded = getEncodedAddress(address || loginAddress || defaultAddress || '', network);
+
+		const { data = null, error } = await nextApiClientFetch<IVotesHistoryResponse>(`api/v1/votes/history?page=${1}&voterAddress=${encoded}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${onchainId}`);
+		if(error || !data) {
+			console.error('Error in fetching votes history: ', error);
+			setIsLastVoteLoading(false);
+			return;
+		}
+
+		if((data?.votes?.length || 0) <= 0) {
+			setIsLastVoteLoading(false);
+			return;
+		}
+
+		setOnChainLastVote(data.votes[0]);
+		setIsLastVoteLoading(false);
+	}, [address, defaultAddress, loginAddress, network, onchainId, proposalType]);
 
 	useEffect(() => {
 		if ([ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
@@ -475,10 +539,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		}
 	}, [currentBlock, post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
 
-	const onAccountChange = (address: string) => {
-		setAddress(address);
-	};
-
 	useEffect(() => {
 		if (!api) {
 			return;
@@ -493,195 +553,94 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
-	const getVotingHistoy = () => {
-		const encoded = getEncodedAddress(address, network);
-		nextApiClientFetch<IVotesHistoryResponse>(`api/v1/votes/history?page=${1}&voterAddress=${encoded}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${onchainId}`)
-			.then((res) => {
-				if (res.error) {
-					console.log('error');
-				} else {
-					if(res.data?.count){
-						setVoteCount(res.data?.count);
-						setVote({
-							balance:res.data?.votes[0].balance,
-							conviction:res.data?.votes[0].lockPeriod||0,
-							decision:res.data?.votes[0].decision,
-							time:res.data?.votes[0].createdAt
-						});
-						setIsLastVoteLoading(false);
-					}
-				}
+	useEffect(() => {
+		getVotingHistoy();
+	}, [getVotingHistoy]);
 
-			})
-			.catch((err) => {
-				console.error(err);
-			});
+	const LastVoteInfoOnChain : FC <IVoteHistory>  = ({ createdAt, decision , lockPeriod }) => {
+		const unit =`${chainProperties[network]?.tokenSymbol}`;
+		return (
+			<Spin spinning={ isLastVoteLoading } indicator={<LoadingOutlined />}>
+				<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
+
+				<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+					<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
+						<span className='h-[25px]'>
+							{decision == 'yes' ?
+								<p>
+									<AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span>
+								</p> :
+								decision == 'no' ?
+									<p>
+										<DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span>
+									</p> :
+									decision == 'abstain' && !(balance as any).abstain ?
+										<p>
+											<SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span>
+										</p> :
+										decision == 'abstain' && (balance as any).abstain ?
+											<p className='flex justify-center align-middle'>
+												<AbstainGray className='mr-1 mb-[-8px]'/>
+												<span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span>
+											</p> : null
+							}
+						</span>
+					</Tooltip>
+
+					<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
+
+					<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
+						<span>
+							<MoneyIcon className='mr-1'/>
+							{formatedBalance(balance, unit)}{` ${unit}`}
+						</span>
+					</Tooltip>
+
+					<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
+						<span title='Conviction'>
+							<ConvictionIcon className='mr-1'/>
+							{lockPeriod}x
+						</span>
+					</Tooltip>
+				</div>
+			</Spin>);
 	};
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedVotingHistory = useCallback(_.debounce(getVotingHistoy, 3000), [address,api,apiReady,network,proposalType,lastVote]);
+	const LastVoteInfoLocalState :FC<ILastVote> = ({ balance, conviction, decision }) => {
+		return (
+			<div>
+				<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
+				<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+					<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
+						<span className='h-[25px]'>{decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
+					</Tooltip>
+					<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
+						<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
+					</Tooltip>
 
-	useEffect( () => {
-		if (!api) {
-			return;
-		}
+					<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=''>
+						<span>
+							<MoneyIcon className='mr-1'/>
+							{formatedBalance(balance.toString(), unit)}{` ${unit}`}
+						</span>
+					</Tooltip>
 
-		if (!apiReady) {
-			return;
-		}
-		setIsLastVoteLoading(true);
-		debouncedVotingHistory();
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedVotingHistory]);
-
-	const balance  = vote.balance ? Object.values(vote.balance).reduce((prev, ele) => {
-		if(!ele){
-			return prev;
-		}
-		return prev.add(new BN(ele));
-	}, new BN(0)).toString() : '';
-
-	const getWalletAccounts = async (chosenWallet: Wallet): Promise<InjectedAccount[] | undefined> => {
-		const injectedWindow = window as Window & InjectedWindow;
-
-		let wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[chosenWallet]
-			: null;
-
-		if (!wallet) {
-			wallet = Object.values(injectedWindow.injectedWeb3)[0];
-		}
-
-		if (!wallet) {
-			return;
-		}
-
-		let injected: Injected | undefined;
-
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if(wallet && wallet.enable) {
-					wallet!.enable(APPNAME).then(value => {
-						clearTimeout(timeoutId);
-						resolve(value);
-					}).catch(error => {
-						reject(error);
-					});
-				}
-			});
-		} catch (err) {
-			console.log('Error fetching wallet accounts : ', err);
-		}
-
-		if(!injected) {
-			return;
-		}
-
-		const accounts = await injected.accounts.get();
-
-		if (accounts.length === 0) return;
-
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
-
-		return accounts;
+					<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
+						<span title='Conviction'>
+							<ConvictionIcon className='mr-1'/>
+							{conviction}x
+						</span>
+					</Tooltip>
+				</div>
+			</div>
+		);
 	};
 
-	const getAccounts = async (): Promise<undefined> => {
-		if (!api) {
-			return;
-		}
-
-		if (!apiReady) {
-			return;
-		}
-
-		const extensions = await web3Enable(APPNAME);
-
-		if (extensions.length === 0) {
-			setExtensionNotFound(true);
-			return;
-		} else {
-			setExtensionNotFound(false);
-		}
-
-		let accounts: InjectedAccount[] = [];
-		let polakadotJSAccounts : InjectedAccount[] | undefined;
-		let polywalletJSAccounts : InjectedAccount[] | undefined;
-		let subwalletAccounts: InjectedAccount[] | undefined;
-		let talismanAccounts: InjectedAccount[] | undefined;
-
-		const signersMapLocal = signersMap as {[key:string]: Signer};
-		const accountsMapLocal = accountsMap as {[key:string]: string};
-
-		for (const extObj of extensions) {
-			if(extObj.name == 'polkadot-js') {
-				signersMapLocal['polkadot-js'] = extObj.signer;
-				polakadotJSAccounts = await getWalletAccounts(Wallet.POLKADOT);
-			} else if(extObj.name == 'subwallet-js') {
-				signersMapLocal['subwallet-js'] = extObj.signer;
-				subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
-			} else if(extObj.name == 'talisman') {
-				signersMapLocal['talisman'] = extObj.signer;
-				talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
-			} else if (['polymesh'].includes(network) && extObj.name === 'polywallet') {
-				signersMapLocal['polywallet'] = extObj.signer;
-				polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
-			}
-		}
-
-		if(polakadotJSAccounts) {
-			accounts = accounts.concat(polakadotJSAccounts);
-			polakadotJSAccounts.forEach((acc: InjectedAccount) => {
-				accountsMapLocal[acc.address] = 'polkadot-js';
-			});
-		}
-
-		if(['polymesh'].includes(network) && polywalletJSAccounts) {
-			accounts = accounts.concat(polywalletJSAccounts);
-			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
-				accountsMapLocal[acc.address] = 'polywallet';
-			});
-		}
-
-		if(subwalletAccounts) {
-			accounts = accounts.concat(subwalletAccounts);
-			subwalletAccounts.forEach((acc: InjectedAccount) => {
-				accountsMapLocal[acc.address] = 'subwallet-js';
-			});
-		}
-
-		if(talismanAccounts) {
-			accounts = accounts.concat(talismanAccounts);
-			talismanAccounts.forEach((acc: InjectedAccount) => {
-				accountsMapLocal[acc.address] = 'talisman';
-			});
-		}
-
-		if (accounts.length === 0) {
-			setAccountsNotFound(true);
-			return;
-		} else {
-			setAccountsNotFound(false);
-			setAccountsMap(accountsMapLocal);
-			setSignersMap(signersMapLocal);
-		}
-
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			setAddress(accounts[0].address);
-			const signer: Signer = signersMapLocal[accountsMapLocal[accounts[0].address]];
-			api.setSigner(signer);
-		}
-
-		return;
-	};
+	const RenderLastVote = lastVote ?
+		<LastVoteInfoLocalState {...lastVote} /> :
+		onChainLastVote !== null ?
+			<LastVoteInfoOnChain {...onChainLastVote}/> :
+			null;
 
 	if (extensionNotFound) {
 		return (
@@ -701,6 +660,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			</GovSidebarCard>
 		);
 	}
+
 	return (
 		<>
 			{<div className={className}>
@@ -788,30 +748,27 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							{
 								proposalType === ProposalType.REFERENDUMS?
 									<>
-
 										{canVote &&
 											<>
 												{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
 													<>
 														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 
-														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
-
-													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
-														<VoteReferendumEth
-															referendumId={onchainId as number}
-															onAccountChange={onAccountChange}
-															setLastVote={setLastVote}
-															lastVote={lastVote} />
-
 														{
-															lastVote ? < LastVoteInfoLocalState lastVote={lastVote} /> : voteCount > 0 ? <LastVoteInfoOnChain isLastVoteLoading={isLastVoteLoading} vote={vote} balance={balance} conviction={vote.conviction} decision={vote.decision}/> : null
-														}
-													</GovSidebarCard>
+															(!metaMaskError || walletConnectProvider?.wc.connected) &&
+																<GovSidebarCard className='overflow-y-hidden'>
+																	<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
+																	<VoteReferendumEth
+																		referendumId={onchainId as number}
+																		onAccountChange={onAccountChange}
+																		setLastVote={setLastVote}
+																		lastVote={lastVote} />
 
+																	{RenderLastVote}
+																</GovSidebarCard>
 														}
-													</> : <GovSidebarCard className='overflow-y-hidden'>
+													</> :
+													<GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
@@ -822,9 +779,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															proposalType={proposalType}
 														/>
 
-														{
-															lastVote ? < LastVoteInfoLocalState lastVote={lastVote} /> : voteCount > 0 ? <LastVoteInfoOnChain isLastVoteLoading={isLastVoteLoading} vote={vote} balance={balance} conviction={vote.conviction} decision={vote.decision}/> : null
-														}
+														{RenderLastVote}
 													</GovSidebarCard>
 												}
 											</>
@@ -857,9 +812,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															setLastVote={setLastVote}
 															lastVote={lastVote} />
 
-														{
-															lastVote ? < LastVoteInfoLocalState lastVote={lastVote} /> : voteCount > 0 ? <LastVoteInfoOnChain isLastVoteLoading={isLastVoteLoading} vote={vote} balance={balance} conviction={vote.conviction} decision={vote.decision}/> : null
-														}
+														{RenderLastVote}
 													</GovSidebarCard>
 
 														}
@@ -874,9 +827,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															proposalType={proposalType}
 														/>
 
-														{
-															lastVote ? < LastVoteInfoLocalState lastVote={lastVote} /> : voteCount > 0 ? <LastVoteInfoOnChain isLastVoteLoading={isLastVoteLoading} vote={vote} balance={balance} conviction={vote.conviction} decision={vote.decision}/> : null
-														}
+														{RenderLastVote}
 
 													</GovSidebarCard>}
 											</>

@@ -171,7 +171,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const[isLastVoteLoading, setIsLastVoteLoading] = useState(true);
 
 	const canVote = Boolean(post.status) &&
-	[proposalStatus.PROPOSED,
+	[
+		proposalStatus.PROPOSED,
 		referendumStatus.STARTED,
 		motionStatus.PROPOSED,
 		tipStatus.OPENED,
@@ -550,13 +551,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	}, [currentBlock, post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
 
 	useEffect(() => {
-		if (!api) {
-			return;
-		}
-
-		if (!apiReady) {
-			return;
-		}
+		if (!api || !!apiReady) return;
 
 		const signer: Signer = signersMap[accountsMap[address]];
 		api?.setSigner(signer);
@@ -814,8 +809,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
-													<GovSidebarCard>
-														<h6 className="dashboard-heading mb-6">Cast your Vote!</h6>
+													<GovSidebarCard className='overflow-y-hidden'>
+														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendumEthV2
 															referendumId={onchainId as number}
 															onAccountChange={onAccountChange}

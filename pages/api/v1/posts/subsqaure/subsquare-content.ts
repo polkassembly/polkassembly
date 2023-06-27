@@ -5,6 +5,7 @@ import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { ProposalType } from '~src/global/proposalType';
+import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 const urlMapper: any = {
 	[ProposalType.BOUNTIES]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/bounties/${id}`,
@@ -21,15 +22,20 @@ const urlMapper: any = {
 
 export const getSubSquareContentAndTitle = async (proposalType: string | string[], network: string | string[] | undefined, id: string | string[] | number |undefined) => {
 	try {
-		const url = urlMapper[proposalType]?.(id, network);
+		if( typeof proposalType !== 'string' ){
+			throw apiErrorWithStatusCode('can not send String[] in Proposal type', 400);
+			return;
+		}
+		const url = urlMapper[String(proposalType)]?.(id, network);
 		const data = await (await fetch(url)).json();
 		let subsqTitle = data.title.includes('Untitled') ? '' : data.title;
 		subsqTitle.includes('[Root] Referendum #') ? subsqTitle = subsqTitle.replace(/\[Root\] Referendum #\d+: /, '') : '';
 
-		const comments = { content : data.content ,title:subsqTitle };
-		console.log('api data = ',comments);
-		return comments;
+		const subsquareData = { content : data.content ,title:subsqTitle };
+		console.log('api data = ',subsquareData);
+		return subsquareData;
 	} catch (error) {
+		console.log('Error while Fetching data from subsquare');
 		return { content: '',title: '' };
 	}
 };
@@ -43,9 +49,9 @@ const handler: NextApiHandler<{ data: any } | { error: string }> = async (req, r
 	const data :{
         content:'',
         title:''
-    }= await getSubSquareContentAndTitle(proposalType as string, network, id);
-	if (data.title === '' && data.content === '') {
-		res.status(200).json({ data: { content:null , title:null } });
+    } | undefined = await getSubSquareContentAndTitle(proposalType as string, network, id);
+	if (data?.title === '' && data?.content === '') {
+		res.status(200).json({ data: { content:'' , title:'' } });
 	} else {
 		res.status(200).json( { data } );
 	}

@@ -481,6 +481,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
 					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex } = subsquidPost;
 					let otherPostProposer = '';
+					const method = splitterAndCapitalizer(subsquidPost.callData?.method || '', '_');
 					if (group?.proposals?.length) {
 						group.proposals.forEach((obj: any) => {
 							if (!otherPostProposer) {
@@ -508,11 +509,12 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					if (postDoc && postDoc.exists) {
 						const data = postDoc.data();
 						if (data) {
-							//console.log('single post ',data);
 							let subsquareTitle = '';
-							await getSubSquareContentAndTitle(strProposalType,network,postId).then((response) => {
-								subsquareTitle = response.title;
-							});
+							if(data?.title === '' || data?.title === method ){
+								await getSubSquareContentAndTitle(strProposalType,network,postId).then((response) => {
+									subsquareTitle = response?.title;
+								});
+							}
 							const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 							const topic = data?.topic;
 							const topic_id = data?.topic_id;
@@ -531,7 +533,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 								status,
 								tags: data?.tags || [],
-								title: subsquareTitle || null,
+								title: data?.title || subsquareTitle,
 								topic: topic ? topic : isTopicIdValid(topic_id) ? {
 									id: topic_id,
 									name: getTopicNameFromTopicId(topic_id)
@@ -544,7 +546,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 					let subsquareTitle = '';
 					await getSubSquareContentAndTitle(strProposalType,network,postId).then((response) => {
-						subsquareTitle = response.title;
+						subsquareTitle = response?.title;
 					});
 					return {
 						comments_count: commentsQuerySnapshot.data()?.count || 0,

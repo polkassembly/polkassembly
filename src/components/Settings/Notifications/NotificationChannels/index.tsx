@@ -118,7 +118,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 				key='1'
 			>
 				<div className='flex flex-col'>
-					<p className='font-medium text-[16px] leading-[21px] mb-[22px]'>
+					<p className='font-medium text-[16px] leading-[21px] mb-[22px] text-[#243A57]'>
 						Please select the socials where you would like to receive notifications:
 					</p>
 					<EmailNotificationCard

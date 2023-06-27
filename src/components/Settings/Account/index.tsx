@@ -1,13 +1,16 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Row, Skeleton, Switch } from 'antd';
+import { Divider, Row, Skeleton } from 'antd';
+import ExpandIcon from '~assets/icons/expand.svg';
+import CollapseIcon from '~assets/icons/collapse.svg';
 import dynamic from 'next/dynamic';
 import React, { FC, useState } from 'react';
-import Header from 'src/components/Settings/Header';
-import { useUserDetailsContext } from 'src/context';
-import AddressComponent from 'src/ui-components/Address';
 import styled from 'styled-components';
+import AccountIcon from '~assets/icons/account-icon.svg';
+import { Collapse } from '../Notifications/common-ui/Collapse';
+
+const { Panel } = Collapse;
 
 const Address = dynamic(() => import('./Address'),{
 	loading: () => <Skeleton active />,
@@ -30,16 +33,17 @@ interface IAddressHeaderProps {
     checked?: boolean;
     onChange?: React.Dispatch<React.SetStateAction<boolean>>;
 	modal?: React.ReactNode;
+	subHeading?:string
 }
 
-const AddressHeader: FC<IAddressHeaderProps> = ({ checked, header, id, onChange, modal }) => {
+const AddressHeader: FC<IAddressHeaderProps> = ({ checked, header, id, onChange, modal, subHeading }) => {
 	return (
 		<>
-			<article className='flex items-center gap-x-2 text-sm font-normal tracking-wide leading-6 mb-6'>
-				<label className='cursor-pointer' htmlFor={id}>
+			<article className='flex items-center gap-1 text-xs font-normal tracking-wide leading-6 align-center'>
+				<label className='cursor-pointer text-pink_primary font-medium text-sm' htmlFor={id} onClick={(e:any) => onChange?.(e)}>
 					{header}
 				</label>
-				<Switch checked={checked} onChange={(e) => onChange? onChange(e): null} id={id} size='small' defaultChecked />
+				<span>{subHeading}</span>
 			</article>
 			{checked? modal: null}
 		</>
@@ -54,72 +58,82 @@ const Account: FC<Props> = ({ className }) => {
 	const [isLinkAddress, setIsLinkAddress] = useState(false);
 	const [isMultiSigAddress, setIsMultiSigAddress] = useState(false);
 	const [isLinkProxy, setIsLinkProxy] = useState(false);
-	const currentUser = useUserDetailsContext();
-
+	const [active, setActive] = useState(false);
 	return (
-		<Row className={`${className} flex flex-col w-full`}>
-			<Header heading='Account Settings' subHeading='Update your account settings' />
-			<div className='mt-8'>
-				<section>
-					<AddressHeader
-						checked={isLinkAddress}
-						header='Link Address'
-						id='link_address'
-						onChange={setIsLinkAddress}
-						modal={
-							<Address
-								open={isLinkAddress}
-								dismissModal={() => setIsLinkAddress(false)}
+		<Collapse
+			size='large'
+			className='bg-white'
+			expandIconPosition='end'
+			expandIcon={({ isActive }) => {
+				setActive(isActive || false);
+				return isActive ? <CollapseIcon /> : <ExpandIcon />;
+			}}
+		>
+			<Panel
+				header={
+					<div className='flex items-center gap-[6px] channel-header'>
+						<AccountIcon />
+						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
+						Account Settings {active && <span className='text-[#243A57] text-sm font-normal'>Update your account settings here</span>}
+						</h3>
+					</div>
+				}
+				key='1'
+			>
+				<Row className={`${className} flex flex-col w-full`}>
+					<div className='flex flex-col gap-4'>
+						<section>
+							<AddressHeader
+								checked={isLinkAddress}
+								header='Link Address'
+								id='link_address'
+								onChange={setIsLinkAddress}
+								subHeading='For participating in governance activities with your multisig'
+								modal={
+									<Address
+										open={isLinkAddress}
+										dismissModal={() => setIsLinkAddress(false)}
+									/>
+								}
 							/>
-						}
-					/>
-				</section>
-				<section>
-					<AddressHeader
-						checked={isMultiSigAddress}
-						header='Link Multi Signature Address'
-						id='link_multi_address'
-						onChange={setIsMultiSigAddress}
-						modal={
-							<MultiSignatureAddress
-								open={isMultiSigAddress}
-								dismissModal={() => setIsMultiSigAddress(false)}
+						</section>
+						<Divider className='m-0 text-[#D2D8E0]' />
+						<section>
+							<AddressHeader
+								checked={isMultiSigAddress}
+								header='Link Multi Signature Address'
+								id='link_multi_address'
+								onChange={setIsMultiSigAddress}
+								subHeading='For participating in governance activities with your proxy account'
+								modal={
+									<MultiSignatureAddress
+										open={isMultiSigAddress}
+										dismissModal={() => setIsMultiSigAddress(false)}
+									/>
+								}
 							/>
-						}
-					/>
-				</section>
-				<section>
-					<AddressHeader
-						checked={isLinkProxy}
-						header='Link Proxy Address'
-						id='link_proxy'
-						onChange={setIsLinkProxy}
-						modal={
-							<Proxy
-								open={isLinkProxy}
-								dismissModal={() => setIsLinkProxy(false)}
+						</section>
+						<Divider className='m-0 text-[#D2D8E0]' />
+						<section>
+							<AddressHeader
+								checked={isLinkProxy}
+								header='Link Proxy Address'
+								id='link_proxy'
+								onChange={setIsLinkProxy}
+								subHeading='For participating in governance activities with your wallet address'
+								modal={
+									<Proxy
+										open={isLinkProxy}
+										dismissModal={() => setIsLinkProxy(false)}
+									/>
+								}
 							/>
-						}
-					/>
-				</section>
-				{currentUser && currentUser.addresses && currentUser.addresses.length > 0? <section>
-					<p className='text-sm font-normal tracking-wide leading-6'>
-						Linked Addresses
-					</p>
-					<ul className='list-none flex flex-col gap-y-3 mt-3'>
-						{currentUser.addresses?.map((address) => {
-							return <li key={address}>
-								<AddressComponent
-									ethIdenticonSize={35}
-									identiconSize={28}
-									address={address}
-								/>
-							</li>;
-						})}
-					</ul>
-				</section>: null}
-			</div>
-		</Row>
+						</section>
+					</div>
+				</Row>
+			</Panel>
+
+		</Collapse>
 	);
 };
 

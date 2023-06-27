@@ -5,7 +5,7 @@
 import { InjectedWindow } from '@polkadot/extension-inject/types';
 import { Alert, Button, Form , Input, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
+// import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useUserDetailsContext } from 'src/context';
@@ -206,7 +206,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 									id="password" />
 							</Form.Item>
 							<div className="text-right text-pink_primary mt-[-20px]">
-								<Link href="/request-reset-password">Forgot Password?</Link>
+								<div className='cursor-pointer' onClick={() => {isModal && setLoginOpen && setLoginOpen(false); router.push('/request-reset-password');}}>Forgot Password?</div>
 							</div>
 						</div>
 

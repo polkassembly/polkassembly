@@ -216,6 +216,7 @@ export default styled(Cards)`
 			font-weight: 700 !important;
 			font-size: 12px !important;
 			margin-bottom: 0;
+			color: #243A57 !important;
 		}
 
 		.project-badges{

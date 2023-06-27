@@ -138,10 +138,10 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 			<article className={`bg-white shadow-md rounded-md flex flex-col ${className} `}>
 				<div className='flex items-center px-8'>
 					<LoginLogo className='mr-3' />
-					<h3 className="text-[20px] font-semibold text-[#243A57] mt-3">Login</h3>
+					<h3 className="text-[20px] font-semibold text-bodyBlue mt-3">Login</h3>
 				</div>
 				<Divider style={{ background: '#D2D8E0', flexGrow: 1 }} className='mt-1 px-0' />
-				{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor' />}
+				{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-bodyBlue changeColor' />}
 
 				{walletError && <Alert message={walletError} type="error" />}
 				{authResponse.isTFAEnabled ?
@@ -157,7 +157,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					>
 						<div className="flex flex-col gap-y-1">
 							<label
-								className="text-base text-[#485F7D] "
+								className="text-base text-lightBlue "
 								htmlFor="username"
 							>
 							Enter Username or Email
@@ -190,7 +190,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 						<div className="flex flex-col gap-y-1 -mt-4">
 							<label
-								className="text-base text-[#485F7D]"
+								className="text-base text-lightBlue"
 								htmlFor="password"
 							>
 							Enter Password
@@ -228,7 +228,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 						{error && <FilteredError text={error} />}
 
 						<div className='flex justify-center items-center gap-x-2 mt-2 mb-5 font-semibold'>
-							<label className='text-md text-[#243A57]'>Don&apos;t have an account?</label>
+							<label className='text-md text-bodyBlue'>Don&apos;t have an account?</label>
 							<div onClick={handleClick} className='text-md text-pink_primary cursor-pointer'> Sign Up </div>
 						</div>
 					</AuthForm>}
@@ -239,6 +239,6 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 export default styled(Web2Login)`
 .changeColor .ant-alert-message{
-color:#243A57;
+color:var(--bodyBlue);
 
 }`;

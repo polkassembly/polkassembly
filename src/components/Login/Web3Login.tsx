@@ -354,7 +354,7 @@ const Web3Login: FC<Props> = ({
 			<article className="bg-white shadow-md rounded-md flex flex-col gap-y-3">
 				<div className='flex items-center px-4'>
 					<LoginLogo className='mr-2' />
-					<h3 className="text-[20px] font-semibold text-[#243A57] mt-3">Login</h3>
+					<h3 className="text-[20px] font-semibold text-bodyBlue mt-3">Login</h3>
 				</div>
 				<hr className='border-[#D2D8E0] border-opacity-30' />
 				<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col px-4 mb-0">
@@ -363,14 +363,14 @@ const Web3Login: FC<Props> = ({
 						<span className='mt-2'>
 							<WalletIcon which={chosenWallet} />
 						</span>
-						<span className='text-[#243A57] text-lg sm:text-xl'>
+						<span className='text-bodyBlue text-lg sm:text-xl'>
 							{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
 						</span>
 					</p>
 				</h3>
 				{fetchAccounts ?
 					<div className='flex flex-col justify-center items-center px-4'>
-						<p className='text-base text-[#243A57]'>
+						<p className='text-base text-bodyBlue'>
 							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
 						</p>
 						<div className='flex'>
@@ -475,7 +475,7 @@ const Web3Login: FC<Props> = ({
 						</>
 					)}
 				<div className="flex justify-center items-center pb-5 font-medium mt-6">
-					<label className="text-lg text-[#243A57]">
+					<label className="text-lg text-bodyBlue">
 						Don&apos;t have an account?
 					</label>
 					<div onClick={handleClick} className='text-lg text-pink_primary cursor-pointer'>&nbsp; Sign Up </div>

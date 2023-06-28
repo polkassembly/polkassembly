@@ -168,6 +168,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 			</Script></> : null}
 			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network}/>
 			<main>
+				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
 				<div className="mt-6 mx-1">
 					{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}
 				</div>

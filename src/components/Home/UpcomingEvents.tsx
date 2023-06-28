@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CalendarFilled } from '@ant-design/icons';
-import { Badge, Calendar, List, Spin, Tooltip } from 'antd';
+import { Calendar, List, Spin, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -331,7 +331,9 @@ const UpcomingEvents = ({ className }:Props) => {
 
 			return (
 				<Tooltip color='#E5007A' title={eventList}>
-					<Badge count={value.format('D')} color='transparent' className='bg-pink-400 rounded-full absolute -ml-3 mt-[-22px] w-full' />
+					<div className='calenderDate'>
+						{value.format('D')}
+					</div>
 				</Tooltip>
 			);
 		}
@@ -340,7 +342,7 @@ const UpcomingEvents = ({ className }:Props) => {
 	const CalendarElement = () => (
 		<Spin spinning={loading}>
 			<Calendar
-				className='border border-solid border-gray-200 rounded-md mb-4'
+				className='border border-solid border-gray-200 rounded-xl mb-4'
 				fullscreen={false}
 				cellRender={dateCellRender}
 			/>
@@ -354,16 +356,15 @@ const UpcomingEvents = ({ className }:Props) => {
 				itemLayout="horizontal"
 				dataSource={calendarEvents.sort((a,b) => (a?.end_time?.getTime() || a?.start_time?.getTime())- (b?.end_time?.getTime() || b?.start_time?.getTime()))}
 				renderItem={item => {
-					return (<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-sidebarBlue`}>
+					return (<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-[#243A57]`}>
 						<a {...(item.url ? { href: item.url } : {})} target='_blank' rel='noreferrer' className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-sidebarBlue`}>
-							<div className='text-xs mb-1 flex items-center text-navBlue'>
+							<div className='text-xs mb-1 flex items-center text-lightBlue'>
 								{dayjs(item.end_time).format('MMM D, YYYY')}
-								<span className="h-[4px] w-[4px] bg-navBlue mx-2 rounded-full inline-block"></span>
+								<span className="h-[4px] w-[4px] bg-bodyBlue mx-2 rounded-full inline-block"></span>
 								{dayjs(item.end_time).format('h:mm a')}
 							</div>
 
-							<div>{item.title}</div>
-							<div className="text-sm">
+							<div className="text-sm text-bodyBlue">
 								{item.content}
 							</div>
 						</a>
@@ -378,9 +379,9 @@ const UpcomingEvents = ({ className }:Props) => {
 	}
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-4 lg:p-6 rounded-md h-[520px] lg:h-[550px]`}>
+		<div className={`${className} bg-white drop-shadow-md p-4 lg:p-6 rounded-xxl h-[520px] lg:h-[550px]`}>
 			<div className="flex items-center justify-between mb-5">
-				<h2 className='dashboard-heading'>Upcoming Events</h2>
+				<h2 className='text-bodyBlue text-xl font-medium leading-8 sm:mx-3 xs:mx-1 sm:my-0 xs:my-2'>Upcoming Events</h2>
 				<CalendarFilled className='cursor-pointer inline-block lg:hidden' onClick={() => setShowCalendar(!showCalendar)} />
 			</div>
 
@@ -421,5 +422,16 @@ export default styled(UpcomingEvents)`
 
 	.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
 		border-radius: 50% !important;
+		border : 1.5px solid #e5007a;
+	}
+	.calenderDate{
+		margin-top : -24px;
+		background-color: #ff7ab4;
+		color : #fff;
+		border-radius : 50%;
+		display : flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
 	}
 `;

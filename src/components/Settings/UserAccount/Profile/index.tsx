@@ -21,9 +21,13 @@ const Row = ({ label, data, handleEdit }: { label: string, data: string, handleE
 	<div className='flex justify-between items-baseline'>
 		<div>
 			<label className='text-[#485F7D] text-[14px]' htmlFor={label}>{label}</label>
-			<p className='font-medium text-[#243A57]'>{label === 'Password' ? <div className='flex gap-1 mt-2'>{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((id) => <PasswordDotIcon key={id} />)}
-			</div>
-				: data}</p>
+			<p className='font-medium text-[#243A57]'>{
+				label === 'Password' ?
+					<div className='flex gap-1 mt-2'>
+						{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((id) => <PasswordDotIcon key={id} />)}
+					</div> :
+					data ? data : `${label} not linked. Please Add ${label}`
+			}</p>
 		</div>
 		<span className='text-[14px] font-medium text-pink_primary cursor-pointer flex items-center gap-1 text-[#485F7D]' onClick={handleEdit}>
 			<EditPencilIcon /> Edit

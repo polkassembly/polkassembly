@@ -863,7 +863,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
-				console.log('data from subsquid',data);
 				if( (!data.title) || data.content === '' || data.content.endsWith('login and tell us more about your proposal.' || data.title === '')){
 					await getSubSquareContentAndTitle(proposalType,network,numPostId).then((response) => {
 						subsquareTitle = response?.title;subsquareContent = response?.content;

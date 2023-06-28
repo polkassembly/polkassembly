@@ -32,7 +32,6 @@ export const getSubSquareContentAndTitle = async (proposalType: string | string[
 		subsqTitle.includes('[Root] Referendum #') ? subsqTitle = subsqTitle.replace(/\[Root\] Referendum #\d+: /, '') : '';
 
 		const subsquareData = { content : data.content ,title:subsqTitle };
-		console.log('api data = ',subsquareData);
 		return subsquareData;
 	} catch (error) {
 		console.log('Error while Fetching data from subsquare');

@@ -34,6 +34,8 @@ export interface IPostListing {
 		'👍': number;
 		'👎': number;
 	};
+	proposedCall?: any;
+	requestedAmount?: Number;
 	proposer?: string;
 	curator?: string;
 	parent_bounty_index?: number
@@ -57,8 +59,8 @@ export interface IPostsListingResponse {
 
 export function getGeneralStatus(status: string) {
 	switch (status) {
-	case 'DecisionDepositPlaced':
-		return 'Deciding';
+		case 'DecisionDepositPlaced':
+			return 'Deciding';
 	}
 	return status;
 }
@@ -279,7 +281,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			});
 
 			const subsquidDataPost = await Promise.all(subsquidPostsPromise);
-
+			console.log('subsquidDataPost', subsquidDataPost);
 			const data: IPostsListingResponse = {
 				count: count,
 				posts: subsquidDataPost
@@ -535,7 +537,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							};
 						}
 					}
-
+					const proposedCall = preimage?.proposedCall;
 					return {
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: createdAt,
@@ -547,7 +549,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						parent_bounty_index: parentBountyIndex || null,
 						post_id: postId,
 						post_reactions,
+						proposedCall,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
+						requestedAmount: preimage?.proposedCall?.args?.amount || 0,
 						status: status,
 						title: '',
 						topic: topicFromType,
@@ -568,10 +572,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			}
 
 			const data: IPostsListingResponse = {
-				count: Number(subsquidData?.proposalsConnection?.totalCount || subsquidData?.announcementsConnection?.totalCount|| 0),
+				count: Number(subsquidData?.proposalsConnection?.totalCount || subsquidData?.announcementsConnection?.totalCount || 0),
 				posts
 			};
-
+			console.log('data', data);
 			return {
 				data: JSON.parse(JSON.stringify(data)),
 				error: null,
@@ -656,7 +660,7 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 
 // expects optional proposalType, page and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
-	const { page = 1, trackNo, trackStatus, proposalType , sortBy = sortValues.NEWEST,listingLimit = LISTING_LIMIT, filterBy } = req.query;
+	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });

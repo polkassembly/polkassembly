@@ -39,7 +39,7 @@ const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
 export const algolia_client = algoliasearch(ALGOLIA_APP_ID || '', ALGOLIA_SEARCH_API_KEY || '');
 
-const AllowedNetwork = ['KUSAMA', 'POLKADOT'];
+export const allowedNetwork = ['KUSAMA', 'POLKADOT'];
 
 const AUTOCOMPLETE_INDEX_LIMIT = 5;
 
@@ -95,7 +95,7 @@ const getTrackNameFromId = (network: string, trackId: number ) => {
 	return trackName;
 };
 
-const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperSearch }: Props) => {
+const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperSearch }: Props) => {
 	const userIndex = algolia_client.initIndex('polkassembly_users');
 	const postIndex = algolia_client.initIndex('polkassembly_posts');
 	const addressIndex = algolia_client?.initIndex('polkassembly_addresses');
@@ -153,7 +153,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		return  [
 			...postTypeFilter,
 			...tracksFilter,
-			!isSuperSearch ? [`network:${network}`] : selectedNetworks.length > 0 ? selectedNetworks.map((networkStr) => `network:${(networkStr).toLowerCase()}`) : AllowedNetwork.map((networkStr) => `network:${(networkStr).toLowerCase()}`),
+			!isSuperSearch ? [`network:${network}`] : selectedNetworks.length > 0 ? selectedNetworks.map((networkStr) => `network:${(networkStr).toLowerCase()}`) : allowedNetwork.map((networkStr) => `network:${(networkStr).toLowerCase()}`),
 			selectedTags.map((tag) => { return `tags:${tag}`;}),
 			selectedTopics.map((topic) => `topic_id:${post_topic[optionTextToTopic(String(topic)) as keyof typeof post_topic]}`)];
 	};
@@ -457,7 +457,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 					<Radio value={EFilterBy.Discussions} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Discussions && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue px-4 ' : 'text-[#667589] px-1 '} max-md:px-4 ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'}`}>Discussions {finalSearchInput.length > 0 && `(${offchainPostResults?.total || 0})`}</Radio>
 				</Radio.Group>
 				{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && <div className='flex text-xs font-medium tracking-[0.02em] text-[#667589] gap-3.5 max-md:px-0 max-md:gap-1.5'>
-					{ isSuperSearch && <NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} isSearch={true} setSelectedNetworks={setSelectedNetworks} selectedNetworks={selectedNetworks} allowedNetwork ={AllowedNetwork}/>}
+					{ isSuperSearch && <NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} isSearch={true} setSelectedNetworks={setSelectedNetworks} selectedNetworks={selectedNetworks} allowedNetwork ={allowedNetwork}/>}
 
 					<Popover open={ openFilter.date} onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter,date: !openFilter.date })} content={<div className='flex flex-col gap-1'>
 						<Radio.Group size='large' onChange={(e: RadioChangeEvent) => setDateFilter(e.target.value)} value={dateFilter} className={`gap-[1px] flex flex-col ${poppins.variable} ${poppins.className}`}>
@@ -587,7 +587,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	</Modal>;
 };
 
-export default styled(Search)`
+export default styled(NewSearch)`
 .placeholderColor .ant-input-group-addon{
 background: var(--pink_primary);
 color: white !important;

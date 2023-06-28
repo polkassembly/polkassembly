@@ -21,20 +21,25 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import NetworkDropdown from '~src/ui-components/NetworkDropdown';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import Markdown from '~src/ui-components/Markdown';
 import dayjs from 'dayjs';
 import Image from 'next/image';
+import { SearchOutlined } from '@ant-design/icons';
 import SearchLoader from '~assets/search/search-loader.gif';
+import StartSearchIcon from '~assets/search/search-start.svg';
 import DownOutlined from '~assets/search/dropdown-down.svg';
 import HighlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import InputClearIcon from '~assets/icons/close-tags.svg';
-import { SearchOutlined } from '@ant-design/icons';
 import CloseIcon from '~assets/icons/close.svg';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import Markdown from '~src/ui-components/Markdown';
+import LeftArrow from '~assets/icons/arrow-left.svg';
+import PaLogo from '../AppLayout/PaLogo';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
 export const algolia_client = algoliasearch(ALGOLIA_APP_ID || '', ALGOLIA_SEARCH_API_KEY || '');
+
+const AllowedNetwork = ['KUSAMA', 'POLKADOT'];
 
 const AUTOCOMPLETE_INDEX_LIMIT = 5;
 
@@ -58,7 +63,7 @@ interface Props{
 
 export enum EFilterBy {
   Referenda = 'on-chain-posts',
-  Users = 'users',
+  People = 'people',
   Discussions = 'off-chain-posts'
 }
 
@@ -74,7 +79,6 @@ export enum EDateFilter {
   Last_7_days = 'last_7_days',
   Last_30_days = 'last_30_days' ,
   Last_3_months = 'last_3_months',
-
 }
 
 const gov1Tracks =['tips','council_motions','bounties','child_bounties','treasury_proposals','democracy_proposals','tech_committee_proposals','referendums'];
@@ -111,7 +115,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 	const [offchainPostResults, setOffchainPostResults] = useState<{data: any[] , total:number} | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const topicOptions: string[] = [];
-	const [usersPage, setUsersPage] = useState({ page: 1, totalPeople: 0 });
+	const [peoplePage, setPeoplePage] = useState({ page: 1, totalPeople: 0 });
 	const [postsPage, setPostsPage] = useState(1);
 	const [openFilter, setOpenFilter] = useState<{ date: boolean , topic: boolean, track: boolean }>({ date: false , topic: false, track: false });
 	const [searchInputErr, setSearchInputErr] = useState({ clicked: false, err: false });
@@ -149,7 +153,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		return  [
 			...postTypeFilter,
 			...tracksFilter,
-			!isSuperSearch ? [`network:${network}`] : selectedNetworks.map((networkStr) => `network:${(networkStr).toLowerCase()}` ),
+			!isSuperSearch ? [`network:${network}`] : selectedNetworks.length > 0 ? selectedNetworks.map((networkStr) => `network:${(networkStr).toLowerCase()}`) : AllowedNetwork.map((networkStr) => `network:${(networkStr).toLowerCase()}`),
 			selectedTags.map((tag) => { return `tags:${tag}`;}),
 			selectedTopics.map((topic) => `topic_id:${post_topic[optionTextToTopic(String(topic)) as keyof typeof post_topic]}`)];
 	};
@@ -230,8 +234,8 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 		});
 
 		//people data
-		await userIndex.search(finalSearchInput, { hitsPerPage: LISTING_LIMIT, page: usersPage.page-1 }).then(({ hits, nbHits }) => {
-			setUsersPage({ ...usersPage, totalPeople: nbHits });
+		await userIndex.search(finalSearchInput, { hitsPerPage: LISTING_LIMIT, page: peoplePage.page-1 }).then(({ hits, nbHits }) => {
+			setPeoplePage({ ...peoplePage, totalPeople: nbHits });
 			setPeopleResults(hits);
 			getDefaultAddress(hits);
 
@@ -254,7 +258,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 			getResultData();
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[finalSearchInput, selectedTags, selectedTopics, usersPage.page, postsPage, isSuperSearch, selectedNetworks, selectedGov1Tracks, selectedOpengovTracks, dateFilter, searchInputErr.err]);
+	},[finalSearchInput, selectedTags, selectedTopics, peoplePage.page, postsPage, isSuperSearch, selectedNetworks, selectedGov1Tracks, selectedOpengovTracks, dateFilter, searchInputErr.err]);
 
 	const handleClearFilters = (close?: boolean) => {
 		setIsFilter(false);
@@ -388,16 +392,16 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 			setPeopleResults([]);
 			setSearchInputErr({ err: true, clicked: true });
 		}
-		setUsersPage({ page: 1, totalPeople: 0 });
+		setPeoplePage({ page: 1, totalPeople: 0 });
 		setPostsPage(1);
 
 	};
 	return <Modal
-		title={<label className='text-[#243A57] text-xl font-semibold flex flex-wrap'>{isSuperSearch ? 'Super Search':'Search'} {finalSearchInput.length > 0 && `Results for "${finalSearchInput}"`}</label>}
+		title={<label className='text-bodyBlue text-xl font-semibold flex flex-wrap'>{isSuperSearch ? <div className='cursor-pointer flex items-center' onClick={() => { setIsSuperSearch(false); setPostsPage(1); setPeoplePage({ page: 1, totalPeople:0 }); }}><LeftArrow className='mr-2'/> Super Search</div> : 'Search'}{finalSearchInput.length > 0 && `Results for "${finalSearchInput}"`}</label>}
 		open={openModal}
 		onCancel={() => handleClearFilters(true)}
 		footer={false}
-		className={`${className} w-[900px] max-md:w-full ${poppins.className} ${poppins.variable}`}
+		className={`${className} w-[900px] max-md:w-full ${poppins.className} ${poppins.variable} `}
 		closeIcon={<CloseIcon/>}
 	>
 		<div className={`${className} ${isSuperSearch && !loading && 'pb-20'}`}>
@@ -433,7 +437,7 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 
 							return(
 								<List.Item className='flex justify-start flex-wrap hover:cursor-pointer whitespace-nowrap hover:bg-[#FEF2F8] ' onClick={() => {
-									setFilterBy(!isPost ? EFilterBy.Users : item.post_type === 'discussions' ? EFilterBy.Discussions : EFilterBy.Referenda);
+									setFilterBy(!isPost ? EFilterBy.People : item.post_type === 'discussions' ? EFilterBy.Discussions : EFilterBy.Referenda);
 									handleSearchOnChange(cleanStr.endsWith('...') ? cleanStr.slice(0, -3) : cleanStr);
 								}}>
 									<Markdown className='hover:text-pink_primary flex flex-wrap max-md:truncate' md={str} isAutoComplete />
@@ -446,111 +450,109 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 					/>
 				</section>
 			}
+			<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2 flex-wrap' }`}>
+				<Radio.Group disabled={finalSearchInput.length === 0} onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage(1); setPeoplePage({ ...peoplePage, page: 1 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-md:flex-col`}>
+					<Radio value={EFilterBy.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Referenda && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue px-4 ' : 'text-[#667589] px-1'} max-md:px-4 ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'}`}>Referenda {finalSearchInput.length > 0 && `(${onchainPostResults?.total || 0})`}</Radio>
+					<Radio value={EFilterBy.People} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.People && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue px-4' : 'text-[#667589] px-1'} max-md:px-4 ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'}`}>People {finalSearchInput.length > 0 && `(${peoplePage.totalPeople || 0})`}</Radio>
+					<Radio value={EFilterBy.Discussions} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Discussions && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue px-4 ' : 'text-[#667589] px-1 '} max-md:px-4 ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'}`}>Discussions {finalSearchInput.length > 0 && `(${offchainPostResults?.total || 0})`}</Radio>
+				</Radio.Group>
+				{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && <div className='flex text-xs font-medium tracking-[0.02em] text-[#667589] gap-3.5 max-md:px-0 max-md:gap-1.5'>
+					{ isSuperSearch && <NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} isSearch={true} setSelectedNetworks={setSelectedNetworks} selectedNetworks={selectedNetworks} allowedNetwork ={AllowedNetwork}/>}
 
-			{(finalSearchInput.length > 2 || searchInputErr.err ) && <div className={`${loading && 'hidden'} z-10`}>
-				<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2 flex-wrap' }`}>
-					<Radio.Group onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage(1); setUsersPage({ ...usersPage, page: 1 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-md:flex-col`}>
-						<Radio value={EFilterBy.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Referenda ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'} max-md:px-4`}>Referenda ({onchainPostResults?.total || 0})</Radio>
-						<Radio value={EFilterBy.Users} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Users ? 'bg-[#FEF2F8] text-[#243A57] px-4' : 'text-[#667589] px-1'} max-md:px-4`}>People ({usersPage?.totalPeople})</Radio>
-						<Radio value={EFilterBy.Discussions} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Discussions ? 'bg-[#FEF2F8] text-[#243A57] px-4 ' : 'text-[#667589] px-1'} max-md:px-4`}>Discussions ({offchainPostResults?.total || 0})</Radio>
-					</Radio.Group>
-					{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && <div className='flex text-xs font-medium tracking-[0.02em] text-[#667589] gap-3.5 max-md:px-0 max-md:gap-1.5'>
-						{ isSuperSearch && <NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} isSearch={true} setSelectedNetworks={setSelectedNetworks} selectedNetworks={selectedNetworks}/>}
-
-						<Popover open={openFilter.date} onOpenChange={() => setOpenFilter({ ...openFilter,date: !openFilter.date })} content={<div className='flex flex-col gap-1'>
-							<Radio.Group size='large' onChange={(e: RadioChangeEvent) => setDateFilter(e.target.value)} value={dateFilter} className={`gap-[1px] flex flex-col ${poppins.variable} ${poppins.className}`}>
-								<Radio value={EDateFilter.Today} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Today ? 'text-[#243A57]' : 'text-[#667589]'}`}>Today</Radio>
-								<Radio value={EDateFilter.Last_7_days} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_7_days ? 'text-[#243A57]' : 'text-[#667589]'}`}>Last 7 days</Radio>
-								<Radio value={EDateFilter.Last_30_days} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_30_days ? 'text-[#243A57]' : 'text-[#667589]'}`}>Last 30 days</Radio>
-								<Radio value={EDateFilter.Last_3_months} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_3_months ? 'text-[#243A57]' : 'text-[#667589]'}`}>Last 3 months</Radio>
-								<Radio value={null} className={`text-xs font-normal py-1.5 ${!dateFilter ? 'text-[#243A57]' : 'text-[#667589]'}`}>All time</Radio>
-							</Radio.Group></div>} placement="bottomLeft" >
-							<div className={`flex items-center justify-center text-xs cursor-pointer ${openFilter.date && 'text-pink_primary' }`}>
+					<Popover open={ openFilter.date} onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter,date: !openFilter.date })} content={<div className='flex flex-col gap-1'>
+						<Radio.Group size='large' onChange={(e: RadioChangeEvent) => setDateFilter(e.target.value)} value={dateFilter} className={`gap-[1px] flex flex-col ${poppins.variable} ${poppins.className}`}>
+							<Radio value={EDateFilter.Today} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Today ? 'text-bodyBlue' : 'text-[#667589]'}`}>Today</Radio>
+							<Radio value={EDateFilter.Last_7_days} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_7_days ? 'text-bodyBlue' : 'text-[#667589]'}`}>Last 7 days</Radio>
+							<Radio value={EDateFilter.Last_30_days} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_30_days ? 'text-bodyBlue' : 'text-[#667589]'}`}>Last 30 days</Radio>
+							<Radio value={EDateFilter.Last_3_months} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_3_months ? 'text-bodyBlue' : 'text-[#667589]'}`}>Last 3 months</Radio>
+							<Radio value={null} className={`text-xs font-normal py-1.5 ${!dateFilter ? 'text-bodyBlue' : 'text-[#667589]'}`}>All time</Radio>
+						</Radio.Group></div>} placement="bottomLeft" >
+						<div className={`flex items-center justify-center text-xs ${openFilter.date && 'text-pink_primary' } ${finalSearchInput.length === 0 ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'}`}>
                                Date
-								<span className='text-[#96A4B6]'>
-									{openFilter.date ?<HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> :<DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}
-								</span>
-							</div>
-						</Popover>
+							<span className='text-[#96A4B6]'>
+								{openFilter.date ?<HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> :<DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}
+							</span>
+						</div>
+					</Popover>
 
-						<FilterByTags isSearch={true} setSelectedTags={setSelectedTags} />
+					<FilterByTags isSearch={true} setSelectedTags={setSelectedTags} disabled={finalSearchInput.length === 0} />
 
-						{filterBy === EFilterBy.Referenda && <Popover rootClassName='track-popover' open={openFilter.track} onOpenChange={() => setOpenFilter({ ...openFilter, track: !openFilter.track })} content={
-							<Collapse collapsible='header' className={`${poppins.className} ${poppins.variable} cursor-pointer`}>
-								<Collapse.Panel key={1} header='Gov1' className='cursor-pointer'>
-									<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedGov1Tracks(list)} value={selectedGov1Tracks} >
-										{gov1Tracks && gov1Tracks?.map((track) => <Checkbox key={track} value={track} className={`text-xs font-normal py-1.5 ml-0 ${selectedGov1Tracks.includes(track) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
-											<div className='mt-[2px] capitalize'>{track?.split('_')?.join(' ')}</div>
-										</Checkbox> )}
-									</Checkbox.Group>
-								</Collapse.Panel>
-								<Collapse.Panel key={2} header='OpenGov' className='cursor-pointer'>
-									<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedOpengovTracks(list)} value={selectedOpengovTracks} >
-										{openGovTracks && openGovTracks?.map((track) => <Checkbox key={track?.name} value={track?.trackId} className={`text-xs font-normal py-1.5 ml-0 ${selectedOpengovTracks.includes(track?.name) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
-											<div className='mt-[2px] capitalize'>{track?.name?.split('_')?.join(' ')}</div>
-										</Checkbox> )}
-									</Checkbox.Group>
-								</Collapse.Panel>
-							</Collapse>
+					{filterBy === EFilterBy.Referenda && <Popover rootClassName='track-popover' open={openFilter.track} onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, track: !openFilter.track })} content={
+						<Collapse collapsible='header' className={`${poppins.className} ${poppins.variable} cursor-pointer`}>
+							<Collapse.Panel key={1} header='Gov1' className='cursor-pointer'>
+								<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedGov1Tracks(list)} value={selectedGov1Tracks} >
+									{gov1Tracks && gov1Tracks?.map((track) => <Checkbox key={track} value={track} className={`text-xs font-normal py-1.5 ml-0 ${selectedGov1Tracks.includes(track) ? 'text-bodyBlue' : 'text-[#667589]'}`}>
+										<div className='mt-[2px] capitalize'>{track?.split('_')?.join(' ')}</div>
+									</Checkbox> )}
+								</Checkbox.Group>
+							</Collapse.Panel>
+							<Collapse.Panel key={2} header='OpenGov' className='cursor-pointer'>
+								<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedOpengovTracks(list)} value={selectedOpengovTracks} >
+									{openGovTracks && openGovTracks?.map((track) => <Checkbox key={track?.name} value={track?.trackId} className={`text-xs font-normal py-1.5 ml-0 ${selectedOpengovTracks.includes(track?.name) ? 'text-bodyBlue' : 'text-[#667589]'}`}>
+										<div className='mt-[2px] capitalize'>{track?.name?.split('_')?.join(' ')}</div>
+									</Checkbox> )}
+								</Checkbox.Group>
+							</Collapse.Panel>
+						</Collapse>
 
-						} placement="bottomLeft">
-							<div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter.track) && 'text-pink_primary' }`}>
+					} placement="bottomLeft">
+						<div className={`flex items-center justify-center text-xs ${(openFilter.track) && 'text-pink_primary' } ${finalSearchInput.length === 0 ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'}`}>
                             Tracks
-								<span className='text-[#96A4B6]'>
-									{openFilter.track ?<HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> : <DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}</span>
-							</div>
-						</Popover>}
+							<span className='text-[#96A4B6]'>
+								{openFilter.track ?<HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> : <DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}</span>
+						</div>
+					</Popover>}
 
-						<Popover open={openFilter.topic} onOpenChange={() => setOpenFilter({ ...openFilter, topic: !openFilter.topic })} content={<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedTopics(list)} value={selectedTopics} >
-							{topicOptions && topicOptions?.map((topic) => <Checkbox key={topic} value={topic} className={`text-xs font-normal py-1.5 ml-0 ${selectedTopics.includes(topic) ? 'text-[#243A57]' : 'text-[#667589]'}`}>
-								<div className='mt-[2px]'>{topic}</div>
-							</Checkbox>)}</Checkbox.Group>} placement="bottomLeft" >
-							<div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter.topic) && 'text-pink_primary' }`}>
+					<Popover open={openFilter.topic} onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, topic: !openFilter.topic })} content={<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedTopics(list)} value={selectedTopics} >
+						{topicOptions && topicOptions?.map((topic) => <Checkbox key={topic} value={topic} className={`text-xs font-normal py-1.5 ml-0 ${selectedTopics.includes(topic) ? 'text-bodyBlue' : 'text-[#667589]'}`}>
+							<div className='mt-[2px]'>{topic}</div>
+						</Checkbox>)}</Checkbox.Group>} placement="bottomLeft" >
+						<div className={`flex items-center justify-center text-xs ${(openFilter.topic) && 'text-pink_primary' } ${finalSearchInput.length === 0 ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'}`}>
                  Topic
-								<span className='text-[#96A4B6]'>
-									{openFilter.topic ? <HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> :<DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}
-								</span>
-							</div>
-						</Popover>
+							<span className='text-[#96A4B6]'>
+								{openFilter.topic ? <HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> :<DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}
+							</span>
+						</div>
+					</Popover>
+				</div>}
+			</div>
+
+			{filterBy !== EFilterBy.People && <div className='mt-3 flex flex-wrap justify-between text-xs font-medium text-bodyBlue '>
+				<div className='flex gap-1'>
+					{isSuperSearch && selectedNetworks.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
+						<span className='text-pink_primary'>Network:</span>
+						<span>{ selectedNetworks?.map((network, index) => <span key={index}> {network[0] + network.slice(1).toLowerCase()}{index !== selectedNetworks.length - 1 && ','}</span>)}</span>
+					</div>}
+					{dateFilter && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px] font-medium'>
+						<span className='text-pink_primary'>Date:</span>
+						<span className='capitalize'>{dateFilter?.split('_')?.join(' ')}</span>
+					</div>}
+					{selectedTags.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
+						<span className='text-pink_primary'>Tags:</span>
+						<span className='capitalize'>{selectedTags?.join(',')}</span>
+					</div>}
+					{(selectedOpengovTracks.length > 0 || selectedGov1Tracks.length > 0) && filterBy !== EFilterBy.Discussions && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
+						<span className='text-pink_primary'>Tracks:</span>
+						<>
+							{selectedOpengovTracks?.map((trackId, index) => <span key={index} className="capitalize gap-[2px]">{ getTrackNameFromId(network, Number(trackId))?.split('_')?.join(' ')}{index !== selectedOpengovTracks.length - 1 && ','} </span> )}
+							{selectedGov1Tracks.map((track, index) => <span key={index} className="capitalize gap-[2px]"> {selectedOpengovTracks.length > 0 && ', '}{ (track as string)?.split('_')?.join(' ')}{index !== selectedGov1Tracks.length - 1 && ','} </span>)}
+						</>
+					</div>}
+					{selectedTopics.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
+						<span className='text-pink_primary'>Topics:</span>
+						<span>{selectedTopics?.join(',')}</span>
 					</div>}
 				</div>
-
-				{filterBy !== EFilterBy.Users && <div className='mt-3 flex flex-wrap justify-between text-xs font-medium text-[#243A57] '>
-					<div className='flex gap-1'>
-						{isSuperSearch && selectedNetworks.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
-							<span className='text-pink_primary'>Network:</span>
-							<span>{ selectedNetworks?.map((network, index) => <span key={index}> {network[0] + network.slice(1).toLowerCase()}{index !== selectedNetworks.length - 1 && ','}</span>)}</span>
-						</div>}
-						{dateFilter && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px] font-medium'>
-							<span className='text-pink_primary'>Date:</span>
-							<span className='capitalize'>{dateFilter?.split('_')?.join(' ')}</span>
-						</div>}
-						{selectedTags.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
-							<span className='text-pink_primary'>Tags:</span>
-							<span className='capitalize'>{selectedTags?.join(',')}</span>
-						</div>}
-						{(selectedOpengovTracks.length > 0 || selectedGov1Tracks.length > 0) && filterBy !== EFilterBy.Discussions && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
-							<span className='text-pink_primary'>Tracks:</span>
-							<>
-								{selectedOpengovTracks?.map((trackId, index) => <span key={index} className="capitalize gap-[2px]">{ getTrackNameFromId(network, Number(trackId))?.split('_')?.join(' ')}{index !== selectedOpengovTracks.length - 1 && ','} </span> )}
-								{selectedGov1Tracks.map((track, index) => <span key={index} className="capitalize gap-[2px]"> {selectedOpengovTracks.length > 0 && ', '}{ (track as string)?.split('_')?.join(' ')}{index !== selectedGov1Tracks.length - 1 && ','} </span>)}
-							</>
-						</div>}
-						{selectedTopics.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
-							<span className='text-pink_primary'>Topics:</span>
-							<span>{selectedTopics?.join(',')}</span>
-						</div>}
-					</div>
-					<span className={`${!isFilter ? 'text-[#667589] cursor-default' : 'text-pink_primary cursor-pointer'}`} onClick={() => isFilter && handleClearFilters()}>Clear All Filters</span>
-				</div>}
-
+				{finalSearchInput.length > 0 && <span className={`${!isFilter ? 'text-[#667589] cursor-default' : 'text-pink_primary cursor-pointer'}`} onClick={() => isFilter && handleClearFilters()}>Clear All Filters</span>}
+			</div>}
+			{(finalSearchInput.length > 2 || searchInputErr.err ) && <div className={`${loading && 'hidden'} z-10`}>
 				{
 					(filterBy === EFilterBy.Referenda || filterBy ===  EFilterBy.Discussions) && !searchInputErr.err
 						&& (onchainPostResults || offchainPostResults) && <ResultPosts setOpenModal={setOpenModal} isSuperSearch={isSuperSearch} postsData={filterBy === EFilterBy.Referenda ? onchainPostResults?.data || [] : offchainPostResults?.data || []} totalPage={ filterBy === EFilterBy.Discussions ? offchainPostResults?.total || 0 : onchainPostResults?.total || 0 } className='mt-3' postsPage={postsPage} setPostsPage={setPostsPage}/>
 				}
 
-				{filterBy === EFilterBy.Users && !searchInputErr.err
-					&& peopleResults && <ResultPeople searchInput={finalSearchInput} setOpenModal={setOpenModal} peopleData={peopleResults} usersPage={usersPage} setUsersPage={setUsersPage} />
+				{filterBy === EFilterBy.People && !searchInputErr.err
+					&& peopleResults && <ResultPeople searchInput={finalSearchInput} setOpenModal={setOpenModal} peopleData={peopleResults} peoplePage={peoplePage} setPeoplePage={setPeoplePage} />
 				}
 
 				{
@@ -560,8 +562,10 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 						setFilterBy={setFilterBy}
 						setOpenModal= {setOpenModal}
 						setIsSuperSearch={setIsSuperSearch}
+						setPeoplePage={setPeoplePage}
+						setPostsPage= {setPostsPage}
 						postResultsCounts={filterBy === EFilterBy.Discussions ? offchainPostResults?.total || 0 : onchainPostResults?.total || 0}
-						peopleResultsCounts={usersPage.totalPeople || 0}
+						peopleResultsCounts={peoplePage.totalPeople || 0}
 						isSuperSearch= {isSuperSearch}
 					/>
 				}
@@ -569,21 +573,26 @@ const Search = ({ className, openModal, setOpenModal, isSuperSearch, setIsSuperS
 
 			<div className={`flex flex-col justify-center items-center pt-10 pb-8 gap-4 ${!loading && 'hidden'}`}>
 				<Image src={SearchLoader} alt='' height={150} width={150}/>
-				<span className='font-medium text-sm text-[#243A57] tracking-[0.01em]'>
+				<span className='font-medium text-sm text-bodyBlue tracking-[0.01em]'>
 					{isSuperSearch ? 'Looking for results across the Polkassembly Universe.': 'Looking for results.'}
 				</span>
 			</div>
 
+			{finalSearchInput.length === 0 && <div className='h-[360px] flex justify-center items-center flex-col font-medium text-sm text-bodyBlue'>
+				<StartSearchIcon/>
+				<span className='mt-8 tracking-[0.01em]'>Welcome to the all new & supercharged search!</span>
+				<div className='text-xs font-medium mt-2 tracking-[0.01em] flex gap-1 items-center'>powered by<PaLogo className='w-[99px] h-[30px]'/></div>
+			</div>}
 		</div>
 	</Modal>;
 };
 
 export default styled(Search)`
 .placeholderColor .ant-input-group-addon{
-background: #E5007A;
+background: var(--pink_primary);
 color: white !important;
 font-size:12px;
-border: 1px solid #E5007A; 
+border: 1px solid var(--pink_primary);
 }
 .checkboxStyle .ant-checkbox-wrapper+.ant-checkbox-wrapper{
   margin-inline-start: 0px !important;

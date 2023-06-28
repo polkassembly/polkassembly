@@ -79,10 +79,10 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 				className='bg-transparent flex items-center justify-center w-[105px] h-[105px] '
 				iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
 			/>
-			<div className='text-[#243A57]'>
-				<span className='text-[#243A57] font-semibold mb-4 tracking-wide text-lg'>{username || userName}</span >
+			<div className='text-bodyBlue'>
+				<span className='text-bodyBlue font-semibold mb-4 tracking-wide text-lg'>{username || userName}</span >
 				{address && address.length > 0  && <div className='flex gap-2 items-center'>
-					<Address address={address} displayInline className='text-[14px] text-[#243A57]' identiconSize={34} />
+					<Address address={address} displayInline className='text-sm text-bodyBlue' identiconSize={34} />
 					<span className='flex items-center cursor-pointer' onClick={(e) => {isSearch && e.preventDefault(); copyLink(address || addresses[0]) ;success();}}>
 						{contextHolder}
 						<CopyIcon/>
@@ -93,11 +93,11 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					? <h2 className={`text-sm font-normal text-[#576D8BCC] mt-2 ${username === userProfile.username && 'cursor-pointer'}`} onClick={() => setOpenEditModal(true)}>
 						{username === userProfile.username ? 'Click here to add bio' : 'No Bio' }
 					</h2>
-					: <h2  onClick={() => setOpenEditModal(true)} className={`text-sm mt-2 text-[#243A57] tracking-[0.01em] cursor-pointer font-normal ${username === userProfile.username && 'cursor-pointer'}`}>{bio}</h2>
+					: <h2  onClick={() => setOpenEditModal(true)} className={`text-sm mt-2 text-bodyBlue tracking-[0.01em] cursor-pointer font-normal ${username === userProfile.username && 'cursor-pointer'}`}>{bio}</h2>
 				}
 
 				<div
-					className={`flex flex-wrap items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-[10px] ${isSearch && 'mt-0'}`}
+					className={`flex flex-wrap items-center text-xl text-bodyBlue gap-x-5 md:gap-x-3 mt-[10px] ${isSearch && 'mt-0'}`}
 				>
 					{
 						socialLinks?.map((social: any, index: number) => {
@@ -109,7 +109,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 									link={link}
 									disable={!link}
 									type={social}
-									iconClassName={`text-[20px] ${link ? 'text-[#576D8B]' : 'text-[#96A4B6]'}`}
+									iconClassName={`text-lg ${link ? 'text-[#576D8B]' : 'text-[#96A4B6]'}`}
 
 								/>
 							);

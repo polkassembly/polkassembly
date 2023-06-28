@@ -68,10 +68,11 @@ interface INetworkDropdown {
   isSearch?: boolean;
   setSelectedNetworks?: (pre: string[]) => void;
   selectedNetworks?: string[];
+  allowedNetwork?: string[];
 }
 
 const NetworkDropdown: FC<INetworkDropdown> = (props) => {
-	const { isSmallScreen, setSidedrawer, isSearch, setSelectedNetworks, selectedNetworks = [] } = props;
+	const { isSmallScreen, setSidedrawer, isSearch, setSelectedNetworks, selectedNetworks = [], allowedNetwork } = props;
 	const { network } = useNetworkContext();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
 	const router = useRouter();
@@ -80,6 +81,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 
 		setOpenFilter(false);
 		if(isSearch && setSelectedNetworks && selectedNetworks){
+			if(!allowedNetwork?.includes(option.key)) return ;
 			const filterArr = selectedNetworks.filter((network) => network !== option?.key);
 			if(filterArr?.length < selectedNetworks.length){
 				setSelectedNetworks([...filterArr]);
@@ -101,38 +103,38 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				return (
 					<Card className='max-w-[356px] max-h-[52vh] overflow-y-auto'>
 						<>
-							<div className='text-navBlue font-medium'>Polkadot &amp; Parachains</div>
+							<div className='text-bodyBlue font-medium'>Polkadot &amp; Parachains</div>
 							<Row className="mt-2">
 								{
 									polkadotChains.map(optionObj => (
-										<Col span={12} key={optionObj.key} className={`flex cursor-pointer ${isSearch && selectedNetworks?.includes(optionObj.key) && 'text-pink_primary font-medium' }`} onClick={() => handleLink(optionObj) }>{optionObj.label}</Col>
+										<Col span={12} key={optionObj.key} className={`flex ${!isSearch && 'cursor-pointer'} ${isSearch && selectedNetworks?.includes(optionObj.key) && 'text-pink_primary font-medium cursor-pointer'} ${isSearch && !allowedNetwork?.includes(optionObj?.key) && 'text-[#B5BFCC] cursor-not-allowed'}`} onClick={() => handleLink(optionObj) }>{optionObj.label}</Col>
 									))
 								}
 							</Row>
 
-							<div className='text-navBlue font-medium mt-4'>Kusama &amp; Parachains</div>
+							<div className='text-bodyBlue font-medium mt-4'>Kusama &amp; Parachains</div>
 							<Row className="mt-2">
 								{
 									kusamaChains.map(optionObj => (
-										<Col span={12} key={optionObj.key} className={`flex cursor-pointer ${isSearch && selectedNetworks?.includes(optionObj.key) && 'text-pink_primary font-medium' }`} onClick={() => handleLink(optionObj) }>{optionObj.label}</Col>
+										<Col span={12} key={optionObj.key} className={`flex ${!isSearch && 'cursor-pointer'} ${isSearch && selectedNetworks?.includes(optionObj.key) && 'text-pink_primary font-medium cursor-pointer'} ${isSearch && !allowedNetwork?.includes(optionObj?.key) && 'text-[#B5BFCC] cursor-not-allowed'}`} onClick={() => handleLink(optionObj) }>{optionObj.label}</Col>
 									))
 								}
 							</Row>
 
-							<div className='text-navBlue font-medium mt-4'>Solo Chains</div>
+							<div className='text-bodyBlue font-medium mt-4'>Solo Chains</div>
 							<Row className="mt-2">
 								{
 									soloChains.map(optionObj => (
-										<Col span={12} key={optionObj.key} className={`flex cursor-pointer ${isSearch && selectedNetworks?.includes(optionObj.key) && 'text-pink_primary font-medium' }`} onClick={() => handleLink(optionObj) }>{optionObj.label}</Col>
+										<Col span={12} key={optionObj.key} className={`flex ${!isSearch && 'cursor-pointer'} ${isSearch && selectedNetworks?.includes(optionObj.key) && 'text-pink_primary font-medium cursor-pointer'} ${isSearch && !allowedNetwork?.includes(optionObj?.key) && 'text-[#B5BFCC] cursor-not-allowed'}`}  onClick={() => handleLink(optionObj) }>{optionObj.label}</Col>
 									))
 								}
 							</Row>
 
-							<div className='text-navBlue font-medium mt-4'>Test Chains</div>
+							<div className='text-bodyBlue font-medium mt-4'>Test Chains</div>
 							<Row className="mt-2">
 								{
 									testChains.map(optionObj => (
-										<Col span={12} key={optionObj.key} className={`flex cursor-pointer ${isSearch && selectedNetworks?.includes(optionObj.key) && 'text-pink_primary font-medium' }`} onClick={() => handleLink(optionObj) }>{optionObj.label}</Col>
+										<Col span={12} key={optionObj.key} className={`flex ${!isSearch && 'cursor-pointer'} ${isSearch && selectedNetworks?.includes(optionObj.key) && 'text-pink_primary font-medium cursor-pointer'} ${isSearch && !allowedNetwork?.includes(optionObj?.key) && 'text-[#B5BFCC] cursor-not-allowed'}`} onClick={() => handleLink(optionObj) }>{optionObj.label}</Col>
 									))
 								}
 							</Row>
@@ -170,7 +172,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 							<ArrowDownIcon />
 						</span>
 					</a>
-					: <a className='flex items-center justify-between text-navBlue hover:text-pink_primary lg:min-w-[133px] lg:h-8 lg:border-solid lg:border lg:border-[#D2D8E0] lg:rounded-[26px] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px]' onClick={e => {
+					: <a className='flex items-center justify-between text-bodyBlue hover:text-pink_primary lg:min-w-[133px] lg:h-8 lg:border-solid lg:border lg:border-[#D2D8E0] lg:rounded-[26px] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px]' onClick={e => {
 						e.preventDefault();
 						setSidedrawer(false);
 					}}

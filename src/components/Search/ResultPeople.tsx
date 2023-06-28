@@ -27,23 +27,24 @@ interface Props {
 
 const ResultPeople = ({ className, peopleData, peoplePage, setPeoplePage }: Props) => {
 
-	return <><div className={`${className} h-[360px] ${peopleData.length > 1 && 'overflow-y-scroll'} mt-3 -mx-6`}>
-		{peopleData.map((user, index) => <a rel="noreferrer" href={`/user/${user?.username}`} target='_blank' key={index}>
-			<DelegationProfile address={user?.defaultAddress || ''} username={user?.username} isSearch = {true}
-				className={`py-8 px-9 border-[#f3f4f5] border-solid border-[1px] shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] rounded-none border-b-[0px] hover:border-pink_primary hover:border-b-[1px] cursor-pointer min-h-[180px] ${index % 2 === 1 && 'bg-[#fafafb]'} ${index === peopleData.length-1 && 'border-b-[1px]'}`}/>
-		</a>)}
-	</div>
-	<div className='flex justify-center items-center py-4 px-4'>
-		<Pagination
-			defaultCurrent={1}
-			current={peoplePage?.page}
-			pageSize={LISTING_LIMIT}
-			total={peoplePage?.totalPeople}
-			showSizeChanger={false}
-			hideOnSinglePage={true}
-			onChange={(page: number) => setPeoplePage((prev: any) => { return { ...prev, page };})}
-			responsive={true}
-		/>
-	</div></>;
+	return peopleData.length> 0 ? <>
+		<div className={`${className} ${peopleData.length > 1 && 'overflow-y-scroll h-[360px]'} mt-3 -mx-6`}>
+			{peopleData.map((user, index) => <a rel="noreferrer" href={`/user/${user?.username}`} target='_blank' key={index}>
+				<DelegationProfile address={user?.defaultAddress || ''} username={user?.username} isSearch = {true}
+					className={`py-8 px-9 border-[#f3f4f5] border-solid border-[1px] shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] rounded-none border-b-[0px] hover:border-pink_primary hover:border-b-[1px] cursor-pointer min-h-[180px] ${index % 2 === 1 && 'bg-[#fafafb]'} ${index === peopleData.length-1 && 'border-b-[1px]'}`}/>
+			</a>)}
+		</div>
+		<div className='flex justify-center items-center pt-4 px-4'>
+			<Pagination
+				defaultCurrent={1}
+				current={peoplePage?.page}
+				pageSize={LISTING_LIMIT}
+				total={peoplePage?.totalPeople}
+				showSizeChanger={false}
+				hideOnSinglePage={true}
+				onChange={(page: number) => setPeoplePage((prev: any) => { return { ...prev, page };})}
+				responsive={true}
+			/>
+		</div></> : null;
 };
 export default ResultPeople;

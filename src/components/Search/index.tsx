@@ -250,8 +250,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 	useEffect(() => {
 
-		(Boolean(dateFilter)  || selectedGov1Tracks.length > 0 || filterBy === EFilterBy.Discussions ? false : selectedOpengovTracks.length > 0 || selectedTags.length > 0 ||  selectedTopics.length > 0 || isSuperSearch ? selectedNetworks.length > 0 : false) ? setIsFilter(true) : setIsFilter(false);
-
+		(Boolean(dateFilter) || selectedGov1Tracks.length > 0 || (filterBy === EFilterBy.Discussions ? false : selectedOpengovTracks.length > 0) || selectedTags.length > 0 ||  selectedTopics.length > 0 || (isSuperSearch ? selectedNetworks.length > 0 : false)) ? setIsFilter(true) : setIsFilter(false);
 		if(finalSearchInput.length > 2 && !searchInputErr.err){
 			setOpenFilter({ date: false, topic: false, track: false });
 			setLoading(true);
@@ -386,7 +385,6 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			setSearchInputErr({ err: false, clicked: true });
 		}
 		else if(searchInput?.trim().length <= 2) {
-			setFinalSearchInput('');
 			setOnchainPostResults(null);
 			setOffchainPostResults(null);
 			setPeopleResults([]);
@@ -406,7 +404,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	>
 		<div className={`${className} ${isSuperSearch && !loading && 'pb-20'}`}>
 			<Input
-				className='placeholderColor mt-4 rounded-[4px]'
+				className='placeholderColor mt-4 rounded-[4px] border-pink_primary h-[40px]'
 				type='search'
 				value={searchInput}
 				onChange={(e) => handleSearchOnChange(e.target.value)}
@@ -415,7 +413,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				onPressEnter={handleSearchSubmit}
 				addonAfter={
 					<div onClick={handleSearchSubmit}
-						className={`text-white text-[18px] tracking-[0.02em] ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+						className={`text-white text-[18px] tracking-[0.02em]  ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
 						<SearchOutlined/>
 					</div>
 				}
@@ -477,7 +475,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 					<FilterByTags isSearch={true} setSelectedTags={setSelectedTags} disabled={finalSearchInput.length === 0} />
 
-					{filterBy === EFilterBy.Referenda && <Popover rootClassName='track-popover' open={openFilter.track} onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, track: !openFilter.track })} content={
+					{filterBy === EFilterBy.Referenda && <Popover rootClassName='track-popover' open={true} onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, track: !openFilter.track })} content={
 						<Collapse collapsible='header' className={`${poppins.className} ${poppins.variable} cursor-pointer`}>
 							<Collapse.Panel key={1} header='Gov1' className='cursor-pointer'>
 								<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedGov1Tracks(list)} value={selectedGov1Tracks} >
@@ -517,7 +515,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				</div>}
 			</div>
 
-			{filterBy !== EFilterBy.People && <div className='mt-3 flex flex-wrap justify-between text-xs font-medium text-bodyBlue '>
+			{filterBy !== EFilterBy.People && isFilter && <div className='mt-3 flex flex-wrap justify-between text-xs font-medium text-bodyBlue '>
 				<div className='flex gap-1'>
 					{isSuperSearch && selectedNetworks.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
 						<span className='text-pink_primary'>Network:</span>
@@ -600,6 +598,8 @@ border: 1px solid var(--pink_primary);
 .ant-input-affix-wrapper {
 	border-width: 1px !important;
   border-radius:4px 0px 0px 4px !important;
+  border: 1px solid var(--pink_primary);
+  height: 38px !important;
 }
 .listing .ant-spin-nested-loading .ant-spin-container .ant-list-items .ant-list-item{
   padding:0px 18px !important;
@@ -607,7 +607,6 @@ border: 1px solid var(--pink_primary);
 .track-popover .ant-popover-content .ant-popover-inner {
   padding:0px !important;
   border-radius: 4px !important;
-
 }
 .track-popover .ant-popover-content .ant-popover-inner .ant-collapse{
   padding:0px !important;

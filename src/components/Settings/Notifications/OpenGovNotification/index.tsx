@@ -50,7 +50,7 @@ export default function OpenGovNotification({
 		});
 		const notification = Object.assign({}, userNotification);
 		Object.keys(options).forEach((key) => {
-			const id = networkTrackInfo[network][key].trackId;
+			const id = networkTrackInfo[network][key]?.trackId;
 			options[key].forEach((option: any) => {
 				if (!option?.triggerName) {
 					return;
@@ -92,7 +92,7 @@ export default function OpenGovNotification({
 			type: ACTIONS.OPEN_GOV_PROPOSAL_ALL_CHANGE
 		});
 		const notification = Object.assign({}, userNotification);
-		const id = networkTrackInfo[network][title].trackId;
+		const id = networkTrackInfo[network][title]?.trackId;
 		options[title].forEach((option: any) => {
 			if (!option?.triggerName) {
 				return;
@@ -126,7 +126,7 @@ export default function OpenGovNotification({
 			type: ACTIONS.OPEN_GOV_PROPOSAL_SINGLE_CHANGE
 		});
 		const notification = Object.assign({}, userNotification);
-		const id = networkTrackInfo[network][title].trackId;
+		const id = networkTrackInfo[network][title]?.trackId;
 		const option = categoryOptions.find((opt: any) => opt.label === value);
 		if (!option?.triggerName) {
 			return;

@@ -147,22 +147,20 @@ export default function Parachain({
 						Set as Primary Network Settings
 					</Checkbox>
 					<div
-						className={`flex item-center gap-2 max-w-[560px] text-[16px] ${primaryNetwork !== network
+						className={`flex item-center gap-2 max-w-[300px] text-[16px] ${primaryNetwork !== network
 							? 'text-pink_primary cursor-pointer'
 							: 'text-[#96A4B6] cursor-not-allowed'} whitespace-normal md:whitespace-nowrap`}
-						onClick={primaryNetwork !== network ? () => {
-							setCopyPreferencesModal(true);
-						} : () => { }}
 					>
-						<span>
+						<span onClick={primaryNetwork !== network ? () => {
+							setCopyPreferencesModal(true);
+						} : () => { }}>
 							{primaryNetwork !== network ? (
 								<ImportIcon />
 							) : (
 								<DisabledImportIcon />
 							)}
 						</span>
-						Importing Primary Network Settings to the networks
-						selected above
+						Importing Primary Network Settings
 					</div>
 				</div>
 			</Panel>

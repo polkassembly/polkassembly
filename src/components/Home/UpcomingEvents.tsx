@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CalendarFilled } from '@ant-design/icons';
-import { Badge, Calendar, List, Spin, Tooltip } from 'antd';
+import { Calendar, List, Spin, Tooltip } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -331,7 +331,9 @@ const UpcomingEvents = ({ className }:Props) => {
 
 			return (
 				<Tooltip color='#E5007A' title={eventList}>
-					<Badge count={value.format('D')} color='transparent' className='bg-pink-400 rounded-full absolute -ml-3 mt-[-22px] w-full' />
+					<div className='calenderDate'>
+						{value.format('D')}
+					</div>
 				</Tooltip>
 			);
 		}
@@ -420,5 +422,16 @@ export default styled(UpcomingEvents)`
 
 	.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
 		border-radius: 50% !important;
+		border : 1.5px solid #e5007a;
+	}
+	.calenderDate{
+		margin-top : -24px;
+		background-color: #ff7ab4;
+		color : #fff;
+		border-radius : 50%;
+		display : flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
 	}
 `;

@@ -14,6 +14,7 @@ import CopyIcon from '~assets/icons/content-copy.svg';
 import { poppins } from 'pages/_app';
 import { handleTokenChange } from '~src/services/auth.service';
 import { useUserDetailsContext } from '~src/context';
+import KeyboardDownIcon from '~assets/icons/keyboard-arrow-down.svg';
 
 const Title = <>
 	<span className='text-lg tracking-wide text-sidebarBlue font-bold'>Two Factor Authentication</span>
@@ -212,9 +213,10 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 			<Button
 				onClick={handleModalOpen}
 				htmlType="submit"
-				className='mt-5 rounded-lg font-semibold text-md leading-7 text-white py-5 outline-none border-none px-7 flex items-center justify-center bg-pink_primary'
+				className='w-full bg-[#F6F7F9] text-[#243A57] text-left h-full p-[16px] border-[#D2D8E0]'
 			>
-				Enable Two Factor Authentication
+				<span className='flex align-center text-[16px] font-medium '>Enable Two Factor Authentication <KeyboardDownIcon/></span>
+				<span className='block text-[14px]'>Enhance account security with two factor authentication. Verify your identity with an extra step for added protection. </span>
 			</Button>
 		</Form>
 	);

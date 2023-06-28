@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { allGov1 } from '../Gov1Notification/utils';
-import { openGov } from '../OpenGovNotification/utils';
+import { getOpenGov } from '../OpenGovNotification/utils';
 
 const myProposal = [
 	{
@@ -34,9 +34,9 @@ const subscribePost = [
 		value: 'Comments on subscribed posts'
 	}
 ];
-export const notificationInitialState = {
+export const notificationInitialState = (network:string) => ({
 	gov1Post: allGov1,
 	myProposal,
-	openGov: openGov,
+	openGov: getOpenGov(network),
 	subscribePost
-};
+});

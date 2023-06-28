@@ -475,7 +475,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 					<FilterByTags isSearch={true} setSelectedTags={setSelectedTags} disabled={finalSearchInput.length === 0} />
 
-					{filterBy === EFilterBy.Referenda && <Popover rootClassName='track-popover' open={true} onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, track: !openFilter.track })} content={
+					{filterBy === EFilterBy.Referenda && <Popover rootClassName='track-popover' open={openFilter.track} onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, track: !openFilter.track })} content={
 						<Collapse collapsible='header' className={`${poppins.className} ${poppins.variable} cursor-pointer`}>
 							<Collapse.Panel key={1} header='Gov1' className='cursor-pointer'>
 								<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedGov1Tracks(list)} value={selectedGov1Tracks} >

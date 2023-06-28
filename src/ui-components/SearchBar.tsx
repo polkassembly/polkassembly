@@ -10,6 +10,7 @@ import ClientOnly, { Search } from './ClientOnly';
 import   NewSearch from 'src/components/Search';
 import { Modal } from 'antd';
 import { allowedNetwork } from '~src/components/Search';
+import { poppins } from 'pages/_app';
 
 interface ISearchBarProps {
 	className?: string;
@@ -57,7 +58,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 							open={open}
 							onCancel={() => setOpen(false)}
 							footer={[]}
-							className={className}
+							className={`${className} ${poppins.className} ${poppins.variable}`}
 						>
 							<div className='client'>
 								<ClientOnly>

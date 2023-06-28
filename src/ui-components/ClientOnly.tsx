@@ -28,7 +28,7 @@ const Search: FC<{ network: string }> = (props) => {
 				</script>
 			</Helmet>
 			<div className="gcse-search" data-as_sitesearch={ ['moonbase', 'moonbeam', 'moonriver', 'kilt'].includes(network) ? `${network}.polkassembly.network` : `${network}.polkassembly.io` }></div>
-			<label> If you`&apos;d like to search and supersearch enabled for your chain, please reach out to us on <span>hello@polkassembly.io</span></label>
+			<div className='text-sm font-medium text-bodyBlue pt-4 pb-2 text-center'> If you&apos;d like to search and supersearch enabled for your chain, please reach out to us on <a className='text-pink_primary' href="mailto:hello@polkassembly.io">hello@polkassembly.io</a></div>
 		</>
 	);
 };

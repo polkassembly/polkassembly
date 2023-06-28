@@ -32,7 +32,7 @@ const SearchErrorsCard = ({ isSearchErr, setIsSuperSearch, setOpenModal, setFilt
 			<div className='text-bodyBlue text-sm font-medium tracking-[0.01em]'>
 				<div className='flex flex-col mt-5 justify-center items-center'>
 					<EmptyResultsIcon/>
-					<span className='text-sm font-medium text-bodyBlue mt-6 tracking-[0.01em]'>{!isSearchErr ? 'No search results found. You may want to try using different keywords.' : 'Please enter at least 3 characters to proceed.'}</span>
+					<span className='text-sm font-medium text-bodyBlue mt-6 tracking-[0.01em] text-center'>{!isSearchErr ? 'No search results found. You may want to try using different keywords.' : 'Please enter at least 3 characters to proceed.'}</span>
 				</div>
 			</div>
 			{!isSuperSearch && <Button onClick={() => {setFilterBy(EFilterBy.Referenda); setPostsPage(1); setPeoplePage({ page: 1, totalPeople: 0 }); setIsSuperSearch(true);}} className='flex items-center justify-center gap-1.5 bg-pink_primary text-white text-sm font-medium rounded-[4px] mt-6'>

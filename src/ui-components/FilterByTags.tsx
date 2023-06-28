@@ -164,7 +164,7 @@ const FilterByTags=({ className, isSearch, setSelectedTags, disabled }:Props) =>
 				<span className='text-xl ml-2 mt-[2px]'>
 					{openFilter?<FilterIcon/>:<FilterUnfilledIcon/>}
 				</span>
-			</div> : <div className={`flex items-center justify-center text-xs ${(openFilter) ? 'text-pink_primary':'text-[#667589]'} ${disabled ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'}`}>
+			</div> : <div className={`flex items-center justify-center text-xs ${(openFilter) ? 'text-pink_primary':'text-[#667589]'} ${disabled ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'} max-sm:text-[10px]`}>
           Tags
 				<span className='text-[#96A4B6] font-semibold'>{openFilter ? <HightlightDownOutlined className='ml-2.5 mt-1 max-md:ml-1'/> :<DownOutlined className='ml-2.5 mt-1 max-md:ml-1'/>}</span>
 			</div> }

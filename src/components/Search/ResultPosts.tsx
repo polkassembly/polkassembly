@@ -47,12 +47,19 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 						href={`https://${post?.network}.polkassembly.io/${getSinglePostLinkFromProposalType(post?.post_type)}/${post?.id}`}
 						key={index}
 						target='_blank'>
-						<div className={`py-8 px-9 border-[#f3f4f5] border-solid flex-col border-[1px] shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] rounded-none border-b-[0px] hover:border-pink_primary hover:border-b-[1px] cursor-pointer min-h-[200px] ${index % 2 === 1 && 'bg-[#fafafb]'} ${index === postsData.length-1 && 'border-b-[1px]'} max-md:flex-wrap`}>
-							{post?.proposer_address ? <Address address={post?.proposer_address} displayInline textClassName='text-xs text-lightBlue'/> : <div className='text-xs text-lightBlue font-medium mb-1'>{post?.username}</div>}
+						<div className={`py-8 px-9 max-sm:p-5 border-[#f3f4f5] border-solid flex-col border-[1px] shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] rounded-none border-b-[0px] hover:border-pink_primary hover:border-b-[1px] cursor-pointer min-h-[200px] ${index % 2 === 1 && 'bg-[#fafafb]'} ${index === postsData.length-1 && 'border-b-[1px]'} max-md:flex-wrap`}>
+							<div className='flex gap-2 items-center'>
+								{post?.proposer_address ? <Address address={post?.proposer_address} displayInline textClassName='text-xs text-lightBlue'/> : <div className='text-xs text-lightBlue font-medium mb-1'>{post?.username}</div>}
+								<div className='flex gap-2 items-center text-xs text-lightBlue md:hidden'>
+									<Divider style={{ border: '1px solid var(--lightBlue)' }} type="vertical"/>
+									<ClockCircleOutlined className='-mr-1'/>
+									{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
+								</div>
+							</div>
 							<span className='text-[#243A57] text-sm font-medium mt-2'>{titleString}</span>
-							<Markdown md={post?.content?.slice(0, 250)} className='text-[#8696a9] text-sm font-normal my-2 tracking-[0.01em] expand-content'/>
-							<div className='my-2 flex flex-shrink-0 gap-1 flex-wrap'>
-								<div className='flex gap-2 items-center text-xs text-lightBlue'>
+							<Markdown md={post?.content?.slice(0, 250) + ' .....'} className='text-[#8696a9] text-sm font-normal my-2 tracking-[0.01em] expand-content'/>
+							<div className='my-2 flex flex-shrink-0 gap-1 flex-wrap max-sm:mt-2'>
+								<div className='flex gap-2 items-center text-xs text-lightBlue max-md:hidden'>
 									<div className='flex gap-1 items-center text-xs text-lightBlue'>
 										<LikeIcon/><span>{post?.reaction_count?.['👍'] || 0}</span>
 									</div>
@@ -73,12 +80,12 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 									<Divider style={{ border: '1px solid var(--lightBlue)' }} type="vertical"/>
 								</div>
 								}
-								<div className='flex gap-2 items-center text-xs text-lightBlue'>
+								<div className='flex gap-2 items-center text-xs text-lightBlue max-md:hidden'>
 									<ClockCircleOutlined className='-mr-1'/>
 									{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
 									<Divider style={{ border: '1px solid var(--lightBlue)' }} type="vertical"/>
 								</div>
-								{(post?.topic || post?.topic_id) && <div className='flex gap-2 items-center'>
+								{(post?.topic || post?.topic_id) && <div className='flex gap-2 items-center max-md:hidden'>
 									<TopicTag topic={post?.topic ? post?.topic?.name : getTopicNameFromTopicId((post?.topic_id || getTopicFromType(post?.postType as ProposalType)?.id) as any) } />
 									<Divider style={{ border: '1px solid var(--lightBlue)' }} type="vertical"/>
 								</div>}

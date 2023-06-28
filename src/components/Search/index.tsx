@@ -121,6 +121,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	const [searchInputErr, setSearchInputErr] = useState({ clicked: false, err: false });
 	const [autoCompleteResults, setAutoCompleteResults] = useState<IAutocompleteResults>(initAutocompleteResults);
 	const [isFilter, setIsFilter] = useState<boolean>(false);
+	const [justStart, setJustStart] = useState<boolean>(true);
 
 	Object.keys(post_topic).map((topic) => topicOptions.push(topicToOptionText(topic)));
 
@@ -276,6 +277,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		dateFilter && setDateFilter(null);
 		close && setIsSuperSearch(false);
 		close && setOpenModal(false);
+		close && setJustStart(true);
 	};
 
 	const getAutoCompleteData = async (queryStr: string) => {
@@ -379,6 +381,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 	const handleSearchSubmit = () => {
 		if(loading) return;
+		setJustStart(false);
 		setAutoCompleteResults(initAutocompleteResults);
 		if(searchInput?.trim().length > 2){
 			setFinalSearchInput(searchInput?.trim());
@@ -449,10 +452,10 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				</section>
 			}
 			<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2 flex-wrap' }`}>
-				<Radio.Group disabled={finalSearchInput.length === 0} onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage(1); setPeoplePage({ ...peoplePage, page: 1 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-md:flex-col`}>
-					<Radio value={EFilterBy.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Referenda && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue px-4 ' : 'text-[#667589] px-1'} max-md:px-4 ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'}`}>Referenda {finalSearchInput.length > 0 && `(${onchainPostResults?.total || 0})`}</Radio>
-					<Radio value={EFilterBy.People} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.People && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue px-4' : 'text-[#667589] px-1'} max-md:px-4 ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'}`}>People {finalSearchInput.length > 0 && `(${peoplePage.totalPeople || 0})`}</Radio>
-					<Radio value={EFilterBy.Discussions} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Discussions && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue px-4 ' : 'text-[#667589] px-1 '} max-md:px-4 ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'}`}>Discussions {finalSearchInput.length > 0 && `(${offchainPostResults?.total || 0})`}</Radio>
+				<Radio.Group disabled={finalSearchInput.length === 0 && justStart} onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage(1); setPeoplePage({ ...peoplePage, page: 1 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-sm:flex-wrap`}>
+					<Radio value={finalSearchInput.length > 0 && EFilterBy.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Referenda && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue md:px-2' : 'text-[#667589]'} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}>Referenda {finalSearchInput.length > 0 && `(${onchainPostResults?.total || 0})`}</Radio>
+					<Radio value={EFilterBy.People} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.People && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue md:px-2' : 'text-[#667589]'} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}>People {finalSearchInput.length > 0 && `(${peoplePage.totalPeople || 0})`}</Radio>
+					<Radio value={EFilterBy.Discussions} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Discussions && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue md:px-2' : 'text-[#667589]'} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}>Discussions {finalSearchInput.length > 0 && `(${offchainPostResults?.total || 0})`}</Radio>
 				</Radio.Group>
 				{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && <div className='flex text-xs font-medium tracking-[0.02em] text-[#667589] gap-3.5 max-md:px-0 max-md:gap-1.5'>
 					{ isSuperSearch && <NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} isSearch={true} setSelectedNetworks={setSelectedNetworks} selectedNetworks={selectedNetworks} allowedNetwork ={allowedNetwork}/>}
@@ -465,10 +468,10 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							<Radio value={EDateFilter.Last_3_months} className={`text-xs font-normal py-1.5 ${dateFilter === EDateFilter.Last_3_months ? 'text-bodyBlue' : 'text-[#667589]'}`}>Last 3 months</Radio>
 							<Radio value={null} className={`text-xs font-normal py-1.5 ${!dateFilter ? 'text-bodyBlue' : 'text-[#667589]'}`}>All time</Radio>
 						</Radio.Group></div>} placement="bottomLeft" >
-						<div className={`flex items-center justify-center text-xs ${openFilter.date && 'text-pink_primary' } ${finalSearchInput.length === 0 ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'}`}>
+						<div className={`flex items-center justify-center text-xs ${openFilter.date && 'text-pink_primary' } ${finalSearchInput.length === 0 ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'} max-sm:text-[10px]`}>
                                Date
 							<span className='text-[#96A4B6]'>
-								{openFilter.date ?<HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> :<DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}
+								{openFilter.date ?<HighlightDownOutlined className='ml-2.5 mt-1 max-md-ml-1'/> :<DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}
 							</span>
 						</div>
 					</Popover>
@@ -494,7 +497,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						</Collapse>
 
 					} placement="bottomLeft">
-						<div className={`flex items-center justify-center text-xs ${(openFilter.track) && 'text-pink_primary' } ${finalSearchInput.length === 0 ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'}`}>
+						<div className={`flex items-center justify-center text-xs ${(openFilter.track) && 'text-pink_primary' } ${finalSearchInput.length === 0 ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'} max-sm:text-[10px]`}>
                             Tracks
 							<span className='text-[#96A4B6]'>
 								{openFilter.track ?<HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> : <DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}</span>
@@ -505,7 +508,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						{topicOptions && topicOptions?.map((topic) => <Checkbox key={topic} value={topic} className={`text-xs font-normal py-1.5 ml-0 ${selectedTopics.includes(topic) ? 'text-bodyBlue' : 'text-[#667589]'}`}>
 							<div className='mt-[2px]'>{topic}</div>
 						</Checkbox>)}</Checkbox.Group>} placement="bottomLeft" >
-						<div className={`flex items-center justify-center text-xs ${(openFilter.topic) && 'text-pink_primary' } ${finalSearchInput.length === 0 ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'}`}>
+						<div className={`flex items-center justify-center text-xs ${(openFilter.topic) && 'text-pink_primary' } ${finalSearchInput.length === 0 ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'} max-sm:text-[10px]`}>
                  Topic
 							<span className='text-[#96A4B6]'>
 								{openFilter.topic ? <HighlightDownOutlined  className='ml-2.5 mt-1 max-md-ml-1'/> :<DownOutlined className='ml-2.5 mt-1 max-md-ml-1'/>}
@@ -541,7 +544,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						<span>{selectedTopics?.join(',')}</span>
 					</div>}
 				</div>
-				{finalSearchInput.length > 0 && <span className={`${!isFilter ? 'text-[#667589] cursor-default' : 'text-pink_primary cursor-pointer'}`} onClick={() => isFilter && handleClearFilters()}>Clear All Filters</span>}
+				{finalSearchInput.length > 0 && <span className={`${!isFilter ? 'text-[#667589] cursor-default' : 'text-pink_primary cursor-pointer'} max-sm:border-solid max-sm:border-[1px] max-sm:border-pink_primary max-sm:mt-2 max-sm:p-1.5  `} onClick={() => isFilter && handleClearFilters()}>Clear All Filters</span>}
 			</div>}
 			{(finalSearchInput.length > 2 || searchInputErr.err ) && <div className={`${loading && 'hidden'} z-10`}>
 				{
@@ -576,9 +579,9 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				</span>
 			</div>
 
-			{finalSearchInput.length === 0 && <div className='h-[360px] flex justify-center items-center flex-col font-medium text-sm text-bodyBlue'>
+			{finalSearchInput.length === 0 && justStart && <div className='h-[360px] flex justify-center items-center flex-col font-medium text-sm text-bodyBlue'>
 				<StartSearchIcon/>
-				<span className='mt-8 tracking-[0.01em]'>Welcome to the all new & supercharged search!</span>
+				<span className='mt-8 tracking-[0.01em] text-center'>Welcome to the all new & supercharged search!</span>
 				<div className='text-xs font-medium mt-2 tracking-[0.01em] flex gap-1 items-center'>powered by<PaLogo className='w-[99px] h-[30px]'/></div>
 			</div>}
 		</div>

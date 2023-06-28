@@ -143,7 +143,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				);}
 			}
 		>
-			{isSearch ? <div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter || selectedNetworks.length > 0 ) && 'text-pink_primary' }`}>
+			{isSearch ? <div className={`flex items-center justify-center text-xs cursor-pointer ${(openFilter || selectedNetworks.length > 0 ) && 'text-pink_primary' } max-sm:text-[10px]`}>
                              Network
 				<span className='text-[#96A4B6]'>
 					{openFilter ? <HightlightDownOutlined className='ml-2.5 mt-1 max-md:ml-1'/> :<DownOutlined className='ml-2.5 max-md:ml-1 mt-1'/>}

@@ -330,7 +330,7 @@ export const DelegatedIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DelegatedSVG} {...props} />
 );
 
-export const DelegatedSVGDelegationIcon = (props: Partial<CustomIconComponentProps>) => (
+export const DelegateDelegationIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DelegatedSVGDelegation} {...props} />
 );
 

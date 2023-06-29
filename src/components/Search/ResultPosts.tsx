@@ -34,7 +34,7 @@ interface Props {
 const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsPage, totalPage }: Props) => {
 
 	return postsData.length > 0 ? <>
-		<div className={ `${className} mt-4 -mx-6 h-[360px] ${postsData.length> 1 && 'overflow-y-scroll'}`}>
+		<div className={ `${className} mt-4 -mx-6 h-[250px] ${postsData.length> 1 && 'overflow-y-scroll'}`}>
 			{ postsData.map((post, index: number) => {
 				let titleString = post?.title || noTitle;
 
@@ -85,7 +85,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 									{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
 									<Divider style={{ border: '1px solid var(--lightBlue)' }} type="vertical"/>
 								</div>
-								{(post?.topic || post?.topic_id) && <div className='flex items-center max-sm:hidden'>
+								{(post?.topic || post?.topic_id) && <div className='flex items-center'>
 									<TopicTag className='ml-1' topic={post?.topic ? post?.topic?.name : getTopicNameFromTopicId((post?.topic_id || getTopicFromType(post?.postType as ProposalType)?.id) as any) } />
 									<Divider style={{ border: '1px solid var(--lightBlue)' }} type="vertical"/>
 								</div>}

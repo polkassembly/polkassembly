@@ -45,8 +45,8 @@ const SearchErrorsCard = ({ isSearchErr, setIsSuperSearch, setOpenModal, setFilt
 			<div className='text-sm text-bodyBlue font-medium tracking-[0.01em] flex gap-1'><span>See </span><span onClick={() =>  {router.push(checkGov2Route(router?.pathname) ? '/opengov' : '/'); setOpenModal(false);}} className='text-pink_primary mx-[2px] border-solid border-[0px] border-b-[1px] leading-[-8px] cursor-pointer'>Latest Activity</span><span >on Polkassembly.</span></div>
 		</div>
 		:!isSuperSearch ?
-			<div className='flex flex-col justify-center items-center mb-5'>
-				<label className='text-sm font-medium text-bodyBlue mt-4 tracking-[0.01em]'>Didn’t find what you were looking for?</label>
+			<div className='flex flex-col justify-center items-center mb-2'>
+				<label className='text-sm font-medium text-bodyBlue tracking-[0.01em]'>Didn’t find what you were looking for?</label>
 				<Button onClick={() => {setFilterBy(EFilterBy.Referenda); setPostsPage(1); setPeoplePage({ page: 1, totalPeople: 0 }); setIsSuperSearch(true);}} className='flex items-center justify-center gap-1.5 bg-pink_primary text-white text-sm font-medium rounded-[4px] mt-4'>
 					<SuperSearchIcon/>
 					<span>Use Super Search</span>

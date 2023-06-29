@@ -215,7 +215,6 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			setLoading(false);
 			return;
 		}
-		// const uniqueResults = initAutocompleteResults.posts.filter((item: string ,index: number) => initAutocompleteResults.posts.indexOf(item) === index);
 
 		setAutoCompleteResults(initAutocompleteResults);
 		setLoading(true);
@@ -430,16 +429,16 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	},[sortedAutoCompleteResults]);
 
 	return <Modal
-		title={<label className='text-bodyBlue text-xl font-semibold flex flex-wrap search'>{isSuperSearch ? <div className='cursor-pointer flex items-center' onClick={() => { setIsSuperSearch(false); setPostsPage(1); setPeoplePage({ page: 1, totalPeople:0 }); }}><LeftArrow className='mr-2'/> Super Search</div> : 'Search'}{finalSearchInput.length > 0 && `Results for "${finalSearchInput}"`}</label>}
+		title={<label className={'text-bodyBlue text-xl font-semibold flex flex-wrap search gap-1'}>{isSuperSearch ? <span className='cursor-pointer flex items-center' onClick={() => { setIsSuperSearch(false); setPostsPage(1); setPeoplePage({ page: 1, totalPeople:0 }); }}><span className='supersearch'><LeftArrow className='mr-2'/></span> {'Super Search'} </span> : 'Search'}{finalSearchInput.length > 0 && ` Results for "${finalSearchInput}"`}</label>}
 		open={openModal}
 		onCancel={() => handleClearFilters(true)}
 		footer={false}
-		className={`${className} w-[900px] max-md:w-full ${poppins.className} ${poppins.variable} `}
+		className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable} `}
 		closeIcon={<CloseIcon/>}
 	>
-		<div className={`${className} ${isSuperSearch && !loading && 'pb-20'}`}>
+		<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
 			<Input
-				className='placeholderColor mt-4 rounded-[4px] border-pink_primary h-[40px] text-bodyBlue'
+				className='placeholderColor mt-2 rounded-[4px] border-pink_primary h-[40px] text-bodyBlue'
 				type='search'
 				value={searchInput}
 				onChange={(e) => handleSearchOnChange(e.target.value)}
@@ -508,7 +507,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						</div>
 					</Popover>
 
-					<FilterByTags isSearch={true} setSelectedTags={setSelectedTags} disabled={finalSearchInput.length === 0} />
+					<FilterByTags clearTags={!isFilter} isSearch={true} setSelectedTags={setSelectedTags} disabled={finalSearchInput.length === 0} />
 
 					{filterBy === EFilterBy.Referenda && <Popover rootClassName='track-popover' open={openFilter.track} onOpenChange={() => finalSearchInput.length > 0 && setOpenFilter({ ...openFilter, track: !openFilter.track })} content={
 						<Collapse collapsible='header' className={`${poppins.className} ${poppins.variable} cursor-pointer`}>
@@ -662,5 +661,8 @@ input::placeholder {
   border-radius: 4px !important;
   border:none !important;
   cursor: pointer !important;
+}
+.supersearch:hover{
+	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 }
 `;

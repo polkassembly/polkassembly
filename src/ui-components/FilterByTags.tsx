@@ -22,9 +22,10 @@ interface Props {
   isSearch?: boolean;
   setSelectedTags?: (pre: string[]) => void;
   disabled?: boolean;
+  clearTags?: boolean;
 }
 
-const FilterByTags=({ className, isSearch, setSelectedTags, disabled }:Props) => {
+const FilterByTags=({ className, isSearch, setSelectedTags, disabled, clearTags }:Props) => {
 	const defaultTags = useGetFilterByFromUrl();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
 	const [filteredTags, setFilteredTags] = useState<IPostTag[]>([]);
@@ -44,6 +45,12 @@ const FilterByTags=({ className, isSearch, setSelectedTags, disabled }:Props) =>
 			setTrendingTags(data);
 		}
 	};
+
+	useEffect(() => {
+		if(! isSearch) return;
+		clearTags && setTags([]);
+
+	},[clearTags, isSearch]);
 
 	useEffect(() => {
 		allTags.length === 0 && getData();

@@ -32,11 +32,12 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 						<NewSearch openModal={open} setOpenModal={setOpen} isSuperSearch={isSuperSearch} setIsSuperSearch={setIsSuperSearch}/>
 					</div>
 					: <>
-						<div className='flex items-center gap-1'>
-							<button className='flex items-center justify-center outline-none border-none bg-transparent cursor-pointer text-[18px] text-[#485F7D]' onClick={() => setOpen(true)}>
+						<div className='flex items-center gap-1 max-sm:gap-0 cursor-pointer' onClick={() => setOpen(true)}>
+							<button className='flex items-center justify-center outline-none border-none bg-transparent cursor-pointer text-[18px] text-[#485F7D]'>
 								<SearchOutlined />
 							</button>
-							<span className='bg-[#407AFC] py-0.5 px-2 text-[10px] font-semibold text-white rounded-full'>New</span>
+							<span className='bg-[#407AFC] py-0.5 px-2 text-[10px] font-semibold max-sm:hidden text-white rounded-full'>New</span>
+							<span className='-mt-3 text-[#407AFC] text-[16px] sm:hidden' >&#9679;</span>
 						</div>
 						<NewSearch openModal={open} setOpenModal={setOpen} isSuperSearch={isSuperSearch} setIsSuperSearch={setIsSuperSearch}/>
 					</>

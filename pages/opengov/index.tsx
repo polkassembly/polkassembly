@@ -23,6 +23,9 @@ import { EGovType, OffChainProposalType, ProposalType } from '~src/global/propos
 import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import { CommentOutlined, CustomerServiceOutlined } from '@ant-design/icons';
+import { FloatButton } from 'antd';
+import { setTimeout } from 'timers';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active /> ,
@@ -98,6 +101,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 	}, [network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
+	setTimeout(DocsBotAI.open(),2000);
 
 	return (
 		<>
@@ -124,7 +128,19 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 					<News twitter={networkSocialsData?.data?.twitter || ''} />
 				</div>
 			</div>
-			<ChatFloatingModal/>
+			<FloatButton.Group
+				trigger="click"
+				type="primary"
+				style={{ right: 20 , bottom:30 }}
+				icon={<CustomerServiceOutlined />}
+			>
+
+				<FloatButton icon={<CommentOutlined />} />
+				
+				
+				<ChatFloatingModal/>
+			</FloatButton.Group>
+
 		</>
 	);
 };

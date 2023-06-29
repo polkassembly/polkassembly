@@ -12,9 +12,7 @@ import grill from '@subsocial/grill-widget';
 
 const Container = styled.div`
 .ChatFloatingModal {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
+  margin-right:8px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -52,14 +50,21 @@ const Container = styled.div`
   transition-duration: 0.3s, 0s, 0s;
   transition-delay: 0s, 0s, 0s;
   opacity: 1;
+  
+}
+
+.ChatFloatingIframe{
+	margin-right:30px;
+	margin-bottom:-40px;
 }
 
 .ChatFloatingModal .ChatFloatingIframe.ChatFloatingIframeHidden {
   pointer-events: none;
   transition-delay: 0s, 0.3s, 0.3s !important;
-  height: 0;
-  width: 0;
+  width: 30px;
+  height: 30px;
   opacity: 0;
+  
 }
 
 .ChatFloatingModal .ChatFloatingIframe iframe {
@@ -121,7 +126,7 @@ export default function ChatFloatingModal() {
 					/>
 				)}
 				<Button className={'ChatFloatingButton'} onClick={toggleChat}>
-					<Image src={GrillChatIcon} alt='GrillChat' className='w-[50px] h-[50px]' />
+					<Image src={GrillChatIcon} alt='GrillChat' className='w-[35px] h-[35px]' />
 				</Button>
 			</div>
 		</Container>

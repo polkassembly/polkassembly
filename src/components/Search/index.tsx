@@ -457,7 +457,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			{/* Autocomplete results */}
 			{
 				((autoCompleteResults.posts.length > 0 || autoCompleteResults.users.length > 0) && !searchInputErr?.err) &&
-				<section className='border-solid border-[1px] border-gray-200 rounded-b-[4px] absolute z-50 w-[94.3%] max-md:w-[87%] bg-white'>
+				<section className='border-solid border-[1px] border-gray-200 rounded-b-[4px] absolute z-50 w-[94.3%] max-md:w-[85.7%] bg-white'>
 					{/* Posts List */}
 					<List
 						size="small"
@@ -638,6 +638,17 @@ border: 1px solid var(--pink_primary);
   border-radius:4px 0px 0px 4px !important;
   border: 1px solid var(--pink_primary);
   height: 38px !important;
+  color:red !important;
+}
+.ant-input{
+   color:#7788A0 !important;
+}
+input::placeholder {
+	font-weight: 400 !important;
+	font-size: 14px !important;
+	line-height: 21px !important;
+	letter-spacing: 0.0025em !important;
+  color:#7788A0 !important;
 }
 .listing .ant-spin-nested-loading .ant-spin-container .ant-list-items .ant-list-item{
   padding:0px 18px !important;

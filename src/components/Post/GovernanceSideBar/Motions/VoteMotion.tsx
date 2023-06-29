@@ -2,9 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
-import { Alert, Button, Modal, Spin } from 'antd';
+import { Alert, Button, Modal, Spin,  Tooltip } from 'antd';
 import Image from 'next/image';
 import React, { useEffect,useState } from 'react';
 import { LoadingStatusType, NotificationStatus } from 'src/types';
@@ -15,6 +15,13 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import { useApiContext, useUserDetailsContext } from '~src/context';
 import LoginToVote from '../LoginToVoteOrEndorse';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { EDecision, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
+import { network } from '~src/global/networkConstants';
+import { ProposalType } from '~src/global/proposalType';
+import AyeGreen from '~assets/icons/aye-green-icon.svg';
+import { DislikeIcon } from '~src/ui-components/CustomIcons';
+import dayjs from 'dayjs';
 
 interface Props {
 	accounts: InjectedAccount[]
@@ -24,6 +31,7 @@ interface Props {
 	motionId?: number | null
 	motionProposalHash?: string
 	onAccountChange: (address: string) => void
+	proposalType?: ProposalType;
 }
 
 const VoteMotion = ({
@@ -33,7 +41,8 @@ const VoteMotion = ({
 	getAccounts,
 	motionId,
 	motionProposalHash,
-	onAccountChange
+	onAccountChange,
+	proposalType
 }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
@@ -42,6 +51,14 @@ const VoteMotion = ({
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
 	const { addresses, isLoggedOut } = useUserDetailsContext();
+	const [vote,setVote] = useState<{
+		timestamp: string | undefined,
+		decision:EDecision,
+	}>({
+		decision:EDecision.YES,
+		timestamp:''
+	});
+	const [voteCount,setVoteCount] = useState<number>(0);
 
 	useEffect(() => {
 		if (!api) {
@@ -69,6 +86,34 @@ const VoteMotion = ({
 			return false;
 		});
 	}, [addresses, currentCouncil]);
+	useEffect( () => {
+		if (!api) {
+			return;
+		}
+
+		if (!apiReady) {
+			return;
+		}
+		nextApiClientFetch<IVotesHistoryResponse>(`api/v1/votes/history?page=${1}&voterAddress=${address}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${motionId}`)
+			.then((res) => {
+				if (res.error) {
+					console.log('error');
+				} else {
+					if(res.data?.count){
+						setVoteCount(res.data?.count);
+						setVote({
+							decision:res.data?.votes[0].decision,
+							timestamp:res.data?.votes[0].timestamp
+						});
+					}
+				}
+
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address,api,apiReady,network,proposalType,motionId]);
 
 	const voteMotion = async (aye: boolean) => {
 		if (!motionId && motionId !== 0) {
@@ -132,7 +177,7 @@ const VoteMotion = ({
 
 	const VotingForm = () =>
 		<GovSidebarCard>
-			<h3 className='dashboard-heading mb-6'>Cast your Vote!</h3>
+			<h3 className='text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6'>Cast your Vote!</h3>
 			<Button
 				className='bg-pink_primary hover:bg-pink_secondary text-lg my-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[95%] mx-auto'
 				onClick={openModal}
@@ -146,7 +191,7 @@ const VoteMotion = ({
 				footer={null}
 			>
 				<Spin spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
-					<h4 className='dashboard-heading mb-7'>Cast Your Vote</h4>
+					<h4 className='text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-7'>Cast Your Vote</h4>
 
 					<AccountSelectionForm
 						title='Vote with Account'
@@ -165,6 +210,22 @@ const VoteMotion = ({
 					/>
 				</Spin>
 			</Modal>
+			{ voteCount ?
+				<div>
+					<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
+					<div className='flex text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+						<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='w-[20%] max-[345px]:w-auto'>
+							<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : null}</span>
+						</Tooltip>
+						<Tooltip placement="bottom"  title="Time"  color={'#E5007A'} className='w-[30%] max-[345px]:w-auto'>
+							<span className=''><ClockCircleOutlined className='mr-1' />{dayjs(vote.timestamp, 'YYYY-MM-DD').format('Do MMM\'YY')}</span>
+						</Tooltip>
+
+					</div>
+				</div>
+				: null
+			}
+
 		</GovSidebarCard>;
 
 	const NotCouncil = () =>

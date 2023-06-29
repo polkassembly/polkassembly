@@ -12,11 +12,12 @@ interface Props {
 	isPreview?: boolean;
 	isAutoComplete?: boolean;
 	md: string;
+  imgHidden?: boolean;
 }
 
-const Markdown = ({ className, isPreview = false, isAutoComplete = false, md }: Props) => {
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden }: Props) => {
 	return <ReactMarkdown
-		className={`${className} ${isPreview && 'mde-preview-content'} ${isAutoComplete && 'mde-autocomplete-content'}`}
+		className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'}`}
 		rehypePlugins={[rehypeRaw]}
 		linkTarget='_blank'
 	>
@@ -25,7 +26,10 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md }: 
 };
 
 export default styled(Markdown)`
-
+&.hide-image img{
+  display: none !important;
+  border: 1px solid red;
+}
 	&, &.mde-preview-content {
 		font-size: 14px;
 		margin-bottom: 0;

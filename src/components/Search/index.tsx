@@ -215,6 +215,8 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			setLoading(false);
 			return;
 		}
+		// const uniqueResults = initAutocompleteResults.posts.filter((item: string ,index: number) => initAutocompleteResults.posts.indexOf(item) === index);
+
 		setAutoCompleteResults(initAutocompleteResults);
 		setLoading(true);
 
@@ -333,14 +335,6 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		return matchedWordsLength;
 	}
 
-	const sortedAutoCompleteResults = useMemo(() => {
-		return autoCompleteResults.posts.concat(autoCompleteResults.users).sort((a, b) => {
-			const aMatchedWordsLength = getMatchedWordsLength(a);
-			const bMatchedWordsLength = getMatchedWordsLength(b);
-			return aMatchedWordsLength - bMatchedWordsLength;
-		});
-	},[autoCompleteResults]);
-
 	const getCleanString = (str: string) => {
 		return str.replace(/<[^>]+>|\n|<br\s*\/?>|[*_~`]|(?:^|\s)#\S+|!\[.*?\]\(.*?\)|\[.*?\]\(.*?\)/g, '');
 	};
@@ -397,6 +391,44 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		setPostsPage(1);
 
 	};
+
+	const sortedAutoCompleteResults = useMemo(() => {
+		return autoCompleteResults.posts.concat(autoCompleteResults.users).sort((a, b) => {
+			const aMatchedWordsLength = getMatchedWordsLength(a);
+			const bMatchedWordsLength = getMatchedWordsLength(b);
+			return aMatchedWordsLength - bMatchedWordsLength;
+		});
+	},[autoCompleteResults]);
+
+	const dedupedSortedAutoCompleteResults = useMemo(() => {
+		const dedupedResults = [];
+
+		for (const [index, item] of sortedAutoCompleteResults.entries()) {
+			if (index === 0) continue;
+
+			// string that we need to check duplicates for
+			const str = getAutocompleteMarkedText(item._highlightResult) || 'No title';
+
+			// loop till index and check if there is any duplicate for str if there is then continue
+			let isDuplicate = false;
+			for (const result of sortedAutoCompleteResults.slice(0, index)) {
+				const resultStr = getAutocompleteMarkedText(result._highlightResult) || 'No title';
+				if (resultStr === str) {
+					isDuplicate = true;
+					break;
+				}
+			}
+
+			if(!isDuplicate) {
+				dedupedResults.push(item);
+			}
+
+		}
+
+		return dedupedResults;
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[sortedAutoCompleteResults]);
+
 	return <Modal
 		title={<label className='text-bodyBlue text-xl font-semibold flex flex-wrap'>{isSuperSearch ? <div className='cursor-pointer flex items-center' onClick={() => { setIsSuperSearch(false); setPostsPage(1); setPeoplePage({ page: 1, totalPeople:0 }); }}><LeftArrow className='mr-2'/> Super Search</div> : 'Search'}{finalSearchInput.length > 0 && `Results for "${finalSearchInput}"`}</label>}
 		open={openModal}
@@ -429,7 +461,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 					{/* Posts List */}
 					<List
 						size="small"
-						dataSource={sortedAutoCompleteResults}
+						dataSource={dedupedSortedAutoCompleteResults}
 						className='listing'
 						renderItem={(item) => {
 							const isPost = ('post_type' in item);
@@ -615,5 +647,6 @@ border: 1px solid var(--pink_primary);
   padding:0px !important;
   border-radius: 4px !important;
   border:none !important;
+  cursor: pointer !important;
 }
 `;

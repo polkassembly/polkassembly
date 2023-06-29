@@ -42,7 +42,7 @@ const SearchErrorsCard = ({ isSearchErr, setIsSuperSearch, setOpenModal, setFilt
 			<div className='w-[50%] max-md:w-[80%] my-4'>
 				<Divider className='text-[#90A0B7] border-[1px]'><span className='text-[10px] font-medium'>OR</span></Divider>
 			</div>
-			<div className='text-sm text-bodyBlue font-medium tracking-[0.01em] flex gap-1'><span>See latest</span><span onClick={() =>  {router.push(checkGov2Route(router?.pathname) ? '/opengov' : '/'); setOpenModal(false);}} className='text-pink_primary mx-[2px] border-solid border-[0px] border-b-[1px] leading-[-8px] cursor-pointer'>Latest Activity</span><span >on Polkassembly.</span></div>
+			<div className='text-sm text-bodyBlue font-medium tracking-[0.01em] flex gap-1'><span>See </span><span onClick={() =>  {router.push(checkGov2Route(router?.pathname) ? '/opengov' : '/'); setOpenModal(false);}} className='text-pink_primary mx-[2px] border-solid border-[0px] border-b-[1px] leading-[-8px] cursor-pointer'>Latest Activity</span><span >on Polkassembly.</span></div>
 		</div>
 		:!isSuperSearch ?
 			<div className='flex flex-col justify-center items-center mb-5'>

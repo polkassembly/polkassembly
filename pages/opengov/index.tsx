@@ -25,7 +25,7 @@ import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { CommentOutlined, CustomerServiceOutlined } from '@ant-design/icons';
 import { FloatButton } from 'antd';
-import { setTimeout } from 'timers';
+import Script from 'next/script';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active /> ,
@@ -100,11 +100,21 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
+	// TODO: add to useEffect
+	// router.events.on("routeChangeStart", (window as any).DocsBotAI.unmount());
+
 	if (error) return <ErrorState errorMessage={error} />;
-	setTimeout(DocsBotAI.open(),2000);
 
 	return (
 		<>
+			<Script id='ai-bot-script'>
+				{'window.DocsBotAI=window.DocsBotAI||{ },DocsBotAI.init=function(c){return new Promise(function(e,o){var t=document.createElement("Script");t.type="text/javascript",t.async=!0,t.src="https://widget.docsbot.ai/chat.js";var n=document.getElementsByTagName("Script")[0];n.parentNode.insertBefore(t,n),t.addEventListener("load",function(){window.DocsBotAI.mount({ id: c.id, supportCallback: c.supportCallback, identify: c.identify });var t;t=function(n){return new Promise(function(e){if(document.querySelector(n))return e(document.querySelector(n));var o=new MutationObserver(function(t){document.querySelector(n) && (e(document.querySelector(n)), o.disconnect())});o.observe(document.body,{childList:!0,subtree:!0})})},t&&t("#docsbotai-root").then(e).catch(o)}),t.addEventListener("error",function(t){o(t.message)})})};'}
+			</Script>
+
+			<Script id='ai-bot-init'>
+				{'DocsBotAI.init({id: "X6zGLB8jx6moWVb6L5S9/D7XT9ksDuTZCvdf99KSW"});'}
+			</Script>
+
 			<SEOHead title='OpenGov' network={network}/>
 			<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
 			<div className="mt-6 mx-1">
@@ -128,16 +138,19 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 					<News twitter={networkSocialsData?.data?.twitter || ''} />
 				</div>
 			</div>
+
+			{/* TODO: before closing automatically check : window.DocsBotAI.isChatbotOpen */}
 			<FloatButton.Group
 				trigger="click"
 				type="primary"
-				style={{ right: 20 , bottom:30 }}
+				style={{ bottom:30, right: 20 }}
 				icon={<CustomerServiceOutlined />}
 			>
 
-				<FloatButton icon={<CommentOutlined />} />
-				
-				
+				<FloatButton icon={<CommentOutlined />} onClick={() => {
+					(window as any).DocsBotAI.toggle();
+				}} />
+
 				<ChatFloatingModal/>
 			</FloatButton.Group>
 

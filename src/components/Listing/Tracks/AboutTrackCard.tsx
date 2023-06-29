@@ -111,7 +111,6 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						</h4>
 					</Tooltip>
 				</div>
-				<h2 className="text-sm text-pink_primary">{trackMetaData?.group}</h2>
 			</div>
 
 			<p className="mt-0 font-normal text-base leading-6 text-bodyBlue">{trackMetaData?.description}</p>

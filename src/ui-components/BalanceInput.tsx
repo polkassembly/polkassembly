@@ -59,24 +59,15 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 	}, []);
 
 	return <div className={`${className} w-full flex flex-col balance-input`}>
-		<label className='mb-[2px] inner-headings'>
+		{(label || (address && withBalance)) && <label className='mb-[2px] inner-headings'>
 			{label}
 			{address && withBalance && <span><Balance address={address} onChange={onAccountBalanceChange} /></span>
 			}
-		</label>
+		</label>}
 		<Form.Item
 			name={formItemName}
 			initialValue={balance ? Number(formatedBalance(balance.toString(), unit)) : ''}
-			rules={noRules ? [ {
-				message: 'Invalid Balance',
-				validator(rule, value, callback) {
-					if (callback && isNaN(Number(value))){
-						callback(rule?.message?.toString());
-					}else {
-						callback();
-					}
-				}
-			}]: [
+			rules={noRules ? []: [
 				{
 					message: 'Lock Balance is required.',
 					required: true
@@ -107,7 +98,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 			<Input
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name={formItemName || 'balance'}
-				className={`w-full h-[39px] border-[1px] ${inputClassName} text-sm mt-0 suffixColor hover:border-[#E5007A] balance-input`}
+				className={`w-full h-[39px] border-[1px] ${inputClassName} text-sm mt-0 suffixColor hover:border-pink_primary balance-input`}
 				onChange={(e) => onBalanceChange(e.target.value)}
 				placeholder={placeholder}
 				value={(formatedBalance(String(balance || ZERO_BN), unit))}
@@ -118,10 +109,10 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 };
 export default styled(BalanceInput)`
 .suffixColor .ant-input-group .ant-input-group-addon{
-	background:#E5007A;
+	background:var(--pink_primary);
 	color:white;
 	font-size:12px !important;
-	border: 1px solid #E5007A;
+	border: 1px solid var(--pink_primary);
   border-radius:0px 4px 4px 0px !important ;
 }
 .suffixColor .ant-input{
@@ -144,10 +135,9 @@ export default styled(BalanceInput)`
 	border: 1px solid #D2D8E0 ;
 }
 .balance-input .ant-input-number-focused{
-	border: 1px solid #E5007A ;
+	border: 1px solid var(--pink_primary) ;
 }
 input::placeholder {
-	color: #576D8B !important;
 	font-weight: 400 !important;
 	font-size: 14px !important;
 	line-height: 21px !important;

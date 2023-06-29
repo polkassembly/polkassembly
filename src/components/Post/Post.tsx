@@ -28,6 +28,7 @@ import SpamAlert from '~src/ui-components/SpamAlert';
 import { useNetworkContext } from '~src/context';
 import Link from 'next/link';
 import LinkCard from './LinkCard';
+import { ILastVote } from '~src/types';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -99,6 +100,7 @@ const Post: FC<IPostProps> = (props) => {
 
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
+	const [lastVote, setLastVote] = useState< ILastVote | undefined >(undefined);
 
 	useEffect(() => {
 		if(!post) return;
@@ -199,6 +201,8 @@ const Post: FC<IPostProps> = (props) => {
 					startTime={post.created_at}
 					post={post}
 					tally={post?.tally}
+					lastVote={lastVote}
+					setLastVote={setLastVote}
 				/>
 				{
 					isOffchainPost &&

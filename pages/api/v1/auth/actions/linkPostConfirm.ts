@@ -73,10 +73,14 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 		throw apiErrorWithStatusCode('Something went wrong while getting encoded address corresponding to network', 500);
 	}
 
+	const isOffChainPost = ['discussions', 'grants'].includes(currPostType);
 	const userAddresses = await getAddressesFromUserId(user.id, true);
-	const isAuthor = userAddresses.some(address => address.address === substrateAddress) || (currPostData && user.id === currPostData.user_id);
+	const isAuthor = userAddresses.some(address => address.address === substrateAddress) || (isOffChainPost? true: currPostData && user.id === currPostData.user_id);
 	if (!isAuthor) {
 		throw apiErrorWithStatusCode(`You can not ${isRemove? 'unlink': 'link'} the post, because you are not the user who created this post`, 403);
+	}
+	if (isOffChainPost && currPostData?.post_link) {
+		throw apiErrorWithStatusCode('Discussion is already linked with other onchain post.', 403);
 	}
 	const batch = firestore_db.batch();
 	batch.set(currPostDocRef, {
@@ -307,9 +311,9 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (r
 			if (!postData) {
 				throw apiErrorWithStatusCode(`Post with id: "${postId}" and type: "${postType}" does not exist, please create a post.`, 404);
 			}
-			const isAuthor = user.id === postData.user_id;
-			if (!isAuthor) {
-				throw apiErrorWithStatusCode('You can not link the post, because you are not the user who created this post.', 403);
+
+			if (postData.post_link) {
+				throw apiErrorWithStatusCode('Discussion is already linked with other onchain post.', 403);
 			}
 			params = {
 				currPostData: postData,

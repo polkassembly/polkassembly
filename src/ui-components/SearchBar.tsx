@@ -37,7 +37,6 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 								<SearchOutlined />
 							</button>
 							<span className='bg-[#407AFC] py-0.5 px-2 text-[10px] font-semibold text-white rounded-full'>New</span>
-							{/* <span className='text-[16px] text-[#407AFC] mt-[-8px]'>&#9679;</span> */}
 						</div>
 						<NewSearch openModal={open} setOpenModal={setOpen} isSuperSearch={isSuperSearch} setIsSuperSearch={setIsSuperSearch}/>
 					</>

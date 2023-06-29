@@ -10,12 +10,14 @@ import styled from 'styled-components';
 interface Props {
 	className?: string;
 	isPreview?: boolean;
+	isAutoComplete?: boolean;
 	md: string;
+  imgHidden?: boolean;
 }
 
-const Markdown = ({ className, isPreview=false, md }: Props) => {
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden }: Props) => {
 	return <ReactMarkdown
-		className={isPreview ? `${className} mde-preview-content` : className}
+		className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'}`}
 		rehypePlugins={[rehypeRaw]}
 		linkTarget='_blank'
 	>
@@ -24,18 +26,19 @@ const Markdown = ({ className, isPreview=false, md }: Props) => {
 };
 
 export default styled(Markdown)`
-
+&.hide-image img{
+  display: none !important;
+  border: 1px solid red;
+}
 	&, &.mde-preview-content {
-		font-size: 15px;
+		font-size: 14px;
 		margin-bottom: 0;
 		overflow-wrap: break-word;
 
 		p, blockquote, ul, ol, dl, table {
 			line-height: 160%;
 			margin: 0 0 0.5rem 0;
-			color: #243A57 !important;
-			font-weight: 500 !important;
-			font-size: 14px !important;
+      color:#243A57 !important;
 		}
 
 		h1 {
@@ -137,6 +140,24 @@ export default styled(Markdown)`
 
 		h3 {
 			font-family: font_default !important;
+		}
+	}
+
+	&.mde-autocomplete-content {
+		margin-top: 4px !important;
+		color: #243A57;
+		font-weight: 700;
+
+		mark {
+			margin-top: -3px;
+			margin-right: -2px;
+			font-weight: 500;
+			color: #485F7D !important;
+			background:none !important;
+		}
+
+		&:hover {
+			color: pink_primary !important;
 		}
 	}
 `;

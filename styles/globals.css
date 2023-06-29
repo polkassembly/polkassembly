@@ -329,3 +329,15 @@ a.command-palette-list-item svg {
 .opengov_modal .ant-modal-content {
   background-color: #FFF3FA !important;
 }
+.track-popover .ant-popover-content .ant-popover-inner {
+  padding:0px !important;
+  border-radius: 4px !important;
+}
+.track-popover .ant-popover-content .ant-popover-inner .ant-collapse{
+  padding:0px !important;
+  border-radius: 4px !important;
+  border:none !important;
+}
+.track-popover .ant-collapse>.ant-collapse-item >.ant-collapse-header{
+color: var(--lightBlue) !important;
+}

@@ -43,6 +43,7 @@ interface IGovernanceProps {
 	tags?: string[] | [];
 	spam_users_count?: number;
 	cid?:string;
+	requestedAmount?:number;
 }
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
@@ -69,7 +70,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		isCommentsVisible = true,
 		username,
 		tags,
-		spam_users_count
+		spam_users_count,
+		requestedAmount
 	} = props;
 	const currentUser = useContext(UserDetailsContext);
 	let titleString = title || method || tipReason || noTitle;
@@ -83,7 +85,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const ownProposal = currentUser?.addresses?.includes(address);
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
-
 	return (
 		<>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 sm:p-3 min-h-[80px] sm:flex xs:hidden`}>
@@ -108,6 +109,14 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									: null
 							}
 							{status  && <StatusTag className='sm:mt-[-36px] sm:mr-10' status={status} />}
+							{
+								requestedAmount? <div className='flex items-center justify-center gap-x-1.5'>
+									<span className='text-bodyBlue text-xs'>Requested Amount:</span>
+									<span className='text-lightBlue text-xs'> {
+										requestedAmount
+									} SOL</span>
+								</div>: ''
+							}
 						</div>
 					</div>
 

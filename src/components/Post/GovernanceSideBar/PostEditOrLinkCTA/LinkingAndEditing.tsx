@@ -78,6 +78,18 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 		setLoading(true);
 		try {
 			if ((!url || !url.trim())) {
+				if (!updatedContent) {
+					setError('Please enter a valid content');
+					setFormDisabled(false);
+					setLoading(false);
+					return;
+				}
+				if (!updatedTitle) {
+					setError('Please enter a valid title');
+					setFormDisabled(false);
+					setLoading(false);
+					return;
+				}
 				const { data , error: editError } = await nextApiClientFetch<IEditPostResponse>('api/v1/auth/actions/editPost', {
 					content: updatedContent,
 					postId: postIndex,
@@ -221,7 +233,15 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					key='save'
 					className='flex items-center justify-end'
 				>
-					<Button loading={loading} disabled={formDisabled} onClick={() => form.submit()} className={`'border-none outline-none bg-pink_primary text-white rounded-[4px] px-4 py-1 font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize' ${formDisabled? 'cursor-not-allowed': 'cursor-pointer'}`}>
+					<Button loading={loading} disabled={formDisabled} onClick={() => {
+						if ((content !== editPostValue.content || title !== editPostValue.title)) {
+							form.submit();
+						} else if (prevUrl === url) {
+							onFinish({ updatedContent: content, updatedTitle: title, url });
+						} else {
+							onFinish({ updatedContent: editPostValue.content, updatedTitle: editPostValue.title, url });
+						}
+					}} className={`'border-none outline-none bg-pink_primary text-white rounded-[4px] px-4 py-1 font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize' ${formDisabled? 'cursor-not-allowed': 'cursor-pointer'}`}>
 						{prevUrl === url || (content !== editPostValue.content || title !== editPostValue.title) ? 'Save' : 'Preview'}
 					</Button>
 				</div>

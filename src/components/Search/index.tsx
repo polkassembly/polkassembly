@@ -430,7 +430,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	},[sortedAutoCompleteResults]);
 
 	return <Modal
-		title={<label className='text-bodyBlue text-xl font-semibold flex flex-wrap'>{isSuperSearch ? <div className='cursor-pointer flex items-center' onClick={() => { setIsSuperSearch(false); setPostsPage(1); setPeoplePage({ page: 1, totalPeople:0 }); }}><LeftArrow className='mr-2'/> Super Search</div> : 'Search'}{finalSearchInput.length > 0 && `Results for "${finalSearchInput}"`}</label>}
+		title={<label className='text-bodyBlue text-xl font-semibold flex flex-wrap search'>{isSuperSearch ? <div className='cursor-pointer flex items-center' onClick={() => { setIsSuperSearch(false); setPostsPage(1); setPeoplePage({ page: 1, totalPeople:0 }); }}><LeftArrow className='mr-2'/> Super Search</div> : 'Search'}{finalSearchInput.length > 0 && `Results for "${finalSearchInput}"`}</label>}
 		open={openModal}
 		onCancel={() => handleClearFilters(true)}
 		footer={false}
@@ -439,7 +439,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	>
 		<div className={`${className} ${isSuperSearch && !loading && 'pb-20'}`}>
 			<Input
-				className='placeholderColor mt-4 rounded-[4px] border-pink_primary h-[40px]'
+				className='placeholderColor mt-4 rounded-[4px] border-pink_primary h-[40px] text-bodyBlue'
 				type='search'
 				value={searchInput}
 				onChange={(e) => handleSearchOnChange(e.target.value)}
@@ -551,10 +551,10 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			</div>
 
 			{filterBy !== EFilterBy.People && isFilter && <div className='mt-3 flex flex-wrap justify-between text-xs font-medium text-bodyBlue '>
-				<div className='flex gap-1'>
+				<div className='flex gap-1 max-sm:mb-2 max-sm:flex-wrap'>
 					{isSuperSearch && selectedNetworks.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
 						<span className='text-pink_primary'>Network:</span>
-						<span>{ selectedNetworks?.map((network, index) => <span key={index}> {network[0] + network.slice(1).toLowerCase()}{index !== selectedNetworks.length - 1 && ','}</span>)}</span>
+						<span>{ selectedNetworks?.map((network, index) => <span key={index}> {network[0] + network.slice(1).toLowerCase()}{index !== selectedNetworks.length - 1 && ', '}</span>)}</span>
 					</div>}
 					{dateFilter && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px] font-medium'>
 						<span className='text-pink_primary'>Date:</span>
@@ -562,21 +562,21 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 					</div>}
 					{selectedTags.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
 						<span className='text-pink_primary'>Tags:</span>
-						<span className='capitalize'>{selectedTags?.join(',')}</span>
+						<span className='capitalize'>{selectedTags?.join(', ')}</span>
 					</div>}
 					{(selectedOpengovTracks.length > 0 || selectedGov1Tracks.length > 0) && filterBy !== EFilterBy.Discussions && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
 						<span className='text-pink_primary'>Tracks:</span>
-						<>
-							{selectedOpengovTracks?.map((trackId, index) => <span key={index} className="capitalize gap-[2px]">{ getTrackNameFromId(network, Number(trackId))?.split('_')?.join(' ')}{index !== selectedOpengovTracks.length - 1 && ','} </span> )}
-							{selectedGov1Tracks.map((track, index) => <span key={index} className="capitalize gap-[2px]"> {selectedOpengovTracks.length > 0 && ', '}{ (track as string)?.split('_')?.join(' ')}{index !== selectedGov1Tracks.length - 1 && ','} </span>)}
-						</>
+						<span className='flex flex-wrap'>
+							{selectedOpengovTracks?.map((trackId, index) => <span key={index} className="capitalize">{ getTrackNameFromId(network, Number(trackId))?.split('_')?.join(' ')}{index !== selectedOpengovTracks.length - 1 && ', '} </span> )}
+							{selectedGov1Tracks.map((track, index) => <span key={index} className="capitalize flex flex-shrink-0"> {selectedOpengovTracks.length > 0 && ', '}{ (track as string)?.split('_')?.join(' ')}{index !== selectedGov1Tracks.length - 1 && ', '} </span>)}
+						</span>
 					</div>}
 					{selectedTopics.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
 						<span className='text-pink_primary'>Topics:</span>
-						<span>{selectedTopics?.join(',')}</span>
+						<span className='flex flex-wrap'>{selectedTopics.map((topic, index) => <span key={index} className="capitalize flex flex-shrink-0"> {topic}{(selectedTopics.length - 1) !== index && ', '}</span>)}</span>
 					</div>}
 				</div>
-				{finalSearchInput.length > 0 && <span className={`${!isFilter ? 'text-[#667589] cursor-default' : 'text-pink_primary cursor-pointer'} max-sm:border-solid max-sm:border-[1px] max-sm:border-pink_primary max-sm:mt-2 max-sm:p-1.5  `} onClick={() => isFilter && handleClearFilters()}>Clear All Filters</span>}
+				{finalSearchInput.length > 0 && <span className={`${!isFilter ? 'text-[#667589] cursor-default' : 'text-pink_primary cursor-pointer'} max-sm:border-solid max-sm:border-[1px] flex max-sm:border-pink_primary max-sm:p-1 items-center`} onClick={() => handleClearFilters()}>Clear All Filters</span>}
 			</div>}
 			{(finalSearchInput.length > 2 || searchInputErr.err ) && <div className={`${loading && 'hidden'} z-10`}>
 				{
@@ -606,7 +606,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 			<div className={`flex flex-col justify-center items-center pt-10 pb-8 gap-4 ${!loading && 'hidden'}`}>
 				<Image src={SearchLoader} alt='' height={150} width={150}/>
-				<span className='font-medium text-sm text-bodyBlue tracking-[0.01em]'>
+				<span className='font-medium text-sm text-bodyBlue tracking-[0.01em] text-center'>
 					{isSuperSearch ? 'Looking for results across the Polkassembly Universe.': 'Looking for results.'}
 				</span>
 			</div>
@@ -626,6 +626,9 @@ background: var(--pink_primary);
 color: white !important;
 font-size:12px;
 border: 1px solid var(--pink_primary);
+}
+.ant-modal-close{
+  margin-top: 6px;
 }
 .checkboxStyle .ant-checkbox-wrapper+.ant-checkbox-wrapper{
   margin-inline-start: 0px !important;

@@ -59,7 +59,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 							<span className='text-[#243A57] text-sm font-medium mt-2'>{titleString}</span>
 							<Markdown imgHidden={true} md={post?.content?.slice(0, 250) + ' .....'} className='text-[#8696a9] text-sm font-normal my-2 tracking-[0.01em] expand-content'/>
 							<div className='my-2 flex flex-shrink-0 gap-1 flex-wrap max-sm:mt-2'>
-								<div className='flex gap-2 items-center text-xs text-lightBlue max-md:hidden'>
+								<div className='flex gap-2 items-center text-xs text-lightBlue max-sm:hidden'>
 									<div className='flex gap-1 items-center text-xs text-lightBlue'>
 										<LikeIcon/><span>{post?.reaction_count?.['👍'] || 0}</span>
 									</div>
@@ -80,12 +80,12 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 									<Divider style={{ border: '1px solid var(--lightBlue)' }} type="vertical"/>
 								</div>
 								}
-								<div className='flex gap-2 items-center text-xs text-lightBlue max-md:hidden'>
+								<div className='flex gap-2 items-center text-xs text-lightBlue max-sm:hidden'>
 									<ClockCircleOutlined className='-mr-1'/>
 									{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
 									<Divider style={{ border: '1px solid var(--lightBlue)' }} type="vertical"/>
 								</div>
-								{(post?.topic || post?.topic_id) && <div className='flex items-center max-md:hidden'>
+								{(post?.topic || post?.topic_id) && <div className='flex items-center max-sm:hidden'>
 									<TopicTag className='ml-1' topic={post?.topic ? post?.topic?.name : getTopicNameFromTopicId((post?.topic_id || getTopicFromType(post?.postType as ProposalType)?.id) as any) } />
 									<Divider style={{ border: '1px solid var(--lightBlue)' }} type="vertical"/>
 								</div>}

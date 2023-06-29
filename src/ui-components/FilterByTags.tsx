@@ -155,7 +155,7 @@ const FilterByTags=({ className, isSearch, setSelectedTags, disabled }:Props) =>
 			open={!disabled && openFilter}
 			className={className}
 			onOpenChange={() => !disabled && setOpenFilter(!openFilter)}
-			placement='bottomLeft'
+			placement='bottom'
 			arrow={isSearch}
 		>
 

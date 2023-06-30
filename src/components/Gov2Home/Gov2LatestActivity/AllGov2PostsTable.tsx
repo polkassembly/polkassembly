@@ -14,6 +14,7 @@ import { ErrorState } from 'src/ui-components/UIStates';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 
 import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
+import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 
 const columns: ColumnsType<IPostsRowData> = [
 	{
@@ -28,13 +29,13 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Title',
 		dataIndex: 'title',
 		key: 'title',
-		width: 400,
+		width: 340,
 		fixed: 'left',
 		render: (title) => {
 			return (
 				<>
 					<h4
-						className='truncate'
+						className='truncate m-0'
 					>
 						{title}
 					</h4>
@@ -46,7 +47,8 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Posted By',
 		dataIndex: 'username',
 		key: 'postedBy',
-		render: (username, { proposer }) => <NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' className='max-w-[120px] truncate' defaultAddress={proposer} username={username} disableIdenticon={false} />
+		render: (username, { proposer }) => <div className='truncate' ><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={false} /></div>,
+		width: 200
 	},
 	{
 		title: 'Created',
@@ -56,6 +58,18 @@ const columns: ColumnsType<IPostsRowData> = [
 			const relativeCreatedAt = getRelativeCreatedAt(createdAt);
 			return (
 				<span>{relativeCreatedAt}</span>
+			);
+		},
+		width: 140
+	},
+	{
+		title: 'Origin',
+		dataIndex: 'origin',
+		key: 'type',
+		render: (postOrigin) => {
+			return (
+				<span className='flex items-center'>
+					<span className='capitalize'>{postOrigin?.split(/(?=[A-Z])/).join(' ')}</span></span>
 			);
 		},
 		width: 160
@@ -68,17 +82,6 @@ const columns: ColumnsType<IPostsRowData> = [
 			if(status) return <StatusTag status={status} />;
 		},
 		width: 160
-	},
-	{
-		title: 'Origin',
-		dataIndex: 'origin',
-		key: 'type',
-		render: (postOrigin) => {
-			return (
-				<span className='flex items-center'>
-					<span className='capitalize ml-3'>{postOrigin?.split(/(?=[A-Z])/).join(' ')}</span></span>
-			);
-		}
 	}
 ];
 
@@ -91,14 +94,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 	const router = useRouter();
 
 	function gotoPost(rowData: IPostsRowData): void{
-		let path = 'referenda';
-		if (rowData.type === 'FellowshipReferendum') {
-			path = 'member-referenda';
-		} else if (rowData.type === 'ReferendumV2') {
-			path = 'referenda';
-		} else if(!rowData.origin) {
-			path = 'post';
-		}
+		const path = getSinglePostLinkFromProposalType(getFirestoreProposalType(rowData.type) as any);
 		if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
 			window?.open(`/${path}/${rowData.post_id}`, '_blank');
 		} else {
@@ -130,8 +126,8 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					proposer: post.proposer,
 					username: post?.username,
 					created_at: post.created_at,
-					origin: post.origin || null,
-					status: post.status,
+					origin: post.origin || post.type ||null,
+					status: post.status || '-',
 					sub_title: subTitle,
 					track: Number(post.track_number),
 					type: post.type
@@ -150,7 +146,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					/>
 				</div>
 
-				<div className="block lg:hidden h-[520px] overflow-y-auto">
+				<div className="block lg:hidden h-[520px] overflow-y-auto px-0">
 					<Gov2PopulatedLatestActivityCard tableData={tableData}
 						onClick={(rowData) => gotoPost(rowData)}
 					/>

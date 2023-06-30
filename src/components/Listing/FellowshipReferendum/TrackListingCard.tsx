@@ -8,7 +8,6 @@ import React, { FC, useState } from 'react';
 import TrackListingAllTabContent from './TrackListingAllTabContent';
 import TrackListingTabContent from './TrackListingTabContent';
 import FilterByTags from '~src/ui-components/FilterByTags';
-import FilteredTags from '~src/ui-components/filteredTags';
 import { useRouter } from 'next/router';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
@@ -44,13 +43,18 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 				key: value,
 				label: <CountBadgePill label={value.replace(/([a-z0-9])([A-Z])/g, '$1 $2')} count={posts?.[value]?.data?.count || 0} />
 			};
-		})
+		}),
+		{
+			key: 'Filter',
+			label: <FilterByTags className='hidden sm:flex sm:mr-1 sm:mt-1 sm:mb-2'/>
+		}
 	];
 	const router = useRouter();
 	const trackName = router.query['trackName'];
 	const defaultActiveTab = trackName && ['All', ...fellowshipReferendumPostOrigins].includes(String(trackName))? String(trackName): 'All';
 	const [activeTab, setActiveTab] = useState(defaultActiveTab);
 	const onTabClick = (key: string) => {
+		if(key === 'Filter')return;
 		setActiveTab(key);
 		const query = { ...router.query };
 		delete query.page;
@@ -77,14 +81,9 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 	};
 
 	return (
-		<div
-			className={`${className} bg-white drop-shadow-md rounded-md p-4 md:p-8 text-sidebarBlue`}
-		><div className='flex items-center justify-between mb-10'>
-				<div>
-					<h1 className='dashboard-heading'>Fellowship Referenda</h1>
-					<FilteredTags/>
-				</div>
-				<FilterByTags className='mr-[2px] mt-[-8px]'/>
+		<div className={`${className} bg-white drop-shadow-md rounded-xxl sm:py-8 px-0 xs:py-4`}>
+			<div className='sm:hidden xs:flex xs:items-center xs:justify-end xs:mb-0 xs:px-4 xs:pt-2'>
+				<FilterByTags className='sm:hidden xs:mr-1 xs:mt-1 xs:mb-2'/>
 			</div>
 			<Tabs
 				activeKey={activeTab}
@@ -94,12 +93,12 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 				onChange={(v) => {
 					setTrackName(v);
 				}}
-				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+				className='ant-tabs-tab-bg-white text-bodyBlue font-medium'
 			/>
 			{
 				((posts?.[activeTab]?.data?.count || 0) > 0 && (posts as any)[activeTab].data.count > LISTING_LIMIT) &&
 				<Pagination
-					className='flex justify-end mt-6'
+					className='flex justify-end sm:mt-6 mt-4 mb-2'
 					defaultCurrent={1}
 					current={router.query.page ? parseInt(router.query.page as string, 10) : 1}
 					onChange={onPaginationChange}

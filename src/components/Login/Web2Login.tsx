@@ -3,9 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Button, Form , Input, Skeleton } from 'antd';
+import { Alert, Button, Divider, Form , Input, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
+// import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import { useUserDetailsContext } from 'src/context';
@@ -135,13 +135,13 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 	return (
 		<>
-			<div className='flex items-center'>
-				<LoginLogo className='ml-6 mr-2' />
-				<h3 className="text-[20px] font-semibold text-[#243A57] mt-3">Login</h3>
-			</div>
-			<hr className='text-[#D2D8E0] ' />
-			<article className={`bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className} `}>
-				{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor' />}
+			<article className={`bg-white shadow-md rounded-md flex flex-col ${className} `}>
+				<div className='flex items-center justify-start px-8 pt-4 pb-2'>
+					<LoginLogo className='mr-3' />
+					<span className="text-[20px] font-semibold text-bodyBlue">Login</span>
+				</div>
+				<Divider style={{ background: '#D2D8E0', flexGrow: 1 }} className='mt-1 px-0' />
+				{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-bodyBlue changeColor' />}
 
 				{walletError && <Alert message={walletError} type="error" />}
 				{authResponse.isTFAEnabled ?
@@ -153,11 +153,11 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					/> :
 					<AuthForm
 						onSubmit={handleSubmitForm}
-						className="flex flex-col gap-y-3"
+						className="flex flex-col gap-y-3 px-8"
 					>
 						<div className="flex flex-col gap-y-1">
 							<label
-								className="text-base text-[#485F7D] "
+								className="text-base text-lightBlue "
 								htmlFor="username"
 							>
 							Enter Username or Email
@@ -190,7 +190,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 						<div className="flex flex-col gap-y-1 -mt-4">
 							<label
-								className="text-base text-[#485F7D]"
+								className="text-base text-lightBlue"
 								htmlFor="password"
 							>
 							Enter Password
@@ -206,7 +206,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 									id="password" />
 							</Form.Item>
 							<div className="text-right text-pink_primary mt-[-20px]">
-								<Link href="/request-reset-password">Forgot Password?</Link>
+								<div className='cursor-pointer' onClick={() => {isModal && setLoginOpen && setLoginOpen(false); router.push('/request-reset-password');}}>Forgot Password?</div>
 							</div>
 						</div>
 
@@ -227,9 +227,9 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 						{error && <FilteredError text={error} />}
 
-						<div className='flex justify-center items-center gap-x-2 font-semibold'>
-							<label className='text-md text-[#243A57]'>Don&apos;t have an account?</label>
-							<div onClick={handleClick} className='text-pink_primary text-md'> Sign Up </div>
+						<div className='flex justify-center items-center gap-x-2 mt-2 mb-5 font-semibold'>
+							<label className='text-md text-bodyBlue'>Don&apos;t have an account?</label>
+							<div onClick={handleClick} className='text-md text-pink_primary cursor-pointer'> Sign Up </div>
 						</div>
 					</AuthForm>}
 			</article>
@@ -239,6 +239,6 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 export default styled(Web2Login)`
 .changeColor .ant-alert-message{
-color:#243A57;
+color:var(--bodyBlue);
 
 }`;

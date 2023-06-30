@@ -70,9 +70,8 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req
 		if (!isPostExist) {
 			return res.status(404).json({ message: `Post with id: "${postId}" and type: "${postType}" does not exist, please create a post.` });
 		}
-		const isAuthor = user.id === postData.user_id;
-		if (!isAuthor) {
-			return res.status(403).json({ message: 'You can not link the post, because you are not the user who created this post.' });
+		if (postData.post_link) {
+			return res.status(403).json({ message: 'Discussion is already linked with other onchain post.' });
 		}
 		linkPostRes.title = postData?.title;
 		linkPostRes.description = postData?.content;

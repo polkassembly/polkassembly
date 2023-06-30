@@ -304,8 +304,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 										<Button disabled={true} className='text-pink_primary flex items-center border-none shadow-none text-xs disabled-reply'>
 											<ReplyIcon className='mr-1'/> Reply
 										</Button>
-									</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={toggleReply}><ReplyIcon className='mr-1'/>Reply</Button>)
-									: null
+									</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={toggleReply}><ReplyIcon className='mr-1'/>Reply</Button>): null
 								}
 							</div>
 							{

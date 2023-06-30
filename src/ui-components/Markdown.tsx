@@ -36,6 +36,11 @@ export default styled(Markdown)`
 		font-size: 15px;
 		margin-bottom: 0;
 		overflow-wrap: break-word;
+		overflow-x : auto;
+
+		hr {
+			margin: 1rem 0;
+		}
 
 		p, blockquote, ul, ol, dl, table {
 			line-height: 160%;

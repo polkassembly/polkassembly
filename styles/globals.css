@@ -329,3 +329,7 @@ a.command-palette-list-item svg {
 .opengov_modal .ant-modal-content {
   background-color: #FFF3FA !important;
 }
+
+#docsbotai-root a .floating-button {
+  display:none !important;
+}

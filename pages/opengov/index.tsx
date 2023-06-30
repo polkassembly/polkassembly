@@ -26,6 +26,7 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import { CommentOutlined, CustomerServiceOutlined } from '@ant-design/icons';
 import { FloatButton } from 'antd';
 import Script from 'next/script';
+import styled from 'styled-components';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active /> ,
@@ -96,6 +97,12 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 	const { setNetwork } = useNetworkContext();
 
 	useEffect(() => {
+		//console.log('doc ', document.getElementById('shadow-root') );
+		setTimeout(() => {console.log('doc ', document.getElementsByClassName('floating-button') );},10000);
+		//window.addEventListener('onload',() => {console.log('doc ', document.getElementById('shadow-root') );});
+	},[]);
+
+	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
@@ -143,8 +150,9 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 			<FloatButton.Group
 				trigger="click"
 				type="primary"
-				style={{ bottom:30, right: 20 }}
+				style={{ bottom:30, right: 100 }}
 				icon={<CustomerServiceOutlined />}
+				//onOpenChange={() => {(window as any).DocsBotAI.close();} }
 			>
 
 				<FloatButton icon={<CommentOutlined />} onClick={() => {
@@ -158,4 +166,23 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 	);
 };
 
-export default Gov2Home;
+export default styled(Gov2Home)`
+	.docsbot-wrapper {
+		z-index:1 !important;
+		margin-left:250px;
+		pointer-events: none !important;
+	}
+	  .floating-button{
+		display:none !important;
+	}
+	.docsbot-chat-inner-container{
+		z-index:1 !important;
+		margin-right:250px !important;
+		pointer-events: none !important;
+		background-color:red;
+	
+	}
+	.ant-float-btn-group-circle {
+		display:none !important;
+	}
+`;

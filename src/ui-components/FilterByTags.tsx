@@ -91,7 +91,6 @@ const FilterByTags=({ className, isSearch, setSelectedTags, disabled, clearTags 
 	};
 
 	const handleSetTags=(tag: string) => {
-		setOpenFilter(false);
 		if (tag && tags.indexOf( tag.toLowerCase() ) === -1 && tags.length<5){
 			setTags([...tags, tag.toLowerCase()]);
 			setSelectedTags && setSelectedTags([...tags, tag.toLowerCase()]);
@@ -102,7 +101,6 @@ const FilterByTags=({ className, isSearch, setSelectedTags, disabled, clearTags 
 	};
 
 	const handleRemoveTag= ( removedTag: string ) => {
-		setOpenFilter(false);
 		const newTags = tags.filter((tag) => tag !== removedTag);
 		setTags(newTags);
 		setSelectedTags && setSelectedTags(newTags);

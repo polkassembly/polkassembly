@@ -254,7 +254,6 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 		(Boolean(dateFilter) || selectedGov1Tracks.length > 0 || (filterBy === EFilterBy.Discussions ? false : selectedOpengovTracks.length > 0) || selectedTags.length > 0 ||  selectedTopics.length > 0 || (isSuperSearch ? selectedNetworks.length > 0 : false)) ? setIsFilter(true) : setIsFilter(false);
 		if(finalSearchInput.length > 2 && !searchInputErr.err){
-			setOpenFilter({ date: false, topic: false, track: false });
 			setLoading(true);
 			getResultData();
 		}

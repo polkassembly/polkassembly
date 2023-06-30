@@ -14,6 +14,7 @@ import { ErrorState } from 'src/ui-components/UIStates';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 
 import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
+import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 
 const columns: ColumnsType<IPostsRowData> = [
 	{
@@ -93,14 +94,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 	const router = useRouter();
 
 	function gotoPost(rowData: IPostsRowData): void{
-		let path = 'referenda';
-		if (rowData.type === 'FellowshipReferendum') {
-			path = 'member-referenda';
-		} else if (rowData.type === 'ReferendumV2') {
-			path = 'referenda';
-		} else if(!rowData.origin) {
-			path = 'post';
-		}
+		const path = getSinglePostLinkFromProposalType(getFirestoreProposalType(rowData.type) as any);
 		if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
 			window?.open(`/${path}/${rowData.post_id}`, '_blank');
 		} else {

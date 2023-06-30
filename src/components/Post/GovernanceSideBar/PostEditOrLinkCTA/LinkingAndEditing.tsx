@@ -74,7 +74,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 		}
 	}, [post_link]);
 
-	const onFinish = async ({ url, title: updatedTitle  }: any) => {
+	const onFinish = async ({ url, updatedTitle, updatedContent  }: any) => {
 		setError('');
 		setFormDisabled(true);
 		setLoading(true);

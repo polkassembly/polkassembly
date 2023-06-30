@@ -9,7 +9,7 @@ import { getLatestActivityAllPosts } from 'pages/api/v1/latest-activity/all-post
 import { getLatestActivityOffChainPosts } from 'pages/api/v1/latest-activity/off-chain-posts';
 import { getLatestActivityOnChainPosts } from 'pages/api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Gov2LatestActivity from 'src/components/Gov2Home/Gov2LatestActivity';
 import AboutNetwork from 'src/components/Home/AboutNetwork';
 import News from 'src/components/Home/News';
@@ -95,17 +95,33 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Props) => {
 	const { setNetwork } = useNetworkContext();
+	const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
 
 	useEffect(() => {
-		//console.log('doc ', document.getElementById('shadow-root') );
-		setTimeout(() => {console.log('doc ', document.getElementsByClassName('floating-button') );},10000);
-		//window.addEventListener('onload',() => {console.log('doc ', document.getElementById('shadow-root') );});
-	},[]);
+		if(!isAIChatBotOpen) return;
+
+		const docsBotElement = ((window as any).DocsBotAI.el.shadowRoot.lastChild) as HTMLElement;
+		docsBotElement.style.position = 'absolute';
+		docsBotElement.style.right = '30em';
+	},[isAIChatBotOpen]);
 
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
+
+	useEffect(() => {
+		// check for the presence of a dom element inside a setInterval until it is found
+		const interval = setInterval(() => {
+			const docsBotElement = ((window as any)?.DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
+			if (!docsBotElement) return;
+
+			clearInterval(interval);
+			docsBotElement.style.display = 'none';
+		}, 600);
+
+		return () => clearInterval(interval);
+	}, []);
 
 	// TODO: add to useEffect
 	// router.events.on("routeChangeStart", (window as any).DocsBotAI.unmount());
@@ -115,7 +131,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 	return (
 		<>
 			<Script id='ai-bot-script'>
-				{'window.DocsBotAI=window.DocsBotAI||{ },DocsBotAI.init=function(c){return new Promise(function(e,o){var t=document.createElement("Script");t.type="text/javascript",t.async=!0,t.src="https://widget.docsbot.ai/chat.js";var n=document.getElementsByTagName("Script")[0];n.parentNode.insertBefore(t,n),t.addEventListener("load",function(){window.DocsBotAI.mount({ id: c.id, supportCallback: c.supportCallback, identify: c.identify });var t;t=function(n){return new Promise(function(e){if(document.querySelector(n))return e(document.querySelector(n));var o=new MutationObserver(function(t){document.querySelector(n) && (e(document.querySelector(n)), o.disconnect())});o.observe(document.body,{childList:!0,subtree:!0})})},t&&t("#docsbotai-root").then(e).catch(o)}),t.addEventListener("error",function(t){o(t.message)})})};'}
+				{'window.DocsBotAI=window.DocsBotAI||{},DocsBotAI.init=function(c){return new Promise(function(e,o){var t=document.createElement("Script");t.type="text/javascript",t.async=!0,t.src="https://widget.docsbot.ai/chat.js";var n=document.getElementsByTagName("Script")[0];n.parentNode.insertBefore(t,n),t.addEventListener("load",function(){window.DocsBotAI.mount({ id: c.id, supportCallback: c.supportCallback, identify: c.identify });var t;t=function(n){return new Promise(function(e){if(document.querySelector(n))return e(document.querySelector(n));var o=new MutationObserver(function(t){document.querySelector(n) && (e(document.querySelector(n)), o.disconnect())});o.observe(document.body,{childList:!0,subtree:!0})})},t&&t("#docsbotai-root").then(e).catch(o)}),t.addEventListener("error",function(t){o(t.message)})})};'}
 			</Script>
 
 			<Script id='ai-bot-init'>
@@ -157,6 +173,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 
 				<FloatButton icon={<CommentOutlined />} onClick={() => {
 					(window as any).DocsBotAI.toggle();
+					setIsAIChatBotOpen(!isAIChatBotOpen);
 				}} />
 
 				<ChatFloatingModal/>

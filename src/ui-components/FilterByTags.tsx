@@ -14,7 +14,7 @@ import handleFilterResults from '~src/util/handleFilterResults';
 import NoTagsFoundIcon from '~assets/icons/no-tag.svg';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 
-import { FilterIcon, FilterUnfilledIcon, SearchIcon, TrendingIcon } from './CustomIcons';
+import { FilterIcon, SearchIcon, TrendingIcon } from './CustomIcons';
 import ClearIcon from '~assets/icons/close-tags.svg';
 
 interface Props {
@@ -116,7 +116,6 @@ const FilterByTags=({ className, isSearch, setSelectedTags, disabled, clearTags 
 	},[searchInput, tags]);
 
 	useEffect(() => {
-		setOpenFilter(false);
 		if(searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0){
 			setDisplayTags(trendingTags.slice(0, 5).map((tag) => tag?.name));
 		}else{
@@ -124,7 +123,7 @@ const FilterByTags=({ className, isSearch, setSelectedTags, disabled, clearTags 
 		}
 	}, [filteredTags, searchInput.length, tags, trendingTags, allTags]);
 
-	const content = <div className='min-h-[150px]'>
+	const content = <div className='min-h-[150px] w-[180px] '>
 		{!isSearch ? <div className={`text-sidebarBlue cursor-auto flex text-sm justify-between font-medium mb-[-2px] mt-[-2px] tracking-wide ${poppins.variable} ${poppins.className}`}>
       Tags
 			{!isSearch && <span className='text-pink_primary font-normal text-[10px] flex justify-center cursor-pointer' onClick={() => {setTags([]); !isSearch && handleFilterByClick([]);setSearchInput('');}}>
@@ -166,10 +165,10 @@ const FilterByTags=({ className, isSearch, setSelectedTags, disabled, clearTags 
 			arrow={isSearch}
 		>
 
-			{!isSearch ? <div className={`text-sm tracking-wide font-normal flex items-center ${openFilter ? 'text-pink_primary':'text-grey_primary'} mt-[3.5px] cursor-pointer`}>
-        Filter
-				<span className='text-xl ml-2 mt-[2px]'>
-					{openFilter?<FilterIcon/>:<FilterUnfilledIcon/>}
+			{!isSearch ? <div className={'text-sm tracking-wide font-normal flex items-center text-pink_primary mt-[3.5px] cursor-pointer'}>
+				<span> Filter</span>
+				<span className='text-lg ml-2'>
+					<FilterIcon/>
 				</span>
 			</div> : <div className={`flex items-center justify-center text-xs ${(openFilter) ? 'text-pink_primary':'text-[#667589]'} ${disabled ? 'text-[#B5BFCC] cursor-not-allowed' : 'cursor-pointer'} max-sm:text-[10px]`}>
           Tags

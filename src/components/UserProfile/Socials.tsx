@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LinkOutlined } from '@ant-design/icons';
-import { Input } from 'antd';
+import { Alert, Input } from 'antd';
 import React, { FC } from 'react';
 import { ProfileDetails } from '~src/auth/types';
 import { socialLinks } from './Details';
@@ -13,10 +13,12 @@ interface ISocialsProps {
     loading: boolean;
     setProfile: React.Dispatch<React.SetStateAction<ProfileDetails>>
     profile: ProfileDetails;
+	errorCheck?: string | undefined;
 }
 
 const Socials: FC<ISocialsProps> = (props) => {
-	const { loading, profile, setProfile } = props;
+	const { loading, profile, setProfile , errorCheck } = props;
+	console.log('errorCheck', errorCheck);
 	return (
 		<div className='max-h-[552px] flex flex-col gap-y-4'>
 			{
@@ -73,6 +75,15 @@ const Socials: FC<ISocialsProps> = (props) => {
 						</article>
 					);
 				})
+			}
+			{
+				errorCheck ?
+					<Alert
+						className='mt-4'
+						description={errorCheck}
+						type='error'
+					/>
+					: null
 			}
 		</div>
 	);

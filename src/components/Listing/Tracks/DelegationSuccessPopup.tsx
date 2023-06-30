@@ -61,7 +61,7 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 		className={`${poppins.variable} ${poppins.className} ${isDelegate ? 'delegate' : 'undelegate'}`}
 		wrapClassName={className}
 		closeIcon={isDelegate ? <CloseIcon/> : <UndelegateCloseIcon/>}
-		onCancel={() => {!isVote &&  router.reload() ; setOpen(false); }}
+		onCancel={() => { !isVote && router.reload() ; setOpen(false); }}
 		centered
 		footer={false}
 		maskClosable={false}

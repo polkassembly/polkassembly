@@ -278,6 +278,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		close && setIsSuperSearch(false);
 		close && setOpenModal(false);
 		close && setJustStart(true);
+		close && setAutoCompleteResults({ posts: [], users: [] });
 	};
 
 	const getAutoCompleteData = async (queryStr: string) => {

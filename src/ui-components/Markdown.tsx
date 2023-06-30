@@ -15,12 +15,14 @@ interface Props {
 }
 
 const Markdown = ({ className, isPreview=false, md }: Props) => {
+	const sanitisedMd = md.replace(/\\n/g, '\n');
+
 	return <ReactMarkdown
 		className={isPreview ? `${className} mde-preview-content` : className}
 		rehypePlugins={[rehypeRaw, remarkGfm]}
 		linkTarget='_blank'
 	>
-		{md}
+		{sanitisedMd}
 	</ReactMarkdown>;
 };
 

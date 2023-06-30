@@ -40,7 +40,7 @@ export default styled(Markdown)`
 			border: 1px solid red;
 		}
 
-		table, th, td {
+		th, td {
 			border: 1px solid;
 			padding: 0.5rem;
 		}

@@ -15,8 +15,9 @@ import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 
 type DropdownMenuItemType = {
-	key: any,
-	label: any
+	key: any;
+	label: any;
+	link: string;
 }
 
 const polkadotChains: DropdownMenuItemType[] = [];
@@ -44,7 +45,8 @@ for (const key of Object.keys(network)) {
 				alt='Logo'
 			/>
 			<span className='capitalize'> {keyVal == 'hydradx' ? 'HydraDX' : keyVal} </span>
-		</div>
+		</div>,
+		link
 	};
 
 	switch(chainProperties[keyVal]?.category) {
@@ -89,7 +91,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				setSelectedNetworks([...selectedNetworks, option.key]);}
 		}
 		else {
-			router.push(link);
+			router.push(option.link);
 		}
 	};
 

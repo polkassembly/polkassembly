@@ -25,7 +25,7 @@ interface Props {
   clearTags?: boolean;
 }
 
-const FilterByTags=({ className, isSearch, setSelectedTags, disabled, clearTags }:Props) => {
+const FilterByTags=({ className, isSearch = false, setSelectedTags, disabled, clearTags }:Props) => {
 	const defaultTags = useGetFilterByFromUrl();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
 	const [filteredTags, setFilteredTags] = useState<IPostTag[]>([]);

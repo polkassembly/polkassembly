@@ -46,12 +46,18 @@ const SocialLink: FC<ISocialLink> = (props) => {
 			const url = new URL(handle);
 			username = url.pathname.split('/')[1];
 		}
+		else{
+			username = handle;
+		}
 		link = `https://twitter.com/${username}`;
 		break;
 	case ESocialType.TELEGRAM:
 		if (handle.startsWith('https://')) {
 			const url = new URL(handle);
 			username = url.pathname.split('/')[1];
+		}
+		else{
+			username = handle;
 		}
 		link = `https:/t.me/${username}`;
 		break;
@@ -64,12 +70,18 @@ const SocialLink: FC<ISocialLink> = (props) => {
 			const url = new URL(handle);
 			username = url.pathname.split('/')[2];
 		}
+		else{
+			username = handle;
+		}
 		link = `https://riot.im/app/#/user/${username}`;
 		break;
 	case ESocialType.DISCORD:
 		if (handle.startsWith('https://')) {
 			const url = new URL(handle);
 			username = url.pathname.split('/')[2];
+		}
+		else{
+			username = handle;
 		}
 		link = `https://discordapp.com/users/${username}`;
 	}

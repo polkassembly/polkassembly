@@ -301,7 +301,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				{error && <FilteredError text={error} />}
 				<div className='flex justify-center items-center gap-x-2 font-semibold'>
 					<label className='text-md text-[#243A57]'>Already have an account?</label>
-					<div onClick={() => handleClick()} className='text-pink_primary text-md'>Login</div>
+					<div onClick={() => handleClick()} className='text-pink_primary text-md cursor-pointer'>Login</div>
 				</div>
 			</AuthForm>
 			<Modal

@@ -71,7 +71,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const post = postDoc.data();
 	let isAuthor = false;
 
-	if(postDoc.exists) {
+	if(postDoc.exists && !isNaN(post?.user_id)) {
 		if(![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)){
 			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
 			const postQuery = proposalType === ProposalType.ALLIANCE_MOTION ?

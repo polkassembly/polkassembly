@@ -2,6 +2,7 @@ import algoliasearch from 'algoliasearch';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import fetchSubsquid from './utils/fetchSubsquid';
+import { htmlOrMarkdownToText } from './utils/htmlOrMarkdownToText';
 import dayjs from 'dayjs';
 
 admin.initializeApp();
@@ -38,6 +39,7 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 	});
 
 	const subsquidData = subsquidRes && subsquidRes?.data?.proposals?.[0];
+	const parsedContent = htmlOrMarkdownToText(post?.content || '');
 
 	// Create an object to be indexed by Algolia
 	let postRecord: {[index: string]: any} = {
@@ -46,6 +48,7 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 		created_at: dayjs(post?.created_at?.toDate?.() || new Date()).unix(),
 		last_comment_at: dayjs(post?.last_comment_at?.toDate?.() || new Date()).unix(),
 		last_edited_at: dayjs(post?.last_edited_at?.toDate?.() || new Date()).unix(),
+		parsed_content: parsedContent || post?.content || '',
 		updated_at: dayjs(post?.updated_at?.toDate?.() || new Date()).unix(),
 		postType,
 		...post

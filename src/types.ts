@@ -7,6 +7,7 @@ import { Dispatch, SetStateAction } from 'react';
 
 import { network, tokenSymbol } from './global/networkConstants';
 import { ProposalType } from './global/proposalType';
+import BN from 'bn.js';
 
 export interface UserDetailsContextType {
   id?: number | null;
@@ -36,7 +37,7 @@ export interface INetworkPreferences {
       verification_token?: string,
       verification_token_expires?: Date
       enabled?: boolean;
-      email?:string;
+      handle?:string;
     }
   },
   triggerPreferences: {
@@ -450,4 +451,10 @@ export interface IUserNotificationSettings {
   triggerPreferences: {
     [network: string]: { [index: string]: IUserNotificationTriggerPreferences }
   }
+}
+export interface ILastVote {
+	decision: EVoteDecisionType | null
+	time:  Date | string | null;
+	balance: BN | string;
+	conviction:  number;
 }

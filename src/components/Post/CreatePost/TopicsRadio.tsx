@@ -16,14 +16,14 @@ interface Props {
     govType?: 'gov_1' | 'open_gov';
 }
 
-const topicToOptionText = (topic: string) => {
+export const topicToOptionText = (topic: string) => {
 	//replace _ with space and then capitalize first letter of each word
 	return topic.replace(/_/g, ' ').replace(/\w\S*/g, (txt) => {
 		return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
 	});
 };
 
-const optionTextToTopic = (optionText: string) => {
+export const optionTextToTopic = (optionText: string) => {
 	//replace space with _ and then upperCase
 	return optionText.replace(/ /g, '_').toUpperCase();
 };

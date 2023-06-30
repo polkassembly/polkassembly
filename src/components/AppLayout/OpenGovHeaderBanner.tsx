@@ -24,7 +24,7 @@ export function getTime() {
 const OpenGovHeaderBanner = () => {
 	return (
 		<section
-			className='opengov_banner rounded-b-[20px] flex flex-col md:items-center justify-center gap-x-2 py-[10px] px-4 md:py-6 md:px-9 lg:flex-row lg:ml-[80px]'
+			className='opengov_banner rounded-b-[20px] flex flex-col items-center justify-center gap-x-2 py-[10px] px-4 md:py-6 md:px-9 lg:flex-row lg:ml-[80px]'
 		>
 			<h2
 				className='m-0 p-0 text-white flex items-center gap-x-2 font-medium font-poppins text-sm md:text-[24px] leading-[21px] md:leading-[36px]'

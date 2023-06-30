@@ -291,16 +291,15 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								}
 								{id === userId && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>}
 								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} postId={postIndex} commentId={commentId} type='reply' replyId={replyId} />}
-								{id && !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>}
 
-								{reply.reply_source !== 'subsquare' && id && !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>}
-								{reply.reply_source === 'subsquare' && (
+								{id? (reply.reply_source === 'subsquare'? (
 									<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
-										<Button className='text-pink_primary flex items-center border-none shadow-none text-xs disabled-reply'>
+										<Button disabled={true} className='text-pink_primary flex items-center border-none shadow-none text-xs disabled-reply'>
 											<ReplyIcon className='mr-1'/> Reply
 										</Button>
-									</Tooltip>
-								)}
+									</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
+									: null
+								}
 							</div>
 							{
 								isReplying

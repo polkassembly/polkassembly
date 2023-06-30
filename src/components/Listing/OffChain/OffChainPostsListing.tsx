@@ -27,12 +27,13 @@ const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts
 	}
 
 	return (
-		<div className={`${className} flex flex-col gap-y-6`}>
-			{posts.map(post => (
+		<div className={`${className} flex flex-col `}>
+			{posts.map((post,index) => (
 				<div key={post.post_id}>
 					<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${post.post_id}`}>
 						<OffChainCard
 							post_id={post.post_id}
+							className={`${(index+1)%2!==0 && 'bg-[#FBFBFC]'}`}
 							postReactionCount={post?.post_reactions}
 							address={post?.proposer || ''}
 							commentsCount={post.comments_count || 0}

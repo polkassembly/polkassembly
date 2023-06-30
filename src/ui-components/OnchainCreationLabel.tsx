@@ -5,8 +5,8 @@
 import React from 'react';
 
 import Address from './Address';
-import TopicTag from './TopicTag';
 import Link from 'next/link';
+//import TopicTag from './TopicTag';
 
 interface Props {
 	address: string
@@ -15,24 +15,23 @@ interface Props {
 	truncateUsername?:boolean;
 }
 
-const OnchainCreationLabel = ({ address, topic, username, truncateUsername }:Props ) => {
+const OnchainCreationLabel = ({ address, username, truncateUsername }:Props ) => {
 	return (
-		<div className='flex justify-between min-[340px]:flex-row min-[340px]:items-center text-xs text-navBlue w-full min-[340px]:w-auto'>
+		<div className='flex justify-between min-[340px]:flex-row min-[340px]:items-center text-xs text-[#485F7D] w-full min-[340px]:w-auto'>
 			<div className='flex items-center'>
 				{
 					username || address?
 						<>
-							<div>By:</div>
 							{
 								address?
 									<Address
 										address={address}
-										className='address ml-1.5'
+										className='address '
 										displayInline={true}
 										truncateUsername={truncateUsername}
 									/>
 									: <span
-										className='mx-1.5 max-w-[150px] text-ellipsis overflow-hidden text-[#243a57] font-semibold'
+										className='max-w-[150px] text-ellipsis overflow-hidden text-[#243a57] font-semibold'
 									>
 										<Link href={`/user/${username}`}>{username}</Link>
 									</span>
@@ -41,14 +40,7 @@ const OnchainCreationLabel = ({ address, topic, username, truncateUsername }:Pro
 						: null
 				}
 			</div>
-			{
-				topic?
-					<div className='flex items-center'>
-						<div className='mr-1.5 ml-auto hidden min-[340px]:flex'>from</div>
-						<TopicTag topic={topic} />
-					</div>
-					: null
-			}
+
 		</div>
 	);
 };

@@ -150,7 +150,7 @@ const allColumns: ColumnsType<IPostsRowData> = [
 		render: (postCategory) => {
 			return (
 				<span className='flex items-center'>
-					<span className='capitalize ml-3'>{postCategory}</span></span>
+					<span className='capitalize '>{postCategory}</span></span>
 			);
 		},
 		title: 'Type',

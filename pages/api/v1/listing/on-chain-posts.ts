@@ -551,7 +551,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						post_reactions,
 						proposedCall,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
-						requestedAmount: preimage?.proposedCall?.args?.amount || 0,
+						requestedAmount: preimage?.proposedCall?.args?.amount || null,
 						status: status,
 						title: '',
 						topic: topicFromType,

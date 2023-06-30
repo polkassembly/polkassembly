@@ -19,6 +19,8 @@ import TopicTag from '~src/ui-components/TopicTag';
 import NewChatIcon from '~assets/icons/chat-icon.svg';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import { getFormattedLike } from '~src/util/getFormattedLike';
+import formatBnBalance from '~src/util/formatBnBalance';
+import { useNetworkContext } from '~src/context';
 
 interface IGovernanceProps {
 	postReactionCount: {
@@ -75,7 +77,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	} = props;
 	const currentUser = useContext(UserDetailsContext);
 	let titleString = title || method || tipReason || noTitle;
-
+	const { network } = useNetworkContext();
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
 
@@ -110,13 +112,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							}
 							{status  && <StatusTag className='sm:mt-[-36px] sm:mr-10' status={status} />}
 							{
-								requestedAmount? <div className='flex items-center justify-center gap-x-1.5'>
-									<span className='text-bodyBlue text-xs'>Requested Amount:</span>
-									<span className='text-lightBlue text-xs'> {
-										requestedAmount
-									} SOL</span>
-								</div>: ''
-							}
+								requestedAmount && requestedAmount > 0 &&
+							formatBnBalance(String(requestedAmount), { numberAfterComma: 2, withUnit: true }, network)}
 						</div>
 					</div>
 

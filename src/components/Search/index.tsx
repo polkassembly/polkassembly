@@ -471,6 +471,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 								<List.Item className='flex justify-start flex-wrap hover:cursor-pointer whitespace-nowrap hover:bg-[#FEF2F8] ' onClick={() => {
 									setFilterBy(!isPost ? EFilterBy.People : item.post_type === 'discussions' ? EFilterBy.Discussions : EFilterBy.Referenda);
 									handleSearchOnChange(cleanStr.endsWith('...') ? cleanStr.slice(0, -3) : cleanStr);
+									setFinalSearchInput(cleanStr.endsWith('...') ? cleanStr.slice(0, -3) : cleanStr);
 								}}>
 									<Markdown className='hover:text-pink_primary flex flex-wrap max-md:truncate' md={str} isAutoComplete />
 									<span className='text-[9px] mx-2 text-gray-400'>&#9679;</span>

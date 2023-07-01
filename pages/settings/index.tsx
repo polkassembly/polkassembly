@@ -16,12 +16,11 @@ import { PageLink } from '~src/global/post_categories';
 import BackToListingView from '~src/ui-components/BackToListingView';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import NotificationUpgradingState from '~src/components/Settings/Notifications/NotificationChannels/NotificationUpgradingState';
+import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
 
 interface Props {
 	network: string
 }
-
-const AVAILABLE_NETWORK = ['pendulum', 'cere'];
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);

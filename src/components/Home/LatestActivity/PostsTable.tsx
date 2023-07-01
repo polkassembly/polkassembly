@@ -69,7 +69,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 			post_id: id,
 			proposer: proposer,
 			spam_users_count: spam_users_count,
-			status: status,
+			status: status||'-',
 			tip_id: count - index - 1,
 			title,
 			topic: post?.topic?.name,
@@ -98,7 +98,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 			/>
 		</div>
 
-		<div className="block lg:hidden h-[520px] overflow-y-auto">
+		<div className="block lg:hidden h-[520px] overflow-y-auto px-0">
 			<PopulatedLatestActivityCard
 				tableData={tableData}
 				onClick={(rowData) => {

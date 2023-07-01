@@ -6,33 +6,53 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import styled from 'styled-components';
+import remarkGfm from 'remark-gfm';
 
 interface Props {
 	className?: string;
 	isPreview?: boolean;
+	isAutoComplete?: boolean;
 	md: string;
+  imgHidden?: boolean;
 }
 
-const Markdown = ({ className, isPreview=false, md }: Props) => {
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false }: Props) => {
+	const sanitisedMd = md.replace(/\\n/g, '\n');
+
 	return <ReactMarkdown
-		className={isPreview ? `${className} mde-preview-content` : className}
-		rehypePlugins={[rehypeRaw]}
+		className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'}`}
+		rehypePlugins={[rehypeRaw, remarkGfm]}
 		linkTarget='_blank'
 	>
-		{md}
+		{sanitisedMd}
 	</ReactMarkdown>;
 };
 
 export default styled(Markdown)`
-
 	&, &.mde-preview-content {
-		font-size: 15px;
+		font-size: 14px;
 		margin-bottom: 0;
 		overflow-wrap: break-word;
+		overflow-x : auto;
+
+		.hide-image img{
+			display: none !important;
+			border: 1px solid red;
+		}
+
+		th, td {
+			border: 1px solid;
+			padding: 0.5rem;
+		}
+
+		hr {
+			margin: 1rem 0;
+		}
 
 		p, blockquote, ul, ol, dl, table {
 			line-height: 160%;
 			margin: 0 0 0.5rem 0;
+      color:#243A57 !important;
 		}
 
 		h1 {
@@ -134,6 +154,24 @@ export default styled(Markdown)`
 
 		h3 {
 			font-family: font_default !important;
+		}
+	}
+
+	&.mde-autocomplete-content {
+		margin-top: 4px !important;
+		color: #243A57;
+		font-weight: 700;
+
+		mark {
+			margin-top: -3px;
+			margin-right: -2px;
+			font-weight: 500;
+			color: #485F7D !important;
+			background:none !important;
+		}
+
+		&:hover {
+			color: pink_primary !important;
 		}
 	}
 `;

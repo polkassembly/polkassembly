@@ -19,49 +19,49 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 		<Space size={19} className='items-center'>
 			{blockchain_socials.homepage?
 				<a href={blockchain_socials.homepage} target='_blank' rel='noreferrer'>
-					<HomeFilled className='text-sm md:text-lg md:mr-1 text-sidebarBlue' />
+					<HomeFilled className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.twitter?
 				<a href={blockchain_socials.twitter} target='_blank' rel='noreferrer'>
-					<TwitterOutlined className='text-sm md:text-lg md:mr-1 text-sidebarBlue' />
+					<TwitterOutlined className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.discord?
 				<a href={blockchain_socials.discord} target='_blank' rel='noreferrer'>
-					<DiscordIcon className='text-sm md:text-lg md:mr-1 text-sidebarBlue' />
+					<DiscordIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.github?
 				<a href={blockchain_socials.github} target='_blank' rel='noreferrer'>
-					<GithubIcon className='text-sm md:text-lg md:mr-1 text-sidebarBlue' />
+					<GithubIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.youtube?
 				<a href={blockchain_socials.youtube} target='_blank' rel='noreferrer'>
-					<YoutubeFilled className='text-sm md:text-lg md:mr-1 text-sidebarBlue' />
+					<YoutubeFilled className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.reddit?
 				<a href={blockchain_socials.reddit} target='_blank' rel='noreferrer'>
-					<RedditIcon className='text-sm md:text-lg md:mr-1 text-sidebarBlue' />
+					<RedditIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.telegram?
 				<a href={blockchain_socials.telegram} target='_blank' rel='noreferrer'>
-					<TelegramIcon className='text-sm md:text-lg md:mr-1 text-sidebarBlue' />
+					<TelegramIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
 			{blockchain_socials.block_explorer?
 				<a href={blockchain_socials.block_explorer} target='_blank' rel='noreferrer'>
-					<CubeIcon className='text-white text-sm md:text-lg md:mr-1 text-sidebarBlue' />
+					<CubeIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
@@ -78,24 +78,24 @@ const gov2Link = ({ className, bgImage, icon, link, text, subText } : { classNam
 			{icon}
 		</div>
 
-		<div className='flex flex-col justify-between my-1'>
-			<div className="text-sidebarBlue group-hover:text-pink_secondary">{text}</div>
-			<div className="text-navBlue group-hover:text-pink_secondary">{subText}</div>
+		<div className='flex flex-col justify-between'>
+			<div className="text-bodyBlue font-semibold text-sm group-hover:text-pink_secondary leading-[150%]">{text}</div>
+			<div className="text-lightBlue font-medium text-xs group-hover:text-pink_secondary">{subText}</div>
 		</div>
 	</a>;
 
 const AboutNetwork = ({ className, networkSocialsData, showGov2Links } : { className?: string, networkSocialsData: NetworkSocials | null, showGov2Links?: boolean }) => {
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-5 md:p-6 rounded-md`}>
+		<div className={`${className} bg-white drop-shadow-md p-5 md:p-6 rounded-xxl`}>
 			<div className="flex items-center justify-between">
-				<h2 className='dashboard-heading'>About</h2>
+				<h2 className='text-bodyBlue text-xl font-medium leading-8'>About</h2>
 				<div className='hidden lg:inline-block'>
 					{networkSocialsData && socialLinks(networkSocialsData)}
 				</div>
 			</div>
 
-			<p className='mt-5'>Join our Community to discuss, contribute and get regular updates from us!</p>
+			<p className='text-bodyBlue mt-1.5 medium text-sm'>Join our Community to discuss, contribute and get regular updates from us!</p>
 
 			<div className='mt-5 lg:hidden flex'>
 				{networkSocialsData && socialLinks(networkSocialsData)}

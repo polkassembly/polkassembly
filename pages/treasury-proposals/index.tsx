@@ -21,6 +21,8 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { isCreationOfTreasuryProposalSupported } from '~src/util/isCreationOfTreasuryProposalSupported';
+import DiamondIcon from '~assets/icons/diamond-icon.svg';
+import FilteredTags from '~src/ui-components/filteredTags';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TreasuryProposalFormButton = dynamic(() => import('src/components/CreateTreasuryProposal/TreasuryProposalFormButton'), {
@@ -82,14 +84,14 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 		<>
 			<SEOHead title='Treasury Proposals' network={network}/>
 
-			<div className='w-full flex flex-col sm:flex-row sm:items-center'>
-				<h1 className='dashboard-heading flex-1 mb-4 sm:mb-0'>On Chain Treasury Proposals</h1>
+			<div className='w-full flex flex-col sm:flex-row sm:items-center mt-3'>
+				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2 flex-1 mb-2 flex'><DiamondIcon className='mr-2 justify-self-center'/>Treasury Proposals ({count})</h1>
 				{isCreationOfTreasuryProposalSupported(network) && <TreasuryProposalFormButton  />}
 			</div>
 
 			{/* Intro and Create Post Button */}
 			<div className="mt-8">
-				<p className="text-sidebarBlue h-full text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+				<p className="text-bodyBlue text-sm font-medium bg-white p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
 					This is the place to discuss on-chain treasury proposals. On-chain posts are automatically generated as soon as they are created on the chain.
 					Only the proposer is able to edit them.
 					{
@@ -103,12 +105,14 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 			</div>
 
 			{/* Treasury Overview Cards */}
-			<TreasuryOverview inTreasuryProposals={true} className='my-8'/>
+			<TreasuryOverview className='my-6'/>
 
-			<div className='mt-8 shadow-md bg-white p-3 md:p-8 rounded-md'>
+			<div className='shadow-md bg-white py-5 px-0 rounded-xxl'>
 				<div className='flex items-center justify-between'>
-					<h1 className='dashboard-heading'>{ count } Treasury Proposals</h1>
-					<FilterByTags/>
+					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
+						<FilteredTags/>
+					</div>
+					<FilterByTags className='my-6 sm:mr-14 xs:mx-6 xs:my-2'/>
 				</div>
 
 				<div>

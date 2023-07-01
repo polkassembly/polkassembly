@@ -5,7 +5,6 @@
 import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
@@ -13,14 +12,13 @@ import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import PostDataContextProvider from '~src/context/PostDataContext';
-import { checkIsOnChainPost, getFirestoreProposalType, getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
+import { checkIsOnChainPost, getFirestoreProposalType, ProposalType } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 import OtherProposals from '../OtherProposals';
 import SidebarRight from '../SidebarRight';
 import OptionPoll from './ActionsBar/OptionPoll';
 import TrackerButton from './ActionsBar/TrackerButton';
-import DiscussionLink from './DiscussionLink';
 import EditablePostContent from './EditablePostContent';
 import PostHeading from './PostHeading';
 import getNetwork from '~src/util/getNetwork';
@@ -28,6 +26,9 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
 import SpamAlert from '~src/ui-components/SpamAlert';
 import { useNetworkContext } from '~src/context';
+import Link from 'next/link';
+import LinkCard from './LinkCard';
+import { ILastVote } from '~src/types';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -93,16 +94,13 @@ const Post: FC<IPostProps> = (props) => {
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
-	const [redirection, setRedirection] = useState({
-		link: '',
-		text: ''
-	});
 	const [canEdit, setCanEdit] = useState(false);
 	const { network } = useNetworkContext();
 	const [duration, setDuration] = useState(dayjs.duration(0));
 
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
+	const [lastVote, setLastVote] = useState< ILastVote | undefined >(undefined);
 
 	useEffect(() => {
 		if(!post) return;
@@ -177,19 +175,6 @@ const Post: FC<IPostProps> = (props) => {
 					nextPost = v;
 				}
 			});
-			if (nextPost) {
-				const proposalType = getFirestoreProposalType(nextPost.type) as ProposalType;
-				const link = getSinglePostLinkFromProposalType(proposalType);
-				setRedirection({
-					link: `/${link}/${nextPost.index}`,
-					text:`${(nextPost.type || '').replace(/([a-z])([A-Z])/g, '$1 $2')} ${proposalType === ProposalType.ANNOUNCEMENT ? '' : '#'+nextPost.index}`
-				});
-			} else {
-				setRedirection({
-					link: '',
-					text: ''
-				});
-			}
 		}
 	}, [post]);
 
@@ -216,6 +201,8 @@ const Post: FC<IPostProps> = (props) => {
 					startTime={post.created_at}
 					post={post}
 					tally={post?.tally}
+					lastVote={lastVote}
+					setLastVote={setLastVote}
 				/>
 				{
 					isOffchainPost &&
@@ -338,7 +325,6 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
-
 	return (
 		<PostDataContextProvider initialPostData={{
 			cid: post?.cid || '',
@@ -369,39 +355,30 @@ const Post: FC<IPostProps> = (props) => {
 		}}>
 			<>
 				<SpamAlert />
-				<div className={`${className} grid grid-cols-1 xl:grid-cols-12 gap-9`}>
-					<div className='xl:col-span-8'>
-
-						{
-							!isEditing && <DiscussionLink isOffchainPost={isOffchainPost} />
-						}
-
-						{!isEditing && isOnchainPost && redirection.link &&
-						<Link href={redirection.link}>
-							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
-								This proposal is now <span className='text-pink_primary'>{redirection.text}</span>
-							</div>
-						</Link>
-						}
-
-						{ post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
-							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading flex items-center gap-x-2'>
-								<span>The child bounty payout is ready to be claimed</span>
-								<ClaimPayoutModal
-									parentBountyId={post?.parentBountyId}
-									childBountyId={onchainId}
-								/>
-							</div>
-						)}
-						{
-							proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&
+				{
+					!isEditing && Boolean(post.timeline?.length) && proposalType !==  ProposalType.CHILD_BOUNTIES &&
+          ( post?.timeline.length === 1 ? getFirestoreProposalType(post?.timeline[0]?.type) !== proposalType : true  ) && <LinkCard timeline={post?.timeline} proposalType={proposalType}/>
+				}
+				{
+					proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&
 						<Link href={`/bounty/${post.parent_bounty_index}`}>
 							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
 								This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
 							</div>
 						</Link>
-						}
+				}
+				{ post && proposalType ===  ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
+					<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md  mb-6 dashboard-heading flex items-center gap-x-2 w-full'>
+						<span>The child bounty payout is ready to be claimed</span>
+						<ClaimPayoutModal
+							parentBountyId={post?.parentBountyId}
+							childBountyId={onchainId}
+						/>
+					</div>
+				)}
 
+				<div className={`${className} grid grid-cols-1 xl:grid-cols-12 gap-9`}>
+					<div className='xl:col-span-8'>
 						{
 							proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) &&
 						<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
@@ -412,8 +389,9 @@ const Post: FC<IPostProps> = (props) => {
 						}
 
 						{/* Post Content */}
-						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-md w-full mb-6'>
-							{isEditing && <EditablePostContent toggleEdit={toggleEdit} />}
+						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6'>
+							{isEditing &&
+              <EditablePostContent toggleEdit={toggleEdit} />}
 
 							{!isEditing && <>
 								<PostHeading
@@ -421,7 +399,7 @@ const Post: FC<IPostProps> = (props) => {
 								/>
 								<Tabs
 									type="card"
-									className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+									className='ant-tabs-tab-bg-white text-bodyBlue font-medium'
 									items={tabItems}
 								/>
 

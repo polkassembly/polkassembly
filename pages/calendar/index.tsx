@@ -461,7 +461,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 
 	return (
 		<>
-			<div className={`${className} bg-white drop-shadow-md p-3 rounded-md`}>
+			<div className={`${className} bg-white drop-shadow-md p-3 rounded-xl`}>
 				{error && <ErrorAlert errorMsg={error} />}
 
 				{accessible &&

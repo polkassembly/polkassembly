@@ -264,9 +264,9 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 				<GovSidebarCard>
 					<Spin spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
 						<div className='flex items-center justify-between gap-x-2'>
-							<h6 className='text-sidebarBlue font-semibold text-[20px] leading-[24px] m-0 p-0'>Voting</h6>
+							<h6 className='text-bodyBlue font-medium text-xl leading-[24px] m-0 p-0'>Voting</h6>
 							<div className='flex items-center justify-center gap-x-2'>
-								<div className={'text-sidebarBlue border-solid border-navBlue border xl:max-w-[120px] 2xl:max-w-[100%] text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min'}>
+								<div className={'text-bodyBlue border-solid border-bodyBlue border xl:max-w-[120px] 2xl:max-w-[100%] text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min'}>
 									{ voteInfo?.voteThreshold }
 								</div>
 								{voteInfo.isPassing !== null && <PassingInfoTag isPassing={voteInfo?.isPassing}/>}
@@ -278,7 +278,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 							className='vote-progress'
 							nayVotes={voteInfo?.nay_amount}
 						/>
-						<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-[#485F7D] -mt-4'>
+						<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue -mt-4'>
 							<article className='flex items-center justify-between gap-x-2'>
 								<div className='flex items-center gap-x-1'>
 									<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
@@ -286,19 +286,19 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 									</span>
 								</div>
 								<div
-									className='text-navBlue text-xs font-medium leading-[22px]'
+									className='text-lightBlue text-xs font-medium leading-[22px]'
 								>
 									{formatUSDWithUnits(formatBnBalance(voteInfo?.aye_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 								</div>
 							</article>
-							<article className='flex items-center justify-between gap-x-2'>
+							<article className='flex items-center text-lightBlue justify-between gap-x-2'>
 								<div className='flex items-center gap-x-1'>
 									<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
 										Nay
 									</span>
 								</div>
 								<div
-									className='text-navBlue text-xs font-medium leading-[22px]'
+									className='text-lightBlue text-xs font-medium leading-[22px]'
 								>
 									{formatUSDWithUnits(formatBnBalance(voteInfo?.nay_amount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 								</div>
@@ -310,7 +310,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 									</span>
 								</div>
 								<div
-									className='text-navBlue text-xs font-medium leading-[22px]'
+									className='text-lightBlue text-xs font-medium leading-[22px]'
 								>
 									{formatUSDWithUnits(formatBnBalance(voteInfo?.turnout, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 								</div>
@@ -324,7 +324,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 											</span>
 										</div>
 										<div
-											className='text-navBlue text-xs font-medium leading-[22px]'
+											className='text-lightBlue text-xs font-medium leading-[22px]'
 										>
 											{formatUSDWithUnits(formatBnBalance(totalIssuance, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
 										</div>
@@ -350,9 +350,9 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 						<GovSidebarCard>
 							<Spin spinning={isFetchingCereVoteInfo} className='bg-white' indicator={<LoadingOutlined />}>
 								<div className='flex items-center justify-between gap-x-2'>
-									<h6 className='text-sidebarBlue font-semibold text-[20px] leading-[24px] m-0 p-0'>Voting</h6>
+									<h6 className='text-bodyBlue font-medium text-xl leading-[24px] m-0 p-0'>Voting</h6>
 									<div className='flex items-center justify-center gap-x-2 relative z-50'>
-										<div title={voteInfo?.voteThreshold} className={'text-sidebarBlue border-solid border-navBlue border xl:max-w-[120px] 2xl:max-w-[100%] text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min'}>
+										<div title={voteInfo?.voteThreshold} className={'text-bodyBlue border-solid border-navBlue border xl:max-w-[120px] 2xl:max-w-[100%] text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min'}>
 											{ voteInfo?.voteThreshold }
 										</div>
 										{voteInfo !== null && <PassingInfoTag isPassing={voteInfo?.isPassing}/>}

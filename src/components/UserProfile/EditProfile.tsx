@@ -60,6 +60,9 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			setErrorCheck({ ...errorCheck, basicInformationError: 'Image URL is invalid.' });
 			return true;
 		}
+		else{
+			setErrorCheck({ ...errorCheck, basicInformationError: '' });
+		}
 
 		if (social_links && Array.isArray(social_links)) {
 			for (let i = 0; i < social_links.length; i++) {
@@ -67,6 +70,9 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				if(link.link && !link.link?.match(regex)) {
 					setErrorCheck({ ...errorCheck, socialsError: `${link.type} ${link.type === 'Email'? '': 'URL'} is invalid.` });
 					return true;
+				}
+				else{
+					setErrorCheck({ ...errorCheck, socialsError: '' });
 				}
 			}
 		}

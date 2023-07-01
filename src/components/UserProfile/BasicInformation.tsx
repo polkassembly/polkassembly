@@ -27,7 +27,6 @@ interface IBasicInformationProps {
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
 	const { profile, loading, setProfile, setUsername, username, className , errorCheck } = props;
-	console.log(errorCheck);
 	const [newBadge, setNewBadge] = useState<string>('');
 
 	const addNewBadge = () => {
@@ -231,7 +230,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 						type='error'
 						showIcon
 					/>
-					: null
+					: ''
 			}
 		</div>
 	);

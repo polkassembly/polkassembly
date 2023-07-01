@@ -59,8 +59,8 @@ export interface IPostsListingResponse {
 
 export function getGeneralStatus(status: string) {
 	switch (status) {
-		case 'DecisionDepositPlaced':
-			return 'Deciding';
+	case 'DecisionDepositPlaced':
+		return 'Deciding';
 	}
 	return status;
 }

@@ -182,7 +182,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 			errors.push('');
 		}
 		if(bnBalance.lte(ZERO_BN)) {
-			setBalanceErr('Please provide a valid balance.Balance must be greater than 0.');
+			setBalanceErr('Please provide a valid balance.');
+			errors.push('');
+		}
+
+		if(bnBalance.eq(ZERO_BN)){
+			setBalanceErr('Balance must be greater than 0.');
 			errors.push('');
 		}
 
@@ -287,7 +292,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 		<Checkbox.Group className='flex flex-col h-[200px] overflow-y-scroll' onChange={onChange} value={checkedList} >
 			{trackArr?.filter(( item ) => item?.trackId !== trackNum)?.map((track, index) => (
 				<div
-					className={`${poppins.variable} ${poppins.className} text-sm tracking-[0.01em] text-[#243A57] flex gap-[13px] p-[8px]`}
+					className={`${poppins.variable} ${poppins.className} text-sm tracking-[0.01em] text-bodyBlue flex gap-[13px] p-[8px]`}
 					key={index}
 				>
 					<Checkbox className='text-pink_primary' value={track?.name}/>
@@ -310,7 +315,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full` }
 				wrapClassName={className}
 				title={
-					<div className='flex items-center text-[#243A57] text-[20px] font-semibold mb-6'>
+					<div className='flex items-center text-bodyBlue text-[20px] font-semibold mb-6'>
 						<DelegateProfileIcon className='mr-2'/>Delegate
 					</div>
 				}
@@ -345,7 +350,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 							disabled={loading}
 						>
 							<div className=''>
-								<label className='text-sm text-[#485F7D] mb-[2px]'>Your Address</label>
+								<label className='text-sm text-lightBlue mb-[2px]'>Your Address</label>
 								<div className='px-[6px] py-[6px] border-solid rounded-[4px] border-[1px] cursor-not-allowed h-[40px] bg-[#f6f7f9] border-[#D2D8E0] text-[#7c899b] text-sm font-normal'>
 									<Address address={delegationDashboardAddress} identiconSize={26} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
 								</div>
@@ -354,7 +359,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 								defaultAddress={defaultTarget}
 								label={'Delegate to'}
 								placeholder='Delegate Account Address'
-								className='text-[#485F7D] text-sm font-normal'
+								className='text-lightBlue text-sm font-normal'
 								onChange={(address) => setTarget(address)}
 								size='large'
 								skipFormatCheck={true}
@@ -365,27 +370,31 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 							{targetErr.length > 0 && <div className='-mt-1 text-sm text-red-500'>{targetErr}</div>}
 							{addressAlert && <Alert className='mb mt-2' showIcon message='The substrate address has been changed to Kusama address.'/> }
 
-							<div className='flex justify-between items-center mt-6 cursor-pointer -mb-6 text-[#485F7D]' >
+							<div className='flex justify-between items-center mt-6 cursor-pointer text-lightBlue' >
                 Balance<span onClick={() => {
 									setBnBalance(availableBalance);
 									form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));
 								}}>
-									<Balance address={delegationDashboardAddress} onChange={handleOnBalanceChange}/></span></div>
+									<Balance address={delegationDashboardAddress} onChange={handleOnBalanceChange}/>
+								</span>
+							</div>
+
 							<BalanceInput
 								placeholder={'Enter balance'}
-								className='mt-[2px] text-[#485F7D] text-sm font-normal'
+								className='text-lightBlue text-sm font-normal'
 								address={delegationDashboardAddress}
 								onAccountBalanceChange={handleOnBalanceChange}
 								onChange={(balance) => setBnBalance(balance)}
 								balance={ bnBalance }
+								size='middle'
 								inputClassName={`text-[#7c899b] text-sm ${balanceErr.length > 0 && 'border-red-500'}`}
 								noRules={true}
 							/>
 							{/* errors */}
 							{balanceErr.length > 0 && <div className='-mt-5 text-sm text-red-500'>{balanceErr}</div>}
 
-							<div className='mb-2 border-solid border-white mt-2'>
-								<label  className='text-[#485F7D] flex items-center text-sm'>
+							<div className='mb-2 border-solid border-white mt-4'>
+								<label  className='text-lightBlue flex items-center text-sm'>
                   Conviction
 									<span>
 										<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
@@ -410,30 +419,29 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 											}} }
 										step={7}
 										marks={{
-											1:{ label:<div>0.1x</div>, style: { color: '#243A57', fontSize:'12px', marginTop:'16px' } },
-											2:{ label:<div>1x</div>, style: { color: '#243A57', fontSize:'12px', marginTop:'16px' } },
-											3:{ label:<div>2x</div> , style: { color: '#243A57', fontSize:'12px', marginTop:'16px' } },
-											4:{ label:<div>3x</div>, style: { color: '#243A57', fontSize:'12px', marginTop:'16px' } },
-											5:{ label:<div>4x</div>, style: { color: '#243A57', fontSize:'12px', marginTop:'16px' } },
-											6:{ label:<div>5x</div>, style: { color: '#243A57', fontSize:'12px', marginTop:'16px' } },
-											7:{ label:<div>6x</div>, style: { color: '#243A57', fontSize:'12px',marginTop:'16px' } }  }}
+											1:{ label:<div>0.1x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
+											2:{ label:<div>1x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
+											3:{ label:<div>2x</div> , style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
+											4:{ label:<div>3x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
+											5:{ label:<div>4x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
+											6:{ label:<div>5x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
+											7:{ label:<div>6x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px',marginTop:'16px' } }  }}
 										min={1}
 										max={7}
 										defaultValue={1}
 									/></div>
 							</div>
 							<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
-								<div className='flex gap-[10px] items-center justify-center text-[#485F7D] text-sm'> <LockIcon/><span>Locking period</span></div>
-								<div className='text-[#243A57] font-medium text-sm flex justify-center items-center' >
+								<div className='flex gap-[10px] items-center justify-center text-lightBlue text-sm'> <LockIcon/><span>Locking period</span></div>
+								<div className='text-bodyBlue font-medium text-sm flex justify-center items-center' >
 									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enactment period`}
 								</div>
 							</div>
 							<div className='mt-6 mb-2 flex justify-between items-center'>
-								<span className='text-sm text-[#485F7D]'>Selected track(s)</span>
+								<span className='text-sm text-lightBlue'>Selected track(s)</span>
 								<Popover
 									content={content}
-									placement='topLeft'
-									className= ''>
+									placement='topLeft'>
 									<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Select available tracks</Checkbox>
 								</Popover>
 							</div>
@@ -466,15 +474,14 @@ export default styled(DelegateModal)`
 .padding .ant-modal-close{
   margin-top: 4px;
 }
-.padding  .ant-modal-close:hover{
+.padding .ant-modal-close:hover{
   margin-top: 4px;
 }
 .padding .ant-alert-message{
-color:#243A57;
-font-size:14px;
-font-weight: 400;
+  color: var(--bodyBlue);
+  font-size: 14px;
+  font-weight: 400;
 }
-
 .padding .ant-slider-dot{
   height:12px;
   width:2px;
@@ -483,7 +490,7 @@ font-weight: 400;
   margin-top:-1px;
 }
 .padding .ant-slider-dot-active{
-  border-color:#E5007A !important;
+  border-color:var(--pink_primary) !important;
   width:2px;
   height:12px;  
   border-radius:0px !important;
@@ -493,32 +500,27 @@ font-weight: 400;
  border-color:#D2D8E0 !important;
  margin-top:-1px;
 }
-// .padding .ant-slider-handle{
-//   border:1px solid  ;
-// }
 .padding .ant-slider .ant-slider-rail{
   background-color: #D2D8E0;
   height: 5px;
 }
 .padding .ant-slider .ant-slider-track{
-height: 5px;
- background-color: #E5007A !important;
+  height: 5px;
+  background-color: var(--pink_primary) !important;
 }
-
- .padding .ant-slider .ant-slider-handle::after{
-height:25px;
-margin-top:-7px;
-background:#E5007A;
-width:18px;
-border-radius:8px !important;
-border:none !important;
-margin-left:-2px;
+.padding .ant-slider .ant-slider-handle::after{
+  height:25px;
+  margin-top:-7px;
+  background:var(--pink_primary);
+  width:18px;
+  border-radius:8px !important;
+  border:none !important;
+  margin-left:-2px;
   box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
  }
-  .padding .ant-slider .ant-slider-handle::before{
-
-border-radius:8px !important;
-border:none !important;
+ .padding .ant-slider .ant-slider-handle::before{
+  border-radius:8px !important;
+  border:none !important;
   box-shadow: 0px 4px 6px rgba(157, 12, 89, 0.4) !important;
  }
  `;

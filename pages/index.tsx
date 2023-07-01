@@ -30,6 +30,8 @@ import { getNetworkSocials } from './api/v1/network-socials';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
+import Gov2LatestActivity from '~src/components/Gov2Home/Gov2LatestActivity';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -49,7 +51,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		return {
 			props: {},
 			redirect: {
-				destination: '/gov-2'
+				destination: '/opengov'
 			}
 		};
 	}
@@ -113,6 +115,17 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		});
 	}
 
+	if (network === 'collectives') {
+		for (const trackName of Object.keys(networkTrackInfo[network])) {
+			fetches [trackName as keyof typeof fetches] =  getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.FELLOWSHIP_REFERENDUMS,
+				trackNo: networkTrackInfo[network][trackName].trackId
+			});
+		}
+	}
+
 	const responseArr = await Promise.all(Object.values(fetches));
 	const props: IHomeProps = {
 		latestPosts: {},
@@ -155,6 +168,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 			</Script></> : null}
 			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network}/>
 			<main>
+				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
 				<div className="mt-6 mx-1">
 					{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}
 				</div>
@@ -164,7 +178,15 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					</div>
 				}
 				<div className="mt-8 mx-1">
-					<LatestActivity latestPosts={latestPosts} />
+					{
+						network !== AllNetworks.COLLECTIVES?
+							<LatestActivity latestPosts={latestPosts} />
+							: <Gov2LatestActivity gov2LatestPosts={{
+								allGov2Posts: latestPosts.all,
+								discussionPosts: latestPosts.discussions,
+								...latestPosts
+							}} />
+					}
 				</div>
 
 				<div className="mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">

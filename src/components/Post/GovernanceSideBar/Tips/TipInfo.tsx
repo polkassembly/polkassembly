@@ -59,10 +59,14 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 			return;
 		}
 		let cancel = false;
-		api.query.council.members().then((members) => {
-			if (cancel) return;
-			setMembers(members?.map(member => member.toString()));
-		});
+		try {
+			api.query.council.members().then((members) => {
+				if (cancel) return;
+				setMembers(members?.map(member => member.toString()));
+			});
+		} catch (error) {
+			// console.log(error);
+		}
 		return () => {
 			cancel = true;
 		};
@@ -93,10 +97,10 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 					</Row>
 					<h3 className='flex items-center gap-x-2 text-lg tracking-wide text-sidebarBlue font-medium'>Tippers <HelperTooltip className='text-sm' text='Amount tipped by an individual/organization' /></h3>
 					<div className='flex flex-col gap-y-5'>
-						{tippers.map((tip) => {
+						{tippers.map((tip, i) => {
 							const { tipper, value } = tip;
 							return (
-								<Row key={tipper} className='flex items-center justify-between'>
+								<Row key={i} className='flex items-center justify-between'>
 									<Col>
 										<Address isSubVisible={false} address={tipper} />
 									</Col>

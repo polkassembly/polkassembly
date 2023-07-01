@@ -135,9 +135,11 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		if(!validateUserName(username)) return ;
 
 		setLoading(true);
+
 		const { data , error } = await nextApiClientFetch<IAddProfileResponse>( 'api/v1/auth/actions/addProfile', {
 			badges: JSON.stringify(badges || []),
 			bio: bio,
+			custom_username:true,
 			image: image,
 			social_links: JSON.stringify(social_links || []),
 			title: title,
@@ -273,7 +275,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 						: null
 				}
 			</Modal>
-			<button
+			{!setOpenModal && <button
 				className='rounded-[4px] md:h-[40px] md:w-[87px] outline-none text-[#fff] flex items-center justify-center bg-transparent border-0 md:border border-solid border-white gap-x-1.5 font-medium text-sm cursor-pointer'
 				onClick={() => {
 					setOpen(true);
@@ -284,7 +286,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				<span className=' md:block'>
 					Edit
 				</span>
-			</button>
+			</button>}
 		</div>
 	);
 };

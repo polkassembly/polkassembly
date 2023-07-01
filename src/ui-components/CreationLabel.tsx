@@ -64,10 +64,11 @@ interface ICreationLabelProps {
   commentSource?:'polkassembly' | 'subsquare';
   cid?:string;
   spam_users_count?:number;
+  truncateUsername?:boolean;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource='polkassembly', cid ,spam_users_count = 0 } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource='polkassembly', cid ,spam_users_count = 0, truncateUsername } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 
 	const items : MenuProps['items']=[
@@ -79,32 +80,34 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	];
 
 	return <div className={`${className} flex justify-between w-[100%]`} >
-		<div className='text-navBlue text-xs flex flex-col md:flex-row md:items-center'>
+		<div className='text-xs flex flex-col md:flex-row md:items-center'>
 			<div className={'flex min-[320px]:flex-row min-[320px]:items-center w-full min-[320px]:w-auto '}>
 				<div className={'flex items-center '}>
-					{!text && <span className='mr-1'>By:</span>}
+					{!text && <span className='mr-2 text-lightBlue'>By:</span>}
 					<NameLabel
 						defaultAddress={defaultAddress}
 						username={username}
 						clickable={commentSource === 'polkassembly' }
+						truncateUsername={truncateUsername}
+						textClassName={'text-[12px]'}
 					/>
 					{text}&nbsp;
 					{topic &&
-			<div className='flex items-center'><span>in</span> &nbsp; &nbsp; <TopicTag topic={topic} className={topic} /></div>
+			<div className='flex sm:-mt-0.5'> <span className='text-lightBlue mr-2 mt-1'>in</span> <TopicTag topic={topic} className={topic} /></div>
 					}
 					{cid ?
 						<>
-							<Divider type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+							<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 							<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
 						</> : null}
 				</div>
 			</div>
-			<div className='flex items-center mt-2 md:mt-0'>
-				{(topic || text) && <>
+			<div className='flex items-center text-lightBlue'>
+				{(topic || text || created_at) && <>
 				&nbsp;
-					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #90A0B7' }} />
+					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 				</>}
-				{created_at && <span className='flex items-center'><ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>}
+				{created_at && <span className='flex items-center'><ClockCircleOutlined className='sm:mx-1' />{relativeCreatedAt}</span>}
 				{children}
 			</div>
 		</div>

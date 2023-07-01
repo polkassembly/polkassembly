@@ -5,6 +5,7 @@
 import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { poppins } from 'pages/_app';
 import React, { FC } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
@@ -34,11 +35,12 @@ const TrackListingTabContent: FC<ITrackListingTabContentProps> = (props) => {
 	if(posts&& posts.length>0)
 		return (
 			<div className={className}>
-				{posts.map((post) => {
+				{posts.map((post,index) => {
 					return (
-						<div key={post.post_id} className='my-5'>
+						<div key={post.post_id} className='my-0'>
 							{<Link href={`/member-referenda/${post.post_id}`}>
 								<GovernanceCard
+									className={`${(index+1)%2!==0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
 									postReactionCount={post.post_reactions}
 									address={post.proposer}
 									commentsCount={post.comments_count || 0}
@@ -46,7 +48,7 @@ const TrackListingTabContent: FC<ITrackListingTabContentProps> = (props) => {
 									onchainId={post.post_id}
 									status={post.status}
 									title={post.title}
-									topic={post.topic.name}
+									topic={post.topic?.name}
 									created_at={post.created_at}
 									tags={post?.tags}
 									spam_users_count={post?.spam_users_count}

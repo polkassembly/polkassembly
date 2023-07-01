@@ -19,7 +19,10 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import styled from 'styled-components';
 import { useApiContext, useNetworkContext } from '~src/context';
-
+import Available from '~assets/icons/available.svg';
+import CurrentPrice from '~assets/icons/currentprice.svg';
+import NextBurn from '~assets/icons/nextburn.svg';
+import SpendPeriod from '~assets/icons/spendperiod.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
@@ -308,7 +311,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				);
 				const responseJSON = await response.json();
 				if (responseJSON['message'] == 'Success') {
-					const weekAgoPrice = responseJSON['data']['average'];
+					const weekAgoPrice = responseJSON['data']['ema7_average'];
 					const currentTokenPriceNum : number = parseFloat(currentTokenPrice.value);
 					const weekAgoPriceNum : number = parseFloat(weekAgoPrice);
 					if(weekAgoPriceNum == 0) {
@@ -342,203 +345,264 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	}, [currentTokenPrice, network]);
 
 	return (
-		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col gap-4 lg:flex`}>
+		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col xs:gap-6 sm:gap-8 xl:flex`}>
 			{/* Available */}
-			<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-md gap-y-2">
-				{
-					!available.isLoading ?
-						<>
-							<div className="text-navBlue text-xs flex items-center">
-								<span className="mr-2">
-									Available
-								</span>
-
-								<HelperTooltip
-									text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
-								/>
-							</div>
-							<div className="text-sidebarBlue font-medium text-lg">
-								{
-									available.value ?
-										<span>
-											{available.value}
-											{' '}
-											<span className='text-navBlue'>
-												{chainProperties[network]?.tokenSymbol}
-											</span>
-										</span>
-										: <span>N/A</span>
-								}
-							</div>
-							{!['polymesh', 'polymesh-test'].includes(network) && <>
-								<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
-									<Divider className='m-0 p-0' />
-									<span className='flex flex-col justify-center text-sidebarBlue font-medium'>
-										{
-											available.valueUSD
-												? `~ $${available.valueUSD}`
-												: 'N/A'
-										}
-									</span>
-								</div>
-							</>}
-						</>
-						: <div className='min-h-[89px] w-full flex items-center justify-center'>
-							<LoadingOutlined />
-						</div>
-				}
-			</div>
-
-			{/* CurrentPrice */}
-			{network !== 'moonbase' &&
-				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-md gap-y-2">
+			<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
+				<div className='lg:flex flex-col flex-1 gap-x-0 w-full'>
+					<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>
+						<Available className='lg:hidden' />
+					</div>
 					{
-						!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading)?
+						!available.isLoading ?
 							<>
-								<div className="text-navBlue text-xs flex items-center">
-									<span className='hidden md:flex'>
-							Current Price of {chainProperties[network]?.tokenSymbol}
-									</span>
-									<span className='flex md:hidden'>
-							Price {chainProperties[network]?.tokenSymbol}
-									</span>
-								</div>
-								<div className="text-sidebarBlue font-medium text-lg">
-									{currentTokenPrice.value === 'N/A' ? <span>N/A</span> : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value))
-										? <span>${currentTokenPrice.value}</span>
-										: null
-									}
-								</div>
-								<div className="flex flex-col justify-center text-sidebarBlue font-medium gap-y-3">
-									<Divider className='m-0 p-0' />
-									<span className='flex items-center gap-x-1'>
-										{priceWeeklyChange.value === 'N/A' ? 'N/A' : priceWeeklyChange.value ?
-											<>
-												<span>
-													Weekly{' '}
-													<span className='hidden xl:inline-block'>
-														Change
+								<div className='mb-4'>
+									<div className="flex items-center my-1">
+										<span className="mr-2 text-xs leading-5 text-lightBlue font-medium p-0">
+									Available
+										</span>
+										<HelperTooltip
+											text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
+											className='text-xs leading-5 text-lightBlue font-medium'
+										/>
+									</div>
+									<div className="flex justify-between font-medium">
+										{
+											available.value ?
+												<span className='text-lg text-bodyBlue font-medium'>
+													{available.value}
+													{' '}
+													<span className='text-lightBlue text-sm'>
+														{chainProperties[network]?.tokenSymbol}
 													</span>
 												</span>
-												<span>
-													{Math.abs(Number(priceWeeklyChange.value))}%
-												</span>
-												{typeof priceWeeklyChange.value === 'number' && priceWeeklyChange.value < 0 ? <CaretDownOutlined color='red' /> : <CaretUpOutlined color='green' /> }
-											</>
-											: null
+												: <span>N/A</span>
 										}
-									</span>
+									</div>
 								</div>
-							</>
-							:  <div className='min-h-[89px] w-full flex items-center justify-center'>
-								<LoadingOutlined />
-							</div>
-					}
-				</div>
-			}
-
-			{/* Spend Period */}
-			{!['polymesh', 'polymesh-test'].includes(network) && <>
-				{!inTreasuryProposals &&
-				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-md gap-y-2">
-					{
-						!spendPeriod.isLoading?
-							<>
-								<div className="text-navBlue text-xs flex items-center gap-x-2">
-									<span>
-										Spend Period
-									</span>
-
-									<HelperTooltip
-										text='Funds held in the treasury can be spent by making a spending proposal that, if approved by the Council, will enter a spend period before distribution, it is subject to governance, with the current default set to 24 days.'
-									/>
-								</div>
-
-								<div className="text-sidebarBlue font-medium text-lg">
-									{spendPeriod.value?.total
-										? <>
+								{!['polymesh', 'polymesh-test'].includes(network) && <>
+									<div className='flex flex-col justify-center text-bodyBlue font-medium gap-y-3'>
+										<Divider
+											style={{
+												background: '#D2D8E0',
+												width: '100%'
+											}}
+											className='m-0 p-0' />
+										<span className='flex flex-col justify-center text-lightBlue text-xs font-medium'>
 											{
-												spendPeriod.value?.days?
-													<>
-														<span>{spendPeriod.value.days} </span>
-														<span className='text-navBlue'>days </span>
-													</>
-													: null
+												available.valueUSD
+													? `~ $${available.valueUSD}`
+													: 'N/A'
 											}
-											<span>{spendPeriod.value.hours} </span>
-											<span className='text-navBlue'>hrs </span>
-											{
-												!spendPeriod.value?.days?
-													<>
-														<span>{spendPeriod.value.minutes} </span>
-														<span className='text-navBlue'>mins </span>
-													</>
-													: null
-											}
-											<span className="text-navBlue text-xs"> / {spendPeriod.value.total} days </span>
-										</>
-										: 'N/A'
-									}
-								</div>
-								{
-									<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
-										<Divider className='m-0 p-0' />
-										<span className='flex items-center'>
-											<Progress className='m-0 p-0 flex items-center' percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0} strokeColor='#E5007A' size="small" />
 										</span>
 									</div>
-								}
-							</>
-							:  <div className='min-h-[89px] w-full flex items-center justify-center'>
-								<LoadingOutlined />
-							</div>
-					}
-				</div>
-				}
-			</>}
-
-			{/* Next Burn */}
-			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
-				<div className="flex-1 flex flex-col justify-between bg-white drop-shadow-md p-3 lg:p-6 rounded-md gap-y-2">
-					{
-						!nextBurn.isLoading?
-							<>
-								<div className="text-navBlue text-xs flex items-center">
-									<span className="mr-2">
-										Next Burn
-									</span>
-
-									<HelperTooltip
-										text='If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.'
-									/>
-								</div>
-
-								<div className="text-sidebarBlue font-medium text-lg">
-									{
-										nextBurn.value ? (
-											<span>
-												{nextBurn.value} <span className='text-navBlue'>{chainProperties[network]?.tokenSymbol}</span>
-											</span>
-										) : null
-									}
-								</div>
-								<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
-									<Divider className='m-0 p-0' />
-									<span className='mr-2 text-sidebarBlue font-medium'>
-										{
-											nextBurn.valueUSD
-												? `~ $${nextBurn.valueUSD}`
-												: 'N/A'
-										}
-									</span>
-								</div>
+								</>}
 							</>
 							: <div className='min-h-[89px] w-full flex items-center justify-center'>
 								<LoadingOutlined />
 							</div>
 					}
 				</div>
+				<div>
+					<Available className='lg:block xs:hidden'/>
+				</div>
+			</div>
+
+			{/* CurrentPrice */}
+			{network !== 'moonbase' &&
+				<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
+					<div className='lg:flex flex-col gap-x-0 w-full'>
+						<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>
+							<CurrentPrice className='lg:hidden' />
+						</div>
+						{
+							!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading)?
+								<>
+									<div className='mb-4'>
+										<div className="flex items-center my-1">
+											<span className='hidden mr-2 text-xs leading-5 text-lightBlue font-medium md:flex'>
+							Current Price of {chainProperties[network]?.tokenSymbol}
+											</span>
+											<span className='flex md:hidden text-xs text-lightBlue font-medium'>
+							Price {chainProperties[network]?.tokenSymbol}
+											</span>
+										</div>
+										<div className="font-medium text-lg">
+											{currentTokenPrice.value === 'N/A' ? <span>N/A</span> : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value))
+												?
+												<><span className='text-lightBlue'>$ </span><span className='text-bodyBlue'>{currentTokenPrice.value}</span></>
+												: null
+											}
+										</div>
+									</div>
+									<div className="flex flex-col justify-center text-bodyBlue font-medium gap-y-3">
+										<Divider
+											style={{
+												background: '#D2D8E0'
+											}}
+											className='m-0 p-0' />
+										<div className='flex text-xs text-lightBlue md:whitespace-pre items-center'>
+											{priceWeeklyChange.value === 'N/A' ? 'N/A' : priceWeeklyChange.value ?
+												<>
+													<span className="mr-1 sm:mr-2">
+													Weekly Change
+													</span>
+													<div className='flex items-center'>
+														<span className='font-semibold'>
+															{Math.abs(Number(priceWeeklyChange.value))}%
+														</span>
+														{Number(priceWeeklyChange.value) < 0 ? <CaretDownOutlined style={{ color: 'red' , marginLeft: '1.5px' }} /> :
+															<CaretUpOutlined style={{ color: '#52C41A' , marginLeft: '1.5px' }} /> }
+													</div>
+												</>
+												: null
+											}
+										</div>
+									</div>
+								</>
+								:  <div className='min-h-[89px] w-full flex items-center justify-center'>
+									<LoadingOutlined />
+								</div>
+						}
+					</div>
+					<div>
+						<CurrentPrice className="xs:hidden lg:block"/>
+					</div>
+				</div>
 			}
+
+			{/* Next Burn */}
+			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
+				<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
+					<div className='lg:flex flex-col gap-x-0 w-full'>
+						<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>
+							<NextBurn className='lg:hidden' />
+						</div>
+						{
+							!nextBurn.isLoading?
+								<>
+									<div className='mb-4'>
+										<div className="text-lightBlue text-xs flex items-center my-1">
+											<span className="mr-2 text-xs leading-5 text-lightBlue font-medium">
+										Next Burn
+											</span>
+
+											<HelperTooltip
+												text='If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.'
+											/>
+										</div>
+
+										<div className="text-bodyBlue flex justify-between font-medium text-lg">
+											{
+												nextBurn.value ? (
+													<span>
+														{nextBurn.value} <span className='text-lightBlue text-sm'>{chainProperties[network]?.tokenSymbol}</span>
+													</span>
+												) : null
+											}
+										</div>
+									</div>
+									<div className='flex flex-col justify-center text-sidebarBlue font-medium gap-y-3'>
+										<Divider
+											style={{
+												background: '#D2D8E0'
+											}}
+											className='m-0 p-0' />
+										<span className='mr-2 text-lightBlue w-full text-xs font-medium'>
+											{
+												nextBurn.valueUSD
+													? `~ $${nextBurn.valueUSD}`
+													: 'N/A'
+											}
+										</span>
+									</div>
+								</>
+								: <div className='min-h-[89px] w-full flex items-center justify-center'>
+									<LoadingOutlined />
+								</div>
+						}
+					</div>
+					<div>
+						<NextBurn className="xs:hidden lg:block"/>
+					</div>
+				</div>
+			}
+
+			{/* Spend Period */}
+			{!['polymesh', 'polymesh-test'].includes(network) && <>
+				{!inTreasuryProposals &&
+				<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
+					<div className='lg:flex flex-col gap-x-0 w-full'>
+						<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>
+							<SpendPeriod className='lg:hidden' />
+						</div>
+						{
+							!spendPeriod.isLoading?
+								<>
+									<div className='mb-5 sm:mb-4'>
+										<div className="flex items-center my-1">
+											<span className='mr-2 text-xs mt-1 lg:mt-0 leading-5 text-lightBlue font-medium'>
+										Spend Period
+											</span>
+
+											<HelperTooltip
+												text='Funds held in the treasury can be spent by making a spending proposal that, if approved by the Council, will enter a spend period before distribution, it is subject to governance, with the current default set to 24 days.'
+												className='text-xs leading-5 text-lightBlue font-medium'
+											/>
+										</div>
+
+										<div className="text-bodyBlue flex whitespace-pre font-medium items-baseline mt-1 sm:mt-0">
+											{spendPeriod.value?.total
+												? <>
+													{
+														spendPeriod.value?.days?
+															<>
+																<span className='text-base sm:text-lg'>{spendPeriod.value.days}&nbsp;</span>
+																<span className='text-lightBlue text-xs'>days&nbsp;</span>
+															</>
+															: null
+													}
+													<>
+														<span className='text-base sm:text-lg'>{spendPeriod.value.hours}&nbsp;</span>
+														<span className='text-lightBlue text-xs'>hrs&nbsp;</span>
+													</>
+													{
+														!spendPeriod.value?.days?
+															<>
+																<span className='text-base sm:text-lg'>{spendPeriod.value.minutes}&nbsp;</span>
+																<span className='text-lightBlue text-xs'>mins&nbsp;</span>
+															</>
+															: null
+													}
+													<span className="text-lightBlue text-[10px] sm:text-xs">/ {spendPeriod.value.total} days </span>
+												</>
+												: 'N/A'
+											}
+										</div>
+									</div>
+									{
+										<div className='flex flex-col justify-center font-medium gap-y-3'>
+											<Divider
+												style={{
+													background: '#D2D8E0'
+												}}
+												className='m-0 p-0' />
+											<span className='flex items-center'>
+												<Progress className='m-0 p-0 flex items-center' percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0} trailColor='#E1E6EB' strokeColor='#E5007A' size="small" />
+											</span>
+										</div>
+									}
+								</>
+								:  <div className='min-h-[89px] w-full flex items-center justify-center'>
+									<LoadingOutlined />
+								</div>
+						}
+					</div>
+					<div>
+						<SpendPeriod className="xs:hidden lg:block mt-2"/>
+					</div>
+				</div>
+				}
+			</>}
 		</div>
 	);
 };
@@ -546,7 +610,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 export default styled(TreasuryOverview)`
 
 .ant-progress-text{
-	color: #90A0B7 !important;
+	color: #485F7D !important;
+	font-size: 12px !important;
 }
 .ant-progress-outer {
 	display: flex !important;

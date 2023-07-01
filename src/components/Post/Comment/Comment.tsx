@@ -80,14 +80,14 @@ export const Comment: FC<ICommentProps> = (props) => {
 			/>
 			<div className='w-full overflow-hidden'>
 				<CreationLabel
-					className='creation-label py-2 pt-4 px-0 md:px-4 bg-comment_bg rounded-t-md mb'
+					className='creation-label py-2 pt-4 px-0 md:px-4 bg-comment_bg rounded-t-md'
 					created_at={created_at}
 					defaultAddress={comment.proposer}
-					text={'commented'}
 					username={comment.username}
 					sentiment={newSentiment}
 					commentSource={comment_source}
 					spam_users_count={spam_users_count}
+					truncateUsername = {false}
 				>
 					<div className='cursor-pointer' onClick={() => setOpenModal(true)}>
 						<UpdateLabel

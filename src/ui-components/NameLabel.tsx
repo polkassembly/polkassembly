@@ -14,13 +14,14 @@ interface Props {
 	disableIdenticon?: boolean
 	textClassName?: string
 	clickable?:boolean
+	truncateUsername?:boolean;
 }
 
-const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, textClassName, clickable=true } : Props) => {
+const NameLabel = ({ className, defaultAddress, username, disableIdenticon = false, textClassName, clickable=true , truncateUsername } : Props) => {
 	const router = useRouter();
 	return (
 		<div className={`${className}`}>
-			{!defaultAddress ? <span className={`username text-navBlue font-medium mr-1.5 ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`} onClick={() => {
+			{!defaultAddress ? <span className={`username text-[#243a57] font-semibold mr-1.5 ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`} onClick={() => {
 				if(clickable){
 					router.push(`/user/${username}`);
 				}
@@ -32,6 +33,7 @@ const NameLabel = ({ className, defaultAddress, username, disableIdenticon = fal
 					displayInline={true}
 					disableIdenticon={disableIdenticon}
 					clickable={clickable}
+					truncateUsername={truncateUsername}
 				/>
 			}
 		</div>

@@ -60,13 +60,13 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 	});
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-4 lg:p-6 rounded-md`}>
-			<div className="flex justify-between items-center">
-				<h2 className='dashboard-heading mb-6'>Latest Activity</h2>
-				{currentTab !== 'all' && <Link className='text-sidebarBlue font-medium hover:text-pink_primary py-0.5 px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
+		<div className={`${className} bg-white drop-shadow-md p-0 lg:p-6 rounded-xxl`}>
+			<div className="flex justify-between items-center pr-4 pl-1">
+				<h2 className='text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 sm:mt-0'>Latest Activity</h2>
+				{currentTab !== 'all' && <Link className='text-bodyBlue font-medium hover:text-pink_primary px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
 			</div>
 			<Tabs
-				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+				className='ant-tabs-tab-bg-white text-bodyBlue text-sm font-medium'
 				type="card"
 				items={tabItems}
 				onChange={(key) => setCurrentTab(key)}
@@ -77,18 +77,36 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 
 export default styled(LatestActivity)`
 	th {
-		color: var(--navBlue) !important;
+		color: #485F7D !important;
+		font-weight: 500 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
 	}
 
-	td.ant-table-cell {
-		color: var(--sidebarBlue) !important;
+	th.ant-table-cell {
+		color: #485F7D !important;
+		font-weight: 500 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
 	}
 
-	tr:nth-child(2n) td {
-    background-color: #fbfbfb !important;
+	.ant-table-thead > tr > th {
+		color: #485F7D !important;
+		font-weight: 500 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
 	}
 
-	tr {
+	.ant-table-row{
+		color: #243A57 !important;
+		font-size: 14px !important;
+		font-weight: 400 !important;
+	}
+
+	tr{
+		color: #243A57 !important;
+		font-size: 14px !important;
+		font-weight: 400 !important;
 		cursor: pointer !important;
 	}
 

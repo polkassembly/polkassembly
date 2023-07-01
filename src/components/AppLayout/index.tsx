@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import { BellOutlined, BookOutlined, DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
@@ -13,7 +13,7 @@ import React, { memo, ReactNode, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
-import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, DelegationSidebarIcon } from 'src/ui-components/CustomIcons';
+import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon } from 'src/ui-components/CustomIcons';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 
@@ -28,6 +28,7 @@ import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 
 const { Content, Sider } = Layout;
 
@@ -51,13 +52,6 @@ function getSiderMenuItem(
 const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [
 		{
-			key: 'notification settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/notification-settings'>
-				<BellOutlined />
-				<span>Notifications</span>
-			</Link>
-		},
-		{
 			key: 'view profile',
 			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
 				<UserOutlined />
@@ -65,15 +59,8 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 			</Link>
 		},
 		{
-			key: 'tracker',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/tracker'>
-				<BookOutlined />
-				<span>Tracker</span>
-			</Link>
-		},
-		{
 			key: 'settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings'>
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
 				<SettingOutlined />
 				<span>Settings</span>
 			</Link>
@@ -153,10 +140,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const gov1Items: {[x:string]: ItemType[]} = {
 		overviewItems: [
 			getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white' />),
-			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white' />),
+			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
-			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white' />)
+			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-3' />)
 		],
 		democracyItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
@@ -169,11 +156,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		treasuryItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
 			getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
-			getSiderMenuItem('Child Bounties', '/child_bounties', <BountiesIcon className='text-white' />),
+			getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />),
 			getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
 		] : [],
 		techCommItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Proposals', '/tech-comm-proposals', <DemocracyProposalsIcon className='text-white' />)
+			getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
 		] : [],
 		allianceItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-white' />),
@@ -187,9 +174,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if(typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) {
+	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network))) {
 		gov1Items.overviewItems = [
-			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'gov-2', ''),
+			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, 'opengov', ''),
 			...gov1Items.overviewItems
 		];
 	}
@@ -231,7 +218,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]);
 	}
 
-	if(network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES){
+	if(network === AllNetworks.COLLECTIVES){
+		const fellowshipItems = [getSiderMenuItem('Members', '/fellowship', <MembersIcon className='text-white' />), getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='text-sidebarBlue' />)];
+		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
+			...gov1Items.allianceItems
+		]), getSiderMenuItem('Fellowship', 'fellowship_group', null, fellowshipItems)];
+		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems, ...fellowshipItems];
+	} else if (network === AllNetworks.WESTENDCOLLECTIVES) {
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
 			...gov1Items.allianceItems
 		])];
@@ -272,7 +265,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				);
 				break;
 			default: {
-				const icon = trackName === PostOrigin.ROOT ? <RootIcon /> : trackName === PostOrigin.AUCTION_ADMIN ? <AuctionAdminIcon /> :  <StakingAdminIcon />;
+				const icon = trackName === PostOrigin.ROOT ? <RootIcon /> : trackName === PostOrigin.AUCTION_ADMIN ? <AuctionAdminIcon className='ml-0.5' /> :  <StakingAdminIcon />;
 				gov2TrackItems.mainItems.push(
 					getSiderMenuItem(trackName.split(/(?=[A-Z])/).join(' '), `/${trackName.split(/(?=[A-Z])/).join('-').toLowerCase()}`, icon)
 				);
@@ -282,24 +275,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let gov2OverviewItems = [
-		getSiderMenuItem('Overview', '/gov-2', <OverviewIcon className='text-white' />),
-		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white' />),
+		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-white mt-1' />),
+		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
-		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white' />),
-		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='text-sidebarBlue' />)
+		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-2.5' />),
+		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1' />)
 	];
 
-	if(network === 'kusama'){
-		gov2OverviewItems.splice(1, 0, getSiderMenuItem(<div className='flex gap-2 items-center'>Delegation <span className='px-[6px] py-[2px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-xs'>New</span></div>, '/delegation',  !sidedrawer ? <div className='flex flex-col items-center gap-0 delegation'><DelegationSidebarIcon className= 'text-white -ml-1'/>
-			<span className='px-[4px] py-[1px] flex justify-center items-center text-white bg-[#407AFC] rounded-[20px] text-[10px] -mt-1 ml-[-2px] opacity'>New</span>
-		</div> : <DelegationSidebarIcon className= 'text-white -ml-1 mr-1'/> ));
+	if(['kusama', 'polkadot'].includes(network)){
+		gov2OverviewItems.splice(1, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className= 'mt-1.5'/> ));
 	}
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	if(typeof window !== 'undefined' && window.screen.width < 1024 && isOpenGovSupported(network)) {
+	if(typeof window !== 'undefined' && window.screen.width < 1024 && (isOpenGovSupported(network) || network === 'polkadot')) {
 		gov2OverviewItems = [
 			getSiderMenuItem(<GovernanceSwitchButton previousRoute={previousRoute} className='flex lg:hidden' />, '/', ''),
 			...gov2OverviewItems
@@ -309,7 +300,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const gov2Items:MenuProps['items'] = [
 		...gov2OverviewItems,
 		// Tracks Heading
-		getSiderMenuItem(<span className='text-navBlue hover:text-navBlue ml-2 uppercase text-base font-medium'>Tracks</span>, 'tracksHeading', null),
+		getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 uppercase text-base font-medium'>Tracks</span>, 'tracksHeading', null),
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-sidebarBlue' />, [
 			...gov2TrackItems.governanceItems
@@ -320,7 +311,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	];
 
 	if (isFellowshipSupported(network)) {
-		gov2Items.splice(gov2Items.length - 1, 1, getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [
+		gov2Items.splice(gov2Items.length - 1, 1, getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue mt-1' />, [
 			...gov2TrackItems.fellowshipItems
 		]));
 	}
@@ -354,7 +345,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]));
 	}
 
-	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute );
+	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
 
 	const handleMenuClick = (menuItem: any) => {
 		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
@@ -425,11 +416,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onMouseLeave={() => setSidedrawer(false)}
 					/>
 				</Drawer>
-				<Layout className='min-h-[calc(100vh - 10rem)] bg-[#EFF2F5] flex flex-row'>
-					{/* Dummy Collapsed Sidebar for auto margins */}
-					<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
-					<CustomContent Component={Component} pageProps={pageProps} />
-				</Layout>
+				{
+					((['kusama', 'polkadot'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
+						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
+							{/* Dummy Collapsed Sidebar for auto margins */}
+							<OpenGovHeaderBanner />
+							<div className='flex flex-row'>
+								<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
+								<CustomContent Component={Component} pageProps={pageProps} />
+							</div>
+						</Layout>
+						: <Layout className={`min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] flex flex-row ${(network === 'polkadot' && router.asPath === '/opengov')? 'bg-[rgba(0,0,0,0.65)]': ''}`}>
+							{/* Dummy Collapsed Sidebar for auto margins */}
+							<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
+							<CustomContent Component={Component} pageProps={pageProps} />
+						</Layout>
+				}
 			</Layout>
 			<Footer />
 		</Layout>
@@ -437,7 +439,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 };
 
 const CustomContent = memo(function CustomContent({ Component, pageProps } : Props) {
-	return <Content className={'lg:opacity-100 flex-initial mx-auto min-h-[90vh] w-[94vw] lg:w-[85vw] 2xl:w-5/6 my-6'}>
+	return <Content className={'lg:opacity-100 flex-initial mx-auto min-h-[90vh] w-[94vw] lg:w-[85vw] 2xl:w-5/6 my-6 max-w-7xl'}>
 		<Component {...pageProps} />
 	</Content>;
 });
@@ -468,11 +470,11 @@ export default styled(AppLayout)`
 }
 
 .ant-menu-item .anticon, .ant-menu-item-icon{
-	font-size: 18px !important;
+	font-size: 20px !important;
 }
 
 .ant-menu-item .delegation{
-font-size: 18px !important;
+font-size: 20px !important;
 }
 .ant-menu-item .delegation .opacity{
 opacity:1 !important;
@@ -497,7 +499,7 @@ margin-top: -17px !important;
 }
 
 .ant-menu-title-content {
-	color: #334D6E !important;
+	color: #485F7D !important;
 	font-weight: 500;
 	font-size: 14px;
 	line-height: 21px;
@@ -526,7 +528,7 @@ margin-top: -17px !important;
   background-color: var(--pink_primary) !important;
 }
 .ant-menu-inline-collapsed-noicon {
-	color: var(--navBlue);
+	color: var(--lightBlue);
 }
 
 .ant-menu-item-selected {

@@ -52,7 +52,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 	const currentUser = useUserDetailsContext();
 	const router = useRouter();
 	const [displayWeb, setDisplayWeb] = useState(2);
-	const [chosenWallet, setChosenWallet] = useState<Wallet>();
+	const [chosenWallet, setChosenWallet] = useState<Wallet |null>(null);
 	const [walletError, setWalletError] =  useState<string | undefined>();
 
 	const setDisplayWeb2 = () => setDisplayWeb(2);
@@ -60,6 +60,12 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 	const onWalletSelect = (wallet: Wallet) => {
 		setChosenWallet(wallet);
 		setDisplayWeb(3);
+	};
+
+	// TODO: FIX ambiguous function name
+	const onWalletUpdate = () => {
+		setChosenWallet(null);
+		setDisplayWeb(2);
 	};
 
 	const setPolkadotWallet = () => {
@@ -78,14 +84,14 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 			<Row justify='center' align='middle' className='h-full -mt-5'>
 				<Col className='w-full sm:max-w-[600px]'>
 					{displayWeb === 2 ? (
-						<Web2Login  isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} />
+						<Web2Login isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} />
 					) : null}
 
 					{
 						displayWeb === 3 && chosenWallet && <>
 							{
 								chosenWallet === Wallet.METAMASK ?
-									<MetamaskLogin isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
+									<MetamaskLogin isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet} onWalletUpdate={onWalletUpdate} />
 									: chosenWallet == Wallet.WALLETCONNECT ?
 										<WalletConnectLogin isModal={isModal} setLoginOpen={setLoginOpen} setDisplayWeb2={setDisplayWeb2} setPolkadotWallet={setPolkadotWallet} /> :
 										<Web3Login
@@ -94,6 +100,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 											chosenWallet={chosenWallet}
 											setDisplayWeb2={setDisplayWeb2}
 											setWalletError={setWalletError}
+											onWalletUpdate={onWalletUpdate}
 										/>
 							}
 						</>

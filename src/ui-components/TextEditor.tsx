@@ -1,19 +1,22 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { LoadingOutlined } from '@ant-design/icons';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
-import styled from 'styled-components';
 import classNames from 'classnames';
-import { Spin } from 'antd';
+import { Skeleton } from 'antd';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import showdown from 'showdown';
-const converter = new showdown.Converter();
+
+const converter = new showdown.Converter({
+	simplifiedAutoLink: true,
+	strikethrough: true,
+	tables: true,
+	tasklists: true
+});
 
 interface ITextEditorProps {
     className?: string;
-	spinClassName?: string;
     height?: number | string;
     value?: string;
     onChange: (value: string) => void;
@@ -21,97 +24,123 @@ interface ITextEditorProps {
     name: string;
 }
 
+const editorContentStyle = `
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+body {
+	font-family: "Poppins",
+	sans-serif;
+	font-size: 14px;
+	letter-spacing: 1px;
+	line-height: 1.5;
+}
+
+th, td {
+	border: 1px solid #243A57;
+	padding: 0.5rem;
+}
+
+img {
+	max-width: 100%;
+}
+`;
+
 const TextEditor: FC<ITextEditorProps> = (props) => {
-	const { className, spinClassName, height, onChange, isDisabled, value, name } = props;
-	const [spin, setSpin] = useState(true);
+	const { className, height, onChange, isDisabled, value, name } = props;
+	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor>(null!);
 
-	useEffect(() => {
-		const timeout = setTimeout(() => {
-			setSpin(false);
-		}, 1000);
-		return () => {
-			clearTimeout(timeout);
-		};
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
 	return (
-		<div style={{
-			minHeight: `${height || 300}px`
-		}} className={classNames('flex-1 w-full', className)}>
-			<Spin className={classNames('', spinClassName)} spinning={spin} indicator={<LoadingOutlined />}>
-				<Editor
-					textareaName={name}
-					value={converter.makeHtml(value || '')}
-					ref={ref}
-					disabled={isDisabled}
-					onEditorChange={(v) => {
-						onChange(v);
-					}}
-					// apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
-					init={{
-						block_unsupported_drop: false,
-						branding: false,
-						content_style: 'body { font-family: Montserrat, sans-serif; font-size: 14px; letter-spacing: 1px; line-height: 1.5; }',
-						height: height || 300,
-						images_file_types: 'jpg,png,jpeg,gif,svg',
-						images_upload_handler: (blobInfo, progress) => {
-							return new Promise<string>((resolve, reject) => {
-								const xhr = new XMLHttpRequest();
-								xhr.withCredentials = false;
-								xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
+		<>
+			{loading &&  (
+				<Skeleton.Input block={true} active={true} style={{ height: '300px' }} />
+			)}
 
-								xhr.upload.onprogress = (e) => {
-									progress(Number((e.loaded / e.total * 100).toPrecision(2)));
-								};
+			<div style={{
+				minHeight: `${height || 300}px`
+			}} className={classNames('flex-1 w-full', className, { 'invisible' : loading })}>
+				<div className={`${loading && 'invisible'}`}>
+					<Editor
+						onPaste={(e) => {
+							e.stopPropagation();
+							e.preventDefault();
+							const content = e.clipboardData?.getData('text/plain') || '';
+							const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
+							const parsed_content = converter.makeHtml(sanitisedContent);
+							ref.current.editor?.setContent(parsed_content || sanitisedContent);
+						}}
+						textareaName={name}
+						value={converter.makeHtml(value || '')}
+						ref={ref}
+						disabled={isDisabled}
+						onEditorChange={(v) => {
+							onChange(v);
+						}}
+						apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
+						onInit={() => setLoading(false)}
+						init={{
+							block_unsupported_drop: false,
+							branding: false,
+							content_style: editorContentStyle,
+							height: height || 400,
+							icons: 'thin',
+							images_file_types: 'jpg,png,jpeg,gif,svg',
+							images_upload_handler: (blobInfo, progress) => {
+								return new Promise<string>((resolve, reject) => {
+									const xhr = new XMLHttpRequest();
+									xhr.withCredentials = false;
+									xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
 
-								xhr.onload = () => {
-									if (xhr.status === 403) {
-										reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
-										return;
-									}
+									xhr.upload.onprogress = (e) => {
+										progress(Number((e.loaded / e.total * 100).toPrecision(2)));
+									};
 
-									if (xhr.status < 200 || xhr.status >= 300) {
-										reject('HTTP Error: ' + xhr.status);
-										return;
-									}
+									xhr.onload = () => {
+										if (xhr.status === 403) {
+											reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
+											return;
+										}
 
-									const json = JSON.parse(xhr.responseText);
+										if (xhr.status < 200 || xhr.status >= 300) {
+											reject('HTTP Error: ' + xhr.status);
+											return;
+										}
 
-									if (!json || typeof json?.data?.display_url != 'string') {
-										reject('Invalid JSON: ' + xhr.responseText);
-										return;
-									}
+										const json = JSON.parse(xhr.responseText);
 
-									resolve(json?.data?.display_url);
-								};
-								xhr.onerror = () => {
-									reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
-								};
-								const formData = new FormData();
-								formData.append('image', blobInfo.blob(), `${blobInfo.filename()}`);
-								xhr.send(formData);
-							});
-						},
-						menubar: false,
-						paste_data_images: true,
-						plugins: [
-							'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-							'searchreplace', 'visualblocks', 'code', 'fullscreen',
-							'insertdatetime', 'media', 'table'
-						],
-						// skin: '',
-						toolbar: 'undo redo preview | ' +
-							'bold italic backcolor | ' +
-							'bullist numlist table | ' +
-							'removeformat link image code',
-						xss_sanitization: true
-					}}
-				/>
-			</Spin>
-		</div>
+										if (!json || typeof json?.data?.display_url != 'string') {
+											reject('Invalid JSON: ' + xhr.responseText);
+											return;
+										}
+
+										resolve(json?.data?.display_url);
+									};
+									xhr.onerror = () => {
+										reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+									};
+									const formData = new FormData();
+									formData.append('image', blobInfo.blob(), `${blobInfo.filename()}`);
+									xhr.send(formData);
+								});
+							},
+							menubar: false,
+							paste_data_images: true,
+							plugins: [
+								'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+								'searchreplace', 'visualblocks', 'code', 'fullscreen',
+								'insertdatetime', 'media', 'table'
+							],
+							toolbar: 'undo redo preview | ' +
+								'bold italic backcolor | ' +
+								'bullist numlist table | ' +
+								'removeformat link image code',
+							xss_sanitization: true
+						}}
+					/>
+				</div>
+			</div>
+		</>
+
 	);
 };
 
-export default styled(TextEditor)``;
+export default TextEditor;

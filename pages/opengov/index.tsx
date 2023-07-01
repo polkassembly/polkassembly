@@ -137,6 +137,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 		return () => {
 			router.events.off('routeChangeStart', handleRouteChange);
 		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	if (error) return <ErrorState errorMessage={error} />;

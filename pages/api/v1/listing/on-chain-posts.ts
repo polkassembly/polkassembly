@@ -281,7 +281,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			});
 
 			const subsquidDataPost = await Promise.all(subsquidPostsPromise);
-			console.log('subsquidDataPost', subsquidDataPost);
 			const data: IPostsListingResponse = {
 				count: count,
 				posts: subsquidDataPost
@@ -575,7 +574,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				count: Number(subsquidData?.proposalsConnection?.totalCount || subsquidData?.announcementsConnection?.totalCount || 0),
 				posts
 			};
-			console.log('data', data);
 			return {
 				data: JSON.parse(JSON.stringify(data)),
 				error: null,

@@ -79,9 +79,10 @@ const Socials: FC<ISocialsProps> = (props) => {
 			{
 				errorCheck ?
 					<Alert
-						className='mt-4'
+						className='mt-4 h-[40px] py-2 px-5'
 						description={errorCheck}
 						type='error'
+						showIcon
 					/>
 					: null
 			}

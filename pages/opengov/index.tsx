@@ -16,18 +16,16 @@ import News from 'src/components/Home/News';
 import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
 import { useNetworkContext } from '~src/context';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
-import { CommentOutlined, CustomerServiceOutlined } from '@ant-design/icons';
-import { FloatButton } from 'antd';
 import Script from 'next/script';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
+import AiBot from '~src/components/AiBot/AiBot';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active /> ,
@@ -105,11 +103,9 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 
 		const docsBotElement = ((window as any).DocsBotAI.el.shadowRoot?.lastChild) as HTMLElement;
 		docsBotElement.style.position = 'fixed';
-		docsBotElement.style.right = '5em';
+		docsBotElement.style.right = '4em';
 		docsBotElement.style.bottom = '30px';
-		docsBotElement.style.pointerEvents = 'none';
-		//window.addEventListener('click',(event)=>{event.stopPropagation();});
-	},[isAIChatBotOpen]);
+	},[isAIChatBotOpen,floatButtonOpen]);
 
 	useEffect(() => {
 		setNetwork(network);
@@ -129,13 +125,19 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 		return () => clearInterval(interval);
 	}, []);
 
-	// TODO: add to useEffect
-	//router.events.on("routeChangeStart", (window as any).DocsBotAI.unmount());
 	useEffect(() => {
-		if((window as any).DocsBotAI.isChatbotOpen){
-			router.events.on('routeChangeStart', (window as any).DocsBotAI.unmount());
-		}
-	},[router.events]);
+		const handleRouteChange = () => {
+			if ((window as any).DocsBotAI.isChatbotOpen) {
+				(window as any).DocsBotAI.close();
+			}
+		};
+
+		router.events.on('routeChangeStart', handleRouteChange);
+
+		return () => {
+			router.events.off('routeChangeStart', handleRouteChange);
+		};
+	}, []);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
@@ -173,25 +175,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 				</div>
 			</div>
 
-			{/* TODO: before closing automatically check : window.DocsBotAI.isChatbotOpen */}
-			<FloatButton.Group
-				trigger="click"
-				type="primary"
-				style={{ bottom:30, right: 30 }}
-				icon={<CustomerServiceOutlined />}
-				onClick={(event:any) => {setFloatButtonOpen(!floatButtonOpen) ;console.log('clicked123',event);}}
-				//open = { floatButtonOpen }
-				onOpenChange={() => {if((window as any).DocsBotAI.isChatbotOpen){ (window as any).DocsBotAI.close(); setIsAIChatBotOpen(false);}} }
-			>
-
-				<FloatButton icon={<CommentOutlined />} onClick={() => {
-					(window as any).DocsBotAI.toggle();
-					//console.log('122',document.getElementsByClassName('docsbot-chat-container'));
-					setIsAIChatBotOpen(!isAIChatBotOpen);
-				}} />
-
-				{ !isAIChatBotOpen && <ChatFloatingModal/>}
-			</FloatButton.Group>
+			<AiBot isAIChatBotOpen={isAIChatBotOpen} setIsAIChatBotOpen={setIsAIChatBotOpen} floatButtonOpen={floatButtonOpen} setFloatButtonOpen={setFloatButtonOpen} />
 
 		</>
 	);

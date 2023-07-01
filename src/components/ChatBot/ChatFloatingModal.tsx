@@ -75,9 +75,13 @@ const Container = styled.div`
 }
 `;
 
-export default function ChatFloatingModal() {
+export default function ChatFloatingModal(props:any) {
 	const [isOpen, setIsOpen] = useState(false);
+	const disabled  = props.disabled;
 	const toggleChat = () => {
+		if (disabled){
+			return;
+		}
 		setIsOpen((prev:boolean) => !prev);
 	};
 

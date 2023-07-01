@@ -37,7 +37,6 @@ export default styled(Markdown)`
 
 		.hide-image img{
 			display: none !important;
-			border: 1px solid red;
 		}
 
 		th, td {

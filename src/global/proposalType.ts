@@ -235,9 +235,9 @@ export const customOpenGovStatuses = ['All', 'CustomStatusSubmitted', 'CustomSta
 export const getStatusesFromCustomStatus = (customStatus: CustomStatus) => {
 	switch(customStatus) {
 	case CustomStatus.Submitted:
-		return ['DecisionDepositPlaced', 'Submitted'];
+		return ['Submitted'];
 	case CustomStatus.Voting:
-		return ['Deciding', 'ConfirmStarted', 'ConfirmAborted'];
+		return ['DecisionDepositPlaced', 'Deciding', 'ConfirmStarted', 'ConfirmAborted'];
 	case CustomStatus.Closed:
 		return ['Cancelled', 'TimedOut', 'Confirmed', 'Approved', 'Rejected', 'Executed'];
 	case CustomStatus.Active:

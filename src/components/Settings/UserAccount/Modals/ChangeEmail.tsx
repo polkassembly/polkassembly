@@ -84,7 +84,7 @@ const ChangeEmail = ({
 					form={form}
 					className='flex flex-col gap-6 w-full'
 				>
-					<Form.Item
+					{Boolean(email) && <Form.Item
 						name='old-email'
 						className='m-0 w-full min-w-[250px]'
 					>
@@ -94,7 +94,7 @@ const ChangeEmail = ({
 							value={email}
 							disabled
 						/>
-					</Form.Item>
+					</Form.Item>}
 					<div>
 						<label htmlFor="new-email">New Email</label>
 						<Form.Item

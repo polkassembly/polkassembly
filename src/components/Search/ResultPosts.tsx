@@ -34,7 +34,7 @@ interface Props {
 const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsPage, totalPage }: Props) => {
 
 	return postsData.length > 0 ? <>
-		<div className={ `${className} mt-4 -mx-6 h-[250px] ${postsData.length> 1 && 'overflow-y-scroll'}`}>
+		<div className={ `${className} mt-4 -mx-6 h-[400px] ${postsData.length> 1 && 'overflow-y-scroll'}`}>
 			{ postsData.map((post, index: number) => {
 				let titleString = post?.title || noTitle;
 

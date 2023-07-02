@@ -6,6 +6,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import styled from 'styled-components';
+import remarkGfm from 'remark-gfm';
 
 interface Props {
 	className?: string;
@@ -15,25 +16,37 @@ interface Props {
   imgHidden?: boolean;
 }
 
-const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden }: Props) => {
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false }: Props) => {
+	const sanitisedMd = md.replace(/\\n/g, '\n');
+
 	return <ReactMarkdown
 		className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'}`}
-		rehypePlugins={[rehypeRaw]}
+		rehypePlugins={[rehypeRaw, remarkGfm]}
 		linkTarget='_blank'
 	>
-		{md}
+		{sanitisedMd}
 	</ReactMarkdown>;
 };
 
 export default styled(Markdown)`
-&.hide-image img{
-  display: none !important;
-  border: 1px solid red;
-}
 	&, &.mde-preview-content {
 		font-size: 14px;
 		margin-bottom: 0;
 		overflow-wrap: break-word;
+		overflow-x : auto;
+
+		.hide-image img{
+			display: none !important;
+		}
+
+		th, td {
+			border: 1px solid;
+			padding: 0.5rem;
+		}
+
+		hr {
+			margin: 1rem 0;
+		}
 
 		p, blockquote, ul, ol, dl, table {
 			line-height: 160%;

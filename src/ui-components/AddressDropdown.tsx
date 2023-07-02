@@ -9,16 +9,17 @@ import React, { useState } from 'react';
 import Address from 'src/ui-components/Address';
 import { useUserDetailsContext } from '~src/context';
 import DownIcon from '~assets/icons/down-icon.svg';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 interface Props {
 	defaultAddress?: string;
-  accounts: InjectedAccount[];
-  className?: string;
-  filterAccounts?: string[]
-  onAccountChange: (address: string) => void;
-  isDisabled?: boolean;
-  isSwitchButton?: boolean;
-  setSwitchModalOpen?: (pre: boolean)=> void;
+	accounts: InjectedAccount[];
+	className?: string;
+	filterAccounts?: string[]
+	onAccountChange: (address: string) => void;
+	isDisabled?: boolean;
+	isSwitchButton?: boolean;
+	setSwitchModalOpen?: (pre: boolean)=> void;
 }
 
 const AddressDropdown = ({
@@ -40,14 +41,15 @@ const AddressDropdown = ({
 
 	const dropdownList: {[index: string]: string} = {};
 	const addressItems: ItemType[] = [];
-	const { setUserDetailsContextState } = useUserDetailsContext();
-
+	const { setUserDetailsContextState, loginAddress } = useUserDetailsContext();
+	const substrate_address = getSubstrateAddress(loginAddress);
 	filteredAccounts.forEach(account => {
 		addressItems.push({
 			key: account.address,
 			label: (
-				<Address disableAddressClick={true} extensionName={account.name} address={account.address} />
-			)
+				<Address disableAddressClick={true} className='flex items-center' otherText={getSubstrateAddress(account.address)?.toLowerCase() === (substrate_address || '').toLowerCase()? 'Logged in address': ''} otherTextClassName='ml-auto' extensionName={account.name} address={account.address} />
+			),
+			title: getSubstrateAddress(account.address)?.toLowerCase() === (substrate_address || '').toLowerCase()? 'Logged in address': ''
 		});
 
 		if (account.address && account.name){

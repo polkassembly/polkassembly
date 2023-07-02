@@ -60,6 +60,7 @@ import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBala
 import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -322,6 +323,16 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			setAccountsNotFound(false);
 			setAccountsMap(accountsMapLocal);
 			setSignersMap(signersMapLocal);
+		}
+
+		if (accounts && Array.isArray(accounts)) {
+			const substrate_address = getSubstrateAddress(loginAddress);
+			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
+			if (index >= 0) {
+				const account = accounts[index];
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+			}
 		}
 
 		setAccounts(accounts);
@@ -694,6 +705,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					{proposalType === ProposalType.COUNCIL_MOTIONS && <>
 						{canVote &&
 							<VoteMotion
+								setAccounts={setAccounts}
 								accounts={accounts}
 								address={address}
 								getAccounts={getAccounts}
@@ -711,6 +723,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					{proposalType === ProposalType.ALLIANCE_MOTION && <>
 						{canVote &&
 							<VoteMotion
+								setAccounts={setAccounts}
 								accounts={accounts}
 								address={address}
 								getAccounts={getAccounts}
@@ -927,6 +940,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						{
 							canVote && <EndorseTip
 								className='mb-8'
+								setAccounts={setAccounts}
 								accounts={accounts}
 								address={address}
 								getAccounts={getAccounts}

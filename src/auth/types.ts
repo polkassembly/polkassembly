@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ProposalType } from '~src/global/proposalType';
-import { IUserNotificationSettings, Role } from '~src/types';
+import { IUserNotificationSettings, Role, Wallet } from '~src/types';
 
 export interface MessageType {
 	message: string;
@@ -141,7 +141,7 @@ export  interface Roles {
 }
 
 export interface JWTPayloadType {
-	default_address: string,
+	default_address: string;
 	addresses: string[];
 	sub: string;
 	username: string;
@@ -152,6 +152,8 @@ export interface JWTPayloadType {
 	roles: Roles;
 	web3signup: boolean;
 	is2FAEnabled?: boolean;
+	login_wallet?: Wallet;
+	login_address?: string;
 }
 
 export interface IAuthResponse {

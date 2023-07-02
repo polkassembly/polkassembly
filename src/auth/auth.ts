@@ -330,7 +330,11 @@ class AuthService {
 
 		return {
 			isTFAEnabled,
-			token: await this.getSignedToken(user)
+			token: await this.getSignedToken({
+				...user,
+				login_address: address,
+				login_wallet: wallet
+			})
 		};
 	}
 
@@ -837,7 +841,7 @@ class AuthService {
 		return { email: user.email, updatedToken: await this.getSignedToken(user) };
 	}
 
-	public async getSignedToken ({ email, email_verified, id, username, web3_signup, two_factor_auth }: User): Promise<string> {
+	public async getSignedToken ({ email, email_verified, id, username, web3_signup, two_factor_auth, login_address, login_wallet }: User & { login_address?: string; login_wallet?: Wallet; }): Promise<string> {
 		if (!privateKey) {
 			const key = process.env.NODE_ENV === 'test' ? process.env.JWT_PRIVATE_KEY_TEST : process.env.JWT_PRIVATE_KEY?.replace(/\\n/gm, '\n');
 			throw apiErrorWithStatusCode(`${key} not set. Aborting.`, 403);
@@ -880,6 +884,8 @@ class AuthService {
 			email_verified: email_verified || false,
 			iat: Math.floor(Date.now() / 1000),
 			id,
+			login_address,
+			login_wallet: login_wallet,
 			roles: {
 				allowedRoles,
 				currentRole

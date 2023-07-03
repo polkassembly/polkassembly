@@ -352,6 +352,8 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 
 		const { data , error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/2fa/validate', {
 			auth_code: String(authCode), //use string for if it starts with 0
+			login_address: currentUser.loginAddress || address,
+			login_wallet: currentUser.loginWallet || Wallet.WALLETCONNECT,
 			tfa_token: authResponse.tfa_token,
 			user_id: Number(authResponse.user_id)
 		});

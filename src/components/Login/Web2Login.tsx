@@ -97,6 +97,8 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 		const { data , error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/2fa/validate', {
 			auth_code: String(authCode), //use string for if it starts with 0
+			login_address: currentUser.loginAddress,
+			login_wallet: currentUser.loginWallet,
 			tfa_token: authResponse.tfa_token,
 			user_id: Number(authResponse.user_id)
 		});

@@ -225,9 +225,9 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			{
 				errorCheck ?
 					<Alert
-						className='mt-4 h-[40px] py-2 px-5'
+						className='mt-4 h-[40px] py-2 px-5 text-bodyBlue text-sm rounded-[4px]'
 						description={errorCheck}
-						type='error'
+						type='info'
 						showIcon
 					/>
 					: ''

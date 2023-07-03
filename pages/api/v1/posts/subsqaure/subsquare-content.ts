@@ -21,6 +21,7 @@ const urlMapper: any = {
 };
 
 export const getSubSquareContentAndTitle = async (proposalType: string | string[], network: string | string[] | undefined, id: string | string[] | number |undefined) => {
+	//console.log('params', proposalType , network , id);
 	try {
 		if( typeof proposalType !== 'string' ){
 			throw apiErrorWithStatusCode('can not send String[] in Proposal type', 400);
@@ -28,13 +29,20 @@ export const getSubSquareContentAndTitle = async (proposalType: string | string[
 		}
 		const url = urlMapper[String(proposalType)]?.(id, network);
 		const data = await (await fetch(url)).json();
-		let subsqTitle = data.title.includes('Untitled') ? '' : data.title;
-		subsqTitle.includes('[Root] Referendum #') ? subsqTitle = subsqTitle.replace(/\[Root\] Referendum #\d+: /, '') : '';
+
+		//let subsqTitle = data.title.includes('Untitled') ? '' : data.title;
+		let subsqTitle = data.title;
+
+		subsqTitle = String(data?.title)?.includes('Untitled') ? '' : data.title;
+
+		if(subsqTitle){
+			subsqTitle.includes('[Root] Referendum #') ? subsqTitle = subsqTitle.replace(/\[Root\] Referendum #\d+: /, '') : '';
+		}
 
 		const subsquareData = { content : data.content ,title:subsqTitle };
 		return subsquareData;
 	} catch (error) {
-		console.log('Error while Fetching data from subsquare');
+		console.log(`Error ${error}`);
 		return { content: '',title: '' };
 	}
 };

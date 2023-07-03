@@ -123,7 +123,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 				let title = post.title || post.method || noTitle;
 				title = title.length > 80 ? `${title.substring(0, Math.min(80, title.length))}...`  : title.substring(0, Math.min(80, title.length));
 				const subTitle = !title && post.method;
-
+				console.log('title ',title);
 				const tableDataObj: IPostsRowData = {
 					key: post.post_id,
 					post_id: post.post_id,

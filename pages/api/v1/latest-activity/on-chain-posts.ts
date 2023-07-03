@@ -107,7 +107,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 				if (data) {
 					let subsquareTitle = '';
 					if(data?.title === '' || data?.title === method || data.title === null){
-						await getSubSquareContentAndTitle(strProposalType,network,postId).then((response) => {
+						await getSubSquareContentAndTitle(strProposalType as ProposalType,network,postId).then((response) => {
 							subsquareTitle = response?.title;
 						});
 					}
@@ -128,7 +128,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 			}
 
 			let subsquareTitle = '';
-			await getSubSquareContentAndTitle(strProposalType,network,postId).then((response) => {
+			await getSubSquareContentAndTitle(strProposalType as ProposalType,network,postId).then((response) => {
 				subsquareTitle = response?.title;
 			});
 

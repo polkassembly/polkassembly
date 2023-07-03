@@ -368,9 +368,12 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 		<Modal
 			closable={false}
 			title={
-				<span className='font-medium text-lg tracking-wide text-sidebarBlue'>
+				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
+					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue'>
 					Link Address
-				</span>
+					</span>
+					<Divider />
+				</div>
 			}
 			open={open}
 			className='mb-8 md:min-w-[600px]'
@@ -437,6 +440,9 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 							})}
 						</section>
 			}
+			<div className='mr-[-24px] ml-[-24px]'>
+				<Divider className='my-4 mt-0' />
+			</div>
 		</Modal>
 	);
 };

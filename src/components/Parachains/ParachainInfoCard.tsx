@@ -39,18 +39,13 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 
 	return (
 		<div className={className}>
-			<div className="bg-white drop-shadow-md p-3 lg:p-6 rounded-xl">
+			<div className="bg-white drop-shadow-md p-3 lg:p-6 rounded-xxl">
 				<div className='parachain-card-header'>
 					<Image src={network=='polkadot' ? polkadotLogo : kusamaLogo} alt="Chain Logo" />
 					<span className='network-name'>{network}</span>
 				</div>
-				<div className='parachain-card-meta text-[#243A57] opacity-90'>
+				<div className='parachain-card-meta text-bodyBlue opacity-90'>
 					{network == 'polkadot' ? '11%' : '31%' } of Total Supply Locked<span className='hidden-sm'> in Parachains and Crowdloans</span>
-				</div>
-
-				<div className="mt-3 text-sidebarBlue font-medium">
-					<span> <span className='text-navBlue'></span>
-					</span>
 				</div>
 				<Divider className='my-3' />
 				<div className='parachain-card-desc'>
@@ -58,36 +53,36 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 					<div className='metric-container'>
 						<div className='metric-line flex items-center'>
 							<Image className='h-[14px] w-auto md:h-auto' src={auctionIcon} alt="Auction Icon" />
-							<span className='metric-num ml-[7px] font-medium text-[12px] md:text-[14px] text-[#243A57]'>{metrics.auction}</span>
+							<span className='metric-num ml-[7px] font-medium text-xs md:text-base text-bodyBlue'>{metrics.auction}</span>
 						</div>
-						<div className='metric-name mt-[8px] text-[12px] md:text-[14px] text-[#485F7D]'>Auction</div>
+						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue'>Auction</div>
 					</div>
 
 					{/* Crowdloans */}
 					<div className='metric-container'>
 						<div className='metric-line flex items-center'>
 							<Image className='h-[14px] w-auto md:h-auto' src={crowdloansIcon} alt="Crowdloans Icon" />
-							<span className='metric-num ml-[7px] font-medium text-[12px] md:text-[14px] text-[#243A57]'>{metrics.crowdloans}</span>
+							<span className='metric-num ml-[7px] font-medium text-xs md:text-sm text-bodyBlue'>{metrics.crowdloans}</span>
 						</div>
-						<div className='metric-name mt-[8px] text-[12px] md:text-[14px] text-[#485F7D]'>Crowdloans</div>
+						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue'>Crowdloans</div>
 					</div>
 
 					{/* Parachains */}
 					<div className='metric-container'>
 						<div className='metric-line flex items-center'>
 							<Image className='h-[14px] w-auto md:h-auto' src={chainIcon} alt="Parachains Icon" />
-							<span className='metric-num ml-[7px] font-medium text-[12px] md:text-[14px] text-[#243A57]'>{metrics.parachains}</span>
+							<span className='metric-num ml-[7px] font-medium text-xs md:text-sm text-bodyBlue'>{metrics.parachains}</span>
 						</div>
-						<div className='metric-name mt-[8px] text-[12px] md:text-[14px] text-[#485F7D]'>Parachains</div>
+						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue'>Parachains</div>
 					</div>
 
 					{/* Projects */}
 					<div className='metric-container'>
 						<div className='metric-line flex items-center'>
 							<Image className='h-[14px] w-auto md:h-auto' src={projectsIcon} alt="Parachains Icon" />
-							<span className='metric-num ml-[7px] font-medium text-[12px] md:text-[14px] text-[#243A57]'>{metrics.projects}</span>
+							<span className='metric-num ml-[7px] font-medium text-xs md:text-sm text-bodyBlue'>{metrics.projects}</span>
 						</div>
-						<div className='metric-name mt-[8px] text-[12px] md:text-[14px] text-[#485F7D]'>Projects</div>
+						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue'>Projects</div>
 					</div>
 				</div>
 			</div>
@@ -101,7 +96,7 @@ export default styled(ParachainInfoCard)`
 			align-items: center;
 			font-size: 18px !important;
 			font-weight: 500;
-			color: #243A57 !important;
+			color: var(--bodyBlue) !important;
 			@media only screen and (max-width: 768px) {
 				font-size: 16px !important;
 				font-weight: 500;
@@ -122,7 +117,7 @@ export default styled(ParachainInfoCard)`
 			.network-name {
 				text-transform: capitalize;
 				font-weight: 500;
-				color: #243A57 !important;
+				color: var(--bodyBlue) !important;
 			}
 
 			.dotDivider {

@@ -27,7 +27,7 @@ export enum CustomStatus {
 	Submitted = 'CustomStatusSubmitted',
 	Voting = 'CustomStatusVoting',
 	Closed = 'CustomStatusClosed',
-    Active = 'CustomStatusActive'
+  Active = 'CustomStatusActive'
 }
 
 const TrackListingCard = ({ className, posts, trackName } : Props) => {
@@ -84,6 +84,7 @@ const TrackListingCard = ({ className, posts, trackName } : Props) => {
 	const defaultActiveTab = trackStatus && ['closed', 'all', 'voting', 'submitted'].includes(String(trackStatus))? String(trackStatus).charAt(0).toUpperCase() + String(trackStatus).slice(1) : 'All';
 	const [activeTab, setActiveTab] = useState(defaultActiveTab);
 	const onTabClick = (key: string) => {
+		if(key === 'Filter')return;
 		setActiveTab(key);
 		router.push({
 			pathname: router.pathname,

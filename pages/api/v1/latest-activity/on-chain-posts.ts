@@ -91,13 +91,11 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 			let status = subsquidPost.status;
 			if (status === 'DecisionDepositPlaced') {
 				const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
-				const decidingIndex = statuses.findIndex((status) => status && status.status === 'Deciding');
-				if (decidingIndex >= 0) {
-					const decisionDepositPlacedIndex = statuses.findIndex((status) => status && status.status === 'DecisionDepositPlaced');
-					if (decisionDepositPlacedIndex >=0 && decidingIndex < decisionDepositPlacedIndex) {
+				statuses.forEach((obj) => {
+					if (obj.status === 'Deciding') {
 						status = 'Deciding';
 					}
-				}
+				});
 			}
 			const postId = proposalType === ProposalType.TIPS?  hash: index;
 			const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));

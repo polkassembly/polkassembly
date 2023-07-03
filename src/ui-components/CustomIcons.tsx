@@ -93,6 +93,11 @@ import BigSpenderSVG from '~assets/delegation-tracks/big-spender.svg';
 import BigTipperSVG from '~assets/delegation-tracks/big-tipper.svg';
 import SmallSpenderSVG from '~assets/delegation-tracks/small-spender.svg';
 import DelegationSVG from '~assets/sidebar/delegation-icon.svg';
+import Dislike from '~assets/icons/dislike.svg';
+
+export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={Dislike} {...props} />
+);
 
 export const OpenGovBannerIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={OpenGovBannerSVG} {...props} />
@@ -330,7 +335,7 @@ export const DelegatedIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DelegatedSVG} {...props} />
 );
 
-export const DelegatedSVGDelegationIcon = (props: Partial<CustomIconComponentProps>) => (
+export const DelegateDelegationIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DelegatedSVGDelegation} {...props} />
 );
 

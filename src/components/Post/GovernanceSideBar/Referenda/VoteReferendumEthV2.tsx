@@ -9,7 +9,7 @@ import { Button, Form, Modal, Segmented, Select, Spin, Alert } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
-import { EVoteDecisionType, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
+import { EVoteDecisionType, ILastVote, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -42,8 +42,8 @@ interface Props {
 	className?: string
 	referendumId?: number | null | undefined
 	onAccountChange: (address: string) => void
-	lastVote: string | null | undefined
-	setLastVote: React.Dispatch<React.SetStateAction<string | null | undefined>>
+	lastVote: ILastVote | undefined
+	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
 }
 
 const abi = require('../../../../moonbeamConvictionVoting.json');
@@ -368,7 +368,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				})
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote(vote);
+					setLastVote({
+						balance: totalVoteValue,
+						conviction: conviction,
+						decision: vote,
+						time: new Date()
+					});
 					setShowModal(false);
 					setSuccessModal(true);
 					queueNotification({
@@ -400,7 +405,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				})
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote(vote);
+					setLastVote({
+						balance: totalVoteValue,
+						conviction: conviction,
+						decision: vote,
+						time: new Date()
+					});
 					setShowModal(false);
 					setSuccessModal(true);
 					queueNotification({
@@ -438,7 +448,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				})
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote(vote);
+					setLastVote({
+						balance: totalVoteValue,
+						conviction: conviction,
+						decision: vote,
+						time: new Date()
+					});
 					setShowModal(false);
 					setSuccessModal(true);
 					queueNotification({
@@ -478,7 +493,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				})
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote(vote);
+					setLastVote({
+						balance: totalVoteValue,
+						conviction: conviction,
+						decision: vote,
+						time: new Date()
+					});
 					setShowModal(false);
 					setSuccessModal(true);
 					queueNotification({
@@ -582,7 +602,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	return (
 		<div className={className}>
 			<Button
-				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[100%]'
+				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-[4px] flex items-center justify-center p-6 w-[100%]'
 				onClick={openModal}
 			>
 				{lastVote == null || lastVote == undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }

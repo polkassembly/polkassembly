@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function GroupCheckbox({
-	categoryOptions,
+	categoryOptions = [],
 	title,
 	classname,
 	Icon,
@@ -67,6 +67,7 @@ export default function GroupCheckbox({
 								name={item.value}
 								onChange={(e) => handleChange(e, item.value)}
 								checked={item.selected}
+								className='text-[#243A57]'
 							>
 								{item.label}
 							</Checkbox>

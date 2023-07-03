@@ -4,7 +4,7 @@
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Button, Form, Input, Modal } from 'antd';
+import { Alert, Button, Divider, Form, Input, Modal } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
@@ -134,9 +134,13 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 		<Modal
 			closable={false}
 			title={
-				<span className='font-medium text-lg tracking-wide text-sidebarBlue'>
+				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
+					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue'>
 					Link Proxy address
-				</span>
+					</span>
+					<Divider />
+				</div>
+
 			}
 			open={open}
 			className='mb-8 md:min-w-[600px]'
@@ -175,7 +179,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 					: <Form
 						form={form}
 						onFinish={handleSign}
-						className='flex flex-col gap-y-8'
+						className='flex flex-col gap-y-8 mb-6'
 					>
 						{
 							accountsNotFound
@@ -219,6 +223,9 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 						{error && <FilteredError text={error} />}
 					</Form>
 			}
+			<div className='mr-[-24px] ml-[-24px]'>
+				<Divider className='my-4 mt-0' />
+			</div>
 		</Modal>
 	);
 };

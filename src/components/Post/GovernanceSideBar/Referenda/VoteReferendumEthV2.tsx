@@ -110,6 +110,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		if (userDetails.loginWallet && [Wallet.TALISMAN, Wallet.METAMASK].includes(userDetails.loginWallet)) {
 			setLoginWallet(userDetails.loginWallet);
 			setWallet(userDetails.loginWallet);
+			handleDefaultWallet(userDetails.loginWallet);
 		} else {
 			if(!window) return;
 			const defaultWallet = localStorage.getItem('loginWallet') as Wallet ;

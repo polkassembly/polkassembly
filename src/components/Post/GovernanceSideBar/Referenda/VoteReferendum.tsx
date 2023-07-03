@@ -88,10 +88,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			setWallet(userDetails.loginWallet);
 		} else {
 			if(!window) return;
-			const Wallet = localStorage.getItem('loginWallet') ;
+			const wallet = localStorage.getItem('loginWallet') ;
 			if(Wallet){
-				setLoginWallet(Wallet as  Wallet);
-				setWallet(Wallet as Wallet);
+				setLoginWallet(wallet as  Wallet);
+				setWallet(wallet as Wallet);
 			}
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -884,8 +884,6 @@ class AuthService {
 			email_verified: email_verified || false,
 			iat: Math.floor(Date.now() / 1000),
 			id,
-			login_address,
-			login_wallet: login_wallet,
 			roles: {
 				allowedRoles,
 				currentRole
@@ -894,6 +892,14 @@ class AuthService {
 			username,
 			web3signup: web3_signup || false
 		};
+
+		if (login_address) {
+			tokenContent.login_address = login_address;
+		}
+
+		if (login_wallet) {
+			tokenContent.login_wallet = login_wallet;
+		}
 
 		if(two_factor_auth?.enabled && two_factor_auth?.verified) {
 			tokenContent = {

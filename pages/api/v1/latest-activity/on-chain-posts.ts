@@ -125,7 +125,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 				}
 			}
 
-			let subsquareTitle = '';
+			let subsquareTitle =  '';
 			await getSubSquareContentAndTitle(strProposalType as ProposalType,network,postId).then((response) => {
 				subsquareTitle = response?.title;
 			});

@@ -10,7 +10,8 @@ import Web2Signup from 'src/components/Signup/Web2Signup';
 import { Wallet } from 'src/types';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import SEOHead from '~src/global/SEOHead';
 
 const WalletConnectSignup = dynamic(() => import('src/components/Signup/WalletConnectSignup'), {
@@ -39,10 +40,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:Props) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

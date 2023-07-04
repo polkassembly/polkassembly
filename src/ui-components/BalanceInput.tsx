@@ -4,16 +4,15 @@
 
 import { Form, Input } from 'antd';
 import BN from 'bn.js';
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
-
-import { NetworkContext } from '~src/context/NetworkContext';
 
 import { inputToBn } from '../util/inputToBn';
 import Balance from '~src/components/Balance';
 import styled from 'styled-components';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -35,7 +34,7 @@ interface Props{
 
 const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance' }: Props) => {
 
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network].tokenSymbol}`;
 	const onBalanceChange = (value: string | null): void => {
 

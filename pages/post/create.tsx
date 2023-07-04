@@ -7,7 +7,8 @@ import dynamic from 'next/dynamic';
 import React, { useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 
@@ -28,10 +29,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Create = ({ network }: { network: string }) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

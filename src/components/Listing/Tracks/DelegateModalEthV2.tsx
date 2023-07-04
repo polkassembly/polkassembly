@@ -8,8 +8,7 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Button, Form, Modal, Select, Spin } from 'antd';
 import BN from 'bn.js';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { ApiContext } from 'src/context/ApiContext';
+import React, { useEffect, useMemo, useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import AddressInput from 'src/ui-components/AddressInput';
@@ -18,10 +17,10 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import { inputToBn } from 'src/util/inputToBn';
 import Web3 from 'web3';
+import { useApiContext, useUserDetailsContext } from '~src/context';
 
-import { NetworkContext } from '~src/context/NetworkContext';
-import { UserDetailsContext } from '~src/context/UserDetailsContext';
 import { chainProperties } from '~src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { oneEnactmentPeriodInDays } from '~src/util/oneEnactmentPeriodInDays';
 
@@ -32,13 +31,13 @@ const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 const ZERO_BN = new BN(0);
 
 const DelegateModalEthV2 = ({ trackNum } : { trackNum:number }) => {
-	const { api, apiReady } = useContext(ApiContext);
-	const { network } = useContext(NetworkContext);
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
 
 	const [form] = Form.useForm();
 
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider } = useContext(UserDetailsContext);
+	const { walletConnectProvider, setWalletConnectProvider } = useUserDetailsContext();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);

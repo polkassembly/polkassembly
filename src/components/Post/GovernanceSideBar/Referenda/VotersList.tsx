@@ -11,7 +11,7 @@ import { LoadingStatusType } from 'src/types';
 import Address from 'src/ui-components/Address';
 import formatBnBalance from 'src/util/formatBnBalance';
 
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { VoteType } from '~src/global/proposalType';
 import { votesSortOptions, votesSortValues } from '~src/global/sortOptions';
@@ -28,7 +28,7 @@ interface IVotersListProps {
 type DecisionType = 'yes' | 'no' | 'abstain';
 
 const VotersList: FC<IVotersListProps> = (props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const firstRef = useRef(true);
 
 	const { className, referendumId, voteType } = props;

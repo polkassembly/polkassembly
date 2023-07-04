@@ -7,7 +7,7 @@ import Markdown from 'src/ui-components/Markdown';
 import getPrivacyPolicy from '~assets/privacy-policy';
 import getTermsAndConditions from '~assets/terms-and-conditions';
 import TOW from '~assets/terms-of-website';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props{
 	md: string
@@ -26,11 +26,11 @@ const MdScreen = ({ md } : Props) => {
 const StyledMdScreen = MdScreen;
 
 export const TermsAndConditions = () => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	return <StyledMdScreen md={getTermsAndConditions(network)}/>;
 };
 export const PrivacyPolicy = () => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	return <StyledMdScreen md={getPrivacyPolicy(network)}/>;
 };
 export const TermsOfWebsite = () => <StyledMdScreen md={TOW}/>;

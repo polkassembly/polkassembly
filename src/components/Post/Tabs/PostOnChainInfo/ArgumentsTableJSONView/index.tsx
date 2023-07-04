@@ -9,7 +9,7 @@ import Address from 'src/ui-components/Address';
 import styled from 'styled-components';
 import ArgumentsTable from './ArgumentsTable';
 import { u8aToString } from '@polkadot/util';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { encodeAddress } from '@polkadot/util-crypto';
 import { chainProperties } from '~src/global/networkConstants';
 
@@ -80,7 +80,7 @@ const convertAnyHexToASCII = (obj: any, network: string): any => {
 };
 
 const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	if(postArguments) {
 		postArguments = convertAnyHexToASCII(postArguments, network);
 		const tabItems = [

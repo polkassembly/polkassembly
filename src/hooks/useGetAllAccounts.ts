@@ -11,7 +11,7 @@ import { APPNAME } from 'src/global/appName';
 import { Wallet } from 'src/types';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 type Response = {
 	noExtension: boolean;
@@ -31,7 +31,7 @@ const initResponse: Response = {
 
 const useGetAllAccounts = (get_erc20?: boolean) => {
 	const { api, apiReady } = useContext(ApiContext);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [response, setResponse] = useState<Response>(initResponse);
 

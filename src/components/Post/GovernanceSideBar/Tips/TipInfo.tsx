@@ -10,7 +10,7 @@ import HelperTooltip from 'src/ui-components/HelperTooltip';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
 
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 import Address from '../../../../ui-components/Address';
 
@@ -46,7 +46,7 @@ const getMedian = (list: ITippersInfo[], members: string[], proposer?: string, r
 };
 
 const TipInfo: FC<ITipInfoProps> = (props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const { tippers, receiver, proposer, status } = props;
 

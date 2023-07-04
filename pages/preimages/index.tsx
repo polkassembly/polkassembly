@@ -10,7 +10,8 @@ import { getPreimages, IPreimagesListingResponse } from 'pages/api/v1/listing/pr
 import React, { FC, useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import SEOHead from '~src/global/SEOHead';
 import { ErrorState } from '~src/ui-components/UIStates';
@@ -41,10 +42,10 @@ interface IPreImagesProps {
 
 const PreImages: FC<IPreImagesProps> = (props) => {
 	const { data, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

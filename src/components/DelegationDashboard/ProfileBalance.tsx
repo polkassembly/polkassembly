@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useUserDetailsContext } from '~src/context';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import LockBalanceIcon from '~assets/icons/lock-balance.svg';
 import RightTickIcon from '~assets/icons/right-tick.svg';
@@ -19,6 +19,7 @@ import { APPNAME } from '~src/global/appName';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { formatBalance } from '@polkadot/util';
 import Image from 'next/image';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props{
   className?: string;
@@ -45,7 +46,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	const [lockBalance, setLockBalance] = useState<string>('0');
 	const [transferableBalance, setTransferableBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);

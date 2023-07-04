@@ -7,12 +7,12 @@ import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
-import React, { FC, useContext, useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Listing from '~src/components/Listing';
-import { useNetworkContext } from '~src/context';
-import { NetworkContext } from '~src/context/NetworkContext';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -23,6 +23,7 @@ import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { isCreationOfTreasuryProposalSupported } from '~src/util/isCreationOfTreasuryProposalSupported';
 import DiamondIcon from '~assets/icons/diamond-icon.svg';
 import FilteredTags from '~src/ui-components/filteredTags';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TreasuryProposalFormButton = dynamic(() => import('src/components/CreateTreasuryProposal/TreasuryProposalFormButton'), {
@@ -56,16 +57,15 @@ interface ITreasuryProps {
 
 const Treasury: FC<ITreasuryProps> = (props) => {
 	const { data, error } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
+	const { network } = useNetworkSelector();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const router = useRouter();
-
-	const { network } = useContext(NetworkContext);
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;

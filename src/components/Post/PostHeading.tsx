@@ -11,7 +11,7 @@ import { noTitle } from 'src/global/noTitle';
 import StatusTag from 'src/ui-components/StatusTag';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
 
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import PostHistoryModal from '~src/ui-components/PostHistoryModal';
@@ -34,7 +34,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	} } = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2? requested: reward;
 

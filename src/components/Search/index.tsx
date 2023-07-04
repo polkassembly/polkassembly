@@ -6,7 +6,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Checkbox, Input, List, Modal, Popover, Radio, RadioChangeEvent, Collapse } from 'antd';
 import _ from 'lodash';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import FilterByTags from '~src/ui-components/FilterByTags';
@@ -100,7 +100,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	const postIndex = algolia_client.initIndex('polkassembly_posts');
 	const addressIndex = algolia_client?.initIndex('polkassembly_addresses');
 
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [finalSearchInput, setFinalSearchInput] = useState<string>('');
 	const [filterBy, setFilterBy] = useState<EFilterBy>(EFilterBy.Referenda);

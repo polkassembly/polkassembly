@@ -10,11 +10,11 @@ import { ITrackRowData } from './DashboardTrack';
 import { Button } from 'antd';
 import UndelegatedProfileIcon from '~assets/icons/undelegate-profile.svg';
 import { ETrackDelegationStatus } from '~src/types';
-import { useNetworkContext } from '~src/context';
 import dayjs from 'dayjs';
 import { AuctionAdminTrackIcon, BigSpenderTrackIcon, BigTipperTrackIcon, FellowshipAdminTrackIcon, GeneralAdminTrackIcon, LeaseAdminTrackIcon, MediumSpenderTrackIcon, ReferendumCancellerTrackIcon, ReferendumKillerTrackIcon, RootTrackIcon, SmallSpenderTrackIcon, SmallTipperTrackIcon, StakingAdminTrackTrackIcon, TreasurerTrackIcon, WhitelistedCallerTrackIcon  } from '~src/ui-components/CustomIcons';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 export const handleTracksIcon =  (index:string, size:number ) => {
 	switch(index){
@@ -211,7 +211,7 @@ const GetColumns = (status :ETrackDelegationStatus) => {
 };
 const GetTracksColumns = (status :ETrackDelegationStatus,setOpen: (pre: boolean) => void) => {
 
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 
 	if(status === ETrackDelegationStatus.Delegated){

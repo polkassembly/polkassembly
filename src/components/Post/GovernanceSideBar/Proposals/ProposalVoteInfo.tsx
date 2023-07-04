@@ -5,11 +5,10 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import BN from 'bn.js';
-import React, { useContext } from 'react';
+import React from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import { LoadingStatusType } from 'src/types';
-
-import { NetworkContext } from '~src/context/NetworkContext';
+import { useNetworkSelector } from '~src/redux/selectors';
 import formatBnBalance from '~src/util/formatBnBalance';
 
 interface Props {
@@ -20,7 +19,7 @@ interface Props {
 }
 
 const ProposalVoteInfo = ({ className, deposit, loadingStatus, seconds }:  Props) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	return (
 		<Spin spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>

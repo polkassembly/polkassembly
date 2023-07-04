@@ -19,14 +19,15 @@ import OverviewSVG from '~assets/sidebar/overview.svg';
 import DiscussionsSVG from '~assets/sidebar/discussions.svg';
 import ParachainsSVG from '~assets/sidebar/parachains.svg';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useUserDetailsContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const CMDK = () => {
 	const [page, setPage] = useState('home');
 	const [open, setOpen] = useState<boolean>(false);
 	const [search, setSearch] = useState('');
 	useHandleOpenCommandPalette(setOpen);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { isLoggedOut } = useUserDetailsContext();
 
 	function onPageEscape(page: any) {

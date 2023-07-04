@@ -6,7 +6,8 @@ import React, { useEffect } from 'react';
 import MembersContainer from 'src/components/Listing/Members/MembersContainer';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import SEOHead from '~src/global/SEOHead';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
@@ -15,10 +16,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Members = (props : { network: string }) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

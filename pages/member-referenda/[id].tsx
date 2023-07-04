@@ -11,7 +11,8 @@ import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState, LoadingState } from 'src/ui-components/UIStates';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import { noTitle } from '~src/global/noTitle';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ProposalType } from '~src/global/proposalType';
@@ -48,14 +49,14 @@ interface IReferendaPostProps {
 
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	const { post, error , status } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const router = useRouter();
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized,setIsUnFinalized] = useState(false);
 	const { id } = router.query;
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 

@@ -2,25 +2,23 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Alert, Button, Checkbox, Form, Modal, Popover, Slider, Spin } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
-import { ApiContext } from 'src/context/ApiContext';
 import { ETrackDelegationStatus, NotificationStatus } from 'src/types';
 import AddressInput from 'src/ui-components/AddressInput';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 
-import { NetworkContext } from '~src/context/NetworkContext';
 import LockIcon from '~assets/icons/lock.svg';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { useUserDetailsContext } from '~src/context';
+import { useApiContext, useUserDetailsContext } from '~src/context';
 
 import DelegateProfileIcon from '~assets/icons/delegate-popup-profile.svg';
 import CloseIcon from '~assets/icons/close.svg';
@@ -37,6 +35,7 @@ import { useRouter } from 'next/router';
 import Web3 from 'web3';
 import Balance from '~src/components/Balance';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ZERO_BN = new BN(0);
 
@@ -49,8 +48,8 @@ interface Props {
 }
 
 const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Props ) => {
-	const { api, apiReady } = useContext(ApiContext);
-	const { network } = useContext(NetworkContext);
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { delegationDashboardAddress } = useUserDetailsContext();

@@ -15,9 +15,10 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType, VoteType, getSubsquidProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 import ExtensionNotDetected from '../../ExtensionNotDetected';
 import { tipStatus } from '../Tabs/PostOnChainInfo';
@@ -138,7 +139,7 @@ export function getTrackFunctions(trackInfo: any) {
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, lastVote ,setLastVote } = props;
 
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const currentBlock = useCurrentBlock();
 	const { api, apiReady } = useApiContext();
 	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();

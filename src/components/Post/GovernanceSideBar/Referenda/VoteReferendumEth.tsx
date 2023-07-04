@@ -17,7 +17,7 @@ import styled from 'styled-components';
 import Web3 from 'web3';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import addEthereumChain from '~src/util/addEthereumChain';
 import LoginToVote from '../LoginToVoteOrEndorse';
@@ -31,6 +31,7 @@ import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import { poppins } from 'pages/_app';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
+import { useNetworkSelector } from '~src/redux/selectors';
 import dayjs from 'dayjs';
 const ZERO_BN = new BN(0);
 
@@ -55,7 +56,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
 	const { setPostData } = usePostDataContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
 	const [availableWallets, setAvailableWallets] = useState<any>({});

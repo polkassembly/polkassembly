@@ -11,7 +11,7 @@ import { IDelegate } from '~src/types';
 import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import styled from 'styled-components';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import SocialLink from '~src/ui-components/SocialLinks';
@@ -20,6 +20,7 @@ import { ESocialType } from '~src/auth/types';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from './ProfileBalance';
 import CloseIcon from '~assets/icons/close.svg';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props{
   delegate: IDelegate;
@@ -38,7 +39,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [transferableBalance, setTransferableBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [social_links, setSocial_links]= useState<any[]>([]);
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);

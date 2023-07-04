@@ -11,7 +11,7 @@ import UndelegateCloseIcon from '~assets/icons/white-close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
@@ -43,7 +43,7 @@ interface Props{
 }
 
 const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction , title = 'Delegated', vote ,votedAt, ayeVoteValue, nayVoteValue, abstainVoteValue,isVote = false }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const router = useRouter();
 	useEffect(() => {

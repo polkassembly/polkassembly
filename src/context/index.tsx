@@ -6,7 +6,6 @@ import { useContext } from 'react';
 
 import { ApiContext } from './ApiContext';
 import { ModalContext } from './ModalContext';
-import { NetworkContext } from './NetworkContext';
 import { PostDataContext } from './PostDataContext';
 import { UserDetailsContext } from './UserDetailsContext';
 
@@ -22,12 +21,8 @@ const useApiContext = () => {
 	return useContext(ApiContext);
 };
 
-const useNetworkContext = () => {
-	return useContext(NetworkContext);
-};
-
 function usePostDataContext() {
 	return useContext(PostDataContext);
 }
 
-export { useModalContext, useUserDetailsContext, useApiContext, useNetworkContext, usePostDataContext };
+export { useModalContext, useUserDetailsContext, useApiContext, usePostDataContext };

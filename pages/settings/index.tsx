@@ -8,7 +8,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Notifications from '~src/components/Settings/Notifications';
 import UserAccount from '~src/components/Settings/UserAccount';
-import { useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useUserDetailsContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import Tracker from '~src/components/Tracker/Tracker';
 import { useRouter } from 'next/router';
@@ -17,6 +17,9 @@ import BackToListingView from '~src/ui-components/BackToListingView';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import NotificationUpgradingState from '~src/components/Settings/Notifications/NotificationChannels/NotificationUpgradingState';
 import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
+import { useNetworkSelector } from '~src/redux/selectors';
+import { networkActions } from '~src/redux/network';
+import { useDispatch } from 'react-redux';
 
 interface Props {
 	network: string
@@ -28,7 +31,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Settings: FC<Props> = (props) => {
-	const { setNetwork, network } = useNetworkContext();
+	const { network } = useNetworkSelector();
+	const dispatch = useDispatch();
 	const router = useRouter();
 	const tab = router.query?.tab as string;
 	const { id } = useUserDetailsContext();
@@ -59,7 +63,7 @@ const Settings: FC<Props> = (props) => {
 	}, [id, router, router.isReady, searchQuery, tab, tabItems]);
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(networkActions.setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

@@ -12,13 +12,14 @@ import { Alert, Button, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import AuthForm from 'src/ui-components/AuthForm';
 import FilteredError from 'src/ui-components/FilteredError';
 import Loader from 'src/ui-components/Loader';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 import NovaWalletIcon from '~assets/wallet/nova-wallet-star.svg';
 import PolkadotJSIcon from '~assets/wallet/polkadotjs-icon.svg';
@@ -84,7 +85,7 @@ const MetamaskLogin: FC<Props> = ({
 }) => {
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);

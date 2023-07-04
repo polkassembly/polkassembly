@@ -13,7 +13,7 @@ import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
@@ -29,6 +29,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ExtensionNotDetected from '../ExtensionNotDetected';
 import { WalletIcon } from '../Login/MetamaskLogin';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
   chosenWallet: Wallet;
@@ -49,7 +50,7 @@ const Web3Signup: FC<Props> = ({
 	setLoginOpen,
 	onWalletUpdate
 }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [error, setErr] = useState('');
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);

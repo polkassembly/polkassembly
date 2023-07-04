@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useUserDetailsContext } from '~src/context';
 import styled from 'styled-components';
 import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
@@ -21,6 +21,7 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props{
   className?: string;
@@ -76,7 +77,7 @@ export const handleTrack = ( track: string ) => {
 const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 	const { query : { track } } = useRouter();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [status, setStatus] = useState<ETrackDelegationStatus[]>([]);
 	const router = useRouter();
 	const [showTable, setShowTable] = useState<boolean>(false);

@@ -13,7 +13,6 @@ import { checkAddress } from '@polkadot/util-crypto';
 import { Button, Form, Input, Modal, Tooltip } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { APPNAME } from 'src/global/appName';
 import { addressPrefix } from 'src/global/networkConstants';
 import { chainProperties } from 'src/global/networkConstants';
@@ -24,11 +23,11 @@ import Loader from 'src/ui-components/Loader';
 import queueNotification from 'src/ui-components/QueueNotification';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
-
-import { NetworkContext } from '~src/context/NetworkContext';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 
 import AddressComponent from '../../ui-components/Address';
+import { useNetworkSelector } from '~src/redux/selectors';
+import { useUserDetailsContext } from '~src/context';
 
 interface Props {
 	className?: string
@@ -90,8 +89,8 @@ const SetOnChainIdentityButton = ({
 	className
 	// setTipModalOpen,
 } : Props) => {
-	const { id } = useContext(UserDetailsContext);
-	const { network } = useContext(NetworkContext);
+	const { id } = useUserDetailsContext();
+	const { network } = useNetworkSelector();
 
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const [validAddress, setValidAddress] = useState<boolean>(false);

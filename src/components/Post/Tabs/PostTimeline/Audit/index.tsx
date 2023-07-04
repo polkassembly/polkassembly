@@ -4,12 +4,11 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState ,useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ClockCircleOutlined ,LoadingOutlined } from '@ant-design/icons';
 import { Radio, Spin } from 'antd';
 import { ProposalType } from '~src/global/proposalType';
 import { usePostDataContext } from 'src/context';
-import { NetworkContext } from '~src/context/NetworkContext';
 import CautionSVG from '~assets/icons/caution.svg';
 import YouTubeIcon from '~assets/icons/video.svg';
 import PdfIcon from '~assets/icons/pdfs.svg';
@@ -17,6 +16,7 @@ import PdfViewer from './PdfViewer';
 import VideoViewer from './VideoViewer';
 import NoAuditReport from './NoAuditReport';
 import ImageViewer from './ImageViewer';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 export interface IDataType {
   download_url: string;
@@ -63,7 +63,7 @@ function getOrdinalSuffix(day: number): string {
 
 const PostAudit = () => {
 
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const { postData } = usePostDataContext();
 
 	// Fetching data

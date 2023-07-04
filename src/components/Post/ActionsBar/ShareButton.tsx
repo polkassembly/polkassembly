@@ -4,12 +4,11 @@
 
 import { ShareAltOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import React, { useContext } from 'react';
-
-import { NetworkContext } from '~src/context/NetworkContext';
+import React from 'react';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const ShareButton = function ({ title }: {title?: string | null}) {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	const share = () => {
 		const twitterParameters = [];

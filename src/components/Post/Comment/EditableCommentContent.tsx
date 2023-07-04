@@ -6,7 +6,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Form, MenuProps, Tooltip } from 'antd';
 import { useRouter } from 'next/router';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
-import React, { FC, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
@@ -17,7 +17,6 @@ import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
 import { usePostDataContext, useUserDetailsContext } from '~src/context';
-import { NetworkContext } from '~src/context/NetworkContext';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -33,6 +32,7 @@ import ReplyIcon from '~assets/icons/reply.svg';
 import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon,AgainstUnfilledIcon,SlightlyAgainstUnfilledIcon,NeutralUnfilledIcon,SlightlyForUnfilledIcon,ForUnfilledIcon } from '~src/ui-components/CustomIcons';
 
 import { poppins } from 'pages/_app';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IEditableCommentContentProps {
 	userId: number,
@@ -56,7 +56,7 @@ const editCommentKey = (commentId: string) => `comment:${commentId}:${global.win
 const replyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment ,userName } = props;
 	const { setPostData, postData: { postType , postIndex } } = usePostDataContext();

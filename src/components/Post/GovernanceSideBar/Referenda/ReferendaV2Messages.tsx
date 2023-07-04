@@ -6,12 +6,13 @@ import BN from 'bn.js';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
 import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Tracks/AboutTrackCard';
-import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { DecisionPeriodIcon, EnactmentPeriodIcon, PreparePeriodIcon } from '~src/ui-components/CustomIcons';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import CloseIcon from 'public/assets/icons/close.svg';
 import { getBlockLink } from '~src/util/subscanCheck';
 import { IProgress } from './Curves';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IReferendaV2Messages {
     className?: string;
@@ -94,7 +95,7 @@ export const checkProposalPresent = (timeline: any[], type: string) => {
 const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const { progress } = props;
 	const { postData: { track_name, track_number, created_at, status, timeline, requested } } = usePostDataContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const trackData = getTrackData(network, track_name, track_number);
 	const proposalCreatedAt = dayjs(created_at);

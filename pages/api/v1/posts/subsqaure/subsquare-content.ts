@@ -21,7 +21,7 @@ const urlMapper: any = {
 };
 
 export const getSubSquareContentAndTitle = async (proposalType: string | string[], network: string , id: string | string[] | number |undefined) => {
-	//console.log('params', proposalType , network , id);
+
 	try {
 		if(!proposalType){
 			throw apiErrorWithStatusCode('Proposal type missing ', 400);
@@ -46,7 +46,7 @@ export const getSubSquareContentAndTitle = async (proposalType: string | string[
 		}
 
 		if(!network){
-			throw apiErrorWithStatusCode('Network is not missing', 400);
+			throw apiErrorWithStatusCode('Network is  missing', 400);
 			return;
 		}
 		if(!isValidNetwork(network)){
@@ -78,6 +78,7 @@ const handler: NextApiHandler<{ data: any } | { error: string }> = async (req, r
 	const network = String(req.headers['x-network']);
 
 	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!id) res.status(400).json({ error: 'id missing in request' });
 
 	const data :{
         content:'',

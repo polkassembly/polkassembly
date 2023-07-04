@@ -56,16 +56,16 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 	const displayJudgements = JSON.stringify(judgements?.map(([,jud]) => jud.toString()));
 
 	const popupContent = <StyledPopup>
-		{identity?.legal && <li><span className='desc'>legal:</span><span className='text-[12px]'>{identity.legal}</span></li>}
-		{identity?.email && <li className='flex items-center'><span className='desc flex text-[14px]'><EmailIcon className='mr-1'/>Email:</span><span className='text-[12px]'>{identity.email}</span></li>}
-		{(identity?.judgements?.length || 0) > 0 && <li className='flex'><span className='desc flex text-[14px]'><JudgementIcon className='mr-1'/>Judgements:</span><span className='judgments'><span className='text-[12px]'>{displayJudgements}</span></span></li>}
-		{identity?.pgp && <li><span className='desc'>pgp:</span><span className='text-[12px]'>{identity.pgp}</span></li>}
-		{identity?.riot && <li><span className='desc'>riot:</span><span className='text-[12px]'>{identity.riot}</span></li>}
-		{identity?.twitter && <li className='flex items-center'><span className='desc flex text-[14px]'><TwitterIcon className='mr-2 mt-1'/>Twitter:</span><span className='text-[12px]'>{identity.twitter}</span></li>}
-		{identity?.web && <li><span className='desc'>web:</span><span className='text-[12px]'>{identity.web}</span></li>}
+		{identity?.legal && <li><span className='desc'>legal:</span><span className='text-xs'>{identity.legal}</span></li>}
+		{identity?.email && <li className='flex items-center'><span className='desc flex items-center text-sm'><EmailIcon className='mr-1'/>Email:</span><span className='text-xs'>{identity.email}</span></li>}
+		{(identity?.judgements?.length || 0) > 0 && <li className='flex items-center'><span className='desc flex items-center text-sm'><JudgementIcon className='mr-1'/>Judgements:</span><span className='judgments'><span className='text-xs'>{displayJudgements}</span></span></li>}
+		{identity?.pgp && <li><span className='desc'>pgp:</span><span className='text-xs'>{identity.pgp}</span></li>}
+		{identity?.riot && <li><span className='desc'>riot:</span><span className='text-xs'>{identity.riot}</span></li>}
+		{identity?.twitter && <li className='flex items-center'><span className='desc flex text-sm'><TwitterIcon className='mr-1 mt-1'/>Twitter:</span><span className='text-xs'>{identity.twitter}</span></li>}
+		{identity?.web && <li><span className='desc'>web:</span><span className='text-xs'>{identity.web}</span></li>}
 		{flags?.isCouncil && <li><span className='desc'>Council member</span><CouncilEmoji/></li>}
-		{<li><span className='desc'><a href={`https://polkaverse.com/accounts/${address}`} target='_blank' rel='noreferrer' className='flex text-pink-500 underline'><ShareScreenIcon className='mr-2'/>Polkaverse Profile</a></span></li>}
-		{web3Name && <li><span className='desc'><a href={`https://w3n.id/${web3Name}`} target='_blank' rel='noreferrer' className='flex text-pink-500'><ShareScreenIcon className='mr-2'/>Web3 Name Profile</a></span></li>}
+		{<li><span className='desc'><a href={`https://polkaverse.com/accounts/${address}`} target='_blank' rel='noreferrer' className='flex text-pink-500 underline items-center'><ShareScreenIcon className='mr-2'/>Polkaverse Profile</a></span></li>}
+		{web3Name && <li><span className='desc flex items-center'><a href={`https://w3n.id/${web3Name}`} target='_blank' rel='noreferrer' className='flex text-pink-500'><ShareScreenIcon className='mr-2'/>Web3 Name Profile</a></span></li>}
 	</StyledPopup>;
 
 	return <div className={className}>

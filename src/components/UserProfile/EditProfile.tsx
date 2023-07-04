@@ -19,6 +19,7 @@ import nameBlacklist from '~src/auth/utils/nameBlacklist';
 import { useRouter } from 'next/router';
 import { useUserDetailsContext } from '~src/context';
 import { poppins } from 'pages/_app';
+import validator from 'validator';
 
 interface IEditProfileModalProps {
     id?: number | null;
@@ -54,20 +55,20 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const validateData = ( image: string | undefined, social_links: ISocial[] | undefined) => {
 
 		// eslint-disable-next-line no-useless-escape
-		const regex = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{0,256}\.[a-zA-Z0-9()]{0,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi);
+		const regex = validator.isURL(image || '', { protocols: ['http','https'], require_protocol: true });
 
-		if(image && image.trim() && !image?.match(regex)) {
+		if(image && image.trim() && !regex) {
 			setErrorCheck({ ...errorCheck, basicInformationError: 'Image URL is invalid.' });
 			return true;
 		}
-		else{
+		else if(regex){
 			setErrorCheck({ ...errorCheck, basicInformationError: '' });
 		}
 
 		if (social_links && Array.isArray(social_links)) {
 			for (let i = 0; i < social_links.length; i++) {
 				const link = social_links[i];
-				if(link.link && !link.link?.match(regex)) {
+				if(link.link && !validator.isURL(link.link, { protocols: ['http','https'], require_protocol: true }) && !validator.isEmail(link.link)) {
 					setErrorCheck({ ...errorCheck, socialsError: `${link.type} ${link.type === 'Email'? '': 'URL'} is invalid.` });
 					return true;
 				}

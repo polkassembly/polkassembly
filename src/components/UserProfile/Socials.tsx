@@ -18,7 +18,6 @@ interface ISocialsProps {
 
 const Socials: FC<ISocialsProps> = (props) => {
 	const { loading, profile, setProfile , errorCheck } = props;
-	console.log('errorCheck', errorCheck);
 	return (
 		<div className='max-h-[552px] flex flex-col gap-y-4'>
 			{
@@ -77,14 +76,13 @@ const Socials: FC<ISocialsProps> = (props) => {
 				})
 			}
 			{
-				errorCheck ?
+				errorCheck &&
 					<Alert
 						className='mt-4 h-[40px] py-2 px-5 text-bodyBlue text-sm rounded-[4px]'
 						message={errorCheck}
 						type='info'
 						showIcon
 					/>
-					: null
 			}
 		</div>
 	);

@@ -8,7 +8,7 @@ import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-i
 import { Alert, Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
-import { EVoteDecisionType, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
+import { EVoteDecisionType, ILastVote, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -34,6 +34,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const ZERO_BN = new BN(0);
 
@@ -41,8 +42,8 @@ interface Props {
 	className?: string
 	referendumId?: number | null | undefined
 	onAccountChange: (address: string) => void
-	lastVote: string | null | undefined
-	setLastVote: React.Dispatch<React.SetStateAction<string | null | undefined>>
+	lastVote: ILastVote | undefined
+	setLastVote: React.Dispatch<React.SetStateAction< ILastVote | undefined >>
 	proposalType: ProposalType;
   address: string;
 }
@@ -53,7 +54,8 @@ message: string;
 }
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
-	const { addresses, isLoggedOut } = useUserDetailsContext();
+	const userDetails = useUserDetailsContext();
+	const { addresses, isLoggedOut, loginAddress } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
@@ -71,7 +73,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [successModal,setSuccessModal] = useState(false);
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
-	const[ayeNayForm] = Form.useForm();
+	const [ayeNayForm] = Form.useForm();
 	const [abstainVoteValue, setAbstainVoteValue] = useState<BN>(ZERO_BN);
 	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
@@ -81,14 +83,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
 	useEffect(() => {
-		if(!window) return;
-		const Wallet = localStorage.getItem('loginWallet') ;
-		if(Wallet){
-			setLoginWallet(Wallet as  Wallet);
-			setWallet(Wallet as Wallet);
+		if (userDetails.loginWallet) {
+			setLoginWallet(userDetails.loginWallet);
+			setWallet(userDetails.loginWallet);
+		} else {
+			if(!window) return;
+			const wallet = localStorage.getItem('loginWallet') ;
+			if(Wallet){
+				setLoginWallet(wallet as  Wallet);
+				setWallet(wallet as Wallet);
+			}
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [userDetails]);
 
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -135,6 +142,16 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		accounts.forEach((account) => {
 			account.address = getEncodedAddress(account.address, network) || account.address;
 		});
+
+		if (accounts && Array.isArray(accounts)) {
+			const substrate_address = getSubstrateAddress(loginAddress);
+			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
+			if (index >= 0) {
+				const account = accounts[index];
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+			}
+		}
 
 		setAccounts(accounts);
 		if (accounts.length > 0) {
@@ -416,7 +433,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						message: `Vote on referendum #${referendumId} successful.`,
 						status: NotificationStatus.SUCCESS
 					});
-					setLastVote(vote);
+					setLastVote({
+						balance: totalVoteValue,
+						conviction: conviction,
+						decision: vote,
+						time: new Date()
+					});
 					setShowModal(false);
 					setSuccessModal(true);
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
@@ -445,7 +467,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						message: `Vote on referendum #${referendumId} successful.`,
 						status: NotificationStatus.SUCCESS
 					});
-					setLastVote(vote);
+					setLastVote({
+						balance: totalVoteValue,
+						conviction: conviction,
+						decision: vote,
+						time: new Date()
+					});
 					setShowModal(false);
 					setSuccessModal(true);
 					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
@@ -500,7 +527,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const VoteUI = <>
 		<div className={className}>
 			<Button
-				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[100%]'
+				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-[4px] flex items-center justify-center p-6 w-[100%]'
 				onClick={() => setShowModal(true)}
 			>
 				{lastVote == null || lastVote == undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }

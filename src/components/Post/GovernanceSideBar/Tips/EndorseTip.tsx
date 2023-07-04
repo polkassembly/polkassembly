@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { Alert, Button, Form } from 'antd';
 import BN from 'bn.js';
 import Image from 'next/image';
@@ -15,14 +14,17 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import { useApiContext, useUserDetailsContext } from '~src/context';
 import LoginToEndorse from '../LoginToVoteOrEndorse';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 
 interface Props {
-	accounts: InjectedAccount[]
+	accounts: InjectedTypeWithCouncilBoolean[]
 	address: string
 	className?: string
 	getAccounts: () => Promise<undefined>
 	tipHash?: string
-	onAccountChange: (address: string) => void
+	onAccountChange: (address: string) => void;
+	setAccounts: React.Dispatch<React.SetStateAction<InjectedTypeWithCouncilBoolean[]>>;
 }
 
 const EndorseTip = ({
@@ -31,7 +33,8 @@ const EndorseTip = ({
 	className,
 	getAccounts,
 	tipHash,
-	onAccountChange
+	onAccountChange,
+	setAccounts
 }: Props) => {
 	const ZERO = new BN(0);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
@@ -40,19 +43,29 @@ const EndorseTip = ({
 	const [forceEndorse, setForceEndorse] = useState(false);
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
-	const { addresses, isLoggedOut } = useUserDetailsContext();
+	const { isLoggedOut } = useUserDetailsContext();
 
 	useEffect(() => {
-		// it will iterate through all addresses
-		addresses && addresses.some(address => {
-			if (currentCouncil.includes(address)) {
+		// it will iterate through all accounts
+		if (accounts && Array.isArray(accounts)) {
+			const index = accounts.findIndex((account) => {
+				const substrateAddress = getSubstrateAddress(account.address);
+				return currentCouncil.some((council) => getSubstrateAddress(council) === substrateAddress);
+			});
+			if (index >= 0) {
+				const account = accounts[index];
 				setIsCouncil(true);
-				// this breaks the loop as soon as we find a matching address
-				return true;
+				accounts.splice(index, 1);
+				accounts.unshift({
+					...account,
+					isCouncil: true
+				});
+				setAccounts(accounts);
+				onAccountChange(account.address);
 			}
-			return false;
-		});
-	}, [addresses, currentCouncil]);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentCouncil, accounts]);
 
 	useEffect(() => {
 		if (!api) {
@@ -64,13 +77,18 @@ const EndorseTip = ({
 		}
 
 		try {
+			if (accounts.length === 0) {
+				getAccounts();
+			}
 			api.query.council.members().then((memberAccounts) => {
-				setCurrentCouncil(memberAccounts.map(member => member.toString()));
+				const members = memberAccounts.map(member => member.toString());
+				setCurrentCouncil(members.filter((member) => !!member) as string[]);
 			});
 		} catch (error) {
 			// console.log(error);
 		}
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
 	const onValueChange = (balance: BN) => setEndorseValue(balance);

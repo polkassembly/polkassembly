@@ -6,19 +6,24 @@ import { Button, Dropdown } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
-import Address from 'src/ui-components/Address';
+import Address, { EAddressOtherTextType } from 'src/ui-components/Address';
 import { useUserDetailsContext } from '~src/context';
 import DownIcon from '~assets/icons/down-icon.svg';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+
+export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
+	isCouncil?: boolean;
+};
 
 interface Props {
 	defaultAddress?: string;
-  accounts: InjectedAccount[];
-  className?: string;
-  filterAccounts?: string[]
-  onAccountChange: (address: string) => void;
-  isDisabled?: boolean;
-  isSwitchButton?: boolean;
-  setSwitchModalOpen?: (pre: boolean)=> void;
+	accounts: InjectedTypeWithCouncilBoolean[];
+	className?: string;
+	filterAccounts?: string[]
+	onAccountChange: (address: string) => void;
+	isDisabled?: boolean;
+	isSwitchButton?: boolean;
+	setSwitchModalOpen?: (pre: boolean)=> void;
 }
 
 const AddressDropdown = ({
@@ -40,14 +45,35 @@ const AddressDropdown = ({
 
 	const dropdownList: {[index: string]: string} = {};
 	const addressItems: ItemType[] = [];
-	const { setUserDetailsContextState } = useUserDetailsContext();
+	const { setUserDetailsContextState, loginAddress } = useUserDetailsContext();
+	const substrate_address = getSubstrateAddress(loginAddress);
+
+	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
+		const isConnected = getSubstrateAddress(account?.address || '')?.toLowerCase() === (substrate_address || '').toLowerCase();
+		if (account?.isCouncil) {
+			if (isConnected) {
+				return EAddressOtherTextType.COUNCIL_CONNECTED;
+			}
+			return EAddressOtherTextType.COUNCIL;
+		} else if (isConnected) {
+			return EAddressOtherTextType.CONNECTED;
+		}
+	};
 
 	filteredAccounts.forEach(account => {
 		addressItems.push({
 			key: account.address,
 			label: (
-				<Address disableAddressClick={true} extensionName={account.name} address={account.address} />
-			)
+				<Address
+					disableAddressClick={true}
+					className='flex items-center'
+					otherTextType={getOtherTextType(account)}
+					otherTextClassName='ml-auto'
+					extensionName={account.name}
+					address={account.address}
+				/>
+			),
+			title: getSubstrateAddress(account.address)?.toLowerCase() === (substrate_address || '').toLowerCase()? 'Logged in address': ''
 		});
 
 		if (account.address && account.name){
@@ -88,9 +114,12 @@ const AddressDropdown = ({
 					disableAddressClick={true}
 					extensionName={dropdownList[selectedAddress]}
 					address={defaultAddress || selectedAddress}
+					otherTextType={getOtherTextType(filteredAccounts.find(account => account.address === selectedAddress || account.address === defaultAddress))}
+					className='flex items-center flex-1'
+					otherTextClassName='ml-auto'
 				/>
-				<span>
-					<DownIcon className='mr-2'/>
+				<span className='mx-2'>
+					<DownIcon />
 				</span>
 			</div>
 		</Dropdown>

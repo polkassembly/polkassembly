@@ -61,6 +61,7 @@ import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -147,7 +148,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const metaMaskError = useHandleMetaMask();
 
 	const [address, setAddress] = useState<string>('');
-	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
+	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
 	const [extensionNotFound, setExtensionNotFound] = useState(false);
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
 	const [accountsMap, setAccountsMap] = useState<{[key:string]:string}>({});
@@ -345,7 +346,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		return;
 	};
 
-	const getVotingHistoy = useCallback(async () => {
+	const getVotingHistory = useCallback(async () => {
 		setIsLastVoteLoading(true);
 		const encoded = getEncodedAddress(address || loginAddress || defaultAddress || '', network);
 
@@ -570,8 +571,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	}, [address]);
 
 	useEffect(() => {
-		getVotingHistoy();
-	}, [getVotingHistoy]);
+		getVotingHistory();
+	}, [getVotingHistory]);
 
 	const LastVoteInfoOnChain : FC <IVoteHistory>  = ({ createdAt, decision , lockPeriod }) => {
 		const unit =`${chainProperties[network]?.tokenSymbol}`;

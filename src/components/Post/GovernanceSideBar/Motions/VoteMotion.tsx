@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { Alert, Button, Modal, Spin,  Tooltip } from 'antd';
 import Image from 'next/image';
 import React, { useEffect,useState } from 'react';
@@ -23,9 +22,10 @@ import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import dayjs from 'dayjs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 
 interface Props {
-	accounts: InjectedAccount[]
+	accounts: InjectedTypeWithCouncilBoolean[]
 	address: string
 	className?: string
 	getAccounts: () => Promise<undefined>
@@ -33,7 +33,7 @@ interface Props {
 	motionProposalHash?: string
 	onAccountChange: (address: string) => void
 	proposalType?: ProposalType;
-	setAccounts: React.Dispatch<React.SetStateAction<InjectedAccount[]>>;
+	setAccounts: React.Dispatch<React.SetStateAction<InjectedTypeWithCouncilBoolean[]>>;
 }
 
 const VoteMotion = ({
@@ -95,7 +95,10 @@ const VoteMotion = ({
 				const account = accounts[index];
 				setIsCouncil(true);
 				accounts.splice(index, 1);
-				accounts.unshift(account);
+				accounts.unshift({
+					...account,
+					isCouncil: true
+				});
 				setAccounts(accounts);
 				onAccountChange(account.address);
 			}

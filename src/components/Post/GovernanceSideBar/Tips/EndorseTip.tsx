@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { Alert, Button, Form } from 'antd';
 import BN from 'bn.js';
 import Image from 'next/image';
@@ -16,15 +15,16 @@ import styled from 'styled-components';
 import { useApiContext, useUserDetailsContext } from '~src/context';
 import LoginToEndorse from '../LoginToVoteOrEndorse';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 
 interface Props {
-	accounts: InjectedAccount[]
+	accounts: InjectedTypeWithCouncilBoolean[]
 	address: string
 	className?: string
 	getAccounts: () => Promise<undefined>
 	tipHash?: string
 	onAccountChange: (address: string) => void;
-	setAccounts: React.Dispatch<React.SetStateAction<InjectedAccount[]>>;
+	setAccounts: React.Dispatch<React.SetStateAction<InjectedTypeWithCouncilBoolean[]>>;
 }
 
 const EndorseTip = ({
@@ -56,7 +56,10 @@ const EndorseTip = ({
 				const account = accounts[index];
 				setIsCouncil(true);
 				accounts.splice(index, 1);
-				accounts.unshift(account);
+				accounts.unshift({
+					...account,
+					isCouncil: true
+				});
 				setAccounts(accounts);
 				onAccountChange(account.address);
 			}

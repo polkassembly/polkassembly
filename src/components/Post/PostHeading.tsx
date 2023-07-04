@@ -17,6 +17,7 @@ import { ProposalType } from '~src/global/proposalType';
 import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
+import PostSummary from './PostSummary';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => <div className="flex gap-x-6"><Skeleton.Avatar active /><Skeleton.Input active /></div> ,
@@ -70,6 +71,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								updated_at={last_edited_at}
 								isHistory={history && history?.length > 0}
 							/></div>
+						<PostSummary className='ml-3' content={content} />
 					</CreationLabel>
 				</>
 			</div>

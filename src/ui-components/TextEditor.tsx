@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { Skeleton } from 'antd';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import showdown from 'showdown';
+import styled from 'styled-components';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -47,7 +48,7 @@ img {
 const TextEditor: FC<ITextEditorProps> = (props) => {
 	const { className, height, onChange, isDisabled, value, name } = props;
 	const [loading, setLoading] = useState(true);
-	const ref = useRef<Editor>(null!);
+	const ref = useRef<Editor | null>(null);
 
 	return (
 		<>
@@ -66,7 +67,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							const content = e.clipboardData?.getData('text/plain') || '';
 							const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
 							const parsed_content = converter.makeHtml(sanitisedContent);
-							ref.current.editor?.setContent(parsed_content || sanitisedContent);
+							ref.current?.editor?.setContent(parsed_content || sanitisedContent);
 						}}
 						textareaName={name}
 						value={converter.makeHtml(value || '')}
@@ -77,6 +78,8 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						}}
 						apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
 						onInit={() => setLoading(false)}
+						onFocusIn={() => document.querySelector('.tox-editor-header')?.classList.add('focused')}
+						onFocusOut={() => document.querySelector('.tox-editor-header')?.classList.remove('focused')}
 						init={{
 							block_unsupported_drop: false,
 							branding: false,
@@ -124,6 +127,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							},
 							menubar: false,
 							paste_data_images: true,
+							placeholder: 'Please type here...',
 							plugins: [
 								'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
 								'searchreplace', 'visualblocks', 'code', 'fullscreen',
@@ -143,4 +147,18 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	);
 };
 
-export default TextEditor;
+export default styled(TextEditor)`
+	.tox-editor-header {
+		opacity: 0.3;
+		box-shadow: none !important;
+		transition: opacity 0.2s ease-in-out !important;
+
+		&.focused {
+			opacity: 1 !important;
+		}
+
+		.tox-tbtn {
+			scale: 0.85;
+		}
+	}
+`;

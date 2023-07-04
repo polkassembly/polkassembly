@@ -13,6 +13,7 @@ import HelperTooltip from 'src/ui-components/HelperTooltip';
 import { useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import * as validation from 'src/util/validation';
+import validator from 'validator';
 
 import debounce from 'lodash/debounce';
 
@@ -253,9 +254,8 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	const onChange = async (content:string) => {
 		const inputValue = content;
 		setInput(inputValue);
-		const linkRegex = /^(https?:\/\/)?(www\.)?[\w.-]+\.[a-zA-Z]{2,}(\/\S*)?$/;
 
-		if(validation.email.pattern.test(inputValue) && linkRegex.test(inputValue)) {
+		if(validation.email.pattern.test(inputValue) && validator.isURL(inputValue)) {
 			const matches = inputValue.match(/(?<!\[)@\w+/g);
 			if (matches && matches.length > 0) {
 				const usernameQuery = matches[matches.length - 1].substring(1);

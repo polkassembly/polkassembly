@@ -31,7 +31,6 @@ body {
 	font-family: "Poppins",
 	sans-serif;
 	font-size: 14px;
-	letter-spacing: 1px;
 	line-height: 1.5;
 }
 

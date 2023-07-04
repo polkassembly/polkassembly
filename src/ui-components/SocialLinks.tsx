@@ -40,50 +40,36 @@ const SocialLink: FC<ISocialLink> = (props) => {
 	let link = '';
 	let username = '';
 
-	switch (type) {
-	case ESocialType.TWITTER:
+	function getSocialLink(handle:any) {
 		if (handle.startsWith('https://')) {
 			const url = new URL(handle);
 			username = url.pathname.split('/')[1];
 		}
-		else{
+		else {
 			username = handle;
 		}
+		return [link, username];
+	}
+	switch (type) {
+	case ESocialType.TWITTER:
+		[link, username] = getSocialLink(handle);
 		link = `https://twitter.com/${username}`;
 		break;
 	case ESocialType.TELEGRAM:
-		if (handle.startsWith('https://')) {
-			const url = new URL(handle);
-			username = url.pathname.split('/')[1];
-		}
-		else{
-			username = handle;
-		}
+		[link, username] = getSocialLink(handle);
 		link = `https:/t.me/${username}`;
 		break;
 	case ESocialType.EMAIL:
 		link = `mailto:${handle}`;
-		// No need to extract username from an email handle
 		break;
 	case ESocialType.RIOT:
-		if (handle.startsWith('https://')) {
-			const url = new URL(handle);
-			username = url.pathname.split('/')[2];
-		}
-		else{
-			username = handle;
-		}
+		[link, username] = getSocialLink(handle);
 		link = `https://riot.im/app/#/user/${username}`;
 		break;
 	case ESocialType.DISCORD:
-		if (handle.startsWith('https://')) {
-			const url = new URL(handle);
-			username = url.pathname.split('/')[2];
-		}
-		else{
-			username = handle;
-		}
+		[link, username] = getSocialLink(handle);
 		link = `https://discordapp.com/users/${username}`;
+		break;
 	}
 
 	return (

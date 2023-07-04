@@ -31,7 +31,8 @@ export const getSubSquareContentAndTitle = async (proposalType: string | string[
 			throw apiErrorWithStatusCode('id is not present', 400);
 			return;
 		}
-		const url = urlMapper[String(proposalType)]?.(id, network);
+		//const url = urlMapper[String(proposalType)]?.(id, network);
+		const url = new URL( urlMapper[String(proposalType)]?.(id, network));
 		const data = await (await fetch(url)).json();
 
 		//let subsqTitle = data.title.includes('Untitled') ? '' : data.title;

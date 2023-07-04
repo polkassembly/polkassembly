@@ -27,6 +27,10 @@ export const getSubSquareContentAndTitle = async (proposalType: string | string[
 			throw apiErrorWithStatusCode('can not send String[] in Proposal type', 400);
 			return;
 		}
+		if(!id){
+			throw apiErrorWithStatusCode('id is not present', 400);
+			return;
+		}
 		const url = urlMapper[String(proposalType)]?.(id, network);
 		const data = await (await fetch(url)).json();
 

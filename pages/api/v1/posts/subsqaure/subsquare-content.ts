@@ -20,22 +20,43 @@ const urlMapper: any = {
 	[ProposalType.TREASURY_PROPOSALS]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/proposals/${id}`
 };
 
-export const getSubSquareContentAndTitle = async (proposalType: string | string[], network: string | string[] | undefined, id: string | string[] | number |undefined) => {
+export const getSubSquareContentAndTitle = async (proposalType: string | string[], network: string , id: string | string[] | number |undefined) => {
 	//console.log('params', proposalType , network , id);
 	try {
+		if(!proposalType){
+			throw apiErrorWithStatusCode('Proposal type missing ', 400);
+			return;
+		}
 		if( typeof proposalType !== 'string' ){
 			throw apiErrorWithStatusCode('can not send String[] in Proposal type', 400);
 			return;
 		}
+
 		if(!id){
 			throw apiErrorWithStatusCode('id is not present', 400);
 			return;
 		}
-		//const url = urlMapper[String(proposalType)]?.(id, network);
+		if(proposalType === ProposalType.TIPS && typeof id !== 'string'){
+			throw apiErrorWithStatusCode('type of id should be string', 400);
+			return;
+		}
+		if( proposalType !== ProposalType.TIPS && Number(id) < 0){
+			throw apiErrorWithStatusCode('id can not be negative', 400);
+			return;
+		}
+
+		if(!network){
+			throw apiErrorWithStatusCode('Network is not missing', 400);
+			return;
+		}
+		if(!isValidNetwork(network)){
+			throw apiErrorWithStatusCode('Network is not valid', 400);
+			return;
+		}
+
 		const url = new URL( urlMapper[String(proposalType)]?.(id, network));
 		const data = await (await fetch(url)).json();
 
-		//let subsqTitle = data.title.includes('Untitled') ? '' : data.title;
 		let subsqTitle = data.title;
 
 		subsqTitle = String(data?.title)?.includes('Untitled') ? '' : data.title;

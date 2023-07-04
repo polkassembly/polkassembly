@@ -76,8 +76,8 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						}}
 						apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
 						onInit={() => setLoading(false)}
-						onFocusIn={() => document.querySelector('.tox-editor-header')?.classList.add('focused')}
-						onFocusOut={() => document.querySelector('.tox-editor-header')?.classList.remove('focused')}
+						onFocusIn={() => document.querySelectorAll('.tox-editor-header').forEach(elem => elem.classList?.add('focused'))}
+						onFocusOut={() => document.querySelectorAll('.tox-editor-header').forEach(elem => elem.classList?.remove('focused'))}
 						init={{
 							block_unsupported_drop: false,
 							branding: false,

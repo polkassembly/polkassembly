@@ -196,18 +196,18 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 						? <Space>
 							{(kiltName || identity && mainDisplay) && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 							<Tooltip color='#E5007A' title={popupContent}>
-								<div className={'header display_inline identityName max-w-[30px] flex flex-col gap-y-1  text-navBlue'}>
-									{ t1 && <span className={`truncate ${textClassName}`}>{t1}</span> }
-									{sub && isSubVisible && <span className={`sub truncate ${textClassName}`}>{sub}</span>}
+								<div className={'header display_inline identityName max-w-[30px] flex flex-col gap-y-1'}>
+									{ t1 && <span className='truncate text-bodyBlue font-semibold'>{t1}</span> }
+									{sub && isSubVisible && <span className={`sub truncate text-bodyBlue font-semibold ${textClassName}`}>{sub}</span>}
 								</div>
 							</Tooltip>
 						</Space>
 						: <>
-							<div className={'description display_inline flex items-center'}>
-								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} className='mr-2 text-navBlue' />}
-								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[85px] flex gap-x-1 ${textClassName}`}>
-									{ t1 && <span className={`${truncateUsername && 'truncate'} ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
-									{sub && isSubVisible && <span className={`sub truncate ${textClassName}`}>{sub}</span>}
+							<div className={'escription display_inline flex items-center w-fit'}>
+								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} className='mr-2' />}
+								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[150px] flex gap-x-1 ${textClassName}`}>
+									{ t1 && <span className={`${truncateUsername && 'truncate'} text-bodyBlue font-semibold ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
+									{sub && isSubVisible && <span className={`sub truncate text-bodyBlue font-semibold ${textClassName}`}>{sub}</span>}
 								</span>
 							</div>
 						</>
@@ -218,12 +218,12 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 								<Space>
 									<Space className={'header'}>
 										{(kiltName || identity && mainDisplay) && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
-										<span className='bg-red-500 identityName max-w-[85px] flex flex-col gap-y-1 text-navBlue'>
-											{ t2 && <span className={`${textClassName} truncate `}>{ t2 }</span> }
-											{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-navBlue`}>{sub}</span>}
+										<span className='bg-red-500 identityName max-w-[85px] flex flex-col gap-y-1'>
+											{ t2 && <span className={`${textClassName} truncate text-bodyBlue font-semibold`}>{ t2 }</span> }
+											{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-bodyBlue`}>{sub}</span>}
 										</span>
 									</Space>
-									<div className={'description display_inline'}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
+									<div className={'description display_inline text-bodyBlue'}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 								</Space>
 							</Tooltip>
 							: <div>
@@ -232,8 +232,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 										<Space className={'header'}>
 											{(kiltName || identity && mainDisplay) && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 											<span className='identityName max-w-[85px] flex flex-col gap-y-1'>
-												{ t2 && <span className={`${textClassName} truncate text-[#243a57] font-semibold`}>{ t2 }</span> }
-												{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-[#243a57] font-semibold`}>{sub}</span>}
+												{ t2 && <span className={`${textClassName} truncate text-bodyBlue font-semibold`}>{ t2 }</span> }
+												{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-bodyBlue font-semibold`}>{sub}</span>}
 											</span>
 										</Space>
 										: null
@@ -254,15 +254,11 @@ export default styled(Address)`
 
 	.content {
 		display: inline-block;
-		color: nav_blue !important;
+		color: var(--bodyBlue) !important;
 	}
 
 	.identicon {
 		margin-right: 0.25rem;
-	}
-
-	.identityName {
-		filter: grayscale(100%);
 	}
 
 	.header {
@@ -272,7 +268,7 @@ export default styled(Address)`
 	}
 
 	.description {
-		color: nav_blue;
+		color: var(--bodyBlue) !important;
 		margin-right: 0.4rem;
 		
 	}
@@ -282,7 +278,7 @@ export default styled(Address)`
 	}
 
 	.sub {
-		color: nav_blue;
+		color: var(--bodyBlue) !important;
 		line-height: inherit;
 	}
 `;

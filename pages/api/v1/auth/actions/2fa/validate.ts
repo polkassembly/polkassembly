@@ -15,7 +15,7 @@ import { redisDel, redisGet } from '~src/auth/redis';
 async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
-	const { auth_code = null, tfa_token = null, user_id = null } = req.body;
+	const { auth_code = null, tfa_token = null, user_id = null, login_address, login_wallet } = req.body;
 	if (isNaN(auth_code) || !tfa_token || isNaN(user_id)) return res.status(400).json({ message: 'Invalid parameters in request body.' });
 
 	const userDoc = await firestore_db.collection('users').doc(String(user_id)).get();
@@ -40,7 +40,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	const isValidToken = totp.validate({ token: String(auth_code).replaceAll(/\s/g,''), window: 1 }) !== null;
 	if(!isValidToken) return res.status(400).json({ message: messages.TWO_FACTOR_AUTH_INVALID_AUTH_CODE });
 
-	const updatedJWT = await authServiceInstance.getSignedToken(user);
+	const updatedJWT = await authServiceInstance.getSignedToken({
+		...user,
+		login_address: login_address,
+		login_wallet: login_wallet
+	});
 	await redisDel(get2FAKey(Number(user_id)));
 
 	return res.status(200).json({ token: updatedJWT });

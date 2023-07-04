@@ -113,6 +113,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 		if(validateData(profile?.image, profile?.social_links)) return;
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [profile]);
 
 	const populateData = useCallback(() => {

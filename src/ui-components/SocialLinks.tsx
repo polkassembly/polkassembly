@@ -37,10 +37,8 @@ interface ISocialLink extends ISocial{
 const SocialLink: FC<ISocialLink> = (props) => {
 	const { link: handle, className, type, disable, iconClassName } = props;
 
-	let link = '';
-	let username = '';
-
 	function getSocialLink(handle:any) {
+		let username = '';
 		if (handle.startsWith('https://')) {
 			const url = new URL(handle);
 			username = url.pathname.split('/')[1];
@@ -48,27 +46,25 @@ const SocialLink: FC<ISocialLink> = (props) => {
 		else {
 			username = handle;
 		}
-		return [link, username];
+		return username;
 	}
+	const userName = getSocialLink(handle);
+	let link = '';
 	switch (type) {
 	case ESocialType.TWITTER:
-		[link, username] = getSocialLink(handle);
-		link = `https://twitter.com/${username}`;
+		link = `https://twitter.com/${userName}`;
 		break;
 	case ESocialType.TELEGRAM:
-		[link, username] = getSocialLink(handle);
-		link = `https:/t.me/${username}`;
+		link = `https:/t.me/${userName}`;
 		break;
 	case ESocialType.EMAIL:
 		link = `mailto:${handle}`;
 		break;
 	case ESocialType.RIOT:
-		[link, username] = getSocialLink(handle);
-		link = `https://riot.im/app/#/user/${username}`;
+		link = `https://riot.im/app/#/user/${userName}`;
 		break;
 	case ESocialType.DISCORD:
-		[link, username] = getSocialLink(handle);
-		link = `https://discordapp.com/users/${username}`;
+		link = `https://discordapp.com/users/${userName}`;
 		break;
 	}
 

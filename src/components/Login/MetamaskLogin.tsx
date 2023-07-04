@@ -324,6 +324,8 @@ const MetamaskLogin: FC<Props> = ({
 
 		const { data , error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/2fa/validate', {
 			auth_code: String(authCode), //use string for if it starts with 0
+			login_address: address,
+			login_wallet: Wallet.METAMASK,
 			tfa_token: authResponse.tfa_token,
 			user_id: Number(authResponse.user_id)
 		});

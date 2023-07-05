@@ -27,7 +27,7 @@ export enum EAddressOtherTextType {
 	CONNECTED='Connected',
 	COUNCIL='Council',
 	COUNCIL_CONNECTED='Council (Connected)',
-	LINKED_ADDRESS= 'Linked Address'
+	LINKED_ADDRESS= 'Linked'
 }
 
 interface Props {
@@ -254,12 +254,12 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 				}
 			</div>}
 			{
-				otherTextType? <p className={`m-0 flex items-center gap-x-1 ${otherTextClassName}`}>
+				otherTextType? <p className={`m-0 flex items-center gap-x-1 text-lightBlue leading-[15px] text-[10px] ${otherTextClassName}`}>
 					<span
-						className={classNames('w-2 h-2 rounded-full', {
-							'bg-blue-500 ': otherTextType === EAddressOtherTextType.COUNCIL,
-							'bg-green-500 ': [EAddressOtherTextType.CONNECTED, EAddressOtherTextType.COUNCIL_CONNECTED].includes(otherTextType),
-							'bg-red-500 ': otherTextType === EAddressOtherTextType.LINKED_ADDRESS
+						className={classNames('w-[6px] h-[6px] rounded-full', {
+							'bg-aye_green ': [EAddressOtherTextType.CONNECTED, EAddressOtherTextType.COUNCIL_CONNECTED].includes(otherTextType),
+							'bg-blue ': otherTextType === EAddressOtherTextType.COUNCIL,
+							'bg-nay_red': otherTextType === EAddressOtherTextType.LINKED_ADDRESS
 						})}
 					>
 					</span>

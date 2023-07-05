@@ -46,7 +46,6 @@ export const getSubSquareContentAndTitle = async (proposalType: string | string[
 			throw apiErrorWithStatusCode('Network is not valid', 400);
 		}
 		const postId = ProposalType.TIPS !== proposalType ? Number(id) : id ;
-
 		const url = new URL( urlMapper[proposalType as keyof typeof urlMapper]?.(postId, network));
 		const data = await (await fetch(url)).json();
 
@@ -59,7 +58,6 @@ export const getSubSquareContentAndTitle = async (proposalType: string | string[
 		}
 
 		const subsquareData = { content : data?.content || '' ,title:subsqTitle };
-
 		return subsquareData;
 	} catch (error) {
 		return { content: '',title: '' };

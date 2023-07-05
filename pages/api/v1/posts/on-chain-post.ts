@@ -904,10 +904,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.post_link = post_link;
 			}
 
-			if(post.content === '' || post.title === ''){
+			if(post.content === '' || post.title === '' || post.title === undefined || post.content === undefined){
 				const res =  await getSubSquareContentAndTitle(proposalType,network,numPostId);
-				post.content =  res?.content;
-				post.title = res?.title;
+				post.content =  res.content;
+				post.title = res.title;
 			}
 		}
 

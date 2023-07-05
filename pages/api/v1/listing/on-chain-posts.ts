@@ -122,7 +122,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 		}
 
 		if (filterBy && Array.isArray(filterBy) && filterBy.length > 0) {
-
 			const offChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
 			let order: 'desc' | 'asc' = sortBy === sortValues.NEWEST ? 'desc' : 'asc';
 			let orderedField = 'created_at';
@@ -143,7 +142,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const docData = doc.data();
 					if (docData) {
 						let subsquareTitle = '';
-						if(docData?.title === ''  ){
+						if(docData?.title === '' || docData?.title === undefined ){
 							const res = await getSubSquareContentAndTitle(strProposalType,network,docData.id);
 							subsquareTitle = res?.title;
 						}
@@ -236,7 +235,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const data = postDoc.data();
 					if (data) {
 						let subsquareTitle = '';
-						if(data?.title === ''){
+						if(data?.title === '' || data?.title === undefined){
 							const res = await getSubSquareContentAndTitle(strProposalType,network,postId);
 							subsquareTitle = res?.title;
 						}
@@ -397,7 +396,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const data = postDoc.data();
 							if (data) {
 								let subsquareTitle = '';
-								if(data?.title === ''){
+								if(data?.title === '' || data?.content === '' || data.title === undefined || data?.content === undefined){
 									const res = await getSubSquareContentAndTitle(strProposalType,network,postId);
 									subsquareTitle = res?.title;
 								}
@@ -459,7 +458,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const data = postDoc.data();
 							if (data) {
 								let subsquareTitle = '';
-								if(data?.title === '' || data?.title === title ){
+								if(data?.title === '' || data?.title === title || data?.title === undefined ){
 									const res = await getSubSquareContentAndTitle(strProposalType,network,postId);
 									subsquareTitle = res?.title;
 								}

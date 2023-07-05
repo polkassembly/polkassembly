@@ -16,10 +16,11 @@ import StatusTag from 'src/ui-components/StatusTag';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import TopicTag from '~src/ui-components/TopicTag';
+import BigNumber from 'bignumber.js';
+import { chainProperties } from 'src/global/networkConstants';
 import NewChatIcon from '~assets/icons/chat-icon.svg';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import { getFormattedLike } from '~src/util/getFormattedLike';
-import formatBnBalance from '~src/util/formatBnBalance';
 import { useNetworkContext } from '~src/context';
 
 interface IGovernanceProps {
@@ -87,6 +88,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const ownProposal = currentUser?.addresses?.includes(address);
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
+
+	const tokenDecimals = chainProperties[network]?.tokenDecimals;
+	const requestedAmountFormatted = requestedAmount ? new BigNumber(requestedAmount).div(10 ** tokenDecimals).toFixed(0, BigNumber.ROUND_DOWN) : 0;
+
 	return (
 		<>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 sm:p-3 min-h-[120px] sm:flex xs:hidden`}>
@@ -107,11 +112,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</h1>
 							<h2 className='text-bodyBlue font-medium text-sm'>{subTitle}</h2>
 						</div>
-						<div className="flex justify-end items-center sm:mr-10">
-							{
-								requestedAmount && requestedAmount > 0 &&
-								formatBnBalance(String(requestedAmount), { numberAfterComma: 2, withUnit: true }, network)}
-						</div>
+						{
+							requestedAmount &&
+							<div className='flex justify-center items-center'>
+								{requestedAmount > 100 ?
+									<span className='text-bodyBlue text-sm font-medium sm:mr-12'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									:
+									<span className='text-bodyBlue text-sm font-medium sm:mr-20'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
+								}
+							</div>
+						}
 					</div>
 					<div className="font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center sm:mb-1 sm:mt-0 sm:ml-[120px]">
 						<div className='flex items-center gap-x-2'>

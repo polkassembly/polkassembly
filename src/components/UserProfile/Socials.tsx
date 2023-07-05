@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LinkOutlined } from '@ant-design/icons';
-import { Input } from 'antd';
+import { Alert, Input } from 'antd';
 import React, { FC } from 'react';
 import { ProfileDetails } from '~src/auth/types';
 import { socialLinks } from './Details';
@@ -13,10 +13,11 @@ interface ISocialsProps {
     loading: boolean;
     setProfile: React.Dispatch<React.SetStateAction<ProfileDetails>>
     profile: ProfileDetails;
+	errorCheck?: string | undefined;
 }
 
 const Socials: FC<ISocialsProps> = (props) => {
-	const { loading, profile, setProfile } = props;
+	const { loading, profile, setProfile , errorCheck } = props;
 	return (
 		<div className='max-h-[552px] flex flex-col gap-y-4'>
 			{
@@ -40,7 +41,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 								prefix={<LinkOutlined className='text-[rgba(72,95,125,0.2)] mr-1.5 text-base' />}
 								placeholder={`Enter ${strLink} ${strLink === 'Email'? '': 'URL'}`}
 								onChange={(e) => {
-									const value = e.target.value;
+									const value = e.target.value.trim();
 									setProfile((prev) => {
 										let isUpdated = false;
 										const social_links = prev?.social_links?.map((link) => {
@@ -73,6 +74,15 @@ const Socials: FC<ISocialsProps> = (props) => {
 						</article>
 					);
 				})
+			}
+			{
+				errorCheck &&
+					<Alert
+						className='mt-4 h-[40px] py-2 px-5 text-bodyBlue text-sm rounded-[4px]'
+						message={errorCheck}
+						type='info'
+						showIcon
+					/>
 			}
 		</div>
 	);

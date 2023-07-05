@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Input, Skeleton, Tag } from 'antd';
+import { Alert, Button, Divider, Input, Skeleton, Tag } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
@@ -22,10 +22,11 @@ interface IBasicInformationProps {
     setUsername: (pre: string) => void;
     username: string;
     className?: string;
+	errorCheck?: string | undefined;
 }
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
-	const { profile, loading, setProfile, setUsername, username, className } = props;
+	const { profile, loading, setProfile, setUsername, username, className , errorCheck } = props;
 	const [newBadge, setNewBadge] = useState<string>('');
 
 	const addNewBadge = () => {
@@ -221,6 +222,15 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					</article>
 				</div>
 			</div>
+			{
+				errorCheck &&
+					<Alert
+						className='mt-4 h-[40px] py-2 px-5 text-bodyBlue text-sm rounded-[4px]'
+						message={errorCheck}
+						type='info'
+						showIcon
+					/>
+			}
 		</div>
 	);
 };

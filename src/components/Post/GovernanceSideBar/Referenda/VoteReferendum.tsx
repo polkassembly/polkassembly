@@ -35,6 +35,7 @@ import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNet
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
 import { useNetworkSelector } from '~src/redux/selectors';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const ZERO_BN = new BN(0);
 
@@ -54,7 +55,8 @@ message: string;
 }
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
-	const { addresses, isLoggedOut } = useUserDetailsContext();
+	const userDetails = useUserDetailsContext();
+	const { addresses, isLoggedOut, loginAddress } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
@@ -72,7 +74,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [successModal,setSuccessModal] = useState(false);
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
-	const[ayeNayForm] = Form.useForm();
+	const [ayeNayForm] = Form.useForm();
 	const [abstainVoteValue, setAbstainVoteValue] = useState<BN>(ZERO_BN);
 	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
@@ -82,14 +84,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
 	useEffect(() => {
-		if(!window) return;
-		const Wallet = localStorage.getItem('loginWallet') ;
-		if(Wallet){
-			setLoginWallet(Wallet as  Wallet);
-			setWallet(Wallet as Wallet);
+		if (userDetails.loginWallet) {
+			setLoginWallet(userDetails.loginWallet);
+			setWallet(userDetails.loginWallet);
+		} else {
+			if(!window) return;
+			const wallet = localStorage.getItem('loginWallet') ;
+			if(Wallet){
+				setLoginWallet(wallet as  Wallet);
+				setWallet(wallet as Wallet);
+			}
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [userDetails]);
 
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -136,6 +143,16 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		accounts.forEach((account) => {
 			account.address = getEncodedAddress(account.address, network) || account.address;
 		});
+
+		if (accounts && Array.isArray(accounts)) {
+			const substrate_address = getSubstrateAddress(loginAddress);
+			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
+			if (index >= 0) {
+				const account = accounts[index];
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+			}
+		}
 
 		setAccounts(accounts);
 		if (accounts.length > 0) {

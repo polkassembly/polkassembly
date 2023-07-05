@@ -21,6 +21,14 @@ import IdentityBadge from './IdentityBadge';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getKiltDidName } from '~src/util/kiltDid';
 import dayjs from 'dayjs';
+import classNames from 'classnames';
+
+export enum EAddressOtherTextType {
+	CONNECTED='Connected',
+	COUNCIL='Council',
+	COUNCIL_CONNECTED='Council (Connected)',
+	LINKED_ADDRESS= 'Linked Address'
+}
 
 interface Props {
 	address: string
@@ -38,9 +46,11 @@ interface Props {
 	disableHeader?: boolean;
 	disableAddressClick?: boolean;
 	isSubVisible?: boolean;
-  addressClassName?: string;
-  clickable?:boolean;
-  truncateUsername?:boolean;
+	addressClassName?: string;
+	clickable?:boolean;
+	truncateUsername?:boolean;
+	otherTextType?: EAddressOtherTextType;
+	otherTextClassName?: string;
 }
 
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
@@ -48,7 +58,7 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 	ssr: false
 });
 
-const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true, addressClassName, clickable=true , truncateUsername = true }: Props): JSX.Element => {
+const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true, addressClassName, clickable=true , truncateUsername = true, otherTextType, otherTextClassName }: Props): JSX.Element => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
@@ -243,6 +253,21 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 						: <div className={`description text-xs ${addressClassName}`}>{kiltName ? t1 : isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 				}
 			</div>}
+			{
+				otherTextType? <p className={`m-0 flex items-center gap-x-1 ${otherTextClassName}`}>
+					<span
+						className={classNames('w-2 h-2 rounded-full', {
+							'bg-blue-500 ': otherTextType === EAddressOtherTextType.COUNCIL,
+							'bg-green-500 ': [EAddressOtherTextType.CONNECTED, EAddressOtherTextType.COUNCIL_CONNECTED].includes(otherTextType),
+							'bg-red-500 ': otherTextType === EAddressOtherTextType.LINKED_ADDRESS
+						})}
+					>
+					</span>
+					<span className='text-xs'>
+						{otherTextType}
+					</span>
+				</p>: null
+			}
 		</div>
 	);
 };

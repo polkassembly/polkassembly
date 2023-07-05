@@ -37,6 +37,7 @@ import LikeWhite from '~assets/icons/like-white.svg';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import { useNetworkSelector } from '~src/redux/selectors';
 import dayjs from 'dayjs';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -53,7 +54,8 @@ const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
 const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut } = useUserDetailsContext();
+	const userDetails = useUserDetailsContext();
+	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress } = userDetails;
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const { apiReady } = useApiContext();
 	const [address, setAddress] = useState<string>('');
@@ -106,15 +108,21 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	};
 
 	useEffect(() => {
-		if(!window) return;
-		const defaultWallet = localStorage.getItem('loginWallet') as Wallet ;
-		if(defaultWallet){
-			if(defaultWallet === Wallet.METAMASK){setWallet(Wallet.METAMASK);handleDefaultWallet(Wallet.METAMASK);}
-			else if(defaultWallet === Wallet.TALISMAN){setWallet(Wallet.TALISMAN);handleDefaultWallet(Wallet.TALISMAN);}
-			setLoginWallet(defaultWallet as  Wallet);
+		if (userDetails.loginWallet && [Wallet.TALISMAN, Wallet.METAMASK].includes(userDetails.loginWallet)) {
+			setLoginWallet(userDetails.loginWallet);
+			setWallet(userDetails.loginWallet);
+			handleDefaultWallet(userDetails.loginWallet);
+		} else {
+			if(!window) return;
+			const defaultWallet = localStorage.getItem('loginWallet') as Wallet ;
+			if(defaultWallet){
+				if(defaultWallet === Wallet.METAMASK){setWallet(Wallet.METAMASK);handleDefaultWallet(Wallet.METAMASK);}
+				else if(defaultWallet === Wallet.TALISMAN){setWallet(Wallet.TALISMAN);handleDefaultWallet(Wallet.TALISMAN);}
+				setLoginWallet(defaultWallet as  Wallet);
+			}
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [apiReady]);
+	}, [apiReady, userDetails]);
 
 	useEffect(() => {
 		setPostData((prev) => {
@@ -156,7 +164,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 		wallet === Wallet.TALISMAN && addresses.filter((address: string) => address.slice(0,2) === '0x').length === 0 ? setIsTalismanEthereum(false) : setIsTalismanEthereum(true);
 
-		setAccounts(addresses.map((address: string): InjectedAccountWithMeta => {
+		const accounts = addresses.map((address: string): InjectedAccountWithMeta => {
 			const account = {
 				address,
 				meta: {
@@ -167,7 +175,19 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			};
 
 			return account;
-		}));
+		});
+
+		if (accounts && Array.isArray(accounts)) {
+			const substrate_address = getSubstrateAddress(loginAddress);
+			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
+			if (index >= 0) {
+				const account = accounts[index];
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+			}
+		}
+
+		setAccounts(accounts);
 
 		if (addresses.length > 0) {
 			setAddress(addresses[0]);

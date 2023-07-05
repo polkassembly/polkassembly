@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CloseOutlined } from '@ant-design/icons';
-import { Alert, Button, Divider, Modal, Tabs } from 'antd';
+import { Button, Divider, Modal, Tabs } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { IAddProfileResponse, ISocial, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
@@ -19,6 +19,7 @@ import nameBlacklist from '~src/auth/utils/nameBlacklist';
 import { useRouter } from 'next/router';
 import { useUserDetailsContext } from '~src/context';
 import { poppins } from 'pages/_app';
+import validator from 'validator';
 
 interface IEditProfileModalProps {
     id?: number | null;
@@ -43,7 +44,10 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const [open, setOpen] = useState(false);
 	const [profile, setProfile] = useState(getDefaultProfile());
 	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState('');
+	const [errorCheck, setErrorCheck] = useState({
+		basicInformationError: '',
+		socialsError: ''
+	});
 	const userDetailsContext = useUserDetailsContext();
 	const [username, setUsername] = useState<string>(userDetailsContext.username || '');
 	const router = useRouter();
@@ -51,35 +55,42 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const validateData = ( image: string | undefined, social_links: ISocial[] | undefined) => {
 
 		// eslint-disable-next-line no-useless-escape
-		const regex = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi);
+		const regex = validator.isURL(image || '', { protocols: ['http','https'], require_protocol: true });
 
-		if(image && image.trim() && !image?.match(regex)) {
-			setError('Image URL is invalid.');
-			return;
+		if(image && image.trim() && !regex) {
+			setErrorCheck({ ...errorCheck, basicInformationError: 'Image URL is invalid.' });
+			return true;
+		}
+		else if(regex){
+			setErrorCheck({ ...errorCheck, basicInformationError: '' });
 		}
 
 		if (social_links && Array.isArray(social_links)) {
 			for (let i = 0; i < social_links.length; i++) {
 				const link = social_links[i];
-				if(link.link && !link.link?.match(regex)) {
-					setError(`${link.type} ${link.type === 'Email'? '': 'URL'} is invalid.`);
-					return;
+				if(link.link && !validator.isURL(link.link, { protocols: ['http','https'], require_protocol: true }) && !validator.isEmail(link.link)) {
+					setErrorCheck({ ...errorCheck, socialsError: `${link.type} ${link.type === 'Email'? '': 'URL'} is invalid.` });
+					return true;
+				}
+				else{
+					setErrorCheck({ ...errorCheck, socialsError: '' });
 				}
 			}
 		}
+		return false;
 	};
 
 	const validateUserName = (username: string) => {
 
-		let error = 0;
-		const format = /^[a-zA-Z0-9]*$/;
+		let errorUsername = 0;
+		const format = /^[a-zA-Z0-9_@]*$/;
 		if(!format.test(username) || username.length > 30 || username.length < 3){
 			queueNotification({
 				header: 'Error',
 				message: messages.USERNAME_INVALID_ERROR,
 				status: NotificationStatus.ERROR
 			});
-			error += 1;
+			errorUsername += 1;
 		}
 
 		for (let i = 0; i < nameBlacklist.length; i++) {
@@ -89,11 +100,11 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					message: messages.USERNAME_BANNED,
 					status: NotificationStatus.ERROR
 				});
-				error += 1;
+				errorUsername += 1;
 			}
 		}
 
-		return error === 0;
+		return errorUsername === 0;
 
 	};
 
@@ -101,8 +112,9 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 		if(!profile) return;
 
-		validateData(profile?.image, profile?.social_links);
+		if(validateData(profile?.image, profile?.social_links)) return;
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [profile]);
 
 	const populateData = useCallback(() => {
@@ -126,12 +138,12 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 	const updateProfileData = async () => {
 		if (!profile) {
-			setError('Profile is empty');
+			setErrorCheck({ ...errorCheck, basicInformationError: 'Please fill in the required fields.' });
 			return;
 		}
 
 		const { badges, bio, image, social_links, title } = profile;
-		validateData(image, social_links);
+		if(validateData(profile?.image, profile?.social_links)) return;
 		if(!validateUserName(username)) return ;
 
 		setLoading(true);
@@ -154,7 +166,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				message: error || 'Your profile was not updated.',
 				status: NotificationStatus.ERROR
 			});
-			setError(error || 'Error updating profile');
+			setErrorCheck({ ...errorCheck, basicInformationError: 'Your profile was not updated.' });
 		}
 
 		if (data?.token) {
@@ -179,7 +191,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		}
 
 		setLoading(false);
-		setError('');
+		setErrorCheck({ ...errorCheck, basicInformationError: '' });
 		setOpen(false);
 		setOpenModal && setOpenModal(false);
 
@@ -224,7 +236,11 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 										try {
 											await updateProfileData();
 										} catch (error) {
-											setError(error?.message || error);
+											setErrorCheck(prevState => ({
+												...prevState,
+												basicInformationError: error?.message || error,
+												socialInformationError: error?.socialInformationError
+											}));
 										}
 									}}
 									size='middle'
@@ -251,6 +267,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 									setProfile= {setProfile}
 									setUsername= {setUsername}
 									username= {username}
+									errorCheck= {errorCheck.basicInformationError}
 								/>
 							),
 							key:'basic_information',
@@ -262,6 +279,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 									loading={loading}
 									profile={profile}
 									setProfile={setProfile}
+									errorCheck={errorCheck.socialsError}
 								/>
 							),
 							key:'socials',
@@ -269,11 +287,6 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 						}
 					]}
 				/>
-				{
-					error?
-						<Alert className='mt-4' type='error' message={error} />
-						: null
-				}
 			</Modal>
 			{!setOpenModal && <button
 				className='rounded-[4px] md:h-[40px] md:w-[87px] outline-none text-[#fff] flex items-center justify-center bg-transparent border-0 md:border border-solid border-white gap-x-1.5 font-medium text-sm cursor-pointer'

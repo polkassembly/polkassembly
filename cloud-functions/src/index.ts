@@ -55,7 +55,7 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 		last_edited_at: dayjs(post?.last_edited_at?.toDate?.() || new Date()).unix(),
 		parsed_content: parsedContent || post?.content || '',
 		updated_at: dayjs(post?.updated_at?.toDate?.() || new Date()).unix(),
-		postType
+		post_type: postType
 	};
 
 	if (post?.topic) delete post?.topic;

@@ -24,33 +24,26 @@ export const getSubSquareContentAndTitle = async (proposalType: string | string[
 	try {
 		if(!proposalType){
 			throw apiErrorWithStatusCode('Proposal type missing ', 400);
-			return;
 		}
 		if( typeof proposalType !== 'string' ){
 			throw apiErrorWithStatusCode('can not send String[] in Proposal type', 400);
-			return;
 		}
 
-		if(!id || Array.isArray(id)){
+		if(!id){
 			throw apiErrorWithStatusCode('id is not present', 400);
-			return;
 		}
 		if(proposalType === ProposalType.TIPS && typeof id !== 'string'){
 			throw apiErrorWithStatusCode('type of id should be string', 400);
-			return;
 		}
 		if( proposalType !== ProposalType.TIPS && Number(id) < 0){
 			throw apiErrorWithStatusCode('id can not be negative', 400);
-			return;
 		}
 
 		if(!network){
 			throw apiErrorWithStatusCode('Network is  missing', 400);
-			return;
 		}
 		if(!isValidNetwork(network)){
 			throw apiErrorWithStatusCode('Network is not valid', 400);
-			return;
 		}
 		const postId = ProposalType.TIPS !== proposalType ? Number(id) : id ;
 
@@ -78,7 +71,7 @@ const handler: NextApiHandler<{ data: ({ content: any|string , title: string|any
 	const network = String(req.headers['x-network']);
 
 	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
-	if (!id || Array.isArray(id) ) res.status(400).json({ error: 'id missing in request' });
+	if (!id ) res.status(400).json({ error: 'id missing in request' });
 
 	const data = await getSubSquareContentAndTitle(proposalType as string, network, String(id));
 

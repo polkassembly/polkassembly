@@ -857,14 +857,15 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}catch(e){
 				data=undefined;
 			}
-
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
+				post.content = data.content;
 				if (!post.proposer) {
 					post.proposer = getProposerAddressFromFirestorePostData(data, network);
 				}
 				post.user_id = data.user_id;
+				post.title = data?.title;
 				post.last_edited_at = getUpdatedAt(data);
 				post.tags = data?.tags;
 				post.gov_type = data?.gov_type;

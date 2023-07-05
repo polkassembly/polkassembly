@@ -55,17 +55,19 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 
 	// for loop for networksSnapshot
 	for(const networkDoc of networksSnapshot.docs) {
-		// console.log(networkDoc.id,'docID')
 		//get postTypes for each network
 		const postTypesSnapshot = await networkDoc.ref.collection('post_types').get();
 
 		// for loop for postTypesSnapshot
 		for(const postTypeDoc of postTypesSnapshot.docs) {
+			console.log(`${networkDoc.id}:: ${postTypeDoc.id}`);
 			// get posts for each postType
 			const postsSnapshot = await postTypeDoc.ref.collection('posts').get();
 
 			// setup batch here
 			const chunksArray = chunkArray<FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>>(postsSnapshot.docs, 300);
+			console.log(`chunksArray length: ${chunksArray.length}`);
+
 			// for loop for postsSnapshot
 			for(const postsArr of chunksArray) {
 				const postRecords = [];
@@ -125,10 +127,12 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 				// console.log(postTypeDoc.id, networkDoc.id, postRecords);
 				///commit batch
 
-				console.log('hereee =>', networkDoc.id, postsSnapshot.size, postRecords);
 				await index.saveObjects(postRecords).catch((err) => {
 					console.log(err);
 				});
+
+				console.log('post saved for =>', networkDoc.id, postsSnapshot.size);
+
 			}
 		}
 	}

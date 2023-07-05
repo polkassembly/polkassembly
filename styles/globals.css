@@ -341,3 +341,31 @@ a.command-palette-list-item svg {
 .track-popover .ant-collapse>.ant-collapse-item >.ant-collapse-header{
 color: var(--lightBlue) !important;
 }
+
+/* TINY MCE CSS */
+
+.tox-tinymce {
+  border-radius: 0 !important;
+}
+.proposal_error {
+  border-color: var(--red_primary) !important;
+}
+.tox-tinymce .proposal_error {
+  border-color: var(--red_primary) !important;
+}
+.tox-statusbar__path-item, .tox-statusbar__path-divider {
+  display: none !important;
+}
+.html-content ul, ol {
+  padding-left: 15px;
+}
+.html-content td {
+  padding: 3px 6px;
+}
+.html-content a {
+  color: var(--blue_primary) !important;
+}
+.tox-notifications-container {
+  display: none !important;
+}
+/* TINY MCE CSS */

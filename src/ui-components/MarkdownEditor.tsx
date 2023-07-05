@@ -12,8 +12,6 @@ import { useUserDetailsContext } from '~src/context';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 import { useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import * as validation from 'src/util/validation';
-import validator from 'validator';
 
 import debounce from 'lodash/debounce';
 
@@ -255,21 +253,19 @@ function MarkdownEditor(props: Props): React.ReactElement {
 		const inputValue = content;
 		setInput(inputValue);
 
-		if(validation.email.pattern.test(inputValue) && validator.isURL(inputValue)) {
-			const matches = inputValue.match(/(?<!\[)@\w+/g);
-			if (matches && matches.length > 0) {
-				const usernameQuery = matches[matches.length - 1].substring(1);
-				if (!validUsers.includes(usernameQuery)) {
-					debouncedAPIcall(usernameQuery, content);
-				} else if (validUsers.includes(usernameQuery)) {
-					let inputData = content;
-					const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
-					inputData = inputData.replace(
-						regex,
-						`[@${usernameQuery}](${window.location.origin}/user/${usernameQuery})`
-					);
-					setInput(inputData);
-				}
+		const matches = inputValue.match(/(?:^|\s)@(\w+)/);
+		if (matches && matches.length > 0) {
+			const usernameQuery = matches[matches.length - 1];
+			if (!validUsers.includes(usernameQuery)) {
+				debouncedAPIcall(usernameQuery, content);
+			} else if (validUsers.includes(usernameQuery)) {
+				let inputData = content;
+				const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
+				inputData = inputData.replace(
+					regex,
+					`[@${usernameQuery}](${window.location.origin}/user/${usernameQuery})`
+				);
+				setInput(inputData);
 			}
 		}
 		if (props.onChange) {

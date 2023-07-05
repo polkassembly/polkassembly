@@ -18,6 +18,7 @@ import { LoadingStatusType, NotificationStatus } from 'src/types';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 export interface SecondProposalProps {
 	className?: string
@@ -32,7 +33,7 @@ const currentNetwork = getNetwork();
 const abi = require('src/moonbeamAbi.json');
 
 const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalProps) => {
-	const { walletConnectProvider, setWalletConnectProvider,id } = useUserDetailsContext();
+	const { walletConnectProvider, setWalletConnectProvider,id, loginAddress } = useUserDetailsContext();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
 	const { api, apiReady } = useApiContext();
@@ -170,7 +171,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			return;
 		}
 
-		setAccounts(addresses.map((address: string): InjectedAccountWithMeta => {
+		const accounts = addresses.map((address: string): InjectedAccountWithMeta => {
 			const account = {
 				address,
 				meta: {
@@ -180,8 +181,19 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 				}
 			};
 			return account;
-		}));
+		});
 
+		if (accounts && Array.isArray(accounts)) {
+			const substrate_address = getSubstrateAddress(loginAddress);
+			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
+			if (index >= 0) {
+				const account = accounts[index];
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+			}
+		}
+
+		setAccounts(accounts);
 		if (addresses.length > 0) {
 			setAddress(addresses[0]);
 		}

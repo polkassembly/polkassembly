@@ -492,7 +492,15 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							}
 						});
 					}
-					const status = subsquidPost.status;
+					let status = subsquidPost.status;
+					if (status === 'DecisionDepositPlaced') {
+						const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
+						statuses.forEach((obj) => {
+							if (obj.status === 'Deciding') {
+								status = 'Deciding';
+							}
+						});
+					}
 					const postId = proposalType === ProposalType.TIPS ? hash : index;
 					const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 

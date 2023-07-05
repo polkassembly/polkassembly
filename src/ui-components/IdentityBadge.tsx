@@ -16,7 +16,7 @@ const StyledPopup = styled.div`
 font-size: sm;
 color: var(--grey_primary);
 list-style: none;
-padding: 1rem;
+padding: 0.5rem 1rem;
 
 li {
 	margin-bottom: 0.3rem;
@@ -24,7 +24,6 @@ li {
 
 .desc {
 	font-weight: 500;
-	margin-right: 0.3rem;
 }
 
 .judgments {

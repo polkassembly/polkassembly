@@ -108,7 +108,7 @@ const Root: FC<IRootProps> = (props) => {
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (!posts || Object.keys(posts).length === 0) return null;
-	console.log('posts',posts);
+
 	return <>
 		<SEOHead title={PostOrigin.ROOT.split(/(?=[A-Z])/).join(' ')} network={network}/>
 		<TrackListing

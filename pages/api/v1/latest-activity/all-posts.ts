@@ -177,9 +177,8 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					const data = postDoc?.data();
 					let subsquareTitle = '';
 					if(data?.title === '' || data?.title === method || data?.title === null){
-						await getSubSquareContentAndTitle(getFirestoreProposalType(type) as ProposalType,network,postId).then((response) => {
-							subsquareTitle = response?.title;
-						});
+						const res = await getSubSquareContentAndTitle(getFirestoreProposalType(type) as ProposalType, network, postId);
+						subsquareTitle = res?.title;
 					}
 					return {
 						...onChainPost,
@@ -188,9 +187,8 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				}
 
 				let subsquareTitle = '';
-				await getSubSquareContentAndTitle(getFirestoreProposalType(type) as ProposalType,network,postId).then((response) => {
-					subsquareTitle = response?.title;
-				});
+				const res = await getSubSquareContentAndTitle(getFirestoreProposalType(type) as ProposalType, network, postId);
+				subsquareTitle = res?.title;
 				onChainPost.title = subsquareTitle;
 
 				return onChainPost;

@@ -105,9 +105,8 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 				if (data) {
 					let subsquareTitle = '';
 					if(data?.title === '' || data?.title === method || data.title === null){
-						await getSubSquareContentAndTitle(strProposalType as ProposalType,network,postId).then((response) => {
-							subsquareTitle = response?.title;
-						});
+						const res = await getSubSquareContentAndTitle(strProposalType as ProposalType, network, postId);
+						subsquareTitle = res?.title;
 					}
 					return {
 						created_at: createdAt,
@@ -126,9 +125,8 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 			}
 
 			let subsquareTitle =  '';
-			await getSubSquareContentAndTitle(strProposalType as ProposalType,network,postId).then((response) => {
-				subsquareTitle = response?.title;
-			});
+			const res = await getSubSquareContentAndTitle(strProposalType as ProposalType, network, postId);
+			subsquareTitle = res?.title;
 
 			return {
 				created_at: createdAt,

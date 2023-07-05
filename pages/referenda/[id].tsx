@@ -80,6 +80,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 				trackName = key;
 			}
 		}
+
 		return <>
 			<SEOHead title={post.title || `${noTitle} - Referenda V2`} desc={post.content} network={network}/>
 

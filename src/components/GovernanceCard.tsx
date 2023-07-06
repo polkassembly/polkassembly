@@ -91,7 +91,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
 	const requestedAmountFormatted = requestedAmount ? new BigNumber(requestedAmount).div(10 ** tokenDecimals).toFixed(0, BigNumber.ROUND_DOWN) : 0;
-
 	return (
 		<>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 sm:p-3 min-h-[120px] sm:flex xs:hidden`}>
@@ -116,9 +115,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							requestedAmount &&
 							<div className='flex justify-center items-center'>
 								{requestedAmount > 100 ?
-									<span className='text-bodyBlue text-sm font-medium sm:mr-[54px]'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue text-sm font-medium sm:mr-[54px]'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 									:
-									<span className='text-bodyBlue text-sm font-medium sm:mr-20'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue text-sm font-medium sm:mr-20'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
 								}
 							</div>
 						}
@@ -212,6 +211,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			</div>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200  xs:px-2 xs:py-2 md:pb-6 min-h-[147px] xs:flex h-auto sm:hidden`}>
 				<div className="sm:hidden xs:flex flex-col flex-1 xs:mt-1">
+					{
+						requestedAmount &&
+							<div className='xs:flex xs:justify-end xs:mr-5'>
+								{requestedAmount > 100 ?
+									<span className='text-lightBlue text-sm font-medium sm:mr-[54px]'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									:
+									<span className='text-lightBlue text-sm font-medium sm:mr-20'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
+								}
+							</div>
+					}
 					<div className='sm:hidden xs:flex xs:justify-start gap-x-2 lg:items-start lg:flex-row my-2 '>
 						<span className='font-medium text-center xs:w-[45px] text-bodyBlue xs:mt-0'>#{isTip? tip_index: onchainId}</span>
 						<div className='xs:mt-0 lg:mt-0'>

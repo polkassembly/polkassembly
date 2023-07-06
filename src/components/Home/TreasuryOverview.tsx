@@ -31,6 +31,37 @@ interface ITreasuryOverviewProps{
 	inTreasuryProposals?: boolean
 	className?: string
 }
+export const GetCurrentTokenPrice = (network: string, setCurrentTokenPrice: (pre: {isLoading: boolean,value: string}) => void) => {
+	let cancel = false;
+	if(cancel) return;
+
+	setCurrentTokenPrice({
+		isLoading: true,
+		value: ''
+	});
+	fetchTokenToUSDPrice(network).then((formattedUSD) => {
+		if(formattedUSD === 'N/A') {
+			setCurrentTokenPrice({
+				isLoading: false,
+				value: formattedUSD
+			});
+			return;
+		}
+
+		setCurrentTokenPrice({
+			isLoading: false,
+			value: network =='cere' ? parseFloat(formattedUSD).toFixed(4) : parseFloat(formattedUSD).toFixed(2)
+		});
+	}).catch(() => {
+		setCurrentTokenPrice({
+			isLoading: false,
+			value: 'N/A'
+		});
+	});
+
+	return () => {cancel = true;};
+
+};
 
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals } = props;
@@ -255,34 +286,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 	// fetch current price of the token
 	useEffect(() => {
-		let cancel = false;
-		if(cancel) return;
-
-		setCurrentTokenPrice({
-			isLoading: true,
-			value: ''
-		});
-		fetchTokenToUSDPrice(network).then((formattedUSD) => {
-			if(formattedUSD === 'N/A') {
-				setCurrentTokenPrice({
-					isLoading: false,
-					value: formattedUSD
-				});
-				return;
-			}
-
-			setCurrentTokenPrice({
-				isLoading: false,
-				value: network =='cere' ? parseFloat(formattedUSD).toFixed(4) : parseFloat(formattedUSD).toFixed(2)
-			});
-		}).catch(() => {
-			setCurrentTokenPrice({
-				isLoading: false,
-				value: 'N/A'
-			});
-		});
-
-		return () => {cancel = true;};
+		if(!network ) return;
+		GetCurrentTokenPrice( network ,setCurrentTokenPrice);
 	}, [network]);
 
 	// fetch a week ago price of the token and calc priceWeeklyChange

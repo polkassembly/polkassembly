@@ -341,3 +341,7 @@ a.command-palette-list-item svg {
 .track-popover .ant-collapse>.ant-collapse-item >.ant-collapse-header{
 color: var(--lightBlue) !important;
 }
+.ant-select-dropdown .ant-select-item {
+  color:var(--bodyBlue) !important;
+  font-size: 14px;
+}

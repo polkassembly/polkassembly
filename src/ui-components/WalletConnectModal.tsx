@@ -26,11 +26,14 @@ interface Props{
   open: boolean;
   setOpen: (pre: boolean) => void;
   closable?: boolean;
+  walletKey: string;
+  addressKey: string;
+  onConfirm : () => void;
 }
 
 const ZERO_BN = new BN(0);
 
-const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
+const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, addressKey, onConfirm }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
@@ -47,8 +50,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 
 	const handleSubmit = () => {
 		setLoading(true);
-		localStorage.setItem('delegationWallet',  String(wallet));
-		localStorage.setItem('delegationDashboardAddress', (address) );
+		localStorage.setItem(walletKey,  String(wallet));
+		localStorage.setItem(addressKey, (address) );
 		setUserDetailsContextState((prev) => {
 
 			return { ...prev,
@@ -56,6 +59,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 				loginWallet: wallet || null
 			};
 		});
+		onConfirm();
 		setOpen(false);
 		setLoading(false);
 	};

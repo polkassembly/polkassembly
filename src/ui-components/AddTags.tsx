@@ -12,12 +12,13 @@ import handleFilterResults from '~src/util/handleFilterResults';
 import NoTagsFoundIcon from '~assets/icons/no-tag.svg';
 
 interface Props{
-  tags:string[];
-  setTags:(pre:string[])=>void;
-  className?:string;
+  tags: string[];
+  setTags: (pre:string[])=>void;
+  className?: string;
+  disabled?: boolean;
 }
 
-const AddTags=({ tags,setTags,className }:Props) => {
+const AddTags=({ tags, setTags, className, disabled }:Props) => {
 
 	const [ inputVisible, setInputVisible ] = useState(false);
 	const [ inputValue, setInputValue ] = useState('');
@@ -98,13 +99,15 @@ const AddTags=({ tags,setTags,className }:Props) => {
 		...filteredTags.slice(0,5).map((tag,index) => {return  { key: index+2, label:<div className={`text-xs text-[#90A0B7]  ${poppins.className} ${poppins.className} tracking-wide`} onClick={() => {selectedTag.current = tag?.name; handleInputConfirm(); } }>{tag?.name}</div> }; })];
 
 	return <div className={className}>
-		<div className='border-solid border-gray-300 h-[40px] p-[10px] flex rounded border justify-between items-center text-[#90A0B7]  max-lg:h-auto'>
+		<div className={`border-solid border-gray-300 min-h-[40px] p-[10px] flex rounded border justify-between items-center text-[#90A0B7] max-lg:h-auto ${disabled && 'bg-[#F5F5F5] cursor-not-allowed'}`}>
 			<Dropdown
-				disabled={tags.length === 5}
+				disabled={tags.length === 5 || disabled}
 				overlayClassName='ml-[-10px] min-w-[104px] rounded create-post' menu={{ items }} placement="topLeft">
-				<div className='flex '>
-					{ inputVisible ?
-						tags.length < 5 &&<Input
+				<div className={'flex'}>
+					{ (inputVisible && !disabled) ?
+						tags.length < 5 && <Input
+							disabled={disabled}
+							name='tags'
 							ref={inputRef}
 							type="text"
 							size="small"
@@ -114,7 +117,7 @@ const AddTags=({ tags,setTags,className }:Props) => {
 							onPressEnter={handleInputConfirm}
 							className={`text-[#90A0B7]  rounded-xl bg-white text-xs text-normal px-[16px] py-[4px] mr-2 flex items-center ${charLimitReached && 'border-red-500'}`}
 						/>  :
-						tags.length <5 && <Tag onClick={showInput}className='rounded-xl bg-white border-pink_primary py-[4px] px-[16px] cursor-pointer text-pink_primary text-xs flex items-center' >
+						(tags.length <5 && !disabled) && <Tag onClick={showInput} className='rounded-xl bg-white border-pink_primary py-[4px] px-[16px] cursor-pointer text-pink_primary text-xs flex items-center' >
 							<PlusOutlined className='mr-1'/>
           Add new tag
 						</Tag>}
@@ -122,11 +125,13 @@ const AddTags=({ tags,setTags,className }:Props) => {
 						{tags.map((tag,index) => (
 							<Tag
 								key={index}
-								className='text-[#90A0B7] border-[#90A0B7] rounded-xl bg-white text-normal text-xs py-[4px] px-[16px] tracking-wide hover:border-pink_primary'
-								closable
+								className={`text-[#90A0B7] border-[#90A0B7] rounded-xl bg-white text-normal text-xs py-[4px] px-[16px] tracking-wide mt-1 ${disabled ? 'bg-[#F5F5F5]' : 'hover:border-pink_primary'}`}
+								closable={disabled ? false : true}
 								onClose={(e) => {e.preventDefault();handleClose(tag);}}>{tag}</Tag>))}
-					</div></div></Dropdown>
-			<div className={`text-xs  ${  5 - tags.length === 0 ? 'text-pink_primary':'text-[#90A0B7] ' }`}>{5-(tags.length)} Tags left</div>
+					</div>
+				</div>
+			</Dropdown>
+			{!disabled && <div className={`text-xs ${  5 - tags.length === 0 ? 'text-pink_primary':'text-[#90A0B7]' }`}>{5-(tags.length)} Tags left</div>}
 		</div>
 		{charLimitReached && <h2 className='text-red-500 font-medium text-xs tracking-wide mt-1'>Character limit reached</h2>
 		}</div>;

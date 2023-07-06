@@ -80,6 +80,7 @@ export interface IPostResponse {
 		id: number;
 		name: string;
 	};
+  title?: string;
 	decision?: string;
 	last_edited_at?: string | Date;
 	[key: string]: any;

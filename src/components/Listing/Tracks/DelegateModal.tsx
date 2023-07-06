@@ -236,14 +236,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 						setOpen ? setOpen?.(false) : setDefaultOpen(false);
 
 					} else if (event.method === 'ExtrinsicFailed') {
-						const errorModule = (event.data as any)?.dispatchError?.asModule;
-						let message = 'Delegation failed.';
-
-						if(errorModule) {
-							const { method, section, docs } = api.registry.findMetaError(errorModule);
-							message = `${section}.${method} : ${docs.join(' ')}`;
-						}
-
+						const message = 'Delegation failed.';
 						queueNotification({
 							header: 'Delegation failed!',
 							message,
@@ -397,7 +390,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 								<label  className='text-lightBlue flex items-center text-sm'>
                   Conviction
 									<span>
-										<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
+										<HelperTooltip className='ml-1' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
 									</span>
 								</label>
 

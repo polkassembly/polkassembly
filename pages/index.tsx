@@ -33,6 +33,11 @@ import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
 import Gov2LatestActivity from '~src/components/Gov2Home/Gov2LatestActivity';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 
+const OpenGovProposals = dynamic(() => import('~src/components/OpenGovProposals'),{
+	loading: () => <Skeleton active /> ,
+	ssr:false
+});
+
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
 }
@@ -170,6 +175,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 			<main>
 				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
 				<div className="mt-6 mx-1">
+					<OpenGovProposals/>
 					{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}
 				</div>
 				{ network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES &&

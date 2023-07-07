@@ -217,12 +217,12 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			}
-			<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1'>
+			<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1 sticky top-[10%]'>
 				<span className='text-lg font-medium text-bodyBlue'>
 					{filteredComments?.length}
 					<span className='ml-1'>Comments</span>
 				</span>
-				{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2'>
+				{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2 '>
 					<Tooltip color='#E5007A'
 						title={<div className='flex flex-col text-xs px-1'>
 							<span className='text-center font-medium'>Completely Against</span>
@@ -274,7 +274,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			<div  className={'block xl:grid grid-cols-12'}>
 				{
 					!!comments?.length && timelines.length >= 1 &&
-					<div className='hidden h-auto xl:block col-start-1 col-end-2 min-w-[100px] sticky top-[10%] ml-1'>
+					<div className='hidden h-min xl:block col-start-1 col-end-2 min-w-[100px] sticky top-[100px] ml-1'>
 						<Anchor targetOffset={targetOffset} className='h-full min-w-[140px]' onClick={handleTimelineClick}>
 							{timelines.map(({ commentsCount, date, firstCommentId, id, status }) => {
 								return (
@@ -283,7 +283,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											key={id}
 											href={`#${firstCommentId}`}
 											title={
-												<div className='flex flex-col text-lightBlue'>
+												<div className='flex flex-col text-lightBlue sticky top-10'>
 													<div className='text-xs mb-1'>{date.format('MMM Do')}</div>
 													<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{status}</div>
 													<div className='text-xs'>({commentsCount})</div>
@@ -291,7 +291,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											}
 										/>
 										:
-										<div key={id} className='flex flex-col ml-5 cursor-default text-lightBlue'>
+										<div key={id} className='flex flex-col ml-5 cursor-default text-lightBlue sticky top-10'>
 											<div className='text-xs mb-1'>{date.format('MMM Do')}</div>
 											<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{status}</div>
 											<div className='text-xs'>({commentsCount})</div>
@@ -334,10 +334,6 @@ export default React.memo(styled(CommentsContainer)`
 	}
 
 	.ant-anchor-ink {
-		margin-left: 5px;
-	}
-	
-	.ant-anchor-link {
 		margin-left: 5px;
 	}
 

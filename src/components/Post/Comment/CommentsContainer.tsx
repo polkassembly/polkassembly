@@ -337,6 +337,10 @@ export default React.memo(styled(CommentsContainer)`
 		margin-left: 5px;
 	}
 
+	.ant-anchor-link {
+		margin-left: 5px;
+	}
+
 	.ant-anchor-ink-ball-visible {
 		display: block !important;
 		background: url('/assets/pa-small-circle.png') !important;

@@ -15,7 +15,6 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
-import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 
 export interface ILatestActivityPostsListingResponse {
     count: number;
@@ -103,11 +102,6 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 			if (postDoc && postDoc.exists) {
 				const data = postDoc?.data();
 				if (data) {
-					let subsquareTitle = '';
-					if(data?.title === '' || data?.title === method || data.title === null){
-						const res = await getSubSquareContentAndTitle(strProposalType as ProposalType, network, postId);
-						subsquareTitle = res?.title;
-					}
 					return {
 						created_at: createdAt,
 						description,
@@ -117,17 +111,12 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 						post_id: postId,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator,
 						status: status,
-						title: data?.title || subsquareTitle,
+						title: data?.title || null,
 						track_number: trackNumber,
 						type
 					};
 				}
 			}
-
-			let subsquareTitle =  '';
-			const res = await getSubSquareContentAndTitle(strProposalType as ProposalType, network, postId);
-			subsquareTitle = res?.title;
-
 			return {
 				created_at: createdAt,
 				description,
@@ -137,7 +126,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 				post_id: postId,
 				proposer: proposer || preimage?.proposer || otherPostProposer || curator,
 				status: status,
-				title: subsquareTitle,
+				title: '',
 				track_number: trackNumber,
 				type
 			};

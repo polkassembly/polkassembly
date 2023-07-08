@@ -220,19 +220,15 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				isCurrPostUpdated = true;
 				batch.set(postDocRef, newPostDoc, { merge: true });
 			} else if (![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)) {
-				let post_link: any = {
-					id: postId,
-					type: strProposalType
-				};
-				if (isProposalTypeValid(strProposalType)) {
-					post_link = null;
-				}
 				batch.set(postDocRef, {
 					content,
 					created_at,
 					id: proposalType === ProposalType.TIPS ? obj.hash : Number(obj.index),
 					last_edited_at: last_comment_at,
-					post_link: post_link,
+					post_link: {
+						id: postId,
+						type: strProposalType
+					},
 					proposer_address: proposer_address,
 					tags: tags || [],
 					title,

@@ -31,7 +31,6 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import Gov2LatestActivity from '~src/components/Gov2Home/Gov2LatestActivity';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import Script from 'next/script';
-import { useRouter } from 'next/router';
 import AiBot from '~src/components/AiBot/AiBot';
 
 export type ILatestActivityPosts = {
@@ -151,54 +150,11 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 
 	const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
 	const [floatButtonOpen , setFloatButtonOpen] = useState(false);
-	const router = useRouter();
-
-	useEffect(() => {
-		if(!isAIChatBotOpen) return;
-
-		const docsBotElement = ((window as any).DocsBotAI.el.shadowRoot?.lastChild) as HTMLElement;
-		docsBotElement.style.position = 'fixed';
-		docsBotElement.style.right = '4em';
-		docsBotElement.style.bottom = '30px';
-	},[isAIChatBotOpen,floatButtonOpen]);
 
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-
-	useEffect(() => {
-		// check for the presence of a dom element inside a setInterval until it is found
-		const interval = setInterval(() => {
-			const docsBotElement = ((window as any)?.DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
-			if (!docsBotElement) return;
-
-			clearInterval(interval);
-			docsBotElement.style.display = 'none';
-		}, 600);
-
-		return () => clearInterval(interval);
-	}, []);
-
-	useEffect(() => {
-		const handleRouteChange = () => {
-			if ((window as any).DocsBotAI.isChatbotOpen) {
-				(window as any).DocsBotAI.close();
-			}
-		};
-
-		router.events.on('routeChangeStart', handleRouteChange);
-
-		return () => {
-			router.events.off('routeChangeStart', handleRouteChange);
-		};
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() => {
-		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	return (
 		<>

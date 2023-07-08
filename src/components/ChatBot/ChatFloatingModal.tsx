@@ -12,7 +12,9 @@ import grill from '@subsocial/grill-widget';
 
 const Container = styled.div`
 .ChatFloatingModal {
-  margin-right:8px;
+	position : fixed;
+	bottom:120px;
+	right:-5px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -76,7 +78,7 @@ const Container = styled.div`
 `;
 
 export default function ChatFloatingModal(props:any) {
-	const [isOpen, setIsOpen] = useState(false);
+	const [isOpen, setIsOpen] = useState(true);
 	const disabled  = props.disabled;
 	const toggleChat = () => {
 		if (disabled){
@@ -84,7 +86,6 @@ export default function ChatFloatingModal(props:any) {
 		}
 		setIsOpen((prev:boolean) => !prev);
 	};
-
 	const grillData: { [index: string]: string[] } = {
 		[globalNework.CERE]: ['5145', '5139'],
 		[globalNework.KILT]: ['2035', '5144'],
@@ -129,9 +130,11 @@ export default function ChatFloatingModal(props:any) {
 						}
 					/>
 				)}
-				<Button className={'ChatFloatingButton'} onClick={toggleChat}>
-					<Image src={GrillChatIcon} alt='GrillChat' className='w-[35px] h-[35px]' />
+				{ !isOpen && <Button className={'ChatFloatingButton'} onClick={toggleChat}>
+					<Image src={GrillChatIcon} alt='GrillChat' className='w-[40px] h-[40px]' />
 				</Button>
+				}
+
 			</div>
 		</Container>
 	) : null;

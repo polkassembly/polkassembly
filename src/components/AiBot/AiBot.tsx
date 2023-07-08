@@ -2,37 +2,141 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { FloatButton } from 'antd';
+import { Button, FloatButton, List } from 'antd';
 import ChatFloatingModal from '../ChatBot/ChatFloatingModal';
-import { ThunderboltTwoTone, CustomerServiceOutlined,CloseOutlined } from '@ant-design/icons';
-import { FC } from 'react';
-
+import { FC, useEffect, useState ,  useContext } from 'react';
+import AIbotIcon from '~assets/icons/ai-bot-icon.svg';
+import CautionIcon from '~assets/icons/caution-icon.svg';
+import CreateDiscussionIcon from '~assets/icons/create-icon.svg';
+import CloseIcon from '~assets/icons/close-cross-icon.svg';
+import CloseWhite from '~assets/icons/close-white.svg';
+import FabButton from '~assets/icons/fab-icon.svg';
+import styled from 'styled-components';
+import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
+import { useRouter } from 'next/router';
+import { UserDetailsContext } from 'src/context/UserDetailsContext';
 interface IAiChatbotProps {
     floatButtonOpen: boolean;
 	setFloatButtonOpen: React.Dispatch<React.SetStateAction<boolean>>
     isAIChatBotOpen:boolean;
     setIsAIChatBotOpen:React.Dispatch<React.SetStateAction<boolean>>;
+	className?: string|undefined;
 }
 
 const  AiBot : FC <IAiChatbotProps> = (props) => {
 
-	const  { floatButtonOpen , setFloatButtonOpen , isAIChatBotOpen , setIsAIChatBotOpen } = props;
+	const  { floatButtonOpen , setFloatButtonOpen , isAIChatBotOpen , setIsAIChatBotOpen ,className } = props;
+	const [grillChat,setGrillChat] = useState(false);
+	const router=useRouter();
+	const { id } = useContext(UserDetailsContext);
+
+	useEffect(() => {
+		if(!isAIChatBotOpen) return;
+
+		const docsBotElement = ((window as any).DocsBotAI.el.shadowRoot?.lastChild) as HTMLElement;
+		docsBotElement.style.position = 'fixed';
+		docsBotElement.style.right = '1em';
+		docsBotElement.style.bottom = '80px';
+	},[isAIChatBotOpen,floatButtonOpen]);
+
+	useEffect(() => {
+		// check for the presence of a dom element inside a setInterval until it is found
+		const interval = setInterval(() => {
+			const docsBotElement = ((window as any)?.DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
+			if (!docsBotElement) return;
+
+			clearInterval(interval);
+			docsBotElement.style.display = 'none';
+		}, 600);
+
+		return () => clearInterval(interval);
+	}, []);
+
+	useEffect(() => {
+		const handleRouteChange = () => {
+			if ((window as any).DocsBotAI.isChatbotOpen) {
+				(window as any).DocsBotAI.close();
+			}
+		};
+
+		router.events.on('routeChangeStart', handleRouteChange);
+
+		return () => {
+			router.events.off('routeChangeStart', handleRouteChange);
+		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const data = [
+		{
+			component: <div className='flex justify-center'><CreateDiscussionIcon className='cursor-pointer' onClick={() => { if(id)router.push('/post/create');}} /> <p className='text-[#485F7D] ml-4 mt-2 font-medium text-[14px] leading-5 tracking-[1.25%]'>Create Discussion Post</p></div>
+		},
+		{
+			component: <div className='flex justify-center' onClick={() => {
+				if(!grillChat)
+					(window as any).DocsBotAI.toggle();
+				setIsAIChatBotOpen(!isAIChatBotOpen);
+			}}><AIbotIcon className='cursor-pointer'/> <p className='text-[#485F7D] ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p></div>
+		},
+		{
+			component: <div className='flex justify-center'  onClick={ () => {if(!isAIChatBotOpen) setGrillChat(!grillChat); }}> <GrillChatIcon className='cursor-pointer'/> <p className='text-[#485F7D] ml-4 mt-2  font-medium text-[14px] leading-5 tracking-[1.25%]'>Grill Chat</p> </div>
+		},
+		{
+			component: <a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer' className='text-[#485F7D] hover:text-[#485F7D]'>
+				<div  className='flex justify-center'><CautionIcon className='cursor-pointer' /> <p className='ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p></div>
+			</a>
+		}
+	];
 
 	return (
-		<FloatButton.Group
-			trigger="click"
-			type="primary"
-			style={{ bottom:30, right: 10 }}
-			icon={<CustomerServiceOutlined className='float-button' style={{ fontSize:'32px',marginBottom:'2px',marginLeft:'-7px' }}  onClick={() => setFloatButtonOpen(!floatButtonOpen)}/> }
-			closeIcon={<CloseOutlined className='float-button' style={{ fontSize:'30px',marginLeft:'-6px' }} onClick={() => {setFloatButtonOpen(!floatButtonOpen);if((window as any).DocsBotAI.isChatbotOpen){ (window as any).DocsBotAI.close(); setIsAIChatBotOpen(false);} }}/>}
-			open = { floatButtonOpen }
-		>
-			<FloatButton icon={<ThunderboltTwoTone />} onClick={() => {
-				(window as any).DocsBotAI.toggle();
-				setIsAIChatBotOpen(!isAIChatBotOpen);
-			}} />
-			<ChatFloatingModal disabled={isAIChatBotOpen}/>
-		</FloatButton.Group>
+		<>
+			<FloatButton.Group
+				trigger="click"
+				type="primary"
+				style={{ bottom:30, right: 30 }}
+				icon={<Button type="text" style={{ borderRadius:'50%' ,height:'56px' ,marginLeft:'-8px' ,width:'56px' }} onClick={() => setFloatButtonOpen(!floatButtonOpen)}><FabButton className='mt-1'/></Button>}
+				closeIcon={<Button type="text" style={{ borderRadius:'50%' ,height:'56px', marginLeft:'-8px' ,width:'56px' }} onClick={() => {setFloatButtonOpen(!floatButtonOpen);if((window as any).DocsBotAI.isChatbotOpen){ (window as any).DocsBotAI.close(); setIsAIChatBotOpen(false);} setGrillChat(false) ;}}><CloseWhite className='mt-1' /></Button>}
+				open = { floatButtonOpen }
+				className ={className}
+			>
+			</FloatButton.Group>
+
+			{ floatButtonOpen &&
+
+				<List
+					style={{ bottom: '85px',position:'fixed' ,right:'35px', zIndex:'999' }}
+					header={<div className='flex justify-between font-semibold text-[20px] text-[#485F7D] h-[38px]'><p className='mt-2 h-[25px]'>Menu</p> <CloseIcon className='mt-4 cursor-pointer' onClick={() => {setFloatButtonOpen(false); setGrillChat(false);}} /></div>}
+					bordered
+					dataSource={data}
+					className={` ${className} w-[311px] max-h-[384px] bg-white max-[350px]:w-[250px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]`}
+					renderItem={(item) => (
+						<List.Item>
+							{item.component}
+						</List.Item>
+					)}
+				/>
+
+			}
+
+			{
+				grillChat && <ChatFloatingModal outerClick={true}/>
+			}
+
+		</>
 	);
 };
-export default AiBot;
+export default styled( AiBot)`
+
+
+.ant-float-btn-body{
+	width:56px !important;
+	height:56px !important;
+	background: radial-gradient(circle,#E5007A,#BA0566,#9A0856);
+}
+.ant-float-btn .ant-float-btn-body .ant-float-btn-content .ant-float-btn-icon {
+width:55px !important;
+}
+.ant-list{
+	background-color:red !important;
+}
+`;

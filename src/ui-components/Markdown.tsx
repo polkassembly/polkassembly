@@ -35,12 +35,12 @@ export default styled(Markdown)`
 		overflow-wrap: break-word;
 		overflow-x : auto;
 
-		.hide-image img {
+		.hide-image img{
 			display: none !important;
 		}
 
 		th, td {
-			border: 1px solid #243A57;
+			border: 1px solid;
 			padding: 0.5rem;
 		}
 

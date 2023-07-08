@@ -14,7 +14,7 @@ import { Alert, Button, Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
@@ -31,6 +31,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ExtensionNotDetected from '../ExtensionNotDetected';
 import { WalletIcon } from './MetamaskLogin';
 import TFALoginForm from './TFALoginForm';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
   chosenWallet: Wallet;
@@ -58,7 +59,7 @@ const Web3Login: FC<Props> = ({
 	setSignupOpen,
 	onWalletUpdate
 }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();

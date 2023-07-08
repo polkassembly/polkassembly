@@ -6,7 +6,7 @@ import { Button, Form, Input, Modal } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
 import React, { FC, useEffect, useState } from 'react';
 import ContentForm from '~src/components/ContentForm';
-import { useNetworkContext, usePostDataContext } from '~src/context';
+import { usePostDataContext } from '~src/context';
 import { NotificationStatus } from '~src/types';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -16,6 +16,7 @@ import { ILinkPostStartResponse } from 'pages/api/v1/auth/actions/linkPostStart'
 import LinkPostPreview from './LinkPostPreview';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import AddTags from '~src/ui-components/AddTags';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface ILinkingAndEditingProps {
     setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -46,7 +47,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 		timeline,
 		tags: oldTags
 	}, setPostData } = usePostDataContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [tags, setTags] = useState<string[]>(oldTags);
 

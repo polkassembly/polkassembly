@@ -12,12 +12,14 @@ import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext,useApiContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { useRouter } from 'next/router';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 
 const proposalType = ProposalType.REFERENDUMS;
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
@@ -43,7 +45,7 @@ interface IReferendumPostProps {
 const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 
 	const { post, error , status, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const { api, apiReady } = useApiContext();
 	const router = useRouter();
 	const { id } = router.query;
@@ -61,7 +63,7 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 	}, [api, apiReady, error, status,id]);
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 

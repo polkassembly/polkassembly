@@ -10,7 +10,8 @@ import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState, LoadingState } from 'src/ui-components/UIStates';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import { noTitle } from '~src/global/noTitle';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -35,10 +36,10 @@ interface IAnnouncementPostProps {
 
 const AnnouncementPost: FC<IAnnouncementPostProps> = (props) => {
 	const { data: post, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

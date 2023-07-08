@@ -16,7 +16,6 @@ import { antdTheme } from 'styles/antdTheme';
 
 import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
-import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
 
 export const poppins = Poppins({
@@ -40,11 +39,17 @@ const workSans = Work_Sans({
 
 import 'antd/dist/reset.css';
 import '../styles/globals.css';
+import { PersistGate } from 'redux-persist/integration/react';
+import { wrapper } from '~src/redux/store';
+import { useDispatch, useStore } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
+	const store: any = useStore();
 	const router = useRouter();
 	const [showSplashScreen, setShowSplashScreen] = useState(true);
 	const [network, setNetwork] = useState<string>('');
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		router.isReady && setShowSplashScreen(false);
@@ -53,7 +58,9 @@ export default function App({ Component, pageProps }: AppProps) {
 	useEffect(() => {
 		if(!global?.window) return;
 		const networkStr = getNetwork();
+		dispatch(networkActions.setNetwork(networkStr));
 		setNetwork(networkStr);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const SplashLoader = () => <div style={{ background:'#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
@@ -66,22 +73,28 @@ export default function App({ Component, pageProps }: AppProps) {
 		/>
 	</div>;
 
-	return <ConfigProvider theme={antdTheme}>
-		<ModalProvider>
-			<UserDetailsProvider>
-				<ApiContextProvider network={network}>
-					<NetworkContextProvider initialNetwork={network}>
-						<>
-							{ showSplashScreen && <SplashLoader /> }
-							<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-								<NextNProgress color="#E5007A" />
-								<CMDK />
-								<AppLayout Component={Component} pageProps={pageProps} />
-							</main>
-						</>
-					</NetworkContextProvider>
-				</ApiContextProvider>
-			</UserDetailsProvider>
-		</ModalProvider>
-	</ConfigProvider>;
+	return (
+		<>
+			<PersistGate persistor={store.__persistor}>
+				<ConfigProvider theme={antdTheme}>
+					<ModalProvider>
+						<UserDetailsProvider>
+							<ApiContextProvider network={network}>
+								<>
+									{ showSplashScreen && <SplashLoader /> }
+									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+										<NextNProgress color="#E5007A" />
+										<CMDK />
+										<AppLayout Component={Component} pageProps={pageProps} />
+									</main>
+								</>
+							</ApiContextProvider>
+						</UserDetailsProvider>
+					</ModalProvider>
+				</ConfigProvider>
+			</PersistGate>
+		</>
+	);
 }
+
+export default wrapper.withRedux(App);

@@ -7,7 +7,8 @@ import { useRouter } from 'next/router';
 import { getOnChainPosts } from 'pages/api/v1/listing/on-chain-posts';
 import React, { useEffect } from 'react';
 import Listing from '~src/components/Listing';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
@@ -38,11 +39,11 @@ interface IAnnouncementProps {
 
 const Announcements = (props:IAnnouncementProps) => {
 	const { data, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const router = useRouter();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

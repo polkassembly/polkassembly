@@ -9,7 +9,8 @@ import styled from 'styled-components';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import ParachainInfoCard from '~src/components/Parachains/ParachainInfoCard';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import SEOHead from '~src/global/SEOHead';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 
@@ -26,10 +27,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Parachains = ({ className, network }: Props) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

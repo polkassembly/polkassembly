@@ -8,7 +8,6 @@ import { poppins } from 'pages/_app';
 import { Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
 import { useUserDetailsContext } from '~src/context';
-import { NetworkContext } from '~src/context/NetworkContext';
 import WalletButton from '~src/components/WalletButton';
 import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
@@ -20,6 +19,7 @@ import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
 import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props{
   className?: string;
@@ -32,7 +32,7 @@ const ZERO_BN = new BN(0);
 
 const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
 	const { loginWallet, setUserDetailsContextState } = useUserDetailsContext();
 	const [address, setAddress] = useState<string>('');

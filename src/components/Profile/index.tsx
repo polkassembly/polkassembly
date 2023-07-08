@@ -28,7 +28,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
 import { MessageType, ProfileDetails } from '~src/auth/types';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -47,7 +47,7 @@ const SetOnChainIdentityButton = dynamic(() => import('src/components/Settings/s
 });
 
 const Profile = ({ className, profileDetails }: Props): JSX.Element => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const router = useRouter();
 	const { address, username, membersType } = router.query;

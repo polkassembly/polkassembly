@@ -5,16 +5,15 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { Button, Modal, Spin } from 'antd';
-import React, { useContext, useState } from 'react';
-import { ApiContext } from 'src/context/ApiContext';
+import React, { useState } from 'react';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 
 import { LoadingStatusType,NotificationStatus } from '../../../../types';
-import { NetworkContext } from '~src/context/NetworkContext';
 import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
-import { useUserDetailsContext } from '~src/context';
+import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 export interface SecondProposalProps {
 	accounts: InjectedAccount[]
@@ -28,8 +27,8 @@ export interface SecondProposalProps {
 const SecondProposal = ({ className, proposalId, address, accounts, onAccountChange, getAccounts }: SecondProposalProps) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
-	const { api, apiReady } = useContext(ApiContext);
-	const { network } = useContext(NetworkContext);
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
 	const [modalOpen,setModalOpen]=useState(false);
 	const [seconds, setSeconds] = useState<number>(0);
 	const { id }=useUserDetailsContext();

@@ -4,7 +4,7 @@
 
 import { useMemo } from 'react';
 
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
 
 import useCurrentBlock from './useCurrentBlock';
@@ -12,7 +12,7 @@ import useCurrentBlock from './useCurrentBlock';
 const TWO_WEEKS = 2 * 7 * 24 * 60 * 60 * 1000;
 
 export default function usePollEndBlock()  {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const blocktime:number = chainProperties?.[network]?.blockTime;
 	const currenBlockNumber = useCurrentBlock()?.toNumber();

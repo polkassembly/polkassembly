@@ -17,7 +17,7 @@ import PassingInfoTag from 'src/ui-components/PassingInfoTag';
 import VoteProgress from 'src/ui-components/VoteProgress';
 import formatBnBalance from 'src/util/formatBnBalance';
 
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { isSubscanSupport } from 'src/util/subscanCheck';
 import { chainProperties } from '~src/global/networkConstants';
@@ -45,7 +45,7 @@ type VoteInfo = {
 const ZERO = new BN(0);
 
 const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpen, voteThreshold }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const { api, apiReady } = useContext(ApiContext);
 	const [totalIssuance, setTotalIssuance] = useState<BN | null>(null);

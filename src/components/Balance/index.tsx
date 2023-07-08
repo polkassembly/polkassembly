@@ -4,12 +4,11 @@
 /* eslint-disable no-tabs */
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApiContext, usePostDataContext } from 'src/context';
 import formatBnBalance from 'src/util/formatBnBalance';
-
-import { NetworkContext } from '~src/context/NetworkContext';
 import { ProposalType } from '~src/global/proposalType';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	address: string;
@@ -21,7 +20,7 @@ interface Props {
 const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 	const { postData } = usePostDataContext();
 
 	const isReferendum = [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(postData?.postType);

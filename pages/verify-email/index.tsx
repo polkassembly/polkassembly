@@ -7,12 +7,14 @@ import { Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useDispatch } from 'react-redux';
+import { useUserDetailsContext } from 'src/context';
 import queueNotification from 'src/ui-components/QueueNotification';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { ChangeResponseType } from '~src/auth/types';
 import SEOHead from '~src/global/SEOHead';
+import { networkActions } from '~src/redux/network';
 import { handleTokenChange } from '~src/services/auth.service';
 import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
@@ -25,10 +27,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const VerifyEmail = ({ network }: { network: string }) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

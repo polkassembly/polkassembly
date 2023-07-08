@@ -5,10 +5,10 @@ import { Button } from 'antd';
 import Image from 'next/image';
 import GrillChatIcon from '~assets/grillchat.png';
 import styled from 'styled-components';
-import { useNetworkContext } from '~src/context';
 import { network as globalNework } from '~src/global/networkConstants';
 import { useEffect, useRef, useState } from 'react';
 import grill from '@subsocial/grill-widget';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const Container = styled.div`
 .ChatFloatingModal {
@@ -84,7 +84,7 @@ export default function ChatFloatingModal() {
 		[globalNework.POLKADOT]: ['3638', '754']
 	};
 
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const hasOpened = useRef(false);
 	useEffect(() => {
 		if (!isOpen) return;

@@ -7,7 +7,7 @@ import { Alert, Button, Input, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import DelegateCard from './DelegateCard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useUserDetailsContext } from '~src/context';
 import { IDelegate } from '~src/types';
 
 import Web3 from 'web3';
@@ -17,6 +17,7 @@ import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
 import DelegatedIcon from '~assets/icons/delegate.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active /> ,
@@ -38,7 +39,7 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 
 	useEffect(() => {

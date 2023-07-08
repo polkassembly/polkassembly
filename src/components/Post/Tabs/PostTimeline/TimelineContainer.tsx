@@ -8,7 +8,7 @@ import * as React from 'react';
 import StatusTag from 'src/ui-components/StatusTag';
 
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { getBlockLink } from '~src/util/subscanCheck';
 
@@ -34,7 +34,7 @@ function sortfunc(a: BlockStatus, b: BlockStatus) {
 
 const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	const { timeline } = props;
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	if (!timeline) return null;
 	const { statuses, type } = timeline;
 

@@ -17,7 +17,8 @@ import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -90,10 +91,10 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 };
 
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Props) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 

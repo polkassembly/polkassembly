@@ -12,7 +12,7 @@ import Address from 'src/ui-components/Address';
 import blockToTime from 'src/util/blockToTime';
 import formatBnBalance from 'src/util/formatBnBalance';
 import styled from 'styled-components';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { ProposalType } from '~src/global/proposalType';
 import { useCurrentBlock } from '~src/hooks';
 import { getBlockLink } from '~src/util/subscanCheck';
@@ -103,7 +103,7 @@ export const getBlockNumber = (statusHistory?: {
 };
 
 const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const { className, handleOpenSidebar, onChainInfo, proposalType } = props;
 	const currentBlock = useCurrentBlock();

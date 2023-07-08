@@ -16,8 +16,9 @@ import { chainProperties } from '../../global/networkConstants';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
 import formatBnBalance from '../../util/formatBnBalance';
 import getNetwork from '../../util/getNetwork';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
 import addEthereumChain from '~src/util/addEthereumChain';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const abi = require('../../moonbeamAbi.json');
 
@@ -39,7 +40,7 @@ interface Vote {
 const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
 
 const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdated, setIsBalanceUpdated }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [address, setAddress] = useState<string>('');
 	const [votes, setVotes] = useState<Vote[]>([]);
 	const [lockedBalance, setLockedBalance] = useState<BN>(new BN(0));

@@ -7,11 +7,13 @@ import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Web2Login from 'src/components/Login/Web2Login';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useUserDetailsContext } from 'src/context';
 import { Wallet } from 'src/types';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
+import { networkActions } from '~src/redux/network';
 // import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 interface Props{
@@ -41,10 +43,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:Props) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(networkActions.setNetwork(network));
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

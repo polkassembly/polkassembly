@@ -16,7 +16,8 @@ import AboutNetwork from '~src/components/Home/AboutNetwork';
 import LatestActivity from '~src/components/Home/LatestActivity';
 import News from '~src/components/Home/News';
 import UpcomingEvents from '~src/components/Home/UpcomingEvents';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { LATEST_POSTS_LIMIT } from '~src/global/listingLimit';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -146,10 +147,10 @@ const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOver
 });
 
 const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

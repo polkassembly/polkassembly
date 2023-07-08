@@ -7,7 +7,7 @@
 // import BN from 'bn.js';
 // import { FC } from 'react';
 // import styled from 'styled-components';
-// import { useNetworkContext } from '~src/context';
+// import { useNetworkSelector } from '~src/redux/selectors';
 // import formatBnBalance from '~src/util/formatBnBalance';
 
 // interface IVoteProgressProps {
@@ -23,7 +23,7 @@
 
 // // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // const VoteProgress: FC<IVoteProgressProps> = ({ ayeVotes, className, nayVotes, ayesNum, naysNum, turnoutPercentage }) => {
-// 	const { network } = useNetworkContext();
+// 	const { network } = useNetworkSelector();
 
 // 	const bnToIntBalance = function (bn: BN): number{
 // 		return  Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));

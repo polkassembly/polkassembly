@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 import checkGov2Route from 'src/util/checkGov2Route';
-import { useNetworkContext } from '~src/context';
 import { SyncIcon } from '~src/ui-components/CustomIcons';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -16,7 +16,7 @@ interface Props {
 
 const GovernanceSwitchButton = ({ className, previousRoute } : Props) => {
 
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const { pathname , query } = router;
 	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute, network);

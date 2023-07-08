@@ -9,7 +9,8 @@ import React, { FC } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import TrackListing from '~src/components/Listing/FellowshipReferendum/TrackListing';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ProposalType } from '~src/global/proposalType';
@@ -101,8 +102,8 @@ interface IFellowshipReferendumProps {
 
 const FellowshipAdmin: FC<IFellowshipReferendumProps> = (props) => {
 	const { posts, error, network } = props;
-	const { setNetwork } = useNetworkContext();
-	setNetwork(network);
+	const dispatch = useDispatch();
+	dispatch(networkActions.setNetwork(props.network));
 
 	if (error) return <ErrorState errorMessage={error} />;
 	const fellowshipReferendumPostOrigins: string[] = [];

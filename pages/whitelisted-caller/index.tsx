@@ -10,7 +10,8 @@ import React, { FC, useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import TrackListing from '~src/components/Listing/Tracks/TrackListing';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ProposalType } from '~src/global/proposalType';
@@ -93,10 +94,10 @@ interface IWhitelistedCallerProps {
 
 const WhitelistedCaller: FC<IWhitelistedCallerProps> = (props) => {
 	const { posts, error } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

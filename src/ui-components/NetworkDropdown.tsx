@@ -6,7 +6,7 @@ import { Card, Col, Dropdown, Row } from 'antd';
 import Image from 'next/image';
 import React, { FC, useState } from 'react';
 import { chainProperties, network } from 'src/global/networkConstants';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { ArrowDownIcon } from './CustomIcons';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useRouter } from 'next/router';
@@ -75,7 +75,7 @@ interface INetworkDropdown {
 
 const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 	const { isSmallScreen, setSidedrawer, isSearch, setSelectedNetworks, selectedNetworks = [], allowedNetwork } = props;
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
 	const router = useRouter();
 

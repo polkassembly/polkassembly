@@ -2,18 +2,17 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import Link from 'next/link';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-
-import { NetworkContext } from '~src/context/NetworkContext';
 import { NetworkSocials } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import { socialLinks } from '../Home/AboutNetwork';
 import PaLogo from './PaLogo';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const Footer = ({ className } : { className?:string }) => {
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	const [socials, setSocials] = useState<NetworkSocials>();
 	const [error, setError] = useState('');

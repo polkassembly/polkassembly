@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useRef, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useUserDetailsContext } from 'src/context';
 import NetworkDropdown from 'src/ui-components/NetworkDropdown';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
@@ -25,6 +25,7 @@ import PaLogo from './PaLogo';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -39,7 +40,7 @@ interface Props {
 }
 
 const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsContext();
 	const router = useRouter();
 	const { pathname, query } = router;

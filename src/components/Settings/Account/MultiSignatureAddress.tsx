@@ -7,7 +7,7 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Checkbox, Divider, Form, Input, InputNumber, Modal } from 'antd';
 import React, { FC, useState } from 'react';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useApiContext, useUserDetailsContext } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { chainProperties } from 'src/global/networkConstants';
 import { handleTokenChange } from 'src/services/auth.service';
@@ -23,6 +23,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	open?: boolean;
@@ -30,7 +31,7 @@ interface Props {
 }
 
 const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const [form] = Form.useForm();
 	const currentUser = useUserDetailsContext();

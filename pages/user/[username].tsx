@@ -7,7 +7,6 @@ import { GetServerSideProps } from 'next';
 import { getUserProfileWithUsername } from 'pages/api/v1/auth/data/userProfileWithUsername';
 import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import React, { FC, useEffect, useState } from 'react';
-import { useNetworkContext } from 'src/context';
 import styled from 'styled-components';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -19,6 +18,8 @@ import SEOHead from '~src/global/SEOHead';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import UserNotFound from '~assets/user-not-found.svg';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -87,11 +88,11 @@ const EmptyState = styled.div`
 
 const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, className } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

@@ -25,7 +25,7 @@ import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
 import SpamAlert from '~src/ui-components/SpamAlert';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { ILastVote } from '~src/types';
@@ -95,7 +95,7 @@ const Post: FC<IPostProps> = (props) => {
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
 	const [canEdit, setCanEdit] = useState(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [duration, setDuration] = useState(dayjs.duration(0));
 
 	const isOnchainPost = checkIsOnChainPost(proposalType);

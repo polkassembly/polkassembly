@@ -7,7 +7,7 @@ import React from 'react';
 import { Wallet } from 'src/types';
 
 import WalletButton from '../WalletButton';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { WalletIcon } from './MetamaskLogin';
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 }
 
 const WalletButtons = ({ onWalletSelect, disabled } : Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	function handleWalletClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) {
 		event.preventDefault();
 		onWalletSelect(wallet);

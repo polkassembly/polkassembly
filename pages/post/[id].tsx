@@ -13,7 +13,8 @@ import { ErrorState, LoadingState } from 'src/ui-components/UIStates';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Post from '~src/components/Post/Post';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import { noTitle } from '~src/global/noTitle';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -39,10 +40,10 @@ interface IDiscussionPostProps {
 }
 const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 	const { post, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

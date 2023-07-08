@@ -10,7 +10,8 @@ import React, { FC, useContext, useEffect, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { OffChainProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -59,12 +60,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 const Discussions: FC<IDiscussionsProps> = (props) => {
 	const { data, error, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	const [openModal,setModalOpen]=useState<boolean>(false);
 	const router=useRouter();
 
 	useEffect(() => {
-		setNetwork(props.network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

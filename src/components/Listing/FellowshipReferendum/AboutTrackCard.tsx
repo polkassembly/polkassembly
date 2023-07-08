@@ -3,12 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import BN from 'bn.js';
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
 
-import { NetworkContext } from '~src/context/NetworkContext';
 import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { useNetworkSelector } from '~src/redux/selectors';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 
 interface IAboutTrackCardProps {
@@ -19,7 +19,7 @@ interface IAboutTrackCardProps {
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const { className, trackName, fellowshipReferendumPostOrigins } = props;
-	const { network } = useContext(NetworkContext);
+	const { network } = useNetworkSelector();
 
 	if (!fellowshipReferendumPostOrigins.includes(trackName)) {
 		return (

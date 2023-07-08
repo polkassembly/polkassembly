@@ -10,7 +10,7 @@ import ImportIcon from '~assets/icons/import-icon.svg';
 import DisabledImportIcon from '~assets/icons/disabled-state-import-icon.svg';
 import NetworkTags from './NetworkTags';
 import { chainProperties } from '~src/global/networkConstants';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import AddNetworkModal from './AddNetworkModal';
 import ImportPrimaryNetworkSettingModal from './ImportPrinaryBetwork';
 import SetPrimaryNetworkSettingModal from './PrimaryNetworkConfirmModal';
@@ -39,7 +39,7 @@ export default function Parachain({
 	selectedNetwork,
 	setSelectedNetwork
 }: Props) {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [openModal, setOpenModal] = useState(false);
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const handleModalConfirm = (networks: ISelectedNetwork) => {

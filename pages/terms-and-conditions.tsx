@@ -6,7 +6,8 @@ import React, { FC, useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { TermsAndConditions } from '~src/components/LegalDocuments';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import SEOHead from '~src/global/SEOHead';
 
 interface ITermsAndConditionsPage {
@@ -24,10 +25,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const TermsAndConditionsPage: FC<ITermsAndConditionsPage> = (props) => {
 	const { network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

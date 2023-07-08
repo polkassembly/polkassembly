@@ -6,7 +6,8 @@
 import { MenuProps } from 'antd';
 import { Dropdown } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
 import { TRPCEndpoint } from '~src/types';
 import { ArrowDownIcon, SignalTowerIcon } from './CustomIcons';
@@ -34,7 +35,7 @@ export const dropdownLabel = (wsProvider: string, network: string) => {
 const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 	const { className, isSmallScreen } = props;
 	const { isApiLoading, setWsProvider, wsProvider } = useApiContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [rpcEndpoints, setRPCEndpoints] = useState<TRPCEndpoint[]>([]);
 
 	useEffect(() => {

@@ -10,7 +10,8 @@ import React, { FC, useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { ProfileDetails } from '~src/auth/types';
-import { useNetworkContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { networkActions } from '~src/redux/network';
 import SEOHead from '~src/global/SEOHead';
 
 interface IProfileProps {
@@ -53,9 +54,9 @@ const ProfileComponent = dynamic(() => import('~src/components/Profile'),{
 
 const Profile: FC<IProfileProps> = (props) => {
 	const { className, userProfile, network } = props;
-	const { setNetwork } = useNetworkContext();
+	const dispatch = useDispatch();
 	useEffect(() => {
-		setNetwork(network);
+		dispatch(networkActions.setNetwork(props.network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

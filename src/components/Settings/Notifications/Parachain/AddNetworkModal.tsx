@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Divider, Image, Switch, Tag } from 'antd';
 import SmallParachainIcon from '~assets/icons/parachain-small.svg';
 import { chainProperties } from '~src/global/networkConstants';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { networkLabel } from './utils';
 import { ISelectedNetwork } from '../types';
@@ -23,7 +23,7 @@ const AddNetworkModal = ({
     onCancel: () => void;
 }) => {
 	const [allNetworks, setAllNetworks] = useState(selectedNetwork);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [showSureModal, setShowSureModal] = useState(false);
 
 	useEffect(() => {

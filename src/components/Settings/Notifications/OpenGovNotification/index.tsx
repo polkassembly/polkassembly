@@ -7,7 +7,7 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import OverallPostsNotification from '~assets/icons/gov-icon.svg';
 import GroupCheckbox from '../common-ui/GroupCheckbox';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { iconMapper, postOriginMapper, titleMapper } from './utils';
 import { ACTIONS } from '../Reducer/action';
@@ -41,7 +41,7 @@ export default function OpenGovNotification({
 	options
 }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [all, setAll] = useState(false);
 	const openGovTwoOptions = getConsecutiveKeys(networkTrackInfo[network] || {});
 

@@ -98,17 +98,6 @@ const OpenGovProposals = ({ className }: Props) => {
 	};
 
 	useEffect(() => {
-		// const data = localStorage.getItem('treasuryProposalData');
-
-		// if(data){
-		// 	const formData = JSON.parse(data)?.form2 ;
-		// 	setPreimageHash(formData?.preimageHash || preimageHash) ;
-		// 	setPreimageLength(formData?.preimageLength || preimageLength);
-		// 	setBeneficiaryAddress(formData?.beneficiaryAddress || beneficiaryAddress);
-		// 	setEnactment(formData?.enactment || enactment);
-		// 	setFundingAmount(formData?.fundingAmount || fundingAmount);
-		// 	setSelectedTrack(formData?.selectedTrack || selectedTrack);
-		// }
 		const address = localStorage.getItem('treasuryProposalProposerAddress') || '';
 		setProposerAddress(address);
 	// eslint-disable-next-line react-hooks/exhaustive-deps

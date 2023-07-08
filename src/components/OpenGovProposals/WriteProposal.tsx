@@ -43,6 +43,10 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 	};
 
 	const handleStateChange = (writeProposalFormData: any) => {
+		writeProposalFormData?.discussionLink && setSteps({ percent: 66.6, step:0 });
+		writeProposalFormData.title && setSteps({ percent: 83.33, step: 0 });
+		writeProposalFormData.content && setSteps({ percent: 100, step: 0 });
+
 		setDiscussionLink(writeProposalFormData?.discussionLink || '') ;
 		setTitle(writeProposalFormData?.title || '');
 		setContent(writeProposalFormData?.content || '');
@@ -66,7 +70,6 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 	},[]);
 
 	const onChangeLocalSet = (obj: any, isDiscussionLink: boolean, isDiscussionLinkedStateChange?: boolean) => {
-		console.log(obj, isDiscussionLink);
 		let data: any = localStorage.getItem('treasuryProposalData');
 		if(data){data = JSON.parse(data);}
 

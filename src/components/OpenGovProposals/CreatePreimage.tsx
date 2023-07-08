@@ -132,7 +132,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		if(data && data?.createPreimageForm){
 			const isPreimage = data?.isPreimage;
 			setIsPreimage(isPreimage);
-			setSteps({ percent: 33.3, step: 1 });
+			setSteps({ percent: 20, step: 1 });
 			const createPreimageForm = data?.createPreimageForm?.[!isPreimage ? 'withoutPreimageForm' : 'withPreimageForm'] ;
 			handleStateChange(createPreimageForm);
 		}
@@ -281,9 +281,9 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 						}
 					}
-					console.log(`Delegation: completed at block hash #${status.toString()}`);
+					console.log(`Preimage: completed at block hash #${status.toString()}`);
 				} else {
-					console.log(`Delegation: Current status: ${status.type}`);
+					console.log(`Preimage: Current status: ${status.type}`);
 				}
 			})
 				.catch((error) => {
@@ -310,11 +310,9 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	};
 
 	const handleSubmit = async() => {
-		console.log(await form.validateFields());
+
 		if(!isPreimage){if(txFee.gte(availableBalance)) return;}
 		await form.validateFields();
-		console.log(await form.validateFields());
-		console.log(preimageLength !== 0 , beneficiaryAddress.length > 0 , fundingAmount.gt(ZERO_BN));
 		!isPreimage ? await getPreimage() : (preimageLength !== 0 && beneficiaryAddress.length > 0 && fundingAmount.gt(ZERO_BN)) && setSteps({ percent: 0, step: 2 }) ;
 		setEnactment({ ...enactment, value: enactment.key === EEnactment.At_Block_No ? advancedDetails?.atBlockNo : advancedDetails?.afterNoOfBlocks });
 		if(preimage) {
@@ -330,6 +328,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		!JSON.parse(JSON.stringify(lengthObj))?.unrequested?.len  ? setInvalidPreimage(true) : setInvalidPreimage(false) ;
 		const length = JSON.parse(JSON.stringify(lengthObj))?.unrequested?.len || 0;
 		setPreimageLength(length);
+		form.setFieldValue('preimage_length', length);
+		onChangeLocalSet({ preimageLength: length || '' }, Boolean(isPreimage));
 
 		const preimageRaw: any = await api.query.preimage.preimageFor([preimageHash, length ]);
 		const preimage = preimageRaw.unwrapOr(null);
@@ -373,6 +373,16 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				setBeneficiaryAddress(preImageArguments[1].value || '');
 				setFundingAmount(balance);
 				onChangeLocalSet({ fundingAmount: balance.toString() }, Boolean(isPreimage));
+				onChangeLocalSet({ beneficiaryAddress: preImageArguments[1].value || '' }, Boolean(isPreimage));
+				setSteps({ percent: 100 ,step: 1 });
+				for(const i in maxSpendArr){
+					const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
+					if(maxSpend.gte(balance)){
+						setSelectedTrack(maxSpendArr[i].track);
+						onChangeLocalSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
+						break;
+					}
+				}
 
 			}else{
 				setInvalidPreimage(true);
@@ -394,10 +404,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}`);
 		if(data){
 			if(data.hash === preimageHash){
-				console.log(data);
 				if(!data.proposedCall.args || !data?.proposedCall?.args?.beneficiary || !data?.proposedCall?.args?.amount){
 					setInvalidPreimage(true);
-					console.log(!data.proposedCall.args && !data?.proposedCall?.args?.beneficiary && !data?.proposedCall?.args?.amount);
 				}else{
 					form.setFieldValue('preimage_length', data.length);
 					setBeneficiaryAddress(data?.proposedCall?.args?.beneficiary || '');
@@ -409,6 +417,14 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					onChangeLocalSet({ preimageLength: data.length || '' }, Boolean(isPreimage));
 					onChangeLocalSet({ beneficiaryAddress: data?.proposedCall?.args?.beneficiary || '' }, Boolean(isPreimage));
 					setSteps({ percent: 100 ,step: 1 });
+					for(const i in maxSpendArr){
+						const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
+						if(maxSpend.gte(balance)){
+							setSelectedTrack(maxSpendArr[i].track);
+							onChangeLocalSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
+							break;
+						}
+					}
 				}}else{
 				getExistPreimageDataFromPolkadot();
 			}
@@ -478,7 +494,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
 			if(maxSpend.gte(fundingAmount)){
 				setSelectedTrack(maxSpendArr[i].track);
-				onChangeLocalSet({ selectedtrack: maxSpendArr[i].track }, Boolean(isPreimage));
+				onChangeLocalSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
 				break;
 			}
 		}
@@ -620,7 +636,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					<Button onClick={() => setSteps({ percent: 100, step: 0 }) } className='font-medium tracking-[0.05em] text-pink_primary border-pink_primary text-sm w-[155px] h-[38px] rounded-[4px]'>Back</Button>
 					<Button htmlType='submit'
 						className={`bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px] ${((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack) : !(preimageHash )) && 'opacity-50' }`}
-						disabled={isPreimage ? !preimageHash  : !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack)}>
+						disabled={isPreimage ? (!preimageHash && !beneficiaryAddress && fundingAmount.gt(ZERO_BN) && selectedTrack.length === 0 && preimageLength <= 0)  : !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack)}>
 						{isPreimage ? 'Link Preimage' : 'Create Preimage'}
 					</Button>
 				</div>

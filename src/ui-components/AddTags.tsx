@@ -16,9 +16,10 @@ interface Props{
   setTags: (pre:string[])=>void;
   className?: string;
   disabled?: boolean;
+  onChange?: (pre: any) => void;
 }
 
-const AddTags=({ tags, setTags, className, disabled }:Props) => {
+const AddTags=({ tags, setTags, className, disabled, onChange }:Props) => {
 
 	const [ inputVisible, setInputVisible ] = useState(false);
 	const [ inputValue, setInputValue ] = useState('');
@@ -53,6 +54,7 @@ const AddTags=({ tags, setTags, className, disabled }:Props) => {
 	const handleClose = (removedTag: string) => {
 		const newTags = tags.filter((tag) => tag !== removedTag);
 		setTags(newTags);
+		onChange && onChange(newTags);
 	};
 
 	const showInput = () => {
@@ -74,6 +76,7 @@ const AddTags=({ tags, setTags, className, disabled }:Props) => {
 		if(selectedTag.current !== null){
 			if ( tags.length < 5 && selectedTag.current && tags.indexOf( selectedTag.current.toLowerCase() ) === -1 && selectedTag.current !== null){
 				setTags([...tags, selectedTag.current.trim()]);
+				onChange && onChange([...tags, selectedTag.current.trim()]);
 			}
 		}
 		else{
@@ -87,6 +90,7 @@ const AddTags=({ tags, setTags, className, disabled }:Props) => {
 					return ;
 				}else {
 					setTags([...tags, inputValue.trim().toLowerCase()]);}
+				onChange && onChange([...tags, inputValue.trim().toLowerCase()]);
 			}}
 		selectedTag.current = null;
 		setInputValue('');

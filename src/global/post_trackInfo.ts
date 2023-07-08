@@ -95,7 +95,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin for spending (any amount of) funds.',
 			'group': 'Treasury',
 			'name': 'treasurer',
-			'maxSpend':333333,
+			'maxSpend': 333333,
 			'maxDeciding': 10,
 			'decisionDeposit': 33333333333000,
 			'preparePeriod': 1200,

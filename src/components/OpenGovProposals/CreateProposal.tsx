@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Alert, Button, message } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { EEnactment, IEnactment, IPreimage, ISteps } from '.';
+import { IEnactment, IPreimage, ISteps } from '.';
 import BN from 'bn.js';
 import Address from '~src/ui-components/Address';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -14,6 +14,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '../DelegationDashboard/ProfileBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import CopyIcon from '~assets/icons/content-copy.svg';
+import { PostOrigin } from '~src/types';
 
 const ZERO_BN = new BN(0);
 
@@ -39,7 +40,7 @@ const CreateProposal = ({ className, setSteps, isPreimage, fundingAmount, propos
 	const { api, apiReady } = useApiContext();
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const success = (message: string) => {
 		messageApi.open({
@@ -63,14 +64,18 @@ const CreateProposal = ({ className, setSteps, isPreimage, fundingAmount, propos
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+  console.log(txFee.toString())
 	useEffect(() => {
 		setShowAlert(false);
+    console.log('here')
+		const obj = localStorage.getItem('treasuryProposalData');
+		obj && localStorage.setItem('treasuryProposalData', JSON.stringify({ ...JSON.parse(obj), step: 2 }));
 
 		if(!proposerAddress || !api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN) || fundingAmount.eq(ZERO_BN)) return;
-		if(!selectedTrack) return;
+		// if(!selectedTrack) return;
 
 		setLoading(true);
-		const tx = api.tx.referenda.submit(selectedTrack ,{ Lookup: { hash: preimageHash, length:preimageLength } }, enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value }: { After: enactment.value }): { After: BN_HUNDRED });
+		const tx = api.tx.referenda.submit( 'SmallSpender',{ Lookup: { hash: preimageHash, length: preimageLength } }, { After: BN_HUNDRED });
 
 		(async () => {
 			const info = await tx.paymentInfo(proposerAddress);
@@ -78,6 +83,7 @@ const CreateProposal = ({ className, setSteps, isPreimage, fundingAmount, propos
 			setLoading(false);
 			setShowAlert(true);
 		})();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
 
 	// const handleCreateProposal = async() => {

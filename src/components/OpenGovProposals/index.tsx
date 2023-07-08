@@ -87,9 +87,9 @@ const OpenGovProposals = ({ className }: Props) => {
 		setPreimage(undefined);
 		setSelectedTrack('');
 		setEnactment({ key:null, value: null });
-
 		localStorage.removeItem('treasuryProposalProposerAddress');
 		localStorage.removeItem('treasuryProposalProposerWallet');
+		localStorage.removeItem('treasuryProposalData');
 		writeProposalForm.resetFields();
 		createPreimageForm.resetFields();
 		setSteps({ percent: 0, step: 0 });
@@ -98,6 +98,17 @@ const OpenGovProposals = ({ className }: Props) => {
 	};
 
 	useEffect(() => {
+		// const data = localStorage.getItem('treasuryProposalData');
+
+		// if(data){
+		// 	const formData = JSON.parse(data)?.form2 ;
+		// 	setPreimageHash(formData?.preimageHash || preimageHash) ;
+		// 	setPreimageLength(formData?.preimageLength || preimageLength);
+		// 	setBeneficiaryAddress(formData?.beneficiaryAddress || beneficiaryAddress);
+		// 	setEnactment(formData?.enactment || enactment);
+		// 	setFundingAmount(formData?.fundingAmount || fundingAmount);
+		// 	setSelectedTrack(formData?.selectedTrack || selectedTrack);
+		// }
 		const address = localStorage.getItem('treasuryProposalProposerAddress') || '';
 		setProposerAddress(address);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -156,7 +167,7 @@ const OpenGovProposals = ({ className }: Props) => {
 				/>
 				{steps?.step === 0 && <WriteProposal form={writeProposalForm} setSteps={setSteps} title={title} content={content} tags={tags} isDiscussionLinked={isDiscussionLinked} setIsDiscussionLinked={setIsDiscussionLinked} discussionLink={discussionLink} setDiscussionLink={setDiscussionLink} setTags={setTags} setContent={setContent} setTitle={setTitle}  />}
 				{steps?.step === 1 && <CreatePreimage preimageLength={preimageLength} setPreimageLength={setPreimageLength} preimage={preimage} form={createPreimageForm} setPreimage={setPreimage} setSteps={setSteps} setIsPreimage={setIsPreimage} isPreimage={isPreimage} preimageHash={preimageHash} setPreimageHash={setPreimageHash} proposerAddress= {proposerAddress} beneficiaryAddress={beneficiaryAddress} setBeneficiaryAddress={setBeneficiaryAddress} fundingAmount={fundingAmount} setFundingAmount={setFundingAmount} selectedTrack={selectedTrack} setSelectedTrack={setSelectedTrack} enactment={enactment} setEnactment={setEnactment}/>}
-				{(steps.step === 2) && <CreateProposal enactment={enactment} preimage={preimage} setSteps={setSteps} isPreimage={Boolean(isPreimage)} proposerAddress={proposerAddress} fundingAmount={fundingAmount} selectedTrack={selectedTrack} preimageHash={preimageHash} preimageLength={preimageLength} />}
+				{(steps.step === 2) && <CreateProposal beneficiaryAddress={beneficiaryAddress} enactment={enactment} preimage={preimage} setSteps={setSteps} isPreimage={Boolean(isPreimage)} proposerAddress={proposerAddress} fundingAmount={fundingAmount} selectedTrack={selectedTrack} preimageHash={preimageHash} preimageLength={preimageLength} />}
 			</div>
 		</Modal>
 	</div>;

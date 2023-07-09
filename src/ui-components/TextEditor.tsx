@@ -155,7 +155,11 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								{ start: 'a. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-alpha' } },
 								{ start: 'a) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-alpha' } },
 								{ start: 'i. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' } },
-								{ start: 'i) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' } }
+								{ start: 'i) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' } },
+								{ start: '---', replacement: '<hr/>' },
+								{ start: '--', replacement: '—' },
+								{ start: '-', replacement: '—' },
+								{ start: '(c)', replacement: '©' }
 							]
 						}}
 					/>

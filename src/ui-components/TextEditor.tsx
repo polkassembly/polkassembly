@@ -147,10 +147,14 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								{ start: '####', format: 'h4' },
 								{ start: '#####', format: 'h5' },
 								{ start: '######', format: 'h6' },
-								{ start: '1. ', cmd: 'InsertOrderedList' },
 								{ start: '* ', cmd: 'InsertUnorderedList' },
 								{ start: '- ', cmd: 'InsertUnorderedList' },
-								{ start: '//brb', replacement: 'Be Right Back' }
+								{ start: '1. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'decimal' } },
+								{ start: '1) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'decimal' } },
+								{ start: 'a. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-alpha' } },
+								{ start: 'a) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-alpha' } },
+								{ start: 'i. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' } },
+								{ start: 'i) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' } }
 							]
 						}}
 					/>

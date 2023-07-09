@@ -65,9 +65,10 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							e.stopPropagation();
 							e.preventDefault();
 							const content = e.clipboardData?.getData('text/plain') || '';
+							const caretPosition = ref.current?.editor?.selection.getRng();
 							const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
-							const parsed_content = converter.makeHtml(sanitisedContent);
-							ref.current?.editor?.setContent(parsed_content || sanitisedContent);
+							const parsed_content = converter.makeHtml(sanitisedContent).replace(/<p>|<\/p>/g, '');
+							ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });
 						}}
 						textareaName={name}
 						value={converter.makeHtml(value || '')}
@@ -130,7 +131,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							placeholder: 'Please type here...',
 							plugins: [
 								'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-								'searchreplace', 'visualblocks', 'code', 'fullscreen',
+								'searchreplace', 'visualblocks', 'fullscreen',
 								'insertdatetime', 'media', 'table', 'textpattern'
 							],
 							toolbar: 'undo redo preview | ' +

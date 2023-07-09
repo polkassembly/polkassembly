@@ -132,12 +132,12 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							plugins: [
 								'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
 								'searchreplace', 'visualblocks', 'fullscreen',
-								'insertdatetime', 'media', 'table', 'textpattern'
+								'insertdatetime', 'media', 'table', 'textpattern', 'emoticons'
 							],
 							toolbar: 'undo redo preview | ' +
 								'bold italic backcolor | ' +
 								'bullist numlist table | ' +
-								'removeformat link image',
+								'removeformat link image emoticons',
 							xss_sanitization: true,
 							textpattern_patterns: [
 								{ start: '*', end: '*', format: 'italic' },

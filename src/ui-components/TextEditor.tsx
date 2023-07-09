@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
+/* eslint-disable sort-keys */
 import React, { FC, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import classNames from 'classnames';
@@ -21,7 +23,7 @@ interface ITextEditorProps {
     height?: number | string;
     value?: string;
     onChange: (value: string) => void;
-	isDisabled?: boolean;
+		isDisabled?: boolean;
     name: string;
 }
 
@@ -71,8 +73,8 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						value={converter.makeHtml(value || '')}
 						ref={ref}
 						disabled={isDisabled}
-						onEditorChange={(v) => {
-							onChange(v);
+						onEditorChange={(content) => {
+							onChange(content);
 						}}
 						apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
 						onInit={() => setLoading(false)}
@@ -129,13 +131,27 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							plugins: [
 								'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
 								'searchreplace', 'visualblocks', 'code', 'fullscreen',
-								'insertdatetime', 'media', 'table'
+								'insertdatetime', 'media', 'table', 'textpattern'
 							],
 							toolbar: 'undo redo preview | ' +
 								'bold italic backcolor | ' +
 								'bullist numlist table | ' +
-								'removeformat link image code',
-							xss_sanitization: true
+								'removeformat link image',
+							xss_sanitization: true,
+							textpattern_patterns: [
+								{ start: '*', end: '*', format: 'italic' },
+								{ start: '**', end: '**', format: 'bold' },
+								{ start: '#', format: 'h1' },
+								{ start: '##', format: 'h2' },
+								{ start: '###', format: 'h3' },
+								{ start: '####', format: 'h4' },
+								{ start: '#####', format: 'h5' },
+								{ start: '######', format: 'h6' },
+								{ start: '1. ', cmd: 'InsertOrderedList' },
+								{ start: '* ', cmd: 'InsertUnorderedList' },
+								{ start: '- ', cmd: 'InsertUnorderedList' },
+								{ start: '//brb', replacement: 'Be Right Back' }
+							]
 						}}
 					/>
 				</div>

@@ -14,10 +14,19 @@ export interface IPostDataContextProviderProps extends PropsWithChildren {
 	initialPostData: IPostData;
 }
 
+export interface ITimelineData {
+    commentsCount: number;
+    index: number;
+    type: string;
+    statuses:any[] | any;
+    hash:any;
+    [index:string]:any
+}
+
 export interface IPostData {
     postIndex: number | string;
     postType: ProposalType;
-    timeline?: any[];
+    timeline?: ITimelineData[];
     title: string;
     cid?:string;
     content: string;

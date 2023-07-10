@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton, Tabs } from 'antd';
+import { Badge, Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
@@ -97,6 +97,7 @@ const Post: FC<IPostProps> = (props) => {
 	const [canEdit, setCanEdit] = useState(false);
 	const { network } = useNetworkContext();
 	const [duration, setDuration] = useState(dayjs.duration(0));
+	const [totalAuditCount, setTotalAuditCount] = useState<number>(0);
 
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
@@ -237,7 +238,7 @@ const Post: FC<IPostProps> = (props) => {
 		setProposerAddress(address);
 	};
 	const getOnChainTabs = () => {
-		const tabs = [
+		const tabs: any[] = [
 			{
 				children: (
 					<PostTimeline />
@@ -249,10 +250,15 @@ const Post: FC<IPostProps> = (props) => {
 		if (['polkadot', 'kusama'].includes(network)){
 			tabs.push({
 				children: (
-					<PostAudit />
+					<PostAudit  setTotalAuditCount={setTotalAuditCount}/>
 				),
 				key: 'audit',
-				label: 'Audit'
+				label:<div className='flex gap-1 items-center'>Audit
+					<Badge
+						className="site-badge-count-109"
+						count={totalAuditCount}
+						style={{ backgroundColor: 'var(--pink_primary)' }}
+					/></div>
 			});
 		}
 

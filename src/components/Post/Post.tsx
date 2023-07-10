@@ -97,6 +97,7 @@ const Post: FC<IPostProps> = (props) => {
 	const [canEdit, setCanEdit] = useState(false);
 	const { network } = useNetworkContext();
 	const [duration, setDuration] = useState(dayjs.duration(0));
+	const [totalAuditCount, setTotalAuditCount] = useState<number>(0);
 
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
@@ -237,7 +238,7 @@ const Post: FC<IPostProps> = (props) => {
 		setProposerAddress(address);
 	};
 	const getOnChainTabs = () => {
-		const tabs = [
+		const tabs: any[] = [
 			{
 				children: (
 					<PostTimeline />
@@ -249,10 +250,11 @@ const Post: FC<IPostProps> = (props) => {
 		if (['polkadot', 'kusama'].includes(network)){
 			tabs.push({
 				children: (
-					<PostAudit />
+					<PostAudit  setTotalAuditCount={setTotalAuditCount}/>
 				),
 				key: 'audit',
-				label: 'Audit'
+				label:<div className='flex gap-2 items-center justify-center'>Audit
+					<span className='bg-pink_primary text-xs font-medium rounded-full px-1.5 text-white'>{totalAuditCount}</span></div>
 			});
 		}
 

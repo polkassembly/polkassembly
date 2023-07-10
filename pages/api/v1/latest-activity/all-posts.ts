@@ -20,6 +20,7 @@ import { ILatestActivityPostsListingResponse } from './on-chain-posts';
 import { firestore_db } from '~src/services/firebaseInit';
 import { chainProperties, network as AllNetworks } from '~src/global/networkConstants';
 import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
+import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 interface IGetLatestActivityAllPostsParams {
 	listingLimit?: string | string[] | number;
 	network: string;
@@ -174,11 +175,22 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				};
 				if (postDoc && postDoc.exists) {
 					const data = postDoc?.data();
+					let subsquareTitle = '';
+					if(data?.title === '' || data?.title === method || data?.title === null){
+						const res = await getSubSquareContentAndTitle(getFirestoreProposalType(type) as ProposalType, network, postId);
+						subsquareTitle = res?.title;
+					}
 					return {
 						...onChainPost,
-						title: data?.title || null
+						title: data?.title || subsquareTitle || null
 					};
 				}
+
+				let subsquareTitle = '';
+				const res = await getSubSquareContentAndTitle(getFirestoreProposalType(type) as ProposalType, network, postId);
+				subsquareTitle = res?.title;
+				onChainPost.title = subsquareTitle;
+
 				return onChainPost;
 			});
 

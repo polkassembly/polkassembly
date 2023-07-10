@@ -65,7 +65,7 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 		index_eq: numPostId,
 		limit: numListingLimit,
 		offset: numListingLimit * (numPage - 1),
-		orderBy: strSortBy === votesSortValues.BALANCE? ['balance_value_DESC', 'id_DESC']: isOpenGov? ['createdAtBlock_DESC', 'id_DESC']:['timestamp_DESC', 'id_DESC'],
+		orderBy: strSortBy === votesSortValues.BALANCE? 'balance_value_DESC': isOpenGov? 'createdAtBlock_DESC':'timestamp_DESC',
 		type_eq: voteType
 	};
 

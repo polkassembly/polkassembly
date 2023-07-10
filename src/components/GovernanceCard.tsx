@@ -91,6 +91,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
 	const requestedAmountFormatted = requestedAmount ? new BigNumber(requestedAmount).div(10 ** tokenDecimals).toFixed(0, BigNumber.ROUND_DOWN) : 0;
+	console.log('requestedAmountFormatted', requestedAmountFormatted);
 	return (
 		<>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 sm:p-3 min-h-[120px] sm:flex xs:hidden`}>
@@ -115,7 +116,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							requestedAmount &&
 							<div className='flex justify-center items-center'>
 								{requestedAmount > 100 ?
-									<span className='text-lightBlue text-sm font-medium sm:mr-[54px]'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue text-sm font-medium sm:mr-12'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 									:
 									<span className='text-lightBlue text-sm font-medium sm:mr-20'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
 								}

@@ -45,11 +45,13 @@ const AddressDropdown = ({
 
 	const dropdownList: {[index: string]: string} = {};
 	const addressItems: ItemType[] = [];
-	const { setUserDetailsContextState, loginAddress } = useUserDetailsContext();
+	const { setUserDetailsContextState, loginAddress, addresses } = useUserDetailsContext();
 	const substrate_address = getSubstrateAddress(loginAddress);
+	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 
 	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
-		const isConnected = getSubstrateAddress(account?.address || '')?.toLowerCase() === (substrate_address || '').toLowerCase();
+		const account_substrate_address = getSubstrateAddress(account?.address || '');
+		const isConnected = account_substrate_address?.toLowerCase() === (substrate_address || '').toLowerCase();
 		if (account?.isCouncil) {
 			if (isConnected) {
 				return EAddressOtherTextType.COUNCIL_CONNECTED;
@@ -57,6 +59,8 @@ const AddressDropdown = ({
 			return EAddressOtherTextType.COUNCIL;
 		} else if (isConnected) {
 			return EAddressOtherTextType.CONNECTED;
+		} else if (substrate_addresses.includes(account_substrate_address)) {
+			return EAddressOtherTextType.LINKED_ADDRESS;
 		}
 	};
 
@@ -72,8 +76,7 @@ const AddressDropdown = ({
 					extensionName={account.name}
 					address={account.address}
 				/>
-			),
-			title: getSubstrateAddress(account.address)?.toLowerCase() === (substrate_address || '').toLowerCase()? 'Logged in address': ''
+			)
 		});
 
 		if (account.address && account.name){

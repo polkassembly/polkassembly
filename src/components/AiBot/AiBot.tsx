@@ -84,7 +84,7 @@ const  AiBot : FC <IAiChatbotProps> = (props) => {
 	const data = network === globalNework.CERE || network === globalNework.KILT || network === globalNework.KUSAMA || network === globalNework.MOONBEAM || network === globalNework.POLKADOT ?
 		[
 			{
-				component: <div className=' ml-[-25px] flex justify-center'><CreateDiscussionIcon className='cursor-pointer' onClick={() => { handleAddDiscussion(); }} /> <p className='text-[#485F7D] ml-4 mt-2 font-medium text-[14px] leading-5 tracking-[1.25%]'>Create Discussion Post</p></div>
+				component: <div className=' ml-[-25px] flex justify-center'><CreateDiscussionIcon  className='cursor-pointer' onClick={() => { handleAddDiscussion(); }} /> <p className='text-[#485F7D] ml-4 mt-2 font-medium text-[14px] leading-5 tracking-[1.25%]'>Create Discussion Post</p></div>
 			},
 			{
 				component: <div className='ml-[-25px] flex justify-center' onClick={() => {

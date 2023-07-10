@@ -253,8 +253,8 @@ const Post: FC<IPostProps> = (props) => {
 					<PostAudit  setTotalAuditCount={setTotalAuditCount}/>
 				),
 				key: 'audit',
-				label:<div className='flex gap-2 items-center'>Audit
-					<span className='bg-pink_primary text-sm font-medium rounded-full px-2 text-white py-0.5'>{totalAuditCount}</span></div>
+				label:<div className='flex gap-2 items-center justify-center'>Audit
+					<span className='bg-pink_primary text-xs font-medium rounded-full px-1.5 text-white'>{totalAuditCount}</span></div>
 			});
 		}
 

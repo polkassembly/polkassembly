@@ -86,7 +86,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string,
 			<Tabs
 				type="card"
 				items={tabItems}
-				className='ant-tabs-tab-bg-white text-bodyBlue text-sm font-medium'
+				className='ant-tabs-tab-bg-white text-bodyBlue text-sm md:px-2 font-medium'
 				onChange={(key) => setCurrentTab(key)}
 			/>
 		</div>

@@ -66,7 +66,7 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 				{currentTab !== 'all' && <Link className='text-bodyBlue font-medium hover:text-pink_primary px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
 			</div>
 			<Tabs
-				className='ant-tabs-tab-bg-white text-bodyBlue text-sm font-medium'
+				className='ant-tabs-tab-bg-white text-bodyBlue text-sm md:px-2 font-medium'
 				type="card"
 				items={tabItems}
 				onChange={(key) => setCurrentTab(key)}

@@ -82,7 +82,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 	});
 
 	return(<>
-		<div className='hidden lg:block'>
+		<div className='hidden md:block'>
 			<PopulatedLatestActivity
 				columns={columns}
 				tableData={tableData}
@@ -98,7 +98,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 			/>
 		</div>
 
-		<div className="block lg:hidden h-[520px] overflow-y-auto px-0">
+		<div className="block md:hidden h-[520px] overflow-y-auto px-0">
 			<PopulatedLatestActivityCard
 				tableData={tableData}
 				onClick={(rowData) => {

@@ -189,15 +189,15 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 						</div>
 					</div>
 
-					<div className='flex-1 flex flex-col justify-between ml-12 py-9'>
+					<div className='flex-1 flex flex-col justify-between ml-12 py-12'>
 						<div className='mb-auto flex items-center'>
 							<div className='mr-auto text-sidebarBlue font-medium'>Aye</div>
-							<div className='text-navBlue'>{ayes}</div>
+							<div className='text-navBlue mr-12'>{ayes}</div>
 						</div>
 
 						<div className='flex items-center'>
 							<div className='mr-auto text-sidebarBlue font-medium'>Nay</div>
-							<div className='text-navBlue'>{nays}</div>
+							<div className='text-navBlue mr-12'>{nays}</div>
 						</div>
 					</div>
 				</div>
@@ -207,27 +207,29 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 				</div>
 				<div>
 					<AyeNayButtons
-						className='mt-9 mb-6 mx-auto'
+						className='mt-9 mb-6 mx-auto max-w-[310px]'
 						size='large'
 						disabled={!id || !!ownVote || !canVote}
 						onClickAye={() => castVote(Vote.AYE)}
 						onClickNay={() => castVote(Vote.NAY)}
+						customWidth='w-[180px]'
 					/>
-					<div className='flex items-center justify-between mt-6'>
-						<div>
-							{ownVote && canVote &&
-							<Button size='middle' className='info text-muted cancelVoteLink' onClick={cancelVote}>
-								Cancel <span className='capitalize'>&nbsp;{ownVote.toLowerCase()}&nbsp;</span> vote
-							</Button>
-							}
-						</div>
+					<div className='flex items-center  justify-items-start mt-6 '>
 						{canVote
-							? <span>Poll ends in <BlockCountdown endBlock={endBlock}/></span>
-							: <span>Poll ended. {canEdit
+							? <span className='mr-5'>Poll ends in <BlockCountdown endBlock={endBlock}/></span>
+							: <span className='mr-5'>Poll ended. {canEdit
 								? <Button className='info' onClick={extendsPoll}>Extend Poll</Button>
 								: ''}
 							</span>
 						}
+
+						<div>
+							{ownVote && canVote &&
+							<Button size='middle' className='info text-muted cancelVoteLink ' onClick={cancelVote}>
+								Cancel <span className='capitalize'>&nbsp;{ownVote.toLowerCase()}&nbsp;</span> vote
+							</Button>
+							}
+						</div>
 					</div>
 				</div>
 			</Spin>

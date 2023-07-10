@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function GroupCheckbox({
-	categoryOptions,
+	categoryOptions = [],
 	title,
 	classname,
 	Icon,

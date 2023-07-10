@@ -39,7 +39,7 @@ export default function Notifications({ network }: { network: string }) {
 
 	const [notificationPreferences, dispatch] = useReducer(
 		reducer,
-		notificationInitialState
+		notificationInitialState(network)
 	);
 	const [selectedNetwork, setSelectedNetwork] = useState<{
 		[index: string]: Array<{ name: string; selected: boolean }>;

@@ -15,6 +15,7 @@ import styled from 'styled-components';
 import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import { useRouter } from 'next/router';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 interface IAiChatbotProps {
     floatButtonOpen: boolean;
 	setFloatButtonOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -29,6 +30,7 @@ const  AiBot : FC <IAiChatbotProps> = (props) => {
 	const [grillChat,setGrillChat] = useState(false);
 	const router=useRouter();
 	const { id } = useContext(UserDetailsContext);
+	const [openModal,setModalOpen]=useState<boolean>(false);
 
 	useEffect(() => {
 		if(!isAIChatBotOpen) return;
@@ -66,23 +68,31 @@ const  AiBot : FC <IAiChatbotProps> = (props) => {
 		};
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+	const handleAddDiscussion=() => {
+		if(id){
+			router.push('/post/create');
+		}else{
+			setModalOpen(true);
+		}
+
+	};
 
 	const data = [
 		{
-			component: <div className='flex justify-center'><CreateDiscussionIcon className='cursor-pointer' onClick={() => { if(id)router.push('/post/create');}} /> <p className='text-[#485F7D] ml-4 mt-2 font-medium text-[14px] leading-5 tracking-[1.25%]'>Create Discussion Post</p></div>
+			component: <div className=' ml-[-25px] flex justify-center'><CreateDiscussionIcon className='cursor-pointer' onClick={() => { handleAddDiscussion();}} /> <p className='text-[#485F7D] ml-4 mt-2 font-medium text-[14px] leading-5 tracking-[1.25%]'>Create Discussion Post</p></div>
 		},
 		{
-			component: <div className='flex justify-center' onClick={() => {
+			component: <div className='ml-[-25px] flex justify-center' onClick={() => {
 				if(!grillChat)
 					(window as any).DocsBotAI.toggle();
 				setIsAIChatBotOpen(!isAIChatBotOpen);
 			}}><AIbotIcon className='cursor-pointer'/> <p className='text-[#485F7D] ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p></div>
 		},
 		{
-			component: <div className='flex justify-center'  onClick={ () => {if(!isAIChatBotOpen) setGrillChat(!grillChat); }}> <GrillChatIcon className='cursor-pointer'/> <p className='text-[#485F7D] ml-4 mt-2  font-medium text-[14px] leading-5 tracking-[1.25%]'>Grill Chat</p> </div>
+			component: <div className='ml-[-25px] flex justify-center'  onClick={ () => {if(!isAIChatBotOpen) setGrillChat(!grillChat); }}> <GrillChatIcon className='cursor-pointer'/> <p className='text-[#485F7D] ml-4 mt-2  font-medium text-[14px] leading-5 tracking-[1.25%]'>Grill Chat</p> </div>
 		},
 		{
-			component: <a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer' className='text-[#485F7D] hover:text-[#485F7D]'>
+			component: <a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer' className='text-[#485F7D] hover:text-[#485F7D] ml-[-25px]'>
 				<div  className='flex justify-center'><CautionIcon className='cursor-pointer' /> <p className='ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p></div>
 			</a>
 		}
@@ -93,7 +103,7 @@ const  AiBot : FC <IAiChatbotProps> = (props) => {
 			<FloatButton.Group
 				trigger="click"
 				type="primary"
-				style={{ bottom:30, right: 30 }}
+				style={{ bottom:30, right: 40 }}
 				icon={<Button type="text" style={{ borderRadius:'50%' ,height:'56px' ,marginLeft:'-8px' ,width:'56px' }} onClick={() => setFloatButtonOpen(!floatButtonOpen)}><FabButton className='mt-1'/></Button>}
 				closeIcon={<Button type="text" style={{ borderRadius:'50%' ,height:'56px', marginLeft:'-8px' ,width:'56px' }} onClick={() => {setFloatButtonOpen(!floatButtonOpen);if((window as any).DocsBotAI.isChatbotOpen){ (window as any).DocsBotAI.close(); setIsAIChatBotOpen(false);} setGrillChat(false) ;}}><CloseWhite className='mt-1' /></Button>}
 				open = { floatButtonOpen }
@@ -104,7 +114,7 @@ const  AiBot : FC <IAiChatbotProps> = (props) => {
 			{ floatButtonOpen &&
 
 				<List
-					style={{ bottom: '85px',position:'fixed' ,right:'35px', zIndex:'999' }}
+					style={{ bottom: '85px',position:'fixed' ,right:'25px', zIndex:'999' }}
 					header={<div className='flex justify-between font-semibold text-[20px] text-[#485F7D] h-[38px]'><p className='mt-2 h-[25px]'>Menu</p> <CloseIcon className='mt-4 cursor-pointer' onClick={() => {setFloatButtonOpen(false); setGrillChat(false);}} /></div>}
 					bordered
 					dataSource={data}
@@ -121,10 +131,11 @@ const  AiBot : FC <IAiChatbotProps> = (props) => {
 			{
 				grillChat && <ChatFloatingModal outerClick={true}/>
 			}
-
+			<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title="Join Polkassembly to Start a New Discussion." subtitle="Discuss, contribute and get regular updates from Polkassembly."/>
 		</>
 	);
 };
+
 export default styled( AiBot)`
 
 
@@ -133,10 +144,17 @@ export default styled( AiBot)`
 	height:56px !important;
 	background: radial-gradient(circle,#E5007A,#BA0566,#9A0856);
 }
+.ant-float-btn-primary {
+    background-color: #9A0856;
+}
 .ant-float-btn .ant-float-btn-body .ant-float-btn-content .ant-float-btn-icon {
 width:55px !important;
 }
-.ant-list{
-	background-color:red !important;
+.ant-list-item{
+	height:65px;
+	border-bottom: 2px dotted #D2D8E0;
+}
+.ant-spin-container{
+	padding: 0px 16px;
 }
 `;

@@ -16,6 +16,9 @@ import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import { useRouter } from 'next/router';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import { useNetworkContext } from '~src/context';
+import { network as globalNework } from '~src/global/networkConstants';
+
 interface IAiChatbotProps {
     floatButtonOpen: boolean;
 	setFloatButtonOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -31,6 +34,7 @@ const  AiBot : FC <IAiChatbotProps> = (props) => {
 	const router=useRouter();
 	const { id } = useContext(UserDetailsContext);
 	const [openModal,setModalOpen]=useState<boolean>(false);
+	const { network } = useNetworkContext();
 
 	useEffect(() => {
 		if(!isAIChatBotOpen) return;
@@ -77,26 +81,45 @@ const  AiBot : FC <IAiChatbotProps> = (props) => {
 
 	};
 
-	const data = [
-		{
-			component: <div className=' ml-[-25px] flex justify-center'><CreateDiscussionIcon className='cursor-pointer' onClick={() => { handleAddDiscussion();}} /> <p className='text-[#485F7D] ml-4 mt-2 font-medium text-[14px] leading-5 tracking-[1.25%]'>Create Discussion Post</p></div>
-		},
-		{
-			component: <div className='ml-[-25px] flex justify-center' onClick={() => {
-				if(!grillChat)
-					(window as any).DocsBotAI.toggle();
-				setIsAIChatBotOpen(!isAIChatBotOpen);
-			}}><AIbotIcon className='cursor-pointer'/> <p className='text-[#485F7D] ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p></div>
-		},
-		{
-			component: <div className='ml-[-25px] flex justify-center'  onClick={ () => {if(!isAIChatBotOpen) setGrillChat(!grillChat); }}> <GrillChatIcon className='cursor-pointer'/> <p className='text-[#485F7D] ml-4 mt-2  font-medium text-[14px] leading-5 tracking-[1.25%]'>Grill Chat</p> </div>
-		},
-		{
-			component: <a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer' className='text-[#485F7D] hover:text-[#485F7D] ml-[-25px]'>
-				<div  className='flex justify-center'><CautionIcon className='cursor-pointer' /> <p className='ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p></div>
-			</a>
-		}
-	];
+	const data = network === globalNework.CERE || network === globalNework.KILT || network === globalNework.KUSAMA || network === globalNework.MOONBEAM || network === globalNework.POLKADOT ?
+		[
+			{
+				component: <div className=' ml-[-25px] flex justify-center'><CreateDiscussionIcon className='cursor-pointer' onClick={() => { handleAddDiscussion(); }} /> <p className='text-[#485F7D] ml-4 mt-2 font-medium text-[14px] leading-5 tracking-[1.25%]'>Create Discussion Post</p></div>
+			},
+			{
+				component: <div className='ml-[-25px] flex justify-center' onClick={() => {
+					if (!grillChat)
+						(window as any).DocsBotAI.toggle();
+					setIsAIChatBotOpen(!isAIChatBotOpen);
+				}}><AIbotIcon className='cursor-pointer' /> <p className='text-[#485F7D] ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p></div>
+			},
+			{
+				component: <div className='ml-[-25px] flex justify-center' onClick={() => { if (!isAIChatBotOpen) setGrillChat(!grillChat); }}> <GrillChatIcon className='cursor-pointer' /> <p className='text-[#485F7D] ml-4 mt-2  font-medium text-[14px] leading-5 tracking-[1.25%]'>Grill Chat</p> </div>
+			},
+			{
+				component: <a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer' className='text-[#485F7D] hover:text-[#485F7D] ml-[-25px]'>
+					<div className='flex justify-center'><CautionIcon className='cursor-pointer' /> <p className='ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p></div>
+				</a>
+			}
+		]
+		:
+		[
+			{
+				component: <div className=' ml-[-25px] flex justify-center'><CreateDiscussionIcon className='cursor-pointer' onClick={() => { handleAddDiscussion(); }} /> <p className='text-[#485F7D] ml-4 mt-2 font-medium text-[14px] leading-5 tracking-[1.25%]'>Create Discussion Post</p></div>
+			},
+			{
+				component: <div className='ml-[-25px] flex justify-center' onClick={() => {
+					if (!grillChat)
+						(window as any).DocsBotAI.toggle();
+					setIsAIChatBotOpen(!isAIChatBotOpen);
+				}}><AIbotIcon className='cursor-pointer' /> <p className='text-[#485F7D] ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p></div>
+			},
+			{
+				component: <a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer' className='text-[#485F7D] hover:text-[#485F7D] ml-[-25px]'>
+					<div className='flex justify-center'><CautionIcon className='cursor-pointer' /> <p className='ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p></div>
+				</a>
+			}
+		];
 
 	return (
 		<>
@@ -118,7 +141,7 @@ const  AiBot : FC <IAiChatbotProps> = (props) => {
 					header={<div className='flex justify-between font-semibold text-[20px] text-[#485F7D] h-[38px]'><p className='mt-2 h-[25px]'>Menu</p> <CloseIcon className='mt-4 cursor-pointer' onClick={() => {setFloatButtonOpen(false); setGrillChat(false);}} /></div>}
 					bordered
 					dataSource={data}
-					className={` ${className} w-[311px] max-h-[384px] bg-white max-[350px]:w-[250px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]`}
+					className={` ${className} w-[311px] max-h-[384px] bg-white max-[350px]:w-[260px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]`}
 					renderItem={(item) => (
 						<List.Item>
 							{item.component}
@@ -129,7 +152,7 @@ const  AiBot : FC <IAiChatbotProps> = (props) => {
 			}
 
 			{
-				grillChat && <ChatFloatingModal outerClick={true}/>
+				grillChat && <ChatFloatingModal />
 			}
 			<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title="Join Polkassembly to Start a New Discussion." subtitle="Discuss, contribute and get regular updates from Polkassembly."/>
 		</>

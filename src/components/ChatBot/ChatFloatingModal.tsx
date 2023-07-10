@@ -77,13 +77,9 @@ const Container = styled.div`
 }
 `;
 
-export default function ChatFloatingModal(props:any) {
+export default function ChatFloatingModal() {
 	const [isOpen, setIsOpen] = useState(true);
-	const disabled  = props.disabled;
 	const toggleChat = () => {
-		if (disabled){
-			return;
-		}
 		setIsOpen((prev:boolean) => !prev);
 	};
 	const grillData: { [index: string]: string[] } = {

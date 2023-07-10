@@ -4,7 +4,7 @@
 
 import { Form } from 'antd';
 import React, { useState } from 'react';
-import TextEditor from '~src/ui-components/TextEditor';
+import MarkdownEditor from 'src/ui-components/MarkdownEditor';
 
 interface Props {
 	className?: string
@@ -54,11 +54,11 @@ const ContentForm = ({ className, height, onChange, value }: Props): JSX.Element
 	return (
 		<div className={className}>
 			<Form.Item valuePropName='value' getValueFromEvent={onChangeWrapper} name='content' validateStatus={validationStatus.validateStatus} help={validationStatus.errorMsg}>
-				<TextEditor
-					name='content'
-					value={value}
+				<MarkdownEditor
 					height={height}
+					name='content'
 					onChange={onChangeWrapper}
+					value={value || ''}
 				/>
 			</Form.Item>
 		</div>

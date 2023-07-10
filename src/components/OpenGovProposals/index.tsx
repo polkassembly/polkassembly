@@ -15,6 +15,7 @@ import CreateProposal from './CreateProposal';
 import WalletConnectModal from '~src/ui-components/WalletConnectModal';
 import { HexString } from '@polkadot/util/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
+import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
 // import { BN_HUNDRED } from '@polkadot/util';
 
 interface Props{
@@ -72,6 +73,7 @@ const OpenGovProposals = ({ className }: Props) => {
 	const [writeProposalForm] = Form.useForm();
 	const [createPreimageForm] = Form.useForm();
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
+	const [openSuccess, setOpenSuccess] = useState<boolean>(true);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -125,6 +127,17 @@ const OpenGovProposals = ({ className }: Props) => {
 				</div>
 			</div>
 		</Modal>
+		<TreasuryProposalSuccessPopup
+			open={false}
+			setOpen={setOpenSuccess}
+			selectedTrack={selectedTrack}
+			proposerAddress={proposerAddress}
+			beneficiaryAddress={beneficiaryAddress}
+			fundingAmount={fundingAmount}
+			preimageHash={preimageHash}
+			preimageLength={preimageLength}
+		/>
+
 		<Modal
 			open={openModal}
 			maskClosable={false}
@@ -156,7 +169,7 @@ const OpenGovProposals = ({ className }: Props) => {
 				/>
 				{steps?.step === 0 && <WriteProposal form={writeProposalForm} setSteps={setSteps} title={title} content={content} tags={tags} isDiscussionLinked={isDiscussionLinked} setIsDiscussionLinked={setIsDiscussionLinked} discussionLink={discussionLink} setDiscussionLink={setDiscussionLink} setTags={setTags} setContent={setContent} setTitle={setTitle}  />}
 				{steps?.step === 1 && <CreatePreimage preimageLength={preimageLength} setPreimageLength={setPreimageLength} preimage={preimage} form={createPreimageForm} setPreimage={setPreimage} setSteps={setSteps} setIsPreimage={setIsPreimage} isPreimage={isPreimage} preimageHash={preimageHash} setPreimageHash={setPreimageHash} proposerAddress= {proposerAddress} beneficiaryAddress={beneficiaryAddress} setBeneficiaryAddress={setBeneficiaryAddress} fundingAmount={fundingAmount} setFundingAmount={setFundingAmount} selectedTrack={selectedTrack} setSelectedTrack={setSelectedTrack} enactment={enactment} setEnactment={setEnactment}/>}
-				{(steps.step === 2) && <CreateProposal beneficiaryAddress={beneficiaryAddress} enactment={enactment} preimage={preimage} setSteps={setSteps} isPreimage={Boolean(isPreimage)} proposerAddress={proposerAddress} fundingAmount={fundingAmount} selectedTrack={selectedTrack} preimageHash={preimageHash} preimageLength={preimageLength} />}
+				{(steps.step === 2) && <CreateProposal setOpenSuccess={setOpenSuccess} setOpenModal={setOpenModal} beneficiaryAddress={beneficiaryAddress} enactment={enactment} isPreimage={Boolean(isPreimage)} proposerAddress={proposerAddress} fundingAmount={fundingAmount} selectedTrack={selectedTrack} preimageHash={preimageHash} preimageLength={preimageLength} />}
 			</div>
 		</Modal>
 	</div>;

@@ -101,7 +101,7 @@ const PostAudit = ({ setTotalAuditCount }: Props) => {
 			if (response.ok) {
 				const data = await response.json();
 				setAuditData(data);
-				setTotalAuditCount(data.length);
+				setTotalAuditCount(data.length || 0);
 			} else {
 				throw new Error('Request failed');
 			}

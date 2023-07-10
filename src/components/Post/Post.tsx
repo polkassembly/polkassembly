@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Badge, Skeleton, Tabs } from 'antd';
+import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
@@ -253,12 +253,8 @@ const Post: FC<IPostProps> = (props) => {
 					<PostAudit  setTotalAuditCount={setTotalAuditCount}/>
 				),
 				key: 'audit',
-				label:<div className='flex gap-1 items-center'>Audit
-					<Badge
-						className="site-badge-count-109"
-						count={totalAuditCount}
-						style={{ backgroundColor: 'var(--pink_primary)' }}
-					/></div>
+				label:<div className='flex gap-2 items-center'>Audit
+					<span className='bg-pink_primary text-sm font-medium rounded-full px-2 text-white py-0.5'>{totalAuditCount}</span></div>
 			});
 		}
 

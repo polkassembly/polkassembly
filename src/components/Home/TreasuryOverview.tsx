@@ -345,7 +345,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	}, [currentTokenPrice, network]);
 
 	return (
-		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col xs:gap-6 sm:gap-8 xl:flex`}>
+		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col xs:gap-6 sm:gap-8 xl:gap-4 xl:flex`}>
 			{/* Available */}
 			<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 				<div className='lg:flex flex-col flex-1 gap-x-0 w-full'>

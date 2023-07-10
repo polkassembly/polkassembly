@@ -12,7 +12,6 @@ import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
-import ContentForm from '../ContentForm';
 
 interface Props{
   isDiscussionLinked: boolean | null;
@@ -44,7 +43,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 	};
 
 	const handleStateChange = (writeProposalFormData: any) => {
-    console.log(writeProposalFormData?.content);
+		console.log(writeProposalFormData?.content);
 		writeProposalFormData?.discussionLink && setSteps({ percent: 66.6, step:0 });
 		(writeProposalFormData.title && writeProposalFormData.content) && setSteps({ percent: 100, step: 0 });
 		setDiscussionLink(writeProposalFormData?.discussionLink || '') ;
@@ -151,8 +150,8 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 			<Form
 				onFinish={handleSubmit}
 				form={form}
-				// disabled={loading}
-				initialValues={{ discussion_link: discussionLink, tags }}
+				disabled={loading}
+				initialValues={{ content, discussion_link: discussionLink, tags, title }}
 				validateMessages= {
 					{ required: "Please add the '${name}'" }
 				}>
@@ -196,11 +195,10 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 						</Form.Item>
 					</div>
 					<div className='mt-6'>
-						<label className='mb-0.5' >Description <span className='text-nay_red'>*</span></label>
-            <ContentForm onChange={(content: string) => {setContent(content); onChangeLocalStorageSet({ content: content }, isDiscussionLinked); title.length === 0 ? setSteps({ percent: 83.33, step: 0 }): setSteps({ percent: 100, step: 0 });}}/>
-						{/* <Form.Item name='content' rules={[{ required: true }]}>
-							<MarkdownEditor disabled={isDiscussionLinked} name='content' value={content}   />
-						</Form.Item> */}
+						<label className='mb-0.5'>Description <span className='text-nay_red'>*</span></label>
+						<Form.Item name='content' rules={[{ required: true }]}>
+							<MarkdownEditor disabled={isDiscussionLinked} name='content' value={content} onChange={(content: string) => {setContent(content); onChangeLocalStorageSet({ content: content }, isDiscussionLinked); title.length === 0 ? setSteps({ percent: 83.33, step: 0 }): setSteps({ percent: 100, step: 0 });}}  />
+						</Form.Item>
 					</div>
 				</div>}
 				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4'>

@@ -16,6 +16,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import RedirectIcon from '~assets/icons/redirect.svg';
+import styled from 'styled-components';
 
 interface Props{
   className?: string;
@@ -27,9 +28,10 @@ interface Props{
   preimageHash: string;
   preimageLength: number;
   beneficiaryAddress: string;
+  postId: number;
 }
 
-const TreasuryProposalSuccessPopup= ({ className, open, setOpen, fundingAmount, preimageHash, proposerAddress, beneficiaryAddress, preimageLength, selectedTrack }: Props) => {
+const TreasuryProposalSuccessPopup= ({ className, open, setOpen, fundingAmount, preimageHash, proposerAddress, beneficiaryAddress, preimageLength, selectedTrack, postId }: Props) => {
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -61,7 +63,6 @@ const TreasuryProposalSuccessPopup= ({ className, open, setOpen, fundingAmount, 
 		wrapClassName={className}
 		closeIcon={<CloseIcon/>}
 		onCancel={() => setOpen(false)}
-		centered
 		footer={<div className='flex items-center'><Button className='w-full bg-pink_primary text-white text-sm font-medium h-[40px] rounded-[4px]'>View Proposal</Button></div>}
 		maskClosable={false}
 	>
@@ -82,18 +83,28 @@ const TreasuryProposalSuccessPopup= ({ className, open, setOpen, fundingAmount, 
 					</span>
 					<span className='flex gap-1'><span className='w-[150px]'>Preimage Length:</span><span className='text-bodyBlue font-medium'>{preimageLength}</span></span>
 					<span className='flex gap-1 items-center'><span className='w-[150px]'>Link to proposal:</span>
-						<a target='_blank' rel='noreferrer' href={`https://${network}.polkassembly.io/preimages/${preimageHash}`} className='text-pink_primary font-medium'>{`https://${network}.polkassembly.io/post/`}</a>
-						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/preimages/${preimageHash}`) ;success('Preimage link copied to clipboard.');}}>
+						<a href={`https://${network}.polkassembly.io/referenda/${postId}`} className='text-pink_primary font-medium'>{`https://${network}.polkassembly.io/referenda/${postId}`}</a>
+						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/referenda/${postId}`) ;success('Preimage link copied to clipboard.');}}>
 							{contextHolder}
 							<RedirectIcon/>
 						</span>
 					</span>
 				</div>
-				<Alert showIcon type='warning' className='rounded-[4px]' message={'Place a decision deposit in X days to prevent your proposal from being timed out.'} />
 			</div>
+			<Alert showIcon type='warning' className='rounded-[4px] mb-6 text-sm w-full' message={<span className='text-xs font-medium text-bodyBlue'>Place a decision deposit in X days to prevent your proposal from being timed out.</span>} description={<span className='text-xs text-pink_primary font-medium'>Pay Decision Deposit</span>} />
 		</div>
 
 	</Modal>;
 };
 
-export default TreasuryProposalSuccessPopup;
+export default styled(TreasuryProposalSuccessPopup)`
+.ant-alert-with-description{
+padding-block: 15px !important;
+}
+.ant-alert-with-description .ant-alert-description{
+  margin-top:-10px ;
+}
+.ant-alert-with-description .ant-alert-icon{
+  font-size: 18px !important;
+  margin-top: 4px;
+}`;

@@ -7,7 +7,7 @@ import { EEnactment, IEnactment } from '.';
 import BN from 'bn.js';
 import Address from '~src/ui-components/Address';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { useApiContext, useNetworkContext } from '~src/context';
+import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import { BN_HUNDRED, formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '../DelegationDashboard/ProfileBalance';
@@ -20,6 +20,8 @@ import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { CreatePostResponseType } from '~src/auth/types';
 
 const ZERO_BN = new BN(0);
 
@@ -35,9 +37,14 @@ interface Props{
   beneficiaryAddress: string;
   setOpenModal: (pre: boolean) => void;
   setOpenSuccess: (pre: boolean) => void;
+  title: string;
+  content: string;
+  tags: string[];
+  postId: number;
+  setPostId: (pre: number) => void;
 }
 
-const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess }: Props) => {
+const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess,title, content, tags, postId, setPostId }: Props) => {
 	const { network } = useNetworkContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -46,6 +53,8 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	const [submitionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
+	const { id: userId } = useUserDetailsContext();
+	console.log(userId);
 
 	const success = (message: string) => {
 		messageApi.open({
@@ -94,7 +103,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
 
-	const handleCreateProposal = async() => {
+	const handleSubmitTreasuryProposal = async() => {
 		if(!api || !apiReady) return;
 		const origin: any = { Origins: selectedTrack };
 		const proposerWallet = localStorage.getItem('treasuryProposalProposerWallet') || '';
@@ -133,7 +142,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 		try {
 			setLoading(true);
 			const proposal = api.tx.referenda.submit(origin ,{ Lookup: { hash: preimageHash, length:preimageLength } }, enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value }: { After: enactment.value }): { After: BN_HUNDRED });
-			proposal.signAndSend(proposerAddress, ({ status, events }: any) => {
+			proposal.signAndSend(proposerAddress, async ({ status, events }: any) => {
 				if (status.isFinalized) {
 					for (const { event } of events) {
 						if (event.method === 'ExtrinsicSuccess') {
@@ -143,9 +152,13 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 								message: `Preimage #${proposal.hash} successful.`,
 								status: NotificationStatus.SUCCESS
 							});
+							await handleSaveTreasuryProposal();
 							setLoading(false);
 							setOpenSuccess(true);
 							setOpenModal(false);
+
+							const post_id = Number(api.query.referenda.referendumCount()) - 1;
+							setPostId(post_id);
 
 							console.log(`Completed at block hash #${status.asInBlock.toString()}`);
 
@@ -186,6 +199,29 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			});
 		}
 	};
+	const handleSaveTreasuryProposal = async() => {
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/action/createOpengovTreasuryProposal',{
+			content,
+			postId,
+			proposerAddress,
+			tags,
+			title,
+			userId
+		});
+
+		if(data && data?.post_id){
+			setPostId(data?.post_id);
+		}
+		else if(apiError || !data?.post_id) {
+			queueNotification({
+				header: 'Error',
+				message: 'There was an error creating your treasury post.',
+				status: NotificationStatus.ERROR
+			});
+			console.error(apiError);
+		}
+
+	};
 
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
 		<div className={`create-proposal ${className}`}>
@@ -220,7 +256,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					<span className='flex gap-3 text-sm text-lightBlue font-semibold'><span className='w-[150px]'>Total</span><span className='text-bodyBlue'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span></span>
 				</div>}/>}
 			<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
-				<Button onClick={() => handleCreateProposal() } className='bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px]'>
+				<Button onClick={() => handleSubmitTreasuryProposal() } className='bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px]'>
          Create Proposal
 				</Button>
 			</div>
@@ -230,4 +266,8 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 export default styled(CreateProposal)`
 .ant-alert-with-description{
 padding-block: 15px !important;
+}
+.ant-alert-with-description .ant-alert-icon{
+  font-size: 18px !important;
+  margin-top: 4px;
 }`;

@@ -73,7 +73,8 @@ const OpenGovProposals = ({ className }: Props) => {
 	const [writeProposalForm] = Form.useForm();
 	const [createPreimageForm] = Form.useForm();
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
-	const [openSuccess, setOpenSuccess] = useState<boolean>(true);
+	const [openSuccess, setOpenSuccess] = useState<boolean>(false);
+	const [postId, setPostId] = useState<number>(0);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -128,7 +129,7 @@ const OpenGovProposals = ({ className }: Props) => {
 			</div>
 		</Modal>
 		<TreasuryProposalSuccessPopup
-			open={false}
+			open={openSuccess}
 			setOpen={setOpenSuccess}
 			selectedTrack={selectedTrack}
 			proposerAddress={proposerAddress}
@@ -136,6 +137,7 @@ const OpenGovProposals = ({ className }: Props) => {
 			fundingAmount={fundingAmount}
 			preimageHash={preimageHash}
 			preimageLength={preimageLength}
+			postId={postId}
 		/>
 
 		<Modal
@@ -167,9 +169,58 @@ const OpenGovProposals = ({ className }: Props) => {
 						title: ESteps.Create_Proposal
 					}]}
 				/>
-				{steps?.step === 0 && <WriteProposal form={writeProposalForm} setSteps={setSteps} title={title} content={content} tags={tags} isDiscussionLinked={isDiscussionLinked} setIsDiscussionLinked={setIsDiscussionLinked} discussionLink={discussionLink} setDiscussionLink={setDiscussionLink} setTags={setTags} setContent={setContent} setTitle={setTitle}  />}
-				{steps?.step === 1 && <CreatePreimage preimageLength={preimageLength} setPreimageLength={setPreimageLength} preimage={preimage} form={createPreimageForm} setPreimage={setPreimage} setSteps={setSteps} setIsPreimage={setIsPreimage} isPreimage={isPreimage} preimageHash={preimageHash} setPreimageHash={setPreimageHash} proposerAddress= {proposerAddress} beneficiaryAddress={beneficiaryAddress} setBeneficiaryAddress={setBeneficiaryAddress} fundingAmount={fundingAmount} setFundingAmount={setFundingAmount} selectedTrack={selectedTrack} setSelectedTrack={setSelectedTrack} enactment={enactment} setEnactment={setEnactment}/>}
-				{(steps.step === 2) && <CreateProposal setOpenSuccess={setOpenSuccess} setOpenModal={setOpenModal} beneficiaryAddress={beneficiaryAddress} enactment={enactment} isPreimage={Boolean(isPreimage)} proposerAddress={proposerAddress} fundingAmount={fundingAmount} selectedTrack={selectedTrack} preimageHash={preimageHash} preimageLength={preimageLength} />}
+				{steps?.step === 0 && <WriteProposal
+					form={writeProposalForm}
+					setSteps={setSteps} title={title}
+					content={content}
+					tags={tags}
+					isDiscussionLinked={isDiscussionLinked}
+					setIsDiscussionLinked={setIsDiscussionLinked}
+					discussionLink={discussionLink}
+					setDiscussionLink={setDiscussionLink}
+					setTags={setTags}
+					setContent={setContent}
+					setTitle={setTitle}
+				/>}
+
+				{steps?.step === 1 && <CreatePreimage
+					preimageLength={preimageLength}
+					setPreimageLength={setPreimageLength}
+					preimage={preimage}
+					form={createPreimageForm}
+					setPreimage={setPreimage}
+					setSteps={setSteps}
+					setIsPreimage={setIsPreimage}
+					isPreimage={isPreimage}
+					preimageHash={preimageHash}
+					setPreimageHash={setPreimageHash}
+					proposerAddress={proposerAddress}
+					beneficiaryAddress={beneficiaryAddress}
+					setBeneficiaryAddress={setBeneficiaryAddress}
+					fundingAmount={fundingAmount}
+					setFundingAmount={setFundingAmount}
+					selectedTrack={selectedTrack}
+					setSelectedTrack={setSelectedTrack}
+					enactment={enactment}
+					setEnactment={setEnactment}
+				/>}
+
+				{(steps.step === 2) && <CreateProposal
+					title={title}
+					content={content}
+					tags={tags}
+					postId={postId}
+					setPostId={setPostId}
+					setOpenSuccess={setOpenSuccess}
+					setOpenModal={setOpenModal}
+					beneficiaryAddress={beneficiaryAddress}
+					enactment={enactment}
+					isPreimage={Boolean(isPreimage)}
+					proposerAddress={proposerAddress}
+					fundingAmount={fundingAmount}
+					selectedTrack={selectedTrack}
+					preimageHash={preimageHash}
+					preimageLength={preimageLength} />}
 			</div>
 		</Modal>
 	</div>;

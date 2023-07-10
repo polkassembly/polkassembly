@@ -78,6 +78,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const [preimageCreated, setPreimageCreated] = useState<boolean>(false);
+	const [preimageLinked, setPreimageLinked] = useState<boolean>(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(false);
@@ -99,6 +100,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const trackArr: string[] = [];
 	const maxSpendArr: {track: string, maxSpend: number}[] = [];
 
+	console.log(preimageCreated, preimageLinked);
 	if(network){
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
 			if(value.group === 'Treasury'){
@@ -143,12 +145,13 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-		data.preimageCreated && setPreimageCreated(true);
 		GetCurrentTokenPrice(network, setCurrentTokenPrice);
+		data.preimageCreated && setPreimageCreated(data.preimageCreated);
+		data.preimageLinked && setPreimageLinked(data.preimageLinked);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
-	const onChangeLocalStorageSet = (obj: any, isPreimage: boolean, isPreimageStateChange?: boolean, createdPreimage?: boolean) => {
+	const onChangeLocalStorageSet = (obj: any, isPreimage: boolean, preimageCreated?: boolean, preimageLinked?: boolean, isPreimageStateChange?: boolean) => {
 		let data: any = localStorage.getItem('treasuryProposalData');
 		if(data){data = JSON.parse(data);}
 
@@ -161,14 +164,17 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				...createPreimageFormData,
 				[createPreimageFormKey]: { ...createPreimageKeysData, ...obj }
 			},
-			createdPreimage: Boolean(createdPreimage),
 			isPreimage: isPreimage,
+			preimageCreated: Boolean(preimageCreated),
+			preimageLinked: Boolean(preimageLinked),
 			step: 0
 		}));
 
 		if(isPreimageStateChange) {
 			handleStateChange(createPreimageKeysData || {});
 			setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
+			data.preimageCreated && setPreimageCreated(data.preimageCreated);
+			data.preimageLinked && setPreimageLinked(data.preimageLinked);
 		}
 
 	};
@@ -274,7 +280,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 							setPreimageHash(preimageHash);
 							setPreimageLength(preimageLength);
 							setPreimageCreated(true);
-							onChangeLocalStorageSet({ createdPreimage: true }, Boolean(isPreimage), false, true);
+							onChangeLocalStorageSet({ preimageCreated: true }, Boolean(isPreimage), true);
 							onChangeLocalStorageSet({ preimageHash: preimage.preimageHash }, Boolean(isPreimage));
 							onChangeLocalStorageSet({ preimageLength: preimage.preimageLength }, Boolean(isPreimage));
 							console.log(`Completed at block hash #${status.asInBlock.toString()}`);
@@ -325,7 +331,9 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 		if(!isPreimage){if(txFee.gte(availableBalance)) return;}
 		await form.validateFields();
-		if(preimageCreated) {
+		isPreimage && onChangeLocalStorageSet({ preimageLinked: true }, Boolean(isPreimage), preimageCreated, true);
+
+		if(!(isPreimage) ? preimageCreated : preimageLinked) {
 			setSteps({ percent: 100, step: 2 });
 		}
 		else{
@@ -454,6 +462,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		existPreimageData(preimageHash);
 		setPreimageHash(preimageHash);
 		onChangeLocalStorageSet({ preimageHash: preimageHash }, Boolean(isPreimage));
+		setPreimageCreated(false);
+		setPreimageLinked(false);
 	};
 
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
@@ -474,11 +484,15 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		}catch(error){
 			console.log(error);
 		}
+		setPreimageCreated(false);
+		setPreimageLinked(false);
 
 	};
 
 	const handleBeneficiaryAddresschange = (address: string) => {
 		setBeneficiaryAddress(address);
+		setPreimageCreated(false);
+		setPreimageLinked(false);
 		!isPreimage && onChangeLocalStorageSet({ beneficiaryAddress: beneficiaryAddress }, Boolean(isPreimage));
 		(fundingAmount.gt(ZERO_BN) && address.length > 0 )? setSteps({ percent: 100, step: 1 }) : setSteps({ percent: 60, step: 1 });
 		address && (getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
@@ -500,6 +514,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const handleFundingAmountChange = (fundingAmount : BN) => {
 
 		setFundingAmount(fundingAmount);
+		setPreimageCreated(false);
+		setPreimageLinked(false);
 		(beneficiaryAddress.length > 0 && fundingAmount.gt(ZERO_BN)) ? setSteps({ percent: 100, step: 1 }) : setSteps({ percent: 60, step: 1 }) ;
 
 		if(!isAutoSelectTrack || !fundingAmount || fundingAmount.eq(ZERO_BN)) return;
@@ -517,7 +533,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		<div className={className}>
 			<div className='my-8 flex flex-col'>
 				<label className='text-lightBlue text-sm'>Do you have an existing preimage? </label>
-				<Radio.Group onChange={(e) => {setIsPreimage(e.target.value); onChangeLocalStorageSet({ isPreimage: e.target.value }, e.target.value, true);setSteps({ percent: 20, step: 1 });}} size='small' className='mt-1.5' value={isPreimage}>
+				<Radio.Group onChange={(e) => {setIsPreimage(e.target.value); onChangeLocalStorageSet({ isPreimage: e.target.value }, e.target.value, preimageCreated, preimageLinked, true);setSteps({ percent: 20, step: 1 });}} size='small' className='mt-1.5' value={isPreimage}>
 					<Radio value={true} className='text-bodyBlue text-sm font-normal'>Yes</Radio>
 					<Radio value={false} className='text-bodyBlue text-sm font-normal'>No</Radio>
 				</Radio.Group>
@@ -650,7 +666,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					<Button htmlType='submit'
 						className={`bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px] ${((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack) : !(preimageHash )) && 'opacity-50' }`}
 						disabled={isPreimage ? (!preimageHash && !beneficiaryAddress && fundingAmount.gt(ZERO_BN) && selectedTrack.length === 0 && preimageLength <= 0)  : !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack)}>
-						{isPreimage ? 'Link Preimage' : 'Create Preimage'}
+						{isPreimage ? (preimageLinked ? 'Next' :  'Link Preimage') : (preimageCreated ? 'Next' : 'Create Preimage')}
 					</Button>
 				</div>
 			</Form>

@@ -47,7 +47,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
 	const { postData: { postIndex, postType } } = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
-
 	useEffect(() => {
 		if (typeof window == 'undefined') return;
 		const hashArr = asPath.split('#');
@@ -73,7 +72,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 			{/* Offset div to scroll to because scrollIntoView doesn't support offset */}
 			<div id={id} ref={commentScrollRef} className="invisible absolute mt-[-100px]"></div>
 			<UserAvatar
-				className='mt-1 hidden md:inline-block flex-none'
+				className={'mt-1 hidden md:inline-block flex-none'}
 				username={comment.username}
 				size='large'
 				id={user_id}

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useContext, useEffect, useState } from 'react';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from '@ant-design/icons';
 import { Alert, Button, Checkbox, Form, Modal, Popover, Slider, Spin } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -22,7 +22,7 @@ import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useUserDetailsContext } from '~src/context';
 
-import DelegateProfileIcon from '~assets/icons/delegate-popup-profile.svg';
+import DelegateProfileIcon from '~assets/icons/delegation-listing.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
@@ -304,8 +304,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 
 	return (
 		<>
-			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm text-pink_primary hover:bg-pink_primary hover:text-white flex gap-0 items-center justify-center py-3 px-6 rounded-[4px]'>
-				<PlusOutlined/>
+			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm bg-pink_primary flex gap-0 items-center justify-center p-5 rounded-md text-white'>
+				<DelegateProfileIcon className='mr-2'/>
 				<span >Delegate</span>
 			</Button>}
 

@@ -80,13 +80,13 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string,
 	return (
 		<div className={`${className} bg-white drop-shadow-md p-0 lg:p-6 rounded-xxl`}>
 			<div className="flex justify-between items-center pr-4 pl-1">
-				<h2 className='text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 lg:mt-0 mx-2 lg:mx-0'>Latest Activity</h2>
+				<h2 className='text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 lg:mt-0 mx-3.5 lg:mx-0'>Latest Activity</h2>
 				{currentTab !== 'all' && <Link className='text-bodyBlue font-medium hover:text-pink_primary px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
 			</div>
 			<Tabs
 				type="card"
 				items={tabItems}
-				className='ant-tabs-tab-bg-white text-bodyBlue text-sm font-medium'
+				className='ant-tabs-tab-bg-white text-bodyBlue text-sm md:px-2 font-medium'
 				onChange={(key) => setCurrentTab(key)}
 			/>
 		</div>

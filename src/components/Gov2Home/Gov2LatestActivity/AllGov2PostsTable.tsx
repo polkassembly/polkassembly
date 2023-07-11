@@ -139,14 +139,14 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 
 		return (
 			<>
-				<div className='hidden lg:block'>
+				<div className='hidden md:block p-0'>
 					<PopulatedLatestActivity columns={columns} tableData={tableData}
 						// modify the tableData to add the onClick event
 						onClick={(rowData) => gotoPost(rowData)}
 					/>
 				</div>
 
-				<div className="block lg:hidden h-[520px] overflow-y-auto px-0">
+				<div className="block md:hidden h-[520px] overflow-y-auto px-0">
 					<Gov2PopulatedLatestActivityCard tableData={tableData}
 						onClick={(rowData) => gotoPost(rowData)}
 					/>

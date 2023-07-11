@@ -109,8 +109,8 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 										/>
 								}
 							</span>
-							<Divider type="vertical" className='mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
-							<span className='text-lightBlue mx-1.5'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
+							<Divider type="vertical" className='mt-1 font-normal text-xs' style={{ borderLeft: '1px solid #485F7D' }} />
+							<span className='text-lightBlue mx-1.5 font-normal text-xs'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
 						</div>
 						{
 							rowData.status !== '-' &&
@@ -154,8 +154,8 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 										/>
 								}
 							</span>
-							<Divider type="vertical" className='mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
-							<span className='text-lightBlue mx-1.5'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
+							<Divider type="vertical" className='mt-1 font-normal text-xs' style={{ borderLeft: '1px solid #485F7D' }} />
+							<span className='text-lightBlue mx-1.5 font-normal text-xs'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
 						</div>
 						{
 							rowData.status !== '-' &&

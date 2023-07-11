@@ -111,12 +111,11 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						</h4>
 					</Tooltip>
 				</div>
-				<h2 className="text-sm text-pink_primary">{trackMetaData?.group}</h2>
 			</div>
 
 			<p className="mt-0 font-normal text-base leading-6 text-bodyBlue">{trackMetaData?.description}</p>
 
-			<div className="mt-8 text-xs w-full flex flex-wrap lg:gap-x-24">
+			<div className="mt-8 text-xs w-full flex flex-wrap lg:gap-x-28">
 				<div className="w-full sm:w-1/2 md:w-1/3 lg:w-auto">
 					<div className="flex flex-col">
 						<div className="font-medium text-sm text-lightBlue whitespace-pre">Max Deciding</div>

@@ -71,7 +71,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								updated_at={last_edited_at}
 								isHistory={history && history?.length > 0}
 							/></div>
-						<PostSummary className='ml-3' content={content} />
+						<PostSummary />
 					</CreationLabel>
 				</>
 			</div>

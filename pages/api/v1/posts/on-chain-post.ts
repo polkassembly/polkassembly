@@ -220,6 +220,9 @@ const getAndSetNewData = async (params: IParams) => {
 							if (data.post_link && !newData.post_link) {
 								newData.post_link = data.post_link;
 							}
+							if (data.summary && !newData.summary) {
+								newData.summary = data.summary;
+							}
 							if(data.tags && Array.isArray(data.tags)){
 								newData.tags = data?.tags;
 							}
@@ -858,6 +861,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}
 			// Populate firestore post data into the post object
 			if (data && post) {
+				post.summary = data.summary;
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
 				post.content = data.content;
 				if (!post.proposer) {

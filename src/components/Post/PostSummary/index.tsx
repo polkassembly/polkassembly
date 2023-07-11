@@ -2,23 +2,38 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { LoadingOutlined } from '@ant-design/icons';
-import { Modal, Spin } from 'antd';
+import { Divider, Modal, Spin } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
+import classNames from 'classnames';
+import Markdown from '~src/ui-components/Markdown';
+import styled from 'styled-components';
+import { SummaryModalClose } from '~src/ui-components/CustomIcons';
+import { usePostDataContext } from '~src/context';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface IPostSummaryProps {
     className?: string;
-    content?: string;
 }
 
+const sanitizeSummary = (md: string) => {
+	let newMd = (md || '').trim();
+	if (newMd.startsWith('-')) {
+		newMd = newMd.substring(1);
+	} else if (newMd.startsWith(':')) {
+		newMd = newMd.substring(1);
+	}
+	return newMd;
+};
+
 const PostSummary: FC<IPostSummaryProps> = (props) => {
-	const { className, content } = props;
+	const { className } = props;
+	const { postData: { content, postIndex, postType, summary }, setPostData } = usePostDataContext();
 	const [open, setOpen] = useState(false);
-	const [summary, setSummary] = useState('');
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		(async () => {
-			if (content) {
+			if (content && !summary && open) {
 				setLoading(true);
 				try {
 					const res = await fetch('https://api.openai.com/v1/completions', {
@@ -39,7 +54,17 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 					});
 					const data = await res.json();
 					if (data && data.choices && Array.isArray(data.choices) && data.choices.length > 0) {
-						setSummary(data.choices[0]?.text);
+						const summary = data.choices[0]?.text;
+						setPostData((prev) => ({
+							...prev,
+							summary: summary
+						}));
+
+						await nextApiClientFetch('api/v1/posts/post-summary', {
+							postId: postIndex,
+							postType: postType,
+							summary: summary
+						});
 					}
 					setLoading(false);
 				} catch (error) {
@@ -48,33 +73,63 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				}
 			}
 		})();
-	}, [content]);
-
+	}, [summary, content, setPostData, postIndex, postType, open]);
 	return (
-		<section className={className}>
+		<section className={classNames(className, 'flex items-center')}>
+			<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 			<button
 				onClick={() => setOpen(true)}
-				className='border-none outline-none flex items-center justify-center cursor-pointer text-pink_primary bg-transparent font-medium underline underline-offset-2'
+				className='border-none outline-none flex items-center justify-center cursor-pointer text-pink_primary bg-transparent text-xs leading-[18px] font-medium'
 			>
-                Summarize
+                View Summary
 			</button>
 			<Modal
+				className={className}
 				open={open}
-				onCancel={() => setOpen(false)}
-				title='Post Summary'
-				footer={false}
+				closable={false}
+				title={<div className='p-5 md:p-6 m-0 flex items-center justify-between rounded-[14px]'>
+					<h3 className='font-semibold text-xl leading-[24px] text-bodyBlue m-0 p-0'>View Summary</h3>
+					<button onClick={() => setOpen(false)} className='cursor-pointer border-none outline-none bg-transparent flex items-center justify-center'>
+						<SummaryModalClose className='text-sm text-lightBlue' />
+					</button>
+				</div>}
+				footer={
+					<div className='w-full px-5 py-3 md:px-6 md:py-4 rounded-[14px]'>
+						<button onClick={() => setOpen(false)} className='border-none outline-none py-1 px-4 rounded-[4px] bg-pink_primary text-white w-full min-h-[40px] font-medium text-sm leading-[21px] cursor-pointer'>
+							Back To Proposal
+						</button>
+					</div>
+				}
 			>
 				<Spin
 					spinning={loading}
 					indicator={<LoadingOutlined />}
 				>
-					<p className='min-h-[100px]'>
-						{summary}
-					</p>
+					<Divider className='m-0 p-0' />
+					<div className='p-5 md:p-6'>
+						<Markdown className='md' md={sanitizeSummary(summary || '')} />
+					</div>
+					<Divider className='m-0 p-0' />
 				</Spin>
 			</Modal>
 		</section>
 	);
 };
 
-export default PostSummary;
+export default styled(PostSummary)`
+	.ant-modal-content {
+		border-radius: 14px !important;
+		padding: 0 !important;
+	}
+	.ant-modal-footer {
+		border-radius: 14px !important;
+		margin: 0 !important;
+	}
+	.ant-modal-header {
+		border-radius: 14px !important;
+		margin: 0 !important;
+	}
+	.md > p {
+		margin: 0 !important;
+	}
+`;

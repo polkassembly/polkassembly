@@ -96,6 +96,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			proposer: proposer,
 			spam_users_count,
 			subscribers: data?.subscribers || [],
+			summary: data?.summary,
 			tags: tags || [],
 			timeline: [],
 			title: data?.title,

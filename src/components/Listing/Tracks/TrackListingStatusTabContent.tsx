@@ -58,6 +58,7 @@ const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (pr
 										// topic={post.topic.name}
 										created_at={post.created_at}
 										tags={post?.tags}
+										requestedAmount={post?.requestedAmount}
 										spam_users_count={post.spam_users_count}
 									/>
 								</Link>}

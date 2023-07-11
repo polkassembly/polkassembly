@@ -21,13 +21,11 @@ interface Props {
 }
 
 const StyledPopup = styled.div`
-font-size: sm;
-color: var(--grey_primary);
 list-style: none;
-padding: 0.5rem 0.2rem 0.5rem 0.25rem;
+padding: 0.75rem;
 
 li {
-	margin-bottom: 0.3rem;
+	margin-bottom: 0.45rem;
 }
 
 .desc {
@@ -57,13 +55,13 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 	const popupContent =
 	<StyledPopup>
 		{identity?.legal &&
-		<li className='my-1'>
+		<li className='my-1.5'>
 			<span className='desc text-bodyBlue font-medium'>legal:</span>
 			<span className='text-xs text-bodyBlue font-normal'>{identity.legal}</span>
 		</li>
 		}
 		{identity?.email &&
-		<li className='flex items-center my-1'>
+		<li className='flex items-center my-1.5'>
 			<span className='desc text-bodyBlue font-medium flex items-center text-sm'>
 				<EmailIcon className='mr-1'/>Email:
 			</span>
@@ -71,48 +69,48 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 		</li>
 		}
 		{(identity?.judgements?.length || 0) > 0 &&
-		<li className='flex items-center my-1'>
+		<li className='flex items-center my-1.5'>
 			<span className='desc flex items-center text-sm text-bodyBlue font-medium'><JudgementIcon className='mr-1'/>Judgements:</span>
 			<span className='text-xs text-bodyBlue'>{displayJudgements}</span>
 		</li>
 		}
 		{identity?.pgp &&
-		<li className='flex items-center my-1'>
-			<span className='desc text-bodyblue text-sm font-medium'>pgp:</span>
+		<li className='flex items-center my-1.5'>
+			<span className='desc text-bodyblue text-sm font-medium'>pgp: </span>
 			<span className='text-xs text-bodyblue font-normal'>{identity.pgp}</span>
 		</li>
 		}
 		{identity?.riot &&
-		<li className='flex items-center my-1'>
-			<span className='text-bodyBlue text-sm font-medium'>riot:</span>
+		<li className='flex items-center my-1.5'>
+			<span className='text-bodyBlue text-sm font-medium'>riot:&nbsp; </span>
 			<span className='text-xs text-bodyBlue font-normal'>{identity.riot}</span>
 		</li>
 		}
 		{identity?.twitter &&
-		<li className='flex items-center my-1'>
-			<span className='desc text-bodyBlue font-medium flex text-sm'><TwitterIcon className='mr-1 mt-1'/>Twitter:</span>
+		<li className='flex items-center my-1.5'>
+			<span className='desc text-bodyBlue font-medium flex text-sm'><TwitterIcon className='mr-1 mt-1'/>Twitter: </span>
 			<span className='text-xs font-normal text-bodyBlue'>{identity.twitter}</span>
 		</li>
 		}
 		{identity?.web &&
-		<li className='flex items-center my-1'>
-			<span className='desc text-bodyBlue font-medium text-sm'>Web:</span>
+		<li className='flex items-center my-1.5'>
+			<span className='desc text-bodyBlue font-medium text-sm'>Web: </span>
 			<span className='text-xs text-bodyBlue font-normal'>{identity.web}</span>
 		</li>
 		}
 		{flags?.isCouncil &&
-		<li className='flex items-center my-1'>
-			<span className='desc text-bodyBlue font-medium text-sm'>Council member:</span><CouncilEmoji/>
+		<li className='flex items-center my-1.5'>
+			<span className='desc text-bodyBlue font-medium text-sm'>Council member: </span><CouncilEmoji/>
 		</li>
 		}
 		{
-			<li className='flex items-center my-1'>
+			<li className='flex items-center my-1.5'>
 				<span className='desc'><a href={`https://polkaverse.com/accounts/${address}`} target='_blank' rel='noreferrer' className='flex text-pink-500 underline items-center'><ShareScreenIcon className='mr-2'/>Polkaverse Profile</a>
 				</span>
 			</li>
 		}
 		{web3Name &&
-		<li className='flex items-center my-1'>
+		<li className='flex items-center my-1.5'>
 			<span className='desc flex items-center'><a href={`https://w3n.id/${web3Name}`} target='_blank' rel='noreferrer' className='flex text-pink-500'><ShareScreenIcon className='mr-2'/>Web3 Name Profile</a>
 			</span>
 		</li>

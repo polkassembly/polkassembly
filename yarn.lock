@@ -9966,10 +9966,10 @@ pnglib@0.0.1:
   resolved "https://registry.yarnpkg.com/pnglib/-/pnglib-0.0.1.tgz#f9ab6f9c688f4a9d579ad8be28878a716e30c096"
   integrity sha512-95ChzOoYLOPIyVmL+Y6X+abKGXUJlvOVLkB1QQkyXl7Uczc6FElUy/x01NS7r2GX6GRezloO/ecCX9h4U9KadA==
 
-polkasafe@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/polkasafe/-/polkasafe-1.0.7.tgz#5c69d5607b6ee64aebe26bae1dd11a388da77946"
-  integrity sha512-MLKOcRoKRMSSXNcT2a30DU6/XvnYu0R5+1ThL7t6f5z3inJxlEDSXD8bvYS+jLTSFaTrYsWaysNwhYoa58luMg==
+polkasafe@^1.1.9:
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/polkasafe/-/polkasafe-1.1.9.tgz#d4b2ad5ca8510b064424a2c5514eb5417e982e8c"
+  integrity sha512-nlLIVSQ/g4iGLJgzpRgnqSKEQ6yTs9vLIqOGt8Cos40ASWpy/5vHYEyf8KVWEOw1QlI6RMAj0/1NGjO+AAx6kA==
   dependencies:
     "@polkadot/api" "^10.6.1"
     "@polkadot/api-augment" "^10.7.3"

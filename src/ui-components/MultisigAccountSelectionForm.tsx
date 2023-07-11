@@ -36,6 +36,7 @@ interface Props {
     withoutInfo?: boolean;
     wallet?:any;
     setWallet?:any;
+	containerClassName?:string
 }
 
 const MultisigAccountSelectionForm = ({
@@ -52,7 +53,8 @@ const MultisigAccountSelectionForm = ({
 	setSwitchModalOpen,
 	withoutInfo,
 	wallet,
-	setWallet
+	setWallet,
+	containerClassName
 }: Props) => {
 	const [multisig, setMultisig] = useState<any>(null);
 	const client = new Polkasafe();
@@ -80,7 +82,7 @@ const MultisigAccountSelectionForm = ({
 	}, [multisig, setWallet]);
 
 	return (
-		<Container style={{ width: '100%' }}>
+		<Container style={{ width: '100%' }} className={containerClassName}>
 			<article className={`w-full flex flex-col ${className}`}>
 				{title && (
 					<div className="flex items-center mb-[2px] gap-2">

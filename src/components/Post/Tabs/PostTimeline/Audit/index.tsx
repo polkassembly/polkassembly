@@ -60,8 +60,11 @@ function getOrdinalSuffix(day: number): string {
 
 	return suffix;
 }
+interface Props{
+  setTotalAuditCount: (pre: number) => void;
+}
 
-const PostAudit = () => {
+const PostAudit = ({ setTotalAuditCount }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { postData } = usePostDataContext();
@@ -98,6 +101,7 @@ const PostAudit = () => {
 			if (response.ok) {
 				const data = await response.json();
 				setAuditData(data);
+				setTotalAuditCount(data.length || 0);
 			} else {
 				throw new Error('Request failed');
 			}

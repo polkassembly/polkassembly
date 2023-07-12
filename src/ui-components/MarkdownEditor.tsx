@@ -258,7 +258,8 @@ function MarkdownEditor(props: Props): React.ReactElement {
 			const usernameQuery = matches[matches.length - 1];
 			if (!validUsers.includes(usernameQuery)) {
 				debouncedAPIcall(usernameQuery, content);
-			} else if (validUsers.includes(usernameQuery)) {
+			}
+			else if (validUsers.includes(usernameQuery)) {
 				let inputData = content;
 				const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
 				inputData = inputData.replace(

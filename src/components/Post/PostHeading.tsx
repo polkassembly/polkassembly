@@ -71,7 +71,11 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								updated_at={last_edited_at}
 								isHistory={history && history?.length > 0}
 							/></div>
-						<PostSummary />
+						{
+							content.includes('If you own this account, login and tell us more about your proposal.')?
+								null
+								: <PostSummary />
+						}
 					</CreationLabel>
 				</>
 			</div>

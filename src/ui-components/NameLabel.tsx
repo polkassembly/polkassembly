@@ -27,6 +27,7 @@ const NameLabel = ({ className, defaultAddress, username, disableIdenticon = fal
 				}
 			}}> { username } </span> :
 				<Address
+					passedUsername={username}
 					address={defaultAddress}
 					className='text-sm'
 					textClassName={textClassName}

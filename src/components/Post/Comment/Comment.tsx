@@ -59,7 +59,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 
 	if (!user_id || !content) return (<div className={`${className} mb-5`}>
 		<Avatar className='bg-gray-300' size="large" icon={<UserOutlined />} />
-
 		<div className='comment-content'>
 			Comment not available
 		</div>

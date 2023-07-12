@@ -27,31 +27,6 @@ interface IAiChatbotProps {
 	className?: string | undefined;
 }
 
-const BButton = ({ children }) => {
-	function createRipple(event) {
-		const button = event.currentTarget;
-
-		const circle = document.createElement('span');
-		const diameter = Math.max(button.clientWidth, button.clientHeight);
-		const radius = diameter / 2;
-
-		circle.style.width = circle.style.height = `${diameter}px`;
-		circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
-		circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
-		circle.classList.add('ripple');
-
-		const ripple = button.getElementsByClassName('ripple')[0];
-
-		if (ripple) {
-			ripple.remove();
-		}
-
-		button.appendChild(circle);
-	}
-
-	return <button onClick={createRipple}>{children}</button>;
-};
-
 const AiBot: FC<IAiChatbotProps> = (props) => {
 
 	const { floatButtonOpen, setFloatButtonOpen, isAIChatBotOpen, setIsAIChatBotOpen, className } = props;
@@ -151,46 +126,37 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		:
 		[
 			{
-				component: <div className=' ml-[-25px] flex justify-center'><CreateDiscussionIcon className='cursor-pointer' onClick={() => { handleAddDiscussion(); }} /> <p className='text-[#485F7D] ml-4 mt-2 font-medium text-[14px] leading-5 tracking-[1.25%]'>Create Discussion Post</p></div>
+				component: <div className='ml-[-25px] flex justify-center hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[280px] p-[5px] rounded-[8px] cursor-pointer'
+					onClick={() => { handleAddDiscussion(); }}
+				>
+					<CreateDiscussionIcon className='cursor-pointer ml-[-70px]' />
+					<p className='text-[#485F7D] ml-4 mt-2 font-medium text-[14px] leading-5 tracking-[1.25%]'>Create Discussion Post</p>
+				</div>
 			},
 			{
-				component: <div className='ml-[-25px] flex justify-center' onClick={() => {
-					if (!grillChat)
-						(window as any).DocsBotAI.toggle();
-					setIsAIChatBotOpen(!isAIChatBotOpen);
-				}}><AIbotIcon className='cursor-pointer' /> <p className='text-[#485F7D] ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p></div>
+				component: <div className='ml-[-25px] flex justify-center hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[280px] p-[5px] rounded-[8px] cursor-pointer'
+					onClick={() => {
+						if (!grillChat)
+							(window as any).DocsBotAI.toggle();
+						setIsAIChatBotOpen(!isAIChatBotOpen);
+					}}
+				>
+					<AIbotIcon className='cursor-pointer ml-[-175px]' />
+					<p className='text-[#485F7D] ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p>
+				</div>
 			},
 			{
-				component: <a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer' className='text-[#485F7D] hover:text-[#485F7D] ml-[-25px]'>
-					<div className='flex justify-center'><CautionIcon className='cursor-pointer' /> <p className='ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p></div>
+				component: <a href='https://polkassembly.hellonext.co/'
+					target='_blank'
+					rel='noreferrer'
+					className='text-[#485F7D] hover:text-[#485F7D] ml-[-25px]'>
+					<div className='flex justify-center hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[280px] p-[5px] rounded-[8px] cursor-pointer'><CautionIcon className='cursor-pointer ml-[-115px]' /> <p className='ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p></div>
 				</a>
 			}
 		];
 
-	const createRipple = (event: any) => {
-		const button = event.currentTarget;
-		console.log('btn', button, event);
-		const circle = document.createElement('span');
-		const diameter = Math.max(button.clientWidth, button.clientHeight);
-		const radius = diameter / 2;
-
-		circle.style.width = circle.style.height = `${diameter}px`;
-		circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
-		circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
-		circle.classList.add('ripple');
-
-		const ripple = button.getElementsByClassName('ripple')[0];
-
-		if (ripple) {
-			ripple.remove();
-		}
-
-		button.appendChild(circle);
-	};
-
 	return (
 		<>
-			{/* <div className={`animate-ping fixed bottom-[-1px] right-[5px] bg-[#e5007a80] h-[94px] w-[94px] rounded-full ${animationState}`} >  </div> */}
 			<div className={`wave-effect ${animationState}`} ></div>
 
 			<FloatButton.Group
@@ -201,8 +167,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					<Button
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
-						onClick={(event) => {
-							createRipple(event);
+						onClick={() => {
 							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 300);
 							setAnimationState('hidden');
 						}}
@@ -270,26 +235,4 @@ width:55px !important;
 .ant-spin-container{
 	padding: 0px 16px;
 }
-.ant-btn-text{
-	overflow: hidden !important;
-	position: relative !important;
-}
-
-.ant-btn-text span.ripple {
-	z-index: 100 !important;
-	border-radius: 50% !important;
-	position: absolute !important;
-	transform: scale(0) !important;
-	animation: ripple 600ms linear !important;
-	background-color: rgba(255, 255, 255,1) !important;
-  }
-  
-  @keyframes ripple {
-	to {
-	  transform: scale(4) !important;
-	  opacity: 0 !important;
-	}
-  }
-  
-  
 `;

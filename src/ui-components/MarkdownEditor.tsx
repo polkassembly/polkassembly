@@ -253,9 +253,9 @@ function MarkdownEditor(props: Props): React.ReactElement {
 		const inputValue = content;
 		setInput(inputValue);
 
-		const matches = inputValue.match(/(?:^|\s)@(\w+)/);
+		const matches = inputValue.match(/(?<!\S)@(\w+)(?!\.\w)/g);
 		if (matches && matches.length > 0) {
-			const usernameQuery = matches[matches.length - 1];
+			const usernameQuery = matches[matches.length - 1].replace('@','');
 			if (!validUsers.includes(usernameQuery)) {
 				debouncedAPIcall(usernameQuery, content);
 			}

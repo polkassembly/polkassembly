@@ -17,6 +17,7 @@ import { ProposalType } from '~src/global/proposalType';
 import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
+import PostSummary from './PostSummary';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => <div className="flex gap-x-6"><Skeleton.Avatar active /><Skeleton.Input active /></div> ,
@@ -30,7 +31,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router= useRouter();
 	const { className } = props;
 	const { postData: {
-		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags, track_name, cid, history, content
+		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags, track_name, cid, history, content, summary
 	} } = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
@@ -70,6 +71,11 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								updated_at={last_edited_at}
 								isHistory={history && history?.length > 0}
 							/></div>
+						{
+							summary?
+								<PostSummary />
+								: null
+						}
 					</CreationLabel>
 				</>
 			</div>

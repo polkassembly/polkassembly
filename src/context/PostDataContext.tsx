@@ -21,6 +21,7 @@ export interface IPostData {
     title: string;
     cid?:string;
     content: string;
+    summary?: string;
     created_at: string | Date;
     last_edited_at?: string | Date;
     proposer: string;

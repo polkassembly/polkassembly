@@ -50,14 +50,13 @@ export function ApiContextProvider(
 	const [apiReady, setApiReady] = useState(false);
 	const [isApiLoading, setIsApiLoading] = useState(false);
 	const [wsProvider, setWsProvider] = useState<string>(props.network ? chainProperties?.[props.network]?.rpcEndpoint : '');
-	const [isLightClient, setIsLightClient] = useState<boolean>(false);
 	const [lightProvider, setLightProvider] = useState<any>('');
+	
 	let provider: any;
 
 	useEffect(() => {
 		if (!wsProvider && !props.network) return;
 		if(wsProvider.startsWith('light://substrate-connect/')) {
-			setIsLightClient(true);
 			console.log('light client = ', wsProvider);
 			provider = new ScProvider(Sc, relaySpecs[props.network || '']);
 			setLightProvider(provider);
@@ -87,7 +86,7 @@ export function ApiContextProvider(
 
 	useEffect(() => {
 		if (api) {
-			if (isLightClient){
+			if (lightProvider){
 				const c = async () => {
 					if (lightProvider && lightProvider.connect && !lightProvider.isConnected){
 						await lightProvider.connect();

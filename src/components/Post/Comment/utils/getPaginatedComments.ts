@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { getFirestoreProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 // of the Apache-2.0 license. See the LICENSE file for details.
@@ -18,7 +19,7 @@ export const getPaginatedComments = async (
 			network,
 			pageSize,
 			postId,
-			postType
+			postType:getFirestoreProposalType(postType)
 		});
 		if(data){
 			return data || [];

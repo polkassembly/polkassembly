@@ -20,6 +20,8 @@ import { useRouter } from 'next/router';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { useApiContext } from '~src/context';
+import { updateComments } from 'pages/api/v1/posts/comments/updateComments';
+import { getSubsquareCommentsFromFirebase } from 'pages/api/v1/posts/comments/getOnlySubsquareComments';
 
 const proposalType = ProposalType.OPEN_GOV;
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
@@ -31,9 +33,13 @@ export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 		postId: id,
 		proposalType
 	});
-	const comments = await getSubSquareComments(proposalType, network, id);
-	const post = data && { ...data, comments: [...data.comments, ...comments] };
-	return { props: { error, network, post, status } };
+	const { data: commentId } = await getSubsquareCommentsFromFirebase({ network, postId: id as string, postType:proposalType });
+	let comments = await getSubSquareComments(proposalType, network, id);
+	commentId?.forEach(id => {
+		comments = comments.filter(comment => comment.id!== id);
+	});
+	await updateComments(id as string, network, proposalType, comments);
+	return { props: { error, network, post:data, status } };
 };
 
 interface IReferendaPostProps {

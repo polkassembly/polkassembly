@@ -15,11 +15,11 @@ const Container = styled.div`
 	position : fixed;
 	bottom:120px;
 	right:-5px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 16px;
+  	z-index: 1000;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-end;
+  	gap: 16px;
 }
 
 .ChatFloatingModal .ChatFloatingButton {

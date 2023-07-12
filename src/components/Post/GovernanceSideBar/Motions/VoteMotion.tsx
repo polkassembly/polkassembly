@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { Alert, Button, Modal, Spin,  Tooltip } from 'antd';
 import Image from 'next/image';
 import React, { useEffect,useState } from 'react';
@@ -22,9 +21,11 @@ import { ProposalType } from '~src/global/proposalType';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import dayjs from 'dayjs';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 
 interface Props {
-	accounts: InjectedAccount[]
+	accounts: InjectedTypeWithCouncilBoolean[]
 	address: string
 	className?: string
 	getAccounts: () => Promise<undefined>
@@ -32,6 +33,7 @@ interface Props {
 	motionProposalHash?: string
 	onAccountChange: (address: string) => void
 	proposalType?: ProposalType;
+	setAccounts: React.Dispatch<React.SetStateAction<InjectedTypeWithCouncilBoolean[]>>;
 }
 
 const VoteMotion = ({
@@ -42,7 +44,8 @@ const VoteMotion = ({
 	motionId,
 	motionProposalHash,
 	onAccountChange,
-	proposalType
+	proposalType,
+	setAccounts
 }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
@@ -50,7 +53,7 @@ const VoteMotion = ({
 	const [forceVote, setForceVote] = useState(false);
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
-	const { addresses, isLoggedOut } = useUserDetailsContext();
+	const { isLoggedOut } = useUserDetailsContext();
 	const [vote,setVote] = useState<{
 		timestamp: string | undefined,
 		decision:EDecision,
@@ -69,23 +72,39 @@ const VoteMotion = ({
 			return;
 		}
 
+		if (accounts.length === 0) {
+			getAccounts();
+		}
+
 		api.query.council.members().then((memberAccounts) => {
-			setCurrentCouncil(memberAccounts.map(member => member.toString()));
+			const members = memberAccounts.map(member => member.toString());
+			setCurrentCouncil(members.filter((member) => !!member) as string[]);
 		});
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
 	useEffect( () => {
-		// it will iterate through all addresses
-		addresses && addresses.some(address => {
-			if (currentCouncil.includes(address)) {
+		// it will iterate through all accounts
+		if (accounts && Array.isArray(accounts)) {
+			const index = accounts.findIndex((account) => {
+				const substrateAddress = getSubstrateAddress(account.address);
+				return currentCouncil.some((council) => getSubstrateAddress(council) === substrateAddress);
+			});
+			if (index >= 0) {
+				const account = accounts[index];
 				setIsCouncil(true);
-				// this breaks the loop as soon as we find a matching address
-				return true;
+				accounts.splice(index, 1);
+				accounts.unshift({
+					...account,
+					isCouncil: true
+				});
+				setAccounts(accounts);
+				onAccountChange(account.address);
 			}
-			return false;
-		});
-	}, [addresses, currentCouncil]);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentCouncil, accounts]);
 	useEffect( () => {
 		if (!api) {
 			return;

@@ -21,6 +21,7 @@ import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-pos
 import { getUpdatedAt } from './off-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
+import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -901,6 +902,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					}
 				}
 				post.post_link = post_link;
+			}
+
+			if(post.content === '' || post.title === '' || post.title === undefined || post.content === undefined){
+				const res =  await getSubSquareContentAndTitle(proposalType,network,numPostId);
+				post.content =  res.content;
+				post.title = res.title;
 			}
 		}
 

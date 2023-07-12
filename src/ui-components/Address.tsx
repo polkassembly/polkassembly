@@ -21,6 +21,14 @@ import IdentityBadge from './IdentityBadge';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getKiltDidName } from '~src/util/kiltDid';
 import dayjs from 'dayjs';
+import classNames from 'classnames';
+
+export enum EAddressOtherTextType {
+	CONNECTED='Connected',
+	COUNCIL='Council',
+	COUNCIL_CONNECTED='Council (Connected)',
+	LINKED_ADDRESS= 'Linked'
+}
 
 interface Props {
 	address: string
@@ -38,10 +46,12 @@ interface Props {
 	disableHeader?: boolean;
 	disableAddressClick?: boolean;
 	isSubVisible?: boolean;
-  addressClassName?: string;
-  clickable?:boolean;
-  truncateUsername?:boolean;
-  passedUsername?:string
+	addressClassName?: string;
+	clickable?:boolean;
+	truncateUsername?:boolean;
+	otherTextType?: EAddressOtherTextType;
+	otherTextClassName?: string;
+	passedUsername?:string
 }
 
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
@@ -49,7 +59,7 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 	ssr: false
 });
 
-const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true, addressClassName, clickable=true , truncateUsername = true, passedUsername = '' }: Props): JSX.Element => {
+const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true, addressClassName, clickable=true , truncateUsername = true, otherTextType, otherTextClassName, passedUsername }: Props): JSX.Element => {
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useContext(ApiContext);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
@@ -245,6 +255,21 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 						: <div className={`description text-xs ${addressClassName}`}>{kiltName ? t1 : isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 				}
 			</div>}
+			{
+				otherTextType? <p className={`m-0 flex items-center gap-x-1 text-lightBlue leading-[15px] text-[10px] ${otherTextClassName}`}>
+					<span
+						className={classNames('w-[6px] h-[6px] rounded-full', {
+							'bg-aye_green ': [EAddressOtherTextType.CONNECTED, EAddressOtherTextType.COUNCIL_CONNECTED].includes(otherTextType),
+							'bg-blue ': otherTextType === EAddressOtherTextType.COUNCIL,
+							'bg-nay_red': otherTextType === EAddressOtherTextType.LINKED_ADDRESS
+						})}
+					>
+					</span>
+					<span className='text-xs'>
+						{otherTextType}
+					</span>
+				</p>: null
+			}
 		</div>
 	);
 };

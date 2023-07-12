@@ -215,7 +215,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 						: <>
 							<div className={'description display_inline flex items-center'}>
 								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} className='mr-2 text-navBlue' />}
-								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[85px] flex gap-x-1 bg-red-300 ${textClassName}`}>
+								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[85px] flex gap-x-1 ${textClassName}`}>
 									{ t1 && <span className={`${truncateUsername && 'truncate'} ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
 									{sub && isSubVisible && <span className={`sub truncate ${textClassName}`}>{sub}</span>}
 								</span>

@@ -39,6 +39,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 			<Modal
 				className={className}
 				open={open}
+				onCancel={() => setOpen(false)}
 				closable={false}
 				title={<div className='p-5 md:p-6 m-0 flex items-center justify-between rounded-[14px]'>
 					<h3 className='font-semibold text-xl leading-[24px] text-bodyBlue m-0 p-0'>View Summary</h3>

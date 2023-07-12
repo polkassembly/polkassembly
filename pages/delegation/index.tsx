@@ -11,7 +11,6 @@ import CopyContentIcon from '~assets/icons/content-copy.svg';
 import copyToClipboard from 'src/util/copyToClipboard';
 import queueNotification from 'src/ui-components/QueueNotification';
 import { NotificationStatus } from 'src/types';
-import { message } from 'antd';
 import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import { useRouter } from 'next/router';
@@ -25,9 +24,6 @@ const Delegation = ( props : { network: string } ) => {
 
 	const { setNetwork } = useNetworkContext();
 	const { asPath } = useRouter();
-	const handleClick = () => {
-		message.success('Request submitted successfully');
-	};
 
 	const handleCopylink = () => {
 		const url = `https://${props.network}.polkassembly.io${asPath.split('#')[0]}`;
@@ -36,7 +32,7 @@ const Delegation = ( props : { network: string } ) => {
 
 		queueNotification({
 			header: 'Copied!',
-			message: 'Comment link copied to clipboard.',
+			message: 'Link copied to clipboard.',
 			status: NotificationStatus.INFO
 		});
 	};
@@ -48,11 +44,14 @@ const Delegation = ( props : { network: string } ) => {
 
 	return <>
 		<SEOHead title='Delegation Dashboard' network={props.network} />
-		<div className='hidden sm:flex'><DelegationDashboard/></div>
-		<div className='flex sm:hidden items-center justify-center flex-col mt-10 w-full'>
-			<DelegationDashboardEmptyState className='w-[100%] sm:w-64 mr-[-14px]' viewBox='0 0 350 350'/>
-			<button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md px-6 py-3 mt-[-15px] flex items-center justify-center' onClick={handleClick}>Request Mobile View</button>
-			<div className='mt-[64px] px-4 py-1 rounded-full border border-[#D2D8E0] border-solid flex justify-center items-center' onClick={() => {handleCopylink();}}>Copy Page Link <CopyContentIcon className='ml-1'/></div>
+		<div className='hidden sm:block'><DelegationDashboard/></div>
+		<div className='sm:hidden w-full'>
+			<h1 className='text-bodyBlue text-center text-2xl font-semibold'>Delegation Dashboard</h1>
+			<div className='flex flex-col justify-center items-center mt-12'>
+				<DelegationDashboardEmptyState />
+				<p className='text-center text-bodyBlue text-base mt-6'>Please visit Delegation Dashboard from your Dekstop computer</p>
+				<button className='mt-5 px-3.5 py-1.5 rounded-full text-bodyBlue bg-transparent border border-[#D2D8E0] border-solid flex justify-center items-center' onClick={() => {handleCopylink();}}>Copy Page Link <CopyContentIcon className='ml-1'/></button>
+			</div>
 		</div>
 	</>;
 };

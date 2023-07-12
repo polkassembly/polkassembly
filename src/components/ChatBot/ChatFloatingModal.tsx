@@ -12,14 +12,14 @@ import grill from '@subsocial/grill-widget';
 
 const Container = styled.div`
 .ChatFloatingModal {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 16px;
+	position : fixed;
+	bottom:120px;
+	right:-5px;
+  	z-index: 1000;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-end;
+  	gap: 16px;
 }
 
 .ChatFloatingModal .ChatFloatingButton {
@@ -52,14 +52,21 @@ const Container = styled.div`
   transition-duration: 0.3s, 0s, 0s;
   transition-delay: 0s, 0s, 0s;
   opacity: 1;
+  
+}
+
+.ChatFloatingIframe{
+	margin-right:30px;
+	margin-bottom:-40px;
 }
 
 .ChatFloatingModal .ChatFloatingIframe.ChatFloatingIframeHidden {
   pointer-events: none;
   transition-delay: 0s, 0.3s, 0.3s !important;
-  height: 0;
-  width: 0;
+  width: 30px;
+  height: 30px;
   opacity: 0;
+  
 }
 
 .ChatFloatingModal .ChatFloatingIframe iframe {
@@ -71,11 +78,10 @@ const Container = styled.div`
 `;
 
 export default function ChatFloatingModal() {
-	const [isOpen, setIsOpen] = useState(false);
+	const [isOpen, setIsOpen] = useState(true);
 	const toggleChat = () => {
 		setIsOpen((prev:boolean) => !prev);
 	};
-
 	const grillData: { [index: string]: string[] } = {
 		[globalNework.CERE]: ['5145', '5139'],
 		[globalNework.KILT]: ['2035', '5144'],
@@ -120,9 +126,11 @@ export default function ChatFloatingModal() {
 						}
 					/>
 				)}
-				<Button className={'ChatFloatingButton'} onClick={toggleChat}>
-					<Image src={GrillChatIcon} alt='GrillChat' className='w-[50px] h-[50px]' />
+				{ !isOpen && <Button className={'ChatFloatingButton'} onClick={toggleChat}>
+					<Image src={GrillChatIcon} alt='GrillChat' className='w-[40px] h-[40px]' />
 				</Button>
+				}
+
 			</div>
 		</Container>
 	) : null;

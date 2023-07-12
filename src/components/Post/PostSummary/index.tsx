@@ -42,7 +42,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 							max_tokens: 256,
 							model: 'text-davinci-003',
 							presence_penalty: 0.0,
-							prompt: `${content}\n\nTl;dr`,
+							prompt: `Please give a summary of this content, and don't give any redundant markdown. ${content}\n\nTl;dr`,
 							temperature: 1,
 							top_p: 1.0
 						}),

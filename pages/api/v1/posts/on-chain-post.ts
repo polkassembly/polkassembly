@@ -1013,6 +1013,9 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	if(error || !data) {
 		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	}else {
+		if (data.summary) {
+			delete data.summary;
+		}
 		res.status(status).json(data);
 	}
 };

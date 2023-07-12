@@ -31,7 +31,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router= useRouter();
 	const { className } = props;
 	const { postData: {
-		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags, track_name, cid, history, content
+		created_at, status, postType: proposalType, postIndex: onchainId, title, description, proposer, curator, username, topic, last_edited_at, requested, reward,tags, track_name, cid, history, content, summary
 	} } = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
@@ -72,9 +72,9 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								isHistory={history && history?.length > 0}
 							/></div>
 						{
-							content.includes('If you own this account, login and tell us more about your proposal.')?
-								null
-								: <PostSummary />
+							summary?
+								<PostSummary />
+								: null
 						}
 					</CreationLabel>
 				</>

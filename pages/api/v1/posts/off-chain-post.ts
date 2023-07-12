@@ -16,7 +16,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
+import { getComments, getContentSummary, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 
 interface IGetOffChainPostParams {
@@ -104,6 +104,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 				id: topic_id,
 				name: getTopicNameFromTopicId(topic_id)
 			}: getTopicFromType(strProposalType as ProposalType),
+			type: (strProposalType === 'discussions'? 'Discussions': strProposalType === 'grants'? 'Grants': ''),
 			user_id: data?.user_id,
 			username: data?.username
 
@@ -205,6 +206,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 				post.comments = comments;
 			}
 		}
+		await getContentSummary(post, network);
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,

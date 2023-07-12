@@ -35,6 +35,8 @@ import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNet
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import blockToDays from '~src/util/blockToDays';
+import { ApiPromise } from '@polkadot/api';
 
 const ZERO_BN = new BN(0);
 
@@ -52,6 +54,30 @@ message: string;
  description: string;
  error: number
 }
+
+export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
+	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
+		if (api && apiReady) {
+			const res = api.consts.convictionVoting.voteLockingPeriod;
+			const num = res.toJSON();
+			const days = blockToDays(num, network);
+			if (days && !isNaN(Number(days))) {
+				return [
+					<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+					...CONVICTIONS.map(([value, lock]) =>
+						<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
+					)
+				];
+			}
+		}
+	}
+	return [
+		<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+		...CONVICTIONS.map(([value, lock]) =>
+			<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
+		)
+	];
+};
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
 	const userDetails = useUserDetailsContext();
@@ -204,12 +230,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		await getAccounts(wallet);
 		setLoadingStatus({ ...loadingStatus, isLoading: false });
 	};
-	const convictionOpts = useMemo(() => [
-		<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
-		...CONVICTIONS.map(([value, lock]) =>
-			<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
-		)
-	],[CONVICTIONS]);
+	const convictionOpts = useMemo(() => {
+		return getConvictionVoteOptions(CONVICTIONS, proposalType, api, apiReady, network);
+	},[CONVICTIONS, proposalType, api, apiReady, network]);
 
 	const [conviction, setConviction] = useState<number>(0);
 

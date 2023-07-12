@@ -9,7 +9,7 @@ import { Button, Form, Modal, Segmented, Select, Spin, Alert } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
-import { EVoteDecisionType, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
+import { EVoteDecisionType, ILastVote, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -36,14 +36,15 @@ import DownIcon from '~assets/icons/down-icon.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 const ZERO_BN = new BN(0);
 
 interface Props {
 	className?: string
 	referendumId?: number | null | undefined
 	onAccountChange: (address: string) => void
-	lastVote: string | null | undefined
-	setLastVote: React.Dispatch<React.SetStateAction<string | null | undefined>>
+	lastVote: ILastVote | undefined
+	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
 }
 
 const abi = require('../../../../moonbeamConvictionVoting.json');
@@ -52,7 +53,8 @@ const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
 const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut } = useUserDetailsContext();
+	const userDetails = useUserDetailsContext();
+	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress } = userDetails;
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const { apiReady } = useApiContext();
 	const [address, setAddress] = useState<string>('');
@@ -105,15 +107,21 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	};
 
 	useEffect(() => {
-		if(!window) return;
-		const defaultWallet = localStorage.getItem('loginWallet') as Wallet ;
-		if(defaultWallet){
-			if(defaultWallet === Wallet.METAMASK){setWallet(Wallet.METAMASK);handleDefaultWallet(Wallet.METAMASK);}
-			else if(defaultWallet === Wallet.TALISMAN){setWallet(Wallet.TALISMAN);handleDefaultWallet(Wallet.TALISMAN);}
-			setLoginWallet(defaultWallet as  Wallet);
+		if (userDetails.loginWallet && [Wallet.TALISMAN, Wallet.METAMASK].includes(userDetails.loginWallet)) {
+			setLoginWallet(userDetails.loginWallet);
+			setWallet(userDetails.loginWallet);
+			handleDefaultWallet(userDetails.loginWallet);
+		} else {
+			if(!window) return;
+			const defaultWallet = localStorage.getItem('loginWallet') as Wallet ;
+			if(defaultWallet){
+				if(defaultWallet === Wallet.METAMASK){setWallet(Wallet.METAMASK);handleDefaultWallet(Wallet.METAMASK);}
+				else if(defaultWallet === Wallet.TALISMAN){setWallet(Wallet.TALISMAN);handleDefaultWallet(Wallet.TALISMAN);}
+				setLoginWallet(defaultWallet as  Wallet);
+			}
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [apiReady]);
+	}, [apiReady, userDetails]);
 
 	useEffect(() => {
 		setPostData((prev) => {
@@ -155,7 +163,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 		wallet === Wallet.TALISMAN && addresses.filter((address: string) => address.slice(0,2) === '0x').length === 0 ? setIsTalismanEthereum(false) : setIsTalismanEthereum(true);
 
-		setAccounts(addresses.map((address: string): InjectedAccountWithMeta => {
+		const accounts = addresses.map((address: string): InjectedAccountWithMeta => {
 			const account = {
 				address,
 				meta: {
@@ -166,7 +174,19 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			};
 
 			return account;
-		}));
+		});
+
+		if (accounts && Array.isArray(accounts)) {
+			const substrate_address = getSubstrateAddress(loginAddress);
+			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
+			if (index >= 0) {
+				const account = accounts[index];
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+			}
+		}
+
+		setAccounts(accounts);
 
 		if (addresses.length > 0) {
 			setAddress(addresses[0]);
@@ -368,7 +388,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				})
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote(vote);
+					setLastVote({
+						balance: totalVoteValue,
+						conviction: conviction,
+						decision: vote,
+						time: new Date()
+					});
 					setShowModal(false);
 					setSuccessModal(true);
 					queueNotification({
@@ -400,7 +425,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				})
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote(vote);
+					setLastVote({
+						balance: totalVoteValue,
+						conviction: conviction,
+						decision: vote,
+						time: new Date()
+					});
 					setShowModal(false);
 					setSuccessModal(true);
 					queueNotification({
@@ -438,7 +468,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				})
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote(vote);
+					setLastVote({
+						balance: totalVoteValue,
+						conviction: conviction,
+						decision: vote,
+						time: new Date()
+					});
 					setShowModal(false);
 					setSuccessModal(true);
 					queueNotification({
@@ -478,7 +513,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				})
 				.then(() => {
 					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote(vote);
+					setLastVote({
+						balance: totalVoteValue,
+						conviction: conviction,
+						decision: vote,
+						time: new Date()
+					});
 					setShowModal(false);
 					setSuccessModal(true);
 					queueNotification({
@@ -582,7 +622,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	return (
 		<div className={className}>
 			<Button
-				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[100%]'
+				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-[4px] flex items-center justify-center p-6 w-[100%]'
 				onClick={openModal}
 			>
 				{lastVote == null || lastVote == undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }

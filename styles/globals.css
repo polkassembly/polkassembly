@@ -10,6 +10,7 @@
   --black_primary: #2e2f30;
   --blue_primary: #4d9999;
   --blue_secondary: #ebf0f5;
+  --blue: #3C74E1;
   --green_primary: #4dd18f;
   --green_secondary: #399969;
   --grey_app_background: #eaeef0;
@@ -328,4 +329,16 @@ a.command-palette-list-item svg {
 
 .opengov_modal .ant-modal-content {
   background-color: #FFF3FA !important;
+}
+.track-popover .ant-popover-content .ant-popover-inner {
+  padding:0px !important;
+  border-radius: 4px !important;
+}
+.track-popover .ant-popover-content .ant-popover-inner .ant-collapse{
+  padding:0px !important;
+  border-radius: 4px !important;
+  border:none !important;
+}
+.track-popover .ant-collapse>.ant-collapse-item >.ant-collapse-header{
+color: var(--lightBlue) !important;
 }

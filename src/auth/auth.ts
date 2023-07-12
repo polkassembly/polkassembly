@@ -330,7 +330,11 @@ class AuthService {
 
 		return {
 			isTFAEnabled,
-			token: await this.getSignedToken(user)
+			token: await this.getSignedToken({
+				...user,
+				login_address: address,
+				login_wallet: wallet
+			})
 		};
 	}
 
@@ -708,19 +712,16 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async ChangeUsername (token: string, username: string, password: string): Promise<string> {
+	public async ChangeUsername (token: string, username: string ): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const firestore = firebaseAdmin.firestore();
 
-		const alreadyExists = (await firestore.collection('users').where('username', '==', username.toLowerCase()).get()).size > 0;
+		const alreadyExists = (await firestore.collection('users').where('username', '==', username).get()).size > 0;
 		if (alreadyExists) throw apiErrorWithStatusCode(messages.USERNAME_ALREADY_EXISTS, 400);
 
 		let user = await getUserFromUserId(userId);
 
-		const isCorrectPassword = await verifyUserPassword(user.password, password);
-		if (!isCorrectPassword) throw apiErrorWithStatusCode(messages.INCORRECT_PASSWORD, 403);
-
-		await firestore.collection('users').doc(String(userId)).update({ username: username.toLowerCase() });
+		await firestore.collection('users').doc(String(userId)).update({ username: username });
 		user = await getUserFromUserId(userId);
 
 		return this.getSignedToken(user);
@@ -840,7 +841,7 @@ class AuthService {
 		return { email: user.email, updatedToken: await this.getSignedToken(user) };
 	}
 
-	public async getSignedToken ({ email, email_verified, id, username, web3_signup, two_factor_auth }: User): Promise<string> {
+	public async getSignedToken ({ email, email_verified, id, username, web3_signup, two_factor_auth, login_address, login_wallet }: User & { login_address?: string; login_wallet?: Wallet; }): Promise<string> {
 		if (!privateKey) {
 			const key = process.env.NODE_ENV === 'test' ? process.env.JWT_PRIVATE_KEY_TEST : process.env.JWT_PRIVATE_KEY?.replace(/\\n/gm, '\n');
 			throw apiErrorWithStatusCode(`${key} not set. Aborting.`, 403);
@@ -891,6 +892,14 @@ class AuthService {
 			username,
 			web3signup: web3_signup || false
 		};
+
+		if (login_address) {
+			tokenContent.login_address = login_address;
+		}
+
+		if (login_wallet) {
+			tokenContent.login_wallet = login_wallet;
+		}
 
 		if(two_factor_auth?.enabled && two_factor_auth?.verified) {
 			tokenContent = {

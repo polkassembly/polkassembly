@@ -14,16 +14,16 @@ import messages from '~src/auth/utils/messages';
 async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseType | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
-	const body = JSON.parse(req.body);
-	const { username, password } = body;
-	if(!body || !username || !password) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { username } = req.body;
+
+	if( !username ) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
 	if(!token) return res.status(400).json({ message: 'Invalid token' });
 
 	if(!isValidUsername(username)) return res.status(400).json({ message: messages.USERNAME_INVALID_ERROR });
 
-	const updatedJWT = await authServiceInstance.ChangeUsername(token, username, password);
+	const updatedJWT = await authServiceInstance.ChangeUsername(token, username);
 
 	return res.status(200).json({ message: messages.NOTIFICATION_PREFERENCE_CHANGE_SUCCESSFUL, token: updatedJWT });
 }

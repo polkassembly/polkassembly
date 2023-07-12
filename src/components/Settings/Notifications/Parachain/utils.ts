@@ -4,24 +4,25 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { chainProperties, network } from '~src/global/networkConstants';
+import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
 
 const networks: any = {
 	kusama: [],
 	polkadot: [],
-	solo: [],
-	test: []
+	solo: []
+	// test: []
 };
 
 const networkLabel: {[index: string]: string} = {
 	kusama: 'Kusama',
 	polkadot: 'Polkadot',
-	solo: 'Solo Chains',
-	test: 'Test Chains'
+	solo: 'Solo Chains'
+	// test: 'Test Chains'
 };
 
 for (const key of Object.keys(network)) {
 	const keyVal = network[key as keyof typeof network];
-	if (key === 'TANGANIKA') continue;
+	if (!AVAILABLE_NETWORK.includes(keyVal)) continue;
 
 	const optionObj = {
 		name: keyVal,

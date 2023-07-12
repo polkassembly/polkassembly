@@ -21,6 +21,14 @@ import IdentityBadge from './IdentityBadge';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getKiltDidName } from '~src/util/kiltDid';
 import dayjs from 'dayjs';
+import classNames from 'classnames';
+
+export enum EAddressOtherTextType {
+	CONNECTED='Connected',
+	COUNCIL='Council',
+	COUNCIL_CONNECTED='Council (Connected)',
+	LINKED_ADDRESS= 'Linked'
+}
 
 interface Props {
 	address: string
@@ -38,9 +46,11 @@ interface Props {
 	disableHeader?: boolean;
 	disableAddressClick?: boolean;
 	isSubVisible?: boolean;
-  addressClassName?: string;
-  clickable?:boolean;
-  truncateUsername?:boolean;
+	addressClassName?: string;
+	clickable?:boolean;
+	truncateUsername?:boolean;
+	otherTextType?: EAddressOtherTextType;
+	otherTextClassName?: string;
 }
 
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
@@ -48,7 +58,7 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 	ssr: false
 });
 
-const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true, addressClassName, clickable=true , truncateUsername = true }: Props): JSX.Element => {
+const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true, addressClassName, clickable=true , truncateUsername = true, otherTextType, otherTextClassName }: Props): JSX.Element => {
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useContext(ApiContext);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
@@ -196,18 +206,18 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 						? <Space>
 							{(kiltName || identity && mainDisplay) && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
 							<Tooltip color='#E5007A' title={popupContent}>
-								<div className={'header display_inline identityName max-w-[30px] flex flex-col gap-y-1'}>
-									{ t1 && <span className='truncate text-[#243a57] font-semibold'>{t1}</span> }
-									{sub && isSubVisible && <span className='sub truncate text-[#243a57] font-semibold'>{sub}</span>}
+								<div className={'header display_inline identityName max-w-[30px] flex flex-col gap-y-1  text-navBlue'}>
+									{ t1 && <span className={`truncate ${textClassName}`}>{t1}</span> }
+									{sub && isSubVisible && <span className={`sub truncate ${textClassName}`}>{sub}</span>}
 								</div>
 							</Tooltip>
 						</Space>
 						: <>
-							<div className={'description display_inline flex items-center w-fit'}>
-								{(kiltName || identity && mainDisplay) && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} className='mr-2' />}
-								<span title={mainDisplay || encoded_addr} className={` max-w-[150px] flex gap-x-1 ${textClassName}`}>
-									{ t1 && <span className={` ${truncateUsername && 'truncate'} text-[#243a57] font-semibold  ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
-									{sub && isSubVisible && <span className={`sub ${isShortenAddressLength && 'truncate'} text-[#243a57] font-semibold`}>{sub}</span>}
+							<div className={'description display_inline flex items-center'}>
+								{identity && mainDisplay && <IdentityBadge address={address} identity={identity} flags={flags} className='mr-2 text-navBlue' />}
+								<span title={mainDisplay || encoded_addr} className={` identityName max-w-[85px] flex gap-x-1 ${textClassName}`}>
+									{ t1 && <span className={`${truncateUsername && 'truncate'} ${identity && mainDisplay && '-ml-1.5'}`}>{ t1 }</span> }
+									{sub && isSubVisible && <span className={`sub truncate ${textClassName}`}>{sub}</span>}
 								</span>
 							</div>
 						</>
@@ -218,9 +228,9 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 								<Space>
 									<Space className={'header'}>
 										{(kiltName || identity && mainDisplay) && !extensionName && <IdentityBadge address={address} identity={identity} flags={flags} web3Name={kiltName} />}
-										<span className='bg-red-500 identityName max-w-[85px] flex flex-col gap-y-1'>
-											{ t2 && <span className={`${textClassName} truncate text-[#243a57] font-semibold`}>{ t2 }</span> }
-											{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-[#243a57] font-semibold`}>{sub}</span>}
+										<span className='bg-red-500 identityName max-w-[85px] flex flex-col gap-y-1 text-navBlue'>
+											{ t2 && <span className={`${textClassName} truncate `}>{ t2 }</span> }
+											{!extensionName && sub && isSubVisible && <span className={`${textClassName} sub truncate text-navBlue`}>{sub}</span>}
 										</span>
 									</Space>
 									<div className={'description display_inline'}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
@@ -243,6 +253,21 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 						: <div className={`description text-xs ${addressClassName}`}>{kiltName ? t1 : isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 				}
 			</div>}
+			{
+				otherTextType? <p className={`m-0 flex items-center gap-x-1 text-lightBlue leading-[15px] text-[10px] ${otherTextClassName}`}>
+					<span
+						className={classNames('w-[6px] h-[6px] rounded-full', {
+							'bg-aye_green ': [EAddressOtherTextType.CONNECTED, EAddressOtherTextType.COUNCIL_CONNECTED].includes(otherTextType),
+							'bg-blue ': otherTextType === EAddressOtherTextType.COUNCIL,
+							'bg-nay_red': otherTextType === EAddressOtherTextType.LINKED_ADDRESS
+						})}
+					>
+					</span>
+					<span className='text-xs'>
+						{otherTextType}
+					</span>
+				</p>: null
+			}
 		</div>
 	);
 };

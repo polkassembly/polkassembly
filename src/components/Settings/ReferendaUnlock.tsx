@@ -25,6 +25,19 @@ const abi = require('../../moonbeamConvictionVoting.json');
 
 const currentNetwork = getNetwork();
 
+export const getTrackName = (network: string, trackId: number) => {
+	const tracksObj = networkTrackInfo[network];
+	let name = '';
+	if (tracksObj) {
+		Object.values(tracksObj).forEach((obj) => {
+			if (obj.trackId === trackId) {
+				name = obj.name;
+			}
+		});
+	}
+	return name;
+};
+
 interface IReferendaUnlockProps {
 	className?: string;
 	isBalanceUpdated: boolean;
@@ -46,19 +59,6 @@ interface Unlock {
 }
 
 const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
-
-const getTrackName = (network: string, trackId: number) => {
-	const tracksObj = networkTrackInfo[network];
-	let name = '';
-	if (tracksObj) {
-		Object.values(tracksObj).forEach((obj) => {
-			if (obj.trackId === trackId) {
-				name = obj.name;
-			}
-		});
-	}
-	return name;
-};
 
 interface IReferendaUnlockStatus {
 	remove: {

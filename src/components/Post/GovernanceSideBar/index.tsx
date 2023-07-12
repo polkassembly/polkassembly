@@ -2,16 +2,15 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DislikeFilled, LikeFilled } from '@ant-design/icons';
+import { ClockCircleOutlined,LoadingOutlined } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Form, Modal } from 'antd';
+import { Button, Form, Modal, Spin, Tooltip } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
-import { Wallet } from 'src/types';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
@@ -48,9 +47,21 @@ import PostEditOrLinkCTA from './PostEditOrLinkCTA';
 import CloseIcon from '~assets/icons/close.svg';
 import { PlusOutlined } from '@ant-design/icons';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
-import SplitGray from '~assets/icons/split-gray.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
 import { useCurrentBlock } from '~src/hooks';
+import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import SplitYellow from '~assets/icons/split-yellow-icon.svg';
+import BN from 'bn.js';
+import { chainProperties } from '~src/global/networkConstants';
+import MoneyIcon from '~assets/icons/money-icon-gray.svg';
+import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
+import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
+import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
+import AyeGreen from '~assets/icons/aye-green-icon.svg';
+import { DislikeIcon } from '~src/ui-components/CustomIcons';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -62,6 +73,8 @@ interface IGovernanceSidebarProps {
 	tally?: any;
 	post: IPostResponse;
 	toggleEdit?: () => void;
+	lastVote: ILastVote | undefined;
+	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -125,26 +138,24 @@ export function getTrackFunctions(trackInfo: any) {
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, lastVote ,setLastVote } = props;
+
 	const { network } = useNetworkContext();
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit } = props;
+	const currentBlock = useCurrentBlock();
+	const { api, apiReady } = useApiContext();
+	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();
+	const { postData: { created_at, track_number, post_link } } = usePostDataContext();
+	const metaMaskError = useHandleMetaMask();
+
 	const [address, setAddress] = useState<string>('');
-	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
+	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
 	const [extensionNotFound, setExtensionNotFound] = useState(false);
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
 	const [accountsMap, setAccountsMap] = useState<{[key:string]:string}>({});
 	const [signersMap, setSignersMap] = useState<{[key:string]: Signer}>({});
 	const [open, setOpen] = useState(false);
 	const [graphicOpen, setGraphicOpen] = useState<boolean>(true);
-	const currentBlock = useCurrentBlock();
-
-	const { api, apiReady } = useApiContext();
-	const [lastVote, setLastVote] = useState<string | null | undefined>(undefined);
-
-	const { walletConnectProvider } = useUserDetailsContext();
-	const { postData: { created_at, track_number, post_link } } = usePostDataContext();
 	const [thresholdOpen, setThresholdOpen] = useState(false);
-
-	const metaMaskError = useHandleMetaMask();
 	const [curvesLoading, setCurvesLoading] = useState(true);
 	const [curvesError, setCurvesError] = useState('');
 	const [data, setData] = useState<any>({
@@ -158,9 +169,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		support: 0,
 		supportThreshold: 0
 	});
+	const [onChainLastVote, setOnChainLastVote] = useState<IVoteHistory | null>(null);
+	const[isLastVoteLoading, setIsLastVoteLoading] = useState(true);
 
 	const canVote = Boolean(post.status) &&
-	[proposalStatus.PROPOSED,
+	[
+		proposalStatus.PROPOSED,
 		referendumStatus.STARTED,
 		motionStatus.PROPOSED,
 		tipStatus.OPENED,
@@ -169,6 +183,188 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		gov2ReferendumStatus.CONFIRM_STARTED,
 		gov2ReferendumStatus.DECISION_DEPOSIT_PLACED
 	].includes(post.status);
+
+	const unit =`${chainProperties[network]?.tokenSymbol}`;
+
+	const balance  = useMemo(() => {
+		return onChainLastVote?.balance ? Object.values(onChainLastVote.balance).reduce((prev, curr) => {
+			if(!curr) return prev;
+			return prev.add(new BN(curr));
+		}, new BN(0)).toString() : '';
+	}, [onChainLastVote?.balance]);
+
+	const onAccountChange = (address: string) => setAddress(address);
+
+	const getWalletAccounts = async (chosenWallet: Wallet): Promise<InjectedAccount[] | undefined> => {
+		const injectedWindow = window as Window & InjectedWindow;
+
+		let wallet = isWeb3Injected
+			? injectedWindow.injectedWeb3[chosenWallet]
+			: null;
+
+		if (!wallet) {
+			wallet = Object.values(injectedWindow.injectedWeb3)[0];
+		}
+
+		if (!wallet) {
+			return;
+		}
+
+		let injected: Injected | undefined;
+
+		try {
+			injected = await new Promise((resolve, reject) => {
+				const timeoutId = setTimeout(() => {
+					reject(new Error('Wallet Timeout'));
+				}, 60000); // wait 60 sec
+
+				if(wallet && wallet.enable) {
+					wallet!.enable(APPNAME).then(value => {
+						clearTimeout(timeoutId);
+						resolve(value);
+					}).catch(error => {
+						reject(error);
+					});
+				}
+			});
+		} catch (err) {
+			console.log('Error fetching wallet accounts : ', err);
+		}
+
+		if(!injected) {
+			return;
+		}
+
+		const accounts = await injected.accounts.get();
+
+		if (accounts.length === 0) return;
+
+		accounts.forEach((account) => {
+			account.address = getEncodedAddress(account.address, network) || account.address;
+		});
+
+		return accounts;
+	};
+
+	const getAccounts = async (): Promise<undefined> => {
+		if (!api) {
+			return;
+		}
+
+		if (!apiReady) {
+			return;
+		}
+
+		const extensions = await web3Enable(APPNAME);
+
+		if (extensions.length === 0) {
+			setExtensionNotFound(true);
+			return;
+		} else {
+			setExtensionNotFound(false);
+		}
+
+		let accounts: InjectedAccount[] = [];
+		let polakadotJSAccounts : InjectedAccount[] | undefined;
+		let polywalletJSAccounts : InjectedAccount[] | undefined;
+		let subwalletAccounts: InjectedAccount[] | undefined;
+		let talismanAccounts: InjectedAccount[] | undefined;
+
+		const signersMapLocal = signersMap as {[key:string]: Signer};
+		const accountsMapLocal = accountsMap as {[key:string]: string};
+
+		for (const extObj of extensions) {
+			if(extObj.name == 'polkadot-js') {
+				signersMapLocal['polkadot-js'] = extObj.signer;
+				polakadotJSAccounts = await getWalletAccounts(Wallet.POLKADOT);
+			} else if(extObj.name == 'subwallet-js') {
+				signersMapLocal['subwallet-js'] = extObj.signer;
+				subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
+			} else if(extObj.name == 'talisman') {
+				signersMapLocal['talisman'] = extObj.signer;
+				talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
+			} else if (['polymesh'].includes(network) && extObj.name === 'polywallet') {
+				signersMapLocal['polywallet'] = extObj.signer;
+				polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
+			}
+		}
+
+		if(polakadotJSAccounts) {
+			accounts = accounts.concat(polakadotJSAccounts);
+			polakadotJSAccounts.forEach((acc: InjectedAccount) => {
+				accountsMapLocal[acc.address] = 'polkadot-js';
+			});
+		}
+
+		if(['polymesh'].includes(network) && polywalletJSAccounts) {
+			accounts = accounts.concat(polywalletJSAccounts);
+			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
+				accountsMapLocal[acc.address] = 'polywallet';
+			});
+		}
+
+		if(subwalletAccounts) {
+			accounts = accounts.concat(subwalletAccounts);
+			subwalletAccounts.forEach((acc: InjectedAccount) => {
+				accountsMapLocal[acc.address] = 'subwallet-js';
+			});
+		}
+
+		if(talismanAccounts) {
+			accounts = accounts.concat(talismanAccounts);
+			talismanAccounts.forEach((acc: InjectedAccount) => {
+				accountsMapLocal[acc.address] = 'talisman';
+			});
+		}
+
+		if (accounts.length === 0) {
+			setAccountsNotFound(true);
+			return;
+		} else {
+			setAccountsNotFound(false);
+			setAccountsMap(accountsMapLocal);
+			setSignersMap(signersMapLocal);
+		}
+
+		if (accounts && Array.isArray(accounts)) {
+			const substrate_address = getSubstrateAddress(loginAddress);
+			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
+			if (index >= 0) {
+				const account = accounts[index];
+				accounts.splice(index, 1);
+				accounts.unshift(account);
+			}
+		}
+
+		setAccounts(accounts);
+		if (accounts.length > 0) {
+			setAddress(accounts[0].address);
+			const signer: Signer = signersMapLocal[accountsMapLocal[accounts[0].address]];
+			api.setSigner(signer);
+		}
+
+		return;
+	};
+
+	const getVotingHistory = useCallback(async () => {
+		setIsLastVoteLoading(true);
+		const encoded = getEncodedAddress(address || loginAddress || defaultAddress || '', network);
+
+		const { data = null, error } = await nextApiClientFetch<IVotesHistoryResponse>(`api/v1/votes/history?page=${1}&voterAddress=${encoded}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${onchainId}`);
+		if(error || !data) {
+			console.error('Error in fetching votes history: ', error);
+			setIsLastVoteLoading(false);
+			return;
+		}
+
+		if((data?.votes?.length || 0) <= 0) {
+			setIsLastVoteLoading(false);
+			return;
+		}
+
+		setOnChainLastVote(data.votes[0]);
+		setIsLastVoteLoading(false);
+	}, [address, defaultAddress, loginAddress, network, onchainId, proposalType]);
 
 	useEffect(() => {
 		if ([ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
@@ -366,164 +562,102 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		}
 	}, [currentBlock, post?.deciding, post?.timeline, proposalType, trackInfo, trackInfo.decisionPeriod]);
 
-	const onAccountChange = (address: string) => {
-		setAddress(address);
-	};
-
 	useEffect(() => {
-		if (!api) {
-			return;
-		}
-
-		if (!apiReady) {
-			return;
-		}
+		if (!api || !!apiReady) return;
 
 		const signer: Signer = signersMap[accountsMap[address]];
 		api?.setSigner(signer);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
-	const getWalletAccounts = async (chosenWallet: Wallet): Promise<InjectedAccount[] | undefined> => {
-		const injectedWindow = window as Window & InjectedWindow;
+	useEffect(() => {
+		getVotingHistory();
+	}, [getVotingHistory]);
 
-		let wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[chosenWallet]
-			: null;
+	const LastVoteInfoOnChain : FC <IVoteHistory>  = ({ createdAt, decision , lockPeriod }) => {
+		const unit =`${chainProperties[network]?.tokenSymbol}`;
+		return (
+			<Spin spinning={ isLastVoteLoading } indicator={<LoadingOutlined />}>
+				<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
 
-		if (!wallet) {
-			wallet = Object.values(injectedWindow.injectedWeb3)[0];
-		}
+				<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+					<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
+						<span className='h-[25px]'>
+							{decision == 'yes' ?
+								<p>
+									<AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span>
+								</p> :
+								decision == 'no' ?
+									<p>
+										<DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span>
+									</p> :
+									decision == 'abstain' && !(balance as any).abstain ?
+										<p>
+											<SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span>
+										</p> :
+										decision == 'abstain' && (balance as any).abstain ?
+											<p className='flex justify-center align-middle'>
+												<AbstainGray className='mr-1 mb-[-8px]'/>
+												<span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span>
+											</p> : null
+							}
+						</span>
+					</Tooltip>
 
-		if (!wallet) {
-			return;
-		}
+					<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
 
-		let injected: Injected | undefined;
+					<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
+						<span>
+							<MoneyIcon className='mr-1'/>
+							{formatedBalance(balance, unit)}{` ${unit}`}
+						</span>
+					</Tooltip>
 
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if(wallet && wallet.enable) {
-					wallet!.enable(APPNAME).then(value => {
-						clearTimeout(timeoutId);
-						resolve(value);
-					}).catch(error => {
-						reject(error);
-					});
-				}
-			});
-		} catch (err) {
-			console.log('Error fetching wallet accounts : ', err);
-		}
-
-		if(!injected) {
-			return;
-		}
-
-		const accounts = await injected.accounts.get();
-
-		if (accounts.length === 0) return;
-
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
-
-		return accounts;
+					<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
+						<span title='Conviction'>
+							<ConvictionIcon className='mr-1'/>
+							{lockPeriod}x
+						</span>
+					</Tooltip>
+				</div>
+			</Spin>);
 	};
 
-	const getAccounts = async (): Promise<undefined> => {
-		if (!api) {
-			return;
-		}
+	const LastVoteInfoLocalState :FC<ILastVote> = ({ balance, conviction, decision }) => {
+		return (
+			<div>
+				<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
+				<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+					<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
+						<span className='h-[25px]'>{decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
+					</Tooltip>
+					<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
+						<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
+					</Tooltip>
 
-		if (!apiReady) {
-			return;
-		}
+					<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=''>
+						<span>
+							<MoneyIcon className='mr-1'/>
+							{formatedBalance(balance.toString(), unit)}{` ${unit}`}
+						</span>
+					</Tooltip>
 
-		const extensions = await web3Enable(APPNAME);
-
-		if (extensions.length === 0) {
-			setExtensionNotFound(true);
-			return;
-		} else {
-			setExtensionNotFound(false);
-		}
-
-		let accounts: InjectedAccount[] = [];
-		let polakadotJSAccounts : InjectedAccount[] | undefined;
-		let polywalletJSAccounts : InjectedAccount[] | undefined;
-		let subwalletAccounts: InjectedAccount[] | undefined;
-		let talismanAccounts: InjectedAccount[] | undefined;
-
-		const signersMapLocal = signersMap as {[key:string]: Signer};
-		const accountsMapLocal = accountsMap as {[key:string]: string};
-
-		for (const extObj of extensions) {
-			if(extObj.name == 'polkadot-js') {
-				signersMapLocal['polkadot-js'] = extObj.signer;
-				polakadotJSAccounts = await getWalletAccounts(Wallet.POLKADOT);
-			} else if(extObj.name == 'subwallet-js') {
-				signersMapLocal['subwallet-js'] = extObj.signer;
-				subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
-			} else if(extObj.name == 'talisman') {
-				signersMapLocal['talisman'] = extObj.signer;
-				talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
-			} else if (['polymesh'].includes(network) && extObj.name === 'polywallet') {
-				signersMapLocal['polywallet'] = extObj.signer;
-				polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
-			}
-		}
-
-		if(polakadotJSAccounts) {
-			accounts = accounts.concat(polakadotJSAccounts);
-			polakadotJSAccounts.forEach((acc: InjectedAccount) => {
-				accountsMapLocal[acc.address] = 'polkadot-js';
-			});
-		}
-
-		if(['polymesh'].includes(network) && polywalletJSAccounts) {
-			accounts = accounts.concat(polywalletJSAccounts);
-			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
-				accountsMapLocal[acc.address] = 'polywallet';
-			});
-		}
-
-		if(subwalletAccounts) {
-			accounts = accounts.concat(subwalletAccounts);
-			subwalletAccounts.forEach((acc: InjectedAccount) => {
-				accountsMapLocal[acc.address] = 'subwallet-js';
-			});
-		}
-
-		if(talismanAccounts) {
-			accounts = accounts.concat(talismanAccounts);
-			talismanAccounts.forEach((acc: InjectedAccount) => {
-				accountsMapLocal[acc.address] = 'talisman';
-			});
-		}
-
-		if (accounts.length === 0) {
-			setAccountsNotFound(true);
-			return;
-		} else {
-			setAccountsNotFound(false);
-			setAccountsMap(accountsMapLocal);
-			setSignersMap(signersMapLocal);
-		}
-
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			setAddress(accounts[0].address);
-			const signer: Signer = signersMapLocal[accountsMapLocal[accounts[0].address]];
-			api.setSigner(signer);
-		}
-
-		return;
+					<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
+						<span title='Conviction'>
+							<ConvictionIcon className='mr-1'/>
+							{conviction}x
+						</span>
+					</Tooltip>
+				</div>
+			</div>
+		);
 	};
+
+	const RenderLastVote = lastVote ?
+		<LastVoteInfoLocalState {...lastVote} /> :
+		onChainLastVote !== null ?
+			<LastVoteInfoOnChain {...onChainLastVote}/> :
+			null;
 
 	if (extensionNotFound) {
 		return (
@@ -543,6 +677,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			</GovSidebarCard>
 		);
 	}
+
 	return (
 		<>
 			{<div className={className}>
@@ -571,6 +706,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					{proposalType === ProposalType.COUNCIL_MOTIONS && <>
 						{canVote &&
 							<VoteMotion
+								setAccounts={setAccounts}
 								accounts={accounts}
 								address={address}
 								getAccounts={getAccounts}
@@ -588,6 +724,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					{proposalType === ProposalType.ALLIANCE_MOTION && <>
 						{canVote &&
 							<VoteMotion
+								setAccounts={setAccounts}
 								accounts={accounts}
 								address={address}
 								getAccounts={getAccounts}
@@ -630,26 +767,27 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							{
 								proposalType === ProposalType.REFERENDUMS?
 									<>
-
 										{canVote &&
 											<>
 												{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
 													<>
 														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 
-														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
+														{
+															(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
-													<GovSidebarCard>
+													<GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendumEth
 															referendumId={onchainId as number}
 															onAccountChange={onAccountChange}
 															setLastVote={setLastVote}
 															lastVote={lastVote} />
+														{RenderLastVote}
 													</GovSidebarCard>
-
 														}
-													</> : <GovSidebarCard>
+													</> :
+													<GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
@@ -659,6 +797,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															referendumId={onchainId  as number}
 															proposalType={proposalType}
 														/>
+
+														{RenderLastVote}
 													</GovSidebarCard>
 												}
 											</>
@@ -683,17 +823,19 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
-													<GovSidebarCard>
+													<GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendumEthV2
 															referendumId={onchainId as number}
 															onAccountChange={onAccountChange}
 															setLastVote={setLastVote}
 															lastVote={lastVote} />
+
+														{RenderLastVote}
 													</GovSidebarCard>
 
 														}
-													</> : <GovSidebarCard>
+													</> : <GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
@@ -703,6 +845,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															referendumId={onchainId  as number}
 															proposalType={proposalType}
 														/>
+
+														{RenderLastVote}
+
 													</GovSidebarCard>}
 											</>
 										}
@@ -784,15 +929,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										You haven&apos;t voted yet, vote now and do your bit for the community
 									</GovSidebarCard>
 									:
-									<GovSidebarCard className='flex items-center'>
-
-										You Voted: { lastVote == 'aye' && <LikeFilled className='text-aye_green ml-2' />}
-										{ lastVote == 'nay' && <DislikeFilled className='text-nay_red ml-2' />}
-										{ lastVote == 'split' && <SplitGray className=' ml-2 mr-1' />}
-										{ lastVote == 'abstain' && <AbstainGray className=' ml-2 mr-1' />}
-										<span className={`last-vote-text ${lastVote == 'aye' ? 'green-text' : 'red-text'}`}>{lastVote}</span>
-
-									</GovSidebarCard>
+									<></>
 									: <></>
 								}
 							</div>
@@ -804,6 +941,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						{
 							canVote && <EndorseTip
 								className='mb-8'
+								setAccounts={setAccounts}
 								accounts={accounts}
 								address={address}
 								getAccounts={getAccounts}
@@ -849,5 +987,9 @@ export default styled(GovernanceSideBar)`
 	}
 	.edit-icon-wrapper:hover .edit-icon{
 		display: block;
+	}
+	.ant-tooltip-open{
+		font-size:12px;
+		height:20px;
 	}
 `;

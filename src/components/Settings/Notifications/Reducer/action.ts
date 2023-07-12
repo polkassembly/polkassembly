@@ -124,7 +124,7 @@ const updateAll = (payload:any, state:IReducerState) => {
 	const openGov: any = {};
 	for (const key in state.openGov) {
 		state.openGov[key] = networkTrackInfo?.[payload.network]?.[key]?.fellowshipOrigin ? fellowShipOptions : state.openGov[key];
-		openGov[key] = state.openGov[key].map((category: any) => {
+		openGov[key] = state.openGov[key]?.map((category: any) => {
 			return {
 				...category,
 				selected:

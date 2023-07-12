@@ -1,9 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState ,useContext } from 'react';
 import { ClockCircleOutlined ,LoadingOutlined } from '@ant-design/icons';
 import { Radio, Spin } from 'antd';
@@ -60,8 +57,12 @@ function getOrdinalSuffix(day: number): string {
 
 	return suffix;
 }
+interface Props{
+  setTotalAuditCount: (pre: number) => void;
+  totalAuditCount: number;
+}
 
-const PostAudit = () => {
+const PostAudit = ({ setTotalAuditCount, totalAuditCount }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { postData } = usePostDataContext();
@@ -98,6 +99,7 @@ const PostAudit = () => {
 			if (response.ok) {
 				const data = await response.json();
 				setAuditData(data);
+				setTotalAuditCount(totalAuditCount + data.length || 0);
 			} else {
 				throw new Error('Request failed');
 			}
@@ -122,6 +124,8 @@ const PostAudit = () => {
 				const data = await response.json();
 				const decoded = atob(data.content);
 				setVideoData(JSON.parse(decoded) as IDataVideoType[]);
+				setTotalAuditCount(totalAuditCount + (JSON.parse(decoded) as IDataVideoType[]).length || 0);
+
 			} else {
 				throw new Error('Request failed');
 			}

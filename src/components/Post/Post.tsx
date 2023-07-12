@@ -28,6 +28,7 @@ import SpamAlert from '~src/ui-components/SpamAlert';
 import { useNetworkContext } from '~src/context';
 import Link from 'next/link';
 import LinkCard from './LinkCard';
+import { ILastVote } from '~src/types';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -96,9 +97,11 @@ const Post: FC<IPostProps> = (props) => {
 	const [canEdit, setCanEdit] = useState(false);
 	const { network } = useNetworkContext();
 	const [duration, setDuration] = useState(dayjs.duration(0));
+	const [totalAuditCount, setTotalAuditCount] = useState<number>(0);
 
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
+	const [lastVote, setLastVote] = useState< ILastVote | undefined >(undefined);
 
 	useEffect(() => {
 		if(!post) return;
@@ -199,6 +202,8 @@ const Post: FC<IPostProps> = (props) => {
 					startTime={post.created_at}
 					post={post}
 					tally={post?.tally}
+					lastVote={lastVote}
+					setLastVote={setLastVote}
 				/>
 				{
 					isOffchainPost &&
@@ -233,7 +238,7 @@ const Post: FC<IPostProps> = (props) => {
 		setProposerAddress(address);
 	};
 	const getOnChainTabs = () => {
-		const tabs = [
+		const tabs: any[] = [
 			{
 				children: (
 					<PostTimeline />
@@ -245,10 +250,11 @@ const Post: FC<IPostProps> = (props) => {
 		if (['polkadot', 'kusama'].includes(network)){
 			tabs.push({
 				children: (
-					<PostAudit />
+					<PostAudit  setTotalAuditCount={setTotalAuditCount} totalAuditCount={totalAuditCount}/>
 				),
 				key: 'audit',
-				label: 'Audit'
+				label:<div className='flex gap-2 items-center justify-center'>Audit
+					<span className='bg-pink_primary text-xs font-medium rounded-full px-1.5 text-white'>{totalAuditCount}</span></div>
 			});
 		}
 

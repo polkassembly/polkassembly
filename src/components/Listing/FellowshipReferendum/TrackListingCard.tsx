@@ -54,6 +54,7 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 	const defaultActiveTab = trackName && ['All', ...fellowshipReferendumPostOrigins].includes(String(trackName))? String(trackName): 'All';
 	const [activeTab, setActiveTab] = useState(defaultActiveTab);
 	const onTabClick = (key: string) => {
+		if(key === 'Filter')return;
 		setActiveTab(key);
 		const query = { ...router.query };
 		delete query.page;

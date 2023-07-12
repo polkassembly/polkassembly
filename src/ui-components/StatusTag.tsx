@@ -10,7 +10,7 @@ interface Props{
 	children?: ReactNode;
 	className?: string;
 	content?: string;
-	status: string;
+	status: string | undefined;
 	colorInverted?: boolean;
 	type?: string;
 }
@@ -29,7 +29,7 @@ const StatusTag = ({ className, content, status, colorInverted, type }: Props) =
 	}
 
 	return (
-		<div className={`${className} ${status} ${colorInverted && 'bg-white inverted'} text-xs rounded-full border-solid border-2 px-3 py-1 whitespace-nowrap h-min`}>
+		<div className={`${className} ${status} ${colorInverted && 'bg-white inverted'} text-xs rounded-full  px-3 py-1 whitespace-nowrap h-min`}>
 			{content?.split(/(?=[A-Z])/).join(' ')}
 		</div>
 	);
@@ -39,10 +39,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	className: status,
 	content: status
 }))`
-	color: #fff;
+	
 	max-width: min-content;
-	background: #666;
-	border-color: #666;
 
 	&.inverted {
 		color: #666;
@@ -52,7 +50,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${bountyStatus.ACTIVE},
 	&.${bountyStatus.EXTENDED},
 	&.${tipStatus.CLOSING} {
-		border-color: #FF6700;
+		color: #fff;
+		border:2px solid #FF6700;
 		background: #FF6700;
 
 		&.inverted {
@@ -69,7 +68,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${bountyStatus.PROPOSED},
 	&.${tipStatus.OPENED},
 	&.${childBountyStatus.ADDED} {
-		border-color: #407AFC;
+		color: #fff;
+		border:2px solid #407AFC;
 		background: #407AFC;
 
 		&.inverted {
@@ -87,7 +87,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${bountyStatus.CANCELED},
 	&.${bountyStatus.REJECTED},
 	&.${childBountyStatus.CANCELED} {
-		border-color: #FF0000 !important;
+		color: #fff;
+		border:2px solid #FF0000 !important;
 		background: #FF0000 !important;
 
 		&.inverted {
@@ -96,7 +97,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 		}
 	}
 	&.${referendumStatus.NOTPASSED}{
-		border-color: #FF0000 !important;
+		color: #fff;
+		border:2px solid #FF0000 !important;
 		background: #FF0000 !important;
 		&.inverted {
 			color: #FF0000 !important;
@@ -115,7 +117,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${childBountyStatus.AWARDED},
 	&.${bountyStatus.AWARDED},
 	&.${announcementStatus.Announced} {
-		border-color: #5BC044;
+		color: #fff;
+		border:2px solid #5BC044;
 		background: #5BC044;
 
 		&.inverted {
@@ -124,7 +127,8 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	}
 	&.${childBountyStatus.CLAIMED},
 	&.prime, &.Prime {
-		border-color: var(--green_primary);
+		color: #fff;
+		border:2px solid var(--green_primary);
 		background-color: var(--green_primary);
 
 		&.inverted {

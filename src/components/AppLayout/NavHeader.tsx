@@ -77,9 +77,9 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 						<div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
 				}
 				<div className="flex items-center justify-between gap-x-2 md:gap-x-4">
+					<SearchBar/>
 
 					<Space className='hidden md:flex items-center justify-between gap-x-2 md:gap-x-4'>
-						<SearchBar/>
 						{/* <Link className='text-navBlue hidden hover:text-pink_primary text-lg items-center' href='/notification-settings'>
 							<BellOutlined />
 						</Link> */}
@@ -122,7 +122,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 										className='p-4 bg-white'
 									>
 										<div className='flex flex-col'>
-											{/* <SearchBar isSmallScreen={true} /> */}
+											<SearchBar  />
 											<div>
 												<p className='m-0 p-0 text-[#485F7D] font-normal text-sm leading-[23px] tracking-[0.02em] text-left'>Network</p>
 												<NetworkDropdown setSidedrawer={() => {}} isSmallScreen={true} />

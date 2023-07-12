@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { GetTracksColumns, handleTracksIcon } from './Coloumn';
 import { Button, Skeleton, Table } from 'antd';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
-import { DelegatedIcon } from '~src/ui-components/CustomIcons';
+import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
 import { ETrackDelegationStatus, IDelegation, Wallet } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -195,24 +195,24 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			</span>
 		</div>
 		{status ? <div className='border-solid border-[1px] border-[#D2D8E0] rounded-[14px] py-6 px-9 shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white'>
-			<div className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57] flex gap-3 items-center'>
+			<div className='text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue flex gap-3 items-center'>
 				{handleTracksIcon(handleTrack(String(track)), 28)}
 				<span>{handleTrack(String(track))}</span>
 				{status && status.map((item: ETrackDelegationStatus, index: number) =>
-					<span key={index} className={`text-[12px] ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center`}>
+					<span key={index} className={`text-sm ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF]'} ${item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8]'} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8]'} rounded-[26px] py-[6px] px-[12px] text-center`}>
 						{ item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
 					</span>)}
 			</div>
-			<p className='mt-[19px] text-sm text-[#243A57] tracking-[0.01em] font-normal'>
+			<p className='mt-5 text-sm text-bodyBlue tracking-[0.01em] font-normal'>
 				{trackDetails.description}
 			</p>
 			<div className='flex flex-col gap-4 mt-6' >
 				{ showTable && status.map((item: ETrackDelegationStatus, index: number) => (
 
 					<div className='flex gap-2 flex-col' key={index}>
-						<span className='text-sm text-[#243A57] font-semibold ml-[1px]'>
+						<span className='text-sm text-bodyBlue font-semibold ml-[1px]'>
 							{item === ETrackDelegationStatus.Received_Delegation ? 'Received Delegation(s)' : 'Delegated'}</span>
-						<div className='bg-white mt-0 border-[1px] border-solid rounded-[6px] pl-[3px] pr-[3px] border-[#D2D8E0] bg-transparent'>
+						<div className='bg-white mt-0 border-[1px] border-solid rounded-md pl-[3px] pr-[3px] border-[#D2D8E0] bg-transparent'>
 							<Table
 								className='column'
 								columns={GetTracksColumns(item, setOpenUndelegateModal)}
@@ -223,11 +223,11 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 					</div>))
 				}</div>
 			{status.includes(ETrackDelegationStatus.Undelegated) && <div className='bg-white flex pt-[24px] items-center flex-col text-[169px] pb-[33px] rounded-b-[14px]'>
-				<DelegatedIcon />
-				<div className='text-[#243A57] mt-[18px] text-center'>
+				<DelegateDelegationIcon />
+				<div className='text-bodyBlue mt-[18px] text-center'>
 					<div className='text-sm tracking-[0.01em] font-normal mt-1 flex justify-center items-center max-md:flex-col'>
         Voting power for this track has not been delegated yet
-						<Button onClick={() => setOpenDelegateModal(true)} className='text-[#E5007A] font-normal tracking-wide text-sm ml-1 flex items-center justify-center max-md:mt-[10px] border-none shadow-none' >
+						<Button onClick={() => setOpenDelegateModal(true)} className='text-pink_primary font-normal tracking-wide text-sm ml-1 flex items-center justify-center max-md:mt-[10px] border-none shadow-none' >
 							<DelegatedProfileIcon className='mr-[7px]'/>
 							<span className='mt-[1px]'>
                Delegate
@@ -247,7 +247,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 				disabled={status.includes(ETrackDelegationStatus.Delegated)}
 				trackDetails={trackDetails}
 			/>
-		</div> : <Skeleton className='mt-'/>}
+		</div> : <Skeleton />}
 
 		{!openLoginModal && !openSignupModal && !loginWallet && <WalletConnectModal open={openModal} setOpen={setOpenModal} />}
 		<LoginPopup closable={false} setSignupOpen={setOpenSignupModal} modalOpen={openLoginModal} setModalOpen={setOpenLoginModal} isModal={true} isDelegation={true}/>
@@ -271,7 +271,7 @@ export default styled(DashboardTrackListing)`
   background: radial-gradient(99.69% 25520% at 1.22% 0%, #42122C 0%, #A6075C 32.81%, #952863 77.08%, #E5007A 100%);
 }
 .column .ant-table-thead > tr > th{
-  color:#485F7D !important;
+  color:var(--lightBlue) !important;
   font-size: 14px;
   font-weight: 600px;
   line-height: 21px;

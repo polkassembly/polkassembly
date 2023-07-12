@@ -68,7 +68,7 @@ const Parachains = ({ className, network }: Props) => {
 					</Col>
 				</Row>
 
-				<div className={`${className} bg-white drop-shadow-md p-2 lg:p-6 rounded-xl h-[650px]`}>
+				<div className={`${className} bg-white drop-shadow-md p-2 lg:p-6 rounded-xxl h-[650px]`}>
 					<h2 className='text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 sm:mt-0'>Projects</h2>
 					<Tabs
 						type="card"

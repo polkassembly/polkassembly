@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import AddTags from '~src/ui-components/AddTags';
 import MarkdownEditor from '~src/ui-components/MarkdownEditor';
@@ -12,6 +12,7 @@ import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
+import _ from 'lodash';
 
 interface Props{
   isDiscussionLinked: boolean | null;
@@ -42,10 +43,45 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 		return (!regex.test(value) || value.split('https://')[1].split('.')[0] !== network);
 	};
 
+	const getDiscussionPostData = async(link: string, isDiscussionLinked: boolean) => {
+		const regex =  /^https:\/\/\w+\.polkassembly\.io\/post\/\d+$/;
+		if(!regex.test(link)) return;
+
+		const linkNetwork = link?.split('https://')[1]?.split('.')?.[0];
+		const postId = link.split('post/')[1];
+		if(network !== linkNetwork ) return;
+		setLoading(true);
+		const { data, error } = await nextApiClientFetch<IPostResponse>(`api/v1/posts/off-chain-post?postId=${postId}&network=${network}`);
+		if(data){
+			setTitle(data.title  || '');
+			setContent(data.content || '');
+			setTags(data?.tags || []);
+			form.setFieldValue('title', (data?.title || ''));
+			form.setFieldValue('content', (data?.content || ''));
+			form.setFieldValue('tags', (data?.tags || []));
+			setIsDiscussionFound(true);
+			setSteps({ percent: 100, step: 0 });
+			setLoading(false);
+			onChangeLocalStorageSet({ content: data?.content || '', tags: data?.tags || [], title:data?.title || '' }, Boolean(isDiscussionLinked));
+		}
+		else if(error) {
+			setIsDiscussionFound(false);
+			queueNotification({
+				header: 'Failed!',
+				message: error || 'Invalid discussion link. ' ,
+				status: NotificationStatus.ERROR
+			});
+		}
+		setLoading(false);
+
+	};
 	const handleStateChange = (writeProposalFormData: any) => {
-		console.log(writeProposalFormData?.content);
-		writeProposalFormData?.discussionLink && setSteps({ percent: 66.6, step:0 });
-		(writeProposalFormData.title && writeProposalFormData.content) && setSteps({ percent: 100, step: 0 });
+		setSteps({ percent: 33.3, step: 0 });
+		if(writeProposalFormData?.discussionLink){
+			setSteps({ percent: 66.6, step:0 });
+			!(writeProposalFormData?.content && writeProposalFormData.title) && getDiscussionPostData(writeProposalFormData?.discussionLink,writeProposalFormData?.isDiscussionLinked );
+		}
+		(writeProposalFormData?.discussionLink && writeProposalFormData.title && writeProposalFormData.content) && setSteps({ percent: 100, step: 0 });
 		setDiscussionLink(writeProposalFormData?.discussionLink || '') ;
 		setTitle(writeProposalFormData?.title || '');
 		setContent(writeProposalFormData?.content || '');
@@ -57,11 +93,13 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 	};
 
 	useEffect(() => {
+		console.log('helo');
 		let data: any = localStorage.getItem('treasuryProposalData');
 		data = JSON.parse(data);
 		if(data && data?.writeProposalForm){
 			const isDiscussionLink = data?.isDiscussionLinked;
-			setIsDiscussionLinked(isDiscussionLink);
+			console.log(data?.isDiscussionLinked);
+			data?.isDiscussionLinked !== undefined && setIsDiscussionLinked(Boolean(isDiscussionLink));
 			setSteps({ percent: 33.3, step: 0 });
 			const writeProposalFormData = data?.writeProposalForm?.[isDiscussionLink ? 'discussionLinkForm' : 'withoutDiscussionLinkForm'] || {};
 			handleStateChange(writeProposalFormData);
@@ -89,46 +127,11 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 		isDiscussionLinkedStateChange && handleStateChange(writeProposalKeysData);
 	};
 
-	const getDiscussionPostData = async(link: string) => {
-		const regex =  /^https:\/\/\w+\.polkassembly\.io\/post\/\d+$/;
-		if(!regex.test(link)) return;
-
-		const linkNetwork = link?.split('https://')[1]?.split('.')?.[0];
-		const postId = link.split('post/')[1];
-		if(network !== linkNetwork ) return;
-		setLoading(true);
-		const { data, error } = await nextApiClientFetch<IPostResponse>(`api/v1/posts/off-chain-post?postId=${postId}&network=${network}`);
-		if(data){
-			setTitle(data.title  || '');
-			setContent(data.content || '');
-			setTags(data?.tags || []);
-			form.setFieldValue('title', (data?.title || ''));
-			form.setFieldValue('content', (data?.content || ''));
-			form.setFieldValue('tags', (data?.tags || []));
-			setIsDiscussionFound(true);
-			onChangeLocalStorageSet({ content: data?.content || '', tags: data?.tags || [], title:data?.title || '' }, Boolean(isDiscussionLinked));
-			setSteps({ percent: 100, step: 0 });
-			setLoading(false);
-		}
-		else if(error) {
-			setIsDiscussionFound(false);
-			queueNotification({
-				header: 'Failed!',
-				message: error || 'Invalid discussion link. ' ,
-				status: NotificationStatus.ERROR
-			});
-		}
-		setLoading(false);
-
-	};
-
 	const handleChangeIsDiscussion = () => {
 		setTitle('');
 		setTags([]);
 		setContent('');
-		form.setFieldValue('title', '');
-		form.setFieldValue('content', '');
-		form.setFieldValue('tags', []);
+		form.resetFields(['content', 'tags', 'title' ]);
 		setIsDiscussionFound(true);
 	};
 
@@ -136,8 +139,18 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 		setIsDiscussionLinked(value);
 		handleChangeIsDiscussion();
 		onChangeLocalStorageSet({ isDiscussionLinked: value }, value, true);
-		setSteps({ percent: 33.3, step: 0 });
 	};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const debouncedAutoCompleteFn = useCallback(_.debounce(getDiscussionPostData, 1500), []);
+	const handleChangeDiscussionLink = (link: string, isDiscussionLinked: boolean) => {
+		setDiscussionLink(link);
+		handleChangeIsDiscussion();
+		debouncedAutoCompleteFn(link, isDiscussionLinked);
+		onChangeLocalStorageSet({ discussionLink: link }, Boolean(isDiscussionLinked));
+		setSteps({ percent: 66.6, step: 0 });
+	};
+
 	return <>
 		<Spin spinning={loading} indicator={<LoadingOutlined/>}>
 			<div className='my-8 flex flex-col'>
@@ -167,7 +180,10 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 							}
 						}
 					}]} >
-						<Input name='discussion_link' value={discussionLink} onChange={(e) => {setDiscussionLink(e.target.value); handleChangeIsDiscussion(); onChangeLocalStorageSet({ discussionLink: e.target.value }, isDiscussionLinked); getDiscussionPostData(e.target.value); setSteps({ percent: 66.6, step: 0 });}} className='rounded-[4px] h-[40px]' placeholder='🌐 https://'/>
+						<Input name='discussion_link'
+							value={discussionLink}
+							onChange={(e) => handleChangeDiscussionLink(e.target.value, Boolean(isDiscussionLinked))}
+							className='rounded-[4px] h-[40px]' placeholder='https://'/>
 					</Form.Item>
 				</>}
 				{ isDiscussionLinked === false && <Alert type='info' showIcon message={
@@ -178,26 +194,37 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 						</a>
 					</span>}/>}
 
-				{isDiscussionLinked !== null &&  (isDiscussionLinked ? (discussionLink && !isDiscussionLinkedValid(discussionLink) && isDiscussionFound) : true) && <div className='mt-6 text-sm font-normal text-lightBlue'>
+				{isDiscussionLinked !== null &&  (isDiscussionLinked ? (discussionLink && !isDiscussionLinkedValid(discussionLink) && isDiscussionFound && loading) : true) && <div className='mt-6 text-sm font-normal text-lightBlue'>
 					<label className='font-medium'>Write a proposal :</label>
 					<div className='mt-4'>
 						<label className='mb-0.5'>Title <span className='text-nay_red'>*</span></label>
-						<Form.Item name='title' rules={[{ required: true }]}>
+						<Form.Item name='title'>
 							<Input name='title' className='h-[40px] rounded-[4px]'
-								onChange={(e) => {setTitle(e.target.value); onChangeLocalStorageSet({ title: e.target.value }, isDiscussionLinked); content.length === 0 ? setSteps({ percent: 83.33, step: 0 }) : setSteps({ percent: 100, step: 0 });}}
+								onChange={(e) => {
+									setTitle(e.target.value);
+									onChangeLocalStorageSet({ title: e.target.value }, Boolean(isDiscussionLinked));
+									setSteps({ percent: content.length === 0 ? 83.33 : 100, step: 0 });
+								}}
 								disabled={isDiscussionLinked}/>
 						</Form.Item>
 					</div>
 					<div className='mt-6'>
-						<label className='mb-0.5'>Add Tags</label>
+						<label className='mb-0.5'>{isDiscussionLinked ?  'Tags' : 'Add Tags' }</label>
 						<Form.Item name='tags'>
 							<AddTags onChange={(e) => onChangeLocalStorageSet({ tags: e }, isDiscussionLinked)} tags={tags} setTags={setTags} disabled={isDiscussionLinked}/>
 						</Form.Item>
 					</div>
 					<div className='mt-6'>
 						<label className='mb-0.5'>Description <span className='text-nay_red'>*</span></label>
-						<Form.Item name='content' rules={[{ required: true }]}>
-							<MarkdownEditor disabled={isDiscussionLinked} name='content' value={content} onChange={(content: string) => {setContent(content); onChangeLocalStorageSet({ content: content }, isDiscussionLinked); title.length === 0 ? setSteps({ percent: 83.33, step: 0 }): setSteps({ percent: 100, step: 0 });}}  />
+						<Form.Item name='content'>
+							<MarkdownEditor
+								disabled={isDiscussionLinked}
+								name='content' value={content}
+								onChange={(content: string) => {
+									setContent(content);
+									onChangeLocalStorageSet({ content: content }, isDiscussionLinked);
+									setSteps({ percent:title.length === 0 ? 83.33 : 100, step: 0 });
+								}}  />
 						</Form.Item>
 					</div>
 				</div>}

@@ -79,10 +79,6 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 			initialValue={balance ? Number(formatedBalance(balance.toString(), unit)) : ''}
 			rules={noRules ? []: [
 				{
-					message: 'Lock Balance is required.',
-					required: true
-				},
-				{
 					message: 'Lock Balance must be greater than 0.',
 					validator(rule, value, callback) {
 						if (callback && value.length && Number(value) <= 0 ){
@@ -95,7 +91,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 				{
 					message: 'Invalid Balance',
 					validator(rule, value, callback) {
-						if (callback && (isNaN(Number(value)) || (Number(value) <= 0 ) &&  (value?.split('.')?.[1]?.length && ( chainProperties[network]?.tokenDecimals  < (value?.split('.')?.[1].length || 0))))){
+						if (callback && (isNaN(Number(value)) || (Number(value) > 0 ) && (value?.split('.')?.[1]?.length && ( chainProperties[network]?.tokenDecimals  < (value?.split('.')?.[1].length || 0))))){
 							callback(rule?.message?.toString());
 						}else {
 							callback();

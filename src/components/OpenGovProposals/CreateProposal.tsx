@@ -22,6 +22,7 @@ import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
+import { poppins } from 'pages/_app';
 
 const ZERO_BN = new BN(0);
 
@@ -46,6 +47,7 @@ interface Props{
 
 const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess,title, content, tags, postId, setPostId }: Props) => {
 	const { network } = useNetworkContext();
+	console.log(enactment);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
 	const { api, apiReady } = useApiContext();
@@ -225,7 +227,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
 		<div className={`create-proposal ${className}`}>
-			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className='text-bodyBlue text-sm rounded-[4px] mt-8' type='success' showIcon/>
+			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-bodyBlue text-sm rounded-[4px] mt-8 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>
 			<div className='mt-4 text-sm font-normal text-lightBlue'>
 				<label className='font-medium'>Preimage Details:</label>
 				<div className='mt-[10px] flex flex-col gap-2'>
@@ -241,7 +243,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					</span>
 					<span className='flex gap-1'><span className='w-[150px]'>Preimage Length:</span><span className='text-bodyBlue font-medium'>{preimageLength}</span></span>
 					<span className='flex gap-1 items-center'><span className='w-[150px]'>Preimage Link:</span>
-						<a target='_blank' rel='noreferrer' href={`https://${network}.polkassembly.io/preimages/${preimageHash}`} className='text-bodyBlue font-medium'>{`https://${network}.polkassembly.io/preimages/${preimageHash.slice(0,5)}...`}</a>
+						<a  href={`/preimages/${preimageHash}`} className='text-bodyBlue font-medium'>{`https://${network}.polkassembly.io/preimages/${preimageHash.slice(0,5)}...`}</a>
 						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/preimages/${preimageHash}`) ;success('Preimage link copied to clipboard.');}}>
 							{contextHolder}
 							<CopyIcon/>
@@ -249,7 +251,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					</span>
 				</div>
 			</div>
-			{showAlert && <Alert className='mt-6 text-bodyBlue rounded-[4px]' showIcon type='info' message={<span className='text-sm text-bodyBlue'>An amount of {formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit} will be required to submit proposal.</span>}
+			{showAlert && <Alert className={`mt-6 text-bodyBlue rounded-[4px] ${poppins.className} ${poppins.variable}`} showIcon type='info' message={<span className='text-sm text-bodyBlue'>An amount of <span className='font-medium'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span> will be required to submit proposal.</span>}
 				description={<div className='mt-[10px] flex flex-col gap-1 font-normal'>
 					<span className='flex gap-3 text-xs text-lightBlue'><span className='w-[150px]'>Deposit amount</span><span className='text-bodyBlue font-medium'>{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}</span></span>
 					<span className='flex gap-3 text-xs text-lightBlue'><span className='w-[150px]'>Gas fees</span><span className='text-bodyBlue font-medium'>{formatedBalance(String(txFee.toString()), unit)} {unit}</span></span>

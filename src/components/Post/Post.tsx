@@ -250,7 +250,7 @@ const Post: FC<IPostProps> = (props) => {
 		if (['polkadot', 'kusama'].includes(network)){
 			tabs.push({
 				children: (
-					<PostAudit  setTotalAuditCount={setTotalAuditCount}/>
+					<PostAudit  setTotalAuditCount={setTotalAuditCount} totalAuditCount={totalAuditCount}/>
 				),
 				key: 'audit',
 				label:<div className='flex gap-2 items-center justify-center'>Audit

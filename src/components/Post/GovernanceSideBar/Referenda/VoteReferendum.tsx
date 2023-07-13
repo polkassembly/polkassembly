@@ -37,8 +37,8 @@ import dayjs from 'dayjs';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import ArrowLeft from '~assets/icons/arrow-left.svg';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import { Polkasafe } from 'polkasafe';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
+import usePolkasafe from '~src/hooks/usePolkasafe';
 
 const ZERO_BN = new BN(0);
 
@@ -86,7 +86,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [multisig, setMultisig] = useState<string>('');
 	const [showMultisig, setShowMultisig] = useState<boolean>(false);
 
-	const client = new Polkasafe();
+	const { client, connect } = usePolkasafe(address);
 
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
@@ -434,25 +434,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		}
 		if(multisig){
 			const voteReferendumByMultisig = async (tx:any) => {
-				const substrateAddress = getSubstrateAddress(address);
-				if(!substrateAddress){
-					throw new Error('Invalid address');
-				}
-				if(!wallet){
-					throw new Error('wallet not found');
-				}
-				const injectedWindow = window as Window & InjectedWindow;
-				const selectedWallet = injectedWindow.injectedWeb3[wallet];
-				if (!selectedWallet) {
-					throw new Error('Invalid wallet');
-				}
-				const injected = selectedWallet && selectedWallet.enable && await selectedWallet.enable(APPNAME);
-				if(!injected){
-					throw new Error('Internal Error');
-				}
 				try{
-					//@ts-ignore
-					await client.connect(network, substrateAddress, injected );
+					await connect();
 					const statusGrabber = (message:string) => {
 						setLoadingStatus({ isLoading: true, message:message });
 					};

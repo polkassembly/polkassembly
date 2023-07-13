@@ -41,6 +41,7 @@ import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import usePolkasafe from '~src/hooks/usePolkasafe';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
+import MultisigVoteInitiatedModal from './Modal/MultisigVoteSuccessModal';
 
 const ZERO_BN = new BN(0);
 
@@ -112,7 +113,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [multisig, setMultisig] = useState<string>('');
 	const [showMultisig, setShowMultisig] = useState<boolean>(false);
 
-	const { client, connect } = usePolkasafe(address);
+	const { client, connect } = usePolkasafe(loginAddress);
 
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
@@ -810,7 +811,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
-			<DelegationSuccessPopup title='Voted' vote={vote} isVote={true} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} />
+			{ successModal && multisig ?
+				<MultisigVoteInitiatedModal title='Voting with Polkasafe Multisig initiated'  vote={vote} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} multisig={multisig} conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} />
+				:
+				<DelegationSuccessPopup title='Voted' vote={vote} isVote={true} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} />
+			}
 		</div>
 	</>;
 

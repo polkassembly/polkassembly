@@ -34,7 +34,7 @@ const SearchErrorsCard = ({ isSearchErr, setIsSuperSearch, setOpenModal, setFilt
 		setUserDetailsContextState((prev: UserDetailsContextType) => {
 			return{
 				...prev,
-				govType:  EGovType.OPEN_GOV === govType ? EGovType.GOV1 : EGovType.OPEN_GOV
+				govType: govType === EGovType.OPEN_GOV ?  EGovType.OPEN_GOV : EGovType.GOV1
 			};
 		});
 	};

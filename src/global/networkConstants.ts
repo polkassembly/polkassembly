@@ -317,7 +317,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 592,
 		logo: astarLogo,
-		rpcEndpoint: 'wss://astar.api.onfinality.io/public-ws',
+		rpcEndpoint: 'wss://astar-rpc.dwellir.com/',
 		ss58Format: 5,
 		subsquidUrl: '',
 		tokenDecimals: 12,

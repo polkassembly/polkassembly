@@ -5,11 +5,10 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import React, { createContext, useState } from 'react';
 import { decodeToken } from 'react-jwt';
-
 import { JWTPayloadType } from '~src/auth/types';
-
 import { getLocalStorageToken } from '../services/auth.service';
 import { UserDetailsContextType } from '../types';
+import { EGovType } from '~src/global/proposalType';
 
 const initialUserDetailsContext : UserDetailsContextType = {
 	addresses: [],
@@ -18,6 +17,7 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	delegationDashboardAddress:'',
 	email: null,
 	email_verified: false,
+	govType: EGovType.OPEN_GOV,
 	id: null,
 	is2FAEnabled: false,
 	isLoggedOut: (): boolean => {

@@ -21,7 +21,7 @@ import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { PostOrigin } from '~src/types';
+import { PostOrigin, UserDetailsContextType } from '~src/types';
 
 import Footer from './Footer';
 import GovernanceSwitchButton from './GovernanceSwitchButton';
@@ -29,6 +29,7 @@ import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
+import { EGovType } from '~src/global/proposalType';
 
 const { Content, Sider } = Layout;
 
@@ -102,7 +103,7 @@ interface Props {
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkContext();
-	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
+	const { setUserDetailsContextState, govType, username, picture } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
@@ -345,7 +346,17 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]));
 	}
 
-	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
+	useEffect(() => {
+		const isGov2Route = checkGov2Route(router.pathname, router.query, govType, network);
+
+		setUserDetailsContextState((prev: UserDetailsContextType) => {
+			return{
+				...prev,
+				govType: isGov2Route
+			};
+		});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[]);
 
 	const handleMenuClick = (menuItem: any) => {
 		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
@@ -362,7 +373,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
-	if(isGov2Route) {
+	if(govType === EGovType.OPEN_GOV) {
 		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	}
 

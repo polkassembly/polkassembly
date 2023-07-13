@@ -14,9 +14,10 @@ interface Props {
 	username: string | null
 	id: number | null
 	size?: AvatarSize;
+	profile?:string
 }
 
-const UserAvatar = ({ className, id, username, size }: Props) => {
+const UserAvatar = ({ className, id, username, size, profile }: Props) => {
 	const [userProfileData, setUserProfileData] = useState<ProfileDetailsResponse | null>(null);
 
 	const getUserDetails = useCallback(async () => {
@@ -29,11 +30,13 @@ const UserAvatar = ({ className, id, username, size }: Props) => {
 	}, [id]);
 
 	useEffect(() => {
-		getUserDetails();
-	}, [getUserDetails]);
+		if(profile === undefined){
+			getUserDetails();
+		}
+	}, [getUserDetails, profile]);
 
 	return (
-		userProfileData?.image ? <Avatar className={className} src={userProfileData?.image} size={size} />
+		(profile || userProfileData?.image) ? <Avatar className={className} src={profile || userProfileData?.image} size={size} />
 			: <Avatar className={`${className} bg-gray-300`} size={size} shape='circle'>{username?.substring(0, 1).toUpperCase()}</Avatar>
 	);
 };

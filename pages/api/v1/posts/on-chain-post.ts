@@ -22,6 +22,9 @@ import { getUpdatedAt } from './off-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
+import { getSubsquareCommentsFromFirebase } from './comments/getOnlySubsquareComments';
+import { getSubSquareComments } from './comments/subsquare-comments';
+import { updateComments } from './comments/updateComments';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -313,12 +316,14 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
 			const commentsReactionsSnapshot = await commentDocRef.collection('comment_reactions').get();
 			const comment_reactions = getReactions(commentsReactionsSnapshot);
+			const user = (await firestore_db.collection('users').doc(String(data.user_id)).get()).data();
 			const comment = {
 				comment_reactions: comment_reactions,
 				content: data.content,
 				created_at: data.created_at?.toDate ? data.created_at.toDate(): data.created_at,
 				history: history,
 				id: data.id,
+				profile: user?.profile || null,
 				proposer: '',
 				replies: [] as any[],
 				sentiment:data.sentiment || 0,
@@ -921,21 +926,14 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			const timelines:Array<any> = await Promise.allSettled(commentPromises);
 			post.timeline = timelines.map(timeline => timeline.value);
 		}
-		// else {
-		// 	if (post.post_link) {
-		// 		const { id, type } = post.post_link;
-		// 		const postDocRef = postsByTypeRef(network, type).doc(String(id));
-		// 		const commentsSnapshot = await postDocRef.collection('comments').get();
-		// 		post.comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
-		// 	}
-		// 	const commentsSnapshot = await postDocRef.collection('comments').get();
-		// 	const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
-		// 	if (post.comments && Array.isArray(post.comments)) {
-		// 		post.comments = post.comments.concat(comments);
-		// 	} else {
-		// 		post.comments = comments;
-		// 	}
-		// }
+
+		// Update subsquare comments
+		const { data: commentIds } = await getSubsquareCommentsFromFirebase({ network, postId: postId as string, postType:proposalType });
+		let comments = await getSubSquareComments(proposalType as string, network, postId as string);
+		commentIds?.forEach(id => {
+			comments = comments.filter(comment => comment.id!== id);
+		});
+		await updateComments(postId as string, network, proposalType, comments);
 
 		// Post Reactions
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();

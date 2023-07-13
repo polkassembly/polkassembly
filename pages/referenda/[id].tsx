@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
-import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
 import Post from 'src/components/Post/Post';
@@ -20,8 +19,6 @@ import { useRouter } from 'next/router';
 import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { useApiContext } from '~src/context';
-import { updateComments } from 'pages/api/v1/posts/comments/updateComments';
-import { getSubsquareCommentsFromFirebase } from 'pages/api/v1/posts/comments/getOnlySubsquareComments';
 
 const proposalType = ProposalType.OPEN_GOV;
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
@@ -33,12 +30,6 @@ export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 		postId: id,
 		proposalType
 	});
-	const { data: commentId } = await getSubsquareCommentsFromFirebase({ network, postId: id as string, postType:proposalType });
-	let comments = await getSubSquareComments(proposalType, network, id);
-	commentId?.forEach(id => {
-		comments = comments.filter(comment => comment.id!== id);
-	});
-	await updateComments(id as string, network, proposalType, comments);
 	return { props: { error, network, post:data, status } };
 };
 

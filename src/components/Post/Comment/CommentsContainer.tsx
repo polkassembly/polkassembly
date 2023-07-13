@@ -30,6 +30,7 @@ import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRouter } from 'next/router';
+import { getCommentsWithId } from './utils/getPostCommentsWithId';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -98,6 +99,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const allComments = Object.values(comments)?.flat() || [];
 	const router = useRouter();
 
+	const url = window.location.href;
+	const commentId = url.split('#')[1];
 	const handleTimelineClick = (e: React.MouseEvent<HTMLElement>, link: { title: React.ReactNode; href: string; }) => {
 		if (link.href === '#') {
 			e.preventDefault();
@@ -200,16 +203,31 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 
 		for(const data of timelines){
-			const lastDoc = comments[data.index][comments[data.index].length-1]?.id;
-			const res:any = await getPaginatedComments(data.index.toString(), lastDoc, network, COMMENT_SIZE, data.type);
-			comments[data.index] = [...comments[data.index], ...res.comments];
-			const timelinePayload = { ...data, firstCommentId: comments[data.index]?.[0]?.id || '' };
-			setCurrentTimeline(timelinePayload);
-			setComments(comments);
-			if(Object.values(comments).flat().length >= COMMENT_SIZE) {
-				break;
+			let res: any;
+			if(commentId){
+				res = await getCommentsWithId(data.index.toString(), commentId, network, COMMENT_SIZE, data.type);
+				const isCommentExit = res.comments.some((comment: { id: string; }) => {
+					return comment.id === commentId;
+				});
+				comments[data.index] = [...comments[data.index], ...res.comments];
+				const timelinePayload = { ...data, firstCommentId: comments[data.index]?.[0]?.id || '' };
+				setCurrentTimeline(timelinePayload);
+				if(isCommentExit){
+					break;
+				}
+			}
+			else{
+				const lastDoc = comments[data.index][comments[data.index].length-1]?.id;
+				res = await getPaginatedComments(data.index.toString(), lastDoc, network, COMMENT_SIZE, data.type);
+				comments[data.index] = [...comments[data.index], ...res.comments];
+				const timelinePayload = { ...data, firstCommentId: comments[data.index]?.[0]?.id || '' };
+				setCurrentTimeline(timelinePayload);
+				if(Object.values(comments).flat().length >= COMMENT_SIZE) {
+					break;
+				}
 			}
 		}
+		setComments(comments);
 		if(loading){
 			setLoading(false);
 		}
@@ -357,11 +375,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								return (
 									timeline.commentsCount > 0 ?
 										<div key={id} onClick={() => {
-											setLoading(true);
-											handleSingleTimelineClick(timeline).then((firstCommentId) => {
-												setLoading(false);
-												router.push(`#${firstCommentId}`);
-											});
+											if(!comments[timeline.index]?.[0]?.id){
+												setLoading(true);
+												handleSingleTimelineClick(timeline).then((firstCommentId) => {
+													setLoading(false);
+													router.push(`#${firstCommentId}`);
+												});
+											}
 										}} className='m-0 p-0 border-none [&>.ant-card-body]:p-0'>
 											{comments[timeline.index]?.[0]?.id ? <AnchorLink
 												href={`#${comments[timeline.index]?.[0]?.id}`}

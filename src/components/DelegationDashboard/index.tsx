@@ -33,7 +33,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
-
+	const[isMobile, setIsMobile] = useState<boolean>(false);
 	useEffect(() => {
 		if(!window ) return;
 		const wallet = localStorage.getItem('delegationWallet') || '';
@@ -45,19 +45,16 @@ const DelegationDashboardHome = ({ className } : Props) => {
 				loginWallet: wallet as Wallet
 			};
 		} );
-
-	}, [userDetails]);
-
-	useEffect(() => {
-
-		userDetails.isLoggedOut() && setOpenLoginModal(true);
+		if(window.innerWidth < 768){
+			setIsMobile(true);
+		}
+		isMobile ? userDetails.isLoggedOut() && setOpenLoginModal(false) : userDetails.isLoggedOut() && setOpenLoginModal(true);
 		!userDetails.isLoggedOut() && setOpenLoginModal(false);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userDetails?.isLoggedOut]);
+	}, [userDetails,isMobile]);
 
 	useEffect(() => {
-		if(!userDetails.delegationDashboardAddress){
+		if(!userDetails.delegationDashboardAddress && window.innerWidth > 768){
 			setOpenModal(true);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps

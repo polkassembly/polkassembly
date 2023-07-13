@@ -20,7 +20,7 @@ const combineRoutes = [
 	'discussions',
 	'calender',
 	'user',
-	'setting',
+	'settings',
 	'post'
 ];
 

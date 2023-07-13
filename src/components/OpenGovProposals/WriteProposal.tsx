@@ -93,12 +93,10 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 	};
 
 	useEffect(() => {
-		console.log('helo');
 		let data: any = localStorage.getItem('treasuryProposalData');
 		data = JSON.parse(data);
 		if(data && data?.writeProposalForm){
 			const isDiscussionLink = data?.isDiscussionLinked;
-			console.log(data?.isDiscussionLinked);
 			data?.isDiscussionLinked !== undefined && setIsDiscussionLinked(Boolean(isDiscussionLink));
 			setSteps({ percent: 33.3, step: 0 });
 			const writeProposalFormData = data?.writeProposalForm?.[isDiscussionLink ? 'discussionLinkForm' : 'withoutDiscussionLinkForm'] || {};
@@ -194,7 +192,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 						</a>
 					</span>}/>}
 
-				{isDiscussionLinked !== null &&  (isDiscussionLinked ? (discussionLink && !isDiscussionLinkedValid(discussionLink) && isDiscussionFound && loading) : true) && <div className='mt-6 text-sm font-normal text-lightBlue'>
+				{isDiscussionLinked !== null &&  (isDiscussionLinked ? (discussionLink && !isDiscussionLinkedValid(discussionLink) && isDiscussionFound) : true) && <div className='mt-6 text-sm font-normal text-lightBlue'>
 					<label className='font-medium'>Write a proposal :</label>
 					<div className='mt-4'>
 						<label className='mb-0.5'>Title <span className='text-nay_red'>*</span></label>

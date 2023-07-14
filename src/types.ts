@@ -185,6 +185,7 @@ export enum Wallet {
   WALLETCONNECT = 'walletconnect',
   NOVAWALLET = 'polkadot-js',
   POLYWALLET = 'polywallet',
+  POLKADOT_VAULT = 'polkadot-vault',
   OTHER = ''
 }
 

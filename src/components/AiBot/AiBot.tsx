@@ -85,41 +85,44 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const data = network === globalNework.CERE || network === globalNework.KILT || network === globalNework.KUSAMA || network === globalNework.MOONBEAM || network === globalNework.POLKADOT ?
 		[
 			{
-				component: <div className='ml-[-25px] flex justify-center hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[280px] p-[5px] rounded-[8px] cursor-pointer'
+				component: <div className='ml-[-37px] flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 					onClick={() => { handleAddDiscussion(); }}
 				>
-					<CreateDiscussionIcon className='cursor-pointer ml-[-70px]' />
-					<p className='text-[#485F7D] ml-4 mt-2 font-medium text-[14px] leading-5 tracking-[1.25%]'>Create Discussion Post</p>
+					<CreateDiscussionIcon className='cursor-pointer ml-[-65px] mt-[5px]' />
+					<p className='text-[#485F7D] ml-4 mt-[10px] mb-[12px] font-medium text-[14px] leading-5 tracking-[1.25%] '>Create Discussion Post</p>
 				</div>
 			},
 			{
-				component: <div className='ml-[-25px] flex justify-center hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[280px] p-[5px] rounded-[8px] cursor-pointer'
+				component: <div className='ml-[-37px] flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 					onClick={() => {
 						if (!grillChat)
 							(window as any).DocsBotAI.toggle();
 						setIsAIChatBotOpen(!isAIChatBotOpen);
 					}}
 				>
-					<AIbotIcon className='cursor-pointer ml-[-175px]' />
-					<p className='text-[#485F7D] ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p>
+					<AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
+					<p className='text-[#485F7D] ml-4 mt-[10px] mb-[12px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p>
 				</div>
 			},
 			{
-				component: <div className='ml-[-25px] flex justify-center hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[280px] p-[5px] rounded-[8px] cursor-pointer'
+				component: <div className='ml-[-37px] flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 					onClick={() => {
 						if (!isAIChatBotOpen) setGrillChat(!grillChat);
 					}}
 				>
-					<GrillChatIcon className='cursor-pointer ml-[-155px]' />
-					<p className='text-[#485F7D] ml-4 mt-2  font-medium text-[14px] leading-5 tracking-[1.25%]'>Grill Chat</p>
+					<GrillChatIcon className='cursor-pointer ml-[-149px] mt-[5px]' />
+					<p className='text-[#485F7D] ml-4 mt-[10px] mb-[12px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>Grill Chat</p>
 				</div>
 			},
 			{
 				component: <a href='https://polkassembly.hellonext.co/'
 					target='_blank'
 					rel='noreferrer'
-					className='text-[#485F7D] hover:text-[#485F7D] ml-[-25px]'>
-					<div className='flex justify-center hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[280px] p-[5px] rounded-[8px] cursor-pointer'><CautionIcon className='cursor-pointer ml-[-115px]' /> <p className='ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p></div>
+					className='text-[#485F7D] hover:text-[#485F7D] ml-[-37px]'>
+					<div className='flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px]  rounded-[8px] cursor-pointer'>
+						<CautionIcon className='cursor-pointer ml-[-109px] mt-[5px]' />
+						<p className='ml-4 mt-[10px] mb-[12px] font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p>
+					</div>
 				</a>
 			}
 		]
@@ -168,7 +171,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
 						onClick={() => {
-							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 300);
+							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 500);
 							setAnimationState('hidden');
 						}}
 					>
@@ -179,7 +182,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					<Button
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
-						onClick={() => { setFloatButtonOpen(!floatButtonOpen); if ((window as any).DocsBotAI.isChatbotOpen) { (window as any).DocsBotAI.close(); setIsAIChatBotOpen(false); } setGrillChat(false); }}><CloseWhite className='mt-1' />
+						onClick={() => { setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 500); if ((window as any).DocsBotAI.isChatbotOpen) { (window as any).DocsBotAI.close(); setIsAIChatBotOpen(false); } setGrillChat(false); }}><CloseWhite className='mt-1' />
 					</Button>
 				}
 				open={floatButtonOpen}
@@ -190,10 +193,21 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 			{
 				<List
 					style={{ bottom: '85px', position: 'fixed', right: '20px', zIndex: '999' }}
-					header={<div className='flex justify-between font-semibold text-[20px] text-[#485F7D] h-[38px]'><p className='mt-2 h-[25px]'>Menu</p> <CloseIcon className='mt-4 cursor-pointer' onClick={() => { setFloatButtonOpen(false); setGrillChat(false); }} /></div>}
+					header={
+						<div className='flex justify-between font-semibold text-[20px] text-[#485F7D] h-[38px]'>
+							<p className='mt-2 h-[25px]'>
+							Menu
+							</p>
+							<CloseIcon className='mt-4 cursor-pointer' onClick={() =>
+							{ setFloatButtonOpen(false); setGrillChat(false);
+							}} />
+						</div>}
 					bordered
 					dataSource={data}
-					className={`${className} ${floatButtonOpen ? 'w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)] transition-opacity' : 'hidden'}  `}
+					className={`${className}
+					${floatButtonOpen ? 'opacity-100 translate-y-0 transition-all duration-500 delay-200 w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]' : 'opacity-0 -translate-y-2 transition-all duration-500 w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]'}
+					${floatButtonOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
+
 					renderItem={(item) => (
 						<List.Item >
 							{item.component}
@@ -202,7 +216,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				/>
 
 			}
-
 			{
 				grillChat && <ChatFloatingModal />
 			}
@@ -233,6 +246,6 @@ width:55px !important;
 	border-bottom: 2px dotted #D2D8E0;
 }
 .ant-spin-container{
-	padding: 0px 16px;
+	padding: 0px 23px;
 }
 `;

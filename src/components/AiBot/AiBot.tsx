@@ -88,7 +88,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				component: <div className='ml-[-37px] flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 					onClick={() => { handleAddDiscussion(); }}
 				>
-					<CreateDiscussionIcon className='cursor-pointer ml-[-58px] mt-[5px]' />
+					<CreateDiscussionIcon className='cursor-pointer ml-[-55px] mt-[5px]' />
 					<p className='text-[#485F7D] ml-4 mt-[10px] mb-[12px] font-medium text-[14px] leading-5 tracking-[1.25%] '>Create Discussion Post</p>
 				</div>
 			},
@@ -132,7 +132,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				component: <div className='ml-[-37px] flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 					onClick={() => { handleAddDiscussion(); }}
 				>
-					<CreateDiscussionIcon className='cursor-pointer ml-[-58px] mt-[5px]' />
+					<CreateDiscussionIcon className='cursor-pointer ml-[-55px] mt-[5px]' />
 					<p className='text-[#485F7D] ml-4 mt-[10px] mb-[12px] font-medium text-[14px] leading-5 tracking-[1.25%] '>Create Discussion Post</p>
 				</div>
 			},

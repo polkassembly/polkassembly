@@ -33,6 +33,7 @@ import { poppins } from 'pages/_app';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { getConvictionVoteOptions } from './VoteReferendum';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -52,11 +53,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const userDetails = useUserDetailsContext();
 	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress } = userDetails;
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
-	const { apiReady } = useApiContext();
+	const { apiReady, api } = useApiContext();
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
-	const { setPostData } = usePostDataContext();
+	const { setPostData, postData: { postType: proposalType } } = usePostDataContext();
 	const { network } = useNetworkContext();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
@@ -72,12 +73,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
 	const [successModal,setSuccessModal] = useState(false);
 
-	const convictionOpts = useMemo(() => [
-		<Select.Option className={`text-[#243A57] ${poppins.variable} ${poppins.className}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
-		...CONVICTIONS.map(([value, lock]) =>
-			<Select.Option  key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
-		)
-	],[CONVICTIONS]);
+	const convictionOpts = useMemo(() => {
+		return getConvictionVoteOptions(CONVICTIONS, proposalType, api, apiReady, network);
+	},[CONVICTIONS, proposalType, api, apiReady, network]);
 
 	const [conviction, setConviction] = useState<number>(0);
 

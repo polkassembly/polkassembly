@@ -902,8 +902,8 @@ query ReceivedDelgationsAndVotesCountForAddress($address: String = "", $createdA
 
 // Alliance
 export const GET_ALLIANCE_LATEST_ACTIVITY = `
-query getAllianceLatestActivity( $limit: Int = 10, $offset: Int = 0 ) {
-  proposals(orderBy: id_DESC,limit: $limit, offset: $offset) {
+query getAllianceLatestActivity($limit: Int = 10, $offset: Int = 0) {
+  proposals(orderBy: id_DESC, limit: $limit, offset: $offset, where: {type_eq: AllianceMotion}) {
     id
     type
     createdAt
@@ -915,7 +915,7 @@ query getAllianceLatestActivity( $limit: Int = 10, $offset: Int = 0 ) {
       method
     }
   }
-  proposalsConnection(orderBy: id_ASC) {
+  proposalsConnection(orderBy: id_ASC, where: {type_eq: AllianceMotion}) {
     totalCount
   }
 }

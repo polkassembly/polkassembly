@@ -88,7 +88,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				component: <div className='ml-[-37px] flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 					onClick={() => { handleAddDiscussion(); }}
 				>
-					<CreateDiscussionIcon className='cursor-pointer ml-[-65px] mt-[5px]' />
+					<CreateDiscussionIcon className='cursor-pointer ml-[-58px] mt-[5px]' />
 					<p className='text-[#485F7D] ml-4 mt-[10px] mb-[12px] font-medium text-[14px] leading-5 tracking-[1.25%] '>Create Discussion Post</p>
 				</div>
 			},
@@ -129,31 +129,34 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		:
 		[
 			{
-				component: <div className='ml-[-25px] flex justify-center hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[280px] p-[5px] rounded-[8px] cursor-pointer'
+				component: <div className='ml-[-37px] flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 					onClick={() => { handleAddDiscussion(); }}
 				>
-					<CreateDiscussionIcon className='cursor-pointer ml-[-70px]' />
-					<p className='text-[#485F7D] ml-4 mt-2 font-medium text-[14px] leading-5 tracking-[1.25%]'>Create Discussion Post</p>
+					<CreateDiscussionIcon className='cursor-pointer ml-[-58px] mt-[5px]' />
+					<p className='text-[#485F7D] ml-4 mt-[10px] mb-[12px] font-medium text-[14px] leading-5 tracking-[1.25%] '>Create Discussion Post</p>
 				</div>
 			},
 			{
-				component: <div className='ml-[-25px] flex justify-center hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[280px] p-[5px] rounded-[8px] cursor-pointer'
+				component: <div className='ml-[-37px] flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 					onClick={() => {
 						if (!grillChat)
 							(window as any).DocsBotAI.toggle();
 						setIsAIChatBotOpen(!isAIChatBotOpen);
 					}}
 				>
-					<AIbotIcon className='cursor-pointer ml-[-175px]' />
-					<p className='text-[#485F7D] ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p>
+					<AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
+					<p className='text-[#485F7D] ml-4 mt-[10px] mb-[12px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p>
 				</div>
 			},
 			{
 				component: <a href='https://polkassembly.hellonext.co/'
 					target='_blank'
 					rel='noreferrer'
-					className='text-[#485F7D] hover:text-[#485F7D] ml-[-25px]'>
-					<div className='flex justify-center hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[280px] p-[5px] rounded-[8px] cursor-pointer'><CautionIcon className='cursor-pointer ml-[-115px]' /> <p className='ml-4 mt-[8px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p></div>
+					className='text-[#485F7D] hover:text-[#485F7D] ml-[-37px]'>
+					<div className='flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px]  rounded-[8px] cursor-pointer'>
+						<CautionIcon className='cursor-pointer ml-[-109px] mt-[5px]' />
+						<p className='ml-4 mt-[10px] mb-[12px] font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p>
+					</div>
 				</a>
 			}
 		];

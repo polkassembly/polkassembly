@@ -37,6 +37,7 @@ import dayjs from 'dayjs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
+import executeTx from '~src/util/executeTx';
 
 const ZERO_BN = new BN(0);
 
@@ -447,76 +448,43 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				voteTx = api.tx.democracy.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:false , conviction } } });
 			}
 		}
-		if(network == 'equilibrium'){
-			voteTx?.signAndSend(address, { nonce: -1 }, ({ status }) => {
-				if (status.isInBlock) {
-					setLoadingStatus({ isLoading: false, message: '' });
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-				} else {
-					if (status.isBroadcast){
-						setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' });
-					}
-					console.log(`Current status: ${status.type}`);
-				}
-			}).catch((error) => {
-				setLoadingStatus({ isLoading: false, message: '' });
-				console.log(':( transaction failed');
-				console.error('ERROR:', error);
-				queueNotification({
-					header: 'Failed!',
-					message: error.message,
-					status: NotificationStatus.ERROR
-				});
-			});
-		}else{
-			voteTx?.signAndSend(address, ({ status }) => {
-				if (status.isInBlock) {
-					setLoadingStatus({ isLoading: false, message: '' });
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-				} else {
-					if (status.isBroadcast){
-						setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' });
-					}
-					console.log(`Current status: ${status.type}`);
-				}
-			}).catch((error) => {
-				setLoadingStatus({ isLoading: false, message: '' });
-				console.log(':( transaction failed');
-				console.error('ERROR:', error);
-				queueNotification({
-					header: 'Failed!',
-					message: error.message,
-					status: NotificationStatus.ERROR
-				});
-			});
 
-		}
+		const onSucess = () => {
+			setLoadingStatus({ isLoading: false, message: '' });
+			queueNotification({
+				header: 'Success!',
+				message: `Vote on referendum #${referendumId} successful.`,
+				status: NotificationStatus.SUCCESS
+			});
+			setLastVote({
+				balance: totalVoteValue,
+				conviction: conviction,
+				decision: vote,
+				time: new Date()
+			});
+			setShowModal(false);
+			setSuccessModal(true);
+		};
+		const onFailed = (message: string) => {
+			setLoadingStatus({ isLoading: false, message: '' });
+			console.log(':( transaction failed');
+			queueNotification({
+				header: 'Failed!',
+				message,
+				status: NotificationStatus.ERROR
+			});
+		};
+
+		await executeTx({ address,
+			api,
+			message: 'Transaction failed.',
+			network,
+			onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
+			onFailed,
+			onSucess,
+			params: network == 'equilibrium' ? { nonce: -1 } : {},
+			tx: voteTx
+		});
 
 	};
 

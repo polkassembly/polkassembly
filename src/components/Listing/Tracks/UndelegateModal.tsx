@@ -27,6 +27,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { APPNAME } from '~src/global/appName';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
+import executeTx from '~src/util/executeTx';
 
 const ZERO_BN = new BN(0);
 
@@ -92,6 +93,25 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [defaultAddress]);
 
+	const onSucess = () => {
+		queueNotification({
+			header: 'Success!',
+			message: 'Undelegate successful.',
+			status: NotificationStatus.SUCCESS
+		});
+		setLoading(false);
+		setOpenSuccessPopup(true);
+		setOpen(false);
+	};
+	const onFailed = (message: string) => {
+		queueNotification({
+			header: 'Undelegate failed!',
+			message,
+			status: NotificationStatus.ERROR
+		});
+		setLoading(false);
+	};
+
 	const handleSubmit = async () => {
 
 		if (!api || !apiReady) return;
@@ -133,55 +153,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 		// TODO: check .toNumber()
 		const delegateTxn = api.tx.convictionVoting.undelegate(trackNum);
-
-		delegateTxn.signAndSend(defaultAddress, ({ status, events }: any) => {
-			if (status.isFinalized) {
-				for (const { event } of events) {
-					if (event.method === 'ExtrinsicSuccess') {
-						queueNotification({
-							header: 'Success!',
-							message: 'Undelegate successful.',
-							status: NotificationStatus.SUCCESS
-						});
-						setLoading(false);
-						setOpenSuccessPopup(true);
-						setOpen(false);
-
-					} else if (event.method === 'ExtrinsicFailed') {
-						const errorModule = (event.data as any)?.dispatchError?.asModule;
-						let message = 'Undelegate failed.';
-
-						if(errorModule) {
-							const { method, section, docs } = api.registry.findMetaError(errorModule);
-							message = `${section}.${method} : ${docs.join(' ')}`;
-						}
-
-						queueNotification({
-							header: 'Undelegate failed!',
-							message,
-							status: NotificationStatus.ERROR
-						});
-						// TODO: error state popup
-					}
-				}
-
-				setLoading(false);
-
-				console.log(`Undelegate: completed at block hash #${status.toString()}`);
-			} else {
-				console.log(`Undelegate: Current status: ${status.type}`);
-			}
-		}).catch((error: any) => {
-			console.log(':( transaction failed');
-			console.error('ERROR:', error);
-			queueNotification({
-				header: 'Undelegate failed!',
-				message: error.message,
-				status: NotificationStatus.ERROR
-			});
-			setLoading(false);
-
-		});
+		await executeTx({ address: defaultAddress, api, message: 'Undelegate successful.', network, onFailed, onSucess, tx: delegateTxn });
 	};
 
 	return (

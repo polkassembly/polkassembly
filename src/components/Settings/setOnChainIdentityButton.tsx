@@ -29,6 +29,7 @@ import { NetworkContext } from '~src/context/NetworkContext';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 
 import AddressComponent from '../../ui-components/Address';
+import executeTx from '~src/util/executeTx';
 
 interface Props {
 	className?: string
@@ -326,34 +327,27 @@ const SetOnChainIdentityButton = ({
 
 		const identity = api.tx.identity.setIdentity(info);
 
-		identity.signAndSend(submitWithAccount, ({ status }) => {
-			if (status.isInBlock) {
-				queueNotification({
-					header: 'Success!',
-					message: `Identity credentials submitted for verification, you will recieve an email from registrar shortly. Txn hash ${identity.hash}`,
-					status: NotificationStatus.SUCCESS
-				});
-				setLoadingStatus({ isLoading: false, message: '' });
-				setModalOpen(false);
-				console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-			} else {
-				if (status.isBroadcast){
-					setLoadingStatus({ isLoading: true, message: 'Broadcasting the identity' });
-				}
-				console.log(`Current status: ${status.type}`);
-			}
-		}).catch((error) => {
+		const onSucess = () => {
+			queueNotification({
+				header: 'Success!',
+				message: `Identity credentials submitted for verification, you will recieve an email from registrar shortly. Txn hash ${identity.hash}`,
+				status: NotificationStatus.SUCCESS
+			});
 			setLoadingStatus({ isLoading: false, message: '' });
-			console.log(':( transaction failed');
-			console.error('ERROR:', error);
+			setModalOpen(false);
+		};
+		const onFailed = (message: string) => {
 			queueNotification({
 				header: 'Failed!',
-				message: error.message,
+				message,
 				status: NotificationStatus.ERROR
 			});
+		};
+
+		await executeTx({
+			address: submitWithAccount, api, message: 'Transaction failed.', network, onFailed, onSucess, tx: identity
 		});
 	};
-
 	const triggerBtn = <div><Button disabled={!id} className='h-[40px] md:h-[69px] bg-pink_primary rounded-md  hover:bg-pink_secondary text-white transition-colors duration-300' onClick={() => setModalOpen(true)}> Set On-Chain Identity</Button></div>;
 	const triggerBtnLoginDisabled = <Tooltip  color='#E5007A' title='Please signup/login to set on-chain identity'> <Button type='primary' disabled={true} className='w-full h-[40px] md:h-[69px] rounded-md' > Set On-Chain Identity</Button></Tooltip>;
 

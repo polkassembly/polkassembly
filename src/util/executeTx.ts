@@ -8,15 +8,16 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 interface Props{
   api: ApiPromise | undefined;
   network: string;
-  tx: SubmittableExtrinsic<'promise'>;
+  tx: SubmittableExtrinsic<'promise'> | null;
   address: string;
   params?: any;
   message: string;
   onSucess:() => void;
   onFailed: (message: string) => void;
+  onBroadcast?: () => void;
 }
-const signinAndSend = async({ api, network, tx, address, params= {}, message, onSucess, onFailed }: Props) => {
-	if(!api)return;
+const executeTx = async({ api, network, tx, address, params= {}, message, onSucess, onFailed, onBroadcast }: Props) => {
+	if(!api || !tx)return;
 
 	tx.signAndSend(address, params,  async({ status, events, txHash }: any) => {
 		if (status.isInvalid) {
@@ -25,6 +26,7 @@ const signinAndSend = async({ api, network, tx, address, params= {}, message, on
 			console.log('Transaction is ready');
 		} else if (status.isBroadcast) {
 			console.log('Transaction has been broadcasted');
+			onBroadcast && onBroadcast();
 		} else if (status.isInBlock) {
 			console.log('Transaction is in block');
 		} else if (status.isFinalized) {
@@ -48,11 +50,11 @@ const signinAndSend = async({ api, network, tx, address, params= {}, message, on
 					}}
 			}
 		}
-	}).catch((error) => {
+	}).catch((error: string) => {
 		console.log(':( transaction failed');
 		console.error('ERROR:', error);
 		onFailed(message);
 	});
 
 };
-export default signinAndSend;
+export default executeTx;

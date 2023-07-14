@@ -9,8 +9,7 @@ import DelegationDashboard from '~src/components/DelegationDashboard';
 import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import CopyContentIcon from '~assets/icons/content-copy.svg';
 import copyToClipboard from 'src/util/copyToClipboard';
-import queueNotification from 'src/ui-components/QueueNotification';
-import { NotificationStatus } from 'src/types';
+import { message } from 'antd';
 import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 import { useRouter } from 'next/router';
@@ -30,11 +29,7 @@ const Delegation = ( props : { network: string } ) => {
 
 		copyToClipboard(url);
 
-		queueNotification({
-			header: 'Copied!',
-			message: 'Link copied to clipboard.',
-			status: NotificationStatus.INFO
-		});
+		message.success('Link copied to clipboard');
 	};
 
 	useEffect(() => {

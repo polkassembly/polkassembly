@@ -54,11 +54,14 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	}, [userDetails,isMobile]);
 
 	useEffect(() => {
-		if(!userDetails.delegationDashboardAddress && window.innerWidth > 768){
-			setOpenModal(true);
+		if(window.innerWidth < 768){
+			setIsMobile(true);
+		}
+		if(!userDetails.delegationDashboardAddress){
+			isMobile ? setOpenModal(false) : setOpenModal(true);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userDetails?.username, userDetails?.delegationDashboardAddress]);
+	}, [userDetails?.username, userDetails?.delegationDashboardAddress,isMobile]);
 
 	return <div className= { `${ className }` }>
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>

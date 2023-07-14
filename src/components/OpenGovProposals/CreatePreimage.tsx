@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import { EEnactment, IEnactment, IPreimage, ISteps } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
@@ -97,10 +97,10 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
 	const checkPreimageHash = (preimageLength: number, preimageHash: string) => {
-		return (!isHex(preimageHash, 256)) && preimageLength > 0;
+		return (!isHex(preimageHash, 256) || (!preimageLength || preimageLength === 0));
 	};
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const invalidPreimageHash = useMemo(() => checkPreimageHash(preimageLength, preimageHash),[preimageHash]);
+	const invalidPreimageHash = useCallback(() => checkPreimageHash(preimageLength, preimageHash),[preimageHash, preimageLength]);
 
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 
@@ -117,7 +117,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	}
 
 	maxSpendArr.sort((a,b) => a.maxSpend - b.maxSpend );
-
+	console.log(invalidPreimageHash());
 	const handleStateChange = (createPreimageForm: any) => {
 		setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
 		form.setFieldValue('at_block',currentBlock?.add(BN_THOUSAND) || BN_ONE  );
@@ -184,6 +184,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			form.setFieldValue('at_block',currentBlock?.add(BN_THOUSAND) || BN_ONE  );
 			data.preimageCreated && setPreimageCreated(data.preimageCreated);
 			data.preimageLinked && setPreimageLinked(data.preimageLinked);
+			setIsAutoSelectTrack(true);
 			setOpenAdvanced(false);
 		}
 
@@ -431,12 +432,13 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 	const existPreimageData = async(preimageHash: string, isPreimage: boolean) => {
 		setPreimageLength(0);
+		form.setFieldValue('preimage_length', 0);
 		if(!api || !apiReady || !isHex(preimageHash, 256) || preimageHash?.length < 0) return;
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}`);
 		if(data){
 			if(data.hash === preimageHash){
-				if(!data.proposedCall.args || !data?.proposedCall?.args?.beneficiary || !data?.proposedCall?.args?.amount){
+				if(!data.proposedCall.args && !data?.proposedCall?.args?.beneficiary && !data?.proposedCall?.args?.amount){
 					getExistPreimageDataFromPolkadot(preimageHash, Boolean(isPreimage));
 				}else{
 					form.setFieldValue('preimage_length', data?.length);
@@ -444,6 +446,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					const balance = new BN(data?.proposedCall?.args?.amount || '0') || ZERO_BN;
 					setFundingAmount(balance);
 					setPreimageLength(data.length);
+					form.setFieldValue('preimage_length', data.length);
 					onChangeLocalStorageSet({ beneficiaryAddress: data?.proposedCall?.args?.beneficiary || '', fundingAmount: balance.toString(), preimageLength: data?.length || '' }, Boolean(isPreimage));
 					setSteps({ percent: 100 ,step: 1 });
 					for(const i in maxSpendArr){
@@ -462,23 +465,17 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		setLoading(false);
 	};
 
-	const getInvalidPreimage = (value: string) => {
-		if(value && value.length <= 0 )return;
-		checkPreimageHash(value.length, value);
-	};
-
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debounceExistPreimageFn = useCallback(_.debounce(existPreimageData, 2000),[]);
 
 	const handlePreimageHash = (preimageHash: string, isPreimage: boolean) => {
+		if( !preimageHash || preimageHash.length === 0 ) return;
 		setSteps({ percent: 60, step: 1 });
 		debounceExistPreimageFn(preimageHash, isPreimage);
 		setPreimageHash(preimageHash);
-		existPreimageData(preimageHash, Boolean(isPreimage));
 		onChangeLocalStorageSet({ preimageHash: preimageHash }, Boolean(isPreimage));
 		setPreimageCreated(false);
 		setPreimageLinked(false);
-		getInvalidPreimage(preimageHash);
 	};
 
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
@@ -542,7 +539,6 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			}
 		}
 	};
-	console.log(isPreimage);
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
 		<div className={className}>
 			<div className='my-8 flex flex-col'>
@@ -572,19 +568,23 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						<Form.Item name='preimage_hash' rules={[
 							{ message: 'Invalid preimage hash',
 								validator(rule, value, callback) {
-									if (callback && (!isHex(value, 256) || invalidPreimageHash) && value.length > 0 ){
+									if (callback && (!isHex(value, 256) || invalidPreimageHash()) && value.length > 0 ){
 										callback(rule?.message?.toString());
 									}else {
 										callback();
 									}
 								} }]}>
-							<Input name='preimage_hash' className='h-[40px] rounded-[4px] ' value={preimageHash} onChange={(e) => handlePreimageHash(e.target.value, Boolean(isPreimage))}/>
+							<Input name='preimage_hash' className='h-[40px] rounded-[4px]' value={preimageHash} onChange={(e) => handlePreimageHash(e.target.value, Boolean(isPreimage))}/>
 						</Form.Item>
 					</div>
 					<div className='mt-6'>
 						<label className='text-lightBlue text-sm'>Preimage Length</label>
 						<Form.Item name='preimage_length'>
-							<Input name='preimage_length' className='h-[40px] rounded-[4px]' onChange={(e) => {setPreimageLength(Number(e.target.value)); onChangeLocalStorageSet({ preimageLength: e.target.value }, isPreimage);}} disabled/>
+							<Input name='preimage_length' className='h-[40px] rounded-[4px]' onChange={(e) => {
+								setPreimageLength(Number(e.target.value));
+								onChangeLocalStorageSet({ preimageLength: e.target.value }, isPreimage);
+							}}
+							disabled/>
 						</Form.Item>
 					</div>
 				</>
@@ -607,7 +607,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						placeholder='Add beneficiary address'
 						className='text-lightBlue text-sm font-normal'
 						onChange={(address) => handleBeneficiaryAddresschange(address)}
-						helpText='Beneficiary Address'
+						helpText='The amount requested in the proposal will be received in this address.'
 						size='large'
 						identiconSize={30}
 						inputClassName={' font-normal text-sm h-[40px]'}
@@ -617,13 +617,13 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					{addressAlert && <Alert className='mb mt-2' showIcon message='The substrate address has been changed to Kusama address.'/> }
 					<div  className='mt-6 -mb-6'>
 						<div className='flex justify-between items-center text-lightBlue text-sm mb-[2px]'>
-							<label>Funding Amount <span><HelperTooltip text='Funding Amount' className='ml-1'/></span></label>
-							<span className='text-xs text-bodyBlue'>Current Value: {Number(inputAmountValue)*Number(currentTokenPrice.value)} USD</span>
+							<label>Funding Amount <span><HelperTooltip text='Amount requested by the proposer.' className='ml-1'/></span></label>
+							<span className='text-xs text-bodyBlue'>Current Value: {Number(inputAmountValue)*Number(currentTokenPrice.value) || 0} USD</span>
 						</div>
 						<BalanceInput address={proposerAddress} placeholder='Add funding amount' setInputValue={(input: string) => {setInputAmountValue(input); onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage)); }} formItemName='funding_amount' onChange= { handleFundingAmountChange }/>
 					</div>
 					<div className='mt-6'>
-						<label className='text-lightBlue text-sm'>Select Track <span><HelperTooltip text='select a track' className='ml-1'/></span></label>
+						<label className='text-lightBlue text-sm'>Select Track <span><HelperTooltip text='Track selection is done based on the amount requested.' className='ml-1'/></span></label>
 						<SelectTracks tracksArr={trackArr} onTrackChange={(track) => {setSelectedTrack(track); setIsAutoSelectTrack(false); onChangeLocalStorageSet({ selectedTrack: track }, isPreimage); setSteps({ percent: 100, step: 1 });}} selectedTrack={selectedTrack}/>
 					</div>
 				</>}
@@ -632,10 +632,10 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					<DownArrow className='down-icon'/>
 				</div>}
 				{openAdvanced && <div className='mt-3 flex flex-col'>
-					<label className='text-lightBlue text-sm'>Enactment <span><HelperTooltip text='select a track' className='ml-1'/></span></label>
+					<label className='text-lightBlue text-sm'>Enactment <span><HelperTooltip text='A custom delay can be set for enactment of approved proposals.' className='ml-1'/></span></label>
 					<Radio.Group className='mt-1 flex flex-col gap-2' value={enactment.key} onChange={(e) => setEnactment({ key: e.target.value, value: null })}>
 						<Radio value={EEnactment.At_Block_No} className='text-bodyBlue text-sm font-normal'>
-							<div className='flex items-center gap-2 h-[40px]'><span className='w-[150px]'>At Block Number<HelperTooltip className='ml-1' text='select a track'/></span>
+							<div className='flex items-center gap-2 h-[40px]'><span className='w-[150px]'>At Block Number<HelperTooltip className='ml-1' text='Allows you to choose a custom block number for enactment.'/></span>
 								<span>
 									{enactment.key === EEnactment.At_Block_No && <Form.Item name='at_block'
 										rules={[
@@ -657,7 +657,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 							</div>
 						</Radio>
 						<Radio value={EEnactment.After_No_Of_Blocks} className='text-bodyBlue text-sm font-normal'>
-							<div className='flex items-center gap-2 h-[30px]'><span className='w-[150px]'>After no. of Blocks<HelperTooltip text='select a track' className='ml-1'/></span>
+							<div className='flex items-center gap-2 h-[30px]'><span className='w-[150px]'>After no. of Blocks<HelperTooltip text='Allows you to choose a custom delay in terms of blocks for enactment.' className='ml-1'/></span>
 								<span>{enactment.key === EEnactment.After_No_Of_Blocks && <Form.Item name='after_blocks'
 									rules={[
 										{
@@ -682,8 +682,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
 					<Button onClick={() => setSteps({ percent: 100, step: 0 }) } className='font-medium tracking-[0.05em] text-pink_primary border-pink_primary text-sm w-[155px] h-[38px] rounded-[4px]'>Back</Button>
 					<Button htmlType='submit'
-						className={`bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px] ${((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack) : (preimageHash?.length === 0 || invalidPreimageHash )) && 'opacity-50' }`}
-						disabled={((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack) : (preimageHash?.length === 0 || invalidPreimageHash ))}>
+						className={`bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px] ${((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack) : (preimageHash?.length === 0 || invalidPreimageHash())) && 'opacity-50' }`}
+						disabled={((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack) : (preimageHash?.length === 0 || invalidPreimageHash() ))}>
 						{isPreimage ? (preimageLinked ? 'Next' :  'Link Preimage') : (preimageCreated ? 'Next' : 'Create Preimage')}
 					</Button>
 				</div>

@@ -14,6 +14,7 @@ interface Props{
   selectedTrack: string;
 }
 const SelectTracks = ({ tracksArr, className, onTrackChange, selectedTrack }: Props) => {
+
 	return <div className={className}>
 		<Select
 			placeholder='Select a track'
@@ -21,7 +22,7 @@ const SelectTracks = ({ tracksArr, className, onTrackChange, selectedTrack }: Pr
 			className={`w-full h-[40px] rounded-[4px] flex flex-col items-center  ${poppins.className} ${poppins.variable} `}
 			value={selectedTrack.length > 0 ? selectedTrack : null}
 			onChange={onTrackChange}
-			options={tracksArr?.map((track) => { return { label: track,value:track }; }) || []}
+			options={tracksArr?.map((track) => { return { label: track.split(/(?=[A-Z])/).join(' ') ,value: track }; }) || []}
 			popupClassName={`${poppins.className} ${poppins.variable}`}
 		/>
 	</div>;

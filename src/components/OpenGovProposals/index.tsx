@@ -124,7 +124,7 @@ const OpenGovProposals = ({ className }: Props) => {
 				<span className='text-bodyBlue text-sm'>Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process? </span>
 				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
 					<Button onClick={handleClose} className='font-medium tracking-[0.05em] text-pink_primary border-pink_primary text-sm w-[145px] h-[38px] rounded-[4px]'>Yes, Exit</Button>
-					<Button onClick={() => {setCloseConfirm(false); setOpenModal(true);}} className={'bg-pink_primary text-white font-medium tracking-[0.05em] text-sm h-[40px] rounded-[4px] w-[270px]'}>No, continue proposal Creation</Button>
+					<Button onClick={() => {setCloseConfirm(false); setOpenModal(true);}} className={'bg-pink_primary text-white font-medium tracking-[0.05em] text-sm h-[40px] rounded-[4px] w-[200px]'}>No, Continue Editing</Button>
 				</div>
 			</div>
 		</Modal>

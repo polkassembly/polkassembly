@@ -47,7 +47,6 @@ interface Props{
 
 const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess,title, content, tags, postId, setPostId }: Props) => {
 	const { network } = useNetworkContext();
-	console.log(enactment);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
 	const { api, apiReady } = useApiContext();
@@ -56,7 +55,6 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const { id: userId } = useUserDetailsContext();
-	console.log(userId);
 
 	const success = (message: string) => {
 		messageApi.open({

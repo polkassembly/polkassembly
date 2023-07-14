@@ -208,7 +208,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					bordered
 					dataSource={data}
 					className={`${className}
-					${floatButtonOpen ? 'opacity-100 translate-y-0 transition-all duration-500 delay-200 w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]' : 'opacity-0 -translate-y-2 transition-all duration-500 w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]'}
+					${floatButtonOpen ? 'opacity-100 translate-y-0 transition-all duration-500 delay-200 w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_60px_-20px_rgba(178,59,123,0.5)]' : 'opacity-0 -translate-y-2 transition-all duration-500 w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]'}
 					${floatButtonOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
 
 					renderItem={(item) => (
@@ -236,6 +236,7 @@ export default styled(AiBot)`
 	width:56px !important;
 	height:56px !important;
 	background: radial-gradient(circle,#E5007A,#BA0566,#9A0856);
+	box-shadow: 0 0 10px 0 rgba(229, 0, 122, 0.3), 0 0 20px 5px rgba(229, 0, 122, 0.2);
 }
 .ant-float-btn-primary {
     background: rgba(76, 175, 80, 0.001)

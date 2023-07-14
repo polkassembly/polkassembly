@@ -16,7 +16,7 @@ import StatusTag from 'src/ui-components/StatusTag';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import TopicTag from '~src/ui-components/TopicTag';
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 import { chainProperties } from 'src/global/networkConstants';
 import NewChatIcon from '~assets/icons/chat-icon.svg';
 import TagsIcon from '~assets/icons/tags-icon.svg';
@@ -90,8 +90,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
 
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
-	const requestedAmountFormatted = requestedAmount ? new BigNumber(requestedAmount).div(10 ** tokenDecimals).toFixed(0, BigNumber.ROUND_DOWN) : 0;
-	console.log('requestedAmountFormatted', requestedAmountFormatted);
+	const requestedAmountFormatted = requestedAmount ? new BN(requestedAmount).div(new BN(10).pow(new BN(tokenDecimals))).toString() : 0;
 	return (
 		<>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 sm:p-3 min-h-[120px] sm:flex xs:hidden`}>

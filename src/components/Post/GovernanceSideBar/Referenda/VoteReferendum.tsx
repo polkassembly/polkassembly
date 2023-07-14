@@ -38,6 +38,8 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 
+import { network as AllNetworks } from '~src/global/networkConstants';
+
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -56,7 +58,7 @@ message: string;
 }
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
-	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
+	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
 		if (api && apiReady) {
 			const res = api.consts.convictionVoting.voteLockingPeriod;
 			const num = res.toJSON();

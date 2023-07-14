@@ -21,7 +21,6 @@ import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsCon
 
 import { ProposalType } from '~src/global/proposalType';
 import addEthereumChain from '~src/util/addEthereumChain';
-import { oneEnactmentPeriodInDays } from '~src/util/oneEnactmentPeriodInDays';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
@@ -37,6 +36,7 @@ import LikeWhite from '~assets/icons/like-white.svg';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { getConvictionVoteOptions } from './VoteReferendum';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -56,12 +56,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const userDetails = useUserDetailsContext();
 	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress } = userDetails;
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
-	const { apiReady } = useApiContext();
+	const { apiReady, api } = useApiContext();
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
 	const { network } = useNetworkContext();
-	const { setPostData } = usePostDataContext();
+	const { setPostData, postData: { postType: proposalType } } = usePostDataContext();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
 	const [availableWallets, setAvailableWallets] = useState<any>({});
@@ -72,12 +72,9 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 
-	const convictionOpts = useMemo(() => [
-		<Select.Option className={`text-[#243A57] ${poppins.className} ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
-		...CONVICTIONS.map(([value, lock]) =>
-			<Select.Option className={`text-[#243A57] ${poppins.className} ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock * oneEnactmentPeriodInDays[network]} days`}</Select.Option>
-		)
-	],[CONVICTIONS, network]);
+	const convictionOpts = useMemo(() => {
+		return getConvictionVoteOptions(CONVICTIONS, proposalType, api, apiReady, network);
+	},[CONVICTIONS, proposalType, api, apiReady, network]);
 
 	const [conviction, setConviction] = useState<number>(0);
 

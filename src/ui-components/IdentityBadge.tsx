@@ -106,7 +106,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 		}
 		{flags?.isCouncil &&
 		<li className='flex items-center'>
-			<span className='desc text-bodyBlue font-medium text-sm'><CouncilEmoji /> Council member: </span>
+			<span className='desc text-bodyBlue font-medium text-sm'><CouncilEmoji /> Council member </span>
 		</li>
 		}
 		{

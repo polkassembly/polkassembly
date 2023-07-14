@@ -208,7 +208,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					bordered
 					dataSource={data}
 					className={`${className}
-					${floatButtonOpen ? 'opacity-100 translate-y-0 transition-all duration-500 delay-200 w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_60px_-20px_rgba(178,59,123,0.5)]' : 'opacity-0 -translate-y-2 transition-all duration-500 w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]'}
+					${floatButtonOpen ? 'opacity-100 translate-y-0 transition-all duration-500 delay-200 w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_15px_35px_-20px_rgba(178,59,123,1)]' : 'opacity-0 -translate-y-2 transition-all duration-500 w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]'}
 					${floatButtonOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
 
 					renderItem={(item) => (
@@ -251,5 +251,8 @@ width:55px !important;
 }
 .ant-spin-container{
 	padding: 0px 23px;
+}
+.ant-list{
+	background-color:red ;
 }
 `;

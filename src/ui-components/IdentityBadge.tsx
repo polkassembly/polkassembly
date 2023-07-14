@@ -14,6 +14,7 @@ import TwitterIcon from '~assets/icons/twitter-icon.svg';
 import WebIcon from '~assets/icons/web-icon.svg';
 import RiotIcon from '~assets/icons/riot-icon.svg';
 import ShareScreenIcon from '~assets/icons/screen-share-icon.svg';
+import PgpIcon from '~assets/icons/pgp-icon.svg';
 
 interface Props {
 	className?: string,
@@ -81,7 +82,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 		}
 		{identity?.pgp &&
 		<li className='flex items-center'>
-			<span className='desc text-bodyblue text-sm font-medium'>pgp: </span>
+			<span className='desc flex items-center text-sm text-bodyBlue font-medium'><PgpIcon className='mr-1'/>pgp:</span>
 			<span className='text-xs text-bodyblue font-normal'>{identity.pgp}</span>
 		</li>
 		}

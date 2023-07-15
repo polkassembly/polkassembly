@@ -23,6 +23,7 @@ interface IGetOffChainPostParams {
 	network: string;
 	postId?: string | string[] | number;
 	proposalType: OffChainProposalType | string | string[];
+	isExternalApiCall?: boolean;
 }
 
 export const getUpdatedAt = (data: any) => {
@@ -39,7 +40,7 @@ export const getUpdatedAt = (data: any) => {
 
 export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<IApiResponse<IPostResponse>> {
 	try {
-		const { network, postId, proposalType } = params;
+		const { network, postId, proposalType, isExternalApiCall } = params;
 		if (postId === undefined || postId === null) {
 			throw apiErrorWithStatusCode('Please send postId', 400);
 		}
@@ -206,7 +207,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 				post.comments = comments;
 			}
 		}
-		await getContentSummary(post, network);
+		await getContentSummary(post, network, isExternalApiCall);
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,
@@ -229,6 +230,7 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getOffChainPost({
+		isExternalApiCall: true,
 		network,
 		postId,
 		proposalType

@@ -2,13 +2,17 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DesktopOutlined, FileTextOutlined, HomeFilled, PlayCircleFilled, TwitterOutlined, YoutubeFilled } from '@ant-design/icons';
+import { DesktopOutlined, FileTextOutlined, PlayCircleFilled } from '@ant-design/icons'; //YoutubeFilled
 import { Space } from 'antd';
 import React from 'react';
-import { CubeIcon, DiscordIcon, GithubIcon, RedditIcon, TelegramIcon } from 'src/ui-components/CustomIcons';
+//import { CubeIcon, GithubIcon, RedditIcon } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 
 import { NetworkSocials } from '~src/types';
+import TwitterIcon from '~assets/icons/twitter-icon.svg';
+import DiscordIcon from '~assets/icons/discord-icon.svg';
+import TelegramIcon from '~assets/icons/telegram-icon.svg';
+import InternetIcon from '~assets/icons/internet-icon.svg';
 
 export const socialLinks = (blockchain_socials: NetworkSocials) => {
 	if (!blockchain_socials) {
@@ -17,15 +21,15 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 
 	return (
 		<Space size={19} className='items-center'>
-			{/* {blockchain_socials.homepage?
+			{blockchain_socials.homepage?
 				<a href={blockchain_socials.homepage} target='_blank' rel='noreferrer'>
-					<HomeFilled className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+					<InternetIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
-			} */}
+			}
 			{blockchain_socials.twitter?
 				<a href={blockchain_socials.twitter} target='_blank' rel='noreferrer'>
-					<TwitterOutlined className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+					<TwitterIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
@@ -35,36 +39,36 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 				</a>
 				: null
 			}
-			{blockchain_socials.github?
+			{/* {blockchain_socials.github?
 				<a href={blockchain_socials.github} target='_blank' rel='noreferrer'>
 					<GithubIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
-			}
-			{blockchain_socials.youtube?
+			} */}
+			{/* {blockchain_socials.youtube?
 				<a href={blockchain_socials.youtube} target='_blank' rel='noreferrer'>
 					<YoutubeFilled className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
-			}
-			{blockchain_socials.reddit?
+			} */}
+			{/* {blockchain_socials.reddit?
 				<a href={blockchain_socials.reddit} target='_blank' rel='noreferrer'>
 					<RedditIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
-			}
+			} */}
 			{blockchain_socials.telegram?
 				<a href={blockchain_socials.telegram} target='_blank' rel='noreferrer'>
 					<TelegramIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
 			}
-			{blockchain_socials.block_explorer?
+			{/* {blockchain_socials.block_explorer?
 				<a href={blockchain_socials.block_explorer} target='_blank' rel='noreferrer'>
 					<CubeIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
-			}
+			} */}
 		</Space>
 	);
 };

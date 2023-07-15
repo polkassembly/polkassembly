@@ -2,18 +2,17 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import Link from 'next/link';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { NetworkContext } from '~src/context/NetworkContext';
 import { NetworkSocials } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import { socialLinks } from '../Home/AboutNetwork';
 import PaLogo from './PaLogo';
+import RedirectIcon from '~assets/icons/redirect-icon.svg';
 
 const Footer = ({ className } : { className?:string }) => {
-	const { network } = useContext(NetworkContext);
 
 	const [socials, setSocials] = useState<NetworkSocials>();
 	const [error, setError] = useState('');
@@ -57,36 +56,45 @@ const Footer = ({ className } : { className?:string }) => {
 					{/* Terms Links */}
 					<div className="mt-10 md:mt-0 mx-auto md:mx-0 md:ml-auto flex flex-col md:flex-row justify-center md:justify-end">
 						<div className="md:ml-10 lg:ml-14 text-center sm:text-left">
-							<p className="text-lg font-medium text-sidebarBlue">Help Center</p>
+							<p className="text-lg font-bold text-[#243A57]">Help Center</p>
 
 							<nav aria-label="Footer About Nav" className="mt-4 md:mt-8">
-								<div className="space-y-4 text-sm">
+								<div className="space-y-4 text-sm text-[#485F7D] font-normal">
+
+									<div>
+										<a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer'>
+											Report an Issue
+										</a>
+										<RedirectIcon className='ml-3' />
+									</div>
+									<div>
+										<a href='https://feedback.polkassembly.io' target='_blank' rel='noreferrer'>
+											Feedback
+										</a>
+										<RedirectIcon className='ml-3' />
+									</div>
 									<div>
 										<Link href='/terms-and-conditions'>
 											Terms and Conditions
 										</Link>
 									</div>
 
-									<div>
-										<a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer'>
-											Report an Issue
-										</a>
-									</div>
-									<div>
-										<a href='https://feedback.polkassembly.io' target='_blank' rel='noreferrer'>
-											Feedback
-										</a>
-									</div>
-
 								</div>
 							</nav>
 						</div>
 
-						<div className="mt-10 md:mt-0 md:ml-10 lg:ml-14 text-center sm:text-left">
-							<p className="text-lg font-medium text-sidebarBlue">Our Services</p>
+						<div className="mt-10 md:mt-0 md:ml-10 lg:ml-14 text-center sm:text-left text-[#485F7D] font-normal">
+							<p className="text-lg font-bold text-[#243A57]">Our Services</p>
 
 							<nav aria-label="Footer Services Nav" className="mt-4 md:mt-8">
 								<div className="space-y-4 text-sm">
+									<div>
+										<a href='https://docs.polkassembly.io/' target='_blank' rel='noreferrer'>
+										Docs
+										</a>
+										<RedirectIcon className='ml-3' />
+									</div>
+
 									<div>
 										<Link href={'/terms-of-website'} >
 											Terms of Website
@@ -98,12 +106,6 @@ const Footer = ({ className } : { className?:string }) => {
 											Privacy Policy
 										</Link>
 									</div>
-									<div>
-										<a href='https://docs.polkassembly.io/' target='_blank' rel='noreferrer'>
-										Docs
-										</a>
-									</div>
-
 								</div>
 							</nav>
 						</div>

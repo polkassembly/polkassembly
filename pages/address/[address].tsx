@@ -34,13 +34,13 @@ interface IUserProfileProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	const address = context.params?.address;
+	const { params, req } = context;
+	const address = params?.address;
 	if (!address) {
 		return { props: {
 			error: 'No address provided'
 		} };
 	}
-	const req = context.req;
 	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getUserIdWithAddress(address.toString());
 	if (error || !data || isNaN(Number(data))) {

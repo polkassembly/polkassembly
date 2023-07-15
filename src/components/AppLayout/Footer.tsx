@@ -46,11 +46,11 @@ const Footer = ({ className } : { className?:string }) => {
 							</Link>
 						</div>
 
-						<p className="mx-auto mt-6 max-w-md text-center leading-relaxed text-sidebarBlue sm:mx-0 sm:max-w-xs sm:text-left">
+						{/* <p className="mx-auto mt-6 max-w-md text-center leading-relaxed text-sidebarBlue sm:mx-0 sm:max-w-xs sm:text-left">
 							Polkassembly is a unified platform to discuss and vote on governance proposals, motions and referandas.
-						</p>
+						</p> */}
 
-						<h2 className="mt-8 text-sidebarBlue text-sm capitalize text-center md:text-left">{network} Network Links: </h2>
+						{/* <h2 className="mt-8 text-sidebarBlue text-sm capitalize text-center md:text-left">{network} Network Links: </h2> */}
 						<div className='mt-3 flex justify-center md:inline-block'>{!error && socials && socialLinks(socials)}</div>
 					</div>
 

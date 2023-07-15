@@ -17,12 +17,12 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 
 	return (
 		<Space size={19} className='items-center'>
-			{blockchain_socials.homepage?
+			{/* {blockchain_socials.homepage?
 				<a href={blockchain_socials.homepage} target='_blank' rel='noreferrer'>
 					<HomeFilled className='text-sm md:text-lg md:mr-1 text-lightBlue' />
 				</a>
 				: null
-			}
+			} */}
 			{blockchain_socials.twitter?
 				<a href={blockchain_socials.twitter} target='_blank' rel='noreferrer'>
 					<TwitterOutlined className='text-sm md:text-lg md:mr-1 text-lightBlue' />

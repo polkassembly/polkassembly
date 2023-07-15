@@ -16,8 +16,9 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { getComments, getContentSummary, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
+import { getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
+import { getContentSummary } from '~src/util/getPostContentAiSummary';
 
 interface IGetOffChainPostParams {
 	network: string;

@@ -273,11 +273,11 @@ const Post: FC<IPostProps> = (props) => {
 					tally={post?.tally}
 					lastVote={lastVote}
 					setLastVote={setLastVote}
-					className={'sticky top-[65px] mb-6 '}
+					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
 				/>
 				{
 					isOffchainPost &&
-					<div>
+					<div className={'sticky top-[65px] mb-6 '}>
 						<Poll
 							proposalType={proposalType}
 							postId={post.post_id}

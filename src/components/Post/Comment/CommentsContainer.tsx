@@ -274,7 +274,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			<div  className={'block xl:grid grid-cols-12'}>
 				{
 					!!comments?.length && timelines.length >= 1 &&
-					<div className='hidden h-min xl:block col-start-1 col-end-2 min-w-[100px] sticky top-[100px] ml-1 mt-2'>
+					<div className='hidden h-min xl:block col-start-1 col-end-2 min-w-[100px] sticky top-[115px] ml-1 mt-2'>
 						<Anchor targetOffset={targetOffset} className='h-full min-w-[140px]' onClick={handleTimelineClick}>
 							{timelines.map(({ commentsCount, date, firstCommentId, id, status }) => {
 								return (

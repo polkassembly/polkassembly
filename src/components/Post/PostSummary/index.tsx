@@ -32,14 +32,16 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 			<Divider className='hidden md:block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 			<button
 				onClick={() => setOpen(true)}
-				className='flex items-center gap-x-1 justify-center cursor-pointer text-pink_primary bg-white text-xs leading-[18px] font-medium px-2 py-1 outline-none rounded-lg ai-btn-border'
+				className='flex items-center gap-x-1 justify-center cursor-pointer text-pink_primary bg-white text-xs leading-[18px] p-[1.5px] font-medium outline-none ai-btn-border'
 			>
-				<span className='flex items-center justify-center text-lightBlue text-lg'>
-					<AiStarIcon />
-				</span>
-				<span className='text-xs font-medium leading-[18px] tracking-[0.048px]'>
-					AI Summary
-				</span>
+				<p className='bg-white m-0 flex items-center justify-center px-2 py-1 rounded-[5px]'>
+					<span className='flex items-center justify-center text-lightBlue text-lg'>
+						<AiStarIcon />
+					</span>
+					<span className='text-xs font-medium leading-[18px] tracking-[0.048px]'>
+						AI Summary
+					</span>
+				</p>
 			</button>
 			<Modal
 				className={classNames(className, 'pl-0 pb-0 h-[calc(100vh-250px)] md:min-w-[604px]')}
@@ -92,10 +94,10 @@ export default styled(PostSummary)`
 		margin: 0 !important;
 	}
 	.ai-btn-border {
-		border: 1px solid;
-		border-image-slice: 1;
-		border-image-source: linear-gradient(95.24deg, #CF2DAB -3.77%, #40E8FF 11.75%, rgba(106, 65, 221, 0.72) 65.2%, #B62E76 89.54%, rgba(0, 0, 0, 0) 102.72%);
-		border-image-repeat: round !important;
+		background-image: linear-gradient(95.24deg, #CF2DAB -3.77%, #40E8FF 11.75%, rgba(106, 65, 221, 0.72) 65.2%, #B62E76 89.54%, rgba(0, 0, 0, 0) 102.72%) !important;
+		background-origin: border-box !important;
+    	background-clip: padding-box, border-box !important;
 		border-radius: 8px !important;
+		border: 1px solid transparent !important;
 	}
 `;

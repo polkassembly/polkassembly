@@ -16,6 +16,7 @@ module.exports = {
 			},
 			colors: {
 				navBlue: 'var(--navBlue)',
+				blue: 'var(--blue)',
 				sidebarBlue: 'var(--sidebarBlue)',
 				bodyBlue: 'var(--bodyBlue)',
 				lightBlue: 'var(--lightBlue)',

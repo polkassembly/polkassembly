@@ -22,6 +22,7 @@ import { getUpdatedAt } from './off-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
+import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -908,12 +909,18 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				}
 				post.post_link = post_link;
 			}
+
+			if(post.content === '' || post.title === '' || post.title === undefined || post.content === undefined){
+				const res =  await getSubSquareContentAndTitle(proposalType,network,numPostId);
+				post.content =  res.content;
+				post.title = res.title;
+			}
 		}
 
 		// Comments
 		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 			const commentPromises = post.timeline.map(async (timeline: any) => {
-				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String((timeline.type === 'Tip'? timeline.hash: timeline.index)));
 				const commentsSnapshot = await postDocRef.collection('comments').get();
 				const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
 				return comments;

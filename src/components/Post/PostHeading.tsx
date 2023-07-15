@@ -64,19 +64,25 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						topic={topic && topic?.name}
 						cid={cid}
 					>
-						<div className='cursor-pointer' onClick={() => setOpenModal(true)}>
+						<div className='cursor-pointer mt-2 md:mt-0' onClick={() => setOpenModal(true)}>
 							<UpdateLabel
 								className='md'
 								created_at={created_at}
 								updated_at={last_edited_at}
 								isHistory={history && history?.length > 0}
-							/></div>
+							/>
+						</div>
 						{
 							summary?
-								<PostSummary />
+								<PostSummary className='hidden md:flex' />
 								: null
 						}
 					</CreationLabel>
+					{
+						summary?
+							<PostSummary className='block mt-2 pl-7 md:hidden' />
+							: null
+					}
 				</>
 			</div>
 			{tags && tags.length>0 &&<div className='flex mt-6 gap-[8px] flex-wrap'>

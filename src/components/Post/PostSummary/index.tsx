@@ -6,7 +6,7 @@ import React, { FC, useState } from 'react';
 import classNames from 'classnames';
 import Markdown from '~src/ui-components/Markdown';
 import styled from 'styled-components';
-import { SummaryModalClose } from '~src/ui-components/CustomIcons';
+import { AiStarIcon, OpenAiIcon, SummaryModalClose } from '~src/ui-components/CustomIcons';
 import { usePostDataContext } from '~src/context';
 
 interface IPostSummaryProps {
@@ -29,37 +29,50 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 	const [open, setOpen] = useState(false);
 	return (
 		<section className={classNames(className, 'flex items-center')}>
-			<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+			<Divider className='hidden md:block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 			<button
 				onClick={() => setOpen(true)}
-				className='border-none outline-none flex items-center justify-center cursor-pointer text-pink_primary bg-transparent text-xs leading-[18px] font-medium'
+				className='flex items-center gap-x-1 justify-center cursor-pointer text-pink_primary bg-white text-xs leading-[18px] font-medium px-2 py-1 outline-none rounded-lg ai-btn-border'
 			>
-                View Summary
+				<span className='flex items-center justify-center text-lightBlue text-lg'>
+					<AiStarIcon />
+				</span>
+				<span className='text-xs font-medium leading-[18px] tracking-[0.048px]'>
+					AI Summary
+				</span>
 			</button>
 			<Modal
-				className={className}
+				className={classNames(className, 'pl-0 pb-0 h-[calc(100vh-250px)] md:min-w-[604px]')}
 				open={open}
 				onCancel={() => setOpen(false)}
 				closable={false}
-				title={<div className='p-5 md:p-6 m-0 flex items-center justify-between rounded-[14px]'>
-					<h3 className='font-semibold text-xl leading-[24px] text-bodyBlue m-0 p-0'>View Summary</h3>
-					<button onClick={() => setOpen(false)} className='cursor-pointer border-none outline-none bg-transparent flex items-center justify-center'>
+				title={<div className='p-5 pb-4 md:p-6 m-0 flex items-start justify-between rounded-[14px]'>
+					<article className='flex flex-col md:items-center gap-x-[6px] md:flex-row'>
+						<h3 className='m-0 p-0 flex items-center gap-x-2'>
+							<span className='flex items-center justify-center text-lightBlue text-2xl'>
+								<AiStarIcon />
+							</span>
+							<span className='text-bodyBlue text-lg md:text-xl font-semibold leading-7 md:leading-6 tracking-[0.03px]'>
+								AI Summary
+							</span>
+						</h3>
+						<div className='flex items-center gap-x-1 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.20)] pl-[6px] pr-[8px] py-1 md:pl-[10px] md:py-[6px] md:pr-3'>
+							<OpenAiIcon className='text-base md:text-2xl' />
+							<p className='m-0 text-bodyBlue text-[10px] md:text-xs leading-normal tracking-[0.24px] font-semibold'>
+								Powered by OpenAI
+							</p>
+						</div>
+					</article>
+					<button onClick={() => setOpen(false)} className='cursor-pointer border-none outline-none bg-transparent flex items-center justify-center mt-2 md:mt-0'>
 						<SummaryModalClose className='text-sm text-lightBlue' />
 					</button>
 				</div>}
-				footer={
-					<div className='w-full px-5 py-3 md:px-6 md:py-4 rounded-[14px]'>
-						<button onClick={() => setOpen(false)} className='border-none outline-none py-1 px-4 rounded-[4px] bg-pink_primary text-white w-full min-h-[40px] font-medium text-sm leading-[21px] cursor-pointer'>
-							Back To Proposal
-						</button>
-					</div>
-				}
+				footer={null}
 			>
-				<Divider className='m-0 p-0' />
-				<div className='p-5 md:p-6'>
-					<Markdown className='md' md={sanitizeSummary(summary || '')} />
+				<Divider className='m-0 p-0 bg-[#e1e6eb]' />
+				<div className='p-4 px-5 md:p-6'>
+					<Markdown className='md text-bodyBlue font-normal text-sm leading-[26px] tracking-[0.14px]' md={sanitizeSummary(summary || '')} />
 				</div>
-				<Divider className='m-0 p-0' />
 			</Modal>
 		</section>
 	);
@@ -69,10 +82,7 @@ export default styled(PostSummary)`
 	.ant-modal-content {
 		border-radius: 14px !important;
 		padding: 0 !important;
-	}
-	.ant-modal-footer {
-		border-radius: 14px !important;
-		margin: 0 !important;
+		margin: auto !important;
 	}
 	.ant-modal-header {
 		border-radius: 14px !important;
@@ -80,5 +90,12 @@ export default styled(PostSummary)`
 	}
 	.md > p {
 		margin: 0 !important;
+	}
+	.ai-btn-border {
+		border: 1px solid;
+		border-image-slice: 1;
+		border-image-source: linear-gradient(95.24deg, #CF2DAB -3.77%, #40E8FF 11.75%, rgba(106, 65, 221, 0.72) 65.2%, #B62E76 89.54%, rgba(0, 0, 0, 0) 102.72%);
+		border-image-repeat: round !important;
+		border-radius: 8px !important;
 	}
 `;

@@ -40,8 +40,8 @@ import { ApiPromise } from '@polkadot/api';
 import { getPolkadotVaultAccounts } from '~src/components/Settings/UserAccount/ParitySigner';
 import { Signer } from '@polkadot/api/types';
 import { QrSigner, QrState } from '~src/util/QrSigner';
-import { QrDisplayPayload, QrScanSignature } from '@polkadot/react-qr';
 import { HexString } from '@polkadot/util/types';
+import AuthorizeTransactionUsingQr from '~src/ui-components/AuthorizeTransactionUsingQr';
 
 const ZERO_BN = new BN(0);
 
@@ -115,6 +115,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [{ isQrHashed, qrAddress, qrPayload, qrResolve }, setQrState] = useState<QrState>(() => ({ isQrHashed: false, qrAddress: '', qrPayload: new Uint8Array() }));
 	const [signer, setSigner] = useState<Signer>({});
 	const [showQrModal, setShowQrModal] = useState(false);
+	const [isScanned, setIsScanned] = useState(false);
 
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
@@ -344,11 +345,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	}, [api, apiReady]);
 
 	const _addQrSignature = useCallback(
-		({ signature }: { signature: string }) => qrResolve && qrResolve({
-			id: ++qrId,
-			signature: signature as HexString
-		}),
-		[qrResolve]
+		({ signature }: { signature: string }) => {
+			if (isScanned) {
+				return;
+			}
+			setIsScanned(true);
+			qrResolve && qrResolve({
+				id: ++qrId,
+				signature: signature as HexString
+			});
+		},
+		[qrResolve, isScanned]
 	);
 
 	if (isLoggedOut()) {
@@ -530,6 +537,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						});
 						setShowModal(false);
 						setSuccessModal(true);
+						setShowQrModal(false);
 						console.log(`Completed at block hash #${status.asInBlock.toString()}`);
 					} else {
 						if (status.isBroadcast){
@@ -622,35 +630,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			>
 				{lastVote == null || lastVote == undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }
 			</Button>
-			<Modal
+			<AuthorizeTransactionUsingQr
 				open={showQrModal}
-				onCancel={() => setShowQrModal(false)}
-				title='Authorize Transaction'
-				footer={null}
-				className='min-w-[800px]'
-			>
-				{
-					api && apiReady && qrAddress?
-						<section className='grid grid-cols-2 gap-x-5'>
-							<article>
-								<QrDisplayPayload
-									address={qrAddress}
-									cmd={
-										isQrHashed
-											? 1
-											: 2
-									}
-									genesisHash={api?.genesisHash || ''}
-									payload={qrPayload}
-								/>
-							</article>
-							<article>
-								<QrScanSignature onScan={_addQrSignature} />
-							</article>
-						</section>
-						: null
-				}
-			</Modal>
+				setOpen={setShowQrModal}
+				api={api}
+				apiReady={apiReady}
+				qrAddress={qrAddress}
+				qrPayload={qrPayload}
+				isQrHashed={isQrHashed}
+				onScan={_addQrSignature}
+				isScanned={isScanned}
+			/>
 			<Modal
 				open={showModal}
 				onCancel={() => setShowModal(false)}

@@ -79,7 +79,7 @@ interface ISentimentsPercentage {
 	slightlyFor: ESentiments | 0;
 }
 
-const COMMENT_SIZE = 15;
+const COMMENT_SIZE = 5;
 
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;

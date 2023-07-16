@@ -8,20 +8,22 @@ import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import messages from '~src/util/messages';
 import { getComments } from '../on-chain-post';
+import { ITimelineComments } from './getCommentByPostId';
+import { MessageType } from '~src/auth/types';
+import { ProposalType } from '~src/global/proposalType';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getCommentsWithId = async ({ postId, network, postType, pageSize, commentId }: {
-	postId: string, network: string, pageSize:number, postType: any, commentId: any
+	postId: string, network: string, pageSize: number, postType: ProposalType, commentId: string
 }) => {
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(postId);
 		const sortingField = 'created_at';
 		let commentsSnapshot;
 		commentsSnapshot = await postRef.collection('comments').doc(commentId).get();
-		if(!commentsSnapshot.exists){
+		if (!commentsSnapshot.exists) {
 			commentsSnapshot = await postRef.collection('comments').orderBy(sortingField, 'asc').get();
 		}
-		else{
+		else {
 			commentsSnapshot = await postRef.collection('comments').orderBy(sortingField, 'asc').limit(pageSize).get();
 		}
 		const comments = await getComments(commentsSnapshot, postRef, network, postType);
@@ -41,10 +43,10 @@ export const getCommentsWithId = async ({ postId, network, postType, pageSize, c
 	}
 };
 
-const handler: NextApiHandler<any | { error: string }> = async (req, res) => {
+const handler: NextApiHandler<ITimelineComments | { error: MessageType | string }> = async (req, res) => {
 	const { postId = 0, postType, commentId, pageSize } = req.body;
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });
 	const { data, error, status } = await getCommentsWithId({
 		commentId,
 		network,

@@ -928,12 +928,13 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		}
 
 		// Update subsquare comments
-		const { data: commentIds } = await getSubsquareCommentsFromFirebase({ network, postId: postId as string, postType:proposalType });
+		const { data: commentIds } = await getSubsquareCommentsFromFirebase({ network, postId: postId as string, postType:proposalType as ProposalType });
 		let comments = await getSubSquareComments(proposalType as string, network, postId as string);
 		commentIds?.forEach(id => {
 			comments = comments.filter(comment => comment.id!== id);
 		});
-		await updateComments(postId as string, network, proposalType, comments);
+
+		await updateComments(postId as string, network, proposalType as ProposalType, comments);
 
 		// Post Reactions
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();

@@ -8,24 +8,31 @@ import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import messages from '~src/util/messages';
 import { getComments } from '../on-chain-post';
+import { ProposalType } from '~src/global/proposalType';
+import { MessageType } from '~src/auth/types';
+import { IComment } from '~src/components/Post/Comment/Comment';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface ITimelineComments {
+	comments: Array<IComment>;
+	count: number;
+}
+
 export const getPostComments = async ({ postId, network, postType, pageSize, lastDocumentId }: {
-	postId: string, network: string, postType: any, pageSize: any,
-	lastDocumentId: any
+	postId: string, network: string, postType: ProposalType, pageSize: number,
+	lastDocumentId: string
 }) => {
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(postId);
 		const sortingField = 'created_at';
 		let commentsSnapshot;
-		if(lastDocumentId){
+		if (lastDocumentId) {
 			const lastDocument = await postRef.collection('comments').doc(lastDocumentId).get();
 			commentsSnapshot = await postRef.collection('comments').orderBy(sortingField, 'asc').startAfter(lastDocument).limit(pageSize).get();
 		}
 		else {
 			commentsSnapshot = await postRef.collection('comments').orderBy(sortingField, 'asc').limit(pageSize).get();
 		}
-		const comments = await getComments(commentsSnapshot, postRef, network, postType);
+		const comments = await getComments(commentsSnapshot, postRef, network, postType) as Array<IComment>;
 		const count = (await postRef.collection('comments').get()).size;
 		return {
 			data: { comments, count },
@@ -41,10 +48,10 @@ export const getPostComments = async ({ postId, network, postType, pageSize, las
 	}
 };
 
-const handler: NextApiHandler<any | { error: string }> = async (req, res) => {
+const handler: NextApiHandler<ITimelineComments | { error: MessageType | string }> = async (req, res) => {
 	const { postId = 0, postType, lastDocumentId, pageSize } = req.body;
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });
 	const { data, error, status } = await getPostComments({
 		lastDocumentId: lastDocumentId,
 		network,

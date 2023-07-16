@@ -31,7 +31,7 @@ export interface IComment {
   comment_source?:'polkassembly' | 'subsquare';
   history?: ICommentHistory[];
   spam_users_count?:number;
-  profile:string;
+  profile?:string;
 }
 
 interface ICommentProps {

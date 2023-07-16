@@ -6,11 +6,12 @@ import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import { ProposalType } from '~src/global/proposalType';
 import messages from '~src/util/messages';
+import { MessageType } from '~src/auth/types';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getSubsquareCommentsFromFirebase = async ({ postId, network, postType }: {
-	postId: string, network: string, postType: any
+	postId: string, network: string, postType: ProposalType
 }) => {
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(postId);
@@ -30,10 +31,10 @@ export const getSubsquareCommentsFromFirebase = async ({ postId, network, postTy
 	}
 };
 
-const handler: NextApiHandler<any | { error: string }> = async (req, res) => {
+const handler: NextApiHandler<Array<string> | { error: MessageType | string }> = async (req, res) => {
 	const { postId = 0, postType } = req.body;
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });
 	const { data, error, status } = await getSubsquareCommentsFromFirebase({
 		network,
 		postId: postId.toString(),

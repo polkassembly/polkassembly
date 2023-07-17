@@ -3,10 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Button } from 'antd';
+// import BN from 'bn.js';
+// import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import CautionIcon from '~assets/icons/grey-caution.svg';
-// import { useNetworkContext } from '~src/context';
+// import { useApiContext, useNetworkContext } from '~src/context';
+// import { networkTrackInfo } from '~src/global/post_trackInfo';
 import WalletConnectModal from '~src/ui-components/WalletConnectModal';
 
 interface Props{
@@ -15,11 +18,17 @@ interface Props{
 }
 const DecisionDepositCard = ({ className, trackName }: Props) => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	// const [api, apiReady] = useNetworkContext();
-	//   const handleConfirm = () => {
-	// networkTrackInfo[network][trackName].decisionDeposit.toString()
+	// const { network } = useNetworkContext();
+	// const { api, apiReady } = useApiContext();
+	// const router = useRouter();
 
-	//   }
+	// const handleConfirm = async() => {
+	// if(!api || !apiReady) return;
+	// const balance =new BN(networkTrackInfo[network][trackName].decisionDeposit.toString());
+	// const tx = api.tx.referenda.placeDecisionDeposit();
+	//   tx.signAndSend()
+
+	// };
 
 	return <div className='w-full p-6 text-bodyBlue rounded-[14px] mb-8 bg-white'>
 		<h2 className='font-semibold tracking-[0.015em] text-xl shadow-[0px 6px 18px 0px #0000000F]'>Decision Deposit</h2>

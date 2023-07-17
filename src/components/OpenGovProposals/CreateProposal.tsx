@@ -7,7 +7,7 @@ import { EEnactment, IEnactment } from '.';
 import BN from 'bn.js';
 import Address from '~src/ui-components/Address';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import { BN_HUNDRED, formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '../DelegationDashboard/ProfileBalance';
@@ -45,7 +45,7 @@ interface Props{
   setPostId: (pre: number) => void;
 }
 
-const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess,title, content, tags, postId, setPostId }: Props) => {
+const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess,title, content, tags, setPostId }: Props) => {
 	const { network } = useNetworkContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -55,7 +55,6 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const { id: userId } = useUserDetailsContext();
-	const { setPostData }  = usePostDataContext();
 
 	const success = (message: string) => {
 		messageApi.open({
@@ -79,10 +78,6 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	//   useEffect(()=>{
-	// setPostData(())
-	//   },[postId])
-
 	useEffect(() => {
 		setShowAlert(false);
 		setLoading(true);
@@ -101,7 +96,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			setLoading(false);
 			setShowAlert(true);
 		})();
-		const submissionDeposite =  api.consts.referenda.submissionDeposit;
+		const submissionDeposite = api.consts.referenda.submissionDeposit;
 		setSubmissionDeposite(submissionDeposite);
 		setLoading(false);
 

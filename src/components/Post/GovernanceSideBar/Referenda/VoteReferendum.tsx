@@ -7,7 +7,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Alert, Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
-import React, { useEffect, useMemo,useState } from 'react';
+import React, { useCallback, useEffect, useMemo,useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
@@ -37,6 +37,11 @@ import dayjs from 'dayjs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
+import { getPolkadotVaultAccounts } from '~src/components/Settings/UserAccount/ParitySigner';
+import { Signer } from '@polkadot/api/types';
+import { QrSigner, QrState } from '~src/util/QrSigner';
+import { HexString } from '@polkadot/util/types';
+import AuthorizeTransactionUsingQr from '~src/ui-components/AuthorizeTransactionUsingQr';
 
 import { network as AllNetworks } from '~src/global/networkConstants';
 
@@ -81,6 +86,8 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
+let qrId = 0;
+
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
 	const userDetails = useUserDetailsContext();
 	const { addresses, isLoggedOut, loginAddress } = userDetails;
@@ -107,6 +114,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
 	const [walletErr, setWalletErr] = useState<INetworkWalletErr>({ description: '', error: 0, message: '' });
 	const [voteValues, setVoteValues] = useState({ abstainVoteValue:ZERO_BN,ayeVoteValue:ZERO_BN , nayVoteValue:ZERO_BN ,totalVoteValue:ZERO_BN });
+	const [{ isQrHashed, qrAddress, qrPayload, qrResolve }, setQrState] = useState<QrState>(() => ({ isQrHashed: false, qrAddress: '', qrPayload: new Uint8Array() }));
+	const [signer, setSigner] = useState<Signer>({});
+	const [showQrModal, setShowQrModal] = useState(false);
+	const [isScanned, setIsScanned] = useState(false);
 
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
@@ -131,38 +142,49 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	};
 
 	const getAccounts = async (chosenWallet: Wallet, chosenAddress?:string): Promise<undefined> => {
+		let accounts: InjectedAccount[] = [];
+		let signer: Signer = {};
 
-		const injectedWindow = window as Window & InjectedWindow;
+		if (chosenWallet === Wallet.POLKADOT_VAULT) {
+			accounts = getPolkadotVaultAccounts();
+			if (api) {
+				signer = new QrSigner(api.registry, setQrState);
+			}
+		} else {
+			const injectedWindow = window as Window & InjectedWindow;
 
-		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[chosenWallet]
-			: null;
+			const wallet = isWeb3Injected
+				? injectedWindow.injectedWeb3[chosenWallet]
+				: null;
 
-		if (!wallet) {
-			return;
+			if (!wallet) {
+				return;
+			}
+
+			let injected: Injected | undefined;
+			try {
+				injected = await new Promise((resolve, reject) => {
+					const timeoutId = setTimeout(() => {
+						reject(new Error('Wallet Timeout'));
+					}, 60000); // wait 60 sec
+
+					if(wallet && wallet.enable) {
+						wallet.enable(APPNAME)
+							.then((value) => { clearTimeout(timeoutId); resolve(value); })
+							.catch((error) => { reject(error); });
+					}
+				});
+			} catch (err) {
+				console.log(err?.message);
+			}
+			if (!injected) {
+				return;
+			}
+
+			accounts = await injected.accounts.get();
+			signer = injected.signer;
 		}
 
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if(wallet && wallet.enable) {
-					wallet.enable(APPNAME)
-						.then((value) => { clearTimeout(timeoutId); resolve(value); })
-						.catch((error) => { reject(error); });
-				}
-			});
-		} catch (err) {
-			console.log(err?.message);
-		}
-		if (!injected) {
-			return;
-		}
-
-		const accounts = await injected.accounts.get();
 		if (accounts.length === 0) {
 			return;
 		}
@@ -184,7 +206,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setAccounts(accounts);
 		if (accounts.length > 0) {
 			if(api && apiReady) {
-				api.setSigner(injected.signer);
+				api.setSigner(signer);
+				setSigner(signer);
 			}
 
 			onAccountChange(chosenAddress || accounts[0].address);
@@ -322,6 +345,20 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
+
+	const _addQrSignature = useCallback(
+		({ signature }: { signature: string }) => {
+			if (isScanned) {
+				return;
+			}
+			setIsScanned(true);
+			qrResolve && qrResolve({
+				id: ++qrId,
+				signature: signature as HexString
+			});
+		},
+		[qrResolve, isScanned]
+	);
 
 	if (isLoggedOut()) {
 		return <LoginToVote />;
@@ -484,39 +521,77 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				});
 			});
 		}else{
-			voteTx?.signAndSend(address, ({ status }) => {
-				if (status.isInBlock) {
-					setLoadingStatus({ isLoading: false, message: '' });
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-				} else {
-					if (status.isBroadcast){
-						setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' });
+			if (wallet === Wallet.POLKADOT_VAULT) {
+				setShowQrModal(true);
+				voteTx?.signAndSend(address, { signer } ,({ status }) => {
+					if (status.isInBlock) {
+						setLoadingStatus({ isLoading: false, message: '' });
+						queueNotification({
+							header: 'Success!',
+							message: `Vote on referendum #${referendumId} successful.`,
+							status: NotificationStatus.SUCCESS
+						});
+						setLastVote({
+							balance: totalVoteValue,
+							conviction: conviction,
+							decision: vote,
+							time: new Date()
+						});
+						setShowModal(false);
+						setSuccessModal(true);
+						setShowQrModal(false);
+						console.log(`Completed at block hash #${status.asInBlock.toString()}`);
+					} else {
+						if (status.isBroadcast){
+							setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' });
+						}
+						console.log(`Current status: ${status.type}`);
 					}
-					console.log(`Current status: ${status.type}`);
-				}
-			}).catch((error) => {
-				setLoadingStatus({ isLoading: false, message: '' });
-				console.log(':( transaction failed');
-				console.error('ERROR:', error);
-				queueNotification({
-					header: 'Failed!',
-					message: error.message,
-					status: NotificationStatus.ERROR
+				}).catch((error) => {
+					setLoadingStatus({ isLoading: false, message: '' });
+					console.log(':( transaction failed');
+					console.error('ERROR:', error);
+					queueNotification({
+						header: 'Failed!',
+						message: error.message,
+						status: NotificationStatus.ERROR
+					});
 				});
-			});
+			} else {
+				voteTx?.signAndSend(address, ({ status }) => {
+					if (status.isInBlock) {
+						setLoadingStatus({ isLoading: false, message: '' });
+						queueNotification({
+							header: 'Success!',
+							message: `Vote on referendum #${referendumId} successful.`,
+							status: NotificationStatus.SUCCESS
+						});
+						setLastVote({
+							balance: totalVoteValue,
+							conviction: conviction,
+							decision: vote,
+							time: new Date()
+						});
+						setShowModal(false);
+						setSuccessModal(true);
+						console.log(`Completed at block hash #${status.asInBlock.toString()}`);
+					} else {
+						if (status.isBroadcast){
+							setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' });
+						}
+						console.log(`Current status: ${status.type}`);
+					}
+				}).catch((error) => {
+					setLoadingStatus({ isLoading: false, message: '' });
+					console.log(':( transaction failed');
+					console.error('ERROR:', error);
+					queueNotification({
+						header: 'Failed!',
+						message: error.message,
+						status: NotificationStatus.ERROR
+					});
+				});
+			}
 
 		}
 
@@ -557,6 +632,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			>
 				{lastVote == null || lastVote == undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }
 			</Button>
+			<AuthorizeTransactionUsingQr
+				open={showQrModal}
+				setOpen={setShowQrModal}
+				api={api}
+				apiReady={apiReady}
+				qrAddress={qrAddress}
+				qrPayload={qrPayload}
+				isQrHashed={isQrHashed}
+				onScan={_addQrSignature}
+				isScanned={isScanned}
+			/>
 			<Modal
 				open={showModal}
 				onCancel={() => setShowModal(false)}
@@ -576,6 +662,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
 								{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
 								{availableWallets[Wallet.SUBWALLET] &&  <WalletButton className={`${wallet === Wallet.SUBWALLET? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
+								{['polkadot', 'kusama'].includes(network) &&  <WalletButton className={`${wallet === Wallet.POLKADOT_VAULT? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT_VAULT)} name="Polkadot Vault" icon={<WalletIcon which={Wallet.POLKADOT_VAULT} className='h-6 w-6' />} />}
 								{
 									(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
                     <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />

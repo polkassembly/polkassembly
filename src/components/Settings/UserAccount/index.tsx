@@ -6,6 +6,13 @@ import OldAccount from '~src/components/Settings/Account';
 import Delete from '~src/components/Settings/Delete';
 import Unlock from '~src/components/Settings/Unlock';
 import ProfileSettings from './Profile';
+import { Skeleton } from 'antd';
+import dynamic from 'next/dynamic';
+
+const ParitySigner = dynamic(() => import('~src/components/Settings/UserAccount/ParitySigner'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
 
 export default function UserAccount({ network }: { network: string }) {
 	return (
@@ -14,6 +21,7 @@ export default function UserAccount({ network }: { network: string }) {
 			<OldAccount />
 			<Unlock network={network} />
 			<Delete />
+			<ParitySigner />
 		</div>
 	);
 }

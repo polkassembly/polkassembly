@@ -20,31 +20,20 @@ import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
 import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
-import CloseIcon from '~assets/icons/close.svg';
-import HelperTooltip from './HelperTooltip';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { chainProperties } from '~src/global/networkConstants';
-import { formatBalance } from '@polkadot/util';
-import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 
 interface Props{
   className?: string;
   open: boolean;
   setOpen: (pre: boolean) => void;
   closable?: boolean;
-  walletKey?: string;
-  addressKey?: string;
-  onConfirm? : () => void;
-  payDecisionDeposit?: boolean;
-  title?: string;
-  footerTitle?: string;
-  selectionFormTitle?: string;
-  trackName?: string;
+  walletKey: string;
+  addressKey: string;
+  onConfirm : () => void;
 }
 
 const ZERO_BN = new BN(0);
 
-const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, addressKey, onConfirm, payDecisionDeposit, title='Connect your wallet', footerTitle = 'Continue', selectionFormTitle='Select a address', trackName }: Props) => {
+const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, addressKey, onConfirm }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
@@ -61,28 +50,27 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 
 	const handleSubmit = () => {
 		setLoading(true);
-		walletKey && localStorage.setItem(walletKey,  String(wallet));
-		addressKey && localStorage.setItem(addressKey, (address) );
-		!payDecisionDeposit && setUserDetailsContextState((prev) => {
+		localStorage.setItem(walletKey,  String(wallet));
+		localStorage.setItem(addressKey, (address) );
+		setUserDetailsContextState((prev) => {
 
 			return { ...prev,
 				delegationDashboardAddress: address,
 				loginWallet: wallet || null
 			};
 		});
-		onConfirm && onConfirm();
+		onConfirm();
 		setOpen(false);
 		setLoading(false);
 	};
 
 	const getWallet=() => {
-		if(!window) return;
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(injectedWindow.injectedWeb3);
 	};
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
-		if(!api || !apiReady || !window) return;
+		if(!api || !apiReady) return;
 		setLoading(true);
 
 		setExtentionOpen(false);
@@ -154,30 +142,22 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 	};
 
 	useEffect(() => {
-		if(!network) return ;
-		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol
-		});
 		getWallet();
-		loginWallet!==null && getAccounts(loginWallet);
+		loginWallet !== null && getAccounts(loginWallet);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
 	return <Modal
 		wrapClassName={className}
-		className = {`${poppins.className} ${poppins.variable} w-[453px] radius`}
+		className = {`${poppins.className} ${poppins.variable} radius`}
 		open = {open}
-		title = {<div className='text-lg font-semibold flex text-bodyBlue items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0]'>
-			{title}
-		</div>}
-		footer = {<div className='border-0 border-t-[1px] border-solid px-6 mt-6 pt-4 border-[#D2D8E0]'><Button onClick={handleSubmit} disabled={accounts.length === 0} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider'>{footerTitle}</Button></div>}
-		closable = {closable ? true : false}
+		title = {<div className='text-center text-[20px] font-semibold text-[#243A57]'>Connect your wallet</div>}
+		footer = {[<Button onClick={handleSubmit} disabled={accounts.length === 0} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-6 rounded-[4px]'>Continue</Button>]}
+		closable = {closable? true : false}
 		onCancel={() => closable ? setOpen(false) : setOpen(true)}
-		closeIcon={<CloseIcon/>}
 	>
 		<Spin spinning={loading} indicator={<LoadingOutlined />}>
-			<div className='flex flex-col mx-6'>
+			<div className='flex flex-col'>
 				<h3 className='text-sm font-normal text-[#485F7D] text-center'>Select a wallet</h3>
 				<div className='flex items-center justify-center gap-x-4 mb-6'>
 					{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
@@ -205,23 +185,15 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 								>
 									{accounts.length > 0
 										?<AccountSelectionForm
-											title={selectionFormTitle}
+											title='Select an address'
 											accounts={accounts}
 											address={address}
 											withBalance={true}
 											onAccountChange={(address) => setAddress(address)}
 											onBalanceChange={handleOnBalanceChange}
 											className='text-[#485F7D] text-sm'
-										/>: !wallet && Object.keys(defaultWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
+										/> : !wallet && Object.keys(defaultWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 								</Form>}
-				{payDecisionDeposit && trackName && <div className='mt-4 flex gap-8 items-center'>
-					<span className='text-sm text-lightBlue tracking-wide flex gap-1.5'>
-            Decision Deposit<HelperTooltip text='Decision deposit should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.'/>
-					</span>
-					<span className='px-3 py-0.5 bg-[#EDEFF3] tracking-wide text-sm text-bodyBlue font-semibold rounded-[16px]'>
-						{formatedBalance(networkTrackInfo[network][trackName].decisionDeposit.toString(), `${chainProperties[network]?.tokenSymbol}`)} {chainProperties[network]?.tokenSymbol}
-					</span>
-				</div>}
 			</div>
 		</Spin>
 	</Modal>;
@@ -230,5 +202,4 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 export default styled(WalletConnectModal)`
 .radius .ant-modal-content {
 border-radius: 4px !important;
-padding: 16px 0px !important;
 }`;

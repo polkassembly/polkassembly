@@ -173,7 +173,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 							setLoading(false);
 							queueNotification({
 								header: 'Success!',
-								message: `Preimage #${proposal.hash} successful.`,
+								message: `Proposal #${proposal.hash} successful.`,
 								status: NotificationStatus.SUCCESS
 							});
 							const post_id = Number(api.query.referenda.referendumCount()) - 1;

@@ -6,7 +6,7 @@ import { ClockCircleOutlined,LoadingOutlined } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Form, Modal, Spin, Tooltip } from 'antd';
+import { Button, Form, Modal, Skeleton, Spin, Tooltip } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -14,11 +14,9 @@ import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } 
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
-
 import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType, VoteType, getSubsquidProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
-
 import ExtensionNotDetected from '../../ExtensionNotDetected';
 import { tipStatus } from '../Tabs/PostOnChainInfo';
 import BountyChildBounties from './Bounty/BountyChildBounties';
@@ -44,24 +42,30 @@ import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
 import Curves from './Referenda/Curves';
 import PostEditOrLinkCTA from './PostEditOrLinkCTA';
-import CloseIcon from '~assets/icons/close.svg';
-import { PlusOutlined } from '@ant-design/icons';
-import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
-import AbstainGray from '~assets/icons/abstain-gray.svg';
 import { useCurrentBlock } from '~src/hooks';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
-import MoneyIcon from '~assets/icons/money-icon-gray.svg';
-import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
+import dynamic from 'next/dynamic';
+import { PlusOutlined } from '@ant-design/icons';
+import MoneyIcon from '~assets/icons/money-icon-gray.svg';
+import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
+import SplitYellow from '~assets/icons/split-yellow-icon.svg';
+import CloseIcon from '~assets/icons/close.svg';
+import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
+import AbstainGray from '~assets/icons/abstain-gray.svg';
+
+const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovProposals/DecisionDepositCard'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -75,6 +79,7 @@ interface IGovernanceSidebarProps {
 	toggleEdit?: () => void;
 	lastVote: ILastVote | undefined;
 	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
+  trackName?: string;
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -138,7 +143,7 @@ export function getTrackFunctions(trackInfo: any) {
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, lastVote ,setLastVote } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, lastVote ,setLastVote, trackName } = props;
 
 	const { network } = useNetworkContext();
 	const currentBlock = useCurrentBlock();
@@ -687,6 +692,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							<PostEditOrLinkCTA />
 						</>
 					}
+					{/* decision deposite placed. */}
+					{(post?.statusHistory?.filter((status: any) => status.status === 'DecisionDepositPlaced')?.length === 0) && trackName && <DecisionDepositCard trackName={String(trackName)} />}
 
 					{canEdit && graphicOpen && post_link && !(post.tags && Array.isArray(post.tags) && post.tags.length > 0) && <div className=' rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] pb-[36px] mb-8'>
 						<div className='flex justify-end py-[17px] px-[20px] items-center' onClick={ () => setGraphicOpen(false)}>

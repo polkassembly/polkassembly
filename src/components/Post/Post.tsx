@@ -32,11 +32,6 @@ import { ILastVote } from '~src/types';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
 
-const DecisionDepositCard = dynamic(() => import('../OpenGovProposals/DecisionDepositCard'), {
-	loading: () => <Skeleton active /> ,
-	ssr: false
-});
-
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
@@ -267,9 +262,6 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
-				{console.log(post?.statusHistory)}
-				{/* decision deposite placed. */}
-				{post?.statusHistory?.filter((status: any) => status.status === 'DecisionDepositPlaced')?.length && <DecisionDepositCard trackName={String(trackName)} />}
 
 				<GovernanceSideBar
 					toggleEdit={toggleEdit}
@@ -282,7 +274,10 @@ const Post: FC<IPostProps> = (props) => {
 					tally={post?.tally}
 					lastVote={lastVote}
 					setLastVote={setLastVote}
+					trackName={trackName}
 				/>
+				{/* decision deposite placed. */}
+
 				{
 					isOffchainPost &&
 					<>

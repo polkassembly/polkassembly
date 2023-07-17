@@ -31,6 +31,7 @@ import LinkCard from './LinkCard';
 import { ILastVote } from '~src/types';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
+import DecisionDepositCard from '../OpenGovProposals/DecisionDepositCard';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -183,7 +184,7 @@ const Post: FC<IPostProps> = (props) => {
 		}
 	}, [post]);
 
-	const networkModified = network.charAt(0).toUpperCase() + network.slice(1);
+	const networkModified =  network?.charAt(0)?.toUpperCase() + network?.slice(1);
 	let postType:any = proposalType;
 
 	if(postType === ProposalType.REFERENDUM_V2){
@@ -262,6 +263,10 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
+				{console.log(post?.statusHistory)}
+				{/* decision deposite placed. */}
+				{post?.statusHistory?.filter((status: any) => status.status === 'DecisionDepositPlaced')?.length && <DecisionDepositCard/>}
+
 				<GovernanceSideBar
 					toggleEdit={toggleEdit}
 					proposalType={proposalType}

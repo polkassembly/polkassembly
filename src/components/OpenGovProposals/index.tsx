@@ -1,22 +1,20 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Form, Modal, Steps } from 'antd';
-import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import WriteProposal from './WriteProposal';
-import CloseIcon from '~assets/icons/close.svg';
-import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
-import CreatePreimage from './CreatePreimage';
 import BN from 'bn.js';
+import { poppins } from 'pages/_app';
+import styled from 'styled-components';
+import { Button, Form, Modal, Steps } from 'antd';
+import WriteProposal from './WriteProposal';
+import CreatePreimage from './CreatePreimage';
 import CreateProposal from './CreateProposal';
-// import { useUserDetailsContext } from '~src/context';
 import WalletConnectModal from '~src/ui-components/WalletConnectModal';
+import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
 import { HexString } from '@polkadot/util/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
-// import { BN_HUNDRED } from '@polkadot/util';
+import CloseIcon from '~assets/icons/close.svg';
+import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 
 interface Props{
   className?: string;
@@ -261,10 +259,14 @@ export default styled(OpenGovProposals)`
 .opengov-proposals .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title{
   color: #96A4B6 !important;
 }
-.opengov-proposals .ant-steps .ant-steps-item .ant-steps-item-container .ant-steps-item-tail{
-  cursor: pointer !important;
+ .ant-steps .ant-steps-item .ant-steps-item-container .ant-steps-item-tail{
   top:0px !important;
   padding: 4px 15px !important;
+}
+.opengov-proposals .ant-steps .ant-steps-item-wait>.ant-steps-item-container>.ant-steps-item-tail::after,
+.opengov-proposals .ant-steps .ant-steps-item-process>.ant-steps-item-container>.ant-steps-item-tail::after,
+.opengov-proposals .ant-steps .ant-steps-item-tail::after{
+background-color: #D2D8E0 !important;
 }
 .opengov-proposals .ant-steps.ant-steps-label-vertical .ant-steps-item-content{
   width: 100% !important;

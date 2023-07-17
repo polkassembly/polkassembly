@@ -117,8 +117,13 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	}
 
 	maxSpendArr.sort((a,b) => a.maxSpend - b.maxSpend );
-	console.log(invalidPreimageHash());
+
 	const handleStateChange = (createPreimageForm: any) => {
+		setSteps({ percent: 20, step: 1 });
+
+		(createPreimageForm.preimageHash && createPreimageForm.preimageLength  && createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) &&  setSteps({ percent: 100, step: 1 });
+		(createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) && setSteps({ percent: 100, step: 1 });
+
 		setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
 		form.setFieldValue('at_block',currentBlock?.add(BN_THOUSAND) || BN_ONE  );
 		const balance = new BN(createPreimageForm?.fundingAmount) ;
@@ -540,7 +545,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		}
 	};
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
-		<div className={className}>
+		<div className={`${className} create-preimage`}>
 			<div className='my-8 flex flex-col'>
 				<label className='text-lightBlue text-sm'>Do you have an existing preimage? </label>
 				<Radio.Group onChange={(e) => {
@@ -560,22 +565,15 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					{ required: "Please add the '${name}' " }
 				}>
 				{isPreimage && <>
-					<div className='mt-6'>
+					<div className='mt-6 preimage'>
 						<label className='text-lightBlue text-sm'>Preimage Hash <span>
 							<HelperTooltip text='this product is powered by kanishka rajput' className='ml-1'/>
 						</span>
 						</label>
-						<Form.Item name='preimage_hash' rules={[
-							{ message: 'Invalid preimage hash',
-								validator(rule, value, callback) {
-									if (callback && (!isHex(value, 256) || invalidPreimageHash()) && value.length > 0 ){
-										callback(rule?.message?.toString());
-									}else {
-										callback();
-									}
-								} }]}>
+						<Form.Item name='preimage_hash'>
 							<Input name='preimage_hash' className='h-[40px] rounded-[4px]' value={preimageHash} onChange={(e) => handlePreimageHash(e.target.value, Boolean(isPreimage))}/>
 						</Form.Item>
+						{invalidPreimageHash () && <span className='text-[#ff4d4f] text-sm'>Invalid Preimage hash</span>}
 					</div>
 					<div className='mt-6'>
 						<label className='text-lightBlue text-sm'>Preimage Length</label>
@@ -631,16 +629,16 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					<span className='text-pink_primary text-sm font-medium'>Advanced Details</span>
 					<DownArrow className='down-icon'/>
 				</div>}
-				{openAdvanced && <div className='mt-3 flex flex-col'>
+				{openAdvanced && <div className='mt-3 flex flex-col preimage'>
 					<label className='text-lightBlue text-sm'>Enactment <span><HelperTooltip text='A custom delay can be set for enactment of approved proposals.' className='ml-1'/></span></label>
-					<Radio.Group className='mt-1 flex flex-col gap-2' value={enactment.key} onChange={(e) => setEnactment({ key: e.target.value, value: null })}>
+					<Radio.Group className='mt-1 flex flex-col gap-2 enactment' value={enactment.key} onChange={(e) => setEnactment({ key: e.target.value, value: null })}>
 						<Radio value={EEnactment.At_Block_No} className='text-bodyBlue text-sm font-normal'>
 							<div className='flex items-center gap-2 h-[40px]'><span className='w-[150px]'>At Block Number<HelperTooltip className='ml-1' text='Allows you to choose a custom block number for enactment.'/></span>
 								<span>
 									{enactment.key === EEnactment.At_Block_No && <Form.Item name='at_block'
 										rules={[
 											{
-												message:'Block number should be greater than current block',
+												message:'Invalid Block no.',
 												validator(rule, value, callback){
 													const bnValue = new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
 
@@ -661,7 +659,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 								<span>{enactment.key === EEnactment.After_No_Of_Blocks && <Form.Item name='after_blocks'
 									rules={[
 										{
-											message:'Invalid Blocks',
+											message:'Invalid no. of Blocks',
 											validator(rule, value, callback){
 												const bnValue =  new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
 												if(callback &&  value?.length > 0 && (bnValue?.lt(BN_ONE) ||  (value?.length && Number(value) <= 0) )){
@@ -671,7 +669,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 												}
 											} }
 									]}>
-									<Input name='after_blocks' className='w-[100px] mt-5' onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}/>
+									<Input name='after_blocks' className='w-[100px]  mt-5' onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}/>
 								</Form.Item>}
 								</span>
 							</div>
@@ -694,5 +692,12 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 export default styled(CreatePreimage)`
 .down-icon{
 	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+}
+.preimage .ant-form-item {
+  margin-bottom: 0px;
+}
+.enactment .ant-form-item .ant-form-item-control{
+flex-direction: row !important;
+gap:4px;
 }
 `;

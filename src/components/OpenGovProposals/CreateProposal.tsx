@@ -7,7 +7,7 @@ import { EEnactment, IEnactment } from '.';
 import BN from 'bn.js';
 import Address from '~src/ui-components/Address';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { BN_HUNDRED, formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '../DelegationDashboard/ProfileBalance';
@@ -55,6 +55,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const { id: userId } = useUserDetailsContext();
+	const { setPostData }  = usePostDataContext();
 
 	const success = (message: string) => {
 		messageApi.open({
@@ -78,6 +79,10 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	//   useEffect(()=>{
+	// setPostData(())
+	//   },[postId])
+
 	useEffect(() => {
 		setShowAlert(false);
 		setLoading(true);
@@ -89,7 +94,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 		const origin: any = { Origins: selectedTrack };
 		setLoading(true);
-		const tx = api.tx.referenda.submit(origin ,{ Lookup: { hash: preimageHash, length:preimageLength } }, enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value }: { After: enactment.value }): { After: BN_HUNDRED });
+		const tx = api.tx.referenda.submit(origin ,{ Lookup: { hash: preimageHash, len: String(preimageLength) } }, enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value }: { After: enactment.value }): { After: BN_HUNDRED });
 		(async () => {
 			const info = await tx.paymentInfo(proposerAddress);
 			setTxFee(new BN(info.partialFee.toString() || 0));
@@ -102,6 +107,30 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
+
+	const handleSaveTreasuryProposal = async(postId: number) => {
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/action/createOpengovTreasuryProposal',{
+			content,
+			postId : postId,
+			proposerAddress,
+			tags,
+			title,
+			userId
+		});
+
+		if(data && data?.post_id){
+			setPostId(data?.post_id);
+		}
+		else if(apiError || !data?.post_id) {
+			queueNotification({
+				header: 'Error',
+				message: 'There was an error creating your treasury post.',
+				status: NotificationStatus.ERROR
+			});
+			console.error(apiError);
+		}
+
+	};
 
 	const handleSubmitTreasuryProposal = async() => {
 		if(!api || !apiReady) return;
@@ -141,7 +170,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 		setLoading(true);
 		try {
 			setLoading(true);
-			const proposal = api.tx.referenda.submit(origin ,{ Lookup: { hash: preimageHash, length:preimageLength } }, enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value }: { After: enactment.value }): { After: BN_HUNDRED });
+			const proposal = api.tx.referenda.submit(origin ,{ Lookup: { hash: preimageHash, len: String(preimageLength) } }, enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value }: { After: enactment.value }): { After: BN_HUNDRED });
 			proposal.signAndSend(proposerAddress, async ({ status, events }: any) => {
 				if (status.isFinalized) {
 					for (const { event } of events) {
@@ -152,13 +181,11 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 								message: `Preimage #${proposal.hash} successful.`,
 								status: NotificationStatus.SUCCESS
 							});
-							await handleSaveTreasuryProposal();
+							const post_id = Number(api.query.referenda.referendumCount()) - 1;
+							await handleSaveTreasuryProposal(post_id);
 							setLoading(false);
 							setOpenSuccess(true);
 							setOpenModal(false);
-
-							const post_id = Number(api.query.referenda.referendumCount()) - 1;
-							setPostId(post_id);
 
 							console.log(`Completed at block hash #${status.asInBlock.toString()}`);
 
@@ -199,30 +226,6 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			});
 		}
 	};
-	const handleSaveTreasuryProposal = async() => {
-		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/action/createOpengovTreasuryProposal',{
-			content,
-			postId,
-			proposerAddress,
-			tags,
-			title,
-			userId
-		});
-
-		if(data && data?.post_id){
-			setPostId(data?.post_id);
-		}
-		else if(apiError || !data?.post_id) {
-			queueNotification({
-				header: 'Error',
-				message: 'There was an error creating your treasury post.',
-				status: NotificationStatus.ERROR
-			});
-			console.error(apiError);
-		}
-
-	};
-
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
 		<div className={`create-proposal ${className}`}>
 			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-bodyBlue text-sm rounded-[4px] mt-8 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>

@@ -3,8 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined , StopOutlined } from '@ant-design/icons';
-import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
-import WalletConnectProvider from '@walletconnect/web3-provider';
+import { InjectedWindowProvider } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Segmented, Select, Spin, Alert } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
@@ -20,7 +19,6 @@ import WalletButton from '~src/components/WalletButton';
 import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 
 import { ProposalType } from '~src/global/proposalType';
-import addEthereumChain from '~src/util/addEthereumChain';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
@@ -35,38 +33,37 @@ import DownIcon from '~assets/icons/down-icon.svg';
 import LikeWhite from '~assets/icons/like-white.svg';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getConvictionVoteOptions } from './VoteReferendum';
+import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 const ZERO_BN = new BN(0);
 
 interface Props {
-	className?: string
-	referendumId?: number | null | undefined
-	onAccountChange: (address: string) => void
-	lastVote: ILastVote | undefined
-	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
+	className?: string;
+	referendumId?: number | null | undefined;
+	onAccountChange: (address: string) => void;
+	lastVote: ILastVote | undefined;
+	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>;
+	address: string;
+	availableWallets: Record<string, InjectedWindowProvider>;
+	setSelectedWallet: (wallet: Wallet) => void;
+	selectedWallet: Wallet | null;
+	accounts: InjectedTypeWithCouncilBoolean[];
+	isTalismanEthereum: boolean;
+	isMetamaskWallet: boolean;
 }
 
 const abi = require('../../../../moonbeamConvictionVoting.json');
 
 const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
-const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
-	const [showModal, setShowModal] = useState<boolean>(false);
+const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote, accounts, address, availableWallets, isMetamaskWallet, isTalismanEthereum, selectedWallet, setSelectedWallet }: Props) => {
 	const userDetails = useUserDetailsContext();
-	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress } = userDetails;
-	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
+	const { walletConnectProvider, isLoggedOut } = userDetails;
 	const { apiReady, api } = useApiContext();
-	const [address, setAddress] = useState<string>('');
-	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
-	const [isAccountLoading, setIsAccountLoading] = useState(false);
 	const { network } = useNetworkContext();
 	const { setPostData, postData: { postType: proposalType } } = usePostDataContext();
-	const [wallet, setWallet] = useState<Wallet>();
-	const [loginWallet, setLoginWallet] = useState<Wallet>();
-	const [availableWallets, setAvailableWallets] = useState<any>({});
-	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
-	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
+	const [showModal, setShowModal] = useState<boolean>(false);
+	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
 	const [voteValues, setVoteValues] = useState({ abstainVoteValue:ZERO_BN,ayeVoteValue:ZERO_BN , nayVoteValue:ZERO_BN ,totalVoteValue:ZERO_BN });
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
@@ -80,7 +77,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
-	const[ayeNayForm] = Form.useForm();
+	const [ayeNayForm] = Form.useForm();
 	const [abstainVoteValue, setAbstainVoteValue] = useState<BN>(ZERO_BN);
 	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
 	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
@@ -88,37 +85,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [balanceErr, setBalanceErr] = useState('');
 	const [vote,setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [successModal,setSuccessModal] = useState(false);
-
-	const getWallet=() => {
-		const injectedWindow = window as Window & InjectedWindow ;
-		setAvailableWallets(injectedWindow.injectedWeb3);
-		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
-	};
-
-	const handleDefaultWallet=async(wallet:Wallet) => {
-		setWallet(wallet);
-		await getAccounts(wallet);
-		if (walletConnectProvider) {
-			await getWalletConnectAccounts();
-		}
-	};
-
-	useEffect(() => {
-		if (userDetails.loginWallet && [Wallet.TALISMAN, Wallet.METAMASK].includes(userDetails.loginWallet)) {
-			setLoginWallet(userDetails.loginWallet);
-			setWallet(userDetails.loginWallet);
-			handleDefaultWallet(userDetails.loginWallet);
-		} else {
-			if(!window) return;
-			const defaultWallet = localStorage.getItem('loginWallet') as Wallet ;
-			if(defaultWallet){
-				if(defaultWallet === Wallet.METAMASK){setWallet(Wallet.METAMASK);handleDefaultWallet(Wallet.METAMASK);}
-				else if(defaultWallet === Wallet.TALISMAN){setWallet(Wallet.TALISMAN);handleDefaultWallet(Wallet.TALISMAN);}
-				setLoginWallet(defaultWallet as  Wallet);
-			}
-		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [apiReady, userDetails]);
 
 	useEffect(() => {
 		setPostData((prev) => {
@@ -129,142 +95,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		});
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	const getAccounts = async (wallet: Wallet) => {
-		setAccounts([]);
-		setAddress('');
-		setIsAccountLoading(true);
-		const ethereum = wallet === Wallet.TALISMAN? (window as any).talismanEth : (window as any).ethereum;
-
-		if (!ethereum) {
-			return;
-		}
-
-		if (wallet === Wallet.METAMASK) {
-			try {
-				await addEthereumChain({
-					ethereum,
-					network
-				});
-			} catch (error) {
-				return;
-			}
-		}
-
-		const addresses = await ethereum.request({ method: 'eth_requestAccounts' });
-
-		if (addresses.length === 0) {
-			setIsAccountLoading(false);
-			return;
-		}
-
-		wallet === Wallet.TALISMAN && addresses.filter((address: string) => address.slice(0,2) === '0x').length === 0 ? setIsTalismanEthereum(false) : setIsTalismanEthereum(true);
-
-		const accounts = addresses.map((address: string): InjectedAccountWithMeta => {
-			const account = {
-				address,
-				meta: {
-					genesisHash: null,
-					name: 'metamask',
-					source: 'metamask'
-				}
-			};
-
-			return account;
-		});
-
-		if (accounts && Array.isArray(accounts)) {
-			const substrate_address = getSubstrateAddress(loginAddress);
-			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
-			if (index >= 0) {
-				const account = accounts[index];
-				accounts.splice(index, 1);
-				accounts.unshift(account);
-			}
-		}
-
-		setAccounts(accounts);
-
-		if (addresses.length > 0) {
-			setAddress(addresses[0]);
-		}
-		setIsAccountLoading(false);
-	};
-
-	const connect = async () => {
-		setIsAccountLoading(true);
-
-		//  Create new WalletConnect Provider
-		window.localStorage.removeItem('walletconnect');
-		const wcPprovider = new WalletConnectProvider({
-			rpc: {
-				1284: 'https://rpc.api.moonbeam.network',
-				1285: 'https://rpc.api.moonriver.moonbeam.network',
-				1287: 'https://rpc.api.moonbase.moonbeam.network'
-			}
-		});
-		await wcPprovider.wc.createSession();
-		setWalletConnectProvider(wcPprovider);
-	};
-
-	const getAccountsHandler = async (addresses: string[], chainId: number) => {
-
-		if(chainId !== chainProperties[network].chainId) {
-			// setErr(new Error(`Please login using the ${NETWORK} network`));
-			// setAccountsNotFound(true);
-			setIsAccountLoading(false);
-			return;
-		}
-
-		const checksumAddresses = addresses.map((address: string) => address);
-
-		if (checksumAddresses.length === 0) {
-			// setAccountsNotFound(true);
-			setIsAccountLoading(false);
-			return;
-		}
-
-		setAccounts(checksumAddresses.map((address: string): InjectedAccountWithMeta => {
-			const account = {
-				address: address.toLowerCase(),
-				meta: {
-					genesisHash: null,
-					name: 'walletConnect',
-					source: 'walletConnect'
-				}
-			};
-
-			return account;
-		}));
-
-		if (checksumAddresses.length > 0) {
-			setAddress(checksumAddresses[0]);
-		}
-
-		setIsAccountLoading(false);
-	};
-
-	const getWalletConnectAccounts = async () => {
-		if(!walletConnectProvider?.wc.connected) {
-			await connect();
-			if(!walletConnectProvider?.connected) return;
-		}
-
-		getAccountsHandler(walletConnectProvider.wc.accounts, walletConnectProvider.wc.chainId);
-
-		setIsAccountLoading(false);
-
-		walletConnectProvider.wc.on('session_update', (error, payload) => {
-			if (error) {
-				console.error(error);
-				return;
-			}
-
-			// updated accounts and chainId
-			const { accounts:addresses, chainId } = payload.params[0];
-			getAccountsHandler(addresses, Number(chainId));
-		});
-	};
 
 	const onBalanceChange = (balance: BN) => {
 
@@ -352,7 +182,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			web3 = new Web3((walletConnectProvider as any));
 			chainId = walletConnectProvider.wc.chainId;
 		}else {
-			web3 = new Web3(wallet === Wallet.TALISMAN? (window as any).talismanEth : (window as any).ethereum);
+			const newWindow = (window as any);
+			web3 = new Web3(selectedWallet === Wallet.TALISMAN? newWindow.talismanEth : newWindow.ethereum);
 			chainId = await web3.eth.net.getId();
 		}
 
@@ -556,14 +387,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		</Form.Item>;
 
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
-		setLoadingStatus({ ...loadingStatus, isLoading: true });
 		event.preventDefault();
-		setWallet(wallet);
-		await getAccounts(wallet);
-		if (walletConnectProvider) {
-			await getWalletConnectAccounts();
-		}
-		setLoadingStatus({ ...loadingStatus, isLoading: false });
+		setSelectedWallet(wallet);
 	};
 
 	const handleOnBalanceChange = (balanceStr: string) => {
@@ -578,16 +403,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 		setAvailableBalance(balance);
 	};
-
-	// eslint-disable-next-line react-hooks/rules-of-hooks
-	useEffect(() => {
-		getWallet();
-		if(!loginWallet) return;
-		if(loginWallet === Wallet.METAMASK){setWallet(Wallet.METAMASK);handleDefaultWallet(Wallet.METAMASK);}
-		else if(loginWallet === Wallet.TALISMAN){setWallet(Wallet.TALISMAN);handleDefaultWallet(Wallet.TALISMAN);}
-	}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	,[loginWallet]);
 
 	const decisionOptions = isOpenGovSupported(network) ? [
 		{
@@ -636,17 +451,17 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					<span className='text-[#243A57] font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
 				</div>}
 			> <>
-					<Spin spinning={loadingStatus.isLoading || isAccountLoading} indicator={<LoadingOutlined />}>
+					<Spin spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
 						<div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>
 
 						<div className='flex items-center gap-x-5 mt-1 mb-[24px] justify-center'>
-							{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-							{isMetamaskWallet && <WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />}
+							{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${selectedWallet === Wallet.TALISMAN? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+							{isMetamaskWallet && <WalletButton className={`${selectedWallet === Wallet.METAMASK? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />}
 						</div>
 						{!isTalismanEthereum && <Alert message='Please use Ethereum account via Talisman wallet.' type='info' className='mb-2 -mt-2' showIcon/>}
 
-						{balanceErr.length > 0 && wallet && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
-						{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
+						{balanceErr.length > 0 && selectedWallet && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
+						{accounts.length === 0  && selectedWallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 
 						{
 							accounts.length > 0?
@@ -661,7 +476,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 									inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 									withoutInfo = {true}
 								/>
-								: !wallet? <Alert type='info'  message='Please select a wallet.' showIcon />: null
+								: !selectedWallet? <Alert type='info'  message='Please select a wallet.' showIcon />: null
 						}
 
 						<h3 className='inner-headings mt-[24px] mb-[2px]'>Choose your vote</h3>
@@ -705,7 +520,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 								<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
+									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!selectedWallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!selectedWallet || !lockedBalance}>Confirm</Button>
 								</div>
 							</Form>
 						}
@@ -740,7 +555,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!selectedWallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!selectedWallet || !lockedBalance}>Confirm</Button>
 									</div>
 								</Form>
 						}
@@ -781,7 +596,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!selectedWallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!selectedWallet || !lockedBalance}>Confirm</Button>
 									</div>
 								</Form>
 						}

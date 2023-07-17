@@ -46,6 +46,7 @@ const accessToken = getLocalStorageToken();
 try {
 	const tokenPayload = accessToken && decodeToken<JWTPayloadType>(accessToken);
 
+	console.log('UserDetailsContext:-', tokenPayload, accessToken);
 	if (tokenPayload && tokenPayload.sub) {
 		const {
 			addresses,

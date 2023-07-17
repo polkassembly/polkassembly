@@ -5,10 +5,10 @@
 import { ClockCircleOutlined,LoadingOutlined } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
+import { Injected, InjectedAccount, InjectedAccountWithMeta, InjectedWindow, InjectedWindowProvider } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Spin, Tooltip } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
@@ -62,6 +62,9 @@ import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
+import { isOffChainProposalTypeValid } from '~src/api-utils';
+import addEthereumChain from '~src/util/addEthereumChain';
+import WalletConnectProvider from '@walletconnect/web3-provider';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -143,7 +146,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { network } = useNetworkContext();
 	const currentBlock = useCurrentBlock();
 	const { api, apiReady } = useApiContext();
-	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();
+	const { loginAddress, defaultAddress, walletConnectProvider, setWalletConnectProvider, loginWallet } = useUserDetailsContext();
 	const { postData: { created_at, track_number, post_link } } = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
 
@@ -172,17 +175,33 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [onChainLastVote, setOnChainLastVote] = useState<IVoteHistory | null>(null);
 	const[isLastVoteLoading, setIsLastVoteLoading] = useState(true);
 
-	const canVote = Boolean(post.status) &&
-	[
-		proposalStatus.PROPOSED,
-		referendumStatus.STARTED,
-		motionStatus.PROPOSED,
-		tipStatus.OPENED,
-		gov2ReferendumStatus.SUBMITTED,
-		gov2ReferendumStatus.DECIDING,
-		gov2ReferendumStatus.CONFIRM_STARTED,
-		gov2ReferendumStatus.DECISION_DEPOSIT_PLACED
-	].includes(post.status);
+	const [canVote, setCanVote] = useState(false);
+	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
+	const [isCouncil, setIsCouncil] = useState(false);
+	const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
+	const [availableWallets, setAvailableWallets] = useState<Record<string, InjectedWindowProvider>>({});
+	const [isMoonbaseFamily, setIsMoonbaseFamily] = useState(false);
+	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
+	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
+
+	useEffect(() => {
+		setIsMoonbaseFamily(['moonbase', 'moonbeam', 'moonriver'].includes(network));
+	}, [network]);
+
+	useEffect(() => {
+		const canVote = Boolean(post.status) &&
+		[
+			proposalStatus.PROPOSED,
+			referendumStatus.STARTED,
+			motionStatus.PROPOSED,
+			tipStatus.OPENED,
+			gov2ReferendumStatus.SUBMITTED,
+			gov2ReferendumStatus.DECIDING,
+			gov2ReferendumStatus.CONFIRM_STARTED,
+			gov2ReferendumStatus.DECISION_DEPOSIT_PLACED
+		].includes(post.status);
+		setCanVote(canVote && !(extensionNotFound || accountsNotFound));
+	}, [accountsNotFound, extensionNotFound, post.status]);
 
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 
@@ -193,9 +212,79 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		}, new BN(0)).toString() : '';
 	}, [onChainLastVote?.balance]);
 
-	const onAccountChange = (address: string) => setAddress(address);
+	const onAccountChange = (address: string) => {
+		setAddress(address);
+	};
 
-	const getWalletAccounts = async (chosenWallet: Wallet): Promise<InjectedAccount[] | undefined> => {
+	const connect = useCallback(async () => {
+
+		//  Create new WalletConnect Provider
+		window.localStorage.removeItem('walletconnect');
+		const wcProvider = new WalletConnectProvider({
+			rpc: {
+				1284: 'https://rpc.api.moonbeam.network',
+				1285: 'https://rpc.api.moonriver.moonbeam.network',
+				1287: 'https://rpc.api.moonbase.moonbeam.network'
+			}
+		});
+		await wcProvider.wc.createSession();
+		setWalletConnectProvider(wcProvider);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const getAccountsHandler = useCallback(async (addresses: string[], chainId: number) => {
+		if(chainId !== chainProperties[network].chainId) {
+			// setErr(new Error(`Please login using the ${NETWORK} network`));
+			// setAccountsNotFound(true);
+			return;
+		}
+
+		const checksumAddresses = addresses.map((address: string) => address);
+
+		if (checksumAddresses.length === 0) {
+			// setAccountsNotFound(true);
+			return;
+		}
+
+		setAccounts(checksumAddresses.map((address: string): InjectedAccountWithMeta => {
+			const account = {
+				address: address.toLowerCase(),
+				meta: {
+					genesisHash: null,
+					name: 'walletConnect',
+					source: 'walletConnect'
+				}
+			};
+
+			return account;
+		}));
+
+		if (checksumAddresses.length > 0) {
+			setAddress(checksumAddresses[0]);
+		}
+	}, [network]);
+
+	const getWalletConnectAccounts = useCallback(async () => {
+		if(!walletConnectProvider?.wc.connected) {
+			await connect();
+			if(!walletConnectProvider?.connected) return;
+		}
+
+		getAccountsHandler(walletConnectProvider.wc.accounts, walletConnectProvider.wc.chainId);
+
+		walletConnectProvider.wc.on('session_update', (error, payload) => {
+			if (error) {
+				console.error(error);
+				return;
+			}
+
+			// updated accounts and chainId
+			const { accounts: addresses, chainId } = payload.params[0];
+			getAccountsHandler(addresses, Number(chainId));
+		});
+	}, [connect, getAccountsHandler, walletConnectProvider?.connected, walletConnectProvider?.wc]);
+
+	const getWalletAccounts = useCallback(async (chosenWallet: Wallet): Promise<InjectedAccount[] | undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
 
 		let wallet = isWeb3Injected
@@ -231,104 +320,164 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			console.log('Error fetching wallet accounts : ', err);
 		}
 
-		if(!injected) {
+		if (!injected) {
 			return;
 		}
 
 		const accounts = await injected.accounts.get();
-
-		if (accounts.length === 0) return;
 
 		accounts.forEach((account) => {
 			account.address = getEncodedAddress(account.address, network) || account.address;
 		});
 
 		return accounts;
-	};
+	}, [network]);
 
-	const getAccounts = async (): Promise<undefined> => {
-		if (!api) {
+	const getAccounts = useCallback(async (): Promise<undefined> => {
+		if (!api || !apiReady) {
 			return;
 		}
 
-		if (!apiReady) {
+		const signersMapLocal = {} as {[key:string]: Signer};
+		const accountsMapLocal = {} as {[key:string]: string};
+
+		let accounts: InjectedTypeWithCouncilBoolean[] = [];
+
+		console.log('isMoonbaseFamily', isMoonbaseFamily, proposalType, selectedWallet);
+
+		if (!selectedWallet && [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
+			setAccounts([]);
+			setAddress('');
 			return;
 		}
+		if (!isMoonbaseFamily) {
+			const extensions = await web3Enable(APPNAME);
 
-		const extensions = await web3Enable(APPNAME);
-
-		if (extensions.length === 0) {
-			setExtensionNotFound(true);
-			return;
-		} else {
-			setExtensionNotFound(false);
-		}
-
-		let accounts: InjectedAccount[] = [];
-		let polakadotJSAccounts : InjectedAccount[] | undefined;
-		let polywalletJSAccounts : InjectedAccount[] | undefined;
-		let subwalletAccounts: InjectedAccount[] | undefined;
-		let talismanAccounts: InjectedAccount[] | undefined;
-
-		const signersMapLocal = signersMap as {[key:string]: Signer};
-		const accountsMapLocal = accountsMap as {[key:string]: string};
-
-		for (const extObj of extensions) {
-			if(extObj.name == 'polkadot-js') {
-				signersMapLocal['polkadot-js'] = extObj.signer;
-				polakadotJSAccounts = await getWalletAccounts(Wallet.POLKADOT);
-			} else if(extObj.name == 'subwallet-js') {
-				signersMapLocal['subwallet-js'] = extObj.signer;
-				subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
-			} else if(extObj.name == 'talisman') {
-				signersMapLocal['talisman'] = extObj.signer;
-				talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
-			} else if (['polymesh'].includes(network) && extObj.name === 'polywallet') {
-				signersMapLocal['polywallet'] = extObj.signer;
-				polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
+			if (extensions.length === 0) {
+				setExtensionNotFound(true);
+				return;
+			} else {
+				setExtensionNotFound(false);
 			}
-		}
 
-		if(polakadotJSAccounts) {
-			accounts = accounts.concat(polakadotJSAccounts);
-			polakadotJSAccounts.forEach((acc: InjectedAccount) => {
-				accountsMapLocal[acc.address] = 'polkadot-js';
-			});
-		}
+			let polakadotJSAccounts : InjectedAccount[] | undefined;
+			let polywalletJSAccounts : InjectedAccount[] | undefined;
+			let subwalletAccounts: InjectedAccount[] | undefined;
+			let talismanAccounts: InjectedAccount[] | undefined;
 
-		if(['polymesh'].includes(network) && polywalletJSAccounts) {
-			accounts = accounts.concat(polywalletJSAccounts);
-			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
-				accountsMapLocal[acc.address] = 'polywallet';
-			});
-		}
+			for (const extObj of extensions) {
+				if(extObj.name == 'polkadot-js' && (selectedWallet === Wallet.POLKADOT || !selectedWallet)) {
+					signersMapLocal['polkadot-js'] = extObj.signer;
+					polakadotJSAccounts = await getWalletAccounts(Wallet.POLKADOT);
+				} else if(extObj.name == 'subwallet-js' && (selectedWallet === Wallet.SUBWALLET || !selectedWallet)) {
+					signersMapLocal['subwallet-js'] = extObj.signer;
+					subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
+				} else if(extObj.name == 'talisman' && (selectedWallet === Wallet.TALISMAN || !selectedWallet)) {
+					signersMapLocal['talisman'] = extObj.signer;
+					talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
+				} else if (['polymesh'].includes(network) && extObj.name === 'polywallet' && (selectedWallet === Wallet.POLYWALLET || !selectedWallet)) {
+					signersMapLocal['polywallet'] = extObj.signer;
+					polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
+				}
+			}
 
-		if(subwalletAccounts) {
-			accounts = accounts.concat(subwalletAccounts);
-			subwalletAccounts.forEach((acc: InjectedAccount) => {
-				accountsMapLocal[acc.address] = 'subwallet-js';
-			});
-		}
+			if(polakadotJSAccounts) {
+				accounts = accounts.concat(polakadotJSAccounts);
+				polakadotJSAccounts.forEach((acc: InjectedAccount) => {
+					accountsMapLocal[acc.address] = 'polkadot-js';
+				});
+			}
 
-		if(talismanAccounts) {
-			accounts = accounts.concat(talismanAccounts);
-			talismanAccounts.forEach((acc: InjectedAccount) => {
-				accountsMapLocal[acc.address] = 'talisman';
-			});
-		}
+			if(['polymesh'].includes(network) && polywalletJSAccounts) {
+				accounts = accounts.concat(polywalletJSAccounts);
+				polywalletJSAccounts.forEach((acc: InjectedAccount) => {
+					accountsMapLocal[acc.address] = 'polywallet';
+				});
+			}
 
-		if (accounts.length === 0) {
-			setAccountsNotFound(true);
-			return;
+			if(subwalletAccounts) {
+				accounts = accounts.concat(subwalletAccounts);
+				subwalletAccounts.forEach((acc: InjectedAccount) => {
+					accountsMapLocal[acc.address] = 'subwallet-js';
+				});
+			}
+
+			if(talismanAccounts) {
+				accounts = accounts.concat(talismanAccounts);
+				talismanAccounts.forEach((acc: InjectedAccount) => {
+					accountsMapLocal[acc.address] = 'talisman';
+				});
+			}
+
+			if (accounts.length === 0) {
+				setAccountsNotFound(true);
+				return;
+			} else {
+				setAccountsNotFound(false);
+				setAccountsMap(accountsMapLocal);
+				setSignersMap(signersMapLocal);
+			}
 		} else {
-			setAccountsNotFound(false);
-			setAccountsMap(accountsMapLocal);
-			setSignersMap(signersMapLocal);
+			const newWindow = (window as any);
+			const ethereum = selectedWallet === Wallet.TALISMAN? newWindow.talismanEth : newWindow.ethereum;
+			if (!ethereum) {
+				setExtensionNotFound(true);
+				return;
+			} else {
+				setExtensionNotFound(false);
+			}
+			try {
+				await addEthereumChain({
+					ethereum,
+					network
+				});
+			} catch (error) {
+				return;
+			}
+			const addresses = await ethereum.request({ method: 'eth_requestAccounts' });
+			console.log(addresses);
+			if (addresses.length === 0) {
+				setAccountsNotFound(true);
+				return;
+			} else {
+				setAccountsNotFound(false);
+			}
+
+			if (selectedWallet === Wallet.TALISMAN) {
+				addresses.filter((address: string) => address.slice(0,2) === '0x').length === 0 ? setIsTalismanEthereum(false) : setIsTalismanEthereum(true);
+			}
+
+			accounts = addresses.map((address: string): InjectedTypeWithCouncilBoolean => {
+				const account: InjectedTypeWithCouncilBoolean = {
+					address
+				} as any;
+
+				return account;
+			});
+		}
+
+		if (accounts && Array.isArray(accounts)) {
+			const index = accounts.findIndex((account) => {
+				const substrateAddress = getSubstrateAddress(account.address);
+				return currentCouncil.some((council) => getSubstrateAddress(council) === substrateAddress);
+			});
+			if (index >= 0) {
+				const account = accounts[index];
+				setIsCouncil(true);
+				accounts.splice(index, 1);
+				accounts.unshift({
+					...account,
+					isCouncil: true
+				});
+				setAccounts(accounts);
+				onAccountChange(account.address);
+			}
 		}
 
 		if (accounts && Array.isArray(accounts)) {
 			const substrate_address = getSubstrateAddress(loginAddress);
 			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
+			console.log(index, substrate_address, loginAddress, accounts);
 			if (index >= 0) {
 				const account = accounts[index];
 				accounts.splice(index, 1);
@@ -342,9 +491,75 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			const signer: Signer = signersMapLocal[accountsMapLocal[accounts[0].address]];
 			api.setSigner(signer);
 		}
+	}, [api, apiReady, currentCouncil, getWalletAccounts, isMoonbaseFamily, loginAddress, network, proposalType, selectedWallet]);
 
-		return;
-	};
+	useEffect(() => {
+		if (loginWallet && (isMoonbaseFamily? [Wallet.TALISMAN, Wallet.METAMASK].includes(loginWallet): true)) {
+			setSelectedWallet(loginWallet);
+		} else {
+			if(!window) return;
+			const wallet = localStorage.getItem('loginWallet') as Wallet;
+			if (wallet && (isMoonbaseFamily? [Wallet.TALISMAN, Wallet.METAMASK].includes(wallet): true)) {
+				setSelectedWallet(wallet);
+			} else {
+				setSelectedWallet(null);
+			}
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loginWallet, isMoonbaseFamily]);
+
+	useEffect(() => {
+		if (isMoonbaseFamily && selectedWallet && [Wallet.TALISMAN, Wallet.METAMASK].includes(selectedWallet)) {
+			(async () => {
+				if (walletConnectProvider) {
+					await getWalletConnectAccounts();
+				}
+			})();
+		}
+	}, [selectedWallet, isMoonbaseFamily, walletConnectProvider, getWalletConnectAccounts]);
+
+	useEffect(() => {
+		if (window) {
+			const injectedWindow = window as Window & InjectedWindow;
+			setAvailableWallets(injectedWindow.injectedWeb3);
+			setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (!api || !apiReady) {
+			return;
+		}
+
+		if (isOffChainProposalTypeValid(proposalType)) {
+			return;
+		}
+
+		try {
+			api.query.council.members().then((memberAccounts) => {
+				const members = memberAccounts.map(member => member.toString());
+				const currentCouncil = members.filter((member) => !!member) as string[];
+				setCurrentCouncil(currentCouncil);
+			});
+		} catch (error) {
+			// console.log(error);
+		}
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, proposalType]);
+
+	useEffect(() => {
+		if (canVote) {
+			try {
+				getAccounts();
+			} catch (error) {
+				// console.log(error);
+			}
+		} else {
+			setAccounts([]);
+			setAddress('');
+		}
+	}, [canVote, getAccounts]);
 
 	const getVotingHistory = useCallback(async () => {
 		setIsLastVoteLoading(true);
@@ -535,7 +750,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	}, [api, apiReady, created_at, network, onchainId, proposalType, track_number]);
 
 	useEffect(() => {
-		if (trackInfo) {
+		if (trackInfo && [ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
 			const isVotingStart = checkVotingStart(post?.timeline, proposalType as TOpenGov);
 			if (!isVotingStart) {
 				setProgress((prev) => ({
@@ -573,6 +788,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	useEffect(() => {
 		getVotingHistory();
 	}, [getVotingHistory]);
+
+	useEffect(() => {
+		console.log('accounts.changed:-', accounts);
+	}, [accounts]);
 
 	const LastVoteInfoOnChain : FC <IVoteHistory>  = ({ createdAt, decision , lockPeriod }) => {
 		const unit =`${chainProperties[network]?.tokenSymbol}`;
@@ -658,26 +877,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		onChainLastVote !== null ?
 			<LastVoteInfoOnChain {...onChainLastVote}/> :
 			null;
-
-	if (extensionNotFound) {
-		return (
-			<div className={className}>
-				<GovSidebarCard>
-					<ExtensionNotDetected />
-				</GovSidebarCard>
-			</div>
-		);
-	}
-
-	if (accountsNotFound) {
-		return (
-			<GovSidebarCard>
-				<div className='mb-4'>You need at least one account in Polkadot-js extenstion to use this feature.</div>
-				<div className='text-muted'>Please reload this page after adding accounts.</div>
-			</GovSidebarCard>
-		);
-	}
-
+	// console.log(extensionNotFound);
 	return (
 		<>
 			{<div className={className}>
@@ -687,7 +887,29 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							<PostEditOrLinkCTA />
 						</>
 					}
-
+					{
+						(accountsNotFound || extensionNotFound)? (
+							<GovSidebarCard>
+								{
+									accountsNotFound? (
+										<div className='mb-4'>
+											<p className='mb-4'>
+												You need at least one account in Polkadot-js extension to use this feature.
+											</p>
+											<p className='text-muted m-0'>
+												Please reload this page after adding accounts.
+											</p>
+										</div>
+									): null
+								}
+								{
+									extensionNotFound? (
+										<ExtensionNotDetected />
+									): null
+								}
+							</GovSidebarCard>
+						): null
+					}
 					{canEdit && graphicOpen && post_link && !(post.tags && Array.isArray(post.tags) && post.tags.length > 0) && <div className=' rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] pb-[36px] mb-8'>
 						<div className='flex justify-end py-[17px] px-[20px] items-center' onClick={ () => setGraphicOpen(false)}>
 							<CloseIcon/>
@@ -699,20 +921,19 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								onClick={() => { toggleEdit && toggleEdit(); setGraphicOpen(false);}}
 							>
 								<PlusOutlined/>
-                Add Tags
+								Add Tags
 							</Button>
 						</div>
 					</div>}
 					{proposalType === ProposalType.COUNCIL_MOTIONS && <>
 						{canVote &&
 							<VoteMotion
-								setAccounts={setAccounts}
 								accounts={accounts}
 								address={address}
-								getAccounts={getAccounts}
 								motionId={onchainId as number}
 								motionProposalHash={post.hash}
 								onAccountChange={onAccountChange}
+								isCouncil={isCouncil}
 							/>
 						}
 						{(post.motion_votes && (post.motion_votes?.length || 0) > 0) &&
@@ -724,13 +945,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					{proposalType === ProposalType.ALLIANCE_MOTION && <>
 						{canVote &&
 							<VoteMotion
-								setAccounts={setAccounts}
 								accounts={accounts}
 								address={address}
-								getAccounts={getAccounts}
 								motionId={onchainId as number}
 								motionProposalHash={post.hash}
 								onAccountChange={onAccountChange}
+								isCouncil={isCouncil}
 							/>
 						}
 
@@ -747,7 +967,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							accounts={accounts}
 							address={address}
 							canVote={canVote}
-							getAccounts={getAccounts}
 							onAccountChange={onAccountChange}
 							status={status}
 							proposalId={onchainId  as number}
@@ -769,7 +988,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									<>
 										{canVote &&
 											<>
-												{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
+												{isMoonbaseFamily ?
 													<>
 														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 
@@ -779,10 +998,18 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													<GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendumEth
-															referendumId={onchainId as number}
-															onAccountChange={onAccountChange}
+															address={address}
+															lastVote={lastVote}
 															setLastVote={setLastVote}
-															lastVote={lastVote} />
+															onAccountChange={onAccountChange}
+															referendumId={onchainId as number}
+															isTalismanEthereum={isTalismanEthereum}
+															isMetamaskWallet={isMetamaskWallet}
+															accounts={accounts}
+															availableWallets={availableWallets}
+															selectedWallet={selectedWallet}
+															setSelectedWallet={setSelectedWallet}
+														/>
 														{RenderLastVote}
 													</GovSidebarCard>
 														}
@@ -796,6 +1023,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															onAccountChange={onAccountChange}
 															referendumId={onchainId  as number}
 															proposalType={proposalType}
+															accounts={accounts}
+															availableWallets={availableWallets}
+															selectedWallet={selectedWallet}
+															setSelectedWallet={setSelectedWallet}
 														/>
 
 														{RenderLastVote}
@@ -817,7 +1048,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									: <>
 										{canVote &&
 											<>
-												{['moonbase', 'moonbeam', 'moonriver'].includes(network) ?
+												{isMoonbaseFamily ?
 													<>
 														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 
@@ -826,10 +1057,18 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													<GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendumEthV2
-															referendumId={onchainId as number}
-															onAccountChange={onAccountChange}
+															address={address}
+															lastVote={lastVote}
 															setLastVote={setLastVote}
-															lastVote={lastVote} />
+															onAccountChange={onAccountChange}
+															referendumId={onchainId as number}
+															isTalismanEthereum={isTalismanEthereum}
+															isMetamaskWallet={isMetamaskWallet}
+															accounts={accounts}
+															availableWallets={availableWallets}
+															selectedWallet={selectedWallet}
+															setSelectedWallet={setSelectedWallet}
+														/>
 
 														{RenderLastVote}
 													</GovSidebarCard>
@@ -844,6 +1083,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															onAccountChange={onAccountChange}
 															referendumId={onchainId  as number}
 															proposalType={proposalType}
+															accounts={accounts}
+															availableWallets={availableWallets}
+															selectedWallet={selectedWallet}
+															setSelectedWallet={setSelectedWallet}
 														/>
 
 														{RenderLastVote}
@@ -941,12 +1184,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						{
 							canVote && <EndorseTip
 								className='mb-8'
-								setAccounts={setAccounts}
 								accounts={accounts}
 								address={address}
-								getAccounts={getAccounts}
 								tipHash={onchainId as string}
 								onAccountChange={onAccountChange}
+								isCouncil={isCouncil}
 							/>
 						}
 
@@ -956,6 +1198,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							proposer={post.proposer}
 							receiver={post.payee || post.proposer}
 							tippers={post.tippers}
+							members={currentCouncil}
 						/>
 					</GovSidebarCard>
 					}
@@ -971,7 +1214,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	);
 };
 
-export default styled(GovernanceSideBar)`
+export default memo(styled(GovernanceSideBar)`
 	.edit-icon-wrapper{
 		transition: all 0.5s;
 	}
@@ -992,4 +1235,4 @@ export default styled(GovernanceSideBar)`
 		font-size:12px;
 		height:20px;
 	}
-`;
+`);

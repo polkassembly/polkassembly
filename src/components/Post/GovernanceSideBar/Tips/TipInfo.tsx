@@ -4,8 +4,7 @@
 
 import { Col, Row } from 'antd';
 import BN from 'bn.js';
-import React, { FC, useContext, useEffect, useState } from 'react';
-import { ApiContext } from 'src/context/ApiContext';
+import React, { FC, useEffect, useState } from 'react';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -25,6 +24,7 @@ interface ITipInfoProps {
 	tippers?: ITippersInfo[];
 	receiver?: string;
 	proposer?: string;
+	members: string[];
 }
 
 const getMedian = (list: ITippersInfo[], members: string[], proposer?: string, receiver?: string): BN => {
@@ -48,29 +48,8 @@ const getMedian = (list: ITippersInfo[], members: string[], proposer?: string, r
 const TipInfo: FC<ITipInfoProps> = (props) => {
 	const { network } = useNetworkContext();
 
-	const { tippers, receiver, proposer, status } = props;
-
-	const { api, apiReady } = useContext(ApiContext);
-	const [members, setMembers] = useState<string[]>([]);
+	const { tippers, receiver, proposer, status, members } = props;
 	const [median, setMedian] = useState(new BN(0));
-
-	useEffect(() => {
-		if (!api || !apiReady) {
-			return;
-		}
-		let cancel = false;
-		try {
-			api.query.council.members().then((members) => {
-				if (cancel) return;
-				setMembers(members?.map(member => member.toString()));
-			});
-		} catch (error) {
-			// console.log(error);
-		}
-		return () => {
-			cancel = true;
-		};
-	},[api, apiReady]);
 
 	useEffect(() => {
 		if (tippers && members) {
@@ -80,7 +59,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 
 	if (!tippers) return <PostEmptyState />;
 
-	const pendingTippers = members.filter(item => !tippers?.find((tip) => tip.tipper === item));
+	const pendingTippers = members?.filter(item => !tippers?.find((tip) => tip.tipper === item));
 
 	return (
 		<>
@@ -121,7 +100,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 											<Address isSubVisible={false} address={tip} />
 										</Col>
 										<Col>
-									Pending
+										Pending
 										</Col>
 									</Row>
 								)}

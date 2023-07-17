@@ -3,8 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined , StopOutlined } from '@ant-design/icons';
-import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
+import { InjectedWindowProvider } from '@polkadot/extension-inject/types';
 import { Alert, Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo,useState } from 'react';
@@ -16,9 +15,7 @@ import styled from 'styled-components';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
-import { APPNAME } from '~src/global/appName';
 import { ProposalType } from '~src/global/proposalType';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import { poppins } from 'pages/_app';
 import CastVoteIcon from '~assets/icons/cast-vote-icon.svg';
@@ -34,11 +31,11 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 
 import { network as AllNetworks } from '~src/global/networkConstants';
+import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 
 const ZERO_BN = new BN(0);
 
@@ -49,12 +46,16 @@ interface Props {
 	lastVote: ILastVote | undefined
 	setLastVote: React.Dispatch<React.SetStateAction< ILastVote | undefined >>
 	proposalType: ProposalType;
-  address: string;
+	address: string;
+	availableWallets: Record<string, InjectedWindowProvider>;
+	setSelectedWallet: (wallet: Wallet) => void;
+	selectedWallet: Wallet | null;
+	accounts: InjectedTypeWithCouncilBoolean[];
 }
 export interface INetworkWalletErr{
-message: string;
- description: string;
- error: number
+	message: string;
+	description: string;
+	error: number
 }
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
@@ -81,9 +82,9 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
+const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, availableWallets, selectedWallet, accounts,  setSelectedWallet }: Props) => {
 	const userDetails = useUserDetailsContext();
-	const { addresses, isLoggedOut, loginAddress } = userDetails;
+	const { addresses, isLoggedOut } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const { api, apiReady } = useApiContext();
@@ -91,11 +92,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [isFellowshipMember, setIsFellowshipMember] = useState<boolean>(false);
 	const [fetchingFellowship, setFetchingFellowship] = useState(true);
 	const { network } = useNetworkContext();
-	const [wallet,setWallet] = useState<Wallet>();
-	const [availableWallets, setAvailableWallets] = useState<any>({});
-	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
-	const [loginWallet, setLoginWallet] = useState<Wallet>();
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [balanceErr, setBalanceErr] = useState('');
 	const [successModal,setSuccessModal] = useState(false);
@@ -109,102 +106,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [voteValues, setVoteValues] = useState({ abstainVoteValue:ZERO_BN,ayeVoteValue:ZERO_BN , nayVoteValue:ZERO_BN ,totalVoteValue:ZERO_BN });
 
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
-
-	useEffect(() => {
-		if (userDetails.loginWallet) {
-			setLoginWallet(userDetails.loginWallet);
-			setWallet(userDetails.loginWallet);
-		} else {
-			if(!window) return;
-			const wallet = localStorage.getItem('loginWallet') ;
-			if(Wallet){
-				setLoginWallet(wallet as  Wallet);
-				setWallet(wallet as Wallet);
-			}
-		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userDetails]);
-
-	const getWallet=() => {
-		const injectedWindow = window as Window & InjectedWindow;
-		setAvailableWallets(injectedWindow.injectedWeb3);
-	};
-
-	const getAccounts = async (chosenWallet: Wallet, chosenAddress?:string): Promise<undefined> => {
-
-		const injectedWindow = window as Window & InjectedWindow;
-
-		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[chosenWallet]
-			: null;
-
-		if (!wallet) {
-			return;
-		}
-
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if(wallet && wallet.enable) {
-					wallet.enable(APPNAME)
-						.then((value) => { clearTimeout(timeoutId); resolve(value); })
-						.catch((error) => { reject(error); });
-				}
-			});
-		} catch (err) {
-			console.log(err?.message);
-		}
-		if (!injected) {
-			return;
-		}
-
-		const accounts = await injected.accounts.get();
-		if (accounts.length === 0) {
-			return;
-		}
-
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
-
-		if (accounts && Array.isArray(accounts)) {
-			const substrate_address = getSubstrateAddress(loginAddress);
-			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
-			if (index >= 0) {
-				const account = accounts[index];
-				accounts.splice(index, 1);
-				accounts.unshift(account);
-			}
-		}
-
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			if(api && apiReady) {
-				api.setSigner(injected.signer);
-			}
-
-			onAccountChange(chosenAddress || accounts[0].address);
-		}
-
-		return;
-	};
-
-	useEffect(() => {
-		getWallet();
-		if(!loginWallet) return ;
-		getAccounts(loginWallet);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[loginWallet]);
-
-	useEffect(() => {
-		if(!address || !wallet) return;
-		getAccounts(wallet, address);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, wallet]);
 
 	useEffect(() => {
 		setWalletErr(checkWalletForSubstrateNetwork(network) as INetworkWalletErr );
@@ -224,13 +125,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setAvailableBalance(balance);
 	};
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
-		setLoadingStatus({ ...loadingStatus, isLoading: true });
-		setAccounts([]);
-		onAccountChange('');
 		event.preventDefault();
-		setWallet(wallet);
-		await getAccounts(wallet);
-		setLoadingStatus({ ...loadingStatus, isLoading: false });
+		setSelectedWallet(wallet);
 	};
 	const convictionOpts = useMemo(() => {
 		return getConvictionVoteOptions(CONVICTIONS, proposalType, api, apiReady, network);
@@ -573,22 +469,22 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						<>
 							<div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>
 							<div className='flex items-center gap-x-5 mt-1 mb-6 justify-center'>
-								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
-								{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-								{availableWallets[Wallet.SUBWALLET] &&  <WalletButton className={`${wallet === Wallet.SUBWALLET? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
+								{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${selectedWallet === Wallet.POLKADOT? ' w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
+								{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${selectedWallet === Wallet.TALISMAN? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+								{availableWallets[Wallet.SUBWALLET] &&  <WalletButton className={`${selectedWallet === Wallet.SUBWALLET? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
 								{
 									(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
-                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
+                    <WalletButton disabled={!apiReady} className={`${selectedWallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
 								}
 								{
 									['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET]?
-										<WalletButton disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
+										<WalletButton disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} className={`${selectedWallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
 										: null
 								}
 							</div>
-							{balanceErr.length > 0 && wallet && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
+							{balanceErr.length > 0 && selectedWallet && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
 							{walletErr.error === 1 && !loadingStatus.isLoading && <Alert message={walletErr.message} description={walletErr.description} showIcon/>}
-							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
+							{accounts.length === 0  && selectedWallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 							{
 								accounts.length > 0 ?
 									<AccountSelectionForm
@@ -602,7 +498,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										inputClassName='rounded-[4px] px-3 py-1'
 										withoutInfo={true}
 									/>
-									: walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? <Alert message='Please select a wallet.' showIcon type='info' />: null
+									: walletErr.message.length === 0 && !selectedWallet && !loadingStatus.isLoading ? <Alert message='Please select a wallet.' showIcon type='info' />: null
 							}
 
 							{/* aye nye split abstain buttons */}
@@ -645,7 +541,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 									<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!selectedWallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!selectedWallet || !lockedBalance}>Confirm</Button>
 									</div>
 								</Form>
 							}
@@ -677,7 +573,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!selectedWallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!selectedWallet || !lockedBalance}>Confirm</Button>
 									</div>
 								</Form>
 							}
@@ -716,7 +612,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 									<div className='flex justify-end mt-[-1px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 										<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance}>Confirm</Button>
+										<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!selectedWallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!selectedWallet || !lockedBalance}>Confirm</Button>
 									</div>
 								</Form>
 							}

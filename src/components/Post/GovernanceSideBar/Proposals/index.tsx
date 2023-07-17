@@ -19,7 +19,7 @@ type IProposalDisplayProps = SecondProposalProps & {
 }
 
 const ProposalDisplay: FC<IProposalDisplayProps> = (props) => {
-	const { proposalId, accounts, address, canVote, getAccounts, onAccountChange, seconds } = props;
+	const { proposalId, accounts, address, canVote, onAccountChange, seconds } = props;
 	const { api, apiReady } = useApiContext();
 	const [deposit, setDeposit] = useState('');
 	const { network } = useNetworkContext();
@@ -55,7 +55,6 @@ const ProposalDisplay: FC<IProposalDisplayProps> = (props) => {
 					<SecondProposal
 						accounts={accounts}
 						address={address}
-						getAccounts={getAccounts}
 						onAccountChange={onAccountChange}
 						proposalId={proposalId}
 					/> }

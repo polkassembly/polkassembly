@@ -21,37 +21,32 @@ import { ProposalType } from '~src/global/proposalType';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import dayjs from 'dayjs';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 
 interface Props {
-	accounts: InjectedTypeWithCouncilBoolean[]
-	address: string
-	className?: string
-	getAccounts: () => Promise<undefined>
-	motionId?: number | null
-	motionProposalHash?: string
-	onAccountChange: (address: string) => void
+	accounts: InjectedTypeWithCouncilBoolean[];
+	address: string;
+	className?: string;
+	motionId?: number | null;
+	motionProposalHash?: string;
+	onAccountChange: (address: string) => void;
 	proposalType?: ProposalType;
-	setAccounts: React.Dispatch<React.SetStateAction<InjectedTypeWithCouncilBoolean[]>>;
+	isCouncil?: boolean;
 }
 
 const VoteMotion = ({
 	accounts,
 	address,
 	className,
-	getAccounts,
 	motionId,
 	motionProposalHash,
 	onAccountChange,
 	proposalType,
-	setAccounts
+	isCouncil
 }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
-	const [isCouncil, setIsCouncil] = useState(false);
 	const [forceVote, setForceVote] = useState(false);
-	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
 	const { isLoggedOut } = useUserDetailsContext();
 	const [vote,setVote] = useState<{
@@ -63,48 +58,6 @@ const VoteMotion = ({
 	});
 	const [voteCount,setVoteCount] = useState<number>(0);
 
-	useEffect(() => {
-		if (!api) {
-			return;
-		}
-
-		if (!apiReady) {
-			return;
-		}
-
-		if (accounts.length === 0) {
-			getAccounts();
-		}
-
-		api.query.council.members().then((memberAccounts) => {
-			const members = memberAccounts.map(member => member.toString());
-			setCurrentCouncil(members.filter((member) => !!member) as string[]);
-		});
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady]);
-
-	useEffect( () => {
-		// it will iterate through all accounts
-		if (accounts && Array.isArray(accounts)) {
-			const index = accounts.findIndex((account) => {
-				const substrateAddress = getSubstrateAddress(account.address);
-				return currentCouncil.some((council) => getSubstrateAddress(council) === substrateAddress);
-			});
-			if (index >= 0) {
-				const account = accounts[index];
-				setIsCouncil(true);
-				accounts.splice(index, 1);
-				accounts.unshift({
-					...account,
-					isCouncil: true
-				});
-				setAccounts(accounts);
-				onAccountChange(account.address);
-			}
-		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentCouncil, accounts]);
 	useEffect( () => {
 		if (!api) {
 			return;
@@ -189,9 +142,6 @@ const VoteMotion = ({
 	}
 	const openModal = () => {
 		setShowModal(true);
-		if(accounts.length === 0) {
-			getAccounts();
-		}
 	};
 
 	const VotingForm = () =>

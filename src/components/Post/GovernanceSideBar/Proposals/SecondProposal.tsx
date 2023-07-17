@@ -17,15 +17,14 @@ import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 import { useUserDetailsContext } from '~src/context';
 
 export interface SecondProposalProps {
-	accounts: InjectedAccount[]
-	address: string
-	className?: string
-	proposalId?: number | null | undefined
-	getAccounts: () => Promise<undefined>
-	onAccountChange: (address: string) => void
+	accounts: InjectedAccount[];
+	address: string;
+	className?: string;
+	proposalId?: number | null | undefined;
+	onAccountChange: (address: string) => void;
 }
 
-const SecondProposal = ({ className, proposalId, address, accounts, onAccountChange, getAccounts }: SecondProposalProps) => {
+const SecondProposal = ({ className, proposalId, address, accounts, onAccountChange }: SecondProposalProps) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
 	const { api, apiReady } = useContext(ApiContext);
@@ -120,11 +119,9 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 	};
 
 	const openModal = () => {
-		if(!id){
+		if (!id) {
 			setModalOpen(true);
-		}else if(accounts.length === 0) {
-			getAccounts();
-		}else if(id && accounts.length>0){
+		} else if(id && accounts.length>0){
 			setShowModal(true);
 		}
 	};
@@ -143,7 +140,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 				onCancel={() => setShowModal(false)}
 				footer={[
 					<Button className='bg-pink_primary text-white border-pink_primary hover:bg-pink_secondary my-1' key="second" loading={loadingStatus.isLoading} disabled={!apiReady} onClick={secondProposal}>
-            Second
+						Second
 					</Button>
 				]}
 			>

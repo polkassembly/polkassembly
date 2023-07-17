@@ -5,7 +5,7 @@ import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { Button, Dropdown } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { poppins } from 'pages/_app';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Address, { EAddressOtherTextType } from 'src/ui-components/Address';
 import { useUserDetailsContext } from '~src/context';
 import DownIcon from '~assets/icons/down-icon.svg';
@@ -48,8 +48,9 @@ const AddressDropdown = ({
 	const { setUserDetailsContextState, loginAddress, addresses } = useUserDetailsContext();
 	const substrate_address = getSubstrateAddress(loginAddress);
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
+	const [otherTextType, setOtherTextType] = useState<EAddressOtherTextType>();
 
-	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
+	const getOtherTextType = useCallback((account?: InjectedTypeWithCouncilBoolean) => {
 		const account_substrate_address = getSubstrateAddress(account?.address || '');
 		const isConnected = account_substrate_address?.toLowerCase() === (substrate_address || '').toLowerCase();
 		if (account?.isCouncil) {
@@ -62,7 +63,7 @@ const AddressDropdown = ({
 		} else if (substrate_addresses.includes(account_substrate_address)) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
 		}
-	};
+	}, [substrate_address, substrate_addresses]);
 
 	filteredAccounts.forEach(account => {
 		addressItems.push({
@@ -93,6 +94,15 @@ const AddressDropdown = ({
 			</div>
 		)
 	});
+	useEffect(() => {
+		const filteredAccounts = !filterAccounts
+			? accounts
+			: accounts.filter( elem =>
+				filterAccounts.includes(elem.address)
+			);
+		const otherTextType = getOtherTextType(filteredAccounts.find(account => account.address === selectedAddress || account.address === defaultAddress));
+		setOtherTextType(otherTextType);
+	}, [accounts, defaultAddress, filterAccounts, getOtherTextType, selectedAddress]);
 	return (
 		<Dropdown
 			trigger={['click']}
@@ -115,9 +125,9 @@ const AddressDropdown = ({
 
 				<Address
 					disableAddressClick={true}
-					extensionName={dropdownList[selectedAddress]}
+					extensionName={dropdownList[defaultAddress || ''] || dropdownList[selectedAddress]}
 					address={defaultAddress || selectedAddress}
-					otherTextType={getOtherTextType(filteredAccounts.find(account => account.address === selectedAddress || account.address === defaultAddress))}
+					otherTextType={otherTextType}
 					className='flex items-center flex-1'
 					otherTextClassName='ml-auto'
 				/>

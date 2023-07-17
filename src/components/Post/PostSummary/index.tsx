@@ -32,7 +32,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 			<Divider className='hidden md:block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 			<button
 				onClick={() => setOpen(true)}
-				className='flex items-center gap-x-1 justify-center cursor-pointer text-pink_primary bg-white text-xs leading-[18px] p-[1.5px] font-medium outline-none ai-btn-border'
+				className='flex items-center gap-x-1 justify-center cursor-pointer text-lightBlue bg-white text-xs leading-[18px] p-[1.5px] font-medium outline-none ai-btn-border'
 			>
 				<p className='bg-white m-0 flex items-center justify-center px-2 py-1 rounded-[5px]'>
 					<span className='flex items-center justify-center text-lightBlue text-lg'>
@@ -48,7 +48,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				open={open}
 				onCancel={() => setOpen(false)}
 				closable={false}
-				title={<div className='p-5 pb-4 md:p-6 m-0 flex items-start justify-between rounded-[14px]'>
+				title={<div className='p-5 pb-4 md:p-6 md:pb-4 m-0 flex items-start md:items-center justify-between rounded-[14px]'>
 					<article className='flex flex-col md:items-center gap-x-[6px] md:flex-row'>
 						<h3 className='m-0 p-0 flex items-center gap-x-2'>
 							<span className='flex items-center justify-center text-lightBlue text-2xl'>

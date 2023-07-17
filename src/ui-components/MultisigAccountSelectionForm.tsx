@@ -71,7 +71,6 @@ const MultisigAccountSelectionForm = ({
 	};
 	useEffect(() => {
 		const substrateAddress = getSubstrateAddress(address);
-		console.log(substrateAddress, network);
 		if (substrateAddress) handleGetMultisig(substrateAddress, network);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, network]);

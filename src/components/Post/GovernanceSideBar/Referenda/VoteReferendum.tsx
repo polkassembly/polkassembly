@@ -68,18 +68,18 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 			const days = blockToDays(num, network);
 			if (days && !isNaN(Number(days))) {
 				return [
-					<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+					<Select.Option className={`text-bodyBlue ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
 					...CONVICTIONS.map(([value, lock]) =>
-						<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
+						<Select.Option className={`text-bodyBlue ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
 					)
 				];
 			}
 		}
 	}
 	return [
-		<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+		<Select.Option className={`text-bodyBlue ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
 		...CONVICTIONS.map(([value, lock]) =>
-			<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
+			<Select.Option className={`text-bodyBlue ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
 		)
 	];
 };
@@ -463,7 +463,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					const statusGrabber = (message:string) => {
 						setLoadingStatus({ isLoading: true, message:message });
 					};
-					// @ts-ignore
 					const { error } = await client.customTransactionAsMulti(multisig, tx, statusGrabber, false);
 					if(error){
 						throw new Error(error);
@@ -617,14 +616,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							<ArrowLeft onClick={() => {setShowMultisig(false); setMultisig('');}} className='cursor-pointer absolute left-[24px] mt-1'/>
 							<div className='flex gap-[8px] items-center'>
 								<CastVoteIcon className='mt-1'/>
-								<span className='text-[#243A57] font-semibold tracking-[0.0015em] text-xl'>Cast Vote with Polkasafe Multisig</span>
+								<span className='text-bodyBlue font-semibold tracking-[0.0015em] text-xl'>Cast Vote with Polkasafe Multisig</span>
 							</div>
 
 						</div>
 						:
 						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center justify-center gap-2'>
 							<CastVoteIcon className='mt-1'/>
-							<span className='text-[#243A57] font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
+							<span className='text-bodyBlue font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
 						</div>
 				}
 			><>

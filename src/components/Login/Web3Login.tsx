@@ -74,7 +74,7 @@ const Web3Login: FC<Props> = ({
 	const [loading, setLoading] = useState(false);
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [address, setAddress] = useState<string>('');
-	const [multiWallet, setMultiWallet] = useState<string>('');
+	const [multisigAddress, setMultisigAddress] = useState<string>('');
 	const [isAccountLoading, setIsAccountLoading] = useState(true);
 	const [extensionNotFound, setExtensionNotFound] = useState(false);
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
@@ -168,7 +168,7 @@ const Web3Login: FC<Props> = ({
 
 	const onAccountChange = (address: string) => {
 		setAddress(address);
-		setMultiWallet('');
+		setMultisigAddress('');
 	};
 
 	const handleLogin: ( values: React.BaseSyntheticEvent<object, any, any> | undefined ) => void = async  () => {
@@ -176,9 +176,9 @@ const Web3Login: FC<Props> = ({
 
 		try {
 			const injectedWindow = window as Window & InjectedWindow;
-
+			console.log(chosenWallet);
 			const wallet = isWeb3Injected
-				? injectedWindow.injectedWeb3[chosenWallet === Wallet.POLKASAFE ? Wallet.POLKADOT : chosenWallet]
+				? injectedWindow.injectedWeb3[chosenWallet]
 				: null;
 
 			if (!wallet) {
@@ -223,7 +223,7 @@ const Web3Login: FC<Props> = ({
 				type: 'bytes'
 			});
 
-			const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<IAuthResponse>( 'api/v1/auth/actions/addressLogin', { address: substrate_address,multisig:multiWallet, signature, wallet: chosenWallet });
+			const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<IAuthResponse>( 'api/v1/auth/actions/addressLogin', { address: substrate_address,multisig:multisigAddress, signature, wallet: chosenWallet });
 			if(addressLoginError) {
 				setError(addressLoginError);
 				// TODO: change this method of checking if user is already signed up
@@ -231,7 +231,7 @@ const Web3Login: FC<Props> = ({
 					setIsSignUp(true);
 					try {
 						setLoading(true);
-						const { data , error } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressSignupStart', { address: substrate_address,multisig:multiWallet });
+						const { data , error } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressSignupStart', { address: substrate_address,multisig:multisigAddress });
 						if (error || !data) {
 							setError(error || 'Something went wrong');
 							setLoading(false);
@@ -253,7 +253,7 @@ const Web3Login: FC<Props> = ({
 
 						const { data: confirmData , error: confirmError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressSignupConfirm', {
 							address: substrate_address,
-							multisig:multiWallet,
+							multisig:multisigAddress,
 							signature: signature,
 							wallet: chosenWallet
 						});
@@ -266,10 +266,10 @@ const Web3Login: FC<Props> = ({
 
 						if(confirmData.token) {
 							currentUser.loginWallet= chosenWallet;
-							currentUser.loginAddress = multiWallet || address;
-							currentUser.delegationDashboardAddress = multiWallet || address;
+							currentUser.loginAddress = multisigAddress || address;
+							currentUser.delegationDashboardAddress = multisigAddress || address;
 							localStorage.setItem('delegationWallet', chosenWallet);
-							localStorage.setItem('delegationDashboardAddress', multiWallet || address);
+							localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
 							localStorage.setItem('loginWallet', chosenWallet);
 							handleTokenChange(confirmData.token, currentUser);
 							if(isModal){
@@ -294,11 +294,11 @@ const Web3Login: FC<Props> = ({
 
 			if(addressLoginData?.token){
 				currentUser.loginWallet= chosenWallet;
-				currentUser.loginAddress =multiWallet || address;
-				currentUser.delegationDashboardAddress =multiWallet || address;
+				currentUser.loginAddress =multisigAddress || address;
+				currentUser.delegationDashboardAddress =multisigAddress || address;
 
 				localStorage.setItem('delegationWallet', chosenWallet);
-				localStorage.setItem('delegationDashboardAddress', multiWallet || address);
+				localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
 				localStorage.setItem('loginWallet', chosenWallet);
 
 				handleTokenChange(addressLoginData.token, currentUser);
@@ -365,16 +365,15 @@ const Web3Login: FC<Props> = ({
 
 	const handleChangeWalletWithPolkasafe = (wallet:string) => {
 		setChosenWallet(wallet);
-		console.log(wallet);
 		setAccounts([]);
 	};
 	useEffect(() => {
 		if(withPolkasafe && accounts.length === 0 && chosenWallet !== Wallet.POLKASAFE){
 			getAccounts(chosenWallet)
-				.then(() => {setLoading(false);setFetchAccounts(false);})
+				.then(() => setFetchAccounts(false))
 				.catch((err) => {
 					console.error(err);
-				});
+				}).finally(() => setLoading(false));
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[accounts.length, chosenWallet, withPolkasafe]);
@@ -383,7 +382,7 @@ const Web3Login: FC<Props> = ({
 		<>
 			<div className='flex items-center'>
 				<LoginLogo className='ml-6 mr-2' />
-				<h3 className="text-[20px] font-semibold text-[#243A57] mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Login'}</h3>
+				<h3 className="text-[20px] font-semibold text-bodyBlue mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Login'}</h3>
 			</div>
 			<hr className='text-[#D2D8E0] ' />
 			<article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-3">
@@ -392,7 +391,7 @@ const Web3Login: FC<Props> = ({
 						<span className='mt-2'>
 							<WalletIcon which={chosenWallet} />
 						</span>
-						<span className='text-[#243A57] text-lg sm:text-xl'>
+						<span className='text-bodyBlue text-lg sm:text-xl'>
 							{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
 						</span>
 					</p>}
@@ -408,7 +407,7 @@ const Web3Login: FC<Props> = ({
 				</h3>
 				{fetchAccounts ?
 					<div className='flex flex-col justify-center items-center'>
-						<p className='text-base text-[#243A57]'>
+						<p className='text-base text-bodyBlue'>
 							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
 						</p>
 						<div className='flex'>
@@ -472,8 +471,8 @@ const Web3Login: FC<Props> = ({
 														accounts={accounts}
 														address={address}
 														onAccountChange={onAccountChange}
-														wallet={multiWallet}
-														setWallet={setMultiWallet}
+														wallet={multisigAddress}
+														setWallet={setMultisigAddress}
 													/>
 												) : (
 													<AccountSelectionForm

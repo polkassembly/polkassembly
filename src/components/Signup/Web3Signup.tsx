@@ -254,7 +254,6 @@ const Web3Signup: FC<Props> = ({
 	};
 	const handleChangeWalletWithPolkasafe = (wallet:string) => {
 		setChosenWallet(wallet);
-		console.log(wallet);
 		setAccounts([]);
 	};
 	useEffect(() => {
@@ -283,7 +282,7 @@ const Web3Signup: FC<Props> = ({
 						{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
 					</span>
 				</p>}
-				{!!withPolkasafe && (
+				{ Boolean(withPolkasafe) && (
 					<WalletButtons
 						disabled={loading}
 						onWalletSelect={handleChangeWalletWithPolkasafe}

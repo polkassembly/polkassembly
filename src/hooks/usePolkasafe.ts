@@ -29,7 +29,6 @@ export default function usePolkasafe(address:string)  {
 		if(!injected){
 			throw new Error('Internal Error');
 		}
-		// @ts-ignore
 		await client.connect(network, substrateAddress, injected);
 	};
 

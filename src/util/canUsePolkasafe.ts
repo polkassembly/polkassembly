@@ -5,8 +5,5 @@ import { network } from '~src/global/networkConstants';
 
 const SUPPORTED_POLKASAFE_NETWORK = [network.KUSAMA, network.POLKADOT, network.WESTEND, network.ASTAR];
 export const canUsePolkasafe = (network:string) => {
-	if(SUPPORTED_POLKASAFE_NETWORK.includes(network)){
-		return true;
-	}
-	return false;
+	return SUPPORTED_POLKASAFE_NETWORK.includes(network);
 };

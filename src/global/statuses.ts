@@ -26,6 +26,7 @@ export const gov2ReferendumStatus = {
 	CONFIRM_STARTED: 'ConfirmStarted',
 	DECIDING: 'Deciding',
 	DECISION_DEPOSIT_PLACED: 'DecisionDepositPlaced',
+	EXECUTION_FAILED: 'ExecutionFailed',
 	KILLED: 'Killed',
 	REJECTED: 'Rejected',
 	SUBMITTED: 'Submitted',
@@ -101,8 +102,4 @@ export const announcementStatus = {
 
 export const announcementStatusMap = {
 	[announcementStatus.Announced]: 'Announced'
-};
-
-export const collectivesStatus = {
-	EXECUTION_FAILED: 'ExecutionFailed'
 };

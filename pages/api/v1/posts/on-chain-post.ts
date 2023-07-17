@@ -21,6 +21,7 @@ import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-pos
 import { getUpdatedAt } from './off-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
+import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
 
 export const isDataExist = (data: any) => {
@@ -96,6 +97,7 @@ interface IGetOnChainPostParams {
 	postId?: string | number | string[];
 	voterAddress?: string | string[];
 	proposalType: string | string[];
+	isExternalApiCall?: boolean;
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -220,6 +222,9 @@ const getAndSetNewData = async (params: IParams) => {
 							}
 							if (data.post_link && !newData.post_link) {
 								newData.post_link = data.post_link;
+							}
+							if (data.summary && !newData.summary) {
+								newData.summary = data.summary;
 							}
 							if(data.tags && Array.isArray(data.tags)){
 								newData.tags = data?.tags;
@@ -607,7 +612,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 
 export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IApiResponse<IPostResponse>> {
 	try {
-		const { network, postId, voterAddress, proposalType } = params;
+		const { network, postId, voterAddress, proposalType, isExternalApiCall } = params;
 		const netDocRef = networkDocRef(network);
 
 		const numPostId = Number(postId);
@@ -859,6 +864,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}
 			// Populate firestore post data into the post object
 			if (data && post) {
+				post.summary = data.summary;
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
 				post.content = data.content;
 				if (!post.proposer) {
@@ -963,7 +969,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		if((proposalType === ProposalType.ALLIANCE_MOTION || proposalType === ProposalType.ANNOUNCEMENT) && !post.title){
 			post.title = splitterAndCapitalizer(postData?.callData?.method || '', '_') || postData?.cid;
 		}
-
+		await getContentSummary(post, network, isExternalApiCall);
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,
@@ -1007,6 +1013,7 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
 	const { data, error, status } = await getOnChainPost({
+		isExternalApiCall: true,
 		network,
 		postId,
 		proposalType,
@@ -1016,6 +1023,9 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	if(error || !data) {
 		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	}else {
+		if (data.summary) {
+			delete data.summary;
+		}
 		res.status(status).json(data);
 	}
 };

@@ -22,6 +22,10 @@ import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
 import CloseIcon from '~assets/icons/close.svg';
 import HelperTooltip from './HelperTooltip';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { chainProperties } from '~src/global/networkConstants';
+import { formatBalance } from '@polkadot/util';
+import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 
 interface Props{
   className?: string;
@@ -35,11 +39,12 @@ interface Props{
   title?: string;
   footerTitle?: string;
   selectionFormTitle?: string;
+  trackName?: string;
 }
 
 const ZERO_BN = new BN(0);
 
-const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, addressKey, onConfirm, payDecisionDeposit, title='Connect your wallet', footerTitle = 'Continue', selectionFormTitle='Select a address' }: Props) => {
+const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, addressKey, onConfirm, payDecisionDeposit, title='Connect your wallet', footerTitle = 'Continue', selectionFormTitle='Select a address', trackName }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
@@ -58,7 +63,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 		setLoading(true);
 		walletKey && localStorage.setItem(walletKey,  String(wallet));
 		addressKey && localStorage.setItem(addressKey, (address) );
-		setUserDetailsContextState((prev) => {
+		!payDecisionDeposit && setUserDetailsContextState((prev) => {
 
 			return { ...prev,
 				delegationDashboardAddress: address,
@@ -71,12 +76,13 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 	};
 
 	const getWallet=() => {
+		if(!window) return;
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(injectedWindow.injectedWeb3);
 	};
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
-		if(!api || !apiReady) return;
+		if(!api || !apiReady || !window) return;
 		setLoading(true);
 
 		setExtentionOpen(false);
@@ -148,6 +154,11 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 	};
 
 	useEffect(() => {
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
 		getWallet();
 		loginWallet!==null && getAccounts(loginWallet);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -203,12 +214,12 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 											className='text-[#485F7D] text-sm'
 										/>: !wallet && Object.keys(defaultWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 								</Form>}
-				{payDecisionDeposit && <div className='border-solid mt-4 flex gap-8'>
+				{payDecisionDeposit && trackName && <div className='mt-4 flex gap-8 items-center'>
 					<span className='text-sm text-lightBlue tracking-wide flex gap-1.5'>
-            Decision Deposit<HelperTooltip text='dasdasdas'/>
+            Decision Deposit<HelperTooltip text='Decision deposit should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.'/>
 					</span>
-					<span className='border-solid px-3 py-0.5'>
-
+					<span className='px-3 py-0.5 bg-[#EDEFF3] tracking-wide text-sm text-bodyBlue font-semibold rounded-[16px]'>
+						{formatedBalance(networkTrackInfo[network][trackName].decisionDeposit.toString(), `${chainProperties[network]?.tokenSymbol}`)} {chainProperties[network]?.tokenSymbol}
 					</span>
 				</div>}
 			</div>

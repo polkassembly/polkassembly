@@ -44,7 +44,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				</p>
 			</button>
 			<Modal
-				className={classNames(className, 'pl-0 pb-0 h-[calc(100vh-250px)] md:min-w-[604px]')}
+				className={classNames(className, 'pl-0 pb-0 ml-0 md:ml-auto h-[calc(100vh-250px)] md:min-w-[604px]')}
 				open={open}
 				onCancel={() => setOpen(false)}
 				closable={false}

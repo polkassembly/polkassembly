@@ -14,7 +14,7 @@ export const getContentSummary = async (post: any, network: string, isExternalAp
 					max_tokens: 256,
 					model: 'text-davinci-003',
 					presence_penalty: 0.0,
-					prompt: `Please give a summary of this polkassembly ${post.type} post, and don't give any redundant markdown. ${post.content}\n\nTl;dr`,
+					prompt: `Please give a summary of this polkassembly ${post.type} post in points, and don't give any redundant markdown. ${post.content}\n\nTl;dr`,
 					temperature: 1,
 					top_p: 1.0
 				}),

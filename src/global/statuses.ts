@@ -102,3 +102,7 @@ export const announcementStatus = {
 export const announcementStatusMap = {
 	[announcementStatus.Announced]: 'Announced'
 };
+
+export const collectivesStatus = {
+	EXECUTION_FAILED: 'ExecutionFailed'
+};

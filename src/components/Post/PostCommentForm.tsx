@@ -116,7 +116,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					username: username || ''
 				}]
 			}));
-
 		}
 		setLoading(false);
 		setIsComment(false);
@@ -172,7 +171,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				setIsComment={setIsComment}
 				setIsSentimentPost={setIsSentimentPost}
 				sentiment={sentiment}
-
 			/>}
 		</div>
 	);

@@ -94,9 +94,8 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 
 		if (substrateAddress) {
 			try {
-				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`);
+				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`, undefined, 'GET');
 				if (error|| !data || !data.username) {
-					console.error(error);
 					return;
 				}
 				setUsername(data.username);

@@ -27,6 +27,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import AddressComponent from '../../ui-components/Address';
 import ContentForm from '../ContentForm';
 import TitleForm from '../TitleForm';
+import executeTx from '~src/util/executeTx';
 
 interface Props {
 	className?: string
@@ -244,37 +245,41 @@ const TreasuryProposalFormButton = ({
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
 		try {
 			const proposal = api.tx.treasury.proposeSpend(value.toString(), beneficiaryAccount);
-			proposal.signAndSend(submitWithAccount, async ({ status }) => {
-				if (status.isInBlock) {
-					queueNotification({
-						header: 'Success!',
-						message: `Propsal #${proposal.hash} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-					setLoadingStatus({ isLoading: false, message: '' });
-					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-					setModalOpen(false);
-					const userId = id;
-					if (!userId){
-						return;
-					}
-					await saveProposal(userId, postTitle, postDescription, submitWithAccount);
-				} else {
-					if (status.isBroadcast){
-						setLoadingStatus({ isLoading: true, message: 'Broadcasting the endorsement' });
-					}
-					console.log(`Current status: ${status.type}`);
-				}
-			}).catch((error) => {
+
+			const onSuccess = async() => {
+				queueNotification({
+					header: 'Success!',
+					message: `Propsal #${proposal.hash} successful.`,
+					status: NotificationStatus.SUCCESS
+				});
 				setLoadingStatus({ isLoading: false, message: '' });
-				console.log(':( transaction failed');
-				console.error('ERROR:', error);
+				setModalOpen(false);
+				const userId = id;
+				if (!userId){
+					return;
+				}
+				await saveProposal(userId, postTitle, postDescription, submitWithAccount);
+			};
+
+			const onFailed = (message: string) => {
+				setLoadingStatus({ isLoading: false, message: '' });
 				setModalOpen(false);
 				queueNotification({
 					header: 'Failed!',
-					message: error.message,
+					message,
 					status: NotificationStatus.ERROR
 				});
+			};
+
+			await executeTx({
+				address: submitWithAccount,
+				api,
+				errorMessageFallback: 'Transaction failed.',
+				network,
+				onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
+				onFailed,
+				onSuccess,
+				tx: proposal
 			});
 		}
 		catch(error){
@@ -291,7 +296,7 @@ const TreasuryProposalFormButton = ({
 	};
 
 	const triggerBtn = <button disabled={!id} className='outline-none whitespace-pre border-none p-3 font-medium  leading-[20px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary cursor-pointer -mt-1' onClick={() => setModalOpen(true)}>+ Add New Proposal</button>;
-	const triggerBtnLoginDisabled = <Tooltip  color='#E5007A' title='Please signup/login to create treasury proposal'> <button disabled={true} className='font-medium text-sm p-4 rounded-[4px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-white border-none outline-none cursor-pointer text-white border-none outline-none cursor-not-allowed bg-grey_secondary'>+ Add New Proposal</button></Tooltip>;
+	const triggerBtnLoginDisabled = <Tooltip  color='#E5007A' title='Please signup/login to create treasury proposal'> <button disabled={true} className='font-medium text-sm p-4 rounded-[4px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-white border-none outline-none cursor-pointer  bg-grey_secondary'>+ Add New Proposal</button></Tooltip>;
 	return (
 		loadingStatus.isLoading
 			? <Spin indicator={<LoadingOutlined />} >

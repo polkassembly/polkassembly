@@ -16,6 +16,8 @@ import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ContentForm from '../ContentForm';
+import queueNotification from '~src/ui-components/QueueNotification';
+import { NotificationStatus } from '~src/types';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -72,6 +74,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 
 		if(error || !data) {
 			setError(error || 'No data returned from the saving comment query');
+			queueNotification({
+				header: 'Failed!',
+				message: error,
+				status: NotificationStatus.ERROR
+			});
 		}
 
 		if(data) {
@@ -80,6 +87,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			form.setFieldValue('content', '');
 			global.window.localStorage.removeItem(commentKey());
 			postIndex && createSubscription(postIndex);
+			queueNotification({
+				header: 'Success!',
+				message: 'Comment created successfully.',
+				status: NotificationStatus.SUCCESS
+			});
 			setPostData((prev) => ({
 				...prev,
 				comments: [...(prev?.comments? prev.comments: []), {
@@ -160,7 +172,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				setIsComment={setIsComment}
 				setIsSentimentPost={setIsSentimentPost}
 				sentiment={sentiment}
-
 			/>}
 		</div>
 	);

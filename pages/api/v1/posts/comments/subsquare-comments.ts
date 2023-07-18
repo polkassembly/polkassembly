@@ -44,8 +44,11 @@ const extractContent = async (markdownContent: string, network: any) => {
 			if (label.startsWith('@')) {
 				const address = addressWithNetwork.split('-')[0]; // splitting the address and network
 				const { data, error } = await getProfileWithAddress({ address: address });
-				if (!error) {
-					const link = `https://${network}.polkassembly.io/user/${data?.username || address}`;
+				if (data && !error) {
+					const link = `https://${network}.polkassembly.io/user/${data?.username}`;
+					updatedContent = updatedContent.replace(match, `[${label}](${link})`);
+				} else {
+					const link = `https://${network}.polkassembly.io/address/${address}`;
 					updatedContent = updatedContent.replace(match, `[${label}](${link})`);
 				}
 			}

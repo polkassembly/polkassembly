@@ -26,7 +26,7 @@ interface Props{
   fundingAmount: BN;
   selectedTrack: string;
   preimageHash: string;
-  preimageLength: number;
+  preimageLength: number | null;
   beneficiaryAddress: string;
   postId: number;
 }

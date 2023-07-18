@@ -33,7 +33,7 @@ interface Props{
   fundingAmount: BN;
   selectedTrack: string;
   preimageHash: string;
-  preimageLength: number;
+  preimageLength: number | null;
   enactment: IEnactment;
   beneficiaryAddress: string;
   setOpenModal: (pre: boolean) => void;

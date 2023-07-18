@@ -66,8 +66,8 @@ interface Props{
   setPreimage: (pre: IPreimage) => void;
   preimage: IPreimage | undefined;
   form: FormInstance;
-  preimageLength: number;
-  setPreimageLength: (pre:number) => void;
+  preimageLength: number | null;
+  setPreimageLength: (pre:number | null) => void;
 }
 
 interface IAdvancedDetails{
@@ -96,8 +96,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	});
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
-	const checkPreimageHash = (preimageLength: number, preimageHash: string) => {
-		if(!preimageHash) return false;
+	const checkPreimageHash = (preimageLength: number| null, preimageHash: string) => {
+		if(!preimageHash && !preimageLength) return false;
 		return (!isHex(preimageHash, 256) || (!preimageLength || preimageLength === 0));
 	};
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,7 +141,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		const balance = new BN(createPreimageForm?.fundingAmount) ;
 		setInputAmountValue(createPreimageForm?.fundingAmount);
 		setPreimageHash(createPreimageForm?.preimageHash || '') ;
-		setPreimageLength(createPreimageForm?.preimageLength || 0);
+		setPreimageLength(createPreimageForm?.preimageLength || null);
 		setBeneficiaryAddress(createPreimageForm?.beneficiaryAddress || '');
 		setEnactment(createPreimageForm?.enactment || { key: null, value: null });
 		setBeneficiaryAddress(createPreimageForm.beneficiaryAddress || '');
@@ -576,7 +576,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				form={form}
 				disabled={loading}
 				onFinish={handleSubmit}
-				initialValues={{ address: beneficiaryAddress, after_blocks: String(advancedDetails.afterNoOfBlocks?.toString()), at_block: String(advancedDetails.atBlockNo?.toString()), preimage_hash: preimageHash, preimage_length: preimageLength }}
+				initialValues={{ address: beneficiaryAddress, after_blocks: String(advancedDetails.afterNoOfBlocks?.toString()), at_block: String(advancedDetails.atBlockNo?.toString()), preimage_hash: preimageHash, preimage_length: preimageLength || 0 }}
 				validateMessages= {
 					{ required: "Please add the '${name}' " }
 				}>

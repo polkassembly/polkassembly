@@ -310,8 +310,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 		open = {open}
 		title = {<div className={`${connectedAddress ? 'text-start' : 'text-center'} text-[20px] font-semibold text-[#243A57]`}>{ connectedAddress ? 'Link Address' : 'Connect your wallet'}</div>}
 		footer = {<div className='flex gap-2 justify-end mt-6'>
-			<Button onClick={() => setOpen(false)} disabled={accounts.length === 0} key={1} className='text-sm font-medium text-pink_primary border-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wide'>Back</Button>
-			<Button onClick={handleSubmit} disabled={accounts.length === 0} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wide'>
+			<Button onClick={() => setOpen(false)} className='text-sm font-medium text-pink_primary border-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wide'>Back</Button>
+			<Button onClick={handleSubmit} disabled={accounts.length === 0} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wide'>
 				{(getOtherTextType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS) ? 'Link Address' : connectedAddress ? 'Next' : 'Confirm'}</Button>
 		</div>}
 		closable = {closable? true : false}
@@ -320,7 +320,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 	>
 		<Spin spinning={loading} indicator={<LoadingOutlined />}>
 			<div className='flex flex-col'>
-				{connectedAddress && (getOtherTextType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS) && <div className='flex flex-col mt-6 mb-2 items-center justify-center px-4'>
+				{connectedAddress && accounts.length > 0 && !loading && (getOtherTextType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS) && <div className='flex flex-col mt-6 mb-2 items-center justify-center px-4'>
 					<ConnectAddressIcon/>
 					<ul className='mt-6 text-bodyBlue text-sm'>
 						<li>Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community</li>
@@ -363,7 +363,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 											className='text-[#485F7D] text-sm'
 										/> : !wallet && Object.keys(defaultWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 								</Form>}
-				{connectedAddress && <>
+				{connectedAddress && !loading && accounts.length > 0 && <>
 					<Alert showIcon type='info' message={<span className='text-bodyBlue'>
           Link Address to your Polkassembly account to proceed with proposal creation
 					</span>}

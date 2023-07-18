@@ -57,7 +57,7 @@ const OpenGovProposals = ({ className }: Props) => {
 	const [isPreimage, setIsPreimage] = useState<boolean | null>(null);
 	const [discussionLink, setDiscussionLink] = useState<string>('');
 	const [preimageHash, setPreimageHash] = useState<string>('');
-	const [preimageLength, setPreimageLength] = useState<number>(0);
+	const [preimageLength, setPreimageLength] = useState<number | null>(null);
 	const [proposerAddress, setProposerAddress] = useState<string>('');
 	const [beneficiaryAddress, setBeneficiaryAddress] = useState<string>('');
 	const [fundingAmount, setFundingAmount] = useState<BN>(ZERO_BN);

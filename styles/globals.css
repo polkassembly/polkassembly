@@ -342,3 +342,6 @@ a.command-palette-list-item svg {
 .track-popover .ant-collapse>.ant-collapse-item >.ant-collapse-header{
 color: var(--lightBlue) !important;
 }
+.icon-alert .ant-alert-icon{
+  margin-top: -40px !important;
+}

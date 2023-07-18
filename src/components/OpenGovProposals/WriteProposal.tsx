@@ -13,6 +13,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import _ from 'lodash';
+import styled from 'styled-components';
 
 interface Props{
   isDiscussionLinked: boolean | null;
@@ -151,7 +152,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 
 	return <>
 		<Spin spinning={loading} indicator={<LoadingOutlined/>}>
-			<div className='my-8 flex flex-col'>
+			<div className='my-8 flex flex-col write-proposal'>
 				<label className='text-lightBlue text-sm'>Have you initiated a discussion post for your proposal already? </label>
 				<Radio.Group disabled={loading} onChange={(e) => handleIsDiscussionLinkedChange(e.target.value)} size='small' className='mt-1.5' value={isDiscussionLinked}>
 					<Radio value={true} className='text-bodyBlue text-sm font-normal'>Yes</Radio>
@@ -184,7 +185,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 							className='rounded-[4px] h-[40px]' placeholder='https://'/>
 					</Form.Item>
 				</>}
-				{ isDiscussionLinked === false && <Alert type='info' showIcon message={
+				{ isDiscussionLinked === false && <Alert type='info' className='icon-alert' showIcon message={
 					<span className='text-sm font-medium text-bodyBlue'>
           Discussion posts allows the community to deliberate and recommend improvements. A Discussion should be created before creating a proposal.
 						<a className='text-pink_primary text-xs' target='_blank' rel="noreferrer" href={'/post/create'}>
@@ -233,4 +234,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 		</Spin>
 	</>;
 };
-export default WriteProposal;
+export default styled(WriteProposal)`
+.icon-alert .ant-alert-icon{
+  margin-top: -40px !important;
+}`;

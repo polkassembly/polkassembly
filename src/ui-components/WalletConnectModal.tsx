@@ -82,121 +82,128 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 
 	const handleLink = async (address: InjectedAccount['address'], chosenWallet: Wallet) => {
 		setLoading(true);
-		const injectedWindow = window as Window & InjectedWindow;
+		try{
+			const injectedWindow = window as Window & InjectedWindow;
+			const wallet = isWeb3Injected
+				? injectedWindow.injectedWeb3[chosenWallet]
+				: null;
 
-		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[chosenWallet]
-			: null;
+			if (!wallet) return;
 
-		if (!wallet) return;
+			const injected = wallet && wallet.enable && await wallet.enable(APPNAME);
 
-		const injected = wallet && wallet.enable && await wallet.enable(APPNAME);
+			const signRaw = injected && injected.signer && injected.signer.signRaw;
+			if (!signRaw) return console.error('Signer not available');
 
-		const signRaw = injected && injected.signer && injected.signer.signRaw;
-		if (!signRaw) return console.error('Signer not available');
+			let substrate_address: string | null;
+			if(!address.startsWith('0x')) {
+				substrate_address = getSubstrateAddress(address);
+				if(!substrate_address){
+					console.error('Invalid address');
+					setLoading(false);
+					return;
+				}
+			}else {
+				substrate_address = address;
+			}
 
-		let substrate_address: string | null;
-		if(!address.startsWith('0x')) {
-			substrate_address = getSubstrateAddress(address);
-			if(!substrate_address){
-				console.error('Invalid address');
+			const { data , error } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressLinkStart', { address: substrate_address });
+			if(error || !data?.signMessage){
+				queueNotification({
+					header: 'Failed!',
+					message: cleanError(error || 'Something went wrong'),
+					status: NotificationStatus.ERROR
+				});
 				setLoading(false);
 				return;
 			}
-		}else {
-			substrate_address = address;
-		}
 
-		const { data , error } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressLinkStart', { address: substrate_address });
-		if(error || !data?.signMessage){
+			let signature = '';
+
+			if(substrate_address.startsWith('0x')) {
+				const msg = stringToHex(data?.signMessage || '');
+				const from = address;
+
+				const params = [msg, from];
+				const method = 'personal_sign';
+
+				(window as any).web3.currentProvider.sendAsync({
+					from,
+					method,
+					params
+				}, async (err: any, result: any) => {
+					if(result) {
+						signature = result.result;
+					}
+
+					const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/addressLinkConfirm', {
+						address: substrate_address,
+						signature,
+						wallet
+					});
+
+					if(confirmError) {
+						console.error(confirmError);
+						queueNotification({
+							header: 'Failed!',
+							message: cleanError(confirmError),
+							status: NotificationStatus.ERROR
+						});
+						setLoading(false);
+					}
+
+					if (confirmData?.token) {
+						handleTokenChange(confirmData.token, currentUser);
+						queueNotification({
+							header: 'Success!',
+							message: confirmData.message || '',
+							status: NotificationStatus.SUCCESS
+						});
+						setLoading(false);
+					}
+				});
+			}else {
+				if(signRaw) {
+					const { signature: substrate_signature } = await signRaw({
+						address: substrate_address,
+						data: stringToHex(data?.signMessage || ''),
+						type: 'bytes'
+					});
+					signature = substrate_signature;
+
+					const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/addressLinkConfirm', {
+						address: substrate_address,
+						signature,
+						wallet
+					});
+
+					if(confirmError) {
+						console.error(confirmError);
+						queueNotification({
+							header: 'Failed!',
+							message: cleanError(confirmError),
+							status: NotificationStatus.ERROR
+						});
+						setLoading(false);
+					}
+
+					if (confirmData?.token) {
+						handleTokenChange(confirmData.token, currentUser);
+						queueNotification({
+							header: 'Success!',
+							message: confirmData.message || '',
+							status: NotificationStatus.SUCCESS
+						});
+						setLoading(false);
+					}
+				}
+			}}catch(error){
 			queueNotification({
 				header: 'Failed!',
-				message: cleanError(error || 'Something went wrong'),
+				message: error,
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
-			return;
-		}
-
-		let signature = '';
-
-		if(substrate_address.startsWith('0x')) {
-			const msg = stringToHex(data?.signMessage || '');
-			const from = address;
-
-			const params = [msg, from];
-			const method = 'personal_sign';
-
-			(window as any).web3.currentProvider.sendAsync({
-				from,
-				method,
-				params
-			}, async (err: any, result: any) => {
-				if(result) {
-					signature = result.result;
-				}
-
-				const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/addressLinkConfirm', {
-					address: substrate_address,
-					signature,
-					wallet
-				});
-
-				if(confirmError) {
-					console.error(confirmError);
-					queueNotification({
-						header: 'Failed!',
-						message: cleanError(confirmError),
-						status: NotificationStatus.ERROR
-					});
-					setLoading(false);
-				}
-
-				if (confirmData?.token) {
-					handleTokenChange(confirmData.token, currentUser);
-					queueNotification({
-						header: 'Success!',
-						message: confirmData.message || '',
-						status: NotificationStatus.SUCCESS
-					});
-					setLoading(false);
-				}
-			});
-		}else {
-			if(signRaw) {
-				const { signature: substrate_signature } = await signRaw({
-					address: substrate_address,
-					data: stringToHex(data?.signMessage || ''),
-					type: 'bytes'
-				});
-				signature = substrate_signature;
-
-				const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/addressLinkConfirm', {
-					address: substrate_address,
-					signature,
-					wallet
-				});
-
-				if(confirmError) {
-					console.error(confirmError);
-					queueNotification({
-						header: 'Failed!',
-						message: cleanError(confirmError),
-						status: NotificationStatus.ERROR
-					});
-					setLoading(false);
-				}
-
-				if (confirmData?.token) {
-					handleTokenChange(confirmData.token, currentUser);
-					queueNotification({
-						header: 'Success!',
-						message: confirmData.message || '',
-						status: NotificationStatus.SUCCESS
-					});
-					setLoading(false);
-				}
-			}
 		}
 	};
 
@@ -322,9 +329,9 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 			<div className='flex flex-col'>
 				{connectedAddress && accounts.length > 0 && !loading && (getOtherTextType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS) && <div className='flex flex-col mt-6 mb-2 items-center justify-center px-4'>
 					<ConnectAddressIcon/>
-					<ul className='mt-6 text-bodyBlue text-sm'>
-						<li>Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community</li>
-					</ul>
+					<span className='mt-6 text-bodyBlue text-sm text-center'>
+						Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community
+					</span>
 				</div>
 				}
 				<h3 className='text-sm font-normal text-[#485F7D] text-center'>Select a wallet</h3>

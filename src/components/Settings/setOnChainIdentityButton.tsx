@@ -327,7 +327,7 @@ const SetOnChainIdentityButton = ({
 
 		const identity = api.tx.identity.setIdentity(info);
 
-		const onSucess = () => {
+		const onSuccess = () => {
 			queueNotification({
 				header: 'Success!',
 				message: `Identity credentials submitted for verification, you will recieve an email from registrar shortly. Txn hash ${identity.hash}`,
@@ -345,7 +345,7 @@ const SetOnChainIdentityButton = ({
 		};
 
 		await executeTx({
-			address: submitWithAccount, api, message: 'Transaction failed.', network, onFailed, onSucess, tx: identity
+			address: submitWithAccount, api, errorMessageFallback: 'Transaction failed.', network, onFailed, onSuccess, tx: identity
 		});
 	};
 	const triggerBtn = <div><Button disabled={!id} className='h-[40px] md:h-[69px] bg-pink_primary rounded-md  hover:bg-pink_secondary text-white transition-colors duration-300' onClick={() => setModalOpen(true)}> Set On-Chain Identity</Button></div>;

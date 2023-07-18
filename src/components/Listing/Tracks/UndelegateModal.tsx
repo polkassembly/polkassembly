@@ -93,7 +93,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [defaultAddress]);
 
-	const onSucess = () => {
+	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
 			message: 'Undelegate successful.',
@@ -153,7 +153,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 		// TODO: check .toNumber()
 		const delegateTxn = api.tx.convictionVoting.undelegate(trackNum);
-		await executeTx({ address: defaultAddress, api, message: 'Undelegate successful.', network, onFailed, onSucess, tx: delegateTxn });
+		await executeTx({ address: defaultAddress, api, errorMessageFallback: 'Undelegate successful.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 
 	return (

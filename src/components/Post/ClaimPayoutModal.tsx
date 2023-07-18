@@ -57,7 +57,7 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId } : Props) 
 		setSelectedAddress(address);
 	};
 
-	const onSucess = () => {
+	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
 			message: 'Claim Payout successful.',
@@ -99,10 +99,10 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId } : Props) 
 			await executeTx({
 				address: selectedAddress,
 				api,
-				message: 'Transaction failed.',
+				errorMessageFallback: 'Transaction failed.',
 				network,
 				onFailed,
-				onSucess,
+				onSuccess,
 				tx: claim
 			});
 		}

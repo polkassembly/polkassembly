@@ -449,7 +449,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			}
 		}
 
-		const onSucess = () => {
+		const onSuccess = () => {
 			setLoadingStatus({ isLoading: false, message: '' });
 			queueNotification({
 				header: 'Success!',
@@ -474,14 +474,15 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				status: NotificationStatus.ERROR
 			});
 		};
+		if(!voteTx) return;
 
 		await executeTx({ address,
 			api,
-			message: 'Transaction failed.',
+			errorMessageFallback: 'Transaction failed.',
 			network,
 			onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
 			onFailed,
-			onSucess,
+			onSuccess,
 			params: network == 'equilibrium' ? { nonce: -1 } : {},
 			tx: voteTx
 		});

@@ -95,7 +95,7 @@ const EndorseTip = ({
 
 	const onValueChange = (balance: BN) => setEndorseValue(balance);
 
-	const onSucess = () => {
+	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
 			message: `Endorse tip #${tipHash} successful.`,
@@ -127,7 +127,7 @@ const EndorseTip = ({
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
 		const endorse = api.tx.treasury.tip(tipHash, endorseValue);
-		await executeTx({ address, api, message: 'Transaction failed.', network, onFailed, onSucess, tx: endorse });
+		await executeTx({ address, api, errorMessageFallback: 'Transaction failed.', network, onFailed, onSuccess, tx: endorse });
 
 	};
 

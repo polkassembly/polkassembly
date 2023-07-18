@@ -35,7 +35,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 	const [seconds, setSeconds] = useState<number>(0);
 	const { id }=useUserDetailsContext();
 
-	const onSucess = () => {
+	const onSuccess = () => {
 		setLoadingStatus({ isLoading: false, message: '' });
 		queueNotification({
 			header: 'Success!',
@@ -85,7 +85,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 			network,
 			onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
 			onFailed,
-			onSucess,
+			onSuccess,
 			params: network == 'equilibrium' ? { nonce: -1 } : {},
 			tx: second
 		});

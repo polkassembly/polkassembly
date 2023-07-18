@@ -204,7 +204,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 		setErrorArr(errors);
 		return errors.length === 0;
 	};
-	const onSucess = () => {
+	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
 			message: 'Delegation successful.',
@@ -243,7 +243,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 		const txArr = checkedArr?.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
 		const delegateTxn = api.tx.utility.batchAll(txArr);
 
-		await executeTx({ address: delegationDashboardAddress, api, message: 'Delegation failed.', network, onFailed, onSucess, tx: delegateTxn });
+		await executeTx({ address: delegationDashboardAddress, api, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 
 	const handleOnBalanceChange = (balanceStr: string) => {

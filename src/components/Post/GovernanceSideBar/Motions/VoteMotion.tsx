@@ -136,7 +136,7 @@ const VoteMotion = ({
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address,api,apiReady,network,proposalType,motionId]);
 
-	const onSucess = () => {
+	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
 			message: `Vote on motion #${motionId} successful.`,
@@ -179,11 +179,11 @@ const VoteMotion = ({
 
 		await executeTx({ address,
 			api,
-			message: 'Transaction failed.',
+			errorMessageFallback: 'Transaction failed.',
 			network: Network,
 			onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
 			onFailed,
-			onSucess,
+			onSuccess,
 			tx: vote
 		});
 	};

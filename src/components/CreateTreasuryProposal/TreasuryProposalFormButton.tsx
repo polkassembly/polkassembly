@@ -246,7 +246,7 @@ const TreasuryProposalFormButton = ({
 		try {
 			const proposal = api.tx.treasury.proposeSpend(value.toString(), beneficiaryAccount);
 
-			const onSucess = async() => {
+			const onSuccess = async() => {
 				queueNotification({
 					header: 'Success!',
 					message: `Propsal #${proposal.hash} successful.`,
@@ -274,11 +274,11 @@ const TreasuryProposalFormButton = ({
 			await executeTx({
 				address: submitWithAccount,
 				api,
-				message: 'Transaction failed.',
+				errorMessageFallback: 'Transaction failed.',
 				network,
 				onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
 				onFailed,
-				onSucess,
+				onSuccess,
 				tx: proposal
 			});
 		}

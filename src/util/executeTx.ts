@@ -6,17 +6,17 @@ import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 
 interface Props{
-  api: ApiPromise | undefined;
+  api: ApiPromise;
   network: string;
-  tx: SubmittableExtrinsic<'promise'> | null;
+  tx: SubmittableExtrinsic<'promise'>;
   address: string;
   params?: any;
-  message: string;
-  onSucess:() => void;
-  onFailed: (message: string) => void;
+  errorMessageFallback: string;
+  onSuccess:() => Promise<void> | void;
+  onFailed: (errorMessageFallback: string) => Promise<void> | void;
   onBroadcast?: () => void;
 }
-const executeTx = async({ api, network, tx, address, params= {}, message, onSucess, onFailed, onBroadcast }: Props) => {
+const executeTx = async({ api, network, tx, address, params= {}, errorMessageFallback, onSuccess, onFailed, onBroadcast }: Props) => {
 	if(!api || !tx)return;
 
 	tx.signAndSend(address, params,  async({ status, events, txHash }: any) => {
@@ -26,7 +26,7 @@ const executeTx = async({ api, network, tx, address, params= {}, message, onSuce
 			console.log('Transaction is ready');
 		} else if (status.isBroadcast) {
 			console.log('Transaction has been broadcasted');
-			onBroadcast && onBroadcast();
+			onBroadcast && onBroadcast?.();
 		} else if (status.isInBlock) {
 			console.log('Transaction is in block');
 		} else if (status.isFinalized) {
@@ -35,25 +35,25 @@ const executeTx = async({ api, network, tx, address, params= {}, message, onSuce
 
 			for (const { event } of events) {
 				if (event.method === 'ExtrinsicSuccess') {
-					onSucess();
+					await onSuccess();
 
 				} else if (event.method === 'ExtrinsicFailed') {
 					console.log('Transaction failed');
 					const errorModule = (event.data as any)?.dispatchError?.asModule;
 					if(!errorModule) {
 						const { method, section, docs } = api.registry.findMetaError(errorModule);
-						message = `${section}.${method} : ${docs.join(' ')}`;
-						console.log(message);
-						onFailed(message);
+						errorMessageFallback = `${section}.${method} : ${docs.join(' ')}`;
+						console.log(errorMessageFallback);
+						await onFailed(errorMessageFallback);
 					}else{
-						onFailed(message);
+						await onFailed(errorMessageFallback);
 					}}
 			}
 		}
 	}).catch((error: string) => {
 		console.log(':( transaction failed');
 		console.error('ERROR:', error);
-		onFailed(message);
+		onFailed(errorMessageFallback);
 	});
 
 };

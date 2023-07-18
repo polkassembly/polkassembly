@@ -26,13 +26,16 @@ function isHex(value: string) {
 function containsBinaryData(str: string) {
 	if (!str || typeof str !== 'string') return false;
 	const buffer = Buffer.from(str.trim());
+	let totalBinaryCharacters = 0;
 
 	for (let i = 0; i < buffer.length; i++) {
 		if ((buffer[i] > 0 && buffer[i] < 32) || buffer[i] > 126) {
-			return true;
+			totalBinaryCharacters++;
 		}
 	}
-
+	if (((totalBinaryCharacters / buffer.length) * 100) > 10) {
+		return true;
+	}
 	return false;
 }
 

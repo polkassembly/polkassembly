@@ -9,6 +9,7 @@ import { Button, Modal } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
 import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
+import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
 import { useApiContext, useNetworkContext } from '~src/context';
@@ -71,12 +72,19 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		setOpen(true);
 		setAddress(address);
 	};
-	return <div className={`border-solid border-[1px] border-[#D2D8E0] rounded-[6px]  ${delegate?.isNovaWalletDelegate ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'} ${className}`}>
+	return <div className={`border-solid border-[1px] border-[#D2D8E0] rounded-[6px]  ${delegate?.dataSource === 'nova' ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'} ${className}`}>
 
-		{delegate?.isNovaWalletDelegate && <div className='h-[36px] border-[#3C74E1] border-solid border-[1px] rounded-t-[6px] mt-[-1px] bg-[#e2eafb] px-5 flex items-center gap-[11px] mr-[-0.6px] ml-[-0.6px]'>
+		{delegate?.dataSource === 'nova' && <div className='h-[36px] border-[#3C74E1] border-solid border-[1px] rounded-t-[6px] mt-[-1px] bg-[#e2eafb] px-5 flex items-center gap-[11px] mr-[-0.6px] ml-[-0.6px]'>
 			<NovaWalletIcon/>
 			<span className='text-xs text-[#798aa2]'>Nova Wallet Delegate</span>
 		</div>}
+
+		{
+			delegate?.dataSource === 'parity' && <div className='h-[36px] border-pink_primary border-solid border-[1px] rounded-t-[6px] mt-[-1px] bg-pink_primary px-5 flex items-center gap-[11px] mr-[-0.6px] ml-[-0.6px]'>
+				<ParityTechIcon />
+				<span className='text-xs text-white'>Polkadot Delegate</span>
+			</div>
+		}
 
 		<div className='flex justify-between items-center px-5 pt-5'>
 			<div className='flex gap-2 max-lg:justify-start'>

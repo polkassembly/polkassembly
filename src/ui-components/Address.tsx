@@ -24,6 +24,7 @@ import dayjs from 'dayjs';
 import classNames from 'classnames';
 import { ApiPromise } from '@polkadot/api';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 
 export enum EAddressOtherTextType {
 	CONNECTED='Connected',
@@ -87,7 +88,6 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 
 	const encoded_addr = address ? getEncodedAddress(address, network) || '' : '';
 	const FEATURE_RELEASE_DATE = dayjs('2023-06-12').toDate(); // Date from which we are sending custom username flag on web3 sign up.
-	const MANUAL_USERNAME_25_CHAR: string[] = ['marcosdanieldasilvasantos','masterquincyleroyharrison','sasha.fleur.polkaassembly'];
 
 	const fetchUsername = async (isOnclick:boolean) => {
 		const substrateAddress = getSubstrateAddress(address);

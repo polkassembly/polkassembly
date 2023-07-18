@@ -5,7 +5,6 @@
 import React, { useEffect } from 'react';
 import { Modal } from 'antd';
 import CloseIcon from '~assets/icons/close.svg';
-import SuccessIcon from '~assets/multi-vote-initiated.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
@@ -18,13 +17,14 @@ import { EVoteDecisionType } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
+import { ReactElement } from 'react-markdown/lib/react-markdown';
 
 interface Props {
     className?: string;
     open: boolean;
     setOpen: (pre: boolean) => void;
     address: string;
-    multisig: string;
+    multisig?: string;
     balance: BN;
     conviction?: number;
     title: string;
@@ -33,9 +33,10 @@ interface Props {
     ayeVoteValue?: BN;
     nayVoteValue?: BN;
     abstainVoteValue?: BN;
+	icon:ReactElement;
 }
 
-const MultisigVoteInitiatedModal = ({
+const VoteInitiatedModal = ({
 	className,
 	open,
 	setOpen,
@@ -43,12 +44,13 @@ const MultisigVoteInitiatedModal = ({
 	multisig,
 	balance,
 	conviction,
-	title = 'Delegated',
+	title,
 	vote,
 	votedAt,
 	ayeVoteValue,
 	nayVoteValue,
-	abstainVoteValue
+	abstainVoteValue,
+	icon
 }: Props) => {
 	const { network } = useNetworkContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -73,7 +75,7 @@ const MultisigVoteInitiatedModal = ({
 			maskClosable={false}
 		>
 			<div className='flex justify-center items-center flex-col -mt-[132px]'>
-				<SuccessIcon />
+				{icon}
 				<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-4'>
 					{title}
 				</h2>
@@ -166,16 +168,18 @@ const MultisigVoteInitiatedModal = ({
 							</span>
 						</div>
 
-						<div className='flex gap-3 text-sm text-[#485F7D] font-normal'>
-                            With Multisig:{' '}
-							<span className='font-medium'>
-								<Address
-									address={multisig}
-									className='address'
-									displayInline={true}
-								/>{' '}
-							</span>
-						</div>
+						{multisig &&
+							<div className='flex gap-3 text-sm text-[#485F7D] font-normal'>
+								With Multisig:{' '}
+								<span className='font-medium'>
+									<Address
+										address={multisig}
+										className='address'
+										displayInline={true}
+									/>{' '}
+								</span>
+							</div>
+						}
 
 						<div className='flex h-[21px] gap-[70px] text-sm text-[#485F7D] font-normal'>
                             Vote :
@@ -229,4 +233,4 @@ const MultisigVoteInitiatedModal = ({
 	);
 };
 
-export default MultisigVoteInitiatedModal;
+export default VoteInitiatedModal;

@@ -32,7 +32,6 @@ import CloseCross from '~assets/icons/close-cross-icon.svg';
 import DownIcon from '~assets/icons/down-icon.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
-import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import ArrowLeft from '~assets/icons/arrow-left.svg';
@@ -41,7 +40,9 @@ import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import usePolkasafe from '~src/hooks/usePolkasafe';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
-import MultisigVoteInitiatedModal from './Modal/MultisigVoteSuccessModal';
+import VoteInitiatedModal from './Modal/VoteSuccessModal';
+import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
+import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 
 const ZERO_BN = new BN(0);
 
@@ -460,8 +461,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			const voteReferendumByMultisig = async (tx:any) => {
 				try{
 					await connect();
-					const statusGrabber = (message:string) => {
-						setLoadingStatus({ isLoading: true, message:message });
+					const statusGrabber = (message?:string) => {
+						setLoadingStatus({ isLoading: true, message:message || '' });
 					};
 					const { error } = await client.customTransactionAsMulti(multisig, tx, statusGrabber, false);
 					if(error){
@@ -810,10 +811,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
-			{ successModal && multisig ?
-				<MultisigVoteInitiatedModal title='Voting with Polkasafe Multisig initiated'  vote={vote} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} multisig={multisig} conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} />
-				:
-				<DelegationSuccessPopup title='Voted' vote={vote} isVote={true} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} isDelegate={true}  conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} />
+			{ successModal &&
+				<VoteInitiatedModal title='Voting with Polkasafe Multisig initiated'  vote={vote} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} multisig={multisig ? multisig : ''} conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} icon={multisig ? <MultisigSuccessIcon/>: <SuccessIcon/>}/>
 			}
 		</div>
 	</>;

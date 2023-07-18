@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import type { Signer, SignerResult } from '@polkadot/api/types';
-import type { Registry, SignerPayloadJSON } from '@polkadot/types/types';
+import type { Registry, SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 
 import { blake2AsU8a } from '@polkadot/util-crypto';
 
@@ -28,6 +28,24 @@ export class QrSigner implements Signer {
 			// limit size of the transaction
 			const isQrHashed = (payload.method.length > 5000);
 			const wrapper = this.#registry.createType('ExtrinsicPayload', payload, { version: payload.version });
+			const qrPayload = isQrHashed
+				? blake2AsU8a(wrapper.toU8a(true))
+				: wrapper.toU8a();
+
+			this.#setState({
+				isQrHashed,
+				qrAddress: payload.address,
+				qrPayload,
+				qrReject: reject,
+				qrResolve: resolve
+			});
+		});
+	}
+	public async signRaw (payload: SignerPayloadRaw): Promise<SignerResult> {
+		return new Promise((resolve, reject): void => {
+			// limit size of the transaction
+			const isQrHashed = (payload.data.length > 5000);
+			const wrapper = this.#registry.createType('ExtrinsicPayload', payload);
 			const qrPayload = isQrHashed
 				? blake2AsU8a(wrapper.toU8a(true))
 				: wrapper.toU8a();

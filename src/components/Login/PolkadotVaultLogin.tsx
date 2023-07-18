@@ -1,64 +1,46 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { CheckOutlined } from '@ant-design/icons';
-import { isWeb3Injected } from '@polkadot/extension-dapp';
-import {
-	Injected,
-	InjectedAccount,
-	InjectedWindow
-} from '@polkadot/extension-inject/types';
-import { stringToHex } from '@polkadot/util';
-import { Alert, Button, Divider } from 'antd';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { FC, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
-import { APPNAME } from 'src/global/appName';
-import { handleTokenChange } from 'src/services/auth.service';
-import { Wallet } from 'src/types';
-import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
-import AuthForm from 'src/ui-components/AuthForm';
-import FilteredError from 'src/ui-components/FilteredError';
-import Loader from 'src/ui-components/Loader';
-import getEncodedAddress from 'src/util/getEncodedAddress';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import LoginLogo from '~assets/icons/login-logo.svg';
+import { WalletIcon } from './MetamaskLogin';
+import { Wallet } from '~src/types';
+import { useRouter } from 'next/router';
+import { Alert, Button, Divider } from 'antd';
+import FilteredError from '~src/ui-components/FilteredError';
+import AuthForm from '~src/ui-components/AuthForm';
+import Link from 'next/link';
+import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
+import Loader from '~src/ui-components/Loader';
+import TFALoginForm from './TFALoginForm';
+import { useApiContext, useUserDetailsContext } from '~src/context';
+import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
+import { initAuthResponse } from './Web3Login';
+import { QrSigner, QrState } from '~src/util/QrSigner';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { handleTokenChange } from '~src/services/auth.service';
+import { getPolkadotVaultAccounts } from '../Settings/UserAccount/ParitySigner';
+import AuthorizeTransactionUsingQr from '~src/ui-components/AuthorizeTransactionUsingQr';
+import { HexString } from '@polkadot/util/types';
 
-import ExtensionNotDetected from '../ExtensionNotDetected';
-import { WalletIcon } from './MetamaskLogin';
-import TFALoginForm from './TFALoginForm';
-
-interface Props {
-  chosenWallet: Wallet;
-  setDisplayWeb2: () => void;
-  setWalletError: React.Dispatch<React.SetStateAction<string | undefined>>;
-  isModal?:boolean;
-  setLoginOpen?:(pre: boolean) => void;
-  setSignupOpen?: (pre: boolean) => void;
-  onWalletUpdate?: () => void;
+interface IPolkadotVaultLoginProps {
+    chosenWallet: Wallet;
+    setDisplayWeb2: () => void;
+    setWalletError: React.Dispatch<React.SetStateAction<string | undefined>>;
+    isModal?:boolean;
+    setLoginOpen?:(pre: boolean) => void;
+    setSignupOpen?: (pre: boolean) => void;
+    onWalletUpdate?: () => void;
 }
 
-export const initAuthResponse: IAuthResponse = {
-	isTFAEnabled: false,
-	tfa_token: '',
-	token: '',
-	user_id: 0
-};
+let qrId = 0;
 
-const Web3Login: FC<Props> = ({
-	chosenWallet,
-	setDisplayWeb2,
-	setWalletError,
-	isModal,
-	setLoginOpen,
-	setSignupOpen,
-	onWalletUpdate
-}) => {
-	const { network } = useNetworkContext();
+const PolkadotVaultLogin: FC<IPolkadotVaultLoginProps> = (props) => {
+	const { chosenWallet, isModal, setLoginOpen, setSignupOpen, setDisplayWeb2, onWalletUpdate } = props;
+	const { api, apiReady } = useApiContext();
 
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
@@ -68,119 +50,64 @@ const Web3Login: FC<Props> = ({
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [address, setAddress] = useState<string>('');
 	const [isAccountLoading, setIsAccountLoading] = useState(true);
-	const [extensionNotFound, setExtensionNotFound] = useState(false);
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
 	const [fetchAccounts, setFetchAccounts] = useState(true);
 	const [isSignUp, setIsSignUp] = useState(false);
 	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
+	const [{ isQrHashed, qrAddress, qrPayload, qrResolve }, setQrState] = useState<QrState>(() => ({ isQrHashed: false, qrAddress: '', qrPayload: new Uint8Array() }));
+	const [showQrModal, setShowQrModal] = useState(false);
+	const [isScanned, setIsScanned] = useState(false);
+
+	const onAccountChange = (address: string) => setAddress(address);
+
+	useEffect(() => {
+		const accounts = getPolkadotVaultAccounts();
+		setAccounts(accounts);
+		setFetchAccounts(false);
+		setIsAccountLoading(false);
+		if (accounts.length > 0) {
+			setAddress(accounts[0].address);
+		} else {
+			setAccountsNotFound(true);
+		}
+	}, []);
+
+	const _addQrSignature = useCallback(
+		({ signature }: { signature: string }) => {
+			if (isScanned) {
+				return;
+			}
+			setIsScanned(true);
+			qrResolve && qrResolve({
+				id: ++qrId,
+				signature: signature as HexString
+			});
+		},
+		[qrResolve, isScanned]
+	);
 
 	const handleClick=() => {
-		if(isModal && setSignupOpen && setLoginOpen){
+		if(isModal && setSignupOpen && setLoginOpen) {
 			setSignupOpen(true);
-			setLoginOpen(false);}
-		else{
+			setLoginOpen(false);
+		} else{
 			router.push('/signup');
 		}
 	};
 
-	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
-		const injectedWindow = window as Window & InjectedWindow;
-
-		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[chosenWallet]
-			: null;
-
-		if (!wallet) {
-			setExtensionNotFound(true);
-			setIsAccountLoading(false);
-			return;
-		} else {
-			setExtensionNotFound(false);
-		}
-
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if(wallet && wallet.enable) {
-					wallet.enable(APPNAME)
-						.then((value) => { clearTimeout(timeoutId); resolve(value); })
-						.catch((error) => { reject(error); });
-				}
-			});
-		} catch (err) {
-			setIsAccountLoading(false);
-			console.log(err?.message);
-			if (err?.message == 'Rejected') {
-				setWalletError('');
-				handleToggle();
-			} else if (
-				err?.message ==
-        'Pending authorisation request already exists for this site. Please accept or reject the request.'
-			) {
-				setWalletError(
-					'Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.'
-				);
-				handleToggle();
-			} else if (err?.message == 'Wallet Timeout') {
-				setWalletError(
-					'Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.'
-				);
-				handleToggle();
-			}
-		}
-		if (!injected) {
-			return;
-		}
-
-		const accounts = await injected.accounts.get();
-		if (accounts.length === 0) {
-			setAccountsNotFound(true);
-			setIsAccountLoading(false);
-			return;
-		} else {
-			setAccountsNotFound(false);
-		}
-
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
-
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			setAddress(accounts[0].address);
-		}
-
-		setIsAccountLoading(false);
-		return;
-	};
-
-	const onAccountChange = (address: string) => setAddress(address);
-
 	const handleLogin: ( values: React.BaseSyntheticEvent<object, any, any> | undefined ) => void = async  () => {
-		if (!accounts.length) return getAccounts(chosenWallet);
+		if (!accounts.length) {
+			return;
+		}
 
 		try {
-			const injectedWindow = window as Window & InjectedWindow;
 
-			const wallet = isWeb3Injected
-				? injectedWindow.injectedWeb3[chosenWallet]
-				: null;
-
-			if (!wallet) {
-				setExtensionNotFound(true);
-				setIsAccountLoading(false);
+			if (!api || !apiReady) {
 				return;
-			} else {
-				setExtensionNotFound(false);
 			}
 
-			const injected = wallet && wallet.enable && await wallet.enable(APPNAME);
-
-			const signRaw = injected && injected.signer && injected.signer.signRaw;
+			const signer = new QrSigner(api?.registry, setQrState);
+			const signRaw = signer.signRaw;
 			if (!signRaw) return console.error('Signer not available');
 
 			setLoading(true);
@@ -189,7 +116,7 @@ const Web3Login: FC<Props> = ({
 			if(!address.startsWith('0x')) {
 				substrate_address = getSubstrateAddress(address);
 				if(!substrate_address) return console.error('Invalid address');
-			}else {
+			} else {
 				substrate_address = address;
 			}
 
@@ -206,11 +133,13 @@ const Web3Login: FC<Props> = ({
 				throw new Error('Challenge message not found');
 			}
 
+			setShowQrModal(true);
 			const { signature } = await signRaw({
 				address: substrate_address,
-				data: stringToHex(signMessage),
+				data: signMessage,
 				type: 'bytes'
 			});
+			setShowQrModal(false);
 
 			const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<IAuthResponse>( 'api/v1/auth/actions/addressLogin', { address: substrate_address, signature, wallet: chosenWallet });
 			if(addressLoginError) {
@@ -234,11 +163,13 @@ const Web3Login: FC<Props> = ({
 							return;
 						}
 
+						setShowQrModal(true);
 						const { signature } = await signRaw({
 							address: substrate_address,
-							data: stringToHex(signMessage),
+							data: signMessage,
 							type: 'bytes'
 						});
+						setShowQrModal(false);
 
 						const { data: confirmData , error: confirmError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressSignupConfirm', {
 							address: substrate_address,
@@ -347,7 +278,7 @@ const Web3Login: FC<Props> = ({
 
 	const handleToggle = () => setDisplayWeb2();
 
-	const handleBackToLogin = ():void => {
+	const handleBackToLogin = () => {
 		onWalletUpdate && onWalletUpdate();
 	};
 
@@ -370,6 +301,17 @@ const Web3Login: FC<Props> = ({
 						</span>
 					</p>
 				</h3>
+				<AuthorizeTransactionUsingQr
+					open={showQrModal}
+					setOpen={setShowQrModal}
+					api={api}
+					apiReady={apiReady}
+					qrAddress={qrAddress}
+					qrPayload={qrPayload}
+					isQrHashed={isQrHashed}
+					onScan={_addQrSignature}
+					isScanned={isScanned}
+				/>
 				{fetchAccounts ?
 					<div className='flex flex-col justify-center items-center px-4'>
 						<p className='text-base text-bodyBlue'>
@@ -382,15 +324,7 @@ const Web3Login: FC<Props> = ({
 								key='got-it'
 								icon={<CheckOutlined />}
 								className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-5 px-8 font-medium text-lg leading-none flex items-center justify-center'
-								onClick={() => {
-									getAccounts(chosenWallet)
-										.then(() => {
-											setFetchAccounts(false);
-										})
-										.catch((err) => {
-											console.error(err);
-										});
-								} }
+								onClick={() => {}}
 							>
 								Got it!
 							</Button>
@@ -406,11 +340,6 @@ const Web3Login: FC<Props> = ({
 									loading={loading}
 								/> :
 								<AuthForm onSubmit={handleLogin} className="flex flex-col px-4">
-									{extensionNotFound ?
-										<div className='flex justify-center items-center my-5'>
-											<ExtensionNotDetected chosenWallet={chosenWallet} />
-										</div>
-										: null}
 									{accountsNotFound && (
 										<div className='flex justify-center items-center my-5'>
 											<Alert
@@ -425,7 +354,8 @@ const Web3Login: FC<Props> = ({
 											<Loader
 												size="large"
 												timeout={3000}
-												text="Requesting Web3 accounts" />
+												text="Requesting Web3 accounts"
+											/>
 										</div>
 									) : accounts.length > 0 && (
 										<>
@@ -434,9 +364,27 @@ const Web3Login: FC<Props> = ({
 													title='Choose linked account'
 													accounts={accounts}
 													address={address}
-													onAccountChange={onAccountChange} />
+													onAccountChange={onAccountChange}
+												/>
 											</div>
-											{isSignUp && <Alert showIcon className='mb-2' type='info' message={<>By Signing up you agree to the terms of the <Link href='/terms-and-conditions' className='text-pink_primary'>Polkassembly end user agreement</Link>.</>} />}
+											{
+												isSignUp && <Alert
+													showIcon
+													className='mb-2'
+													type='info'
+													message={
+														<>
+                                                            By Signing up you agree to the terms of the
+															<Link
+																href='/terms-and-conditions' className='text-pink_primary'
+															>
+                                                                Polkassembly end user agreement
+															</Link>.
+														</>
+													}
+												/>
+
+											}
 											<div className="flex justify-center items-center">
 												<Button
 													loading={loading}
@@ -469,11 +417,16 @@ const Web3Login: FC<Props> = ({
 								</AuthForm>
 							}
 
-							{!authResponse.isTFAEnabled && <div className='flex items-center justify-center'>
-								<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() => handleBackToLogin()}>
-								Go Back
-								</Button>
-							</div>}
+							{
+								!authResponse.isTFAEnabled && <div className='flex items-center justify-center'>
+									<Button
+										className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center'
+										onClick={() => handleBackToLogin()}
+									>
+                                        Go Back
+									</Button>
+								</div>
+							}
 						</>
 					)}
 				<div className="flex justify-center items-center pb-5 font-medium mt-6">
@@ -482,8 +435,9 @@ const Web3Login: FC<Props> = ({
 					</label>
 					<div onClick={handleClick} className='text-lg text-pink_primary cursor-pointer'>&nbsp; Sign Up </div>
 				</div>
-			</article></>
+			</article>
+		</>
 	);
 };
 
-export default Web3Login;
+export default PolkadotVaultLogin;

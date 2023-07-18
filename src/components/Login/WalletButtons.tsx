@@ -32,6 +32,11 @@ const WalletButtons = ({ onWalletSelect, disabled } : Props) => {
 				<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />
 				<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="SubWallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6'  />} />
 				{
+					['kusama', 'polkadot'].includes(network)?
+						<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT_VAULT)} name="Polkadot Vault" icon={<WalletIcon which={Wallet.POLKADOT_VAULT} className='h-6 w-6'  />} />
+						: null
+				}
+				{
 					['polymesh'].includes(network)?
 						<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
 						: null

@@ -17,6 +17,10 @@ const WalletConnectSignup = dynamic(() => import('src/components/Signup/WalletCo
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
+const PolkadotVaultSignup = dynamic(() => import('src/components/Signup/PolkadotVaultSignup'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
 const Web3Signup = dynamic(() => import('src/components/Signup/Web3Signup'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
@@ -87,15 +91,26 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:
 									<MetamaskSignup isModal={isModal} setSignupOpen={setSignupOpen} setLoginOpen={setLoginOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet}/>
 									: chosenWallet == Wallet.WALLETCONNECT ?
 										<WalletConnectSignup  isModal={isModal} setSignupOpen={setSignupOpen} setMethod={setMethod}/> :
-										<Web3Signup
-											isModal={isModal}
-											setSignupOpen={setSignupOpen}
-											setLoginOpen={setLoginOpen}
-											chosenWallet={chosenWallet}
-											setDisplayWeb2={setDisplayWeb2}
-											setWalletError={setWalletError}
-											onWalletUpdate={onWalletUpdate}
-										/>
+										chosenWallet === Wallet.POLKADOT_VAULT?
+											<PolkadotVaultSignup
+												isModal={isModal}
+												setLoginOpen={setLoginOpen}
+												setSignupOpen={setSignupOpen}
+												chosenWallet={chosenWallet}
+												setDisplayWeb2={setDisplayWeb2}
+												setWalletError={setWalletError}
+												onWalletUpdate={onWalletUpdate}
+											/>
+											:
+											<Web3Signup
+												isModal={isModal}
+												setSignupOpen={setSignupOpen}
+												setLoginOpen={setLoginOpen}
+												chosenWallet={chosenWallet}
+												setDisplayWeb2={setDisplayWeb2}
+												setWalletError={setWalletError}
+												onWalletUpdate={onWalletUpdate}
+											/>
 							}
 						</>
 					}

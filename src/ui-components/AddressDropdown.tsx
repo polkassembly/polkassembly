@@ -61,6 +61,8 @@ const AddressDropdown = ({
 			return EAddressOtherTextType.CONNECTED;
 		} else if (substrate_addresses.includes(account_substrate_address)) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
+		}else{
+			return EAddressOtherTextType.UNLINKED_ADDRESS;
 		}
 	};
 

@@ -227,18 +227,19 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			<div className='mt-4 text-sm font-normal text-lightBlue'>
 				<label className='font-medium'>Preimage Details:</label>
 				<div className='mt-[10px] flex flex-col gap-2'>
-					<span className='flex gap-1'><span className='w-[150px]'>Proposer Address:</span><Address address={proposerAddress} identiconSize={24}/></span>
-					<span className='flex gap-1'><span className='w-[150px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
-					<span className='flex gap-1'><span className='w-[150px]'>Funding Amount:</span><span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
-					<span className='flex gap-1 items-center'><span className='w-[150px]'>Preimage Hash:</span>
+					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address address={proposerAddress} identiconSize={24}/></span>
+					<span className='flex'><span className='w-[150px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
+					<span className='flex'><span className='w-[150px]'>Funding Amount:</span><span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
+					<span className='flex items-center'><span className='w-[150px]'>Preimage Hash:</span>
 						<span className='text-bodyBlue  font-medium'>{preimageHash.slice(0,10)+'...'+ preimageHash.slice(55)}</span>
 						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(preimageHash) ;success('Preimage hash copied to clipboard');}}>
 							{contextHolder}
 							<CopyIcon/>
 						</span>
 					</span>
-					<span className='flex gap-1'><span className='w-[150px]'>Preimage Length:</span><span className='text-bodyBlue font-medium'>{preimageLength}</span></span>
-					<span className='flex gap-1 items-center'><span className='w-[150px]'>Preimage Link:</span>
+					<span className='flex'><span className='w-[150px]'>Preimage Length:</span><span className='text-bodyBlue font-medium'>{preimageLength}</span></span>
+					<span className='flex items-center'>
+						<span className='w-[150px]'>Preimage Link:</span>
 						<a target='_blank' rel='noreferrer' href={`https://${network}.polkassembly.io/preimages/${preimageHash}`} className='text-bodyBlue font-medium'>{`https://${network}.polkassembly.io/preimages/${preimageHash.slice(0,5)}...`}</a>
 						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/preimages/${preimageHash}`) ;success('Preimage link copied to clipboard.');}}>
 							{contextHolder}

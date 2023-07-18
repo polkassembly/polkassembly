@@ -5,7 +5,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Alert, Button, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
-import { Wallet } from '~src/types';
+import { NotificationStatus, Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
 import { useUserDetailsContext } from '~src/context';
 import { NetworkContext } from '~src/context/NetworkContext';
@@ -20,6 +20,17 @@ import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
 import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { InjectedTypeWithCouncilBoolean } from './AddressDropdown';
+import { EAddressOtherTextType } from './Address';
+import ConnectAddressIcon from '~assets/icons/connect-address.svg';
+import CloseIcon from '~assets/icons/close.svg';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import queueNotification from './QueueNotification';
+import cleanError from '~src/util/cleanError';
+import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
+import { handleTokenChange } from '~src/services/auth.service';
+import { stringToHex } from '@polkadot/util';
 
 interface Props{
   className?: string;
@@ -28,40 +39,186 @@ interface Props{
   closable?: boolean;
   walletKey: string;
   addressKey: string;
-  onConfirm : () => void;
+  onConfirm?: () => void;
+  connectedAddress?: boolean;
 }
 
 const ZERO_BN = new BN(0);
 
-const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, addressKey, onConfirm }: Props) => {
+const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, addressKey, onConfirm, connectedAddress }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
-	const { loginWallet, setUserDetailsContextState } = useUserDetailsContext();
+	const currentUser = useUserDetailsContext();
+	const { loginWallet, setUserDetailsContextState, loginAddress, addresses } = currentUser;
 	const [address, setAddress] = useState<string>('');
 	const [form] = Form.useForm();
-	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
+	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [defaultWallets, setDefaultWallets] = useState<any>({});
-	const [wallet,setWallet] = useState<Wallet>();
+	const [wallet, setWallet] = useState<Wallet>();
 	const [extensionOpen, setExtentionOpen] = useState<boolean>(false);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const substrate_address = getSubstrateAddress(loginAddress);
+	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
+
+	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
+		const account_substrate_address = getSubstrateAddress(account?.address || '');
+		const isConnected = account_substrate_address?.toLowerCase() === (substrate_address || '').toLowerCase();
+		if (account?.isCouncil || false) {
+			if (isConnected) {
+				return EAddressOtherTextType.COUNCIL_CONNECTED;
+			}
+			return EAddressOtherTextType.COUNCIL;
+		} else if (isConnected) {
+			return EAddressOtherTextType.CONNECTED;
+		} else if (substrate_addresses.includes(account_substrate_address)) {
+			return EAddressOtherTextType.LINKED_ADDRESS;
+		}else{
+			return EAddressOtherTextType.UNLINKED_ADDRESS;
+		}
+	};
+
+	const handleLink = async (address: InjectedAccount['address'], chosenWallet: Wallet) => {
+		setLoading(true);
+		const injectedWindow = window as Window & InjectedWindow;
+
+		const wallet = isWeb3Injected
+			? injectedWindow.injectedWeb3[chosenWallet]
+			: null;
+
+		if (!wallet) return;
+
+		const injected = wallet && wallet.enable && await wallet.enable(APPNAME);
+
+		const signRaw = injected && injected.signer && injected.signer.signRaw;
+		if (!signRaw) return console.error('Signer not available');
+
+		let substrate_address: string | null;
+		if(!address.startsWith('0x')) {
+			substrate_address = getSubstrateAddress(address);
+			if(!substrate_address){
+				console.error('Invalid address');
+				setLoading(false);
+				return;
+			}
+		}else {
+			substrate_address = address;
+		}
+
+		const { data , error } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressLinkStart', { address: substrate_address });
+		if(error || !data?.signMessage){
+			queueNotification({
+				header: 'Failed!',
+				message: cleanError(error || 'Something went wrong'),
+				status: NotificationStatus.ERROR
+			});
+			setLoading(false);
+			return;
+		}
+
+		let signature = '';
+
+		if(substrate_address.startsWith('0x')) {
+			const msg = stringToHex(data?.signMessage || '');
+			const from = address;
+
+			const params = [msg, from];
+			const method = 'personal_sign';
+
+			(window as any).web3.currentProvider.sendAsync({
+				from,
+				method,
+				params
+			}, async (err: any, result: any) => {
+				if(result) {
+					signature = result.result;
+				}
+
+				const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/addressLinkConfirm', {
+					address: substrate_address,
+					signature,
+					wallet
+				});
+
+				if(confirmError) {
+					console.error(confirmError);
+					queueNotification({
+						header: 'Failed!',
+						message: cleanError(confirmError),
+						status: NotificationStatus.ERROR
+					});
+					setLoading(false);
+				}
+
+				if (confirmData?.token) {
+					handleTokenChange(confirmData.token, currentUser);
+					queueNotification({
+						header: 'Success!',
+						message: confirmData.message || '',
+						status: NotificationStatus.SUCCESS
+					});
+					setLoading(false);
+				}
+			});
+		}else {
+			if(signRaw) {
+				const { signature: substrate_signature } = await signRaw({
+					address: substrate_address,
+					data: stringToHex(data?.signMessage || ''),
+					type: 'bytes'
+				});
+				signature = substrate_signature;
+
+				const { data: confirmData , error: confirmError } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/addressLinkConfirm', {
+					address: substrate_address,
+					signature,
+					wallet
+				});
+
+				if(confirmError) {
+					console.error(confirmError);
+					queueNotification({
+						header: 'Failed!',
+						message: cleanError(confirmError),
+						status: NotificationStatus.ERROR
+					});
+					setLoading(false);
+				}
+
+				if (confirmData?.token) {
+					handleTokenChange(confirmData.token, currentUser);
+					queueNotification({
+						header: 'Success!',
+						message: confirmData.message || '',
+						status: NotificationStatus.SUCCESS
+					});
+					setLoading(false);
+				}
+			}
+		}
+	};
 
 	const handleSubmit = () => {
-		setLoading(true);
-		localStorage.setItem(walletKey,  String(wallet));
-		localStorage.setItem(addressKey, (address) );
-		setUserDetailsContextState((prev) => {
+		if(!address || !wallet || !accounts) return;
+		if (connectedAddress && getOtherTextType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS){
+			handleLink(address, wallet as Wallet);
+		}else{
+			setLoading(true);
+			localStorage.setItem(walletKey,  String(wallet));
+			localStorage.setItem(addressKey, (address) );
+			setUserDetailsContextState((prev) => {
 
-			return { ...prev,
-				delegationDashboardAddress: address,
-				loginWallet: wallet || null
-			};
-		});
-		onConfirm();
-		setOpen(false);
-		setLoading(false);
+				return { ...prev,
+					delegationDashboardAddress: address,
+					loginWallet: wallet || null
+				};
+			});
+			onConfirm && onConfirm();
+			setOpen(false);
+			setLoading(false);
+		}
 	};
 
 	const getWallet=() => {
@@ -151,13 +308,25 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 		wrapClassName={className}
 		className = {`${poppins.className} ${poppins.variable} radius`}
 		open = {open}
-		title = {<div className='text-center text-[20px] font-semibold text-[#243A57]'>Connect your wallet</div>}
-		footer = {[<Button onClick={handleSubmit} disabled={accounts.length === 0} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-6 rounded-[4px]'>Continue</Button>]}
+		title = {<div className={`${connectedAddress ? 'text-start' : 'text-center'} text-[20px] font-semibold text-[#243A57]`}>{ connectedAddress ? 'Link Address' : 'Connect your wallet'}</div>}
+		footer = {<div className='flex gap-2 justify-end mt-6'>
+			<Button onClick={() => setOpen(false)} disabled={accounts.length === 0} key={1} className='text-sm font-medium text-pink_primary border-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wide'>Back</Button>
+			<Button onClick={handleSubmit} disabled={accounts.length === 0} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wide'>
+				{(getOtherTextType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS) ? 'Link Address' : connectedAddress ? 'Next' : 'Confirm'}</Button>
+		</div>}
 		closable = {closable? true : false}
 		onCancel={() => closable ? setOpen(false) : setOpen(true)}
+		closeIcon={<CloseIcon/>}
 	>
 		<Spin spinning={loading} indicator={<LoadingOutlined />}>
 			<div className='flex flex-col'>
+				{connectedAddress && (getOtherTextType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS) && <div className='flex flex-col mt-6 mb-2 items-center justify-center px-4'>
+					<ConnectAddressIcon/>
+					<ul className='mt-6 text-bodyBlue text-sm'>
+						<li>Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community</li>
+					</ul>
+				</div>
+				}
 				<h3 className='text-sm font-normal text-[#485F7D] text-center'>Select a wallet</h3>
 				<div className='flex items-center justify-center gap-x-4 mb-6'>
 					{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
@@ -175,7 +344,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 				</div>
 
 				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message='For using delegation dashboard:' description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
-				{Object.keys(defaultWallets || {}).length === 0 && !loading && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
+				{Object.keys(defaultWallets || {}).length === 0 && !loading && <Alert message={connectedAddress ? 'Please install a wallet and create an address to start creating a proposal.' : 'Wallet extension not detected.'} description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
 
 				{
 					!extensionOpen &&
@@ -185,7 +354,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 								>
 									{accounts.length > 0
 										?<AccountSelectionForm
-											title='Select an address'
+											title={connectedAddress ? 'Select Proposer Address' :'Select an address'}
 											accounts={accounts}
 											address={address}
 											withBalance={true}
@@ -194,6 +363,12 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 											className='text-[#485F7D] text-sm'
 										/> : !wallet && Object.keys(defaultWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 								</Form>}
+				{connectedAddress && <>
+					<Alert showIcon type='info' message={<span className='text-bodyBlue'>
+          Link Address to your Polkassembly account to proceed with proposal creation
+					</span>}
+					className='mt-4 text-sm text-bodyBlue rounded-md'/>
+				</>}
 			</div>
 		</Spin>
 	</Modal>;

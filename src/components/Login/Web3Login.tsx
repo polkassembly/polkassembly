@@ -176,7 +176,6 @@ const Web3Login: FC<Props> = ({
 
 		try {
 			const injectedWindow = window as Window & InjectedWindow;
-			console.log(chosenWallet);
 			const wallet = isWeb3Injected
 				? injectedWindow.injectedWeb3[chosenWallet]
 				: null;

@@ -31,7 +31,7 @@ const executeTx = async({ api, network, tx, address, params= {}, errorMessageFal
 			console.log('Transaction is in block');
 		} else if (status.isFinalized) {
 			console.log(`Transaction has been included in blockHash ${status.asFinalized.toHex()}`);
-			console.log(`transfer tx: https://${network}.subscan.io/extrinsic/${txHash}`);
+			console.log(`tx: https://${network}.subscan.io/extrinsic/${txHash}`);
 
 			for (const { event } of events) {
 				if (event.method === 'ExtrinsicSuccess') {

@@ -590,6 +590,18 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const preimage = postData?.preimage;
 		const proposalArguments = postData?.proposalArguments  || postData?.callData;
 		const proposedCall = preimage?.proposedCall;
+		let requested: any;
+		if (proposedCall?.args?.amount) {
+			requested = proposedCall.args.amount;
+		} else {
+			const calls = proposedCall.args.calls;
+			if (calls && Array.isArray(calls) && calls.length > 0) {
+				const requestedCall = calls.find((call) => !!call.amount);
+				if (requestedCall) {
+					requested = requestedCall.amount;
+				}
+			}
+		}
 		const status = postData?.status;
 		let proposer = postData?.proposer || preimage?.proposer || postData?.curator;
 		if (!proposer && (postData?.parentBountyIndex || postData?.parentBountyIndex === 0)) {
@@ -651,7 +663,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,
 			proposer,
-			requested: proposedCall?.args?.amount,
+			requested: requested,
 			reward: postData?.reward,
 			status,
 			statusHistory: postData?.statusHistory,

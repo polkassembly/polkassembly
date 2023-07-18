@@ -86,6 +86,12 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
     preimage {
       method
       proposer
+      proposedCall {
+        args
+        description
+        method
+        section
+      }
     }
     index
     end
@@ -116,7 +122,7 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
 }
 `;
 
-export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES=`query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!]) {
+export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!]) {
   proposals(where: {type_eq: $type_eq, index_in: $index_in}, limit: $limit) {
     proposer
     curator
@@ -896,8 +902,8 @@ query ReceivedDelgationsAndVotesCountForAddress($address: String = "", $createdA
 
 // Alliance
 export const GET_ALLIANCE_LATEST_ACTIVITY = `
-query getAllianceLatestActivity( $limit: Int = 10, $offset: Int = 0 ) {
-  proposals(orderBy: id_DESC,limit: $limit, offset: $offset) {
+query getAllianceLatestActivity($limit: Int = 10, $offset: Int = 0) {
+  proposals(orderBy: createdAt_DESC, limit: $limit, offset: $offset) {
     id
     type
     createdAt
@@ -909,7 +915,7 @@ query getAllianceLatestActivity( $limit: Int = 10, $offset: Int = 0 ) {
       method
     }
   }
-  proposalsConnection(orderBy: id_ASC) {
+  proposalsConnection(orderBy: createdAt_DESC) {
     totalCount
   }
 }

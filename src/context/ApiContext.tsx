@@ -6,7 +6,6 @@ import '@polkadot/api-augment';
 
 import { ApiPromise, ScProvider, WsProvider } from '@polkadot/api';
 import React, { useEffect, useState } from 'react';
-import { chainProperties } from 'src/global/networkConstants';
 import * as Sc from '@substrate/connect';
 import { chainProperties, network } from 'src/global/networkConstants';
 import { typesBundleGenshiro } from '../typesBundle/typeBundleGenshiro';
@@ -56,7 +55,7 @@ export function ApiContextProvider(
 	const [isApiLoading, setIsApiLoading] = useState(false);
 	const [wsProvider, setWsProvider] = useState<string>(props.network ? chainProperties?.[props.network]?.rpcEndpoint : '');
 	const [lightProvider, setLightProvider] = useState<any>('');
-	
+
 	let provider: any;
 
 	useEffect(() => {
@@ -150,9 +149,9 @@ export function ApiContextProvider(
 				});
 				setIsApiLoading(false);
 				await api.disconnect();
-        if (lightprovider){
-          	await lightProvider.disconnect();
-        }
+				if (lightProvider){
+					await lightProvider.disconnect();
+				}
 				localStorage.removeItem('tracks');
 				if (props.network) {
 					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
@@ -186,10 +185,10 @@ export function ApiContextProvider(
 					});
 					setIsApiLoading(false);
 					await api.disconnect();
-          if (lightprovider){
-              await lightProvider.disconnect();
-          }					
-          console.error(error);
+					if (lightProvider){
+						await lightProvider.disconnect();
+					}
+					console.error(error);
 					localStorage.removeItem('tracks');
 					if (props.network) {
 						setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);

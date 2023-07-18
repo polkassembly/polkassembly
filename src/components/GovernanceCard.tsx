@@ -16,9 +16,12 @@ import StatusTag from 'src/ui-components/StatusTag';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import TopicTag from '~src/ui-components/TopicTag';
+import BN from 'bn.js';
+import { chainProperties } from 'src/global/networkConstants';
 import NewChatIcon from '~assets/icons/chat-icon.svg';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import { getFormattedLike } from '~src/util/getFormattedLike';
+import { useNetworkContext } from '~src/context';
 
 interface IGovernanceProps {
 	postReactionCount: {
@@ -43,6 +46,7 @@ interface IGovernanceProps {
 	tags?: string[] | [];
 	spam_users_count?: number;
 	cid?:string;
+	requestedAmount?:number;
 }
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
@@ -69,11 +73,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		isCommentsVisible = true,
 		username,
 		tags,
-		spam_users_count
+		spam_users_count,
+		requestedAmount
 	} = props;
 	const currentUser = useContext(UserDetailsContext);
 	let titleString = title || method || tipReason || noTitle;
-
+	const { network } = useNetworkContext();
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
 
@@ -84,34 +89,40 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
 
+	const tokenDecimals = chainProperties[network]?.tokenDecimals;
+	const requestedAmountFormatted = requestedAmount ? new BN(requestedAmount).div(new BN(10).pow(new BN(tokenDecimals))).toString() : 0;
 	return (
 		<>
-			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 sm:p-3 min-h-[80px] sm:flex xs:hidden`}>
-				<span className='font-medium text-center flex-none sm:w-[120px] text-bodyBlue sm:mt-3'>#{isTip? tip_index: onchainId}</span>
+			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 sm:p-3 min-h-[120px] sm:flex xs:hidden`}>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-2.5">
-					<OnchainCreationLabel address={address} username={username} />
-					<div className='hidden sm:flex sm:justify-between gap-x-2 lg:items-start lg:flex-row my-1.5'>
-						<div className='mt-3 lg:mt-0'>
-							<h1 className='text-bodyBlue text-sm mt-2 flex overflow-hidden lg:max-w-none'>
+					<div className="flex justify-between items-center">
+						<div className="flex flex-grow">
+							<span className='font-medium text-center flex-none sm:w-[120px] text-bodyBlue'>#{isTip? tip_index: onchainId}</span>
+							<OnchainCreationLabel address={address} username={username} />
+						</div>
+						<div className="flex justify-end items-center">
+							{status && <StatusTag className='sm:mr-10' status={status} />}
+						</div>
+					</div>
+					<div className="flex justify-between items-center">
+						<div className="flex flex-grow ml-[120px]">
+							<h1 className='text-bodyBlue text-sm mt-0.5 flex overflow-hidden lg:max-w-none'>
 								<span className='break-all text-bodyBlue font-medium text-sm'>{ mainTitle }</span>
 							</h1>
 							<h2 className='text-bodyBlue font-medium text-sm'>{subTitle}</h2>
 						</div>
-						<div className='flex justify-between items-center gap-x-2'>
-							{
-								spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
-									<div className='flex items-center justify-center'>
-										<Tooltip color="#E5007A" title="This post could be a spam.">
-											<WarningMessageIcon className='text-xl text-[#FFA012]' />
-										</Tooltip>
-									</div>
-									: null
-							}
-							{status  && <StatusTag className='sm:mt-[-36px] sm:mr-10' status={status} />}
-						</div>
+						{
+							requestedAmount &&
+							<div className='flex justify-center items-center'>
+								{requestedAmount > 100 ?
+									<span className='text-lightBlue text-sm font-medium sm:mr-[2.63rem]'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									:
+									<span className='text-lightBlue text-sm font-medium sm:mr-20'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
+								}
+							</div>
+						}
 					</div>
-
-					<div className="font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center sm:mb-1 sm:mt-0">
+					<div className="font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center sm:mb-1 sm:mt-0 sm:ml-[120px]">
 						<div className='flex items-center gap-x-2'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
 								<LikeOutlined style={{ color: '#485F7D' }} />
@@ -200,6 +211,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			</div>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200  xs:px-2 xs:py-2 md:pb-6 min-h-[147px] xs:flex h-auto sm:hidden`}>
 				<div className="sm:hidden xs:flex flex-col flex-1 xs:mt-1">
+					{
+						requestedAmount &&
+							<div className='xs:flex xs:justify-end xs:mr-5'>
+								{requestedAmount > 100 ?
+									<span className='text-lightBlue text-sm font-medium sm:mr-[54px]'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									:
+									<span className='text-lightBlue text-sm font-medium sm:mr-20'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
+								}
+							</div>
+					}
 					<div className='sm:hidden xs:flex xs:justify-start gap-x-2 lg:items-start lg:flex-row my-2 '>
 						<span className='font-medium text-center xs:w-[45px] text-bodyBlue xs:mt-0'>#{isTip? tip_index: onchainId}</span>
 						<div className='xs:mt-0 lg:mt-0'>

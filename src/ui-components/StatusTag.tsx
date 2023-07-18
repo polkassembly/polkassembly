@@ -86,6 +86,7 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${tipStatus.RETRACTED},
 	&.${bountyStatus.CANCELED},
 	&.${bountyStatus.REJECTED},
+	&.${gov2ReferendumStatus.EXECUTION_FAILED},
 	&.${childBountyStatus.CANCELED} {
 		color: #fff;
 		border:2px solid #FF0000 !important;

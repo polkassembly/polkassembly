@@ -71,7 +71,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query: GET_ALLIANCE_LATEST_ACTIVITY,
-				variables:{ limit:numListingLimit }
+				variables:{ limit: numListingLimit }
 			});
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals || [];

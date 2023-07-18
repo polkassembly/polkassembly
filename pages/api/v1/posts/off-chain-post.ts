@@ -18,11 +18,13 @@ import messages from '~src/util/messages';
 
 import { getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
+import { getContentSummary } from '~src/util/getPostContentAiSummary';
 
 interface IGetOffChainPostParams {
 	network: string;
 	postId?: string | string[] | number;
 	proposalType: OffChainProposalType | string | string[];
+	isExternalApiCall?: boolean;
 }
 
 export const getUpdatedAt = (data: any) => {
@@ -39,7 +41,7 @@ export const getUpdatedAt = (data: any) => {
 
 export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<IApiResponse<IPostResponse>> {
 	try {
-		const { network, postId, proposalType } = params;
+		const { network, postId, proposalType, isExternalApiCall } = params;
 		if (postId === undefined || postId === null) {
 			throw apiErrorWithStatusCode('Please send postId', 400);
 		}
@@ -96,6 +98,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			proposer: proposer,
 			spam_users_count,
 			subscribers: data?.subscribers || [],
+			summary: data?.summary,
 			tags: tags || [],
 			timeline: [],
 			title: data?.title,
@@ -103,6 +106,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 				id: topic_id,
 				name: getTopicNameFromTopicId(topic_id)
 			}: getTopicFromType(strProposalType as ProposalType),
+			type: (strProposalType === 'discussions'? 'Discussions': strProposalType === 'grants'? 'Grants': ''),
 			user_id: data?.user_id,
 			username: data?.username
 
@@ -204,6 +208,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 				post.comments = comments;
 			}
 		}
+		await getContentSummary(post, network, isExternalApiCall);
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,
@@ -226,6 +231,7 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getOffChainPost({
+		isExternalApiCall: true,
 		network,
 		postId,
 		proposalType
@@ -234,6 +240,9 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	if(error || !data) {
 		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	}else {
+		if (data.summary) {
+			delete data.summary;
+		}
 		res.status(status).json(data);
 	}
 };

@@ -19,7 +19,7 @@ interface Props{
 }
 
 export const Reply = ({ className, commentId, reply ,userName } : Props) => {
-	const { user_id, username, content, created_at, id, updated_at, proposer } = reply;
+	const { user_id, username, content, created_at, id, updated_at, proposer, is_custom_username } = reply;
 	const { asPath } = useRouter();
 	const replyRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
@@ -65,6 +65,8 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 					replyId={id}
 					content={content}
 					userName={userName}
+					proposer={proposer}
+					is_custom_username={is_custom_username}
 				/>
 			</div>
 		</div>

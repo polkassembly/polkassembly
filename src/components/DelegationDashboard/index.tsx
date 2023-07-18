@@ -33,7 +33,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
-
+	const[isMobile, setIsMobile] = useState<boolean>(false);
 	useEffect(() => {
 		if(!window ) return;
 		const wallet = localStorage.getItem('delegationWallet') || '';
@@ -45,23 +45,23 @@ const DelegationDashboardHome = ({ className } : Props) => {
 				loginWallet: wallet as Wallet
 			};
 		} );
-
-	}, [userDetails]);
-
-	useEffect(() => {
-
-		userDetails.isLoggedOut() && setOpenLoginModal(true);
+		if(window.innerWidth < 768){
+			setIsMobile(true);
+		}
+		isMobile ? userDetails.isLoggedOut() && setOpenLoginModal(false) : userDetails.isLoggedOut() && setOpenLoginModal(true);
 		!userDetails.isLoggedOut() && setOpenLoginModal(false);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userDetails?.isLoggedOut]);
+	}, [userDetails,isMobile]);
 
 	useEffect(() => {
+		if(window.innerWidth < 768){
+			setIsMobile(true);
+		}
 		if(!userDetails.delegationDashboardAddress){
-			setOpenModal(true);
+			isMobile ? setOpenModal(false) : setOpenModal(true);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userDetails?.username, userDetails?.delegationDashboardAddress]);
+	}, [userDetails?.username, userDetails?.delegationDashboardAddress,isMobile]);
 
 	return <div className= { `${ className } delegation-dashboard` }>
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>

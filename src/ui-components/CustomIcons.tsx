@@ -6,6 +6,9 @@ import Icon from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import React from 'react';
 
+import OpenAiSVG from '~assets/icons/openai.svg';
+import AiStarSVG from '~assets/icons/ai-star.svg';
+import SummaryModalCloseSVG from '~assets/icons/summary-modal-close.svg';
 import OpenGovBannerSVG from '~assets/icons/opengov_banner.svg';
 import CubeSVG from '~assets/icons/cube.svg';
 import DiscordSVG from '~assets/icons/discord.svg';
@@ -98,6 +101,18 @@ import CopySVG from '~assets/icons/content-copy.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
+);
+
+export const OpenAiIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={OpenAiSVG} {...props} />
+);
+
+export const AiStarIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={AiStarSVG} {...props} />
+);
+
+export const SummaryModalClose = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SummaryModalCloseSVG} {...props} />
 );
 
 export const OpenGovBannerIcon = (props: Partial<CustomIconComponentProps>) => (

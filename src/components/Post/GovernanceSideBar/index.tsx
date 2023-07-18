@@ -664,25 +664,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			<LastVoteInfoOnChain {...onChainLastVote}/> :
 			null;
 
-	if (extensionNotFound) {
-		return (
-			<div className={className}>
-				<GovSidebarCard>
-					<ExtensionNotDetected />
-				</GovSidebarCard>
-			</div>
-		);
-	}
-
-	if (accountsNotFound) {
-		return (
-			<GovSidebarCard>
-				<div className='mb-4'>You need at least one account in Polkadot-js extenstion to use this feature.</div>
-				<div className='text-muted'>Please reload this page after adding accounts.</div>
-			</GovSidebarCard>
-		);
-	}
-
 	return (
 		<>
 			{<div className={className}>
@@ -710,8 +691,31 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							</Button>
 						</div>
 					</div>}
+					{
+						(accountsNotFound || extensionNotFound)? (
+							<GovSidebarCard>
+								{
+									accountsNotFound? (
+										<div className='mb-4'>
+											<p className='mb-4'>
+												You need at least one account in Polkadot-js extension to use this feature.
+											</p>
+											<p className='text-muted m-0'>
+												Please reload this page after adding accounts.
+											</p>
+										</div>
+									): null
+								}
+								{
+									extensionNotFound? (
+										<ExtensionNotDetected />
+									): null
+								}
+							</GovSidebarCard>
+						): null
+					}
 					{proposalType === ProposalType.COUNCIL_MOTIONS && <>
-						{canVote &&
+						{canVote && !(extensionNotFound) &&
 							<VoteMotion
 								setAccounts={setAccounts}
 								accounts={accounts}
@@ -729,7 +733,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						}
 					</>}
 					{proposalType === ProposalType.ALLIANCE_MOTION && <>
-						{canVote &&
+						{canVote && !(extensionNotFound) &&
 							<VoteMotion
 								setAccounts={setAccounts}
 								accounts={accounts}

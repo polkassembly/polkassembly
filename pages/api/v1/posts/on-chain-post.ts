@@ -24,6 +24,7 @@ import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
+import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -590,16 +591,22 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const preimage = postData?.preimage;
 		const proposalArguments = postData?.proposalArguments  || postData?.callData;
 		const proposedCall = preimage?.proposedCall;
+		let remark = '';
 		let requested: any;
-		if (proposedCall?.args?.amount) {
-			requested = proposedCall.args.amount;
-		} else {
-			if (proposedCall?.args?.calls) {
+		if (proposedCall?.args) {
+			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
+			if (proposedCall.args.amount) {
+				requested = proposedCall.args.amount;
+			} else {
 				const calls = proposedCall.args.calls;
 				if (calls && Array.isArray(calls) && calls.length > 0) {
 					const requestedCall = calls.find((call) => !!call.amount);
 					if (requestedCall) {
 						requested = requestedCall.amount;
+					}
+					const remarkCall = calls.find((call) => !!call.remark);
+					if (remarkCall && typeof remarkCall.remark === 'string' && !containsBinaryData(remarkCall.remark)) {
+						remark = remarkCall.remark;
 					}
 				}
 			}
@@ -886,11 +893,15 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		post.spam_users_count = await getSpamUsersCount(network, proposalType, (proposalType === ProposalType.TIPS? strPostId: numPostId), 'post');
 
 		if (!post.content || post.content?.trim().length === 0) {
-			const proposer = post.proposer;
-			if (proposer) {
-				post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+			if (remark) {
+				post.content = remark.replace(/\n/g, '<br/>');
 			} else {
-				post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+				const proposer = post.proposer;
+				if (proposer) {
+					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+				} else {
+					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+				}
 			}
 		}
 

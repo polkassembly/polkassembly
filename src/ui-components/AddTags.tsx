@@ -35,7 +35,7 @@ const AddTags=({ tags,setTags,className }:Props) => {
 
 	useEffect(() => {
 
-		inputValue.length >= 65 ? setCharLimitReached(true) : setCharLimitReached(false);
+		inputValue.length >= 20 ? setCharLimitReached(true) : setCharLimitReached(false);
 
 		allTags.length === 0 && getData();
 
@@ -61,7 +61,7 @@ const AddTags=({ tags,setTags,className }:Props) => {
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		selectedTag.current = null;
 		const value = e.target.value;
-		if(value.length > 10){
+		if(value.length > 20){
 			return ;
 		}
 		setInputValue(e.target.value);
@@ -78,10 +78,10 @@ const AddTags=({ tags,setTags,className }:Props) => {
 		else{
 			if ( inputValue && tags.length < 5 && tags.indexOf( inputValue.toLowerCase() ) === -1 && inputValue.trim().length > 0){
 				const format = /^[a-zA-Z0-9]*$/;
-				if(inputValue.length === 10){
+				if(inputValue.length === 20){
 					setCharLimitReached(true);
 				}
-				if(inputValue.length > 10 || !format.test(inputValue)){
+				if(inputValue.length > 20 || !format.test(inputValue)){
 					setInputValue('');
 					return ;
 				}else {

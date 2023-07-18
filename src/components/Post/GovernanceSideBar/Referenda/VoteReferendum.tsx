@@ -35,6 +35,11 @@ import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNet
 import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuccessPopup';
 import dayjs from 'dayjs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import blockToDays from '~src/util/blockToDays';
+import { ApiPromise } from '@polkadot/api';
+import executeTx from '~src/util/executeTx';
+
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 const ZERO_BN = new BN(0);
 
@@ -52,6 +57,30 @@ message: string;
  description: string;
  error: number
 }
+
+export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
+	if ([ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType) && ![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
+		if (api && apiReady) {
+			const res = api.consts.convictionVoting.voteLockingPeriod;
+			const num = res.toJSON();
+			const days = blockToDays(num, network);
+			if (days && !isNaN(Number(days))) {
+				return [
+					<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+					...CONVICTIONS.map(([value, lock]) =>
+						<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
+					)
+				];
+			}
+		}
+	}
+	return [
+		<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+		...CONVICTIONS.map(([value, lock]) =>
+			<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
+		)
+	];
+};
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
 	const userDetails = useUserDetailsContext();
@@ -204,12 +233,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		await getAccounts(wallet);
 		setLoadingStatus({ ...loadingStatus, isLoading: false });
 	};
-	const convictionOpts = useMemo(() => [
-		<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
-		...CONVICTIONS.map(([value, lock]) =>
-			<Select.Option className={`text-[#243A57] ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
-		)
-	],[CONVICTIONS]);
+	const convictionOpts = useMemo(() => {
+		return getConvictionVoteOptions(CONVICTIONS, proposalType, api, apiReady, network);
+	},[CONVICTIONS, proposalType, api, apiReady, network]);
 
 	const [conviction, setConviction] = useState<number>(0);
 
@@ -424,76 +450,44 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				voteTx = api.tx.democracy.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:false , conviction } } });
 			}
 		}
-		if(network == 'equilibrium'){
-			voteTx?.signAndSend(address, { nonce: -1 }, ({ status }) => {
-				if (status.isInBlock) {
-					setLoadingStatus({ isLoading: false, message: '' });
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-				} else {
-					if (status.isBroadcast){
-						setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' });
-					}
-					console.log(`Current status: ${status.type}`);
-				}
-			}).catch((error) => {
-				setLoadingStatus({ isLoading: false, message: '' });
-				console.log(':( transaction failed');
-				console.error('ERROR:', error);
-				queueNotification({
-					header: 'Failed!',
-					message: error.message,
-					status: NotificationStatus.ERROR
-				});
-			});
-		}else{
-			voteTx?.signAndSend(address, ({ status }) => {
-				if (status.isInBlock) {
-					setLoadingStatus({ isLoading: false, message: '' });
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-				} else {
-					if (status.isBroadcast){
-						setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' });
-					}
-					console.log(`Current status: ${status.type}`);
-				}
-			}).catch((error) => {
-				setLoadingStatus({ isLoading: false, message: '' });
-				console.log(':( transaction failed');
-				console.error('ERROR:', error);
-				queueNotification({
-					header: 'Failed!',
-					message: error.message,
-					status: NotificationStatus.ERROR
-				});
-			});
 
-		}
+		const onSuccess = () => {
+			setLoadingStatus({ isLoading: false, message: '' });
+			queueNotification({
+				header: 'Success!',
+				message: `Vote on referendum #${referendumId} successful.`,
+				status: NotificationStatus.SUCCESS
+			});
+			setLastVote({
+				balance: totalVoteValue,
+				conviction: conviction,
+				decision: vote,
+				time: new Date()
+			});
+			setShowModal(false);
+			setSuccessModal(true);
+		};
+		const onFailed = (message: string) => {
+			setLoadingStatus({ isLoading: false, message: '' });
+			console.log(':( transaction failed');
+			queueNotification({
+				header: 'Failed!',
+				message,
+				status: NotificationStatus.ERROR
+			});
+		};
+		if(!voteTx) return;
+
+		await executeTx({ address,
+			api,
+			errorMessageFallback: 'Transaction failed.',
+			network,
+			onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
+			onFailed,
+			onSuccess,
+			params: network == 'equilibrium' ? { nonce: -1 } : {},
+			tx: voteTx
+		});
 
 	};
 

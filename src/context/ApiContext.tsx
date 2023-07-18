@@ -8,6 +8,7 @@ import { ApiPromise, ScProvider, WsProvider } from '@polkadot/api';
 import React, { useEffect, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import * as Sc from '@substrate/connect';
+import { chainProperties, network } from 'src/global/networkConstants';
 import { typesBundleGenshiro } from '../typesBundle/typeBundleGenshiro';
 import { typesBundleCrust } from '../typesBundle/typesBundleCrust';
 import { typesBundleEquilibrium } from '../typesBundle/typesBundleEquilibrium';
@@ -28,6 +29,8 @@ export const relaySpecs: Record<string, string> = {
 export interface ApiContextType {
 	api: ApiPromise | undefined;
 	apiReady: boolean;
+	relayApi?: ApiPromise;
+	relayApiReady?: boolean;
 	isApiLoading: boolean;
 	wsProvider: string;
 	setWsProvider: React.Dispatch<React.SetStateAction<string>>;
@@ -48,11 +51,41 @@ export function ApiContextProvider(
 	const { children = null } = props;
 	const [api, setApi] = useState<ApiPromise>();
 	const [apiReady, setApiReady] = useState(false);
+	const [relayApi, setRelayApi] = useState<ApiPromise>();
+	const [relayApiReady, setRelayApiReady] = useState(false);
 	const [isApiLoading, setIsApiLoading] = useState(false);
 	const [wsProvider, setWsProvider] = useState<string>(props.network ? chainProperties?.[props.network]?.rpcEndpoint : '');
 	const [lightProvider, setLightProvider] = useState<any>('');
 	
 	let provider: any;
+
+	useEffect(() => {
+		if (props.network === network.COLLECTIVES) {
+			const property = chainProperties?.[props.network];
+			if (property) {
+				ApiPromise
+					.create({
+						provider: (new WsProvider((property.relayRpcEndpoints || []).map((endpoint) => endpoint.key))),
+						typesBundle
+					})
+					.then((api) => setRelayApi(api))
+					.catch(console.error);
+			}
+		}
+	}, [props.network]);
+
+	useEffect(() => {
+		if (props.network === network.COLLECTIVES && relayApi) {
+			relayApi.on('connected', () => setRelayApiReady(true));
+			relayApi.on('disconnected', () => setRelayApiReady(false));
+			relayApi.on('error', () => setRelayApiReady(false));
+			relayApi.isReady.then(() => {
+				setRelayApiReady(true);
+			}).catch(() => {
+				setRelayApiReady(false);
+			});
+		}
+	}, [props.network, relayApi]);
 
 	useEffect(() => {
 		if (!wsProvider && !props.network) return;
@@ -117,7 +150,9 @@ export function ApiContextProvider(
 				});
 				setIsApiLoading(false);
 				await api.disconnect();
-				await lightProvider.disconnect();
+        if (lightprovider){
+          	await lightProvider.disconnect();
+        }
 				localStorage.removeItem('tracks');
 				if (props.network) {
 					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
@@ -151,8 +186,10 @@ export function ApiContextProvider(
 					});
 					setIsApiLoading(false);
 					await api.disconnect();
-					await lightProvider.disconnect();
-					console.error(error);
+          if (lightprovider){
+              await lightProvider.disconnect();
+          }					
+          console.error(error);
 					localStorage.removeItem('tracks');
 					if (props.network) {
 						setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
@@ -164,7 +201,7 @@ export function ApiContextProvider(
 	}, [api]);
 
 	return (
-		<ApiContext.Provider value={{ api, apiReady, isApiLoading, setWsProvider, wsProvider }}>
+		<ApiContext.Provider value={{ api, apiReady, isApiLoading, relayApi, relayApiReady, setWsProvider, wsProvider }}>
 			{children}
 		</ApiContext.Provider>
 	);

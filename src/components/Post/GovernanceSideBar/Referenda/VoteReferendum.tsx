@@ -114,7 +114,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [multisig, setMultisig] = useState<string>('');
 	const [showMultisig, setShowMultisig] = useState<boolean>(false);
 
-	const { client, connect } = usePolkasafe(loginAddress);
+	const { client, connect } = usePolkasafe();
 
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
 
@@ -466,7 +466,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					};
 					const { error } = await client.customTransactionAsMulti(multisig, tx, statusGrabber, false);
 					if(error){
-						throw new Error(error);
+						throw new Error(error.error);
 					}
 					setLoadingStatus({ isLoading: false, message: '' });
 					queueNotification({

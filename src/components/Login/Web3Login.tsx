@@ -266,10 +266,12 @@ const Web3Login: FC<Props> = ({
 						if(confirmData.token) {
 							currentUser.loginWallet= chosenWallet;
 							currentUser.loginAddress = multisigAddress || address;
+							currentUser.multisigAssociatedAddress = address;
 							currentUser.delegationDashboardAddress = multisigAddress || address;
 							localStorage.setItem('delegationWallet', chosenWallet);
 							localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
 							localStorage.setItem('loginWallet', chosenWallet);
+							localStorage.setItem('multisigAssociatedAddress', address);
 							handleTokenChange(confirmData.token, currentUser);
 							if(isModal){
 								setLoginOpen && setLoginOpen(false);
@@ -293,13 +295,13 @@ const Web3Login: FC<Props> = ({
 
 			if(addressLoginData?.token){
 				currentUser.loginWallet= chosenWallet;
-				currentUser.loginAddress =multisigAddress || address;
-				currentUser.delegationDashboardAddress =multisigAddress || address;
-
+				currentUser.loginAddress = multisigAddress || address;
+				currentUser.delegationDashboardAddress = multisigAddress || address;
+				currentUser.multisigAssociatedAddress = address;
 				localStorage.setItem('delegationWallet', chosenWallet);
 				localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
 				localStorage.setItem('loginWallet', chosenWallet);
-
+				localStorage.setItem('multisigAssociatedAddress', address);
 				handleTokenChange(addressLoginData.token, currentUser);
 				if(isModal){
 					setLoginOpen?.(false);

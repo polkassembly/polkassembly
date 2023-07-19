@@ -7,9 +7,9 @@ import { InjectedWindow } from '@polkadot/extension-inject/types';
 import { Polkasafe } from 'polkasafe';
 import { APPNAME } from '~src/global/appName';
 
-export default function usePolkasafe(address:string)  {
+export default function usePolkasafe(address?:string)  {
 	const client = new Polkasafe();
-	const substrateAddress = getSubstrateAddress(address);
+	const substrateAddress = getSubstrateAddress(address || localStorage.getItem('multisigAssociatedAddress') || '');
 	if(!substrateAddress){
 		throw new Error('Invalid address');
 	}

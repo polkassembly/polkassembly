@@ -54,6 +54,7 @@ interface Props {
 	truncateUsername?:boolean;
 	otherTextType?: EAddressOtherTextType;
 	otherTextClassName?: string;
+	isVoterAddress?: boolean;
 }
 
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
@@ -61,7 +62,7 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 	ssr: false
 });
 
-const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true, addressClassName, clickable=true , truncateUsername = true, otherTextType, otherTextClassName }: Props): JSX.Element => {
+const Address = ({ address, className, displayInline, disableIdenticon, extensionName, popupContent, disableAddress, textClassName, shortenAddressLength, isShortenAddressLength = true, identiconSize, ethIdenticonSize, disableHeader, disableAddressClick, isSubVisible = true, addressClassName, clickable=true , truncateUsername = true, otherTextType, otherTextClassName, isVoterAddress }: Props): JSX.Element => {
 	const { network } = useNetworkContext();
 	const apiContext = useContext(ApiContext);
 	const [api, setApi] = useState<ApiPromise>();
@@ -90,6 +91,9 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 	const FEATURE_RELEASE_DATE = dayjs('2023-06-12').toDate(); // Date from which we are sending custom username flag on web3 sign up.
 
 	const fetchUsername = async (isOnclick:boolean) => {
+		if (isVoterAddress) {
+			return;
+		}
 		const substrateAddress = getSubstrateAddress(address);
 
 		if (substrateAddress) {

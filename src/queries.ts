@@ -914,6 +914,11 @@ query getAllianceLatestActivity($limit: Int = 10, $offset: Int = 0) {
     callData {
       method
     }
+    statusHistory {
+      block
+      status
+      timestamp
+    }
   }
   proposalsConnection(orderBy: createdAt_DESC) {
     totalCount

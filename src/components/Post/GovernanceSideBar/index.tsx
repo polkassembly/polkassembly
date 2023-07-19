@@ -16,7 +16,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
 import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
-import { ProposalType, VoteType, getSubsquidProposalType } from '~src/global/proposalType';
+import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 import ExtensionNotDetected from '../../ExtensionNotDetected';
@@ -922,7 +922,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									<VotersList
 										className={className}
 										referendumId={onchainId as number}
-										voteType={proposalType === ProposalType.REFERENDUMS?VoteType.REFERENDUM: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS? VoteType.FELLOWSHIP: VoteType.REFERENDUM_V2}
+										voteType={getVotingTypeFromProposalType(proposalType)}
 									/>
 								</Modal>
 							}

@@ -4,10 +4,10 @@
 
 import '@polkadot/api-augment';
 
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ApiPromise, ScProvider, WsProvider } from '@polkadot/api';
 import React, { useEffect, useState } from 'react';
+import * as Sc from '@substrate/connect';
 import { chainProperties, network } from 'src/global/networkConstants';
-
 import { typesBundleGenshiro } from '../typesBundle/typeBundleGenshiro';
 import { typesBundleCrust } from '../typesBundle/typesBundleCrust';
 import { typesBundleEquilibrium } from '../typesBundle/typesBundleEquilibrium';
@@ -16,6 +16,14 @@ import { NotificationStatus } from '~src/types';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { dropdownLabel } from '~src/ui-components/RPCDropdown';
 import { typesBundle } from '@kiltprotocol/type-definitions';
+import { WellKnownChain } from '@substrate/connect';
+
+export const relaySpecs: Record<string, string> = {
+	kusama: WellKnownChain.ksmcc3,
+	polkadot: WellKnownChain.polkadot,
+	rococo: WellKnownChain.rococo_v2_2,
+	westend: WellKnownChain.westend2
+};
 
 export interface ApiContextType {
 	api: ApiPromise | undefined;
@@ -46,6 +54,9 @@ export function ApiContextProvider(
 	const [relayApiReady, setRelayApiReady] = useState(false);
 	const [isApiLoading, setIsApiLoading] = useState(false);
 	const [wsProvider, setWsProvider] = useState<string>(props.network ? chainProperties?.[props.network]?.rpcEndpoint : '');
+	const [lightProvider, setLightProvider] = useState<any>('');
+
+	let provider: any;
 
 	useEffect(() => {
 		if (props.network === network.COLLECTIVES) {
@@ -77,7 +88,13 @@ export function ApiContextProvider(
 
 	useEffect(() => {
 		if (!wsProvider && !props.network) return;
-		const provider = new WsProvider(wsProvider || chainProperties?.[props.network!]?.rpcEndpoint);
+		if(wsProvider.startsWith('light://substrate-connect/')) {
+			console.log('light client = ', wsProvider);
+			provider = new ScProvider(Sc, relaySpecs[props.network || '']);
+			setLightProvider(provider);
+		}else{
+			provider = new WsProvider(wsProvider || chainProperties?.[props.network!]?.rpcEndpoint);
+		}
 		setApiReady(false);
 		setApi(undefined);
 		let api = undefined;
@@ -101,6 +118,14 @@ export function ApiContextProvider(
 
 	useEffect(() => {
 		if (api) {
+			if (lightProvider){
+				const c = async () => {
+					if (lightProvider && lightProvider.connect && !lightProvider.isConnected){
+						await lightProvider.connect();
+					}
+				};
+				c();
+			}
 			setIsApiLoading(true);
 			const timer = setTimeout(async () => {
 				queueNotification({
@@ -124,6 +149,9 @@ export function ApiContextProvider(
 				});
 				setIsApiLoading(false);
 				await api.disconnect();
+				if (lightProvider){
+					await lightProvider.disconnect();
+				}
 				localStorage.removeItem('tracks');
 				if (props.network) {
 					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
@@ -157,6 +185,9 @@ export function ApiContextProvider(
 					});
 					setIsApiLoading(false);
 					await api.disconnect();
+					if (lightProvider){
+						await lightProvider.disconnect();
+					}
 					console.error(error);
 					localStorage.removeItem('tracks');
 					if (props.network) {

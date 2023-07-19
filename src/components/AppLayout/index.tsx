@@ -347,12 +347,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	useEffect(() => {
-		const isGov2Type = getCurrGovType(router.pathname, router.query, govType, network);
+		const checkGovType = getCurrGovType(router.pathname, router.query, govType, network);
 
 		setUserDetailsContextState((prev: UserDetailsContextType) => {
 			return{
 				...prev,
-				govType: isGov2Type
+				govType: checkGovType
 			};
 		});
 	// eslint-disable-next-line react-hooks/exhaustive-deps

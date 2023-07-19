@@ -7,7 +7,7 @@ import 'dayjs-init';
 import { Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
-import { FC, useEffect , useState } from 'react';
+import { FC, useEffect } from 'react';
 import SEOHead from 'src/global/SEOHead';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -31,7 +31,6 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import Gov2LatestActivity from '~src/components/Gov2Home/Gov2LatestActivity';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import Script from 'next/script';
-import AiBot from '~src/components/AiBot/AiBot';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -148,9 +147,6 @@ const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOver
 const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	const { setNetwork } = useNetworkContext();
 
-	const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
-	const [floatButtonOpen , setFloatButtonOpen] = useState(false);
-
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -169,14 +165,6 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					gtag('config', ${chainProperties[network].gTag});
 				`}
 			</Script></> : null}
-
-			<Script id='ai-bot-script'>
-				{'window.DocsBotAI=window.DocsBotAI||{ },DocsBotAI.init=function(c){return new Promise(function(e,o){var t=document.createElement("Script");t.type="text/javascript",t.async=!0,t.src="https://widget.docsbot.ai/chat.js";var n=document.getElementsByTagName("Script")[0];n.parentNode.insertBefore(t,n),t.addEventListener("load",function(){window.DocsBotAI.mount({ id: c.id, supportCallback: c.supportCallback, identify: c.identify });var t;t=function(n){return new Promise(function(e){if(document.querySelector(n))return e(document.querySelector(n));var o=new MutationObserver(function(t){document.querySelector(n) && (e(document.querySelector(n)), o.disconnect())});o.observe(document.body,{childList:!0,subtree:!0})})},t&&t("#docsbotai-root").then(e).catch(o)}),t.addEventListener("error",function(t){o(t.message)})})};'}
-			</Script>
-
-			<Script id='ai-bot-init'>
-				{'DocsBotAI.init({id: "X6zGLB8jx6moWVb6L5S9/D7XT9ksDuTZCvdf99KSW"});'}
-			</Script>
 
 			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network}/>
 			<main>
@@ -211,7 +199,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 						<News twitter={networkSocialsData?.data?.twitter || ''} />
 					</div>
 				</div>
-				<AiBot isAIChatBotOpen={isAIChatBotOpen} setIsAIChatBotOpen={setIsAIChatBotOpen} floatButtonOpen={floatButtonOpen} setFloatButtonOpen={setFloatButtonOpen} />
+				{/* <AiBot isAIChatBotOpen={isAIChatBotOpen} setIsAIChatBotOpen={setIsAIChatBotOpen} floatButtonOpen={floatButtonOpen} setFloatButtonOpen={setFloatButtonOpen} /> */}
 			</main>
 		</>
 	);

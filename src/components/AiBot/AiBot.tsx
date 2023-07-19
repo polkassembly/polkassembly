@@ -18,6 +18,7 @@ import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 import { useNetworkContext } from '~src/context';
 import { network as globalNework } from '~src/global/networkConstants';
+import Script from 'next/script';
 
 interface IAiChatbotProps {
 	floatButtonOpen: boolean;
@@ -56,6 +57,9 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 			docsBotElement.style.display = 'none';
 		}, 600);
 
+		if(localStorage.getItem('animationKey')){
+			setAnimationState('hidden');
+		}
 		return () => clearInterval(interval);
 	}, []);
 
@@ -64,6 +68,8 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 			if ((window as any).DocsBotAI.isChatbotOpen) {
 				(window as any).DocsBotAI.close();
 			}
+			setFloatButtonOpen(false);
+			setGrillChat(false);
 		};
 
 		router.events.on('routeChangeStart', handleRouteChange);
@@ -105,7 +111,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				</div>
 			},
 			{
-				component: <div className='ml-[-37px] flex justify-center align-middle text-[#485F7D] hover:text-[#243A57] hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+				component: <div className='ml-[-34px] flex justify-center align-middle text-[#485F7D] hover:text-[#243A57] hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 					onClick={() => {
 						if (!isAIChatBotOpen) setGrillChat(!grillChat);
 					}}
@@ -118,7 +124,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				component: <a href='https://polkassembly.hellonext.co/'
 					target='_blank'
 					rel='noreferrer'
-					className='text-[#485F7D] hover:text-[#243A57] ml-[-37px]'>
+					className='text-[#485F7D] hover:text-[#243A57] ml-[-34px]'>
 					<div className='flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px]  rounded-[8px] cursor-pointer'>
 						<CautionIcon className='cursor-pointer ml-[-105px] mt-[5px]' />
 						<p className='ml-4 mt-[10px] mb-[12px] font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p>
@@ -163,6 +169,15 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 
 	return (
 		<>
+			{/* Script for AI Bot */}
+			<Script id='ai-bot-script'>
+				{'window.DocsBotAI=window.DocsBotAI||{ },DocsBotAI.init=function(c){return new Promise(function(e,o){var t=document.createElement("Script");t.type="text/javascript",t.async=!0,t.src="https://widget.docsbot.ai/chat.js";var n=document.getElementsByTagName("Script")[0];n.parentNode.insertBefore(t,n),t.addEventListener("load",function(){window.DocsBotAI.mount({ id: c.id, supportCallback: c.supportCallback, identify: c.identify });var t;t=function(n){return new Promise(function(e){if(document.querySelector(n))return e(document.querySelector(n));var o=new MutationObserver(function(t){document.querySelector(n) && (e(document.querySelector(n)), o.disconnect())});o.observe(document.body,{childList:!0,subtree:!0})})},t&&t("#docsbotai-root").then(e).catch(o)}),t.addEventListener("error",function(t){o(t.message)})})};'}
+			</Script>
+
+			<Script id='ai-bot-init'>
+				{'DocsBotAI.init({id: "X6zGLB8jx6moWVb6L5S9/D7XT9ksDuTZCvdf99KSW"});'}
+			</Script>
+
 			<div className={`wave-effect ${animationState}`} ></div>
 
 			<FloatButton.Group
@@ -176,6 +191,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 						onClick={() => {
 							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 500);
 							setAnimationState('hidden');
+							localStorage.setItem('animationKey','true');
 						}}
 					>
 						<FabButton className='mt-1' />
@@ -185,7 +201,13 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					<Button
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
-						onClick={() => { setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 500); if ((window as any).DocsBotAI.isChatbotOpen) { (window as any).DocsBotAI.close(); setIsAIChatBotOpen(false); } setGrillChat(false); }}><CloseWhite className='mt-1' />
+						onClick={() => { setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 500);
+							(window as any).DocsBotAI.close();
+							setIsAIChatBotOpen(false);
+							setGrillChat(false);
+						}
+						}>
+						<CloseWhite className='mt-1' />
 					</Button>
 				}
 				open={floatButtonOpen}
@@ -227,8 +249,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	);
 };
 
-{/* */ }
-
 export default styled(AiBot)`
 
 
@@ -251,8 +271,5 @@ width:55px !important;
 }
 .ant-spin-container{
 	padding: 0px 23px;
-}
-.ant-list{
-	background-color:red ;
 }
 `;

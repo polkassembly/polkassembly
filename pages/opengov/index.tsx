@@ -9,7 +9,7 @@ import { getLatestActivityAllPosts } from 'pages/api/v1/latest-activity/all-post
 import { getLatestActivityOffChainPosts } from 'pages/api/v1/latest-activity/off-chain-posts';
 import { getLatestActivityOnChainPosts } from 'pages/api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Gov2LatestActivity from 'src/components/Gov2Home/Gov2LatestActivity';
 import AboutNetwork from 'src/components/Home/AboutNetwork';
 import News from 'src/components/Home/News';
@@ -22,9 +22,7 @@ import { EGovType, OffChainProposalType, ProposalType } from '~src/global/propos
 import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
-import Script from 'next/script';
 import styled from 'styled-components';
-import AiBot from '~src/components/AiBot/AiBot';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active /> ,
@@ -93,8 +91,8 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Props) => {
 	const { setNetwork } = useNetworkContext();
-	const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
-	const [floatButtonOpen , setFloatButtonOpen] = useState(false);
+	// const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
+	// const [floatButtonOpen , setFloatButtonOpen] = useState(false);
 
 	useEffect(() => {
 		setNetwork(network);
@@ -105,14 +103,6 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 
 	return (
 		<>
-			<Script id='ai-bot-script'>
-				{'window.DocsBotAI=window.DocsBotAI||{},DocsBotAI.init=function(c){return new Promise(function(e,o){var t=document.createElement("Script");t.type="text/javascript",t.async=!0,t.src="https://widget.docsbot.ai/chat.js";var n=document.getElementsByTagName("Script")[0];n.parentNode.insertBefore(t,n),t.addEventListener("load",function(){window.DocsBotAI.mount({ id: c.id, supportCallback: c.supportCallback, identify: c.identify });var t;t=function(n){return new Promise(function(e){if(document.querySelector(n))return e(document.querySelector(n));var o=new MutationObserver(function(t){document.querySelector(n) && (e(document.querySelector(n)), o.disconnect())});o.observe(document.body,{childList:!0,subtree:!0})})},t&&t("#docsbotai-root").then(e).catch(o)}),t.addEventListener("error",function(t){o(t.message)})})};'}
-			</Script>
-
-			<Script id='ai-bot-init'>
-				{'DocsBotAI.init({id: "X6zGLB8jx6moWVb6L5S9/D7XT9ksDuTZCvdf99KSW"});'}
-			</Script>
-
 			<SEOHead title='OpenGov' network={network}/>
 			<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
 			<div className="mt-6 mx-1">
@@ -137,7 +127,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 				</div>
 			</div>
 
-			<AiBot isAIChatBotOpen={isAIChatBotOpen} setIsAIChatBotOpen={setIsAIChatBotOpen} floatButtonOpen={floatButtonOpen} setFloatButtonOpen={setFloatButtonOpen} />
+			{/* <AiBot isAIChatBotOpen={isAIChatBotOpen} setIsAIChatBotOpen={setIsAIChatBotOpen} floatButtonOpen={floatButtonOpen} setFloatButtonOpen={setFloatButtonOpen} /> */}
 
 		</>
 	);

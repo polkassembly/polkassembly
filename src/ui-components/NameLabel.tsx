@@ -34,6 +34,7 @@ const NameLabel = ({ className, defaultAddress, username, disableIdenticon = fal
 					disableIdenticon={disableIdenticon}
 					clickable={clickable}
 					truncateUsername={truncateUsername}
+					isSubVisible={false}
 				/>
 			}
 		</div>

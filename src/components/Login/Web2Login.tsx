@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Button, Divider, Form , Input, Skeleton } from 'antd';
+import { Alert, Button, Divider, Form, Input, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 // import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -20,11 +20,12 @@ import LoginLogo from '~assets/icons/login-logo.svg';
 import { IAuthResponse } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TFALoginForm from './TFALoginForm';
+import { trackEvent } from 'analytics';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
 	loading: () => <div className="flex flex-col mt-6 bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
 		<Skeleton className='mt-8' active />
-	</div> ,
+	</div>,
 	ssr: false
 });
 
@@ -39,10 +40,10 @@ interface Props {
 	onWalletSelect: (wallet: Wallet) => void;
 	walletError: string | undefined;
 	isModal?: boolean;
-	setLoginOpen?: (pre: boolean)=> void
-	setSignupOpen?: (pre: boolean)=> void;
-  isDelegation?: boolean;
-  className?: string;
+	setLoginOpen?: (pre: boolean) => void
+	setSignupOpen?: (pre: boolean) => void;
+	isDelegation?: boolean;
+	className?: string;
 }
 const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation }) => {
 	const { username } = validation;
@@ -53,7 +54,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
 	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
 
-	const getWallet=() => {
+	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(Object.keys(injectedWindow?.injectedWeb3 || {}));
 	};
@@ -61,26 +62,29 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	const handleSubmitForm = async (data: any) => {
 		const { username, password } = data;
 
-		if(username && password) {
+		if (username && password) {
 			setLoading(true);
-			const { data , error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/login', { password, username });
-			if(error || !data) {
+			const { data, error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/login', { password, username });
+			if (error || !data) {
 				setError(error || 'Login failed. Please try again later.');
+				trackEvent('Login', 'Failed Login', 'Login');
 				setLoading(false);
 				return;
 			}
 
 			if (data?.token) {
 				handleTokenChange(data.token, currentUser);
-				if(isModal){
+				if (isModal) {
 					setLoading(false);
 					setLoginOpen && setLoginOpen(false);
 					return;
 				}
+				trackEvent('Login', 'Successful Login', 'Login');
 				router.back();
-			}else if(data?.isTFAEnabled) {
-				if(!data?.tfa_token) {
+			} else if (data?.isTFAEnabled) {
+				if (!data?.tfa_token) {
 					setError(error || 'TFA token missing. Please try again.');
+					trackEvent('Login', 'Failed Login', 'Login');
 					setLoading(false);
 					return;
 				}
@@ -92,16 +96,16 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 
 	const handleSubmitAuthCode = async (formData: any) => {
 		const { authCode } = formData;
-		if(isNaN(authCode)) return;
+		if (isNaN(authCode)) return;
 		setLoading(true);
 
-		const { data , error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/2fa/validate', {
+		const { data, error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/2fa/validate', {
 			auth_code: String(authCode), //use string for if it starts with 0
 			tfa_token: authResponse.tfa_token,
 			user_id: Number(authResponse.user_id)
 		});
 
-		if(error || !data) {
+		if (error || !data) {
 			setError(error || 'Login failed. Please try again later.');
 			setLoading(false);
 			return;
@@ -110,7 +114,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 		if (data?.token) {
 			setError('');
 			handleTokenChange(data.token, currentUser);
-			if(isModal){
+			if (isModal) {
 				setLoading(false);
 				setAuthResponse(initAuthResponse);
 				setLoginOpen?.(false);
@@ -120,11 +124,12 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 		}
 	};
 
-	const handleClick=() => {
-		if(isModal && setSignupOpen && setLoginOpen){
+	const handleClick = () => {
+		if (isModal && setSignupOpen && setLoginOpen) {
 			setSignupOpen(true);
-			setLoginOpen(false);}
-		else{
+			setLoginOpen(false);
+		}
+		else {
 			router.push('/signup');
 		}
 	};
@@ -146,7 +151,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 				{walletError && <Alert message={walletError} type="error" />}
 				{authResponse.isTFAEnabled ?
 					<TFALoginForm
-						onBack={() => {setAuthResponse(initAuthResponse); setError(''); }}
+						onBack={() => { setAuthResponse(initAuthResponse); setError(''); }}
 						onSubmit={handleSubmitAuthCode}
 						error={error || ''}
 						loading={loading}
@@ -160,7 +165,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								className="text-base text-lightBlue "
 								htmlFor="username"
 							>
-							Enter Username or Email
+								Enter Username or Email
 							</label>
 							<Form.Item
 								name="username"
@@ -193,7 +198,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								className="text-base text-lightBlue"
 								htmlFor="password"
 							>
-							Enter Password
+								Enter Password
 							</label>
 							<Form.Item
 								name="password"
@@ -206,7 +211,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 									id="password" />
 							</Form.Item>
 							<div className="text-right text-pink_primary mt-[-20px]">
-								<div className='cursor-pointer' onClick={() => {isModal && setLoginOpen && setLoginOpen(false); router.push('/request-reset-password');}}>Forgot Password?</div>
+								<div className='cursor-pointer' onClick={() => { isModal && setLoginOpen && setLoginOpen(false); router.push('/request-reset-password'); }}>Forgot Password?</div>
 							</div>
 						</div>
 
@@ -217,7 +222,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								size="large"
 								className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
 							>
-							Login
+								Login
 							</Button>
 						</div>
 

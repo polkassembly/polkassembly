@@ -18,6 +18,7 @@ import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
 import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
+import { initGA, logPageView } from '../analytics';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,
@@ -51,14 +52,24 @@ export default function App({ Component, pageProps }: AppProps) {
 	}, [router.isReady]);
 
 	useEffect(() => {
-		if(!global?.window) return;
+		if (!global?.window) return;
 		const networkStr = getNetwork();
 		setNetwork(networkStr);
 	}, []);
 
-	const SplashLoader = () => <div style={{ background:'#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
+	useEffect(() => {
+		// @ts-ignore
+		if (!window.GA_INITIALIZED) {
+			initGA();
+			// @ts-ignore
+			window.GA_INITIALIZED = true;
+		}
+		logPageView();
+	}, []);
+
+	const SplashLoader = () => <div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
 		<Image
-			style={{ left:'calc(50vw - 16px)', position:'absolute', top:'calc(50vh - 16px)' }}
+			style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}
 			width={32}
 			height={32}
 			src='/favicon.ico'
@@ -72,7 +83,7 @@ export default function App({ Component, pageProps }: AppProps) {
 				<ApiContextProvider network={network}>
 					<NetworkContextProvider initialNetwork={network}>
 						<>
-							{ showSplashScreen && <SplashLoader /> }
+							{showSplashScreen && <SplashLoader />}
 							<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
 								<NextNProgress color="#E5007A" />
 								<CMDK />

@@ -43,7 +43,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 		<>
 			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 min-h-[120px] sm:flex xs:hidden ${className}`}>
 				<span className='font-medium text-center flex-none sm:w-[120px] text-bodyBlue sm:mt-2'>#{post_id}</span>
-				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-2">
+				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-[6px]">
 					<OnchainCreationLabel address={address} topic={topic} username={username} />
 					<div className="hidden sm:mt-2 sm:mb-1 sm:flex sm:justify-between lg:items-start lg:flex-row">
 						<div className='mt-3 lg:mt-1'>
@@ -53,7 +53,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						</div>
 						<div className='flex justify-between items-center'>
 							{relativeCreatedAt &&
-							<div className='flex items-center text-lightBlue lg:hidden'>
+							<div className='flex items-center text-lightBlue lg:hidden text-sm'>
 								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 							</div>}
 							{
@@ -90,7 +90,8 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							</div>
 
 							<div className='xs:hidden sm:flex items-center'>
-								<NewChatIcon className='mr-1' style={{ color: '#485F7D' }} /> {commentsCount}
+								<NewChatIcon className='mr-1' style={{ color: '#485F7D' }} />
+								<span className=' text-lightBlue'>{commentsCount}</span>
 							</div>
 							<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 
@@ -104,7 +105,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							</>}
 							{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #485F7D' }} />}
 							{relativeCreatedAt && <>
-								<div className='hidden text-lightBlue lg:flex items-center'>
+								<div className='hidden text-lightBlue lg:flex items-center text-sm'>
 									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 								</div>
 							</>}
@@ -175,7 +176,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 							<OnchainCreationLabel address={address} username={username} />
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
 							{relativeCreatedAt && <>
-								<div className='xs:flex xs:text-lightBlue xs:-mt-0.5 mt-0 lg:flex items-center'>
+								<div className='xs:flex xs:text-lightBlue xs:-mt-0.5 mt-0 lg:flex items-center text-sm'>
 									<ClockCircleOutlined className='mr-1 mt-0' /> {relativeCreatedAt}
 								</div>
 							</>}

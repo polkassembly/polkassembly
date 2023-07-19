@@ -27,10 +27,11 @@ export interface IComment {
 	comment_reactions: IReactions;
 	username: string;
 	proposer?: string;
-  sentiment?:number;
-  comment_source?:'polkassembly' | 'subsquare';
-  history?: ICommentHistory[];
-  spam_users_count?:number;
+	sentiment?: number;
+	comment_source?: 'polkassembly' | 'subsquare';
+	history?: ICommentHistory[];
+	spam_users_count?: number;
+	is_custom_username?: boolean;
 }
 
 interface ICommentProps {
@@ -110,6 +111,8 @@ export const Comment: FC<ICommentProps> = (props) => {
 					prevSentiment={sentiment||0}
 					isSubsquareUser={comment_source==='subsquare'}
 					userName = {comment?.username}
+					proposer={comment?.proposer}
+					is_custom_username={comment?.is_custom_username}
 				/>
 				{replies && replies.length > 0 && <Replies className='comment-content' commentId={id} repliesArr={replies} />}
 			</div>

@@ -101,7 +101,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	const url = window.location.href;
 	const commentId = url.split('#')[1];
-
 	const handleTimelineClick = (e: React.MouseEvent<HTMLElement>, link: { title: React.ReactNode; href: string; }) => {
 		if (link.href === '#') {
 			e.preventDefault();
@@ -235,7 +234,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		if(!currentTimeline){
 			return;
 		}
-		// console.log(currentTimeline, 'Again--');
 		const commentsPayload = Object.assign({}, comments);
 		for(const data of timelines){
 			setCurrentTimeline(timelines[data.id]);

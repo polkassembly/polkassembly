@@ -18,6 +18,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
+import { IComment } from './Comment/Comment';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -81,6 +82,33 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			});
 		}
 
+		const handleAddComments = (commentsWithTimeline:{[index:string]:Array<IComment>}) => {
+			const comments= Object.assign({}, commentsWithTimeline);
+			comments[postIndex] = [...comments[postIndex], {
+				comment_reactions: {
+					'👍': {
+						count: 0,
+						usernames: []
+					},
+					'👎': {
+						count: 0,
+						usernames: []
+					}
+				},
+				content,
+				created_at: new Date(),
+				history: [],
+				id: data?.id || '',
+				profile: picture || '',
+				replies: [],
+				sentiment:isSentimentPost? sentiment : 0,
+				updated_at: new Date(),
+				user_id: id as any,
+				username: username || ''
+			}];
+			return comments;
+		};
+
 		if(data) {
 			setContent('');
 			form.resetFields();
@@ -94,28 +122,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			});
 			setPostData((prev) => ({
 				...prev,
-				comments: [...(prev?.comments? prev.comments: []), {
-					comment_reactions: {
-						'👍': {
-							count: 0,
-							usernames: []
-						},
-						'👎': {
-							count: 0,
-							usernames: []
-						}
-					},
-					content,
-					created_at: new Date(),
-					history: [],
-					id: data.id,
-					profile: picture || '',
-					replies: [],
-					sentiment:isSentimentPost? sentiment : 0,
-					updated_at: new Date(),
-					user_id: id as any,
-					username: username || ''
-				}]
+				comments: handleAddComments(prev.comments)
 			}));
 		}
 		setLoading(false);

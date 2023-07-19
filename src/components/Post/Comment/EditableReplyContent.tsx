@@ -18,7 +18,6 @@ import { usePostDataContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ReportButton from '../ActionsBar/ReportButton';
-import { IComment } from './Comment';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 
 interface Props {
@@ -107,9 +106,9 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			global.window.localStorage.removeItem(editReplyKey(replyId));
 			form.setFieldValue('content', '');
 			setPostData((prev) => {
-				let comments: IComment[] = [];
-				if (prev?.comments && Array.isArray(prev.comments)) {
-					comments = prev.comments.map((comment) => {
+				const comments:any = Object.assign({}, prev.comments);
+				if (prev?.comments?.[postIndex]) {
+					comments[postIndex] = prev.comments[postIndex].map((comment) => {
 						if (comment.id === commentId) {
 							if (comment?.replies && Array.isArray(comment.replies)) {
 								comment.replies = comment.replies.map((reply) => {
@@ -169,9 +168,9 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 				setError('');
 				global.window.localStorage.removeItem(newReplyKey(commentId));
 				setPostData((prev) => {
-					let comments: IComment[] = [];
-					if (prev?.comments && Array.isArray(prev.comments)) {
-						comments = prev.comments.map((comment) => {
+					const comments:any = Object.assign({}, prev.comments);
+					if (prev?.comments?.[postIndex]) {
+						comments[postIndex] = prev.comments[postIndex].map((comment) => {
 							if (comment.id === commentId) {
 								if (comment?.replies && Array.isArray(comment.replies)) {
 									comment.replies = [...comment.replies,{
@@ -227,9 +226,9 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 
 		if (data) {
 			setPostData((prev) => {
-				let comments: IComment[] = [];
-				if (prev?.comments && Array.isArray(prev.comments)) {
-					comments = prev.comments.map((comment) => {
+				const comments:any = Object.assign({}, prev.comments);
+				if (prev?.comments?.[postIndex]) {
+					comments[postIndex] = prev.comments[postIndex].map((comment) => {
 						if (comment.id === commentId) {
 							comment.replies = comment?.replies?.filter((reply) => (reply.id !== replyId)) || [];
 						}

@@ -58,7 +58,7 @@ interface ICommentsContainerProps {
 	id: number | null | undefined;
 }
 
-interface ITimeline {
+export interface ITimeline {
 	date: Dayjs;
 	status: string;
 	id: number;
@@ -83,17 +83,17 @@ const COMMENT_SIZE = 5;
 
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
-	const { postData: { postType, timeline, created_at } } = usePostDataContext();
+	const { postData: { comments:initialComments, postType, timeline, created_at, currentTimeline:initialCurrentTimeline } } = usePostDataContext();
 	const targetOffset = 10;
 	const [timelines, setTimelines] = useState<ITimeline[]>([]);
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [filteredSentiment, setFilteredSentiment] = useState<IFilteredSentiment>({ active: false, sentiment: 0 });
-	const [comments, setComments] = useState<{[index:string]:Array<IComment>}>({});
+	const [comments, setComments] = useState<{[index:string]:Array<IComment>}>(initialComments);
 	const [showOverallSentiment, setShowOverallSentiment] = useState<boolean>(true);
 	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
 	const [loading, setLoading] = useState(true);
-	const [currentTimeline, setCurrentTimeline] = useState<ITimeline | null>(null);
+	const [currentTimeline, setCurrentTimeline] = useState<ITimeline | null>(initialCurrentTimeline || null);
 	const [allCommentsLength, setAllCommentsLength] = useState<number>(0);
 	const { network } = useNetworkContext();
 	const allComments = Object.values(comments)?.flat() || [];
@@ -101,6 +101,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	const url = window.location.href;
 	const commentId = url.split('#')[1];
+
 	const handleTimelineClick = (e: React.MouseEvent<HTMLElement>, link: { title: React.ReactNode; href: string; }) => {
 		if (link.href === '#') {
 			e.preventDefault();
@@ -174,7 +175,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [comments]);
 
-	const getComments = async () => {
+	const setTimeline = async () => {
 		if(!timeline){
 			setLoading(false);
 			return;
@@ -201,11 +202,18 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			setTimelines(timelines);
 			setAllCommentsLength(allCount);
 		}
-
-		for(const data of timelines){
-			let res: any;
-			if(commentId){
-				res = await getCommentsWithId(data.index.toString(), commentId, network, COMMENT_SIZE, data.type);
+		if(commentId){
+			if(!currentTimeline){
+				return;
+			}
+			const comment = comments[currentTimeline.index].find(a => {
+				return a.id === commentId;
+			});
+			if(comment){
+				return;
+			}
+			for(const data of timelines){
+				const res = await getCommentsWithId(data.index.toString(), commentId, network, COMMENT_SIZE, data.type);
 				const isCommentExit = res.comments.some((comment: { id: string; }) => {
 					return comment.id === commentId;
 				});
@@ -216,18 +224,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					break;
 				}
 			}
-			else{
-				const lastDoc = comments[data.index][comments[data.index].length-1]?.id;
-				res = await getPaginatedComments(data.index.toString(), lastDoc, network, COMMENT_SIZE, data.type);
-				comments[data.index] = [...comments[data.index], ...res.comments];
-				const timelinePayload = { ...data, firstCommentId: comments[data.index]?.[0]?.id || '' };
-				setCurrentTimeline(timelinePayload);
-				if(Object.values(comments).flat().length >= COMMENT_SIZE) {
-					break;
-				}
-			}
+			setComments(comments);
 		}
-		setComments(comments);
 		if(loading){
 			setLoading(false);
 		}
@@ -237,25 +235,18 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		if(!currentTimeline){
 			return;
 		}
+		// console.log(currentTimeline, 'Again--');
 		const commentsPayload = Object.assign({}, comments);
 		for(const data of timelines){
-			if(data.id <= currentTimeline.id){
-				const lastDoc = commentsPayload[currentTimeline.index][commentsPayload[data.index].length-1]?.id;
-				if(commentsPayload[currentTimeline.index].length < currentTimeline.commentsCount){
-					const res:any = await getPaginatedComments(currentTimeline.index.toString(), lastDoc, network, COMMENT_SIZE, currentTimeline.type);
-					commentsPayload[currentTimeline.index] = [...commentsPayload[currentTimeline.index], ...res.comments];
-				}
-				const timelineIndex = currentTimeline.id === timelines.length ? timelines.length-1 :currentTimeline.id;
-				setCurrentTimeline(timelines[timelineIndex]);
-				break;
-			}
+			setCurrentTimeline(timelines[data.id]);
+			const timeline = timelines.find(a => a.index === data.index);
 			const lastDoc = commentsPayload[data.index][commentsPayload[data.index].length-1]?.id;
-			const res:any = await getPaginatedComments(data.index.toString(), lastDoc, network, COMMENT_SIZE, data.type);
-			commentsPayload[data.index] = [...commentsPayload[data.index], ...res.comments];
-			const timelinePayload = { ...data, firstCommentId: commentsPayload[data.index]?.[0]?.id || '' };
-			setCurrentTimeline(timelinePayload);
-			if(Object.values(commentsPayload).flat().length >= COMMENT_SIZE) {
-				break;
+			if(timeline && commentsPayload[data.index].length < timeline.commentsCount){
+				const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, COMMENT_SIZE, timeline.type);
+				commentsPayload[timeline.index] = [...commentsPayload[timeline.index], ...res.comments];
+				if(res.comments.length === COMMENT_SIZE){
+					break;
+				}
 			}
 		}
 		setComments(commentsPayload);
@@ -289,9 +280,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if(allComments.length === 0){
-			getComments();
-		}
+		setTimeline();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 

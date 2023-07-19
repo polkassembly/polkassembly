@@ -50,7 +50,7 @@ export const getPostComments = async ({ postId, network, postType, pageSize, las
 
 const handler: NextApiHandler<ITimelineComments | { error: MessageType | string }> = async (req, res) => {
 	const { postId, postType, lastDocumentId, pageSize } = req.body;
-	if(!postId || !postType || !pageSize || isNaN(pageSize)) return res.status(400).json({ error: 'Missing parameters in request body' });
+	if(!postId || !postType) return res.status(400).json({ error: 'Missing parameters in request body' });
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });

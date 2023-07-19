@@ -27,6 +27,7 @@ import { getSubsquareCommentsFromFirebase } from './comments/getOnlySubsquareCom
 import { getSubSquareComments } from './comments/subsquare-comments';
 import { updateComments } from './comments/updateComments';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
+import { getInitialComments } from './comments/getInitialComments';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -75,7 +76,8 @@ export interface IReactions {
 export interface IPostResponse {
 	post_reactions: IReactions;
 	timeline: any[];
-	comments: any[];
+	comments: any;
+	currentTimeline?:any;
 	content: string;
 	end?: number;
 	delay?: number;
@@ -869,6 +871,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		});
 
 		await updateComments(postId as string, network, proposalType as ProposalType, comments);
+
+		// get initial comments
+		const initialCommentsData = await getInitialComments(post.timeline, network);
+		post.comments = initialCommentsData?.comments;
+		post.currentTimeline = initialCommentsData?.currentTimeline;
 
 		// Post Reactions
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();

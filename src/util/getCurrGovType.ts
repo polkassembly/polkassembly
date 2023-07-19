@@ -16,7 +16,7 @@ export const gov2Routes = [
 	'member-referenda',
 	'delegation'
 ];
-const combineRoutes = [
+const commonRoutes = [
 	'discussions',
 	'calender',
 	'user',
@@ -28,7 +28,7 @@ for (const trackName of Object.keys(networkTrackInfo.kusama)) {
 	gov2Routes.push(trackName.split(/(?=[A-Z])/).join('-').toLowerCase());
 }
 
-export default function checkGov2Route(pathname: string, query?: ParsedUrlQuery, govType?: EGovType, network?: string): EGovType {
+export default function getCurrGovType(pathname: string, query?: ParsedUrlQuery, govType?: EGovType, network?: string): EGovType {
 	if (network === 'collectives') {
 		return EGovType.GOV1;
 	}
@@ -42,7 +42,7 @@ export default function checkGov2Route(pathname: string, query?: ParsedUrlQuery,
 
 	if(isGov2){
 		return EGovType.OPEN_GOV;
-	}else if(govType && !isGov2 && combineRoutes.includes(pathname.split('/')[1]) ){
+	}else if(govType && !isGov2 && commonRoutes.includes(pathname.split('/')[1]) ){
 		return govType;
 	}
 	return EGovType.GOV1;

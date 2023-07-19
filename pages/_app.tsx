@@ -20,7 +20,7 @@ import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
 
 export const poppins = Poppins({
-	// adjustFontFallback: false,
+	adjustFontFallback: false,
 	display: 'swap',
 	style: ['italic', 'normal'],
 	subsets: ['latin'],

@@ -14,7 +14,7 @@ import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
 import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon } from 'src/ui-components/CustomIcons';
-import checkGov2Route from 'src/util/checkGov2Route';
+import getCurrGovType from '~src/util/getCurrGovType';
 import styled from 'styled-components';
 
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -347,12 +347,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	useEffect(() => {
-		const isGov2Route = checkGov2Route(router.pathname, router.query, govType, network);
+		const isGov2Type = getCurrGovType(router.pathname, router.query, govType, network);
 
 		setUserDetailsContextState((prev: UserDetailsContextType) => {
 			return{
 				...prev,
-				govType: isGov2Route
+				govType: isGov2Type
 			};
 		});
 	// eslint-disable-next-line react-hooks/exhaustive-deps

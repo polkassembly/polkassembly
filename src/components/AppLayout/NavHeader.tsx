@@ -47,11 +47,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 	const [openSignup,setSignupOpen]=useState<boolean>(false);
 	const isClicked = useRef(false);
 
-	const setGovTypeToContext = (path: EGovType) => {
+	const setGovTypeToContext = (govType: EGovType) => {
 		setUserDetailsContextState((prev: UserDetailsContextType) => {
 			return {
 				...prev,
-				govType: path
+				govType
 			};
 		});
 	};

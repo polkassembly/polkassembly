@@ -12,10 +12,11 @@ import BalanceInput from 'src/ui-components/BalanceInput';
 import Loader from 'src/ui-components/Loader';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import LoginToEndorse from '../LoginToVoteOrEndorse';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
+import executeTx from '~src/util/executeTx';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[]
@@ -44,6 +45,7 @@ const EndorseTip = ({
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
 	const { isLoggedOut } = useUserDetailsContext();
+	const { network } = useNetworkContext();
 
 	useEffect(() => {
 		// it will iterate through all accounts
@@ -93,6 +95,22 @@ const EndorseTip = ({
 
 	const onValueChange = (balance: BN) => setEndorseValue(balance);
 
+	const onSuccess = () => {
+		queueNotification({
+			header: 'Success!',
+			message: `Endorse tip #${tipHash} successful.`,
+			status: NotificationStatus.SUCCESS
+		});
+		setLoadingStatus({ isLoading: false, message: '' });
+	};
+	const onFailed = (message: string) => {
+		queueNotification({
+			header: 'Failed!',
+			message,
+			status: NotificationStatus.ERROR
+		});
+	};
+
 	const handleEndorse = async () => {
 		if (!tipHash) {
 			console.error('tipHash not set');
@@ -109,32 +127,8 @@ const EndorseTip = ({
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
 		const endorse = api.tx.treasury.tip(tipHash, endorseValue);
+		await executeTx({ address, api, errorMessageFallback: 'Transaction failed.', network, onFailed, onSuccess, tx: endorse });
 
-		endorse.signAndSend(address, ({ status }) => {
-			if (status.isInBlock) {
-				queueNotification({
-					header: 'Success!',
-					message: `Endorse tip #${tipHash} successful.`,
-					status: NotificationStatus.SUCCESS
-				});
-				setLoadingStatus({ isLoading: false, message: '' });
-				console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-			} else {
-				if (status.isBroadcast){
-					setLoadingStatus({ isLoading: true, message: 'Broadcasting the endorsement' });
-				}
-				console.log(`Current status: ${status.type}`);
-			}
-		}).catch((error) => {
-			setLoadingStatus({ isLoading: false, message: '' });
-			console.log(':( transaction failed');
-			console.error('ERROR:', error);
-			queueNotification({
-				header: 'Failed!',
-				message: error.message,
-				status: NotificationStatus.ERROR
-			});
-		});
 	};
 
 	const GetAccountsButton = () =>

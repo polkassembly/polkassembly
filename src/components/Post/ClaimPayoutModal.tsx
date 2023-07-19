@@ -12,6 +12,8 @@ import { APPNAME } from 'src/global/appName';
 import { NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
+import { useNetworkContext } from '~src/context';
+import executeTx from '~src/util/executeTx';
 
 interface Props {
 	className?: string;
@@ -27,6 +29,7 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId } : Props) 
 	const [availableAccounts, setAvailableAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [extensionNotAvailable, setExtensionNotAvailable] = useState<boolean>(false);
 	const [selectedAddress, setSelectedAddress] = useState<string>('');
+	const { network } = useNetworkContext();
 
 	const getAccounts = async () => {
 		setIsLoading(true);
@@ -54,6 +57,26 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId } : Props) 
 		setSelectedAddress(address);
 	};
 
+	const onSuccess = () => {
+		queueNotification({
+			header: 'Success!',
+			message: 'Claim Payout successful.',
+			status: NotificationStatus.SUCCESS
+		});
+		setIsLoading(false);
+		setShowModal(false);
+	};
+
+	const onFailed = (message: string) => {
+		setIsLoading(false);
+		setShowModal(false);
+		queueNotification({
+			header: 'Payout Claim Failed!',
+			message,
+			status: NotificationStatus.ERROR
+		});
+	};
+
 	const handleSignAndSubmit = async () => {
 		if(!selectedAddress || !parentBountyId || !childBountyId || isLoading) return;
 
@@ -73,29 +96,14 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId } : Props) 
 
 		try {
 			const claim = api.tx.childBounties.claimChildBounty(parentBountyId, childBountyId);
-			claim.signAndSend(selectedAddress, ({ status }) => {
-				if (status.isInBlock) {
-					queueNotification({
-						header: 'Success!',
-						message: ' Claim Payout successful.',
-						status: NotificationStatus.SUCCESS
-					});
-					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-				} else {
-					console.log(`Current status: ${status.type}`);
-				}
-				setIsLoading(false);
-				setShowModal(false);
-			}).catch((error) => {
-				setIsLoading(false);
-				console.log(':( transaction failed');
-				console.error('ERROR:', error);
-				setShowModal(false);
-				queueNotification({
-					header: 'Payout Claim Failed!',
-					message: error.message,
-					status: NotificationStatus.ERROR
-				});
+			await executeTx({
+				address: selectedAddress,
+				api,
+				errorMessageFallback: 'Transaction failed.',
+				network,
+				onFailed,
+				onSuccess,
+				tx: claim
 			});
 		}
 		catch(error){

@@ -203,6 +203,14 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via IBP-GeoDNS2',
 				key: 'wss://rpc.dotters.network/polkadot'
+			},
+			{
+				label: 'via RadiumBlock',
+				key: 'wss://polkadot.public.curie.radiumblock.co/ws'
+			},
+			{
+				label: 'light client (experimental)',
+				key: 'light://substrate-connect/polkadot'
 			}
 		]
 	},
@@ -241,6 +249,14 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via IBP-GeoDNS2',
 				key: 'wss://rpc.dotters.network/kusama'
+			},
+			{
+				label: 'via RadiumBlock',
+				key: 'wss://kusama.public.curie.radiumblock.co/ws'
+			},
+			{
+				label: 'light client (experimental)',
+				key: 'light://substrate-connect/kusama'
 			}
 		]
 	},

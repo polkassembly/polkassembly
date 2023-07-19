@@ -15,6 +15,7 @@ import { HexString } from '@polkadot/util/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import CloseIcon from '~assets/icons/close.svg';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
+import { BN_HUNDRED } from '@polkadot/util';
 
 interface Props{
   className?: string;
@@ -65,7 +66,7 @@ const OpenGovProposals = ({ className }: Props) => {
 	const [content, setContent] = useState<string>('');
 	const [title, setTitle] = useState<string>('');
 	const [selectedTrack, setSelectedTrack] = useState('');
-	const [enactment, setEnactment] = useState<IEnactment>({ key: null , value: null });
+	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks , value: BN_HUNDRED });
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const [preimage, setPreimage] = useState<IPreimage | undefined>();
 	const [writeProposalForm] = Form.useForm();

@@ -170,7 +170,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 				{isDiscussionLinked && <>
 					<label className='text-lightBlue text-sm mb-1.5'>Link Discussion Post</label>
 					<Form.Item name='discussion_link' rules = {[{
-						message: 'Invalid Discussion link',
+						message: `Please add a valid discussion link for ${network} Network`,
 						validator(rule, value, callback) {
 							if (callback && isDiscussionLinkedValid(value)){
 								callback(rule?.message?.toString());

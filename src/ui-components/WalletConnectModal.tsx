@@ -56,7 +56,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [defaultWallets, setDefaultWallets] = useState<any>({});
-	const [wallet, setWallet] = useState<Wallet>();
+	const [wallet, setWallet] = useState<Wallet>(loginWallet as Wallet);
 	const [extensionOpen, setExtentionOpen] = useState<boolean>(false);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
@@ -307,7 +307,11 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 
 	useEffect(() => {
 		getWallet();
-		loginWallet !== null && getAccounts(loginWallet);
+
+		if(loginWallet !== null ){
+			setWallet(loginWallet);
+			getAccounts(loginWallet);
+		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
@@ -350,7 +354,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 					}
 				</div>
 
-				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message='For using delegation dashboard:' description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
+				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message={`For using ${connectedAddress ? 'Treasury proposal creation' : 'Delegation dashboard'}:`} description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
 				{Object.keys(defaultWallets || {}).length === 0 && !loading && <Alert message={connectedAddress ? 'Please install a wallet and create an address to start creating a proposal.' : 'Wallet extension not detected.'} description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
 
 				{

@@ -87,7 +87,6 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 						}
 					});
 				}
-				console.log(status);
 				const title = subsquidPost.callData?.method?.split('_').map((word:string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 				const singlePost = {
 					created_at: createdAt,

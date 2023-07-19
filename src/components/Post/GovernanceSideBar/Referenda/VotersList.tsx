@@ -18,6 +18,8 @@ import { votesSortOptions, votesSortValues } from '~src/global/sortOptions';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { network as AllNetworks } from '~src/global/networkConstants';
+import classNames from 'classnames';
 
 interface IVotersListProps {
 	className?: string;
@@ -141,8 +143,15 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				<div className='flex flex-col text-xs xl:text-sm xl:max-h-screen gap-y-1 overflow-y-auto px-0 text-sidebarBlue'>
 					<div className='flex text-xs items-center justify-between mb-9 font-semibold'>
 						<div className='w-[110px]'>Voter</div>
-						<div className='w-[60px]'><span className='hidden md:inline-block'>Amount</span><span className='inline-block md:hidden'>Amt.</span></div>
-						<div className='w-[70px]'>Conviction</div>
+						<div className={classNames('', {
+							'w-[100px]': network === AllNetworks.COLLECTIVES,
+							'w-[60px]': network !== AllNetworks.COLLECTIVES
+						})}><span className='hidden md:inline-block'>Amount</span><span className='inline-block md:hidden'>Amt.</span></div>
+						{
+							network !== AllNetworks.COLLECTIVES?
+								<div className='w-[70px]'>Conviction</div>
+								: null
+						}
 						<div className='w-[30px]'>Vote</div>
 					</div>
 
@@ -158,13 +167,25 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											<Address textClassName='w-[75px]' isSubVisible={false} displayInline={true} isShortenAddressLength={false} address={voteData?.voter} />
 										</div>}
 
-									<div className='w-[80px] max-w-[80px] overflow-ellipsis'>
-										{
-											formatUSDWithUnits(formatBnBalance(voteData?.decision === 'abstain'? voteData?.balance?.abstain || 0:voteData?.balance?.value || 0, { numberAfterComma: 1, withThousandDelimitor: false,withUnit: true }, network), 1)
-										}
-									</div>
+									{
+										network !== AllNetworks.COLLECTIVES?
+											<>
+												<div className='w-[80px] max-w-[80px] overflow-ellipsis'>
+													{
+														formatUSDWithUnits(formatBnBalance(voteData?.decision === 'abstain'? voteData?.balance?.abstain || 0:voteData?.balance?.value || 0, { numberAfterComma: 1, withThousandDelimitor: false,withUnit: true }, network), 1)
+													}
+												</div>
+												<div className='w-[50px] max-w-[50px] overflow-ellipsis'>{voteData.lockPeriod? `${voteData.lockPeriod}x${voteData?.isDelegated? '/d': ''}`: '-'}</div>
 
-									<div className='w-[50px] max-w-[50px] overflow-ellipsis'>{voteData.lockPeriod? `${voteData.lockPeriod}x${voteData?.isDelegated? '/d': ''}`: '-'}</div>
+											</>
+											: <>
+												<div className='w-[80px] max-w-[80px] overflow-ellipsis'>
+													{
+														voteData?.decision === 'abstain'? voteData?.balance?.abstain || 0:voteData?.balance?.value || 0
+													}
+												</div>
+											</>
+									}
 
 									{
 										voteData.decision === 'yes' ?

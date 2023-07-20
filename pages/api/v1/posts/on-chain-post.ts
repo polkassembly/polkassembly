@@ -34,7 +34,7 @@ export const getTimeline = (proposals: any, isStatus?: {
 }) => {
 	return proposals?.map((obj: any) => {
 		const statuses = obj?.statusHistory as { status: string }[];
-		if (obj.type === 'ReferendumV2') {
+		if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
 			const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');
 			if (index >= 0) {
 				const decidingIndex = statuses.findIndex((v) => v.status === 'Deciding');
@@ -686,6 +686,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		if(proposalType === ProposalType.ANNOUNCEMENT){
 			const proposal = postData.proposal;
+			const isStatus = {
+				swap: false
+			};
 			const proposalTimeline = getTimeline([
 				{
 					createdAt: proposal.createdAt,
@@ -694,12 +697,20 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					statusHistory: proposal.statusHistory,
 					type: proposal.type
 				}
-			]);
+			], isStatus);
 			post.timeline = [...proposalTimeline , ...post.timeline ];
+			if (isStatus.swap) {
+				if (post.status === 'DecisionDepositPlaced') {
+					post.status = 'Deciding';
+				}
+			}
 		}
 		if(proposalType === ProposalType.ALLIANCE_MOTION){
 			const announcement = postData.announcement;
-			if(announcement){
+			if (announcement) {
+				const isStatus = {
+					swap: false
+				};
 				const announcementTimeline = getTimeline([
 					{
 						createdAt: announcement.createdAt,
@@ -708,8 +719,13 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 						statusHistory: announcement.statusHistory,
 						type: announcement.type
 					}
-				]);
+				], isStatus);
 				post.timeline = [...post.timeline, ...announcementTimeline ];
+				if (isStatus.swap) {
+					if (post.status === 'DecisionDepositPlaced') {
+						post.status = 'Deciding';
+					}
+				}
 			}
 		}
 

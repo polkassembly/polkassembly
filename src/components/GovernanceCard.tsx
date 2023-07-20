@@ -117,7 +117,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								{requestedAmount > 100 ?
 									<span className='text-lightBlue text-sm font-medium sm:mr-[2.63rem]'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 									:
-									<span className='text-lightBlue text-sm font-medium sm:mr-20'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue text-sm font-medium sm:mr-[2.65rem]'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 								}
 							</div>
 						}

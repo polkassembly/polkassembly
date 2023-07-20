@@ -7,10 +7,25 @@ import { DeriveAccountFlags, DeriveAccountRegistration } from '@polkadot/api-der
 import { Tooltip } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
+import EmailIcon from '~assets/icons/email-icon.svg';
+import LegalIcon from '~assets/icons/legal-icon.svg';
+import JudgementIcon from '~assets/icons/judgement-icon.svg';
+import TwitterIcon from '~assets/icons/twitter-icon.svg';
+import WebIcon from '~assets/icons/web-icon.svg';
+import RiotIcon from '~assets/icons/riot-icon.svg';
+import ShareScreenIcon from '~assets/icons/screen-share-icon.svg';
+import PgpIcon from '~assets/icons/pgp-icon.svg';
+
+interface Props {
+	className?: string,
+	address: string,
+	identity?: DeriveAccountRegistration | null,
+	flags?: DeriveAccountFlags,
+	web3Name?: string
+}
 
 const StyledPopup = styled.div`
 font-size: sm;
-color: var(--grey_primary);
 list-style: none;
 padding: 1rem;
 
@@ -28,14 +43,6 @@ li {
 }
 `;
 
-interface Props {
-	className?: string,
-	address: string,
-	identity?: DeriveAccountRegistration | null,
-	flags?: DeriveAccountFlags,
-	web3Name?: string
-}
-
 const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props) => {
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
@@ -50,18 +57,71 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 	</span>;
 
 	const displayJudgements = JSON.stringify(judgements?.map(([,jud]) => jud.toString()));
-
-	const popupContent = <StyledPopup>
-		{identity?.legal && <li><span className='desc'>legal:</span>{identity.legal}</li>}
-		{identity?.email && <li><span className='desc'>email:</span>{identity.email}</li>}
-		{(identity?.judgements?.length || 0) > 0 && <li><span className='desc'>judgements:</span><span className='judgments'>{displayJudgements}</span></li>}
-		{identity?.pgp && <li><span className='desc'>pgp:</span>{identity.pgp}</li>}
-		{identity?.riot && <li><span className='desc'>riot:</span>{identity.riot}</li>}
-		{identity?.twitter && <li><span className='desc'>twitter:</span>{identity.twitter}</li>}
-		{identity?.web && <li><span className='desc'>web:</span>{identity.web}</li>}
-		{flags?.isCouncil && <li><span className='desc'>Council member</span><CouncilEmoji/></li>}
-		{<li><span className='desc'><a href={`https://polkaverse.com/accounts/${address}`} target='_blank' rel='noreferrer'>Polkaverse Profile</a></span></li>}
-		{web3Name && <li><span className='desc'><a href={`https://w3n.id/${web3Name}`} target='_blank' rel='noreferrer'>Web3 Name Profile</a></span></li>}
+	const popupContent =
+	<StyledPopup>
+		{identity?.legal &&
+		<li className='flex items-center'>
+			<span className='desc text-bodyBlue font-medium flex items-center text-sm'>
+				<LegalIcon className='mr-1.5'/>legal:
+			</span>
+			<span className='text-xs text-bodyBlue font-normal break-all pt-0.5'>{identity.legal}</span>
+		</li>
+		}
+		{identity?.email &&
+		<li className='flex items-center'>
+			<span className='desc text-bodyBlue font-medium flex items-center text-sm'>
+				<EmailIcon className='mr-2'/>Email:
+			</span>
+			<span className='text-xs text-bodyBlue font-normal break-all pt-0.5'>{identity.email}</span>
+		</li>
+		}
+		{(identity?.judgements?.length || 0) > 0 &&
+		<li className='flex items-center'>
+			<span className='desc flex items-center text-sm text-bodyBlue font-medium'><JudgementIcon className='mr-1.5'/>Judgements:</span>
+			<span className='text-xs break-all text-bodyBlue'>{displayJudgements}</span>
+		</li>
+		}
+		{identity?.pgp &&
+		<li className='flex items-center'>
+			<span className='desc flex items-center text-sm text-bodyBlue font-medium'><PgpIcon className='mr-1'/>pgp:</span>
+			<span className='text-xs text-bodyblue break-all font-normal'>{identity.pgp}</span>
+		</li>
+		}
+		{identity?.riot &&
+		<li className='flex items-center'>
+			<span className='desc flex items-center text-sm text-bodyBlue font-medium'><RiotIcon className='mr-1.5' />riot: </span>
+			<span className='text-xs text-bodyBlue break-all font-normal'>{identity.riot}</span>
+		</li>
+		}
+		{identity?.twitter &&
+		<li className='flex items-center'>
+			<span className='desc text-bodyBlue font-medium flex text-sm'><TwitterIcon className='mr-1.5 mt-1'/>Twitter: </span>
+			<span className='text-xs font-normal break-all text-bodyBlue'>{identity.twitter}</span>
+		</li>
+		}
+		{identity?.web &&
+		<li className='flex items-center'>
+			<span className='desc text-bodyBlue font-medium flex text-sm'><WebIcon className='mr-1.5 mt-1 -ml-0.5' />Web: </span>
+			<span className='text-xs text-bodyBlue break-all font-normal pt-0.5'>{identity.web}</span>
+		</li>
+		}
+		{flags?.isCouncil &&
+		<li className='flex items-center'>
+			<span className='desc text-bodyBlue font-medium text-sm'><CouncilEmoji /> Council member </span>
+		</li>
+		}
+		{
+			<li className='flex items-center'>
+				<span className='desc'><a href={`https://polkaverse.com/accounts/${address}`} target='_blank' rel='noreferrer' className='flex text-pink-500 underline items-center'><ShareScreenIcon className='mr-2'/>Polkaverse Profile</a>
+				</span>
+			</li>
+		}
+		{web3Name &&
+		<li className='flex items-center'>
+			<span className='desc flex items-center'><a href={`https://w3n.id/${web3Name}`} target='_blank' rel='noreferrer' className='flex text-pink-500'><ShareScreenIcon className='mr-2'/>Web3 Name Profile</a>
+			</span>
+		</li>
+		}
 	</StyledPopup>;
 
 	return <div className={className}>
@@ -72,8 +132,6 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 };
 
 export default styled(IdentityBadge)`
-	display: inline;
-
 	i.green.circle.icon {
 		color: green_primary !important;
 	}

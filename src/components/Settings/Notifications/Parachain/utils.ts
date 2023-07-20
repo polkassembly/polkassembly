@@ -13,7 +13,7 @@ const networks: any = {
 	// test: []
 };
 
-const networkLabel: {[index: string]: string} = {
+const networkLabel: { [index: string]: string } = {
 	kusama: 'Kusama',
 	polkadot: 'Polkadot',
 	solo: 'Solo Chains'

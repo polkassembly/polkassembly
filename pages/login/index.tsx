@@ -14,101 +14,134 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
 // import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
-interface Props{
-	network: string;
-	isModal?: boolean;
-	setLoginOpen?: (pre: boolean)=> void;
-	setSignupOpen?: (pre: boolean)=> void;
+interface Props {
+  network: string;
+  isModal?: boolean;
+  setLoginOpen?: (pre: boolean) => void;
+  setSignupOpen?: (pre: boolean) => void;
   isDelegation?: boolean;
 }
 
 const Web3Login = dynamic(() => import('src/components/Login/Web3Login'), {
-	loading: () => <Skeleton active /> ,
-	ssr: false
+  loading: () => <Skeleton active />,
+  ssr: false,
 });
-const MetamaskLogin = dynamic(() => import('src/components/Login/MetamaskLogin'), {
-	loading: () => <Skeleton active /> ,
-	ssr: false
-});
-const WalletConnectLogin = dynamic(() => import('src/components/Login/WalletConnectLogin'), {
-	loading: () => <Skeleton active /> ,
-	ssr: false
-});
+const MetamaskLogin = dynamic(
+  () => import('src/components/Login/MetamaskLogin'),
+  {
+    loading: () => <Skeleton active />,
+    ssr: false,
+  },
+);
+const WalletConnectLogin = dynamic(
+  () => import('src/components/Login/WalletConnectLogin'),
+  {
+    loading: () => <Skeleton active />,
+    ssr: false,
+  },
+);
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
-	return { props: { network } };
+  const network = getNetworkFromReqHeaders(req.headers);
+  return { props: { network } };
 };
 
-const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:Props) => {
-	const { setNetwork } = useNetworkContext();
+const Login = ({
+  network,
+  setLoginOpen,
+  setSignupOpen,
+  isModal,
+  isDelegation,
+}: Props) => {
+  const { setNetwork } = useNetworkContext();
 
-	useEffect(() => {
-		setNetwork(network);
+  useEffect(() => {
+    setNetwork(network);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-	const currentUser = useUserDetailsContext();
-	const router = useRouter();
-	const [displayWeb, setDisplayWeb] = useState(2);
-	const [chosenWallet, setChosenWallet] = useState<Wallet |null>(null);
-	const [walletError, setWalletError] =  useState<string | undefined>();
+  const currentUser = useUserDetailsContext();
+  const router = useRouter();
+  const [displayWeb, setDisplayWeb] = useState(2);
+  const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);
+  const [walletError, setWalletError] = useState<string | undefined>();
 
-	const setDisplayWeb2 = () => setDisplayWeb(2);
+  const setDisplayWeb2 = () => setDisplayWeb(2);
 
-	const onWalletSelect = (wallet: Wallet) => {
-		setChosenWallet(wallet);
-		setDisplayWeb(3);
-	};
+  const onWalletSelect = (wallet: Wallet) => {
+    setChosenWallet(wallet);
+    setDisplayWeb(3);
+  };
 
-	// TODO: FIX ambiguous function name
-	const onWalletUpdate = () => {
-		setChosenWallet(null);
-		setDisplayWeb(2);
-	};
+  // TODO: FIX ambiguous function name
+  const onWalletUpdate = () => {
+    setChosenWallet(null);
+    setDisplayWeb(2);
+  };
 
-	const setPolkadotWallet = () => {
-		onWalletSelect(Wallet.POLKADOT);
-	};
+  const setPolkadotWallet = () => {
+    onWalletSelect(Wallet.POLKADOT);
+  };
 
-	useEffect(() => {
-		if (currentUser?.id && !isModal) {
-			router.push('/');
-		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[currentUser?.id, router]);
-	return (
-		<>
-			<SEOHead title="Login" network={network}/>
-			<Row justify='center' align='middle' className='h-full -mt-5'>
-				<Col className='w-full sm:max-w-[600px]'>
-					{displayWeb === 2 ? (
-						<Web2Login isModal={isModal} setLoginOpen={setLoginOpen} isDelegation={isDelegation} setSignupOpen={setSignupOpen}  onWalletSelect={onWalletSelect} walletError={walletError} />
-					) : null}
+  useEffect(() => {
+    if (currentUser?.id && !isModal) {
+      router.push('/');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.id, router]);
+  return (
+    <>
+      <SEOHead title="Login" network={network} />
+      <Row justify="center" align="middle" className="h-full -mt-5">
+        <Col className="w-full sm:max-w-[600px]">
+          {displayWeb === 2 ? (
+            <Web2Login
+              isModal={isModal}
+              setLoginOpen={setLoginOpen}
+              isDelegation={isDelegation}
+              setSignupOpen={setSignupOpen}
+              onWalletSelect={onWalletSelect}
+              walletError={walletError}
+            />
+          ) : null}
 
-					{
-						displayWeb === 3 && chosenWallet && <>
-							{
-								chosenWallet === Wallet.METAMASK ?
-									<MetamaskLogin isModal={isModal} setLoginOpen={setLoginOpen} setSignupOpen={setSignupOpen} setWalletError={setWalletError} setDisplayWeb2={setDisplayWeb2} chosenWallet={chosenWallet} onWalletUpdate={onWalletUpdate} />
-									: chosenWallet == Wallet.WALLETCONNECT ?
-										<WalletConnectLogin isModal={isModal} setLoginOpen={setLoginOpen} setDisplayWeb2={setDisplayWeb2} setPolkadotWallet={setPolkadotWallet} /> :
-										<Web3Login
-											isModal={isModal} setLoginOpen={setLoginOpen}
-											setSignupOpen={setSignupOpen}
-											chosenWallet={chosenWallet}
-											setDisplayWeb2={setDisplayWeb2}
-											setWalletError={setWalletError}
-											onWalletUpdate={onWalletUpdate}
-										/>
-							}
-						</>
-					}
-				</Col>
-			</Row>
-		</>
-	);
+          {displayWeb === 3 && chosenWallet && (
+            <>
+              {chosenWallet === Wallet.METAMASK ? (
+                <MetamaskLogin
+                  isModal={isModal}
+                  setLoginOpen={setLoginOpen}
+                  setSignupOpen={setSignupOpen}
+                  setWalletError={setWalletError}
+                  setDisplayWeb2={setDisplayWeb2}
+                  chosenWallet={chosenWallet}
+                  onWalletUpdate={onWalletUpdate}
+                />
+              ) : chosenWallet == Wallet.WALLETCONNECT ? (
+                <WalletConnectLogin
+                  isModal={isModal}
+                  setLoginOpen={setLoginOpen}
+                  setDisplayWeb2={setDisplayWeb2}
+                  setPolkadotWallet={setPolkadotWallet}
+                />
+              ) : (
+                <Web3Login
+                  isModal={isModal}
+                  setLoginOpen={setLoginOpen}
+                  setSignupOpen={setSignupOpen}
+                  chosenWallet={chosenWallet}
+                  setDisplayWeb2={setDisplayWeb2}
+                  setWalletError={setWalletError}
+                  onWalletUpdate={onWalletUpdate}
+                />
+              )}
+            </>
+          )}
+        </Col>
+      </Row>
+    </>
+  );
 };
 
 export default Login;

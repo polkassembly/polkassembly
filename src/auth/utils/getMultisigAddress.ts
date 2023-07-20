@@ -3,7 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { u8aSorted } from '@polkadot/util';
-import { blake2AsU8a, decodeAddress, encodeAddress, encodeMultiAddress } from '@polkadot/util-crypto';
+import {
+	blake2AsU8a,
+	decodeAddress,
+	encodeAddress,
+	encodeMultiAddress
+} from '@polkadot/util-crypto';
 
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
@@ -32,12 +37,17 @@ const derivePubkey = (addresses: string[], threshold = 1): Uint8Array => {
  * @param threshold Number of addresses that are needed to approve an action.
  * @returns multisig address
  */
-export default function getMultisigAddress(addresses: string[], ss58Prefix: number, threshold: number): string {
-	if (!addresses || !addresses.length) throw apiErrorWithStatusCode('Please provide the addresses option.', 400);
+export default function getMultisigAddress(
+	addresses: string[],
+	ss58Prefix: number,
+	threshold: number
+): string {
+	if (!addresses || !addresses.length)
+		throw apiErrorWithStatusCode('Please provide the addresses option.', 400);
 
 	let multisigAddress = '';
 
-	if(addresses[0].startsWith('0x')) {
+	if (addresses[0].startsWith('0x')) {
 		const pubkey = derivePubkey(addresses, Number(threshold));
 		multisigAddress = encodeAddress(pubkey, Number(ss58Prefix));
 	}

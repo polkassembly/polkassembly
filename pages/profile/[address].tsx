@@ -14,57 +14,60 @@ import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 
 interface IProfileProps {
-	className?: string;
-	userProfile: {
-		data: ProfileDetails;
-		error: string | null;
-	};
-	network: string;
+  className?: string;
+  userProfile: {
+    data: ProfileDetails;
+    error: string | null;
+  };
+  network: string;
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	const address = context.params?.address;
+  const address = context.params?.address;
 
-	const network = getNetworkFromReqHeaders(context.req.headers);
+  const network = getNetworkFromReqHeaders(context.req.headers);
 
-	const { data, error } = await getProfileWithAddress({
-		address
-	});
-	const props: IProfileProps = {
-		network,
-		userProfile: {
-			data: data?.profile || {
-				badges: [],
-				bio: '',
-				image: '',
-				social_links: [],
-				title: ''
-			},
-			error: error
-		}
-	};
-	return { props: props };
+  const { data, error } = await getProfileWithAddress({
+    address,
+  });
+  const props: IProfileProps = {
+    network,
+    userProfile: {
+      data: data?.profile || {
+        badges: [],
+        bio: '',
+        image: '',
+        social_links: [],
+        title: '',
+      },
+      error: error,
+    },
+  };
+  return { props: props };
 };
 
-const ProfileComponent = dynamic(() => import('~src/components/Profile'),{
-	loading: () => <Skeleton active />,
-	ssr: false
+const ProfileComponent = dynamic(() => import('~src/components/Profile'), {
+  loading: () => <Skeleton active />,
+  ssr: false,
 });
 
 const Profile: FC<IProfileProps> = (props) => {
-	const { className, userProfile, network } = props;
-	const { setNetwork } = useNetworkContext();
-	useEffect(() => {
-		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+  const { className, userProfile, network } = props;
+  const { setNetwork } = useNetworkContext();
+  useEffect(() => {
+    setNetwork(network);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-	return (
-		<>
-			<SEOHead title='Profile' network={network}/>
-			<ProfileComponent className={className} profileDetails={userProfile.data} />
-		</>
-	);
+  return (
+    <>
+      <SEOHead title="Profile" network={network} />
+      <ProfileComponent
+        className={className}
+        profileDetails={userProfile.data}
+      />
+    </>
+  );
 };
 
 export default Profile;

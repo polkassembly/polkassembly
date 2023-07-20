@@ -13,7 +13,7 @@ import { UserDetailsContextType } from '../types';
  * @param token the token received from the authentication header
  */
 export const storeLocalStorageToken = (token: string) => {
-	if(typeof window !== 'undefined'){
+	if (typeof window !== 'undefined') {
 		localStorage.setItem('Authorization', token);
 	}
 };
@@ -22,8 +22,8 @@ export const storeLocalStorageToken = (token: string) => {
  * Get the the jwt from localstorage
  * if any. It might be expired
  */
-export const getLocalStorageToken = (): string|null => {
-	if(typeof window !== 'undefined'){
+export const getLocalStorageToken = (): string | null => {
+	if (typeof window !== 'undefined') {
 		return localStorage.getItem('Authorization') || null;
 	}
 
@@ -35,7 +35,7 @@ export const getLocalStorageToken = (): string|null => {
  * if any.
  */
 export const deleteLocalStorageToken = (): void => {
-	if(typeof window !== 'undefined'){
+	if (typeof window !== 'undefined') {
 		return localStorage.removeItem('Authorization');
 	}
 };
@@ -45,7 +45,10 @@ export const deleteLocalStorageToken = (): void => {
  * @param token answered by the auth server
  * @param currentUser context data on the user
  */
-export const handleTokenChange = (token: string, currentUser: UserDetailsContextType) => {
+export const handleTokenChange = (
+	token: string,
+	currentUser: UserDetailsContextType
+) => {
 	token && storeLocalStorageToken(token);
 	try {
 		const tokenPayload: any = token && decodeToken<JWTPayloadType>(token);
@@ -76,7 +79,8 @@ export const handleTokenChange = (token: string, currentUser: UserDetailsContext
 					id: Number(id),
 					is2FAEnabled,
 					loginAddress: login_address || currentUser?.loginAddress || '',
-					loginWallet: login_wallet || currentUser.loginWallet || prevState.loginWallet,
+					loginWallet:
+            login_wallet || currentUser.loginWallet || prevState.loginWallet,
 					username,
 					web3signup
 				};
@@ -87,7 +91,9 @@ export const handleTokenChange = (token: string, currentUser: UserDetailsContext
 	}
 };
 
-export const logout = (setUserDetailsContextState: UserDetailsContextType['setUserDetailsContextState']) => {
+export const logout = (
+	setUserDetailsContextState: UserDetailsContextType['setUserDetailsContextState']
+) => {
 	deleteLocalStorageToken();
 	localStorage.removeItem('delegationDashboardAddress');
 	localStorage.removeItem('delegationWallet');
@@ -105,13 +111,12 @@ export const logout = (setUserDetailsContextState: UserDetailsContextType['setUs
 			id: null,
 			loginAddress: '',
 			loginWallet: null,
-			networkPreferences:{
-				channelPreferences:{},
-				triggerPreferences:{}
+			networkPreferences: {
+				channelPreferences: {},
+				triggerPreferences: {}
 			},
 			username: null,
 			web3signup: false
 		};
 	});
 };
-

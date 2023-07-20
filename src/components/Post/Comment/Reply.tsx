@@ -10,16 +10,24 @@ import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 
 import EditableReplyContent from './EditableReplyContent';
-interface Props{
-	className?: string,
-	reply: any
-	commentId: string
-	userName?:string
-
+interface Props {
+  className?: string;
+  reply: any;
+  commentId: string;
+  userName?: string;
 }
 
-export const Reply = ({ className, commentId, reply ,userName } : Props) => {
-	const { user_id, username, content, created_at, id, updated_at, proposer, is_custom_username } = reply;
+export const Reply = ({ className, commentId, reply, userName }: Props) => {
+	const {
+		user_id,
+		username,
+		content,
+		created_at,
+		id,
+		updated_at,
+		proposer,
+		is_custom_username
+	} = reply;
 	const { asPath } = useRouter();
 	const replyRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
@@ -37,14 +45,14 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 	return (
 		<div id={id} ref={replyRef} className={`${className} flex gap-x-4`}>
 			<UserAvatar
-				className='mt-1 hidden md:inline-block'
+				className="mt-1 hidden md:inline-block"
 				username={username}
-				size='large'
+				size="large"
 				id={id}
 			/>
-			<div className='comment-box'>
+			<div className="comment-box">
 				<CreationLabel
-					className='py-2 pt-4 px-0 md:px-4 bg-[#EBF0F5] rounded-t-md'
+					className="py-2 pt-4 px-0 md:px-4 bg-[#EBF0F5] rounded-t-md"
 					created_at={created_at}
 					defaultAddress={proposer}
 					text={'replied'}
@@ -52,14 +60,11 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 					spam_users_count={reply.spam_users_count}
 					commentSource={reply.reply_source}
 				>
-					<UpdateLabel
-						created_at={created_at}
-						updated_at={updated_at}
-					/>
+					<UpdateLabel created_at={created_at} updated_at={updated_at} />
 				</CreationLabel>
 				<EditableReplyContent
 					userId={user_id}
-					className='rounded-md'
+					className="rounded-md"
 					commentId={commentId}
 					reply={reply}
 					replyId={id}
@@ -74,31 +79,31 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 };
 
 export default styled(Reply)`
-	display: flex;
-	margin-top: 1rem;
+  display: flex;
+  margin-top: 1rem;
 
-	.comment-box {
-		background-color: white;
-		border-radius: 3px;
-		box-shadow: box_shadow_card;
-		margin-bottom: 1rem;
-		width: calc(100% - 60px);
-		word-break: break-word;
+  .comment-box {
+    background-color: white;
+    border-radius: 3px;
+    box-shadow: box_shadow_card;
+    margin-bottom: 1rem;
+    width: calc(100% - 60px);
+    word-break: break-word;
 
-		@media only screen and (max-width: 576px) {
-			width: 100%;
-			border-radius: 0px;
-		}
-	}
+    @media only screen and (max-width: 576px) {
+      width: 100%;
+      border-radius: 0px;
+    }
+  }
 
-	.creation-label {
-		display: inline-flex;
-		padding: 1rem 0 0.8rem 2rem;
-		margin-bottom: 0;
-	}
+  .creation-label {
+    display: inline-flex;
+    padding: 1rem 0 0.8rem 2rem;
+    margin-bottom: 0;
+  }
 
-	.comment-content {
-		padding: 0.8rem 0 0.8rem 2rem;
-		width: 100%;
-	}
+  .comment-content {
+    padding: 0.8rem 0 0.8rem 2rem;
+    width: 100%;
+  }
 `;

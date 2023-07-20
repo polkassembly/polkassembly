@@ -6,12 +6,12 @@ import { useUserDetailsContext } from '~src/context';
 import Enable2FA from './Enable2FA';
 import Disable2FA from './Disable2FA';
 
-const TwoFactorAuth: FC<{className?: string}> = ({ className }) => {
+const TwoFactorAuth: FC<{ className?: string }> = ({ className }) => {
 	const { is2FAEnabled } = useUserDetailsContext();
 
 	return (
 		<section className={className}>
-			{ !is2FAEnabled ? <Enable2FA /> : <Disable2FA /> }
+			{!is2FAEnabled ? <Enable2FA /> : <Disable2FA />}
 		</section>
 	);
 };

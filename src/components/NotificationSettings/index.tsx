@@ -33,7 +33,9 @@ const NotificationSettings = () => {
 
 	useEffect(() => {
 		setLoading(true);
-		nextApiClientFetch<NotificationSettings>( 'api/v1/auth/data/notificationPreference')
+		nextApiClientFetch<NotificationSettings>(
+			'api/v1/auth/data/notificationPreference'
+		)
 			.then((res) => {
 				if (res.error) {
 					setError(res.error);
@@ -44,19 +46,21 @@ const NotificationSettings = () => {
 			})
 			.catch((err) => {
 				setLoading(false);
-				setError(typeof err === 'string'? err: err?.message);
+				setError(typeof err === 'string' ? err : err?.message);
 			});
 	}, []);
 
 	const updatePreference = async () => {
 		setLoading(true);
 
-		const { data , error } = await nextApiClientFetch<UpdatedDataResponseType<NotificationSettings>>( 'api/v1/auth/actions/changeNotificationPreference', {
-			new_proposal: newProposal,
-			own_proposal: ownProposal,
-			post_created: postCreated,
-			post_participated: postParticipated
-		});
+		const { data, error } = await nextApiClientFetch<
+      UpdatedDataResponseType<NotificationSettings>
+    >('api/v1/auth/actions/changeNotificationPreference', {
+    	new_proposal: newProposal,
+    	own_proposal: ownProposal,
+    	post_created: postCreated,
+    	post_participated: postParticipated
+    });
 
 		if (error) {
 			setError(error);
@@ -83,26 +87,27 @@ const NotificationSettings = () => {
 		setLoading(false);
 	};
 	return (
-		<Form onFinish={() => updatePreference()} className='w-full bg-white shadow-md p-8 rounded-md flex flex-col gap-y-8'>
+		<Form
+			onFinish={() => updatePreference()}
+			className="w-full bg-white shadow-md p-8 rounded-md flex flex-col gap-y-8"
+		>
 			<header>
-				<h3
-					className='font-medium text-lg tracking-wide text-sidebarBlue'
-				>
-						Notification Settings
+				<h3 className="font-medium text-lg tracking-wide text-sidebarBlue">
+          Notification Settings
 				</h3>
-				<h5
-					className='font-normal text-sm text-navBlue mt-2'
-				>
-						Update your notification settings. You will be receiving your notifications on <span className='text-sidebarBlue'>{currentUser?.email}</span>
+				<h5 className="font-normal text-sm text-navBlue mt-2">
+          Update your notification settings. You will be receiving your
+          notifications on{' '}
+					<span className="text-sidebarBlue">{currentUser?.email}</span>
 				</h5>
 			</header>
-			{error && <FilteredError text={error}/>}
-			<article className='flex items-center gap-x-2'>
+			{error && <FilteredError text={error} />}
+			<article className="flex items-center gap-x-2">
 				<label
-					className='text-sm text-sidebarBlue font-normal cursor-pointer'
-					htmlFor='postParticipated'
+					className="text-sm text-sidebarBlue font-normal cursor-pointer"
+					htmlFor="postParticipated"
 				>
-					Subscribe to post you participate in
+          Subscribe to post you participate in
 				</label>
 				<Switch
 					checked={!!email_verified && postParticipated}
@@ -111,16 +116,16 @@ const NotificationSettings = () => {
 						setPostParticipated(checked);
 						setChanged(true);
 					}}
-					size='small'
-					id='postParticipated'
+					size="small"
+					id="postParticipated"
 				/>
 			</article>
-			<article className='flex items-center gap-x-2'>
+			<article className="flex items-center gap-x-2">
 				<label
-					className='text-sm text-sidebarBlue font-normal cursor-pointer'
-					htmlFor='postCreated'
+					className="text-sm text-sidebarBlue font-normal cursor-pointer"
+					htmlFor="postCreated"
 				>
-					Subscribe to post you created
+          Subscribe to post you created
 				</label>
 				<Switch
 					checked={!!email_verified && postCreated}
@@ -129,16 +134,16 @@ const NotificationSettings = () => {
 						setPostCreated(checked);
 						setChanged(true);
 					}}
-					size='small'
-					id='postCreated'
+					size="small"
+					id="postCreated"
 				/>
 			</article>
-			<article className='flex items-center gap-x-2'>
+			<article className="flex items-center gap-x-2">
 				<label
-					className='text-sm text-sidebarBlue font-normal cursor-pointer'
-					htmlFor='newProposal'
+					className="text-sm text-sidebarBlue font-normal cursor-pointer"
+					htmlFor="newProposal"
 				>
-					Notified for new proposal in council/motion/referendum
+          Notified for new proposal in council/motion/referendum
 				</label>
 				<Switch
 					checked={!!email_verified && newProposal}
@@ -147,16 +152,16 @@ const NotificationSettings = () => {
 						setNewProposal(checked);
 						setChanged(true);
 					}}
-					size='small'
-					id='newProposal'
+					size="small"
+					id="newProposal"
 				/>
 			</article>
-			<article className='flex items-center gap-x-2'>
+			<article className="flex items-center gap-x-2">
 				<label
-					className='text-sm text-sidebarBlue font-normal cursor-pointer'
-					htmlFor='ownProposal'
+					className="text-sm text-sidebarBlue font-normal cursor-pointer"
+					htmlFor="ownProposal"
 				>
-					Notified for your own proposals
+          Notified for your own proposals
 				</label>
 				<Switch
 					checked={!!email_verified && ownProposal}
@@ -165,19 +170,21 @@ const NotificationSettings = () => {
 						setOwnProposal(checked);
 						setChanged(true);
 					}}
-					size='small'
-					id='ownProposal'
+					size="small"
+					id="ownProposal"
 				/>
 			</article>
 			<article>
 				<Button
 					loading={loading}
 					disabled={!changed}
-					size='large'
-					htmlType='submit'
-					className={`rounded-lg font-semibold text-lg leading-7 text-white py-3 outline-none border-none px-14 flex items-center justify-center ${changed?'bg-pink_primary':'bg-icon_grey'}`}
+					size="large"
+					htmlType="submit"
+					className={`rounded-lg font-semibold text-lg leading-7 text-white py-3 outline-none border-none px-14 flex items-center justify-center ${
+						changed ? 'bg-pink_primary' : 'bg-icon_grey'
+					}`}
 				>
-					Save
+          Save
 				</Button>
 			</article>
 		</Form>

@@ -9,31 +9,40 @@ import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
 import firebaseAdmin from '~src/services/firebaseInit';
 
 export async function getUser(userId: number): Promise<PublicUser | null> {
-	const firestore = firebaseAdmin.firestore();
+  const firestore = firebaseAdmin.firestore();
 
-	const userDoc = await firestore.collection('users').doc(String(userId)).get();
-	if(!userDoc.exists) return null;
-	const userData = userDoc.data() as User;
+  const userDoc = await firestore.collection('users').doc(String(userId)).get();
+  if (!userDoc.exists) return null;
+  const userData = userDoc.data() as User;
 
-	const addresses = await getAddressesFromUserId(Number(userId));
-	const default_address = addresses.find((address: any) => address.default === true);
+  const addresses = await getAddressesFromUserId(Number(userId));
+  const default_address = addresses.find(
+    (address: any) => address.default === true,
+  );
 
-	return {
-		default_address: default_address?.address || '',
-		id: userData.id,
-		primary_network: userData.primary_network || '',
-		username: userData.username
-	} as PublicUser;
+  return {
+    default_address: default_address?.address || '',
+    id: userData.id,
+    primary_network: userData.primary_network || '',
+    username: userData.username,
+  } as PublicUser;
 }
 
-async function handler(req: NextApiRequest, res: NextApiResponse<PublicUser | MessageType>) {
-	const { userId = null } = req.query;
-	if (!userId || isNaN(Number(userId))) return res.status(400).json({ message: 'Invalid id.' });
+async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<PublicUser | MessageType>,
+) {
+  const { userId = null } = req.query;
+  if (!userId || isNaN(Number(userId)))
+    return res.status(400).json({ message: 'Invalid id.' });
 
-	const user = await getUser(Number(userId));
-	if(!user) return res.status(404).json({ message: `No user found with the id '${userId}'.` });
+  const user = await getUser(Number(userId));
+  if (!user)
+    return res
+      .status(404)
+      .json({ message: `No user found with the id '${userId}'.` });
 
-	res.status(200).json(user);
+  res.status(200).json(user);
 }
 
 export default withErrorHandling(handler);

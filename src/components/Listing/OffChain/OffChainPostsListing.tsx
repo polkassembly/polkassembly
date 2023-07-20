@@ -6,18 +6,25 @@ import Link from 'next/link';
 import React, { FC } from 'react';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
-import { getSinglePostLinkFromProposalType, OffChainProposalType } from '~src/global/proposalType';
+import {
+	getSinglePostLinkFromProposalType,
+	OffChainProposalType
+} from '~src/global/proposalType';
 
 import OffChainCard from './OffChainCard';
 
 interface IOffChainPostsListingProps {
-	className?: string
-	posts?: any[]
-	loading?: boolean
-	proposalType: OffChainProposalType;
+  className?: string;
+  posts?: any[];
+  loading?: boolean;
+  proposalType: OffChainProposalType;
 }
 
-const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts, proposalType }) => {
+const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({
+	className,
+	posts,
+	proposalType
+}) => {
 	if (!posts || !posts.length) {
 		return (
 			<div className={className}>
@@ -28,12 +35,16 @@ const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts
 
 	return (
 		<div className={`${className} flex flex-col `}>
-			{posts.map((post,index) => (
+			{posts.map((post, index) => (
 				<div key={post.post_id}>
-					<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${post.post_id}`}>
+					<Link
+						href={`/${getSinglePostLinkFromProposalType(proposalType)}/${
+							post.post_id
+						}`}
+					>
 						<OffChainCard
 							post_id={post.post_id}
-							className={`${(index+1)%2!==0 && 'bg-[#FBFBFC]'}`}
+							className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC]'}`}
 							postReactionCount={post?.post_reactions}
 							address={post?.proposer || ''}
 							commentsCount={post.comments_count || 0}
@@ -46,8 +57,7 @@ const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts
 						/>
 					</Link>
 				</div>
-			)
-			)}
+			))}
 		</div>
 	);
 };

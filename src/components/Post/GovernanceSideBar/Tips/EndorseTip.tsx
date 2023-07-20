@@ -5,27 +5,33 @@
 import { Alert, Button, Form } from 'antd';
 import BN from 'bn.js';
 import Image from 'next/image';
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LoadingStatusType, NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import Loader from 'src/ui-components/Loader';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import {
+	useApiContext,
+	useNetworkContext,
+	useUserDetailsContext
+} from '~src/context';
 import LoginToEndorse from '../LoginToVoteOrEndorse';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import executeTx from '~src/util/executeTx';
 
 interface Props {
-	accounts: InjectedTypeWithCouncilBoolean[]
-	address: string
-	className?: string
-	getAccounts: () => Promise<undefined>
-	tipHash?: string
-	onAccountChange: (address: string) => void;
-	setAccounts: React.Dispatch<React.SetStateAction<InjectedTypeWithCouncilBoolean[]>>;
+  accounts: InjectedTypeWithCouncilBoolean[];
+  address: string;
+  className?: string;
+  getAccounts: () => Promise<undefined>;
+  tipHash?: string;
+  onAccountChange: (address: string) => void;
+  setAccounts: React.Dispatch<
+    React.SetStateAction<InjectedTypeWithCouncilBoolean[]>
+  >;
 }
 
 const EndorseTip = ({
@@ -38,7 +44,10 @@ const EndorseTip = ({
 	setAccounts
 }: Props) => {
 	const ZERO = new BN(0);
-	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
+	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
+		isLoading: false,
+		message: ''
+	});
 	const [endorseValue, setEndorseValue] = useState<BN>(ZERO);
 	const [isCouncil, setIsCouncil] = useState(false);
 	const [forceEndorse, setForceEndorse] = useState(false);
@@ -52,7 +61,9 @@ const EndorseTip = ({
 		if (accounts && Array.isArray(accounts)) {
 			const index = accounts.findIndex((account) => {
 				const substrateAddress = getSubstrateAddress(account.address);
-				return currentCouncil.some((council) => getSubstrateAddress(council) === substrateAddress);
+				return currentCouncil.some(
+					(council) => getSubstrateAddress(council) === substrateAddress
+				);
 			});
 			if (index >= 0) {
 				const account = accounts[index];
@@ -66,7 +77,7 @@ const EndorseTip = ({
 				onAccountChange(account.address);
 			}
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentCouncil, accounts]);
 
 	useEffect(() => {
@@ -83,14 +94,14 @@ const EndorseTip = ({
 				getAccounts();
 			}
 			api.query.council.members().then((memberAccounts) => {
-				const members = memberAccounts.map(member => member.toString());
+				const members = memberAccounts.map((member) => member.toString());
 				setCurrentCouncil(members.filter((member) => !!member) as string[]);
 			});
 		} catch (error) {
 			// console.log(error);
 		}
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
 	const onValueChange = (balance: BN) => setEndorseValue(balance);
@@ -127,80 +138,93 @@ const EndorseTip = ({
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
 		const endorse = api.tx.treasury.tip(tipHash, endorseValue);
-		await executeTx({ address, api, errorMessageFallback: 'Transaction failed.', network, onFailed, onSuccess, tx: endorse });
-
+		await executeTx({
+			address,
+			api,
+			errorMessageFallback: 'Transaction failed.',
+			network,
+			onFailed,
+			onSuccess,
+			tx: endorse
+		});
 	};
 
-	const GetAccountsButton = () =>
+	const GetAccountsButton = () => (
 		<Form>
-			<Form.Item className='button-container'>
-				<div>Only council members can endorse tips.</div><br/>
-				<Button
-					onClick={getAccounts}
-				>
-					Endorse
-				</Button>
+			<Form.Item className="button-container">
+				<div>Only council members can endorse tips.</div>
+				<br />
+				<Button onClick={getAccounts}>Endorse</Button>
 			</Form.Item>
-		</Form>;
+		</Form>
+	);
 
 	const noAccount = accounts.length === 0;
 	if (isLoggedOut()) {
-		return <LoginToEndorse to='Endorse' />;
+		return <LoginToEndorse to="Endorse" />;
 	}
-	const endorse = noAccount
-		? <GetAccountsButton/>
-		: loadingStatus.isLoading
-			? <div className={'LoaderWrapper'}>
-				<Loader text={loadingStatus.message}/>
-			</div>
-			: <div>
-				<AccountSelectionForm
-					title='Endorse with account'
-					accounts={accounts}
-					address={address}
-					onAccountChange={onAccountChange}
-					withBalance
-				/>
-				<BalanceInput
-					label={'Value'}
-					helpText={'Allocate a suggested tip amount. With enough endorsements, the suggested values are averaged and sent to the beneficiary.'}
-					placeholder={'123'}
-					onChange={onValueChange}
-				/>
-				<Button
-					disabled={!apiReady}
-					onClick={handleEndorse}
-				>
-					Endorse
-				</Button>
-			</div>;
+	const endorse = noAccount ? (
+		<GetAccountsButton />
+	) : loadingStatus.isLoading ? (
+		<div className={'LoaderWrapper'}>
+			<Loader text={loadingStatus.message} />
+		</div>
+	) : (
+		<div>
+			<AccountSelectionForm
+				title="Endorse with account"
+				accounts={accounts}
+				address={address}
+				onAccountChange={onAccountChange}
+				withBalance
+			/>
+			<BalanceInput
+				label={'Value'}
+				helpText={
+					'Allocate a suggested tip amount. With enough endorsements, the suggested values are averaged and sent to the beneficiary.'
+				}
+				placeholder={'123'}
+				onChange={onValueChange}
+			/>
+			<Button disabled={!apiReady} onClick={handleEndorse}>
+        Endorse
+			</Button>
+		</div>
+	);
 
-	const NotCouncil = () =>
+	const NotCouncil = () => (
 		<>
-			<h3 className='dashboard-heading mb-6'>Endorse with account!</h3>
-			<Alert className='mb-6' type='warning' message={<div className='flex items-center gap-x-2'>
-				<span>
-					No account found from the council
-				</span>
-				<Image width={25} height={25} src='/assets/frowning-face.png' alt="frowning face" />
-			</div>} />
+			<h3 className="dashboard-heading mb-6">Endorse with account!</h3>
+			<Alert
+				className="mb-6"
+				type="warning"
+				message={
+					<div className="flex items-center gap-x-2">
+						<span>No account found from the council</span>
+						<Image
+							width={25}
+							height={25}
+							src="/assets/frowning-face.png"
+							alt="frowning face"
+						/>
+					</div>
+				}
+			/>
 			<Button onClick={() => setForceEndorse(true)}>Let me try still.</Button>
-		</>;
+		</>
+	);
 
 	return (
 		<div className={className}>
-			{isCouncil || forceEndorse
-				? endorse
-				: <NotCouncil/>
-			}
+			{isCouncil || forceEndorse ? endorse : <NotCouncil />}
 		</div>
 	);
 };
 
 export default styled(EndorseTip)`
-	.LoaderWrapper {
-		height: 15rem;
-		position: absolute;
-		width: 100%;
-	}
+  .LoaderWrapper {
+    height: 15rem;
+    position: absolute;
+    width: 100%;
+  }
 `;

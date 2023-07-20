@@ -6,15 +6,26 @@ import firebaseAdmin from '~src/services/firebaseInit';
 
 import { Address } from '../types';
 
-export default async function getAddressesFromUserId (userId: number, verified?: boolean): Promise<Address[]> {
-
-	const addressesQuery = verified ?
-		firebaseAdmin.firestore().collection('addresses').where('user_id', '==', userId).where('verified', '==', true) :
-		firebaseAdmin.firestore().collection('addresses').where('user_id', '==', userId);
+export default async function getAddressesFromUserId(
+	userId: number,
+	verified?: boolean
+): Promise<Address[]> {
+	const addressesQuery = verified
+		? firebaseAdmin
+			.firestore()
+			.collection('addresses')
+			.where('user_id', '==', userId)
+			.where('verified', '==', true)
+		: firebaseAdmin
+			.firestore()
+			.collection('addresses')
+			.where('user_id', '==', userId);
 
 	const addressesQuerySnapshot = await addressesQuery.get();
 
-	const addresses = addressesQuerySnapshot.docs.map(doc => doc.data() as Address);
+	const addresses = addressesQuerySnapshot.docs.map(
+		(doc) => doc.data() as Address
+	);
 
 	return addresses;
 }

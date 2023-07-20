@@ -5,7 +5,12 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { Button, Divider, Modal, Tabs } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { IAddProfileResponse, ISocial, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
+import {
+	IAddProfileResponse,
+	ISocial,
+	ProfileDetails,
+	ProfileDetailsResponse
+} from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import { handleTokenChange } from 'src/services/auth.service';
 
@@ -22,11 +27,13 @@ import { poppins } from 'pages/_app';
 import validator from 'validator';
 
 interface IEditProfileModalProps {
-    id?: number | null;
-    data?: ProfileDetailsResponse;
-	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
+  id?: number | null;
+  data?: ProfileDetailsResponse;
+  setProfileDetails: React.Dispatch<
+    React.SetStateAction<ProfileDetailsResponse>
+  >;
   openModal?: boolean;
-  setOpenModal?: (pre:boolean) => void;
+  setOpenModal?: (pre: boolean) => void;
 }
 
 const getDefaultProfile: () => ProfileDetails = () => {
@@ -49,30 +56,50 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		socialsError: ''
 	});
 	const userDetailsContext = useUserDetailsContext();
-	const [username, setUsername] = useState<string>(userDetailsContext.username || '');
+	const [username, setUsername] = useState<string>(
+		userDetailsContext.username || ''
+	);
 	const router = useRouter();
 
-	const validateData = ( image: string | undefined, social_links: ISocial[] | undefined) => {
-
+	const validateData = (
+		image: string | undefined,
+		social_links: ISocial[] | undefined
+	) => {
 		// eslint-disable-next-line no-useless-escape
-		const regex = validator.isURL(image || '', { protocols: ['http','https'], require_protocol: true });
+		const regex = validator.isURL(image || '', {
+			protocols: ['http', 'https'],
+			require_protocol: true
+		});
 
-		if(image && image.trim() && !regex) {
-			setErrorCheck({ ...errorCheck, basicInformationError: 'Image URL is invalid.' });
+		if (image && image.trim() && !regex) {
+			setErrorCheck({
+				...errorCheck,
+				basicInformationError: 'Image URL is invalid.'
+			});
 			return true;
-		}
-		else if(regex){
+		} else if (regex) {
 			setErrorCheck({ ...errorCheck, basicInformationError: '' });
 		}
 
 		if (social_links && Array.isArray(social_links)) {
 			for (let i = 0; i < social_links.length; i++) {
 				const link = social_links[i];
-				if(link.link && !validator.isURL(link.link, { protocols: ['http','https'], require_protocol: true }) && !validator.isEmail(link.link)) {
-					setErrorCheck({ ...errorCheck, socialsError: `${link.type} ${link.type === 'Email'? '': 'URL'} is invalid.` });
+				if (
+					link.link &&
+          !validator.isURL(link.link, {
+          	protocols: ['http', 'https'],
+          	require_protocol: true
+          }) &&
+          !validator.isEmail(link.link)
+				) {
+					setErrorCheck({
+						...errorCheck,
+						socialsError: `${link.type} ${
+							link.type === 'Email' ? '' : 'URL'
+						} is invalid.`
+					});
 					return true;
-				}
-				else{
+				} else {
 					setErrorCheck({ ...errorCheck, socialsError: '' });
 				}
 			}
@@ -81,10 +108,9 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	};
 
 	const validateUserName = (username: string) => {
-
 		let errorUsername = 0;
 		const format = /^[a-zA-Z0-9_@]*$/;
-		if(!format.test(username) || username.length > 30 || username.length < 3){
+		if (!format.test(username) || username.length > 30 || username.length < 3) {
 			queueNotification({
 				header: 'Error',
 				message: messages.USERNAME_INVALID_ERROR,
@@ -94,7 +120,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		}
 
 		for (let i = 0; i < nameBlacklist.length; i++) {
-			if (username.toLowerCase().includes(nameBlacklist[i])){
+			if (username.toLowerCase().includes(nameBlacklist[i])) {
 				queueNotification({
 					header: 'Error',
 					message: messages.USERNAME_BANNED,
@@ -105,16 +131,14 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		}
 
 		return errorUsername === 0;
-
 	};
 
 	useEffect(() => {
+		if (!profile) return;
 
-		if(!profile) return;
+		if (validateData(profile?.image, profile?.social_links)) return;
 
-		if(validateData(profile?.image, profile?.social_links)) return;
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [profile]);
 
 	const populateData = useCallback(() => {
@@ -138,35 +162,44 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 	const updateProfileData = async () => {
 		if (!profile) {
-			setErrorCheck({ ...errorCheck, basicInformationError: 'Please fill in the required fields.' });
+			setErrorCheck({
+				...errorCheck,
+				basicInformationError: 'Please fill in the required fields.'
+			});
 			return;
 		}
 
 		const { badges, bio, image, social_links, title } = profile;
-		if(validateData(profile?.image, profile?.social_links)) return;
-		if(!validateUserName(username)) return ;
+		if (validateData(profile?.image, profile?.social_links)) return;
+		if (!validateUserName(username)) return;
 
 		setLoading(true);
 
-		const { data , error } = await nextApiClientFetch<IAddProfileResponse>( 'api/v1/auth/actions/addProfile', {
-			badges: JSON.stringify(badges || []),
-			bio: bio,
-			custom_username:true,
-			image: image,
-			social_links: JSON.stringify(social_links || []),
-			title: title,
-			user_id: Number(id),
-			username: username || userDetailsContext.username
-		});
+		const { data, error } = await nextApiClientFetch<IAddProfileResponse>(
+			'api/v1/auth/actions/addProfile',
+			{
+				badges: JSON.stringify(badges || []),
+				bio: bio,
+				custom_username: true,
+				image: image,
+				social_links: JSON.stringify(social_links || []),
+				title: title,
+				user_id: Number(id),
+				username: username || userDetailsContext.username
+			}
+		);
 
-		if(error || !data) {
+		if (error || !data) {
 			console.error('Error updating profile: ', error);
 			queueNotification({
 				header: 'Error!',
 				message: error || 'Your profile was not updated.',
 				status: NotificationStatus.ERROR
 			});
-			setErrorCheck({ ...errorCheck, basicInformationError: 'Your profile was not updated.' });
+			setErrorCheck({
+				...errorCheck,
+				basicInformationError: 'Your profile was not updated.'
+			});
 		}
 
 		if (data?.token) {
@@ -186,7 +219,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				};
 			});
 			setProfile(getDefaultProfile());
-			handleTokenChange(data?.token,  { ...userDetailsContext, picture: image } );
+			handleTokenChange(data?.token, { ...userDetailsContext, picture: image });
 			router.push(`/user/${username}`);
 		}
 
@@ -194,7 +227,6 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		setErrorCheck({ ...errorCheck, basicInformationError: '' });
 		setOpen(false);
 		setOpenModal && setOpenModal(false);
-
 	};
 	return (
 		<div>
@@ -205,51 +237,46 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					setOpenModal && setOpenModal(false);
 				}}
 				title={
-					<h3 className='font-semibold text-xl text-[#1D2632]'>
-						Edit Profile
-					</h3>
+					<h3 className="font-semibold text-xl text-[#1D2632]">Edit Profile</h3>
 				}
-				closeIcon={
-					<CloseOutlined className='text-sm text-[#485F7D]' />
-				}
+				closeIcon={<CloseOutlined className="text-sm text-[#485F7D]" />}
 				footer={
-					<div className='-mx-6 px-6 -mb-5 pb-4'>
-						<Divider className='mt-6 mb-4' />
-						{
-							[
-								<Button
-									key='cancel'
-									onClick={() => {
-										setOpenModal && setOpenModal(false); setOpen(false);
-									}}
-									disabled={loading}
-									size='middle'
-									className='border-pink_primary border border-solid rounded-[4px] w-[134px] h-[40px] text-pink_primary font-medium text-sm'
-								>
-									Cancel
-								</Button>,
-								<Button
-									key='update profile'
-									disabled={loading}
-									loading={loading}
-									onClick={async () => {
-										try {
-											await updateProfileData();
-										} catch (error) {
-											setErrorCheck(prevState => ({
-												...prevState,
-												basicInformationError: error?.message || error,
-												socialInformationError: error?.socialInformationError
-											}));
-										}
-									}}
-									size='middle'
-									className='border-pink_primary border border-solid rounded-[4px] w-[134px] h-[40px] text-white bg-pink_primary font-medium text-sm'
-								>
-									Save
-								</Button>
-							]
-						}
+					<div className="-mx-6 px-6 -mb-5 pb-4">
+						<Divider className="mt-6 mb-4" />
+						{[
+							<Button
+								key="cancel"
+								onClick={() => {
+									setOpenModal && setOpenModal(false);
+									setOpen(false);
+								}}
+								disabled={loading}
+								size="middle"
+								className="border-pink_primary border border-solid rounded-[4px] w-[134px] h-[40px] text-pink_primary font-medium text-sm"
+							>
+                Cancel
+							</Button>,
+							<Button
+								key="update profile"
+								disabled={loading}
+								loading={loading}
+								onClick={async () => {
+									try {
+										await updateProfileData();
+									} catch (error) {
+										setErrorCheck((prevState) => ({
+											...prevState,
+											basicInformationError: error?.message || error,
+											socialInformationError: error?.socialInformationError
+										}));
+									}
+								}}
+								size="middle"
+								className="border-pink_primary border border-solid rounded-[4px] w-[134px] h-[40px] text-white bg-pink_primary font-medium text-sm"
+							>
+                Save
+							</Button>
+						]}
 					</div>
 				}
 				zIndex={1002}
@@ -257,20 +284,20 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			>
 				<Tabs
 					type="card"
-					className='ant-tabs-tab-bg-white text-sidebarBlue font-medium mt-4'
+					className="ant-tabs-tab-bg-white text-sidebarBlue font-medium mt-4"
 					items={[
 						{
 							children: (
 								<BasicInformation
-									loading= {loading}
-									profile= {profile}
-									setProfile= {setProfile}
-									setUsername= {setUsername}
-									username= {username}
-									errorCheck= {errorCheck.basicInformationError}
+									loading={loading}
+									profile={profile}
+									setProfile={setProfile}
+									setUsername={setUsername}
+									username={username}
+									errorCheck={errorCheck.basicInformationError}
 								/>
 							),
-							key:'basic_information',
+							key: 'basic_information',
 							label: 'Basic Information'
 						},
 						{
@@ -282,24 +309,24 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 									errorCheck={errorCheck.socialsError}
 								/>
 							),
-							key:'socials',
+							key: 'socials',
 							label: 'Socials'
 						}
 					]}
 				/>
 			</Modal>
-			{!setOpenModal && <button
-				className='rounded-[4px] md:h-[40px] md:w-[87px] outline-none text-[#fff] flex items-center justify-center bg-transparent border-0 md:border border-solid border-white gap-x-1.5 font-medium text-sm cursor-pointer'
-				onClick={() => {
-					setOpen(true);
-					populateData();
-				}}
-			>
-				<EditIcon className='text-white text-2xl md:text-[15px]' />
-				<span className=' md:block'>
-					Edit
-				</span>
-			</button>}
+			{!setOpenModal && (
+				<button
+					className="rounded-[4px] md:h-[40px] md:w-[87px] outline-none text-[#fff] flex items-center justify-center bg-transparent border-0 md:border border-solid border-white gap-x-1.5 font-medium text-sm cursor-pointer"
+					onClick={() => {
+						setOpen(true);
+						populateData();
+					}}
+				>
+					<EditIcon className="text-white text-2xl md:text-[15px]" />
+					<span className=" md:block">Edit</span>
+				</button>
+			)}
 		</div>
 	);
 };

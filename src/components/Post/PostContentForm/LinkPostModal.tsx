@@ -2,7 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CheckOutlined, DeleteOutlined, LinkOutlined, LoadingOutlined } from '@ant-design/icons';
+import {
+	CheckOutlined,
+	DeleteOutlined,
+	LinkOutlined,
+	LoadingOutlined
+} from '@ant-design/icons';
 import { Button, Form, Input, Modal, Select, Spin } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
 import { ILinkPostRemoveResponse } from 'pages/api/v1/auth/actions/linkPostRemove';
@@ -69,11 +74,11 @@ const offChainOptions = [
 ];
 
 interface ILinkPostModalProps {
-	className?: string;
-	setNewTitle: (title: string) => void;
-	setNewContent: (content: string) => void;
-	currPostId: string | number;
-	currPostType: ProposalType;
+  className?: string;
+  setNewTitle: (title: string) => void;
+  setNewContent: (content: string) => void;
+  currPostId: string | number;
+  currPostType: ProposalType;
 }
 
 const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
@@ -85,10 +90,12 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 	const [err, setErr] = useState('');
 	const [postId, setPostId] = useState<number | string>();
 	const [data, setData] = useState<ILinkPostStartResponse>();
-	const [options, setOptions] = useState<{
-		label: string;
-		value: string;
-	}[]>([]);
+	const [options, setOptions] = useState<
+    {
+      label: string;
+      value: string;
+    }[]
+  >([]);
 	const [postType, setPostType] = useState('');
 	const [footer, setFooter] = useState<React.ReactNode>([]);
 
@@ -98,10 +105,13 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 		setLoading(true);
 		// TODO: validate: match discussion post and onchain post author match;
 		try {
-			const { data, error } = await nextApiClientFetch<ILinkPostStartResponse>('api/v1/auth/actions/linkPostStart', {
-				postId,
-				postType
-			});
+			const { data, error } = await nextApiClientFetch<ILinkPostStartResponse>(
+				'api/v1/auth/actions/linkPostStart',
+				{
+					postId,
+					postType
+				}
+			);
 			if (error) {
 				setErr(error);
 			} else {
@@ -119,12 +129,16 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 		setLoading(true);
 		// TODO: validate: match discussion post and onchain post author match;
 		try {
-			const { data: resData, error } = await nextApiClientFetch<ILinkPostConfirmResponse>('api/v1/auth/actions/linkPostConfirm', {
-				currPostId,
-				currPostType,
-				postId,
-				postType
-			});
+			const { data: resData, error } =
+        await nextApiClientFetch<ILinkPostConfirmResponse>(
+        	'api/v1/auth/actions/linkPostConfirm',
+        	{
+        		currPostId,
+        		currPostType,
+        		postId,
+        		postType
+        	}
+        );
 			if (error) {
 				setErr(error);
 			}
@@ -158,12 +172,16 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 		setLoading(true);
 		// TODO: validate: match discussion post and onchain post author match;
 		try {
-			const { data: resData, error } = await nextApiClientFetch<ILinkPostRemoveResponse>('api/v1/auth/actions/linkPostRemove', {
-				currPostId,
-				currPostType,
-				postId,
-				postType
-			});
+			const { data: resData, error } =
+        await nextApiClientFetch<ILinkPostRemoveResponse>(
+        	'api/v1/auth/actions/linkPostRemove',
+        	{
+        		currPostId,
+        		currPostType,
+        		postId,
+        		postType
+        	}
+        );
 			if (error) {
 				setErr(error);
 			}
@@ -189,7 +207,9 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 	};
 
 	useEffect(() => {
-		const options = isOffChainProposalTypeValid(currPostType)? onChainOptions: offChainOptions;
+		const options = isOffChainProposalTypeValid(currPostType)
+			? onChainOptions
+			: offChainOptions;
 		setOptions(options);
 		setPostType(options[0].value);
 	}, [currPostType]);
@@ -199,45 +219,45 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 			footer.push(
 				<Button
 					icon={<DeleteOutlined />}
-					htmlType='reset'
+					htmlType="reset"
 					key="reset"
 					disabled={loading}
 					onClick={handleRemove}
-					className='mr-auto'
+					className="mr-auto"
 				>
-					Remove
+          Remove
 				</Button>
 			);
 		} else if (data) {
 			footer.push(
 				<Button
 					icon={<CheckOutlined />}
-					htmlType='submit'
+					htmlType="submit"
 					key="submit"
 					type="primary"
 					disabled={loading}
 					onClick={handleConfirm}
-					className='bg-green_primary'
+					className="bg-green_primary"
 				>
-					Confirm
+          Confirm
 				</Button>
 			);
 		} else {
 			footer.push(
 				<Button
 					icon={<LinkOutlined />}
-					htmlType='submit'
+					htmlType="submit"
 					key="submit"
 					type="primary"
 					disabled={loading}
 					onClick={handleSubmit}
 				>
-					Link
+          Link
 				</Button>
 			);
 		}
-		setFooter(<div className='flex items-center justify-end'>{footer}</div>);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		setFooter(<div className="flex items-center justify-end">{footer}</div>);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data, postId, postType, postData, loading]);
 
 	useEffect(() => {
@@ -250,31 +270,35 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 				setPostType(post_link.type);
 			}
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postData]);
 	return (
 		<>
-			<Button htmlType="button" className={className} onClick={() => {
-				setShowModal(true);
-				setErr('');
-				const post_link = postData.post_link;
-				if (post_link) {
-					const { type, id } = post_link;
-					setPostId(id);
-					if (type) {
-						setPostType(type);
+			<Button
+				htmlType="button"
+				className={className}
+				onClick={() => {
+					setShowModal(true);
+					setErr('');
+					const post_link = postData.post_link;
+					if (post_link) {
+						const { type, id } = post_link;
+						setPostId(id);
+						if (type) {
+							setPostType(type);
+						}
 					}
-				}
-			}}>
+				}}
+			>
 				<LinkOutlined /> Link Post
 			</Button>
 
 			<Modal
-				title={<h2 className='leading-7 font-medium text-lg text-sidebarBlue'>
-					{
-						data? 'Confirm Details of Post ID to Link': 'Post ID to Link'
-					}
-				</h2>}
+				title={
+					<h2 className="leading-7 font-medium text-lg text-sidebarBlue">
+						{data ? 'Confirm Details of Post ID to Link' : 'Post ID to Link'}
+					</h2>
+				}
 				open={showModal}
 				onOk={handleSubmit}
 				confirmLoading={loading}
@@ -293,55 +317,59 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 						onFinish={handleSubmit}
 						layout="vertical"
 						disabled={formDisabled}
-						className='flex flex-col gap-y-3 my-5'
+						className="flex flex-col gap-y-3 my-5"
 					>
-						<div
-							className='flex flex-col gap-y-1'
-						>
-							<label htmlFor="postId" className='text-sm font-normal leading-5 text-sidebarBlue'>
-							Enter post id
+						<div className="flex flex-col gap-y-1">
+							<label
+								htmlFor="postId"
+								className="text-sm font-normal leading-5 text-sidebarBlue"
+							>
+                Enter post id
 							</label>
 							<Input
-								className='font-medium text-sm leading-6 py-2 px-2.5 rounded-md disabled: bg-white'
-								id='postId'
+								className="font-medium text-sm leading-6 py-2 px-2.5 rounded-md disabled: bg-white"
+								id="postId"
 								disabled={!!data}
 								value={postId}
 								onChange={(e) => setPostId(Number(e.target.value))}
 								autoFocus
-								placeholder='Post ID'
-								type='number'
+								placeholder="Post ID"
+								type="number"
 							/>
 						</div>
-						<div
-							className='flex flex-col gap-y-1'
-						>
-							<label htmlFor="postType" className='text-sm font-normal leading-5 text-sidebarBlue'>
-							Enter post type
+						<div className="flex flex-col gap-y-1">
+							<label
+								htmlFor="postType"
+								className="text-sm font-normal leading-5 text-sidebarBlue"
+							>
+                Enter post type
 							</label>
 							<Select
-								id='postType'
-								className='w-full postTypeSelect'
+								id="postType"
+								className="w-full postTypeSelect"
 								disabled={!!data}
 								value={postType}
 								onChange={(e) => setPostType(e)}
-								placeholder='Post Type'
+								placeholder="Post Type"
 								options={options}
 							/>
 						</div>
-						{
-							err?
-								<div>
-									<ErrorState isRefreshBtnVisible={false} errorMessage={err} />
+						{err ? (
+							<div>
+								<ErrorState isRefreshBtnVisible={false} errorMessage={err} />
+							</div>
+						) : data ? (
+							<div className="my-4">
+								<h3 className="text-xl font-medium text-sidebarBlue">
+									{data?.title || 'Untitled'}
+								</h3>
+								<div className="max-h-[350px] overflow-y-auto">
+									{data?.description ? (
+										<Markdown md={data?.description} />
+									) : null}
 								</div>
-								: data?
-									<div
-										className='my-4'
-									>
-										<h3 className='text-xl font-medium text-sidebarBlue'>{data?.title || 'Untitled'}</h3>
-										<div className='max-h-[350px] overflow-y-auto'>{data?.description? <Markdown md={data?.description} />: null}</div>
-									</div>
-									: null
-						}
+							</div>
+						) : null}
 					</Form>
 				</Spin>
 			</Modal>
@@ -350,15 +378,15 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 };
 
 export default styled(LinkPostModal)`
-	.postTypeSelect .ant-select-selector {
-		font-weight: 500 !important;
-		padding: 5px 10px !important;
-		line-height: 1.5rem !important;
-		font-size: 0.875rem !important;
-		border-radius: 6px !important;
-		height: auto !important;
-	}
-	.postTypeSelect .ant-select-selector {
-		background-color: white !important;
-	}
+  .postTypeSelect .ant-select-selector {
+    font-weight: 500 !important;
+    padding: 5px 10px !important;
+    line-height: 1.5rem !important;
+    font-size: 0.875rem !important;
+    border-radius: 6px !important;
+    height: auto !important;
+  }
+  .postTypeSelect .ant-select-selector {
+    background-color: white !important;
+  }
 `;

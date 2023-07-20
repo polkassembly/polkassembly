@@ -13,21 +13,39 @@ import isValidPassowrd from '~src/auth/utils/isValidPassowrd';
 import isValidUsername from '~src/auth/utils/isValidUsername';
 import messages from '~src/auth/utils/messages';
 
-async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | MessageType>) {
-	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
+async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<TokenType | MessageType>,
+) {
+  if (req.method !== 'POST')
+    return res
+      .status(405)
+      .json({ message: 'Invalid request method, POST required.' });
 
-	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ message: 'Invalid network in request header' });
-	const { email, password, username } = req.body;
+  const network = String(req.headers['x-network']);
+  if (!network || !isValidNetwork(network))
+    res.status(400).json({ message: 'Invalid network in request header' });
+  const { email, password, username } = req.body;
 
-	if(!email || !username || !password) return res.status(400).json({ message: 'Missing parameters in request body' });
-	if (email && !isValidEmail(email)) return res.status(400).json({ message: messages.INVALID_EMAIL });
-	if(!isValidUsername(username)) return res.status(400).json({ message: messages.USERNAME_INVALID_ERROR });
-	if(!isValidPassowrd(password)) return res.status(400).json({ message: messages.PASSWORD_LENGTH_ERROR });
+  if (!email || !username || !password)
+    return res
+      .status(400)
+      .json({ message: 'Missing parameters in request body' });
+  if (email && !isValidEmail(email))
+    return res.status(400).json({ message: messages.INVALID_EMAIL });
+  if (!isValidUsername(username))
+    return res.status(400).json({ message: messages.USERNAME_INVALID_ERROR });
+  if (!isValidPassowrd(password))
+    return res.status(400).json({ message: messages.PASSWORD_LENGTH_ERROR });
 
-	const { token } = await authServiceInstance.SignUp(email, password, username, network);
+  const { token } = await authServiceInstance.SignUp(
+    email,
+    password,
+    username,
+    network,
+  );
 
-	return res.status(200).json({ token });
+  return res.status(200).json({ token });
 }
 
 export default withErrorHandling(handler);

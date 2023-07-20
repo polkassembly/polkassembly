@@ -11,69 +11,88 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 export interface IChildBountiesResponse {
-	child_bounties: {
-        description: string;
-        index: number;
-        status: string;
-    }[];
-    child_bounties_count: number;
+  child_bounties: {
+    description: string;
+    index: number;
+    status: string;
+  }[];
+  child_bounties_count: number;
 }
 
 // expects optional id, page, voteType and listingLimit
-async function handler (req: NextApiRequest, res: NextApiResponse<IChildBountiesResponse | { error: string }>) {
-	const { postId = 0, page = 1, listingLimit = VOTES_LISTING_LIMIT } = req.query;
+async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<IChildBountiesResponse | { error: string }>,
+) {
+  const {
+    postId = 0,
+    page = 1,
+    listingLimit = VOTES_LISTING_LIMIT,
+  } = req.query;
 
-	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) {
-		res.status(400).json({ error: 'Invalid network in request header' });
-	}
+  const network = String(req.headers['x-network']);
+  if (!network || !isValidNetwork(network)) {
+    res.status(400).json({ error: 'Invalid network in request header' });
+  }
 
-	const numListingLimit = Number(listingLimit);
-	if (isNaN(numListingLimit)) {
-		res.status(400).json({ error: `The listingLimit "${listingLimit}" is invalid.` });
-	}
+  const numListingLimit = Number(listingLimit);
+  if (isNaN(numListingLimit)) {
+    res
+      .status(400)
+      .json({ error: `The listingLimit "${listingLimit}" is invalid.` });
+  }
 
-	const numPage = Number(page);
-	if (isNaN(numPage) || numPage <= 0) {
-		return res.status(400).json({ error: `The page "${page}" is invalid.` });
-	}
+  const numPage = Number(page);
+  if (isNaN(numPage) || numPage <= 0) {
+    return res.status(400).json({ error: `The page "${page}" is invalid.` });
+  }
 
-	const numPostId = Number(postId);
-	if (isNaN(numPostId) || numPostId < 0) {
-		return res.status(400).json({ error: `The postId "${postId}" is invalid.` });
-	}
+  const numPostId = Number(postId);
+  if (isNaN(numPostId) || numPostId < 0) {
+    return res
+      .status(400)
+      .json({ error: `The postId "${postId}" is invalid.` });
+  }
 
-	const variables: any = {
-		limit: numListingLimit,
-		offset: numListingLimit * (numPage - 1),
-		parentBountyIndex_eq: numPostId
-	};
+  const variables: any = {
+    limit: numListingLimit,
+    offset: numListingLimit * (numPage - 1),
+    parentBountyIndex_eq: numPostId,
+  };
 
-	const subsquidRes = await fetchSubsquid({
-		network,
-		query: GET_CHILD_BOUNTIES_BY_PARENT_INDEX,
-		variables
-	});
+  const subsquidRes = await fetchSubsquid({
+    network,
+    query: GET_CHILD_BOUNTIES_BY_PARENT_INDEX,
+    variables,
+  });
 
-	const subsquidData = subsquidRes?.data;
-	if (!subsquidData || !subsquidData.proposals || !Array.isArray(subsquidData.proposals) || !subsquidData.proposalsConnection) {
-		throw apiErrorWithStatusCode(`Child bounties of bounty index "${postId}" is not found.`, 404);
-	}
+  const subsquidData = subsquidRes?.data;
+  if (
+    !subsquidData ||
+    !subsquidData.proposals ||
+    !Array.isArray(subsquidData.proposals) ||
+    !subsquidData.proposalsConnection
+  ) {
+    throw apiErrorWithStatusCode(
+      `Child bounties of bounty index "${postId}" is not found.`,
+      404,
+    );
+  }
 
-	const resObj: IChildBountiesResponse = {
-		child_bounties: [],
-		child_bounties_count: subsquidData?.proposalsConnection?.totalCount || 0
-	};
+  const resObj: IChildBountiesResponse = {
+    child_bounties: [],
+    child_bounties_count: subsquidData?.proposalsConnection?.totalCount || 0,
+  };
 
-	subsquidData.proposals.forEach((childBounty: any) => {
-		resObj.child_bounties.push({
-			description: childBounty.description,
-			index: childBounty.index,
-			status: childBounty.status
-		});
-	});
+  subsquidData.proposals.forEach((childBounty: any) => {
+    resObj.child_bounties.push({
+      description: childBounty.description,
+      index: childBounty.index,
+      status: childBounty.status,
+    });
+  });
 
-	res.status(200).json(resObj);
+  res.status(200).json(resObj);
 }
 
 export default withErrorHandling(handler);

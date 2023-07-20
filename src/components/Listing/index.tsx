@@ -8,14 +8,17 @@ import { poppins } from 'pages/_app';
 import GovernanceCard from 'src/components/GovernanceCard';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
-import { getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
+import {
+	getSinglePostLinkFromProposalType,
+	ProposalType
+} from '~src/global/proposalType';
 
 interface IListingProps {
   className?: string;
   posts?: any[];
   proposalType: ProposalType;
   isTip?: boolean;
-  tipStartedIndex?: number
+  tipStartedIndex?: number;
 }
 
 const Listing: FC<IListingProps> = (props) => {
@@ -54,9 +57,15 @@ const Listing: FC<IListingProps> = (props) => {
 				return (
 					<div key={id} className="my-0">
 						{
-							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${id}`}>
+							<Link
+								href={`/${getSinglePostLinkFromProposalType(
+									proposalType
+								)}/${id}`}
+							>
 								<GovernanceCard
-									className={`${(index+1)%2!==0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
+									className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC]'} ${
+										poppins.variable
+									} ${poppins.className}`}
 									cid={cid}
 									postReactionCount={post_reactions}
 									address={proposer || curator}
@@ -69,7 +78,7 @@ const Listing: FC<IListingProps> = (props) => {
 									title={title || description}
 									topic={topic && topic?.name ? topic.name : ''}
 									created_at={created_at}
-									tip_index={tipStartedIndex? tipStartedIndex - index: null}
+									tip_index={tipStartedIndex ? tipStartedIndex - index : null}
 									isTip={isTip}
 									tags={tags}
 									spam_users_count={spam_users_count}

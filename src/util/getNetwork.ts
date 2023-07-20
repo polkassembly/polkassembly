@@ -14,7 +14,7 @@ import { Network } from '../types';
  */
 
 export default function getNetwork(): Network {
-	if(!global?.window) return defaultNetwork;
+	if (!global?.window) return defaultNetwork;
 	let network: string;
 
 	const url = global.window.location.href;
@@ -33,13 +33,11 @@ export default function getNetwork(): Network {
 
 	const possibleNetworks = Object.values(networkConstants);
 
-	if(network == 'test'){
+	if (network == 'test') {
 		network = 'kusama';
-	}
-	else if(network == 'test-polkadot'){
+	} else if (network == 'test-polkadot') {
 		network = 'polkadot';
-	}
-	else if(network == 'moonriver-test'){
+	} else if (network == 'moonriver-test') {
 		network = 'moonriver';
 	}
 

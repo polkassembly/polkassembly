@@ -4,10 +4,10 @@
 import React, { FC, useEffect } from 'react';
 
 interface INFTsProps {
-    loading: boolean;
-    onCancel: React.MutableRefObject<() => void>;
-    onSave: React.MutableRefObject<() => Promise<void>>;
-    open: boolean;
+  loading: boolean;
+  onCancel: React.MutableRefObject<() => void>;
+  onSave: React.MutableRefObject<() => Promise<void>>;
+  open: boolean;
 }
 
 const NFTs: FC<INFTsProps> = (props) => {
@@ -15,11 +15,9 @@ const NFTs: FC<INFTsProps> = (props) => {
 	useEffect(() => {
 		onCancel.current = () => {};
 		onSave.current = async () => {};
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-	return (
-		<div>NFTs</div>
-	);
+	return <div>NFTs</div>;
 };
 
 export default NFTs;

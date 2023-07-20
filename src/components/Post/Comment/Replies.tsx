@@ -7,10 +7,10 @@ import React, { useState } from 'react';
 
 import Reply from './Reply';
 
-interface Props{
-	className?: string
-	repliesArr: any[]
-	commentId: string
+interface Props {
+  className?: string;
+  repliesArr: any[];
+  commentId: string;
 }
 
 const Replies = ({ className, commentId, repliesArr }: Props) => {
@@ -18,24 +18,36 @@ const Replies = ({ className, commentId, repliesArr }: Props) => {
 	const toggleShowReplies = () => setShowReplies(!showReplies);
 	return (
 		<div className={className}>
-			{repliesArr.length > 0 ?
-				!showReplies ?
-					<div className='text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center' onClick={toggleShowReplies}>{repliesArr.length} replies <DownOutlined className='ml-1' /></div>
-					:
-					<div className='text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center' onClick={toggleShowReplies}>Hide replies <UpOutlined className='ml-1' /></div>
-				: null
-			}
-			{showReplies && repliesArr.map((reply: any) => {
-				return(
-					<div key={reply.id}>
-						<Reply
-							reply={reply}
-							key={reply.id}
-							commentId={commentId}
-							userName={reply.username}
-						/>
-					</div>);}
-			)}
+			{repliesArr.length > 0 ? (
+				!showReplies ? (
+					<div
+						className="text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center"
+						onClick={toggleShowReplies}
+					>
+						{repliesArr.length} replies <DownOutlined className="ml-1" />
+					</div>
+				) : (
+					<div
+						className="text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center"
+						onClick={toggleShowReplies}
+					>
+            Hide replies <UpOutlined className="ml-1" />
+					</div>
+				)
+			) : null}
+			{showReplies &&
+        repliesArr.map((reply: any) => {
+        	return (
+        		<div key={reply.id}>
+        			<Reply
+        				reply={reply}
+        				key={reply.id}
+        				commentId={commentId}
+        				userName={reply.username}
+        			/>
+        		</div>
+        	);
+        })}
 		</div>
 	);
 };

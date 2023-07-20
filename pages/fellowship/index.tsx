@@ -11,32 +11,37 @@ import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
-	return { props: { network } };
+  const network = getNetworkFromReqHeaders(req.headers);
+  return { props: { network } };
 };
 
 const FellowshipMembers = (props: { network: string }) => {
-	const { setNetwork } = useNetworkContext();
+  const { setNetwork } = useNetworkContext();
 
-	useEffect(() => {
-		setNetwork(props.network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+  useEffect(() => {
+    setNetwork(props.network);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-	return (
-		<>
-			<SEOHead title='Fellowship' network={props.network}/>
-			<h1 className='dashboard-heading mb-4 md:mb-6'>Fellowship</h1>
+  return (
+    <>
+      <SEOHead title="Fellowship" network={props.network} />
+      <h1 className="dashboard-heading mb-4 md:mb-6">Fellowship</h1>
 
-			{/* Intro and Create Post Button */}
-			<div className="flex flex-col md:flex-row">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
-					Fellowship is a mostly self-governing expert body with a primary goal of representing the humans who embody and contain the technical knowledge base of the Polkadot network and protocol.
-				</p>
-			</div>
-			<WhitelistMembersContainer membersType={EMembersType.FELLOWSHIP} className='mt-8' />
-		</>
-	);
+      {/* Intro and Create Post Button */}
+      <div className="flex flex-col md:flex-row">
+        <p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+          Fellowship is a mostly self-governing expert body with a primary goal
+          of representing the humans who embody and contain the technical
+          knowledge base of the Polkadot network and protocol.
+        </p>
+      </div>
+      <WhitelistMembersContainer
+        membersType={EMembersType.FELLOWSHIP}
+        className="mt-8"
+      />
+    </>
+  );
 };
 
 export default FellowshipMembers;

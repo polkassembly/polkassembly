@@ -4,7 +4,11 @@
 
 import { SettingOutlined, MenuOutlined } from '@ant-design/icons';
 import 'react-cmdk/dist/cmdk.css';
-import CommandPalette, { filterItems, getItemIndex, useHandleOpenCommandPalette } from 'react-cmdk';
+import CommandPalette, {
+	filterItems,
+	getItemIndex,
+	useHandleOpenCommandPalette
+} from 'react-cmdk';
 import React, { useMemo, useState } from 'react';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy_proposals.svg';
 import TreasuryProposalsSVG from '~assets/sidebar/treasury_proposals.svg';
@@ -39,13 +43,17 @@ const CMDK = () => {
 	const homeMenus = getHomeMenu(network);
 	if (isLoggedOut()) {
 		if (homeMenus && Array.isArray(homeMenus) && homeMenus.length > 0) {
-			const index = homeMenus?.[0]?.items?.findIndex((item) => item?.value === 'settings');
+			const index = homeMenus?.[0]?.items?.findIndex(
+				(item) => item?.value === 'settings'
+			);
 			if (index >= 0) {
 				homeMenus[0].items.splice(index, 1);
 			}
 		}
 	}
-	const foldedMenu = homeMenus.filter((menu: any) => menu.name && menu.items.length);
+	const foldedMenu = homeMenus.filter(
+		(menu: any) => menu.name && menu.items.length
+	);
 
 	const pages = useMemo(() => {
 		const subPageItems = foldedMenu.map((m: any) => {
@@ -89,15 +97,23 @@ const CMDK = () => {
 							}),
 							...foldedMenu.map((m: any) => {
 								return {
-									children: typeof m?.name === 'string'? m.name.split('_').map((str: string) => {
-										if (str === 'OPENGOV') {
-											return 'OpenGov';
-										} else {
-											return str?.charAt(0) + str?.slice(1)?.toLowerCase();
-										}
-									}).join(' '): '',
+									children:
+                    typeof m?.name === 'string'
+                    	? m.name
+                    		.split('_')
+                    		.map((str: string) => {
+                    			if (str === 'OPENGOV') {
+                    				return 'OpenGov';
+                    			} else {
+                    				return (
+                    					str?.charAt(0) + str?.slice(1)?.toLowerCase()
+                    				);
+                    			}
+                    		})
+                    		.join(' ')
+                    	: '',
 									closeOnSelect: false,
-									icon: () => <MenuOutlined className='text-[#C2CFE0]' />,
+									icon: () => <MenuOutlined className="text-[#C2CFE0]" />,
 									id: m.name,
 									onClick() {
 										setSearch('');
@@ -107,14 +123,14 @@ const CMDK = () => {
 							})
 						]
 					},
-					...(search? subPageItems.map((i) => i.filteredItems).flat(): [])
+					...(search ? subPageItems.map((i) => i.filteredItems).flat() : [])
 				],
 				search
 			),
 			id: 'home'
 		};
 		return [homepageItem, ...subPageItems];
-	},[foldedMenu, search]);
+	}, [foldedMenu, search]);
 	return (
 		<CommandPalette
 			page={page}
@@ -123,34 +139,32 @@ const CMDK = () => {
 			onChangeOpen={setOpen}
 			search={search}
 		>
-			{
-				pages.map((page) => {
-					return (
-						<CommandPalette.Page
-							key={page.id}
-							id={page.id}
-							onEscape={() => onPageEscape(page)}
-							searchPrefix={(page as any)?.searchPrefix}
-						>
-							{page?.filteredItems?.length ? (
-								page.filteredItems.map((list) => (
-									<CommandPalette.List key={list.id} heading={list.heading}>
-										{list.items.map(({ id, ...rest }) => (
-											<CommandPalette.ListItem
-												key={id}
-												index={getItemIndex(page.filteredItems, id)}
-												{...rest}
-											/>
-										))}
-									</CommandPalette.List>
-								))
-							) : (
-								<CommandPalette.FreeSearchAction />
-							)}
-						</CommandPalette.Page>
-					);
-				})
-			}
+			{pages.map((page) => {
+				return (
+					<CommandPalette.Page
+						key={page.id}
+						id={page.id}
+						onEscape={() => onPageEscape(page)}
+						searchPrefix={(page as any)?.searchPrefix}
+					>
+						{page?.filteredItems?.length ? (
+							page.filteredItems.map((list) => (
+								<CommandPalette.List key={list.id} heading={list.heading}>
+									{list.items.map(({ id, ...rest }) => (
+										<CommandPalette.ListItem
+											key={id}
+											index={getItemIndex(page.filteredItems, id)}
+											{...rest}
+										/>
+									))}
+								</CommandPalette.List>
+							))
+						) : (
+							<CommandPalette.FreeSearchAction />
+						)}
+					</CommandPalette.Page>
+				);
+			})}
 		</CommandPalette>
 	);
 };
@@ -287,16 +301,21 @@ const getReferenda = (network: string) => {
 	const items: any[] = [];
 	if (networkTrackInfo && networkTrackInfo[network]) {
 		Object.values(networkTrackInfo[network]).forEach((v) => {
-			if (v && !v.fellowshipOrigin && !['whitelisted_caller', 'fellowship_admin'].includes(v.name)) {
+			if (
+				v &&
+        !v.fellowshipOrigin &&
+        !['whitelisted_caller', 'fellowship_admin'].includes(v.name)
+			) {
 				items.push({
 					icon: (
-						<span
-							className='w-6 h-6 bg-grey_secondary text-xs leading-none font-medium text-white rounded-full flex items-center justify-center'
-						>
+						<span className="w-6 h-6 bg-grey_secondary text-xs leading-none font-medium text-white rounded-full flex items-center justify-center">
 							{v.trackId}
 						</span>
 					),
-					name: v?.name?.split('_')?.map((s: string) => s?.charAt(0)?.toUpperCase() + s?.slice(1)).join(' '),
+					name: v?.name
+						?.split('_')
+						?.map((s: string) => s?.charAt(0)?.toUpperCase() + s?.slice(1))
+						.join(' '),
 					pathname: v?.name?.split('_')?.join('-') || '',
 					value: v.name
 				});

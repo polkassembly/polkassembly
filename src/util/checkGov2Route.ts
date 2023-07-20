@@ -17,26 +17,48 @@ export const gov2Routes = [
 ];
 
 for (const trackName of Object.keys(networkTrackInfo.kusama)) {
-	gov2Routes.push(trackName.split(/(?=[A-Z])/).join('-').toLowerCase());
+	gov2Routes.push(
+		trackName
+			.split(/(?=[A-Z])/)
+			.join('-')
+			.toLowerCase()
+	);
 }
 
-export default function checkGov2Route(pathname: string, query?: ParsedUrlQuery, prevRoute?: string, network?: string): boolean {
+export default function checkGov2Route(
+	pathname: string,
+	query?: ParsedUrlQuery,
+	prevRoute?: string,
+	network?: string
+): boolean {
 	if (network === 'collectives') {
 		return false;
 	}
-	if(pathname === '/referenda'){
+	if (pathname === '/referenda') {
 		return false;
 	}
-	if (query && query.membersType && ['fellowship', 'whitelist'].includes(String(query.membersType))) {
+	if (
+		query &&
+    query.membersType &&
+    ['fellowship', 'whitelist'].includes(String(query.membersType))
+	) {
 		return true;
 	}
-	if(prevRoute && gov2Routes.includes(prevRoute.split('/')[1]) && pathname.split('/')[1] === 'discussions'){
+	if (
+		prevRoute &&
+    gov2Routes.includes(prevRoute.split('/')[1]) &&
+    pathname.split('/')[1] === 'discussions'
+	) {
 		return true;
-	}
-	else if(prevRoute && gov2Routes.includes(prevRoute.split('/')[1]) && pathname.split('/')[1] === 'post'){
+	} else if (
+		prevRoute &&
+    gov2Routes.includes(prevRoute.split('/')[1]) &&
+    pathname.split('/')[1] === 'post'
+	) {
 		return true;
+	} else if (!prevRoute && pathname.split('/')[1] === 'discussions') {
+		return false;
 	}
-	else if(!prevRoute && pathname.split('/')[1] === 'discussions'){ return false; }
 
 	return gov2Routes.includes(pathname.split('/')[1]);
 }

@@ -18,13 +18,14 @@ import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import AddTags from '~src/ui-components/AddTags';
 
 interface ILinkingAndEditingProps {
-    setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    linkingAndEditingOpen: boolean;
-	isOnchainPost: boolean;
+  setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  linkingAndEditingOpen: boolean;
+  isOnchainPost: boolean;
 }
 
 const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
-	const { linkingAndEditingOpen, setLinkingAndEditingOpen, isOnchainPost } = props;
+	const { linkingAndEditingOpen, setLinkingAndEditingOpen, isOnchainPost } =
+    props;
 	const [form] = Form.useForm();
 	const [post, setPost] = useState<ILinkPostStartResponse>();
 	const [url, setUrl] = useState('');
@@ -37,15 +38,18 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 		title: ''
 	});
 
-	const { postData: {
-		content,
-		postIndex,
-		postType,
-		title,
-		post_link,
-		timeline,
-		tags: oldTags
-	}, setPostData } = usePostDataContext();
+	const {
+		postData: {
+			content,
+			postIndex,
+			postType,
+			title,
+			post_link,
+			timeline,
+			tags: oldTags
+		},
+		setPostData
+	} = usePostDataContext();
 	const { network } = useNetworkContext();
 
 	const [tags, setTags] = useState<string[]>(oldTags);
@@ -72,12 +76,16 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 		}
 	}, [post_link]);
 
-	const onFinish = async ({ url, content: updatedContent, title: updatedTitle  }: any) => {
+	const onFinish = async ({
+		url,
+		content: updatedContent,
+		title: updatedTitle
+	}: any) => {
 		setError('');
 		setFormDisabled(true);
 		setLoading(true);
 		try {
-			if ((!url || !url.trim())) {
+			if (!url || !url.trim()) {
 				if (!updatedContent) {
 					setError('Please enter a valid content');
 					setFormDisabled(false);
@@ -90,15 +98,19 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					setLoading(false);
 					return;
 				}
-				const { data , error: editError } = await nextApiClientFetch<IEditPostResponse>('api/v1/auth/actions/editPost', {
-					content: updatedContent,
-					postId: postIndex,
-					proposalType: postType,
-					tags: ((tags && Array.isArray(tags))? tags: []),
-					timeline,
-					title: updatedTitle
-				});
-				if(editError || !data) {
+				const { data, error: editError } =
+          await nextApiClientFetch<IEditPostResponse>(
+          	'api/v1/auth/actions/editPost',
+          	{
+          		content: updatedContent,
+          		postId: postIndex,
+          		proposalType: postType,
+          		tags: tags && Array.isArray(tags) ? tags : [],
+          		timeline,
+          		title: updatedTitle
+          	}
+          );
+				if (editError || !data) {
 					setError(editError || 'Error in editing the post.');
 					setFormDisabled(false);
 					setLoading(false);
@@ -117,7 +129,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						content,
 						last_edited_at,
 						proposer,
-						tags: ((tags && Array.isArray(tags))? tags: []),
+						tags: tags && Array.isArray(tags) ? tags : [],
 						title,
 						topic
 					}));
@@ -139,10 +151,14 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						setLoading(false);
 						return;
 					}
-					const { data , error } = await nextApiClientFetch<ILinkPostStartResponse>('api/v1/auth/actions/linkPostStart', {
-						postId: postTypeAndId.id,
-						postType: postTypeAndId.type
-					});
+					const { data, error } =
+            await nextApiClientFetch<ILinkPostStartResponse>(
+            	'api/v1/auth/actions/linkPostStart',
+            	{
+            		postId: postTypeAndId.id,
+            		postType: postTypeAndId.type
+            	}
+            );
 					if (error || !data) {
 						setError(error || 'Something went wrong');
 						setFormDisabled(false);
@@ -165,12 +181,16 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						setLoading(false);
 						return;
 					}
-					const { data , error } = await nextApiClientFetch<ILinkPostConfirmResponse>('api/v1/auth/actions/linkPostConfirm', {
-						currPostId: postIndex,
-						currPostType: postType,
-						postId: postTypeAndId.id,
-						postType: postTypeAndId.type
-					});
+					const { data, error } =
+            await nextApiClientFetch<ILinkPostConfirmResponse>(
+            	'api/v1/auth/actions/linkPostConfirm',
+            	{
+            		currPostId: postIndex,
+            		currPostType: postType,
+            		postId: postTypeAndId.id,
+            		postType: postTypeAndId.type
+            	}
+            );
 					if (error || !data) {
 						setError(error || 'Something went wrong');
 						setFormDisabled(false);
@@ -185,20 +205,26 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						});
 						setPostData((prev) => ({
 							...prev,
-							content: isOnchainPost? post?.description || '': prev.content,
+							content: isOnchainPost ? post?.description || '' : prev.content,
 							last_edited_at: post?.last_edited_at,
 							post_link: {
 								created_at: post?.created_at,
 								description: post?.description,
 								id: postTypeAndId.id,
 								last_edited_at: post?.last_edited_at,
-								tags: ((post?.tags && Array.isArray(post?.tags))? post?.tags: prev.tags),
+								tags:
+                  post?.tags && Array.isArray(post?.tags)
+                  	? post?.tags
+                  	: prev.tags,
 								title: post?.title,
 								type: postTypeAndId.type
 							},
-							tags: ((post?.tags && Array.isArray(post?.tags))? post?.tags: prev.tags),
+							tags:
+                post?.tags && Array.isArray(post?.tags)
+                	? post?.tags
+                	: prev.tags,
 							timeline: data.timeline,
-							title: isOnchainPost? post?.title || '': prev.title
+							title: isOnchainPost ? post?.title || '' : prev.title
 						}));
 					}
 				}
@@ -207,7 +233,10 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 			if (error) {
 				if (typeof error === 'string') {
 					setError(error);
-				} else if (typeof error === 'object' && typeof error.message === 'string') {
+				} else if (
+					typeof error === 'object' &&
+          typeof error.message === 'string'
+				) {
 					setError(error.message);
 				} else {
 					setError('Something went wrong');
@@ -229,30 +258,43 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 			open={linkingAndEditingOpen}
 			onCancel={() => setLinkingAndEditingOpen(false)}
 			footer={[
-				<div
-					key='save'
-					className='flex items-center justify-end'
-				>
-					<Button loading={loading} disabled={formDisabled} onClick={() => {
-						if ((content !== editPostValue.content || title !== editPostValue.title)) {
-							form.submit();
-						} else if (prevUrl === url) {
-							onFinish({ updatedContent: content, updatedTitle: title, url });
-						} else {
-							onFinish({ updatedContent: editPostValue.content, updatedTitle: editPostValue.title, url });
-						}
-					}} className={`'border-none outline-none bg-pink_primary text-white rounded-[4px] px-4 py-1 font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize' ${formDisabled? 'cursor-not-allowed': 'cursor-pointer'}`}>
-						{prevUrl === url || (content !== editPostValue.content || title !== editPostValue.title) ? 'Save' : 'Preview'}
+				<div key="save" className="flex items-center justify-end">
+					<Button
+						loading={loading}
+						disabled={formDisabled}
+						onClick={() => {
+							if (
+								content !== editPostValue.content ||
+                title !== editPostValue.title
+							) {
+								form.submit();
+							} else if (prevUrl === url) {
+								onFinish({ updatedContent: content, updatedTitle: title, url });
+							} else {
+								onFinish({
+									updatedContent: editPostValue.content,
+									updatedTitle: editPostValue.title,
+									url
+								});
+							}
+						}}
+						className={`'border-none outline-none bg-pink_primary text-white rounded-[4px] px-4 py-1 font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize' ${
+							formDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+						}`}
+					>
+						{prevUrl === url ||
+            content !== editPostValue.content ||
+            title !== editPostValue.title
+							? 'Save'
+							: 'Preview'}
 					</Button>
 				</div>
 			]}
-			className='md:min-w-[674px]'
+			className="md:min-w-[674px]"
 		>
-			<section className='flex flex-col'>
-				<h2
-					className='mt-3 text-sidebarBlue font-semibold text-xl leading-[24px]'
-				>
-                    Edit Proposal Details
+			<section className="flex flex-col">
+				<h2 className="mt-3 text-sidebarBlue font-semibold text-xl leading-[24px]">
+          Edit Proposal Details
 				</h2>
 				<Form
 					form={form}
@@ -264,35 +306,39 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						content,
 						title: title
 					}}
-					validateMessages= {
-						{ required: "Please add the '${name}'" }
-					}
+					validateMessages={{ required: "Please add the '${name}'" }}
 				>
 					<Form.Item
 						name="title"
-						label={<span className='text-[#475F7D] text-lg leading-[27px] tracking-[0.01em] font-semibold'>Title</span>}
+						label={
+							<span className="text-[#475F7D] text-lg leading-[27px] tracking-[0.01em] font-semibold">
+                Title
+							</span>
+						}
 						rules={[
 							{
 								required: true
 							}
 						]}
-						className='mt-5'
+						className="mt-5"
 					>
 						<Input
-							name='title'
+							name="title"
 							autoFocus
-							onChange={(e) => setEditPostValue((prev) => ({
-								...prev,
-								title: e.target.value
-							}))}
-							placeholder='Add your title here'
-							className='border border-solid border-[rgba(72,95,125,0.2)] rounded-[4px] placeholder:text-[#CED4DE] font-medium text-sm leading-[21px] tracking-[0.01em] p-2 text-[#475F7D]'
+							onChange={(e) =>
+								setEditPostValue((prev) => ({
+									...prev,
+									title: e.target.value
+								}))
+							}
+							placeholder="Add your title here"
+							className="border border-solid border-[rgba(72,95,125,0.2)] rounded-[4px] placeholder:text-[#CED4DE] font-medium text-sm leading-[21px] tracking-[0.01em] p-2 text-[#475F7D]"
 						/>
 					</Form.Item>
-					<div
-						className='mt-[30px]'
-					>
-						<label className='text-[#475F7D] font-semibold text-lg leading-[27px] tracking-[0.01em] flex items-center mb-2'>Description</label>
+					<div className="mt-[30px]">
+						<label className="text-[#475F7D] font-semibold text-lg leading-[27px] tracking-[0.01em] flex items-center mb-2">
+              Description
+						</label>
 						<ContentForm
 							onChange={(content) => {
 								setEditPostValue((prev) => ({
@@ -303,48 +349,61 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 							}}
 						/>
 					</div>
-					<div
-						className='mt-[30px]'
-					>
-						<label className='text-[#475F7D] font-semibold text-lg leading-[27px] tracking-[0.01em] flex items-center mb-2'>Tags</label>
-						<AddTags tags={tags} setTags={setTags} className='mb-1' />
+					<div className="mt-[30px]">
+						<label className="text-[#475F7D] font-semibold text-lg leading-[27px] tracking-[0.01em] flex items-center mb-2">
+              Tags
+						</label>
+						<AddTags tags={tags} setTags={setTags} className="mb-1" />
 					</div>
-					{
-						post_link?
-							<article>
-								<h3 className='text-[#475F7D] text-lg leading-[27px] tracking-[0.01em] font-semibold mb-2'>Linked Discussion</h3>
-								<LinkPostPreview post={post} />
-								<div className='flex items-center justify-end my-2'>
-									<Button loading={loading} disabled={formDisabled} onClick={() => {
+					{post_link ? (
+						<article>
+							<h3 className="text-[#475F7D] text-lg leading-[27px] tracking-[0.01em] font-semibold mb-2">
+                Linked Discussion
+							</h3>
+							<LinkPostPreview post={post} />
+							<div className="flex items-center justify-end my-2">
+								<Button
+									loading={loading}
+									disabled={formDisabled}
+									onClick={() => {
 										form.submit();
-									}} className={`'border-none outline-none bg-pink_primary text-white rounded-[4px] px-4 py-1 font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize' ${formDisabled? 'cursor-not-allowed': 'cursor-pointer'}`}>
-										Unlink
-									</Button>
-								</div>
-							</article>
-							: <article className='flex flex-col gap-y-3'>
-								<Form.Item
-									name="url"
-									label={<span className='text-[#475F7D] text-lg leading-[27px] tracking-[0.01em] font-semibold'>Link {!isOnchainPost? 'Onchain': 'Discussion'}  Post</span>}
-									className='mt-5 mb-0'
+									}}
+									className={`'border-none outline-none bg-pink_primary text-white rounded-[4px] px-4 py-1 font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize' ${
+										formDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+									}`}
 								>
-									<Input
-										name='url'
-										onChange={(e) => {
-											setPrevUrl('');
-											setUrl(e.target.value);
-											setPost(undefined);
-										}}
-										autoFocus
-										placeholder='Enter your post URL here'
-										className='border border-solid border-[rgba(72,95,125,0.2)] rounded-[4px] placeholder:text-[#CED4DE] font-medium text-sm leading-[21px] tracking-[0.01em] p-2 text-[#475F7D]'
-									/>
-								</Form.Item>
-								<LinkPostPreview post={post} />
-							</article>
-					}
+                  Unlink
+								</Button>
+							</div>
+						</article>
+					) : (
+						<article className="flex flex-col gap-y-3">
+							<Form.Item
+								name="url"
+								label={
+									<span className="text-[#475F7D] text-lg leading-[27px] tracking-[0.01em] font-semibold">
+                    Link {!isOnchainPost ? 'Onchain' : 'Discussion'} Post
+									</span>
+								}
+								className="mt-5 mb-0"
+							>
+								<Input
+									name="url"
+									onChange={(e) => {
+										setPrevUrl('');
+										setUrl(e.target.value);
+										setPost(undefined);
+									}}
+									autoFocus
+									placeholder="Enter your post URL here"
+									className="border border-solid border-[rgba(72,95,125,0.2)] rounded-[4px] placeholder:text-[#CED4DE] font-medium text-sm leading-[21px] tracking-[0.01em] p-2 text-[#475F7D]"
+								/>
+							</Form.Item>
+							<LinkPostPreview post={post} />
+						</article>
+					)}
 				</Form>
-				{error && <ErrorAlert className='mt-3' errorMsg={error} />}
+				{error && <ErrorAlert className="mt-3" errorMsg={error} />}
 			</section>
 		</Modal>
 	);

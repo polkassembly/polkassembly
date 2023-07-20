@@ -23,11 +23,11 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TFALoginForm from './TFALoginForm';
 
 interface Props {
-	className?: string
-	setDisplayWeb2: () => void
-	setPolkadotWallet: () => void;
-   isModal?:boolean;
-  setLoginOpen?:(pre:boolean)=>void;
+  className?: string;
+  setDisplayWeb2: () => void;
+  setPolkadotWallet: () => void;
+  isModal?: boolean;
+  setLoginOpen?: (pre: boolean) => void;
 }
 
 const initAuthResponse: IAuthResponse = {
@@ -39,7 +39,13 @@ const initAuthResponse: IAuthResponse = {
 
 const NETWORK = getNetwork();
 
-const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isModal, setLoginOpen }:Props): JSX.Element => {
+const WalletConnectLogin = ({
+	className,
+	setDisplayWeb2,
+	setPolkadotWallet,
+	isModal,
+	setLoginOpen
+}: Props): JSX.Element => {
 	const currentUser = useContext(UserDetailsContext);
 	const { setWalletConnectProvider } = currentUser;
 
@@ -52,13 +58,13 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 	const [provider, setProvider] = useState<WalletConnectProvider | null>(null);
-	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
+	const [authResponse, setAuthResponse] =
+    useState<IAuthResponse>(initAuthResponse);
 
 	const connect = async () => {
-
 		setIsAccountLoading(true);
 
-		if(provider && provider.wc.connected) {
+		if (provider && provider.wc.connected) {
 			provider.wc.killSession();
 		}
 
@@ -75,7 +81,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 	};
 
 	const getAccounts = async () => {
-		if(!provider) return;
+		if (!provider) return;
 
 		if (!provider.wc.connected) {
 			await provider.wc.createSession();
@@ -93,7 +99,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 				return;
 			}
 
-			const { accounts:addresses, chainId } = payload.params[0];
+			const { accounts: addresses, chainId } = payload.params[0];
 
 			getAccountsHandler(addresses, Number(chainId));
 		});
@@ -105,7 +111,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 			}
 
 			// updated accounts and chainId
-			const { accounts:addresses, chainId } = payload.params[0];
+			const { accounts: addresses, chainId } = payload.params[0];
 			getAccountsHandler(addresses, Number(chainId));
 		});
 
@@ -124,8 +130,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const getAccountsHandler = async (addresses: string[], chainId: number) => {
-
-		if(chainId !== chainProperties[NETWORK].chainId) {
+		if (chainId !== chainProperties[NETWORK].chainId) {
 			setError(`Please login using the ${NETWORK} network on WalletConnect`);
 			setAccountsNotFound(true);
 			setIsAccountLoading(false);
@@ -140,18 +145,20 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 			return;
 		}
 
-		setAccounts(checksumAddresses.map((address: string): InjectedAccountWithMeta => {
-			const account = {
-				address: address.toLowerCase(),
-				meta: {
-					genesisHash: null,
-					name: 'walletConnect',
-					source: 'walletConnect'
-				}
-			};
+		setAccounts(
+			checksumAddresses.map((address: string): InjectedAccountWithMeta => {
+				const account = {
+					address: address.toLowerCase(),
+					meta: {
+						genesisHash: null,
+						name: 'walletConnect',
+						source: 'walletConnect'
+					}
+				};
 
-			return account;
-		}));
+				return account;
+			})
+		);
 
 		if (checksumAddresses.length > 0) {
 			setAddress(checksumAddresses[0]);
@@ -162,12 +169,12 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 
 	useEffect(() => {
 		connect();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
 		getAccounts();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [provider]);
 
 	const onAccountChange = (address: string) => {
@@ -175,7 +182,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 	};
 
 	const handleLogin = async () => {
-		if(!provider) return;
+		if (!provider) return;
 
 		if (!accounts.length) {
 			return getAccounts();
@@ -184,8 +191,12 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 		try {
 			setLoading(true);
 
-			const { data: loginStartData , error: loginStartError } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressLoginStart', { address });
-			if(loginStartError) {
+			const { data: loginStartData, error: loginStartError } =
+        await nextApiClientFetch<ChallengeMessage>(
+        	'api/v1/auth/actions/addressLoginStart',
+        	{ address }
+        );
+			if (loginStartError) {
 				console.log('Error in address login start', loginStartError);
 				setError(loginStartError);
 				setLoading(false);
@@ -214,18 +225,28 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 				.sendCustomRequest(tx)
 				.then(async (result: any) => {
 					try {
-						const { data: addressLoginData , error: addressLoginError } = await nextApiClientFetch<IAuthResponse>( 'api/v1/auth/actions/addressLogin', { address, signature: result, wallet: Wallet.WALLETCONNECT });
+						const { data: addressLoginData, error: addressLoginError } =
+              await nextApiClientFetch<IAuthResponse>(
+              	'api/v1/auth/actions/addressLogin',
+              	{ address, signature: result, wallet: Wallet.WALLETCONNECT }
+              );
 
-						if(addressLoginError) {
+						if (addressLoginError) {
 							console.log('Error in address login', addressLoginError);
 							setError(addressLoginError);
 
 							// TODO: change method of checking if user/address needs signup
-							if(addressLoginError === 'Login with web3 account failed. Address not linked to any account.'){
+							if (
+								addressLoginError ===
+                'Login with web3 account failed. Address not linked to any account.'
+							) {
 								try {
-
 									setLoading(true);
-									const { data , error } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressSignupStart', { address });
+									const { data, error } =
+                    await nextApiClientFetch<ChallengeMessage>(
+                    	'api/v1/auth/actions/addressSignupStart',
+                    	{ address }
+                    );
 									if (error || !data) {
 										setError(error || 'Something went wrong');
 										setLoading(false);
@@ -233,7 +254,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 									}
 
 									const signMessage = data?.signMessage;
-									if (!signMessage){
+									if (!signMessage) {
 										setError('Challenge message not found');
 										setLoading(false);
 										return;
@@ -246,51 +267,65 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 									const method = 'personal_sign';
 
 									if ((window as any)?.web3?.currentProvider) {
-										(window as any).web3.currentProvider.sendAsync({
-											from,
-											method,
-											params
-										}, async (err: any, result: any) => {
-											if (err) {
-												setError(err.message);
-												setLoading(false);
-												return;
-											}
-
-											const { data: confirmData , error: confirmError } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/addressSignupConfirm', {
-												address,
-												signature: result.result,
-												wallet: Wallet.WALLETCONNECT
-											});
-
-											if (confirmError || !confirmData) {
-												setError(confirmError || 'Something went wrong');
-												setLoading(false);
-												return;
-											}
-
-											if(confirmData.token) {
-												currentUser.loginWallet=Wallet.WALLETCONNECT;
-												currentUser.loginAddress = address;
-												currentUser.delegationDashboardAddress = address;
-												localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
-												localStorage.setItem('delegationDashboardAddress', address);
-												localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
-
-												handleTokenChange(confirmData.token, currentUser);
-												if(isModal){
-													setLoginOpen && setLoginOpen(false);
+										(window as any).web3.currentProvider.sendAsync(
+											{
+												from,
+												method,
+												params
+											},
+											async (err: any, result: any) => {
+												if (err) {
+													setError(err.message);
 													setLoading(false);
 													return;
 												}
-												router.back();
-											}else {
-												throw new Error('Web3 Login failed');
+
+												const { data: confirmData, error: confirmError } =
+                          await nextApiClientFetch<TokenType>(
+                          	'api/v1/auth/actions/addressSignupConfirm',
+                          	{
+                          		address,
+                          		signature: result.result,
+                          		wallet: Wallet.WALLETCONNECT
+                          	}
+                          );
+
+												if (confirmError || !confirmData) {
+													setError(confirmError || 'Something went wrong');
+													setLoading(false);
+													return;
+												}
+
+												if (confirmData.token) {
+													currentUser.loginWallet = Wallet.WALLETCONNECT;
+													currentUser.loginAddress = address;
+													currentUser.delegationDashboardAddress = address;
+													localStorage.setItem(
+														'delegationWallet',
+														Wallet.WALLETCONNECT
+													);
+													localStorage.setItem(
+														'delegationDashboardAddress',
+														address
+													);
+													localStorage.setItem(
+														'loginWallet',
+														Wallet.WALLETCONNECT
+													);
+
+													handleTokenChange(confirmData.token, currentUser);
+													if (isModal) {
+														setLoginOpen && setLoginOpen(false);
+														setLoading(false);
+														return;
+													}
+													router.back();
+												} else {
+													throw new Error('Web3 Login failed');
+												}
 											}
-
-										});
+										);
 									}
-
 								} catch (error) {
 									console.log(error);
 									setError(error.message);
@@ -301,7 +336,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 
 						if (addressLoginData?.token) {
 							setWalletConnectProvider(provider);
-							currentUser.loginWallet=Wallet.WALLETCONNECT;
+							currentUser.loginWallet = Wallet.WALLETCONNECT;
 							currentUser.loginAddress = address;
 							currentUser.delegationDashboardAddress = address;
 							localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
@@ -309,14 +344,14 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 							localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
 
 							handleTokenChange(addressLoginData.token, currentUser);
-							if(isModal){
+							if (isModal) {
 								setLoginOpen?.(false);
 								setLoading(false);
 								return;
 							}
 							router.back();
-						} else if(addressLoginData?.isTFAEnabled) {
-							if(!addressLoginData?.tfa_token) {
+						} else if (addressLoginData?.isTFAEnabled) {
+							if (!addressLoginData?.tfa_token) {
 								setError(error || 'TFA token missing. Please try again.');
 								setLoading(false);
 								return;
@@ -338,7 +373,6 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 					setError(error?.message || error);
 					return;
 				});
-
 		} catch (error) {
 			setLoading(false);
 			setError(error?.message || error);
@@ -347,18 +381,21 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 
 	const handleSubmitAuthCode = async (formData: any) => {
 		const { authCode } = formData;
-		if(isNaN(authCode)) return;
+		if (isNaN(authCode)) return;
 		setLoading(true);
 
-		const { data , error } = await nextApiClientFetch<IAuthResponse>('api/v1/auth/actions/2fa/validate', {
-			auth_code: String(authCode), //use string for if it starts with 0
-			login_address: address,
-			login_wallet: Wallet.WALLETCONNECT,
-			tfa_token: authResponse.tfa_token,
-			user_id: Number(authResponse.user_id)
-		});
+		const { data, error } = await nextApiClientFetch<IAuthResponse>(
+			'api/v1/auth/actions/2fa/validate',
+			{
+				auth_code: String(authCode), //use string for if it starts with 0
+				login_address: address,
+				login_wallet: Wallet.WALLETCONNECT,
+				tfa_token: authResponse.tfa_token,
+				user_id: Number(authResponse.user_id)
+			}
+		);
 
-		if(error || !data) {
+		if (error || !data) {
 			setError(error || 'Login failed. Please try again later.');
 			setLoading(false);
 			return;
@@ -368,7 +405,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 			setError('');
 
 			setWalletConnectProvider(provider);
-			currentUser.loginWallet=Wallet.WALLETCONNECT;
+			currentUser.loginWallet = Wallet.WALLETCONNECT;
 			currentUser.loginAddress = address;
 			currentUser.delegationDashboardAddress = address;
 			localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
@@ -376,7 +413,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 			localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
 
 			handleTokenChange(data.token, currentUser);
-			if(isModal){
+			if (isModal) {
 				setLoginOpen?.(false);
 				setLoading(false);
 				return;
@@ -385,100 +422,99 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 		}
 	};
 
-	return (<div className={className}>
-		<h3>WalletConnect Login</h3>
-		{accountsNotFound?
-			<div className='card'>
-				<div className='text-muted'>You need at least one account via WalletConnect to login.</div>
-				<div className='text-muted'>Please reload this page after adding accounts.</div>
+	return (
+		<div className={className}>
+			<h3>WalletConnect Login</h3>
+			{accountsNotFound ? (
+				<div className="card">
+					<div className="text-muted">
+            You need at least one account via WalletConnect to login.
+					</div>
+					<div className="text-muted">
+            Please reload this page after adding accounts.
+					</div>
+				</div>
+			) : null}
+			{isAccountLoading ? (
+				<div className="loader-cont">
+					<Loader text={'Requesting accounts'} />
+				</div>
+			) : (
+				accounts.length > 0 && (
+					<>
+						{authResponse.isTFAEnabled ? (
+							<TFALoginForm
+								onBack={() => {
+									setAuthResponse(initAuthResponse);
+									setError('');
+								}}
+								onSubmit={handleSubmitAuthCode}
+								error={error || ''}
+								loading={loading}
+							/>
+						) : (
+							<>
+								<div>
+									<AccountSelectionForm
+										title="Choose linked account"
+										accounts={accounts}
+										address={address}
+										onAccountChange={onAccountChange}
+									/>
+								</div>
+								<div className={'mainButtonContainer'}>
+									<Button disabled={loading} onClick={handleLogin}>
+                    Login
+									</Button>
+								</div>
+							</>
+						)}
+					</>
+				)
+			)}
+			<div className="mt-4">{error && <FilteredError text={error} />}</div>
+			<Divider plain>Or</Divider>
+			<div className={'mainButtonContainer'}>
+				<Button disabled={loading} onClick={() => setDisplayWeb2()}>
+          Login with username
+				</Button>
 			</div>
-			: null
-		}
-		{isAccountLoading
-			?
-			<div className="loader-cont">
-				<Loader text={'Requesting accounts'}/>
+			<Divider plain>Or</Divider>
+			<div className={'mainButtonContainer'}>
+				<Button disabled={loading} onClick={() => setPolkadotWallet()}>
+          Login with polkadot.js
+				</Button>
 			</div>
-			:
-			accounts.length > 0 &&
-			<>
-				{
-					authResponse.isTFAEnabled ?
-						<TFALoginForm
-							onBack={() => {setAuthResponse(initAuthResponse); setError(''); }}
-							onSubmit={handleSubmitAuthCode}
-							error={error || ''}
-							loading={loading}
-						/> : <>
-							<div>
-								<AccountSelectionForm
-									title='Choose linked account'
-									accounts={accounts}
-									address={address}
-									onAccountChange={onAccountChange}
-								/>
-							</div>
-							<div className={'mainButtonContainer'}>
-								<Button
-									disabled={loading}
-									onClick={handleLogin}
-								>
-							Login
-								</Button>
-							</div>
-						</>}
-			</>
-		}
-		<div className='mt-4'>
-			{error&& <FilteredError text={error} />}
 		</div>
-		<Divider plain>Or</Divider>
-		<div className={'mainButtonContainer'}>
-			<Button
-				disabled={loading}
-				onClick={() => setDisplayWeb2()}
-			>
-					Login with username
-			</Button>
-		</div>
-		<Divider plain>Or</Divider>
-		<div className={'mainButtonContainer'}>
-			<Button
-				disabled={loading}
-				onClick={() => setPolkadotWallet()}
-			>
-					Login with polkadot.js
-			</Button>
-		</div>
-	</div>);
+	);
 };
 
 export default styled(WalletConnectLogin)`
-	.loader-cont {
-		margin-top: 150px;
-		.ui.dimmer {
-			height: 100%;
-		}
-	}
+  .loader-cont {
+    margin-top: 150px;
+    .ui.dimmer {
+      height: 100%;
+    }
+  }
 
-	.mainButtonContainer {
-		align-items: center;
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-	}
-	input.error {
-		border-style: solid;
-		border-width: 1px;
-		border-color: red_secondary;
-	}
-	.info {
-		margin: 10px 0;
-	}
-	.errorText {
-		color: red_secondary;
-	}
-	.ui.dimmer {
-		height: calc(100% - 6.5rem);
-	}
+  .mainButtonContainer {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  input.error {
+    border-style: solid;
+    border-width: 1px;
+    border-color: red_secondary;
+  }
+  .info {
+    margin: 10px 0;
+  }
+  .errorText {
+    color: red_secondary;
+  }
+  .ui.dimmer {
+    height: calc(100% - 6.5rem);
+  }
 `;

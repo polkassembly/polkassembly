@@ -55,10 +55,10 @@ export const fellowShipOptions = [
 	}
 ];
 
-export const getOpenGov = (network:string) => {
+export const getOpenGov = (network: string) => {
 	const availableOption = Object.keys(networkTrackInfo[network] || {});
-	const obj:any = {};
-	availableOption.forEach(opt => {
+	const obj: any = {};
+	availableOption.forEach((opt) => {
 		obj[opt] = options;
 	});
 	return obj;
@@ -230,7 +230,7 @@ export const postOriginMapper = (origin: string) => {
 	}
 };
 
-export const iconMapper = (origin:string) => {
+export const iconMapper = (origin: string) => {
 	switch (origin) {
 	case PostOrigin.AUCTION_ADMIN: {
 		return Auction;

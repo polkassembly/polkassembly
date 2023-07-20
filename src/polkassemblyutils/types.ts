@@ -5,21 +5,21 @@
 import BN from 'bn.js';
 
 export enum VoteThresholdEnum {
-    Supermajorityapproval = 'Supermajorityapproval',
-    Supermajorityrejection = 'Supermajorityrejection',
-    Simplemajority = 'Simplemajority'
+  Supermajorityapproval = 'Supermajorityapproval',
+  Supermajorityrejection = 'Supermajorityrejection',
+  Simplemajority = 'Simplemajority',
 }
 
 export type VoteThreshold = keyof typeof VoteThresholdEnum;
 
-export interface BaseThresholdResult{
-	isValid: boolean;
+export interface BaseThresholdResult {
+  isValid: boolean;
 }
 
-export interface PassingThresholdResult extends BaseThresholdResult{
-	passingThreshold?: BN;
+export interface PassingThresholdResult extends BaseThresholdResult {
+  passingThreshold?: BN;
 }
 
-export interface FailingThresholdResult extends BaseThresholdResult{
-	failingThreshold?: BN;
+export interface FailingThresholdResult extends BaseThresholdResult {
+  failingThreshold?: BN;
 }

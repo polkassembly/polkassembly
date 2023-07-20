@@ -6,14 +6,20 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Alert, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 
-interface Props{
-	className?:string;
-	text?: string;
-	timeout?: number;
-	timeoutText?: string;
-	size?: 'default' | 'small' | 'large';
+interface Props {
+  className?: string;
+  text?: string;
+  timeout?: number;
+  timeoutText?: string;
+  size?: 'default' | 'small' | 'large';
 }
-const Loader = ({ className, timeout, text, timeoutText = 'Process timeout', size = 'default' }: Props) => {
+const Loader = ({
+	className,
+	timeout,
+	text,
+	timeoutText = 'Process timeout',
+	size = 'default'
+}: Props) => {
 	const [displayLoader, setDisplayLoader] = useState(true);
 
 	useEffect(() => {
@@ -31,12 +37,15 @@ const Loader = ({ className, timeout, text, timeoutText = 'Process timeout', siz
 	return (
 		<>
 			<div className={`${className} flex justify-center items-center`}>
-				{displayLoader
-					?
+				{displayLoader ? (
 					<Spin tip={text} size={size} indicator={<LoadingOutlined />} />
-					:
-					<Alert className='w-2/3 text-center' type='error' message={timeoutText} />
-				}
+				) : (
+					<Alert
+						className="w-2/3 text-center"
+						type="error"
+						message={timeoutText}
+					/>
+				)}
 			</div>
 		</>
 	);

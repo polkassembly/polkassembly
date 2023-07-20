@@ -3,7 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
+import {
+	web3Accounts,
+	web3Enable,
+	web3FromSource
+} from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { Alert, Button, Modal, Spin } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
@@ -16,18 +20,25 @@ import { useNetworkContext } from '~src/context';
 import executeTx from '~src/util/executeTx';
 
 interface Props {
-	className?: string;
-	parentBountyId:number | undefined;
-	childBountyId:number | undefined;
+  className?: string;
+  parentBountyId: number | undefined;
+  childBountyId: number | undefined;
 }
 
-const ClaimPayoutModal = ({ className, parentBountyId, childBountyId } : Props) => {
+const ClaimPayoutModal = ({
+	className,
+	parentBountyId,
+	childBountyId
+}: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [availableAccounts, setAvailableAccounts] = useState<InjectedAccountWithMeta[]>([]);
-	const [extensionNotAvailable, setExtensionNotAvailable] = useState<boolean>(false);
+	const [availableAccounts, setAvailableAccounts] = useState<
+    InjectedAccountWithMeta[]
+  >([]);
+	const [extensionNotAvailable, setExtensionNotAvailable] =
+    useState<boolean>(false);
 	const [selectedAddress, setSelectedAddress] = useState<string>('');
 	const { network } = useNetworkContext();
 
@@ -50,10 +61,10 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId } : Props) 
 
 	useEffect(() => {
 		getAccounts();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const onAccountChange = (address:string) => {
+	const onAccountChange = (address: string) => {
 		setSelectedAddress(address);
 	};
 
@@ -78,7 +89,8 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId } : Props) 
 	};
 
 	const handleSignAndSubmit = async () => {
-		if(!selectedAddress || !parentBountyId || !childBountyId || isLoading) return;
+		if (!selectedAddress || !parentBountyId || !childBountyId || isLoading)
+			return;
 
 		if (!api) {
 			return;
@@ -95,7 +107,10 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId } : Props) 
 		setIsLoading(true);
 
 		try {
-			const claim = api.tx.childBounties.claimChildBounty(parentBountyId, childBountyId);
+			const claim = api.tx.childBounties.claimChildBounty(
+				parentBountyId,
+				childBountyId
+			);
 			await executeTx({
 				address: selectedAddress,
 				api,
@@ -105,8 +120,7 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId } : Props) 
 				onSuccess,
 				tx: claim
 			});
-		}
-		catch(error){
+		} catch (error) {
 			setIsLoading(false);
 			console.log(':( transaction failed');
 			console.error('ERROR:', error);
@@ -122,38 +136,53 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId } : Props) 
 	return (
 		<div className={className}>
 			<Button
-				className='bg-pink_primary hover:bg-pink_secondary text-base text-white border-pink_primary hover:border-pink_primary rounded-md inline'
+				className="bg-pink_primary hover:bg-pink_secondary text-base text-white border-pink_primary hover:border-pink_primary rounded-md inline"
 				onClick={() => setShowModal(true)}
 			>
-				Claim Payout
+        Claim Payout
 			</Button>
 			<Modal
 				title="Confirm Payout Claim"
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={[
-					<Button className='bg-pink_primary text-white border-pink_primary hover:bg-pink_secondary' key="second" onClick={handleSignAndSubmit} loading={isLoading} disabled={extensionNotAvailable || !apiReady}>
+					<Button
+						className="bg-pink_primary text-white border-pink_primary hover:bg-pink_secondary"
+						key="second"
+						onClick={handleSignAndSubmit}
+						loading={isLoading}
+						disabled={extensionNotAvailable || !apiReady}
+					>
             Sign &amp; Submit
 					</Button>
 				]}
 			>
 				<Spin spinning={isLoading} indicator={<LoadingOutlined />}>
+					<Alert
+						className="mb-6"
+						type="success"
+						message="Thank you for your work to support the community. Please submit the transaction to claim the transaction."
+					/>
 
-					<Alert className='mb-6' type='success' message='Thank you for your work to support the community. Please submit the transaction to claim the transaction.' />
-
-					{extensionNotAvailable && <Alert className='mb-6' type='warning' message='Please install polkadot.js extension to claim.' />}
-
-					{!extensionNotAvailable &&
-					<>
-						<AccountSelectionForm
-							title='Please select your account'
-							accounts={availableAccounts}
-							address={selectedAddress}
-							withBalance
-							onAccountChange={onAccountChange}
+					{extensionNotAvailable && (
+						<Alert
+							className="mb-6"
+							type="warning"
+							message="Please install polkadot.js extension to claim."
 						/>
-					</>
-					}
+					)}
+
+					{!extensionNotAvailable && (
+						<>
+							<AccountSelectionForm
+								title="Please select your account"
+								accounts={availableAccounts}
+								address={selectedAddress}
+								withBalance
+								onAccountChange={onAccountChange}
+							/>
+						</>
+					)}
 				</Spin>
 			</Modal>
 		</div>

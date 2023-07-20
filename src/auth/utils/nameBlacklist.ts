@@ -17,4 +17,3 @@ const nameBlacklist = [
 ];
 
 export default nameBlacklist;
-

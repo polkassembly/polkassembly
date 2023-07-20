@@ -5,8 +5,7 @@
 export default function formatPostInfoArguments(rawArguments: any): any[] {
 	const argumentsArr: any[] = [];
 	rawArguments?.forEach((obj: any) => {
-
-		if(obj.name == 'code') {
+		if (obj.name == 'code') {
 			return false;
 		}
 

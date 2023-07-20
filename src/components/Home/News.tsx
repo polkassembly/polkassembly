@@ -6,7 +6,7 @@ import React, { FC } from 'react';
 import { TwitterTimelineEmbed } from 'react-twitter-embed';
 
 interface INewsProps {
-	twitter: string;
+  twitter: string;
 }
 
 const News: FC<INewsProps> = (props) => {
@@ -16,14 +16,16 @@ const News: FC<INewsProps> = (props) => {
 		profile = twitter.split('/')[3];
 	}
 	return (
-		<div className='bg-white drop-shadow-md p-4 lg:p-6 rounded-xxl h-[520px] lg:h-[550px]'>
-			<h2 className='text-bodyBlue text-xl font-medium leading-8 leading-8 mb-6'>News</h2>
+		<div className="bg-white drop-shadow-md p-4 lg:p-6 rounded-xxl h-[520px] lg:h-[550px]">
+			<h2 className="text-bodyBlue text-xl font-medium leading-8 leading-8 mb-6">
+        News
+			</h2>
 
 			<div>
 				<TwitterTimelineEmbed
 					sourceType="profile"
 					screenName={profile}
-					options={ { height: 450 } }
+					options={{ height: 450 }}
 					noHeader={true}
 					noFooter={true}
 				/>

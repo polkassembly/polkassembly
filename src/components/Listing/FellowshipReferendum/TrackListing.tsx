@@ -8,14 +8,17 @@ import { IFellowshipReferendumPostsByTrackName } from 'pages/member-referenda';
 import React, { FC, useState } from 'react';
 import TrackListingCard from 'src/components/Listing/FellowshipReferendum/TrackListingCard';
 
-const AboutTrackCard = dynamic(() => import('~src/components/Listing/FellowshipReferendum/AboutTrackCard'), {
-	loading: () => <Skeleton active /> ,
-	ssr: false
-});
+const AboutTrackCard = dynamic(
+	() => import('~src/components/Listing/FellowshipReferendum/AboutTrackCard'),
+	{
+		loading: () => <Skeleton active />,
+		ssr: false
+	}
+);
 
 interface ITrackListingProps {
-	posts: IFellowshipReferendumPostsByTrackName|undefined;
-    fellowshipReferendumPostOrigins: string[];
+  posts: IFellowshipReferendumPostsByTrackName | undefined;
+  fellowshipReferendumPostOrigins: string[];
 }
 
 const TrackListing: FC<ITrackListingProps> = (props) => {
@@ -28,7 +31,7 @@ const TrackListing: FC<ITrackListingProps> = (props) => {
 				fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}
 			/>
 			<TrackListingCard
-				className='mt-12'
+				className="mt-12"
 				posts={posts}
 				setTrackName={setTrackName}
 				fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}

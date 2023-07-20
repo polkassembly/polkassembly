@@ -19,34 +19,36 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Header from '../Header';
 
 interface IPasswordProps {
-    name: string;
-    placeholder: string;
-    rules?: Rule[];
-    onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  name: string;
+  placeholder: string;
+  rules?: Rule[];
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 interface IEmailProps {
-	value: string;
-	name: string;
-	label: string;
-	rules?: Rule[];
-	disabled: boolean;
-	onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  value: string;
+  name: string;
+  label: string;
+  rules?: Rule[];
+  disabled: boolean;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-const Password: FC<IPasswordProps> = ({ name, placeholder, rules, onChange }) => {
+const Password: FC<IPasswordProps> = ({
+	name,
+	placeholder,
+	rules,
+	onChange
+}) => {
 	return (
-		<div className='flex flex-col gap-y-2 h-full max-w-[250px]'>
+		<div className="flex flex-col gap-y-2 h-full max-w-[250px]">
 			<label
 				className="text-sm text-sidebarBlue font-normal leading-6 tracking-wide"
 				htmlFor={name}
 			>
 				{placeholder}
 			</label>
-			<Form.Item
-				name={name}
-				rules={rules}
-			>
+			<Form.Item name={name} rules={rules}>
 				<Input.Password
 					onChange={onChange}
 					placeholder={placeholder}
@@ -58,19 +60,23 @@ const Password: FC<IPasswordProps> = ({ name, placeholder, rules, onChange }) =>
 	);
 };
 
-const ChangeEmail: FC<IEmailProps> = ({ disabled, value, name, label, rules, onChange }) => {
+const ChangeEmail: FC<IEmailProps> = ({
+	disabled,
+	value,
+	name,
+	label,
+	rules,
+	onChange
+}) => {
 	return (
-		<div className='flex flex-col gap-y-2 h-full max-w-[250px]'>
+		<div className="flex flex-col gap-y-2 h-full max-w-[250px]">
 			<label
 				className="text-sm text-sidebarBlue font-normal leading-6 tracking-wide"
 				htmlFor={name}
 			>
 				{label}
 			</label>
-			<Form.Item
-				name={name}
-				rules={rules}
-			>
+			<Form.Item name={name} rules={rules}>
 				<Input
 					disabled={disabled}
 					defaultValue={value}
@@ -79,7 +85,7 @@ const ChangeEmail: FC<IEmailProps> = ({ disabled, value, name, label, rules, onC
 					placeholder="email@example.com"
 					className="rounded-md py-3 px-4 w-[320px]"
 					id="email"
-					type='email'
+					type="email"
 				/>
 			</Form.Item>
 		</div>
@@ -103,10 +109,14 @@ const Profile = () => {
 	const [loading, setLoading] = useState(false);
 	const { web3signup } = useUserDetailsContext();
 
-	const isSubmitDisabled =web3signup ? email === '' : isChange ? (!passwords.old || !passwords.new) : (!currentPassword || currentEmail === email);
+	const isSubmitDisabled = web3signup
+		? email === ''
+		: isChange
+			? !passwords.old || !passwords.new
+			: !currentPassword || currentEmail === email;
 
 	const handleSubmit = async (values: any) => {
-		if(email === currentEmail){
+		if (email === currentEmail) {
 			setErr('You already verified this email');
 			return;
 		}
@@ -120,7 +130,7 @@ const Profile = () => {
 
 		//validation is successful
 		setErr('');
-		if(web3signup){
+		if (web3signup) {
 			try {
 				setLoading(true);
 				const { data, error } = await nextApiClientFetch<any>(
@@ -156,13 +166,16 @@ const Profile = () => {
 		}
 
 		const { new_password, old_password } = values;
-		if(currentEmail !== email && currentPassword){
+		if (currentEmail !== email && currentPassword) {
 			setLoading(true);
 			// nextApiClientFetch<ChangeResponseType | MessageType>
-			const { data , error } = await nextApiClientFetch<any>( 'api/v1/auth/actions/changeEmail', {
-				email: email,
-				password: currentPassword
-			});
+			const { data, error } = await nextApiClientFetch<any>(
+				'api/v1/auth/actions/changeEmail',
+				{
+					email: email,
+					password: currentPassword
+				}
+			);
 
 			if (error || !data || !data.message) {
 				setErr(error || 'Something went wrong');
@@ -191,12 +204,15 @@ const Profile = () => {
 			setLoading(false);
 		}
 
-		if (new_password && old_password){
+		if (new_password && old_password) {
 			setLoading(true);
-			const { data , error } = await nextApiClientFetch<MessageType>( 'api/v1/auth/actions/changePassword', {
-				newPassword: new_password,
-				oldPassword: old_password
-			});
+			const { data, error } = await nextApiClientFetch<MessageType>(
+				'api/v1/auth/actions/changePassword',
+				{
+					newPassword: new_password,
+					oldPassword: old_password
+				}
+			);
 
 			if (error || !data || !data.message) {
 				setErr(error || 'Something went wrong');
@@ -223,31 +239,33 @@ const Profile = () => {
 
 			setLoading(false);
 		}
-
 	};
 
 	return (
-		<Row className='flex flex-col w-full'>
-			<Header heading='Profile Settings' subHeading='Update your profile settings' />
-			<Form form={form} onFinish={handleSubmit} className='mt-8'>
-				{err && <div className='mb-4 flex items-start'>
-					<Alert type='error' message={err} />
-				</div>}
+		<Row className="flex flex-col w-full">
+			<Header
+				heading="Profile Settings"
+				subHeading="Update your profile settings"
+			/>
+			<Form form={form} onFinish={handleSubmit} className="mt-8">
+				{err && (
+					<div className="mb-4 flex items-start">
+						<Alert type="error" message={err} />
+					</div>
+				)}
 
-				<article className='w-full flex flex-col md:flex-row gap-x-4'>
+				<article className="w-full flex flex-col md:flex-row gap-x-4">
 					<ChangeEmail
 						disabled={isChange}
 						value={email || ''}
-						onChange={
-							(e) => {
-								setEmail(e.target.value || '');
-								if (err){
-									setErr('');
-								}
+						onChange={(e) => {
+							setEmail(e.target.value || '');
+							if (err) {
+								setErr('');
 							}
-						}
-						name='email'
-						label='Email'
+						}}
+						name="email"
+						label="Email"
 						rules={[
 							{
 								message: messages.VALIDATION_EMAIL_ERROR,
@@ -257,97 +275,103 @@ const Profile = () => {
 					/>
 				</article>
 
-				{
-					!web3signup &&
-					(isChange // only allow to change password if not changing email
-						? <article className='flex flex-col lg:flex-row gap-x-5'>
-							<Password
-								onChange={
-									(e) => {
-										setPasswords((prev) => ({ ...prev, old: e?.target?.value }));
-									}
-								}
-								name='old_password'
-								placeholder='Old Password'
-								rules={[
-									{
-										message: messages.VALIDATION_PASSWORD_ERROR,
-										required: password.required
-									},
-									{
-										message: messages.VALIDATION_PASSWORD_ERROR,
-										min: password.minLength
-									}
-								]}
-							/>
-							<Password
-								onChange={(e) => setPasswords((prev) => ({ ...prev, new: e?.target?.value }))}
-								name='new_password'
-								placeholder='New Password'
-								rules={[
-									{
-										message: messages.VALIDATION_PASSWORD_ERROR,
-										required: password.required
-									},
-									{
-										message: messages.VALIDATION_PASSWORD_ERROR,
-										min: password.minLength
-									}
-								]}
-							/>
+				{!web3signup &&
+          (isChange ? ( // only allow to change password if not changing email
+          	<article className="flex flex-col lg:flex-row gap-x-5">
+          		<Password
+          			onChange={(e) => {
+          				setPasswords((prev) => ({ ...prev, old: e?.target?.value }));
+          			}}
+          			name="old_password"
+          			placeholder="Old Password"
+          			rules={[
+          				{
+          					message: messages.VALIDATION_PASSWORD_ERROR,
+          					required: password.required
+          				},
+          				{
+          					message: messages.VALIDATION_PASSWORD_ERROR,
+          					min: password.minLength
+          				}
+          			]}
+          		/>
+          		<Password
+          			onChange={(e) =>
+          				setPasswords((prev) => ({ ...prev, new: e?.target?.value }))
+          			}
+          			name="new_password"
+          			placeholder="New Password"
+          			rules={[
+          				{
+          					message: messages.VALIDATION_PASSWORD_ERROR,
+          					required: password.required
+          				},
+          				{
+          					message: messages.VALIDATION_PASSWORD_ERROR,
+          					min: password.minLength
+          				}
+          			]}
+          		/>
 
-							<Button
-								loading={loading}
-								size='small'
-								htmlType='button'
-								onClick={() => { setIsChange(false); setPasswords(initialPasswordsState); }}
-								className='border-none outline-none bg-none flex items-center p-0 m-0 md:mt-10 text-pink_primary text-sm leading-6 tracking-wide'
-							>
-               Cancel Change
-							</Button>
-						</article>
-						: <article className='w-full flex flex-col md:flex-row gap-x-4'>
-							<Password
-								onChange={
-									(e) => {
-										setCurrentPassword(e.target.value || '');
-										if (err){
-											setErr('');
-										}
-									}
-								}
-								name='current_password'
-								placeholder='Password'
-								rules={[
-									{
-										message: messages.VALIDATION_PASSWORD_ERROR,
-										required: password.required
-									},
-									{
-										message: messages.VALIDATION_PASSWORD_ERROR,
-										min: password.minLength
-									}
-								]}
-							/>
-							<Button
-								size='small'
-								htmlType='button'
-								onClick={() => {setIsChange(true); setCurrentPassword('');}}
-								className='border-none outline-none bg-none flex items-center p-0 m-0 md:mt-10 text-pink_primary text-sm leading-6 tracking-wide'
-							>
-               Change
-							</Button>
-						</article>)
-				}
+          		<Button
+          			loading={loading}
+          			size="small"
+          			htmlType="button"
+          			onClick={() => {
+          				setIsChange(false);
+          				setPasswords(initialPasswordsState);
+          			}}
+          			className="border-none outline-none bg-none flex items-center p-0 m-0 md:mt-10 text-pink_primary text-sm leading-6 tracking-wide"
+          		>
+                Cancel Change
+          		</Button>
+          	</article>
+          ) : (
+          	<article className="w-full flex flex-col md:flex-row gap-x-4">
+          		<Password
+          			onChange={(e) => {
+          				setCurrentPassword(e.target.value || '');
+          				if (err) {
+          					setErr('');
+          				}
+          			}}
+          			name="current_password"
+          			placeholder="Password"
+          			rules={[
+          				{
+          					message: messages.VALIDATION_PASSWORD_ERROR,
+          					required: password.required
+          				},
+          				{
+          					message: messages.VALIDATION_PASSWORD_ERROR,
+          					min: password.minLength
+          				}
+          			]}
+          		/>
+          		<Button
+          			size="small"
+          			htmlType="button"
+          			onClick={() => {
+          				setIsChange(true);
+          				setCurrentPassword('');
+          			}}
+          			className="border-none outline-none bg-none flex items-center p-0 m-0 md:mt-10 text-pink_primary text-sm leading-6 tracking-wide"
+          		>
+                Change
+          		</Button>
+          	</article>
+          ))}
 
 				<Button
 					loading={loading}
 					disabled={isSubmitDisabled}
-					size='large'
-					htmlType='submit'
-					className={`${!isSubmitDisabled ? 'bg-pink_primary': 'bg-icon_grey'} mt-5 rounded-lg font-semibold text-lg leading-7 text-white py-3 outline-none border-none px-14 flex items-center justify-center bg-pink_primary`}
+					size="large"
+					htmlType="submit"
+					className={`${
+						!isSubmitDisabled ? 'bg-pink_primary' : 'bg-icon_grey'
+					} mt-5 rounded-lg font-semibold text-lg leading-7 text-white py-3 outline-none border-none px-14 flex items-center justify-center bg-pink_primary`}
 				>
-					Save
+          Save
 				</Button>
 			</Form>
 		</Row>

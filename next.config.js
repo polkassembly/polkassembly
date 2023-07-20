@@ -24,12 +24,18 @@ const nextConfig = {
         headers: [
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
           { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+          },
           { key: 'Access-Control-Allow-Headers', value: '*' },
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-          { key: 'Content-Security-Policy', value: `default-src 'self'; img-src '*'` },
-        ]
-      }
+          {
+            key: 'Content-Security-Policy',
+            value: `default-src 'self'; img-src '*'`,
+          },
+        ],
+      },
     ];
   },
   async rewrites() {
@@ -43,9 +49,9 @@ const nextConfig = {
           has: [
             {
               type: 'host',
-              value: 'kusama.polkassembly.io'
-            }
-          ]
+              value: 'kusama.polkassembly.io',
+            },
+          ],
         },
         {
           source: '/:path*',
@@ -53,28 +59,28 @@ const nextConfig = {
           has: [
             {
               type: 'host',
-              value: 'polkadot.polkassembly.io'
-            }
-          ]
-        }
-      ]
+              value: 'polkadot.polkassembly.io',
+            },
+          ],
+        },
+      ],
     };
   },
   images: {
-    domains: ['parachains.info']
+    domains: ['parachains.info'],
   },
   reactStrictMode: true,
   compiler: {
-    styledComponents: true
+    styledComponents: true,
   },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
-      use: ['@svgr/webpack']
+      use: ['@svgr/webpack'],
     });
 
     return config;
-  }
+  },
 };
 
 module.exports = nextConfig;
@@ -82,5 +88,5 @@ module.exports = nextConfig;
 module.exports = withSentryConfig(
   module.exports,
   { silent: true },
-  { hideSourcemaps: true }
+  { hideSourcemaps: true },
 );

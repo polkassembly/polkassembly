@@ -4,7 +4,11 @@
 
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
+import {
+	Injected,
+	InjectedAccount,
+	InjectedWindow
+} from '@polkadot/extension-inject/types';
 import { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { APPNAME } from 'src/global/appName';
@@ -14,12 +18,12 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import { useNetworkContext } from '~src/context';
 
 type Response = {
-	noExtension: boolean;
-	noAccounts: boolean;
-	signersMap: {[key:string]: Signer}
-	accounts: InjectedAccount[]
-	accountsMap: {[key:string]: string}
-}
+  noExtension: boolean;
+  noAccounts: boolean;
+  signersMap: { [key: string]: Signer };
+  accounts: InjectedAccount[];
+  accountsMap: { [key: string]: string };
+};
 
 const initResponse: Response = {
 	accounts: [],
@@ -35,7 +39,9 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 
 	const [response, setResponse] = useState<Response>(initResponse);
 
-	const getWalletAccounts = async (chosenWallet: Wallet): Promise<InjectedAccount[] | undefined> => {
+	const getWalletAccounts = async (
+		chosenWallet: Wallet
+	): Promise<InjectedAccount[] | undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
 
 		let wallet = isWeb3Injected
@@ -58,21 +64,23 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 					reject(new Error('Wallet Timeout'));
 				}, 60000); // wait 60 sec
 
-				if(wallet && wallet.enable) {
-					wallet!.enable(APPNAME).then(value => {
-						clearTimeout(timeoutId);
-						resolve(value);
-					}).catch(error => {
-						reject(error);
-					});
+				if (wallet && wallet.enable) {
+          wallet!
+          	.enable(APPNAME)
+          	.then((value) => {
+          		clearTimeout(timeoutId);
+          		resolve(value);
+          	})
+          	.catch((error) => {
+          		reject(error);
+          	});
 				}
-
 			});
 		} catch (err) {
 			console.log('Error fetching wallet accounts : ', err);
 		}
 
-		if(!injected) {
+		if (!injected) {
 			return;
 		}
 
@@ -81,7 +89,8 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 		if (accounts.length === 0) return;
 
 		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
+			account.address =
+        getEncodedAddress(account.address, network) || account.address;
 		});
 
 		return accounts;
@@ -126,8 +135,8 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 		}
 
 		let accounts: InjectedAccount[] = [];
-		let polakadotJSAccounts : InjectedAccount[] | undefined;
-		let polywalletJSAccounts : InjectedAccount[] | undefined;
+		let polakadotJSAccounts: InjectedAccount[] | undefined;
+		let polywalletJSAccounts: InjectedAccount[] | undefined;
 		let subwalletAccounts: InjectedAccount[] | undefined;
 		let talismanAccounts: InjectedAccount[] | undefined;
 		let metamaskAccounts: InjectedAccount[] = [];
@@ -135,54 +144,57 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 			metamaskAccounts = await getMetamaskAccounts();
 		}
 
-		const signersMapLocal = response.signersMap as {[key:string]: Signer};
-		const accountsMapLocal = response.accountsMap as {[key:string]: string};
+		const signersMapLocal = response.signersMap as { [key: string]: Signer };
+		const accountsMapLocal = response.accountsMap as { [key: string]: string };
 
 		for (const extObj of extensions) {
-			if(extObj.name == 'polkadot-js') {
+			if (extObj.name == 'polkadot-js') {
 				signersMapLocal['polkadot-js'] = extObj.signer;
 				polakadotJSAccounts = await getWalletAccounts(Wallet.POLKADOT);
-			} else if(extObj.name == 'subwallet-js') {
+			} else if (extObj.name == 'subwallet-js') {
 				signersMapLocal['subwallet-js'] = extObj.signer;
 				subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
-			} else if(extObj.name == 'talisman') {
+			} else if (extObj.name == 'talisman') {
 				signersMapLocal['talisman'] = extObj.signer;
 				talismanAccounts = await getWalletAccounts(Wallet.TALISMAN);
-			} else if (['polymesh'].includes(network) && extObj.name === 'polywallet') {
+			} else if (
+				['polymesh'].includes(network) &&
+        extObj.name === 'polywallet'
+			) {
 				signersMapLocal['polywallet'] = extObj.signer;
 				polywalletJSAccounts = await getWalletAccounts(Wallet.POLYWALLET);
 			}
 		}
 
-		if(polakadotJSAccounts) {
+		if (polakadotJSAccounts) {
 			accounts = accounts.concat(polakadotJSAccounts);
 			polakadotJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polkadot-js';
 			});
 		}
 
-		if(['polymesh'].includes(network) && polywalletJSAccounts) {
+		if (['polymesh'].includes(network) && polywalletJSAccounts) {
 			accounts = accounts.concat(polywalletJSAccounts);
 			polywalletJSAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polywallet';
 			});
 		}
 
-		if(subwalletAccounts) {
+		if (subwalletAccounts) {
 			accounts = accounts.concat(subwalletAccounts);
 			subwalletAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'subwallet-js';
 			});
 		}
 
-		if(talismanAccounts) {
+		if (talismanAccounts) {
 			accounts = accounts.concat(talismanAccounts);
 			talismanAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'talisman';
 			});
 		}
 
-		if(get_erc20 && metamaskAccounts) {
+		if (get_erc20 && metamaskAccounts) {
 			accounts = accounts.concat(metamaskAccounts);
 			metamaskAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'metamask';
@@ -204,7 +216,8 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 		setResponse(responseLocal);
 
 		if (accounts.length > 0) {
-			const signer: Signer = signersMapLocal[accountsMapLocal[accounts[0].address]];
+			const signer: Signer =
+        signersMapLocal[accountsMapLocal[accounts[0].address]];
 			api.setSigner(signer);
 		}
 
@@ -213,7 +226,7 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 
 	useEffect(() => {
 		getAccounts();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
 	return response;

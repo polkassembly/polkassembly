@@ -15,10 +15,10 @@ import ReferendaBoard from './ReferendaBoard';
 import TipsBoard from './TipsBoard';
 
 enum SidebarReducerAction {
-	CLOSE,
-	OPEN_DISCUSSION,
-	OPEN_TIP,
-	OPEN_REFERENDA
+  CLOSE,
+  OPEN_DISCUSSION,
+  OPEN_TIP,
+  OPEN_REFERENDA,
 }
 
 const initSidebarState = {
@@ -58,8 +58,7 @@ function reducer(state: any, action: any) {
 	}
 }
 
-const CouncilBoardContainer = ({ className } : {className?: string}) => {
-
+const CouncilBoardContainer = ({ className }: { className?: string }) => {
 	const [members, setMembers] = useState<string[]>([]);
 	const [sidebarState, dispatch] = useReducer(reducer, initSidebarState);
 
@@ -76,9 +75,8 @@ const CouncilBoardContainer = ({ className } : {className?: string}) => {
 		}
 
 		api.query.council.members().then((memberAccounts) => {
-			setMembers(memberAccounts.map(member => member.toString()));
+			setMembers(memberAccounts.map((member) => member.toString()));
 		});
-
 	}, [api, apiReady]);
 
 	const openSidebar = (postID: number, type: SidebarReducerAction) => {
@@ -89,93 +87,108 @@ const CouncilBoardContainer = ({ className } : {className?: string}) => {
 		dispatch({ type: SidebarReducerAction.CLOSE });
 	};
 
-	if (!defaultAddress) return (
-		<div className={className}>
-			<h5>Please login to access the council board.</h5>
-		</div>
-	);
+	if (!defaultAddress)
+		return (
+			<div className={className}>
+				<h5>Please login to access the council board.</h5>
+			</div>
+		);
 
-	return (
-		members && members.length > 0 ?
-			members.includes(defaultAddress)
-			|| defaultAddress === 'GUUbJp6jMocrQMXMGxac5fqvWbjqsv97JL8DHp8m1Wxszmp' ?
+	return members && members.length > 0 ? (
+		members.includes(defaultAddress) ||
+    defaultAddress === 'GUUbJp6jMocrQMXMGxac5fqvWbjqsv97JL8DHp8m1Wxszmp' ? (
 				<div className={className}>
-					<div className='dashboard-heading mb-4'>Council Board</div>
+					<div className="dashboard-heading mb-4">Council Board</div>
 
-					<Row className='md:hidden'>
+					<Row className="md:hidden">
 						<Col span={24}>
 							<h3>Feature available in desktop site only.</h3>
 						</Col>
 					</Row>
 					<Row gutter={8}>
 						<Col span={8}>
-							<DiscussionsBoard className="board-card" openSidebar={(postID:number) => openSidebar(postID, SidebarReducerAction.OPEN_DISCUSSION)}  />
+							<DiscussionsBoard
+								className="board-card"
+								openSidebar={(postID: number) =>
+									openSidebar(postID, SidebarReducerAction.OPEN_DISCUSSION)
+								}
+							/>
 						</Col>
 						<Col span={8}>
-							<ReferendaBoard className="board-card" openSidebar={(postID:number) => openSidebar(postID, SidebarReducerAction.OPEN_REFERENDA)}  />
+							<ReferendaBoard
+								className="board-card"
+								openSidebar={(postID: number) =>
+									openSidebar(postID, SidebarReducerAction.OPEN_REFERENDA)
+								}
+							/>
 						</Col>
 						<Col span={8}>
-							<TipsBoard className="board-card" openSidebar={(postID:number) => openSidebar(postID, SidebarReducerAction.OPEN_TIP)}  />
+							<TipsBoard
+								className="board-card"
+								openSidebar={(postID: number) =>
+									openSidebar(postID, SidebarReducerAction.OPEN_TIP)
+								}
+							/>
 						</Col>
 					</Row>
 
 					{/* Create Event Sidebar */}
-					{ sidebarState.enabled &&
-				<PostSidebar
-					closeSidebar={closeSidebar}
-					sidebarState={sidebarState}
-					open={sidebarState.enabled}
-				/>
-					}
-				</div> :
+					{sidebarState.enabled && (
+						<PostSidebar
+							closeSidebar={closeSidebar}
+							sidebarState={sidebarState}
+							open={sidebarState.enabled}
+						/>
+					)}
+				</div>
+			) : (
 				<div className={className}>
 					<h5>Feature only available for council members.</h5>
 				</div>
-			:
-			<div className={className}>
-				<Loader />
-			</div>
+			)
+	) : (
+		<div className={className}>
+			<Loader />
+		</div>
 	);
-
 };
 
 export default styled(CouncilBoardContainer)`
+  h1 {
+    @media only screen and (max-width: 576px) {
+      margin: 3rem 1rem 1rem 1rem;
+    }
 
-	h1 {
-		@media only screen and (max-width: 576px) {
-			margin: 3rem 1rem 1rem 1rem;
-		}
+    @media only screen and (max-width: 768px) and (min-width: 576px) {
+      margin-left: 1rem;
+    }
 
-		@media only screen and (max-width: 768px) and (min-width: 576px) {
-			margin-left: 1rem;
-		}
+    @media only screen and (max-width: 991px) and (min-width: 768px) {
+      margin-left: 1rem;
+    }
+  }
 
-		@media only screen and (max-width: 991px) and (min-width: 768px) {
-			margin-left: 1rem;
-		}
-	}
+  .board-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 22px;
+    gap: 24px;
+    background: #dddddd;
+    border-radius: 16px;
 
-	.board-card {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding: 20px 22px;
-		gap: 24px;
-		background: #dddddd;
-		border-radius: 16px;
+    & > h3 {
+      width: 100%;
+      text-align: start;
+      color: #5a5a5a;
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+    }
 
-		&>h3 {
-			width: 100%;
-			text-align: start;
-			color: #5A5A5A;
-			font-weight: 500;
-			display: flex;
-			justify-content: space-between;
-		}
-
-		.post-card-div {
-			cursor: pointer;
-			width: 100%
-		}
-	}
+    .post-card-div {
+      cursor: pointer;
+      width: 100%;
+    }
+  }
 `;

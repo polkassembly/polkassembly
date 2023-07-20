@@ -21,7 +21,9 @@ export interface UserDetailsContextType {
   setUserDetailsContextState: Dispatch<SetStateAction<UserDetailsContextType>>;
   web3signup?: boolean | null;
   walletConnectProvider: WalletConnectProvider | null;
-  setWalletConnectProvider: React.Dispatch<React.SetStateAction<WalletConnectProvider | null>>
+  setWalletConnectProvider: React.Dispatch<
+    React.SetStateAction<WalletConnectProvider | null>
+  >;
   isLoggedOut: () => boolean;
   loginWallet: Wallet | null;
   delegationDashboardAddress: string;
@@ -34,24 +36,24 @@ export interface UserDetailsContextType {
 export interface INetworkPreferences {
   channelPreferences: {
     [index: string]: {
-      verification_token?: string,
-      verification_token_expires?: Date
+      verification_token?: string;
+      verification_token_expires?: Date;
       enabled?: boolean;
-      handle?:string;
-    }
-  },
+      handle?: string;
+    };
+  };
   triggerPreferences: {
     [index: string]: {
-      [index: string]:{
+      [index: string]: {
         enabled: boolean;
         name: string;
-        post_types?: Array<string>,
-        tracks?: Array<number>,
-        mention_types?:Array<string>,
-        sub_triggers?: Array<string>,
-      }
-    }
-  },
+        post_types?: Array<string>;
+        tracks?: Array<number>;
+        mention_types?: Array<string>;
+        sub_triggers?: Array<string>;
+      };
+    };
+  };
 }
 export enum Role {
   ANONYMOUS = 'anonymous',
@@ -65,7 +67,7 @@ export enum NotificationStatus {
   SUCCESS = 'success',
   ERROR = 'error',
   WARNING = 'warning',
-  INFO = 'info'
+  INFO = 'info',
 }
 
 export interface ModalType {
@@ -90,30 +92,30 @@ export interface Account {
   meta: AccountMeta;
 }
 
-export type Network = typeof network[keyof typeof network];
-export type TokenSymbol = typeof tokenSymbol[keyof typeof tokenSymbol];
+export type Network = (typeof network)[keyof typeof network];
+export type TokenSymbol = (typeof tokenSymbol)[keyof typeof tokenSymbol];
 
 export type ChainPropType = {
   [index: string]: ChainProps;
 };
 
 export interface ChainProps {
-  'blockTime': number;
-  'logo'?: any;
-  'ss58Format': number;
-  'tokenDecimals': number;
-  'tokenSymbol': TokenSymbol;
-  'chainId': number;
-  'rpcEndpoint': string;
-  'category': string;
-  'subsquidUrl': string;
-  'treasuryProposalBondPercent': string | null;
-  'treasuryProposalMinBond': string | null;
-  'treasuryProposalMaxBond': string | null;
-  'externalLinks': string;
-  'rpcEndpoints': TRPCEndpoint[];
-  'relayRpcEndpoints'?: TRPCEndpoint[];
-  'gTag': string | null;
+  blockTime: number;
+  logo?: any;
+  ss58Format: number;
+  tokenDecimals: number;
+  tokenSymbol: TokenSymbol;
+  chainId: number;
+  rpcEndpoint: string;
+  category: string;
+  subsquidUrl: string;
+  treasuryProposalBondPercent: string | null;
+  treasuryProposalMinBond: string | null;
+  treasuryProposalMaxBond: string | null;
+  externalLinks: string;
+  rpcEndpoints: TRPCEndpoint[];
+  relayRpcEndpoints?: TRPCEndpoint[];
+  gTag: string | null;
 }
 
 export type TRPCEndpoint = {
@@ -186,7 +188,7 @@ export enum Wallet {
   WALLETCONNECT = 'walletconnect',
   NOVAWALLET = 'polkadot-js',
   POLYWALLET = 'polywallet',
-  OTHER = ''
+  OTHER = '',
 }
 
 export const PostOrigin = {
@@ -222,54 +224,54 @@ export type TrackInfoType = {
 };
 
 export interface TrackProps {
-  'trackId': number;
-  'group'?: string;
-  'description': string;
+  trackId: number;
+  group?: string;
+  description: string;
   [index: string]: any;
 }
 
 export interface NetworkSocials {
-  homepage: string,
-  twitter: string,
-  discord: string,
-  github: string,
-  youtube: string,
-  reddit: string,
-  telegram: string,
-  block_explorer: string,
-  description: string
+  homepage: string;
+  twitter: string;
+  discord: string;
+  github: string;
+  youtube: string;
+  reddit: string;
+  telegram: string;
+  block_explorer: string;
+  description: string;
 }
 
 export interface NetworkEvent {
-  content: string,
-  end_time: Date,
-  event_type: string,
-  id: string,
-  location: string,
-  module: string,
-  start_time: Date,
-  status: 'approved' | 'pending' | 'rejected',
-  title: string,
-  url: string,
-  post_id: number,
-  user_id: number
+  content: string;
+  end_time: Date;
+  event_type: string;
+  id: string;
+  location: string;
+  module: string;
+  start_time: Date;
+  status: 'approved' | 'pending' | 'rejected';
+  title: string;
+  url: string;
+  post_id: number;
+  user_id: number;
 }
 
 export interface ICommentHistory {
-  content: string,
-  created_at: Date,
-  sentiment: number | 0,
+  content: string;
+  created_at: Date;
+  sentiment: number | 0;
 }
 
 export interface PostComment {
-  user_id: number,
-  content: string,
-  created_at: Date,
-  history: ICommentHistory[],
-  id: string,
-  updated_at: Date,
+  user_id: number;
+  content: string;
+  created_at: Date;
+  history: ICommentHistory[];
+  id: string;
+  updated_at: Date;
   sentiment: number | 0;
-  username: string,
+  username: string;
   user_profile_img: string;
 }
 
@@ -306,8 +308,8 @@ export interface IOptionPoll {
 }
 
 export interface PostLink {
-  type: ProposalType,
-  id: number
+  type: ProposalType;
+  id: number;
 }
 
 export interface IPostHistory {
@@ -317,21 +319,21 @@ export interface IPostHistory {
 }
 
 export interface Post {
-  user_id: number,
-  content: string,
+  user_id: number;
+  content: string;
   created_at: Date;
-  id: number | string,
-  last_edited_at: Date,
-  last_comment_at: Date,
-  title: string,
-  topic_id: number,
-  proposer_address: string,
-  post_link: PostLink | null,
+  id: number | string;
+  last_edited_at: Date;
+  last_comment_at: Date;
+  title: string;
+  topic_id: number;
+  proposer_address: string;
+  post_link: PostLink | null;
   username?: string;
-  gov_type?: 'gov_1' | 'open_gov'
+  gov_type?: 'gov_1' | 'open_gov';
   tags?: string[] | [];
   history?: IPostHistory[];
-  subscribers?: number[]
+  subscribers?: number[];
 }
 export interface IPostTag {
   name: string;
@@ -343,38 +345,38 @@ export enum ESentiments {
   SlightlyAgainst = 2,
   Neutral = 3,
   SlightlyFor = 4,
-  For = 5
+  For = 5,
 }
 
 export interface CommentReply {
-  user_id: number,
-  content: string,
-  created_at: Date,
-  id: string,
-  updated_at: Date,
-  username: string,
-  user_profile_img: string,
+  user_id: number;
+  content: string;
+  created_at: Date;
+  id: string;
+  updated_at: Date;
+  username: string;
+  user_profile_img: string;
 }
 
 // can't use optional fields in IApiResponse
 // due to serialising undefined error in getServerSideProps
 export interface IApiResponse<T> {
-  data: T | null,
-  error: string | null,
-  status: number
+  data: T | null;
+  error: string | null;
+  status: number;
 }
 
 export interface IApiErrorResponse {
-  error: string,
+  error: string;
 }
 
 export interface IReaction {
-  user_id: number,
-  created_at: Date,
-  id: string,
-  reaction: string,
-  updated_at: Date,
-  username: string
+  user_id: number;
+  created_at: Date;
+  id: string;
+  reaction: string;
+  updated_at: Date;
+  username: string;
 }
 
 export type PjsCalendarItemDuration = {
@@ -383,19 +385,19 @@ export type PjsCalendarItemDuration = {
   startBlockNumber?: number;
   endBlockNumber?: number;
   duration?: number;
-}
+};
 
 export type PjsCalendarItem = PjsCalendarItemDuration & {
   network: string;
   type: string;
   data: { [key: string]: unknown };
-}
+};
 
 export enum ETrackDelegationStatus {
   All = 'all',
   Delegated = 'delegated',
   Received_Delegation = 'received_delegation',
-  Undelegated = 'undelegated'
+  Undelegated = 'undelegated',
 }
 
 export interface IDelegation {
@@ -404,23 +406,23 @@ export interface IDelegation {
   from: string;
   lockPeriod: number;
   balance: string;
-  createdAt: Date
+  createdAt: Date;
 }
 
 export interface IDelegate {
-  name?: string
-  address: string
-  bio: string
-  active_delegation_count: number
-  voted_proposals_count: number
-  isNovaWalletDelegate?: boolean
+  name?: string;
+  address: string;
+  bio: string;
+  active_delegation_count: number;
+  voted_proposals_count: number;
+  isNovaWalletDelegate?: boolean;
 }
 
 export enum EVoteDecisionType {
   AYE = 'aye',
   NAY = 'nay',
   ABSTAIN = 'abstain',
-  SPLIT = 'split'
+  SPLIT = 'split',
 }
 
 export enum NOTIFICATION_CHANNEL {
@@ -429,7 +431,7 @@ export enum NOTIFICATION_CHANNEL {
   DISCORD = 'discord',
   ELEMENT = 'element',
   SLACK = 'slack',
-  IN_APP = 'in_app'
+  IN_APP = 'in_app',
 }
 
 export interface IUserNotificationChannelPreferences {
@@ -447,14 +449,16 @@ export interface IUserNotificationTriggerPreferences {
 }
 
 export interface IUserNotificationSettings {
-  channelPreferences: { [channel: string]: IUserNotificationChannelPreferences },
+  channelPreferences: {
+    [channel: string]: IUserNotificationChannelPreferences;
+  };
   triggerPreferences: {
-    [network: string]: { [index: string]: IUserNotificationTriggerPreferences }
-  }
+    [network: string]: { [index: string]: IUserNotificationTriggerPreferences };
+  };
 }
 export interface ILastVote {
-	decision: EVoteDecisionType | null
-	time:  Date | string | null;
-	balance: BN | string;
-	conviction:  number;
+  decision: EVoteDecisionType | null;
+  time: Date | string | null;
+  balance: BN | string;
+  conviction: number;
 }

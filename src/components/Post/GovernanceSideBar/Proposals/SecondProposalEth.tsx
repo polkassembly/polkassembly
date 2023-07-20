@@ -16,14 +16,18 @@ import Web3 from 'web3';
 
 import { LoadingStatusType, NotificationStatus } from 'src/types';
 import addEthereumChain from '~src/util/addEthereumChain';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import {
+	useApiContext,
+	useNetworkContext,
+	useUserDetailsContext
+} from '~src/context';
 import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 export interface SecondProposalProps {
-	className?: string
-	proposalId?: number | null | undefined
-    seconds: number
+  className?: string;
+  proposalId?: number | null | undefined;
+  seconds: number;
 }
 
 const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
@@ -32,27 +36,35 @@ const currentNetwork = getNetwork();
 
 const abi = require('src/moonbeamAbi.json');
 
-const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalProps) => {
-	const { walletConnectProvider, setWalletConnectProvider,id, loginAddress } = useUserDetailsContext();
+const SecondProposalEth = ({
+	className,
+	proposalId,
+	seconds
+}: SecondProposalProps) => {
+	const { walletConnectProvider, setWalletConnectProvider, id, loginAddress } =
+    useUserDetailsContext();
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message:'' });
+	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
+		isLoading: false,
+		message: ''
+	});
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [address, setAddress] = useState<string>('');
-	const [modalOpen,setModalOpen]=useState(false);
+	const [modalOpen, setModalOpen] = useState(false);
 
 	let web3 = new Web3((window as any).ethereum);
 
 	useEffect(() => {
 		if (!accounts.length) {
-			if(walletConnectProvider) {
+			if (walletConnectProvider) {
 				getWalletConnectAccounts();
-			}else {
+			} else {
 				getAccounts();
 			}
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [accounts.length, walletConnectProvider]);
 
 	const connect = async () => {
@@ -75,12 +87,15 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 	};
 
 	const getWalletConnectAccounts = async () => {
-		if(!walletConnectProvider?.wc.connected) {
+		if (!walletConnectProvider?.wc.connected) {
 			await connect();
-			if(!walletConnectProvider?.connected) return;
+			if (!walletConnectProvider?.connected) return;
 		}
 
-		getAccountsHandler(walletConnectProvider.wc.accounts, walletConnectProvider.wc.chainId);
+		getAccountsHandler(
+			walletConnectProvider.wc.accounts,
+			walletConnectProvider.wc.chainId
+		);
 
 		setLoadingStatus({
 			isLoading: false,
@@ -97,14 +112,13 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			}
 
 			// updated accounts and chainId
-			const { accounts:addresses, chainId } = payload.params[0];
+			const { accounts: addresses, chainId } = payload.params[0];
 			getAccountsHandler(addresses, Number(chainId));
 		});
 	};
 
 	const getAccountsHandler = async (addresses: string[], chainId: number) => {
-
-		if(chainId !== chainProperties[currentNetwork].chainId) {
+		if (chainId !== chainProperties[currentNetwork].chainId) {
 			// setErr(new Error(`Please login using the ${NETWORK} network`));
 			// setAccountsNotFound(true);
 			setLoadingStatus({
@@ -114,8 +128,10 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			return;
 		}
 
-		const web3 = new Web3((walletConnectProvider as any));
-		const checksumAddresses = addresses.map((address: string) => web3.utils.toChecksumAddress(address));
+		const web3 = new Web3(walletConnectProvider as any);
+		const checksumAddresses = addresses.map((address: string) =>
+			web3.utils.toChecksumAddress(address)
+		);
 
 		if (checksumAddresses.length === 0) {
 			// setAccountsNotFound(true);
@@ -126,18 +142,20 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			return;
 		}
 
-		setAccounts(checksumAddresses.map((address: string): InjectedAccountWithMeta => {
-			const account = {
-				address: web3.utils.toChecksumAddress(address),
-				meta: {
-					genesisHash: null,
-					name: 'walletConnect',
-					source: 'walletConnect'
-				}
-			};
+		setAccounts(
+			checksumAddresses.map((address: string): InjectedAccountWithMeta => {
+				const account = {
+					address: web3.utils.toChecksumAddress(address),
+					meta: {
+						genesisHash: null,
+						name: 'walletConnect',
+						source: 'walletConnect'
+					}
+				};
 
-			return account;
-		}));
+				return account;
+			})
+		);
 
 		if (checksumAddresses.length > 0) {
 			setAddress(checksumAddresses[0]);
@@ -171,21 +189,27 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			return;
 		}
 
-		const accounts = addresses.map((address: string): InjectedAccountWithMeta => {
-			const account = {
-				address,
-				meta: {
-					genesisHash: null,
-					name: 'metamask',
-					source: 'metamask'
-				}
-			};
-			return account;
-		});
+		const accounts = addresses.map(
+			(address: string): InjectedAccountWithMeta => {
+				const account = {
+					address,
+					meta: {
+						genesisHash: null,
+						name: 'metamask',
+						source: 'metamask'
+					}
+				};
+				return account;
+			}
+		);
 
 		if (accounts && Array.isArray(accounts)) {
 			const substrate_address = getSubstrateAddress(loginAddress);
-			const index = accounts.findIndex((account) => (getSubstrateAddress(account?.address) || '').toLowerCase() === (substrate_address || '').toLowerCase());
+			const index = accounts.findIndex(
+				(account) =>
+					(getSubstrateAddress(account?.address) || '').toLowerCase() ===
+          (substrate_address || '').toLowerCase()
+			);
 			if (index >= 0) {
 				const account = accounts[index];
 				accounts.splice(index, 1);
@@ -197,7 +221,6 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 		if (addresses.length > 0) {
 			setAddress(addresses[0]);
 		}
-
 	};
 
 	const secondProposal = async () => {
@@ -216,11 +239,14 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for confirmation' });
 
-		if(walletConnectProvider?.wc.connected) {
+		if (walletConnectProvider?.wc.connected) {
 			await walletConnectProvider.enable();
-			web3 = new Web3((walletConnectProvider as any));
+			web3 = new Web3(walletConnectProvider as any);
 
-			if (walletConnectProvider.wc.chainId !== chainProperties[currentNetwork].chainId) {
+			if (
+				walletConnectProvider.wc.chainId !==
+        chainProperties[currentNetwork].chainId
+			) {
 				queueNotification({
 					header: 'Wrong Network!',
 					message: `Please change to ${currentNetwork} network`,
@@ -233,10 +259,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 		const voteContract = new web3.eth.Contract(abi, contractAddress);
 
 		voteContract.methods
-			.second(
-				proposalId,
-				seconds
-			)
+			.second(proposalId, seconds)
 			.send({
 				from: address,
 				to: contractAddress
@@ -265,11 +288,11 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 	};
 
 	const openModal = () => {
-		if(!id){
+		if (!id) {
 			setModalOpen(true);
-		}else if(accounts.length === 0) {
+		} else if (accounts.length === 0) {
 			getAccounts();
-		}else if(id && accounts.length>0){
+		} else if (id && accounts.length > 0) {
 			setShowModal(true);
 		}
 	};
@@ -277,24 +300,33 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 	return (
 		<div className={className}>
 			<Button
-				className='bg-pink_primary hover:bg-pink_secondary mb-10 text-lg text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[90%] mx-auto'
+				className="bg-pink_primary hover:bg-pink_secondary mb-10 text-lg text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[90%] mx-auto"
 				onClick={openModal}
 			>
-				Second
+        Second
 			</Button>
 			<Modal
 				title="Second Proposal"
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={[
-					<Button className='bg-pink_primary text-white border-pink_primary hover:bg-pink_secondary my-1' key="second" loading={loadingStatus.isLoading} disabled={!apiReady} onClick={secondProposal}>
+					<Button
+						className="bg-pink_primary text-white border-pink_primary hover:bg-pink_secondary my-1"
+						key="second"
+						loading={loadingStatus.isLoading}
+						disabled={!apiReady}
+						onClick={secondProposal}
+					>
             Second
 					</Button>
 				]}
 			>
-				<Spin spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
+				<Spin
+					spinning={loadingStatus.isLoading}
+					indicator={<LoadingOutlined />}
+				>
 					<AccountSelectionForm
-						title='Endorse with account'
+						title="Endorse with account"
 						accounts={accounts}
 						address={address}
 						withBalance
@@ -302,21 +334,23 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 					/>
 				</Spin>
 			</Modal>
-			{<ReferendaLoginPrompts
-				modalOpen={modalOpen}
-				setModalOpen={setModalOpen}
-				image="/assets/referenda-endorse.png"
-				title="Join Polkassembly to Endorse this proposal."
-				subtitle="Discuss, contribute and get regular updates from Polkassembly."/>}
-
+			{
+				<ReferendaLoginPrompts
+					modalOpen={modalOpen}
+					setModalOpen={setModalOpen}
+					image="/assets/referenda-endorse.png"
+					title="Join Polkassembly to Endorse this proposal."
+					subtitle="Discuss, contribute and get regular updates from Polkassembly."
+				/>
+			}
 		</div>
 	);
 };
 
 export default styled(SecondProposalEth)`
-	.LoaderWrapper {
-		height: 15rem;
-		position: absolute;
-		width: 100%;
-	}
+  .LoaderWrapper {
+    height: 15rem;
+    position: absolute;
+    width: 100%;
+  }
 `;

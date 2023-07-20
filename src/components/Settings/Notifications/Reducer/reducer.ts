@@ -2,10 +2,26 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { IReducerState } from '../types';
-import { ACTIONS, updateALLMyProposal, updateALLSubscribedProposal, updateAll, updateGovOneAll, updateGovOneProposal, updateGovOneProposalAll, updateMyProposal, updateOpenGovAll, updateOpenGovProposal, updateOpenGovProposalAll, updateSubscribedProposal } from './action';
+import {
+	ACTIONS,
+	updateALLMyProposal,
+	updateALLSubscribedProposal,
+	updateAll,
+	updateGovOneAll,
+	updateGovOneProposal,
+	updateGovOneProposalAll,
+	updateMyProposal,
+	updateOpenGovAll,
+	updateOpenGovProposal,
+	updateOpenGovProposalAll,
+	updateSubscribedProposal
+} from './action';
 
 // of the Apache-2.0 license. See the LICENSE file for details.
-export function reducer(state: IReducerState, action: {type:string, payload:any}) {
+export function reducer(
+	state: IReducerState,
+	action: { type: string; payload: any }
+) {
 	switch (action.type) {
 	case ACTIONS.INITIAL_SET: {
 		return state;

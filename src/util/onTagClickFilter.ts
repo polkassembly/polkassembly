@@ -4,96 +4,82 @@
 
 import { ProposalType } from '~src/global/proposalType';
 
-export const onTagClickFilter = (proposalType:ProposalType,trackName:string) => {
-
-	if(proposalType === ProposalType.DISCUSSIONS){
+export const onTagClickFilter = (
+	proposalType: ProposalType,
+	trackName: string
+) => {
+	if (proposalType === ProposalType.DISCUSSIONS) {
 		return 'discussions';
 	}
 
-	if(proposalType === ProposalType.REFERENDUMS){
+	if (proposalType === ProposalType.REFERENDUMS) {
 		return 'referenda';
 	}
 
-	if(proposalType === ProposalType.DEMOCRACY_PROPOSALS){
+	if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 		return 'proposals';
 	}
 
-	if(proposalType === ProposalType.TREASURY_PROPOSALS){
+	if (proposalType === ProposalType.TREASURY_PROPOSALS) {
 		return 'treasury-proposals';
 	}
 
-	if(proposalType === ProposalType.GRANTS){
+	if (proposalType === ProposalType.GRANTS) {
 		return 'grants';
 	}
 
-	if(proposalType === ProposalType.CHILD_BOUNTIES){
+	if (proposalType === ProposalType.CHILD_BOUNTIES) {
 		return 'child_bounties';
 	}
 
-	if(proposalType === ProposalType.TIPS){
+	if (proposalType === ProposalType.TIPS) {
 		return 'tips';
 	}
 
-	if(proposalType === ProposalType.COUNCIL_MOTIONS){
+	if (proposalType === ProposalType.COUNCIL_MOTIONS) {
 		return 'motions';
 	}
 
-	if(proposalType === ProposalType.TECH_COMMITTEE_PROPOSALS){
+	if (proposalType === ProposalType.TECH_COMMITTEE_PROPOSALS) {
 		return 'tech-comm-proposals';
 	}
 
-	if(proposalType === ProposalType.REFERENDUM_V2){
-
-		if(trackName === 'root'){
+	if (proposalType === ProposalType.REFERENDUM_V2) {
+		if (trackName === 'root') {
 			return 'root';
-		}
-		else if(trackName === 'StackingAdmin'){
+		} else if (trackName === 'StackingAdmin') {
 			return 'staking-admin';
-		}
-		else if(trackName === 'AuctionAdmin'){
+		} else if (trackName === 'AuctionAdmin') {
 			return 'auction-admin';
-		}
-		else if(trackName === 'LeaseAdmin'){
+		} else if (trackName === 'LeaseAdmin') {
 			return 'lease-admin';
-		}
-		else if(trackName === 'GeneralAdmin'){
+		} else if (trackName === 'GeneralAdmin') {
 			return 'general-admin';
-		}
-		else if(trackName === 'ReferendumCanceller'){
+		} else if (trackName === 'ReferendumCanceller') {
 			return 'referendum-canceller';
-		}
-		else if(trackName === 'ReferendumKiller'){
+		} else if (trackName === 'ReferendumKiller') {
 			return 'referendum-killer';
-		}
-		else if(trackName === 'Treasurer'){
+		} else if (trackName === 'Treasurer') {
 			return 'treasurer';
-		}
-		else if(trackName === 'SmallTipper'){
+		} else if (trackName === 'SmallTipper') {
 			return 'small-tipper';
-		}
-		else if(trackName === 'BigTipper'){
+		} else if (trackName === 'BigTipper') {
 			return 'big-tipper';
-		}
-		else if(trackName === 'SmallSpender'){
+		} else if (trackName === 'SmallSpender') {
 			return 'small-spender';
-		}
-
-		else if(trackName === 'MediumSpender'){
+		} else if (trackName === 'MediumSpender') {
 			return 'medium-spender';
-		}
-		else if(trackName === 'BigSpender'){
+		} else if (trackName === 'BigSpender') {
 			return 'big-spender';
-		}
-		else if(trackName === 'WhitelistedCaller'){
+		} else if (trackName === 'WhitelistedCaller') {
 			return 'whitelisted-caller';
-		}
-		else if(trackName === 'FellowshipAdmin'){
+		} else if (trackName === 'FellowshipAdmin') {
 			return 'fellowship-admin';
 		}
 	}
 
-	if(proposalType === ProposalType.FELLOWSHIP_REFERENDUMS){
-		if(trackName === 'Proficients'){
+	if (proposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
+		if (trackName === 'Proficients') {
 			return 'member-referenda';
 		}
 	}

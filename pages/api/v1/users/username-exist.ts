@@ -8,19 +8,26 @@ import { MessageType } from '~src/auth/types';
 import { firestore_db } from '~src/services/firebaseInit';
 
 export interface IUsernameExistResponse {
-    isExist: boolean;
+  isExist: boolean;
 }
 
-const handler: NextApiHandler<IUsernameExistResponse | MessageType> = async (req, res) => {
-	const { username } = req.query;
-	if (!username) {
-		return res.status(400).json({ message: `Invalid username ${username}.` });
-	}
-	const users = await firestore_db.collection('users').where('username', '==', username).limit(1).get();
-	let isExist = true;
-	if (users.size === 0) {
-		isExist = false;
-	}
-	res.status(200).json({ isExist });
+const handler: NextApiHandler<IUsernameExistResponse | MessageType> = async (
+  req,
+  res,
+) => {
+  const { username } = req.query;
+  if (!username) {
+    return res.status(400).json({ message: `Invalid username ${username}.` });
+  }
+  const users = await firestore_db
+    .collection('users')
+    .where('username', '==', username)
+    .limit(1)
+    .get();
+  let isExist = true;
+  if (users.size === 0) {
+    isExist = false;
+  }
+  res.status(200).json({ isExist });
 };
 export default withErrorHandling(handler);

@@ -14,13 +14,17 @@ import { encodeAddress } from '@polkadot/util-crypto';
 import { chainProperties } from '~src/global/networkConstants';
 
 interface Props {
-	className?: string
-	postArguments: any
-	showAccountArguments: boolean
+  className?: string;
+  postArguments: any;
+  showAccountArguments: boolean;
 }
 
 function isHex(value: string) {
-	return typeof value === 'string' && value.length % 2 == 0 && /^0x[a-f\d]*$/i.test(value);
+	return (
+		typeof value === 'string' &&
+    value.length % 2 == 0 &&
+    /^0x[a-f\d]*$/i.test(value)
+	);
 }
 
 function containsBinaryData(str: string) {
@@ -45,7 +49,7 @@ const convertAnyHexToASCII = (obj: any, network: string): any => {
 				if (containsBinaryData(str)) {
 					const ss58Format = chainProperties?.[network]?.ss58Format;
 					try {
-						const str =  encodeAddress(obj, ss58Format);
+						const str = encodeAddress(obj, ss58Format);
 						if (str) {
 							if (containsBinaryData(str)) {
 								return obj;
@@ -69,7 +73,8 @@ const convertAnyHexToASCII = (obj: any, network: string): any => {
 		return obj?.map((v) => {
 			return convertAnyHexToASCII(v, network);
 		});
-	} if (typeof obj === 'object') {
+	}
+	if (typeof obj === 'object') {
 		for (const key in obj) {
 			if (key.trim().toLowerCase() !== 'id') {
 				obj[key] = convertAnyHexToASCII(obj[key], network);
@@ -79,41 +84,45 @@ const convertAnyHexToASCII = (obj: any, network: string): any => {
 	return obj;
 };
 
-const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments }: Props) => {
+const ArgumentsTableJSONView = ({
+	className,
+	postArguments,
+	showAccountArguments
+}: Props) => {
 	const { network } = useNetworkContext();
-	if(postArguments) {
+	if (postArguments) {
 		postArguments = convertAnyHexToASCII(postArguments, network);
 		const tabItems = [
 			{
-				children: <div className="table-view">
-					<table cellSpacing={0} cellPadding={0}>
-						<thead>
-							<tr>
-								<th className='direct-data data-0'>
-									Name
-								</th>
-								<th className='direct-data data-2'>
-									Value
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							<ArgumentsTable argumentsJSON={postArguments} />
-						</tbody>
-					</table>
-				</div>,
+				children: (
+					<div className="table-view">
+						<table cellSpacing={0} cellPadding={0}>
+							<thead>
+								<tr>
+									<th className="direct-data data-0">Name</th>
+									<th className="direct-data data-2">Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<ArgumentsTable argumentsJSON={postArguments} />
+							</tbody>
+						</table>
+					</div>
+				),
 				key: 'table',
 				label: 'Table'
 			},
 			{
-				children: <div className="json-view">
-					<ReactJson
-						src={postArguments}
-						iconStyle='circle'
-						enableClipboard={false}
-						displayDataTypes={false}
-					/>
-				</div>,
+				children: (
+					<div className="json-view">
+						<ReactJson
+							src={postArguments}
+							iconStyle="circle"
+							enableClipboard={false}
+							displayDataTypes={false}
+						/>
+					</div>
+				),
 				key: 'json',
 				label: 'JSON'
 			}
@@ -122,28 +131,30 @@ const ArgumentsTableJSONView = ({ className, postArguments, showAccountArguments
 		return (
 			<div className={className}>
 				<Tabs
-					className='onchain-tabs'
+					className="onchain-tabs"
 					defaultActiveKey="table"
 					items={tabItems}
 				/>
 
-				{
-					!showAccountArguments && postArguments.map((element:any, index:any) => {
-						return element.name === 'account' && <div key={index}>
-							<Address address={element.value} key={index}/>
-						</div>;
-					})
-				}
+				{!showAccountArguments &&
+          postArguments.map((element: any, index: any) => {
+          	return (
+          		element.name === 'account' && (
+          			<div key={index}>
+          				<Address address={element.value} key={index} />
+          			</div>
+          		)
+          	);
+          })}
 			</div>
 		);
 	} else {
-		return (<div></div>);
+		return <div></div>;
 	}
-
 };
 
 export default styled(ArgumentsTableJSONView)`
-	.onchain-tabs .ant-tabs-tab{
-		background: transparent !important;
-	}
+  .onchain-tabs .ant-tabs-tab {
+    background: transparent !important;
+  }
 `;

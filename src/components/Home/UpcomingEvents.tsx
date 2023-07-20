@@ -11,15 +11,27 @@ import { useApiContext, useNetworkContext } from '~src/context';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { NetworkEvent } from '~src/types';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
-import { fetchAuctionInfo, fetchCouncilElection, fetchCouncilMotions, fetchDemocracyDispatches, fetchDemocracyLaunch, fetchParachainLease, fetchScheduled, fetchSocietyChallenge, fetchSocietyRotate, fetchStakingInfo, fetchTreasurySpend } from '~src/util/getCalendarEvents';
+import {
+	fetchAuctionInfo,
+	fetchCouncilElection,
+	fetchCouncilMotions,
+	fetchDemocracyDispatches,
+	fetchDemocracyLaunch,
+	fetchParachainLease,
+	fetchScheduled,
+	fetchSocietyChallenge,
+	fetchSocietyRotate,
+	fetchStakingInfo,
+	fetchTreasurySpend
+} from '~src/util/getCalendarEvents';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 dayjs.extend(localizedFormat);
-interface Props{
-	className?: string
+interface Props {
+  className?: string;
 }
 
-const UpcomingEvents = ({ className }:Props) => {
+const UpcomingEvents = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 
@@ -30,12 +42,12 @@ const UpcomingEvents = ({ className }:Props) => {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		if(!api || !apiReady) return;
+		if (!api || !apiReady) return;
 
 		(async () => {
 			setLoading(true);
 			const eventsArr: any[] = [];
-			const eventDatesArr:string[] = [];
+			const eventDatesArr: string[] = [];
 
 			const eventPromises = [
 				fetchStakingInfo(api, network),
@@ -54,18 +66,22 @@ const UpcomingEvents = ({ className }:Props) => {
 			const eventsSettled = await Promise.allSettled(eventPromises);
 
 			for (const [index, eventSettled] of eventsSettled.entries()) {
-				if(eventSettled.status !== 'fulfilled' || !eventSettled.value) continue;
+				if (eventSettled.status !== 'fulfilled' || !eventSettled.value)
+					continue;
 
-				switch(index) {
+				switch (index) {
 				case 0:
 					eventSettled.value.forEach((eventObj, i) => {
 						const type = eventObj?.type?.replace(/([A-Z])/g, ' $1');
 						const title = type.charAt(0).toUpperCase() + type.slice(1);
 
 						eventsArr.push({
-							content: eventObj.type === 'stakingEpoch' ? `Start of a new staking session ${eventObj?.data?.index}`
-								: eventObj.type === 'stakingEra' ? `Start of a new staking era ${eventObj?.data?.index}`
-									: `${eventObj.type} ${eventObj?.data?.index}`,
+							content:
+                  eventObj.type === 'stakingEpoch'
+                  	? `Start of a new staking session ${eventObj?.data?.index}`
+                  	: eventObj.type === 'stakingEra'
+                  		? `Start of a new staking era ${eventObj?.data?.index}`
+                  		: `${eventObj.type} ${eventObj?.data?.index}`,
 							end_time: dayjs(eventObj.startDate).toDate(),
 							id: `stakingInfoEvent_${i}`,
 							location: '',
@@ -82,7 +98,9 @@ const UpcomingEvents = ({ className }:Props) => {
 				case 1:
 					eventSettled.value.forEach((eventObj, i) => {
 						eventsArr.push({
-							content: `Council Motion ${String(eventObj?.data?.hash)?.substring(0,10)}...`,
+							content: `Council Motion ${String(
+								eventObj?.data?.hash
+							)?.substring(0, 10)}...`,
 							end_time: dayjs(eventObj.endDate).toDate(),
 							id: `councilMotionEvent_${i}`,
 							location: '',
@@ -116,7 +134,11 @@ const UpcomingEvents = ({ className }:Props) => {
 				case 3:
 					eventSettled.value.forEach((eventObj, i) => {
 						eventsArr.push({
-							content: eventObj?.data?.id ? `Execute named scheduled task ${String(eventObj?.data?.id)?.substring(0,10)}...` : 'Execute anonymous scheduled task',
+							content: eventObj?.data?.id
+								? `Execute named scheduled task ${String(
+									eventObj?.data?.id
+								)?.substring(0, 10)}...`
+								: 'Execute anonymous scheduled task',
 							end_time: dayjs(eventObj.endDate).toDate(),
 							id: `scheduledEvent_${i}`,
 							location: '',
@@ -139,7 +161,7 @@ const UpcomingEvents = ({ className }:Props) => {
 							location: '',
 							start_time: dayjs(eventObj.endDate).toDate(),
 							status: 'approved',
-							title : 'Start Spend Period',
+							title: 'Start Spend Period',
 							url: ''
 						});
 						const eventDateStr = dayjs(eventObj.endDate).format('L');
@@ -156,7 +178,7 @@ const UpcomingEvents = ({ className }:Props) => {
 							location: '',
 							start_time: dayjs(eventObj.endDate).toDate(),
 							status: 'approved',
-							title : 'Democracy Dispatch',
+							title: 'Democracy Dispatch',
 							url: ''
 						});
 						const eventDateStr = dayjs(eventObj.endDate).format('L');
@@ -173,7 +195,7 @@ const UpcomingEvents = ({ className }:Props) => {
 							location: '',
 							start_time: dayjs(eventObj.endDate).toDate(),
 							status: 'approved',
-							title : 'Start Referendum Voting Period',
+							title: 'Start Referendum Voting Period',
 							url: ''
 						});
 						const eventDateStr = dayjs(eventObj.endDate).format('L');
@@ -190,7 +212,7 @@ const UpcomingEvents = ({ className }:Props) => {
 							location: '',
 							start_time: dayjs(eventObj.endDate).toDate(),
 							status: 'approved',
-							title : 'New Members & Bids',
+							title: 'New Members & Bids',
 							url: ''
 						});
 						const eventDateStr = dayjs(eventObj.endDate).format('L');
@@ -207,7 +229,7 @@ const UpcomingEvents = ({ className }:Props) => {
 							location: '',
 							start_time: dayjs(eventObj.endDate).toDate(),
 							status: 'approved',
-							title : 'Start Membership Challenge Period',
+							title: 'Start Membership Challenge Period',
 							url: ''
 						});
 						const eventDateStr = dayjs(eventObj.endDate).format('L');
@@ -224,7 +246,7 @@ const UpcomingEvents = ({ className }:Props) => {
 							location: '',
 							start_time: dayjs(eventObj.endDate).toDate(),
 							status: 'approved',
-							title : 'End Parachain Auction',
+							title: 'End Parachain Auction',
 							url: ''
 						});
 						const eventDateStr = dayjs(eventObj.endDate).format('L');
@@ -241,7 +263,7 @@ const UpcomingEvents = ({ className }:Props) => {
 							location: '',
 							start_time: dayjs(eventObj.endDate).toDate(),
 							status: 'approved',
-							title : 'Start Parachain Lease Period',
+							title: 'Start Parachain Lease Period',
 							url: ''
 						});
 						const eventDateStr = dayjs(eventObj.endDate).format('L');
@@ -255,25 +277,26 @@ const UpcomingEvents = ({ className }:Props) => {
 			setEventDates(eventDatesArr);
 			setLoading(false);
 		})();
-
 	}, [api, apiReady, network]);
 
 	const getNetworkEvents = useCallback(async () => {
-		const { data , error: fetchError } = await nextApiClientFetch<NetworkEvent[]>( 'api/v1/events');
+		const { data, error: fetchError } = await nextApiClientFetch<
+      NetworkEvent[]
+    >('api/v1/events');
 
-		if(fetchError || !data) {
+		if (fetchError || !data) {
 			console.log('error fetching events : ', fetchError);
 			setError(fetchError || 'Error in fetching events');
 		}
 
-		if(data) {
-			const eventsArr:any[] = calendarEvents;
-			const eventDatesArr:string[] = eventDates;
+		if (data) {
+			const eventsArr: any[] = calendarEvents;
+			const eventDatesArr: string[] = eventDates;
 
-			data.forEach(eventObj => {
+			data.forEach((eventObj) => {
 				const eventDate = new Date(eventObj.end_time);
 				const currDate = new Date();
-				if(eventDate.getTime() >= currDate.getTime()) {
+				if (eventDate.getTime() >= currDate.getTime()) {
 					eventsArr.push({
 						content: eventObj.content,
 						end_time: dayjs(eventObj.end_time).toDate(),
@@ -291,7 +314,7 @@ const UpcomingEvents = ({ className }:Props) => {
 			setCalendarEvents(eventsArr);
 			setEventDates(eventDatesArr);
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
@@ -305,8 +328,8 @@ const UpcomingEvents = ({ className }:Props) => {
 
 	const getEventData = (value: Dayjs): any[] => {
 		const eventList: any[] = [];
-		calendarEvents.forEach(eventObj => {
-			if(dayjs(eventObj.end_time).format('L') === value.format('L')){
+		calendarEvents.forEach((eventObj) => {
+			if (dayjs(eventObj.end_time).format('L') === value.format('L')) {
 				eventList.push(eventObj);
 			}
 		});
@@ -316,24 +339,29 @@ const UpcomingEvents = ({ className }:Props) => {
 
 	const dateCellRender = (value: Dayjs) => {
 		const hasEvent = getDateHasEvent(value);
-		if(hasEvent) {
+		if (hasEvent) {
 			const eventData = getEventData(value);
-			const eventList = <div>
-				{
-					eventData.map(eventObj => (
+			const eventList = (
+				<div>
+					{eventData.map((eventObj) => (
 						<div key={eventObj.id}>
-							<a className='text-white hover:text-white hover:underline' href={eventObj.url} target='_blank' rel='noreferrer'>{eventObj.title}</a>
+							<a
+								className="text-white hover:text-white hover:underline"
+								href={eventObj.url}
+								target="_blank"
+								rel="noreferrer"
+							>
+								{eventObj.title}
+							</a>
 							<span className="flex h-[1px] bg-[rgba(255,255,255,0.3)] w-full my-2 rounded-full"></span>
 						</div>
-					))
-				}
-			</div>;
+					))}
+				</div>
+			);
 
 			return (
-				<Tooltip color='#E5007A' title={eventList}>
-					<div className='calenderDate'>
-						{value.format('D')}
-					</div>
+				<Tooltip color="#E5007A" title={eventList}>
+					<div className="calenderDate">{value.format('D')}</div>
 				</Tooltip>
 			);
 		}
@@ -342,7 +370,7 @@ const UpcomingEvents = ({ className }:Props) => {
 	const CalendarElement = () => (
 		<Spin spinning={loading}>
 			<Calendar
-				className='border border-solid border-gray-200 rounded-xl mb-4'
+				className="border border-solid border-gray-200 rounded-xl mb-4"
 				fullscreen={false}
 				cellRender={dateCellRender}
 			/>
@@ -352,23 +380,38 @@ const UpcomingEvents = ({ className }:Props) => {
 	const EventsListElement = () => (
 		<>
 			<List
-				className='h-[100%] overflow-y-auto'
+				className="h-[100%] overflow-y-auto"
 				itemLayout="horizontal"
-				dataSource={calendarEvents.sort((a,b) => (a?.end_time?.getTime() || a?.start_time?.getTime())- (b?.end_time?.getTime() || b?.start_time?.getTime()))}
-				renderItem={item => {
-					return (<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-[#243A57]`}>
-						<a {...(item.url ? { href: item.url } : {})} target='_blank' rel='noreferrer' className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-sidebarBlue`}>
-							<div className='text-xs mb-1 flex items-center text-lightBlue'>
-								{dayjs(item.end_time).format('MMM D, YYYY')}
-								<span className="h-[4px] w-[4px] bg-bodyBlue mx-2 rounded-full inline-block"></span>
-								{dayjs(item.end_time).format('h:mm a')}
-							</div>
+				dataSource={calendarEvents.sort(
+					(a, b) =>
+						(a?.end_time?.getTime() || a?.start_time?.getTime()) -
+            (b?.end_time?.getTime() || b?.start_time?.getTime())
+				)}
+				renderItem={(item) => {
+					return (
+						<List.Item
+							className={`${
+								item.url ? 'cursor-pointer' : 'cursor-default'
+							} text-[#243A57]`}
+						>
+							<a
+								{...(item.url ? { href: item.url } : {})}
+								target="_blank"
+								rel="noreferrer"
+								className={`${
+									item.url ? 'cursor-pointer' : 'cursor-default'
+								} text-sidebarBlue`}
+							>
+								<div className="text-xs mb-1 flex items-center text-lightBlue">
+									{dayjs(item.end_time).format('MMM D, YYYY')}
+									<span className="h-[4px] w-[4px] bg-bodyBlue mx-2 rounded-full inline-block"></span>
+									{dayjs(item.end_time).format('h:mm a')}
+								</div>
 
-							<div className="text-sm text-bodyBlue">
-								{item.content}
-							</div>
-						</a>
-					</List.Item>);
+								<div className="text-sm text-bodyBlue">{item.content}</div>
+							</a>
+						</List.Item>
+					);
 				}}
 			/>
 		</>
@@ -379,17 +422,24 @@ const UpcomingEvents = ({ className }:Props) => {
 	}
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-4 lg:p-6 rounded-xxl h-[520px] lg:h-[550px]`}>
+		<div
+			className={`${className} bg-white drop-shadow-md p-4 lg:p-6 rounded-xxl h-[520px] lg:h-[550px]`}
+		>
 			<div className="flex items-center justify-between mb-5">
-				<h2 className='text-bodyBlue text-xl font-medium leading-8 sm:mx-3 xs:mx-1 sm:my-0 xs:my-2'>Upcoming Events</h2>
-				<CalendarFilled className='cursor-pointer inline-block lg:hidden' onClick={() => setShowCalendar(!showCalendar)} />
+				<h2 className="text-bodyBlue text-xl font-medium leading-8 sm:mx-3 xs:mx-1 sm:my-0 xs:my-2">
+          Upcoming Events
+				</h2>
+				<CalendarFilled
+					className="cursor-pointer inline-block lg:hidden"
+					onClick={() => setShowCalendar(!showCalendar)}
+				/>
 			</div>
 
 			{/* Desktop */}
 			<div className="hidden lg:flex lg:flex-row h-[520px] lg:h-[450px]">
 				<div className="w-full lg:w-[55%] p-3">
 					<CalendarElement />
-					<span className='text-xs text-navBlue'>*DateTime in UTC</span>
+					<span className="text-xs text-navBlue">*DateTime in UTC</span>
 				</div>
 
 				<div className="w-[45%] ml-4 p-2">
@@ -399,39 +449,39 @@ const UpcomingEvents = ({ className }:Props) => {
 
 			{/* Tablet and below */}
 			<div className="flex lg:hidden">
-				{
-					showCalendar ?
-						<div className="w-full lg:w-[55%] p-3">
-							<CalendarElement />
-							<span className='text-xs text-navBlue'>*DateTime in UTC</span>
-						</div>
-						:
-						<div className="w-full h-[430px] ml-4 p-2">
-							<EventsListElement />
-						</div>
-				}
+				{showCalendar ? (
+					<div className="w-full lg:w-[55%] p-3">
+						<CalendarElement />
+						<span className="text-xs text-navBlue">*DateTime in UTC</span>
+					</div>
+				) : (
+					<div className="w-full h-[430px] ml-4 p-2">
+						<EventsListElement />
+					</div>
+				)}
 			</div>
 		</div>
 	);
 };
 
 export default styled(UpcomingEvents)`
-	.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
-		border-radius: 50%;
-	}
+  .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
+    border-radius: 50%;
+  }
 
-	.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
-		border-radius: 50% !important;
-		border : 1.5px solid #e5007a;
-	}
-	.calenderDate{
-		margin-top : -24px;
-		background-color: #ff7ab4;
-		color : #fff;
-		border-radius : 50%;
-		display : flex;
-		align-items: center;
-		justify-content: center;
-		position: relative;
-	}
+  .ant-picker-cell-in-view.ant-picker-cell-today
+    .ant-picker-cell-inner::before {
+    border-radius: 50% !important;
+    border: 1.5px solid #e5007a;
+  }
+  .calenderDate {
+    margin-top: -24px;
+    background-color: #ff7ab4;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
 `;

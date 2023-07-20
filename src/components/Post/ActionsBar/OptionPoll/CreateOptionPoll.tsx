@@ -2,7 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { AuditOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+	AuditOutlined,
+	MinusCircleOutlined,
+	PlusOutlined
+} from '@ant-design/icons';
 import { Button, Form, Input, Modal, Select } from 'antd';
 import { ICreatePollResponse } from 'pages/api/v1/auth/actions/createPoll';
 import React, { FC, useState } from 'react';
@@ -16,8 +20,8 @@ import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface ICreatePollProps {
-	postId: number | string;
-	proposalType: ProposalType
+  postId: number | string;
+  proposalType: ProposalType;
 }
 
 const daysOptions: React.ReactElement[] = [];
@@ -25,20 +29,26 @@ const hoursOptions: React.ReactElement[] = [];
 const minutesOptions: React.ReactElement[] = [];
 
 for (let i = 0; i < 59; i++) {
-	if(i<10) {
+	if (i < 10) {
 		daysOptions.push(
-			<Select.Option key={i + 1} value={i + 1}>{i + 1}</Select.Option>
+			<Select.Option key={i + 1} value={i + 1}>
+				{i + 1}
+			</Select.Option>
 		);
 	}
 
-	if(i<23) {
+	if (i < 23) {
 		hoursOptions.push(
-			<Select.Option key={i + 1} value={i + 1}>{i + 1}</Select.Option>
+			<Select.Option key={i + 1} value={i + 1}>
+				{i + 1}
+			</Select.Option>
 		);
 	}
 
 	minutesOptions.push(
-		<Select.Option key={i + 1} value={i + 1}>{i + 1}</Select.Option>
+		<Select.Option key={i + 1} value={i + 1}>
+			{i + 1}
+		</Select.Option>
 	);
 }
 
@@ -61,17 +71,25 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 			const hours = form.getFieldValue('hours') || 0;
 			const minutes = form.getFieldValue('minutes') || 0;
 
-			const endAt = Math.round(Date.now()/1000) + (days*24*60*60) + (hours*60*60) + (minutes*60);
+			const endAt =
+        Math.round(Date.now() / 1000) +
+        days * 24 * 60 * 60 +
+        hours * 60 * 60 +
+        minutes * 60;
 
 			setLoading(true);
-			const { data , error: apiError } = await nextApiClientFetch<ICreatePollResponse>( 'api/v1/auth/actions/createPoll', {
-				endAt,
-				options: JSON.stringify(options),
-				pollType: POLL_TYPE.OPTION,
-				postId,
-				proposalType,
-				question
-			});
+			const { data, error: apiError } =
+        await nextApiClientFetch<ICreatePollResponse>(
+        	'api/v1/auth/actions/createPoll',
+        	{
+        		endAt,
+        		options: JSON.stringify(options),
+        		pollType: POLL_TYPE.OPTION,
+        		postId,
+        		proposalType,
+        		question
+        	}
+        );
 
 			if (apiError || !data) {
 				queueNotification({
@@ -125,21 +143,43 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 
 	return (
 		<>
-			<Button className={'text-pink_primary flex items-center border-none shadow-none px-1.5'} onClick={() => setShowModal(true)}>
-				<AuditOutlined /><span className='ml-1'>Create Poll</span>
+			<Button
+				className={
+					'text-pink_primary flex items-center border-none shadow-none px-1.5'
+				}
+				onClick={() => setShowModal(true)}
+			>
+				<AuditOutlined />
+				<span className="ml-1">Create Poll</span>
 			</Button>
 
 			<Modal
 				title="Create Poll"
 				open={showModal}
 				onOk={handleCreate}
-				onCancel={() => { form.resetFields(); setShowModal(false);}}
+				onCancel={() => {
+					form.resetFields();
+					setShowModal(false);
+				}}
 				confirmLoading={loading}
 				footer={[
-					<Button key="back" disabled={loading} onClick={() => { form.resetFields(); setShowModal(false);}}>
+					<Button
+						key="back"
+						disabled={loading}
+						onClick={() => {
+							form.resetFields();
+							setShowModal(false);
+						}}
+					>
             Cancel
 					</Button>,
-					<Button htmlType='submit' key="submit" className='bg-pink_primary hover:bg-pink_secondary text-white' disabled={loading} onClick={handleCreate}>
+					<Button
+						htmlType="submit"
+						key="submit"
+						className="bg-pink_primary hover:bg-pink_secondary text-white"
+						disabled={loading}
+						onClick={handleCreate}
+					>
             Create Poll
 					</Button>
 				]}
@@ -150,17 +190,22 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 					onFinish={handleCreate}
 					layout="vertical"
 					disabled={loading || formDisabled}
-					validateMessages={
-						{ required: "Please add the '${name}'" }
-					}
-					initialValues={
-						{ options: [undefined, undefined] }
-					}
+					validateMessages={{ required: "Please add the '${name}'" }}
+					initialValues={{ options: [undefined, undefined] }}
 				>
-					{error && <ErrorAlert errorMsg={error} className='mb-4' />}
+					{error && <ErrorAlert errorMsg={error} className="mb-4" />}
 
-					<Form.Item name="question" label="Question" rules={[{ required: true }]}>
-						<Input name='question' autoFocus placeholder='Ask a question...' className='text-black' />
+					<Form.Item
+						name="question"
+						label="Question"
+						rules={[{ required: true }]}
+					>
+						<Input
+							name="question"
+							autoFocus
+							placeholder="Ask a question..."
+							className="text-black"
+						/>
 					</Form.Item>
 
 					<Form.List
@@ -169,7 +214,9 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 							{
 								validator: async (_, options) => {
 									if (!options || options.length < 2) {
-										return Promise.reject(new Error('Please add atleast 2 options'));
+										return Promise.reject(
+											new Error('Please add atleast 2 options')
+										);
 									}
 								}
 							}
@@ -188,14 +235,19 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 											validateTrigger={['onChange', 'onBlur']}
 											rules={[
 												{
-													message: 'Please input an option text or remove this field.',
+													message:
+                            'Please input an option text or remove this field.',
 													required: true,
 													whitespace: true
 												}
 											]}
 											noStyle
 										>
-											<Input placeholder={`Option ${index + 1}`} name='linkPostId' className='w-[90%] text-black' />
+											<Input
+												placeholder={`Option ${index + 1}`}
+												name="linkPostId"
+												className="w-[90%] text-black"
+											/>
 										</Form.Item>
 										{fields.length > 2 ? (
 											<MinusCircleOutlined
@@ -211,9 +263,9 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 										type="dashed"
 										onClick={() => add()}
 										icon={<PlusOutlined />}
-										className='flex items-center'
+										className="flex items-center"
 									>
-										Add Option
+                    Add Option
 									</Button>
 									<Form.ErrorList errors={errors} />
 								</Form.Item>
@@ -222,34 +274,16 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 					</Form.List>
 
 					<div className="flex items-center justify-between">
-						<Form.Item
-							name="days"
-							label="Days"
-							className='w-full mx-2'
-						>
-							<Select>
-								{daysOptions}
-							</Select>
+						<Form.Item name="days" label="Days" className="w-full mx-2">
+							<Select>{daysOptions}</Select>
 						</Form.Item>
 
-						<Form.Item
-							name="hours"
-							label="Hours"
-							className='w-full mx-2'
-						>
-							<Select>
-								{hoursOptions}
-							</Select>
+						<Form.Item name="hours" label="Hours" className="w-full mx-2">
+							<Select>{hoursOptions}</Select>
 						</Form.Item>
 
-						<Form.Item
-							name="minutes"
-							label="Minutes"
-							className='w-full mx-2'
-						>
-							<Select>
-								{minutesOptions}
-							</Select>
+						<Form.Item name="minutes" label="Minutes" className="w-full mx-2">
+							<Select>{minutesOptions}</Select>
 						</Form.Item>
 					</div>
 				</Form>

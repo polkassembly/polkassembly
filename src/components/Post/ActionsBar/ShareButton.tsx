@@ -8,7 +8,7 @@ import React, { useContext } from 'react';
 
 import { NetworkContext } from '~src/context/NetworkContext';
 
-const ShareButton = function ({ title }: {title?: string | null}) {
+const ShareButton = function ({ title }: { title?: string | null }) {
 	const { network } = useContext(NetworkContext);
 
 	const share = () => {
@@ -22,7 +22,8 @@ const ShareButton = function ({ title }: {title?: string | null}) {
 
 		twitterParameters.push('via=' + encodeURI('polkassembly'));
 
-		const url = 'https://twitter.com/intent/tweet?' + twitterParameters.join('&');
+		const url =
+      'https://twitter.com/intent/tweet?' + twitterParameters.join('&');
 
 		global.window.open(url);
 	};
@@ -30,7 +31,9 @@ const ShareButton = function ({ title }: {title?: string | null}) {
 	return (
 		<>
 			<Button
-				className={'text-pink_primary flex items-center border-none shadow-none px-1 md:px-2'}
+				className={
+					'text-pink_primary flex items-center border-none shadow-none px-1 md:px-2'
+				}
 				onClick={share}
 			>
 				<ShareAltOutlined /> {' Share'}

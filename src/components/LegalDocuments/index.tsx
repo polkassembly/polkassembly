@@ -9,15 +9,15 @@ import getTermsAndConditions from '~assets/terms-and-conditions';
 import TOW from '~assets/terms-of-website';
 import { useNetworkContext } from '~src/context';
 
-interface Props{
-	md: string
+interface Props {
+  md: string;
 }
 
-const MdScreen = ({ md } : Props) => {
+const MdScreen = ({ md }: Props) => {
 	return (
 		<section>
-			<article className='bg-white p-12 rounded-md shadow-md'>
-				<Markdown className='markdown' md={md}/>
+			<article className="bg-white p-12 rounded-md shadow-md">
+				<Markdown className="markdown" md={md} />
 			</article>
 		</section>
 	);
@@ -27,11 +27,10 @@ const StyledMdScreen = MdScreen;
 
 export const TermsAndConditions = () => {
 	const { network } = useNetworkContext();
-	return <StyledMdScreen md={getTermsAndConditions(network)}/>;
+	return <StyledMdScreen md={getTermsAndConditions(network)} />;
 };
 export const PrivacyPolicy = () => {
 	const { network } = useNetworkContext();
-	return <StyledMdScreen md={getPrivacyPolicy(network)}/>;
+	return <StyledMdScreen md={getPrivacyPolicy(network)} />;
 };
-export const TermsOfWebsite = () => <StyledMdScreen md={TOW}/>;
-
+export const TermsOfWebsite = () => <StyledMdScreen md={TOW} />;

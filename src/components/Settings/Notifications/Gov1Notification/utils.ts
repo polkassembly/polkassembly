@@ -195,4 +195,15 @@ const titleMapper = (title: string) => {
 	}
 };
 
-export { techCommittee, tips, childBounties, bounties, proposal, treasuryProposal, referendumsV1, councilMotion, allGov1, titleMapper };
+export {
+	techCommittee,
+	tips,
+	childBounties,
+	bounties,
+	proposal,
+	treasuryProposal,
+	referendumsV1,
+	councilMotion,
+	allGov1,
+	titleMapper
+};

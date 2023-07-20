@@ -9,12 +9,12 @@ import { CHANNEL } from '..';
 import { useUserDetailsContext } from '~src/context';
 
 type Props = {
-    icon: any;
-    title: string;
-    open: boolean;
-    getVerifyToken:  (channel: CHANNEL) => Promise<any>;
-    generatedToken?: string;
-    onClose: () => void;
+  icon: any;
+  title: string;
+  open: boolean;
+  getVerifyToken: (channel: CHANNEL) => Promise<any>;
+  generatedToken?: string;
+  onClose: () => void;
 };
 
 const DiscordInfoModal = ({
@@ -41,7 +41,7 @@ const DiscordInfoModal = ({
 	return (
 		<Modal
 			title={
-				<h3 className='flex items-center gap-3 mb-5'>
+				<h3 className="flex items-center gap-3 mb-5">
 					{icon} {title}
 				</h3>
 			}
@@ -49,67 +49,61 @@ const DiscordInfoModal = ({
 			closable
 			onCancel={onClose}
 			footer={null}
-			className='min-[550px]'
+			className="min-[550px]"
 		>
-			<div className=''>
+			<div className="">
 				<ol>
-					<li className='list-inside leading-[40px]'>
-                        Click this invite link
-						<span className='p-1 mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'>
+					<li className="list-inside leading-[40px]">
+            Click this invite link
+						<span className="p-1 mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary">
 							<a
-								href='https://discord.com/oauth2/authorize?client_id=1112538708219007017&permissions=397284485120&scope=bot'
-								target='_blank'
-								rel='noreferrer'
+								href="https://discord.com/oauth2/authorize?client_id=1112538708219007017&permissions=397284485120&scope=bot"
+								target="_blank"
+								rel="noreferrer"
 							>
-                                discord.com/api/oauth2/
+                discord.com/api/oauth2/
 							</a>
 						</span>
 					</li>
-					<li className='list-inside leading-[40px]'>
-                        Send this command to the chat with the bot:
+					<li className="list-inside leading-[40px]">
+            Send this command to the chat with the bot:
 						<br />
 						<span
 							onClick={() =>
-								handleCopyClicked(
-									'/add <username> <verificationToken>'
-								)
+								handleCopyClicked('/add <username> <verificationToken>')
 							}
-							className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
+							className="p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary"
 						>
-							<CopyIcon className='relative top-[6px]' />{' '}
-							{'<username>'} {'<verificationToken>'}
+							<CopyIcon className="relative top-[6px]" /> {'<username>'}{' '}
+							{'<verificationToken>'}
 						</span>
 						<Button
 							loading={loading}
 							onClick={handleGenerateToken}
-							className='bg-pink_primary text-white font-normal'
+							className="bg-pink_primary text-white font-normal"
 						>
-                            Generate Token
+              Generate Token
 						</Button>
 						<br />
 						{token && (
 							<>
-								<div className='list-inside leading-[40px]'>
-                        Copy your username:
+								<div className="list-inside leading-[40px]">
+                  Copy your username:
 									<span
-										onClick={() =>
-											handleCopyClicked(username as string)
-										}
-										className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
+										onClick={() => handleCopyClicked(username as string)}
+										className="p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary"
 									>
-										<CopyIcon className='relative top-[6px]' />{' '}
-										{username}
+										<CopyIcon className="relative top-[6px]" /> {username}
 									</span>
 								</div>
 
-								<div className=''>
+								<div className="">
 									<span>Verification Token: </span>
 									<span
 										onClick={() => handleCopyClicked(token)}
-										className='p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary'
+										className="p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary"
 									>
-										<CopyIcon className='relative top-[6px]' />{' '}
-										{token}
+										<CopyIcon className="relative top-[6px]" /> {token}
 									</span>
 								</div>
 							</>

@@ -5,11 +5,21 @@
 import { NextApiHandler } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
-import { isProposalTypeValid, isTrackNoValid, isValidNetwork } from '~src/api-utils';
+import {
+  isProposalTypeValid,
+  isTrackNoValid,
+  isValidNetwork,
+} from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
-import { GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES } from '~src/queries';
+import {
+  getSubsquidProposalType,
+  ProposalType,
+} from '~src/global/proposalType';
+import {
+  GET_PROPOSALS_LISTING_BY_TYPE,
+  GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES,
+} from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -18,176 +28,232 @@ import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 
 export interface ILatestActivityPostsListingResponse {
-    count: number;
-    posts: any;
+  count: number;
+  posts: any;
 }
 
 interface IGetLatestActivityOnChainPostsParams {
-	network: string;
-	listingLimit: string | string[] | number;
-	proposalType: ProposalType | string | string[];
-	trackNo?: number | string | string[];
+  network: string;
+  listingLimit: string | string[] | number;
+  proposalType: ProposalType | string | string[];
+  trackNo?: number | string | string[];
 }
 
-export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOnChainPostsParams): Promise<IApiResponse<ILatestActivityPostsListingResponse>> {
-	try {
-		const { network, proposalType, trackNo, listingLimit } = params;
+export async function getLatestActivityOnChainPosts(
+  params: IGetLatestActivityOnChainPostsParams,
+): Promise<IApiResponse<ILatestActivityPostsListingResponse>> {
+  try {
+    const { network, proposalType, trackNo, listingLimit } = params;
 
-		const numListingLimit = Number(listingLimit);
-		if (isNaN(numListingLimit)) {
-			throw apiErrorWithStatusCode( `Invalid listingLimit "${listingLimit}"`, 400);
-		}
+    const numListingLimit = Number(listingLimit);
+    if (isNaN(numListingLimit)) {
+      throw apiErrorWithStatusCode(
+        `Invalid listingLimit "${listingLimit}"`,
+        400,
+      );
+    }
 
-		const strProposalType = String(proposalType);
-		if (!isProposalTypeValid(strProposalType)) {
-			throw apiErrorWithStatusCode(`The proposal type of the name "${proposalType}" does not exist.`, 400);
-		}
+    const strProposalType = String(proposalType);
+    if (!isProposalTypeValid(strProposalType)) {
+      throw apiErrorWithStatusCode(
+        `The proposal type of the name "${proposalType}" does not exist.`,
+        400,
+      );
+    }
 
-		const numTrackNo = Number(trackNo);
-		if (strProposalType === ProposalType.OPEN_GOV) {
-			if (!isTrackNoValid(numTrackNo, network)) {
-				throw apiErrorWithStatusCode(`The OpenGov trackNo "${trackNo}" is invalid.`, 400);
-			}
-		}
-		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+    const numTrackNo = Number(trackNo);
+    if (strProposalType === ProposalType.OPEN_GOV) {
+      if (!isTrackNoValid(numTrackNo, network)) {
+        throw apiErrorWithStatusCode(
+          `The OpenGov trackNo "${trackNo}" is invalid.`,
+          400,
+        );
+      }
+    }
+    const subsquidProposalType = getSubsquidProposalType(proposalType as any);
 
-		const postsVariables: any = {
-			limit: numListingLimit,
-			type_in: subsquidProposalType
-		};
+    const postsVariables: any = {
+      limit: numListingLimit,
+      type_in: subsquidProposalType,
+    };
 
-		if (proposalType && [ProposalType.OPEN_GOV.toString(), ProposalType.FELLOWSHIP_REFERENDUMS.toString()].includes(strProposalType)) {
-			postsVariables.trackNumber_in = [numTrackNo];
-		}
+    if (
+      proposalType &&
+      [
+        ProposalType.OPEN_GOV.toString(),
+        ProposalType.FELLOWSHIP_REFERENDUMS.toString(),
+      ].includes(strProposalType)
+    ) {
+      postsVariables.trackNumber_in = [numTrackNo];
+    }
 
-		let query = GET_PROPOSALS_LISTING_BY_TYPE;
-		if (network === 'collectives') {
-			query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES;
-		}
+    let query = GET_PROPOSALS_LISTING_BY_TYPE;
+    if (network === 'collectives') {
+      query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES;
+    }
 
-		const subsquidRes = await fetchSubsquid({
-			network,
-			query: query,
-			variables: postsVariables
-		});
+    const subsquidRes = await fetchSubsquid({
+      network,
+      query: query,
+      variables: postsVariables,
+    });
 
-		const subsquidData = subsquidRes?.data;
-		const subsquidPosts: any[] = subsquidData?.proposals || [];
+    const subsquidData = subsquidRes?.data;
+    const subsquidPosts: any[] = subsquidData?.proposals || [];
 
-		const postsPromise = subsquidPosts?.map(async (subsquidPost) => {
-			const { createdAt, proposer, curator, preimage, type, index, hash, method, origin, trackNumber, group, description } = subsquidPost;
-			let otherPostProposer = '';
-			if (group?.proposals?.length) {
-				group.proposals.forEach((obj: any) => {
-					if (!otherPostProposer) {
-						if (obj.proposer) {
-							otherPostProposer = obj.proposer;
-						} else if (obj?.preimage?.proposer) {
-							otherPostProposer = obj.preimage.proposer;
-						}
-					}
-				});
-			}
-			let status = subsquidPost.status;
-			if (status === 'DecisionDepositPlaced') {
-				const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
-				statuses.forEach((obj) => {
-					if (obj.status === 'Deciding') {
-						status = 'Deciding';
-					}
-				});
-			}
-			const postId = proposalType === ProposalType.TIPS?  hash: index;
-			const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
-			const postDoc = await postDocRef.get();
-			if (postDoc && postDoc.exists) {
-				const data = postDoc?.data();
-				if (data) {
-					let subsquareTitle = '';
-					if(data?.title === '' || data?.title === method || data.title === null){
-						const res = await getSubSquareContentAndTitle(strProposalType as ProposalType, network, postId);
-						subsquareTitle = res?.title;
-					}
-					return {
-						created_at: createdAt,
-						description,
-						hash,
-						method: method || preimage?.method,
-						origin,
-						post_id: postId,
-						proposer: proposer || preimage?.proposer || otherPostProposer || curator,
-						status: status,
-						title: data?.title || subsquareTitle,
-						track_number: trackNumber,
-						type
-					};
-				}
-			}
+    const postsPromise = subsquidPosts?.map(async (subsquidPost) => {
+      const {
+        createdAt,
+        proposer,
+        curator,
+        preimage,
+        type,
+        index,
+        hash,
+        method,
+        origin,
+        trackNumber,
+        group,
+        description,
+      } = subsquidPost;
+      let otherPostProposer = '';
+      if (group?.proposals?.length) {
+        group.proposals.forEach((obj: any) => {
+          if (!otherPostProposer) {
+            if (obj.proposer) {
+              otherPostProposer = obj.proposer;
+            } else if (obj?.preimage?.proposer) {
+              otherPostProposer = obj.preimage.proposer;
+            }
+          }
+        });
+      }
+      let status = subsquidPost.status;
+      if (status === 'DecisionDepositPlaced') {
+        const statuses = (subsquidPost?.statusHistory || []) as {
+          status: string;
+        }[];
+        statuses.forEach((obj) => {
+          if (obj.status === 'Deciding') {
+            status = 'Deciding';
+          }
+        });
+      }
+      const postId = proposalType === ProposalType.TIPS ? hash : index;
+      const postDocRef = postsByTypeRef(
+        network,
+        strProposalType as ProposalType,
+      ).doc(String(postId));
+      const postDoc = await postDocRef.get();
+      if (postDoc && postDoc.exists) {
+        const data = postDoc?.data();
+        if (data) {
+          let subsquareTitle = '';
+          if (
+            data?.title === '' ||
+            data?.title === method ||
+            data.title === null
+          ) {
+            const res = await getSubSquareContentAndTitle(
+              strProposalType as ProposalType,
+              network,
+              postId,
+            );
+            subsquareTitle = res?.title;
+          }
+          return {
+            created_at: createdAt,
+            description,
+            hash,
+            method: method || preimage?.method,
+            origin,
+            post_id: postId,
+            proposer:
+              proposer || preimage?.proposer || otherPostProposer || curator,
+            status: status,
+            title: data?.title || subsquareTitle,
+            track_number: trackNumber,
+            type,
+          };
+        }
+      }
 
-			let subsquareTitle =  '';
-			const res = await getSubSquareContentAndTitle(strProposalType as ProposalType, network, postId);
-			subsquareTitle = res?.title;
+      let subsquareTitle = '';
+      const res = await getSubSquareContentAndTitle(
+        strProposalType as ProposalType,
+        network,
+        postId,
+      );
+      subsquareTitle = res?.title;
 
-			return {
-				created_at: createdAt,
-				description,
-				hash,
-				method: method || preimage?.method,
-				origin,
-				post_id: postId,
-				proposer: proposer || preimage?.proposer || otherPostProposer || curator,
-				status: status,
-				title: subsquareTitle,
-				track_number: trackNumber,
-				type
-			};
-		});
+      return {
+        created_at: createdAt,
+        description,
+        hash,
+        method: method || preimage?.method,
+        origin,
+        post_id: postId,
+        proposer:
+          proposer || preimage?.proposer || otherPostProposer || curator,
+        status: status,
+        title: subsquareTitle,
+        track_number: trackNumber,
+        type,
+      };
+    });
 
-		const postsResults = await Promise.allSettled(postsPromise);
-		let posts = postsResults.reduce((prev, post) => {
-			if (post && post.status === 'fulfilled') {
-				prev.push(post.value);
-			}
-			return prev;
-		}, [] as any[]);
+    const postsResults = await Promise.allSettled(postsPromise);
+    let posts = postsResults.reduce((prev, post) => {
+      if (post && post.status === 'fulfilled') {
+        prev.push(post.value);
+      }
+      return prev;
+    }, [] as any[]);
 
-		posts = await getSpamUsersCountForPosts(network, posts, strProposalType);
+    posts = await getSpamUsersCountForPosts(network, posts, strProposalType);
 
-		const data: ILatestActivityPostsListingResponse = {
-			count: Number(subsquidData?.proposalsConnection.totalCount),
-			posts
-		};
-		return {
-			data: JSON.parse(JSON.stringify(data)),
-			error: null,
-			status: 200
-		};
-	} catch (error) {
-		return {
-			data: null,
-			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500
-		};
-	}
+    const data: ILatestActivityPostsListingResponse = {
+      count: Number(subsquidData?.proposalsConnection.totalCount),
+      posts,
+    };
+    return {
+      data: JSON.parse(JSON.stringify(data)),
+      error: null,
+      status: 200,
+    };
+  } catch (error) {
+    return {
+      data: null,
+      error: error.message || messages.API_FETCH_ERROR,
+      status: Number(error.name) || 500,
+    };
+  }
 }
 
-const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: string }> = async (req, res) => {
-	const { trackNo, proposalType = ProposalType.DEMOCRACY_PROPOSALS, listingLimit = LISTING_LIMIT } = req.query;
+const handler: NextApiHandler<
+  ILatestActivityPostsListingResponse | { error: string }
+> = async (req, res) => {
+  const {
+    trackNo,
+    proposalType = ProposalType.DEMOCRACY_PROPOSALS,
+    listingLimit = LISTING_LIMIT,
+  } = req.query;
 
-	const network = String(req.headers['x-network']);
-	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
+  const network = String(req.headers['x-network']);
+  if (!network || !isValidNetwork(network))
+    res.status(400).json({ error: 'Invalid network in request header' });
 
-	const { data, error, status } = await getLatestActivityOnChainPosts({
-		listingLimit,
-		network,
-		proposalType,
-		trackNo
-	});
+  const { data, error, status } = await getLatestActivityOnChainPosts({
+    listingLimit,
+    network,
+    proposalType,
+    trackNo,
+  });
 
-	if(error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-	}else {
-		res.status(status).json(data);
-	}
+  if (error || !data) {
+    res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+  } else {
+    res.status(status).json(data);
+  }
 };
 export default withErrorHandling(handler);

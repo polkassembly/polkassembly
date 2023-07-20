@@ -11,9 +11,15 @@ import messages from './messages';
 /**
  * Get User id from JWT
  */
-export default function getUserIdFromJWT(token: string, publicKey: string | undefined): number {
+export default function getUserIdFromJWT(
+	token: string,
+	publicKey: string | undefined
+): number {
 	if (!publicKey) {
-		const key = process.env.NODE_ENV === 'test' ? process.env.JWT_PUBLIC_KEY_TEST : process.env.JWT_PUBLIC_KEY?.replace(/\\n/gm, '\n');
+		const key =
+      process.env.NODE_ENV === 'test'
+      	? process.env.JWT_PUBLIC_KEY_TEST
+      	: process.env.JWT_PUBLIC_KEY?.replace(/\\n/gm, '\n');
 		throw apiErrorWithStatusCode(`${key} not set. Aborting.`, 403);
 	}
 

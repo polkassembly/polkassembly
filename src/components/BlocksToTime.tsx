@@ -10,13 +10,13 @@ import { useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 
 interface Props {
-	blocks: number | BN;
-	className?: string
+  blocks: number | BN;
+  className?: string;
 }
 
-const BlocksToTime = ({ blocks, className }:Props ) => {
+const BlocksToTime = ({ blocks, className }: Props) => {
 	const { network } = useNetworkContext();
-	const blocktime:number = chainProperties?.[network]?.blockTime;
+	const blocktime: number = chainProperties?.[network]?.blockTime;
 
 	return (
 		<div className={className}>

@@ -18,35 +18,48 @@ import { ICommentHistory } from '~src/types';
 import CommentHistoryModal from '~src/ui-components/CommentHistoryModal';
 
 export interface IComment {
-	user_id: number;
-	content: string;
-	created_at: Date;
-	id: string;
-	updated_at: Date;
-	replies: any[];
-	comment_reactions: IReactions;
-	username: string;
-	proposer?: string;
-	sentiment?: number;
-	comment_source?: 'polkassembly' | 'subsquare';
-	history?: ICommentHistory[];
-	spam_users_count?: number;
-	is_custom_username?: boolean;
+  user_id: number;
+  content: string;
+  created_at: Date;
+  id: string;
+  updated_at: Date;
+  replies: any[];
+  comment_reactions: IReactions;
+  username: string;
+  proposer?: string;
+  sentiment?: number;
+  comment_source?: 'polkassembly' | 'subsquare';
+  history?: ICommentHistory[];
+  spam_users_count?: number;
+  is_custom_username?: boolean;
 }
 
 interface ICommentProps {
-	className?: string;
-	comment: IComment;
-	disableEdit?: boolean;
+  className?: string;
+  comment: IComment;
+  disableEdit?: boolean;
 }
 
 export const Comment: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
-	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history ,spam_users_count } = comment;
+	const {
+		user_id,
+		content,
+		created_at,
+		id,
+		replies,
+		updated_at,
+		sentiment,
+		comment_source = 'polkassembly',
+		history,
+		spam_users_count
+	} = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
-	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
-	const { postData: { postIndex, postType } } = usePostDataContext();
+	const [newSentiment, setNewSentiment] = useState<number>(sentiment || 0);
+	const {
+		postData: { postIndex, postType }
+	} = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -54,17 +67,21 @@ export const Comment: FC<ICommentProps> = (props) => {
 		const hashArr = asPath.split('#');
 		const hash = hashArr[hashArr.length - 1];
 		if (commentScrollRef && commentScrollRef.current && hash === `${id}`) {
-			commentScrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			commentScrollRef.current.scrollIntoView({
+				behavior: 'smooth',
+				block: 'start'
+			});
 		}
 	}, [asPath, id]);
 
-	if (!user_id || !content) return (<div className={`${className} mb-5`}>
-		<Avatar className='bg-gray-300' size="large" icon={<UserOutlined />} />
+	if (!user_id || !content)
+		return (
+			<div className={`${className} mb-5`}>
+				<Avatar className="bg-gray-300" size="large" icon={<UserOutlined />} />
 
-		<div className='comment-content'>
-			Comment not available
-		</div>
-	</div>);
+				<div className="comment-content">Comment not available</div>
+			</div>
+		);
 
 	// TODO: author address
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -72,35 +89,42 @@ export const Comment: FC<ICommentProps> = (props) => {
 	return (
 		<div className={`${className} flex gap-x-4 mb-9 `}>
 			{/* Offset div to scroll to because scrollIntoView doesn't support offset */}
-			<div id={id} ref={commentScrollRef} className="invisible absolute mt-[-100px]"></div>
+			<div
+				id={id}
+				ref={commentScrollRef}
+				className="invisible absolute mt-[-100px]"
+			></div>
 			<UserAvatar
-				className='mt-1 hidden md:inline-block flex-none'
+				className="mt-1 hidden md:inline-block flex-none"
 				username={comment.username}
-				size='large'
+				size="large"
 				id={user_id}
 			/>
-			<div className='w-full overflow-hidden'>
+			<div className="w-full overflow-hidden">
 				<CreationLabel
-					className='creation-label py-2 pt-4 px-0 md:px-4 bg-comment_bg rounded-t-md'
+					className="creation-label py-2 pt-4 px-0 md:px-4 bg-comment_bg rounded-t-md"
 					created_at={created_at}
 					defaultAddress={comment.proposer}
 					username={comment.username}
 					sentiment={newSentiment}
 					commentSource={comment_source}
 					spam_users_count={spam_users_count}
-					truncateUsername = {false}
+					truncateUsername={false}
 				>
-					<div className='cursor-pointer' onClick={() => setOpenModal(true)}>
+					<div className="cursor-pointer" onClick={() => setOpenModal(true)}>
 						<UpdateLabel
 							created_at={created_at}
 							updated_at={updated_at}
 							isHistory={history && history?.length > 0}
-						/></div>
+						/>
+					</div>
 				</CreationLabel>
 				<EditableCommentContent
 					userId={user_id}
 					created_at={created_at}
-					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px] min-[320px]:mt-[-2px]' }`}
+					className={`rounded-md ${
+						sentiment && sentiment !== 0 && 'mt-[-5px] min-[320px]:mt-[-2px]'
+					}`}
 					comment={comment}
 					commentId={id}
 					content={content}
@@ -109,15 +133,37 @@ export const Comment: FC<ICommentProps> = (props) => {
 					disableEdit={props.disableEdit}
 					sentiment={newSentiment}
 					setSentiment={setNewSentiment}
-					prevSentiment={sentiment||0}
-					isSubsquareUser={comment_source==='subsquare'}
-					userName = {comment?.username}
+					prevSentiment={sentiment || 0}
+					isSubsquareUser={comment_source === 'subsquare'}
+					userName={comment?.username}
 					proposer={comment?.proposer}
 					is_custom_username={comment?.is_custom_username}
 				/>
-				{replies && replies.length > 0 && <Replies className='comment-content' commentId={id} repliesArr={replies} />}
+				{replies && replies.length > 0 && (
+					<Replies
+						className="comment-content"
+						commentId={id}
+						repliesArr={replies}
+					/>
+				)}
 			</div>
-			{ history && history.length > 0 && <CommentHistoryModal open={openModal} setOpen={setOpenModal} history={[{ content: content, created_at: updated_at, sentiment: newSentiment || sentiment || 0 } ,...history]} defaultAddress={comment?.proposer} username={comment?.username} user_id={comment?.user_id}/>}
+			{history && history.length > 0 && (
+				<CommentHistoryModal
+					open={openModal}
+					setOpen={setOpenModal}
+					history={[
+						{
+							content: content,
+							created_at: updated_at,
+							sentiment: newSentiment || sentiment || 0
+						},
+						...history
+					]}
+					defaultAddress={comment?.proposer}
+					username={comment?.username}
+					user_id={comment?.user_id}
+				/>
+			)}
 		</div>
 	);
 };

@@ -8,7 +8,14 @@ import type { NextApiRequest } from 'next';
 import { defaultNetwork } from '~src/global/defaultNetwork';
 import { network } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { customOpenGovStatuses, govTypes, offChainProposalTypes, ProposalType, proposalTypes, trackPostStatuses } from '~src/global/proposalType';
+import {
+	customOpenGovStatuses,
+	govTypes,
+	offChainProposalTypes,
+	ProposalType,
+	proposalTypes,
+	trackPostStatuses
+} from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
 import firebaseAdmin from '~src/services/firebaseInit';
 
@@ -16,13 +23,16 @@ export function getNetworkName(req: NextApiRequest) {
 	return req.headers['x-network'];
 }
 
-export async function getNetworkDocRef(req: NextApiRequest, firestore: firebaseAdmin.firestore.Firestore) {
+export async function getNetworkDocRef(
+	req: NextApiRequest,
+	firestore: firebaseAdmin.firestore.Firestore
+) {
 	const networkName = getNetworkName(req);
 	if (typeof networkName !== 'string') {
 		throw new Error(`The network of the name "${networkName}" is invalid.`);
 	}
 
-	if (!(Object.values(network).includes(networkName))) {
+	if (!Object.values(network).includes(networkName)) {
 		throw new Error(`The network of the name "${networkName}" does not exist.`);
 	}
 	const networkNameDocRef = firestore.collection('networks').doc(networkName);
@@ -30,7 +40,9 @@ export async function getNetworkDocRef(req: NextApiRequest, firestore: firebaseA
 }
 
 export function isSortByValid(sortBy: string) {
-	return [sortValues.NEWEST, sortValues.OLDEST, sortValues.COMMENTED].includes(sortBy);
+	return [sortValues.NEWEST, sortValues.OLDEST, sortValues.COMMENTED].includes(
+		sortBy
+	);
 }
 
 export function isProposalTypeValid(proposalType: string) {
@@ -42,7 +54,10 @@ export function isOffChainProposalTypeValid(proposalType: string) {
 }
 
 export function isFirestoreProposalTypeValid(proposalType: string) {
-	return proposalTypes.includes(proposalType) || offChainProposalTypes.includes(proposalType);
+	return (
+		proposalTypes.includes(proposalType) ||
+    offChainProposalTypes.includes(proposalType)
+	);
 }
 
 export function isTrackPostStatusValid(trackStatus: string) {
@@ -54,12 +69,19 @@ export function isCustomOpenGovStatusValid(trackStatus: string) {
 }
 
 export function isTrackNoValid(trackNo: number, network: string) {
-	return !isNaN(trackNo) && networkTrackInfo?.[network] && Object.entries(networkTrackInfo?.[network]).find(([, value]) => {
-		return value && value.trackId === trackNo;
-	});
+	return (
+		!isNaN(trackNo) &&
+    networkTrackInfo?.[network] &&
+    Object.entries(networkTrackInfo?.[network]).find(([, value]) => {
+    	return value && value.trackId === trackNo;
+    })
+	);
 }
 
-export async function isPostIdOrHashValid(postIdOrHash: string | string[] | 0, proposalType: string | string[]) {
+export async function isPostIdOrHashValid(
+	postIdOrHash: string | string[] | 0,
+	proposalType: string | string[]
+) {
 	if (proposalType !== ProposalType.TIPS) {
 		const numPostId = Number(postIdOrHash);
 		if (isNaN(numPostId)) {
@@ -72,16 +94,21 @@ export async function isPostIdOrHashValid(postIdOrHash: string | string[] | 0, p
 	return null;
 }
 
-export async function isProposerAddressValid(proposerAddress: string | string[] | undefined) {
+export async function isProposerAddressValid(
+	proposerAddress: string | string[] | undefined
+) {
 	if (typeof proposerAddress !== 'string' || !proposerAddress) {
 		throw new Error(`The proposerAddress "${proposerAddress}" is invalid.`);
 	}
 	return String(proposerAddress);
 }
 
-export function getCount(snapshotArr: FirebaseFirestore.AggregateQuerySnapshot<{
+export function getCount(
+	snapshotArr: FirebaseFirestore.AggregateQuerySnapshot<{
     count: FirebaseFirestore.AggregateField<number>;
-}>[], i: number) {
+  }>[],
+	i: number
+) {
 	let count = 0;
 	if (snapshotArr.length > i) {
 		count = snapshotArr[i].data()?.count || 0;
@@ -103,22 +130,22 @@ export function getNetworkFromReqHeaders(headers: IncomingHttpHeaders) {
 		network = headers.host.split('.')[0];
 	}
 
-	if(!Object.values(network).includes(network)) {
-		if(network == 'test'){
+	if (!Object.values(network).includes(network)) {
+		if (network == 'test') {
 			network = 'kusama';
-		}
-		else if(network == 'test-polkadot'){
+		} else if (network == 'test-polkadot') {
 			network = 'polkadot';
-		}
-		else if(network == 'moonriver-test'){
+		} else if (network == 'moonriver-test') {
 			network = 'moonriver';
-		}
-		else{
-			network = process.env.NEXT_PUBLIC_APP_ENV === 'development' ? defaultNetwork : network;
+		} else {
+			network =
+        process.env.NEXT_PUBLIC_APP_ENV === 'development'
+        	? defaultNetwork
+        	: network;
 		}
 	}
 
-	if(!network){
+	if (!network) {
 		network = 'kusama';
 	}
 

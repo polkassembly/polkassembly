@@ -5,21 +5,31 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 
-interface Props{
+interface Props {
   api: ApiPromise;
   network: string;
   tx: SubmittableExtrinsic<'promise'>;
   address: string;
   params?: any;
   errorMessageFallback: string;
-  onSuccess:() => Promise<void> | void;
+  onSuccess: () => Promise<void> | void;
   onFailed: (errorMessageFallback: string) => Promise<void> | void;
   onBroadcast?: () => void;
 }
-const executeTx = async({ api, network, tx, address, params= {}, errorMessageFallback, onSuccess, onFailed, onBroadcast }: Props) => {
-	if(!api || !tx)return;
+const executeTx = async ({
+	api,
+	network,
+	tx,
+	address,
+	params = {},
+	errorMessageFallback,
+	onSuccess,
+	onFailed,
+	onBroadcast
+}: Props) => {
+	if (!api || !tx) return;
 
-	tx.signAndSend(address, params,  async({ status, events, txHash }: any) => {
+	tx.signAndSend(address, params, async ({ status, events, txHash }: any) => {
 		if (status.isInvalid) {
 			console.log('Transaction invalid');
 		} else if (status.isReady) {
@@ -30,24 +40,27 @@ const executeTx = async({ api, network, tx, address, params= {}, errorMessageFal
 		} else if (status.isInBlock) {
 			console.log('Transaction is in block');
 		} else if (status.isFinalized) {
-			console.log(`Transaction has been included in blockHash ${status.asFinalized.toHex()}`);
+			console.log(
+				`Transaction has been included in blockHash ${status.asFinalized.toHex()}`
+			);
 			console.log(`tx: https://${network}.subscan.io/extrinsic/${txHash}`);
 
 			for (const { event } of events) {
 				if (event.method === 'ExtrinsicSuccess') {
 					await onSuccess();
-
 				} else if (event.method === 'ExtrinsicFailed') {
 					console.log('Transaction failed');
 					const errorModule = (event.data as any)?.dispatchError?.asModule;
-					if(!errorModule) {
-						const { method, section, docs } = api.registry.findMetaError(errorModule);
+					if (!errorModule) {
+						const { method, section, docs } =
+              api.registry.findMetaError(errorModule);
 						errorMessageFallback = `${section}.${method} : ${docs.join(' ')}`;
 						console.log(errorMessageFallback);
 						await onFailed(errorMessageFallback);
-					}else{
+					} else {
 						await onFailed(errorMessageFallback);
-					}}
+					}
+				}
 			}
 		}
 	}).catch((error: string) => {
@@ -55,6 +68,5 @@ const executeTx = async({ api, network, tx, address, params= {}, errorMessageFal
 		console.error('ERROR:', error);
 		onFailed(errorMessageFallback);
 	});
-
 };
 export default executeTx;

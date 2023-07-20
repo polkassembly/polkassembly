@@ -6,9 +6,9 @@ import { chainProperties } from 'src/global/networkConstants';
 
 function secondsToDhm(seconds: number) {
 	seconds = Number(seconds);
-	const d = Math.floor(seconds / (3600*24));
-	const h = Math.floor(seconds % (3600*24) / 3600);
-	const m = seconds < 60 ? 1 : Math.floor(seconds % 3600 / 60);
+	const d = Math.floor(seconds / (3600 * 24));
+	const h = Math.floor((seconds % (3600 * 24)) / 3600);
+	const m = seconds < 60 ? 1 : Math.floor((seconds % 3600) / 60);
 
 	const dDisplay = d === 0 ? '' : d + 'd ';
 	const hDisplay = h + 'h ';
@@ -17,8 +17,11 @@ function secondsToDhm(seconds: number) {
 	return dDisplay + hDisplay + mDisplay;
 }
 
-export default function blockToTime (blocks: BN |  number, network:string, blocktime?: number ): {time:string, seconds:number} {
-
+export default function blockToTime(
+	blocks: BN | number,
+	network: string,
+	blocktime?: number
+): { time: string; seconds: number } {
 	if (!blocktime) {
 		blocktime = chainProperties?.[network]?.blockTime / 1000;
 	} else {
@@ -32,5 +35,5 @@ export default function blockToTime (blocks: BN |  number, network:string, block
 
 	const time = secondsToDhm(blocks * blocktime);
 
-	return { seconds:blocks * blocktime , time };
+	return { seconds: blocks * blocktime, time };
 }

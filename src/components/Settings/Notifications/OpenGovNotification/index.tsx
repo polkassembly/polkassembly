@@ -16,10 +16,10 @@ import { Collapse } from '../common-ui/Collapse';
 
 const { Panel } = Collapse;
 type Props = {
-	onSetNotification: (obj: INotificationObject) => void;
-	userNotification: INotificationObject;
-	dispatch: React.Dispatch<any>;
-	options: any;
+  onSetNotification: (obj: INotificationObject) => void;
+  userNotification: INotificationObject;
+  dispatch: React.Dispatch<any>;
+  options: any;
 };
 
 const getConsecutiveKeys = (obj: any) => {
@@ -150,9 +150,9 @@ export default function OpenGovNotification({
 	};
 	return (
 		<Collapse
-			size='large'
-			className='bg-white'
-			expandIconPosition='end'
+			size="large"
+			className="bg-white"
+			expandIconPosition="end"
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
@@ -160,50 +160,63 @@ export default function OpenGovNotification({
 		>
 			<Panel
 				header={
-					<div className='flex items-center gap-[6px] channel-header'>
+					<div className="flex items-center gap-[6px] channel-header">
 						<OverallPostsNotification />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
-							OpenGov Notifications
+						<h3 className="font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]">
+              OpenGov Notifications
 						</h3>
 						{!!active && (
 							<>
-								<span className='flex gap-[8px] items-center'>
+								<span className="flex gap-[8px] items-center">
 									<Switch
-										size='small'
-										id='postParticipated'
+										size="small"
+										id="postParticipated"
 										onChange={(checked, e) => {
 											e.stopPropagation();
 											handleAllClick(checked);
 										}}
 										checked={all}
 									/>
-									<p className='m-0 text-[#485F7D]'>All</p>
+									<p className="m-0 text-[#485F7D]">All</p>
 								</span>
 							</>
 						)}
 					</div>
 				}
-				key='1'
+				key="1"
 			>
-				<div className='flex flex-col'>
-					{openGovTwoOptions.map((category: any[], i:number) => (
+				<div className="flex flex-col">
+					{openGovTwoOptions.map((category: any[], i: number) => (
 						<React.Fragment key={category.toString()}>
-							<div className='flex flex-wrap'>
+							<div className="flex flex-wrap">
 								{category.map((postType, i) => {
-									return (<React.Fragment key={postType.toString()}>
-										<GroupCheckbox
-											categoryOptions={options[postType]}
-											title={postOriginMapper(postType)}
-											classname={i === (category.length - 1) ? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]' : 'md:basis-[50%]'}
-											Icon={iconMapper(postType)}
-											onChange={handleChange}
-											handleCategoryAllClick={handleCategoryAllClick}
-										/>
-										{i !== (category.length - 1) && <Divider className='border-[#D2D8E0] border-[2px] md:hidden' dashed />}
-									</React.Fragment>);
+									return (
+										<React.Fragment key={postType.toString()}>
+											<GroupCheckbox
+												categoryOptions={options[postType]}
+												title={postOriginMapper(postType)}
+												classname={
+													i === category.length - 1
+														? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+														: 'md:basis-[50%]'
+												}
+												Icon={iconMapper(postType)}
+												onChange={handleChange}
+												handleCategoryAllClick={handleCategoryAllClick}
+											/>
+											{i !== category.length - 1 && (
+												<Divider
+													className="border-[#D2D8E0] border-[2px] md:hidden"
+													dashed
+												/>
+											)}
+										</React.Fragment>
+									);
 								})}
 							</div>
-							{i !== (openGovTwoOptions.length - 1) && <Divider className='border-[#D2D8E0] border-2' dashed />}
+							{i !== openGovTwoOptions.length - 1 && (
+								<Divider className="border-[#D2D8E0] border-2" dashed />
+							)}
 						</React.Fragment>
 					))}
 				</div>

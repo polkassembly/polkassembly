@@ -4,11 +4,13 @@
 
 import * as firebaseAdmin from 'firebase-admin';
 
-if(!process.env.FIREBASE_SERVICE_ACC_CONFIG) {
+if (!process.env.FIREBASE_SERVICE_ACC_CONFIG) {
 	throw new Error('Internal Error: FIREBASE_SERVICE_ACC_CONFIG missing.');
 }
 
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACC_CONFIG) as firebaseAdmin.ServiceAccount;
+const serviceAccount = JSON.parse(
+	process.env.FIREBASE_SERVICE_ACC_CONFIG
+) as firebaseAdmin.ServiceAccount;
 
 try {
 	firebaseAdmin.initializeApp({

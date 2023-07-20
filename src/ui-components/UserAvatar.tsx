@@ -10,20 +10,24 @@ import { ProfileDetailsResponse } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
-	className?: string
-	username: string | null
-	id: number | null
-	size?: AvatarSize;
+  className?: string;
+  username: string | null;
+  id: number | null;
+  size?: AvatarSize;
 }
 
 const UserAvatar = ({ className, id, username, size }: Props) => {
-	const [userProfileData, setUserProfileData] = useState<ProfileDetailsResponse | null>(null);
+	const [userProfileData, setUserProfileData] =
+    useState<ProfileDetailsResponse | null>(null);
 
 	const getUserDetails = useCallback(async () => {
-		const { data , error } = await nextApiClientFetch<ProfileDetailsResponse>( 'api/v1/events', { userId: id });
+		const { data, error } = await nextApiClientFetch<ProfileDetailsResponse>(
+			'api/v1/events',
+			{ userId: id }
+		);
 		if (error || !data) return;
 
-		if(data) {
+		if (data) {
 			setUserProfileData(data);
 		}
 	}, [id]);
@@ -32,9 +36,12 @@ const UserAvatar = ({ className, id, username, size }: Props) => {
 		getUserDetails();
 	}, [getUserDetails]);
 
-	return (
-		userProfileData?.image ? <Avatar className={className} src={userProfileData?.image} size={size} />
-			: <Avatar className={`${className} bg-gray-300`} size={size} shape='circle'>{username?.substring(0, 1).toUpperCase()}</Avatar>
+	return userProfileData?.image ? (
+		<Avatar className={className} src={userProfileData?.image} size={size} />
+	) : (
+		<Avatar className={`${className} bg-gray-300`} size={size} shape="circle">
+			{username?.substring(0, 1).toUpperCase()}
+		</Avatar>
 	);
 };
 

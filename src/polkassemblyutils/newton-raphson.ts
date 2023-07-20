@@ -6,17 +6,17 @@
 
 import BN from 'bn.js';
 
-interface Options{
-    tolerance: BN
-    epsilon: BN
-    maxIterations: number
-    h: BN
-    verbose: boolean
+interface Options {
+  tolerance: BN;
+  epsilon: BN;
+  maxIterations: number;
+  h: BN;
+  verbose: boolean;
 }
 
 export interface NewtonRaphsonResult {
-	foundRoot: boolean;
-	result?: BN;
+  foundRoot: boolean;
+  result?: BN;
 }
 
 /**
@@ -28,12 +28,22 @@ export interface NewtonRaphsonResult {
  * @param options optional options to specify the `tolerance`, `epsilon`, macIterations` or `verbose`.
  **/
 
-export function newtonRaphson (f: (x: BN) => BN, fp: (x: BN) => BN, x0: BN, options?: Options): NewtonRaphsonResult {
+export function newtonRaphson(
+	f: (x: BN) => BN,
+	fp: (x: BN) => BN,
+	x0: BN,
+	options?: Options
+): NewtonRaphsonResult {
 	let x1: BN, y: BN, yp: BN, iter: number;
 
-	const tol = options?.tolerance === undefined ? new BN(1e-7) : options.tolerance;
-	const eps = options?.epsilon === undefined ? new BN(2.220446049250313e-16) : options.epsilon;
-	const maxIter = options?.maxIterations === undefined ? 20 : options.maxIterations;
+	const tol =
+    options?.tolerance === undefined ? new BN(1e-7) : options.tolerance;
+	const eps =
+    options?.epsilon === undefined
+    	? new BN(2.220446049250313e-16)
+    	: options.epsilon;
+	const maxIter =
+    options?.maxIterations === undefined ? 20 : options.maxIterations;
 	const verbose = options?.verbose === undefined ? false : options.verbose;
 
 	iter = 0;
@@ -44,7 +54,9 @@ export function newtonRaphson (f: (x: BN) => BN, fp: (x: BN) => BN, x0: BN, opti
 
 		if (yp.abs().lte(eps.mul(y.abs()))) {
 			if (verbose) {
-				console.log('Newton-Raphson: failed to converged due to nearly zero first derivative');
+				console.log(
+					'Newton-Raphson: failed to converged due to nearly zero first derivative'
+				);
 			}
 			return { foundRoot: false };
 		}
@@ -55,7 +67,13 @@ export function newtonRaphson (f: (x: BN) => BN, fp: (x: BN) => BN, x0: BN, opti
 		// Check for convergence:
 		if (x1.sub(x0).abs().lte(tol.mul(x1.abs()))) {
 			if (verbose) {
-				console.log('Newton-Raphson: converged to x = ' + x1.toString() + ' after ' + iter + ' iterations');
+				console.log(
+					'Newton-Raphson: converged to x = ' +
+            x1.toString() +
+            ' after ' +
+            iter +
+            ' iterations'
+				);
 			}
 			return { foundRoot: true, result: x1 };
 		}

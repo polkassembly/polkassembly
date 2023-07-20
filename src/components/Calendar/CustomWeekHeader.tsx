@@ -6,27 +6,36 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import React from 'react';
 
-function CustomWeekHeader({
-	date,
-	localizer,
-	small
-}: any): JSX.Element {
+function CustomWeekHeader({ date, localizer, small }: any): JSX.Element {
 	return (
-		<div className='week-header-text'>
-			<div className='day-of-week'>{small ? localizer.format(date, 'dd')[0] : localizer.format(date, 'ddd')}</div>
-			<div className='day-num'>{localizer.format(date, 'D')}</div>
+		<div className="week-header-text">
+			<div className="day-of-week">
+				{small
+					? localizer.format(date, 'dd')[0]
+					: localizer.format(date, 'ddd')}
+			</div>
+			<div className="day-num">{localizer.format(date, 'D')}</div>
 		</div>
 	);
 }
 
-export function TimeGutterHeader({ localizer, date, selectedView }: any): JSX.Element {
-
-	return <span className='time-gutter-header-text'>{selectedView == 'day' ?
-		<div className='week-header-text'>
-			<div className='day-of-week'>{localizer.format(date, 'dd')[0]}</div>
-			<div className='day-num'>{localizer.format(date, 'D')}</div>
-		</div>
-		: 'UTC'}</span>;
+export function TimeGutterHeader({
+	localizer,
+	date,
+	selectedView
+}: any): JSX.Element {
+	return (
+		<span className="time-gutter-header-text">
+			{selectedView == 'day' ? (
+				<div className="week-header-text">
+					<div className="day-of-week">{localizer.format(date, 'dd')[0]}</div>
+					<div className="day-num">{localizer.format(date, 'D')}</div>
+				</div>
+			) : (
+				'UTC'
+			)}
+		</span>
+	);
 }
 
 export default CustomWeekHeader;

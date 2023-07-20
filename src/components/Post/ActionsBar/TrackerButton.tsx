@@ -11,12 +11,12 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import { ProposalType } from '~src/global/proposalType';
 
 interface IDiscussionProps {
-	onchainId: string | number;
-	proposalType: ProposalType;
+  onchainId: string | number;
+  proposalType: ProposalType;
 }
 
 function getTrackType(proposalType: ProposalType): string {
-	switch(proposalType) {
+	switch (proposalType) {
 	case ProposalType.BOUNTIES:
 		return 'bounty';
 	case ProposalType.CHILD_BOUNTIES:
@@ -53,7 +53,9 @@ const TrackerButton: FC<IDiscussionProps> = function ({
 	useEffect(() => {
 		let trackMap: any = {};
 		try {
-			trackMap = JSON.parse(global.window.localStorage.getItem('trackMap') || '{}');
+			trackMap = JSON.parse(
+				global.window.localStorage.getItem('trackMap') || '{}'
+			);
 		} catch (error) {
 			console.error(error);
 		}
@@ -66,7 +68,9 @@ const TrackerButton: FC<IDiscussionProps> = function ({
 	const handleTrack = () => {
 		let trackMap: any = {};
 		try {
-			trackMap = JSON.parse(global.window.localStorage.getItem('trackMap') || '{}');
+			trackMap = JSON.parse(
+				global.window.localStorage.getItem('trackMap') || '{}'
+			);
 		} catch (error) {
 			console.error(error);
 		}
@@ -87,7 +91,9 @@ const TrackerButton: FC<IDiscussionProps> = function ({
 
 		queueNotification({
 			header: 'Success!',
-			message: `Post #${onchainId} ${tracked ? 'removed from' : 'added to'} personal tracker`,
+			message: `Post #${onchainId} ${
+				tracked ? 'removed from' : 'added to'
+			} personal tracker`,
 			status: NotificationStatus.SUCCESS
 		});
 
@@ -96,7 +102,9 @@ const TrackerButton: FC<IDiscussionProps> = function ({
 
 	return (
 		<Button
-			className={'text-pink_primary flex items-center border-none shadow-none px-1 md:px-2'}
+			className={
+				'text-pink_primary flex items-center border-none shadow-none px-1 md:px-2'
+			}
 			onClick={handleTrack}
 		>
 			{tracked ? <EyeInvisibleOutlined /> : <EyeOutlined />}

@@ -15,8 +15,8 @@ import { Tooltip } from 'antd';
 import Router from 'next/router';
 import getUsernameByAddress from '~src/util/getUsernameByAddress';
 
-async function goToProfileByAddress (address: string) {
-	if(!address) return;
+async function goToProfileByAddress(address: string) {
+	if (!address) return;
 	const username = await getUsernameByAddress(address);
 	if (!username) return;
 
@@ -27,7 +27,7 @@ const Index: any = {
 	dataIndex: 'post_id',
 	fixed: 'left',
 	key: 'index',
-	render: (post_id: any) => <div className='truncate'>{post_id}</div>,
+	render: (post_id: any) => <div className="truncate">{post_id}</div>,
 	title: '#',
 	width: 75
 };
@@ -36,7 +36,7 @@ const Title: any = {
 	dataIndex: 'title',
 	fixed: 'left',
 	key: 'title',
-	render: (title: any) => <div className='truncate'>{title}</div>,
+	render: (title: any) => <div className="truncate">{title}</div>,
 	title: 'Title',
 	width: 420
 };
@@ -48,15 +48,24 @@ const Creator: any = {
 		return {
 			onClick: async (e: any) => {
 				e.stopPropagation();
-				if(record.username) {
+				if (record.username) {
 					Router.push(`/user/${record.username}`);
-				}else {
+				} else {
 					await goToProfileByAddress(record.proposer || '');
 				}
 			}
 		};
 	},
-	render: (username: any, { proposer }: { proposer: any }) => <div className='truncate'><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={true} /></div>,
+	render: (username: any, { proposer }: { proposer: any }) => (
+		<div className="truncate">
+			<NameLabel
+				textClassName="max-w-[9vw] 2xl:max-w-[12vw]"
+				defaultAddress={proposer}
+				username={username}
+				disableIdenticon={true}
+			/>
+		</div>
+	),
 	title: 'Creator'
 };
 
@@ -64,22 +73,19 @@ const Status: any = {
 	dataIndex: 'status',
 	key: 'status',
 	render: (status: any, obj: any) => {
-		if(status || obj.spam_users_count) return <div className='flex items-center gap-x-2'>
-			{
-				status?
-					<StatusTag status={status} />
-					: null
-			}
-			{
-				obj.spam_users_count ?
-					<div className='flex items-center justify-center'>
-						<Tooltip color="#E5007A" title="This post could be a spam.">
-							<WarningMessageIcon className='text-lg text-[#FFA012]' />
-						</Tooltip>
-					</div>
-					: null
-			}
-		</div>;
+		if (status || obj.spam_users_count)
+			return (
+				<div className="flex items-center gap-x-2">
+					{status ? <StatusTag status={status} /> : null}
+					{obj.spam_users_count ? (
+						<div className="flex items-center justify-center">
+							<Tooltip color="#E5007A" title="This post could be a spam.">
+								<WarningMessageIcon className="text-lg text-[#FFA012]" />
+							</Tooltip>
+						</div>
+					) : null}
+				</div>
+			);
 	},
 	title: 'Status',
 	width: 200
@@ -90,9 +96,7 @@ const CreatedAt: any = {
 	key: 'created',
 	render: (createdAt: any) => {
 		const relativeCreatedAt = getRelativeCreatedAt(createdAt);
-		return (
-			<span>{relativeCreatedAt}</span>
-		);
+		return <span>{relativeCreatedAt}</span>;
 	},
 	title: 'Created'
 };
@@ -114,11 +118,7 @@ const allColumns: ColumnsType<IPostsRowData> = [
 		render: (title) => {
 			return (
 				<>
-					<div
-						className='truncate'
-					>
-						{title}
-					</div>
+					<div className="truncate">{title}</div>
 				</>
 			);
 		},
@@ -132,15 +132,24 @@ const allColumns: ColumnsType<IPostsRowData> = [
 			return {
 				onClick: async (e) => {
 					e.stopPropagation();
-					if(record.username) {
+					if (record.username) {
 						Router.push(`/user/${record.username}`);
-					}else {
+					} else {
 						await goToProfileByAddress(record.proposer || '');
 					}
 				}
 			};
 		},
-		render: (username, { proposer }) => <div className='truncate' ><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={true} /></div>,
+		render: (username, { proposer }) => (
+			<div className="truncate">
+				<NameLabel
+					textClassName="max-w-[9vw] 2xl:max-w-[12vw]"
+					defaultAddress={proposer}
+					username={username}
+					disableIdenticon={true}
+				/>
+			</div>
+		),
 		title: 'Posted By'
 	},
 	CreatedAt,
@@ -149,13 +158,13 @@ const allColumns: ColumnsType<IPostsRowData> = [
 		key: 'type',
 		render: (postCategory) => {
 			return (
-				<span className='flex items-center'>
-					<span className='capitalize '>{postCategory}</span></span>
+				<span className="flex items-center">
+					<span className="capitalize ">{postCategory}</span>
+				</span>
 			);
 		},
 		title: 'Type',
 		width: 200
-
 	},
 	Status
 ];
@@ -183,11 +192,7 @@ const offChainColumns: ColumnsType<IPostsRowData> = [
 		render: (title) => {
 			return (
 				<>
-					<div
-						className='truncate'
-					>
-						{title}
-					</div>
+					<div className="truncate">{title}</div>
 				</>
 			);
 		},
@@ -204,12 +209,22 @@ const offChainColumns: ColumnsType<IPostsRowData> = [
 	CreatedAt
 ];
 
-export function getColumns(key: 'all' | ProposalType): ColumnsType<IPostsRowData> {
+export function getColumns(
+	key: 'all' | ProposalType
+): ColumnsType<IPostsRowData> {
 	if (key === 'all') {
 		return allColumns;
 	} else if (key === ProposalType.TIPS) {
 		return tipColumns;
-	} else if ([ProposalType.BOUNTIES,ProposalType.DEMOCRACY_PROPOSALS, ProposalType.REFERENDUMS, ProposalType.COUNCIL_MOTIONS, ProposalType.TREASURY_PROPOSALS].includes(key)) {
+	} else if (
+		[
+			ProposalType.BOUNTIES,
+			ProposalType.DEMOCRACY_PROPOSALS,
+			ProposalType.REFERENDUMS,
+			ProposalType.COUNCIL_MOTIONS,
+			ProposalType.TREASURY_PROPOSALS
+		].includes(key)
+	) {
 		return columns;
 	} else if ([ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(key)) {
 		return offChainColumns;

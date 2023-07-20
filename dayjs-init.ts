@@ -13,6 +13,4 @@ dayjs.extend(isBetween);
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 
-export {
-	dayjs
-};
+export { dayjs };

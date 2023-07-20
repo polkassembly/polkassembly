@@ -4,23 +4,29 @@
 
 import React, { FC } from 'react';
 import { ESocialType, ISocial } from '~src/auth/types';
-import { DiscordIcon, EmailIcon, RiotIcon, TelegramIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
+import {
+	DiscordIcon,
+	EmailIcon,
+	RiotIcon,
+	TelegramIcon,
+	TwitterIcon
+} from '~src/ui-components/CustomIcons';
 
 interface ISocialIconProps {
-	type: ESocialType;
+  type: ESocialType;
   className?: string;
 }
 
 export const SocialIcon: FC<ISocialIconProps> = (props) => {
-	switch(props.type) {
+	switch (props.type) {
 	case ESocialType.EMAIL:
 		return <EmailIcon className={props.className} />;
 	case ESocialType.RIOT:
-		return <RiotIcon className={props.className}  />;
+		return <RiotIcon className={props.className} />;
 	case ESocialType.TWITTER:
-		return <TwitterIcon className={props.className}  />;
+		return <TwitterIcon className={props.className} />;
 	case ESocialType.TELEGRAM:
-		return <TelegramIcon className={props.className}  />;
+		return <TelegramIcon className={props.className} />;
 	case ESocialType.DISCORD:
 		return <DiscordIcon className={props.className} />;
 	default:
@@ -28,22 +34,21 @@ export const SocialIcon: FC<ISocialIconProps> = (props) => {
 	}
 };
 
-interface ISocialLink extends ISocial{
-	className?: string;
-	disable?: boolean;
+interface ISocialLink extends ISocial {
+  className?: string;
+  disable?: boolean;
   iconClassName?: string;
 }
 
 const SocialLink: FC<ISocialLink> = (props) => {
 	const { link: handle, className, type, disable, iconClassName } = props;
 
-	function getSocialLink(handle:any) {
+	function getSocialLink(handle: any) {
 		let username = '';
 		if (handle.startsWith('https://')) {
 			const url = new URL(handle);
 			username = url.pathname.split('/')[1];
-		}
-		else {
+		} else {
 			username = handle;
 		}
 		return username;
@@ -70,19 +75,15 @@ const SocialLink: FC<ISocialLink> = (props) => {
 
 	return (
 		<>
-			{
-				disable?
-					<span className={`${className} cursor-not-allowed opacity-60`}>
-						<SocialIcon type={type}  className={iconClassName} />
-					</span>
-					: <a
-						href={link} target='_blank'
-						rel='noreferrer'
-						className={className}
-					>
-						<SocialIcon type={type} className={iconClassName} />
-					</a>
-			}
+			{disable ? (
+				<span className={`${className} cursor-not-allowed opacity-60`}>
+					<SocialIcon type={type} className={iconClassName} />
+				</span>
+			) : (
+				<a href={link} target="_blank" rel="noreferrer" className={className}>
+					<SocialIcon type={type} className={iconClassName} />
+				</a>
+			)}
 		</>
 	);
 };

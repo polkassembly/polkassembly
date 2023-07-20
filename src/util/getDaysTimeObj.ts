@@ -8,7 +8,9 @@ export default function getDaysTimeObj(line: string) {
 		const words = line.split(' ');
 		words.forEach((word) => {
 			if (word && typeof word === 'string' && word.length > 1) {
-				const lastChar = word.charAt(word.length - 1) as keyof typeof daysTimeObj;
+				const lastChar = word.charAt(
+					word.length - 1
+				) as keyof typeof daysTimeObj;
 				if (!['d', 'h', 'm'].includes(lastChar)) return;
 
 				const num = Number(word.replace(lastChar, ''));

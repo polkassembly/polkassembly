@@ -6,7 +6,11 @@ import { signatureVerify } from '@polkadot/util-crypto';
 
 import getPublicKey from './getPublicKey';
 
-export default function verifySignature(message: string, address: string, signature: string): boolean {
+export default function verifySignature(
+	message: string,
+	address: string,
+	signature: string
+): boolean {
 	const publicKey = getPublicKey(address);
 
 	return signatureVerify(message, signature, publicKey).isValid;

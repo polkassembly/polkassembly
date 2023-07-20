@@ -17,18 +17,18 @@ import w3fGreenLogo from '~assets/parachains/w3f-green.png';
 import w3fRedLogo from '~assets/parachains/w3f-red.png';
 
 interface AllParachainsCardProps {
-	index: number | string,
-	className?: string
-	badgeArray: string[]
-	githubLink: string
-	investors: number
-	logoURL: string
-	project: string
-	status: string
-	token: string
-	chain?: string
-	tokenPriceUSD?: number
-	w3fGrant: { [key: string]: any; } | null
+  index: number | string;
+  className?: string;
+  badgeArray: string[];
+  githubLink: string;
+  investors: number;
+  logoURL: string;
+  project: string;
+  status: string;
+  token: string;
+  chain?: string;
+  tokenPriceUSD?: number;
+  w3fGrant: { [key: string]: any } | null;
 }
 
 const Cards = function ({
@@ -42,28 +42,30 @@ const Cards = function ({
 	status,
 	token,
 	w3fGrant
-}:AllParachainsCardProps) {
-
+}: AllParachainsCardProps) {
 	function toTitleCase(str: string): string {
-		return str.replace(
-			/\w\S*/g,
-			function(txt) {
-				return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
-			}
-		);
+		return str.replace(/\w\S*/g, function (txt) {
+			return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
+		});
 	}
 
 	const grantPopupContent = () => {
 		let content = '';
-		if(w3fGrant){
-			if(w3fGrant.terminated){
-				content = toTitleCase(`W3F grant TERMINATED: "${w3fGrant.terminationReason}"`);
-			}else if(w3fGrant.milestoneText){
-				content = toTitleCase(`${w3fGrant.received} received, ${w3fGrant.milestoneText}`);
-			}else{
-				content = toTitleCase(`${w3fGrant.received} received, ${w3fGrant.completed} completed`);
+		if (w3fGrant) {
+			if (w3fGrant.terminated) {
+				content = toTitleCase(
+					`W3F grant TERMINATED: "${w3fGrant.terminationReason}"`
+				);
+			} else if (w3fGrant.milestoneText) {
+				content = toTitleCase(
+					`${w3fGrant.received} received, ${w3fGrant.milestoneText}`
+				);
+			} else {
+				content = toTitleCase(
+					`${w3fGrant.received} received, ${w3fGrant.completed} completed`
+				);
 			}
-		}else {
+		} else {
 			content = '';
 		}
 		return content;
@@ -72,13 +74,15 @@ const Cards = function ({
 	const title = grantPopupContent();
 
 	return (
-		<div className={`${className} bg-white rounded shadow-md mb-6 p-3 border border-gray-200 cursor-pointer`}>
-			<div className='parachain-card-header'>
+		<div
+			className={`${className} bg-white rounded shadow-md mb-6 p-3 border border-gray-200 cursor-pointer`}
+		>
+			<div className="parachain-card-header">
 				<div>
 					<Image src={logoURL} height={34} width={34} alt={`${name} Logo`} />
-					<span className='project-name'>{name}</span>
+					<span className="project-name">{name}</span>
 				</div>
-				<a href={githubLink} target='_blank' rel='noreferrer'>
+				<a href={githubLink} target="_blank" rel="noreferrer">
 					<Image src={githubLogo} height={16} width={16} alt="Github" />
 				</a>
 			</div>
@@ -90,41 +94,94 @@ const Cards = function ({
 				</div>
 				<div className="div2">
 					<h3>Investors</h3>
-					<p>{investors == 0 ? 'N/A' : investors }</p>
+					<p>{investors == 0 ? 'N/A' : investors}</p>
 				</div>
 				<div className="div3">
 					<h3>Status</h3>
 					<p className="status">
-						{
-							status.search('auction') !== -1 ? <><Image src={auctionIcon} height={12} width={12} alt='Auction Icon' /> In Auction</>:
-								status.search('Testing') !== -1 ? <><Image src={testingIcon} height={12} width={12} alt='Testing Icon' /> Testing</> :
-									status.search('announced') !== -1 ? <><Image src={announcedIcon} height={12} width={12} alt='Announced Icon' /> Announced</>:
-										status.search('live') !== -1 ? <><Image src={liveIcon} height={12} width={12} alt='Live Icon' /> Live</> : null
-						}
+						{status.search('auction') !== -1 ? (
+							<>
+								<Image
+									src={auctionIcon}
+									height={12}
+									width={12}
+									alt="Auction Icon"
+								/>{' '}
+                In Auction
+							</>
+						) : status.search('Testing') !== -1 ? (
+							<>
+								<Image
+									src={testingIcon}
+									height={12}
+									width={12}
+									alt="Testing Icon"
+								/>{' '}
+                Testing
+							</>
+						) : status.search('announced') !== -1 ? (
+							<>
+								<Image
+									src={announcedIcon}
+									height={12}
+									width={12}
+									alt="Announced Icon"
+								/>{' '}
+                Announced
+							</>
+						) : status.search('live') !== -1 ? (
+							<>
+								<Image src={liveIcon} height={12} width={12} alt="Live Icon" />{' '}
+                Live
+							</>
+						) : null}
 					</p>
 				</div>
 				<div className="div4">
 					<h3>W3F Grant</h3>
 					<div>
-						{ w3fGrant ?
+						{w3fGrant ? (
 							<div className="grant-data-div">
 								<Tooltip title={title}>
-									<Image src={w3fGrant?.terminated ? w3fRedLogo : w3fGrant?.milestoneText? w3fBlackLogo : w3fGreenLogo} height={34} width={34} alt='W3F Logo' />
+									<Image
+										src={
+											w3fGrant?.terminated
+												? w3fRedLogo
+												: w3fGrant?.milestoneText
+													? w3fBlackLogo
+													: w3fGreenLogo
+										}
+										height={34}
+										width={34}
+										alt="W3F Logo"
+									/>
 								</Tooltip>
 							</div>
-							: 'N/A'
-						}
+						) : (
+							'N/A'
+						)}
 					</div>
 				</div>
 			</div>
 
 			<div className="parachain-card-tags">
-				<div className='project-badges'>
-					{badgeArray.map(
-						(badge: string) => {
-							return <div key={badge} style={{ backgroundColor:'#EA729D', borderRadius:'48px', color:'#ffffff', marginRight:'10px', padding:'4px 10px' }}>{badge}</div>;
-						}
-					)}
+				<div className="project-badges">
+					{badgeArray.map((badge: string) => {
+						return (
+							<div
+								key={badge}
+								style={{
+									backgroundColor: '#EA729D',
+									borderRadius: '48px',
+									color: '#ffffff',
+									marginRight: '10px',
+									padding: '4px 10px'
+								}}
+							>
+								{badge}
+							</div>
+						);
+					})}
 				</div>
 			</div>
 		</div>
@@ -132,118 +189,125 @@ const Cards = function ({
 };
 
 export default styled(Cards)`
+  .parachain-card-header {
+    &,
+    div {
+      display: flex;
+    }
 
-	.parachain-card-header {
+    justify-content: space-between;
 
-		&, div {
-			display: flex;
-		}
+    align-items: center;
+    color: #75767c;
 
-		justify-content: space-between;
+    img {
+      margin-right: 10px;
+    }
 
-		align-items: center;
-		color: #75767C;
+    .project-name {
+      font-size: 16px;
+    }
+  }
 
-		img {
-			margin-right: 10px;
-		}
+  .parachain-card-meta {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 40px;
+    grid-row-gap: 16px;
+    color: #3b444f;
 
-		.project-name {
-			font-size: 16px;
-		}
-	}
+    .div1 {
+      grid-area: 1 / 1 / 2 / 2;
+    }
+    .div2 {
+      grid-area: 1 / 2 / 2 / 3;
+    }
+    .div3 {
+      grid-area: 2 / 1 / 3 / 2;
+    }
+    .div4 {
+      grid-area: 2 / 2 / 3 / 3;
+    }
 
-	.parachain-card-meta {
-		margin-top: 16px;
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		grid-template-rows: repeat(2, 1fr);
-		grid-column-gap: 40px;
-		grid-row-gap: 16px;
-		color: #3B444F;
+    h3 {
+      font-size: 12px;
+      margin-bottom: 11px;
+      font-weight: 500;
+    }
 
-		.div1 { grid-area: 1 / 1 / 2 / 2; }
-		.div2 { grid-area: 1 / 2 / 2 / 3; }
-		.div3 { grid-area: 2 / 1 / 3 / 2; }
-		.div4 { grid-area: 2 / 2 / 3 / 3; }
+    p,
+    div {
+      font-size: 14px;
 
-		h3 {
-			font-size: 12px;
-			margin-bottom: 11px;
-			font-weight: 500;
-		}
+      &.status {
+        display: flex;
+        align-items: center;
 
-		p, div {
-			font-size: 14px;
+        img {
+          margin-right: 4px;
+        }
+      }
 
-			&.status {
-				display: flex;
-				align-items: center;
+      .grant-data-div {
+        display: flex;
+        align-items: start;
+        white-space: pre-wrap;
+        img {
+          margin-top: 2px;
+        }
 
-				img {
-					margin-right: 4px;
-				}
-			}
+        .grant-text {
+          margin-left: 6px;
+          font-weight: 500;
 
-			.grant-data-div {
-				display: flex;
-				align-items: start;
-				white-space: pre-wrap;
-				img {
-					margin-top: 2px;
-				}
+          &.red-text {
+            color: #f51d2c !important;
+          }
 
-				.grant-text {
-					margin-left: 6px;
-					font-weight: 500;
+          &.green-text {
+            color: #52c41a !important;
+          }
+        }
+      }
+    }
+  }
 
-					&.red-text {
-						color: #F51D2C !important;
-					}
+  .parachain-card-tags {
+    margin-top: 20px;
 
-					&.green-text {
-						color: #52C41A !important;
-					}
-				}
-			}
-		}
-	}
+    h3 {
+      font-weight: 700 !important;
+      font-size: 12px !important;
+      margin-bottom: 0;
+      color: #243a57 !important;
+    }
 
-	.parachain-card-tags {
-		margin-top: 20px;
+    .project-badges {
+      display: flex;
+      overflow-x: auto;
+      max-width: 100% !important;
 
-		h3 {
-			font-weight: 700 !important;
-			font-size: 12px !important;
-			margin-bottom: 0;
-			color: #243A57 !important;
-		}
+      @media only screen and (max-width: 767px) {
+        overflow-x: auto;
+        background: transparent !important;
+        -ms-overflow-style: none; /* Internet Explorer 10+ */
+        scrollbar-width: none; /* Firefox */
 
-		.project-badges{
-			display: flex;
-			overflow-x: auto;
-			max-width: 100% !important;
+        &::-webkit-scrollbar {
+          display: none; /* Safari and Chrome */
+        }
+      }
+    }
+  }
 
-			@media only screen and (max-width: 767px) {
-				overflow-x: auto;
-				background: transparent !important;
-				-ms-overflow-style: none;  /* Internet Explorer 10+ */
-				scrollbar-width: none;  /* Firefox */
+  .project-token-cell > div {
+    display: flex;
+    align-content: center;
+  }
 
-				&::-webkit-scrollbar {
-					display: none;  /* Safari and Chrome */
-				}
-			}
-
-		}
-	}
-
-	.project-token-cell>div {
-		display: flex;
-		align-content: center;
-	}
-
-	.text-capitalize {
-		text-transform: capitalize !important;
-	}
+  .text-capitalize {
+    text-transform: capitalize !important;
+  }
 `;

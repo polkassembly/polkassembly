@@ -9,19 +9,22 @@ import React from 'react';
 import { PageLink, PostCategory } from 'src/global/post_categories';
 
 interface Props {
-	postCategory?:PostCategory | EMembersType | PageLink;
-	trackName?:string
+  postCategory?: PostCategory | EMembersType | PageLink;
+  trackName?: string;
 }
 
-const BackToListingView = ({ postCategory, trackName } : Props) => {
+const BackToListingView = ({ postCategory, trackName }: Props) => {
 	let path: string = '';
 
-	if(trackName) {
-		path = `${trackName.split(/(?=[A-Z])/).join('-').toLowerCase()}`;
+	if (trackName) {
+		path = `${trackName
+			.split(/(?=[A-Z])/)
+			.join('-')
+			.toLowerCase()}`;
 	}
 
-	if(postCategory) {
-		switch (postCategory){
+	if (postCategory) {
+		switch (postCategory) {
 		case PostCategory.DISCUSSION:
 			path = 'discussions';
 			break;
@@ -76,10 +79,20 @@ const BackToListingView = ({ postCategory, trackName } : Props) => {
 	const listingPageText = path.replace(/-|_/g, ' ');
 
 	return (
-		<Link className='text-sidebarBlue hover:text-pink_primary inline-flex items-center' href={`/${path}`}>
-			<div className='flex items-center'>
-				<LeftOutlined className='text-xs mr-2' />
-				<span className='text-sm font-medium'>Back to <span className='capitalize'>{trackName ? trackName.split(/(?=[A-Z])/).join(' ') : listingPageText}</span></span>
+		<Link
+			className="text-sidebarBlue hover:text-pink_primary inline-flex items-center"
+			href={`/${path}`}
+		>
+			<div className="flex items-center">
+				<LeftOutlined className="text-xs mr-2" />
+				<span className="text-sm font-medium">
+          Back to{' '}
+					<span className="capitalize">
+						{trackName
+							? trackName.split(/(?=[A-Z])/).join(' ')
+							: listingPageText}
+					</span>
+				</span>
 			</div>
 		</Link>
 	);

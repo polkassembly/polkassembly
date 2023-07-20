@@ -11,11 +11,11 @@ import { JWTPayloadType } from '~src/auth/types';
 import { getLocalStorageToken } from '../services/auth.service';
 import { UserDetailsContextType } from '../types';
 
-const initialUserDetailsContext : UserDetailsContextType = {
+const initialUserDetailsContext: UserDetailsContextType = {
 	addresses: [],
 	allowed_roles: [],
 	defaultAddress: '',
-	delegationDashboardAddress:'',
+	delegationDashboardAddress: '',
 	email: null,
 	email_verified: false,
 	id: null,
@@ -25,13 +25,13 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	},
 	loginAddress: '',
 	loginWallet: null,
-	networkPreferences:{
+	networkPreferences: {
 		channelPreferences: {},
-		triggerPreferences:{}
+		triggerPreferences: {}
 	},
 	picture: null,
-	primaryNetwork:'',
-	setUserDetailsContextState : (): void => {
+	primaryNetwork: '',
+	setUserDetailsContextState: (): void => {
 		throw new Error('setUserDetailsContextState function must be overridden');
 	},
 	setWalletConnectProvider: (): void => {
@@ -86,17 +86,32 @@ try {
 
 export const UserDetailsContext = createContext(initialUserDetailsContext);
 
-export const UserDetailsProvider = ({ children }: React.PropsWithChildren<{}>) => {
-
-	const [userDetailsContextState, setUserDetailsContextState] = useState(initialUserDetailsContext);
-	const [walletConnectProvider, setWalletConnectProvider] = useState<WalletConnectProvider | null>(null);
+export const UserDetailsProvider = ({
+	children
+}: React.PropsWithChildren<{}>) => {
+	const [userDetailsContextState, setUserDetailsContextState] = useState(
+		initialUserDetailsContext
+	);
+	const [walletConnectProvider, setWalletConnectProvider] =
+    useState<WalletConnectProvider | null>(null);
 
 	const isLoggedOut = () => {
-		return userDetailsContextState.id === null || userDetailsContextState.id === undefined;
+		return (
+			userDetailsContextState.id === null ||
+      userDetailsContextState.id === undefined
+		);
 	};
 
 	return (
-		<UserDetailsContext.Provider value={{ ...userDetailsContextState, isLoggedOut, setUserDetailsContextState, setWalletConnectProvider, walletConnectProvider }}>
+		<UserDetailsContext.Provider
+			value={{
+				...userDetailsContextState,
+				isLoggedOut,
+				setUserDetailsContextState,
+				setWalletConnectProvider,
+				walletConnectProvider
+			}}
+		>
 			{children}
 		</UserDetailsContext.Provider>
 	);

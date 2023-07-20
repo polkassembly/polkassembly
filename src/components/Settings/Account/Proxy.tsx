@@ -1,7 +1,11 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
+import {
+	web3Accounts,
+	web3Enable,
+	web3FromSource
+} from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider, Form, Input, Modal } from 'antd';
@@ -22,8 +26,8 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
-	open?: boolean;
-	dismissModal?: () => void;
+  open?: boolean;
+  dismissModal?: () => void;
 }
 
 const Proxy: FC<Props> = ({ dismissModal, open }) => {
@@ -57,7 +61,8 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 		const availableAccounts = await web3Accounts();
 
 		availableAccounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
+			account.address =
+        getEncodedAddress(account.address, network) || account.address;
 		});
 
 		const accounts = availableAccounts;
@@ -77,7 +82,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 
 	useEffect(() => {
 		fetchAddressOptions();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSign = async (formData: any) => {
@@ -90,10 +95,10 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 		const proxied = formData?.proxiedAccount;
 
 		let substrate_address: string | null;
-		if(!proxied.startsWith('0x')) {
+		if (!proxied.startsWith('0x')) {
 			substrate_address = getSubstrateAddress(proxied);
-			if(!substrate_address) return console.error('Invalid address');
-		}else {
+			if (!substrate_address) return console.error('Invalid address');
+		} else {
 			substrate_address = proxied;
 		}
 
@@ -107,12 +112,15 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 
 		setLoading(true);
 
-		const { data , error } = await nextApiClientFetch<ChangeResponseType>( 'api/v1/auth/actions/linkProxyAddress', {
-			message,
-			proxied: substrate_address,
-			proxy: proxyAddress,
-			signature
-		});
+		const { data, error } = await nextApiClientFetch<ChangeResponseType>(
+			'api/v1/auth/actions/linkProxyAddress',
+			{
+				message,
+				proxied: substrate_address,
+				proxy: proxyAddress,
+				signature
+			}
+		);
 
 		if (error || !data) {
 			setError(error || 'Something went wrong');
@@ -134,97 +142,98 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 		<Modal
 			closable={false}
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
-					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue'>
-					Link Proxy address
+				<div className="mr-[-24px] ml-[-24px] text-[#243A57]">
+					<span className="ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue">
+            Link Proxy address
 					</span>
 					<Divider />
 				</div>
-
 			}
 			open={open}
-			className='mb-8 md:min-w-[600px]'
+			className="mb-8 md:min-w-[600px]"
 			footer={
-				<div className='flex items-center justify-end'>
-					{
-
-						[
-							<Button
-								disabled={accountsNotFound}
-								key="sign"
-								htmlType='submit'
-								onClick={() => {
-									form.submit();
-								}}
-								loading={loading}
-								className={`bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center ${accountsNotFound? 'bg-gray-300': ''}`}
-							>
-						Sign
-							</Button>,
-							<Button
-								key="cancel"
-								onClick={dismissModal}
-								className='bg-white text-pink_primary outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
-							>
-						Cancel
-							</Button>
-						]
-					}
+				<div className="flex items-center justify-end">
+					{[
+						<Button
+							disabled={accountsNotFound}
+							key="sign"
+							htmlType="submit"
+							onClick={() => {
+								form.submit();
+							}}
+							loading={loading}
+							className={`bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center ${
+								accountsNotFound ? 'bg-gray-300' : ''
+							}`}
+						>
+              Sign
+						</Button>,
+						<Button
+							key="cancel"
+							onClick={dismissModal}
+							className="bg-white text-pink_primary outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center"
+						>
+              Cancel
+						</Button>
+					]}
 				</div>
 			}
 		>
-			{
-				extensionNotFound
-					? <div className='max-w-[600px]'><ExtensionNotDetected /></div>
-					: <Form
-						form={form}
-						onFinish={handleSign}
-						className='flex flex-col gap-y-8 mb-6'
-					>
-						{
-							accountsNotFound
-								? <Alert
-									type='warning'
-									message={<>
-										<p>At least one proxy account should be in your polkadot js extension.</p>
-										<p>Please reload this page after adding accounts.</p>
-									</>}
-								/>
-
-								: <>
-									<section>
-										<label
-											className='flex items-center gap-x-3 text-sm text-sidebarBlue font-normal tracking-wide leading-6'
-											htmlFor='proxiedAccount'
-										>
-                                            Proxied Address
-										</label>
-										<Form.Item
-											name="proxiedAccount"
-											className='m-0 mt-2.5'
-										>
-											<Input
-												placeholder='Enter a valid proxy address'
-												className="rounded-md py-3 px-4 border-grey_border"
-												id="proxiedAccount"
-											/>
-										</Form.Item>
-									</section>
-									<section>
-										<AccountSelectionForm
-											title='Select proxy account'
-											accounts={accounts}
-											address={proxyAddress}
-											onAccountChange={onProxyAddressChange}
-										/>
-									</section>
+			{extensionNotFound ? (
+				<div className="max-w-[600px]">
+					<ExtensionNotDetected />
+				</div>
+			) : (
+				<Form
+					form={form}
+					onFinish={handleSign}
+					className="flex flex-col gap-y-8 mb-6"
+				>
+					{accountsNotFound ? (
+						<Alert
+							type="warning"
+							message={
+								<>
+									<p>
+                    At least one proxy account should be in your polkadot js
+                    extension.
+									</p>
+									<p>Please reload this page after adding accounts.</p>
 								</>
-						}
-						{error && <FilteredError text={error} />}
-					</Form>
-			}
-			<div className='mr-[-24px] ml-[-24px]'>
-				<Divider className='my-4 mt-0' />
+							}
+						/>
+					) : (
+						<>
+							<section>
+								<label
+									className="flex items-center gap-x-3 text-sm text-sidebarBlue font-normal tracking-wide leading-6"
+									htmlFor="proxiedAccount"
+								>
+                  Proxied Address
+								</label>
+								<Form.Item name="proxiedAccount" className="m-0 mt-2.5">
+									<Input
+										placeholder="Enter a valid proxy address"
+										className="rounded-md py-3 px-4 border-grey_border"
+										id="proxiedAccount"
+									/>
+								</Form.Item>
+							</section>
+							<section>
+								<AccountSelectionForm
+									title="Select proxy account"
+									accounts={accounts}
+									address={proxyAddress}
+									onAccountChange={onProxyAddressChange}
+								/>
+							</section>
+						</>
+					)}
+					{error && <FilteredError text={error} />}
+				</Form>
+			)}
+			<div className="mr-[-24px] ml-[-24px]">
+				<Divider className="my-4 mt-0" />
 			</div>
 		</Modal>
 	);

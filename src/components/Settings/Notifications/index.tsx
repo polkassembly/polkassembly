@@ -22,9 +22,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 const getAllNetworks = (network: string) => {
 	for (const category of Object.keys(networks)) {
 		const chains = networks[category];
-		const chainToUpdate = chains.find(
-			(chain: any) => chain.name === network
-		);
+		const chainToUpdate = chains.find((chain: any) => chain.name === network);
 		if (chainToUpdate) {
 			chainToUpdate.selected = true;
 			break;
@@ -35,15 +33,15 @@ const getAllNetworks = (network: string) => {
 
 export default function Notifications({ network }: { network: string }) {
 	const { id, networkPreferences, setUserDetailsContextState, primaryNetwork } =
-		useUserDetailsContext();
+    useUserDetailsContext();
 
 	const [notificationPreferences, dispatch] = useReducer(
 		reducer,
 		notificationInitialState(network)
 	);
 	const [selectedNetwork, setSelectedNetwork] = useState<{
-		[index: string]: Array<{ name: string; selected: boolean }>;
-	}>(getAllNetworks(network));
+    [index: string]: Array<{ name: string; selected: boolean }>;
+  }>(getAllNetworks(network));
 	const [loading, setLoading] = useState(true);
 
 	const handleCurrentNetworkNotifications = (obj: INotificationObject) => {
@@ -76,7 +74,7 @@ export default function Notifications({ network }: { network: string }) {
 					networkPreferences: {
 						...prev.networkPreferences,
 						channelPreferences:
-							data?.notification_preferences?.channelPreferences
+              data?.notification_preferences?.channelPreferences
 					}
 				}));
 			}
@@ -86,7 +84,7 @@ export default function Notifications({ network }: { network: string }) {
 					networkPreferences: {
 						...prev.networkPreferences,
 						triggerPreferences:
-							data?.notification_preferences?.triggerPreferences
+              data?.notification_preferences?.triggerPreferences
 					}
 				}));
 				dispatch({
@@ -130,26 +128,23 @@ export default function Notifications({ network }: { network: string }) {
 				...prev,
 				primaryNetwork: network
 			}));
-			await nextApiClientFetch(
-				'api/v1/auth/actions/setPrimaryNetwork',
-				{ primary_network: network }
-			);
-
+			await nextApiClientFetch('api/v1/auth/actions/setPrimaryNetwork', {
+				primary_network: network
+			});
 		} catch (e) {
 			console.log(e);
 		}
 	};
 
 	const handleSetNetworkPreferences = async (networks: Array<string>) => {
-		if(!networkPreferences?.triggerPreferences?.[network]){
+		if (!networkPreferences?.triggerPreferences?.[network]) {
 			return;
 		}
 		try {
 			const { data, error } = (await nextApiClientFetch(
 				'api/v1/auth/actions/setNetworkPreferences',
 				{
-					network_preferences:
-						networkPreferences.triggerPreferences[network],
+					network_preferences: networkPreferences.triggerPreferences[network],
 					networks
 				}
 			)) as { data: { message: string }; error: string | null };
@@ -166,7 +161,7 @@ export default function Notifications({ network }: { network: string }) {
 	) => {
 		try {
 			const primarySettings =
-				networkPreferences.triggerPreferences?.[primaryNetwork] || {};
+        networkPreferences.triggerPreferences?.[primaryNetwork] || {};
 			const { data, error } = (await nextApiClientFetch(
 				'api/v1/auth/actions/setNetworkPreferences',
 				{
@@ -205,7 +200,6 @@ export default function Notifications({ network }: { network: string }) {
 			}
 
 			return true;
-
 		} catch (e) {
 			console.log(e);
 		}
@@ -238,14 +232,13 @@ export default function Notifications({ network }: { network: string }) {
 			}
 
 			return true;
-
 		} catch (e) {
 			console.log(e);
 		}
 	};
 
 	useEffect(() => {
-		if(loading){
+		if (loading) {
 			return;
 		}
 		const selectedNames: Array<string> = [];
@@ -267,50 +260,45 @@ export default function Notifications({ network }: { network: string }) {
 	return loading ? (
 		<Loader />
 	) : (
-		<div className='flex flex-col gap-[24px] text-[#243A57]'>
-			<NotificationChannels handleEnableDisabled={handleEnableDisabled} handleReset={handleReset}/>
+		<div className="flex flex-col gap-[24px] text-[#243A57]">
+			<NotificationChannels
+				handleEnableDisabled={handleEnableDisabled}
+				handleReset={handleReset}
+			/>
 			<Parachain
 				primaryNetwork={primaryNetwork}
 				onSetPrimaryNetwork={handleSetPrimaryNetwork}
 				onSetNetworkPreferences={handleSetNetworkPreferences}
-				onCopyPrimaryNetworkNotification={
-					handleCopyPrimaryNetworkNotification
-				}
+				onCopyPrimaryNetworkNotification={handleCopyPrimaryNetworkNotification}
 				selectedNetwork={selectedNetwork}
 				setSelectedNetwork={setSelectedNetwork}
 			/>
 			<Proposals
-				userNotification={
-					networkPreferences.triggerPreferences[network]
-				}
+				userNotification={networkPreferences.triggerPreferences[network]}
 				options={notificationPreferences.myProposal}
 				dispatch={dispatch}
 				onSetNotification={handleCurrentNetworkNotifications}
 			/>
 			<SubscribedPosts
-				userNotification={
-					networkPreferences.triggerPreferences[network]
-				}
+				userNotification={networkPreferences.triggerPreferences[network]}
 				options={notificationPreferences.subscribePost}
 				dispatch={dispatch}
 				onSetNotification={handleCurrentNetworkNotifications}
 			/>
 			<Gov1Notification
-				userNotification={
-					networkPreferences.triggerPreferences[network]
-				}
+				userNotification={networkPreferences.triggerPreferences[network]}
 				options={notificationPreferences.gov1Post}
 				dispatch={dispatch}
 				onSetNotification={handleCurrentNetworkNotifications}
 			/>
-			{Object.keys(networkTrackInfo).includes(network) && <OpenGovNotification
-				userNotification={
-					networkPreferences.triggerPreferences[network]
-				}
-				options={notificationPreferences.openGov}
-				dispatch={dispatch}
-				onSetNotification={handleCurrentNetworkNotifications}
-			/>}
+			{Object.keys(networkTrackInfo).includes(network) && (
+				<OpenGovNotification
+					userNotification={networkPreferences.triggerPreferences[network]}
+					options={notificationPreferences.openGov}
+					dispatch={dispatch}
+					onSetNotification={handleCurrentNetworkNotifications}
+				/>
+			)}
 		</div>
 	);
 }

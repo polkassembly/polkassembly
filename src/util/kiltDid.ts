@@ -8,9 +8,9 @@ export async function getKiltDidName(
 	api: ApiPromise,
 	lookupAccountAddress: string
 ): Promise<string | undefined> {
-	const didDetails = await api.call.did.queryByAccount({
+	const didDetails = (await api.call.did.queryByAccount({
 		AccountId32: lookupAccountAddress
-	}) as any;
+	})) as any;
 
 	if (didDetails.isNone) {
 		return undefined;

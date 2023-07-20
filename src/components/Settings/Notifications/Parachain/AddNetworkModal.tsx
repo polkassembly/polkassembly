@@ -17,10 +17,10 @@ const AddNetworkModal = ({
 	onCancel,
 	selectedNetwork
 }: {
-    selectedNetwork: ISelectedNetwork;
-    open: boolean;
-    onConfirm: (networks: any) => void;
-    onCancel: () => void;
+  selectedNetwork: ISelectedNetwork;
+  open: boolean;
+  onConfirm: (networks: any) => void;
+  onCancel: () => void;
 }) => {
 	const [allNetworks, setAllNetworks] = useState(selectedNetwork);
 	const { network } = useNetworkContext();
@@ -68,7 +68,7 @@ const AddNetworkModal = ({
 	return (
 		<>
 			<Modal
-				title='Add Networks'
+				title="Add Networks"
 				titleIcon={<PlusCircleOutlined />}
 				open={open}
 				onCancel={() => {
@@ -81,7 +81,7 @@ const AddNetworkModal = ({
 				onConfirm={handleConfirm}
 				footer={[
 					<Button
-						key='1'
+						key="1"
 						onClick={() => {
 							if (showSureModal) {
 								setShowSureModal(false);
@@ -89,33 +89,30 @@ const AddNetworkModal = ({
 							}
 							onCancel();
 						}}
-						className='h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+						className="h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize"
 					>
-                    Cancel
+            Cancel
 					</Button>,
 					<Button
 						onClick={handleConfirm}
-						key='2'
-						className='h-10 rounded-[6px] bg-[#E5007A] border border-solid border-pink_primary px-[36px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize'
+						key="2"
+						className="h-10 rounded-[6px] bg-[#E5007A] border border-solid border-pink_primary px-[36px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize"
 					>
-                    Confirm
+            Confirm
 					</Button>
 				]}
 			>
-				<p className='font-medium text-[#243A57] text-[16px]'>
+				<p className="font-medium text-[#243A57] text-[16px]">
 					{showSureModal
 						? 'Pre-existing settings will be changed for the following networks:'
 						: 'Please select network(s) for which you want to replicate settings:'}
 				</p>
 				{showSureModal ? (
-					<div className='flex gap-[10px] flex-wrap'>
+					<div className="flex gap-[10px] flex-wrap">
 						{Object.keys(allNetworks).map((chain) => {
-							return allNetworks[chain].filter(net => net.selected).map(
-								({
-									name
-								}: {
-                                name: string;
-                            }) => {
+							return allNetworks[chain]
+								.filter((net) => net.selected)
+								.map(({ name }: { name: string }) => {
 									return (
 										<Tag
 											key={name}
@@ -124,70 +121,65 @@ const AddNetworkModal = ({
 											}
 										>
 											<Image
-												className='w-[20px] h-[20px] rounded-full -mt-[10px]'
+												className="w-[20px] h-[20px] rounded-full -mt-[10px]"
 												src={chainProperties[name].logo.src}
-												alt='Logo'
+												alt="Logo"
 											/>
 											<span
 												className={
 													'items-center justify-center ml-[10px] mr-[12px] font-semibold text-[#243A57] text-sm leading-[18px] tracking-[0.02em] '
 												}
 											>
-												<span className='inline-block capitalize max-w-[100px] overflow-hidden text-ellipsis m-0'>
+												<span className="inline-block capitalize max-w-[100px] overflow-hidden text-ellipsis m-0">
 													{name === 'xx' ? 'XX' : name}
 												</span>
 											</span>
 										</Tag>
 									);
-								}
-							);
+								});
 						})}
 					</div>
 				) : (
 					Object.keys(allNetworks).map((chain, i) => {
 						return (
 							<div key={chain}>
-								<div className='flex items-center gap-[8px] mb-2'>
+								<div className="flex items-center gap-[8px] mb-2">
 									<SmallParachainIcon />
-									<h3 className='font-semibold text-sm tracking-wide leading-[21px] text-sidebarBlue mb-0'>
+									<h3 className="font-semibold text-sm tracking-wide leading-[21px] text-sidebarBlue mb-0">
 										{networkLabel[chain] === 'Kusama' ||
-                                    networkLabel[chain] === 'Polkadot'
+                    networkLabel[chain] === 'Polkadot'
 											? `${networkLabel[chain]} and Parachains`
 											: networkLabel[chain]}
 									</h3>
-									<span className='flex gap-[8px] items-center'>
+									<span className="flex gap-[8px] items-center">
 										<Switch
-											size='small'
-											id='postParticipated'
-											onChange={(checked) =>
-												handleAllClick(checked, chain)
-											}
+											size="small"
+											id="postParticipated"
+											onChange={(checked) => handleAllClick(checked, chain)}
 											checked={allNetworks[chain].every(
 												(network: any) => network.selected
 											)}
 										/>
-										<p className='m-0 text-[#485F7D]'>All</p>
+										<p className="m-0 text-[#485F7D]">All</p>
 									</span>
 								</div>
-								<div className='flex gap-[10px] flex-wrap'>
+								<div className="flex gap-[10px] flex-wrap">
 									{allNetworks[chain].map(
 										({
 											name,
 											selected
 										}: {
-                                        name: string;
-                                        selected: boolean;
-                                    }) => {
+                      name: string;
+                      selected: boolean;
+                    }) => {
 											selected = selected || name === network;
 											return (
 												<div
-													className='flex-[170px] w-auto max-w-[175px]'
+													className="flex-[170px] w-auto max-w-[175px]"
 													key={name}
 												>
 													<Tag
-														onClick={() =>
-															handleClick(name, chain)
-														}
+														onClick={() => handleClick(name, chain)}
 														className={`items-center text-navBlue rounded-[34px] px-[12px] py-[8px] ${
 															selected
 																? 'border-solid border bg-[#FEF2F8] border-[#E5007A]'
@@ -195,23 +187,17 @@ const AddNetworkModal = ({
 														} cursor-pointer hover:bg-[#FEF2F8] max-w-[200px] pb-[5px]`}
 													>
 														<Image
-															className='w-[20px] h-[20px] rounded-full -mt-[12px]'
-															src={
-																chainProperties[
-																	name
-																].logo.src
-															}
-															alt='Logo'
+															className="w-[20px] h-[20px] rounded-full -mt-[12px]"
+															src={chainProperties[name].logo.src}
+															alt="Logo"
 														/>
 														<span
 															className={
 																'items-center justify-center ml-[10px] mr-[12px] font-normal text-[#243A57] text-sm leading-[21px] tracking-[0.02em]'
 															}
 														>
-															<span className='inline-block capitalize max-w-[100px] overflow-hidden text-ellipsis m-0'>
-																{name === 'xx'
-																	? 'XX'
-																	: name}
+															<span className="inline-block capitalize max-w-[100px] overflow-hidden text-ellipsis m-0">
+																{name === 'xx' ? 'XX' : name}
 															</span>
 														</span>
 													</Tag>
@@ -221,17 +207,14 @@ const AddNetworkModal = ({
 									)}
 								</div>
 								{i < Object.keys(allNetworks).length - 1 && (
-									<Divider
-										className='border-[#D2D8E0] border-2'
-										dashed
-									/>
+									<Divider className="border-[#D2D8E0] border-2" dashed />
 								)}
 							</div>
 						);
 					})
 				)}
-				<div className='mr-[-24px] ml-[-24px]'>
-					<Divider className='my-4' />
+				<div className="mr-[-24px] ml-[-24px]">
+					<Divider className="my-4" />
 				</div>
 			</Modal>
 		</>

@@ -3,21 +3,21 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 export enum PostCategory {
-	DISCUSSION = 'discussion',
-	GRANT = 'grant',
-	REFERENDA = 'referenda',
-	PROPOSAL = 'proposal',
-	MOTION = 'motion',
-	TREASURY_PROPOSAL = 'treasury proposal',
-	TECH_COMMITTEE_PROPOSAL = 'tech committee proposal',
-	BOUNTY = 'bounty',
-	CHILD_BOUNTY = 'child bounty',
-	TIP = 'tip',
-	ALLIANCE_MOTION = 'alliance motion',
-	ANNOUNCEMENT = 'alliance announcement'
+  DISCUSSION = 'discussion',
+  GRANT = 'grant',
+  REFERENDA = 'referenda',
+  PROPOSAL = 'proposal',
+  MOTION = 'motion',
+  TREASURY_PROPOSAL = 'treasury proposal',
+  TECH_COMMITTEE_PROPOSAL = 'tech committee proposal',
+  BOUNTY = 'bounty',
+  CHILD_BOUNTY = 'child bounty',
+  TIP = 'tip',
+  ALLIANCE_MOTION = 'alliance motion',
+  ANNOUNCEMENT = 'alliance announcement',
 }
 
 export enum PageLink {
-	OVERVIEW = 'overview',
-	OVERVIEW_GOV_2 = 'overview gov 2'
+  OVERVIEW = 'overview',
+  OVERVIEW_GOV_2 = 'overview gov 2',
 }

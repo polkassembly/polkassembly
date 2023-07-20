@@ -5,17 +5,17 @@
 import { useEffect, useReducer, useRef } from 'react';
 
 interface State<T> {
-  data?: T
-  error?: Error
+  data?: T;
+  error?: Error;
 }
 
-type Cache<T> = { [url: string]: T }
+type Cache<T> = { [url: string]: T };
 
 // discriminated union type
 type Action<T> =
   | { type: 'loading' }
   | { type: 'fetched'; payload: T }
-  | { type: 'error'; payload: Error }
+  | { type: 'error'; payload: Error };
 
 function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
 	const cache = useRef<Cache<T>>({});
@@ -73,7 +73,7 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
 			} catch (error) {
 				if (cancelRequest.current) return;
 
-				dispatch({ payload: error as Error,type: 'error' });
+				dispatch({ payload: error as Error, type: 'error' });
 			}
 		};
 

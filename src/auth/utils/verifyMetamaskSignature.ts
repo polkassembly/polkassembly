@@ -5,7 +5,11 @@
 // TODO: replace with @metamask/eth-sig-util
 const sigUtil = require('eth-sig-util');
 
-export const verifyMetamaskSignature = (message: string, address: string, signature: string): boolean => {
+export const verifyMetamaskSignature = (
+	message: string,
+	address: string,
+	signature: string
+): boolean => {
 	const msgParams = {
 		data: message,
 		sig: signature

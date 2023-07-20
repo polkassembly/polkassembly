@@ -8,19 +8,19 @@ import styled from 'styled-components';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import CloseIcon from '~assets/icons/close.svg';
 type Props = {
-    icon?: any;
-    name: any;
-    selected?: boolean;
-    onActionClick?: any;
-    onClose?: any;
+  icon?: any;
+  name: any;
+  selected?: boolean;
+  onActionClick?: any;
+  onClose?: any;
 };
 
 const PlusIcon = styled(PlusCircleOutlined)`
-    svg {
-        width: 25px;
-        height: 25px;
-        color: #e5007a;
-    }
+  svg {
+    width: 25px;
+    height: 25px;
+    color: #e5007a;
+  }
 `;
 
 export default function NetworkTags({
@@ -39,9 +39,9 @@ export default function NetworkTags({
 		>
 			{icon ? (
 				<Image
-					className='w-[40px] h-[40px] rounded-full'
+					className="w-[40px] h-[40px] rounded-full"
 					src={icon}
-					alt='Logo'
+					alt="Logo"
 				/>
 			) : (
 				<PlusIcon />
@@ -54,7 +54,7 @@ export default function NetworkTags({
 				{name === 'xx' ? 'XX' : name}
 			</span>
 			{onClose && (
-				<span onClick={() => onClose(name)} className='mt-1'>
+				<span onClick={() => onClose(name)} className="mt-1">
 					<CloseIcon />
 				</span>
 			)}

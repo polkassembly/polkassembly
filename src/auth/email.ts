@@ -25,37 +25,41 @@ if (apiKey) {
 	sgMail.setApiKey(apiKey);
 }
 
-export const sendVerificationEmail = (user: User, token: string, network: string): void => {
+export const sendVerificationEmail = (
+	user: User,
+	token: string,
+	network: string
+): void => {
 	if (!apiKey) {
 		console.warn('Verification Email not sent due to missing API key');
 		return;
 	}
 	const verifyUrl = `https://${network}.polkassembly.io/verify-email?token=${token}`;
 
-	fetch(
-		`${FIREBASE_FUNCTIONS_URL}/notify`,
-		{
-			body: JSON.stringify({
-				args: {
-					email:user.email,
-					username:user.username,
-					verifyUrl
-				},
-				trigger: 'verifyEmail'
-			}),
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'x-api-key': '47c058d8-2ddc-421e-aeb5-e2aa99001949',
-				'x-source': 'polkassembly'
+	fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
+		body: JSON.stringify({
+			args: {
+				email: user.email,
+				username: user.username,
+				verifyUrl
 			},
-			method: 'POST'
-		}
-	).catch(e =>
-		console.error('Verification Email not sent', e));
+			trigger: 'verifyEmail'
+		}),
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json',
+			'x-api-key': '47c058d8-2ddc-421e-aeb5-e2aa99001949',
+			'x-source': 'polkassembly'
+		},
+		method: 'POST'
+	}).catch((e) => console.error('Verification Email not sent', e));
 };
 
-export const sendResetPasswordEmail = (user: User, token: string, network: string): void => {
+export const sendResetPasswordEmail = (
+	user: User,
+	token: string,
+	network: string
+): void => {
 	if (!apiKey) {
 		console.warn('Password reset Email not sent due to missing API key');
 		return;
@@ -63,36 +67,33 @@ export const sendResetPasswordEmail = (user: User, token: string, network: strin
 
 	const resetUrl = `https://${network}.polkassembly.io/reset-password?token=${token}&userId=${user.id}`;
 
-	fetch(
-		`${FIREBASE_FUNCTIONS_URL}/notify`,
-		{
-			body: JSON.stringify({
-				args: {
-					email:user.email,
-					resetUrl,
-					username:user.username
-				},
-				trigger: 'resetPassword'
-			}),
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'x-api-key': '47c058d8-2ddc-421e-aeb5-e2aa99001949',
-				'x-source': 'polkassembly'
+	fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
+		body: JSON.stringify({
+			args: {
+				email: user.email,
+				resetUrl,
+				username: user.username
 			},
-			method: 'POST'
-		}
-	).catch(e =>
-		console.error('Verification Email not sent', e));
+			trigger: 'resetPassword'
+		}),
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json',
+			'x-api-key': '47c058d8-2ddc-421e-aeb5-e2aa99001949',
+			'x-source': 'polkassembly'
+		},
+		method: 'POST'
+	}).catch((e) => console.error('Verification Email not sent', e));
 };
 
 export const sendCommentReportMail = (
 	postType: string,
 	postId: string,
 	commentId: string,
-	commentUrl:string,
-	network:string,
-	spam_users_count:number ): void => {
+	commentUrl: string,
+	network: string,
+	spam_users_count: number
+): void => {
 	if (!apiKey) {
 		console.warn('Comment Spam Report Email not sent due to missing API key');
 		return;
@@ -111,21 +112,23 @@ export const sendCommentReportMail = (
 		html: text,
 		subject: 'Comment Spam Report',
 		text,
-		to: ['hello@polkassembly.io','parambir@polkassembly.io']
+		to: ['hello@polkassembly.io', 'parambir@polkassembly.io']
 	};
 
-	sgMail.sendMultiple(msg).catch(e =>
-		console.error('Comment Spam Report not sent', e));
+	sgMail
+		.sendMultiple(msg)
+		.catch((e) => console.error('Comment Spam Report not sent', e));
 };
 
 export const sendReplyReportMail = (
 	postType: string,
 	postId: string,
 	commentId: string,
-	replyId:string,
-	commentUrl:string,
-	network:string,
-	spam_users_count:number ): void => {
+	replyId: string,
+	commentUrl: string,
+	network: string,
+	spam_users_count: number
+): void => {
 	if (!apiKey) {
 		console.warn('Reply Spam Report Email not sent due to missing API key');
 		return;
@@ -145,19 +148,21 @@ export const sendReplyReportMail = (
 		html: text,
 		subject: 'Reply Spam Report',
 		text,
-		to: ['hello@polkassembly.io','parambir@polkassembly.io']
+		to: ['hello@polkassembly.io', 'parambir@polkassembly.io']
 	};
 
-	sgMail.sendMultiple(msg).catch(e =>
-		console.error('Reply Spam Report not sent', e));
+	sgMail
+		.sendMultiple(msg)
+		.catch((e) => console.error('Reply Spam Report not sent', e));
 };
 
 export const sendPostSpamReportMail = (
 	postType: string,
 	postId: string,
-	postUrl:string,
-	network:string,
-	spam_users_count:number ): void => {
+	postUrl: string,
+	network: string,
+	spam_users_count: number
+): void => {
 	if (!apiKey) {
 		console.warn('Post Spam Report Email not sent due to missing API key');
 		return;
@@ -175,47 +180,55 @@ export const sendPostSpamReportMail = (
 		html: text,
 		subject: 'Post Spam Report',
 		text,
-		to: ['hello@polkassembly.io','parambir@polkassembly.io']
+		to: ['hello@polkassembly.io', 'parambir@polkassembly.io']
 	};
 
-	sgMail.sendMultiple(msg).catch(e =>
-		console.error(' Spam Report not sent', e));
+	sgMail
+		.sendMultiple(msg)
+		.catch((e) => console.error(' Spam Report not sent', e));
 	console.log('mail sent');
 };
 
-export const sendUndoEmailChangeEmail = (user: User, undoToken: UndoEmailChangeToken, network: string): void => {
+export const sendUndoEmailChangeEmail = (
+	user: User,
+	undoToken: UndoEmailChangeToken,
+	network: string
+): void => {
 	if (!apiKey) {
 		console.warn('Email undo token email not sent due to missing API key');
 		return;
 	}
 
 	const undoUrl = `https://${network}.polkassembly.io/undo-email-change/${undoToken.token}`;
-	fetch(
-		`${FIREBASE_FUNCTIONS_URL}/notify`,
-		{
-			body: JSON.stringify({
-				args: {
-					email:user.email,
-					undoEmail: undoToken.email,
-					undoUrl,
-					username:user.username
-				},
-				trigger: 'undoEmailChange'
-			}),
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'x-api-key': '47c058d8-2ddc-421e-aeb5-e2aa99001949',
-				'x-source': 'polkassembly'
+	fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
+		body: JSON.stringify({
+			args: {
+				email: user.email,
+				undoEmail: undoToken.email,
+				undoUrl,
+				username: user.username
 			},
-			method: 'POST'
-		}
-	).catch(e =>
-		console.error('Verification Email not sent', e));
+			trigger: 'undoEmailChange'
+		}),
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json',
+			'x-api-key': '47c058d8-2ddc-421e-aeb5-e2aa99001949',
+			'x-source': 'polkassembly'
+		},
+		method: 'POST'
+	}).catch((e) => console.error('Verification Email not sent', e));
 };
 
 // TODO: check when to send
-export const sendReportContentEmail = (username: string, network: string, reportType: string, contentId: string, reason: string, comments: string): void => {
+export const sendReportContentEmail = (
+	username: string,
+	network: string,
+	reportType: string,
+	contentId: string,
+	reason: string,
+	comments: string
+): void => {
 	if (!apiKey) {
 		console.warn('Report Content Email not sent due to missing API key');
 		return;
@@ -237,6 +250,7 @@ export const sendReportContentEmail = (username: string, network: string, report
 		to: REPORT
 	};
 
-	sgMail.send(msg).catch(e =>
-		console.error('Report Content Email not sent', e));
+	sgMail
+		.send(msg)
+		.catch((e) => console.error('Report Content Email not sent', e));
 };

@@ -8,30 +8,36 @@ import AuthForm from '~src/ui-components/AuthForm';
 import FilteredError from '~src/ui-components/FilteredError';
 
 interface Props {
-	className?: string;
-	error?: string;
-	loading?: boolean;
-	onSubmit: (data: any) => void;
-	onBack: () => void;
+  className?: string;
+  error?: string;
+  loading?: boolean;
+  onSubmit: (data: any) => void;
+  onBack: () => void;
 }
 
-const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) => {
+const TFALoginForm = ({
+	className,
+	error,
+	loading,
+	onSubmit,
+	onBack
+}: Props) => {
 	return (
 		<AuthForm
 			onSubmit={onSubmit}
 			className={`${className} flex flex-col gap-y-3`}
 		>
 			<div className="flex flex-col gap-y-1">
-				<h1 className='text-sidebarBlue'>Two Factor Authentication</h1>
-				<p className='text-sidebarBlue'>Please open the two-step verification app or extension and input the authentication code for your Polkassembly account.</p>
+				<h1 className="text-sidebarBlue">Two Factor Authentication</h1>
+				<p className="text-sidebarBlue">
+          Please open the two-step verification app or extension and input the
+          authentication code for your Polkassembly account.
+				</p>
 
-				{error && <FilteredError className='mt-2 mb-6' text={error} />}
+				{error && <FilteredError className="mt-2 mb-6" text={error} />}
 
-				<label
-					className="text-sm text-[#485F7D] "
-					htmlFor="authCode"
-				>
-							Authentication Code
+				<label className="text-sm text-[#485F7D] " htmlFor="authCode">
+          Authentication Code
 				</label>
 				<Form.Item
 					name="authCode"
@@ -40,16 +46,25 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 						{
 							message: 'Please provide a valid authentication code.',
 							validator(rule, value = '', callback) {
-								if (callback && (!value || value.length !== 6 || isNaN(Number(value)))){
+								if (
+									callback &&
+                  (!value || value.length !== 6 || isNaN(Number(value)))
+								) {
 									callback(rule?.message?.toString());
-								}else {
+								} else {
 									callback();
 								}
 							}
 						}
 					]}
 				>
-					<Input disabled={loading} placeholder='######' name='authCode' id="authCode" className='rounded-md py-3 px-4' />
+					<Input
+						disabled={loading}
+						placeholder="######"
+						name="authCode"
+						id="authCode"
+						className="rounded-md py-3 px-4"
+					/>
 				</Form.Item>
 
 				<div className="flex flex-col justify-center items-center gap-y-4">
@@ -59,7 +74,7 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 						size="large"
 						className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
 					>
-									Login
+            Login
 					</Button>
 
 					<Button
@@ -69,7 +84,7 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 						size="small"
 						className="w-56 rounded-md outline-none border-none text-pink_primary"
 					>
-									Go back
+            Go back
 					</Button>
 				</div>
 			</div>

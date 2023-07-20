@@ -13,16 +13,21 @@ import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface IReferendumPostClientProps {
-	councilBoardSidebar?: boolean;
-	postID: string | number;
+  councilBoardSidebar?: boolean;
+  postID: string | number;
 }
 
-const ReferendumPostClient: FC<IReferendumPostClientProps> = ({ councilBoardSidebar=false, postID }) => {
+const ReferendumPostClient: FC<IReferendumPostClientProps> = ({
+	councilBoardSidebar = false,
+	postID
+}) => {
 	const [error, setError] = useState('');
 	const [post, setPost] = useState<IPostResponse>();
 	const proposalType = ProposalType.REFERENDUMS;
 	useEffect(() => {
-		nextApiClientFetch<IPostResponse>(`api/v1/posts/on-chain-post?proposalType=${proposalType}&postId=${postID}`)
+		nextApiClientFetch<IPostResponse>(
+			`api/v1/posts/on-chain-post?proposalType=${proposalType}&postId=${postID}`
+		)
 			.then((res) => {
 				if (res.data) {
 					setPost(res.data);
@@ -33,19 +38,28 @@ const ReferendumPostClient: FC<IReferendumPostClientProps> = ({ councilBoardSide
 			.catch((err) => {
 				setError(err?.message || err);
 			});
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postID]);
 	if (error) return <ErrorState errorMessage={error} />;
 
-	if (post) return (<div>
-		{!councilBoardSidebar && <BackToListingView postCategory={PostCategory.REFERENDA} />}
+	if (post)
+		return (
+			<div>
+				{!councilBoardSidebar && (
+					<BackToListingView postCategory={PostCategory.REFERENDA} />
+				)}
 
-		<div className='mt-6'>
-			<Post post={post} proposalType={proposalType} />
+				<div className="mt-6">
+					<Post post={post} proposalType={proposalType} />
+				</div>
+			</div>
+		);
+
+	return (
+		<div className="mt-16">
+			<LoadingState />
 		</div>
-	</div>);
-
-	return <div className='mt-16'><LoadingState /></div>;
+	);
 };
 
 export default ReferendumPostClient;

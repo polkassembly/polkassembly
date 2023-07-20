@@ -6,12 +6,12 @@ import React, { useEffect, useState } from 'react';
 import Tips from '~assets/icons/tips.svg';
 import Toggler from './Toggler';
 type Props = {
-    categoryOptions: any;
-    title?: string;
-    classname?: string;
-    Icon?: any;
-    onChange: any;
-	handleCategoryAllClick?:any
+  categoryOptions: any;
+  title?: string;
+  classname?: string;
+  Icon?: any;
+  onChange: any;
+  handleCategoryAllClick?: any;
 };
 
 export default function GroupCheckbox({
@@ -41,24 +41,20 @@ export default function GroupCheckbox({
 	return (
 		<div className={classname}>
 			{!!title && (
-				<div className='flex items-center gap-[8px] mb-[16px] text-[#243A57]'>
-					{title && Icon ? (
-						<Icon />
-					) : (
-						<Tips className='w-[20px] h-[20px]' />
-					)}
+				<div className="flex items-center gap-[8px] mb-[16px] text-[#243A57]">
+					{title && Icon ? <Icon /> : <Tips className="w-[20px] h-[20px]" />}
 
-					<h3 className='font-semibold text-[14px] tracking-wide leading-[21px] mb-[1px]'>
+					<h3 className="font-semibold text-[14px] tracking-wide leading-[21px] mb-[1px]">
 						{title}
 					</h3>
 					<Toggler
 						selected={all}
-						label='All'
+						label="All"
 						onClick={(checked: boolean) => handleAllClick(checked)}
 					/>
 				</div>
 			)}
-			<div className='flex flex-col gap-[19px] text-[#243A57]'>
+			<div className="flex flex-col gap-[19px] text-[#243A57]">
 				{categoryOptions.map((item: any) => (
 					<Row key={item.value} style={{ display: 'block' }}>
 						<Col>
@@ -67,7 +63,7 @@ export default function GroupCheckbox({
 								name={item.value}
 								onChange={(e) => handleChange(e, item.value)}
 								checked={item.selected}
-								className='text-[#243A57]'
+								className="text-[#243A57]"
 							>
 								{item.label}
 							</Checkbox>

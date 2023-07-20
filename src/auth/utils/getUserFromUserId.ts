@@ -8,10 +8,14 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { User } from '../types';
 import messages from './messages';
 
-export default async function getUserFromUserId (userId: number): Promise<User> {
-	const userDoc = await firebaseAdmin.firestore().collection('users').doc(String(userId)).get();
+export default async function getUserFromUserId(userId: number): Promise<User> {
+	const userDoc = await firebaseAdmin
+		.firestore()
+		.collection('users')
+		.doc(String(userId))
+		.get();
 
-	if(!userDoc.exists) {
+	if (!userDoc.exists) {
 		throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
 	}
 

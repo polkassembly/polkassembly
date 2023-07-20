@@ -7,12 +7,11 @@ import React from 'react';
 import PostContentForm from './PostContentForm';
 
 interface Props {
-	className?: string
-	toggleEdit: () => void
+  className?: string;
+  toggleEdit: () => void;
 }
 
-const EditablePostContent = ({ className, toggleEdit } : Props) => {
-
+const EditablePostContent = ({ className, toggleEdit }: Props) => {
 	return (
 		<div className={className}>
 			<PostContentForm toggleEdit={toggleEdit} />

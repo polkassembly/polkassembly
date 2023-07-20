@@ -6,11 +6,11 @@ import React, { createContext, useState } from 'react';
 
 import { ModalContextType, ModalType } from '../types';
 
-const initialModalContext : ModalContextType = {
+const initialModalContext: ModalContextType = {
 	dismissModal: () => {
 		throw new Error('dismissModal function must be overridden');
 	},
-	modal : {},
+	modal: {},
 	setModal: () => {
 		throw new Error('setModal function must be overridden');
 	}

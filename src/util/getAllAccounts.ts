@@ -8,7 +8,7 @@ import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import {
   Injected,
   InjectedAccount,
-  InjectedWindow
+  InjectedWindow,
 } from '@polkadot/extension-inject/types';
 import { APPNAME } from '~src/global/appName';
 import { Wallet } from '~src/types';
@@ -38,14 +38,14 @@ export const initResponse: Response = {
   accountsMap: {},
   noAccounts: true,
   noExtension: true,
-  signersMap: {}
+  signersMap: {},
 };
 
 const getAllAccounts: TGetAllAccounts = async (params) => {
   const { api, apiReady, network, get_erc20 } = params;
 
   const getWalletAccounts = async (
-    chosenWallet: Wallet
+    chosenWallet: Wallet,
   ): Promise<InjectedAccount[] | undefined> => {
     const injectedWindow = window as Window & InjectedWindow;
 
@@ -114,7 +114,7 @@ const getAllAccounts: TGetAllAccounts = async (params) => {
           address: address.toLowerCase(),
           genesisHash: null,
           name: 'metamask',
-          type: 'ethereum'
+          type: 'ethereum',
         };
       });
     }

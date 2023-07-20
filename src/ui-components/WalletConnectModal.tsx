@@ -40,12 +40,12 @@ interface Props{
   walletKey: string;
   addressKey: string;
   onConfirm?: () => void;
-  connectedAddress?: boolean;
+  LinkAddressNeeded?: boolean;
 }
 
 const ZERO_BN = new BN(0);
 
-const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, addressKey, onConfirm, connectedAddress }: Props) => {
+const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, addressKey, onConfirm, LinkAddressNeeded }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
@@ -63,7 +63,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 	const substrate_address = getSubstrateAddress(loginAddress);
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 
-	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
+	const getAddressType = (account?: InjectedTypeWithCouncilBoolean) => {
 		const account_substrate_address = getSubstrateAddress(account?.address || '');
 		const isConnected = account_substrate_address?.toLowerCase() === (substrate_address || '').toLowerCase();
 		if (account?.isCouncil || false) {
@@ -71,14 +71,16 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 				return EAddressOtherTextType.COUNCIL_CONNECTED;
 			}
 			return EAddressOtherTextType.COUNCIL;
-		} else if (isConnected) {
-			return EAddressOtherTextType.CONNECTED;
+		} else if (isConnected && substrate_addresses.includes(account_substrate_address)) {
+			return EAddressOtherTextType.LINKED_ADDRESS;
 		} else if (substrate_addresses.includes(account_substrate_address)) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
 		}else{
 			return EAddressOtherTextType.UNLINKED_ADDRESS;
 		}
 	};
+
+	const isUnlinkedAddress = (getAddressType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS);
 
 	const handleLink = async (address: InjectedAccount['address'], chosenWallet: Wallet) => {
 		setLoading(true);
@@ -209,7 +211,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 
 	const handleSubmit = () => {
 		if(!address || !wallet || !accounts) return;
-		if (connectedAddress && getOtherTextType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS){
+		if (LinkAddressNeeded && isUnlinkedAddress){
 			handleLink(address, wallet as Wallet);
 		}else{
 			setLoading(true);
@@ -319,19 +321,21 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 		wrapClassName={className}
 		className = {`${poppins.className} ${poppins.variable} radius`}
 		open = {open}
-		title = {<div className={`${connectedAddress ? 'text-start' : 'text-center'} text-[20px] font-semibold text-[#243A57]`}>{ connectedAddress ? 'Link Address' : 'Connect your wallet'}</div>}
-		footer = {<div className='flex gap-2 justify-end mt-6'>
-			<Button onClick={() => setOpen(false)} className='text-sm font-medium text-pink_primary border-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wide'>Back</Button>
-			<Button onClick={handleSubmit} disabled={accounts.length === 0} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wide'>
-				{(getOtherTextType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS) ? 'Link Address' : connectedAddress ? 'Next' : 'Confirm'}</Button>
-		</div>}
+		title = {<div className={`${LinkAddressNeeded ? 'text-start' : 'text-center'} text-[20px] font-semibold text-bodyBlue`}>{ LinkAddressNeeded ? 'Link Address' : 'Connect your wallet'}</div>}
+		footer = {<Button
+			onClick={handleSubmit}
+			disabled={accounts.length === 0}
+			className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-4 rounded-[4px] tracking-wide'>
+			{isUnlinkedAddress ? 'Link Address' : LinkAddressNeeded ? 'Next' : 'Confirm'}
+		</Button>
+		}
 		closable = {closable? true : false}
 		onCancel={() => closable ? setOpen(false) : setOpen(true)}
 		closeIcon={<CloseIcon/>}
 	>
 		<Spin spinning={loading} indicator={<LoadingOutlined />}>
 			<div className='flex flex-col'>
-				{connectedAddress && accounts.length > 0 && !loading && (getOtherTextType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS) && <div className='flex flex-col mt-6 mb-2 items-center justify-center px-4'>
+				{LinkAddressNeeded && accounts.length > 0 && isUnlinkedAddress && <div className='flex flex-col mt-6 mb-2 items-center justify-center px-4'>
 					<ConnectAddressIcon/>
 					<span className='mt-6 text-bodyBlue text-sm text-center'>
 						Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community
@@ -354,10 +358,10 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 					}
 				</div>
 
-				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message={`For using ${connectedAddress ? 'Treasury proposal creation' : 'Delegation dashboard'}:`} description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
+				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message={`For using ${LinkAddressNeeded ? 'Treasury proposal creation' : 'Delegation dashboard'}:`} description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
 				{Object.keys(defaultWallets || {}).length === 0 && !loading && <Alert
-					message={connectedAddress ? 'Please install a wallet and create an address to start creating a proposal.' : 'Wallet extension not detected.'}
-					description={`${connectedAddress ? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.': 'No web3 wallet was found with an active address.'}`}
+					message={LinkAddressNeeded ? 'Please install a wallet and create an address to start creating a proposal.' : 'Wallet extension not detected.'}
+					description={`${LinkAddressNeeded ? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.': 'No web3 wallet was found with an active address.'}`}
 					type='info' showIcon className='text-[#243A57] changeColor'/>}
 
 				{
@@ -368,7 +372,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 								>
 									{accounts.length > 0
 										?<AccountSelectionForm
-											title={connectedAddress ? 'Select Proposer Address' :'Select an address'}
+											title={LinkAddressNeeded ? 'Select Proposer Address' :'Select an address'}
 											accounts={accounts}
 											address={address}
 											withBalance={true}
@@ -377,7 +381,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 											className='text-[#485F7D] text-sm'
 										/> : !wallet && Object.keys(defaultWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 								</Form>}
-				{connectedAddress && !loading && accounts.length > 0 && <>
+				{LinkAddressNeeded && !loading && accounts.length > 0 && <>
 					<Alert showIcon type='info' message={<span className='text-bodyBlue'>
           Link Address to your Polkassembly account to proceed with proposal creation
 					</span>}

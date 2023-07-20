@@ -107,7 +107,7 @@ const OpenGovProposals = ({ className }: Props) => {
 
 	return <div className={className}>
 		<Button className='text-sm bg-pink_primary text-white font-medium rounded-[4px]' onClick={() => proposerAddress.length > 0 ? setOpenModal(!openModal) : setOpenAddressLinkedModal(true)}>Create Treasury Proposal</Button>
-		<WalletConnectModal walletKey='treasuryProposalProposerWallet' connectedAddress closable addressKey='treasuryProposalProposerAddress' open={openAddressLinkedModal} setOpen={setOpenAddressLinkedModal} onConfirm={() => setOpenModal(true)} />
+		<WalletConnectModal walletKey='treasuryProposalProposerWallet' LinkAddressNeeded closable addressKey='treasuryProposalProposerAddress' open={openAddressLinkedModal} setOpen={setOpenAddressLinkedModal} onConfirm={() => setOpenModal(true)} />
 		<Modal
 			maskClosable={false}
 			open={closeConfirm}

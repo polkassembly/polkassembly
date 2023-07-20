@@ -57,9 +57,12 @@ const AddressDropdown = ({
 				return EAddressOtherTextType.COUNCIL_CONNECTED;
 			}
 			return EAddressOtherTextType.COUNCIL;
-		} else if (isConnected) {
+		} else if (isConnected && substrate_addresses.includes(account_substrate_address)) {
+			return EAddressOtherTextType.LINKED_ADDRESS;
+		}else if(isConnected && !substrate_addresses.includes(account_substrate_address)){
 			return EAddressOtherTextType.CONNECTED;
-		} else if (substrate_addresses.includes(account_substrate_address)) {
+		}
+		else if (substrate_addresses.includes(account_substrate_address)) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
 		}else{
 			return EAddressOtherTextType.UNLINKED_ADDRESS;

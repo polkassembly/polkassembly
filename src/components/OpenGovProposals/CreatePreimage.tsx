@@ -97,7 +97,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
 	const checkPreimageHash = (preimageLength: number| null, preimageHash: string) => {
-		if(!preimageHash && !preimageLength) return false;
+		if(!preimageHash || !preimageLength) return false;
 		return (!isHex(preimageHash, 256) || (!preimageLength || preimageLength === 0));
 	};
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -294,6 +294,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			const proposal = api.tx.treasury.spend(fundingAmount.toString(), beneficiaryAddress);
 			const preimage = getState(api, proposal);
 			setLoading(true);
+
 			preimage?.notePreimageTx?.signAndSend(proposerAddress, ({ status, events }: any) => {
 				if (status.isFinalized) {
 					for (const { event } of events) {
@@ -626,7 +627,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					<div  className='mt-6 -mb-6'>
 						<div className='flex justify-between items-center text-lightBlue text-sm mb-[2px]'>
 							<label>Funding Amount <span><HelperTooltip text='Amount requested by the proposer.' className='ml-1'/></span></label>
-							<span className='text-xs text-bodyBlue'>Current Value: {Number(inputAmountValue)*Number(currentTokenPrice.value) || 0} USD</span>
+							<span className='text-xs text-bodyBlue'>Current Value: <span className='text-pink_primary'>{Number(inputAmountValue)*Number(currentTokenPrice.value) || 0} USD</span></span>
 						</div>
 						<BalanceInput address={proposerAddress} placeholder='Add funding amount' setInputValue={(input: string) => {setInputAmountValue(input); onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage)); }} formItemName='funding_amount' onChange= { handleFundingAmountChange }/>
 					</div>
@@ -649,7 +650,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 							onChangeLocalStorageSet({ enactment: { key: e.target.value, value: form.getFieldValue(e.target.value === EEnactment.At_Block_No ? 'at_block': 'after_blocks').toString() } }, Boolean(isPreimage));
 						}}>
 						<Radio value={EEnactment.At_Block_No} className='text-bodyBlue text-sm font-normal'>
-							<div className='flex items-center gap-2 h-[40px]'><span className='w-[150px]'>At Block Number<HelperTooltip className='ml-1' text='Allows you to choose a custom block number for enactment.'/></span>
+							<div className='flex items-center gap-2 h-[40px]'><span className='w-[150px]'>At Block no.<HelperTooltip className='ml-1' text='Allows you to choose a custom block number for enactment.'/></span>
 								<span>
 									{enactment.key === EEnactment.At_Block_No && <Form.Item name='at_block'
 										rules={[

@@ -12,13 +12,13 @@ import useCurrentBlock from './useCurrentBlock';
 const TWO_WEEKS = 2 * 7 * 24 * 60 * 60 * 1000;
 
 export default function usePollEndBlock() {
-	const { network } = useNetworkContext();
+  const { network } = useNetworkContext();
 
-	const blocktime: number = chainProperties?.[network]?.blockTime;
-	const currenBlockNumber = useCurrentBlock()?.toNumber();
-	const blockEnd = (currenBlockNumber || 0) + Math.floor(TWO_WEEKS / blocktime);
+  const blocktime: number = chainProperties?.[network]?.blockTime;
+  const currenBlockNumber = useCurrentBlock()?.toNumber();
+  const blockEnd = (currenBlockNumber || 0) + Math.floor(TWO_WEEKS / blocktime);
 
-	return useMemo(() => {
-		return blockEnd;
-	}, [blockEnd]);
+  return useMemo(() => {
+    return blockEnd;
+  }, [blockEnd]);
 }

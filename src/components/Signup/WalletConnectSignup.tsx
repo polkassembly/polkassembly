@@ -35,314 +35,314 @@ interface Props {
 }
 
 const WalletConnectSignup = ({
-	className,
-	setMethod,
-	isModal,
-	setSignupOpen
+  className,
+  setMethod,
+  isModal,
+  setSignupOpen,
 }: Props): JSX.Element => {
-	const [error, setError] = useState('');
-	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
-	const [address, setAddress] = useState<string>('');
-	// const { errors, register } = useForm();
-	const [isAccountLoading, setIsAccountLoading] = useState(true);
-	const [accountsNotFound, setAccountsNotFound] = useState(false);
-	const [loading, setLoading] = useState(false);
-	const currentUser = useContext(UserDetailsContext);
-	const { setModal } = useContext(ModalContext);
-	const [provider, setProvider] = useState<WalletConnectProvider | null>(null);
-	const router = useRouter();
+  const [error, setError] = useState('');
+  const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
+  const [address, setAddress] = useState<string>('');
+  // const { errors, register } = useForm();
+  const [isAccountLoading, setIsAccountLoading] = useState(true);
+  const [accountsNotFound, setAccountsNotFound] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const currentUser = useContext(UserDetailsContext);
+  const { setModal } = useContext(ModalContext);
+  const [provider, setProvider] = useState<WalletConnectProvider | null>(null);
+  const router = useRouter();
 
-	const { setWalletConnectProvider } = currentUser;
+  const { setWalletConnectProvider } = currentUser;
 
-	const connect = async () => {
-		setIsAccountLoading(true);
+  const connect = async () => {
+    setIsAccountLoading(true);
 
-		if (provider && provider.wc.connected) {
-			provider.wc.killSession();
-		}
+    if (provider && provider.wc.connected) {
+      provider.wc.killSession();
+    }
 
-		//  Create new WalletConnect Provider
-		window.localStorage.removeItem('walletconnect');
-		const wcPprovider = new WalletConnectProvider({
-			rpc: {
-				1284: 'https://rpc.api.moonbeam.network',
-				1285: 'https://rpc.api.moonriver.moonbeam.network',
-				1287: 'https://rpc.api.moonbase.moonbeam.network'
-			}
-		});
-		setProvider(wcPprovider);
-	};
+    //  Create new WalletConnect Provider
+    window.localStorage.removeItem('walletconnect');
+    const wcPprovider = new WalletConnectProvider({
+      rpc: {
+        1284: 'https://rpc.api.moonbeam.network',
+        1285: 'https://rpc.api.moonriver.moonbeam.network',
+        1287: 'https://rpc.api.moonbase.moonbeam.network',
+      },
+    });
+    setProvider(wcPprovider);
+  };
 
-	const getAccounts = async () => {
-		if (!provider) return;
+  const getAccounts = async () => {
+    if (!provider) return;
 
-		if (!provider.wc.connected) {
-			await provider.wc.createSession();
-		}
+    if (!provider.wc.connected) {
+      await provider.wc.createSession();
+    }
 
-		// Subscribe to events
-		provider.wc.on('modal_closed', () => {
-			setProvider(null);
-			setMethod('web2');
-		});
+    // Subscribe to events
+    provider.wc.on('modal_closed', () => {
+      setProvider(null);
+      setMethod('web2');
+    });
 
-		provider.wc.on('connect', (error, payload) => {
-			if (error) {
-				setError(error?.message);
-				return;
-			}
+    provider.wc.on('connect', (error, payload) => {
+      if (error) {
+        setError(error?.message);
+        return;
+      }
 
-			const { accounts: addresses, chainId } = payload.params[0];
+      const { accounts: addresses, chainId } = payload.params[0];
 
-			getAccountsHandler(addresses, Number(chainId));
-		});
+      getAccountsHandler(addresses, Number(chainId));
+    });
 
-		provider.wc.on('session_update', (error, payload) => {
-			if (error) {
-				setError(error?.message);
-				return;
-			}
+    provider.wc.on('session_update', (error, payload) => {
+      if (error) {
+        setError(error?.message);
+        return;
+      }
 
-			// updated accounts and chainId
-			const { accounts: addresses, chainId } = payload.params[0];
-			getAccountsHandler(addresses, Number(chainId));
-		});
+      // updated accounts and chainId
+      const { accounts: addresses, chainId } = payload.params[0];
+      getAccountsHandler(addresses, Number(chainId));
+    });
 
-		provider.wc.on('disconnect', (error) => {
-			if (error) {
-				setError(error?.message);
-				return;
-			}
+    provider.wc.on('disconnect', (error) => {
+      if (error) {
+        setError(error?.message);
+        return;
+      }
 
-			// Delete connector
-			window.localStorage.removeItem('walletconnect');
-			setProvider(null);
-			window.location.reload();
-		});
-	};
+      // Delete connector
+      window.localStorage.removeItem('walletconnect');
+      setProvider(null);
+      window.location.reload();
+    });
+  };
 
-	const getAccountsHandler = async (addresses: string[], chainId: number) => {
-		if (chainId !== chainProperties[NETWORK].chainId) {
-			setError(`Please login using the ${NETWORK} network`);
-			setAccountsNotFound(true);
-			setIsAccountLoading(false);
-			return;
-		}
+  const getAccountsHandler = async (addresses: string[], chainId: number) => {
+    if (chainId !== chainProperties[NETWORK].chainId) {
+      setError(`Please login using the ${NETWORK} network`);
+      setAccountsNotFound(true);
+      setIsAccountLoading(false);
+      return;
+    }
 
-		const checksumAddresses = addresses.map((address: string) => address);
+    const checksumAddresses = addresses.map((address: string) => address);
 
-		if (checksumAddresses.length === 0) {
-			setAccountsNotFound(true);
-			setIsAccountLoading(false);
-			return;
-		}
+    if (checksumAddresses.length === 0) {
+      setAccountsNotFound(true);
+      setIsAccountLoading(false);
+      return;
+    }
 
-		setAccounts(
-			checksumAddresses.map((address: string): InjectedAccountWithMeta => {
-				const account = {
-					address: address.toLowerCase(),
-					meta: {
-						genesisHash: null,
-						name: 'walletConnect',
-						source: 'walletConnect'
-					}
-				};
+    setAccounts(
+      checksumAddresses.map((address: string): InjectedAccountWithMeta => {
+        const account = {
+          address: address.toLowerCase(),
+          meta: {
+            genesisHash: null,
+            name: 'walletConnect',
+            source: 'walletConnect',
+          },
+        };
 
-				return account;
-			})
-		);
+        return account;
+      }),
+    );
 
-		if (checksumAddresses.length > 0) {
-			setAddress(checksumAddresses[0]);
-		}
+    if (checksumAddresses.length > 0) {
+      setAddress(checksumAddresses[0]);
+    }
 
-		setIsAccountLoading(false);
-	};
+    setIsAccountLoading(false);
+  };
 
-	useEffect(() => {
-		connect();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+  useEffect(() => {
+    connect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-	useEffect(() => {
-		getAccounts();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [provider]);
+  useEffect(() => {
+    getAccounts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [provider]);
 
-	const handleSignup = async () => {
-		if (!provider) return;
+  const handleSignup = async () => {
+    if (!provider) return;
 
-		if (!accounts.length) {
-			return getAccounts();
-		}
+    if (!accounts.length) {
+      return getAccounts();
+    }
 
-		setError('');
+    setError('');
 
-		let signMessage: any = '';
+    let signMessage: any = '';
 
-		try {
-			setLoading(true);
-			const { data, error } = await nextApiClientFetch<ChallengeMessage>(
-				'api/v1/auth/actions/addressSignupStart',
-				{ address }
-			);
-			if (error || !data) {
-				setError(error || 'Something went wrong');
-				setLoading(false);
-				return;
-			}
+    try {
+      setLoading(true);
+      const { data, error } = await nextApiClientFetch<ChallengeMessage>(
+        'api/v1/auth/actions/addressSignupStart',
+        { address },
+      );
+      if (error || !data) {
+        setError(error || 'Something went wrong');
+        setLoading(false);
+        return;
+      }
 
-			signMessage = data?.signMessage;
-			if (!signMessage) {
-				setError('Challenge message not found');
-				setLoading(false);
-				return;
-			}
-		} catch (error) {
-			setError(error);
-			return;
-		}
+      signMessage = data?.signMessage;
+      if (!signMessage) {
+        setError('Challenge message not found');
+        setLoading(false);
+        return;
+      }
+    } catch (error) {
+      setError(error);
+      return;
+    }
 
-		const msg = stringToHex(signMessage);
-		const from = address;
+    const msg = stringToHex(signMessage);
+    const from = address;
 
-		const params = [msg, from];
-		const method = 'personal_sign';
+    const params = [msg, from];
+    const method = 'personal_sign';
 
-		const tx = {
-			method,
-			params
-		};
+    const tx = {
+      method,
+      params,
+    };
 
-		provider.wc
-			.sendCustomRequest(tx)
-			.then(async (result) => {
-				try {
-					const { data: confirmData, error: confirmError } =
+    provider.wc
+      .sendCustomRequest(tx)
+      .then(async (result) => {
+        try {
+          const { data: confirmData, error: confirmError } =
             await nextApiClientFetch<TokenType>(
-            	'api/v1/auth/actions/addressSignupConfirm',
-            	{
-            		address,
-            		signature: result,
-            		wallet: Wallet.WALLETCONNECT
-            	}
+              'api/v1/auth/actions/addressSignupConfirm',
+              {
+                address,
+                signature: result,
+                wallet: Wallet.WALLETCONNECT,
+              },
             );
 
-					if (confirmData?.token) {
-						setWalletConnectProvider(provider);
-						currentUser.loginWallet = Wallet.WALLETCONNECT;
-						currentUser.loginAddress = address;
-						currentUser.delegationDashboardAddress = address;
-						localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
-						localStorage.setItem('delegationDashboardAddress', address);
-						localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
-						handleTokenChange(confirmData.token, currentUser);
+          if (confirmData?.token) {
+            setWalletConnectProvider(provider);
+            currentUser.loginWallet = Wallet.WALLETCONNECT;
+            currentUser.loginAddress = address;
+            currentUser.delegationDashboardAddress = address;
+            localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
+            localStorage.setItem('delegationDashboardAddress', address);
+            localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
+            handleTokenChange(confirmData.token, currentUser);
 
-						setModal({
-							content:
+            setModal({
+              content:
                 'Add an email in settings if you want to be able to recover your account!',
-							title: 'Add optional email'
-						});
-						if (isModal) {
-							setSignupOpen && setSignupOpen(false);
-							return;
-						}
-						router.back();
-					} else {
-						setError(confirmError || 'WalletConnect signup failed');
-					}
-				} catch (error) {
-					setError(error);
-				}
-			})
-			.catch((error) => {
-				// Error returned when rejected
-				setError(error);
-				return;
-			});
-	};
+              title: 'Add optional email',
+            });
+            if (isModal) {
+              setSignupOpen && setSignupOpen(false);
+              return;
+            }
+            router.back();
+          } else {
+            setError(confirmError || 'WalletConnect signup failed');
+          }
+        } catch (error) {
+          setError(error);
+        }
+      })
+      .catch((error) => {
+        // Error returned when rejected
+        setError(error);
+        return;
+      });
+  };
 
-	const onAccountChange = (address: string) => {
-		setAddress(address);
-	};
+  const onAccountChange = (address: string) => {
+    setAddress(address);
+  };
 
-	return (
-		<div className={className}>
-			<h3>Sign-up with WalletConnect</h3>
-			{accountsNotFound ? (
-				<div className="card">
-					<div className="text-muted">
+  return (
+    <div className={className}>
+      <h3>Sign-up with WalletConnect</h3>
+      {accountsNotFound ? (
+        <div className="card">
+          <div className="text-muted">
             You need at least one account via WalletConnect to login.
-					</div>
-					<div className="text-muted">
+          </div>
+          <div className="text-muted">
             Please reload this page after adding accounts.
-					</div>
-				</div>
-			) : null}
-			{isAccountLoading ? (
-				<div className="loader-cont">
-					<Loader text={'Requesting accounts'} />
-				</div>
-			) : (
-				accounts.length > 0 && (
-					<>
-						<div>
-							<AccountSelectionForm
-								title="Choose linked account"
-								accounts={accounts}
-								address={address}
-								onAccountChange={onAccountChange}
-							/>
-						</div>
+          </div>
+        </div>
+      ) : null}
+      {isAccountLoading ? (
+        <div className="loader-cont">
+          <Loader text={'Requesting accounts'} />
+        </div>
+      ) : (
+        accounts.length > 0 && (
+          <>
+            <div>
+              <AccountSelectionForm
+                title="Choose linked account"
+                accounts={accounts}
+                address={address}
+                onAccountChange={onAccountChange}
+              />
+            </div>
 
-						<div>
-							<label className="checkbox-label">
-								<input
-									className={error ? 'error' : ''}
-									name="termsandconditions"
-									value="yes"
-									type="checkbox"
-								/>
+            <div>
+              <label className="checkbox-label">
+                <input
+                  className={error ? 'error' : ''}
+                  name="termsandconditions"
+                  value="yes"
+                  type="checkbox"
+                />
                 I have read and agree to the terms of the{' '}
-								<Link href="/terms-and-conditions">
+                <Link href="/terms-and-conditions">
                   Polkassembly end user agreement
-								</Link>
+                </Link>
                 .
-							</label>
-							{error && (
-								<div className={'errorText'}>
+              </label>
+              {error && (
+                <div className={'errorText'}>
                   Please agree to the terms of the Polkassembly end user
                   agreement.
-								</div>
-							)}
-						</div>
-						<div className="text-muted">
+                </div>
+              )}
+            </div>
+            <div className="text-muted">
               To see how we use your personal data please see our{' '}
-							<Link href="/privacy">privacy notice</Link>.
-						</div>
-						<div className={'mainButtonContainer'}>
-							<Button disabled={loading} onClick={handleSignup}>
+              <Link href="/privacy">privacy notice</Link>.
+            </div>
+            <div className={'mainButtonContainer'}>
+              <Button disabled={loading} onClick={handleSignup}>
                 Sign-up
-							</Button>
-						</div>
-					</>
-				)
-			)}
-			<div className="my-2">{error && <FilteredError text={error} />}</div>
-			<Divider plain>Or</Divider>
-			<div className={'mainButtonContainer'}>
-				<Button disabled={loading} onClick={() => setMethod('web2')}>
+              </Button>
+            </div>
+          </>
+        )
+      )}
+      <div className="my-2">{error && <FilteredError text={error} />}</div>
+      <Divider plain>Or</Divider>
+      <div className={'mainButtonContainer'}>
+        <Button disabled={loading} onClick={() => setMethod('web2')}>
           Sign-up with username
-				</Button>
-			</div>
-			<Divider plain>Or</Divider>
-			<div className={'mainButtonContainer'}>
-				<Button disabled={loading} onClick={() => setMethod('polkadotjs')}>
+        </Button>
+      </div>
+      <Divider plain>Or</Divider>
+      <div className={'mainButtonContainer'}>
+        <Button disabled={loading} onClick={() => setMethod('polkadotjs')}>
           Sign-up with polkadot.js
-				</Button>
-			</div>
-		</div>
-	);
+        </Button>
+      </div>
+    </div>
+  );
 };
 
 export default styled(WalletConnectSignup)`

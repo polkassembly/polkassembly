@@ -5,13 +5,13 @@
 import BN from 'bn.js';
 
 interface Props {
-  address: string;
-  api: any;
-  apiReady: any;
-  setBalance: (pre: string) => void;
-  setLockBalance?: (pre: string) => void;
-  setTransferableBalance?: (pre: string) => void;
-  network: string;
+	address: string;
+	api: any;
+	apiReady: any;
+	setBalance: (pre: string) => void;
+	setLockBalance?: (pre: string) => void;
+	setTransferableBalance?: (pre: string) => void;
+	network: string;
 }
 
 const userProfileBalances = ({
@@ -37,13 +37,13 @@ const userProfileBalances = ({
 			.account(address)
 			.then((result: any) => {
 				const locked =
-          result.toHuman().data?.V0?.lock?.toString().replaceAll(',', '') ||
-          '0';
+					result.toHuman().data?.V0?.lock?.toString().replaceAll(',', '') ||
+					'0';
 				const positive =
-          result
-          	.toHuman()
-          	.data?.V0?.balance?.[0]?.[1]?.Positive?.toString()
-          	.replaceAll(',', '') || '0';
+					result
+						.toHuman()
+						.data?.V0?.balance?.[0]?.[1]?.Positive?.toString()
+						.replaceAll(',', '') || '0';
 				if (new BN(positive).cmp(new BN(locked))) {
 					setBalance(new BN(positive).sub(new BN(locked)).toString() || '0');
 					setLockBalance && setLockBalance(locked);
@@ -58,16 +58,16 @@ const userProfileBalances = ({
 			.then((result: any) => {
 				if (
 					result.data.free &&
-          result.data?.free?.toBigInt() >= result.data?.frozen?.toBigInt()
+					result.data?.free?.toBigInt() >= result.data?.frozen?.toBigInt()
 				) {
 					setTransferableBalance &&
-            setTransferableBalance(
-            	(
-            		result.data?.free?.toBigInt() - result.data?.frozen?.toBigInt()
-            	).toString() || '0'
-            );
+						setTransferableBalance(
+							(
+								result.data?.free?.toBigInt() - result.data?.frozen?.toBigInt()
+							).toString() || '0'
+						);
 					setLockBalance &&
-            setLockBalance(result.data?.frozen?.toBigInt().toString());
+						setLockBalance(result.data?.frozen?.toBigInt().toString());
 					setBalance(result.data?.free?.toBigInt().toString());
 				} else {
 					setBalance('0');

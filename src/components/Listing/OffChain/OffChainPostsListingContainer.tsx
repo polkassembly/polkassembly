@@ -25,36 +25,36 @@ interface IOffChainPostsListingContainerProps {
 const OffChainPostsListingContainer: FC<
   IOffChainPostsListingContainerProps
 > = ({ posts, className, count, proposalType }) => {
-	const router = useRouter();
-	const onPaginationChange = (page: number) => {
-		router.push({
-			query: {
-				page
-			}
-		});
-		handlePaginationChange({ limit: LISTING_LIMIT, page });
-	};
+  const router = useRouter();
+  const onPaginationChange = (page: number) => {
+    router.push({
+      query: {
+        page,
+      },
+    });
+    handlePaginationChange({ limit: LISTING_LIMIT, page });
+  };
 
-	return (
-		<>
-			<div className={className}>
-				<OffChainPostsListing proposalType={proposalType} posts={posts} />
-			</div>
-			<div className="flex justify-end mt-6 pb-5">
-				{!!count && count > 0 && count > LIMIT && (
-					<Pagination
-						defaultCurrent={1}
-						pageSize={LIMIT}
-						total={count}
-						showSizeChanger={false}
-						hideOnSinglePage={true}
-						onChange={onPaginationChange}
-						responsive={true}
-					/>
-				)}
-			</div>
-		</>
-	);
+  return (
+    <>
+      <div className={className}>
+        <OffChainPostsListing proposalType={proposalType} posts={posts} />
+      </div>
+      <div className="flex justify-end mt-6 pb-5">
+        {!!count && count > 0 && count > LIMIT && (
+          <Pagination
+            defaultCurrent={1}
+            pageSize={LIMIT}
+            total={count}
+            showSizeChanger={false}
+            hideOnSinglePage={true}
+            onChange={onPaginationChange}
+            responsive={true}
+          />
+        )}
+      </div>
+    </>
+  );
 };
 
 export default OffChainPostsListingContainer;

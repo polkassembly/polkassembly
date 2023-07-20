@@ -27,44 +27,44 @@ interface Props {
 }
 
 const AccountSelectionForm = ({
-	accounts,
-	address,
-	onAccountChange,
-	title,
-	withBalance = false,
-	onBalanceChange,
-	className,
-	isBalanceUpdated,
-	isDisabled,
-	inputClassName,
-	isSwitchButton,
-	setSwitchModalOpen,
-	withoutInfo
+  accounts,
+  address,
+  onAccountChange,
+  title,
+  withBalance = false,
+  onBalanceChange,
+  className,
+  isBalanceUpdated,
+  isDisabled,
+  inputClassName,
+  isSwitchButton,
+  setSwitchModalOpen,
+  withoutInfo,
 }: Props) => (
-	<article className={`w-full flex flex-col ${className}`}>
-		<div className="flex items-center gap-x-2 ml-[-6px]">
-			<h3 className="inner-headings mb-[2px] ml-1.5">{title}</h3>
-			{!withoutInfo && (
-				<HelperTooltip text="You can choose an account from the extension." />
-			)}
-			{address && withBalance && (
-				<Balance
-					address={address}
-					onChange={onBalanceChange}
-					isBalanceUpdated={isBalanceUpdated}
-				/>
-			)}
-		</div>
-		<AddressDropdown
-			isDisabled={isDisabled}
-			accounts={accounts}
-			defaultAddress={address}
-			onAccountChange={onAccountChange}
-			className={inputClassName}
-			isSwitchButton={isSwitchButton}
-			setSwitchModalOpen={setSwitchModalOpen}
-		/>
-	</article>
+  <article className={`w-full flex flex-col ${className}`}>
+    <div className="flex items-center gap-x-2 ml-[-6px]">
+      <h3 className="inner-headings mb-[2px] ml-1.5">{title}</h3>
+      {!withoutInfo && (
+        <HelperTooltip text="You can choose an account from the extension." />
+      )}
+      {address && withBalance && (
+        <Balance
+          address={address}
+          onChange={onBalanceChange}
+          isBalanceUpdated={isBalanceUpdated}
+        />
+      )}
+    </div>
+    <AddressDropdown
+      isDisabled={isDisabled}
+      accounts={accounts}
+      defaultAddress={address}
+      onAccountChange={onAccountChange}
+      className={inputClassName}
+      isSwitchButton={isSwitchButton}
+      setSwitchModalOpen={setSwitchModalOpen}
+    />
+  </article>
 );
 
 export default styled(AccountSelectionForm)`

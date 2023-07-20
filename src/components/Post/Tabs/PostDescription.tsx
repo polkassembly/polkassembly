@@ -17,16 +17,16 @@ import ShareButton from '../ActionsBar/ShareButton';
 import SubscriptionButton from '../ActionsBar/SubscriptionButton/SubscriptionButton';
 
 const CommentsContainer = dynamic(
-	() => import('../Comment/CommentsContainer'),
-	{
-		loading: () => (
-			<div>
-				<Skeleton active />
-				<Skeleton className="mt-12" active />
-			</div>
-		),
-		ssr: false
-	}
+  () => import('../Comment/CommentsContainer'),
+  {
+    loading: () => (
+      <div>
+        <Skeleton active />
+        <Skeleton className="mt-12" active />
+      </div>
+    ),
+    ssr: false,
+  },
 );
 
 interface IPostDescriptionProps {
@@ -41,74 +41,74 @@ interface IPostDescriptionProps {
 }
 
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
-	const {
-		className,
-		canEdit,
-		id,
-		isEditing,
-		toggleEdit,
-		Sidebar,
-		TrackerButtonComp
-	} = props;
-	const {
-		postData: { content, postType, postIndex, title, post_reactions }
-	} = usePostDataContext();
+  const {
+    className,
+    canEdit,
+    id,
+    isEditing,
+    toggleEdit,
+    Sidebar,
+    TrackerButtonComp,
+  } = props;
+  const {
+    postData: { content, postType, postIndex, title, post_reactions },
+  } = usePostDataContext();
 
-	return (
-		<div className={`${className} mt-4`}>
-			{content && <Markdown className="post-content" md={content} />}
+  return (
+    <div className={`${className} mt-4`}>
+      {content && <Markdown className="post-content" md={content} />}
 
-			{/* Actions Bar */}
-			<div
-				id="actions-bar"
-				className={`flex flex-col md:items-center mt-9 ${
-					canEdit && 'flex-col'
-				} md:flex-row mb-8`}
-			>
-				<div className="flex items-center">
-					<PostReactionBar
-						className="reactions"
-						post_reactions={post_reactions}
-					/>
-					{!canEdit && id && !isEditing && (
-						<SubscriptionButton postId={postIndex} proposalType={postType} />
-					)}
-					{canEdit && (
-						<Button
-							className={
-								'text-pink_primary flex items-center border-none shadow-none px-1.5'
-							}
-							onClick={toggleEdit}
-						>
-							<FormOutlined />
+      {/* Actions Bar */}
+      <div
+        id="actions-bar"
+        className={`flex flex-col md:items-center mt-9 ${
+          canEdit && 'flex-col'
+        } md:flex-row mb-8`}
+      >
+        <div className="flex items-center">
+          <PostReactionBar
+            className="reactions"
+            post_reactions={post_reactions}
+          />
+          {!canEdit && id && !isEditing && (
+            <SubscriptionButton postId={postIndex} proposalType={postType} />
+          )}
+          {canEdit && (
+            <Button
+              className={
+                'text-pink_primary flex items-center border-none shadow-none px-1.5'
+              }
+              onClick={toggleEdit}
+            >
+              <FormOutlined />
               Edit
-						</Button>
-					)}
-				</div>
-				<div className="flex items-center">
-					{id && !isEditing && (
-						<ReportButton
-							proposalType={postType}
-							type="post"
-							postId={`${postIndex}`}
-						/>
-					)}
-					{canEdit && !isEditing && (
-						<CreateOptionPoll proposalType={postType} postId={postIndex} />
-					)}
-					{TrackerButtonComp}
-					<ShareButton title={title} />
-				</div>
-			</div>
+            </Button>
+          )}
+        </div>
+        <div className="flex items-center">
+          {id && !isEditing && (
+            <ReportButton
+              proposalType={postType}
+              type="post"
+              postId={`${postIndex}`}
+            />
+          )}
+          {canEdit && !isEditing && (
+            <CreateOptionPoll proposalType={postType} postId={postIndex} />
+          )}
+          {TrackerButtonComp}
+          <ShareButton title={title} />
+        </div>
+      </div>
 
-			{!isEditing && (
-				<div className="flex xl:hidden mb-8 mx-2">
-					<Sidebar />
-				</div>
-			)}
-			<CommentsContainer id={id} />
-		</div>
-	);
+      {!isEditing && (
+        <div className="flex xl:hidden mb-8 mx-2">
+          <Sidebar />
+        </div>
+      )}
+      <CommentsContainer id={id} />
+    </div>
+  );
 };
 
 export default PostDescription;

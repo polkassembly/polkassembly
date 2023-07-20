@@ -11,9 +11,9 @@ interface Props {
 }
 
 const ErrorAlert = ({ className, errorMsg }: Props) => {
-	return (
-		<Alert message={cleanError(errorMsg)} type="error" className={className} />
-	);
+  return (
+    <Alert message={cleanError(errorMsg)} type="error" className={className} />
+  );
 };
 
 export default ErrorAlert;

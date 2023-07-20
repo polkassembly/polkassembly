@@ -16,11 +16,11 @@ export const getContentSummary = async (
 	if (post) {
 		if (
 			!isExternalApiCall &&
-      !post.summary &&
-      post.content &&
-      !(post.content || '').includes(
-      	'If you own this account, login and tell us more about your proposal.'
-      )
+			!post.summary &&
+			post.content &&
+			!(post.content || '').includes(
+				'If you own this account, login and tell us more about your proposal.'
+			)
 		) {
 			const res = await fetch('https://api.openai.com/v1/chat/completions', {
 				body: JSON.stringify({
@@ -50,23 +50,23 @@ export const getContentSummary = async (
 			const data = await res.json();
 			if (
 				data &&
-        data.choices &&
-        Array.isArray(data.choices) &&
-        data.choices.length > 0
+				data.choices &&
+				Array.isArray(data.choices) &&
+				data.choices.length > 0
 			) {
 				const summary = data.choices[0]?.message?.content;
 				post.summary = summary;
 				const postRef = postsByTypeRef(
 					network,
-          getFirestoreProposalType(post.type || '') as ProposalType
+					getFirestoreProposalType(post.type || '') as ProposalType
 				).doc(String(post.type === 'Tips' ? post.hash : post.post_id));
 				if (postRef && summary) {
 					postRef.get().then((doc) => {
 						if (doc.exists) {
 							postRef
 								.set({ summary: summary }, { merge: true })
-								.then(() => {})
-								.catch(() => {});
+								.then(() => { })
+								.catch(() => { });
 						}
 					});
 				}

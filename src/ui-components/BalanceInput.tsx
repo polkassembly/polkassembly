@@ -34,107 +34,107 @@ interface Props {
 }
 
 const BalanceInput = ({
-	className,
-	label = '',
-	onChange,
-	placeholder = '',
-	size,
-	address,
-	withBalance = false,
-	onAccountBalanceChange,
-	balance,
-	inputClassName,
-	noRules,
-	formItemName = 'balance'
+  className,
+  label = '',
+  onChange,
+  placeholder = '',
+  size,
+  address,
+  withBalance = false,
+  onAccountBalanceChange,
+  balance,
+  inputClassName,
+  noRules,
+  formItemName = 'balance',
 }: Props) => {
-	const { network } = useContext(NetworkContext);
-	const unit = `${chainProperties[network].tokenSymbol}`;
-	const onBalanceChange = (value: string | null): void => {
-		const [balance, isValid] = inputToBn(`${value}`, network, false);
-		if (isValid) {
-			onChange(balance);
-		} else {
-			onChange(ZERO_BN);
-		}
-	};
+  const { network } = useContext(NetworkContext);
+  const unit = `${chainProperties[network].tokenSymbol}`;
+  const onBalanceChange = (value: string | null): void => {
+    const [balance, isValid] = inputToBn(`${value}`, network, false);
+    if (isValid) {
+      onChange(balance);
+    } else {
+      onChange(ZERO_BN);
+    }
+  };
 
-	useEffect(() => {
-		if (!network) return;
-		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol
-		});
+  useEffect(() => {
+    if (!network) return;
+    formatBalance.setDefaults({
+      decimals: chainProperties[network].tokenDecimals,
+      unit: chainProperties[network].tokenSymbol,
+    });
 
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-	return (
-		<div className={`${className} w-full flex flex-col balance-input`}>
-			{(label || (address && withBalance)) && (
-				<label className="mb-[2px] inner-headings">
-					{label}
-					{address && withBalance && (
-						<span>
-							<Balance address={address} onChange={onAccountBalanceChange} />
-						</span>
-					)}
-				</label>
-			)}
-			<Form.Item
-				name={formItemName}
-				initialValue={
-					balance ? Number(formatedBalance(balance.toString(), unit)) : ''
-				}
-				rules={
-					noRules
-						? []
-						: [
-							{
-								message: 'Lock Balance is required.',
-								required: true
-							},
-							{
-								message: 'Lock Balance must be greater than 0.',
-								validator(rule, value, callback) {
-									if (callback && value.length && Number(value) <= 0) {
-										callback(rule?.message?.toString());
-									} else {
-										callback();
-									}
-								}
-							},
-							{
-								message: 'Invalid Balance',
-								validator(rule, value, callback) {
-									if (
-										callback &&
+  return (
+    <div className={`${className} w-full flex flex-col balance-input`}>
+      {(label || (address && withBalance)) && (
+        <label className="mb-[2px] inner-headings">
+          {label}
+          {address && withBalance && (
+            <span>
+              <Balance address={address} onChange={onAccountBalanceChange} />
+            </span>
+          )}
+        </label>
+      )}
+      <Form.Item
+        name={formItemName}
+        initialValue={
+          balance ? Number(formatedBalance(balance.toString(), unit)) : ''
+        }
+        rules={
+          noRules
+            ? []
+            : [
+                {
+                  message: 'Lock Balance is required.',
+                  required: true,
+                },
+                {
+                  message: 'Lock Balance must be greater than 0.',
+                  validator(rule, value, callback) {
+                    if (callback && value.length && Number(value) <= 0) {
+                      callback(rule?.message?.toString());
+                    } else {
+                      callback();
+                    }
+                  },
+                },
+                {
+                  message: 'Invalid Balance',
+                  validator(rule, value, callback) {
+                    if (
+                      callback &&
                       (isNaN(Number(value)) ||
                         (Number(value) !== 0 &&
                           value?.split('.')?.[1]?.length &&
                           chainProperties[network]?.tokenDecimals <
                             value?.split('.')?.[1].length))
-									) {
-										callback(rule?.message?.toString());
-									} else {
-										callback();
-									}
-								}
-							}
-						]
-				}
-			>
-				<Input
-					addonAfter={chainProperties[network]?.tokenSymbol}
-					name={formItemName || 'balance'}
-					className={`w-full h-[39px] border-[1px] ${inputClassName} text-sm mt-0 suffixColor hover:border-pink_primary balance-input`}
-					onChange={(e) => onBalanceChange(e.target.value)}
-					placeholder={placeholder}
-					value={formatedBalance(String(balance || ZERO_BN), unit)}
-					size={size || 'middle'}
-				/>
-			</Form.Item>
-		</div>
-	);
+                    ) {
+                      callback(rule?.message?.toString());
+                    } else {
+                      callback();
+                    }
+                  },
+                },
+              ]
+        }
+      >
+        <Input
+          addonAfter={chainProperties[network]?.tokenSymbol}
+          name={formItemName || 'balance'}
+          className={`w-full h-[39px] border-[1px] ${inputClassName} text-sm mt-0 suffixColor hover:border-pink_primary balance-input`}
+          onChange={(e) => onBalanceChange(e.target.value)}
+          placeholder={placeholder}
+          value={formatedBalance(String(balance || ZERO_BN), unit)}
+          size={size || 'middle'}
+        />
+      </Form.Item>
+    </div>
+  );
 };
 export default styled(BalanceInput)`
   .suffixColor .ant-input-group .ant-input-group-addon {

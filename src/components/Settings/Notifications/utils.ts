@@ -7,9 +7,9 @@ export const FIREBASE_FUNCTIONS_URL =
 const NOTIFICATION_ENGINE_API_KEY = '47c058d8-2ddc-421e-aeb5-e2aa99001949';
 
 export const firebaseFunctionsHeader = (network: string) => ({
-	Accept: 'application/json',
-	'Content-Type': 'application/json',
-	'x-api-key': NOTIFICATION_ENGINE_API_KEY,
-	'x-network': network,
-	'x-source': 'polkassembly'
+  Accept: 'application/json',
+  'Content-Type': 'application/json',
+  'x-api-key': NOTIFICATION_ENGINE_API_KEY,
+  'x-network': network,
+  'x-source': 'polkassembly',
 });

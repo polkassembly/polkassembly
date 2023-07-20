@@ -24,76 +24,76 @@ interface ILatestActivityProps {
 }
 type TCapitalizeFn = (str: string, lower?: boolean) => string;
 const capitalize: TCapitalizeFn = (str, lower = false) =>
-	(lower ? str.toLowerCase() : str).replace(/(?:^|\s|["'([{])+\S/g, (match) =>
-		match.toUpperCase()
-	);
+  (lower ? str.toLowerCase() : str).replace(/(?:^|\s|["'([{])+\S/g, (match) =>
+    match.toUpperCase(),
+  );
 
 const getLabel = (key: 'all' | ProposalType): string => {
-	if (key === ProposalType.COUNCIL_MOTIONS) {
-		return 'Motions';
-	} else if (key === ProposalType.DEMOCRACY_PROPOSALS) {
-		return 'Proposals';
-	} else if (key === ProposalType.TREASURY_PROPOSALS) {
-		return 'Treasury Proposals';
-	}
-	return capitalize(key);
+  if (key === ProposalType.COUNCIL_MOTIONS) {
+    return 'Motions';
+  } else if (key === ProposalType.DEMOCRACY_PROPOSALS) {
+    return 'Proposals';
+  } else if (key === ProposalType.TREASURY_PROPOSALS) {
+    return 'Treasury Proposals';
+  }
+  return capitalize(key);
 };
 
 const LatestActivity: FC<ILatestActivityProps> = ({
-	className,
-	latestPosts
+  className,
+  latestPosts,
 }) => {
-	const [currentTab, setCurrentTab] = useState('all');
-	const tabItems = (
+  const [currentTab, setCurrentTab] = useState('all');
+  const tabItems = (
     Object.entries(latestPosts) as [
       key: 'all' | ProposalType,
       value: IApiResponse<ILatestActivityPostsListingResponse>,
     ][]
-	).map(([key, value]) => {
-		const label = getLabel(key);
-		return {
-			children: (
-				<PostsTable
-					count={value?.data?.count || 0}
-					posts={value?.data?.posts}
-					error={value?.error || ''}
-					columns={getColumns(key)}
-					type={key}
-				/>
-			),
-			key:
+  ).map(([key, value]) => {
+    const label = getLabel(key);
+    return {
+      children: (
+        <PostsTable
+          count={value?.data?.count || 0}
+          posts={value?.data?.posts}
+          error={value?.error || ''}
+          columns={getColumns(key)}
+          type={key}
+        />
+      ),
+      key:
         key === ProposalType.REFERENDUMS
-        	? 'referenda'
-        	: label.toLowerCase().split(' ').join('-'),
-			label: <CountBadgePill label={label} count={value?.data?.count} />
-		};
-	});
+          ? 'referenda'
+          : label.toLowerCase().split(' ').join('-'),
+      label: <CountBadgePill label={label} count={value?.data?.count} />,
+    };
+  });
 
-	return (
-		<div
-			className={`${className} bg-white drop-shadow-md p-0 lg:p-6 rounded-xxl`}
-		>
-			<div className="flex justify-between items-center pr-4 pl-1">
-				<h2 className="text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 sm:mt-0">
+  return (
+    <div
+      className={`${className} bg-white drop-shadow-md p-0 lg:p-6 rounded-xxl`}
+    >
+      <div className="flex justify-between items-center pr-4 pl-1">
+        <h2 className="text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 sm:mt-0">
           Latest Activity
-				</h2>
-				{currentTab !== 'all' && (
-					<Link
-						className="text-bodyBlue font-medium hover:text-pink_primary px-2 rounded-lg"
-						href={`/${currentTab}`}
-					>
+        </h2>
+        {currentTab !== 'all' && (
+          <Link
+            className="text-bodyBlue font-medium hover:text-pink_primary px-2 rounded-lg"
+            href={`/${currentTab}`}
+          >
             View all
-					</Link>
-				)}
-			</div>
-			<Tabs
-				className="ant-tabs-tab-bg-white text-bodyBlue text-sm font-medium"
-				type="card"
-				items={tabItems}
-				onChange={(key) => setCurrentTab(key)}
-			/>
-		</div>
-	);
+          </Link>
+        )}
+      </div>
+      <Tabs
+        className="ant-tabs-tab-bg-white text-bodyBlue text-sm font-medium"
+        type="card"
+        items={tabItems}
+        onChange={(key) => setCurrentTab(key)}
+      />
+    </div>
+  );
 };
 
 export default styled(LatestActivity)`

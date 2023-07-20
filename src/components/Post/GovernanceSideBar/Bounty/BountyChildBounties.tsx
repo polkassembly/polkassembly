@@ -20,84 +20,84 @@ interface IBountyChildBountiesProps {
 }
 
 const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
-	const { bountyId } = props;
-	const [currentPage, setCurrentPage] = useState<number>(1);
-	const [bountiesRes, setBountiesRes] = useState<IChildBountiesResponse>();
-	const [loading, setLoading] = useState(true);
+  const { bountyId } = props;
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [bountiesRes, setBountiesRes] = useState<IChildBountiesResponse>();
+  const [loading, setLoading] = useState(true);
 
-	const handlePageChange = (pageNumber: any) => {
-		setCurrentPage(pageNumber);
-	};
-	useEffect(() => {
-		setLoading(true);
-		nextApiClientFetch<IChildBountiesResponse>(
-			`api/v1/child_bounties?page=${currentPage}&listingLimit=${VOTES_LISTING_LIMIT}&postId=${bountyId}`
-		)
-			.then((res) => {
-				const data = res.data;
-				setBountiesRes(data);
-				setLoading(false);
-			})
-			.catch((err) => {
-				setLoading(false);
-				console.log(err);
-			});
-	}, [currentPage, bountyId]);
+  const handlePageChange = (pageNumber: any) => {
+    setCurrentPage(pageNumber);
+  };
+  useEffect(() => {
+    setLoading(true);
+    nextApiClientFetch<IChildBountiesResponse>(
+      `api/v1/child_bounties?page=${currentPage}&listingLimit=${VOTES_LISTING_LIMIT}&postId=${bountyId}`,
+    )
+      .then((res) => {
+        const data = res.data;
+        setBountiesRes(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  }, [currentPage, bountyId]);
 
-	return (
-		<GovSidebarCard className="min-h-[200px]">
-			<Spin indicator={<LoadingOutlined />} spinning={loading}>
-				<h4 className="dashboard-heading mb-6">
-					{bountiesRes?.child_bounties_count} Child Bounties
-				</h4>
-				{bountiesRes && bountiesRes.child_bounties_count > 0 ? (
-					bountiesRes?.child_bounties.map(
-						(childBounty) =>
-							childBounty && (
-								<Link
-									href={`/child_bounty/${childBounty.index}`}
-									key={childBounty.index}
-									className="mb-6"
-								>
-									<div className="my-4 border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-2 md:p-4">
-										<div className="flex justify-between gap-x-4">
-											<div className="w-[70%] break-words p-1">
-												<h5 className="h-[60px] overflow-hidden p-0 text-sm m-auto">
-													{childBounty.description} ||{' '}
-													{`#${childBounty.index} Untitled`}
-												</h5>
-											</div>
-											{childBounty.status && (
-												<StatusTag
-													className="statusTag m-auto"
-													status={childBounty.status}
-												/>
-											)}
-										</div>
-									</div>
-								</Link>
-							)
-					)
-				) : (
-					<PostEmptyState />
-				)}
-				<PaginationContainer className="flex mt-4 justify-end items-center">
-					<Pagination
-						size="small"
-						className="pagination-container"
-						current={currentPage}
-						total={bountiesRes?.child_bounties_count}
-						pageSize={VOTES_LISTING_LIMIT}
-						showSizeChanger={false}
-						responsive={true}
-						hideOnSinglePage={true}
-						onChange={handlePageChange}
-						showPrevNextJumpers={false}
-					/>
-				</PaginationContainer>
-			</Spin>
-		</GovSidebarCard>
-	);
+  return (
+    <GovSidebarCard className="min-h-[200px]">
+      <Spin indicator={<LoadingOutlined />} spinning={loading}>
+        <h4 className="dashboard-heading mb-6">
+          {bountiesRes?.child_bounties_count} Child Bounties
+        </h4>
+        {bountiesRes && bountiesRes.child_bounties_count > 0 ? (
+          bountiesRes?.child_bounties.map(
+            (childBounty) =>
+              childBounty && (
+                <Link
+                  href={`/child_bounty/${childBounty.index}`}
+                  key={childBounty.index}
+                  className="mb-6"
+                >
+                  <div className="my-4 border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-2 md:p-4">
+                    <div className="flex justify-between gap-x-4">
+                      <div className="w-[70%] break-words p-1">
+                        <h5 className="h-[60px] overflow-hidden p-0 text-sm m-auto">
+                          {childBounty.description} ||{' '}
+                          {`#${childBounty.index} Untitled`}
+                        </h5>
+                      </div>
+                      {childBounty.status && (
+                        <StatusTag
+                          className="statusTag m-auto"
+                          status={childBounty.status}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ),
+          )
+        ) : (
+          <PostEmptyState />
+        )}
+        <PaginationContainer className="flex mt-4 justify-end items-center">
+          <Pagination
+            size="small"
+            className="pagination-container"
+            current={currentPage}
+            total={bountiesRes?.child_bounties_count}
+            pageSize={VOTES_LISTING_LIMIT}
+            showSizeChanger={false}
+            responsive={true}
+            hideOnSinglePage={true}
+            onChange={handlePageChange}
+            showPrevNextJumpers={false}
+          />
+        </PaginationContainer>
+      </Spin>
+    </GovSidebarCard>
+  );
 };
 
 const PaginationContainer = styled.div`

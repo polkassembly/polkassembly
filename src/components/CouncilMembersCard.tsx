@@ -13,18 +13,18 @@ interface Props {
 }
 
 const CouncilMembersCard = function ({ className, data, prime }: Props) {
-	return (
-		<div
-			className={`${className} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-3 md:p-4`}
-		>
-			<div className="flex justify-between">
-				<div className="content">
-					<Address address={data} />
-				</div>
-				{data === prime && <StatusTag status={'Prime'} />}
-			</div>
-		</div>
-	);
+  return (
+    <div
+      className={`${className} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 rounded-md p-3 md:p-4`}
+    >
+      <div className="flex justify-between">
+        <div className="content">
+          <Address address={data} />
+        </div>
+        {data === prime && <StatusTag status={'Prime'} />}
+      </div>
+    </div>
+  );
 };
 
 export default CouncilMembersCard;

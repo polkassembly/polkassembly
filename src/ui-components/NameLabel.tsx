@@ -18,44 +18,44 @@ interface Props {
 }
 
 const NameLabel = ({
-	className,
-	defaultAddress,
-	username,
-	disableIdenticon = false,
-	textClassName,
-	clickable = true,
-	truncateUsername
+  className,
+  defaultAddress,
+  username,
+  disableIdenticon = false,
+  textClassName,
+  clickable = true,
+  truncateUsername,
 }: Props) => {
-	const router = useRouter();
-	return (
-		<div className={`${className}`}>
-			{!defaultAddress ? (
-				<span
-					className={`username text-[#243a57] font-semibold mr-1.5 ${
-						clickable ? 'cursor-pointer' : 'cursor-not-allowed'
-					}`}
-					onClick={() => {
-						if (clickable) {
-							router.push(`/user/${username}`);
-						}
-					}}
-				>
-					{' '}
-					{username}{' '}
-				</span>
-			) : (
-				<Address
-					address={defaultAddress}
-					className="text-sm"
-					textClassName={textClassName}
-					displayInline={true}
-					disableIdenticon={disableIdenticon}
-					clickable={clickable}
-					truncateUsername={truncateUsername}
-				/>
-			)}
-		</div>
-	);
+  const router = useRouter();
+  return (
+    <div className={`${className}`}>
+      {!defaultAddress ? (
+        <span
+          className={`username text-[#243a57] font-semibold mr-1.5 ${
+            clickable ? 'cursor-pointer' : 'cursor-not-allowed'
+          }`}
+          onClick={() => {
+            if (clickable) {
+              router.push(`/user/${username}`);
+            }
+          }}
+        >
+          {' '}
+          {username}{' '}
+        </span>
+      ) : (
+        <Address
+          address={defaultAddress}
+          className="text-sm"
+          textClassName={textClassName}
+          displayInline={true}
+          disableIdenticon={disableIdenticon}
+          clickable={clickable}
+          truncateUsername={truncateUsername}
+        />
+      )}
+    </div>
+  );
 };
 
 export default NameLabel;

@@ -25,284 +25,284 @@ interface Props {
 }
 
 const statusOptions: MenuProps['items'] = [
-	{ key: 'overdue', label: 'Overdue' },
-	{ key: 'completed', label: 'Completed' },
-	{ key: 'in_progress', label: 'In Progress' }
+  { key: 'overdue', label: 'Overdue' },
+  { key: 'completed', label: 'Completed' },
+  { key: 'in_progress', label: 'In Progress' },
 ];
 
 const EditProposalStatus = ({
-	canEdit,
-	className,
-	proposalId,
-	startTime
+  canEdit,
+  className,
+  proposalId,
+  startTime,
 }: Props) => {
-	const [deadlineDate, setDeadlineDate] = useState<Date | null>(null);
-	const [status, setStatus] = useState<string>('in_progress');
-	const [loading, setLoading] = useState<boolean>(false);
-	const [errorsFound, setErrorsFound] = useState<string[]>([]);
-	const [isUpdate, setIsUpdate] = useState<boolean>(false);
-	const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [deadlineDate, setDeadlineDate] = useState<Date | null>(null);
+  const [status, setStatus] = useState<string>('in_progress');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [errorsFound, setErrorsFound] = useState<string[]>([]);
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-	const getProposalStatus = useCallback(async () => {
-		const { data, error } = await nextApiClientFetch<NetworkEvent>(
-			'api/v1/events/getEventByPostId',
-			{
-				post_id: Number(proposalId)
-			}
-		);
+  const getProposalStatus = useCallback(async () => {
+    const { data, error } = await nextApiClientFetch<NetworkEvent>(
+      'api/v1/events/getEventByPostId',
+      {
+        post_id: Number(proposalId),
+      },
+    );
 
-		if (error) {
-			console.log('error fetching proposal status', error);
-			setStatus('Not found');
-		}
+    if (error) {
+      console.log('error fetching proposal status', error);
+      setStatus('Not found');
+    }
 
-		if (data) {
-			setStatus(data.status || 'Not Set');
+    if (data) {
+      setStatus(data.status || 'Not Set');
 
-			if (data.end_time) {
-				setIsUpdate(true);
-				setDeadlineDate((data.end_time as any)?.toDate() || null);
-			}
-		}
-	}, [proposalId]);
+      if (data.end_time) {
+        setIsUpdate(true);
+        setDeadlineDate((data.end_time as any)?.toDate() || null);
+      }
+    }
+  }, [proposalId]);
 
-	useEffect(() => {
-		getProposalStatus();
-	}, [getProposalStatus]);
+  useEffect(() => {
+    getProposalStatus();
+  }, [getProposalStatus]);
 
-	const onStatusChange: MenuProps['onClick'] = ({ key }) => {
-		const status = key as string;
-		setStatus(status);
-	};
+  const onStatusChange: MenuProps['onClick'] = ({ key }) => {
+    const status = key as string;
+    setStatus(status);
+  };
 
-	const handleSave = async () => {
-		if (!canEdit) return;
+  const handleSave = async () => {
+    if (!canEdit) return;
 
-		setLoading(true);
+    setLoading(true);
 
-		const errorsFound: string[] = [];
+    const errorsFound: string[] = [];
 
-		if (Object.prototype.toString.call(deadlineDate) !== '[object Date]') {
-			errorsFound.push('deadlineDate');
-		}
+    if (Object.prototype.toString.call(deadlineDate) !== '[object Date]') {
+      errorsFound.push('deadlineDate');
+    }
 
-		if (!status) {
-			errorsFound.push('status');
-		}
+    if (!status) {
+      errorsFound.push('status');
+    }
 
-		setErrorsFound(errorsFound);
+    setErrorsFound(errorsFound);
 
-		if (errorsFound.length > 0) {
-			setLoading(false);
-			return;
-		}
+    if (errorsFound.length > 0) {
+      setLoading(false);
+      return;
+    }
 
-		if (!isUpdate) {
-			const { data, error } = await nextApiClientFetch<ChallengeMessage>(
-				'api/v1/auth/actions/createProposalTracker',
-				{
-					deadline: dayjs(deadlineDate).toDate(),
-					onchain_proposal_id: Number(proposalId),
-					start_time: startTime,
-					status
-				}
-			);
+    if (!isUpdate) {
+      const { data, error } = await nextApiClientFetch<ChallengeMessage>(
+        'api/v1/auth/actions/createProposalTracker',
+        {
+          deadline: dayjs(deadlineDate).toDate(),
+          onchain_proposal_id: Number(proposalId),
+          start_time: startTime,
+          status,
+        },
+      );
 
-			if (error) {
-				queueNotification({
-					header: 'Error!',
-					message: 'Proposal status was not saved',
-					status: NotificationStatus.ERROR
-				});
-				console.error('Error saving status : ', error);
-			}
+      if (error) {
+        queueNotification({
+          header: 'Error!',
+          message: 'Proposal status was not saved',
+          status: NotificationStatus.ERROR,
+        });
+        console.error('Error saving status : ', error);
+      }
 
-			if (data && data.message) {
-				queueNotification({
-					header: 'Success!',
-					message: 'Proposal status was saved',
-					status: NotificationStatus.SUCCESS
-				});
-			}
-		} else {
-			const { data, error } = await nextApiClientFetch<ChallengeMessage>(
-				'api/v1/auth/actions/updateProposalTracker',
-				{
-					id: Number(proposalId),
-					status
-				}
-			);
+      if (data && data.message) {
+        queueNotification({
+          header: 'Success!',
+          message: 'Proposal status was saved',
+          status: NotificationStatus.SUCCESS,
+        });
+      }
+    } else {
+      const { data, error } = await nextApiClientFetch<ChallengeMessage>(
+        'api/v1/auth/actions/updateProposalTracker',
+        {
+          id: Number(proposalId),
+          status,
+        },
+      );
 
-			if (error) {
-				queueNotification({
-					header: 'Error!',
-					message: 'Proposal status was not updated',
-					status: NotificationStatus.ERROR
-				});
-				console.error('Error updating status : ', error);
-			}
+      if (error) {
+        queueNotification({
+          header: 'Error!',
+          message: 'Proposal status was not updated',
+          status: NotificationStatus.ERROR,
+        });
+        console.error('Error updating status : ', error);
+      }
 
-			if (data && data.message) {
-				queueNotification({
-					header: 'Success!',
-					message: 'Proposal status was updated',
-					status: NotificationStatus.SUCCESS
-				});
-			}
-		}
+      if (data && data.message) {
+        queueNotification({
+          header: 'Success!',
+          message: 'Proposal status was updated',
+          status: NotificationStatus.SUCCESS,
+        });
+      }
+    }
 
-		setLoading(false);
-	};
+    setLoading(false);
+  };
 
-	const onChange: DatePickerProps['onChange'] = (dayJSDate) => {
-		const date = dayJSDate || dayjs();
-		setDeadlineDate(date.toDate());
-	};
+  const onChange: DatePickerProps['onChange'] = (dayJSDate) => {
+    const date = dayJSDate || dayjs();
+    setDeadlineDate(date.toDate());
+  };
 
-	return (
-		<>
-			{canEdit && !isUpdate ? (
-				<Button
-					className="bg-pink_primary rounded-md  hover:bg-pink_secondary text-white transition-colors duration-300 w-full h-[60px]"
-					onClick={() => setModalOpen(true)}
-				>
+  return (
+    <>
+      {canEdit && !isUpdate ? (
+        <Button
+          className="bg-pink_primary rounded-md  hover:bg-pink_secondary text-white transition-colors duration-300 w-full h-[60px]"
+          onClick={() => setModalOpen(true)}
+        >
           Set Deadline Date
-				</Button>
-			) : canEdit && isUpdate ? (
-				<div className="w-full h-[60px] bg-white rounded-md drop-shadow-md flex items-center justify-center transition:colors duration:500 edit-icon-wrapper">
-					<div className="text-center text-sidebarBlue font-medium text-[18px]">
-						<>Deadline: {dayjs(deadlineDate).format('MMM Do YY')}</>
-					</div>
-					<EditOutlined
-						className="edit-icon text-white text-lg"
-						onClick={() => setModalOpen(true)}
-					/>
-				</div>
-			) : isUpdate ? (
-				<div className="w-full h-[60px] bg-white rounded-md drop-shadow-md flex items-center justify-center transition:colors duration:500">
-					<div className="text-center text-sidebarBlue font-medium text-[18px]">
-						<>Deadline: {dayjs(deadlineDate).format('MMM Do YY')}</>
-					</div>
-				</div>
-			) : (
-				<div className="w-full h-[60px] bg-white rounded-md drop-shadow-md flex justify-center items-center text-sidebarBlue font-medium text-[18px]">
+        </Button>
+      ) : canEdit && isUpdate ? (
+        <div className="w-full h-[60px] bg-white rounded-md drop-shadow-md flex items-center justify-center transition:colors duration:500 edit-icon-wrapper">
+          <div className="text-center text-sidebarBlue font-medium text-[18px]">
+            <>Deadline: {dayjs(deadlineDate).format('MMM Do YY')}</>
+          </div>
+          <EditOutlined
+            className="edit-icon text-white text-lg"
+            onClick={() => setModalOpen(true)}
+          />
+        </div>
+      ) : isUpdate ? (
+        <div className="w-full h-[60px] bg-white rounded-md drop-shadow-md flex items-center justify-center transition:colors duration:500">
+          <div className="text-center text-sidebarBlue font-medium text-[18px]">
+            <>Deadline: {dayjs(deadlineDate).format('MMM Do YY')}</>
+          </div>
+        </div>
+      ) : (
+        <div className="w-full h-[60px] bg-white rounded-md drop-shadow-md flex justify-center items-center text-sidebarBlue font-medium text-[18px]">
           Deadline: Not Set
-				</div>
-			)}
+        </div>
+      )}
 
-			<Modal
-				open={modalOpen}
-				className={className}
-				title={'Set Deadline Date'}
-				centered
-				footer={[
-					<Button key="close" onClick={() => setModalOpen(false)}>
+      <Modal
+        open={modalOpen}
+        className={className}
+        title={'Set Deadline Date'}
+        centered
+        footer={[
+          <Button key="close" onClick={() => setModalOpen(false)}>
             Close
-					</Button>,
-					<Button
-						key="submit"
-						className="bg-pink_primary rounded-md  hover:bg-pink_secondary text-white transition-colors duration-300"
-						onClick={handleSave}
-						loading={loading}
-						disabled={loading}
-					>
+          </Button>,
+          <Button
+            key="submit"
+            className="bg-pink_primary rounded-md  hover:bg-pink_secondary text-white transition-colors duration-300"
+            onClick={handleSave}
+            loading={loading}
+            disabled={loading}
+          >
             Save
-					</Button>
-				]}
-				onCancel={() => setModalOpen(false)}
-			>
-				<div className=" flex flex-col">
-					{errorsFound.includes('proposalTracker') && (
-						<ErrorAlert errorMsg="Error in updating proposal status, please try again." />
-					)}
+          </Button>,
+        ]}
+        onCancel={() => setModalOpen(false)}
+      >
+        <div className=" flex flex-col">
+          {errorsFound.includes('proposalTracker') && (
+            <ErrorAlert errorMsg="Error in updating proposal status, please try again." />
+          )}
 
-					<Form>
-						<Form.Item className="date-input-form-field">
-							<label className=" flex items-center text-md text-sidebarBlue font-medium">
+          <Form>
+            <Form.Item className="date-input-form-field">
+              <label className=" flex items-center text-md text-sidebarBlue font-medium">
                 Deadline Date
-								<HelperTooltip
-									className="align-middle ml-2"
-									text="This timeline will be used by the community to track the progress of the proposal. The team will be responsible for delivering the proposed items before the deadline."
-								/>
-							</label>
+                <HelperTooltip
+                  className="align-middle ml-2"
+                  text="This timeline will be used by the community to track the progress of the proposal. The team will be responsible for delivering the proposed items before the deadline."
+                />
+              </label>
 
-							{canEdit && !isUpdate ? (
-								<DatePicker
-									className={`date-input ${
-										errorsFound.includes('deadlineDate')
-											? 'deadline-date-error'
-											: ''
-									}`}
-									disabled={loading}
-									onChange={onChange}
-									format="DD-MM-YYYY"
-								/>
-							) : canEdit && isUpdate ? (
-								<DatePicker
-									className={`date-input ${
-										errorsFound.includes('deadlineDate')
-											? 'deadline-date-error'
-											: ''
-									}`}
-									disabled={loading}
-									onChange={onChange}
-									format="DD-MM-YYYY"
-									value={dayjs(deadlineDate, 'DD-MM-YYYY')}
-								/>
-							) : (
-								<span className="deadline-date text-sidebarBlue">
-									{deadlineDate == null
-										? 'Not Set'
-										: dayjs(deadlineDate).format('MMMM Do YYYY')}
-								</span>
-							)}
-						</Form.Item>
+              {canEdit && !isUpdate ? (
+                <DatePicker
+                  className={`date-input ${
+                    errorsFound.includes('deadlineDate')
+                      ? 'deadline-date-error'
+                      : ''
+                  }`}
+                  disabled={loading}
+                  onChange={onChange}
+                  format="DD-MM-YYYY"
+                />
+              ) : canEdit && isUpdate ? (
+                <DatePicker
+                  className={`date-input ${
+                    errorsFound.includes('deadlineDate')
+                      ? 'deadline-date-error'
+                      : ''
+                  }`}
+                  disabled={loading}
+                  onChange={onChange}
+                  format="DD-MM-YYYY"
+                  value={dayjs(deadlineDate, 'DD-MM-YYYY')}
+                />
+              ) : (
+                <span className="deadline-date text-sidebarBlue">
+                  {deadlineDate == null
+                    ? 'Not Set'
+                    : dayjs(deadlineDate).format('MMMM Do YYYY')}
+                </span>
+              )}
+            </Form.Item>
 
-						<Form.Item className="status-input-form-field">
-							<label className=" flex items-center text-md text-sidebarBlue font-medium">
+            <Form.Item className="status-input-form-field">
+              <label className=" flex items-center text-md text-sidebarBlue font-medium">
                 Status
-							</label>
+              </label>
 
-							{canEdit ? (
-							// eslint-disable-next-line sort-keys
-								<>
-									<Dropdown
-										className="status-dropdown"
-										disabled={loading}
-										menu={{ items: statusOptions, onClick: onStatusChange }}
-									>
-										<Space className="cursor-pointer">
-											{status
-												.toString()
-												.split('_')
-												.map(
-													(s: string) => s.charAt(0).toUpperCase() + s.slice(1)
-												)
-												.join(' ')}{' '}
-											<DownOutlined className="align-middle" />
-										</Space>
-									</Dropdown>
-								</>
-							) : (
-								<span className="text-sidebarBlue">
-									{status == 'Not Set'
-										? status
-										: statusOptions
-											.find((o) => o?.key === status)
-											?.key?.toString()
-											.split('_')
-											.map(
-												(s: string) => s.charAt(0).toUpperCase() + s.slice(1)
-											)
-											.join(' ')}
-								</span>
-							)}
-						</Form.Item>
-					</Form>
-				</div>
-			</Modal>
-		</>
-	);
+              {canEdit ? (
+                // eslint-disable-next-line sort-keys
+                <>
+                  <Dropdown
+                    className="status-dropdown"
+                    disabled={loading}
+                    menu={{ items: statusOptions, onClick: onStatusChange }}
+                  >
+                    <Space className="cursor-pointer">
+                      {status
+                        .toString()
+                        .split('_')
+                        .map(
+                          (s: string) => s.charAt(0).toUpperCase() + s.slice(1),
+                        )
+                        .join(' ')}{' '}
+                      <DownOutlined className="align-middle" />
+                    </Space>
+                  </Dropdown>
+                </>
+              ) : (
+                <span className="text-sidebarBlue">
+                  {status == 'Not Set'
+                    ? status
+                    : statusOptions
+                        .find((o) => o?.key === status)
+                        ?.key?.toString()
+                        .split('_')
+                        .map(
+                          (s: string) => s.charAt(0).toUpperCase() + s.slice(1),
+                        )
+                        .join(' ')}
+                </span>
+              )}
+            </Form.Item>
+          </Form>
+        </div>
+      </Modal>
+    </>
+  );
 };
 
 export default styled(EditProposalStatus)`

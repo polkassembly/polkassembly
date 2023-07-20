@@ -15,15 +15,15 @@ interface Props {
 }
 
 const WalletButton = ({ disabled, onClick, icon, className }: Props) => {
-	return (
-		<Button
-			className={`flex items-center py-6 px-5 justify-center rounded-[7px] border-[#F8E3EE]   ${className}`}
-			onClick={onClick}
-			disabled={disabled}
-		>
-			<span className="mt-1.5">{icon}</span>
-		</Button>
-	);
+  return (
+    <Button
+      className={`flex items-center py-6 px-5 justify-center rounded-[7px] border-[#F8E3EE]   ${className}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      <span className="mt-1.5">{icon}</span>
+    </Button>
+  );
 };
 
 export default WalletButton;

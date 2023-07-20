@@ -21,109 +21,109 @@ interface Props {
 }
 
 const ParachainInfoCard = ({ className, network, projects }: Props) => {
-	const polkadotMetrics = {
-		auction: '14th',
-		crowdloans: '5',
-		parachains: '14',
-		projects: projects
-	};
+  const polkadotMetrics = {
+    auction: '14th',
+    crowdloans: '5',
+    parachains: '14',
+    projects: projects,
+  };
 
-	const kusamaMetrics = {
-		auction: '31st',
-		crowdloans: '5',
-		parachains: '29',
-		projects: projects
-	};
+  const kusamaMetrics = {
+    auction: '31st',
+    crowdloans: '5',
+    parachains: '29',
+    projects: projects,
+  };
 
-	const metrics = network == 'polkadot' ? polkadotMetrics : kusamaMetrics;
+  const metrics = network == 'polkadot' ? polkadotMetrics : kusamaMetrics;
 
-	return (
-		<div className={className}>
-			<div className="bg-white drop-shadow-md p-3 lg:p-6 rounded-xxl">
-				<div className="parachain-card-header">
-					<Image
-						src={network == 'polkadot' ? polkadotLogo : kusamaLogo}
-						alt="Chain Logo"
-					/>
-					<span className="network-name">{network}</span>
-				</div>
-				<div className="parachain-card-meta text-bodyBlue opacity-90">
-					{network == 'polkadot' ? '11%' : '31%'} of Total Supply Locked
-					<span className="hidden-sm"> in Parachains and Crowdloans</span>
-				</div>
-				<Divider className="my-3" />
-				<div className="parachain-card-desc">
-					{/* Auction */}
-					<div className="metric-container">
-						<div className="metric-line flex items-center">
-							<Image
-								className="h-[14px] w-auto md:h-auto"
-								src={auctionIcon}
-								alt="Auction Icon"
-							/>
-							<span className="metric-num ml-[7px] font-medium text-xs md:text-base text-bodyBlue">
-								{metrics.auction}
-							</span>
-						</div>
-						<div className="metric-name mt-[8px] text-xs md:text-sm text-lightBlue">
+  return (
+    <div className={className}>
+      <div className="bg-white drop-shadow-md p-3 lg:p-6 rounded-xxl">
+        <div className="parachain-card-header">
+          <Image
+            src={network == 'polkadot' ? polkadotLogo : kusamaLogo}
+            alt="Chain Logo"
+          />
+          <span className="network-name">{network}</span>
+        </div>
+        <div className="parachain-card-meta text-bodyBlue opacity-90">
+          {network == 'polkadot' ? '11%' : '31%'} of Total Supply Locked
+          <span className="hidden-sm"> in Parachains and Crowdloans</span>
+        </div>
+        <Divider className="my-3" />
+        <div className="parachain-card-desc">
+          {/* Auction */}
+          <div className="metric-container">
+            <div className="metric-line flex items-center">
+              <Image
+                className="h-[14px] w-auto md:h-auto"
+                src={auctionIcon}
+                alt="Auction Icon"
+              />
+              <span className="metric-num ml-[7px] font-medium text-xs md:text-base text-bodyBlue">
+                {metrics.auction}
+              </span>
+            </div>
+            <div className="metric-name mt-[8px] text-xs md:text-sm text-lightBlue">
               Auction
-						</div>
-					</div>
+            </div>
+          </div>
 
-					{/* Crowdloans */}
-					<div className="metric-container">
-						<div className="metric-line flex items-center">
-							<Image
-								className="h-[14px] w-auto md:h-auto"
-								src={crowdloansIcon}
-								alt="Crowdloans Icon"
-							/>
-							<span className="metric-num ml-[7px] font-medium text-xs md:text-sm text-bodyBlue">
-								{metrics.crowdloans}
-							</span>
-						</div>
-						<div className="metric-name mt-[8px] text-xs md:text-sm text-lightBlue">
+          {/* Crowdloans */}
+          <div className="metric-container">
+            <div className="metric-line flex items-center">
+              <Image
+                className="h-[14px] w-auto md:h-auto"
+                src={crowdloansIcon}
+                alt="Crowdloans Icon"
+              />
+              <span className="metric-num ml-[7px] font-medium text-xs md:text-sm text-bodyBlue">
+                {metrics.crowdloans}
+              </span>
+            </div>
+            <div className="metric-name mt-[8px] text-xs md:text-sm text-lightBlue">
               Crowdloans
-						</div>
-					</div>
+            </div>
+          </div>
 
-					{/* Parachains */}
-					<div className="metric-container">
-						<div className="metric-line flex items-center">
-							<Image
-								className="h-[14px] w-auto md:h-auto"
-								src={chainIcon}
-								alt="Parachains Icon"
-							/>
-							<span className="metric-num ml-[7px] font-medium text-xs md:text-sm text-bodyBlue">
-								{metrics.parachains}
-							</span>
-						</div>
-						<div className="metric-name mt-[8px] text-xs md:text-sm text-lightBlue">
+          {/* Parachains */}
+          <div className="metric-container">
+            <div className="metric-line flex items-center">
+              <Image
+                className="h-[14px] w-auto md:h-auto"
+                src={chainIcon}
+                alt="Parachains Icon"
+              />
+              <span className="metric-num ml-[7px] font-medium text-xs md:text-sm text-bodyBlue">
+                {metrics.parachains}
+              </span>
+            </div>
+            <div className="metric-name mt-[8px] text-xs md:text-sm text-lightBlue">
               Parachains
-						</div>
-					</div>
+            </div>
+          </div>
 
-					{/* Projects */}
-					<div className="metric-container">
-						<div className="metric-line flex items-center">
-							<Image
-								className="h-[14px] w-auto md:h-auto"
-								src={projectsIcon}
-								alt="Parachains Icon"
-							/>
-							<span className="metric-num ml-[7px] font-medium text-xs md:text-sm text-bodyBlue">
-								{metrics.projects}
-							</span>
-						</div>
-						<div className="metric-name mt-[8px] text-xs md:text-sm text-lightBlue">
+          {/* Projects */}
+          <div className="metric-container">
+            <div className="metric-line flex items-center">
+              <Image
+                className="h-[14px] w-auto md:h-auto"
+                src={projectsIcon}
+                alt="Parachains Icon"
+              />
+              <span className="metric-num ml-[7px] font-medium text-xs md:text-sm text-bodyBlue">
+                {metrics.projects}
+              </span>
+            </div>
+            <div className="metric-name mt-[8px] text-xs md:text-sm text-lightBlue">
               Projects
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default styled(ParachainInfoCard)`

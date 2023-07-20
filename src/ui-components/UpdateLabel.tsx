@@ -15,31 +15,31 @@ interface Props {
 }
 
 const UpdateLabel = ({
-	className,
-	created_at,
-	updated_at,
-	isHistory
+  className,
+  created_at,
+  updated_at,
+  isHistory,
 }: Props) => {
-	if (!updated_at) return null;
-	const defaultTime = 'a few minutes ago';
-	const title =
+  if (!updated_at) return null;
+  const defaultTime = 'a few minutes ago';
+  const title =
     dayjs.utc(updated_at, 'YYYY-MM-DDTHH:mm:ss.SSS').fromNow() !==
     'NaN years ago'
-    	? dayjs.utc(updated_at, 'YYYY-MM-DDTHH:mm:ss.SSS').fromNow()
-    	: defaultTime;
-	return updated_at.toString() === created_at.toString() ? null : (
-		<span className={className}>
-			<Tooltip color="#E5007A" title={title}>
-				<span
-					className={`text-navBlue text-xs leading-4 ${
-						isHistory && 'text-pink_primary'
-					}`}
-				>
+      ? dayjs.utc(updated_at, 'YYYY-MM-DDTHH:mm:ss.SSS').fromNow()
+      : defaultTime;
+  return updated_at.toString() === created_at.toString() ? null : (
+    <span className={className}>
+      <Tooltip color="#E5007A" title={title}>
+        <span
+          className={`text-navBlue text-xs leading-4 ${
+            isHistory && 'text-pink_primary'
+          }`}
+        >
           (Edited)
-				</span>
-			</Tooltip>
-		</span>
-	);
+        </span>
+      </Tooltip>
+    </span>
+  );
 };
 
 export default styled(UpdateLabel)`

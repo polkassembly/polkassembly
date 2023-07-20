@@ -10,7 +10,7 @@ interface Props {
 }
 
 const InlineTag = ({ className, topic }: Props) => (
-	<Tag className={`${className}`}>{topic}</Tag>
+  <Tag className={`${className}`}>{topic}</Tag>
 );
 
 export default InlineTag;

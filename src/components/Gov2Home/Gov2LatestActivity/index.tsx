@@ -18,99 +18,99 @@ import AllGov2PostsTable from './AllGov2PostsTable';
 import TrackPostsTable from './TrackPostsTable';
 
 const Gov2LatestActivity = ({
-	className,
-	gov2LatestPosts
+  className,
+  gov2LatestPosts,
 }: {
   className?: string;
   gov2LatestPosts: any;
 }) => {
-	const [currentTab, setCurrentTab] = useState('all');
-	const { network } = useContext(NetworkContext);
+  const [currentTab, setCurrentTab] = useState('all');
+  const { network } = useContext(NetworkContext);
 
-	const tabItems = [
-		{
-			children: (
-				<AllGov2PostsTable
-					error={gov2LatestPosts?.allGov2Posts?.error}
-					posts={gov2LatestPosts.allGov2Posts?.data?.posts}
-				/>
-			),
-			key: 'all',
-			label: (
-				<CountBadgePill
-					label="All"
-					count={gov2LatestPosts.allGov2Posts?.data?.count}
-				/>
-			)
-		},
-		{
-			children: (
-				<PostsTable
-					count={gov2LatestPosts.discussionPosts?.data?.count || 0}
-					columns={getColumns(ProposalType.DISCUSSIONS)}
-					error={gov2LatestPosts?.discussionPosts?.error}
-					posts={gov2LatestPosts?.discussionPosts?.data?.posts}
-					type={ProposalType.DISCUSSIONS}
-				/>
-			),
-			key: 'discussions',
-			label: (
-				<CountBadgePill
-					label="Discussions"
-					count={gov2LatestPosts.discussionPosts?.data?.count}
-				/>
-			)
-		}
-	];
+  const tabItems = [
+    {
+      children: (
+        <AllGov2PostsTable
+          error={gov2LatestPosts?.allGov2Posts?.error}
+          posts={gov2LatestPosts.allGov2Posts?.data?.posts}
+        />
+      ),
+      key: 'all',
+      label: (
+        <CountBadgePill
+          label="All"
+          count={gov2LatestPosts.allGov2Posts?.data?.count}
+        />
+      ),
+    },
+    {
+      children: (
+        <PostsTable
+          count={gov2LatestPosts.discussionPosts?.data?.count || 0}
+          columns={getColumns(ProposalType.DISCUSSIONS)}
+          error={gov2LatestPosts?.discussionPosts?.error}
+          posts={gov2LatestPosts?.discussionPosts?.data?.posts}
+          type={ProposalType.DISCUSSIONS}
+        />
+      ),
+      key: 'discussions',
+      label: (
+        <CountBadgePill
+          label="Discussions"
+          count={gov2LatestPosts.discussionPosts?.data?.count}
+        />
+      ),
+    },
+  ];
 
-	if (network) {
-		for (const trackName of Object.keys(networkTrackInfo[network])) {
-			tabItems.push({
-				children: (
-					<TrackPostsTable
-						error={gov2LatestPosts[trackName]?.error}
-						posts={gov2LatestPosts[trackName]?.data?.posts}
-					/>
-				),
-				key: trackName
-					.split(/(?=[A-Z])/)
-					.join('-')
-					.toLowerCase(),
-				label: (
-					<CountBadgePill
-						label={trackName.split(/(?=[A-Z])/).join(' ')}
-						count={gov2LatestPosts[trackName]?.data?.count}
-					/>
-				)
-			});
-		}
-	}
+  if (network) {
+    for (const trackName of Object.keys(networkTrackInfo[network])) {
+      tabItems.push({
+        children: (
+          <TrackPostsTable
+            error={gov2LatestPosts[trackName]?.error}
+            posts={gov2LatestPosts[trackName]?.data?.posts}
+          />
+        ),
+        key: trackName
+          .split(/(?=[A-Z])/)
+          .join('-')
+          .toLowerCase(),
+        label: (
+          <CountBadgePill
+            label={trackName.split(/(?=[A-Z])/).join(' ')}
+            count={gov2LatestPosts[trackName]?.data?.count}
+          />
+        ),
+      });
+    }
+  }
 
-	return (
-		<div
-			className={`${className} bg-white drop-shadow-md p-0 lg:p-6 rounded-xxl`}
-		>
-			<div className="flex justify-between items-center pr-4 pl-1">
-				<h2 className="text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 lg:mt-0 mx-2 lg:mx-0">
+  return (
+    <div
+      className={`${className} bg-white drop-shadow-md p-0 lg:p-6 rounded-xxl`}
+    >
+      <div className="flex justify-between items-center pr-4 pl-1">
+        <h2 className="text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 lg:mt-0 mx-2 lg:mx-0">
           Latest Activity
-				</h2>
-				{currentTab !== 'all' && (
-					<Link
-						className="text-bodyBlue font-medium hover:text-pink_primary px-2 rounded-lg"
-						href={`/${currentTab}`}
-					>
+        </h2>
+        {currentTab !== 'all' && (
+          <Link
+            className="text-bodyBlue font-medium hover:text-pink_primary px-2 rounded-lg"
+            href={`/${currentTab}`}
+          >
             View all
-					</Link>
-				)}
-			</div>
-			<Tabs
-				type="card"
-				items={tabItems}
-				className="ant-tabs-tab-bg-white text-bodyBlue text-sm font-medium"
-				onChange={(key) => setCurrentTab(key)}
-			/>
-		</div>
-	);
+          </Link>
+        )}
+      </div>
+      <Tabs
+        type="card"
+        items={tabItems}
+        className="ant-tabs-tab-bg-white text-bodyBlue text-sm font-medium"
+        onChange={(key) => setCurrentTab(key)}
+      />
+    </div>
+  );
 };
 
 export default React.memo(styled(Gov2LatestActivity)`

@@ -17,32 +17,32 @@ interface Props {
 }
 
 const UserAvatar = ({ className, id, username, size }: Props) => {
-	const [userProfileData, setUserProfileData] =
+  const [userProfileData, setUserProfileData] =
     useState<ProfileDetailsResponse | null>(null);
 
-	const getUserDetails = useCallback(async () => {
-		const { data, error } = await nextApiClientFetch<ProfileDetailsResponse>(
-			'api/v1/events',
-			{ userId: id }
-		);
-		if (error || !data) return;
+  const getUserDetails = useCallback(async () => {
+    const { data, error } = await nextApiClientFetch<ProfileDetailsResponse>(
+      'api/v1/events',
+      { userId: id },
+    );
+    if (error || !data) return;
 
-		if (data) {
-			setUserProfileData(data);
-		}
-	}, [id]);
+    if (data) {
+      setUserProfileData(data);
+    }
+  }, [id]);
 
-	useEffect(() => {
-		getUserDetails();
-	}, [getUserDetails]);
+  useEffect(() => {
+    getUserDetails();
+  }, [getUserDetails]);
 
-	return userProfileData?.image ? (
-		<Avatar className={className} src={userProfileData?.image} size={size} />
-	) : (
-		<Avatar className={`${className} bg-gray-300`} size={size} shape="circle">
-			{username?.substring(0, 1).toUpperCase()}
-		</Avatar>
-	);
+  return userProfileData?.image ? (
+    <Avatar className={className} src={userProfileData?.image} size={size} />
+  ) : (
+    <Avatar className={`${className} bg-gray-300`} size={size} shape="circle">
+      {username?.substring(0, 1).toUpperCase()}
+    </Avatar>
+  );
 };
 
 export default UserAvatar;

@@ -174,150 +174,150 @@ interface Props {
 }
 
 function MarkdownEditor(props: Props): React.ReactElement {
-	const { id, username } = useUserDetailsContext();
-	const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-		'write'
-	);
-	const loadSuggestions = async (text: string) => {
-		return new Promise<Suggestion[]>((accept) => {
-			const savedUsers = global.window.localStorage.getItem('users');
-			const users: string[] = savedUsers ? savedUsers.split(',') : [];
+  const { id, username } = useUserDetailsContext();
+  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
+    'write',
+  );
+  const loadSuggestions = async (text: string) => {
+    return new Promise<Suggestion[]>((accept) => {
+      const savedUsers = global.window.localStorage.getItem('users');
+      const users: string[] = savedUsers ? savedUsers.split(',') : [];
 
-			const suggestions: Suggestion[] = users
-				.map((user) => ({
-					preview: user,
-					value: `[@${user}](${global.window.location.origin}/user/${user})`
-				}))
-				.filter((i) => i.preview.toLowerCase().includes(text.toLowerCase()));
+      const suggestions: Suggestion[] = users
+        .map((user) => ({
+          preview: user,
+          value: `[@${user}](${global.window.location.origin}/user/${user})`,
+        }))
+        .filter((i) => i.preview.toLowerCase().includes(text.toLowerCase()));
 
-			accept(suggestions);
-		});
-	};
+      accept(suggestions);
+    });
+  };
 
-	// Generator function to save images pasted. This generator should 1) Yield the image URL. 2) Return true if the save was successful or false, otherwise
-	const handleSaveImage = async function* (data: any) {
-		const imgBlob = new Blob([data], { type: 'image/jpeg' });
+  // Generator function to save images pasted. This generator should 1) Yield the image URL. 2) Return true if the save was successful or false, otherwise
+  const handleSaveImage = async function* (data: any) {
+    const imgBlob = new Blob([data], { type: 'image/jpeg' });
 
-		const formData = new FormData();
-		formData.append(
-			'image',
-			imgBlob,
-			`${id}_${username}_${new Date().valueOf()}.jpg`
-		);
+    const formData = new FormData();
+    formData.append(
+      'image',
+      imgBlob,
+      `${id}_${username}_${new Date().valueOf()}.jpg`,
+    );
 
-		let url = '';
+    let url = '';
 
-		await fetch(`https://api.imgbb.com/1/upload?key=${IMG_BB_API_KEY}`, {
-			body: formData,
-			method: 'POST'
-		})
-			.then((response) => response.json())
-			.then((res) => {
-				url = res?.data?.display_url;
-			})
-			.catch((error) => console.error('Error in uploading image: ', error));
+    await fetch(`https://api.imgbb.com/1/upload?key=${IMG_BB_API_KEY}`, {
+      body: formData,
+      method: 'POST',
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        url = res?.data?.display_url;
+      })
+      .catch((error) => console.error('Error in uploading image: ', error));
 
-		// yields the URL that should be inserted in the markdown
-		yield url;
+    // yields the URL that should be inserted in the markdown
+    yield url;
 
-		// returns true meaning that the save was successful
-		return Boolean(url);
-	};
+    // returns true meaning that the save was successful
+    return Boolean(url);
+  };
 
-	const [input, setInput] = useState<string>(props.value || '');
-	const [validUsers, setValidUsers] = useState<string[]>([]);
-	const [replacedUsernames, setReplacedUsernames] = useState<string[]>([]);
+  const [input, setInput] = useState<string>(props.value || '');
+  const [validUsers, setValidUsers] = useState<string[]>([]);
+  const [replacedUsernames, setReplacedUsernames] = useState<string[]>([]);
 
-	async function getUserData(usernameQuery: string, content: string) {
-		let inputData = content;
-		const res = await nextApiClientFetch(
-			`api/v1/auth/data/userProfileWithUsername?username=${usernameQuery}`
-		);
-		if (res.data) {
-			if (!replacedUsernames.includes(usernameQuery)) {
-				const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
+  async function getUserData(usernameQuery: string, content: string) {
+    let inputData = content;
+    const res = await nextApiClientFetch(
+      `api/v1/auth/data/userProfileWithUsername?username=${usernameQuery}`,
+    );
+    if (res.data) {
+      if (!replacedUsernames.includes(usernameQuery)) {
+        const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
 
-				inputData = inputData.replace(
-					regex,
-					`[@${usernameQuery}](${global.window.location.origin}/user/${usernameQuery})`
-				);
-				setReplacedUsernames([...replacedUsernames, usernameQuery]);
-			}
-			setInput(inputData);
-			setValidUsers([...validUsers, usernameQuery]);
-		}
+        inputData = inputData.replace(
+          regex,
+          `[@${usernameQuery}](${global.window.location.origin}/user/${usernameQuery})`,
+        );
+        setReplacedUsernames([...replacedUsernames, usernameQuery]);
+      }
+      setInput(inputData);
+      setValidUsers([...validUsers, usernameQuery]);
+    }
 
-		if (props.onChange) {
-			props.onChange(inputData);
-		}
-	}
+    if (props.onChange) {
+      props.onChange(inputData);
+    }
+  }
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedAPIcall = useCallback(debounce(getUserData, 1000), []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedAPIcall = useCallback(debounce(getUserData, 1000), []);
 
-	const onChange = async (content: string) => {
-		const inputValue = content;
-		setInput(inputValue);
+  const onChange = async (content: string) => {
+    const inputValue = content;
+    setInput(inputValue);
 
-		const matches = inputValue.match(/(?<!\S)@(\w+)(?!\.\w)/g);
-		if (matches && matches.length > 0) {
-			const usernameQuery = matches[matches.length - 1].replace('@', '');
-			if (!validUsers.includes(usernameQuery)) {
-				debouncedAPIcall(usernameQuery, content);
-			} else if (validUsers.includes(usernameQuery)) {
-				let inputData = content;
-				const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
-				inputData = inputData.replace(
-					regex,
-					`[@${usernameQuery}](${window.location.origin}/user/${usernameQuery})`
-				);
-				setInput(inputData);
-			}
-		}
-		if (props.onChange) {
-			return props?.onChange(content);
-		}
-		return content;
-	};
+    const matches = inputValue.match(/(?<!\S)@(\w+)(?!\.\w)/g);
+    if (matches && matches.length > 0) {
+      const usernameQuery = matches[matches.length - 1].replace('@', '');
+      if (!validUsers.includes(usernameQuery)) {
+        debouncedAPIcall(usernameQuery, content);
+      } else if (validUsers.includes(usernameQuery)) {
+        let inputData = content;
+        const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
+        inputData = inputData.replace(
+          regex,
+          `[@${usernameQuery}](${window.location.origin}/user/${usernameQuery})`,
+        );
+        setInput(inputData);
+      }
+    }
+    if (props.onChange) {
+      return props?.onChange(content);
+    }
+    return content;
+  };
 
-	return (
-		<StyledTextArea className="container">
-			<ReactMde
-				generateMarkdownPreview={(markdown) =>
-					Promise.resolve(<Markdown isPreview={true} md={markdown} />)
-				}
-				minEditorHeight={props.height}
-				minPreviewHeight={props.height}
-				name={props.name}
-				onTabChange={setSelectedTab}
-				selectedTab={selectedTab}
-				loadSuggestions={loadSuggestions}
-				toolbarCommands={[
-					[
-						'bold',
-						'header',
-						'link',
-						'quote',
-						'strikethrough',
-						'code',
-						'image',
-						'ordered-list',
-						'unordered-list'
-					]
-				]}
-				{...props}
-				paste={{
-					saveImage: handleSaveImage
-				}}
-				onChange={onChange}
-				value={input}
-			/>
-			<HelperTooltip
-				className="ml-2"
-				text="Attach images by dragging & dropping, selecting or pasting them."
-			/>
-		</StyledTextArea>
-	);
+  return (
+    <StyledTextArea className="container">
+      <ReactMde
+        generateMarkdownPreview={(markdown) =>
+          Promise.resolve(<Markdown isPreview={true} md={markdown} />)
+        }
+        minEditorHeight={props.height}
+        minPreviewHeight={props.height}
+        name={props.name}
+        onTabChange={setSelectedTab}
+        selectedTab={selectedTab}
+        loadSuggestions={loadSuggestions}
+        toolbarCommands={[
+          [
+            'bold',
+            'header',
+            'link',
+            'quote',
+            'strikethrough',
+            'code',
+            'image',
+            'ordered-list',
+            'unordered-list',
+          ],
+        ]}
+        {...props}
+        paste={{
+          saveImage: handleSaveImage,
+        }}
+        onChange={onChange}
+        value={input}
+      />
+      <HelperTooltip
+        className="ml-2"
+        text="Attach images by dragging & dropping, selecting or pasting them."
+      />
+    </StyledTextArea>
+  );
 }
 
 export default MarkdownEditor;

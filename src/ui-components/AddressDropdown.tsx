@@ -27,123 +27,123 @@ interface Props {
 }
 
 const AddressDropdown = ({
-	defaultAddress,
-	className = 'px-3 py-1 border-solid border-gray-300 border-[1px] rounded-md h-[48px]',
-	accounts,
-	filterAccounts,
-	isDisabled,
-	onAccountChange,
-	isSwitchButton,
-	setSwitchModalOpen
+  defaultAddress,
+  className = 'px-3 py-1 border-solid border-gray-300 border-[1px] rounded-md h-[48px]',
+  accounts,
+  filterAccounts,
+  isDisabled,
+  onAccountChange,
+  isSwitchButton,
+  setSwitchModalOpen,
 }: Props) => {
-	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
-	const filteredAccounts = !filterAccounts
-		? accounts
-		: accounts.filter((elem) => filterAccounts.includes(elem.address));
+  const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
+  const filteredAccounts = !filterAccounts
+    ? accounts
+    : accounts.filter((elem) => filterAccounts.includes(elem.address));
 
-	const dropdownList: { [index: string]: string } = {};
-	const addressItems: ItemType[] = [];
-	const { setUserDetailsContextState, loginAddress, addresses } =
+  const dropdownList: { [index: string]: string } = {};
+  const addressItems: ItemType[] = [];
+  const { setUserDetailsContextState, loginAddress, addresses } =
     useUserDetailsContext();
-	const substrate_address = getSubstrateAddress(loginAddress);
-	const substrate_addresses = (addresses || []).map((address) =>
-		getSubstrateAddress(address)
-	);
+  const substrate_address = getSubstrateAddress(loginAddress);
+  const substrate_addresses = (addresses || []).map((address) =>
+    getSubstrateAddress(address),
+  );
 
-	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
-		const account_substrate_address = getSubstrateAddress(
-			account?.address || ''
-		);
-		const isConnected =
+  const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
+    const account_substrate_address = getSubstrateAddress(
+      account?.address || '',
+    );
+    const isConnected =
       account_substrate_address?.toLowerCase() ===
       (substrate_address || '').toLowerCase();
-		if (account?.isCouncil) {
-			if (isConnected) {
-				return EAddressOtherTextType.COUNCIL_CONNECTED;
-			}
-			return EAddressOtherTextType.COUNCIL;
-		} else if (isConnected) {
-			return EAddressOtherTextType.CONNECTED;
-		} else if (substrate_addresses.includes(account_substrate_address)) {
-			return EAddressOtherTextType.LINKED_ADDRESS;
-		}
-	};
+    if (account?.isCouncil) {
+      if (isConnected) {
+        return EAddressOtherTextType.COUNCIL_CONNECTED;
+      }
+      return EAddressOtherTextType.COUNCIL;
+    } else if (isConnected) {
+      return EAddressOtherTextType.CONNECTED;
+    } else if (substrate_addresses.includes(account_substrate_address)) {
+      return EAddressOtherTextType.LINKED_ADDRESS;
+    }
+  };
 
-	filteredAccounts.forEach((account) => {
-		addressItems.push({
-			key: account.address,
-			label: (
-				<Address
-					disableAddressClick={true}
-					className="flex items-center"
-					otherTextType={getOtherTextType(account)}
-					otherTextClassName="ml-auto"
-					extensionName={account.name}
-					address={account.address}
-				/>
-			)
-		});
+  filteredAccounts.forEach((account) => {
+    addressItems.push({
+      key: account.address,
+      label: (
+        <Address
+          disableAddressClick={true}
+          className="flex items-center"
+          otherTextType={getOtherTextType(account)}
+          otherTextClassName="ml-auto"
+          extensionName={account.name}
+          address={account.address}
+        />
+      ),
+    });
 
-		if (account.address && account.name) {
-			dropdownList[account.address] = account.name;
-		}
-	});
+    if (account.address && account.name) {
+      dropdownList[account.address] = account.name;
+    }
+  });
 
-	isSwitchButton &&
+  isSwitchButton &&
     setSwitchModalOpen &&
     addressItems.push({
-    	key: 1,
-    	label: (
-    		<div className="flex items-center justify-center mt-2">
-    			<Button
-    				onClick={() => setSwitchModalOpen(true)}
-    				className={`w-full h-[40px] rounded-[8px] text-sm text-[#fff] bg-pink_primary font-medium flex justify-center items-center ${poppins.variable} ${poppins.className}`}
-    			>
+      key: 1,
+      label: (
+        <div className="flex items-center justify-center mt-2">
+          <Button
+            onClick={() => setSwitchModalOpen(true)}
+            className={`w-full h-[40px] rounded-[8px] text-sm text-[#fff] bg-pink_primary font-medium flex justify-center items-center ${poppins.variable} ${poppins.className}`}
+          >
             Switch Wallet
-    			</Button>
-    		</div>
-    	)
+          </Button>
+        </div>
+      ),
     });
-	return (
-		<Dropdown
-			trigger={['click']}
-			className={className}
-			disabled={isDisabled}
-			menu={{
-				items: addressItems,
-				onClick: (e) => {
-					if (e.key !== '1') {
-						setSelectedAddress(e.key);
-						onAccountChange(e.key);
-						setSwitchModalOpen &&
+  return (
+    <Dropdown
+      trigger={['click']}
+      className={className}
+      disabled={isDisabled}
+      menu={{
+        items: addressItems,
+        onClick: (e) => {
+          if (e.key !== '1') {
+            setSelectedAddress(e.key);
+            onAccountChange(e.key);
+            setSwitchModalOpen &&
               setUserDetailsContextState((prev) => {
-              	return { ...prev, delegationDashboardAddress: e.key };
+                return { ...prev, delegationDashboardAddress: e.key };
               });
-					}
-				}
-			}}
-		>
-			<div className="flex justify-between items-center ">
-				<Address
-					disableAddressClick={true}
-					extensionName={dropdownList[selectedAddress]}
-					address={defaultAddress || selectedAddress}
-					otherTextType={getOtherTextType(
-						filteredAccounts.find(
-							(account) =>
-								account.address === selectedAddress ||
-                account.address === defaultAddress
-						)
-					)}
-					className="flex items-center flex-1"
-					otherTextClassName="ml-auto"
-				/>
-				<span className="mx-2">
-					<DownIcon />
-				</span>
-			</div>
-		</Dropdown>
-	);
+          }
+        },
+      }}
+    >
+      <div className="flex justify-between items-center ">
+        <Address
+          disableAddressClick={true}
+          extensionName={dropdownList[selectedAddress]}
+          address={defaultAddress || selectedAddress}
+          otherTextType={getOtherTextType(
+            filteredAccounts.find(
+              (account) =>
+                account.address === selectedAddress ||
+                account.address === defaultAddress,
+            ),
+          )}
+          className="flex items-center flex-1"
+          otherTextClassName="ml-auto"
+        />
+        <span className="mx-2">
+          <DownIcon />
+        </span>
+      </div>
+    </Dropdown>
+  );
 };
 
 export default AddressDropdown;

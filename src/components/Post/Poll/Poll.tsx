@@ -19,24 +19,24 @@ interface IPollProps {
 }
 
 const Poll: FC<IPollProps> = ({
-	pollId,
-	endBlock,
-	canEdit,
-	votes,
-	proposalType
+  pollId,
+  endBlock,
+  canEdit,
+  votes,
+  proposalType,
 }) => {
-	return (
-		<>
-			<GeneralSignals
-				endBlock={endBlock}
-				pollId={pollId}
-				canEdit={canEdit}
-				votes={votes}
-				proposalType={proposalType}
-			/>
-			<CouncilSignals votes={votes} />
-		</>
-	);
+  return (
+    <>
+      <GeneralSignals
+        endBlock={endBlock}
+        pollId={pollId}
+        canEdit={canEdit}
+        votes={votes}
+        proposalType={proposalType}
+      />
+      <CouncilSignals votes={votes} />
+    </>
+  );
 };
 
 export default Poll;

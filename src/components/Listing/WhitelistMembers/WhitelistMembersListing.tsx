@@ -16,21 +16,21 @@ interface Props {
 }
 
 const WhitelistMembersListing = ({ className, data, membersType }: Props) => {
-	return (
-		<div className={`${className}`}>
-			{data.map((member) => (
-				<div key={member.accountId} className="my-5">
-					{
-						<Link
-							href={`/profile/${member.accountId}?membersType=${membersType}`}
-						>
-							<WhitelistMemberCard member={member} />
-						</Link>
-					}
-				</div>
-			))}
-		</div>
-	);
+  return (
+    <div className={`${className}`}>
+      {data.map((member) => (
+        <div key={member.accountId} className="my-5">
+          {
+            <Link
+              href={`/profile/${member.accountId}?membersType=${membersType}`}
+            >
+              <WhitelistMemberCard member={member} />
+            </Link>
+          }
+        </div>
+      ))}
+    </div>
+  );
 };
 
 export default WhitelistMembersListing;

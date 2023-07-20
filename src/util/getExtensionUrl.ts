@@ -13,13 +13,13 @@ const mozillaPolkadotExtension =
   'https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd?hl=en';
 
 export default function getExtensionUrl() {
-	switch (browser && browser.name) {
-	case 'chrome':
-		return chromePolkadotExtension;
-	case 'firefox':
-		return mozillaPolkadotExtension;
-	default:
-		// not supported
-		return '';
-	}
+  switch (browser && browser.name) {
+    case 'chrome':
+      return chromePolkadotExtension;
+    case 'firefox':
+      return mozillaPolkadotExtension;
+    default:
+      // not supported
+      return '';
+  }
 }

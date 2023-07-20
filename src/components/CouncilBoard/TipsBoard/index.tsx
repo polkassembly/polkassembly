@@ -13,20 +13,20 @@ interface Props {
 }
 
 const TipsBoard = ({ className }: Props) => {
-	return (
-		<div className={className}>
-			<h3>
+  return (
+    <div className={className}>
+      <h3>
         Tips <span className="card-count"></span>
-			</h3>
-			<p>Coming Soon...</p>
+      </h3>
+      <p>Coming Soon...</p>
 
-			{/* {[1,2,3,4].map(item => (
+      {/* {[1,2,3,4].map(item => (
 				<div key={item} className='post-card-div' onClick={() => openSidebar(item)}>
 					<TipsPostCard />
 				</div>
 			))} */}
-		</div>
-	);
+    </div>
+  );
 };
 
 export default styled(TipsBoard)`

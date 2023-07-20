@@ -16,32 +16,32 @@ interface Props {
 }
 
 const OnchainCreationLabel = ({
-	address,
-	username,
-	truncateUsername
+  address,
+  username,
+  truncateUsername,
 }: Props) => {
-	return (
-		<div className="flex justify-between min-[340px]:flex-row min-[340px]:items-center text-xs text-[#485F7D] w-full min-[340px]:w-auto">
-			<div className="flex items-center">
-				{username || address ? (
-					<>
-						{address ? (
-							<Address
-								address={address}
-								className="address "
-								displayInline={true}
-								truncateUsername={truncateUsername}
-							/>
-						) : (
-							<span className="max-w-[150px] text-ellipsis overflow-hidden text-[#243a57] font-semibold">
-								<Link href={`/user/${username}`}>{username}</Link>
-							</span>
-						)}
-					</>
-				) : null}
-			</div>
-		</div>
-	);
+  return (
+    <div className="flex justify-between min-[340px]:flex-row min-[340px]:items-center text-xs text-[#485F7D] w-full min-[340px]:w-auto">
+      <div className="flex items-center">
+        {username || address ? (
+          <>
+            {address ? (
+              <Address
+                address={address}
+                className="address "
+                displayInline={true}
+                truncateUsername={truncateUsername}
+              />
+            ) : (
+              <span className="max-w-[150px] text-ellipsis overflow-hidden text-[#243a57] font-semibold">
+                <Link href={`/user/${username}`}>{username}</Link>
+              </span>
+            )}
+          </>
+        ) : null}
+      </div>
+    </div>
+  );
 };
 
 export default OnchainCreationLabel;

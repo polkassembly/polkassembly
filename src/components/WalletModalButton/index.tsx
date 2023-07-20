@@ -5,19 +5,19 @@ import React from 'react';
 import styled from 'styled-components';
 
 const WalletModalButton = ({
-	onClick,
-	icon,
-	name
+  onClick,
+  icon,
+  name,
 }: {
   onClick: () => void;
   icon?: JSX.Element;
   name: string;
 }) => {
-	return (
-		<StyledButton onClick={onClick}>
-			{icon} <StyledName>{name}</StyledName>
-		</StyledButton>
-	);
+  return (
+    <StyledButton onClick={onClick}>
+      {icon} <StyledName>{name}</StyledName>
+    </StyledButton>
+  );
 };
 
 const StyledButton = styled.div`

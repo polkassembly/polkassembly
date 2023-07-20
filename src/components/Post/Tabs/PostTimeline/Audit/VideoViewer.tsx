@@ -12,24 +12,24 @@ interface IVideoViewerProps {
 }
 
 const VideoViewer: FC<IVideoViewerProps> = (props) => {
-	const { item, className } = props;
-	return (
-		<section
-			className={`flex flex-col border border-solid border-[#D2D8E0] rounded-[6px] overflow-hidden ${className}`}
-		>
-			<div>
-				<article className="flex items-center justify-center pt-6 ">
-					<ReactPlayer url={item.url} controls={true} />
-				</article>
-				<article className="px-4 py-[10px] bg-[rgba(210,216,224,0.2)] flex gap-x-2 items-center border-0 border-t border-solid border-t-[#D2D8E0]">
-					<span className="flex items-center justify-center">
-						<YouTubeIcon />
-					</span>
-					<p className="m-0">{item.title}</p>
-				</article>
-			</div>
-		</section>
-	);
+  const { item, className } = props;
+  return (
+    <section
+      className={`flex flex-col border border-solid border-[#D2D8E0] rounded-[6px] overflow-hidden ${className}`}
+    >
+      <div>
+        <article className="flex items-center justify-center pt-6 ">
+          <ReactPlayer url={item.url} controls={true} />
+        </article>
+        <article className="px-4 py-[10px] bg-[rgba(210,216,224,0.2)] flex gap-x-2 items-center border-0 border-t border-solid border-t-[#D2D8E0]">
+          <span className="flex items-center justify-center">
+            <YouTubeIcon />
+          </span>
+          <p className="m-0">{item.title}</p>
+        </article>
+      </div>
+    </section>
+  );
 };
 
 export default VideoViewer;

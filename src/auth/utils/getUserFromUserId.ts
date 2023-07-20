@@ -9,15 +9,15 @@ import { User } from '../types';
 import messages from './messages';
 
 export default async function getUserFromUserId(userId: number): Promise<User> {
-	const userDoc = await firebaseAdmin
-		.firestore()
-		.collection('users')
-		.doc(String(userId))
-		.get();
+  const userDoc = await firebaseAdmin
+    .firestore()
+    .collection('users')
+    .doc(String(userId))
+    .get();
 
-	if (!userDoc.exists) {
-		throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
-	}
+  if (!userDoc.exists) {
+    throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
+  }
 
-	return userDoc.data() as User;
+  return userDoc.data() as User;
 }

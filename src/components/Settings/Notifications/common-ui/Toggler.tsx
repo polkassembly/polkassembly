@@ -26,19 +26,19 @@ const Toggle = styled(Switch)`
 `;
 
 export default function Toggler({ label, onClick, selected }: Props) {
-	const handleClick = (checked: any, e: any) => {
-		e.stopPropagation();
-		onClick(checked);
-	};
-	return (
-		<span className="flex gap-[8px] items-center">
-			<Toggle
-				size="small"
-				id="postParticipated"
-				onChange={(checked, e) => handleClick(checked, e)}
-				checked={selected}
-			/>
-			<p className="m-0 text-[#485F7D]">{label}</p>
-		</span>
-	);
+  const handleClick = (checked: any, e: any) => {
+    e.stopPropagation();
+    onClick(checked);
+  };
+  return (
+    <span className="flex gap-[8px] items-center">
+      <Toggle
+        size="small"
+        id="postParticipated"
+        onChange={(checked, e) => handleClick(checked, e)}
+        checked={selected}
+      />
+      <p className="m-0 text-[#485F7D]">{label}</p>
+    </span>
+  );
 }

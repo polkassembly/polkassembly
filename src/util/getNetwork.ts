@@ -14,36 +14,36 @@ import { Network } from '../types';
  */
 
 export default function getNetwork(): Network {
-	if (!global?.window) return defaultNetwork;
-	let network: string;
+  if (!global?.window) return defaultNetwork;
+  let network: string;
 
-	const url = global.window.location.href;
-	const qs = queryString.parse(global.window.location.search);
+  const url = global.window.location.href;
+  const qs = queryString.parse(global.window.location.search);
 
-	if (qs.network) {
-		network = qs.network.toString();
-	} else {
-		try {
-			network = url.split('//')[1].split('.')[0];
-		} catch (error) {
-			network = defaultNetwork;
-			console.error(error);
-		}
-	}
+  if (qs.network) {
+    network = qs.network.toString();
+  } else {
+    try {
+      network = url.split('//')[1].split('.')[0];
+    } catch (error) {
+      network = defaultNetwork;
+      console.error(error);
+    }
+  }
 
-	const possibleNetworks = Object.values(networkConstants);
+  const possibleNetworks = Object.values(networkConstants);
 
-	if (network == 'test') {
-		network = 'kusama';
-	} else if (network == 'test-polkadot') {
-		network = 'polkadot';
-	} else if (network == 'moonriver-test') {
-		network = 'moonriver';
-	}
+  if (network == 'test') {
+    network = 'kusama';
+  } else if (network == 'test-polkadot') {
+    network = 'polkadot';
+  } else if (network == 'moonriver-test') {
+    network = 'moonriver';
+  }
 
-	if (!possibleNetworks.includes(network)) {
-		network = defaultNetwork;
-	}
+  if (!possibleNetworks.includes(network)) {
+    network = defaultNetwork;
+  }
 
-	return network;
+  return network;
 }

@@ -13,32 +13,32 @@ interface IUnlockProps {
 }
 
 const Unlock: FC<IUnlockProps> = (props) => {
-	const { network } = props;
-	const metaMaskError = useHandleMetaMask();
-	const [isBalanceUpdated, setIsBalanceUpdated] = useState(false);
-	return (
-		<>
-			{!metaMaskError &&
+  const { network } = props;
+  const metaMaskError = useHandleMetaMask();
+  const [isBalanceUpdated, setIsBalanceUpdated] = useState(false);
+  return (
+    <>
+      {!metaMaskError &&
       ['moonbase', 'moonriver', 'moonbeam'].includes(network) ? (
-					<>
-						<DemocracyUnlock
-							isBalanceUpdated={isBalanceUpdated}
-							setIsBalanceUpdated={setIsBalanceUpdated}
-						/>
-						<Divider />
-					</>
-				) : null}
-			{!metaMaskError && ['moonbase', 'moonriver'].includes(network) ? (
-				<>
-					<ReferendaUnlock
-						isBalanceUpdated={isBalanceUpdated}
-						setIsBalanceUpdated={setIsBalanceUpdated}
-					/>
-					<Divider />
-				</>
-			) : null}
-		</>
-	);
+        <>
+          <DemocracyUnlock
+            isBalanceUpdated={isBalanceUpdated}
+            setIsBalanceUpdated={setIsBalanceUpdated}
+          />
+          <Divider />
+        </>
+      ) : null}
+      {!metaMaskError && ['moonbase', 'moonriver'].includes(network) ? (
+        <>
+          <ReferendaUnlock
+            isBalanceUpdated={isBalanceUpdated}
+            setIsBalanceUpdated={setIsBalanceUpdated}
+          />
+          <Divider />
+        </>
+      ) : null}
+    </>
+  );
 };
 
 export default Unlock;

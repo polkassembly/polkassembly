@@ -7,7 +7,7 @@ interface IOneEnactmentPeriodInDays {
 }
 
 export const oneEnactmentPeriodInDays: IOneEnactmentPeriodInDays = {
-	moonbase: 1,
-	moonbeam: 7,
-	moonriver: 7
+  moonbase: 1,
+  moonbeam: 7,
+  moonriver: 7,
 };

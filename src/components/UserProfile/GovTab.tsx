@@ -9,8 +9,8 @@ import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import PostTab from '../User/PostTab';
 
 export const getLabel = (str: string) => {
-	const newStr = str.split('_').join(' ');
-	return newStr.charAt(0).toUpperCase() + newStr.slice(1);
+  const newStr = str.split('_').join(' ');
+  return newStr.charAt(0).toUpperCase() + newStr.slice(1);
 };
 
 interface IGovTabProps {
@@ -64,68 +64,68 @@ interface IGovTabProps {
 }
 
 const GovTab: FC<IGovTabProps> = (props) => {
-	const { posts, className } = props;
-	const [selectedPostsType, setSelectedPostsType] = useState('discussions');
-	const [selectedPost, setSelectedPost] = useState('posts');
-	return (
-		<div className={className}>
-			<Select
-				suffixIcon={<ArrowDownIcon className="text-[#90A0B7]" />}
-				value={selectedPostsType}
-				className="select"
-				onChange={(v) => {
-					setSelectedPostsType(v);
-					const obj = (posts as any)?.[v];
-					if (obj && !Array.isArray(obj)) {
-						const objKeys = Object.keys(obj);
-						if (objKeys && objKeys.length > 0) {
-							setSelectedPost(objKeys[0]);
-						}
-					}
-				}}
-				options={Object.keys(posts).map((key) => ({
-					label: getLabel(key),
-					value: key
-				}))}
-			/>
-			<div className="my-5 flex items-center gap-x-2 max-w-full overflow-x-auto scroll-hidden">
-				{(posts as any)?.[selectedPostsType] &&
+  const { posts, className } = props;
+  const [selectedPostsType, setSelectedPostsType] = useState('discussions');
+  const [selectedPost, setSelectedPost] = useState('posts');
+  return (
+    <div className={className}>
+      <Select
+        suffixIcon={<ArrowDownIcon className="text-[#90A0B7]" />}
+        value={selectedPostsType}
+        className="select"
+        onChange={(v) => {
+          setSelectedPostsType(v);
+          const obj = (posts as any)?.[v];
+          if (obj && !Array.isArray(obj)) {
+            const objKeys = Object.keys(obj);
+            if (objKeys && objKeys.length > 0) {
+              setSelectedPost(objKeys[0]);
+            }
+          }
+        }}
+        options={Object.keys(posts).map((key) => ({
+          label: getLabel(key),
+          value: key,
+        }))}
+      />
+      <div className="my-5 flex items-center gap-x-2 max-w-full overflow-x-auto scroll-hidden">
+        {(posts as any)?.[selectedPostsType] &&
           !Array.isArray((posts as any)?.[selectedPostsType]) &&
           Object.keys((posts as any)?.[selectedPostsType]).map((key) => {
-          	return (
-          		<button
-          			key={key}
-          			onClick={() => {
-          				setSelectedPost(key);
-          			}}
-          			className={`flex items-center justify-center whitespace-nowrap font-medium text-xs leading-[18px] border border-solid outline-none rounded-[50px] px-3 py-1 ${
-          				selectedPost === key
-          					? 'bg-pink_primary text-white border-pink_primary'
-          					: 'bg-transparent border-[#90A0B7] text-[#90A0B7]'
-          			}`}
-          		>
-          			{getLabel(key)}
-          		</button>
-          	);
+            return (
+              <button
+                key={key}
+                onClick={() => {
+                  setSelectedPost(key);
+                }}
+                className={`flex items-center justify-center whitespace-nowrap font-medium text-xs leading-[18px] border border-solid outline-none rounded-[50px] px-3 py-1 ${
+                  selectedPost === key
+                    ? 'bg-pink_primary text-white border-pink_primary'
+                    : 'bg-transparent border-[#90A0B7] text-[#90A0B7]'
+                }`}
+              >
+                {getLabel(key)}
+              </button>
+            );
           })}
-			</div>
-			<div>
-				{(posts as any)?.[selectedPostsType] &&
+      </div>
+      <div>
+        {(posts as any)?.[selectedPostsType] &&
         Array.isArray((posts as any)?.[selectedPostsType]) ? (
-						<PostTab posts={(posts as any)?.[selectedPostsType]} />
-					) : (
-						(posts as any)?.[selectedPostsType]?.[selectedPost] &&
+          <PostTab posts={(posts as any)?.[selectedPostsType]} />
+        ) : (
+          (posts as any)?.[selectedPostsType]?.[selectedPost] &&
           Array.isArray(
-          	(posts as any)?.[selectedPostsType]?.[selectedPost]
+            (posts as any)?.[selectedPostsType]?.[selectedPost],
           ) && (
-							<PostTab
-								posts={(posts as any)?.[selectedPostsType]?.[selectedPost]}
-							/>
-						)
-					)}
-			</div>
-		</div>
-	);
+            <PostTab
+              posts={(posts as any)?.[selectedPostsType]?.[selectedPost]}
+            />
+          )
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default styled(GovTab)`

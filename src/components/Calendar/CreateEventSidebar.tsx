@@ -26,284 +26,284 @@ interface Props {
 }
 
 const CreateEventSidebar = ({
-	className,
-	selectedNetwork,
-	setSidebarCreateEvent,
-	id,
-	open
+  className,
+  selectedNetwork,
+  setSidebarCreateEvent,
+  id,
+  open,
 }: Props) => {
-	const [eventTitle, setEventTitle] = useState<string>('');
-	const [eventDescription, setEventDescription] = useState<string>('');
-	const [eventType, setEventType] = useState<string>('online');
-	const [eventStartDateTime, setEventStartDate] = useState<Date | null>(null);
-	const [eventEndDateTime, setEventEndDate] = useState<Date | null>(null);
-	const [eventJoiningLink, setEventJoiningLink] = useState<string>('');
-	const [eventLocation, setEventLocation] = useState<string>('');
-	const [errorsFound, setErrorsFound] = useState<string[]>([]);
+  const [eventTitle, setEventTitle] = useState<string>('');
+  const [eventDescription, setEventDescription] = useState<string>('');
+  const [eventType, setEventType] = useState<string>('online');
+  const [eventStartDateTime, setEventStartDate] = useState<Date | null>(null);
+  const [eventEndDateTime, setEventEndDate] = useState<Date | null>(null);
+  const [eventJoiningLink, setEventJoiningLink] = useState<string>('');
+  const [eventLocation, setEventLocation] = useState<string>('');
+  const [errorsFound, setErrorsFound] = useState<string[]>([]);
 
-	const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-	const onEventTypeRadioToggle = (event: RadioChangeEvent) => {
-		setEventType(event.target.value?.toString() || 'online');
-	};
+  const onEventTypeRadioToggle = (event: RadioChangeEvent) => {
+    setEventType(event.target.value?.toString() || 'online');
+  };
 
-	const closeCreateEventSidebar = () => {
-		setSidebarCreateEvent(false);
-		setEventTitle('');
-		setEventDescription('');
-		setEventType('online');
-		setEventStartDate(null);
-		setEventEndDate(null);
-		setEventJoiningLink('');
-	};
+  const closeCreateEventSidebar = () => {
+    setSidebarCreateEvent(false);
+    setEventTitle('');
+    setEventDescription('');
+    setEventType('online');
+    setEventStartDate(null);
+    setEventEndDate(null);
+    setEventJoiningLink('');
+  };
 
-	function isFormValid() {
-		const errorsFoundTemp: string[] = [];
+  function isFormValid() {
+    const errorsFoundTemp: string[] = [];
 
-		if (!eventTitle) {
-			errorsFoundTemp.push('eventTitle');
-		}
+    if (!eventTitle) {
+      errorsFoundTemp.push('eventTitle');
+    }
 
-		if (!eventDescription) {
-			errorsFoundTemp.push('eventDescription');
-		}
+    if (!eventDescription) {
+      errorsFoundTemp.push('eventDescription');
+    }
 
-		if (!eventStartDateTime) {
-			errorsFoundTemp.push('eventStartDateTime');
-		}
+    if (!eventStartDateTime) {
+      errorsFoundTemp.push('eventStartDateTime');
+    }
 
-		if (!eventEndDateTime) {
-			errorsFoundTemp.push('eventEndDateTime');
-		}
+    if (!eventEndDateTime) {
+      errorsFoundTemp.push('eventEndDateTime');
+    }
 
-		if (eventType == 'online' && !eventJoiningLink) {
-			errorsFoundTemp.push('eventJoiningLink');
-		} else if (eventType == 'offline' && !eventLocation) {
-			errorsFoundTemp.push('eventLocation');
-		}
+    if (eventType == 'online' && !eventJoiningLink) {
+      errorsFoundTemp.push('eventJoiningLink');
+    } else if (eventType == 'offline' && !eventLocation) {
+      errorsFoundTemp.push('eventLocation');
+    }
 
-		setErrorsFound(errorsFoundTemp);
+    setErrorsFound(errorsFoundTemp);
 
-		if (errorsFoundTemp.length > 0) {
-			return false;
-		}
+    if (errorsFoundTemp.length > 0) {
+      return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	const handleCreateEvent = async () => {
-		if (!isFormValid() || !id) return;
+  const handleCreateEvent = async () => {
+    if (!isFormValid() || !id) return;
 
-		setLoading(true);
-		const { data, error: fetchError } = await nextApiClientFetch<MessageType>(
-			'api/v1/auth/actions/createEvent',
-			{
-				content: eventDescription,
-				end_time: eventEndDateTime,
-				event_type: eventType,
-				location: eventLocation,
-				module: '',
-				network: selectedNetwork,
-				start_time: eventStartDateTime,
-				title: eventTitle,
-				url: eventJoiningLink,
-				user_id: id
-			}
-		);
+    setLoading(true);
+    const { data, error: fetchError } = await nextApiClientFetch<MessageType>(
+      'api/v1/auth/actions/createEvent',
+      {
+        content: eventDescription,
+        end_time: eventEndDateTime,
+        event_type: eventType,
+        location: eventLocation,
+        module: '',
+        network: selectedNetwork,
+        start_time: eventStartDateTime,
+        title: eventTitle,
+        url: eventJoiningLink,
+        user_id: id,
+      },
+    );
 
-		if (fetchError) {
-			queueNotification({
-				header: 'Error!',
-				message: 'Error saving event',
-				status: NotificationStatus.ERROR
-			});
-			console.error('Error saving event :', fetchError);
-		}
+    if (fetchError) {
+      queueNotification({
+        header: 'Error!',
+        message: 'Error saving event',
+        status: NotificationStatus.ERROR,
+      });
+      console.error('Error saving event :', fetchError);
+    }
 
-		if (data) {
-			closeCreateEventSidebar();
-			queueNotification({
-				header: 'Success!',
-				message:
+    if (data) {
+      closeCreateEventSidebar();
+      queueNotification({
+        header: 'Success!',
+        message:
           'Event has been sent for approval and should be live in 48 hours. Please contact hello@polkassembly.io in case of any queries',
-				status: NotificationStatus.SUCCESS
-			});
-			window.location.reload();
-		}
+        status: NotificationStatus.SUCCESS,
+      });
+      window.location.reload();
+    }
 
-		setLoading(false);
-	};
+    setLoading(false);
+  };
 
-	const onEventStartDateChange: DatePickerProps['onChange'] = (date) => {
-		setEventStartDate(dayjs(date).toDate());
-	};
+  const onEventStartDateChange: DatePickerProps['onChange'] = (date) => {
+    setEventStartDate(dayjs(date).toDate());
+  };
 
-	const onEventEndDateChange: DatePickerProps['onChange'] = (date) => {
-		setEventEndDate(dayjs(date).toDate());
-	};
+  const onEventEndDateChange: DatePickerProps['onChange'] = (date) => {
+    setEventEndDate(dayjs(date).toDate());
+  };
 
-	return (
-		<SidebarRight
-			className={className}
-			open={open}
-			closeSidebar={() => setSidebarCreateEvent(false)}
-		>
-			<div className="dashboard-heading">
-				<h1>Create Event</h1>
-			</div>
+  return (
+    <SidebarRight
+      className={className}
+      open={open}
+      closeSidebar={() => setSidebarCreateEvent(false)}
+    >
+      <div className="dashboard-heading">
+        <h1>Create Event</h1>
+      </div>
 
-			<div className="create-event-form">
-				<Form>
-					<div>
-						<label className="input-label">Event Title</label>
-						<Form.Item
-							validateStatus={errorsFound.includes('eventTitle') ? 'error' : ''}
-						>
-							<Input
-								type="text"
-								className="text-input"
-								value={eventTitle}
-								onChange={(e) => setEventTitle(e.target.value)}
-								disabled={loading}
-							/>
-						</Form.Item>
-					</div>
+      <div className="create-event-form">
+        <Form>
+          <div>
+            <label className="input-label">Event Title</label>
+            <Form.Item
+              validateStatus={errorsFound.includes('eventTitle') ? 'error' : ''}
+            >
+              <Input
+                type="text"
+                className="text-input"
+                value={eventTitle}
+                onChange={(e) => setEventTitle(e.target.value)}
+                disabled={loading}
+              />
+            </Form.Item>
+          </div>
 
-					<div>
-						<label className="input-label">Description</label>
-						<Form.Item
-							validateStatus={
-								errorsFound.includes('eventDescription') ? 'error' : ''
-							}
-						>
-							<Input
-								type="text"
-								className="text-input"
-								value={eventDescription}
-								onChange={(e) => setEventDescription(e.target.value)}
-								disabled={loading}
-							/>
-						</Form.Item>
-					</div>
+          <div>
+            <label className="input-label">Description</label>
+            <Form.Item
+              validateStatus={
+                errorsFound.includes('eventDescription') ? 'error' : ''
+              }
+            >
+              <Input
+                type="text"
+                className="text-input"
+                value={eventDescription}
+                onChange={(e) => setEventDescription(e.target.value)}
+                disabled={loading}
+              />
+            </Form.Item>
+          </div>
 
-					<label className="input-label mr-3">Event Type</label>
-					<Radio.Group
-						onChange={onEventTypeRadioToggle}
-						value={eventType}
-						className="radio-input-group"
-					>
-						<Radio
-							value="online"
-							checked={eventType === 'online'}
-							disabled={loading}
-						>
+          <label className="input-label mr-3">Event Type</label>
+          <Radio.Group
+            onChange={onEventTypeRadioToggle}
+            value={eventType}
+            className="radio-input-group"
+          >
+            <Radio
+              value="online"
+              checked={eventType === 'online'}
+              disabled={loading}
+            >
               Online
-						</Radio>
-						<Radio
-							value="offline"
-							checked={eventType === 'offline'}
-							disabled={loading}
-						>
+            </Radio>
+            <Radio
+              value="offline"
+              checked={eventType === 'offline'}
+              disabled={loading}
+            >
               Offline
-						</Radio>
-					</Radio.Group>
+            </Radio>
+          </Radio.Group>
 
-					<div className="d-flex date-input-row">
-						<div className="start-date-div">
-							<label className="input-label">Start Date</label>
-							<Form.Item
-								validateStatus={
-									errorsFound.includes('eventStartDateTime') ? 'error' : ''
-								}
-							>
-								<DatePicker
-									onChange={onEventStartDateChange}
-									value={
-										eventStartDateTime &&
+          <div className="d-flex date-input-row">
+            <div className="start-date-div">
+              <label className="input-label">Start Date</label>
+              <Form.Item
+                validateStatus={
+                  errorsFound.includes('eventStartDateTime') ? 'error' : ''
+                }
+              >
+                <DatePicker
+                  onChange={onEventStartDateChange}
+                  value={
+                    eventStartDateTime &&
                     dayjs(eventStartDateTime, 'DD-MM-YYYY')
-									}
-									disabled={loading}
-									format="DD-MM-YYYY"
-								/>
-							</Form.Item>
-						</div>
+                  }
+                  disabled={loading}
+                  format="DD-MM-YYYY"
+                />
+              </Form.Item>
+            </div>
 
-						<div>
-							<label className="input-label">End Date</label>
-							<Form.Item
-								validateStatus={
-									errorsFound.includes('eventEndDateTime') ? 'error' : ''
-								}
-							>
-								<DatePicker
-									onChange={onEventEndDateChange}
-									value={
-										eventEndDateTime && dayjs(eventEndDateTime, 'DD-MM-YYYY')
-									}
-									disabled={loading || eventStartDateTime === null}
-									format="DD-MM-YYYY"
-									disabledDate={(current) => {
-										const customDate =
+            <div>
+              <label className="input-label">End Date</label>
+              <Form.Item
+                validateStatus={
+                  errorsFound.includes('eventEndDateTime') ? 'error' : ''
+                }
+              >
+                <DatePicker
+                  onChange={onEventEndDateChange}
+                  value={
+                    eventEndDateTime && dayjs(eventEndDateTime, 'DD-MM-YYYY')
+                  }
+                  disabled={loading || eventStartDateTime === null}
+                  format="DD-MM-YYYY"
+                  disabledDate={(current) => {
+                    const customDate =
                       dayjs(eventStartDateTime).format('YYYY-MM-DD');
-										return current && current < dayjs(customDate, 'YYYY-MM-DD');
-									}}
-								/>
-							</Form.Item>
-						</div>
-					</div>
+                    return current && current < dayjs(customDate, 'YYYY-MM-DD');
+                  }}
+                />
+              </Form.Item>
+            </div>
+          </div>
 
-					{eventType == 'online' ? (
-						<div>
-							<label className="input-label">Joining Link</label>
-							<Form.Item
-								validateStatus={
-									errorsFound.includes('eventJoiningLink') ? 'error' : ''
-								}
-							>
-								<Input
-									type="text"
-									className="text-input"
-									value={eventJoiningLink}
-									onChange={(e) => setEventJoiningLink(e.target.value)}
-									disabled={loading}
-								/>
-							</Form.Item>
-						</div>
-					) : (
-						<div>
-							<label className="input-label">Location</label>
-							<Form.Item
-								validateStatus={
-									errorsFound.includes('eventLocation') ? 'error' : ''
-								}
-							>
-								<Input
-									type="text"
-									className="text-input"
-									value={eventLocation}
-									onChange={(e) => setEventLocation(e.target.value)}
-									disabled={loading}
-								/>
-							</Form.Item>
-						</div>
-					)}
+          {eventType == 'online' ? (
+            <div>
+              <label className="input-label">Joining Link</label>
+              <Form.Item
+                validateStatus={
+                  errorsFound.includes('eventJoiningLink') ? 'error' : ''
+                }
+              >
+                <Input
+                  type="text"
+                  className="text-input"
+                  value={eventJoiningLink}
+                  onChange={(e) => setEventJoiningLink(e.target.value)}
+                  disabled={loading}
+                />
+              </Form.Item>
+            </div>
+          ) : (
+            <div>
+              <label className="input-label">Location</label>
+              <Form.Item
+                validateStatus={
+                  errorsFound.includes('eventLocation') ? 'error' : ''
+                }
+              >
+                <Input
+                  type="text"
+                  className="text-input"
+                  value={eventLocation}
+                  onChange={(e) => setEventLocation(e.target.value)}
+                  disabled={loading}
+                />
+              </Form.Item>
+            </div>
+          )}
 
-					<div className="form-actions">
-						<Button onClick={closeCreateEventSidebar} disabled={loading}>
+          <div className="form-actions">
+            <Button onClick={closeCreateEventSidebar} disabled={loading}>
               Cancel
-						</Button>
-						<Button
-							className="bg-pink_primary rounded-md  hover:bg-pink_secondary text-white transition-colors duration-300 ml-1"
-							onClick={handleCreateEvent}
-							loading={loading}
-						>
+            </Button>
+            <Button
+              className="bg-pink_primary rounded-md  hover:bg-pink_secondary text-white transition-colors duration-300 ml-1"
+              onClick={handleCreateEvent}
+              loading={loading}
+            >
               Create Event
-						</Button>
-					</div>
-				</Form>
-			</div>
-		</SidebarRight>
-	);
+            </Button>
+          </div>
+        </Form>
+      </div>
+    </SidebarRight>
+  );
 };
 
 export default styled(CreateEventSidebar)`

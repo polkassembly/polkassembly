@@ -14,42 +14,42 @@ interface Props {
 }
 
 const Replies = ({ className, commentId, repliesArr }: Props) => {
-	const [showReplies, setShowReplies] = useState<boolean>(true);
-	const toggleShowReplies = () => setShowReplies(!showReplies);
-	return (
-		<div className={className}>
-			{repliesArr.length > 0 ? (
-				!showReplies ? (
-					<div
-						className="text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center"
-						onClick={toggleShowReplies}
-					>
-						{repliesArr.length} replies <DownOutlined className="ml-1" />
-					</div>
-				) : (
-					<div
-						className="text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center"
-						onClick={toggleShowReplies}
-					>
+  const [showReplies, setShowReplies] = useState<boolean>(true);
+  const toggleShowReplies = () => setShowReplies(!showReplies);
+  return (
+    <div className={className}>
+      {repliesArr.length > 0 ? (
+        !showReplies ? (
+          <div
+            className="text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center"
+            onClick={toggleShowReplies}
+          >
+            {repliesArr.length} replies <DownOutlined className="ml-1" />
+          </div>
+        ) : (
+          <div
+            className="text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center"
+            onClick={toggleShowReplies}
+          >
             Hide replies <UpOutlined className="ml-1" />
-					</div>
-				)
-			) : null}
-			{showReplies &&
+          </div>
+        )
+      ) : null}
+      {showReplies &&
         repliesArr.map((reply: any) => {
-        	return (
-        		<div key={reply.id}>
-        			<Reply
-        				reply={reply}
-        				key={reply.id}
-        				commentId={commentId}
-        				userName={reply.username}
-        			/>
-        		</div>
-        	);
+          return (
+            <div key={reply.id}>
+              <Reply
+                reply={reply}
+                key={reply.id}
+                commentId={commentId}
+                userName={reply.username}
+              />
+            </div>
+          );
         })}
-		</div>
-	);
+    </div>
+  );
 };
 
 export default Replies;

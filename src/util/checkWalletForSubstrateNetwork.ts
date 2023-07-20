@@ -6,35 +6,35 @@ import { InjectedWindow } from '@polkadot/extension-inject/types';
 import { Wallet } from '~src/types';
 
 export const checkWalletForSubstrateNetwork = (network: string) => {
-	if (!network || !window) return;
+  if (!network || !window) return;
 
-	const injectedWindow = window as Window & InjectedWindow;
-	const availableWallets = injectedWindow.injectedWeb3;
+  const injectedWindow = window as Window & InjectedWindow;
+  const availableWallets = injectedWindow.injectedWeb3;
 
-	if (
-		availableWallets[Wallet.TALISMAN] === undefined &&
+  if (
+    availableWallets[Wallet.TALISMAN] === undefined &&
     availableWallets[Wallet.POLKADOT] === undefined &&
     availableWallets[Wallet.SUBWALLET] === undefined &&
     !(window as any).walletExtension?.isNovaWallet
-	) {
-		if (!['polymesh'].includes(network)) {
-			return {
-				description:
+  ) {
+    if (!['polymesh'].includes(network)) {
+      return {
+        description:
           'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.',
-				error: 1,
-				message: 'Wallet extension not detected.'
-			};
-		}
-		if (network === 'polymesh' && !availableWallets[Wallet.POLYWALLET]) {
-			return {
-				description:
+        error: 1,
+        message: 'Wallet extension not detected.',
+      };
+    }
+    if (network === 'polymesh' && !availableWallets[Wallet.POLYWALLET]) {
+      return {
+        description:
           'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.',
-				error: 1,
-				message: 'Wallet extension not detected.'
-			};
-		}
-	}
+        error: 1,
+        message: 'Wallet extension not detected.',
+      };
+    }
+  }
 
-	return { description: '', error: 0, message: '' };
+  return { description: '', error: 0, message: '' };
 };
 export default checkWalletForSubstrateNetwork;

@@ -12,11 +12,11 @@ interface Props {
 }
 
 const EditablePostContent = ({ className, toggleEdit }: Props) => {
-	return (
-		<div className={className}>
-			<PostContentForm toggleEdit={toggleEdit} />
-		</div>
-	);
+  return (
+    <div className={className}>
+      <PostContentForm toggleEdit={toggleEdit} />
+    </div>
+  );
 };
 
 export default EditablePostContent;

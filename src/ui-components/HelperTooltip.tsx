@@ -15,21 +15,21 @@ interface Props {
 }
 
 const HelperTooltip = ({
-	className,
-	text,
-	bgColor = '#E5007A',
-	placement
+  className,
+  text,
+  bgColor = '#E5007A',
+  placement,
 }: Props) => {
-	return (
-		<Tooltip
-			placement={placement}
-			color={bgColor}
-			title={text}
-			getPopupContainer={(triggerNode) => triggerNode}
-		>
-			<InfoCircleOutlined className={className} />
-		</Tooltip>
-	);
+  return (
+    <Tooltip
+      placement={placement}
+      color={bgColor}
+      title={text}
+      getPopupContainer={(triggerNode) => triggerNode}
+    >
+      <InfoCircleOutlined className={className} />
+    </Tooltip>
+  );
 };
 
 export default HelperTooltip;

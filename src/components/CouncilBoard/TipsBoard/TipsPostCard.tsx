@@ -7,28 +7,28 @@ import React from 'react';
 import styled from 'styled-components';
 
 const TipsPostCard = ({ className }: { className?: string }) => {
-	return (
-		<div className={className}>
-			<div className="tip-history tipped/not-tipped">Not Tipped</div>
+  return (
+    <div className={className}>
+      <div className="tip-history tipped/not-tipped">Not Tipped</div>
 
-			<h5>Talisman Proposal: Cross-Chain Transaction</h5>
-			<p>
+      <h5>Talisman Proposal: Cross-Chain Transaction</h5>
+      <p>
         Working on finishing up the tickets for the bigger project files.
         Working on finishing up the tickets for
-			</p>
+      </p>
 
-			<div className="info-bar">
-				<div className="tip-post-status opened/rewarded">Opened</div>
+      <div className="info-bar">
+        <div className="tip-post-status opened/rewarded">Opened</div>
 
-				<div className="right-info d-flex">
-					<div className="time">
-						<ClockCircleOutlined />
+        <div className="right-info d-flex">
+          <div className="time">
+            <ClockCircleOutlined />
             20h ago
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default styled(TipsPostCard)`

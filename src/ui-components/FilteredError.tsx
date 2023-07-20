@@ -10,15 +10,15 @@ interface ErrorProps {
 }
 // TODO: Remove the file
 const FilteredError = ({ className, text }: ErrorProps) => {
-	return (
-		<div className="flex place-content-center">
-			<Alert
-				className={`${className} text-center max-w-sm`}
-				message={text}
-				type="error"
-			/>
-		</div>
-	);
+  return (
+    <div className="flex place-content-center">
+      <Alert
+        className={`${className} text-center max-w-sm`}
+        message={text}
+        type="error"
+      />
+    </div>
+  );
 };
 
 export default FilteredError;

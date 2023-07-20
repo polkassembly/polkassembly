@@ -18,83 +18,83 @@ interface ISearchBarProps {
 }
 
 const SearchBar: FC<ISearchBarProps> = (props) => {
-	const { className, isSmallScreen } = props;
-	const { network } = useNetworkContext();
-	const [open, setOpen] = useState(false);
-	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
+  const { className, isSmallScreen } = props;
+  const { network } = useNetworkContext();
+  const [open, setOpen] = useState(false);
+  const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
 
-	return allowedNetwork.includes(network.toUpperCase()) ? (
-		<div className={className}>
-			{isSmallScreen ? (
-				<div className="small-client relative ">
-					<SearchOutlined className="absolute top-[11px] left-2.5 z-50" />
-					<NewSearch
-						openModal={open}
-						setOpenModal={setOpen}
-						isSuperSearch={isSuperSearch}
-						setIsSuperSearch={setIsSuperSearch}
-					/>
-				</div>
-			) : (
-				<>
-					<div
-						className="flex items-center gap-1 max-sm:gap-0 cursor-pointer"
-						onClick={() => setOpen(true)}
-					>
-						<button className="flex items-center justify-center outline-none border-none bg-transparent cursor-pointer text-[18px] text-[#485F7D]">
-							<SearchOutlined />
-						</button>
-						<span className="bg-[#407AFC] py-0.5 px-2 text-[10px] font-semibold max-sm:hidden text-white rounded-full">
+  return allowedNetwork.includes(network.toUpperCase()) ? (
+    <div className={className}>
+      {isSmallScreen ? (
+        <div className="small-client relative ">
+          <SearchOutlined className="absolute top-[11px] left-2.5 z-50" />
+          <NewSearch
+            openModal={open}
+            setOpenModal={setOpen}
+            isSuperSearch={isSuperSearch}
+            setIsSuperSearch={setIsSuperSearch}
+          />
+        </div>
+      ) : (
+        <>
+          <div
+            className="flex items-center gap-1 max-sm:gap-0 cursor-pointer"
+            onClick={() => setOpen(true)}
+          >
+            <button className="flex items-center justify-center outline-none border-none bg-transparent cursor-pointer text-[18px] text-[#485F7D]">
+              <SearchOutlined />
+            </button>
+            <span className="bg-[#407AFC] py-0.5 px-2 text-[10px] font-semibold max-sm:hidden text-white rounded-full">
               New
-						</span>
-						<span className="-mt-3 text-[#407AFC] text-[16px] sm:hidden">
+            </span>
+            <span className="-mt-3 text-[#407AFC] text-[16px] sm:hidden">
               &#9679;
-						</span>
-					</div>
-					<NewSearch
-						openModal={open}
-						setOpenModal={setOpen}
-						isSuperSearch={isSuperSearch}
-						setIsSuperSearch={setIsSuperSearch}
-					/>
-				</>
-			)}
-		</div>
-	) : (
-		<div className={className}>
-			{isSmallScreen ? (
-				<div className="small-client relative">
-					<SearchOutlined className="absolute top-[11px] left-2.5 z-50" />
-					<ClientOnly>
-						<Search network={network} />
-					</ClientOnly>
-				</div>
-			) : (
-				<>
-					<button
-						className="flex items-center justify-center outline-none border-none bg-transparent cursor-pointer text-[18px] text-[#485F7D]"
-						onClick={() => setOpen(true)}
-					>
-						<SearchOutlined />
-					</button>
-					<Modal
-						title="Search"
-						closable={false}
-						open={open}
-						onCancel={() => setOpen(false)}
-						footer={[]}
-						className={`${className} ${poppins.className} ${poppins.variable}`}
-					>
-						<div className="client">
-							<ClientOnly>
-								<Search network={network} />
-							</ClientOnly>
-						</div>
-					</Modal>
-				</>
-			)}
-		</div>
-	);
+            </span>
+          </div>
+          <NewSearch
+            openModal={open}
+            setOpenModal={setOpen}
+            isSuperSearch={isSuperSearch}
+            setIsSuperSearch={setIsSuperSearch}
+          />
+        </>
+      )}
+    </div>
+  ) : (
+    <div className={className}>
+      {isSmallScreen ? (
+        <div className="small-client relative">
+          <SearchOutlined className="absolute top-[11px] left-2.5 z-50" />
+          <ClientOnly>
+            <Search network={network} />
+          </ClientOnly>
+        </div>
+      ) : (
+        <>
+          <button
+            className="flex items-center justify-center outline-none border-none bg-transparent cursor-pointer text-[18px] text-[#485F7D]"
+            onClick={() => setOpen(true)}
+          >
+            <SearchOutlined />
+          </button>
+          <Modal
+            title="Search"
+            closable={false}
+            open={open}
+            onCancel={() => setOpen(false)}
+            footer={[]}
+            className={`${className} ${poppins.className} ${poppins.variable}`}
+          >
+            <div className="client">
+              <ClientOnly>
+                <Search network={network} />
+              </ClientOnly>
+            </div>
+          </Modal>
+        </>
+      )}
+    </div>
+  );
 };
 
 export default styled(SearchBar)`

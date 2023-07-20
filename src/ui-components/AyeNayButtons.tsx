@@ -17,40 +17,40 @@ interface Props {
 }
 
 const AyeNayButton = ({
-	className,
-	disabled,
-	onClickAye,
-	onClickNay,
-	size,
-	customWidth
+  className,
+  disabled,
+  onClickAye,
+  onClickNay,
+  size,
+  customWidth,
 }: Props) => (
-	<div
-		className={`${className} flex items-center justify-between max-w-[256px]`}
-	>
-		<Button
-			name="aye"
-			htmlType="submit"
-			className={`bg-aye_green hover:bg-green-600 text-white flex items-center justify-center mr-7 border-aye_green hover:border-green-600 rounded-md ${customWidth} max-[370px]:w-[120px]`}
-			disabled={disabled}
-			size={size}
-			onClick={onClickAye}
-		>
-			<LikeFilled className="mr-1" />
+  <div
+    className={`${className} flex items-center justify-between max-w-[256px]`}
+  >
+    <Button
+      name="aye"
+      htmlType="submit"
+      className={`bg-aye_green hover:bg-green-600 text-white flex items-center justify-center mr-7 border-aye_green hover:border-green-600 rounded-md ${customWidth} max-[370px]:w-[120px]`}
+      disabled={disabled}
+      size={size}
+      onClick={onClickAye}
+    >
+      <LikeFilled className="mr-1" />
       Aye
-		</Button>
+    </Button>
 
-		<Button
-			name="nay"
-			htmlType="submit"
-			className={` text-white hover:text-white flex items-center justify-center bg-nay_red hover:bg-red_primary border-nay_red rounded-md ${customWidth} max-[370px]:w-[120px]`}
-			disabled={disabled}
-			size={size}
-			onClick={onClickNay}
-		>
-			<DislikeFilled className="mr-1" />
+    <Button
+      name="nay"
+      htmlType="submit"
+      className={` text-white hover:text-white flex items-center justify-center bg-nay_red hover:bg-red_primary border-nay_red rounded-md ${customWidth} max-[370px]:w-[120px]`}
+      disabled={disabled}
+      size={size}
+      onClick={onClickNay}
+    >
+      <DislikeFilled className="mr-1" />
       Nay
-		</Button>
-	</div>
+    </Button>
+  </div>
 );
 
 export default AyeNayButton;

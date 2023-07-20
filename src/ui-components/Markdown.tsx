@@ -17,25 +17,25 @@ interface Props {
 }
 
 const Markdown = ({
-	className,
-	isPreview = false,
-	isAutoComplete = false,
-	md,
-	imgHidden = false
+  className,
+  isPreview = false,
+  isAutoComplete = false,
+  md,
+  imgHidden = false,
 }: Props) => {
-	const sanitisedMd = md.replace(/\\n/g, '\n');
+  const sanitisedMd = md.replace(/\\n/g, '\n');
 
-	return (
-		<ReactMarkdown
-			className={`${className} ${isPreview && 'mde-preview-content'} ${
-				imgHidden && 'hide-image'
-			} ${isAutoComplete && 'mde-autocomplete-content'}`}
-			rehypePlugins={[rehypeRaw, remarkGfm]}
-			linkTarget="_blank"
-		>
-			{sanitisedMd}
-		</ReactMarkdown>
-	);
+  return (
+    <ReactMarkdown
+      className={`${className} ${isPreview && 'mde-preview-content'} ${
+        imgHidden && 'hide-image'
+      } ${isAutoComplete && 'mde-autocomplete-content'}`}
+      rehypePlugins={[rehypeRaw, remarkGfm]}
+      linkTarget="_blank"
+    >
+      {sanitisedMd}
+    </ReactMarkdown>
+  );
 };
 
 export default styled(Markdown)`

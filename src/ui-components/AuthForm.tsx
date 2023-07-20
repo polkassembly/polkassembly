@@ -13,11 +13,11 @@ interface Props extends PropsWithChildren {
 }
 
 const AuthForm: FC<Props> = ({ children, onSubmit, className }) => {
-	return (
-		<Form onFinish={onSubmit} className={className}>
-			{children}
-		</Form>
-	);
+  return (
+    <Form onFinish={onSubmit} className={className}>
+      {children}
+    </Form>
+  );
 };
 
 export default AuthForm;

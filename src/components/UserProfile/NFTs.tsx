@@ -11,13 +11,13 @@ interface INFTsProps {
 }
 
 const NFTs: FC<INFTsProps> = (props) => {
-	const { onCancel, onSave } = props;
-	useEffect(() => {
-		onCancel.current = () => {};
-		onSave.current = async () => {};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-	return <div>NFTs</div>;
+  const { onCancel, onSave } = props;
+  useEffect(() => {
+    onCancel.current = () => {};
+    onSave.current = async () => {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return <div>NFTs</div>;
 };
 
 export default NFTs;

@@ -6,7 +6,7 @@ import { u8aToHex } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/util-crypto';
 
 export default function getPublicKey(address: string): string {
-	const publicKey = decodeAddress(address);
+  const publicKey = decodeAddress(address);
 
-	return u8aToHex(publicKey);
+  return u8aToHex(publicKey);
 }

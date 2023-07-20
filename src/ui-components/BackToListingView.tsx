@@ -14,88 +14,88 @@ interface Props {
 }
 
 const BackToListingView = ({ postCategory, trackName }: Props) => {
-	let path: string = '';
+  let path: string = '';
 
-	if (trackName) {
-		path = `${trackName
-			.split(/(?=[A-Z])/)
-			.join('-')
-			.toLowerCase()}`;
-	}
+  if (trackName) {
+    path = `${trackName
+      .split(/(?=[A-Z])/)
+      .join('-')
+      .toLowerCase()}`;
+  }
 
-	if (postCategory) {
-		switch (postCategory) {
-		case PostCategory.DISCUSSION:
-			path = 'discussions';
-			break;
-		case PostCategory.GRANT:
-			path = 'grants';
-			break;
-		case PostCategory.REFERENDA:
-			path = 'referenda';
-			break;
-		case PostCategory.PROPOSAL:
-			path = 'proposals';
-			break;
-		case PostCategory.MOTION:
-			path = 'motions';
-			break;
-		case PostCategory.TREASURY_PROPOSAL:
-			path = 'treasury-proposals';
-			break;
-		case PostCategory.TECH_COMMITTEE_PROPOSAL:
-			path = 'tech-comm-proposals';
-			break;
-		case PostCategory.BOUNTY:
-			path = 'bounties';
-			break;
-		case PostCategory.CHILD_BOUNTY:
-			path = 'child_bounties';
-			break;
-		case PostCategory.TIP:
-			path = 'tips';
-			break;
-		case PostCategory.ALLIANCE_MOTION:
-			path = 'alliance/motions';
-			break;
-		case PostCategory.ANNOUNCEMENT:
-			path = 'alliance/announcements';
-			break;
-		case EMembersType.COUNCIL:
-			path = 'council';
-			break;
-		case EMembersType.FELLOWSHIP:
-			path = 'fellowship';
-			break;
-		case EMembersType.WHITELIST:
-			path = 'whitelist';
-			break;
-		case PageLink.OVERVIEW_GOV_2:
-			path = 'opengov';
-			break;
-		}
-	}
+  if (postCategory) {
+    switch (postCategory) {
+      case PostCategory.DISCUSSION:
+        path = 'discussions';
+        break;
+      case PostCategory.GRANT:
+        path = 'grants';
+        break;
+      case PostCategory.REFERENDA:
+        path = 'referenda';
+        break;
+      case PostCategory.PROPOSAL:
+        path = 'proposals';
+        break;
+      case PostCategory.MOTION:
+        path = 'motions';
+        break;
+      case PostCategory.TREASURY_PROPOSAL:
+        path = 'treasury-proposals';
+        break;
+      case PostCategory.TECH_COMMITTEE_PROPOSAL:
+        path = 'tech-comm-proposals';
+        break;
+      case PostCategory.BOUNTY:
+        path = 'bounties';
+        break;
+      case PostCategory.CHILD_BOUNTY:
+        path = 'child_bounties';
+        break;
+      case PostCategory.TIP:
+        path = 'tips';
+        break;
+      case PostCategory.ALLIANCE_MOTION:
+        path = 'alliance/motions';
+        break;
+      case PostCategory.ANNOUNCEMENT:
+        path = 'alliance/announcements';
+        break;
+      case EMembersType.COUNCIL:
+        path = 'council';
+        break;
+      case EMembersType.FELLOWSHIP:
+        path = 'fellowship';
+        break;
+      case EMembersType.WHITELIST:
+        path = 'whitelist';
+        break;
+      case PageLink.OVERVIEW_GOV_2:
+        path = 'opengov';
+        break;
+    }
+  }
 
-	const listingPageText = path.replace(/-|_/g, ' ');
+  const listingPageText = path.replace(/-|_/g, ' ');
 
-	return (
-		<Link
-			className="text-sidebarBlue hover:text-pink_primary inline-flex items-center"
-			href={`/${path}`}
-		>
-			<div className="flex items-center">
-				<LeftOutlined className="text-xs mr-2" />
-				<span className="text-sm font-medium">
+  return (
+    <Link
+      className="text-sidebarBlue hover:text-pink_primary inline-flex items-center"
+      href={`/${path}`}
+    >
+      <div className="flex items-center">
+        <LeftOutlined className="text-xs mr-2" />
+        <span className="text-sm font-medium">
           Back to{' '}
-					<span className="capitalize">
-						{trackName
-							? trackName.split(/(?=[A-Z])/).join(' ')
-							: listingPageText}
-					</span>
-				</span>
-			</div>
-		</Link>
-	);
+          <span className="capitalize">
+            {trackName
+              ? trackName.split(/(?=[A-Z])/).join(' ')
+              : listingPageText}
+          </span>
+        </span>
+      </div>
+    </Link>
+  );
 };
 
 export default BackToListingView;

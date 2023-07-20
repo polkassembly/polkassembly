@@ -14,19 +14,19 @@ interface Props {
 }
 
 const queueNotification = ({
-	header,
-	message,
-	durationInSeconds = 4.5,
-	status
+  header,
+  message,
+  durationInSeconds = 4.5,
+  status,
 }: Props) => {
-	const args = {
-		message: header,
-		description: message,
-		duration: durationInSeconds
-	};
+  const args = {
+    message: header,
+    description: message,
+    duration: durationInSeconds,
+  };
 
-	// queues notifcation
-	notification[status](args);
+  // queues notifcation
+  notification[status](args);
 };
 
 export default queueNotification;

@@ -68,23 +68,23 @@ export interface IPostDataContext {
 }
 
 export const PostDataContext: React.Context<IPostDataContext> = createContext(
-  {} as IPostDataContext
+  {} as IPostDataContext,
 );
 
 const PostDataContextProvider: FC<IPostDataContextProviderProps> = (props) => {
-	const { initialPostData, children } = props;
-	const [postData, setPostData] = useState(
-		initialPostData || {
-			postIndex: '',
-			postType: ProposalType.DISCUSSIONS
-		}
-	);
+  const { initialPostData, children } = props;
+  const [postData, setPostData] = useState(
+    initialPostData || {
+      postIndex: '',
+      postType: ProposalType.DISCUSSIONS,
+    },
+  );
 
-	return (
-		<PostDataContext.Provider value={{ postData, setPostData }}>
-			{children}
-		</PostDataContext.Provider>
-	);
+  return (
+    <PostDataContext.Provider value={{ postData, setPostData }}>
+      {children}
+    </PostDataContext.Provider>
+  );
 };
 
 export default PostDataContextProvider;

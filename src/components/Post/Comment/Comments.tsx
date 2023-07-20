@@ -14,20 +14,20 @@ interface ICommentsProps {
 }
 
 const Comments: FC<ICommentsProps> = (props) => {
-	const { className, comments } = props;
-	return (
-		<div className={className}>
-			{comments
-				.sort((a, b) => dayjs(a.created_at).diff(dayjs(b.created_at)))
-				.map((comment) => (
-					<Comment
-						disableEdit={props.disableEdit}
-						comment={comment}
-						key={comment.id}
-					/>
-				))}
-		</div>
-	);
+  const { className, comments } = props;
+  return (
+    <div className={className}>
+      {comments
+        .sort((a, b) => dayjs(a.created_at).diff(dayjs(b.created_at)))
+        .map((comment) => (
+          <Comment
+            disableEdit={props.disableEdit}
+            comment={comment}
+            key={comment.id}
+          />
+        ))}
+    </div>
+  );
 };
 
 export default Comments;

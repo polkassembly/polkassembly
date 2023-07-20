@@ -12,9 +12,9 @@ interface Props {
 }
 
 const TopicTag = ({ className, topic }: Props) => {
-	return (
-		<Tag className={`${className} ${topic} text-xs py-1 px-3`}>{topic}</Tag>
-	);
+  return (
+    <Tag className={`${className} ${topic} text-xs py-1 px-3`}>{topic}</Tag>
+  );
 };
 
 export default styled(TopicTag)`

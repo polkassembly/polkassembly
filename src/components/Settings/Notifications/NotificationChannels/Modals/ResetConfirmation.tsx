@@ -22,55 +22,55 @@ const StyledAlert = styled(Alert)`
 `;
 
 const ResetConfirmation = ({
-	open,
-	onConfirm,
-	onCancel,
-	channel
+  open,
+  onConfirm,
+  onCancel,
+  channel,
 }: {
   open: boolean;
   onConfirm: () => void;
   onCancel: () => void;
   channel: string;
 }) => {
-	return (
-		<Modal
-			title="Confirmation"
-			titleIcon={<CheckOutlineIcon />}
-			open={open}
-			onCancel={onCancel}
-			onConfirm={onConfirm}
-			footer={[
-				<Button
-					key="1"
-					onClick={onCancel}
-					className="h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize"
-				>
+  return (
+    <Modal
+      title="Confirmation"
+      titleIcon={<CheckOutlineIcon />}
+      open={open}
+      onCancel={onCancel}
+      onConfirm={onConfirm}
+      footer={[
+        <Button
+          key="1"
+          onClick={onCancel}
+          className="h-10 rounded-[6px] bg-[#FFFFFF] border border-solid border-pink_primary px-[36px] py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize"
+        >
           Cancel
-				</Button>,
-				<Button
-					onClick={onConfirm}
-					key="2"
-					className="h-10 rounded-[6px] bg-[#E5007A] border border-solid border-pink_primary px-[36px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize"
-				>
+        </Button>,
+        <Button
+          onClick={onConfirm}
+          key="2"
+          className="h-10 rounded-[6px] bg-[#E5007A] border border-solid border-pink_primary px-[36px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize"
+        >
           Confirm
-				</Button>
-			]}
-		>
-			<p className="text-[16px] font-medium m-0 my-6 leading-[21px] text-[#243A57]">
-				{`Are you sure you want to remove Polkassembly bot from your ${channel} channel chat?`}
-			</p>
-			<StyledAlert
-				icon={<InfoCircleOutlined />}
-				showIcon
-				type="info"
-				className="text-[14px] bg-[#4E75FF] text-[#fff] "
-				message={`Removing bot means no more notifications for ${channel} channel chat, Stay connected and informed by keeping the bot.`}
-			/>
-			<div className="mr-[-24px] ml-[-24px]">
-				<Divider className="my-4" />
-			</div>
-		</Modal>
-	);
+        </Button>,
+      ]}
+    >
+      <p className="text-[16px] font-medium m-0 my-6 leading-[21px] text-[#243A57]">
+        {`Are you sure you want to remove Polkassembly bot from your ${channel} channel chat?`}
+      </p>
+      <StyledAlert
+        icon={<InfoCircleOutlined />}
+        showIcon
+        type="info"
+        className="text-[14px] bg-[#4E75FF] text-[#fff] "
+        message={`Removing bot means no more notifications for ${channel} channel chat, Stay connected and informed by keeping the bot.`}
+      />
+      <div className="mr-[-24px] ml-[-24px]">
+        <Divider className="my-4" />
+      </div>
+    </Modal>
+  );
 };
 
 export default ResetConfirmation;

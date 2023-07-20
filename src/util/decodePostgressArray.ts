@@ -20,8 +20,8 @@
  */
 
 export function decodePostgresArray(pgArray: string): string[] {
-	const addressArray = pgArray.replace(/"|{|}/g, '');
-	const addresses =
+  const addressArray = pgArray.replace(/"|{|}/g, '');
+  const addresses =
     addressArray.length > 1 || !!addressArray[0] ? addressArray.split(',') : [];
-	return addresses;
+  return addresses;
 }

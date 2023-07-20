@@ -16,50 +16,50 @@ interface IPostReactionBarProps {
 }
 
 const PostReactionBar: FC<IPostReactionBarProps> = ({
-	className,
-	post_reactions
+  className,
+  post_reactions,
 }) => {
-	const [reactionsDisabled, setReactionsDisabled] = useState<boolean>(false);
-	const [openLikeModal, setLikeModalOpen] = useState<boolean>(false);
-	const [openDislikeModal, setDislikeModalOpen] = useState<boolean>(false);
-	const [reactions, setReactions] = useState<IReactions>(post_reactions!);
-	if (!post_reactions) {
-		return null;
-	}
-	return (
-		<div className={`${className} flex items-center`}>
-			{Object.keys(post_reactions).map((reaction) => {
-				return (
-					<div key={reaction}>
-						<ReactionButton
-							reaction={reaction}
-							reactions={reactions}
-							reactionsDisabled={reactionsDisabled}
-							setReactionsDisabled={setReactionsDisabled}
-							setLikeModalOpen={setLikeModalOpen}
-							setDislikeModalOpen={setDislikeModalOpen}
-							setReactions={setReactions}
-						/>
-					</div>
-				);
-			})}
-			<ReferendaLoginPrompts
-				modalOpen={openLikeModal}
-				setModalOpen={setLikeModalOpen}
-				image="/assets/referenda-like-dislike.png"
-				title="Join Polkassembly to Like this proposal."
-				subtitle="Discuss, contribute and get regular updates from Polkassembly."
-			/>
+  const [reactionsDisabled, setReactionsDisabled] = useState<boolean>(false);
+  const [openLikeModal, setLikeModalOpen] = useState<boolean>(false);
+  const [openDislikeModal, setDislikeModalOpen] = useState<boolean>(false);
+  const [reactions, setReactions] = useState<IReactions>(post_reactions!);
+  if (!post_reactions) {
+    return null;
+  }
+  return (
+    <div className={`${className} flex items-center`}>
+      {Object.keys(post_reactions).map((reaction) => {
+        return (
+          <div key={reaction}>
+            <ReactionButton
+              reaction={reaction}
+              reactions={reactions}
+              reactionsDisabled={reactionsDisabled}
+              setReactionsDisabled={setReactionsDisabled}
+              setLikeModalOpen={setLikeModalOpen}
+              setDislikeModalOpen={setDislikeModalOpen}
+              setReactions={setReactions}
+            />
+          </div>
+        );
+      })}
+      <ReferendaLoginPrompts
+        modalOpen={openLikeModal}
+        setModalOpen={setLikeModalOpen}
+        image="/assets/referenda-like-dislike.png"
+        title="Join Polkassembly to Like this proposal."
+        subtitle="Discuss, contribute and get regular updates from Polkassembly."
+      />
 
-			<ReferendaLoginPrompts
-				modalOpen={openDislikeModal}
-				setModalOpen={setDislikeModalOpen}
-				image="/assets/referenda-like-dislike.png"
-				title="Join Polkassembly to Dislike this proposal."
-				subtitle="Discuss, contribute and get regular updates from Polkassembly."
-			/>
-		</div>
-	);
+      <ReferendaLoginPrompts
+        modalOpen={openDislikeModal}
+        setModalOpen={setDislikeModalOpen}
+        image="/assets/referenda-like-dislike.png"
+        title="Join Polkassembly to Dislike this proposal."
+        subtitle="Discuss, contribute and get regular updates from Polkassembly."
+      />
+    </div>
+  );
 };
 
 export default PostReactionBar;

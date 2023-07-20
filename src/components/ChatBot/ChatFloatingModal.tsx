@@ -71,62 +71,62 @@ const Container = styled.div`
 `;
 
 export default function ChatFloatingModal() {
-	const [isOpen, setIsOpen] = useState(false);
-	const toggleChat = () => {
-		setIsOpen((prev: boolean) => !prev);
-	};
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleChat = () => {
+    setIsOpen((prev: boolean) => !prev);
+  };
 
-	const grillData: { [index: string]: string[] } = {
-		[globalNework.CERE]: ['5145', '5139'],
-		[globalNework.KILT]: ['2035', '5144'],
-		[globalNework.KUSAMA]: ['2027', '5138'],
-		[globalNework.MOONBEAM]: ['2065', '5142'],
-		[globalNework.POLKADOT]: ['3638', '754']
-	};
+  const grillData: { [index: string]: string[] } = {
+    [globalNework.CERE]: ['5145', '5139'],
+    [globalNework.KILT]: ['2035', '5144'],
+    [globalNework.KUSAMA]: ['2027', '5138'],
+    [globalNework.MOONBEAM]: ['2065', '5142'],
+    [globalNework.POLKADOT]: ['3638', '754'],
+  };
 
-	const { network } = useNetworkContext();
-	const hasOpened = useRef(false);
-	useEffect(() => {
-		if (!isOpen) return;
-		if (!hasOpened.current) {
-			let filterArray: string[] = [];
-			if (grillData?.[network]) {
-				filterArray = grillData?.[network];
-			}
-			grill.init({
-				hub: { id: 'polkassembly' },
-				onWidgetCreated: (iframe: any) => {
-					const channelsQuery = new URLSearchParams();
-					const filterChannels = filterArray;
-					channelsQuery.set('channels', filterChannels.join(','));
-					iframe.src += `&${channelsQuery.toString()}`;
-					return iframe;
-				}
-			});
-		}
-		hasOpened.current = true;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [grillData, network]);
+  const { network } = useNetworkContext();
+  const hasOpened = useRef(false);
+  useEffect(() => {
+    if (!isOpen) return;
+    if (!hasOpened.current) {
+      let filterArray: string[] = [];
+      if (grillData?.[network]) {
+        filterArray = grillData?.[network];
+      }
+      grill.init({
+        hub: { id: 'polkassembly' },
+        onWidgetCreated: (iframe: any) => {
+          const channelsQuery = new URLSearchParams();
+          const filterChannels = filterArray;
+          channelsQuery.set('channels', filterChannels.join(','));
+          iframe.src += `&${channelsQuery.toString()}`;
+          return iframe;
+        },
+      });
+    }
+    hasOpened.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grillData, network]);
 
-	return grillData?.[network] ? (
-		<Container>
-			<div className={'ChatFloatingModal'}>
-				{(isOpen || hasOpened.current) && (
-					<div
-						id="grill"
-						className={`ChatFloatingIframe ${
-							!isOpen ? 'ChatFloatingIframeHidden' : ''
-						}`}
-					/>
-				)}
-				<Button className={'ChatFloatingButton'} onClick={toggleChat}>
-					<Image
-						src={GrillChatIcon}
-						alt="GrillChat"
-						className="w-[50px] h-[50px]"
-					/>
-				</Button>
-			</div>
-		</Container>
-	) : null;
+  return grillData?.[network] ? (
+    <Container>
+      <div className={'ChatFloatingModal'}>
+        {(isOpen || hasOpened.current) && (
+          <div
+            id="grill"
+            className={`ChatFloatingIframe ${
+              !isOpen ? 'ChatFloatingIframeHidden' : ''
+            }`}
+          />
+        )}
+        <Button className={'ChatFloatingButton'} onClick={toggleChat}>
+          <Image
+            src={GrillChatIcon}
+            alt="GrillChat"
+            className="w-[50px] h-[50px]"
+          />
+        </Button>
+      </div>
+    </Container>
+  ) : null;
 }

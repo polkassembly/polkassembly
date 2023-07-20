@@ -6,19 +6,19 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 const useGetFilterByFromUrl = () => {
-	const [tags, setTags] = useState<string[]>([]);
-	const router = useRouter();
+  const [tags, setTags] = useState<string[]>([]);
+  const router = useRouter();
 
-	useEffect(() => {
-		if (router.query.filterBy) {
-			const filterBy = router.query.filterBy;
-			setTags(JSON.parse(decodeURIComponent(String(filterBy))) || []);
-		} else {
-			setTags([]);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-	return tags;
+  useEffect(() => {
+    if (router.query.filterBy) {
+      const filterBy = router.query.filterBy;
+      setTags(JSON.parse(decodeURIComponent(String(filterBy))) || []);
+    } else {
+      setTags([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return tags;
 };
 
 export default useGetFilterByFromUrl;

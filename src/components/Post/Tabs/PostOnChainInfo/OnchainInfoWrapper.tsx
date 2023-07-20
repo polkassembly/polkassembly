@@ -11,7 +11,7 @@ interface Props {
 }
 
 const OnchainInfoWrapper = ({ children, className }: Props) => {
-	return <div className={className}>{children}</div>;
+  return <div className={className}>{children}</div>;
 };
 
 export default styled(OnchainInfoWrapper)`

@@ -23,22 +23,22 @@ const SpanContent = styled.span`
 `;
 
 const BlockCountdown = ({ className, endBlock }: Props) => {
-	const { network } = useNetworkContext();
+  const { network } = useNetworkContext();
 
-	const ZERO = new BN(0);
-	const currentBlock = useCurrentBlock() || ZERO;
-	const blocksRemaining = endBlock - currentBlock.toNumber();
-	const blocktime: number = chainProperties?.[network]?.blockTime;
+  const ZERO = new BN(0);
+  const currentBlock = useCurrentBlock() || ZERO;
+  const blocksRemaining = endBlock - currentBlock.toNumber();
+  const blocktime: number = chainProperties?.[network]?.blockTime;
 
-	return blocksRemaining !== endBlock && blocksRemaining > 0 ? (
-		<Tooltip title={<SpanContent>{`#${endBlock}`}</SpanContent>}>
-			<span className={`${className} blockCountdown`}>
-				{blockToTime(blocksRemaining, network, blocktime)['time']}
-			</span>
-		</Tooltip>
-	) : (
-		<>#{endBlock}</>
-	);
+  return blocksRemaining !== endBlock && blocksRemaining > 0 ? (
+    <Tooltip title={<SpanContent>{`#${endBlock}`}</SpanContent>}>
+      <span className={`${className} blockCountdown`}>
+        {blockToTime(blocksRemaining, network, blocktime)['time']}
+      </span>
+    </Tooltip>
+  ) : (
+    <>#{endBlock}</>
+  );
 };
 
 export default BlockCountdown;

@@ -20,35 +20,35 @@ interface Props {
 }
 
 const SignupPopup = ({
-	modalOpen,
-	setModalOpen,
-	isModal,
-	setLoginOpen,
-	className,
-	closable,
-	isDelegation
+  modalOpen,
+  setModalOpen,
+  isModal,
+  setLoginOpen,
+  className,
+  closable,
+  isDelegation,
 }: Props) => {
-	const { network } = useNetworkContext();
-	return (
-		<Modal
-			open={modalOpen}
-			footer={false}
-			closable={closable}
-			maskClosable={closable}
-			wrapClassName={className}
-			className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  padding-0`}
-			onCancel={() => setModalOpen(false)}
-			closeIcon={<CloseIcon />}
-		>
-			<Signup
-				network={network}
-				isModal={isModal}
-				setLoginOpen={setLoginOpen}
-				setSignupOpen={setModalOpen}
-				isDelegation={isDelegation}
-			/>
-		</Modal>
-	);
+  const { network } = useNetworkContext();
+  return (
+    <Modal
+      open={modalOpen}
+      footer={false}
+      closable={closable}
+      maskClosable={closable}
+      wrapClassName={className}
+      className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  padding-0`}
+      onCancel={() => setModalOpen(false)}
+      closeIcon={<CloseIcon />}
+    >
+      <Signup
+        network={network}
+        isModal={isModal}
+        setLoginOpen={setLoginOpen}
+        setSignupOpen={setModalOpen}
+        isDelegation={isDelegation}
+      />
+    </Modal>
+  );
 };
 export default styled(SignupPopup)`
   .padding-0 .ant-modal-content {

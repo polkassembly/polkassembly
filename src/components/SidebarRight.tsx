@@ -16,25 +16,25 @@ interface Props {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SidebarRight = ({
-	className,
-	children,
-	open,
-	width,
-	closeSidebar
+  className,
+  children,
+  open,
+  width,
+  closeSidebar,
 }: Props) => {
-	return (
-		<Drawer
-			zIndex={9999}
-			open={open}
-			onClose={closeSidebar}
-			placement="right"
-			className={className}
-			size="large"
-			width={width}
-		>
-			<div className="p-3 md:p-6 h-[92vh] overflow-y-auto">{children}</div>
-		</Drawer>
-	);
+  return (
+    <Drawer
+      zIndex={9999}
+      open={open}
+      onClose={closeSidebar}
+      placement="right"
+      className={className}
+      size="large"
+      width={width}
+    >
+      <div className="p-3 md:p-6 h-[92vh] overflow-y-auto">{children}</div>
+    </Drawer>
+  );
 };
 
 export default styled(SidebarRight)`

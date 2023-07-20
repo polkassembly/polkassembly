@@ -4,17 +4,17 @@
 
 import React, { ReactNode } from 'react';
 import {
-	announcementStatus,
-	bountyStatus,
-	bountyStatusMap,
-	childBountyStatus,
-	childBountyStatusMap,
-	gov2ReferendumStatus,
-	motionStatus,
-	proposalStatus,
-	referendumStatus,
-	tipStatus,
-	tipStatusMap
+  announcementStatus,
+  bountyStatus,
+  bountyStatusMap,
+  childBountyStatus,
+  childBountyStatusMap,
+  gov2ReferendumStatus,
+  motionStatus,
+  proposalStatus,
+  referendumStatus,
+  tipStatus,
+  tipStatusMap,
 } from 'src/global/statuses';
 import styled from 'styled-components';
 
@@ -28,38 +28,38 @@ interface Props {
 }
 
 const StatusTag = ({
-	className,
-	content,
-	status,
-	colorInverted,
-	type
+  className,
+  content,
+  status,
+  colorInverted,
+  type,
 }: Props) => {
-	if (content && type === 'Tip' && tipStatusMap[content]) {
-		content = tipStatusMap[content];
-	}
+  if (content && type === 'Tip' && tipStatusMap[content]) {
+    content = tipStatusMap[content];
+  }
 
-	if (content && type === 'Bounty' && bountyStatusMap[content]) {
-		content = bountyStatusMap[content];
-	}
+  if (content && type === 'Bounty' && bountyStatusMap[content]) {
+    content = bountyStatusMap[content];
+  }
 
-	if (content && type === 'ChildBounty' && childBountyStatusMap[content]) {
-		content = childBountyStatusMap[content];
-	}
+  if (content && type === 'ChildBounty' && childBountyStatusMap[content]) {
+    content = childBountyStatusMap[content];
+  }
 
-	return (
-		<div
-			className={`${className} ${status} ${
-				colorInverted && 'bg-white inverted'
-			} text-xs rounded-full  px-3 py-1 whitespace-nowrap h-min`}
-		>
-			{content?.split(/(?=[A-Z])/).join(' ')}
-		</div>
-	);
+  return (
+    <div
+      className={`${className} ${status} ${
+        colorInverted && 'bg-white inverted'
+      } text-xs rounded-full  px-3 py-1 whitespace-nowrap h-min`}
+    >
+      {content?.split(/(?=[A-Z])/).join(' ')}
+    </div>
+  );
 };
 
 export default styled(StatusTag).attrs(({ status }: Props) => ({
-	className: status,
-	content: status
+  className: status,
+  content: status,
 }))`
   max-width: min-content;
 

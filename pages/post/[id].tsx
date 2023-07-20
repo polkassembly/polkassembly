@@ -19,64 +19,64 @@ import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 
 export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  query,
+    req,
+    query,
 }) => {
-  const { id } = query;
+    const { id } = query;
 
-  const network = getNetworkFromReqHeaders(req.headers);
-  const { data, error } = await getOffChainPost({
-    network,
-    postId: id,
-    proposalType: OffChainProposalType.DISCUSSIONS,
-  });
-  const comments = await getSubSquareComments(
-    OffChainProposalType.DISCUSSIONS,
-    network,
-    id,
-  );
-  const post = data && { ...data, comments: [...data.comments, ...comments] };
-  return { props: { error, network, post } };
+    const network = getNetworkFromReqHeaders(req.headers);
+    const { data, error } = await getOffChainPost({
+        network,
+        postId: id,
+        proposalType: OffChainProposalType.DISCUSSIONS,
+    });
+    const comments = await getSubSquareComments(
+        OffChainProposalType.DISCUSSIONS,
+        network,
+        id,
+    );
+    const post = data && { ...data, comments: [...data.comments, ...comments] };
+    return { props: { error, network, post } };
 };
 
 interface IDiscussionPostProps {
-  post: IPostResponse;
-  error?: string;
-  network: string;
+    post: IPostResponse;
+    error?: string;
+    network: string;
 }
 const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
-  const { post, error, network } = props;
-  const { setNetwork } = useNetworkContext();
+    const { post, error, network } = props;
+    const { setNetwork } = useNetworkContext();
 
-  useEffect(() => {
-    setNetwork(props.network);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    useEffect(() => {
+        setNetwork(props.network);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-  if (error) return <ErrorState errorMessage={error} />;
+    if (error) return <ErrorState errorMessage={error} />;
 
-  if (post)
+    if (post)
+        return (
+            <>
+                <SEOHead
+                    title={post.title || `${noTitle} Discussion`}
+                    desc={post.content}
+                    network={network}
+                />
+
+                <BackToListingView postCategory={PostCategory.DISCUSSION} />
+
+                <div className="mt-6">
+                    <Post post={post} proposalType={ProposalType.DISCUSSIONS} />
+                </div>
+            </>
+        );
+
     return (
-      <>
-        <SEOHead
-          title={post.title || `${noTitle} Discussion`}
-          desc={post.content}
-          network={network}
-        />
-
-        <BackToListingView postCategory={PostCategory.DISCUSSION} />
-
-        <div className="mt-6">
-          <Post post={post} proposalType={ProposalType.DISCUSSIONS} />
+        <div className="mt-16">
+            <LoadingState />
         </div>
-      </>
     );
-
-  return (
-    <div className="mt-16">
-      <LoadingState />
-    </div>
-  );
 };
 
 export default DiscussionPost;

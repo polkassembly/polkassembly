@@ -13,44 +13,44 @@ import isValidEmail from '~src/auth/utils/isValidEmail';
 import messages from '~src/auth/utils/messages';
 
 async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ChangeResponseType | MessageType>,
+    req: NextApiRequest,
+    res: NextApiResponse<ChangeResponseType | MessageType>,
 ) {
-  if (req.method !== 'POST')
-    return res
-      .status(405)
-      .json({ message: 'Invalid request method, POST required.' });
+    if (req.method !== 'POST')
+        return res
+            .status(405)
+            .json({ message: 'Invalid request method, POST required.' });
 
-  const network = String(req.headers['x-network']);
-  if (!network || !isValidNetwork(network))
-    res.status(400).json({ message: 'Invalid network in request header' });
+    const network = String(req.headers['x-network']);
+    if (!network || !isValidNetwork(network))
+        res.status(400).json({ message: 'Invalid network in request header' });
 
-  const { email, password } = req.body;
+    const { email, password } = req.body;
 
-  if (!email || !password)
-    return res
-      .status(400)
-      .json({ message: 'Missing parameters in request body' });
+    if (!email || !password)
+        return res
+            .status(400)
+            .json({ message: 'Missing parameters in request body' });
 
-  const token = getTokenFromReq(req);
-  if (!token) return res.status(400).json({ message: 'Invalid token' });
+    const token = getTokenFromReq(req);
+    if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-  if (email == '' || !isValidEmail(email))
-    return res.status(400).json({ message: messages.INVALID_EMAIL });
+    if (email == '' || !isValidEmail(email))
+        return res.status(400).json({ message: messages.INVALID_EMAIL });
 
-  const updatedJWT = await authServiceInstance.ChangeEmail(
-    token,
-    email,
-    password,
-    network,
-  );
+    const updatedJWT = await authServiceInstance.ChangeEmail(
+        token,
+        email,
+        password,
+        network,
+    );
 
-  return res.status(200).json({
-    message: email
-      ? messages.EMAIL_CHANGE_REQUEST_SUCCESSFUL
-      : messages.EMAIL_REMOVE_SUCCESSFUL,
-    token: updatedJWT,
-  });
+    return res.status(200).json({
+        message: email
+            ? messages.EMAIL_CHANGE_REQUEST_SUCCESSFUL
+            : messages.EMAIL_REMOVE_SUCCESSFUL,
+        token: updatedJWT,
+    });
 }
 
 export default withErrorHandling(handler);

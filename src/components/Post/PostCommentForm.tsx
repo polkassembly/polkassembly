@@ -20,201 +20,204 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 
 interface IPostCommentFormProps {
-  className?: string;
+    className?: string;
 }
 
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-  const { className } = props;
-  const { id, username } = useUserDetailsContext();
-  const {
-    postData: { postIndex, postType },
-    setPostData,
-  } = usePostDataContext();
-  const [content, setContent] = useState(
-    global.window.localStorage.getItem(commentKey()) || '',
-  );
-  const [form] = Form.useForm();
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [openModal, setModalOpen] = useState(false);
-  const [isComment, setIsComment] = useState(false);
-  const [sentiment, setSentiment] = useState<number>(3);
-  const [isSentimentPost, setIsSentimentPost] = useState(false);
-
-  const onContentChange = (content: string) => {
-    setContent(content);
-    global.window.localStorage.setItem(commentKey(), content);
-    return content.length ? content : null;
-  };
-
-  const createSubscription = async (postId: number | string) => {
-    const { data, error } = await nextApiClientFetch<ChangeResponseType>(
-      'api/v1/auth/actions/postSubscribe',
-      { post_id: postId, proposalType: postType },
+    const { className } = props;
+    const { id, username } = useUserDetailsContext();
+    const {
+        postData: { postIndex, postType },
+        setPostData,
+    } = usePostDataContext();
+    const [content, setContent] = useState(
+        global.window.localStorage.getItem(commentKey()) || '',
     );
-    if (error) console.error('Error subscribing to post', error);
-    if (data) console.log(data.message);
-  };
+    const [form] = Form.useForm();
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [openModal, setModalOpen] = useState(false);
+    const [isComment, setIsComment] = useState(false);
+    const [sentiment, setSentiment] = useState<number>(3);
+    const [isSentimentPost, setIsSentimentPost] = useState(false);
 
-  const handleModalOpen = async () => {
-    await form.validateFields();
-    const content = form.getFieldValue('content');
-    if (!content) return;
-    setModalOpen(true);
-  };
+    const onContentChange = (content: string) => {
+        setContent(content);
+        global.window.localStorage.setItem(commentKey(), content);
+        return content.length ? content : null;
+    };
 
-  const handleSave = async () => {
-    await form.validateFields();
-    const content = form.getFieldValue('content');
-    if (!content) return;
+    const createSubscription = async (postId: number | string) => {
+        const { data, error } = await nextApiClientFetch<ChangeResponseType>(
+            'api/v1/auth/actions/postSubscribe',
+            { post_id: postId, proposalType: postType },
+        );
+        if (error) console.error('Error subscribing to post', error);
+        if (data) console.log(data.message);
+    };
 
-    setLoading(true);
+    const handleModalOpen = async () => {
+        await form.validateFields();
+        const content = form.getFieldValue('content');
+        if (!content) return;
+        setModalOpen(true);
+    };
 
-    const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>(
-      'api/v1/auth/actions/addPostComment',
-      {
-        content,
-        postId: postIndex,
-        postType: postType,
-        sentiment: isSentimentPost ? sentiment : 0,
-        userId: id,
-      },
-    );
+    const handleSave = async () => {
+        await form.validateFields();
+        const content = form.getFieldValue('content');
+        if (!content) return;
 
-    if (error || !data) {
-      setError(error || 'No data returned from the saving comment query');
-      queueNotification({
-        header: 'Failed!',
-        message: error,
-        status: NotificationStatus.ERROR,
-      });
-    }
+        setLoading(true);
 
-    if (data) {
-      setContent('');
-      form.resetFields();
-      form.setFieldValue('content', '');
-      global.window.localStorage.removeItem(commentKey());
-      postIndex && createSubscription(postIndex);
-      queueNotification({
-        header: 'Success!',
-        message: 'Comment created successfully.',
-        status: NotificationStatus.SUCCESS,
-      });
-      setPostData((prev) => ({
-        ...prev,
-        comments: [
-          ...(prev?.comments ? prev.comments : []),
-          {
-            comment_reactions: {
-              '👍': {
-                count: 0,
-                usernames: [],
-              },
-              '👎': {
-                count: 0,
-                usernames: [],
-              },
-            },
-            content,
-            created_at: new Date(),
-            history: [],
-            id: data.id,
-            replies: [],
-            sentiment: isSentimentPost ? sentiment : 0,
-            updated_at: new Date(),
-            user_id: id as any,
-            username: username || '',
-          },
-        ],
-      }));
-    }
-    setLoading(false);
-    setIsComment(false);
-    setIsSentimentPost(false);
-    setSentiment(3);
-  };
-  useEffect(() => {
-    isComment && handleSave();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isComment]);
+        const { data, error } =
+            await nextApiClientFetch<IAddPostCommentResponse>(
+                'api/v1/auth/actions/addPostComment',
+                {
+                    content,
+                    postId: postIndex,
+                    postType: postType,
+                    sentiment: isSentimentPost ? sentiment : 0,
+                    userId: id,
+                },
+            );
 
-  if (!id) return <div>You must log in to comment.</div>;
+        if (error || !data) {
+            setError(error || 'No data returned from the saving comment query');
+            queueNotification({
+                header: 'Failed!',
+                message: error,
+                status: NotificationStatus.ERROR,
+            });
+        }
 
-  return (
-    <div className={className}>
-      <UserAvatar
-        className="mt-4 hidden md:inline-block"
-        username={username || ''}
-        size={'large'}
-        id={id}
-      />
+        if (data) {
+            setContent('');
+            form.resetFields();
+            form.setFieldValue('content', '');
+            global.window.localStorage.removeItem(commentKey());
+            postIndex && createSubscription(postIndex);
+            queueNotification({
+                header: 'Success!',
+                message: 'Comment created successfully.',
+                status: NotificationStatus.SUCCESS,
+            });
+            setPostData((prev) => ({
+                ...prev,
+                comments: [
+                    ...(prev?.comments ? prev.comments : []),
+                    {
+                        comment_reactions: {
+                            '👍': {
+                                count: 0,
+                                usernames: [],
+                            },
+                            '👎': {
+                                count: 0,
+                                usernames: [],
+                            },
+                        },
+                        content,
+                        created_at: new Date(),
+                        history: [],
+                        id: data.id,
+                        replies: [],
+                        sentiment: isSentimentPost ? sentiment : 0,
+                        updated_at: new Date(),
+                        user_id: id as any,
+                        username: username || '',
+                    },
+                ],
+            }));
+        }
+        setLoading(false);
+        setIsComment(false);
+        setIsSentimentPost(false);
+        setSentiment(3);
+    };
+    useEffect(() => {
+        isComment && handleSave();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isComment]);
 
-      <div className="comment-box bg-white p-[1rem]">
-        {error && <ErrorAlert errorMsg={error} className="mb-2" />}
-        <Form
-          form={form}
-          name="comment-content-form"
-          layout="vertical"
-          onFinish={handleModalOpen}
-          initialValues={{
-            content,
-          }}
-          disabled={loading}
-          validateMessages={{ required: "Please add the  '${name}'" }}
-        >
-          <ContentForm
-            onChange={(content: any) => onContentChange(content)}
-            height={200}
-          />
-          <Form.Item>
-            <div className="flex items-center justify-end mt-[-40px]">
-              <Button
-                disabled={!content}
-                loading={loading}
-                htmlType="submit"
-                className={`bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center my-0 ${
-                  !content ? 'bg-gray-500 hover:bg-gray-500' : ''
-                }`}
-              >
-                <CheckOutlined /> Comment
-              </Button>
+    if (!id) return <div>You must log in to comment.</div>;
+
+    return (
+        <div className={className}>
+            <UserAvatar
+                className="mt-4 hidden md:inline-block"
+                username={username || ''}
+                size={'large'}
+                id={id}
+            />
+
+            <div className="comment-box bg-white p-[1rem]">
+                {error && <ErrorAlert errorMsg={error} className="mb-2" />}
+                <Form
+                    form={form}
+                    name="comment-content-form"
+                    layout="vertical"
+                    onFinish={handleModalOpen}
+                    initialValues={{
+                        content,
+                    }}
+                    disabled={loading}
+                    validateMessages={{ required: "Please add the  '${name}'" }}
+                >
+                    <ContentForm
+                        onChange={(content: any) => onContentChange(content)}
+                        height={200}
+                    />
+                    <Form.Item>
+                        <div className="flex items-center justify-end mt-[-40px]">
+                            <Button
+                                disabled={!content}
+                                loading={loading}
+                                htmlType="submit"
+                                className={`bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center my-0 ${
+                                    !content
+                                        ? 'bg-gray-500 hover:bg-gray-500'
+                                        : ''
+                                }`}
+                            >
+                                <CheckOutlined /> Comment
+                            </Button>
+                        </div>
+                    </Form.Item>
+                </Form>
             </div>
-          </Form.Item>
-        </Form>
-      </div>
-      {openModal && (
-        <CommentSentimentModal
-          setSentiment={setSentiment}
-          openModal={openModal}
-          setModalOpen={setModalOpen}
-          setIsComment={setIsComment}
-          setIsSentimentPost={setIsSentimentPost}
-          sentiment={sentiment}
-        />
-      )}
-    </div>
-  );
+            {openModal && (
+                <CommentSentimentModal
+                    setSentiment={setSentiment}
+                    openModal={openModal}
+                    setModalOpen={setModalOpen}
+                    setIsComment={setIsComment}
+                    setIsSentimentPost={setIsSentimentPost}
+                    sentiment={sentiment}
+                />
+            )}
+        </div>
+    );
 };
 
 export default styled(PostCommentForm)`
-  display: flex;
-  margin: 2rem 0;
-
-  .comment-box {
-    width: calc(100% - 60px);
-
-    @media only screen and (max-width: 768px) {
-      width: calc(100%);
-      padding: 0.5rem;
-    }
-  }
-
-  .button-container {
-    width: 100%;
     display: flex;
-    justify-content: flex-end;
-  }
+    margin: 2rem 0;
+
+    .comment-box {
+        width: calc(100% - 60px);
+
+        @media only screen and (max-width: 768px) {
+            width: calc(100%);
+            padding: 0.5rem;
+        }
+    }
+
+    .button-container {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+    }
 `;

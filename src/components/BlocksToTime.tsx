@@ -10,21 +10,22 @@ import { useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 
 interface Props {
-  blocks: number | BN;
-  className?: string;
+    blocks: number | BN;
+    className?: string;
 }
 
 const BlocksToTime = ({ blocks, className }: Props) => {
-  const { network } = useNetworkContext();
-  const blocktime: number = chainProperties?.[network]?.blockTime;
+    const { network } = useNetworkContext();
+    const blocktime: number = chainProperties?.[network]?.blockTime;
 
-  return (
-    <div className={className}>
-      <>
-        {blockToTime(blocks, network, blocktime)['time']} ({blocks} blocks)
-      </>
-    </div>
-  );
+    return (
+        <div className={className}>
+            <>
+                {blockToTime(blocks, network, blocktime)['time']} ({blocks}{' '}
+                blocks)
+            </>
+        </div>
+    );
 };
 
 export default BlocksToTime;

@@ -9,37 +9,39 @@ import React, { useContext } from 'react';
 import { NetworkContext } from '~src/context/NetworkContext';
 
 const ShareButton = function ({ title }: { title?: string | null }) {
-  const { network } = useContext(NetworkContext);
+    const { network } = useContext(NetworkContext);
 
-  const share = () => {
-    const twitterParameters = [];
+    const share = () => {
+        const twitterParameters = [];
 
-    twitterParameters.push(`url=${encodeURI(global.window.location.href)}`);
+        twitterParameters.push(`url=${encodeURI(global.window.location.href)}`);
 
-    if (title) {
-      twitterParameters.push(`text=${encodeURI(`[${network}] ${title}`)}`);
-    }
-
-    twitterParameters.push('via=' + encodeURI('polkassembly'));
-
-    const url =
-      'https://twitter.com/intent/tweet?' + twitterParameters.join('&');
-
-    global.window.open(url);
-  };
-
-  return (
-    <>
-      <Button
-        className={
-          'text-pink_primary flex items-center border-none shadow-none px-1 md:px-2'
+        if (title) {
+            twitterParameters.push(
+                `text=${encodeURI(`[${network}] ${title}`)}`,
+            );
         }
-        onClick={share}
-      >
-        <ShareAltOutlined /> {' Share'}
-      </Button>
-    </>
-  );
+
+        twitterParameters.push('via=' + encodeURI('polkassembly'));
+
+        const url =
+            'https://twitter.com/intent/tweet?' + twitterParameters.join('&');
+
+        global.window.open(url);
+    };
+
+    return (
+        <>
+            <Button
+                className={
+                    'text-pink_primary flex items-center border-none shadow-none px-1 md:px-2'
+                }
+                onClick={share}
+            >
+                <ShareAltOutlined /> {' Share'}
+            </Button>
+        </>
+    );
 };
 
 export default ShareButton;

@@ -15,58 +15,60 @@ import { IUserNotificationSettings } from '~src/types';
 const channelArray = ['telegram', 'discord', 'email', 'slack', 'element'];
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
-  const firestore = firebaseAdmin.firestore();
-  if (req.method !== 'POST')
-    return res
-      .status(405)
-      .json({ message: 'Invalid request method, POST required.' });
+    const firestore = firebaseAdmin.firestore();
+    if (req.method !== 'POST')
+        return res
+            .status(405)
+            .json({ message: 'Invalid request method, POST required.' });
 
-  const { channel, enabled } = req.body;
-  if (!channel || enabled === undefined)
-    return res
-      .status(400)
-      .json({ message: 'Missing parameters in request body' });
+    const { channel, enabled } = req.body;
+    if (!channel || enabled === undefined)
+        return res
+            .status(400)
+            .json({ message: 'Missing parameters in request body' });
 
-  // network_preferences should be {[index: string]: IUserNotificationTriggerPreferences}
-  if (!channelArray.includes(channel))
-    return res.status(400).json({ message: 'Invalid channel' });
+    // network_preferences should be {[index: string]: IUserNotificationTriggerPreferences}
+    if (!channelArray.includes(channel))
+        return res.status(400).json({ message: 'Invalid channel' });
 
-  const token = getTokenFromReq(req);
-  if (!token) return res.status(400).json({ message: 'Missing user token' });
+    const token = getTokenFromReq(req);
+    if (!token) return res.status(400).json({ message: 'Missing user token' });
 
-  const user = await authServiceInstance.GetUser(token);
-  if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
+    const user = await authServiceInstance.GetUser(token);
+    if (!user)
+        return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
-  const userRef = firestore.collection('users').doc(String(user.id));
-  const userDoc = await userRef.get();
-  if (!userDoc.exists)
-    return res.status(400).json({ message: messages.USER_NOT_FOUND });
+    const userRef = firestore.collection('users').doc(String(user.id));
+    const userDoc = await userRef.get();
+    if (!userDoc.exists)
+        return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
-  const userData = userDoc.data();
+    const userData = userDoc.data();
 
-  const newNotificationSettings: IUserNotificationSettings = {
-    ...(userData?.notification_preferences || {}),
-    channelPreferences: {
-      ...(userData?.notification_preferences?.channelPreferences || {}),
-      [channel]: {
-        ...(userData?.notification_preferences?.channelPreferences?.[channel] ||
-          {}),
-        enabled: enabled,
-      },
-    },
-  };
+    const newNotificationSettings: IUserNotificationSettings = {
+        ...(userData?.notification_preferences || {}),
+        channelPreferences: {
+            ...(userData?.notification_preferences?.channelPreferences || {}),
+            [channel]: {
+                ...(userData?.notification_preferences?.channelPreferences?.[
+                    channel
+                ] || {}),
+                enabled: enabled,
+            },
+        },
+    };
 
-  await userRef
-    .update({ notification_preferences: newNotificationSettings })
-    .then(() => {
-      return res.status(200).json({ message: 'Success' });
-    })
-    .catch((error) => {
-      console.error('Error updating network preferences: ', error);
-      return res
-        .status(500)
-        .json({ message: 'Error updating  network preferences' });
-    });
+    await userRef
+        .update({ notification_preferences: newNotificationSettings })
+        .then(() => {
+            return res.status(200).json({ message: 'Success' });
+        })
+        .catch((error) => {
+            console.error('Error updating network preferences: ', error);
+            return res
+                .status(500)
+                .json({ message: 'Error updating  network preferences' });
+        });
 }
 
 export default withErrorHandling(handler);

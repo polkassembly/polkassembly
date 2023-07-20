@@ -13,5 +13,5 @@ import util from 'util';
  * only use in server side code
  */
 export default function console_pretty(data: any) {
-  console.log(util.inspect(data, false, null, true));
+    console.log(util.inspect(data, false, null, true));
 }

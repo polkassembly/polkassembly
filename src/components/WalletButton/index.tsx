@@ -6,24 +6,24 @@ import { Button } from 'antd';
 import React from 'react';
 
 interface Props {
-  onClick: React.MouseEventHandler<HTMLAnchorElement> &
-    React.MouseEventHandler<HTMLButtonElement>;
-  icon?: JSX.Element;
-  name: string;
-  disabled: boolean;
-  className?: string;
+    onClick: React.MouseEventHandler<HTMLAnchorElement> &
+        React.MouseEventHandler<HTMLButtonElement>;
+    icon?: JSX.Element;
+    name: string;
+    disabled: boolean;
+    className?: string;
 }
 
 const WalletButton = ({ disabled, onClick, icon, className }: Props) => {
-  return (
-    <Button
-      className={`flex items-center py-6 px-5 justify-center rounded-[7px] border-[#F8E3EE]   ${className}`}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      <span className="mt-1.5">{icon}</span>
-    </Button>
-  );
+    return (
+        <Button
+            className={`flex items-center py-6 px-5 justify-center rounded-[7px] border-[#F8E3EE]   ${className}`}
+            onClick={onClick}
+            disabled={disabled}
+        >
+            <span className="mt-1.5">{icon}</span>
+        </Button>
+    );
 };
 
 export default WalletButton;

@@ -5,8 +5,8 @@
 import { GetServerSideProps } from 'next';
 import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import {
-  getOnChainPost,
-  IPostResponse,
+    getOnChainPost,
+    IPostResponse,
 } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC } from 'react';
 import Post from 'src/components/Post/Post';
@@ -29,106 +29,109 @@ import { useState, useEffect } from 'react';
 
 const proposalType = ProposalType.FELLOWSHIP_REFERENDUMS;
 export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  query,
+    req,
+    query,
 }) => {
-  const { id } = query;
+    const { id } = query;
 
-  const network = getNetworkFromReqHeaders(req.headers);
-  const { data, error, status } = await getOnChainPost({
-    network,
-    postId: id,
-    proposalType,
-  });
-  const comments = await getSubSquareComments(proposalType, network, id);
-  const post = data && { ...data, comments: [...data.comments, ...comments] };
-  return { props: { error, network, post, status } };
+    const network = getNetworkFromReqHeaders(req.headers);
+    const { data, error, status } = await getOnChainPost({
+        network,
+        postId: id,
+        proposalType,
+    });
+    const comments = await getSubSquareComments(proposalType, network, id);
+    const post = data && { ...data, comments: [...data.comments, ...comments] };
+    return { props: { error, network, post, status } };
 };
 
 interface IReferendaPostProps {
-  post: IPostResponse;
-  error?: string;
-  network: string;
-  status?: number;
+    post: IPostResponse;
+    error?: string;
+    network: string;
+    status?: number;
 }
 
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
-  const { post, error, status } = props;
-  const { setNetwork } = useNetworkContext();
-  const router = useRouter();
-  const { api, apiReady } = useApiContext();
-  const [isUnfinalized, setIsUnFinalized] = useState(false);
-  const { id } = router.query;
+    const { post, error, status } = props;
+    const { setNetwork } = useNetworkContext();
+    const router = useRouter();
+    const { api, apiReady } = useApiContext();
+    const [isUnfinalized, setIsUnFinalized] = useState(false);
+    const { id } = router.query;
 
-  useEffect(() => {
-    setNetwork(props.network);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    useEffect(() => {
+        setNetwork(props.network);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-  useEffect(() => {
-    if (!api || !apiReady || !error || !status || !id || status !== 404) {
-      return;
-    }
-    (async () => {
-      setIsUnFinalized(
-        Boolean(await checkIsOnChain(String(id), proposalType, api)),
-      );
-    })();
-  }, [api, apiReady, error, status, id]);
-
-  if (isUnfinalized) {
-    return (
-      <PostEmptyState
-        image={<EmptyIcon />}
-        description={
-          <div className="p-5">
-            <b className="text-xl my-4">Waiting for Block Confirmation</b>
-            <p>Usually its done within a few seconds</p>
-          </div>
+    useEffect(() => {
+        if (!api || !apiReady || !error || !status || !id || status !== 404) {
+            return;
         }
-        imageStyle={{ height: 300 }}
-      />
-    );
-  }
-  if (error) return <ErrorState errorMessage={error} />;
+        (async () => {
+            setIsUnFinalized(
+                Boolean(await checkIsOnChain(String(id), proposalType, api)),
+            );
+        })();
+    }, [api, apiReady, error, status, id]);
 
-  if (post) {
-    let trackName = '';
-    for (const key of Object.keys(networkTrackInfo[props.network])) {
-      if (
-        networkTrackInfo[props.network][key].trackId == post.track_number &&
-        'fellowshipOrigin' in networkTrackInfo[props.network][key]
-      ) {
-        trackName = key;
-      }
+    if (isUnfinalized) {
+        return (
+            <PostEmptyState
+                image={<EmptyIcon />}
+                description={
+                    <div className="p-5">
+                        <b className="text-xl my-4">
+                            Waiting for Block Confirmation
+                        </b>
+                        <p>Usually its done within a few seconds</p>
+                    </div>
+                }
+                imageStyle={{ height: 300 }}
+            />
+        );
+    }
+    if (error) return <ErrorState errorMessage={error} />;
+
+    if (post) {
+        let trackName = '';
+        for (const key of Object.keys(networkTrackInfo[props.network])) {
+            if (
+                networkTrackInfo[props.network][key].trackId ==
+                    post.track_number &&
+                'fellowshipOrigin' in networkTrackInfo[props.network][key]
+            ) {
+                trackName = key;
+            }
+        }
+
+        return (
+            <>
+                <SEOHead
+                    title={post.title || `${noTitle} - Referenda V2`}
+                    desc={post.content}
+                    network={props.network}
+                />
+
+                <BackToListingView trackName={'member-referenda'} />
+
+                <div className="mt-6">
+                    <Post
+                        post={post}
+                        trackName={trackName === 'Root' ? 'root' : trackName}
+                        proposalType={proposalType}
+                    />
+                </div>
+            </>
+        );
     }
 
     return (
-      <>
-        <SEOHead
-          title={post.title || `${noTitle} - Referenda V2`}
-          desc={post.content}
-          network={props.network}
-        />
-
-        <BackToListingView trackName={'member-referenda'} />
-
-        <div className="mt-6">
-          <Post
-            post={post}
-            trackName={trackName === 'Root' ? 'root' : trackName}
-            proposalType={proposalType}
-          />
+        <div className="mt-16">
+            <LoadingState />
         </div>
-      </>
     );
-  }
-
-  return (
-    <div className="mt-16">
-      <LoadingState />
-    </div>
-  );
 };
 
 export default ReferendaPost;

@@ -5,8 +5,8 @@
 import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import {
-  isOffChainProposalTypeValid,
-  isProposalTypeValid,
+    isOffChainProposalTypeValid,
+    isProposalTypeValid,
 } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
@@ -17,87 +17,89 @@ import { ProposalType } from '~src/global/proposalType';
 import { ICommentHistory } from '~src/types';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
-  if (req.method !== 'POST')
-    return res
-      .status(405)
-      .json({ message: 'Invalid request method, POST required.' });
+    if (req.method !== 'POST')
+        return res
+            .status(405)
+            .json({ message: 'Invalid request method, POST required.' });
 
-  const network = String(req.headers['x-network']);
-  if (!network)
-    return res
-      .status(400)
-      .json({ message: 'Missing network name in request headers' });
+    const network = String(req.headers['x-network']);
+    if (!network)
+        return res
+            .status(400)
+            .json({ message: 'Missing network name in request headers' });
 
-  const { userId, commentId, content, postId, postType, sentiment } = req.body;
-  if (!userId || !commentId || !content || isNaN(postId) || !postType)
-    return res
-      .status(400)
-      .json({ message: 'Missing parameters in request body' });
+    const { userId, commentId, content, postId, postType, sentiment } =
+        req.body;
+    if (!userId || !commentId || !content || isNaN(postId) || !postType)
+        return res
+            .status(400)
+            .json({ message: 'Missing parameters in request body' });
 
-  const strProposalType = String(postType);
-  if (
-    !isOffChainProposalTypeValid(strProposalType) &&
-    !isProposalTypeValid(strProposalType)
-  )
-    return res.status(400).json({
-      message: `The post type of the name "${postType}" does not exist.`,
-    });
+    const strProposalType = String(postType);
+    if (
+        !isOffChainProposalTypeValid(strProposalType) &&
+        !isProposalTypeValid(strProposalType)
+    )
+        return res.status(400).json({
+            message: `The post type of the name "${postType}" does not exist.`,
+        });
 
-  const token = getTokenFromReq(req);
-  if (!token) return res.status(400).json({ message: 'Invalid token' });
+    const token = getTokenFromReq(req);
+    if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-  const user = await authServiceInstance.GetUser(token);
-  if (!user || user.id !== Number(userId))
-    return res.status(403).json({ message: messages.UNAUTHORISED });
+    const user = await authServiceInstance.GetUser(token);
+    if (!user || user.id !== Number(userId))
+        return res.status(403).json({ message: messages.UNAUTHORISED });
 
-  const postRef = postsByTypeRef(network, strProposalType as ProposalType).doc(
-    String(postId),
-  );
-  const last_comment_at = new Date();
+    const postRef = postsByTypeRef(
+        network,
+        strProposalType as ProposalType,
+    ).doc(String(postId));
+    const last_comment_at = new Date();
 
-  const commentRef = postRef.collection('comments').doc(String(commentId));
+    const commentRef = postRef.collection('comments').doc(String(commentId));
 
-  const commentDoc = await commentRef.get();
+    const commentDoc = await commentRef.get();
 
-  if (!commentDoc.exists)
-    return res.status(404).json({ message: 'Comment not found' });
-  const commentData = commentDoc.data();
-  if (user.id !== commentData?.user_id)
-    return res.status(403).json({ message: messages.UNAUTHORISED });
+    if (!commentDoc.exists)
+        return res.status(404).json({ message: 'Comment not found' });
+    const commentData = commentDoc.data();
+    if (user.id !== commentData?.user_id)
+        return res.status(403).json({ message: messages.UNAUTHORISED });
 
-  const newHistory: ICommentHistory = {
-    content: commentData?.content,
-    created_at: commentData?.created_at?.toDate
-      ? commentData?.created_at.toDate()
-      : commentData?.created_at,
-    sentiment: commentData?.sentiment || 0,
-  };
+    const newHistory: ICommentHistory = {
+        content: commentData?.content,
+        created_at: commentData?.created_at?.toDate
+            ? commentData?.created_at.toDate()
+            : commentData?.created_at,
+        sentiment: commentData?.sentiment || 0,
+    };
 
-  const history =
-    commentData?.history && Array.isArray(commentData?.history)
-      ? [newHistory, ...(commentData?.history || [])]
-      : new Array(newHistory);
+    const history =
+        commentData?.history && Array.isArray(commentData?.history)
+            ? [newHistory, ...(commentData?.history || [])]
+            : new Array(newHistory);
 
-  commentRef
-    .update({
-      content,
-      history,
-      sentiment,
-      updated_at: last_comment_at,
-    })
-    .then(() => {
-      postRef
+    commentRef
         .update({
-          last_comment_at,
+            content,
+            history,
+            sentiment,
+            updated_at: last_comment_at,
         })
-        .then(() => {});
-      return res.status(200).json({ message: 'Comment saved.' });
-    })
-    .catch((error) => {
-      // The document probably doesn't exist.
-      console.error('Error saving comment: ', error);
-      return res.status(500).json({ message: 'Error saving comment' });
-    });
+        .then(() => {
+            postRef
+                .update({
+                    last_comment_at,
+                })
+                .then(() => {});
+            return res.status(200).json({ message: 'Comment saved.' });
+        })
+        .catch((error) => {
+            // The document probably doesn't exist.
+            console.error('Error saving comment: ', error);
+            return res.status(500).json({ message: 'Error saving comment' });
+        });
 };
 
 export default withErrorHandling(handler);

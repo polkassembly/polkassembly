@@ -7,48 +7,52 @@ import { Alert, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 interface Props {
-  className?: string;
-  text?: string;
-  timeout?: number;
-  timeoutText?: string;
-  size?: 'default' | 'small' | 'large';
+    className?: string;
+    text?: string;
+    timeout?: number;
+    timeoutText?: string;
+    size?: 'default' | 'small' | 'large';
 }
 const Loader = ({
-  className,
-  timeout,
-  text,
-  timeoutText = 'Process timeout',
-  size = 'default',
+    className,
+    timeout,
+    text,
+    timeoutText = 'Process timeout',
+    size = 'default',
 }: Props) => {
-  const [displayLoader, setDisplayLoader] = useState(true);
+    const [displayLoader, setDisplayLoader] = useState(true);
 
-  useEffect(() => {
-    if (timeout) {
-      const timer = setTimeout(() => {
-        setDisplayLoader(false);
-      }, timeout);
+    useEffect(() => {
+        if (timeout) {
+            const timer = setTimeout(() => {
+                setDisplayLoader(false);
+            }, timeout);
 
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [timeout]);
+            return () => {
+                clearTimeout(timer);
+            };
+        }
+    }, [timeout]);
 
-  return (
-    <>
-      <div className={`${className} flex justify-center items-center`}>
-        {displayLoader ? (
-          <Spin tip={text} size={size} indicator={<LoadingOutlined />} />
-        ) : (
-          <Alert
-            className="w-2/3 text-center"
-            type="error"
-            message={timeoutText}
-          />
-        )}
-      </div>
-    </>
-  );
+    return (
+        <>
+            <div className={`${className} flex justify-center items-center`}>
+                {displayLoader ? (
+                    <Spin
+                        tip={text}
+                        size={size}
+                        indicator={<LoadingOutlined />}
+                    />
+                ) : (
+                    <Alert
+                        className="w-2/3 text-center"
+                        type="error"
+                        message={timeoutText}
+                    />
+                )}
+            </div>
+        </>
+    );
 };
 
 export default Loader;

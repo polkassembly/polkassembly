@@ -8,33 +8,34 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const network = getNetworkFromReqHeaders(req.headers);
-  return {
-    props: {
-      network,
-    },
-  };
+    const network = getNetworkFromReqHeaders(req.headers);
+    return {
+        props: {
+            network,
+        },
+    };
 };
 
 const Unscrupulous = ({ network }: { network: string }) => {
-  return (
-    <>
-      <SEOHead title={'Alliance Unscrupulous'} network={network} />
-      <h1 className="dashboard-heading mb-4 md:mb-6">Alliance</h1>
+    return (
+        <>
+            <SEOHead title={'Alliance Unscrupulous'} network={network} />
+            <h1 className="dashboard-heading mb-4 md:mb-6">Alliance</h1>
 
-      {/* Intro and Create Post Button */}
-      <div className="flex flex-col md:flex-row">
-        <p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
-          The Alliance Pallet provides a collective that curates a list of
-          accounts and URLs, deemed by the voting members to be unscrupulous
-          actors. The Alliance provides a set of ethics against bad behavior,
-          and provides recognition and influence for those teams that contribute
-          something back to the ecosystem.
-        </p>
-      </div>
-      <AllianceUnscrupulous className="mt-8" />
-    </>
-  );
+            {/* Intro and Create Post Button */}
+            <div className="flex flex-col md:flex-row">
+                <p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+                    The Alliance Pallet provides a collective that curates a
+                    list of accounts and URLs, deemed by the voting members to
+                    be unscrupulous actors. The Alliance provides a set of
+                    ethics against bad behavior, and provides recognition and
+                    influence for those teams that contribute something back to
+                    the ecosystem.
+                </p>
+            </div>
+            <AllianceUnscrupulous className="mt-8" />
+        </>
+    );
 };
 
 export default Unscrupulous;

@@ -5,12 +5,12 @@ import { Tag } from 'antd';
 import React from 'react';
 
 interface Props {
-  className?: string;
-  topic: string;
+    className?: string;
+    topic: string;
 }
 
 const InlineTag = ({ className, topic }: Props) => (
-  <Tag className={`${className}`}>{topic}</Tag>
+    <Tag className={`${className}`}>{topic}</Tag>
 );
 
 export default InlineTag;

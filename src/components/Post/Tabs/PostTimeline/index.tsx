@@ -9,25 +9,25 @@ import { PostEmptyState } from '~src/ui-components/UIStates';
 import TimelineContainer from './TimelineContainer';
 
 interface IPostTimelineProps {
-  className?: string;
+    className?: string;
 }
 
 const PostTimeline: FC<IPostTimelineProps> = (props) => {
-  const { className } = props;
-  const {
-    postData: { timeline },
-  } = usePostDataContext();
-  return (
-    <div className={`${className} p-5 md:p-10`}>
-      {timeline && Array.isArray(timeline) && timeline.length > 0 ? (
-        timeline?.map((obj: any, index) => {
-          return <TimelineContainer key={index} timeline={obj} />;
-        })
-      ) : (
-        <PostEmptyState />
-      )}
-    </div>
-  );
+    const { className } = props;
+    const {
+        postData: { timeline },
+    } = usePostDataContext();
+    return (
+        <div className={`${className} p-5 md:p-10`}>
+            {timeline && Array.isArray(timeline) && timeline.length > 0 ? (
+                timeline?.map((obj: any, index) => {
+                    return <TimelineContainer key={index} timeline={obj} />;
+                })
+            ) : (
+                <PostEmptyState />
+            )}
+        </div>
+    );
 };
 
 export default PostTimeline;

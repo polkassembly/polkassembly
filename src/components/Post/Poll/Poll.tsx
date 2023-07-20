@@ -11,32 +11,32 @@ import CouncilSignals from './CouncilSignals';
 import GeneralSignals from './GeneralSignals';
 
 interface IPollProps {
-  pollId: string;
-  endBlock: number;
-  canEdit: boolean;
-  votes: IPollVote[];
-  proposalType: ProposalType;
+    pollId: string;
+    endBlock: number;
+    canEdit: boolean;
+    votes: IPollVote[];
+    proposalType: ProposalType;
 }
 
 const Poll: FC<IPollProps> = ({
-  pollId,
-  endBlock,
-  canEdit,
-  votes,
-  proposalType,
+    pollId,
+    endBlock,
+    canEdit,
+    votes,
+    proposalType,
 }) => {
-  return (
-    <>
-      <GeneralSignals
-        endBlock={endBlock}
-        pollId={pollId}
-        canEdit={canEdit}
-        votes={votes}
-        proposalType={proposalType}
-      />
-      <CouncilSignals votes={votes} />
-    </>
-  );
+    return (
+        <>
+            <GeneralSignals
+                endBlock={endBlock}
+                pollId={pollId}
+                canEdit={canEdit}
+                votes={votes}
+                proposalType={proposalType}
+            />
+            <CouncilSignals votes={votes} />
+        </>
+    );
 };
 
 export default Poll;

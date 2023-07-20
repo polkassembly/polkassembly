@@ -7,40 +7,40 @@ import { chainProperties, network } from '~src/global/networkConstants';
 import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
 
 const networks: any = {
-  kusama: [],
-  polkadot: [],
-  solo: [],
-  // test: []
+    kusama: [],
+    polkadot: [],
+    solo: [],
+    // test: []
 };
 
 const networkLabel: { [index: string]: string } = {
-  kusama: 'Kusama',
-  polkadot: 'Polkadot',
-  solo: 'Solo Chains',
-  // test: 'Test Chains'
+    kusama: 'Kusama',
+    polkadot: 'Polkadot',
+    solo: 'Solo Chains',
+    // test: 'Test Chains'
 };
 
 for (const key of Object.keys(network)) {
-  const keyVal = network[key as keyof typeof network];
-  if (!AVAILABLE_NETWORK.includes(keyVal)) continue;
+    const keyVal = network[key as keyof typeof network];
+    if (!AVAILABLE_NETWORK.includes(keyVal)) continue;
 
-  const optionObj = {
-    name: keyVal,
-    selected: false,
-  };
+    const optionObj = {
+        name: keyVal,
+        selected: false,
+    };
 
-  switch (chainProperties[keyVal]?.category) {
-    case 'polkadot':
-      networks.polkadot.push(optionObj);
-      break;
-    case 'kusama':
-      networks.kusama.push(optionObj);
-      break;
-    case 'test':
-      networks.test.push(optionObj);
-      break;
-    default:
-      networks.solo.push(optionObj);
-  }
+    switch (chainProperties[keyVal]?.category) {
+        case 'polkadot':
+            networks.polkadot.push(optionObj);
+            break;
+        case 'kusama':
+            networks.kusama.push(optionObj);
+            break;
+        case 'test':
+            networks.test.push(optionObj);
+            break;
+        default:
+            networks.solo.push(optionObj);
+    }
 }
 export { networks, networkLabel };

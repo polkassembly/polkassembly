@@ -5,28 +5,28 @@
 import { createContext, useState } from 'react';
 
 export interface NetworkContextProviderProps {
-  initialNetwork: string;
-  children?: React.ReactElement;
+    initialNetwork: string;
+    children?: React.ReactElement;
 }
 
 export interface NetworkContextType {
-  network: string;
-  setNetwork: React.Dispatch<React.SetStateAction<string>>;
+    network: string;
+    setNetwork: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const NetworkContext: React.Context<NetworkContextType> = createContext(
-  {} as NetworkContextType,
+    {} as NetworkContextType,
 );
 
 export function NetworkContextProvider({
-  initialNetwork,
-  children,
+    initialNetwork,
+    children,
 }: NetworkContextProviderProps): React.ReactElement {
-  const [network, setNetwork] = useState(initialNetwork || '');
+    const [network, setNetwork] = useState(initialNetwork || '');
 
-  return (
-    <NetworkContext.Provider value={{ network, setNetwork }}>
-      {children}
-    </NetworkContext.Provider>
-  );
+    return (
+        <NetworkContext.Provider value={{ network, setNetwork }}>
+            {children}
+        </NetworkContext.Provider>
+    );
 }

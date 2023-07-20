@@ -8,29 +8,29 @@ import apiErrorWithStatusCode from './apiErrorWithStatusCode';
 import messages from './messages';
 
 interface Args {
-  query: string;
-  variables?: Object;
-  network: string;
+    query: string;
+    variables?: Object;
+    network: string;
 }
 
 export default async function fetchSubsquid({
-  query,
-  variables,
-  network,
+    query,
+    variables,
+    network,
 }: Args) {
-  const body = variables ? { query, variables } : { query };
-  const subsquidUrl = chainProperties[network]?.subsquidUrl;
-  return fetch(`${subsquidUrl}`, {
-    body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    method: 'POST',
-  })
-    .then((res) => res.json())
-    .then((result) => result)
-    .catch((e) => {
-      console.error('error in fetchSubsquid : ', e);
-      throw apiErrorWithStatusCode(messages.SUBSQUID_FETCH_ERROR, 500);
-    });
+    const body = variables ? { query, variables } : { query };
+    const subsquidUrl = chainProperties[network]?.subsquidUrl;
+    return fetch(`${subsquidUrl}`, {
+        body: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        method: 'POST',
+    })
+        .then((res) => res.json())
+        .then((result) => result)
+        .catch((e) => {
+            console.error('error in fetchSubsquid : ', e);
+            throw apiErrorWithStatusCode(messages.SUBSQUID_FETCH_ERROR, 500);
+        });
 }

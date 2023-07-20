@@ -4,5 +4,5 @@
 export const fellowshipNetworks = ['vara', 'kusama'];
 
 export const isFellowshipSupported = (network: string) => {
-  return fellowshipNetworks.includes(network);
+    return fellowshipNetworks.includes(network);
 };

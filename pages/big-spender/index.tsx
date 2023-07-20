@@ -4,8 +4,8 @@
 
 import { GetServerSideProps } from 'next';
 import {
-  getOnChainPosts,
-  IPostsListingResponse,
+    getOnChainPosts,
+    IPostsListingResponse,
 } from 'pages/api/v1/listing/on-chain-posts';
 import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
 import { IReferendumV2PostsByStatus } from 'pages/root';
@@ -23,109 +23,116 @@ import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 
 export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  query,
+    req,
+    query,
 }) => {
-  const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
-  if (!trackStatus) {
-    return {
-      props: {},
-      redirect: {
-        destination: '/big-spender?trackStatus=all&page=1',
-      },
-    };
-  }
-  const network = getNetworkFromReqHeaders(req.headers);
+    const {
+        page = 1,
+        sortBy = sortValues.NEWEST,
+        filterBy,
+        trackStatus,
+    } = query;
+    if (!trackStatus) {
+        return {
+            props: {},
+            redirect: {
+                destination: '/big-spender?trackStatus=all&page=1',
+            },
+        };
+    }
+    const network = getNetworkFromReqHeaders(req.headers);
 
-  if (!networkTrackInfo[network][PostOrigin.BIG_SPENDER]) {
-    return { props: { error: `Invalid track for ${network}` } };
-  }
+    if (!networkTrackInfo[network][PostOrigin.BIG_SPENDER]) {
+        return { props: { error: `Invalid track for ${network}` } };
+    }
 
-  const { trackId } = networkTrackInfo[network][PostOrigin.BIG_SPENDER];
-  const proposalType = ProposalType.OPEN_GOV;
+    const { trackId } = networkTrackInfo[network][PostOrigin.BIG_SPENDER];
+    const proposalType = ProposalType.OPEN_GOV;
 
-  const fetches = [
-    'CustomStatusSubmitted',
-    'CustomStatusVoting',
-    'CustomStatusClosed',
-    'All',
-  ].reduce((prev: any, status) => {
-    const strTrackStatus = String(trackStatus);
-    if (status.toLowerCase().includes(strTrackStatus)) {
-      prev[strTrackStatus] = getOnChainPosts({
-        filterBy:
-          filterBy &&
-          Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))
-            ? JSON.parse(decodeURIComponent(String(filterBy)))
-            : [],
-        listingLimit: LISTING_LIMIT,
+    const fetches = [
+        'CustomStatusSubmitted',
+        'CustomStatusVoting',
+        'CustomStatusClosed',
+        'All',
+    ].reduce((prev: any, status) => {
+        const strTrackStatus = String(trackStatus);
+        if (status.toLowerCase().includes(strTrackStatus)) {
+            prev[strTrackStatus] = getOnChainPosts({
+                filterBy:
+                    filterBy &&
+                    Array.isArray(
+                        JSON.parse(decodeURIComponent(String(filterBy))),
+                    )
+                        ? JSON.parse(decodeURIComponent(String(filterBy)))
+                        : [],
+                listingLimit: LISTING_LIMIT,
+                network,
+                page,
+                proposalType,
+                sortBy,
+                trackNo: trackId,
+                trackStatus: status,
+            });
+        } else {
+            prev[status.toLowerCase().replace('customstatus', '')] =
+                getOnChainPostsCount({
+                    network,
+                    page,
+                    proposalType,
+                    trackNo: trackId,
+                    trackStatus: status,
+                });
+        }
+        return prev;
+    }, {});
+
+    const responseArr = await Promise.allSettled(Object.values(fetches));
+
+    const results = responseArr.map((result) => {
+        if (result.status === 'fulfilled') {
+            return result.value;
+        } else {
+            return {
+                data: null,
+                error: result.reason,
+            } as IApiResponse<IPostsListingResponse>;
+        }
+    });
+    const props: IBigSpenderProps = {
         network,
-        page,
-        proposalType,
-        sortBy,
-        trackNo: trackId,
-        trackStatus: status,
-      });
-    } else {
-      prev[status.toLowerCase().replace('customstatus', '')] =
-        getOnChainPostsCount({
-          network,
-          page,
-          proposalType,
-          trackNo: trackId,
-          trackStatus: status,
-        });
-    }
-    return prev;
-  }, {});
+        posts: {},
+    };
+    Object.keys(fetches).forEach((key, index) => {
+        (props.posts as any)[key] = results[index];
+    });
 
-  const responseArr = await Promise.allSettled(Object.values(fetches));
-
-  const results = responseArr.map((result) => {
-    if (result.status === 'fulfilled') {
-      return result.value;
-    } else {
-      return {
-        data: null,
-        error: result.reason,
-      } as IApiResponse<IPostsListingResponse>;
-    }
-  });
-  const props: IBigSpenderProps = {
-    network,
-    posts: {},
-  };
-  Object.keys(fetches).forEach((key, index) => {
-    (props.posts as any)[key] = results[index];
-  });
-
-  return { props };
+    return { props };
 };
 interface IBigSpenderProps {
-  posts: IReferendumV2PostsByStatus;
-  network: string;
-  error?: string;
+    posts: IReferendumV2PostsByStatus;
+    network: string;
+    error?: string;
 }
 
 const BigSpender: FC<IBigSpenderProps> = (props) => {
-  const { posts, error, network } = props;
-  const { setNetwork } = useNetworkContext();
-  useEffect(() => {
-    setNetwork(props.network);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  if (error) return <ErrorState errorMessage={error} />;
+    const { posts, error, network } = props;
+    const { setNetwork } = useNetworkContext();
+    useEffect(() => {
+        setNetwork(props.network);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    if (error) return <ErrorState errorMessage={error} />;
 
-  if (!posts || Object.keys(posts).length === 0) return null;
-  return (
-    <>
-      <SEOHead
-        title={PostOrigin.BIG_SPENDER.split(/(?=[A-Z])/).join(' ')}
-        network={network}
-      />
-      <TrackListing trackName={PostOrigin.BIG_SPENDER} posts={posts} />
-    </>
-  );
+    if (!posts || Object.keys(posts).length === 0) return null;
+    return (
+        <>
+            <SEOHead
+                title={PostOrigin.BIG_SPENDER.split(/(?=[A-Z])/).join(' ')}
+                network={network}
+            />
+            <TrackListing trackName={PostOrigin.BIG_SPENDER} posts={posts} />
+        </>
+    );
 };
 
 export default BigSpender;

@@ -11,28 +11,31 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 
 async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ChangeResponseType | MessageType>,
+    req: NextApiRequest,
+    res: NextApiResponse<ChangeResponseType | MessageType>,
 ) {
-  if (req.method !== 'POST')
+    if (req.method !== 'POST')
+        return res
+            .status(405)
+            .json({ message: 'Invalid request method, POST required.' });
+
+    const { address } = req.body;
+    if (!address)
+        return res
+            .status(400)
+            .json({ message: 'Missing parameters in request body' });
+
+    const token = getTokenFromReq(req);
+    if (!token) return res.status(400).json({ message: 'Invalid token' });
+
+    const updatedJWT = await authServiceInstance.AddressUnlink(token, address);
+
     return res
-      .status(405)
-      .json({ message: 'Invalid request method, POST required.' });
-
-  const { address } = req.body;
-  if (!address)
-    return res
-      .status(400)
-      .json({ message: 'Missing parameters in request body' });
-
-  const token = getTokenFromReq(req);
-  if (!token) return res.status(400).json({ message: 'Invalid token' });
-
-  const updatedJWT = await authServiceInstance.AddressUnlink(token, address);
-
-  return res
-    .status(200)
-    .json({ message: messages.ADDRESS_UNLINKING_SUCCESS, token: updatedJWT });
+        .status(200)
+        .json({
+            message: messages.ADDRESS_UNLINKING_SUCCESS,
+            token: updatedJWT,
+        });
 }
 
 export default withErrorHandling(handler);

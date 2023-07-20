@@ -10,29 +10,30 @@ import { firestore_db } from '~src/services/firebaseInit';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<IVerified | MessageType>,
+    req: NextApiRequest,
+    res: NextApiResponse<IVerified | MessageType>,
 ) {
-  const { address } = req.body;
+    const { address } = req.body;
 
-  if (!address) return res.status(400).json({ message: 'Missing parameters' });
+    if (!address)
+        return res.status(400).json({ message: 'Missing parameters' });
 
-  const substrateAddress = getSubstrateAddress(String(address));
-  if (!substrateAddress)
-    return res.status(400).json({ message: messages.INVALID_ADDRESS });
+    const substrateAddress = getSubstrateAddress(String(address));
+    if (!substrateAddress)
+        return res.status(400).json({ message: messages.INVALID_ADDRESS });
 
-  const isVerifiedAddress =
-    (
-      await firestore_db
-        .collection('addresses')
-        .where('address', '==', substrateAddress)
-        .where('verified', '==', true)
-        .limit(1)
-        .get()
-    ).docs.length > 0;
-  if (isVerifiedAddress) return res.status(200).json({ verified: true });
+    const isVerifiedAddress =
+        (
+            await firestore_db
+                .collection('addresses')
+                .where('address', '==', substrateAddress)
+                .where('verified', '==', true)
+                .limit(1)
+                .get()
+        ).docs.length > 0;
+    if (isVerifiedAddress) return res.status(200).json({ verified: true });
 
-  res.status(200).json({ verified: false });
+    res.status(200).json({ verified: false });
 }
 
 export default withErrorHandling(handler);

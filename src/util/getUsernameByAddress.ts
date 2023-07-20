@@ -7,14 +7,14 @@ import getSubstrateAddress from './getSubstrateAddress';
 import nextApiClientFetch from './nextApiClientFetch';
 
 export default async function getUsernameByAddress(address: string) {
-  const substrateAddress = getSubstrateAddress(address);
-  if (!substrateAddress) return null;
+    const substrateAddress = getSubstrateAddress(address);
+    if (!substrateAddress) return null;
 
-  const { data, error } =
-    await nextApiClientFetch<IGetProfileWithAddressResponse>(
-      `api/v1/auth/data/profileWithAddress?address=${substrateAddress}`,
-    );
-  if (error || !data || !data.username) return null;
+    const { data, error } =
+        await nextApiClientFetch<IGetProfileWithAddressResponse>(
+            `api/v1/auth/data/profileWithAddress?address=${substrateAddress}`,
+        );
+    if (error || !data || !data.username) return null;
 
-  return data.username || null;
+    return data.username || null;
 }

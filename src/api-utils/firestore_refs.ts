@@ -6,12 +6,12 @@ import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 
 export const networkDocRef = (networkName: string) =>
-  firestore_db.collection('networks').doc(networkName);
+    firestore_db.collection('networks').doc(networkName);
 export const postsByTypeRef = (
-  networkName: string,
-  proposalType: ProposalType,
+    networkName: string,
+    proposalType: ProposalType,
 ) =>
-  networkDocRef(networkName)
-    .collection('post_types')
-    .doc(String(proposalType))
-    .collection('posts');
+    networkDocRef(networkName)
+        .collection('post_types')
+        .doc(String(proposalType))
+        .collection('posts');

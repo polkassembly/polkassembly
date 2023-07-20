@@ -3,13 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 export const openGovNetworks = [
-  'kusama',
-  'moonbase',
-  'moonriver',
-  'vara',
-  'polkadot',
+    'kusama',
+    'moonbase',
+    'moonriver',
+    'vara',
+    'polkadot',
 ];
 
 export const isOpenGovSupported = (network: string) => {
-  return openGovNetworks.includes(network);
+    return openGovNetworks.includes(network);
 };

@@ -16,211 +16,224 @@ import { Collapse } from '../common-ui/Collapse';
 
 const { Panel } = Collapse;
 type Props = {
-  onSetNotification: (obj: INotificationObject) => void;
-  userNotification: INotificationObject;
-  dispatch: React.Dispatch<any>;
-  options: any;
+    onSetNotification: (obj: INotificationObject) => void;
+    userNotification: INotificationObject;
+    dispatch: React.Dispatch<any>;
+    options: any;
 };
 
 const getConsecutiveKeys = (obj: any) => {
-  const keys = Object.keys(obj);
-  const result = [];
+    const keys = Object.keys(obj);
+    const result = [];
 
-  for (let i = 0; i < keys.length - 1; i += 2) {
-    result.push([keys[i], keys[i + 1]]);
-  }
+    for (let i = 0; i < keys.length - 1; i += 2) {
+        result.push([keys[i], keys[i + 1]]);
+    }
 
-  return result;
+    return result;
 };
 
 // eslint-disable-next-line no-empty-pattern
 export default function OpenGovNotification({
-  onSetNotification,
-  userNotification,
-  dispatch,
-  options,
+    onSetNotification,
+    userNotification,
+    dispatch,
+    options,
 }: Props) {
-  const [active, setActive] = useState<boolean | undefined>(false);
-  const { network } = useNetworkContext();
-  const [all, setAll] = useState(false);
-  const openGovTwoOptions = getConsecutiveKeys(networkTrackInfo[network] || {});
+    const [active, setActive] = useState<boolean | undefined>(false);
+    const { network } = useNetworkContext();
+    const [all, setAll] = useState(false);
+    const openGovTwoOptions = getConsecutiveKeys(
+        networkTrackInfo[network] || {},
+    );
 
-  const handleAllClick = (checked: boolean) => {
-    dispatch({
-      payload: {
-        params: { checked },
-      },
-      type: ACTIONS.OPEN_GOV_ALL_CHANGE,
-    });
-    const notification = Object.assign({}, userNotification);
-    Object.keys(options).forEach((key) => {
-      const id = networkTrackInfo[network][key]?.trackId;
-      options[key].forEach((option: any) => {
+    const handleAllClick = (checked: boolean) => {
+        dispatch({
+            payload: {
+                params: { checked },
+            },
+            type: ACTIONS.OPEN_GOV_ALL_CHANGE,
+        });
+        const notification = Object.assign({}, userNotification);
+        Object.keys(options).forEach((key) => {
+            const id = networkTrackInfo[network][key]?.trackId;
+            options[key].forEach((option: any) => {
+                if (!option?.triggerName) {
+                    return;
+                }
+                let tracks = notification?.[option.triggerName]?.tracks || [];
+                if (checked) {
+                    if (!tracks.includes(id)) tracks.push(id);
+                } else {
+                    tracks = tracks.filter((track: number) => track !== id);
+                }
+                notification[option.triggerName] = {
+                    enabled: tracks.length > 0,
+                    name: option?.triggerPreferencesName,
+                    tracks,
+                };
+            });
+        });
+        onSetNotification(notification);
+        setAll(checked);
+    };
+
+    useEffect(() => {
+        const allSelected = Object.values(options).every((option: any) =>
+            option.every((item: any) => item.selected),
+        );
+        setAll(allSelected);
+    }, [options]);
+
+    const handleCategoryAllClick = (
+        checked: boolean,
+        categoryOptions: any,
+        title: any,
+    ) => {
+        title = titleMapper(title) as string;
+        dispatch({
+            payload: {
+                params: { checked, key: title },
+            },
+            type: ACTIONS.OPEN_GOV_PROPOSAL_ALL_CHANGE,
+        });
+        const notification = Object.assign({}, userNotification);
+        const id = networkTrackInfo[network][title]?.trackId;
+        options[title].forEach((option: any) => {
+            if (!option?.triggerName) {
+                return;
+            }
+            let tracks = notification?.[option.triggerName]?.tracks || [];
+            if (checked) {
+                if (!tracks.includes(id)) tracks.push(id);
+            } else {
+                tracks = tracks.filter((track: number) => track !== id);
+            }
+            notification[option.triggerName] = {
+                enabled: tracks.length > 0,
+                name: option?.triggerPreferencesName,
+                tracks,
+            };
+        });
+        onSetNotification(notification);
+    };
+
+    const handleChange = (
+        categoryOptions: any,
+        checked: boolean,
+        value: string,
+        title: string,
+    ) => {
+        title = titleMapper(title) as string;
+        dispatch({
+            payload: {
+                params: { checked, key: title, value },
+            },
+            type: ACTIONS.OPEN_GOV_PROPOSAL_SINGLE_CHANGE,
+        });
+        const notification = Object.assign({}, userNotification);
+        const id = networkTrackInfo[network][title]?.trackId;
+        const option = categoryOptions.find((opt: any) => opt.label === value);
         if (!option?.triggerName) {
-          return;
+            return;
         }
         let tracks = notification?.[option.triggerName]?.tracks || [];
         if (checked) {
-          if (!tracks.includes(id)) tracks.push(id);
+            if (!tracks.includes(id)) tracks.push(id);
         } else {
-          tracks = tracks.filter((track: number) => track !== id);
+            tracks = tracks.filter((track: number) => track !== id);
         }
         notification[option.triggerName] = {
-          enabled: tracks.length > 0,
-          name: option?.triggerPreferencesName,
-          tracks,
+            enabled: tracks.length > 0,
+            name: option?.triggerPreferencesName,
+            tracks,
         };
-      });
-    });
-    onSetNotification(notification);
-    setAll(checked);
-  };
-
-  useEffect(() => {
-    const allSelected = Object.values(options).every((option: any) =>
-      option.every((item: any) => item.selected),
-    );
-    setAll(allSelected);
-  }, [options]);
-
-  const handleCategoryAllClick = (
-    checked: boolean,
-    categoryOptions: any,
-    title: any,
-  ) => {
-    title = titleMapper(title) as string;
-    dispatch({
-      payload: {
-        params: { checked, key: title },
-      },
-      type: ACTIONS.OPEN_GOV_PROPOSAL_ALL_CHANGE,
-    });
-    const notification = Object.assign({}, userNotification);
-    const id = networkTrackInfo[network][title]?.trackId;
-    options[title].forEach((option: any) => {
-      if (!option?.triggerName) {
-        return;
-      }
-      let tracks = notification?.[option.triggerName]?.tracks || [];
-      if (checked) {
-        if (!tracks.includes(id)) tracks.push(id);
-      } else {
-        tracks = tracks.filter((track: number) => track !== id);
-      }
-      notification[option.triggerName] = {
-        enabled: tracks.length > 0,
-        name: option?.triggerPreferencesName,
-        tracks,
-      };
-    });
-    onSetNotification(notification);
-  };
-
-  const handleChange = (
-    categoryOptions: any,
-    checked: boolean,
-    value: string,
-    title: string,
-  ) => {
-    title = titleMapper(title) as string;
-    dispatch({
-      payload: {
-        params: { checked, key: title, value },
-      },
-      type: ACTIONS.OPEN_GOV_PROPOSAL_SINGLE_CHANGE,
-    });
-    const notification = Object.assign({}, userNotification);
-    const id = networkTrackInfo[network][title]?.trackId;
-    const option = categoryOptions.find((opt: any) => opt.label === value);
-    if (!option?.triggerName) {
-      return;
-    }
-    let tracks = notification?.[option.triggerName]?.tracks || [];
-    if (checked) {
-      if (!tracks.includes(id)) tracks.push(id);
-    } else {
-      tracks = tracks.filter((track: number) => track !== id);
-    }
-    notification[option.triggerName] = {
-      enabled: tracks.length > 0,
-      name: option?.triggerPreferencesName,
-      tracks,
+        onSetNotification(notification);
     };
-    onSetNotification(notification);
-  };
-  return (
-    <Collapse
-      size="large"
-      className="bg-white"
-      expandIconPosition="end"
-      expandIcon={({ isActive }) => {
-        setActive(isActive);
-        return isActive ? <CollapseIcon /> : <ExpandIcon />;
-      }}
-    >
-      <Panel
-        header={
-          <div className="flex items-center gap-[6px] channel-header">
-            <OverallPostsNotification />
-            <h3 className="font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]">
-              OpenGov Notifications
-            </h3>
-            {!!active && (
-              <>
-                <span className="flex gap-[8px] items-center">
-                  <Switch
-                    size="small"
-                    id="postParticipated"
-                    onChange={(checked, e) => {
-                      e.stopPropagation();
-                      handleAllClick(checked);
-                    }}
-                    checked={all}
-                  />
-                  <p className="m-0 text-[#485F7D]">All</p>
-                </span>
-              </>
-            )}
-          </div>
-        }
-        key="1"
-      >
-        <div className="flex flex-col">
-          {openGovTwoOptions.map((category: any[], i: number) => (
-            <React.Fragment key={category.toString()}>
-              <div className="flex flex-wrap">
-                {category.map((postType, i) => {
-                  return (
-                    <React.Fragment key={postType.toString()}>
-                      <GroupCheckbox
-                        categoryOptions={options[postType]}
-                        title={postOriginMapper(postType)}
-                        classname={
-                          i === category.length - 1
-                            ? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
-                            : 'md:basis-[50%]'
-                        }
-                        Icon={iconMapper(postType)}
-                        onChange={handleChange}
-                        handleCategoryAllClick={handleCategoryAllClick}
-                      />
-                      {i !== category.length - 1 && (
-                        <Divider
-                          className="border-[#D2D8E0] border-[2px] md:hidden"
-                          dashed
-                        />
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </div>
-              {i !== openGovTwoOptions.length - 1 && (
-                <Divider className="border-[#D2D8E0] border-2" dashed />
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-      </Panel>
-    </Collapse>
-  );
+    return (
+        <Collapse
+            size="large"
+            className="bg-white"
+            expandIconPosition="end"
+            expandIcon={({ isActive }) => {
+                setActive(isActive);
+                return isActive ? <CollapseIcon /> : <ExpandIcon />;
+            }}
+        >
+            <Panel
+                header={
+                    <div className="flex items-center gap-[6px] channel-header">
+                        <OverallPostsNotification />
+                        <h3 className="font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]">
+                            OpenGov Notifications
+                        </h3>
+                        {!!active && (
+                            <>
+                                <span className="flex gap-[8px] items-center">
+                                    <Switch
+                                        size="small"
+                                        id="postParticipated"
+                                        onChange={(checked, e) => {
+                                            e.stopPropagation();
+                                            handleAllClick(checked);
+                                        }}
+                                        checked={all}
+                                    />
+                                    <p className="m-0 text-[#485F7D]">All</p>
+                                </span>
+                            </>
+                        )}
+                    </div>
+                }
+                key="1"
+            >
+                <div className="flex flex-col">
+                    {openGovTwoOptions.map((category: any[], i: number) => (
+                        <React.Fragment key={category.toString()}>
+                            <div className="flex flex-wrap">
+                                {category.map((postType, i) => {
+                                    return (
+                                        <React.Fragment
+                                            key={postType.toString()}
+                                        >
+                                            <GroupCheckbox
+                                                categoryOptions={
+                                                    options[postType]
+                                                }
+                                                title={postOriginMapper(
+                                                    postType,
+                                                )}
+                                                classname={
+                                                    i === category.length - 1
+                                                        ? 'md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] md:pl-[48px]'
+                                                        : 'md:basis-[50%]'
+                                                }
+                                                Icon={iconMapper(postType)}
+                                                onChange={handleChange}
+                                                handleCategoryAllClick={
+                                                    handleCategoryAllClick
+                                                }
+                                            />
+                                            {i !== category.length - 1 && (
+                                                <Divider
+                                                    className="border-[#D2D8E0] border-[2px] md:hidden"
+                                                    dashed
+                                                />
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                })}
+                            </div>
+                            {i !== openGovTwoOptions.length - 1 && (
+                                <Divider
+                                    className="border-[#D2D8E0] border-2"
+                                    dashed
+                                />
+                            )}
+                        </React.Fragment>
+                    ))}
+                </div>
+            </Panel>
+        </Collapse>
+    );
 }

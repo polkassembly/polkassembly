@@ -6,37 +6,37 @@ import { allGov1 } from '../Gov1Notification/utils';
 import { getOpenGov } from '../OpenGovNotification/utils';
 
 const myProposal = [
-  {
-    label: 'Comments on my posts',
-    triggerName: 'newCommentAdded',
-    triggerPreferencesName: 'commentsOnMyPosts',
-    value: 'Comments on my posts',
-  },
-  {
-    label: 'Own proposal Created',
-    triggerName: 'ownProposalCreated',
-    triggerPreferencesName: 'ownProposalCreated',
-    value: 'Own proposal Created',
-  },
-  {
-    label: 'Mentions',
-    triggerName: 'newMention',
-    triggerPreferencesName: 'newMention',
-    value: 'Mentions',
-  },
+    {
+        label: 'Comments on my posts',
+        triggerName: 'newCommentAdded',
+        triggerPreferencesName: 'commentsOnMyPosts',
+        value: 'Comments on my posts',
+    },
+    {
+        label: 'Own proposal Created',
+        triggerName: 'ownProposalCreated',
+        triggerPreferencesName: 'ownProposalCreated',
+        value: 'Own proposal Created',
+    },
+    {
+        label: 'Mentions',
+        triggerName: 'newMention',
+        triggerPreferencesName: 'newMention',
+        value: 'Mentions',
+    },
 ];
 
 const subscribePost = [
-  {
-    label: 'Comments on subscribed posts',
-    triggerName: 'newCommentAdded',
-    triggerPreferencesName: 'commentsOnSubscribedPosts',
-    value: 'Comments on subscribed posts',
-  },
+    {
+        label: 'Comments on subscribed posts',
+        triggerName: 'newCommentAdded',
+        triggerPreferencesName: 'commentsOnSubscribedPosts',
+        value: 'Comments on subscribed posts',
+    },
 ];
 export const notificationInitialState = (network: string) => ({
-  gov1Post: allGov1,
-  myProposal,
-  openGov: getOpenGov(network),
-  subscribePost,
+    gov1Post: allGov1,
+    myProposal,
+    openGov: getOpenGov(network),
+    subscribePost,
 });

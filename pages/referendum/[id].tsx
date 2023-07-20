@@ -5,17 +5,17 @@
 import { GetServerSideProps } from 'next';
 import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import {
-  getOnChainPost,
-  IPostResponse,
+    getOnChainPost,
+    IPostResponse,
 } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import Post from 'src/components/Post/Post';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import {
-  ErrorState,
-  LoadingState,
-  PostEmptyState,
+    ErrorState,
+    LoadingState,
+    PostEmptyState,
 } from 'src/ui-components/UIStates';
 import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -28,93 +28,95 @@ import { checkIsOnChain } from '~src/util/checkIsOnChain';
 
 const proposalType = ProposalType.REFERENDUMS;
 export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  query,
+    req,
+    query,
 }) => {
-  const { id } = query;
-  const network = getNetworkFromReqHeaders(req.headers);
-  const { data, error, status } = await getOnChainPost({
-    network,
-    postId: id,
-    proposalType,
-  });
-  const comments = await getSubSquareComments(proposalType, network, id);
-  const post = data && { ...data, comments: [...data.comments, ...comments] };
-  return { props: { error, network, post, status } };
+    const { id } = query;
+    const network = getNetworkFromReqHeaders(req.headers);
+    const { data, error, status } = await getOnChainPost({
+        network,
+        postId: id,
+        proposalType,
+    });
+    const comments = await getSubSquareComments(proposalType, network, id);
+    const post = data && { ...data, comments: [...data.comments, ...comments] };
+    return { props: { error, network, post, status } };
 };
 
 interface IReferendumPostProps {
-  post: IPostResponse;
-  error?: string;
-  network: string;
-  status?: number;
+    post: IPostResponse;
+    error?: string;
+    network: string;
+    status?: number;
 }
 
 const ReferendumPost: FC<IReferendumPostProps> = (props) => {
-  const { post, error, status, network } = props;
-  const { setNetwork } = useNetworkContext();
-  const { api, apiReady } = useApiContext();
-  const router = useRouter();
-  const { id } = router.query;
-  const [isUnfinalized, setIsUnFinalized] = useState(false);
+    const { post, error, status, network } = props;
+    const { setNetwork } = useNetworkContext();
+    const { api, apiReady } = useApiContext();
+    const router = useRouter();
+    const { id } = router.query;
+    const [isUnfinalized, setIsUnFinalized] = useState(false);
 
-  useEffect(() => {
-    if (!api || !apiReady || !error || !status || !id || status !== 404) {
-      return;
-    }
-    (async () => {
-      setIsUnFinalized(
-        Boolean(await checkIsOnChain(String(id), proposalType, api)),
-      );
-    })();
-  }, [api, apiReady, error, status, id]);
-
-  useEffect(() => {
-    setNetwork(props.network);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (isUnfinalized) {
-    return (
-      <PostEmptyState
-        image={<EmptyIcon />}
-        description={
-          <div className="p-5">
-            <b className="text-xl my-4">Waiting for Block Confirmation</b>
-            <p>Usually its done within a few seconds</p>
-          </div>
+    useEffect(() => {
+        if (!api || !apiReady || !error || !status || !id || status !== 404) {
+            return;
         }
-        imageStyle={{ height: 300 }}
-      />
-    );
-  }
-  if (error) {
-    return <ErrorState errorMessage={error} />;
-  }
-  if (!post) return null;
+        (async () => {
+            setIsUnFinalized(
+                Boolean(await checkIsOnChain(String(id), proposalType, api)),
+            );
+        })();
+    }, [api, apiReady, error, status, id]);
 
-  if (post)
+    useEffect(() => {
+        setNetwork(props.network);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    if (isUnfinalized) {
+        return (
+            <PostEmptyState
+                image={<EmptyIcon />}
+                description={
+                    <div className="p-5">
+                        <b className="text-xl my-4">
+                            Waiting for Block Confirmation
+                        </b>
+                        <p>Usually its done within a few seconds</p>
+                    </div>
+                }
+                imageStyle={{ height: 300 }}
+            />
+        );
+    }
+    if (error) {
+        return <ErrorState errorMessage={error} />;
+    }
+    if (!post) return null;
+
+    if (post)
+        return (
+            <>
+                <SEOHead
+                    title={post.title || `${noTitle} - Referendum`}
+                    desc={post.content}
+                    network={network}
+                />
+
+                <BackToListingView postCategory={PostCategory.REFERENDA} />
+
+                <div className="mt-6">
+                    <Post post={post} proposalType={proposalType} />
+                </div>
+            </>
+        );
+
     return (
-      <>
-        <SEOHead
-          title={post.title || `${noTitle} - Referendum`}
-          desc={post.content}
-          network={network}
-        />
-
-        <BackToListingView postCategory={PostCategory.REFERENDA} />
-
-        <div className="mt-6">
-          <Post post={post} proposalType={proposalType} />
+        <div className="mt-16">
+            <LoadingState />
         </div>
-      </>
     );
-
-  return (
-    <div className="mt-16">
-      <LoadingState />
-    </div>
-  );
 };
 
 export default ReferendumPost;

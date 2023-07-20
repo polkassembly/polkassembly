@@ -6,16 +6,16 @@ import React from 'react';
 import NoDataFound from '~assets/no-audits.svg';
 
 const NoAuditReport = () => {
-  return (
-    <div className="flex flex-col gap-y-6 justify-center items-center">
-      <div className="mt-[75px]">
-        <NoDataFound />
-      </div>
-      <p className="m-0 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#243A57]">
-        No audit reports available
-      </p>
-    </div>
-  );
+    return (
+        <div className="flex flex-col gap-y-6 justify-center items-center">
+            <div className="mt-[75px]">
+                <NoDataFound />
+            </div>
+            <p className="m-0 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#243A57]">
+                No audit reports available
+            </p>
+        </div>
+    );
 };
 
 export default NoAuditReport;

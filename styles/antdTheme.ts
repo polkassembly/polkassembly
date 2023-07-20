@@ -6,9 +6,9 @@ import { ThemeConfig } from 'antd/es/config-provider/context';
 
 // of the Apache-2.0 license. See the LICENSE file for details.
 export const antdTheme: ThemeConfig = {
-  hashed: false,
-  token: {
-    colorPrimary: '#E5007A',
-    fontFamily: 'var(--font-poppins)',
-  },
+    hashed: false,
+    token: {
+        colorPrimary: '#E5007A',
+        fontFamily: 'var(--font-poppins)',
+    },
 };

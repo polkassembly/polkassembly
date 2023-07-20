@@ -6,15 +6,15 @@
 const sigUtil = require('eth-sig-util');
 
 export const verifyMetamaskSignature = (
-  message: string,
-  address: string,
-  signature: string,
+    message: string,
+    address: string,
+    signature: string,
 ): boolean => {
-  const msgParams = {
-    data: message,
-    sig: signature,
-  };
-  const recovered = sigUtil.recoverPersonalSignature(msgParams);
+    const msgParams = {
+        data: message,
+        sig: signature,
+    };
+    const recovered = sigUtil.recoverPersonalSignature(msgParams);
 
-  return `${recovered}`.toLowerCase() === `${address}`.toLowerCase();
+    return `${recovered}`.toLowerCase() === `${address}`.toLowerCase();
 };

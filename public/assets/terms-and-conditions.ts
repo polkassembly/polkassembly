@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 export default function getTermsAndConditions(network: string) {
-  return `Polkassembly end user agreement
+    return `Polkassembly end user agreement
   ====================
 
   Premiurly OÜ is a company registered in Estonia under company number 16162207 with its registered office at Tornimäe tn 7, Kesklinna linnaosa, Tallinn, Harju maakond, 10145 (the "**Company**"). The Company operates Polkassembly (the "**Forum**") on https://${network}.polkassembly.io (the "**Website**").

@@ -12,65 +12,65 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import Poll from './Poll';
 interface Props {
-  className?: string;
-  postId: number;
-  canEdit: boolean;
-  proposalType: ProposalType;
+    className?: string;
+    postId: number;
+    canEdit: boolean;
+    proposalType: ProposalType;
 }
 
 const PollComponent = ({ postId, canEdit, proposalType }: Props) => {
-  const [error, setError] = useState('');
-  const {
-    postData: { polls },
-    setPostData,
-  } = usePostDataContext();
+    const [error, setError] = useState('');
+    const {
+        postData: { polls },
+        setPostData,
+    } = usePostDataContext();
 
-  const getPolls = useCallback(async () => {
-    const { data: fetchData, error: fetchError } =
-      await nextApiClientFetch<IPollsResponse>(
-        `api/v1/polls?postId=${postId}&pollType=${POLL_TYPE.NORMAL}&proposalType=${proposalType}`,
-      );
+    const getPolls = useCallback(async () => {
+        const { data: fetchData, error: fetchError } =
+            await nextApiClientFetch<IPollsResponse>(
+                `api/v1/polls?postId=${postId}&pollType=${POLL_TYPE.NORMAL}&proposalType=${proposalType}`,
+            );
 
-    if (fetchError) {
-      setError(fetchError);
-      return;
-    }
+        if (fetchError) {
+            setError(fetchError);
+            return;
+        }
 
-    if (fetchData && fetchData.polls) {
-      setError('');
-      setPostData((prev) => {
-        return {
-          ...prev,
-          polls: fetchData.polls,
-        };
-      });
-    }
+        if (fetchData && fetchData.polls) {
+            setError('');
+            setPostData((prev) => {
+                return {
+                    ...prev,
+                    polls: fetchData.polls,
+                };
+            });
+        }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postId, proposalType]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [postId, proposalType]);
 
-  useEffect(() => {
-    getPolls();
-  }, [getPolls]);
+    useEffect(() => {
+        getPolls();
+    }, [getPolls]);
 
-  if (error) return null;
+    if (error) return null;
 
-  if (!polls || polls.length == 0) return null;
+    if (!polls || polls.length == 0) return null;
 
-  return (
-    <>
-      {polls.map((poll) => (
-        <Poll
-          proposalType={proposalType}
-          key={poll.id}
-          pollId={String(poll.id)}
-          endBlock={poll.block_end}
-          votes={poll.poll_votes}
-          canEdit={canEdit}
-        />
-      ))}
-    </>
-  );
+    return (
+        <>
+            {polls.map((poll) => (
+                <Poll
+                    proposalType={proposalType}
+                    key={poll.id}
+                    pollId={String(poll.id)}
+                    endBlock={poll.block_end}
+                    votes={poll.poll_votes}
+                    canEdit={canEdit}
+                />
+            ))}
+        </>
+    );
 };
 
 export default PollComponent;

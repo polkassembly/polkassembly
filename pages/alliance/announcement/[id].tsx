@@ -4,8 +4,8 @@
 
 import { GetServerSideProps } from 'next';
 import {
-  getOnChainPost,
-  IPostResponse,
+    getOnChainPost,
+    IPostResponse,
 } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
 import Post from 'src/components/Post/Post';
@@ -20,62 +20,62 @@ import SEOHead from '~src/global/SEOHead';
 
 const proposalType = ProposalType.ANNOUNCEMENT;
 export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  query,
+    req,
+    query,
 }) => {
-  const { id } = query;
-  const network = getNetworkFromReqHeaders(req.headers);
-  const { data, error } = await getOnChainPost({
-    network,
-    postId: id || '',
-    proposalType,
-  });
+    const { id } = query;
+    const network = getNetworkFromReqHeaders(req.headers);
+    const { data, error } = await getOnChainPost({
+        network,
+        postId: id || '',
+        proposalType,
+    });
 
-  return { props: { data, error, network } };
+    return { props: { data, error, network } };
 };
 interface IAnnouncementPostProps {
-  data: IPostResponse;
-  error?: string;
-  network: string;
+    data: IPostResponse;
+    error?: string;
+    network: string;
 }
 
 const AnnouncementPost: FC<IAnnouncementPostProps> = (props) => {
-  const { data: post, error, network } = props;
-  const { setNetwork } = useNetworkContext();
+    const { data: post, error, network } = props;
+    const { setNetwork } = useNetworkContext();
 
-  useEffect(() => {
-    setNetwork(network);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    useEffect(() => {
+        setNetwork(network);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-  if (error) return <ErrorState errorMessage={error} />;
+    if (error) return <ErrorState errorMessage={error} />;
 
-  if (!post) return null;
+    if (!post) return null;
 
-  if (post)
+    if (post)
+        return (
+            <>
+                <SEOHead
+                    title={post.title || `${noTitle} - Announcement`}
+                    desc={post.content}
+                    network={network}
+                />
+                <BackToListingView
+                    postCategory={PostCategory.ANNOUNCEMENT}
+                    trackName="Announcements"
+                />
+
+                <div className="mt-6">
+                    <Post post={post} proposalType={proposalType} />
+                </div>
+            </>
+        );
+
     return (
-      <>
-        <SEOHead
-          title={post.title || `${noTitle} - Announcement`}
-          desc={post.content}
-          network={network}
-        />
-        <BackToListingView
-          postCategory={PostCategory.ANNOUNCEMENT}
-          trackName="Announcements"
-        />
-
-        <div className="mt-6">
-          <Post post={post} proposalType={proposalType} />
+        <div className="mt-16">
+            <LoadingState />
         </div>
-      </>
     );
-
-  return (
-    <div className="mt-16">
-      <LoadingState />
-    </div>
-  );
 };
 
 export default AnnouncementPost;

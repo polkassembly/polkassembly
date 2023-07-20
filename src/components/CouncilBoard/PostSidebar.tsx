@@ -9,41 +9,41 @@ import DiscussionPostClient from './DiscussionsBoard/DiscussionPostClient';
 import ReferendumPostClient from './ReferendaBoard/ReferendumPostClient';
 
 interface Props {
-  className?: string;
-  closeSidebar: () => void;
-  sidebarState: any;
-  open: boolean;
+    className?: string;
+    closeSidebar: () => void;
+    sidebarState: any;
+    open: boolean;
 }
 
 const PostSidebar = ({
-  className,
-  closeSidebar,
-  open,
-  sidebarState,
+    className,
+    closeSidebar,
+    open,
+    sidebarState,
 }: Props) => {
-  return (
-    <SidebarRight
-      closeSidebar={closeSidebar}
-      open={open}
-      className={className}
-      width="75%"
-    >
-      <div className="sidebar-content">
-        {sidebarState.postType === 'discussion' && (
-          <DiscussionPostClient
-            councilBoardSidebar={true}
-            postID={sidebarState.postID}
-          />
-        )}
-        {sidebarState.postType === 'referenda' && (
-          <ReferendumPostClient
-            councilBoardSidebar={true}
-            postID={sidebarState.postID}
-          />
-        )}
-      </div>
-    </SidebarRight>
-  );
+    return (
+        <SidebarRight
+            closeSidebar={closeSidebar}
+            open={open}
+            className={className}
+            width="75%"
+        >
+            <div className="sidebar-content">
+                {sidebarState.postType === 'discussion' && (
+                    <DiscussionPostClient
+                        councilBoardSidebar={true}
+                        postID={sidebarState.postID}
+                    />
+                )}
+                {sidebarState.postType === 'referenda' && (
+                    <ReferendumPostClient
+                        councilBoardSidebar={true}
+                        postID={sidebarState.postID}
+                    />
+                )}
+            </div>
+        </SidebarRight>
+    );
 };
 
 export default PostSidebar;

@@ -3,5 +3,5 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 export default function isValidPassowrd(password: string): boolean {
-  return password.length >= 6;
+    return password.length >= 6;
 }

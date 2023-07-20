@@ -12,53 +12,55 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
-  if (req.method !== 'POST')
-    return res
-      .status(405)
-      .json({ message: 'Invalid request method, POST required.' });
+    if (req.method !== 'POST')
+        return res
+            .status(405)
+            .json({ message: 'Invalid request method, POST required.' });
 
-  const network = String(req.headers['x-network']);
-  if (!network)
-    return res
-      .status(400)
-      .json({ message: 'Missing network name in request headers' });
+    const network = String(req.headers['x-network']);
+    if (!network)
+        return res
+            .status(400)
+            .json({ message: 'Missing network name in request headers' });
 
-  const { userId, postId, commentId, reaction, postType } = req.body;
-  if (!userId || isNaN(postId) || !commentId || !reaction || !postType)
-    return res
-      .status(400)
-      .json({ message: 'Missing parameters in request body' });
+    const { userId, postId, commentId, reaction, postType } = req.body;
+    if (!userId || isNaN(postId) || !commentId || !reaction || !postType)
+        return res
+            .status(400)
+            .json({ message: 'Missing parameters in request body' });
 
-  const token = getTokenFromReq(req);
-  if (!token) return res.status(400).json({ message: 'Invalid token' });
+    const token = getTokenFromReq(req);
+    if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-  const user = await authServiceInstance.GetUser(token);
-  if (!user || user.id !== Number(userId))
-    return res.status(403).json({ message: messages.UNAUTHORISED });
+    const user = await authServiceInstance.GetUser(token);
+    if (!user || user.id !== Number(userId))
+        return res.status(403).json({ message: messages.UNAUTHORISED });
 
-  const postRef = postsByTypeRef(network, postType).doc(String(postId));
-  const userReactionsSnapshot = await postRef
-    .collection('comments')
-    .doc(String(commentId))
-    .collection('comment_reactions')
-    .where('user_id', '==', user.id)
-    .limit(1)
-    .get();
+    const postRef = postsByTypeRef(network, postType).doc(String(postId));
+    const userReactionsSnapshot = await postRef
+        .collection('comments')
+        .doc(String(commentId))
+        .collection('comment_reactions')
+        .where('user_id', '==', user.id)
+        .limit(1)
+        .get();
 
-  if (!userReactionsSnapshot.empty) {
-    const reactionDocRef = userReactionsSnapshot.docs[0].ref;
-    await reactionDocRef
-      .delete()
-      .then(() => {
-        return res.status(200).json({ message: 'Reaction removed.' });
-      })
-      .catch((error) => {
-        console.error('Error removing reaction: ', error);
-        return res.status(500).json({ message: 'Error removing reaction' });
-      });
-  } else {
-    res.status(400).json({ message: 'No reaction found' });
-  }
+    if (!userReactionsSnapshot.empty) {
+        const reactionDocRef = userReactionsSnapshot.docs[0].ref;
+        await reactionDocRef
+            .delete()
+            .then(() => {
+                return res.status(200).json({ message: 'Reaction removed.' });
+            })
+            .catch((error) => {
+                console.error('Error removing reaction: ', error);
+                return res
+                    .status(500)
+                    .json({ message: 'Error removing reaction' });
+            });
+    } else {
+        res.status(400).json({ message: 'No reaction found' });
+    }
 }
 
 export default withErrorHandling(handler);

@@ -165,7 +165,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 			<Divider />
 
-			<div className="flex justify-end p-4">
+			<div className="flex justify-end pt-0 px-4 pb-4 sm:p-4">
 				{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
       <DelegateModal trackNum={trackMetaData?.trackId} />}
 			</div>

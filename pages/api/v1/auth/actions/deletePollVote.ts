@@ -17,101 +17,101 @@ import { ProposalType } from '~src/global/proposalType';
 import { getPollCollectionName } from '../../polls';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
-    if (req.method !== 'POST')
-        return res
-            .status(405)
-            .json({ message: 'Invalid request method, POST required.' });
+	if (req.method !== 'POST')
+		return res
+			.status(405)
+			.json({ message: 'Invalid request method, POST required.' });
 
-    const network = String(req.headers['x-network']);
-    if (!network || !isValidNetwork(network))
-        return res
-            .status(400)
-            .json({ message: 'Invalid network in request header' });
+	const network = String(req.headers['x-network']);
+	if (!network || !isValidNetwork(network))
+		return res
+			.status(400)
+			.json({ message: 'Invalid network in request header' });
 
-    const { pollId, postId, userId, pollType, proposalType } = req.body;
-    if (!pollId || isNaN(postId) || !userId)
-        return res
-            .status(400)
-            .json({ message: 'Missing parameters in request body' });
+	const { pollId, postId, userId, pollType, proposalType } = req.body;
+	if (!pollId || isNaN(postId) || !userId)
+		return res
+			.status(400)
+			.json({ message: 'Missing parameters in request body' });
 
-    const strProposalType = String(proposalType);
-    if (!isOffChainProposalTypeValid(strProposalType))
-        return res.status(400).json({
-            message: `The off chain proposal type of the name "${proposalType}" does not exist.`,
-        });
+	const strProposalType = String(proposalType);
+	if (!isOffChainProposalTypeValid(strProposalType))
+		return res.status(400).json({
+			message: `The off chain proposal type of the name "${proposalType}" does not exist.`,
+		});
 
-    const strPollType = String(pollType);
-    if (!pollType || !isPollTypeValid(strPollType))
-        return res
-            .status(400)
-            .json({ message: `The pollType "${pollType}" is invalid` });
+	const strPollType = String(pollType);
+	if (!pollType || !isPollTypeValid(strPollType))
+		return res
+			.status(400)
+			.json({ message: `The pollType "${pollType}" is invalid` });
 
-    const token = getTokenFromReq(req);
-    if (!token) return res.status(400).json({ message: 'Invalid token' });
+	const token = getTokenFromReq(req);
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-    const user = await authServiceInstance.GetUser(token);
-    if (!user || user.id !== Number(userId))
-        return res.status(403).json({ message: messages.UNAUTHORISED });
+	const user = await authServiceInstance.GetUser(token);
+	if (!user || user.id !== Number(userId))
+		return res.status(403).json({ message: messages.UNAUTHORISED });
 
-    const pollColName = getPollCollectionName(strPollType);
-    if (!['option_polls', 'polls'].includes(pollColName)) {
-        return res
-            .status(400)
-            .json({ message: `The pollType "${pollType}" is invalid` });
-    }
+	const pollColName = getPollCollectionName(strPollType);
+	if (!['option_polls', 'polls'].includes(pollColName)) {
+		return res
+			.status(400)
+			.json({ message: `The pollType "${pollType}" is invalid` });
+	}
 
-    const pollRef = postsByTypeRef(network, strProposalType as ProposalType)
-        .doc(String(postId))
-        .collection(pollColName)
-        .doc(String(pollId));
+	const pollRef = postsByTypeRef(network, strProposalType as ProposalType)
+		.doc(String(postId))
+		.collection(pollColName)
+		.doc(String(pollId));
 
-    const pollDoc = await pollRef.get();
+	const pollDoc = await pollRef.get();
 
-    if (!pollDoc.exists)
-        return res.status(404).json({ message: 'Poll not found' });
+	if (!pollDoc.exists)
+		return res.status(404).json({ message: 'Poll not found' });
 
-    let votes_field_name = '';
-    if (strPollType === POLL_TYPE.OPTION) {
-        votes_field_name = 'option_poll_votes';
-    } else if (strPollType === POLL_TYPE.NORMAL) {
-        votes_field_name = 'poll_votes';
-    } else {
-        return res
-            .status(400)
-            .json({ message: `The pollType "${pollType}" is invalid` });
-    }
+	let votes_field_name = '';
+	if (strPollType === POLL_TYPE.OPTION) {
+		votes_field_name = 'option_poll_votes';
+	} else if (strPollType === POLL_TYPE.NORMAL) {
+		votes_field_name = 'poll_votes';
+	} else {
+		return res
+			.status(400)
+			.json({ message: `The pollType "${pollType}" is invalid` });
+	}
 
-    const updated: any = {};
-    const data = pollDoc.data() as any;
+	const updated: any = {};
+	const data = pollDoc.data() as any;
 
-    updated[votes_field_name] = data?.[votes_field_name] || [];
-    if (
-        !updated[votes_field_name] ||
-        !Array.isArray(updated[votes_field_name])
-    ) {
-        return res
-            .status(500)
-            .json({ message: `The pollType "${pollType}" is invalid` });
-    }
-    const initialVotes = updated[votes_field_name].length;
-    updated[votes_field_name] = updated[votes_field_name].filter(
-        (vote: any) => vote.user_id !== user.id,
-    );
-    if (initialVotes === updated[votes_field_name].length)
-        return res.status(400).json({ message: 'No vote found for the user' });
+	updated[votes_field_name] = data?.[votes_field_name] || [];
+	if (
+		!updated[votes_field_name] ||
+		!Array.isArray(updated[votes_field_name])
+	) {
+		return res
+			.status(500)
+			.json({ message: `The pollType "${pollType}" is invalid` });
+	}
+	const initialVotes = updated[votes_field_name].length;
+	updated[votes_field_name] = updated[votes_field_name].filter(
+		(vote: any) => vote.user_id !== user.id,
+	);
+	if (initialVotes === updated[votes_field_name].length)
+		return res.status(400).json({ message: 'No vote found for the user' });
 
-    pollRef
-        .update(updated)
-        .then(() => {
-            return res.status(200).json({ message: 'Poll vote deleted.' });
-        })
-        .catch((error) => {
-            // The document probably doesn't exist.
-            console.error('Error deleting poll vote: ', error);
-            return res
-                .status(500)
-                .json({ message: 'Error deleting poll vote' });
-        });
+	pollRef
+		.update(updated)
+		.then(() => {
+			return res.status(200).json({ message: 'Poll vote deleted.' });
+		})
+		.catch((error) => {
+			// The document probably doesn't exist.
+			console.error('Error deleting poll vote: ', error);
+			return res
+				.status(500)
+				.json({ message: 'Error deleting poll vote' });
+		});
 };
 
 export default withErrorHandling(handler);

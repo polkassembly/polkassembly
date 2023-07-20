@@ -8,12 +8,12 @@ import Unlock from '~src/components/Settings/Unlock';
 import ProfileSettings from './Profile';
 
 export default function UserAccount({ network }: { network: string }) {
-    return (
-        <div className="flex flex-col gap-6">
-            <ProfileSettings />
-            <OldAccount />
-            <Unlock network={network} />
-            <Delete />
-        </div>
-    );
+	return (
+		<div className="flex flex-col gap-6">
+			<ProfileSettings />
+			<OldAccount />
+			<Unlock network={network} />
+			<Delete />
+		</div>
+	);
 }

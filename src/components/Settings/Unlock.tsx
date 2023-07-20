@@ -9,36 +9,36 @@ import DemocracyUnlock from './DemocracyUnlock';
 import ReferendaUnlock from './ReferendaUnlock';
 
 interface IUnlockProps {
-    network: string;
+	network: string;
 }
 
 const Unlock: FC<IUnlockProps> = (props) => {
-    const { network } = props;
-    const metaMaskError = useHandleMetaMask();
-    const [isBalanceUpdated, setIsBalanceUpdated] = useState(false);
-    return (
-        <>
-            {!metaMaskError &&
-            ['moonbase', 'moonriver', 'moonbeam'].includes(network) ? (
-                <>
-                    <DemocracyUnlock
-                        isBalanceUpdated={isBalanceUpdated}
-                        setIsBalanceUpdated={setIsBalanceUpdated}
-                    />
-                    <Divider />
-                </>
-            ) : null}
-            {!metaMaskError && ['moonbase', 'moonriver'].includes(network) ? (
-                <>
-                    <ReferendaUnlock
-                        isBalanceUpdated={isBalanceUpdated}
-                        setIsBalanceUpdated={setIsBalanceUpdated}
-                    />
-                    <Divider />
-                </>
-            ) : null}
-        </>
-    );
+	const { network } = props;
+	const metaMaskError = useHandleMetaMask();
+	const [isBalanceUpdated, setIsBalanceUpdated] = useState(false);
+	return (
+		<>
+			{!metaMaskError &&
+			['moonbase', 'moonriver', 'moonbeam'].includes(network) ? (
+				<>
+					<DemocracyUnlock
+						isBalanceUpdated={isBalanceUpdated}
+						setIsBalanceUpdated={setIsBalanceUpdated}
+					/>
+					<Divider />
+				</>
+			) : null}
+			{!metaMaskError && ['moonbase', 'moonriver'].includes(network) ? (
+				<>
+					<ReferendaUnlock
+						isBalanceUpdated={isBalanceUpdated}
+						setIsBalanceUpdated={setIsBalanceUpdated}
+					/>
+					<Divider />
+				</>
+			) : null}
+		</>
+	);
 };
 
 export default Unlock;

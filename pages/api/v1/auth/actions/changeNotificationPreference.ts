@@ -8,62 +8,62 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import authServiceInstance from '~src/auth/auth';
 import {
-    MessageType,
-    NotificationSettings,
-    UpdatedDataResponseType,
+	MessageType,
+	NotificationSettings,
+	UpdatedDataResponseType,
 } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 
 async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<
-        UpdatedDataResponseType<NotificationSettings> | MessageType
-    >,
+	req: NextApiRequest,
+	res: NextApiResponse<
+		UpdatedDataResponseType<NotificationSettings> | MessageType
+	>,
 ) {
-    if (req.method !== 'POST')
-        return res
-            .status(405)
-            .json({ message: 'Invalid request method, POST required.' });
+	if (req.method !== 'POST')
+		return res
+			.status(405)
+			.json({ message: 'Invalid request method, POST required.' });
 
-    const network = String(req.headers['x-network']);
-    if (!network || !isValidNetwork(network))
-        res.status(400).json({ message: 'Invalid network in request header' });
+	const network = String(req.headers['x-network']);
+	if (!network || !isValidNetwork(network))
+		res.status(400).json({ message: 'Invalid network in request header' });
 
-    const { new_proposal, own_proposal, post_created, post_participated } =
-        req.body;
+	const { new_proposal, own_proposal, post_created, post_participated } =
+		req.body;
 
-    if (
-        new_proposal === undefined ||
-        own_proposal === undefined ||
-        post_created === undefined ||
-        post_participated === undefined
-    ) {
-        return res.status(400).json({ message: 'Missing parameters in body' });
-    }
+	if (
+		new_proposal === undefined ||
+		own_proposal === undefined ||
+		post_created === undefined ||
+		post_participated === undefined
+	) {
+		return res.status(400).json({ message: 'Missing parameters in body' });
+	}
 
-    const token = getTokenFromReq(req);
-    if (!token) return res.status(400).json({ message: 'Invalid token' });
+	const token = getTokenFromReq(req);
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-    try {
-        const notification_preferences =
-            await authServiceInstance.ChangeNotificationPreference(
-                token,
-                {
-                    new_proposal,
-                    own_proposal,
-                    post_created,
-                    post_participated,
-                },
-                network,
-            );
-        return res.status(200).json({
-            message: messages.NOTIFICATION_PREFERENCE_CHANGE_SUCCESSFUL,
-            updated: notification_preferences,
-        });
-    } catch (error) {
-        return res.status(Number(error.name)).json({ message: error?.message });
-    }
+	try {
+		const notification_preferences =
+			await authServiceInstance.ChangeNotificationPreference(
+				token,
+				{
+					new_proposal,
+					own_proposal,
+					post_created,
+					post_participated,
+				},
+				network,
+			);
+		return res.status(200).json({
+			message: messages.NOTIFICATION_PREFERENCE_CHANGE_SUCCESSFUL,
+			updated: notification_preferences,
+		});
+	} catch (error) {
+		return res.status(Number(error.name)).json({ message: error?.message });
+	}
 }
 
 export default withErrorHandling(handler);

@@ -16,82 +16,82 @@ import messages from '~src/util/messages';
 export interface IPreimagesListing {}
 
 export interface IPreimagesListingResponse {
-    count: number;
-    preimages: IPreimagesListing[];
+	count: number;
+	preimages: IPreimagesListing[];
 }
 
 interface IGetPreimagesParams {
-    network: string;
-    listingLimit: number | string | string[];
-    page: number | string | string[];
+	network: string;
+	listingLimit: number | string | string[];
+	page: number | string | string[];
 }
 
 export async function getPreimages(
-    params: IGetPreimagesParams,
+	params: IGetPreimagesParams,
 ): Promise<IApiResponse<IPreimagesListingResponse>> {
-    try {
-        const { network, listingLimit, page } = params;
+	try {
+		const { network, listingLimit, page } = params;
 
-        const numListingLimit = Number(listingLimit);
-        if (isNaN(numListingLimit)) {
-            throw apiErrorWithStatusCode(
-                `Invalid listingLimit "${listingLimit}"`,
-                400,
-            );
-        }
+		const numListingLimit = Number(listingLimit);
+		if (isNaN(numListingLimit)) {
+			throw apiErrorWithStatusCode(
+				`Invalid listingLimit "${listingLimit}"`,
+				400,
+			);
+		}
 
-        const numPage = Number(page);
-        if (isNaN(numPage) || numPage <= 0) {
-            throw apiErrorWithStatusCode(`Invalid page "${page}"`, 400);
-        }
-        const subsquidRes = await fetchSubsquid({
-            network,
-            query: GET_PREIMAGES_TABLE_QUERY,
-            variables: {
-                limit: numListingLimit,
-                offset: numListingLimit * (numPage - 1),
-            },
-        });
+		const numPage = Number(page);
+		if (isNaN(numPage) || numPage <= 0) {
+			throw apiErrorWithStatusCode(`Invalid page "${page}"`, 400);
+		}
+		const subsquidRes = await fetchSubsquid({
+			network,
+			query: GET_PREIMAGES_TABLE_QUERY,
+			variables: {
+				limit: numListingLimit,
+				offset: numListingLimit * (numPage - 1),
+			},
+		});
 
-        const subsquidData = subsquidRes?.data;
-        const data: IPreimagesListingResponse = {
-            count: Number(subsquidData?.preimagesConnection?.totalCount),
-            preimages: subsquidData?.preimages || [],
-        };
-        return {
-            data: JSON.parse(JSON.stringify(data)),
-            error: null,
-            status: 200,
-        };
-    } catch (error) {
-        return {
-            data: null,
-            error: error.message || messages.API_FETCH_ERROR,
-            status: Number(error.name) || 500,
-        };
-    }
+		const subsquidData = subsquidRes?.data;
+		const data: IPreimagesListingResponse = {
+			count: Number(subsquidData?.preimagesConnection?.totalCount),
+			preimages: subsquidData?.preimages || [],
+		};
+		return {
+			data: JSON.parse(JSON.stringify(data)),
+			error: null,
+			status: 200,
+		};
+	} catch (error) {
+		return {
+			data: null,
+			error: error.message || messages.API_FETCH_ERROR,
+			status: Number(error.name) || 500,
+		};
+	}
 }
 
 const handler: NextApiHandler<
-    IPreimagesListingResponse | { error: string }
+	IPreimagesListingResponse | { error: string }
 > = async (req, res) => {
-    const { page = 1, listingLimit = LISTING_LIMIT } = req.query;
+	const { page = 1, listingLimit = LISTING_LIMIT } = req.query;
 
-    const network = String(req.headers['x-network']);
-    if (!network || !isValidNetwork(network))
-        res.status(400).json({ error: 'Invalid network in request header' });
+	const network = String(req.headers['x-network']);
+	if (!network || !isValidNetwork(network))
+		res.status(400).json({ error: 'Invalid network in request header' });
 
-    const { data, error, status } = await getPreimages({
-        listingLimit,
-        network,
-        page,
-    });
+	const { data, error, status } = await getPreimages({
+		listingLimit,
+		network,
+		page,
+	});
 
-    if (error || !data) {
-        res.status(status).json({ error: error || messages.API_FETCH_ERROR });
-    } else {
-        res.status(status).json(data);
-    }
+	if (error || !data) {
+		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+	} else {
+		res.status(status).json(data);
+	}
 };
 
 export default withErrorHandling(handler);

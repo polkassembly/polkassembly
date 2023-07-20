@@ -3,25 +3,25 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 export default function formatPostInfoArguments(rawArguments: any): any[] {
-    const argumentsArr: any[] = [];
-    rawArguments?.forEach((obj: any) => {
-        if (obj.name == 'code') {
-            return false;
-        }
+	const argumentsArr: any[] = [];
+	rawArguments?.forEach((obj: any) => {
+		if (obj.name == 'code') {
+			return false;
+		}
 
-        const argumentsObj: any = {};
-        delete obj.__typename;
-        if (obj.id) {
-            argumentsObj['id'] = obj.id;
-        }
-        argumentsObj['name'] = obj.name;
-        try {
-            argumentsObj['value'] = JSON.parse(obj.value);
-        } catch {
-            argumentsObj['value'] = obj.value;
-        }
-        argumentsArr.push(argumentsObj);
-    });
+		const argumentsObj: any = {};
+		delete obj.__typename;
+		if (obj.id) {
+			argumentsObj['id'] = obj.id;
+		}
+		argumentsObj['name'] = obj.name;
+		try {
+			argumentsObj['value'] = JSON.parse(obj.value);
+		} catch {
+			argumentsObj['value'] = obj.value;
+		}
+		argumentsArr.push(argumentsObj);
+	});
 
-    return argumentsArr;
+	return argumentsArr;
 }

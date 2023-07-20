@@ -15,142 +15,142 @@ import HelperTooltip from './HelperTooltip';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
-    className?: string;
-    label?: string;
-    helpText?: string;
-    onChange: (address: string) => void;
-    placeholder?: string;
-    size?: 'large' | 'small' | 'middle';
-    defaultAddress?: string;
-    skipFormatCheck?: boolean;
-    inputClassName?: string;
+	className?: string;
+	label?: string;
+	helpText?: string;
+	onChange: (address: string) => void;
+	placeholder?: string;
+	size?: 'large' | 'small' | 'middle';
+	defaultAddress?: string;
+	skipFormatCheck?: boolean;
+	inputClassName?: string;
 }
 
 const AddressInput = ({
-    className,
-    helpText,
-    label,
-    placeholder,
-    size,
-    onChange,
-    defaultAddress,
-    skipFormatCheck,
-    inputClassName,
+	className,
+	helpText,
+	label,
+	placeholder,
+	size,
+	onChange,
+	defaultAddress,
+	skipFormatCheck,
+	inputClassName,
 }: Props) => {
-    const { network } = useContext(NetworkContext);
+	const { network } = useContext(NetworkContext);
 
-    const [address, setAddress] = useState<string>(
-        defaultAddress ? defaultAddress : '',
-    );
+	const [address, setAddress] = useState<string>(
+		defaultAddress ? defaultAddress : '',
+	);
 
-    const [isValid, setIsValid] = useState<boolean>(false);
-    const handleAddressChange = (address: string) => {
-        setAddress(address);
+	const [isValid, setIsValid] = useState<boolean>(false);
+	const handleAddressChange = (address: string) => {
+		setAddress(address);
 
-        if (skipFormatCheck) {
-            if (
-                getEncodedAddress(address, network) ||
-                Web3.utils.isAddress(address)
-            ) {
-                onChange(address);
-            }
-            return;
-        }
+		if (skipFormatCheck) {
+			if (
+				getEncodedAddress(address, network) ||
+				Web3.utils.isAddress(address)
+			) {
+				onChange(address);
+			}
+			return;
+		}
 
-        const isValidMetaAddress = Web3.utils.isAddress(
-            address,
-            addressPrefix[network],
-        );
-        const [validAddress] = checkAddress(address, addressPrefix[network]);
+		const isValidMetaAddress = Web3.utils.isAddress(
+			address,
+			addressPrefix[network],
+		);
+		const [validAddress] = checkAddress(address, addressPrefix[network]);
 
-        if (validAddress || isValidMetaAddress) {
-            setIsValid(true);
-            onChange(address);
-        } else {
-            setIsValid(false);
-            onChange('');
-        }
-    };
+		if (validAddress || isValidMetaAddress) {
+			setIsValid(true);
+			onChange(address);
+		} else {
+			setIsValid(false);
+			onChange('');
+		}
+	};
 
-    useEffect(() => {
-        if (skipFormatCheck) {
-            if (
-                getEncodedAddress(address, network) ||
-                Web3.utils.isAddress(address)
-            ) {
-                setIsValid(true);
-                onChange(address);
-            }
-            return;
-        }
+	useEffect(() => {
+		if (skipFormatCheck) {
+			if (
+				getEncodedAddress(address, network) ||
+				Web3.utils.isAddress(address)
+			) {
+				setIsValid(true);
+				onChange(address);
+			}
+			return;
+		}
 
-        const isValidMetaAddress = Web3.utils.isAddress(
-            address,
-            addressPrefix[network],
-        );
-        const [validAddress] = checkAddress(address, addressPrefix[network]);
+		const isValidMetaAddress = Web3.utils.isAddress(
+			address,
+			addressPrefix[network],
+		);
+		const [validAddress] = checkAddress(address, addressPrefix[network]);
 
-        if (validAddress || isValidMetaAddress) {
-            setIsValid(true);
-            onChange(address);
-        } else {
-            setIsValid(false);
-            onChange('');
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [address]);
+		if (validAddress || isValidMetaAddress) {
+			setIsValid(true);
+			onChange(address);
+		} else {
+			setIsValid(false);
+			onChange('');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
 
-    return (
-        <div className={`${className} mb-2 mt-6`}>
-            {label && (
-                <label className=" flex items-center text-sm mb-[2px]">
-                    {' '}
-                    {label}{' '}
-                    {helpText && (
-                        <HelperTooltip className="ml-2" text={helpText} />
-                    )}{' '}
-                </label>
-            )}
-            <div className={`${className} flex items-center`}>
-                {isValid && (
-                    <>
-                        {address.startsWith('0x') ? (
-                            <EthIdenticon
-                                className="z-10 absolute left-[8px] flex justify-center items-center"
-                                size={26}
-                                address={address}
-                            />
-                        ) : (
-                            <Identicon
-                                className="z-10 absolute left-[8px]"
-                                value={address}
-                                size={26}
-                                theme={'polkadot'}
-                            />
-                        )}
-                    </>
-                )}
+	return (
+		<div className={`${className} mb-2 mt-6`}>
+			{label && (
+				<label className=" flex items-center text-sm mb-[2px]">
+					{' '}
+					{label}{' '}
+					{helpText && (
+						<HelperTooltip className="ml-2" text={helpText} />
+					)}{' '}
+				</label>
+			)}
+			<div className={`${className} flex items-center`}>
+				{isValid && (
+					<>
+						{address.startsWith('0x') ? (
+							<EthIdenticon
+								className="z-10 absolute left-[8px] flex justify-center items-center"
+								size={26}
+								address={address}
+							/>
+						) : (
+							<Identicon
+								className="z-10 absolute left-[8px]"
+								value={address}
+								size={26}
+								theme={'polkadot'}
+							/>
+						)}
+					</>
+				)}
 
-                <Form.Item
-                    className="mb-0 w-full"
-                    validateStatus={address && !isValid ? 'error' : ''}
-                >
-                    <Input
-                        value={address}
-                        className={`${
-                            !isValid ? 'px-[0.5em]' : 'pl-[46px]'
-                        } text-sm w-full h-[40px] border-[1px] rounded-[4px] ${inputClassName}`}
-                        onChange={(e) => {
-                            handleAddressChange(e.target.value);
-                            onChange(e.target.value);
-                        }}
-                        placeholder={placeholder || 'Address'}
-                        size={size}
-                    />
-                </Form.Item>
-            </div>
-        </div>
-    );
+				<Form.Item
+					className="mb-0 w-full"
+					validateStatus={address && !isValid ? 'error' : ''}
+				>
+					<Input
+						value={address}
+						className={`${
+							!isValid ? 'px-[0.5em]' : 'pl-[46px]'
+						} text-sm w-full h-[40px] border-[1px] rounded-[4px] ${inputClassName}`}
+						onChange={(e) => {
+							handleAddressChange(e.target.value);
+							onChange(e.target.value);
+						}}
+						placeholder={placeholder || 'Address'}
+						size={size}
+					/>
+				</Form.Item>
+			</div>
+		</div>
+	);
 };
 
 export default AddressInput;

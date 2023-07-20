@@ -10,32 +10,32 @@ import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 
 interface IPrivacyPage {
-    network: string;
+	network: string;
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-    const network = getNetworkFromReqHeaders(req.headers);
-    return {
-        props: {
-            network,
-        },
-    };
+	const network = getNetworkFromReqHeaders(req.headers);
+	return {
+		props: {
+			network,
+		},
+	};
 };
 const PrivacyPage: FC<IPrivacyPage> = (props) => {
-    const { network } = props;
-    const { setNetwork } = useNetworkContext();
+	const { network } = props;
+	const { setNetwork } = useNetworkContext();
 
-    useEffect(() => {
-        setNetwork(network);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+	useEffect(() => {
+		setNetwork(network);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
-    return (
-        <>
-            <SEOHead title="Privacy Policy" network={network} />
-            <PrivacyPolicy />
-        </>
-    );
+	return (
+		<>
+			<SEOHead title="Privacy Policy" network={network} />
+			<PrivacyPolicy />
+		</>
+	);
 };
 
 export default PrivacyPage;

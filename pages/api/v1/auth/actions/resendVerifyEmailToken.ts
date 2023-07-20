@@ -12,25 +12,23 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
-    if (req.method !== 'POST')
-        return res
-            .status(405)
-            .json({ message: 'Invalid request method, POST required.' });
+	if (req.method !== 'POST')
+		return res
+			.status(405)
+			.json({ message: 'Invalid request method, POST required.' });
 
-    const network = String(req.headers['x-network']);
-    if (!network || !isValidNetwork(network))
-        res.status(400).json({ message: 'Invalid network in request header' });
+	const network = String(req.headers['x-network']);
+	if (!network || !isValidNetwork(network))
+		res.status(400).json({ message: 'Invalid network in request header' });
 
-    const token = getTokenFromReq(req);
-    if (!token) return res.status(400).json({ message: 'Invalid token' });
+	const token = getTokenFromReq(req);
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-    await authServiceInstance.resendVerifyEmailToken(token, network);
+	await authServiceInstance.resendVerifyEmailToken(token, network);
 
-    return res
-        .status(200)
-        .json({
-            message: messages.RESEND_VERIFY_EMAIL_TOKEN_REQUEST_SUCCESSFUL,
-        });
+	return res.status(200).json({
+		message: messages.RESEND_VERIFY_EMAIL_TOKEN_REQUEST_SUCCESSFUL,
+	});
 }
 
 export default withErrorHandling(handler);

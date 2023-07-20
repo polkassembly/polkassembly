@@ -6,33 +6,33 @@ import Jazzicon from '@metamask/jazzicon';
 import { useEffect, useRef } from 'react';
 
 const EthIdenticon = ({
-    address,
-    size,
-    className,
+	address,
+	size,
+	className,
 }: {
-    address: string;
-    size: number;
-    className?: string;
+	address: string;
+	size: number;
+	className?: string;
 }) => {
-    const ref = useRef<HTMLDivElement>();
-    const numericAddress = parseInt(address.slice(2, 10), 16);
+	const ref = useRef<HTMLDivElement>();
+	const numericAddress = parseInt(address.slice(2, 10), 16);
 
-    useEffect(() => {
-        if (numericAddress && ref.current) {
-            ref.current.innerHTML = '';
-            ref.current.appendChild(
-                Jazzicon(size > 18 ? size - 8 : size, numericAddress),
-            );
-        }
-    }, [numericAddress, size]);
+	useEffect(() => {
+		if (numericAddress && ref.current) {
+			ref.current.innerHTML = '';
+			ref.current.appendChild(
+				Jazzicon(size > 18 ? size - 8 : size, numericAddress),
+			);
+		}
+	}, [numericAddress, size]);
 
-    return (
-        <div
-            onClick={() => navigator.clipboard.writeText(address)}
-            className={`cursor-copy ${className}`}
-            ref={ref as any}
-        />
-    );
+	return (
+		<div
+			onClick={() => navigator.clipboard.writeText(address)}
+			className={`cursor-copy ${className}`}
+			ref={ref as any}
+		/>
+	);
 };
 
 export default EthIdenticon;

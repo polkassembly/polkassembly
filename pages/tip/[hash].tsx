@@ -4,8 +4,8 @@
 
 import { GetServerSideProps } from 'next';
 import {
-    getOnChainPost,
-    IPostResponse,
+	getOnChainPost,
+	IPostResponse,
 } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
 import Post from 'src/components/Post/Post';
@@ -28,93 +28,93 @@ import { useState } from 'react';
 
 const proposalType = ProposalType.TIPS;
 export const getServerSideProps: GetServerSideProps = async ({
-    req,
-    query,
+	req,
+	query,
 }) => {
-    const { hash } = query;
+	const { hash } = query;
 
-    const network = getNetworkFromReqHeaders(req.headers);
-    const { data, error, status } = await getOnChainPost({
-        network,
-        postId: hash,
-        proposalType,
-    });
-    return { props: { data, error, network, status } };
+	const network = getNetworkFromReqHeaders(req.headers);
+	const { data, error, status } = await getOnChainPost({
+		network,
+		postId: hash,
+		proposalType,
+	});
+	return { props: { data, error, network, status } };
 };
 
 interface ITipPostProps {
-    data: IPostResponse;
-    error?: string;
-    network: string;
-    status?: number;
+	data: IPostResponse;
+	error?: string;
+	network: string;
+	status?: number;
 }
 
 const TipPost: FC<ITipPostProps> = (props) => {
-    const { data: post, error, network, status } = props;
-    const { setNetwork } = useNetworkContext();
-    const router = useRouter();
-    const { api, apiReady } = useApiContext();
-    const [isUnfinalized, setIsUnFinalized] = useState(false);
-    const { hash } = router.query;
+	const { data: post, error, network, status } = props;
+	const { setNetwork } = useNetworkContext();
+	const router = useRouter();
+	const { api, apiReady } = useApiContext();
+	const [isUnfinalized, setIsUnFinalized] = useState(false);
+	const { hash } = router.query;
 
-    useEffect(() => {
-        setNetwork(props.network);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+	useEffect(() => {
+		setNetwork(props.network);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
-    useEffect(() => {
-        if (!api || !apiReady || !error || !status || !hash || status !== 404) {
-            return;
-        }
-        (async () => {
-            setIsUnFinalized(
-                Boolean(await checkIsOnChain(String(hash), proposalType, api)),
-            );
-        })();
-    }, [api, apiReady, error, status, hash]);
+	useEffect(() => {
+		if (!api || !apiReady || !error || !status || !hash || status !== 404) {
+			return;
+		}
+		(async () => {
+			setIsUnFinalized(
+				Boolean(await checkIsOnChain(String(hash), proposalType, api)),
+			);
+		})();
+	}, [api, apiReady, error, status, hash]);
 
-    if (isUnfinalized) {
-        return (
-            <PostEmptyState
-                image={<EmptyIcon />}
-                description={
-                    <div className="p-5">
-                        <b className="text-xl my-4">
-                            Waiting for Block Confirmation
-                        </b>
-                        <p>Usually its done within a few seconds</p>
-                    </div>
-                }
-                imageStyle={{ height: 300 }}
-            />
-        );
-    }
+	if (isUnfinalized) {
+		return (
+			<PostEmptyState
+				image={<EmptyIcon />}
+				description={
+					<div className="p-5">
+						<b className="text-xl my-4">
+							Waiting for Block Confirmation
+						</b>
+						<p>Usually its done within a few seconds</p>
+					</div>
+				}
+				imageStyle={{ height: 300 }}
+			/>
+		);
+	}
 
-    if (error) return <ErrorState errorMessage={error} />;
-    if (!post) return null;
+	if (error) return <ErrorState errorMessage={error} />;
+	if (!post) return null;
 
-    if (post)
-        return (
-            <>
-                <SEOHead
-                    title={post.title || `${noTitle} - Tip`}
-                    desc={post.content}
-                    network={network}
-                />
+	if (post)
+		return (
+			<>
+				<SEOHead
+					title={post.title || `${noTitle} - Tip`}
+					desc={post.content}
+					network={network}
+				/>
 
-                <BackToListingView postCategory={PostCategory.TIP} />
+				<BackToListingView postCategory={PostCategory.TIP} />
 
-                <div className="mt-6">
-                    <Post post={post} proposalType={proposalType} />
-                </div>
-            </>
-        );
+				<div className="mt-6">
+					<Post post={post} proposalType={proposalType} />
+				</div>
+			</>
+		);
 
-    return (
-        <div className="mt-16">
-            <LoadingState />
-        </div>
-    );
+	return (
+		<div className="mt-16">
+			<LoadingState />
+		</div>
+	);
 };
 
 export default TipPost;

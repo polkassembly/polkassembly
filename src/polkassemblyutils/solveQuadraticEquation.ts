@@ -14,17 +14,17 @@ import BN from 'bn.js';
  **/
 
 export function solveQuadraticEquation(a: BN, b: BN, c: BN): BN[] {
-    const TWO = new BN(2);
-    const FOUR = new BN(4);
+	const TWO = new BN(2);
+	const FOUR = new BN(4);
 
-    const result = b
-        .neg()
-        .add(bnSqrt(b.pow(TWO).sub(FOUR.mul(a).mul(c)).toString()))
-        .div(TWO.mul(a));
-    const result2 = b
-        .neg()
-        .sub(bnSqrt(b.pow(TWO).sub(FOUR.mul(a).mul(c)).toString()))
-        .div(TWO.mul(a));
+	const result = b
+		.neg()
+		.add(bnSqrt(b.pow(TWO).sub(FOUR.mul(a).mul(c)).toString()))
+		.div(TWO.mul(a));
+	const result2 = b
+		.neg()
+		.sub(bnSqrt(b.pow(TWO).sub(FOUR.mul(a).mul(c)).toString()))
+		.div(TWO.mul(a));
 
-    return [result, result2];
+	return [result, result2];
 }

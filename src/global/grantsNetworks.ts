@@ -4,5 +4,5 @@
 export const grantsNetworks = ['moonbase', 'moonbeam', 'moonriver'];
 
 export const isGrantsSupported = (network: string) => {
-    return grantsNetworks.includes(network);
+	return grantsNetworks.includes(network);
 };

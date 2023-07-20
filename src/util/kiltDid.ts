@@ -5,22 +5,22 @@
 import { ApiPromise } from '@polkadot/api';
 
 export async function getKiltDidName(
-    api: ApiPromise,
-    lookupAccountAddress: string,
+	api: ApiPromise,
+	lookupAccountAddress: string,
 ): Promise<string | undefined> {
-    const didDetails = (await api.call.did.queryByAccount({
-        AccountId32: lookupAccountAddress,
-    })) as any;
+	const didDetails = (await api.call.did.queryByAccount({
+		AccountId32: lookupAccountAddress,
+	})) as any;
 
-    if (didDetails.isNone) {
-        return undefined;
-    }
+	if (didDetails.isNone) {
+		return undefined;
+	}
 
-    const { w3n } = didDetails.unwrap();
+	const { w3n } = didDetails.unwrap();
 
-    if (w3n.isNone) {
-        return undefined;
-    }
+	if (w3n.isNone) {
+		return undefined;
+	}
 
-    return w3n.unwrap().toHuman();
+	return w3n.unwrap().toHuman();
 }

@@ -10,28 +10,28 @@ import { ChallengeMessage, MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 
 async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<ChallengeMessage | MessageType>,
+	req: NextApiRequest,
+	res: NextApiResponse<ChallengeMessage | MessageType>,
 ) {
-    if (req.method !== 'POST')
-        return res
-            .status(405)
-            .json({ message: 'Invalid request method, POST required.' });
+	if (req.method !== 'POST')
+		return res
+			.status(405)
+			.json({ message: 'Invalid request method, POST required.' });
 
-    const body = JSON.parse(req.body);
+	const body = JSON.parse(req.body);
 
-    const { address } = body;
+	const { address } = body;
 
-    if (!body || !address)
-        return res
-            .status(400)
-            .json({ message: 'Missing parameters in request body' });
+	if (!body || !address)
+		return res
+			.status(400)
+			.json({ message: 'Missing parameters in request body' });
 
-    const signMessage = await authServiceInstance.EditPostStart(address);
+	const signMessage = await authServiceInstance.EditPostStart(address);
 
-    return res
-        .status(200)
-        .json({ message: messages.EDIT_POST_STARTED, signMessage });
+	return res
+		.status(200)
+		.json({ message: messages.EDIT_POST_STARTED, signMessage });
 }
 
 export default withErrorHandling(handler);

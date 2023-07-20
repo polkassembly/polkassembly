@@ -13,56 +13,56 @@ import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface IDiscussionPostClient {
-    councilBoardSidebar: boolean;
-    postID: string | number;
+	councilBoardSidebar: boolean;
+	postID: string | number;
 }
 
 const DiscussionPostClient: FC<IDiscussionPostClient> = ({
-    councilBoardSidebar = false,
-    postID,
+	councilBoardSidebar = false,
+	postID,
 }) => {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-    const [post, setPost] = useState<IPostResponse>();
-    useEffect(() => {
-        setLoading(true);
-        nextApiClientFetch<IPostResponse>(
-            `api/v1/posts/discussion?postId=${postID}`,
-        )
-            .then((res) => {
-                if (res.data) {
-                    setPost(res.data);
-                } else if (res.error) {
-                    setError(res.error);
-                }
-                setLoading(false);
-            })
-            .catch((err) => {
-                setError(err?.message || err);
-                setLoading(false);
-            });
-    }, [postID]);
-    if (loading) return <p>loading...</p>;
-    if (error) return <ErrorState errorMessage={error} />;
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState('');
+	const [post, setPost] = useState<IPostResponse>();
+	useEffect(() => {
+		setLoading(true);
+		nextApiClientFetch<IPostResponse>(
+			`api/v1/posts/discussion?postId=${postID}`,
+		)
+			.then((res) => {
+				if (res.data) {
+					setPost(res.data);
+				} else if (res.error) {
+					setError(res.error);
+				}
+				setLoading(false);
+			})
+			.catch((err) => {
+				setError(err?.message || err);
+				setLoading(false);
+			});
+	}, [postID]);
+	if (loading) return <p>loading...</p>;
+	if (error) return <ErrorState errorMessage={error} />;
 
-    if (post)
-        return (
-            <div>
-                {!councilBoardSidebar && (
-                    <BackToListingView postCategory={PostCategory.DISCUSSION} />
-                )}
+	if (post)
+		return (
+			<div>
+				{!councilBoardSidebar && (
+					<BackToListingView postCategory={PostCategory.DISCUSSION} />
+				)}
 
-                <div className="mt-6">
-                    <Post post={post} proposalType={ProposalType.DISCUSSIONS} />
-                </div>
-            </div>
-        );
+				<div className="mt-6">
+					<Post post={post} proposalType={ProposalType.DISCUSSIONS} />
+				</div>
+			</div>
+		);
 
-    return (
-        <div className="mt-16">
-            <LoadingState />
-        </div>
-    );
+	return (
+		<div className="mt-16">
+			<LoadingState />
+		</div>
+	);
 };
 
 export default DiscussionPostClient;

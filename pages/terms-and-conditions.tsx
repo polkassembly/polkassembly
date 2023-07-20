@@ -10,33 +10,33 @@ import { useNetworkContext } from '~src/context';
 import SEOHead from '~src/global/SEOHead';
 
 interface ITermsAndConditionsPage {
-    network: string;
+	network: string;
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-    const network = getNetworkFromReqHeaders(req.headers);
-    return {
-        props: {
-            network,
-        },
-    };
+	const network = getNetworkFromReqHeaders(req.headers);
+	return {
+		props: {
+			network,
+		},
+	};
 };
 
 const TermsAndConditionsPage: FC<ITermsAndConditionsPage> = (props) => {
-    const { network } = props;
-    const { setNetwork } = useNetworkContext();
+	const { network } = props;
+	const { setNetwork } = useNetworkContext();
 
-    useEffect(() => {
-        setNetwork(network);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+	useEffect(() => {
+		setNetwork(network);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
-    return (
-        <>
-            <SEOHead title="Terms and Conditions" network={network} />
-            <TermsAndConditions />
-        </>
-    );
+	return (
+		<>
+			<SEOHead title="Terms and Conditions" network={network} />
+			<TermsAndConditions />
+		</>
+	);
 };
 
 export default TermsAndConditionsPage;

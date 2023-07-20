@@ -6,18 +6,18 @@ import React from 'react';
 import cleanError from 'src/util/cleanError';
 
 interface Props {
-    className?: string;
-    errorMsg: string;
+	className?: string;
+	errorMsg: string;
 }
 
 const ErrorAlert = ({ className, errorMsg }: Props) => {
-    return (
-        <Alert
-            message={cleanError(errorMsg)}
-            type="error"
-            className={className}
-        />
-    );
+	return (
+		<Alert
+			message={cleanError(errorMsg)}
+			type="error"
+			className={className}
+		/>
+	);
 };
 
 export default ErrorAlert;

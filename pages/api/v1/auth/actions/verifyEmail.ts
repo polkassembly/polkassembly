@@ -11,22 +11,22 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 
 async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<ChangeResponseType | MessageType>,
+	req: NextApiRequest,
+	res: NextApiResponse<ChangeResponseType | MessageType>,
 ) {
-    if (req.method !== 'POST')
-        return res
-            .status(405)
-            .json({ message: 'Invalid request method, POST required.' });
-    const token = getTokenFromReq(req);
-    if (!token) return res.status(400).json({ message: 'Invalid token' });
+	if (req.method !== 'POST')
+		return res
+			.status(405)
+			.json({ message: 'Invalid request method, POST required.' });
+	const token = getTokenFromReq(req);
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-    const updatedJWT = await authServiceInstance.VerifyEmail(token);
+	const updatedJWT = await authServiceInstance.VerifyEmail(token);
 
-    return res.status(200).json({
-        message: messages.EMAIL_VERIFICATION_SUCCESSFUL,
-        token: updatedJWT,
-    });
+	return res.status(200).json({
+		message: messages.EMAIL_VERIFICATION_SUCCESSFUL,
+		token: updatedJWT,
+	});
 }
 
 export default withErrorHandling(handler);

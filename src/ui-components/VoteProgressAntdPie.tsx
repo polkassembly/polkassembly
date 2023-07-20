@@ -107,7 +107,7 @@
 import React from 'react';
 
 const VoteProgressAntdPie = () => {
-    return <div>VoteProgressAntdPie</div>;
+	return <div>VoteProgressAntdPie</div>;
 };
 
 export default VoteProgressAntdPie;

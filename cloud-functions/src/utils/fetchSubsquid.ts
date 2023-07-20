@@ -4,38 +4,38 @@
 import axios from 'axios';
 
 const subsquidUrlMap = {
-    kusama: 'https://squid.subsquid.io/kusama-polkassembly/graphql',
-    polkadot: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
-    moonbeam: 'https://squid.subsquid.io/moonbeam-polkassembly/graphql',
-    moonriver: 'https://squid.subsquid.io/moonriver-polkassembly/graphql',
-    vara: 'https://squid.subsquid.io/vara-polkassembly/graphql',
+	kusama: 'https://squid.subsquid.io/kusama-polkassembly/graphql',
+	polkadot: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
+	moonbeam: 'https://squid.subsquid.io/moonbeam-polkassembly/graphql',
+	moonriver: 'https://squid.subsquid.io/moonriver-polkassembly/graphql',
+	vara: 'https://squid.subsquid.io/vara-polkassembly/graphql',
 };
 
 interface Args {
-    query: string;
-    variables?: any;
-    network: string;
+	query: string;
+	variables?: any;
+	network: string;
 }
 
 export default async function fetchSubsquid({
-    query,
-    variables,
-    network,
+	query,
+	variables,
+	network,
 }: Args) {
-    const body = variables ? { query, variables } : { query };
+	const body = variables ? { query, variables } : { query };
 
-    if (!(network in subsquidUrlMap)) return;
+	if (!(network in subsquidUrlMap)) return;
 
-    const subsquidUrl = subsquidUrlMap[network as keyof typeof subsquidUrlMap];
-    return axios
-        .post(`${subsquidUrl}`, {
-            body: JSON.stringify(body),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then((result) => result)
-        .catch((e) => {
-            console.error('error in fetchSubsquid : ', e);
-        });
+	const subsquidUrl = subsquidUrlMap[network as keyof typeof subsquidUrlMap];
+	return axios
+		.post(`${subsquidUrl}`, {
+			body: JSON.stringify(body),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+		.then((result) => result)
+		.catch((e) => {
+			console.error('error in fetchSubsquid : ', e);
+		});
 }

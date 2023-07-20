@@ -10,30 +10,30 @@ import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-    const network = getNetworkFromReqHeaders(req.headers);
-    return { props: { network } };
+	const network = getNetworkFromReqHeaders(req.headers);
+	return { props: { network } };
 };
 
 const CreatePost = dynamic(() => import('~src/components/Post/CreatePost'), {
-    loading: () => (
-        <div className="flex flex-col mt-6 bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
-            <Skeleton.Input active />
-            <Skeleton.Input className="mt-8" active />
-            <Skeleton className="mt-8" active />
-            <Skeleton.Input className="mt-8" active />
-            <Skeleton.Button className="mt-8" active />
-        </div>
-    ),
-    ssr: false,
+	loading: () => (
+		<div className="flex flex-col mt-6 bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+			<Skeleton.Input active />
+			<Skeleton.Input className="mt-8" active />
+			<Skeleton className="mt-8" active />
+			<Skeleton.Input className="mt-8" active />
+			<Skeleton.Button className="mt-8" active />
+		</div>
+	),
+	ssr: false,
 });
 
 const Create = ({ network }: { network: string }) => {
-    return (
-        <>
-            <SEOHead title={'Create Post'} network={network} />
-            <CreatePost proposalType={ProposalType.GRANTS} />
-        </>
-    );
+	return (
+		<>
+			<SEOHead title={'Create Post'} network={network} />
+			<CreatePost proposalType={ProposalType.GRANTS} />
+		</>
+	);
 };
 
 export default Create;

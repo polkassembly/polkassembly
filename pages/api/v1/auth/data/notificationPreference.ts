@@ -10,23 +10,23 @@ import { MessageType, NotificationSettings } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 
 async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<NotificationSettings | MessageType>,
+	req: NextApiRequest,
+	res: NextApiResponse<NotificationSettings | MessageType>,
 ) {
-    const network = String(req.headers['x-network']);
-    if (!network || !isValidNetwork(network))
-        res.status(400).json({ message: 'Invalid network in request header' });
+	const network = String(req.headers['x-network']);
+	if (!network || !isValidNetwork(network))
+		res.status(400).json({ message: 'Invalid network in request header' });
 
-    const token = getTokenFromReq(req);
-    if (!token) return res.status(400).json({ message: 'Invalid token' });
+	const token = getTokenFromReq(req);
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-    try {
-        const notification_preferences =
-            await authServiceInstance.GetNotificationPreference(token, network);
-        return res.status(200).json(notification_preferences);
-    } catch (error) {
-        return res.status(Number(error.name)).json({ message: error?.message });
-    }
+	try {
+		const notification_preferences =
+			await authServiceInstance.GetNotificationPreference(token, network);
+		return res.status(200).json(notification_preferences);
+	} catch (error) {
+		return res.status(Number(error.name)).json({ message: error?.message });
+	}
 }
 
 export default withErrorHandling(handler);

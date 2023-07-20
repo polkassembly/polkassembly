@@ -4,21 +4,21 @@
 import React, { FC } from 'react';
 
 interface Props {
-    heading?: string;
-    subHeading?: string;
+	heading?: string;
+	subHeading?: string;
 }
 
 const Header: FC<Props> = ({ heading, subHeading }) => {
-    return (
-        <div>
-            <h3 className="font-medium text-lg tracking-wide leading-7 text-sidebarBlue">
-                {heading}
-            </h3>
-            <p className="text-sm leading-6 tracking-wide mt-2 text-navBlue">
-                {subHeading}
-            </p>
-        </div>
-    );
+	return (
+		<div>
+			<h3 className="font-medium text-lg tracking-wide leading-7 text-sidebarBlue">
+				{heading}
+			</h3>
+			<p className="text-sm leading-6 tracking-wide mt-2 text-navBlue">
+				{subHeading}
+			</p>
+		</div>
+	);
 };
 
 export default Header;

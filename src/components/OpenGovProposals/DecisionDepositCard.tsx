@@ -26,6 +26,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '../DelegationDashboard/ProfileBalance';
 import { formatBalance } from '@polkadot/util';
 import CloseIcon from '~assets/icons/close.svg';
+import executeTx from '~src/util/executeTx';
 
 const ZERO_BN = new BN(0);
 
@@ -145,43 +146,38 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 		if(!api || !apiReady || !router?.query?.id || availableBalance.lte(bnValue)) return;
 
 		const tx = api.tx.referenda.placeDecisionDeposit(Number(router?.query?.id));
-		setLoading(true);
-		tx.signAndSend(address, async({ status, events }) => {
-			if (status.isFinalized) {
-				for (const { event } of events) {
-					if (event.method === 'ExtrinsicSuccess') {
-						queueNotification({
-							header: 'Success!',
-							message: `Decision Deposit ${tx.hash} successful.`,
-							status: NotificationStatus.SUCCESS
-						});
-						console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-						setLoading(false);
-					} else if (event.method === 'ExtrinsicFailed') {
-						queueNotification({
-							header: 'failed!',
-							message: 'Transaction failed!',
-							status: NotificationStatus.ERROR
-						});
-						setLoading(false);
-					}
-				}
-				console.log(`Decision Deposit: completed at block hash #${status.toString()}`);
-			} else {
-				console.log(`Decision Deposit: Current status: ${status.type}`);
-			}
-		})
-			.catch((error) => {
-				console.log(':( transaction failed');
-				console.error('ERROR:', error);
+
+		try{
+			setLoading(true);
+			const onSuccess = () => {
+				queueNotification({
+					header: 'Success!',
+					message: `Decision Deposit ${tx.hash} successful.`,
+					status: NotificationStatus.SUCCESS
+				});
+				setLoading(false);
+			};
+
+			const onFailed = () => {
 				queueNotification({
 					header: 'Failed!',
-					message: error.message,
+					message: 'Transaction failed!',
 					status: NotificationStatus.ERROR
 				});
 				setLoading(false);
+			};
+			await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
 
+		}catch(error){
+			console.log(':( transaction failed');
+			console.error('ERROR:', error);
+			queueNotification({
+				header: 'Failed!',
+				message: error.message,
+				status: NotificationStatus.ERROR
 			});
+			setLoading(false);
+		}
 
 	};
 	return <div className='w-full p-6 text-bodyBlue rounded-[14px] mb-8 bg-white'>

@@ -362,7 +362,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 				{Object.keys(defaultWallets || {}).length === 0 && !loading && <Alert
 					message={LinkAddressNeeded ? 'Please install a wallet and create an address to start creating a proposal.' : 'Wallet extension not detected.'}
 					description={`${LinkAddressNeeded ? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.': 'No web3 wallet was found with an active address.'}`}
-					type='info' showIcon className='text-[#243A57] changeColor'/>}
+					type='info' showIcon className='text-[#243A57] changeColor text-md'/>}
 
 				{
 					!extensionOpen &&

@@ -76,25 +76,25 @@ const TreasuryProposalSuccessPopup= ({ className, open, setOpen, fundingAmount, 
 
 			<div className='flex my-2'>
 				<div className='mt-[10px] flex flex-col text-sm text-lightBlue gap-1.5'>
-					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address address={proposerAddress} identiconSize={24}/></span>
-					<span className='flex'><span className='w-[150px]'>Beneficiary Address:</span><Address address={beneficiaryAddress} identiconSize={24}/></span>
+					<span className='flex'><span className='w-[162px]'>Proposer Address:</span><Address address={proposerAddress} identiconSize={24}/></span>
+					<span className='flex'><span className='w-[162px]'>Beneficiary Address:</span><Address address={beneficiaryAddress} identiconSize={24}/></span>
 
-					<span className='flex'><span className='w-[150px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
-					<span className='flex'><span className='w-[150px]'>Funding Amount:</span><span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
-					<span className='flex items-center'><span className='w-[150px]'>Preimage Hash:</span>
+					<span className='flex'><span className='w-[162px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
+					<span className='flex'><span className='w-[162px]'>Funding Amount:</span><span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
+					<span className='flex items-center'><span className='w-[162px]'>Preimage Hash:</span>
 						<span className='text-bodyBlue  font-medium'>{preimageHash.slice(0,10)+'...'+ preimageHash.slice(55)}</span>
 					</span>
-					<span className='flex'><span className='w-[150px]'>Preimage Length:</span><span className='text-bodyBlue font-medium'>{preimageLength}</span></span>
-					<span className='flex items-center'><span className='w-[150px]'>Link to proposal:</span>
-						<Link href={`https://${network}.polkassembly.io/referenda/${postId}`} className='text-pink_primary font-medium'>{`${network}.../referenda/${postId}`}</Link>
-						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/referenda/${postId}`) ;success('Preimage link copied to clipboard.');}}>
+					<span className='flex'><span className='w-[162px]'>Preimage Length:</span><span className='text-bodyBlue font-medium'>{preimageLength}</span></span>
+					<span className='flex items-center'><span className='w-[162px]'>Link to proposal:</span>
+						<Link href={`https://${network}.polkassembly.io/referenda/${postId}`} className='text-pink_primary font-medium'><u>{`https://${network}.../${postId}`}</u></Link>
+						<span className='flex items-center cursor-pointer ml-1' onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/referenda/${postId}`) ;success('Preimage link copied to clipboard.');}}>
 							{contextHolder}
 							<RedirectIcon/>
 						</span>
 					</span>
 				</div>
 			</div>
-			<Alert showIcon type='warning' className='rounded-[4px] m-2 text-sm w-full' message={<span className='text-xs font-medium text-bodyBlue'>Place a decision deposit in X days to prevent your proposal from being timed out.</span>} description={<span className='text-xs text-pink_primary font-medium'>Pay Decision Deposit</span>} />
+			<Alert showIcon type='warning' className='rounded-[4px] m-2 text-sm w-full' message={<span className='text-sm font-medium text-bodyBlue'>Place a decision deposit in X days to prevent your proposal from being timed out.</span>} description={<span className='text-xs text-pink_primary font-medium'>Pay Decision Deposit</span>} />
 		</div>
 
 	</Modal>;

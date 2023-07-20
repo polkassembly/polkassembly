@@ -39,6 +39,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
 import { poppins } from 'pages/_app';
+import executeTx from '~src/util/executeTx';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -291,55 +292,36 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 		setLoading(true);
 		try {
+
 			const proposal = api.tx.treasury.spend(fundingAmount.toString(), beneficiaryAddress);
-			const preimage = getState(api, proposal);
+			const preimage: any = getState(api, proposal);
+
+			const onSuccess = () => {
+				queueNotification({
+					header: 'Success!',
+					message: `Preimage #${proposal.hash} successful.`,
+					status: NotificationStatus.SUCCESS
+				});
+				setPreimage(preimage);
+				setPreimageHash(preimage.preimageHash);
+				setPreimageLength(preimage.preimageLength);
+				setPreimageCreated(true);
+				onChangeLocalStorageSet({ preimageCreated: true,  preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength }, Boolean(isPreimage), true);
+				setLoading(false);
+				setSteps({ percent: 100, step: 2 });
+			};
+
+			const onFailed = () => {
+				queueNotification({
+					header: 'failed!',
+					message: 'Transaction failed!',
+					status: NotificationStatus.ERROR
+				});
+				setLoading(false);
+			};
 			setLoading(true);
 
-			preimage?.notePreimageTx?.signAndSend(proposerAddress, ({ status, events }: any) => {
-				if (status.isFinalized) {
-					for (const { event } of events) {
-						if (event.method === 'ExtrinsicSuccess') {
-							queueNotification({
-								header: 'Success!',
-								message: `Preimage #${proposal.hash} successful.`,
-								status: NotificationStatus.SUCCESS
-							});
-
-							setPreimage(preimage);
-							setPreimageHash(preimage.preimageHash);
-							setPreimageLength(preimage.preimageLength);
-							setPreimageCreated(true);
-							onChangeLocalStorageSet({ preimageCreated: true,  preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength }, Boolean(isPreimage), true);
-							console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-							setLoading(false);
-							setSteps({ percent: 100, step: 2 });
-						} else if (event.method === 'ExtrinsicFailed') {
-							queueNotification({
-								header: 'failed!',
-								message: 'Transaction failed!',
-								status: NotificationStatus.ERROR
-							});
-							setLoading(false);
-
-						}
-					}
-					console.log(`Preimage: completed at block hash #${status.toString()}`);
-				} else {
-					console.log(`Preimage: Current status: ${status.type}`);
-				}
-			})
-				.catch((error) => {
-					console.log(':( transaction failed');
-					console.error('ERROR:', error);
-					queueNotification({
-						header: 'Failed!',
-						message: error.message,
-						status: NotificationStatus.ERROR
-					});
-					setLoading(false);
-
-				});
-
+			await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage?.notePreimageTx });
 		}
 		catch(error){
 			console.log(':( transaction failed');

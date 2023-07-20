@@ -23,6 +23,7 @@ import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import { poppins } from 'pages/_app';
+import executeTx from '~src/util/executeTx';
 
 const ZERO_BN = new BN(0);
 
@@ -166,49 +167,31 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 		try {
 			setLoading(true);
 			const proposal = api.tx.referenda.submit(origin ,{ Lookup: { hash: preimageHash, len: String(preimageLength) } }, enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value }: { After: enactment.value }): { After: BN_HUNDRED });
-			proposal.signAndSend(proposerAddress, async ({ status, events }: any) => {
-				if (status.isFinalized) {
-					for (const { event } of events) {
-						if (event.method === 'ExtrinsicSuccess') {
-							setLoading(false);
-							queueNotification({
-								header: 'Success!',
-								message: `Proposal #${proposal.hash} successful.`,
-								status: NotificationStatus.SUCCESS
-							});
-							const post_id = Number(api.query.referenda.referendumCount()) - 1;
-							await handleSaveTreasuryProposal(post_id);
-							setLoading(false);
-							setOpenSuccess(true);
-							setOpenModal(false);
 
-							console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-
-						} else if (event.method === 'ExtrinsicFailed') {
-							queueNotification({
-								header: 'failed!',
-								message: 'Transaction failed!',
-								status: NotificationStatus.ERROR
-							});
-							setLoading(false);
-
-						}
-					}
-					console.log(`Treasury proposal: completed at block hash #${status.toString()}`);
-				} else {
-					console.log(`Treasury proposal: Current status: ${status.type}`);
-				}
-			})
-				.catch((error) => {
-					setLoading(false);
-					console.log(':( transaction failed');
-					console.error('ERROR:', error);
-					queueNotification({
-						header: 'Failed!',
-						message: error.message,
-						status: NotificationStatus.ERROR
-					});
+			const onSuccess = async() => {
+				queueNotification({
+					header: 'Success!',
+					message: `Proposal #${proposal.hash} successful.`,
+					status: NotificationStatus.SUCCESS
 				});
+				setLoading(false);
+				const post_id = Number(api.query.referenda.referendumCount()) - 1;
+				await handleSaveTreasuryProposal(post_id);
+				setLoading(false);
+				setOpenSuccess(true);
+				setOpenModal(false);
+			};
+
+			const onFailed = () => {
+				queueNotification({
+					header: 'Failed!',
+					message: 'Transaction failed!',
+					status: NotificationStatus.ERROR
+				});
+				setLoading(false);
+			};
+			await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: proposal });
+
 		}
 		catch(error){
 			setLoading(false);

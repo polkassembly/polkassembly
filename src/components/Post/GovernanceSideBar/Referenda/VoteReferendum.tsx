@@ -645,8 +645,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											wallet={multisig}
 											setWallet={setMultisig}
 											containerClassName='gap-[28px]'
-										/>
-										:
+										/> :
 										<AccountSelectionForm
 											title='Vote with Account'
 											accounts={accounts}

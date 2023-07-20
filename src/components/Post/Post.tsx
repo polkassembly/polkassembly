@@ -469,7 +469,7 @@ const Post: FC<IPostProps> = (props) => {
 
 							{!isEditing && <>
 								<PostHeading
-									className='mb-8'
+									className='mb-6'
 								/>
 								<Tabs
 									type="card"

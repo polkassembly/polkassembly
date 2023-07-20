@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useContext, useEffect, useState } from 'react';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from '@ant-design/icons';
 import { Alert, Button, Checkbox, Form, Modal, Popover, Slider, Spin } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -37,6 +37,7 @@ import { useRouter } from 'next/router';
 import Web3 from 'web3';
 import Balance from '~src/components/Balance';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
+import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
 
 const ZERO_BN = new BN(0);
 
@@ -304,10 +305,16 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 
 	return (
 		<>
-			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm text-pink_primary hover:bg-pink_primary hover:text-white flex gap-0 items-center justify-center py-3 px-6 rounded-[4px]'>
-				<PlusOutlined/>
-				<span >Delegate</span>
-			</Button>}
+			{!open && !setOpen && <Button
+				onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true); }}
+				className={'h-[40px] border-pink_primary hover:border-solid py-1 border-solid px-4 flex justify-around items-center rounded-[4px] text-pink_primary bg-transparent shadow-none gap-2 ml-1 mt-[1px]'}
+			>
+				<DelegatesProfileIcon/>
+				<span className='text-sm font-medium'>
+              Delegate
+				</span>
+			</Button>
+			}
 
 			<Modal
 				maskClosable={false}

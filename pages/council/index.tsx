@@ -25,15 +25,15 @@ const Members = (props : { network: string }) => {
 	return (
 		<>
 			<SEOHead title='Council' network={props.network}/>
-			<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Council</h1>
+			<h1 className='text-bodyBlue font-semibold text-2xl mx-2'>Council</h1>
 
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row">
-				<p className="text-bodyBlue text-sm font-medium bg-white p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
+				<p className="text-bodyBlue text-sm font-medium bg-white max-md:p-4 p-6 rounded-xxl w-full shadow-md">
                 Council is the body of elected members that consists of several on-chain accounts. The Council can act as a representative for &quot;passive&quot; (non-voting) stakeholders. Council members have two main tasks: proposing referenda for the overall stakeholder group to vote on and cancelling malicious referenda.
 				</p>
 			</div>
-			<MembersContainer className='mt-8' />
+			<MembersContainer className='mt-4' />
 		</>
 	);
 };

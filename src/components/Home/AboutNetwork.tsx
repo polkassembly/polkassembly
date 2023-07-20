@@ -87,23 +87,23 @@ const gov2Link = ({ className, bgImage, icon, link, text, subText } : { classNam
 const AboutNetwork = ({ className, networkSocialsData, showGov2Links } : { className?: string, networkSocialsData: NetworkSocials | null, showGov2Links?: boolean }) => {
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-5 md:p-6 rounded-xxl`}>
+		<div className={`${className} bg-white drop-shadow-md py-4 max-md:px-4 px-6 rounded-xxl`}>
 			<div className="flex items-center justify-between">
-				<h2 className='text-bodyBlue text-xl font-medium leading-8'>About</h2>
+				<h2 className='text-bodyBlue text-xl font-medium'>About</h2>
 				<div className='hidden lg:inline-block'>
 					{networkSocialsData && socialLinks(networkSocialsData)}
 				</div>
 			</div>
 
-			<p className='text-bodyBlue mt-1.5 medium text-sm'>Join our Community to discuss, contribute and get regular updates from us!</p>
+			<p className='text-lightBlue mb-1 font-medium text-sm'>Join our Community to discuss, contribute and get regular updates from us!</p>
 
-			<div className='mt-5 lg:hidden flex'>
+			<div className='mt-4 lg:hidden flex'>
 				{networkSocialsData && socialLinks(networkSocialsData)}
 			</div>
 
 			{
 				showGov2Links &&
-				<div className='mt-10 pb-2 flex justify-between xl:w-[90%] overflow-x-auto'>
+				<div className='mt-4 pb-2 flex justify-between xl:w-[90%] overflow-x-auto'>
 					{gov2Link({
 						bgImage: '/assets/gov2-info-bg.png',
 						className: 'mr-12 lg:mr-9',

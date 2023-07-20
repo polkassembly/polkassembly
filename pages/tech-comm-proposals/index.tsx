@@ -74,13 +74,13 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 			</div>
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row">
-				<p className="text-bodyBlue text-sm font-medium bg-white p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
+				<p className="text-bodyBlue text-sm font-medium bg-white max-md:p-4 p-6 rounded-xxl w-full shadow-md">
 					This is the place to discuss on-chain technical committee proposals. On-chain posts are automatically generated as soon as they are created on the chain.
 					Only the proposer is able to edit them.
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-6'>
+			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-4'>
 				<div className='flex items-center justify-between'>
 					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
 						<FilteredTags/>

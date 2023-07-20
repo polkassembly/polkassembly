@@ -54,7 +54,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			<h2 className='text-lg text-bodyBlue font-medium mb-3 leading-7'>
 				{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {title || description || noTitle}
 			</h2>
-			<div className='mb-8'>
+			<div className='mb-0'>
 				<>
 					<CreationLabel
 						className='md'
@@ -85,7 +85,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					}
 				</>
 			</div>
-			{tags && tags.length>0 &&<div className='flex mt-6 gap-[8px] flex-wrap'>
+			{tags && tags.length > 0 && <div className='flex mt-4 gap-[8px] flex-wrap'>
 				{tags?.map((tag,index ) => (<div onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''),tag)} className='rounded-full px-[16px] py-[4px] border-navBlue border-solid border-[1px] text-navBlue text-xs traking-2 cursor-pointer hover:border-pink_primary hover:text-pink_primary' key={index} >{tag}</div>))}
 			</div> }
 			{history  && history.length > 0 && <PostHistoryModal open={openModal} setOpen={setOpenModal} history={[{ content: content, created_at: last_edited_at || '', title: title },...history]} username={username} defaultAddress={proposer} />}

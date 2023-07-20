@@ -28,7 +28,7 @@ const TrackListing: FC<ITrackListingProps> = (props) => {
 				fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}
 			/>
 			<TrackListingCard
-				className='mt-12'
+				className='mt-6'
 				posts={posts}
 				setTrackName={setTrackName}
 				fellowshipReferendumPostOrigins={fellowshipReferendumPostOrigins}

@@ -85,13 +85,13 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 			<SEOHead title='Treasury Proposals' network={network}/>
 
 			<div className='w-full flex flex-col sm:flex-row sm:items-center mt-3'>
-				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2 flex-1 mb-2 flex'><DiamondIcon className='mr-2 justify-self-center'/>Treasury Proposals ({count})</h1>
+				<h1 className='text-bodyBlue font-semibold text-2xl mx-2 flex-1 mb-2 flex'><DiamondIcon className='mr-2 justify-self-center'/>Treasury Proposals ({count})</h1>
 				{isCreationOfTreasuryProposalSupported(network) && <TreasuryProposalFormButton  />}
 			</div>
 
 			{/* Intro and Create Post Button */}
-			<div className="mt-8">
-				<p className="text-bodyBlue text-sm font-medium bg-white p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
+			<div className="mt-4">
+				<p className="text-bodyBlue text-sm font-medium bg-white max-md:p-4 p-6 rounded-xxl w-full shadow-md mb-4">
 					This is the place to discuss on-chain treasury proposals. On-chain posts are automatically generated as soon as they are created on the chain.
 					Only the proposer is able to edit them.
 					{

@@ -4,6 +4,7 @@
 
 import { ParsedUrlQuery } from 'querystring';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { EGovType } from '~src/global/proposalType';
 
 export const gov2Routes = [
 	'gov-2',
@@ -15,28 +16,35 @@ export const gov2Routes = [
 	'member-referenda',
 	'delegation'
 ];
+const commonRoutes = [
+	'discussions',
+	'calender',
+	'user',
+	'settings',
+	'post'
+];
 
 for (const trackName of Object.keys(networkTrackInfo.kusama)) {
 	gov2Routes.push(trackName.split(/(?=[A-Z])/).join('-').toLowerCase());
 }
 
-export default function checkGov2Route(pathname: string, query?: ParsedUrlQuery, prevRoute?: string, network?: string): boolean {
+export default function getCurrGovType(pathname: string, query?: ParsedUrlQuery, govType?: EGovType, network?: string): EGovType {
 	if (network === 'collectives') {
-		return false;
+		return EGovType.GOV1;
 	}
 	if(pathname === '/referenda'){
-		return false;
+		return EGovType.GOV1;
 	}
 	if (query && query.membersType && ['fellowship', 'whitelist'].includes(String(query.membersType))) {
-		return true;
+		return EGovType.OPEN_GOV;
 	}
-	if(prevRoute && gov2Routes.includes(prevRoute.split('/')[1]) && pathname.split('/')[1] === 'discussions'){
-		return true;
-	}
-	else if(prevRoute && gov2Routes.includes(prevRoute.split('/')[1]) && pathname.split('/')[1] === 'post'){
-		return true;
-	}
-	else if(!prevRoute && pathname.split('/')[1] === 'discussions'){ return false; }
+	const isGov2 = gov2Routes.includes(pathname.split('/')[1]);
 
-	return gov2Routes.includes(pathname.split('/')[1]);
+	if(isGov2){
+		return EGovType.OPEN_GOV;
+	}else if(govType && !isGov2 && commonRoutes.includes(pathname.split('/')[1]) ){
+		return govType;
+	}
+	return EGovType.GOV1;
+
 }

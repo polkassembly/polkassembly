@@ -10,7 +10,7 @@ import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
-import { GET_ALLIANCE_ANNOUNCEMENTS, GET_ALLIANCE_LATEST_ACTIVITY, GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES, GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES } from '~src/queries';
+import { GET_ALLIANCE_ANNOUNCEMENTS, GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES, GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -354,10 +354,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			if (network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES) {
 				if (proposalType === ProposalType.ANNOUNCEMENT) {
 					query = GET_ALLIANCE_ANNOUNCEMENTS;
-				} else if (proposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
-					query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES;
 				} else {
-					query = GET_ALLIANCE_LATEST_ACTIVITY;
+					query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES;
 				}
 			}
 			else {
@@ -377,7 +375,16 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			if (network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES) {
 				if (proposalType === ProposalType.ANNOUNCEMENT) {
 					postsPromise = subsquidPosts?.map(async (subsquidPost) => {
-						const { createdAt, hash, proposer, type, updatedAt, version, cid, status } = subsquidPost;
+						const { createdAt, hash, proposer, type, updatedAt, version, cid } = subsquidPost;
+						let status = subsquidPost.status;
+						if (status === 'DecisionDepositPlaced') {
+							const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
+							statuses.forEach((obj) => {
+								if (obj.status === 'Deciding') {
+									status = 'Deciding';
+								}
+							});
+						}
 
 						const postId = cid;
 						const postDocRef = postsByTypeRef(network, proposalType as ProposalType).doc(String(postId));
@@ -440,7 +447,15 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 						const title = splitterAndCapitalizer(subsquidPost.callData?.method || '', '_');
 
-						const status = subsquidPost.status;
+						let status = subsquidPost.status;
+						if (status === 'DecisionDepositPlaced') {
+							const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
+							statuses.forEach((obj) => {
+								if (obj.status === 'Deciding') {
+									status = 'Deciding';
+								}
+							});
+						}
 
 						const postId = index;
 						const postDocRef = postsByTypeRef(network, proposalType as ProposalType).doc(String(postId));

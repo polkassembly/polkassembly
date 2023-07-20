@@ -25,8 +25,8 @@ const CommentsContainer = dynamic(
 				<Skeleton className="mt-12" active />
 			</div>
 		),
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 
 interface IPostDescriptionProps {
@@ -48,10 +48,10 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 		isEditing,
 		toggleEdit,
 		Sidebar,
-		TrackerButtonComp,
+		TrackerButtonComp
 	} = props;
 	const {
-		postData: { content, postType, postIndex, title, post_reactions },
+		postData: { content, postType, postIndex, title, post_reactions }
 	} = usePostDataContext();
 
 	return (

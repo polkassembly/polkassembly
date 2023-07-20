@@ -13,7 +13,7 @@ const nameBlacklist = [
 	'staff',
 	'gavinwood',
 	'gavwood',
-	'gavofyork',
+	'gavofyork'
 ];
 
 export default nameBlacklist;

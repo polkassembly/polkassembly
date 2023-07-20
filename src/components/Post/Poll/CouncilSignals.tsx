@@ -37,7 +37,7 @@ const CouncilSignals = ({ className, votes }: Props) => {
 
 		api.query?.council?.members().then((councilMembers) => {
 			const memberAddresses = councilMembers.map((member) =>
-				member.toString(),
+				member.toString()
 			);
 			setMemberSet(new Set(...memberSet, memberAddresses));
 		});
@@ -58,7 +58,7 @@ const CouncilSignals = ({ className, votes }: Props) => {
 		});
 
 		nextApiClientFetch<IAddressesResponse>('api/v1/getAddressesData', {
-			addresses,
+			addresses
 		})
 			.then((res) => {
 				if (res.error) {
@@ -73,14 +73,14 @@ const CouncilSignals = ({ className, votes }: Props) => {
 						addressesData.forEach((addressData) => {
 							if (addressData) {
 								const userVote = votes.find(
-									(v) => v.user_id === addressData.user_id,
+									(v) => v.user_id === addressData.user_id
 								);
 								if (userVote) {
 									const { vote } = userVote;
 									if (addressData.address) {
 										councilVotes.push({
 											address: addressData.address,
-											vote: vote,
+											vote: vote
 										});
 									}
 									if (vote === Vote.AYE) {
@@ -121,7 +121,7 @@ const CouncilSignals = ({ className, votes }: Props) => {
 								percent={100}
 								success={{
 									percent: (ayes / (ayes + nays)) * 100,
-									strokeColor: '#2ED47A',
+									strokeColor: '#2ED47A'
 								}}
 								type="circle"
 								strokeWidth={12}

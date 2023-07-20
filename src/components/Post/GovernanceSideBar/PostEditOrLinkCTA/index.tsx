@@ -23,7 +23,7 @@ interface IPostEditOrLinkCTA {
 
 const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 	const {
-		postData: { created_at, last_edited_at, postType },
+		postData: { created_at, last_edited_at, postType }
 	} = usePostDataContext();
 	const isEditCTA = last_edited_at
 		? dayjs(last_edited_at).diff(dayjs(created_at)) < 0

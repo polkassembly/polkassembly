@@ -62,14 +62,14 @@ export enum Role {
 	ADMIN = 'admin',
 	PROPOSAL_BOT = 'proposal_bot',
 	USER = 'user',
-	EVENT_BOT = 'event_bot',
+	EVENT_BOT = 'event_bot'
 }
 
 export enum NotificationStatus {
 	SUCCESS = 'success',
 	ERROR = 'error',
 	WARNING = 'warning',
-	INFO = 'info',
+	INFO = 'info'
 }
 
 export interface ModalType {
@@ -148,7 +148,7 @@ export interface LoadingStatusType {
 export enum VoteThresholdEnum {
 	Supermajorityapproval = 'Supermajorityapproval',
 	Supermajorityrejection = 'Supermajorityrejection',
-	Simplemajority = 'Simplemajority',
+	Simplemajority = 'Simplemajority'
 }
 
 export type VoteThreshold = keyof typeof VoteThresholdEnum;
@@ -164,12 +164,12 @@ export interface MetaContextType {
 
 export enum Vote {
 	AYE = 'AYE',
-	NAY = 'NAY',
+	NAY = 'NAY'
 }
 
 export enum PolkassemblyProposalTypes {
 	TreasurySpendProposal,
-	TipProposal,
+	TipProposal
 }
 
 export interface CouncilVote {
@@ -190,7 +190,7 @@ export enum Wallet {
 	WALLETCONNECT = 'walletconnect',
 	NOVAWALLET = 'polkadot-js',
 	POLYWALLET = 'polywallet',
-	OTHER = '',
+	OTHER = ''
 }
 
 export const PostOrigin = {
@@ -218,7 +218,7 @@ export const PostOrigin = {
 	SMALL_TIPPER: 'SmallTipper',
 	STAKING_ADMIN: 'StakingAdmin',
 	TREASURER: 'Treasurer',
-	WHITELISTED_CALLER: 'WhitelistedCaller',
+	WHITELISTED_CALLER: 'WhitelistedCaller'
 };
 
 export type TrackInfoType = {
@@ -347,7 +347,7 @@ export enum ESentiments {
 	SlightlyAgainst = 2,
 	Neutral = 3,
 	SlightlyFor = 4,
-	For = 5,
+	For = 5
 }
 
 export interface CommentReply {
@@ -399,7 +399,7 @@ export enum ETrackDelegationStatus {
 	All = 'all',
 	Delegated = 'delegated',
 	Received_Delegation = 'received_delegation',
-	Undelegated = 'undelegated',
+	Undelegated = 'undelegated'
 }
 
 export interface IDelegation {
@@ -424,7 +424,7 @@ export enum EVoteDecisionType {
 	AYE = 'aye',
 	NAY = 'nay',
 	ABSTAIN = 'abstain',
-	SPLIT = 'split',
+	SPLIT = 'split'
 }
 
 export enum NOTIFICATION_CHANNEL {
@@ -433,7 +433,7 @@ export enum NOTIFICATION_CHANNEL {
 	DISCORD = 'discord',
 	ELEMENT = 'element',
 	SLACK = 'slack',
-	IN_APP = 'in_app',
+	IN_APP = 'in_app'
 }
 
 export interface IUserNotificationChannelPreferences {

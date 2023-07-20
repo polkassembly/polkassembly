@@ -6,10 +6,10 @@ import { ApiPromise } from '@polkadot/api';
 
 export async function getKiltDidName(
 	api: ApiPromise,
-	lookupAccountAddress: string,
+	lookupAccountAddress: string
 ): Promise<string | undefined> {
 	const didDetails = (await api.call.did.queryByAccount({
-		AccountId32: lookupAccountAddress,
+		AccountId32: lookupAccountAddress
 	})) as any;
 
 	if (didDetails.isNone) {

@@ -23,18 +23,18 @@ export default function OptionPollComponent({
 	className,
 	postId,
 	canEdit,
-	proposalType,
+	proposalType
 }: Props) {
 	const [error, setError] = useState('');
 	const {
 		postData: { optionPolls },
-		setPostData,
+		setPostData
 	} = usePostDataContext();
 
 	const getOptionPolls = useCallback(async () => {
 		const { data: fetchData, error: fetchError } =
 			await nextApiClientFetch<IOptionPollsResponse>(
-				`api/v1/polls?postId=${postId}&pollType=${POLL_TYPE.OPTION}&proposalType=${proposalType}`,
+				`api/v1/polls?postId=${postId}&pollType=${POLL_TYPE.OPTION}&proposalType=${proposalType}`
 			);
 
 		if (fetchError) {
@@ -48,7 +48,7 @@ export default function OptionPollComponent({
 			setPostData((prev) => {
 				return {
 					...prev,
-					optionPolls: fetchData.optionPolls,
+					optionPolls: fetchData.optionPolls
 				};
 			});
 		}

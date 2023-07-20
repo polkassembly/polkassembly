@@ -9,7 +9,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import {
 	isOffChainProposalTypeValid,
 	isProposalTypeValid,
-	isValidNetwork,
+	isValidNetwork
 } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
@@ -21,12 +21,12 @@ import messages from '~src/auth/utils/messages';
 import {
 	getFirestoreProposalType,
 	getSubsquidProposalType,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 import {
 	GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE,
 	GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE,
-	GET_PROPOSAL_BY_INDEX_AND_TYPE_V2,
+	GET_PROPOSAL_BY_INDEX_AND_TYPE_V2
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IPostHistory, IPostTag, Post } from '~src/types';
@@ -34,7 +34,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import {
 	getTopicFromType,
-	getTopicNameFromTopicId,
+	getTopicNameFromTopicId
 } from '~src/util/getTopicFromType';
 
 export interface IEditPostResponse {
@@ -50,7 +50,7 @@ export interface IEditPostResponse {
 
 const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 	req,
-	res,
+	res
 ) => {
 	if (req.method !== 'POST')
 		return res
@@ -85,7 +85,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 		!isProposalTypeValid(strProposalType)
 	)
 		return res.status(400).json({
-			message: `The proposal type of the name "${proposalType}" does not exist.`,
+			message: `The proposal type of the name "${proposalType}" does not exist.`
 		});
 
 	const token = getTokenFromReq(req);
@@ -95,7 +95,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const postDocRef = postsByTypeRef(network, proposalType).doc(
-		String(postId),
+		String(postId)
 	);
 
 	let created_at = new Date();
@@ -112,11 +112,11 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 	if (postDoc.exists && !isNaN(post?.user_id)) {
 		if (
 			![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(
-				proposalType,
+				proposalType
 			)
 		) {
 			const subsquidProposalType = getSubsquidProposalType(
-				proposalType as any,
+				proposalType as any
 			);
 			const postQuery =
 				proposalType === ProposalType.ALLIANCE_MOTION
@@ -127,20 +127,20 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 
 			let variables: any = {
 				index_eq: Number(postId),
-				type_eq: subsquidProposalType,
+				type_eq: subsquidProposalType
 			};
 
 			if (proposalType === ProposalType.TIPS) {
 				variables = {
 					hash_eq: String(postId),
-					type_eq: subsquidProposalType,
+					type_eq: subsquidProposalType
 				};
 			}
 
 			const postRes = await fetchSubsquid({
 				network,
 				query: postQuery,
-				variables,
+				variables
 			});
 
 			const post =
@@ -165,8 +165,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 			proposer_address = substrateAddress;
 			isAuthor = Boolean(
 				userAddresses.find(
-					(address) => address.address === substrateAddress,
-				),
+					(address) => address.address === substrateAddress
+				)
 			);
 			if (
 				network === 'moonbeam' &&
@@ -177,7 +177,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 					userAddresses.find(
 						(address) =>
 							address.address ===
-							'0xbb1e1722513a8fa80f7593617bb0113b1258b7f1',
+							'0xbb1e1722513a8fa80f7593617bb0113b1258b7f1'
 					)
 				) {
 					isAuthor = true;
@@ -192,7 +192,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 					userAddresses.find(
 						(address) =>
 							address.address ===
-							'0x16095c509f728721ad19a51704fc39116157be3a',
+							'0x16095c509f728721ad19a51704fc39116157be3a'
 					)
 				) {
 					isAuthor = true;
@@ -212,7 +212,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 		proposer_address = defaultUserAddress?.address || '';
 
 		const subsquidProposalType = getSubsquidProposalType(
-			proposalType as any,
+			proposalType as any
 		);
 		const postQuery =
 			proposalType === ProposalType.ALLIANCE_MOTION
@@ -223,20 +223,20 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 
 		let variables: any = {
 			index_eq: Number(postId),
-			type_eq: subsquidProposalType,
+			type_eq: subsquidProposalType
 		};
 
 		if (proposalType === ProposalType.TIPS) {
 			variables = {
 				hash_eq: String(postId),
-				type_eq: subsquidProposalType,
+				type_eq: subsquidProposalType
 			};
 		}
 
 		const postRes = await fetchSubsquid({
 			network,
 			query: postQuery,
-			variables,
+			variables
 		});
 
 		const post =
@@ -254,7 +254,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 		proposer_address = substrateAddress;
 
 		let isAuthor = userAddresses.find(
-			(address) => address.address === substrateAddress,
+			(address) => address.address === substrateAddress
 		);
 		if (
 			network === 'moonbeam' &&
@@ -264,7 +264,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 			isAuthor = userAddresses.find(
 				(address) =>
 					address.address ===
-					'0xbb1e1722513a8fa80f7593617bb0113b1258b7f1',
+					'0xbb1e1722513a8fa80f7593617bb0113b1258b7f1'
 			);
 		}
 		if (
@@ -275,7 +275,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 			isAuthor = userAddresses.find(
 				(address) =>
 					address.address ===
-					'0x16095c509f728721ad19a51704fc39116157be3a',
+					'0x16095c509f728721ad19a51704fc39116157be3a'
 			);
 		}
 
@@ -288,7 +288,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 	const newHistory: IPostHistory = {
 		content: post?.content,
 		created_at: post?.last_edited_at,
-		title: post?.title,
+		title: post?.title
 	};
 
 	const history =
@@ -315,7 +315,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 		title,
 		topic_id: topic_id || getTopicFromType(proposalType).id,
 		user_id: user.id,
-		username: user.username,
+		username: user.username
 	};
 
 	if (
@@ -331,10 +331,10 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 		const batch = firestore_db.batch();
 		timeline.forEach((obj) => {
 			const proposalType = getFirestoreProposalType(
-				obj.type,
+				obj.type
 			) as ProposalType;
 			const postDocRef = postsByTypeRef(network, proposalType).doc(
-				String(obj.index),
+				String(obj.index)
 			);
 			if (
 				strProposalType === proposalType &&
@@ -344,12 +344,12 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 				batch.set(postDocRef, newPostDoc, { merge: true });
 			} else if (
 				![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(
-					proposalType,
+					proposalType
 				)
 			) {
 				let post_link: any = {
 					id: postId,
-					type: strProposalType,
+					type: strProposalType
 				};
 				if (isProposalTypeValid(strProposalType)) {
 					post_link = null;
@@ -370,9 +370,9 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 						title,
 						topic_id: topic_id || getTopicFromType(proposalType).id,
 						user_id: user.id,
-						username: user.username,
+						username: user.username
 					},
-					{ merge: true },
+					{ merge: true }
 				);
 			}
 		});
@@ -392,8 +392,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 		title,
 		topic: {
 			id: topicId,
-			name: getTopicNameFromTopicId(topicId as any),
-		},
+			name: getTopicNameFromTopicId(topicId as any)
+		}
 	});
 
 	const batch = firestore_db.batch();
@@ -403,7 +403,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (
 				const tagRef = firestore_db.collection('tags').doc(tag);
 				const newTag: IPostTag = {
 					last_used_at: new Date(),
-					name: tag.toLowerCase(),
+					name: tag.toLowerCase()
 				};
 				batch.set(tagRef, newTag, { merge: true });
 			}

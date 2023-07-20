@@ -29,7 +29,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		start_time,
 		title,
 		url,
-		user_id,
+		user_id
 	} = req.body;
 
 	if (
@@ -71,7 +71,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		status: 'pending',
 		title,
 		url,
-		user_id: Number(user_id),
+		user_id: Number(user_id)
 	};
 
 	await eventDocRef

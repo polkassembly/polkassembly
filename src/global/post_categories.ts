@@ -14,10 +14,10 @@ export enum PostCategory {
 	CHILD_BOUNTY = 'child bounty',
 	TIP = 'tip',
 	ALLIANCE_MOTION = 'alliance motion',
-	ANNOUNCEMENT = 'alliance announcement',
+	ANNOUNCEMENT = 'alliance announcement'
 }
 
 export enum PageLink {
 	OVERVIEW = 'overview',
-	OVERVIEW_GOV_2 = 'overview gov 2',
+	OVERVIEW_GOV_2 = 'overview gov 2'
 }

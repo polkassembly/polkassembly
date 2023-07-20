@@ -20,7 +20,7 @@ interface Props {
 
 const ActiveProposalCard = dynamic(() => import('./ActiveProposalCard'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 const ActiveProposals = ({
@@ -28,7 +28,7 @@ const ActiveProposals = ({
 	posts,
 	trackDetails,
 	status,
-	delegatedTo,
+	delegatedTo
 }: Props) => {
 	const count = posts.length;
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);

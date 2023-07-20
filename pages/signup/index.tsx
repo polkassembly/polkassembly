@@ -17,19 +17,19 @@ const WalletConnectSignup = dynamic(
 	() => import('src/components/Signup/WalletConnectSignup'),
 	{
 		loading: () => <Skeleton active />,
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 const Web3Signup = dynamic(() => import('src/components/Signup/Web3Signup'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 const MetamaskSignup = dynamic(
 	() => import('src/components/Signup/MetamaskSignup'),
 	{
 		loading: () => <Skeleton active />,
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 
 interface Props {
@@ -49,7 +49,7 @@ const Signup = ({
 	isModal,
 	setLoginOpen,
 	setSignupOpen,
-	isDelegation,
+	isDelegation
 }: Props) => {
 	const { setNetwork } = useNetworkContext();
 

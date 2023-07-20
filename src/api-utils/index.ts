@@ -14,7 +14,7 @@ import {
 	offChainProposalTypes,
 	ProposalType,
 	proposalTypes,
-	trackPostStatuses,
+	trackPostStatuses
 } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
 import firebaseAdmin from '~src/services/firebaseInit';
@@ -25,7 +25,7 @@ export function getNetworkName(req: NextApiRequest) {
 
 export async function getNetworkDocRef(
 	req: NextApiRequest,
-	firestore: firebaseAdmin.firestore.Firestore,
+	firestore: firebaseAdmin.firestore.Firestore
 ) {
 	const networkName = getNetworkName(req);
 	if (typeof networkName !== 'string') {
@@ -34,7 +34,7 @@ export async function getNetworkDocRef(
 
 	if (!Object.values(network).includes(networkName)) {
 		throw new Error(
-			`The network of the name "${networkName}" does not exist.`,
+			`The network of the name "${networkName}" does not exist.`
 		);
 	}
 	const networkNameDocRef = firestore.collection('networks').doc(networkName);
@@ -45,7 +45,7 @@ export function isSortByValid(sortBy: string) {
 	return [
 		sortValues.NEWEST,
 		sortValues.OLDEST,
-		sortValues.COMMENTED,
+		sortValues.COMMENTED
 	].includes(sortBy);
 }
 
@@ -84,7 +84,7 @@ export function isTrackNoValid(trackNo: number, network: string) {
 
 export async function isPostIdOrHashValid(
 	postIdOrHash: string | string[] | 0,
-	proposalType: string | string[],
+	proposalType: string | string[]
 ) {
 	if (proposalType !== ProposalType.TIPS) {
 		const numPostId = Number(postIdOrHash);
@@ -99,7 +99,7 @@ export async function isPostIdOrHashValid(
 }
 
 export async function isProposerAddressValid(
-	proposerAddress: string | string[] | undefined,
+	proposerAddress: string | string[] | undefined
 ) {
 	if (typeof proposerAddress !== 'string' || !proposerAddress) {
 		throw new Error(`The proposerAddress "${proposerAddress}" is invalid.`);
@@ -111,7 +111,7 @@ export function getCount(
 	snapshotArr: FirebaseFirestore.AggregateQuerySnapshot<{
 		count: FirebaseFirestore.AggregateField<number>;
 	}>[],
-	i: number,
+	i: number
 ) {
 	let count = 0;
 	if (snapshotArr.length > i) {

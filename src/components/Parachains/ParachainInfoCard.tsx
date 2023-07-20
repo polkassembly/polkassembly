@@ -25,14 +25,14 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 		auction: '14th',
 		crowdloans: '5',
 		parachains: '14',
-		projects: projects,
+		projects: projects
 	};
 
 	const kusamaMetrics = {
 		auction: '31st',
 		crowdloans: '5',
 		parachains: '29',
-		projects: projects,
+		projects: projects
 	};
 
 	const metrics = network == 'polkadot' ? polkadotMetrics : kusamaMetrics;

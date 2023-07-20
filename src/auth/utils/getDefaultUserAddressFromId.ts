@@ -7,7 +7,7 @@ import firebaseAdmin from '~src/services/firebaseInit';
 import { Address } from '../types';
 
 export default async function getDefaultUserAddressFromId(
-	userId: number,
+	userId: number
 ): Promise<Address | null> {
 	const addressesQuery = firebaseAdmin
 		.firestore()

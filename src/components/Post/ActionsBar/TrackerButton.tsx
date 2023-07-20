@@ -45,7 +45,7 @@ function getTrackType(proposalType: ProposalType): string {
 
 const TrackerButton: FC<IDiscussionProps> = function ({
 	onchainId,
-	proposalType,
+	proposalType
 }) {
 	const [tracked, setTracked] = useState(false);
 	const postType = getTrackType(proposalType);
@@ -54,7 +54,7 @@ const TrackerButton: FC<IDiscussionProps> = function ({
 		let trackMap: any = {};
 		try {
 			trackMap = JSON.parse(
-				global.window.localStorage.getItem('trackMap') || '{}',
+				global.window.localStorage.getItem('trackMap') || '{}'
 			);
 		} catch (error) {
 			console.error(error);
@@ -69,7 +69,7 @@ const TrackerButton: FC<IDiscussionProps> = function ({
 		let trackMap: any = {};
 		try {
 			trackMap = JSON.parse(
-				global.window.localStorage.getItem('trackMap') || '{}',
+				global.window.localStorage.getItem('trackMap') || '{}'
 			);
 		} catch (error) {
 			console.error(error);
@@ -89,7 +89,7 @@ const TrackerButton: FC<IDiscussionProps> = function ({
 
 		global.window.localStorage.setItem(
 			'trackMap',
-			JSON.stringify(trackMap),
+			JSON.stringify(trackMap)
 		);
 
 		queueNotification({
@@ -97,7 +97,7 @@ const TrackerButton: FC<IDiscussionProps> = function ({
 			message: `Post #${onchainId} ${
 				tracked ? 'removed from' : 'added to'
 			} personal tracker`,
-			status: NotificationStatus.SUCCESS,
+			status: NotificationStatus.SUCCESS
 		});
 
 		setTracked(!tracked);

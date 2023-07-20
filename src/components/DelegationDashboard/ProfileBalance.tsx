@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import {
 	useApiContext,
 	useNetworkContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from '~src/context';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import LockBalanceIcon from '~assets/icons/lock-balance.svg';
@@ -21,7 +21,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import {
 	Injected,
 	InjectedAccount,
-	InjectedWindow,
+	InjectedWindow
 } from '@polkadot/extension-inject/types';
 import { APPNAME } from '~src/global/appName';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -36,14 +36,14 @@ interface Props {
 const DelegationWalletConnectModal = dynamic(
 	() => import('./DelegationWalletConnectModal'),
 	{
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 
 export const formatedBalance = (balance: string, unit: string) => {
 	const formated = formatBalance(balance, {
 		forceUnit: unit,
-		withUnit: false,
+		withUnit: false
 	}).split('.');
 	if (Number(formated?.[0]) > 0) {
 		return formated?.[1]
@@ -68,18 +68,18 @@ const ProfileBalances = ({ className, address }: Props) => {
 	const {
 		loginWallet,
 		setUserDetailsContextState,
-		delegationDashboardAddress,
+		delegationDashboardAddress
 	} = useUserDetailsContext();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [defaultAddress, setAddress] = useState<string>(
-		delegationDashboardAddress,
+		delegationDashboardAddress
 	);
 
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol,
+			unit: chainProperties[network].tokenSymbol
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,7 +93,7 @@ const ProfileBalances = ({ className, address }: Props) => {
 			network,
 			setBalance,
 			setLockBalance,
-			setTransferableBalance,
+			setTransferableBalance
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -160,13 +160,13 @@ const ProfileBalances = ({ className, address }: Props) => {
 				localStorage.setItem('delegationWallet', loginWallet);
 				localStorage.setItem(
 					'delegationDashboardAddress',
-					address || delegationDashboardAddress,
+					address || delegationDashboardAddress
 				);
 				setUserDetailsContextState((prev) => {
 					return {
 						...prev,
 						delegationDashboardAddress:
-							address || delegationDashboardAddress,
+							address || delegationDashboardAddress
 					};
 				});
 				setLoading(false);

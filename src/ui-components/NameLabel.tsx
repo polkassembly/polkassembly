@@ -24,7 +24,7 @@ const NameLabel = ({
 	disableIdenticon = false,
 	textClassName,
 	clickable = true,
-	truncateUsername,
+	truncateUsername
 }: Props) => {
 	const router = useRouter();
 	return (

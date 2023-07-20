@@ -10,7 +10,7 @@ import { MessageType, TokenType } from '~src/auth/types';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<TokenType | MessageType>,
+	res: NextApiResponse<TokenType | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -34,7 +34,7 @@ async function handler(
 		network,
 		address,
 		signature,
-		wallet,
+		wallet
 	);
 
 	return res.status(200).json({ token });

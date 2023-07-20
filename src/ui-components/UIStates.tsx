@@ -24,7 +24,7 @@ interface IErrorStateProps {
 
 export const ErrorState: FC<IErrorStateProps> = ({
 	errorMessage,
-	isRefreshBtnVisible = true,
+	isRefreshBtnVisible = true
 }) => {
 	return (
 		<Result
@@ -55,7 +55,7 @@ export const PostEmptyState: FC<IPostEmptyStateProps> = ({
 	description,
 	postCategory,
 	image,
-	imageStyle,
+	imageStyle
 }) => {
 	//console.log('image=>'+image);
 	return (

@@ -7,12 +7,12 @@ import {
 	DownOutlined,
 	LoadingOutlined,
 	UpOutlined,
-	WarningFilled,
+	WarningFilled
 } from '@ant-design/icons';
 import {
 	web3Accounts,
 	web3Enable,
-	web3FromSource,
+	web3FromSource
 } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import Identicon from '@polkadot/react-identicon';
@@ -33,7 +33,7 @@ import { CreatePostResponseType } from '~src/auth/types';
 import {
 	useApiContext,
 	useNetworkContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from '~src/context';
 import EthIdenticon from '~src/ui-components/EthIdenticon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -50,11 +50,11 @@ interface Props {
 
 enum AvailableAccountsInput {
 	submitWithAccount,
-	beneficiary,
+	beneficiary
 }
 
 const TreasuryProposalFormButton = ({
-	className, // setTipModalOpen,
+	className // setTipModalOpen,
 }: Props) => {
 	const { network } = useNetworkContext();
 
@@ -67,7 +67,7 @@ const TreasuryProposalFormButton = ({
 		[key: string]: boolean;
 	}>({
 		beneficiary: false,
-		submitWithAccount: false,
+		submitWithAccount: false
 	});
 	const [submitWithAccount, setSubmitWithAccount] = useState<string>('');
 	const [beneficiaryAccount, setBeneficiaryAccount] = useState<string>('');
@@ -76,7 +76,7 @@ const TreasuryProposalFormButton = ({
 	const [postDescription, setPostDescription] = useState<string>('');
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: false,
-		message: '',
+		message: ''
 	});
 	// const [addPolkassemblyProposalMutation] = useAddPolkassemblyProposalMutation();
 
@@ -88,7 +88,7 @@ const TreasuryProposalFormButton = ({
 	}>({
 		bondPercent: '',
 		maxBond: '',
-		minBond: '',
+		minBond: ''
 	});
 
 	const { id } = useUserDetailsContext();
@@ -99,12 +99,12 @@ const TreasuryProposalFormButton = ({
 			const {
 				treasuryProposalBondPercent,
 				treasuryProposalMaxBond,
-				treasuryProposalMinBond,
+				treasuryProposalMinBond
 			} = networkChainProperties;
 			setTreasuryProposal({
 				bondPercent: treasuryProposalBondPercent,
 				maxBond: treasuryProposalMaxBond,
-				minBond: treasuryProposalMinBond,
+				minBond: treasuryProposalMinBond
 			});
 		}
 	}, [network]);
@@ -128,7 +128,7 @@ const TreasuryProposalFormButton = ({
 
 		const availableAccountsObj: { [key: string]: boolean } = {
 			beneficiary: false,
-			submitWithAccount: false,
+			submitWithAccount: false
 		};
 
 		switch (updateForInput) {
@@ -147,7 +147,7 @@ const TreasuryProposalFormButton = ({
 
 	const isSelected = (
 		updateForInput: AvailableAccountsInput,
-		address: string,
+		address: string
 	) => {
 		switch (updateForInput) {
 			case AvailableAccountsInput.submitWithAccount:
@@ -159,7 +159,7 @@ const TreasuryProposalFormButton = ({
 
 	const handleSelectAvailableAccount = (
 		updateForInput: AvailableAccountsInput,
-		address: string,
+		address: string
 	) => {
 		switch (updateForInput) {
 			case AvailableAccountsInput.submitWithAccount:
@@ -172,7 +172,7 @@ const TreasuryProposalFormButton = ({
 		// Close dropdown on select
 		const availableAccountsObj: { [key: string]: boolean } = {
 			beneficiary: false,
-			submitWithAccount: false,
+			submitWithAccount: false
 		};
 		setShowAvailableAccountsObj(availableAccountsObj);
 	};
@@ -190,7 +190,7 @@ const TreasuryProposalFormButton = ({
 								onClick={() =>
 									handleSelectAvailableAccount(
 										updateForInput,
-										address,
+										address
 									)
 								}
 								className=" mb-[10px] flex justify-between items-center cursor-pointer"
@@ -212,7 +212,7 @@ const TreasuryProposalFormButton = ({
 											border: '1px solid grey',
 											borderRadius: '50%',
 											height: '1em',
-											width: '1em',
+											width: '1em'
 										}}
 									></div>
 								)}
@@ -265,7 +265,7 @@ const TreasuryProposalFormButton = ({
 		userId: number,
 		title: string,
 		content: string,
-		proposerAddress: string,
+		proposerAddress: string
 	) => {
 		if (!api || !apiReady) {
 			return;
@@ -284,15 +284,15 @@ const TreasuryProposalFormButton = ({
 					postId: proposalId,
 					proposerAddress,
 					title,
-					userId,
-				},
+					userId
+				}
 			);
 
 		if (apiError || !data?.post_id) {
 			queueNotification({
 				header: 'Error',
 				message: 'There was an error creating your treasury post.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			console.error(apiError);
 		}
@@ -301,7 +301,7 @@ const TreasuryProposalFormButton = ({
 			queueNotification({
 				header: 'Thanks for sharing!',
 				message: 'Treasury Post created successfully.',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 		}
 	};
@@ -325,14 +325,14 @@ const TreasuryProposalFormButton = ({
 		try {
 			const proposal = api.tx.treasury.proposeSpend(
 				value.toString(),
-				beneficiaryAccount,
+				beneficiaryAccount
 			);
 
 			const onSuccess = async () => {
 				queueNotification({
 					header: 'Success!',
 					message: `Propsal #${proposal.hash} successful.`,
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				setLoadingStatus({ isLoading: false, message: '' });
 				setModalOpen(false);
@@ -344,7 +344,7 @@ const TreasuryProposalFormButton = ({
 					userId,
 					postTitle,
 					postDescription,
-					submitWithAccount,
+					submitWithAccount
 				);
 			};
 
@@ -354,7 +354,7 @@ const TreasuryProposalFormButton = ({
 				queueNotification({
 					header: 'Failed!',
 					message,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			};
 
@@ -366,11 +366,11 @@ const TreasuryProposalFormButton = ({
 				onBroadcast: () =>
 					setLoadingStatus({
 						isLoading: true,
-						message: 'Broadcasting the vote',
+						message: 'Broadcasting the vote'
 					}),
 				onFailed,
 				onSuccess,
-				tx: proposal,
+				tx: proposal
 			});
 		} catch (error) {
 			setLoadingStatus({ isLoading: false, message: '' });
@@ -380,7 +380,7 @@ const TreasuryProposalFormButton = ({
 			queueNotification({
 				header: 'Failed!',
 				message: error.message,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 	};
@@ -432,7 +432,7 @@ const TreasuryProposalFormButton = ({
 						onClick={handleSignAndSubmit}
 					>
 						Sign &amp; Submit
-					</Button>,
+					</Button>
 				]}
 				open={modalOpen}
 			>
@@ -468,14 +468,14 @@ const TreasuryProposalFormButton = ({
 											className=" mb-0 w-full"
 											validateStatus={
 												errorsFound.includes(
-													'submitWithAccount',
+													'submitWithAccount'
 												)
 													? 'error'
 													: ''
 											}
 										>
 											{errorsFound.includes(
-												'submitWithAccount',
+												'submitWithAccount'
 											) && (
 												<span className="text-red-800">
 													Please select an address
@@ -490,7 +490,7 @@ const TreasuryProposalFormButton = ({
 												}`}
 												onChange={(e) =>
 													setSubmitWithAccount(
-														e.target.value,
+														e.target.value
 													)
 												}
 												placeholder="Account Address"
@@ -503,7 +503,7 @@ const TreasuryProposalFormButton = ({
 											<div
 												onClick={() =>
 													handleDetect(
-														AvailableAccountsInput.submitWithAccount,
+														AvailableAccountsInput.submitWithAccount
 													)
 												}
 												className=" text-pink_primary cursor-pointer ml-[1.5em] mt-[0.25em]"
@@ -530,7 +530,7 @@ const TreasuryProposalFormButton = ({
 									] &&
 										availableAccounts.length > 0 &&
 										getAvailableAccounts(
-											AvailableAccountsInput.submitWithAccount,
+											AvailableAccountsInput.submitWithAccount
 										)}
 								</div>
 
@@ -547,7 +547,7 @@ const TreasuryProposalFormButton = ({
 
 										<div className=" flex items-center">
 											{beneficiaryAccount.startsWith(
-												'0x',
+												'0x'
 											) ? (
 												<EthIdenticon
 													size={26}
@@ -566,14 +566,14 @@ const TreasuryProposalFormButton = ({
 												className=" mb-0 w-full"
 												validateStatus={
 													errorsFound.includes(
-														'beneficiaryAccount',
+														'beneficiaryAccount'
 													)
 														? 'error'
 														: ''
 												}
 											>
 												{errorsFound.includes(
-													'beneficiaryAccount',
+													'beneficiaryAccount'
 												) && (
 													<span className="text-red-800">
 														Please select an address
@@ -589,7 +589,7 @@ const TreasuryProposalFormButton = ({
 													}`}
 													onChange={(e) =>
 														setBeneficiaryAccount(
-															e.target.value,
+															e.target.value
 														)
 													}
 													placeholder="Account Address"
@@ -602,7 +602,7 @@ const TreasuryProposalFormButton = ({
 												<div
 													onClick={() =>
 														handleDetect(
-															AvailableAccountsInput.beneficiary,
+															AvailableAccountsInput.beneficiary
 														)
 													}
 													className=" text-pink_primary cursor-pointer ml-[1.5em] mt-[0.25em]"
@@ -630,7 +630,7 @@ const TreasuryProposalFormButton = ({
 										] &&
 											availableAccounts.length > 0 &&
 											getAvailableAccounts(
-												AvailableAccountsInput.beneficiary,
+												AvailableAccountsInput.beneficiary
 											)}
 									</div>
 								</>

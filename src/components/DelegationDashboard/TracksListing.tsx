@@ -10,7 +10,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import {
 	useApiContext,
 	useNetworkContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from '~src/context';
 import { GetColumns } from './Coloumn';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
@@ -18,7 +18,7 @@ import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import {
 	DelegateDelegationIcon,
 	UnDelegatedIcon,
-	ReceivedDelegationIcon,
+	ReceivedDelegationIcon
 } from '~src/ui-components/CustomIcons';
 import { useRouter } from 'next/router';
 import { ETrackDelegationStatus } from '~src/types';
@@ -44,7 +44,7 @@ export interface ITrackDataType {
 
 const DashboardTrackListing = ({ className }: Props) => {
 	const [status, setStatusValue] = useState<ETrackDelegationStatus>(
-		ETrackDelegationStatus.All,
+		ETrackDelegationStatus.All
 	);
 	const { network } = useNetworkContext();
 	const [delegatedCount, setDelegatedCount] = useState<number>(0);
@@ -68,7 +68,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 					if (!value?.fellowshipOrigin) {
 						return value?.trackId === trackNo;
 					}
-				},
+				}
 			);
 			return data;
 		}
@@ -84,8 +84,8 @@ const DashboardTrackListing = ({ className }: Props) => {
 			const filteredData = data.filter(
 				(row) =>
 					row.status?.includes(
-						ETrackDelegationStatus.Received_Delegation,
-					),
+						ETrackDelegationStatus.Received_Delegation
+					)
 			);
 			const rows = filteredData.map((item, index) => {
 				return { ...item, index: index + 1 };
@@ -95,7 +95,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 		if (currentStatus === ETrackDelegationStatus.Undelegated) {
 			const filteredData = data.filter(
 				(row) =>
-					row.status?.includes(ETrackDelegationStatus.Undelegated),
+					row.status?.includes(ETrackDelegationStatus.Undelegated)
 			);
 			const rows = filteredData.map((item, index) => {
 				return { ...item, index: index + 1 };
@@ -105,7 +105,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 		}
 		if (currentStatus === ETrackDelegationStatus.Delegated) {
 			const filteredData = data.filter(
-				(row) => row.status?.includes(ETrackDelegationStatus.Delegated),
+				(row) => row.status?.includes(ETrackDelegationStatus.Delegated)
 			);
 
 			const rows = filteredData.map((item, index) => {
@@ -124,7 +124,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(
-			`api/v1/delegations?address=${delegationDashboardAddress}`,
+			`api/v1/delegations?address=${delegationDashboardAddress}`
 		);
 		if (data) {
 			const rows = data?.map((track: any, index: number) => {
@@ -133,19 +133,19 @@ const DashboardTrackListing = ({ className }: Props) => {
 				return {
 					active_proposals: track?.active_proposals_count,
 					delegated_by: track?.status?.includes(
-						ETrackDelegationStatus.Received_Delegation,
+						ETrackDelegationStatus.Received_Delegation
 					)
 						? track?.delegations.filter(
 								(row: IDelegation) =>
-									row?.to === delegationDashboardAddress,
+									row?.to === delegationDashboardAddress
 						  )
 						: null, //rece
 					delegated_to: track?.status?.includes(
-						ETrackDelegationStatus.Delegated,
+						ETrackDelegationStatus.Delegated
 					)
 						? track?.delegations.filter(
 								(row: IDelegation) =>
-									row?.to !== delegationDashboardAddress,
+									row?.to !== delegationDashboardAddress
 						  )
 						: null,
 					description: trackData[1]?.description,
@@ -155,7 +155,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 						trackData[0] === 'root'
 							? 'Root'
 							: trackData[0]?.split(/(?=[A-Z])/).join(' '),
-					trackNo: track?.track,
+					trackNo: track?.track
 				};
 			});
 
@@ -180,17 +180,17 @@ const DashboardTrackListing = ({ className }: Props) => {
 			const receivedDelegations = data.filter(
 				(row) =>
 					row.status?.includes(
-						ETrackDelegationStatus.Received_Delegation,
-					),
+						ETrackDelegationStatus.Received_Delegation
+					)
 			);
 			setReceivedDelegationCount(receivedDelegations?.length);
 			const delegateDelegations = data.filter(
-				(row) => row.status?.includes(ETrackDelegationStatus.Delegated),
+				(row) => row.status?.includes(ETrackDelegationStatus.Delegated)
 			);
 			setDelegatedCount(delegateDelegations?.length);
 			const undelegateDelegations = data.filter(
 				(row) =>
-					row.status?.includes(ETrackDelegationStatus.Undelegated),
+					row.status?.includes(ETrackDelegationStatus.Undelegated)
 			);
 			setUndelegatedCount(undelegateDelegations?.length);
 		}
@@ -304,8 +304,8 @@ const DashboardTrackListing = ({ className }: Props) => {
 									`/delegation/${rowData?.track
 										.split(' ')
 										.join('-')
-										.toLowerCase()}`,
-								),
+										.toLowerCase()}`
+								)
 						};
 					}}
 				></Table>
@@ -326,10 +326,10 @@ const DashboardTrackListing = ({ className }: Props) => {
 									disabled={!api || !apiReady}
 									onClick={() => {
 										setStatusValue(
-											ETrackDelegationStatus.Undelegated,
+											ETrackDelegationStatus.Undelegated
 										);
 										filterByStatus(
-											ETrackDelegationStatus.Undelegated,
+											ETrackDelegationStatus.Undelegated
 										);
 									}}
 									className={`text-[#E5007A] font-normal tracking-wide text-sm ml-[17px] flex items-center justify-center  max-md:mt-[10px] cursor-pointer border-none shadow-none ${

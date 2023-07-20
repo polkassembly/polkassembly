@@ -26,7 +26,7 @@ const ReferendaLoginPrompts = ({
 	subtitle,
 	modalOpen,
 	setModalOpen,
-	className,
+	className
 }: Props) => {
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
@@ -66,7 +66,7 @@ const ReferendaLoginPrompts = ({
 						>
 							Signup
 						</Button>
-					</div>,
+					</div>
 				]}
 			>
 				<div className="flex flex-col items-center p-1">

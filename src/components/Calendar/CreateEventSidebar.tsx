@@ -30,7 +30,7 @@ const CreateEventSidebar = ({
 	selectedNetwork,
 	setSidebarCreateEvent,
 	id,
-	open,
+	open
 }: Props) => {
 	const [eventTitle, setEventTitle] = useState<string>('');
 	const [eventDescription, setEventDescription] = useState<string>('');
@@ -108,15 +108,15 @@ const CreateEventSidebar = ({
 					start_time: eventStartDateTime,
 					title: eventTitle,
 					url: eventJoiningLink,
-					user_id: id,
-				},
+					user_id: id
+				}
 			);
 
 		if (fetchError) {
 			queueNotification({
 				header: 'Error!',
 				message: 'Error saving event',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			console.error('Error saving event :', fetchError);
 		}
@@ -127,7 +127,7 @@ const CreateEventSidebar = ({
 				header: 'Success!',
 				message:
 					'Event has been sent for approval and should be live in 48 hours. Please contact hello@polkassembly.io in case of any queries',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 			window.location.reload();
 		}
@@ -261,7 +261,7 @@ const CreateEventSidebar = ({
 									disabledDate={(current) => {
 										const customDate =
 											dayjs(eventStartDateTime).format(
-												'YYYY-MM-DD',
+												'YYYY-MM-DD'
 											);
 										return (
 											current &&

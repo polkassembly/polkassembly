@@ -7,7 +7,7 @@ import {
 	CloseOutlined,
 	DeleteOutlined,
 	FormOutlined,
-	LoadingOutlined,
+	LoadingOutlined
 } from '@ant-design/icons';
 import { Button, Form, Tooltip } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
@@ -53,7 +53,7 @@ const EditableReplyContent = ({
 	userName,
 	reply,
 	proposer,
-	is_custom_username,
+	is_custom_username
 }: Props) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const { id, username, picture } = useContext(UserDetailsContext);
@@ -66,7 +66,7 @@ const EditableReplyContent = ({
 
 	const {
 		setPostData,
-		postData: { postType, postIndex },
+		postData: { postType, postIndex }
 	} = usePostDataContext();
 
 	useEffect(() => {
@@ -112,8 +112,8 @@ const EditableReplyContent = ({
 					postId: postIndex,
 					postType: postType,
 					replyId,
-					userId: id,
-				},
+					userId: id
+				}
 			);
 
 		if (editReplyError || !data) {
@@ -121,7 +121,7 @@ const EditableReplyContent = ({
 			queueNotification({
 				header: 'Error!',
 				message: 'Your reply was edited.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			setError(editReplyError || 'Error in saving reply');
 		}
@@ -146,26 +146,26 @@ const EditableReplyContent = ({
 											reply.updated_at = new Date();
 										}
 										return {
-											...reply,
+											...reply
 										};
-									},
+									}
 								);
 							}
 						}
 						return {
-							...comment,
+							...comment
 						};
 					});
 				}
 				return {
 					...prev,
-					comments: comments,
+					comments: comments
 				};
 			});
 			queueNotification({
 				header: 'Success!',
 				message: 'Your reply was edited.',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 		}
 
@@ -186,8 +186,8 @@ const EditableReplyContent = ({
 						content: replyContent,
 						postId: postIndex,
 						postType: postType,
-						userId: id,
-					},
+						userId: id
+					}
 				);
 			if (error || !data) {
 				setError('There was an error in saving your reply.');
@@ -195,7 +195,7 @@ const EditableReplyContent = ({
 				queueNotification({
 					header: 'Error!',
 					message: 'There was an error in saving your reply.',
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			}
 			if (data) {
@@ -219,19 +219,19 @@ const EditableReplyContent = ({
 											updated_at: new Date(),
 											user_id: id,
 											user_profile_img: picture || '',
-											username: username,
-										},
+											username: username
+										}
 									];
 								}
 							}
 							return {
-								...comment,
+								...comment
 							};
 						});
 					}
 					return {
 						...prev,
-						comments: comments,
+						comments: comments
 					};
 				});
 				replyToreplyForm.resetFields();
@@ -239,7 +239,7 @@ const EditableReplyContent = ({
 				queueNotification({
 					header: 'Success!',
 					message: 'Your reply was added.',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 			}
 			setLoading(false);
@@ -255,8 +255,8 @@ const EditableReplyContent = ({
 					commentId,
 					postId: postIndex,
 					postType: postType,
-					replyId,
-				},
+					replyId
+				}
 			);
 
 		if (deleteReplyError || !data) {
@@ -264,7 +264,7 @@ const EditableReplyContent = ({
 			queueNotification({
 				header: 'Error!',
 				message: deleteReplyError || 'Error in deleting reply',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 
@@ -276,23 +276,23 @@ const EditableReplyContent = ({
 						if (comment.id === commentId) {
 							comment.replies =
 								comment?.replies?.filter(
-									(reply) => reply.id !== replyId,
+									(reply) => reply.id !== replyId
 								) || [];
 						}
 						return {
-							...comment,
+							...comment
 						};
 					});
 				}
 				return {
 					...prev,
-					comments: comments,
+					comments: comments
 				};
 			});
 			queueNotification({
 				header: 'Success!',
 				message: 'Your reply was deleted.',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 		}
 		setLoading(false);
@@ -310,14 +310,14 @@ const EditableReplyContent = ({
 						layout="vertical"
 						// disabled={formDisabled}
 						validateMessages={{
-							required: "Please add the '${name}'",
+							required: "Please add the '${name}'"
 						}}
 					>
 						<ContentForm
 							onChange={(content: string) => {
 								global.window.localStorage.setItem(
 									editReplyKey(replyId),
-									content,
+									content
 								);
 								return content.length ? content : null;
 							}}
@@ -427,14 +427,14 @@ const EditableReplyContent = ({
 								layout="vertical"
 								disabled={loading}
 								validateMessages={{
-									required: "Please add the '${name}'",
+									required: "Please add the '${name}'"
 								}}
 							>
 								<ContentForm
 									onChange={(content: string) => {
 										global.window.localStorage.setItem(
 											newReplyKey(commentId),
-											content,
+											content
 										);
 										return content.length ? content : null;
 									}}

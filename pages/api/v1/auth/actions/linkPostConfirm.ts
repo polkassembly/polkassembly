@@ -9,7 +9,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import {
 	isOffChainProposalTypeValid,
 	isProposalTypeValid,
-	isValidNetwork,
+	isValidNetwork
 } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
@@ -20,7 +20,7 @@ import messages from '~src/auth/utils/messages';
 import {
 	getFirestoreProposalType,
 	getSubsquidProposalType,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 import { GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
@@ -42,7 +42,7 @@ interface IUpdatePostLinkInGroupParams {
 	isTimeline: boolean;
 }
 type TUpdatePostLinkInGroup = (
-	params: IUpdatePostLinkInGroupParams,
+	params: IUpdatePostLinkInGroupParams
 ) => Promise<{
 	timeline: any[];
 }>;
@@ -57,12 +57,12 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 		user,
 		currPostData,
 		isRemove,
-		isTimeline,
+		isTimeline
 	} = params;
 	const subsquidProposalType = getSubsquidProposalType(postType as any);
 
 	const variables: any = {
-		type_eq: subsquidProposalType,
+		type_eq: subsquidProposalType
 	};
 
 	if (postType === ProposalType.TIPS) {
@@ -73,7 +73,7 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 	const subsquidRes = await fetchSubsquid({
 		network,
 		query: GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING,
-		variables: variables,
+		variables: variables
 	});
 
 	// Subsquid Data
@@ -81,7 +81,7 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 	if (!isDataExist(subsquidData)) {
 		throw apiErrorWithStatusCode(
 			`The Post with id: "${postId}" and type: "${postType}" is not found.`,
-			400,
+			400
 		);
 	}
 	const post = subsquidData.proposals[0];
@@ -89,7 +89,7 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 	if (!post || (!post?.proposer && !preimage?.proposer)) {
 		throw apiErrorWithStatusCode(
 			'Proposer address is not present in subsquid response.',
-			400,
+			400
 		);
 	}
 
@@ -99,7 +99,7 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 	if (!substrateAddress) {
 		throw apiErrorWithStatusCode(
 			'Something went wrong while getting encoded address corresponding to network',
-			500,
+			500
 		);
 	}
 
@@ -115,13 +115,13 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 			`You can not ${
 				isRemove ? 'unlink' : 'link'
 			} the post, because you are not the user who created this post`,
-			403,
+			403
 		);
 	}
 	if (isOffChainPost && currPostData?.post_link) {
 		throw apiErrorWithStatusCode(
 			'Discussion is already linked with other onchain post.',
-			403,
+			403
 		);
 	}
 	const batch = firestore_db.batch();
@@ -133,15 +133,15 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 				? null
 				: {
 						id: postType === 'tips' ? postId : Number(postId),
-						type: postType,
-				  },
+						type: postType
+				  }
 		},
-		{ merge: true },
+		{ merge: true }
 	);
 
 	const post_link: any = {
 		id: currPostType === 'tips' ? currPostId : Number(currPostId),
-		type: currPostType,
+		type: currPostType
 	};
 	const postsRefWithData: TPostsRefWithData = [];
 	const proposals = post?.group?.proposals || undefined;
@@ -150,7 +150,7 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 		(proposals as any[]).forEach((proposal) => {
 			if (proposal && proposal.type) {
 				const proposalType = getFirestoreProposalType(
-					proposal.type,
+					proposal.type
 				) as ProposalType;
 				const id =
 					proposal.type === 'Tip'
@@ -158,9 +158,9 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 						: Number(proposal.index);
 				postsRefWithData.push({
 					data: {
-						id,
+						id
 					},
-					ref: postsByTypeRef(network, proposalType).doc(String(id)),
+					ref: postsByTypeRef(network, proposalType).doc(String(id))
 				});
 			}
 		});
@@ -173,10 +173,10 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 				statuses: [
 					{
 						status: 'Created',
-						timestamp: new Date(),
-					},
+						timestamp: new Date()
+					}
 				],
-				type: 'Discussions',
+				type: 'Discussions'
 			});
 		}
 		timeline.push(...getTimeline(proposals));
@@ -188,32 +188,32 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 						hash: post?.hash,
 						index: post?.index,
 						statusHistory: post?.statusHistory,
-						type: post?.type,
-					},
-				]),
+						type: post?.type
+					}
+				])
 			);
 		}
 	}
 	if (postsRefWithData.length === 0) {
 		postsRefWithData.push({
 			data: {
-				id: postType === 'tips' ? postId : Number(postId),
+				id: postType === 'tips' ? postId : Number(postId)
 			},
-			ref: postsByTypeRef(network, postType as any).doc(String(postId)),
+			ref: postsByTypeRef(network, postType as any).doc(String(postId))
 		});
 	}
 	const results = await firestore_db.getAll(
 		...(postsRefWithData && Array.isArray(postsRefWithData)
 			? postsRefWithData
 			: []
-		).map((v) => v.ref),
+		).map((v) => v.ref)
 	);
 	results.forEach((result, i) => {
 		const data = result.data();
 		const newData: any = {
 			...data,
 			last_edited_at: new Date(),
-			post_link: isRemove ? null : post_link,
+			post_link: isRemove ? null : post_link
 		};
 		if (!isRemove) {
 			newData.title = currPostData.title;
@@ -262,7 +262,7 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 	});
 	await batch.commit();
 	return {
-		timeline,
+		timeline
 	};
 };
 
@@ -279,7 +279,7 @@ type TPostsRefWithData = {
 	ref: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>;
 }[];
 type TGetPostsRefAndData = (
-	params: IGetPostsRefAndDataParams,
+	params: IGetPostsRefAndDataParams
 ) => Promise<TPostsRefWithData>;
 export const getPostsRefAndData: TGetPostsRefAndData = async (params) => {
 	const { network, posts } = params;
@@ -287,7 +287,7 @@ export const getPostsRefAndData: TGetPostsRefAndData = async (params) => {
 	const postsRefWithData: TPostsRefWithData = posts?.map((post) => {
 		return {
 			data: {},
-			ref: postsByTypeRef(network, post.type as any).doc(String(post.id)),
+			ref: postsByTypeRef(network, post.type as any).doc(String(post.id))
 		};
 	});
 	const refs = (
@@ -302,7 +302,7 @@ export const getPostsRefAndData: TGetPostsRefAndData = async (params) => {
 			if (posts?.[i].isExistChecked && !(result.exists && currPostData)) {
 				throw apiErrorWithStatusCode(
 					`Post with id: "${posts[i].id}" and type: "${posts[i].type}" does not exist.`,
-					404,
+					404
 				);
 			}
 			postsRefWithData[i].data = currPostData;
@@ -318,7 +318,7 @@ export interface ILinkPostConfirmResponse {
 
 const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (
 	req,
-	res,
+	res
 ) => {
 	if (req.method !== 'POST')
 		return res
@@ -358,7 +358,7 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (
 			if (!isOffChainPost && !isOnChainPost) {
 				throw apiErrorWithStatusCode(
 					`The post type of the name "${type}" does not exist.`,
-					400,
+					400
 				);
 			}
 		});
@@ -368,14 +368,14 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (
 				{
 					id: currPostId,
 					isExistChecked: false,
-					type: currPostType,
+					type: currPostType
 				},
 				{
 					id: postId,
 					isExistChecked: false,
-					type: postType,
-				},
-			],
+					type: postType
+				}
+			]
 		});
 
 		if (postsRefWithData.length !== 2) {
@@ -383,7 +383,7 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (
 		}
 		const [
 			{ data: currPostData, ref: currPostDocRef },
-			{ data: postData, ref: postDocRef },
+			{ data: postData, ref: postDocRef }
 		] = postsRefWithData;
 		let params = {
 			currPostData,
@@ -394,21 +394,21 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (
 			network,
 			postId,
 			postType,
-			user,
+			user
 		};
 
 		if (isOffChainProposalTypeValid(String(postType))) {
 			if (!postData) {
 				throw apiErrorWithStatusCode(
 					`Post with id: "${postId}" and type: "${postType}" does not exist, please create a post.`,
-					404,
+					404
 				);
 			}
 
 			if (postData.post_link) {
 				throw apiErrorWithStatusCode(
 					'Discussion is already linked with other onchain post.',
-					403,
+					403
 				);
 			}
 			params = {
@@ -420,7 +420,7 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (
 				network,
 				postId: currPostId,
 				postType: currPostType,
-				user,
+				user
 			};
 		}
 
@@ -431,7 +431,7 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (
 			.status(
 				error.name && !isNaN(Number(error.name))
 					? Number(error.name)
-					: 500,
+					: 500
 			)
 			.json({ message: error.message });
 	}

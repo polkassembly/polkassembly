@@ -45,7 +45,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType))
 		return res.status(400).json({
-			message: `The off chain proposal type of the name "${proposalType}" does not exist.`,
+			message: `The off chain proposal type of the name "${proposalType}" does not exist.`
 		});
 
 	const strPollType = String(pollType);
@@ -86,7 +86,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			created_at: date,
 			option: option,
 			updated_at: date,
-			user_id: Number(userId),
+			user_id: Number(userId)
 		} as IOptionPollVote;
 		votes_field_name = 'option_poll_votes';
 	} else if (strPollType === POLL_TYPE.NORMAL) {
@@ -94,7 +94,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			created_at: date,
 			updated_at: date,
 			user_id: Number(userId),
-			vote: vote,
+			vote: vote
 		} as IPollVote;
 		votes_field_name = 'poll_votes';
 	} else {

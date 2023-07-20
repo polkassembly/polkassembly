@@ -19,7 +19,7 @@ const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
 			last_used_at: data?.last_used_at.toDate
 				? data?.last_used_at.toDate()
 				: data?.last_used_at,
-			name: data?.name,
+			name: data?.name
 		};
 		return newTag;
 	});

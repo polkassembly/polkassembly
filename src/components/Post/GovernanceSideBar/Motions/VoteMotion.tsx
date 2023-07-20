@@ -15,7 +15,7 @@ import styled from 'styled-components';
 import {
 	useApiContext,
 	useNetworkContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from '~src/context';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -52,12 +52,12 @@ const VoteMotion = ({
 	motionProposalHash,
 	onAccountChange,
 	proposalType,
-	setAccounts,
+	setAccounts
 }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: false,
-		message: '',
+		message: ''
 	});
 	const [isCouncil, setIsCouncil] = useState(false);
 	const [forceVote, setForceVote] = useState(false);
@@ -70,7 +70,7 @@ const VoteMotion = ({
 		decision: EDecision;
 	}>({
 		decision: EDecision.YES,
-		timestamp: '',
+		timestamp: ''
 	});
 	const [voteCount, setVoteCount] = useState<number>(0);
 
@@ -102,7 +102,7 @@ const VoteMotion = ({
 				const substrateAddress = getSubstrateAddress(account.address);
 				return currentCouncil.some(
 					(council) =>
-						getSubstrateAddress(council) === substrateAddress,
+						getSubstrateAddress(council) === substrateAddress
 				);
 			});
 			if (index >= 0) {
@@ -111,7 +111,7 @@ const VoteMotion = ({
 				accounts.splice(index, 1);
 				accounts.unshift({
 					...account,
-					isCouncil: true,
+					isCouncil: true
 				});
 				setAccounts(accounts);
 				onAccountChange(account.address);
@@ -128,7 +128,7 @@ const VoteMotion = ({
 			return;
 		}
 		nextApiClientFetch<IVotesHistoryResponse>(
-			`api/v1/votes/history?page=${1}&voterAddress=${address}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${motionId}`,
+			`api/v1/votes/history?page=${1}&voterAddress=${address}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${motionId}`
 		)
 			.then((res) => {
 				if (res.error) {
@@ -138,7 +138,7 @@ const VoteMotion = ({
 						setVoteCount(res.data?.count);
 						setVote({
 							decision: res.data?.votes[0].decision,
-							timestamp: res.data?.votes[0].timestamp,
+							timestamp: res.data?.votes[0].timestamp
 						});
 					}
 				}
@@ -153,7 +153,7 @@ const VoteMotion = ({
 		queueNotification({
 			header: 'Success!',
 			message: `Vote on motion #${motionId} successful.`,
-			status: NotificationStatus.SUCCESS,
+			status: NotificationStatus.SUCCESS
 		});
 		setLoadingStatus({ isLoading: false, message: '' });
 	};
@@ -163,7 +163,7 @@ const VoteMotion = ({
 		queueNotification({
 			header: 'Failed!',
 			message,
-			status: NotificationStatus.ERROR,
+			status: NotificationStatus.ERROR
 		});
 	};
 
@@ -198,11 +198,11 @@ const VoteMotion = ({
 			onBroadcast: () =>
 				setLoadingStatus({
 					isLoading: true,
-					message: 'Broadcasting the vote',
+					message: 'Broadcasting the vote'
 				}),
 			onFailed,
 			onSuccess,
-			tx: vote,
+			tx: vote
 		});
 	};
 
@@ -297,7 +297,7 @@ const VoteMotion = ({
 							<span className="">
 								<ClockCircleOutlined className="mr-1" />
 								{dayjs(vote.timestamp, 'YYYY-MM-DD').format(
-									"Do MMM'YY",
+									"Do MMM'YY"
 								)}
 							</span>
 						</Tooltip>

@@ -37,9 +37,9 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 			postIndex,
 			cid,
 			timeline,
-			tags: oldTags,
+			tags: oldTags
 		},
-		setPostData,
+		setPostData
 	} = usePostDataContext();
 
 	const [tags, setTags] = useState<string[]>(oldTags);
@@ -59,8 +59,8 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 					proposalType,
 					tags,
 					timeline,
-					title,
-				},
+					title
+				}
 			);
 
 		if (editError || !data) {
@@ -68,7 +68,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 			queueNotification({
 				header: 'Error!',
 				message: 'Error in saving your post.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			setFormDisabled(false);
 			setError(editError || 'Error in saving post');
@@ -78,7 +78,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 			queueNotification({
 				header: 'Success!',
 				message: 'Your post was edited',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 
 			const { content, proposer, title, topic, last_edited_at } = data;
@@ -89,15 +89,15 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 					{
 						content: prev?.content,
 						created_at: prev?.last_edited_at || '',
-						title: prev?.title,
+						title: prev?.title
 					},
-					...(prev?.history || []),
+					...(prev?.history || [])
 				],
 				last_edited_at,
 				proposer,
 				tags,
 				title,
-				topic,
+				topic
 			}));
 			setFormDisabled(false);
 			toggleEdit();
@@ -115,7 +115,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 				layout="vertical"
 				initialValues={{
 					content,
-					title: title || noTitle,
+					title: title || noTitle
 				}}
 				disabled={formDisabled || loading}
 				validateMessages={{ required: "Please add the '${name}'" }}

@@ -8,7 +8,7 @@ import {
 	HomeFilled,
 	PlayCircleFilled,
 	TwitterOutlined,
-	YoutubeFilled,
+	YoutubeFilled
 } from '@ant-design/icons';
 import { Space } from 'antd';
 import React from 'react';
@@ -17,7 +17,7 @@ import {
 	DiscordIcon,
 	GithubIcon,
 	RedditIcon,
-	TelegramIcon,
+	TelegramIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 
@@ -112,7 +112,7 @@ const gov2Link = ({
 	icon,
 	link,
 	text,
-	subText,
+	subText
 }: {
 	className?: string;
 	bgImage: any;
@@ -148,7 +148,7 @@ const gov2Link = ({
 const AboutNetwork = ({
 	className,
 	networkSocialsData,
-	showGov2Links,
+	showGov2Links
 }: {
 	className?: string;
 	networkSocialsData: NetworkSocials | null;
@@ -186,7 +186,7 @@ const AboutNetwork = ({
 						),
 						link: 'https://www.youtube.com/watch?v=EF93ZM_P_Oc',
 						subText: '45:33 mins',
-						text: "Gavin's view on Gov2",
+						text: "Gavin's view on Gov2"
 					})}
 
 					{gov2Link({
@@ -197,7 +197,7 @@ const AboutNetwork = ({
 						),
 						link: 'https://medium.com/polkadot-network/gov2-polkadots-next-generation-of-decentralised-governance-4d9ef657d11b',
 						subText: '17 min read',
-						text: "Gavin's blog on Medium",
+						text: "Gavin's blog on Medium"
 					})}
 
 					{gov2Link({
@@ -208,7 +208,7 @@ const AboutNetwork = ({
 						),
 						link: 'https://wiki.polkadot.network/docs/learn-governance',
 						subText: 'Wiki',
-						text: 'Governance V1 Basics',
+						text: 'Governance V1 Basics'
 					})}
 				</div>
 			)}

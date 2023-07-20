@@ -42,7 +42,7 @@ const TopicsRadio = ({
 	className,
 	onTopicSelection,
 	govType,
-	topicId,
+	topicId
 }: Props) => {
 	const [topicOptions, setTopicOptions] = useState<string[]>([]);
 
@@ -54,7 +54,7 @@ const TopicsRadio = ({
 				topicToOptionText('DEMOCRACY'),
 				topicToOptionText('GENERAL'),
 				topicToOptionText('TECHNICAL_COMMITTEE'),
-				topicToOptionText('TREASURY'),
+				topicToOptionText('TREASURY')
 			]);
 		} else if (govType === 'open_gov') {
 			onTopicSelection(8);
@@ -64,7 +64,7 @@ const TopicsRadio = ({
 				topicToOptionText('GOVERNANCE'),
 				topicToOptionText('ROOT'),
 				topicToOptionText('STAKING_ADMIN'),
-				topicToOptionText('TREASURY'),
+				topicToOptionText('TREASURY')
 			]);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

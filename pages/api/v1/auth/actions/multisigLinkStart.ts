@@ -11,7 +11,7 @@ import messages from '~src/auth/utils/messages';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ChallengeMessage | MessageType>,
+	res: NextApiResponse<ChallengeMessage | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -25,7 +25,7 @@ async function handler(
 			.json({ message: 'Missing parameters in request body' });
 
 	const signMessage = await authServiceInstance.MultisigAddressSignupStart(
-		address,
+		address
 	);
 
 	return res

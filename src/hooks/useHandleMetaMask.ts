@@ -21,7 +21,7 @@ const useHandleMetaMask = (): string => {
 		const ethereum = (window as any)?.ethereum;
 		if (!ethereum?.isMetaMask) {
 			setMetaMaskError(
-				'Please install the MetaMask extension to use supported features.',
+				'Please install the MetaMask extension to use supported features.'
 			);
 		} else if (ethereum) {
 			ethereum.on('chainChanged', () => {

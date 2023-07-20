@@ -10,20 +10,20 @@ const tips = [
 		label: 'New Tips submitted',
 		triggerName: 'gov1ProposalSubmitted',
 		triggerPreferencesName: 'gov1ProposalSubmitted',
-		value: 'New Tips submitted',
+		value: 'New Tips submitted'
 	},
 	{
 		label: 'Tips opened',
 		triggerName: 'gov1ProposalInVoting',
 		triggerPreferencesName: 'gov1ProposalInVoting',
-		value: 'Tips opened',
+		value: 'Tips opened'
 	},
 	{
 		label: 'Tips closed / retracted',
 		triggerName: 'gov1ProposalClosed',
 		triggerPreferencesName: 'gov1ProposalClosed',
-		value: 'Tips closed / retracted',
-	},
+		value: 'Tips closed / retracted'
+	}
 ];
 
 const techCommittee = [
@@ -31,14 +31,14 @@ const techCommittee = [
 		label: 'New Tech Committe Proposals submitted',
 		triggerName: 'gov1ProposalSubmitted',
 		triggerPreferencesName: 'gov1ProposalSubmitted',
-		value: 'New Tech Committe Proposals submitted',
+		value: 'New Tech Committe Proposals submitted'
 	},
 	{
 		label: 'Proposals closed',
 		triggerName: 'gov1ProposalClosed',
 		triggerPreferencesName: 'gov1ProposalClosed',
-		value: 'Proposals closed',
-	},
+		value: 'Proposals closed'
+	}
 ];
 
 const bounties = [
@@ -46,14 +46,14 @@ const bounties = [
 		label: 'Bounties submitted',
 		triggerName: 'gov1ProposalSubmitted',
 		triggerPreferencesName: 'gov1ProposalSubmitted',
-		value: 'Bounties submitted',
+		value: 'Bounties submitted'
 	},
 	{
 		label: 'Bounties closed',
 		triggerName: 'gov1ProposalClosed',
 		triggerPreferencesName: 'gov1ProposalClosed',
-		value: 'Bounties closed',
-	},
+		value: 'Bounties closed'
+	}
 ];
 
 const childBounties = [
@@ -61,14 +61,14 @@ const childBounties = [
 		label: 'Child Bounties submitted',
 		triggerName: 'gov1ProposalSubmitted',
 		triggerPreferencesName: 'gov1ProposalSubmitted',
-		value: 'Child Bounties submitted',
+		value: 'Child Bounties submitted'
 	},
 	{
 		label: 'Child Bounties closed',
 		triggerName: 'gov1ProposalClosed',
 		triggerPreferencesName: 'gov1ProposalClosed',
-		value: 'Child Bounties closed',
-	},
+		value: 'Child Bounties closed'
+	}
 ];
 
 const referendumsV1 = [
@@ -76,20 +76,20 @@ const referendumsV1 = [
 		label: 'New Referendum submitted',
 		triggerName: 'gov1ProposalSubmitted',
 		triggerPreferencesName: 'gov1ProposalSubmitted',
-		value: 'New Referendum submitted',
+		value: 'New Referendum submitted'
 	},
 	{
 		label: 'Referendum Voting',
 		triggerName: 'gov1ProposalInVoting',
 		triggerPreferencesName: 'gov1ProposalInVoting',
-		value: 'Referendum Voting',
+		value: 'Referendum Voting'
 	},
 	{
 		label: 'Referendum closed',
 		triggerName: 'gov1ProposalClosed',
 		triggerPreferencesName: 'gov1ProposalClosed',
-		value: 'Referendum closed',
-	},
+		value: 'Referendum closed'
+	}
 ];
 
 const proposal = [
@@ -97,20 +97,20 @@ const proposal = [
 		label: 'New Proposal submitted',
 		triggerName: 'gov1ProposalSubmitted',
 		triggerPreferencesName: 'gov1ProposalSubmitted',
-		value: 'New Proposal submitted',
+		value: 'New Proposal submitted'
 	},
 	{
 		label: 'Proposal in Voting',
 		triggerName: 'gov1ProposalInVoting',
 		triggerPreferencesName: 'gov1ProposalInVoting',
-		value: 'Proposal in Voting',
+		value: 'Proposal in Voting'
 	},
 	{
 		label: 'Proposal closed',
 		triggerName: 'gov1ProposalClosed',
 		triggerPreferencesName: 'gov1ProposalClosed',
-		value: 'Proposal closed',
-	},
+		value: 'Proposal closed'
+	}
 ];
 
 const treasuryProposal = [
@@ -118,20 +118,20 @@ const treasuryProposal = [
 		label: 'New Proposal submitted',
 		triggerName: 'gov1ProposalSubmitted',
 		triggerPreferencesName: 'gov1ProposalSubmitted',
-		value: 'New Proposal submitted',
+		value: 'New Proposal submitted'
 	},
 	{
 		label: 'Proposal in Voting',
 		triggerName: 'gov1ProposalInVoting',
 		triggerPreferencesName: 'gov1ProposalInVoting',
-		value: 'Proposal in Voting',
+		value: 'Proposal in Voting'
 	},
 	{
 		label: 'Proposal closed',
 		triggerName: 'gov1ProposalClosed',
 		triggerPreferencesName: 'gov1ProposalClosed',
-		value: 'Proposal closed',
-	},
+		value: 'Proposal closed'
+	}
 ];
 
 const councilMotion = [
@@ -139,20 +139,20 @@ const councilMotion = [
 		label: 'New Motions submitted',
 		triggerName: 'gov1ProposalSubmitted',
 		triggerPreferencesName: 'gov1ProposalSubmitted',
-		value: 'New Motions submitted',
+		value: 'New Motions submitted'
 	},
 	{
 		label: 'Motion in voting',
 		triggerName: 'gov1ProposalInVoting',
 		triggerPreferencesName: 'gov1ProposalInVoting',
-		value: 'Motion in voting',
+		value: 'Motion in voting'
 	},
 	{
 		label: 'Motion closed / retracted',
 		triggerName: 'gov1ProposalClosed',
 		triggerPreferencesName: 'gov1ProposalClosed',
-		value: 'Motion closed / retracted',
-	},
+		value: 'Motion closed / retracted'
+	}
 ];
 
 const allGov1 = {
@@ -163,7 +163,7 @@ const allGov1 = {
 	[ProposalType.TREASURY_PROPOSALS]: treasuryProposal,
 	[ProposalType.REFERENDUMS]: referendumsV1,
 	[ProposalType.TECH_COMMITTEE_PROPOSALS]: techCommittee,
-	[ProposalType.TIPS]: tips,
+	[ProposalType.TIPS]: tips
 };
 
 const titleMapper = (title: string) => {
@@ -205,5 +205,5 @@ export {
 	referendumsV1,
 	councilMotion,
 	allGov1,
-	titleMapper,
+	titleMapper
 };

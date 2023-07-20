@@ -6,7 +6,7 @@ import {
 	CloseOutlined,
 	RightOutlined,
 	CheckCircleFilled,
-	MinusCircleFilled,
+	MinusCircleFilled
 } from '@ant-design/icons';
 import { Col, Modal, Row } from 'antd';
 import React, { FC, useState } from 'react';
@@ -15,7 +15,7 @@ import {
 	EmailIcon,
 	IdentityIcon,
 	RiotIcon,
-	TwitterIcon,
+	TwitterIcon
 } from '~src/ui-components/CustomIcons';
 import { TOnChainIdentity } from './Details';
 
@@ -31,7 +31,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 
 	const judgements = onChainIdentity
 		? onChainIdentity.judgements.filter(
-				([, judgement]): boolean => !judgement.isFeePaid,
+				([, judgement]): boolean => !judgement.isFeePaid
 		  )
 		: [];
 	const displayJudgements = judgements
@@ -39,11 +39,11 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 		.join(', ');
 	const isGood = judgements.some(
 		([, judgement]): boolean =>
-			judgement.isKnownGood || judgement.isReasonable,
+			judgement.isKnownGood || judgement.isReasonable
 	);
 	const isBad = judgements.some(
 		([, judgement]): boolean =>
-			judgement.isErroneous || judgement.isLowQuality,
+			judgement.isErroneous || judgement.isLowQuality
 	);
 
 	const color: 'brown' | 'green' | 'grey' = isGood
@@ -150,7 +150,7 @@ const OnChainIdentity: FC<IOnChainIdentityProps> = (props) => {
 													target="_blank"
 													rel="noreferrer"
 													href={`https://twitter.com/${onChainIdentity.twitter.substring(
-														1,
+														1
 													)}`}
 													className="text-[#5E7087] text-sm font-normal mt-1"
 												>

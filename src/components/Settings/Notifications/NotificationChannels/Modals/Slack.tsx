@@ -22,7 +22,7 @@ const SlackInfoModal = ({
 	open,
 	getVerifyToken,
 	generatedToken = '',
-	onClose,
+	onClose
 }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [token, setToken] = useState(generatedToken);
@@ -71,7 +71,7 @@ const SlackInfoModal = ({
 						<span
 							onClick={() =>
 								handleCopyClicked(
-									'/add <username> <verificationToken>',
+									'/add <username> <verificationToken>'
 								)
 							}
 							className="p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary"

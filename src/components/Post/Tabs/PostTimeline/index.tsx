@@ -15,7 +15,7 @@ interface IPostTimelineProps {
 const PostTimeline: FC<IPostTimelineProps> = (props) => {
 	const { className } = props;
 	const {
-		postData: { timeline },
+		postData: { timeline }
 	} = usePostDataContext();
 	return (
 		<div className={`${className} p-5 md:p-10`}>

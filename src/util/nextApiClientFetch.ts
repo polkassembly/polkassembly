@@ -10,7 +10,7 @@ import messages from './messages';
 async function nextApiClientFetch<T>(
 	url: string,
 	data?: { [key: string]: any },
-	method?: 'GET' | 'POST',
+	method?: 'GET' | 'POST'
 ): Promise<{ data?: T; error?: string }> {
 	const network = getNetwork();
 
@@ -23,20 +23,20 @@ async function nextApiClientFetch<T>(
 		headers: {
 			Authorization: 'Bearer ' + token,
 			'Content-Type': 'application/json',
-			'x-network': network,
+			'x-network': network
 		},
-		method: method || 'POST',
+		method: method || 'POST'
 	});
 
 	const resJSON = await response.json();
 
 	if (response.status === 200)
 		return {
-			data: resJSON as T,
+			data: resJSON as T
 		};
 
 	return {
-		error: resJSON.message || messages.API_FETCH_ERROR,
+		error: resJSON.message || messages.API_FETCH_ERROR
 	};
 }
 

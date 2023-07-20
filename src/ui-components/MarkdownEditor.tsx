@@ -176,7 +176,7 @@ interface Props {
 function MarkdownEditor(props: Props): React.ReactElement {
 	const { id, username } = useUserDetailsContext();
 	const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-		'write',
+		'write'
 	);
 	const loadSuggestions = async (text: string) => {
 		return new Promise<Suggestion[]>((accept) => {
@@ -186,10 +186,10 @@ function MarkdownEditor(props: Props): React.ReactElement {
 			const suggestions: Suggestion[] = users
 				.map((user) => ({
 					preview: user,
-					value: `[@${user}](${global.window.location.origin}/user/${user})`,
+					value: `[@${user}](${global.window.location.origin}/user/${user})`
 				}))
 				.filter((i) =>
-					i.preview.toLowerCase().includes(text.toLowerCase()),
+					i.preview.toLowerCase().includes(text.toLowerCase())
 				);
 
 			accept(suggestions);
@@ -204,21 +204,21 @@ function MarkdownEditor(props: Props): React.ReactElement {
 		formData.append(
 			'image',
 			imgBlob,
-			`${id}_${username}_${new Date().valueOf()}.jpg`,
+			`${id}_${username}_${new Date().valueOf()}.jpg`
 		);
 
 		let url = '';
 
 		await fetch(`https://api.imgbb.com/1/upload?key=${IMG_BB_API_KEY}`, {
 			body: formData,
-			method: 'POST',
+			method: 'POST'
 		})
 			.then((response) => response.json())
 			.then((res) => {
 				url = res?.data?.display_url;
 			})
 			.catch((error) =>
-				console.error('Error in uploading image: ', error),
+				console.error('Error in uploading image: ', error)
 			);
 
 		// yields the URL that should be inserted in the markdown
@@ -235,17 +235,17 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	async function getUserData(usernameQuery: string, content: string) {
 		let inputData = content;
 		const res = await nextApiClientFetch(
-			`api/v1/auth/data/userProfileWithUsername?username=${usernameQuery}`,
+			`api/v1/auth/data/userProfileWithUsername?username=${usernameQuery}`
 		);
 		if (res.data) {
 			if (!replacedUsernames.includes(usernameQuery)) {
 				const regex = new RegExp(
-					`@${usernameQuery}(?!.*@${usernameQuery})`,
+					`@${usernameQuery}(?!.*@${usernameQuery})`
 				);
 
 				inputData = inputData.replace(
 					regex,
-					`[@${usernameQuery}](${global.window.location.origin}/user/${usernameQuery})`,
+					`[@${usernameQuery}](${global.window.location.origin}/user/${usernameQuery})`
 				);
 				setReplacedUsernames([...replacedUsernames, usernameQuery]);
 			}
@@ -273,11 +273,11 @@ function MarkdownEditor(props: Props): React.ReactElement {
 			} else if (validUsers.includes(usernameQuery)) {
 				let inputData = content;
 				const regex = new RegExp(
-					`@${usernameQuery}(?!.*@${usernameQuery})`,
+					`@${usernameQuery}(?!.*@${usernameQuery})`
 				);
 				inputData = inputData.replace(
 					regex,
-					`[@${usernameQuery}](${window.location.origin}/user/${usernameQuery})`,
+					`[@${usernameQuery}](${window.location.origin}/user/${usernameQuery})`
 				);
 				setInput(inputData);
 			}
@@ -310,12 +310,12 @@ function MarkdownEditor(props: Props): React.ReactElement {
 						'code',
 						'image',
 						'ordered-list',
-						'unordered-list',
-					],
+						'unordered-list'
+					]
 				]}
 				{...props}
 				paste={{
-					saveImage: handleSaveImage,
+					saveImage: handleSaveImage
 				}}
 				onChange={onChange}
 				value={input}

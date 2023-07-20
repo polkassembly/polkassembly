@@ -27,14 +27,14 @@ interface Props {
 const statusOptions: MenuProps['items'] = [
 	{ key: 'overdue', label: 'Overdue' },
 	{ key: 'completed', label: 'Completed' },
-	{ key: 'in_progress', label: 'In Progress' },
+	{ key: 'in_progress', label: 'In Progress' }
 ];
 
 const EditProposalStatus = ({
 	canEdit,
 	className,
 	proposalId,
-	startTime,
+	startTime
 }: Props) => {
 	const [deadlineDate, setDeadlineDate] = useState<Date | null>(null);
 	const [status, setStatus] = useState<string>('in_progress');
@@ -47,8 +47,8 @@ const EditProposalStatus = ({
 		const { data, error } = await nextApiClientFetch<NetworkEvent>(
 			'api/v1/events/getEventByPostId',
 			{
-				post_id: Number(proposalId),
-			},
+				post_id: Number(proposalId)
+			}
 		);
 
 		if (error) {
@@ -104,15 +104,15 @@ const EditProposalStatus = ({
 					deadline: dayjs(deadlineDate).toDate(),
 					onchain_proposal_id: Number(proposalId),
 					start_time: startTime,
-					status,
-				},
+					status
+				}
 			);
 
 			if (error) {
 				queueNotification({
 					header: 'Error!',
 					message: 'Proposal status was not saved',
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				console.error('Error saving status : ', error);
 			}
@@ -121,7 +121,7 @@ const EditProposalStatus = ({
 				queueNotification({
 					header: 'Success!',
 					message: 'Proposal status was saved',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 			}
 		} else {
@@ -129,15 +129,15 @@ const EditProposalStatus = ({
 				'api/v1/auth/actions/updateProposalTracker',
 				{
 					id: Number(proposalId),
-					status,
-				},
+					status
+				}
 			);
 
 			if (error) {
 				queueNotification({
 					header: 'Error!',
 					message: 'Proposal status was not updated',
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				console.error('Error updating status : ', error);
 			}
@@ -146,7 +146,7 @@ const EditProposalStatus = ({
 				queueNotification({
 					header: 'Success!',
 					message: 'Proposal status was updated',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 			}
 		}
@@ -207,7 +207,7 @@ const EditProposalStatus = ({
 						disabled={loading}
 					>
 						Save
-					</Button>,
+					</Button>
 				]}
 				onCancel={() => setModalOpen(false)}
 			>
@@ -254,7 +254,7 @@ const EditProposalStatus = ({
 									{deadlineDate == null
 										? 'Not Set'
 										: dayjs(deadlineDate).format(
-												'MMMM Do YYYY',
+												'MMMM Do YYYY'
 										  )}
 								</span>
 							)}
@@ -273,7 +273,7 @@ const EditProposalStatus = ({
 										disabled={loading}
 										menu={{
 											items: statusOptions,
-											onClick: onStatusChange,
+											onClick: onStatusChange
 										}}
 									>
 										<Space className="cursor-pointer">
@@ -285,7 +285,7 @@ const EditProposalStatus = ({
 														s
 															.charAt(0)
 															.toUpperCase() +
-														s.slice(1),
+														s.slice(1)
 												)
 												.join(' ')}{' '}
 											<DownOutlined className="align-middle" />
@@ -305,7 +305,7 @@ const EditProposalStatus = ({
 														s
 															.charAt(0)
 															.toUpperCase() +
-														s.slice(1),
+														s.slice(1)
 												)
 												.join(' ')}
 								</span>

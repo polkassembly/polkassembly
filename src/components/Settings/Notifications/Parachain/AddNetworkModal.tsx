@@ -15,7 +15,7 @@ const AddNetworkModal = ({
 	open,
 	onConfirm,
 	onCancel,
-	selectedNetwork,
+	selectedNetwork
 }: {
 	selectedNetwork: ISelectedNetwork;
 	open: boolean;
@@ -35,7 +35,7 @@ const AddNetworkModal = ({
 			return;
 		}
 		const payload = allNetworks[category].map((net: any) =>
-			net.name === name ? { ...net, selected: !net.selected } : net,
+			net.name === name ? { ...net, selected: !net.selected } : net
 		);
 		setAllNetworks({ ...allNetworks, [category]: payload });
 	};
@@ -59,8 +59,8 @@ const AddNetworkModal = ({
 				? net
 				: {
 						...net,
-						selected: checked,
-				  },
+						selected: checked
+				  }
 		);
 		setAllNetworks({ ...allNetworks, [chain]: payload });
 	};
@@ -99,7 +99,7 @@ const AddNetworkModal = ({
 						className="h-10 rounded-[6px] bg-[#E5007A] border border-solid border-pink_primary px-[36px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize"
 					>
 						Confirm
-					</Button>,
+					</Button>
 				]}
 			>
 				<p className="font-medium text-[#243A57] text-[16px]">
@@ -165,7 +165,7 @@ const AddNetworkModal = ({
 											}
 											checked={allNetworks[chain].every(
 												(network: any) =>
-													network.selected,
+													network.selected
 											)}
 										/>
 										<p className="m-0 text-[#485F7D]">
@@ -177,7 +177,7 @@ const AddNetworkModal = ({
 									{allNetworks[chain].map(
 										({
 											name,
-											selected,
+											selected
 										}: {
 											name: string;
 											selected: boolean;
@@ -193,7 +193,7 @@ const AddNetworkModal = ({
 														onClick={() =>
 															handleClick(
 																name,
-																chain,
+																chain
 															)
 														}
 														className={`items-center text-navBlue rounded-[34px] px-[12px] py-[8px] ${
@@ -225,7 +225,7 @@ const AddNetworkModal = ({
 													</Tag>
 												</div>
 											);
-										},
+										}
 									)}
 								</div>
 								{i < Object.keys(allNetworks).length - 1 && (

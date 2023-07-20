@@ -5,7 +5,7 @@
 import { sendCommentReportMail } from '~src/auth/email';
 import {
 	getSinglePostLinkFromProposalType,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 
 export default async function _sendCommentReportMail(
@@ -13,10 +13,10 @@ export default async function _sendCommentReportMail(
 	postType: string,
 	postId: string,
 	commentId: string,
-	spam_users_count: number,
+	spam_users_count: number
 ) {
 	const commentUrl = `https://${network}.polkassembly.io/${getSinglePostLinkFromProposalType(
-		postType as ProposalType,
+		postType as ProposalType
 	)}/${postId}#${commentId}`;
 	sendCommentReportMail(
 		postType,
@@ -24,6 +24,6 @@ export default async function _sendCommentReportMail(
 		commentId,
 		commentUrl,
 		network,
-		spam_users_count,
+		spam_users_count
 	);
 }

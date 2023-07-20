@@ -25,7 +25,7 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
 
 	const initialState: State<T> = {
 		data: undefined,
-		error: undefined,
+		error: undefined
 	};
 
 	// Keep state logic separated

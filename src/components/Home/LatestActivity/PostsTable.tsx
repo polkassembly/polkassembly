@@ -10,13 +10,13 @@ import {
 	EmptyLatestActivity,
 	ErrorLatestActivity,
 	PopulatedLatestActivity,
-	PopulatedLatestActivityCard,
+	PopulatedLatestActivityCard
 } from 'src/ui-components/LatestActivityStates';
 
 import {
 	getFirestoreProposalType,
 	getSinglePostLinkFromProposalType,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 
 export interface IPostsRowData {
@@ -53,7 +53,7 @@ const PostsTable: FC<IPostsTableProps> = ({
 	error,
 	columns,
 	type,
-	count,
+	count
 }) => {
 	const router = useRouter();
 
@@ -77,7 +77,7 @@ const PostsTable: FC<IPostsTableProps> = ({
 			proposer,
 			status,
 			description,
-			spam_users_count,
+			spam_users_count
 		} = post;
 		// if(post?.author?.username) {
 		// truncate title
@@ -107,7 +107,7 @@ const PostsTable: FC<IPostsTableProps> = ({
 			title,
 			topic: post?.topic?.name,
 			type: post.type,
-			username: post?.username,
+			username: post?.username
 		};
 
 		tableData.push(tableDataObj);
@@ -126,10 +126,10 @@ const PostsTable: FC<IPostsTableProps> = ({
 								? `${rowData.type
 										.charAt(0)
 										.toUpperCase()}${rowData.type.slice(1)}`
-								: rowData.type,
+								: rowData.type
 						);
 						const link = getSinglePostLinkFromProposalType(
-							firestoreProposalType as ProposalType,
+							firestoreProposalType as ProposalType
 						);
 						if (
 							(event as KeyboardEvent).ctrlKey ||
@@ -137,7 +137,7 @@ const PostsTable: FC<IPostsTableProps> = ({
 						) {
 							window?.open(
 								`/${link}/${rowData.post_id}`,
-								'_blank',
+								'_blank'
 							);
 						} else {
 							router.push(`/${link}/${rowData.post_id}`);
@@ -155,10 +155,10 @@ const PostsTable: FC<IPostsTableProps> = ({
 								? `${rowData.type
 										.charAt(0)
 										.toUpperCase()}${rowData.type.slice(1)}`
-								: rowData.type,
+								: rowData.type
 						);
 						const link = getSinglePostLinkFromProposalType(
-							firestoreProposalType as ProposalType,
+							firestoreProposalType as ProposalType
 						);
 						if (
 							(event as KeyboardEvent).ctrlKey ||
@@ -166,7 +166,7 @@ const PostsTable: FC<IPostsTableProps> = ({
 						) {
 							window?.open(
 								`/${link}/${rowData.post_id}`,
-								'_blank',
+								'_blank'
 							);
 						} else {
 							router.push(`/${link}/${rowData.post_id}`);

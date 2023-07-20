@@ -38,21 +38,21 @@ export default function OpenGovNotification({
 	onSetNotification,
 	userNotification,
 	dispatch,
-	options,
+	options
 }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkContext();
 	const [all, setAll] = useState(false);
 	const openGovTwoOptions = getConsecutiveKeys(
-		networkTrackInfo[network] || {},
+		networkTrackInfo[network] || {}
 	);
 
 	const handleAllClick = (checked: boolean) => {
 		dispatch({
 			payload: {
-				params: { checked },
+				params: { checked }
 			},
-			type: ACTIONS.OPEN_GOV_ALL_CHANGE,
+			type: ACTIONS.OPEN_GOV_ALL_CHANGE
 		});
 		const notification = Object.assign({}, userNotification);
 		Object.keys(options).forEach((key) => {
@@ -70,7 +70,7 @@ export default function OpenGovNotification({
 				notification[option.triggerName] = {
 					enabled: tracks.length > 0,
 					name: option?.triggerPreferencesName,
-					tracks,
+					tracks
 				};
 			});
 		});
@@ -80,7 +80,7 @@ export default function OpenGovNotification({
 
 	useEffect(() => {
 		const allSelected = Object.values(options).every((option: any) =>
-			option.every((item: any) => item.selected),
+			option.every((item: any) => item.selected)
 		);
 		setAll(allSelected);
 	}, [options]);
@@ -88,14 +88,14 @@ export default function OpenGovNotification({
 	const handleCategoryAllClick = (
 		checked: boolean,
 		categoryOptions: any,
-		title: any,
+		title: any
 	) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
-				params: { checked, key: title },
+				params: { checked, key: title }
 			},
-			type: ACTIONS.OPEN_GOV_PROPOSAL_ALL_CHANGE,
+			type: ACTIONS.OPEN_GOV_PROPOSAL_ALL_CHANGE
 		});
 		const notification = Object.assign({}, userNotification);
 		const id = networkTrackInfo[network][title]?.trackId;
@@ -112,7 +112,7 @@ export default function OpenGovNotification({
 			notification[option.triggerName] = {
 				enabled: tracks.length > 0,
 				name: option?.triggerPreferencesName,
-				tracks,
+				tracks
 			};
 		});
 		onSetNotification(notification);
@@ -122,14 +122,14 @@ export default function OpenGovNotification({
 		categoryOptions: any,
 		checked: boolean,
 		value: string,
-		title: string,
+		title: string
 	) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
-				params: { checked, key: title, value },
+				params: { checked, key: title, value }
 			},
-			type: ACTIONS.OPEN_GOV_PROPOSAL_SINGLE_CHANGE,
+			type: ACTIONS.OPEN_GOV_PROPOSAL_SINGLE_CHANGE
 		});
 		const notification = Object.assign({}, userNotification);
 		const id = networkTrackInfo[network][title]?.trackId;
@@ -146,7 +146,7 @@ export default function OpenGovNotification({
 		notification[option.triggerName] = {
 			enabled: tracks.length > 0,
 			name: option?.triggerPreferencesName,
-			tracks,
+			tracks
 		};
 		onSetNotification(notification);
 	};
@@ -201,7 +201,7 @@ export default function OpenGovNotification({
 													options[postType]
 												}
 												title={postOriginMapper(
-													postType,
+													postType
 												)}
 												classname={
 													i === category.length - 1

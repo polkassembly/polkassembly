@@ -23,7 +23,7 @@ export interface ICreatePollResponse {
 
 const handler: NextApiHandler<ICreatePollResponse | MessageType> = async (
 	req,
-	res,
+	res
 ) => {
 	if (req.method !== 'POST')
 		return res
@@ -43,7 +43,7 @@ const handler: NextApiHandler<ICreatePollResponse | MessageType> = async (
 		blockEnd,
 		postId,
 		proposalType,
-		pollType,
+		pollType
 	} = req.body;
 
 	const strPollType = String(pollType);
@@ -66,7 +66,7 @@ const handler: NextApiHandler<ICreatePollResponse | MessageType> = async (
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType))
 		return res.status(400).json({
-			message: `The off chain proposal type "${proposalType}" is invalid.`,
+			message: `The off chain proposal type "${proposalType}" is invalid.`
 		});
 
 	const token = getTokenFromReq(req);
@@ -77,7 +77,7 @@ const handler: NextApiHandler<ICreatePollResponse | MessageType> = async (
 
 	const postDocRef = postsByTypeRef(
 		network,
-		strProposalType as ProposalType,
+		strProposalType as ProposalType
 	).doc(String(postId));
 	const postDoc = await postDocRef.get();
 	if (!postDoc.exists)
@@ -101,7 +101,7 @@ const handler: NextApiHandler<ICreatePollResponse | MessageType> = async (
 			option_poll_votes: [],
 			options,
 			question,
-			updated_at: date,
+			updated_at: date
 		} as IOptionPoll;
 	} else if (strPollType === POLL_TYPE.NORMAL) {
 		poll = {
@@ -109,7 +109,7 @@ const handler: NextApiHandler<ICreatePollResponse | MessageType> = async (
 			created_at: date,
 			id: '',
 			poll_votes: [],
-			updated_at: date,
+			updated_at: date
 		} as IPoll;
 	} else {
 		return res
@@ -130,7 +130,7 @@ const handler: NextApiHandler<ICreatePollResponse | MessageType> = async (
 		.set(poll)
 		.then(() => {
 			return res.status(200).json({
-				id: pollRef.id,
+				id: pollRef.id
 			});
 		})
 		.catch((error) => {

@@ -21,7 +21,7 @@ const Markdown = ({
 	isPreview = false,
 	isAutoComplete = false,
 	md,
-	imgHidden = false,
+	imgHidden = false
 }: Props) => {
 	const sanitisedMd = md.replace(/\\n/g, '\n');
 

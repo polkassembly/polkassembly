@@ -25,7 +25,7 @@ interface ILatestActivityProps {
 type TCapitalizeFn = (str: string, lower?: boolean) => string;
 const capitalize: TCapitalizeFn = (str, lower = false) =>
 	(lower ? str.toLowerCase() : str).replace(/(?:^|\s|["'([{])+\S/g, (match) =>
-		match.toUpperCase(),
+		match.toUpperCase()
 	);
 
 const getLabel = (key: 'all' | ProposalType): string => {
@@ -41,13 +41,13 @@ const getLabel = (key: 'all' | ProposalType): string => {
 
 const LatestActivity: FC<ILatestActivityProps> = ({
 	className,
-	latestPosts,
+	latestPosts
 }) => {
 	const [currentTab, setCurrentTab] = useState('all');
 	const tabItems = (
 		Object.entries(latestPosts) as [
 			key: 'all' | ProposalType,
-			value: IApiResponse<ILatestActivityPostsListingResponse>,
+			value: IApiResponse<ILatestActivityPostsListingResponse>
 		][]
 	).map(([key, value]) => {
 		const label = getLabel(key);
@@ -65,7 +65,7 @@ const LatestActivity: FC<ILatestActivityProps> = ({
 				key === ProposalType.REFERENDUMS
 					? 'referenda'
 					: label.toLowerCase().split(' ').join('-'),
-			label: <CountBadgePill label={label} count={value?.data?.count} />,
+			label: <CountBadgePill label={label} count={value?.data?.count} />
 		};
 	});
 

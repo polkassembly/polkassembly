@@ -20,7 +20,7 @@ const TFALoginForm = ({
 	error,
 	loading,
 	onSubmit,
-	onBack,
+	onBack
 }: Props) => {
 	return (
 		<AuthForm
@@ -57,8 +57,8 @@ const TFALoginForm = ({
 								} else {
 									callback();
 								}
-							},
-						},
+							}
+						}
 					]}
 				>
 					<Input

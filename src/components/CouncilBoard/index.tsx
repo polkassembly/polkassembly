@@ -18,13 +18,13 @@ enum SidebarReducerAction {
 	CLOSE,
 	OPEN_DISCUSSION,
 	OPEN_TIP,
-	OPEN_REFERENDA,
+	OPEN_REFERENDA
 }
 
 const initSidebarState = {
 	enabled: false,
 	postID: '',
-	postType: '',
+	postType: ''
 };
 
 function reducer(state: any, action: any) {
@@ -34,7 +34,7 @@ function reducer(state: any, action: any) {
 				...state,
 				enabled: true,
 				postID: action.postID,
-				postType: 'discussion',
+				postType: 'discussion'
 			};
 
 		case SidebarReducerAction.OPEN_TIP:
@@ -42,7 +42,7 @@ function reducer(state: any, action: any) {
 				...state,
 				enabled: true,
 				postID: action.postID,
-				postType: 'tip',
+				postType: 'tip'
 			};
 
 		case SidebarReducerAction.OPEN_REFERENDA:
@@ -50,7 +50,7 @@ function reducer(state: any, action: any) {
 				...state,
 				enabled: true,
 				postID: action.postID,
-				postType: 'referenda',
+				postType: 'referenda'
 			};
 
 		default:
@@ -112,7 +112,7 @@ const CouncilBoardContainer = ({ className }: { className?: string }) => {
 							openSidebar={(postID: number) =>
 								openSidebar(
 									postID,
-									SidebarReducerAction.OPEN_DISCUSSION,
+									SidebarReducerAction.OPEN_DISCUSSION
 								)
 							}
 						/>
@@ -123,7 +123,7 @@ const CouncilBoardContainer = ({ className }: { className?: string }) => {
 							openSidebar={(postID: number) =>
 								openSidebar(
 									postID,
-									SidebarReducerAction.OPEN_REFERENDA,
+									SidebarReducerAction.OPEN_REFERENDA
 								)
 							}
 						/>
@@ -134,7 +134,7 @@ const CouncilBoardContainer = ({ className }: { className?: string }) => {
 							openSidebar={(postID: number) =>
 								openSidebar(
 									postID,
-									SidebarReducerAction.OPEN_TIP,
+									SidebarReducerAction.OPEN_TIP
 								)
 							}
 						/>

@@ -22,7 +22,7 @@ const withErrorHandling: TWithErrorHandling = (handler) => {
 			Sentry.captureException(error);
 			res.status(Number(error.name) || 500).json({
 				...error,
-				message: error.message || messages.API_FETCH_ERROR,
+				message: error.message || messages.API_FETCH_ERROR
 			});
 		}
 	};

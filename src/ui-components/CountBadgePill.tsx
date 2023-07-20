@@ -7,7 +7,7 @@ import React from 'react';
 const CountBadgePill = ({
 	className,
 	label,
-	count,
+	count
 }: {
 	className?: string;
 	label?: string;

@@ -28,7 +28,7 @@ import LoginPopup from '~src/ui-components/loginPopup';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 interface Props {
@@ -42,7 +42,7 @@ const NavHeader = ({
 	className,
 	sidedrawer,
 	setSidedrawer,
-	previousRoute,
+	previousRoute
 }: Props) => {
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
@@ -57,7 +57,7 @@ const NavHeader = ({
 		pathname,
 		query,
 		previousRoute,
-		network,
+		network
 	);
 	const isClicked = useRef(false);
 

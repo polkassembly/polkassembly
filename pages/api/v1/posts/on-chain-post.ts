@@ -12,14 +12,14 @@ import {
 	getProposalTypeTitle,
 	getSubsquidProposalType,
 	ProposalType,
-	VoteType,
+	VoteType
 } from '~src/global/proposalType';
 import {
 	GET_PROPOSAL_BY_INDEX_AND_TYPE,
 	GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE,
 	GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
 	GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE,
-	GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE,
+	GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse, IPostHistory } from '~src/types';
@@ -29,7 +29,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import {
 	getTopicFromType,
 	getTopicNameFromTopicId,
-	isTopicIdValid,
+	isTopicIdValid
 } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
@@ -58,18 +58,18 @@ export const getTimeline = (
 	proposals: any,
 	isStatus?: {
 		swap: boolean;
-	},
+	}
 ) => {
 	return (
 		proposals?.map((obj: any) => {
 			const statuses = obj?.statusHistory as { status: string }[];
 			if (obj.type === 'ReferendumV2') {
 				const index = statuses.findIndex(
-					(v) => v.status === 'DecisionDepositPlaced',
+					(v) => v.status === 'DecisionDepositPlaced'
 				);
 				if (index >= 0) {
 					const decidingIndex = statuses.findIndex(
-						(v) => v.status === 'Deciding',
+						(v) => v.status === 'Deciding'
 					);
 					if (decidingIndex >= 0) {
 						const obj = statuses[index];
@@ -86,7 +86,7 @@ export const getTimeline = (
 				hash: obj?.hash,
 				index: obj?.index,
 				statuses,
-				type: obj?.type,
+				type: obj?.type
 			};
 		}) || []
 	);
@@ -139,17 +139,17 @@ export function getDefaultReactionObj(): IReactions {
 	return {
 		'👍': {
 			count: 0,
-			usernames: [],
+			usernames: []
 		},
 		'👎': {
 			count: 0,
-			usernames: [],
-		},
+			usernames: []
+		}
 	};
 }
 
 export function getReactions(
-	reactionsQuerySnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
+	reactionsQuerySnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>
 ): IReactions {
 	const reactions = getDefaultReactionObj();
 	reactionsQuerySnapshot.docs.forEach((doc) => {
@@ -169,7 +169,7 @@ export function getReactions(
 
 export const getTopicFromFirestoreData = (
 	data: any,
-	proposalType: ProposalType,
+	proposalType: ProposalType
 ) => {
 	if (data) {
 		const topic = data.topic;
@@ -179,7 +179,7 @@ export const getTopicFromFirestoreData = (
 			: isTopicIdValid(topic_id)
 			? {
 					id: topic_id,
-					name: getTopicNameFromTopicId(topic_id),
+					name: getTopicNameFromTopicId(topic_id)
 			  }
 			: getTopicFromType(proposalType);
 	}
@@ -200,7 +200,7 @@ interface IParams {
 
 const isDefaultStringExist = (str: string, proposalType: any) => {
 	const firstDefaultStr = `This is a ${getProposalTypeTitle(
-		proposalType as ProposalType,
+		proposalType as ProposalType
 	)}`;
 	const secondDefaultStr =
 		'Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal';
@@ -216,7 +216,7 @@ const getAndSetNewData = async (params: IParams) => {
 	} = {
 		content: '',
 		id: proposalType === ProposalType.TIPS ? id : Number(id),
-		title: '',
+		title: ''
 	};
 
 	if (
@@ -238,15 +238,15 @@ const getAndSetNewData = async (params: IParams) => {
 
 		timeline.forEach((obj) => {
 			const firestorePostType = getFirestoreProposalType(
-				obj.type,
+				obj.type
 			) as ProposalType;
 			const postId = String(obj.index);
 			const postRef = postsByTypeRef(network, firestorePostType).doc(
-				postId,
+				postId
 			);
 			resultDocList.push(postRef);
 			docRefMap[postRef.path] = {
-				ref: postRef,
+				ref: postRef
 			};
 		});
 
@@ -267,7 +267,7 @@ const getAndSetNewData = async (params: IParams) => {
 								data.content &&
 								!isDefaultStringExist(
 									data.content,
-									pathArr.length > 3 ? pathArr[3] : '',
+									pathArr.length > 3 ? pathArr[3] : ''
 								) &&
 								!newData.content
 							) {
@@ -279,7 +279,7 @@ const getAndSetNewData = async (params: IParams) => {
 								newData.proposer_address =
 									getProposerAddressFromFirestorePostData(
 										data,
-										network,
+										network
 									);
 							}
 							if (data.created_at && !newData.created_at) {
@@ -289,7 +289,7 @@ const getAndSetNewData = async (params: IParams) => {
 								newData.topic_id =
 									getTopicFromFirestoreData(
 										data,
-										proposalType,
+										proposalType
 									)?.id || null;
 							}
 							if (data.username && !newData.username) {
@@ -314,7 +314,7 @@ const getAndSetNewData = async (params: IParams) => {
 					} else {
 						docRefMap[path] = {
 							data,
-							ref: result.ref,
+							ref: result.ref
 						};
 					}
 				});
@@ -337,7 +337,7 @@ const getAndSetNewData = async (params: IParams) => {
 									value.data.content &&
 									!isDefaultStringExist(
 										value?.data?.content,
-										pathPostType,
+										pathPostType
 									)
 										? value.data.content
 										: newData.content,
@@ -346,11 +346,11 @@ const getAndSetNewData = async (params: IParams) => {
 									: newData?.title,
 								user_id: newData.user_id
 									? newData.user_id
-									: value.data.user_id,
+									: value.data.user_id
 						  }
 						: {
 								...newData,
-								id: postId,
+								id: postId
 						  };
 					if (pathPostType !== 'tips') {
 						const numPostId = Number(dummyData.id);
@@ -406,7 +406,7 @@ export async function getComments(
 	commentsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>,
 	postDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>,
 	network: string,
-	proposalType: string,
+	proposalType: string
 ): Promise<any[]> {
 	const userIds = new Set<number>();
 	const commentsPromise = commentsSnapshot.docs.map(async (doc) => {
@@ -418,7 +418,7 @@ export async function getComments(
 							...item,
 							created_at: item?.created_at?.toDate
 								? item?.created_at.toDate()
-								: item?.created_at,
+								: item?.created_at
 						};
 				  })
 				: [];
@@ -454,7 +454,7 @@ export async function getComments(
 				spam_users_count: 0,
 				updated_at: getUpdatedAt(data),
 				user_id: data.user_id,
-				username: data.username,
+				username: data.username
 			};
 
 			const replyIds: string[] = [];
@@ -472,7 +472,7 @@ export async function getComments(
 							username,
 							comment_id,
 							content,
-							user_id,
+							user_id
 						} = data;
 						if (id) {
 							replyIds.push(id);
@@ -497,7 +497,7 @@ export async function getComments(
 							spam_users_count: 0,
 							updated_at: getUpdatedAt(data),
 							user_id: user_id,
-							username,
+							username
 						});
 					}
 				}
@@ -525,7 +525,7 @@ export async function getComments(
 										return {
 											...v,
 											spam_users_count:
-												Number(v.spam_users_count) + 1,
+												Number(v.spam_users_count) + 1
 										};
 									}
 									return v;
@@ -541,10 +541,10 @@ export async function getComments(
 					return {
 						...reply,
 						spam_users_count: checkReportThreshold(
-							Number(reply?.spam_users_count),
-						),
+							Number(reply?.spam_users_count)
+						)
 					};
-				}),
+				})
 			};
 		}
 	});
@@ -589,13 +589,13 @@ export async function getComments(
 						userIdToUserMap[data.id] = {
 							is_custom_username:
 								MANUAL_USERNAME_25_CHAR.includes(
-									data.username,
+									data.username
 								) ||
 								data.custom_username ||
 								data.username.length !== 25,
 							proposer:
 								userIdToUserMap?.[data.user_id]?.proposer || '',
-							username: data.username || '',
+							username: data.username || ''
 						};
 					}
 				});
@@ -613,7 +613,7 @@ export async function getComments(
 									?.is_custom_username,
 							proposer: data.address,
 							username:
-								userIdToUserMap?.[data.user_id]?.username || '',
+								userIdToUserMap?.[data.user_id]?.username || ''
 						};
 					}
 				});
@@ -643,7 +643,7 @@ export async function getComments(
 								return {
 									...v,
 									spam_users_count:
-										Number(v.spam_users_count) + 1,
+										Number(v.spam_users_count) + 1
 								};
 							}
 							return v;
@@ -685,14 +685,14 @@ export async function getComments(
 		return {
 			...comment,
 			spam_users_count: checkReportThreshold(
-				Number(comment?.spam_users_count),
-			),
+				Number(comment?.spam_users_count)
+			)
 		};
 	});
 }
 
 export async function getOnChainPost(
-	params: IGetOnChainPostParams,
+	params: IGetOnChainPostParams
 ): Promise<IApiResponse<IPostResponse>> {
 	try {
 		const {
@@ -700,7 +700,7 @@ export async function getOnChainPost(
 			postId,
 			voterAddress,
 			proposalType,
-			isExternalApiCall,
+			isExternalApiCall
 		} = params;
 		const netDocRef = networkDocRef(network);
 
@@ -710,7 +710,7 @@ export async function getOnChainPost(
 			if (!strPostId) {
 				throw apiErrorWithStatusCode(
 					`The Tip hash "${postId} is invalid."`,
-					400,
+					400
 				);
 			}
 		} else if (
@@ -719,7 +719,7 @@ export async function getOnChainPost(
 		) {
 			throw apiErrorWithStatusCode(
 				`The postId "${postId}" is invalid.`,
-				400,
+				400
 			);
 		}
 
@@ -727,25 +727,25 @@ export async function getOnChainPost(
 		if (!isProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(
 				`The proposal type "${proposalType}" is invalid.`,
-				400,
+				400
 			);
 		}
 		const topicFromType = getTopicFromType(proposalType as ProposalType);
 
 		const subsquidProposalType = getSubsquidProposalType(
-			proposalType as any,
+			proposalType as any
 		);
 
 		let postVariables: any =
 			proposalType === ProposalType.ANNOUNCEMENT
 				? {
 						cid: postId,
-						type_eq: subsquidProposalType,
+						type_eq: subsquidProposalType
 				  }
 				: {
 						index_eq: numPostId,
 						type_eq: subsquidProposalType,
-						voter_eq: voterAddress ? String(voterAddress) : '',
+						voter_eq: voterAddress ? String(voterAddress) : ''
 				  };
 
 		let postQuery =
@@ -769,7 +769,7 @@ export async function getOnChainPost(
 		if (proposalType === ProposalType.TIPS) {
 			postVariables = {
 				hash_eq: strPostId,
-				type_eq: subsquidProposalType,
+				type_eq: subsquidProposalType
 			};
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
@@ -777,7 +777,7 @@ export async function getOnChainPost(
 		const subsquidRes = await fetchSubsquid({
 			network,
 			query: postQuery,
-			variables: postVariables,
+			variables: postVariables
 		});
 
 		// Post
@@ -785,7 +785,7 @@ export async function getOnChainPost(
 		if (!isDataExist(subsquidData)) {
 			throw apiErrorWithStatusCode(
 				`The Post with index "${postId}" is not found.`,
-				404,
+				404
 			);
 		}
 
@@ -821,8 +821,8 @@ export async function getOnChainPost(
 				query: GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
 				variables: {
 					index_in: [postData?.parentBountyIndex],
-					limit: 1,
-				},
+					limit: 1
+				}
 			});
 			if (subsquidRes && subsquidRes?.data) {
 				const subsquidData = subsquidRes?.data;
@@ -854,7 +854,7 @@ export async function getOnChainPost(
 						...item,
 						created_at: item?.created_at?.toDate
 							? item?.created_at.toDate()
-							: item?.created_at,
+							: item?.created_at
 					};
 			  })
 			: [];
@@ -911,7 +911,7 @@ export async function getOnChainPost(
 			type:
 				postData?.type || getSubsquidProposalType(proposalType as any),
 			version: postData?.version,
-			vote_threshold: postData?.threshold?.type,
+			vote_threshold: postData?.threshold?.type
 		};
 		// Timeline
 		updatePostTimeline(post, postData);
@@ -924,8 +924,8 @@ export async function getOnChainPost(
 					hash: proposal.hash,
 					index: proposal.index,
 					statusHistory: proposal.statusHistory,
-					type: proposal.type,
-				},
+					type: proposal.type
+				}
 			]);
 			post.timeline = [...proposalTimeline, ...post.timeline];
 		}
@@ -938,8 +938,8 @@ export async function getOnChainPost(
 						hash: announcement.hash,
 						index: announcement.cid,
 						statusHistory: announcement.statusHistory,
-						type: announcement.type,
-					},
+						type: announcement.type
+					}
 				]);
 				post.timeline = [...post.timeline, ...announcementTimeline];
 			}
@@ -979,7 +979,7 @@ export async function getOnChainPost(
 						}
 						return tippers;
 					},
-					[],
+					[]
 				) || [];
 		}
 
@@ -993,14 +993,14 @@ export async function getOnChainPost(
 						}
 						return motion_votes;
 					},
-					[],
+					[]
 				) || [];
 		}
 
 		// Democracy proposals votes TotalCount
 		if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			const numTotalCount = Number(
-				subsquidData?.votesConnection?.totalCount,
+				subsquidData?.votesConnection?.totalCount
 			);
 			post.seconds = isNaN(numTotalCount) ? 0 : numTotalCount;
 		}
@@ -1022,7 +1022,7 @@ export async function getOnChainPost(
 						}
 						return child_bounties;
 					},
-					[],
+					[]
 				) || [];
 		}
 		if (proposalType === ProposalType.CHILD_BOUNTIES) {
@@ -1033,7 +1033,7 @@ export async function getOnChainPost(
 			network,
 			strProposalType.toString() === 'open_gov'
 				? ProposalType.REFERENDUM_V2
-				: strProposalType,
+				: strProposalType
 		).doc(strPostId);
 		const firestorePost = await postDocRef.get();
 		if (firestorePost) {
@@ -1046,7 +1046,7 @@ export async function getOnChainPost(
 					network,
 					proposalType: strProposalType,
 					proposer: post.proposer,
-					timeline: post?.timeline,
+					timeline: post?.timeline
 				});
 			} catch (e) {
 				data = undefined;
@@ -1059,7 +1059,7 @@ export async function getOnChainPost(
 				if (!post.proposer) {
 					post.proposer = getProposerAddressFromFirestorePostData(
 						data,
-						network,
+						network
 					);
 				}
 				post.user_id = data.user_id;
@@ -1072,7 +1072,7 @@ export async function getOnChainPost(
 				if (post_link) {
 					const { id, type } = post_link;
 					const postDocRef = postsByTypeRef(network, type).doc(
-						String(id),
+						String(id)
 					);
 					const postDoc = await postDocRef.get();
 					const postData = postDoc.data();
@@ -1085,7 +1085,7 @@ export async function getOnChainPost(
 						post_link.last_edited_at = getUpdatedAt(postData);
 						post_link.topic = getTopicFromFirestoreData(
 							postData,
-							strProposalType,
+							strProposalType
 						);
 						post_link.username = postData?.username;
 						if (postData?.user_id === post.user_id) {
@@ -1102,10 +1102,10 @@ export async function getOnChainPost(
 										status: 'Created',
 										timestamp: postData?.created_at?.toDate
 											? postData?.created_at?.toDate()
-											: postData?.created_at,
-									},
+											: postData?.created_at
+									}
 								],
-								type: 'Discussions',
+								type: 'Discussions'
 							});
 						}
 					}
@@ -1122,7 +1122,7 @@ export async function getOnChainPost(
 				const res = await getSubSquareContentAndTitle(
 					proposalType,
 					network,
-					numPostId,
+					numPostId
 				);
 				post.content = res.content;
 				post.title = res.title;
@@ -1138,13 +1138,11 @@ export async function getOnChainPost(
 			const commentPromises = post.timeline.map(async (timeline: any) => {
 				const postDocRef = postsByTypeRef(
 					network,
-					getFirestoreProposalType(timeline.type) as ProposalType,
+					getFirestoreProposalType(timeline.type) as ProposalType
 				).doc(
 					String(
-						timeline.type === 'Tip'
-							? timeline.hash
-							: timeline.index,
-					),
+						timeline.type === 'Tip' ? timeline.hash : timeline.index
+					)
 				);
 				const commentsSnapshot = await postDocRef
 					.collection('comments')
@@ -1153,12 +1151,12 @@ export async function getOnChainPost(
 					commentsSnapshot,
 					postDocRef,
 					network,
-					strProposalType,
+					strProposalType
 				);
 				return comments;
 			});
 			const commentPromiseSettledResults = await Promise.allSettled(
-				commentPromises,
+				commentPromises
 			);
 			commentPromiseSettledResults.forEach((result) => {
 				if (
@@ -1177,7 +1175,7 @@ export async function getOnChainPost(
 			if (post.post_link) {
 				const { id, type } = post.post_link;
 				const postDocRef = postsByTypeRef(network, type).doc(
-					String(id),
+					String(id)
 				);
 				const commentsSnapshot = await postDocRef
 					.collection('comments')
@@ -1186,7 +1184,7 @@ export async function getOnChainPost(
 					commentsSnapshot,
 					postDocRef,
 					network,
-					strProposalType,
+					strProposalType
 				);
 			}
 			const commentsSnapshot = await postDocRef
@@ -1196,7 +1194,7 @@ export async function getOnChainPost(
 				commentsSnapshot,
 				postDocRef,
 				network,
-				strProposalType,
+				strProposalType
 			);
 			if (post.comments && Array.isArray(post.comments)) {
 				post.comments = post.comments.concat(comments);
@@ -1216,18 +1214,18 @@ export async function getOnChainPost(
 			network,
 			proposalType,
 			proposalType === ProposalType.TIPS ? strPostId : numPostId,
-			'post',
+			'post'
 		);
 
 		if (!post.content || post.content?.trim().length === 0) {
 			const proposer = post.proposer;
 			if (proposer) {
 				post.content = `This is a ${getProposalTypeTitle(
-					proposalType as ProposalType,
+					proposalType as ProposalType
 				)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 			} else {
 				post.content = `This is a ${getProposalTypeTitle(
-					proposalType as ProposalType,
+					proposalType as ProposalType
 				)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 			}
 		}
@@ -1245,13 +1243,13 @@ export async function getOnChainPost(
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
@@ -1260,7 +1258,7 @@ export const getSpamUsersCount = async (
 	network: string,
 	proposalType: any,
 	postId: string | number,
-	type: 'post' | 'comment',
+	type: 'post' | 'comment'
 ) => {
 	const countQuery = await networkDocRef(network)
 		.collection('reports')
@@ -1290,12 +1288,12 @@ export const checkReportThreshold = (totalUsers?: number) => {
 // expects optional proposalType and postId of proposal
 const handler: NextApiHandler<IPostResponse | { error: string }> = async (
 	req,
-	res,
+	res
 ) => {
 	const {
 		postId = 0,
 		proposalType = ProposalType.DEMOCRACY_PROPOSALS,
-		voterAddress,
+		voterAddress
 	} = req.query;
 
 	// TODO: take proposalType and postId in dynamic pi route
@@ -1308,7 +1306,7 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (
 		network,
 		postId,
 		proposalType,
-		voterAddress,
+		voterAddress
 	});
 
 	if (error || !data) {
@@ -1326,7 +1324,7 @@ export default withErrorHandling(handler);
 export const updatePostTimeline = (post: any, postData: any) => {
 	if (post && postData) {
 		const isStatus = {
-			swap: false,
+			swap: false
 		};
 		if (postData.group && postData.group.proposals) {
 			// Timeline
@@ -1360,10 +1358,10 @@ export const updatePostTimeline = (post: any, postData: any) => {
 						hash: postData?.hash,
 						index: postData?.index || postData?.cid,
 						statusHistory: postData?.statusHistory,
-						type: postData?.type,
-					},
+						type: postData?.type
+					}
 				],
-				isStatus,
+				isStatus
 			);
 		}
 

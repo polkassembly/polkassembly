@@ -14,7 +14,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import {
 	getTopicFromType,
 	getTopicNameFromTopicId,
-	isTopicIdValid,
+	isTopicIdValid
 } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
@@ -29,7 +29,7 @@ interface IGetLatestActivityOffChainPostsParams {
 }
 
 export async function getLatestActivityOffChainPosts(
-	params: IGetLatestActivityOffChainPostsParams,
+	params: IGetLatestActivityOffChainPostsParams
 ): Promise<IApiResponse<ILatestActivityPostsListingResponse>> {
 	try {
 		const { listingLimit, network, proposalType } = params;
@@ -38,7 +38,7 @@ export async function getLatestActivityOffChainPosts(
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(
 				`Invalid listingLimit "${listingLimit}"`,
-				400,
+				400
 			);
 		}
 
@@ -46,13 +46,13 @@ export async function getLatestActivityOffChainPosts(
 		if (!isFirestoreProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(
 				`The off chain proposal type of the name "${proposalType}" does not exist.`,
-				400,
+				400
 			);
 		}
 
 		const postsColRef = postsByTypeRef(
 			network,
-			strProposalType as ProposalType,
+			strProposalType as ProposalType
 		);
 		const postsSnapshotArr = await postsColRef
 			.orderBy('created_at', 'desc')
@@ -90,12 +90,12 @@ export async function getLatestActivityOffChainPosts(
 							: isTopicIdValid(topic_id)
 							? {
 									id: topic_id,
-									name: getTopicNameFromTopicId(topic_id),
+									name: getTopicNameFromTopicId(topic_id)
 							  }
 							: getTopicFromType(ProposalType.DISCUSSIONS),
 						type: proposalType,
 						user_id,
-						username: data?.username,
+						username: data?.username
 					});
 				}
 			}
@@ -112,10 +112,7 @@ export async function getLatestActivityOffChainPosts(
 					.where(
 						'user_id',
 						'in',
-						newIds.slice(
-							i,
-							newIdsLen > i + 30 ? i + 30 : newIdsLen,
-						),
+						newIds.slice(i, newIdsLen > i + 30 ? i + 30 : newIdsLen)
 					)
 					.where('default', '==', true)
 					.get();
@@ -126,7 +123,7 @@ export async function getLatestActivityOffChainPosts(
 							if (v && v.user_id == data.user_id) {
 								return {
 									...v,
-									proposer: data.address,
+									proposer: data.address
 								};
 							}
 							return v;
@@ -142,8 +139,8 @@ export async function getLatestActivityOffChainPosts(
 						'in',
 						newIds.slice(
 							lastIndex,
-							lastIndex === newIdsLen ? newIdsLen + 1 : newIdsLen,
-						),
+							lastIndex === newIdsLen ? newIdsLen + 1 : newIdsLen
+						)
 					)
 					.where('default', '==', true)
 					.get();
@@ -154,7 +151,7 @@ export async function getLatestActivityOffChainPosts(
 							if (v && v.user_id == data.user_id) {
 								return {
 									...v,
-									proposer: data.address,
+									proposer: data.address
 								};
 							}
 							return v;
@@ -167,23 +164,23 @@ export async function getLatestActivityOffChainPosts(
 		posts = await getSpamUsersCountForPosts(
 			network,
 			posts,
-			strProposalType,
+			strProposalType
 		);
 
 		const data: ILatestActivityPostsListingResponse = {
 			count,
-			posts,
+			posts
 		};
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
@@ -193,7 +190,7 @@ const handler: NextApiHandler<
 > = async (req, res) => {
 	const {
 		proposalType = OffChainProposalType.DISCUSSIONS,
-		listingLimit = LISTING_LIMIT,
+		listingLimit = LISTING_LIMIT
 	} = req.query;
 
 	const network = String(req.headers['x-network']);
@@ -203,7 +200,7 @@ const handler: NextApiHandler<
 	const { data, error, status } = await getLatestActivityOffChainPosts({
 		listingLimit,
 		network,
-		proposalType,
+		proposalType
 	});
 
 	if (error || !data) {

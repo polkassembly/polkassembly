@@ -9,7 +9,7 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				poppins: ['var(--font-poppins)'],
+				poppins: ['var(--font-poppins)']
 			},
 			colors: {
 				navBlue: 'var(--navBlue)',
@@ -37,18 +37,18 @@ module.exports = {
 				red_secondary: 'var(--red_secondary)',
 				aye_green: 'var(--aye_green)',
 				nay_red: 'var(--nay_red)',
-				comment_bg: 'var(--comment_bg)',
+				comment_bg: 'var(--comment_bg)'
 			},
 			screens: {
-				xs: '320px',
+				xs: '320px'
 			},
 			borderRadius: {
-				xxl: '0.875rem',
-			},
-		},
+				xxl: '0.875rem'
+			}
+		}
 	},
 	plugins: [],
 	corePlugins: {
-		preflight: false,
-	},
+		preflight: false
+	}
 };

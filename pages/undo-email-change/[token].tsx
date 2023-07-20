@@ -38,7 +38,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 	const handleUndoEmailChange = useCallback(async () => {
 		const { data, error } =
 			await nextApiClientFetch<UndoEmailChangeResponseType>(
-				'api/v1/auth/actions/requestResetPassword',
+				'api/v1/auth/actions/requestResetPassword'
 			);
 		if (error) {
 			console.error('Undo email change error ', error);
@@ -47,7 +47,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 				header: 'Error!',
 				message:
 					'There was an error undoing email change. Please try again.',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 		}
 
@@ -56,7 +56,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 			queueNotification({
 				header: 'Success!',
 				message: data.message,
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 			router.replace('/');
 		}

@@ -5,7 +5,7 @@
 import { CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
 import {
 	DeriveAccountFlags,
-	DeriveAccountRegistration,
+	DeriveAccountRegistration
 } from '@polkadot/api-derive/types';
 import { Tooltip } from 'antd';
 import React from 'react';
@@ -50,18 +50,18 @@ const IdentityBadge = ({
 	address,
 	identity,
 	flags,
-	web3Name,
+	web3Name
 }: Props) => {
 	const judgements = identity?.judgements.filter(
-		([, judgement]): boolean => !judgement.isFeePaid,
+		([, judgement]): boolean => !judgement.isFeePaid
 	);
 	const isGood = judgements?.some(
 		([, judgement]): boolean =>
-			judgement.isKnownGood || judgement.isReasonable,
+			judgement.isKnownGood || judgement.isReasonable
 	);
 	const isBad = judgements?.some(
 		([, judgement]): boolean =>
-			judgement.isErroneous || judgement.isLowQuality,
+			judgement.isErroneous || judgement.isLowQuality
 	);
 
 	const color: 'brown' | 'green' | 'grey' = isGood
@@ -87,7 +87,7 @@ const IdentityBadge = ({
 	);
 
 	const displayJudgements = JSON.stringify(
-		judgements?.map(([, jud]) => jud.toString()),
+		judgements?.map(([, jud]) => jud.toString())
 	);
 	const popupContent = (
 		<StyledPopup>

@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import {
 	getPreimages,
-	IPreimagesListingResponse,
+	IPreimagesListingResponse
 } from 'pages/api/v1/listing/preimages';
 import React, { FC, useEffect } from 'react';
 
@@ -21,12 +21,12 @@ import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
 const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { page = 1 } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 	const { data, error } = await getPreimages({
 		listingLimit: LISTING_LIMIT,
 		network,
-		page,
+		page
 	});
 	return { props: { data, error, network } };
 };
@@ -63,8 +63,8 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 	const onPaginationChange = (page: number) => {
 		router.push({
 			query: {
-				page,
-			},
+				page
+			}
 		});
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};

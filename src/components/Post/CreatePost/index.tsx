@@ -52,7 +52,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 
 		const { data, error } = await nextApiClientFetch<ChangeResponseType>(
 			'api/v1/auth/actions/postSubscribe',
-			{ post_id: postId, proposalType },
+			{ post_id: postId, proposalType }
 		);
 		if (error) console.error('Error subscribing to post', error);
 		if (data?.message) console.log(data.message);
@@ -65,7 +65,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 			queueNotification({
 				header: 'Failed to get end block number. Poll creation failed!',
 				message: 'Failed',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
@@ -76,8 +76,8 @@ const CreatePost = ({ className, proposalType }: Props) => {
 				blockEnd: pollEndBlock,
 				pollType: POLL_TYPE.NORMAL,
 				postId,
-				proposalType,
-			},
+				proposalType
+			}
 		);
 
 		if (apiError) {
@@ -110,8 +110,8 @@ const CreatePost = ({ className, proposalType }: Props) => {
 						tags,
 						title,
 						topicId,
-						userId: currentUser.id,
-					},
+						userId: currentUser.id
+					}
 				);
 
 			if (apiError || !data?.post_id) {
@@ -119,7 +119,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 				queueNotification({
 					header: 'Error',
 					message: 'There was an error creating your post.',
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				console.error(apiError);
 			}
@@ -129,12 +129,12 @@ const CreatePost = ({ className, proposalType }: Props) => {
 				router.push(
 					`/${
 						proposalType === ProposalType.GRANTS ? 'grant' : 'post'
-					}/${postId}`,
+					}/${postId}`
 				);
 				queueNotification({
 					header: 'Thanks for sharing!',
 					message: 'Post created successfully.',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				createSubscription(postId);
 				createPoll(postId);
@@ -235,8 +235,8 @@ const CreatePost = ({ className, proposalType }: Props) => {
 										} else {
 											callback();
 										}
-									},
-								},
+									}
+								}
 							]}
 						>
 							<>

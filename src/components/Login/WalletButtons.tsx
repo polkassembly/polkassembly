@@ -19,7 +19,7 @@ const WalletButtons = ({ onWalletSelect, disabled }: Props) => {
 	const { network } = useNetworkContext();
 	function handleWalletClick(
 		event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-		wallet: Wallet,
+		wallet: Wallet
 	) {
 		event.preventDefault();
 		onWalletSelect(wallet);

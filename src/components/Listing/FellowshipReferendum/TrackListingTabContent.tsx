@@ -11,12 +11,12 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import {
 	ErrorState,
 	LoadingState,
-	PostEmptyState,
+	PostEmptyState
 } from 'src/ui-components/UIStates';
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 interface ITrackListingTabContentProps {

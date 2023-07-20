@@ -14,7 +14,7 @@ import { TOTP } from 'otpauth';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<TokenType | MessageType>,
+	res: NextApiResponse<TokenType | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -45,7 +45,7 @@ async function handler(
 		issuer: 'Polkassembly',
 		label: `${user.id}`,
 		period: 30,
-		secret: user.two_factor_auth?.base32_secret,
+		secret: user.two_factor_auth?.base32_secret
 	});
 
 	const isValidToken =
@@ -59,7 +59,7 @@ async function handler(
 	const newUser2FADetails: IUser2FADetails = {
 		...(user.two_factor_auth || {}),
 		enabled: true,
-		verified: true,
+		verified: true
 	};
 
 	await firestore_db
@@ -75,7 +75,7 @@ async function handler(
 
 	const newUser = {
 		...user,
-		two_factor_auth: newUser2FADetails,
+		two_factor_auth: newUser2FADetails
 	};
 
 	const updatedJWT = await authServiceInstance.getSignedToken(newUser);

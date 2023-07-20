@@ -30,14 +30,14 @@ interface IGetPostsByAddressParams {
 }
 
 export async function getPostsByAddress(
-	params: IGetPostsByAddressParams,
+	params: IGetPostsByAddressParams
 ): Promise<IApiResponse<IProposalsObj>> {
 	try {
 		const { network, proposerAddress } = params;
 		if (!proposerAddress) {
 			throw apiErrorWithStatusCode(
 				`The proposerAddress "${proposerAddress}" is invalid.`,
-				400,
+				400
 			);
 		}
 		const netDocRef = networkDocRef(network);
@@ -47,12 +47,12 @@ export async function getPostsByAddress(
 			network,
 			query: GET_PROPOSALS_BY_PROPOSER_ADDRESS,
 			variables: {
-				proposer_eq: getEncodedAddress(strProposalAddress, network),
-			},
+				proposer_eq: getEncodedAddress(strProposalAddress, network)
+			}
 		});
 		const proposalsObj: IProposalsObj = {
 			democracy: [],
-			treasury: [],
+			treasury: []
 		};
 		const subsquidData = subsquidRes?.data;
 		const postTypesColRef = netDocRef.collection('post_types');
@@ -64,11 +64,11 @@ export async function getPostsByAddress(
 				if (node) {
 					let title = '';
 					const firestoreProposalType = getFirestoreProposalType(
-						node.type,
+						node.type
 					);
 					const key = firestoreProposalType.replace(
 						'_proposals',
-						'',
+						''
 					) as 'democracy' | 'treasury';
 					const proposalDocSnapshot = await postTypesColRef
 						.doc(firestoreProposalType)
@@ -81,7 +81,7 @@ export async function getPostsByAddress(
 					}
 					const newProposal = {
 						...node,
-						title,
+						title
 					};
 					proposalsObj[key].push(newProposal);
 				}
@@ -91,13 +91,13 @@ export async function getPostsByAddress(
 		return {
 			data: JSON.parse(JSON.stringify(proposalsObj)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
@@ -113,14 +113,14 @@ const handler: NextApiHandler<
 		res.status(400).json({ error: 'Invalid network in request header' });
 	const { data, error, status } = await getPostsByAddress({
 		network,
-		proposerAddress,
+		proposerAddress
 	});
 
 	if (error || !data) {
 		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	} else {
 		res.status(status).json({
-			proposals: data,
+			proposals: data
 		});
 	}
 };

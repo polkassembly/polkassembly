@@ -27,14 +27,14 @@ const WalletButtons = dynamic(() => import('./WalletButtons'), {
 			<Skeleton className="mt-8" active />
 		</div>
 	),
-	ssr: false,
+	ssr: false
 });
 
 const initAuthResponse: IAuthResponse = {
 	isTFAEnabled: false,
 	tfa_token: '',
 	token: '',
-	user_id: 0,
+	user_id: 0
 };
 
 interface Props {
@@ -53,7 +53,7 @@ const Web2Login: FC<Props> = ({
 	setLoginOpen,
 	isModal,
 	setSignupOpen,
-	isDelegation,
+	isDelegation
 }) => {
 	const { username } = validation;
 	const router = useRouter();
@@ -76,7 +76,7 @@ const Web2Login: FC<Props> = ({
 			setLoading(true);
 			const { data, error } = await nextApiClientFetch<IAuthResponse>(
 				'api/v1/auth/actions/login',
-				{ password, username },
+				{ password, username }
 			);
 			if (error || !data) {
 				setError(error || 'Login failed. Please try again later.');
@@ -114,8 +114,8 @@ const Web2Login: FC<Props> = ({
 			{
 				auth_code: String(authCode), //use string for if it starts with 0
 				tfa_token: authResponse.tfa_token,
-				user_id: Number(authResponse.user_id),
-			},
+				user_id: Number(authResponse.user_id)
+			}
 		);
 
 		if (error || !data) {
@@ -204,18 +204,18 @@ const Web2Login: FC<Props> = ({
 									{
 										message:
 											messages.VALIDATION_USERNAME_REQUIRED_ERROR,
-										required: username.required,
+										required: username.required
 									},
 									{
 										max: username.maxLength,
 										message:
-											messages.VALIDATION_USERNAME_MAXLENGTH_ERROR,
+											messages.VALIDATION_USERNAME_MAXLENGTH_ERROR
 									},
 									{
 										message:
 											messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
-										min: username.minLength,
-									},
+										min: username.minLength
+									}
 								]}
 								validateTrigger="onSubmit"
 							>

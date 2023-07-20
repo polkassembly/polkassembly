@@ -52,8 +52,8 @@ const MembersContainer = ({ className }: { className?: string }) => {
 			.then((electionInfo) => {
 				setRunnersup(
 					electionInfo.runnersUp.map(
-						(runner) => runner.toString().split(',')[0],
-					),
+						(runner) => runner.toString().split(',')[0]
+					)
 				);
 			})
 			.catch((error) => setErr(error));

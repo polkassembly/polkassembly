@@ -29,8 +29,8 @@ const OffChainPostsListingContainer: FC<
 	const onPaginationChange = (page: number) => {
 		router.push({
 			query: {
-				page,
-			},
+				page
+			}
 		});
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};

@@ -23,7 +23,7 @@ const UserAvatar = ({ className, id, username, size }: Props) => {
 	const getUserDetails = useCallback(async () => {
 		const { data, error } =
 			await nextApiClientFetch<ProfileDetailsResponse>('api/v1/events', {
-				userId: id,
+				userId: id
 			});
 		if (error || !data) return;
 

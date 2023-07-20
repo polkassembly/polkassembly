@@ -9,7 +9,7 @@ import getPublicKey from './getPublicKey';
 export default function verifySignature(
 	message: string,
 	address: string,
-	signature: string,
+	signature: string
 ): boolean {
 	const publicKey = getPublicKey(address);
 

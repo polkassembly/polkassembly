@@ -14,7 +14,7 @@ interface IFellowshipReferendumVoteInfoProps {
 }
 
 const FellowshipReferendumVoteInfo: FC<IFellowshipReferendumVoteInfoProps> = (
-	props,
+	props
 ) => {
 	const { className, tally, setOpen } = props;
 

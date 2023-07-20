@@ -11,7 +11,7 @@ import messages from '~src/auth/utils/messages';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ChallengeMessage | MessageType>,
+	res: NextApiResponse<ChallengeMessage | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res

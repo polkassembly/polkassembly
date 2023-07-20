@@ -55,7 +55,7 @@ export enum ESocialType {
 	RIOT = 'Riot',
 	TWITTER = 'Twitter',
 	TELEGRAM = 'Telegram',
-	DISCORD = 'Discord',
+	DISCORD = 'Discord'
 }
 
 export interface ISocial {
@@ -177,7 +177,7 @@ export enum PostTypeEnum {
 	REFERENDUM = 'referendum',
 	TECH = 'tech',
 	CHILD_BOUNTY = 'child_bounty',
-	REFERENDA = 'referenda',
+	REFERENDA = 'referenda'
 }
 
 export type PostType = PostTypeEnum;

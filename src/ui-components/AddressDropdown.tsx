@@ -34,10 +34,10 @@ const AddressDropdown = ({
 	isDisabled,
 	onAccountChange,
 	isSwitchButton,
-	setSwitchModalOpen,
+	setSwitchModalOpen
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(
-		defaultAddress || '',
+		defaultAddress || ''
 	);
 	const filteredAccounts = !filterAccounts
 		? accounts
@@ -49,12 +49,12 @@ const AddressDropdown = ({
 		useUserDetailsContext();
 	const substrate_address = getSubstrateAddress(loginAddress);
 	const substrate_addresses = (addresses || []).map((address) =>
-		getSubstrateAddress(address),
+		getSubstrateAddress(address)
 	);
 
 	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
 		const account_substrate_address = getSubstrateAddress(
-			account?.address || '',
+			account?.address || ''
 		);
 		const isConnected =
 			account_substrate_address?.toLowerCase() ===
@@ -83,7 +83,7 @@ const AddressDropdown = ({
 					extensionName={account.name}
 					address={account.address}
 				/>
-			),
+			)
 		});
 
 		if (account.address && account.name) {
@@ -104,7 +104,7 @@ const AddressDropdown = ({
 						Switch Wallet
 					</Button>
 				</div>
-			),
+			)
 		});
 	return (
 		<Dropdown
@@ -121,11 +121,11 @@ const AddressDropdown = ({
 							setUserDetailsContextState((prev) => {
 								return {
 									...prev,
-									delegationDashboardAddress: e.key,
+									delegationDashboardAddress: e.key
 								};
 							});
 					}
-				},
+				}
 			}}
 		>
 			<div className="flex justify-between items-center ">
@@ -137,8 +137,8 @@ const AddressDropdown = ({
 						filteredAccounts.find(
 							(account) =>
 								account.address === selectedAddress ||
-								account.address === defaultAddress,
-						),
+								account.address === defaultAddress
+						)
 					)}
 					className="flex items-center flex-1"
 					otherTextClassName="ml-auto"

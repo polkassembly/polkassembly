@@ -50,7 +50,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		reactionData = {
 			...reactionDoc.data(),
 			reaction,
-			updated_at: new Date(),
+			updated_at: new Date()
 		};
 	} else {
 		reactionDoc = postRef.collection('post_reactions').doc();
@@ -61,7 +61,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			reaction,
 			updated_at: new Date(),
 			user_id: user.id,
-			username: user.username,
+			username: user.username
 		};
 	}
 

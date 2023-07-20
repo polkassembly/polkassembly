@@ -5,7 +5,7 @@
 import { CheckOutlined } from '@ant-design/icons';
 import {
 	InjectedAccount,
-	InjectedAccountWithMeta,
+	InjectedAccountWithMeta
 } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
@@ -40,7 +40,7 @@ const MetamaskSignup: FC<Props> = ({
 	setDisplayWeb2,
 	isModal,
 	setSignupOpen,
-	setLoginOpen,
+	setLoginOpen
 }) => {
 	const [error, setErr] = useState('');
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -74,7 +74,7 @@ const MetamaskSignup: FC<Props> = ({
 		try {
 			await addEthereumChain({
 				ethereum,
-				network,
+				network
 			});
 		} catch (error) {
 			setErr(error?.message || 'Something went wrong');
@@ -83,7 +83,7 @@ const MetamaskSignup: FC<Props> = ({
 		}
 
 		let addresses = await ethereum.request({
-			method: 'eth_requestAccounts',
+			method: 'eth_requestAccounts'
 		});
 		addresses = addresses.map((address: string) => address);
 
@@ -100,12 +100,12 @@ const MetamaskSignup: FC<Props> = ({
 					meta: {
 						genesisHash: null,
 						name: 'metamask',
-						source: 'metamask',
-					},
+						source: 'metamask'
+					}
 				};
 
 				return account;
-			}),
+			})
 		);
 
 		if (addresses.length > 0) {
@@ -118,13 +118,13 @@ const MetamaskSignup: FC<Props> = ({
 	const onAccountChange = (address: string) => setAddress(address);
 
 	const handleSignup: (
-		values: React.BaseSyntheticEvent<object, any, any> | undefined,
+		values: React.BaseSyntheticEvent<object, any, any> | undefined
 	) => void = async () => {
 		try {
 			setLoading(true);
 			const { data, error } = await nextApiClientFetch<ChallengeMessage>(
 				'api/v1/auth/actions/addressSignupStart',
-				{ address },
+				{ address }
 			);
 			if (error || !data) {
 				setErr(error || 'Something went wrong');
@@ -149,7 +149,7 @@ const MetamaskSignup: FC<Props> = ({
 				{
 					from,
 					method,
-					params,
+					params
 				},
 				async (err: any, result: any) => {
 					if (err) {
@@ -164,8 +164,8 @@ const MetamaskSignup: FC<Props> = ({
 							{
 								address,
 								signature: result.result,
-								wallet: Wallet.METAMASK,
-							},
+								wallet: Wallet.METAMASK
+							}
 						);
 
 					if (confirmError || !confirmData) {
@@ -188,7 +188,7 @@ const MetamaskSignup: FC<Props> = ({
 					} else {
 						throw new Error('Web3 Login failed');
 					}
-				},
+				}
 			);
 		} catch (error) {
 			console.log(error);

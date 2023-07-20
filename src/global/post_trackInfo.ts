@@ -27,16 +27,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: 333333332,
-				},
+					yOffset: 333333332
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.WHITELISTED_CALLER]: {
 			trackId: 1,
@@ -53,16 +53,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 270899180,
 					xOffset: 389830523,
-					yOffset: 305084738,
-				},
+					yOffset: 305084738
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 8650766,
 					xOffset: 18867926,
-					yOffset: 41509433,
-				},
-			},
+					yOffset: 41509433
+				}
+			}
 		},
 		[PostOrigin.STAKING_ADMIN]: {
 			trackId: 10,
@@ -79,16 +79,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.TREASURER]: {
 			trackId: 11,
@@ -105,16 +105,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: 333333332,
-				},
+					yOffset: 333333332
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.LEASE_ADMIN]: {
 			trackId: 12,
@@ -131,16 +131,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.FELLOWSHIP_ADMIN]: {
 			trackId: 13,
@@ -158,16 +158,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.GENERAL_ADMIN]: {
 			trackId: 14,
@@ -184,16 +184,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: 333333332,
-				},
+					yOffset: 333333332
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 49586777,
 					xOffset: 90909091,
-					yOffset: -45454546,
-				},
-			},
+					yOffset: -45454546
+				}
+			}
 		},
 		[PostOrigin.AUCTION_ADMIN]: {
 			trackId: 15,
@@ -210,16 +210,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: 333333332,
-				},
+					yOffset: 333333332
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 49586777,
 					xOffset: 90909091,
-					yOffset: -45454546,
-				},
-			},
+					yOffset: -45454546
+				}
+			}
 		},
 		[PostOrigin.REFERENDUM_CANCELLER]: {
 			trackId: 20,
@@ -236,16 +236,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.REFERENDUM_KILLER]: {
 			trackId: 21,
@@ -262,16 +262,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.SMALL_TIPPER]: {
 			trackId: 30,
@@ -289,16 +289,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 357142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 1620729,
 					xOffset: 3231018,
-					yOffset: -1615509,
-				},
-			},
+					yOffset: -1615509
+				}
+			}
 		},
 		[PostOrigin.BIG_TIPPER]: {
 			trackId: 31,
@@ -316,16 +316,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 357142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 4149097,
 					xOffset: 8230453,
-					yOffset: -4115227,
-				},
-			},
+					yOffset: -4115227
+				}
+			}
 		},
 		[PostOrigin.SMALL_SPENDER]: {
 			trackId: 32,
@@ -343,16 +343,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.MEDIUM_SPENDER]: {
 			trackId: 33,
@@ -370,16 +370,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 821428571,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 14377233,
 					xOffset: 27972031,
-					yOffset: -13986016,
-				},
-			},
+					yOffset: -13986016
+				}
+			}
 		},
 		[PostOrigin.BIG_SPENDER]: {
 			trackId: 34,
@@ -397,16 +397,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 28326977,
 					xOffset: 53763445,
-					yOffset: -26881723,
-				},
-			},
+					yOffset: -26881723
+				}
+			}
 		},
 		[PostOrigin.CANDIDATES]: {
 			fellowshipOrigin: true,
@@ -424,16 +424,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.MEMBERS]: {
 			fellowshipOrigin: true,
@@ -451,16 +451,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.PROFICIENTS]: {
 			fellowshipOrigin: true,
@@ -478,16 +478,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.FELLOWS]: {
 			fellowshipOrigin: true,
@@ -505,16 +505,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.SENIOR_FELLOWS]: {
 			fellowshipOrigin: true,
@@ -532,16 +532,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.EXPERTS]: {
 			fellowshipOrigin: true,
@@ -559,16 +559,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.SENIOR_EXPERTS]: {
 			fellowshipOrigin: true,
@@ -586,16 +586,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.MASTERS]: {
 			fellowshipOrigin: true,
@@ -613,16 +613,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.SENIOR_MASTERS]: {
 			fellowshipOrigin: true,
@@ -640,16 +640,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.GRAND_MASTERS]: {
 			fellowshipOrigin: true,
@@ -667,17 +667,17 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
-		},
+					ceil: 500000000
+				}
+			}
+		}
 	},
 	polkadot: {
 		[PostOrigin.ROOT]: {
@@ -695,16 +695,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: 333333332,
-				},
+					yOffset: 333333332
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.WHITELISTED_CALLER]: {
 			trackId: 1,
@@ -722,16 +722,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 270899180,
 					xOffset: 389830523,
-					yOffset: 305084738,
-				},
+					yOffset: 305084738
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 8650766,
 					xOffset: 18867926,
-					yOffset: 41509433,
-				},
-			},
+					yOffset: 41509433
+				}
+			}
 		},
 		[PostOrigin.STAKING_ADMIN]: {
 			trackId: 10,
@@ -748,16 +748,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.TREASURER]: {
 			trackId: 11,
@@ -775,16 +775,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: 333333332,
-				},
+					yOffset: 333333332
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.LEASE_ADMIN]: {
 			trackId: 12,
@@ -801,16 +801,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.FELLOWSHIP_ADMIN]: {
 			trackId: 13,
@@ -828,16 +828,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.GENERAL_ADMIN]: {
 			trackId: 14,
@@ -854,16 +854,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: 333333332,
-				},
+					yOffset: 333333332
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 49586777,
 					xOffset: 90909091,
-					yOffset: -45454546,
-				},
-			},
+					yOffset: -45454546
+				}
+			}
 		},
 		[PostOrigin.AUCTION_ADMIN]: {
 			trackId: 15,
@@ -880,16 +880,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: 333333332,
-				},
+					yOffset: 333333332
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 49586777,
 					xOffset: 90909091,
-					yOffset: -45454546,
-				},
-			},
+					yOffset: -45454546
+				}
+			}
 		},
 		[PostOrigin.REFERENDUM_CANCELLER]: {
 			trackId: 20,
@@ -906,16 +906,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.REFERENDUM_KILLER]: {
 			trackId: 21,
@@ -932,16 +932,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.SMALL_TIPPER]: {
 			trackId: 30,
@@ -959,16 +959,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 357142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 1620729,
 					xOffset: 3231018,
-					yOffset: -1615509,
-				},
-			},
+					yOffset: -1615509
+				}
+			}
 		},
 		[PostOrigin.BIG_TIPPER]: {
 			trackId: 31,
@@ -986,16 +986,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 357142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 4149097,
 					xOffset: 8230453,
-					yOffset: -4115227,
-				},
-			},
+					yOffset: -4115227
+				}
+			}
 		},
 		[PostOrigin.SMALL_SPENDER]: {
 			trackId: 32,
@@ -1013,16 +1013,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.MEDIUM_SPENDER]: {
 			trackId: 33,
@@ -1040,16 +1040,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 821428571,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 14377233,
 					xOffset: 27972031,
-					yOffset: -13986016,
-				},
-			},
+					yOffset: -13986016
+				}
+			}
 		},
 		[PostOrigin.BIG_SPENDER]: {
 			trackId: 34,
@@ -1067,17 +1067,17 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 28326977,
 					xOffset: 53763445,
-					yOffset: -26881723,
-				},
-			},
-		},
+					yOffset: -26881723
+				}
+			}
+		}
 	},
 	vara: {
 		[PostOrigin.ROOT]: {
@@ -1095,16 +1095,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: 333333332,
-				},
+					yOffset: 333333332
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.WHITELISTED_CALLER]: {
 			trackId: 1,
@@ -1121,16 +1121,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 270899180,
 					xOffset: 389830523,
-					yOffset: 305084738,
-				},
+					yOffset: 305084738
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 8650766,
 					xOffset: 18867926,
-					yOffset: 41509433,
-				},
-			},
+					yOffset: 41509433
+				}
+			}
 		},
 		[PostOrigin.STAKING_ADMIN]: {
 			trackId: 10,
@@ -1147,16 +1147,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.TREASURER]: {
 			trackId: 11,
@@ -1173,16 +1173,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: 333333332,
-				},
+					yOffset: 333333332
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.FELLOWSHIP_ADMIN]: {
 			trackId: 12,
@@ -1200,16 +1200,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.GENERAL_ADMIN]: {
 			trackId: 13,
@@ -1226,16 +1226,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: 333333332,
-				},
+					yOffset: 333333332
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 49586777,
 					xOffset: 90909091,
-					yOffset: -45454546,
-				},
-			},
+					yOffset: -45454546
+				}
+			}
 		},
 		[PostOrigin.REFERENDUM_CANCELLER]: {
 			trackId: 20,
@@ -1252,16 +1252,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.REFERENDUM_KILLER]: {
 			trackId: 21,
@@ -1278,16 +1278,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 607142857,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 7892829,
 					xOffset: 15544040,
-					yOffset: -7772020,
-				},
-			},
+					yOffset: -7772020
+				}
+			}
 		},
 		[PostOrigin.CANDIDATES]: {
 			fellowshipOrigin: true,
@@ -1305,16 +1305,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.FELLOWS]: {
 			fellowshipOrigin: true,
@@ -1332,16 +1332,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.EXPERTS]: {
 			fellowshipOrigin: true,
@@ -1359,16 +1359,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.MASTERS]: {
 			fellowshipOrigin: true,
@@ -1386,17 +1386,17 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
-		},
+					ceil: 500000000
+				}
+			}
+		}
 	},
 	moonbase: {
 		[PostOrigin.ROOT]: {
@@ -1414,16 +1414,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 999999999,
 					xOffset: 999999999,
-					yOffset: 0,
-				},
+					yOffset: 0
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 5000000,
-					ceil: 250000000,
-				},
-			},
+					ceil: 250000000
+				}
+			}
 		},
 		[PostOrigin.WHITELISTED_CALLER]: {
 			trackId: 1,
@@ -1440,16 +1440,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 999999999,
 					xOffset: 999999999,
-					yOffset: 0,
-				},
+					yOffset: 0
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 60061,
 					xOffset: 2994150,
-					yOffset: -59882,
-				},
-			},
+					yOffset: -59882
+				}
+			}
 		},
 		[PostOrigin.GENERAL_ADMIN]: {
 			trackId: 2,
@@ -1466,16 +1466,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 999999999,
 					xOffset: 999999999,
-					yOffset: 0,
-				},
+					yOffset: 0
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: -166666668,
-				},
-			},
+					yOffset: -166666668
+				}
+			}
 		},
 		[PostOrigin.REFERENDUM_CANCELLER]: {
 			trackId: 3,
@@ -1492,16 +1492,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 999999999,
 					xOffset: 999999999,
-					yOffset: 0,
-				},
+					yOffset: 0
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 787400,
 					xOffset: 1572327,
-					yOffset: -786164,
-				},
-			},
+					yOffset: -786164
+				}
+			}
 		},
 		[PostOrigin.REFERENDUM_KILLER]: {
 			trackId: 4,
@@ -1518,17 +1518,17 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 999999999,
 					xOffset: 999999999,
-					yOffset: 0,
-				},
+					yOffset: 0
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 869501,
 					xOffset: 8620680,
-					yOffset: -862069,
-				},
-			},
-		},
+					yOffset: -862069
+				}
+			}
+		}
 	},
 	moonriver: {
 		[PostOrigin.ROOT]: {
@@ -1546,16 +1546,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 999999999,
 					xOffset: 999999999,
-					yOffset: 0,
-				},
+					yOffset: 0
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 5000000,
-					ceil: 250000000,
-				},
-			},
+					ceil: 250000000
+				}
+			}
 		},
 		[PostOrigin.WHITELISTED_CALLER]: {
 			trackId: 1,
@@ -1572,16 +1572,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 999999999,
 					xOffset: 999999999,
-					yOffset: 0,
-				},
+					yOffset: 0
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 60061,
 					xOffset: 2994150,
-					yOffset: -59882,
-				},
-			},
+					yOffset: -59882
+				}
+			}
 		},
 		[PostOrigin.GENERAL_ADMIN]: {
 			trackId: 2,
@@ -1598,16 +1598,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 999999999,
 					xOffset: 999999999,
-					yOffset: 0,
-				},
+					yOffset: 0
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 222222224,
 					xOffset: 333333335,
-					yOffset: -166666668,
-				},
-			},
+					yOffset: -166666668
+				}
+			}
 		},
 		[PostOrigin.REFERENDUM_CANCELLER]: {
 			trackId: 3,
@@ -1624,16 +1624,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 999999999,
 					xOffset: 999999999,
-					yOffset: 0,
-				},
+					yOffset: 0
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 787400,
 					xOffset: 1572327,
-					yOffset: -786164,
-				},
-			},
+					yOffset: -786164
+				}
+			}
 		},
 		[PostOrigin.REFERENDUM_KILLER]: {
 			trackId: 4,
@@ -1650,17 +1650,17 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				reciprocal: {
 					factor: 999999999,
 					xOffset: 999999999,
-					yOffset: 0,
-				},
+					yOffset: 0
+				}
 			},
 			minSupport: {
 				reciprocal: {
 					factor: 869501,
 					xOffset: 8620680,
-					yOffset: -862069,
-				},
-			},
-		},
+					yOffset: -862069
+				}
+			}
+		}
 	},
 	collectives: {
 		[PostOrigin.CANDIDATES]: {
@@ -1679,16 +1679,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.MEMBERS]: {
 			fellowshipOrigin: true,
@@ -1706,16 +1706,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.PROFICIENTS]: {
 			fellowshipOrigin: true,
@@ -1733,16 +1733,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.FELLOWS]: {
 			fellowshipOrigin: true,
@@ -1760,16 +1760,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.SENIOR_FELLOWS]: {
 			fellowshipOrigin: true,
@@ -1787,16 +1787,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.EXPERTS]: {
 			fellowshipOrigin: true,
@@ -1814,16 +1814,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.SENIOR_EXPERTS]: {
 			fellowshipOrigin: true,
@@ -1841,16 +1841,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.MASTERS]: {
 			fellowshipOrigin: true,
@@ -1868,16 +1868,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.SENIOR_MASTERS]: {
 			fellowshipOrigin: true,
@@ -1895,16 +1895,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
+					ceil: 500000000
+				}
+			}
 		},
 		[PostOrigin.GRAND_MASTERS]: {
 			fellowshipOrigin: true,
@@ -1922,16 +1922,16 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 500000000,
-					ceil: 1000000000,
-				},
+					ceil: 1000000000
+				}
 			},
 			minSupport: {
 				linearDecreasing: {
 					length: 1000000000,
 					floor: 0,
-					ceil: 500000000,
-				},
-			},
-		},
-	},
+					ceil: 500000000
+				}
+			}
+		}
+	}
 };

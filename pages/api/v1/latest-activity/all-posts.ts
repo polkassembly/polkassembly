@@ -11,12 +11,12 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import {
 	getFirestoreProposalType,
 	gov1ProposalTypes,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 import {
 	GET_PROPOSALS_LISTING_BY_TYPE,
 	GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
-	GET_ALLIANCE_LATEST_ACTIVITY,
+	GET_ALLIANCE_LATEST_ACTIVITY
 } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -24,7 +24,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import {
 	getTopicFromType,
 	getTopicNameFromTopicId,
-	isTopicIdValid,
+	isTopicIdValid
 } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
@@ -32,7 +32,7 @@ import { ILatestActivityPostsListingResponse } from './on-chain-posts';
 import { firestore_db } from '~src/services/firebaseInit';
 import {
 	chainProperties,
-	network as AllNetworks,
+	network as AllNetworks
 } from '~src/global/networkConstants';
 import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
@@ -43,7 +43,7 @@ interface IGetLatestActivityAllPostsParams {
 }
 
 export async function getLatestActivityAllPosts(
-	params: IGetLatestActivityAllPostsParams,
+	params: IGetLatestActivityAllPostsParams
 ): Promise<IApiResponse<ILatestActivityPostsListingResponse>> {
 	try {
 		const { listingLimit, network, govType } = params;
@@ -52,7 +52,7 @@ export async function getLatestActivityAllPosts(
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(
 				`Invalid listingLimit "${listingLimit}"`,
-				400,
+				400
 			);
 		}
 
@@ -67,7 +67,7 @@ export async function getLatestActivityAllPosts(
 
 		const variables: any = {
 			limit: numListingLimit,
-			type_in: gov1ProposalTypes,
+			type_in: gov1ProposalTypes
 		};
 
 		if (strGovType === 'open_gov') {
@@ -98,7 +98,7 @@ export async function getLatestActivityAllPosts(
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query: GET_ALLIANCE_LATEST_ACTIVITY,
-				variables: { limit: numListingLimit },
+				variables: { limit: numListingLimit }
 			});
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals || [];
@@ -111,13 +111,13 @@ export async function getLatestActivityAllPosts(
 					index,
 					proposer,
 					status,
-					type,
+					type
 				} = subsquidPost;
 				const title = subsquidPost.callData?.method
 					?.split('_')
 					.map(
 						(word: string) =>
-							word.charAt(0).toUpperCase() + word.slice(1),
+							word.charAt(0).toUpperCase() + word.slice(1)
 					)
 					.join(' ');
 				const singlePost = {
@@ -132,25 +132,25 @@ export async function getLatestActivityAllPosts(
 					status: status,
 					title: title || '',
 					track_number: '',
-					type: type,
+					type: type
 				};
 				const postDocRef = postsByTypeRef(
 					network,
-					getFirestoreProposalType(type) as ProposalType,
+					getFirestoreProposalType(type) as ProposalType
 				).doc(String(index));
 				const postDoc = await postDocRef.get();
 				if (postDoc && postDoc.exists) {
 					const data = postDoc?.data();
 					return {
 						...singlePost,
-						title: data?.title || title,
+						title: data?.title || title
 					};
 				}
 				return singlePost;
 			});
 			onChainPosts = await Promise.all(posts);
 			onChainPostsCount = Number(
-				subsquidData?.proposalsConnection?.totalCount || 0,
+				subsquidData?.proposalsConnection?.totalCount || 0
 			);
 		}
 
@@ -162,7 +162,7 @@ export async function getLatestActivityAllPosts(
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query: GET_PROPOSALS_LISTING_BY_TYPE,
-				variables,
+				variables
 			});
 
 			const subsquidData = subsquidRes?.data;
@@ -185,12 +185,12 @@ export async function getLatestActivityAllPosts(
 						description,
 						proposalArguments,
 						parentBountyIndex,
-						group,
+						group
 					} = subsquidPost;
 					const postId = type === 'Tip' ? hash : index;
 					const postDocRef = postsByTypeRef(
 						network,
-						getFirestoreProposalType(type) as ProposalType,
+						getFirestoreProposalType(type) as ProposalType
 					).doc(String(postId));
 					const postDoc = await postDocRef.get();
 					let newProposer = proposer || preimage?.proposer || curator;
@@ -256,7 +256,7 @@ export async function getLatestActivityAllPosts(
 						status: status,
 						title: '',
 						track_number: trackNumber,
-						type,
+						type
 					};
 					if (postDoc && postDoc.exists) {
 						const data = postDoc?.data();
@@ -269,13 +269,13 @@ export async function getLatestActivityAllPosts(
 							const res = await getSubSquareContentAndTitle(
 								getFirestoreProposalType(type) as ProposalType,
 								network,
-								postId,
+								postId
 							);
 							subsquareTitle = res?.title;
 						}
 						return {
 							...onChainPost,
-							title: data?.title || subsquareTitle || null,
+							title: data?.title || subsquareTitle || null
 						};
 					}
 
@@ -283,18 +283,18 @@ export async function getLatestActivityAllPosts(
 					const res = await getSubSquareContentAndTitle(
 						getFirestoreProposalType(type) as ProposalType,
 						network,
-						postId,
+						postId
 					);
 					subsquareTitle = res?.title;
 					onChainPost.title = subsquareTitle;
 
 					return onChainPost;
-				},
+				}
 			);
 
 			onChainPosts = await Promise.all(onChainPostsPromise);
 			onChainPostsCount = Number(
-				subsquidData?.proposalsConnection?.totalCount || 0,
+				subsquidData?.proposalsConnection?.totalCount || 0
 			);
 
 			if (parentBounties.size > 0) {
@@ -303,8 +303,8 @@ export async function getLatestActivityAllPosts(
 					query: GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
 					variables: {
 						index_in: Array.from(parentBounties),
-						limit: parentBounties.size,
-					},
+						limit: parentBounties.size
+					}
 				});
 				if (subsquidRes && subsquidRes?.data) {
 					const subsquidData = subsquidRes?.data;
@@ -330,7 +330,7 @@ export async function getLatestActivityAllPosts(
 											: '');
 								}
 								return {
-									...onChainPost,
+									...onChainPost
 								};
 							});
 						});
@@ -341,7 +341,7 @@ export async function getLatestActivityAllPosts(
 
 		const discussionsPostsColRef = postsByTypeRef(
 			network,
-			ProposalType.DISCUSSIONS,
+			ProposalType.DISCUSSIONS
 		);
 		const postsSnapshotArr = await discussionsPostsColRef
 			.orderBy('created_at', 'desc')
@@ -381,12 +381,12 @@ export async function getLatestActivityAllPosts(
 							: isTopicIdValid(topic_id)
 							? {
 									id: topic_id,
-									name: getTopicNameFromTopicId(topic_id),
+									name: getTopicNameFromTopicId(topic_id)
 							  }
 							: getTopicFromType(ProposalType.DISCUSSIONS),
 						type: 'Discussions',
 						user_id,
-						username: data?.username || '',
+						username: data?.username || ''
 					});
 				}
 			}
@@ -404,10 +404,7 @@ export async function getLatestActivityAllPosts(
 					.where(
 						'user_id',
 						'in',
-						newIds.slice(
-							i,
-							newIdsLen > i + 30 ? i + 30 : newIdsLen,
-						),
+						newIds.slice(i, newIdsLen > i + 30 ? i + 30 : newIdsLen)
 					)
 					.where('default', '==', true)
 					.get();
@@ -418,7 +415,7 @@ export async function getLatestActivityAllPosts(
 							if (v && v.user_id == data.user_id) {
 								return {
 									...v,
-									proposer: data.address,
+									proposer: data.address
 								};
 							}
 							return v;
@@ -434,8 +431,8 @@ export async function getLatestActivityAllPosts(
 						'in',
 						newIds.slice(
 							lastIndex,
-							lastIndex === newIdsLen ? newIdsLen + 1 : newIdsLen,
-						),
+							lastIndex === newIdsLen ? newIdsLen + 1 : newIdsLen
+						)
 					)
 					.where('default', '==', true)
 					.get();
@@ -446,7 +443,7 @@ export async function getLatestActivityAllPosts(
 							if (v && v.user_id == data.user_id) {
 								return {
 									...v,
-									proposer: data.address,
+									proposer: data.address
 								};
 							}
 							return v;
@@ -461,28 +458,28 @@ export async function getLatestActivityAllPosts(
 		deDupedAllPosts.sort(
 			(a, b) =>
 				new Date(b.created_at).getTime() -
-				new Date(a.created_at).getTime(),
+				new Date(a.created_at).getTime()
 		);
 
 		deDupedAllPosts = await getSpamUsersCountForPosts(
 			network,
-			deDupedAllPosts,
+			deDupedAllPosts
 		);
 
 		const data: ILatestActivityPostsListingResponse = {
 			count: onChainPostsCount + offChainPostsCount,
-			posts: deDupedAllPosts.slice(0, numListingLimit),
+			posts: deDupedAllPosts.slice(0, numListingLimit)
 		};
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
@@ -499,7 +496,7 @@ const handler: NextApiHandler<
 	const { data, error, status } = await getLatestActivityAllPosts({
 		govType,
 		listingLimit,
-		network,
+		network
 	});
 
 	if (error || !data) {

@@ -13,7 +13,7 @@ const initialModalContext: ModalContextType = {
 	modal: {},
 	setModal: () => {
 		throw new Error('setModal function must be overridden');
-	},
+	}
 };
 
 export const ModalContext = createContext(initialModalContext);

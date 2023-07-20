@@ -25,7 +25,7 @@ const executeTx = async ({
 	errorMessageFallback,
 	onSuccess,
 	onFailed,
-	onBroadcast,
+	onBroadcast
 }: Props) => {
 	if (!api || !tx) return;
 
@@ -41,10 +41,10 @@ const executeTx = async ({
 			console.log('Transaction is in block');
 		} else if (status.isFinalized) {
 			console.log(
-				`Transaction has been included in blockHash ${status.asFinalized.toHex()}`,
+				`Transaction has been included in blockHash ${status.asFinalized.toHex()}`
 			);
 			console.log(
-				`tx: https://${network}.subscan.io/extrinsic/${txHash}`,
+				`tx: https://${network}.subscan.io/extrinsic/${txHash}`
 			);
 
 			for (const { event } of events) {
@@ -58,7 +58,7 @@ const executeTx = async ({
 						const { method, section, docs } =
 							api.registry.findMetaError(errorModule);
 						errorMessageFallback = `${section}.${method} : ${docs.join(
-							' ',
+							' '
 						)}`;
 						console.log(errorMessageFallback);
 						await onFailed(errorMessageFallback);

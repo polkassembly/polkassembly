@@ -25,7 +25,7 @@ export const dropdownLabel = (wsProvider: string, network: string) => {
 		if (endpointData && endpointData.key == wsProvider) {
 			label = `${endpointData.label?.substring(
 				4,
-				endpointData.label.length,
+				endpointData.label.length
 			)}`;
 			return true;
 		}
@@ -58,11 +58,11 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 						? wsProvider
 						: network
 						? chainProperties?.[network]?.rpcEndpoint
-						: '',
+						: ''
 				],
 				items: rpcEndpoints,
 				onClick: handleEndpointChange,
-				selectable: true,
+				selectable: true
 			}}
 			className={className}
 		>
@@ -74,7 +74,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 							{dropdownLabel(
 								wsProvider ||
 									chainProperties?.[network!]?.rpcEndpoint,
-								network,
+								network
 							)}
 						</span>
 					</div>

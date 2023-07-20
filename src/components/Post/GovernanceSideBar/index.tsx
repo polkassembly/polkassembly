@@ -8,7 +8,7 @@ import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import {
 	Injected,
 	InjectedAccount,
-	InjectedWindow,
+	InjectedWindow
 } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Spin, Tooltip } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
@@ -18,7 +18,7 @@ import {
 	gov2ReferendumStatus,
 	motionStatus,
 	proposalStatus,
-	referendumStatus,
+	referendumStatus
 } from 'src/global/statuses';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
@@ -28,12 +28,12 @@ import {
 	useApiContext,
 	useNetworkContext,
 	usePostDataContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from '~src/context';
 import {
 	ProposalType,
 	VoteType,
-	getSubsquidProposalType,
+	getSubsquidProposalType
 } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
@@ -69,7 +69,7 @@ import AbstainGray from '~assets/icons/abstain-gray.svg';
 import { useCurrentBlock } from '~src/hooks';
 import {
 	IVoteHistory,
-	IVotesHistoryResponse,
+	IVotesHistoryResponse
 } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
@@ -104,12 +104,12 @@ type TOpenGov =
 
 export function getReferendumVotingFinishHeight(
 	timeline: any[],
-	openGovType: TOpenGov,
+	openGovType: TOpenGov
 ) {
 	let height = 0;
 	if (timeline && Array.isArray(timeline) && timeline.length > 0) {
 		const singleTimeline = timeline.find(
-			(item) => item.type === getSubsquidProposalType(openGovType),
+			(item) => item.type === getSubsquidProposalType(openGovType)
 		);
 		if (
 			singleTimeline &&
@@ -123,8 +123,8 @@ export function getReferendumVotingFinishHeight(
 					'TimedOut',
 					'Cancelled',
 					'Killed',
-					'Confirmed',
-				].includes(obj.status),
+					'Confirmed'
+				].includes(obj.status)
 			);
 			if (finishItem && finishItem?.block) {
 				height = finishItem?.block;
@@ -138,7 +138,7 @@ export function checkVotingStart(timeline: any[], openGovType: TOpenGov) {
 	let isVotingStart = false;
 	if (timeline && Array.isArray(timeline) && timeline.length > 0) {
 		const singleTimeline = timeline.find(
-			(item) => item.type === getSubsquidProposalType(openGovType),
+			(item) => item.type === getSubsquidProposalType(openGovType)
 		);
 		if (
 			singleTimeline &&
@@ -146,7 +146,7 @@ export function checkVotingStart(timeline: any[], openGovType: TOpenGov) {
 			Array.isArray(singleTimeline.statuses)
 		) {
 			const finishItem = singleTimeline.statuses.find(
-				(obj: any) => obj.status === 'Deciding',
+				(obj: any) => obj.status === 'Deciding'
 			);
 			if (finishItem) {
 				isVotingStart = true;
@@ -159,7 +159,7 @@ export function checkVotingStart(timeline: any[], openGovType: TOpenGov) {
 export function getDecidingEndPercentage(
 	decisionPeriod: number,
 	decidingSince: number,
-	endHeight: number,
+	endHeight: number
 ) {
 	const gone = endHeight - decidingSince;
 	return Math.min(gone / decisionPeriod, 1);
@@ -172,29 +172,29 @@ export function getTrackFunctions(trackInfo: any) {
 		if (trackInfo.minApproval) {
 			if (trackInfo.minApproval.reciprocal) {
 				approvalCalc = makeReciprocalCurve(
-					trackInfo.minApproval.reciprocal,
+					trackInfo.minApproval.reciprocal
 				);
 			} else if (trackInfo.minApproval.linearDecreasing) {
 				approvalCalc = makeLinearCurve(
-					trackInfo.minApproval.linearDecreasing,
+					trackInfo.minApproval.linearDecreasing
 				);
 			}
 		}
 		if (trackInfo.minSupport) {
 			if (trackInfo.minSupport.reciprocal) {
 				supportCalc = makeReciprocalCurve(
-					trackInfo.minSupport.reciprocal,
+					trackInfo.minSupport.reciprocal
 				);
 			} else if (trackInfo.minSupport.linearDecreasing) {
 				supportCalc = makeLinearCurve(
-					trackInfo.minSupport.linearDecreasing,
+					trackInfo.minSupport.linearDecreasing
 				);
 			}
 		}
 	}
 	return {
 		approvalCalc,
-		supportCalc,
+		supportCalc
 	};
 }
 
@@ -210,7 +210,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		post,
 		toggleEdit,
 		lastVote,
-		setLastVote,
+		setLastVote
 	} = props;
 
 	const { network } = useNetworkContext();
@@ -219,18 +219,18 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { loginAddress, defaultAddress, walletConnectProvider } =
 		useUserDetailsContext();
 	const {
-		postData: { created_at, track_number, post_link },
+		postData: { created_at, track_number, post_link }
 	} = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
 
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>(
-		[],
+		[]
 	);
 	const [extensionNotFound, setExtensionNotFound] = useState(false);
 	const [accountsNotFound, setAccountsNotFound] = useState(false);
 	const [accountsMap, setAccountsMap] = useState<{ [key: string]: string }>(
-		{},
+		{}
 	);
 	const [signersMap, setSignersMap] = useState<{ [key: string]: Signer }>({});
 	const [open, setOpen] = useState(false);
@@ -240,17 +240,17 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [curvesError, setCurvesError] = useState('');
 	const [data, setData] = useState<any>({
 		datasets: [],
-		labels: [],
+		labels: []
 	});
 	const [trackInfo, setTrackInfo] = useState<any>({});
 	const [progress, setProgress] = useState({
 		approval: 0,
 		approvalThreshold: 0,
 		support: 0,
-		supportThreshold: 0,
+		supportThreshold: 0
 	});
 	const [onChainLastVote, setOnChainLastVote] = useState<IVoteHistory | null>(
-		null,
+		null
 	);
 	const [isLastVoteLoading, setIsLastVoteLoading] = useState(true);
 
@@ -264,7 +264,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			gov2ReferendumStatus.SUBMITTED,
 			gov2ReferendumStatus.DECIDING,
 			gov2ReferendumStatus.CONFIRM_STARTED,
-			gov2ReferendumStatus.DECISION_DEPOSIT_PLACED,
+			gov2ReferendumStatus.DECISION_DEPOSIT_PLACED
 		].includes(post.status);
 
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -283,7 +283,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const onAccountChange = (address: string) => setAddress(address);
 
 	const getWalletAccounts = async (
-		chosenWallet: Wallet,
+		chosenWallet: Wallet
 	): Promise<InjectedAccount[] | undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
 
@@ -382,7 +382,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			) {
 				signersMapLocal['polywallet'] = extObj.signer;
 				polywalletJSAccounts = await getWalletAccounts(
-					Wallet.POLYWALLET,
+					Wallet.POLYWALLET
 				);
 			}
 		}
@@ -430,7 +430,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				(account) =>
 					(
 						getSubstrateAddress(account?.address) || ''
-					).toLowerCase() === (substrate_address || '').toLowerCase(),
+					).toLowerCase() === (substrate_address || '').toLowerCase()
 			);
 			if (index >= 0) {
 				const account = accounts[index];
@@ -454,12 +454,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		setIsLastVoteLoading(true);
 		const encoded = getEncodedAddress(
 			address || loginAddress || defaultAddress || '',
-			network,
+			network
 		);
 
 		const { data = null, error } =
 			await nextApiClientFetch<IVotesHistoryResponse>(
-				`api/v1/votes/history?page=${1}&voterAddress=${encoded}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${onchainId}`,
+				`api/v1/votes/history?page=${1}&voterAddress=${encoded}&network=${network}&numListingLimit=${1}&proposalType=${proposalType}&proposalIndex=${onchainId}`
 			);
 		if (error || !data) {
 			console.error('Error in fetching votes history: ', error);
@@ -480,14 +480,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		loginAddress,
 		network,
 		onchainId,
-		proposalType,
+		proposalType
 	]);
 
 	useEffect(() => {
 		if (
 			[
 				ProposalType.OPEN_GOV,
-				ProposalType.FELLOWSHIP_REFERENDUMS,
+				ProposalType.FELLOWSHIP_REFERENDUMS
 			].includes(proposalType)
 		) {
 			if (!api || !apiReady) {
@@ -505,7 +505,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							track &&
 							Array.isArray(track) &&
 							track.length >= 2 &&
-							track[0] === track_number,
+							track[0] === track_number
 					);
 					if (track && Array.isArray(track) && track.length > 1) {
 						const trackInfo = track[1] as any;
@@ -518,7 +518,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							strArr.forEach((str) => {
 								if (str.includes('h')) {
 									decisionPeriodHrs += parseInt(
-										str.replace('h', ''),
+										str.replace('h', '')
 									);
 								} else if (str.includes('d')) {
 									decisionPeriodHrs +=
@@ -544,8 +544,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									x: i,
 									y:
 										supportCalc(
-											i / (decisionPeriodHrs * 60),
-										) * 100,
+											i / (decisionPeriodHrs * 60)
+										) * 100
 								});
 							}
 							if (approvalCalc) {
@@ -553,8 +553,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									x: i,
 									y:
 										approvalCalc(
-											i / (decisionPeriodHrs * 60),
-										) * 100,
+											i / (decisionPeriodHrs * 60)
+										) * 100
 								});
 							}
 						}
@@ -562,8 +562,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							network: network,
 							query: GET_CURVE_DATA_BY_INDEX,
 							variables: {
-								index_eq: Number(onchainId),
-							},
+								index_eq: Number(onchainId)
+							}
 						});
 						if (
 							subsquidRes &&
@@ -578,7 +578,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									graph_points[graph_points.length - 1];
 								const proposalCreatedAt = dayjs(created_at);
 								const decisionPeriodMinutes = dayjs(
-									lastGraphPoint.timestamp,
+									lastGraphPoint.timestamp
 								).diff(proposalCreatedAt, 'minute');
 								if (
 									decisionPeriodMinutes >
@@ -590,11 +590,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								}
 								graph_points?.forEach((graph_point: any) => {
 									const hour = dayjs(
-										graph_point.timestamp,
+										graph_point.timestamp
 									).diff(proposalCreatedAt, 'minute');
 									const new_graph_point = {
 										...graph_point,
-										hour,
+										hour
 									};
 
 									if (
@@ -606,26 +606,24 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 											x: hour,
 											y:
 												approvalCalc(
-													hour /
-														decisionPeriodMinutes,
-												) * 100,
+													hour / decisionPeriodMinutes
+												) * 100
 										});
 										supportData.push({
 											x: hour,
 											y:
 												supportCalc(
-													hour /
-														decisionPeriodMinutes,
-												) * 100,
+													hour / decisionPeriodMinutes
+												) * 100
 										});
 									}
 									currentApprovalData.push({
 										x: hour,
-										y: new_graph_point.approvalPercent,
+										y: new_graph_point.approvalPercent
 									});
 									currentSupportData.push({
 										x: hour,
-										y: new_graph_point.supportPercent,
+										y: new_graph_point.supportPercent
 									});
 									return new_graph_point;
 								});
@@ -641,29 +639,29 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 								setProgress({
 									approval: currentApproval?.y?.toFixed(
-										1,
+										1
 									) as any,
 									approvalThreshold:
 										(approvalData.find(
 											(data) =>
 												data &&
-												data?.x >= currentApproval?.x,
+												data?.x >= currentApproval?.x
 										)?.y as any) || 0,
 									support: currentSupport?.y?.toFixed(
-										1,
+										1
 									) as any,
 									supportThreshold:
 										(supportData.find(
 											(data) =>
 												data &&
-												data?.x >= currentSupport?.x,
-										)?.y as any) || 0,
+												data?.x >= currentSupport?.x
+										)?.y as any) || 0
 								});
 							}
 						} else {
 							setCurvesError(
 								subsquidRes.errors?.[0]?.message ||
-									'Something went wrong.',
+									'Something went wrong.'
 							);
 						}
 						const newData: ChartData<
@@ -680,7 +678,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									pointHitRadius: 10,
 									pointHoverRadius: 5,
 									pointRadius: 0,
-									tension: 0.1,
+									tension: 0.1
 								},
 								{
 									backgroundColor: 'transparent',
@@ -691,7 +689,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									pointHitRadius: 10,
 									pointHoverRadius: 5,
 									pointRadius: 0,
-									tension: 0.1,
+									tension: 0.1
 								},
 								{
 									backgroundColor: 'transparent',
@@ -703,7 +701,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									pointHitRadius: 10,
 									pointHoverRadius: 5,
 									pointRadius: 0,
-									tension: 0.1,
+									tension: 0.1
 								},
 								{
 									backgroundColor: 'transparent',
@@ -715,10 +713,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									pointHitRadius: 10,
 									pointHoverRadius: 5,
 									pointRadius: 0,
-									tension: 0.1,
-								},
+									tension: 0.1
+								}
 							],
-							labels,
+							labels
 						};
 						setData(JSON.parse(JSON.stringify(newData)));
 					}
@@ -734,20 +732,20 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		network,
 		onchainId,
 		proposalType,
-		track_number,
+		track_number
 	]);
 
 	useEffect(() => {
 		if (trackInfo) {
 			const isVotingStart = checkVotingStart(
 				post?.timeline,
-				proposalType as TOpenGov,
+				proposalType as TOpenGov
 			);
 			if (!isVotingStart) {
 				setProgress((prev) => ({
 					...prev,
 					approvalThreshold: 100,
-					supportThreshold: 50,
+					supportThreshold: 50
 				}));
 				return;
 			}
@@ -755,12 +753,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				? currentBlock?.toNumber()
 				: getReferendumVotingFinishHeight(
 						post?.timeline,
-						proposalType as TOpenGov,
+						proposalType as TOpenGov
 				  );
 			const percentage = getDecidingEndPercentage(
 				Number(trackInfo.decisionPeriod || 0),
 				Number(post?.deciding?.since || 0),
-				Number(endHeight || 0),
+				Number(endHeight || 0)
 			);
 			const { approvalCalc, supportCalc } = getTrackFunctions(trackInfo);
 			if (
@@ -773,7 +771,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					return {
 						...prev,
 						approvalThreshold,
-						supportThreshold,
+						supportThreshold
 					};
 				});
 			}
@@ -784,7 +782,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		post?.timeline,
 		proposalType,
 		trackInfo,
-		trackInfo.decisionPeriod,
+		trackInfo.decisionPeriod
 	]);
 
 	useEffect(() => {
@@ -802,7 +800,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const LastVoteInfoOnChain: FC<IVoteHistory> = ({
 		createdAt,
 		decision,
-		lockPeriod,
+		lockPeriod
 	}) => {
 		const unit = `${chainProperties[network]?.tokenSymbol}`;
 		return (
@@ -897,7 +895,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const LastVoteInfoLocalState: FC<ILastVote> = ({
 		balance,
 		conviction,
-		decision,
+		decision
 	}) => {
 		return (
 			<div>
@@ -1119,7 +1117,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						{[
 							ProposalType.OPEN_GOV,
 							ProposalType.FELLOWSHIP_REFERENDUMS,
-							ProposalType.REFERENDUMS,
+							ProposalType.REFERENDUMS
 						].includes(proposalType) && (
 							<>
 								{proposalType === ProposalType.REFERENDUMS ? (
@@ -1129,7 +1127,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 												{[
 													'moonbase',
 													'moonbeam',
-													'moonriver',
+													'moonriver'
 												].includes(network) ? (
 													<>
 														{metaMaskError &&
@@ -1219,7 +1217,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 												{[
 													'moonbase',
 													'moonbeam',
-													'moonriver',
+													'moonriver'
 												].includes(network) ? (
 													<>
 														{metaMaskError &&
@@ -1310,7 +1308,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														<Modal
 															onCancel={() => {
 																setThresholdOpen(
-																	false,
+																	false
 																);
 															}}
 															open={thresholdOpen}

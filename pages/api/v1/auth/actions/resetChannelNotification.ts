@@ -49,8 +49,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		...(userData?.notification_preferences || {}),
 		channelPreferences: {
 			...(userData?.notification_preferences?.channelPreferences || {}),
-			[channel]: {},
-		},
+			[channel]: {}
+		}
 	};
 
 	await userRef

@@ -44,7 +44,7 @@ const columns: ColumnsType<ParachainRowData> = [
 		key: 'index',
 		render: (index) => <div className="text-[#243A57]">#{index}</div>,
 		title: 'Index',
-		width: 75,
+		width: 75
 	},
 	{
 		dataIndex: 'project',
@@ -69,7 +69,7 @@ const columns: ColumnsType<ParachainRowData> = [
 						style={{
 							borderRadius: '48px',
 							marginRight: '10px',
-							padding: '4px 10px',
+							padding: '4px 10px'
 						}}
 					>
 						{item}
@@ -78,7 +78,7 @@ const columns: ColumnsType<ParachainRowData> = [
 			</div>
 		),
 		title: 'Project',
-		width: 420,
+		width: 420
 	},
 	{
 		dataIndex: 'status',
@@ -128,13 +128,13 @@ const columns: ColumnsType<ParachainRowData> = [
 				) : null}
 			</>
 		),
-		title: 'Status',
+		title: 'Status'
 	},
 	{
 		dataIndex: 'token',
 		key: 'token',
 		render: (token) => <div className="text-[#243A57]">{token}</div>,
-		title: 'Token',
+		title: 'Token'
 	},
 	{
 		dataIndex: 'w3fGrant',
@@ -154,15 +154,15 @@ const columns: ColumnsType<ParachainRowData> = [
 				if (w3fGrant) {
 					if (w3fGrant.terminated) {
 						content = toTitleCase(
-							`W3F grant TERMINATED: "${w3fGrant.terminationReason}"`,
+							`W3F grant TERMINATED: "${w3fGrant.terminationReason}"`
 						);
 					} else if (w3fGrant.milestoneText) {
 						content = toTitleCase(
-							`${w3fGrant.received} W3F grant(s) received, ${w3fGrant.milestoneText}`,
+							`${w3fGrant.received} W3F grant(s) received, ${w3fGrant.milestoneText}`
 						);
 					} else {
 						content = toTitleCase(
-							`${w3fGrant.received} received, ${w3fGrant.completed} completed`,
+							`${w3fGrant.received} received, ${w3fGrant.completed} completed`
 						);
 					}
 				} else {
@@ -207,7 +207,7 @@ const columns: ColumnsType<ParachainRowData> = [
 				</>
 			);
 		},
-		title: 'W3F',
+		title: 'W3F'
 	},
 	{
 		dataIndex: 'investors',
@@ -216,7 +216,7 @@ const columns: ColumnsType<ParachainRowData> = [
 			<div className="text-[#243A57]">{!!investors && investors}</div>
 		),
 		title: 'Investors',
-		width: 'auto',
+		width: 'auto'
 	},
 	{
 		dataIndex: 'githubLink',
@@ -231,8 +231,8 @@ const columns: ColumnsType<ParachainRowData> = [
 				/>
 			</a>
 		),
-		title: 'Github',
-	},
+		title: 'Github'
+	}
 ];
 
 const ChainDataTable = ({ chain, data }: Props) => {
@@ -267,7 +267,7 @@ const ChainDataTable = ({ chain, data }: Props) => {
 					project: title,
 					status: item?.status,
 					token: item?.token,
-					w3fGrant: item?.w3fGrant,
+					w3fGrant: item?.w3fGrant
 				};
 
 				tableData.push(tableDataObj);

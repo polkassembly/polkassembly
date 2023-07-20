@@ -18,12 +18,12 @@ export interface IAddressesResponse {
 
 const handler: NextApiHandler<IAddressesResponse | { error: string }> = async (
 	req,
-	res,
+	res
 ) => {
 	const { addresses } = req.body;
 	if (!addresses || !Array.isArray(addresses))
 		return res.status(400).json({
-			error: `addresses ${addresses} must be an array of string.`,
+			error: `addresses ${addresses} must be an array of string.`
 		});
 
 	const docRefList: firestore.DocumentReference<firestore.DocumentData>[] =
@@ -43,7 +43,7 @@ const handler: NextApiHandler<IAddressesResponse | { error: string }> = async (
 				if (data) {
 					addressesData.push({
 						address: data.address,
-						user_id: data.user_id,
+						user_id: data.user_id
 					});
 				}
 			}
@@ -51,7 +51,7 @@ const handler: NextApiHandler<IAddressesResponse | { error: string }> = async (
 	}
 
 	res.status(200).json({
-		addressesData,
+		addressesData
 	});
 };
 

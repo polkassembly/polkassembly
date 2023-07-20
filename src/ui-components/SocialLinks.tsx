@@ -9,7 +9,7 @@ import {
 	EmailIcon,
 	RiotIcon,
 	TelegramIcon,
-	TwitterIcon,
+	TwitterIcon
 } from '~src/ui-components/CustomIcons';
 
 interface ISocialIconProps {

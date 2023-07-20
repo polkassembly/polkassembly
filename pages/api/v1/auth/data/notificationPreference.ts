@@ -11,7 +11,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<NotificationSettings | MessageType>,
+	res: NextApiResponse<NotificationSettings | MessageType>
 ) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network))

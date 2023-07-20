@@ -26,7 +26,7 @@ const SignupPopup = ({
 	setLoginOpen,
 	className,
 	closable,
-	isDelegation,
+	isDelegation
 }: Props) => {
 	const { network } = useNetworkContext();
 	return (

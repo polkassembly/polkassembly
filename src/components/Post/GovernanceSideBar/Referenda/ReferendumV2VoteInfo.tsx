@@ -21,7 +21,7 @@ import {
 	ThresholdGraphIcon,
 	VoteAmountIcon,
 	VoteCalculationIcon,
-	VotingHistoryIcon,
+	VotingHistoryIcon
 } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
 import CloseIcon from 'public/assets/icons/close.svg';
@@ -41,11 +41,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 	className,
 	tally,
 	setOpen,
-	setThresholdOpen,
+	setThresholdOpen
 }) => {
 	const { network } = useNetworkContext();
 	const {
-		postData: { status, postIndex },
+		postData: { status, postIndex }
 	} = usePostDataContext();
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] =
 		useState(false);
@@ -57,7 +57,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 	const [tallyData, setTallyData] = useState({
 		ayes: ZERO || 0,
 		nays: ZERO || 0,
-		support: ZERO || 0,
+		support: ZERO || 0
 	});
 
 	useEffect(() => {
@@ -76,7 +76,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 				'executed',
 				'timedout',
 				'cancelled',
-				'rejected',
+				'rejected'
 			].includes(status.toLowerCase())
 		) {
 			setTallyData({
@@ -88,7 +88,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 					: new BN(tally?.nays || 0),
 				support: String(tally?.support).startsWith('0x')
 					? new BN(tally?.support || 0, 'hex')
-					: new BN(tally?.support || 0),
+					: new BN(tally?.support || 0)
 			});
 			setIsLoading(false);
 			return;
@@ -105,9 +105,9 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 						'string'
 							? new BN(
 									parsedReferendumInfo.ongoing.tally.ayes.slice(
-										2,
+										2
 									),
-									'hex',
+									'hex'
 							  )
 							: new BN(parsedReferendumInfo.ongoing.tally.ayes),
 					nays:
@@ -115,9 +115,9 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 						'string'
 							? new BN(
 									parsedReferendumInfo.ongoing.tally.nays.slice(
-										2,
+										2
 									),
-									'hex',
+									'hex'
 							  )
 							: new BN(parsedReferendumInfo.ongoing.tally.nays),
 					support:
@@ -125,19 +125,17 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 						'string'
 							? new BN(
 									parsedReferendumInfo.ongoing.tally.support.slice(
-										2,
+										2
 									),
-									'hex',
+									'hex'
 							  )
-							: new BN(
-									parsedReferendumInfo.ongoing.tally.support,
-							  ),
+							: new BN(parsedReferendumInfo.ongoing.tally.support)
 				});
 			} else {
 				setTallyData({
 					ayes: new BN(tally?.ayes || 0, 'hex'),
 					nays: new BN(tally?.nays || 0, 'hex'),
-					support: new BN(tally?.support || 0, 'hex'),
+					support: new BN(tally?.support || 0, 'hex')
 				});
 			}
 		})();
@@ -158,14 +156,14 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 						'Approved',
 						'TimedOut',
 						'Cancelled',
-						'Rejected',
+						'Rejected'
 					].includes(status) && (
 						<PassingInfoTag
 							status={status}
 							isPassing={[
 								'Executed',
 								'Confirmed',
-								'Approved',
+								'Approved'
 							].includes(status)}
 						/>
 					)}
@@ -199,11 +197,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 									{
 										numberAfterComma: 2,
 										withThousandDelimitor: false,
-										withUnit: true,
+										withUnit: true
 									},
-									network,
+									network
 								),
-								1,
+								1
 							)}
 						</div>
 					</article>
@@ -220,11 +218,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 									{
 										numberAfterComma: 2,
 										withThousandDelimitor: false,
-										withUnit: true,
+										withUnit: true
 									},
-									network,
+									network
 								),
-								1,
+								1
 							)}
 						</div>
 					</article>
@@ -241,11 +239,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 									{
 										numberAfterComma: 2,
 										withThousandDelimitor: false,
-										withUnit: true,
+										withUnit: true
 									},
-									network,
+									network
 								),
-								1,
+								1
 							)}
 						</div>
 					</article>
@@ -263,11 +261,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 										{
 											numberAfterComma: 2,
 											withThousandDelimitor: false,
-											withUnit: true,
+											withUnit: true
 										},
-										network,
+										network
 									),
-									1,
+									1
 								)}
 							</div>
 						</article>
@@ -311,7 +309,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({
 									<CheckCircleOutlined />
 									Ok!
 								</button>
-							</div>,
+							</div>
 						]}
 						className="md:min-w-[584px]"
 						closeIcon={<CloseIcon />}

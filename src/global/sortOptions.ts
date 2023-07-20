@@ -7,38 +7,38 @@
 export const sortValues = {
 	COMMENTED: 'commented',
 	NEWEST: 'newest',
-	OLDEST: 'oldest',
+	OLDEST: 'oldest'
 };
 
 export const sortOptions = [
 	{
 		key: sortValues.COMMENTED,
-		label: 'Last Commented',
+		label: 'Last Commented'
 	},
 	{
 		key: sortValues.NEWEST,
-		label: 'Date Added (Newest)',
+		label: 'Date Added (Newest)'
 	},
 	{
 		key: sortValues.OLDEST,
-		label: 'Date Added (Oldest)',
-	},
+		label: 'Date Added (Oldest)'
+	}
 ];
 
 export const votesSortValues = {
 	BALANCE: 'balance',
-	TIME: 'time',
+	TIME: 'time'
 };
 
 export const votesSortOptions = [
 	{
 		key: votesSortValues.TIME,
-		label: 'Time',
+		label: 'Time'
 	},
 	{
 		key: votesSortValues.BALANCE,
-		label: 'Balance',
-	},
+		label: 'Balance'
+	}
 ];
 
 export const isVotesSortOptionsValid = (str: string) => {

@@ -15,7 +15,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ChallengeMessage | MessageType>,
+	res: NextApiResponse<ChallengeMessage | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -77,7 +77,7 @@ async function handler(
 		public_key: '',
 		sign_message,
 		user_id: user.id,
-		verified: false,
+		verified: false
 	};
 
 	await firestore
@@ -87,7 +87,7 @@ async function handler(
 		.then(() => {
 			return res.status(200).json({
 				message: messages.ADDRESS_LINKING_STARTED,
-				signMessage: sign_message,
+				signMessage: sign_message
 			});
 		})
 		.catch((error) => {

@@ -22,7 +22,7 @@ export const relaySpecs: Record<string, string> = {
 	kusama: WellKnownChain.ksmcc3,
 	polkadot: WellKnownChain.polkadot,
 	rococo: WellKnownChain.rococo_v2_2,
-	westend: WellKnownChain.westend2,
+	westend: WellKnownChain.westend2
 };
 
 export interface ApiContextType {
@@ -36,7 +36,7 @@ export interface ApiContextType {
 }
 
 export const ApiContext: React.Context<ApiContextType> = React.createContext(
-	{} as ApiContextType,
+	{} as ApiContextType
 );
 
 export interface ApiContextProviderProps {
@@ -45,7 +45,7 @@ export interface ApiContextProviderProps {
 }
 
 export function ApiContextProvider(
-	props: ApiContextProviderProps,
+	props: ApiContextProviderProps
 ): React.ReactElement {
 	const { children = null } = props;
 	const [api, setApi] = useState<ApiPromise>();
@@ -54,7 +54,7 @@ export function ApiContextProvider(
 	const [relayApiReady, setRelayApiReady] = useState(false);
 	const [isApiLoading, setIsApiLoading] = useState(false);
 	const [wsProvider, setWsProvider] = useState<string>(
-		props.network ? chainProperties?.[props.network]?.rpcEndpoint : '',
+		props.network ? chainProperties?.[props.network]?.rpcEndpoint : ''
 	);
 	const [lightProvider, setLightProvider] = useState<any>('');
 
@@ -67,10 +67,10 @@ export function ApiContextProvider(
 				ApiPromise.create({
 					provider: new WsProvider(
 						(property.relayRpcEndpoints || []).map(
-							(endpoint) => endpoint.key,
-						),
+							(endpoint) => endpoint.key
+						)
 					),
-					typesBundle,
+					typesBundle
 				})
 					.then((api) => setRelayApi(api))
 					.catch(console.error);
@@ -101,7 +101,7 @@ export function ApiContextProvider(
 			setLightProvider(provider);
 		} else {
 			provider = new WsProvider(
-				wsProvider || chainProperties?.[props.network!]?.rpcEndpoint,
+				wsProvider || chainProperties?.[props.network!]?.rpcEndpoint
 			);
 		}
 		setApiReady(false);
@@ -110,7 +110,7 @@ export function ApiContextProvider(
 		if (props.network == 'genshiro') {
 			api = new ApiPromise({
 				provider,
-				typesBundle: typesBundleGenshiro,
+				typesBundle: typesBundleGenshiro
 			});
 		}
 		if (props.network == 'crust') {
@@ -119,7 +119,7 @@ export function ApiContextProvider(
 		if (props.network == 'equilibrium') {
 			api = new ApiPromise({
 				provider,
-				typesBundle: typesBundleEquilibrium,
+				typesBundle: typesBundleEquilibrium
 			});
 		}
 		if (props.network == 'kilt') {
@@ -149,14 +149,14 @@ export function ApiContextProvider(
 				queueNotification({
 					header: 'Error!',
 					message: 'RPC connection Timeout.',
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');
 				if (props.network) {
 					setWsProvider(
-						chainProperties?.[props.network]?.rpcEndpoint,
+						chainProperties?.[props.network]?.rpcEndpoint
 					);
 				}
 			}, 60000);
@@ -166,9 +166,9 @@ export function ApiContextProvider(
 					header: 'Error!',
 					message: `${dropdownLabel(
 						wsProvider,
-						props.network || '',
+						props.network || ''
 					)} is not responding, please change RPC.`,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				setIsApiLoading(false);
 				await api.disconnect();
@@ -178,7 +178,7 @@ export function ApiContextProvider(
 				localStorage.removeItem('tracks');
 				if (props.network) {
 					setWsProvider(
-						chainProperties?.[props.network]?.rpcEndpoint,
+						chainProperties?.[props.network]?.rpcEndpoint
 					);
 				}
 			});
@@ -194,13 +194,13 @@ export function ApiContextProvider(
 								api.consts.fellowshipReferenda.tracks.toJSON();
 							localStorage.setItem(
 								'tracks',
-								JSON.stringify(value),
+								JSON.stringify(value)
 							);
 						} else if (isOpenGovSupported(props.network || '')) {
 							const value = api.consts.referenda.tracks.toJSON();
 							localStorage.setItem(
 								'tracks',
-								JSON.stringify(value),
+								JSON.stringify(value)
 							);
 						} else {
 							localStorage.removeItem('tracks');
@@ -214,7 +214,7 @@ export function ApiContextProvider(
 					queueNotification({
 						header: 'Error!',
 						message: 'RPC connection error.',
-						status: NotificationStatus.ERROR,
+						status: NotificationStatus.ERROR
 					});
 					setIsApiLoading(false);
 					await api.disconnect();
@@ -225,7 +225,7 @@ export function ApiContextProvider(
 					localStorage.removeItem('tracks');
 					if (props.network) {
 						setWsProvider(
-							chainProperties?.[props.network]?.rpcEndpoint,
+							chainProperties?.[props.network]?.rpcEndpoint
 						);
 					}
 				});
@@ -243,7 +243,7 @@ export function ApiContextProvider(
 				relayApi,
 				relayApiReady,
 				setWsProvider,
-				wsProvider,
+				wsProvider
 			}}
 		>
 			{children}

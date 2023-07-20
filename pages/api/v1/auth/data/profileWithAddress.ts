@@ -25,7 +25,7 @@ export interface IGetProfileWithAddressResponse {
 }
 
 export async function getProfileWithAddress(
-	params: IGetProfileWithAddress,
+	params: IGetProfileWithAddress
 ): Promise<IApiResponse<IGetProfileWithAddressResponse>> {
 	try {
 		const { address } = params;
@@ -43,7 +43,7 @@ export async function getProfileWithAddress(
 		if (!addressDoc.exists) {
 			throw apiErrorWithStatusCode(
 				`No user found with the address '${address}'.`,
-				404,
+				404
 			);
 		}
 
@@ -54,42 +54,42 @@ export async function getProfileWithAddress(
 		if (!userDoc.exists) {
 			throw apiErrorWithStatusCode(
 				`No user found with the address '${address}'.`,
-				404,
+				404
 			);
 		}
 		const userData = userDoc.data() as User;
 		const profile = userData.profile as ProfileDetails;
 		const data: IGetProfileWithAddressResponse = {
 			created_at: dayjs(
-				(userData.created_at as any)?.toDate?.() || userData.created_at,
+				(userData.created_at as any)?.toDate?.() || userData.created_at
 			).toDate(),
 			custom_username: userData.custom_username || false,
 			profile,
 			username: userData.username || '',
-			web3Signup: userData.web3_signup,
+			web3Signup: userData.web3_signup
 		};
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<IGetProfileWithAddressResponse | MessageType>,
+	res: NextApiResponse<IGetProfileWithAddressResponse | MessageType>
 ) {
 	const { address } = req.query;
 
 	const { data, error, status } = await getProfileWithAddress({
-		address,
+		address
 	});
 
 	if (error || !data) {

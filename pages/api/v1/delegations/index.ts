@@ -22,7 +22,7 @@ export interface ITrackDelegation {
 export const getDelegationDashboardData = async (
 	address: string,
 	network: string,
-	trackNum?: number,
+	trackNum?: number
 ) => {
 	if (!address || !network || !isOpenGovSupported(network)) return [];
 
@@ -39,13 +39,13 @@ export const getDelegationDashboardData = async (
 			query: ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK,
 			variables: {
 				address: String(address),
-				track_eq: trackInfo.trackId,
-			},
+				track_eq: trackInfo.trackId
+			}
 		});
 	});
 
 	const subsquidResults = await Promise.allSettled(
-		Object.values(subsquidFetches),
+		Object.values(subsquidFetches)
 	);
 
 	const result: ITrackDelegation[] = [];
@@ -66,7 +66,7 @@ export const getDelegationDashboardData = async (
 			delegations: votingDelegationsArr,
 			recieved_delegation_count: 0,
 			status: [],
-			track: Number(track),
+			track: Number(track)
 		};
 
 		// undelegated
@@ -82,32 +82,32 @@ export const getDelegationDashboardData = async (
 			if (votingDelegation.from === address) {
 				if (
 					!trackDelegation.status.includes(
-						ETrackDelegationStatus.Delegated,
+						ETrackDelegationStatus.Delegated
 					)
 				)
 					trackDelegation.status.push(
-						ETrackDelegationStatus.Delegated,
+						ETrackDelegationStatus.Delegated
 					);
 			} else {
 				if (
 					!trackDelegation.status.includes(
-						ETrackDelegationStatus.Received_Delegation,
+						ETrackDelegationStatus.Received_Delegation
 					)
 				)
 					trackDelegation.status.push(
-						ETrackDelegationStatus.Received_Delegation,
+						ETrackDelegationStatus.Received_Delegation
 					);
 			}
 		}
 
 		if (
 			trackDelegation.status.includes(
-				ETrackDelegationStatus.Received_Delegation,
+				ETrackDelegationStatus.Received_Delegation
 			)
 		) {
 			trackDelegation.recieved_delegation_count =
 				votingDelegationsArr.filter(
-					(delegation) => delegation.from !== address,
+					(delegation) => delegation.from !== address
 				).length;
 		}
 
@@ -119,7 +119,7 @@ export const getDelegationDashboardData = async (
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ITrackDelegation[] | { error: string }>,
+	res: NextApiResponse<ITrackDelegation[] | { error: string }>
 ) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network))
@@ -142,7 +142,7 @@ async function handler(
 	const result = await getDelegationDashboardData(
 		String(address),
 		network,
-		!isNaN(trackNum) ? trackNum : undefined,
+		!isNaN(trackNum) ? trackNum : undefined
 	);
 	return res.status(200).json(result as ITrackDelegation[]);
 }

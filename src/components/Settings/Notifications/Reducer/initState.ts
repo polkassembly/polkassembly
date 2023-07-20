@@ -10,20 +10,20 @@ const myProposal = [
 		label: 'Comments on my posts',
 		triggerName: 'newCommentAdded',
 		triggerPreferencesName: 'commentsOnMyPosts',
-		value: 'Comments on my posts',
+		value: 'Comments on my posts'
 	},
 	{
 		label: 'Own proposal Created',
 		triggerName: 'ownProposalCreated',
 		triggerPreferencesName: 'ownProposalCreated',
-		value: 'Own proposal Created',
+		value: 'Own proposal Created'
 	},
 	{
 		label: 'Mentions',
 		triggerName: 'newMention',
 		triggerPreferencesName: 'newMention',
-		value: 'Mentions',
-	},
+		value: 'Mentions'
+	}
 ];
 
 const subscribePost = [
@@ -31,12 +31,12 @@ const subscribePost = [
 		label: 'Comments on subscribed posts',
 		triggerName: 'newCommentAdded',
 		triggerPreferencesName: 'commentsOnSubscribedPosts',
-		value: 'Comments on subscribed posts',
-	},
+		value: 'Comments on subscribed posts'
+	}
 ];
 export const notificationInitialState = (network: string) => ({
 	gov1Post: allGov1,
 	myProposal,
 	openGov: getOpenGov(network),
-	subscribePost,
+	subscribePost
 });

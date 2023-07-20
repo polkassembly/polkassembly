@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import {
 	getOnChainPost,
-	IPostResponse,
+	IPostResponse
 } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
 import { PostCategory } from 'src/global/post_categories';
@@ -30,14 +30,14 @@ import { useState } from 'react';
 
 const Post = dynamic(() => import('src/components/Post/Post'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 const proposalType = ProposalType.DEMOCRACY_PROPOSALS;
 
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { id } = query;
 
@@ -45,7 +45,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,
-		proposalType,
+		proposalType
 	});
 	const comments = await getSubSquareComments(proposalType, network, id);
 	const post = data && { ...data, comments: [...data.comments, ...comments] };
@@ -79,7 +79,7 @@ const ProposalPost: FC<IProposalPostProps> = (props) => {
 		}
 		(async () => {
 			setIsUnFinalized(
-				Boolean(await checkIsOnChain(String(id), proposalType, api)),
+				Boolean(await checkIsOnChain(String(id), proposalType, api))
 			);
 		})();
 	}, [api, apiReady, error, status, id]);

@@ -9,7 +9,7 @@ export const networkDocRef = (networkName: string) =>
 	firestore_db.collection('networks').doc(networkName);
 export const postsByTypeRef = (
 	networkName: string,
-	proposalType: ProposalType,
+	proposalType: ProposalType
 ) =>
 	networkDocRef(networkName)
 		.collection('post_types')

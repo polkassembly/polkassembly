@@ -29,7 +29,7 @@ const Modal = ({
 	onConfirm,
 	onCancel,
 	footer,
-	children,
+	children
 }: Props) => {
 	return (
 		<StyledModal

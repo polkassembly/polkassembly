@@ -40,14 +40,14 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 
 			const { data, error } = await nextApiClientFetch<MessageType>(
 				'api/v1/auth/actions/deleteAccount',
-				{ password: formData?.password },
+				{ password: formData?.password }
 			);
 			if (error) {
 				setError(cleanError(error));
 				queueNotification({
 					header: 'Failed!',
 					message: cleanError(error),
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				console.error('Delete account error', error);
 			}
@@ -120,7 +120,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								className="rounded-lg font-semibold text-lg leading-7 text-white py-5 outline-none border-none px-7 inline-flex items-center justify-center bg-pink_primary"
 							>
 								Cancel
-							</Button>,
+							</Button>
 						]}
 						className={className}
 					>

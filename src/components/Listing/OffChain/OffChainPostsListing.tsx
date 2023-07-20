@@ -8,7 +8,7 @@ import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import {
 	getSinglePostLinkFromProposalType,
-	OffChainProposalType,
+	OffChainProposalType
 } from '~src/global/proposalType';
 
 import OffChainCard from './OffChainCard';
@@ -23,7 +23,7 @@ interface IOffChainPostsListingProps {
 const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({
 	className,
 	posts,
-	proposalType,
+	proposalType
 }) => {
 	if (!posts || !posts.length) {
 		return (
@@ -39,7 +39,7 @@ const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({
 				<div key={post.post_id}>
 					<Link
 						href={`/${getSinglePostLinkFromProposalType(
-							proposalType,
+							proposalType
 						)}/${post.post_id}`}
 					>
 						<OffChainCard

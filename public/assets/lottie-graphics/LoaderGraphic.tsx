@@ -22,7 +22,7 @@ function LoaderGraphic({ width = 200 }: Props): ReactElement {
 					position: 'absolute',
 					top: '50%',
 					transform: 'translate(-50%, -50%)',
-					width: width,
+					width: width
 				}}
 				play={true}
 			/>

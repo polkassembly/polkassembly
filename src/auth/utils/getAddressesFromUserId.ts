@@ -8,7 +8,7 @@ import { Address } from '../types';
 
 export default async function getAddressesFromUserId(
 	userId: number,
-	verified?: boolean,
+	verified?: boolean
 ): Promise<Address[]> {
 	const addressesQuery = verified
 		? firebaseAdmin
@@ -24,7 +24,7 @@ export default async function getAddressesFromUserId(
 	const addressesQuerySnapshot = await addressesQuery.get();
 
 	const addresses = addressesQuerySnapshot.docs.map(
-		(doc) => doc.data() as Address,
+		(doc) => doc.data() as Address
 	);
 
 	return addresses;

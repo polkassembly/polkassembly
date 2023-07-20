@@ -30,7 +30,7 @@ interface IHistoryData extends IPostHistory {
 }
 enum EExpandType {
 	Expanded = 'expanded',
-	ExpandedContent = 'expandedContent',
+	ExpandedContent = 'expandedContent'
 }
 
 const PostHistoryModal = ({
@@ -40,7 +40,7 @@ const PostHistoryModal = ({
 	history,
 	defaultAddress,
 	username,
-	user_id,
+	user_id
 }: Props) => {
 	const [historyData, setHistoryData] = useState<IHistoryData[]>([]);
 
@@ -98,7 +98,7 @@ const PostHistoryModal = ({
 								<div>
 									{diffChars(
 										historyData[index + 1]?.title,
-										item?.title,
+										item?.title
 									)?.map((text, idx) => (
 										<span
 											key={idx}
@@ -147,7 +147,7 @@ const PostHistoryModal = ({
 					id={user_id || 0}
 				/>
 			),
-			key: index,
+			key: index
 		};
 	});
 
@@ -159,7 +159,7 @@ const PostHistoryModal = ({
 						return {
 							...item,
 							expanded: !item?.expanded,
-							expandedContent: false,
+							expandedContent: false
 						};
 					}
 					return { ...item, expanded: !item?.expanded };
@@ -177,7 +177,7 @@ const PostHistoryModal = ({
 		setHistoryData(
 			history.map((item, index) => {
 				return index === 0 ? { ...item, expanded: true } : item;
-			}),
+			})
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open]);
@@ -187,23 +187,23 @@ const PostHistoryModal = ({
 
 		Array.from(
 			document.querySelectorAll(
-				'.post-history-timeline .ant-timeline-item-tail',
-			),
+				'.post-history-timeline .ant-timeline-item-tail'
+			)
 		)?.map((element, index) =>
 			element.addEventListener('click', () =>
-				handleExpand(index, EExpandType.Expanded),
-			),
+				handleExpand(index, EExpandType.Expanded)
+			)
 		);
 
 		return () => {
 			Array.from(
 				document.querySelectorAll(
-					'.post-history-timeline .ant-timeline-item-tail',
-				),
+					'.post-history-timeline .ant-timeline-item-tail'
+				)
 			)?.map((element, index) =>
 				element.removeEventListener('click', () =>
-					handleExpand(index, EExpandType.Expanded),
-				),
+					handleExpand(index, EExpandType.Expanded)
+				)
 			);
 		};
 

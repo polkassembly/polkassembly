@@ -8,17 +8,17 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import {
 	isProposalTypeValid,
 	isTrackNoValid,
-	isValidNetwork,
+	isValidNetwork
 } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import {
 	getSubsquidProposalType,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 import {
 	GET_PROPOSALS_LISTING_BY_TYPE,
-	GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES,
+	GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES
 } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -40,7 +40,7 @@ interface IGetLatestActivityOnChainPostsParams {
 }
 
 export async function getLatestActivityOnChainPosts(
-	params: IGetLatestActivityOnChainPostsParams,
+	params: IGetLatestActivityOnChainPostsParams
 ): Promise<IApiResponse<ILatestActivityPostsListingResponse>> {
 	try {
 		const { network, proposalType, trackNo, listingLimit } = params;
@@ -49,7 +49,7 @@ export async function getLatestActivityOnChainPosts(
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(
 				`Invalid listingLimit "${listingLimit}"`,
-				400,
+				400
 			);
 		}
 
@@ -57,7 +57,7 @@ export async function getLatestActivityOnChainPosts(
 		if (!isProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(
 				`The proposal type of the name "${proposalType}" does not exist.`,
-				400,
+				400
 			);
 		}
 
@@ -66,24 +66,24 @@ export async function getLatestActivityOnChainPosts(
 			if (!isTrackNoValid(numTrackNo, network)) {
 				throw apiErrorWithStatusCode(
 					`The OpenGov trackNo "${trackNo}" is invalid.`,
-					400,
+					400
 				);
 			}
 		}
 		const subsquidProposalType = getSubsquidProposalType(
-			proposalType as any,
+			proposalType as any
 		);
 
 		const postsVariables: any = {
 			limit: numListingLimit,
-			type_in: subsquidProposalType,
+			type_in: subsquidProposalType
 		};
 
 		if (
 			proposalType &&
 			[
 				ProposalType.OPEN_GOV.toString(),
-				ProposalType.FELLOWSHIP_REFERENDUMS.toString(),
+				ProposalType.FELLOWSHIP_REFERENDUMS.toString()
 			].includes(strProposalType)
 		) {
 			postsVariables.trackNumber_in = [numTrackNo];
@@ -97,7 +97,7 @@ export async function getLatestActivityOnChainPosts(
 		const subsquidRes = await fetchSubsquid({
 			network,
 			query: query,
-			variables: postsVariables,
+			variables: postsVariables
 		});
 
 		const subsquidData = subsquidRes?.data;
@@ -116,7 +116,7 @@ export async function getLatestActivityOnChainPosts(
 				origin,
 				trackNumber,
 				group,
-				description,
+				description
 			} = subsquidPost;
 			let otherPostProposer = '';
 			if (group?.proposals?.length) {
@@ -144,7 +144,7 @@ export async function getLatestActivityOnChainPosts(
 			const postId = proposalType === ProposalType.TIPS ? hash : index;
 			const postDocRef = postsByTypeRef(
 				network,
-				strProposalType as ProposalType,
+				strProposalType as ProposalType
 			).doc(String(postId));
 			const postDoc = await postDocRef.get();
 			if (postDoc && postDoc.exists) {
@@ -159,7 +159,7 @@ export async function getLatestActivityOnChainPosts(
 						const res = await getSubSquareContentAndTitle(
 							strProposalType as ProposalType,
 							network,
-							postId,
+							postId
 						);
 						subsquareTitle = res?.title;
 					}
@@ -178,7 +178,7 @@ export async function getLatestActivityOnChainPosts(
 						status: status,
 						title: data?.title || subsquareTitle,
 						track_number: trackNumber,
-						type,
+						type
 					};
 				}
 			}
@@ -187,7 +187,7 @@ export async function getLatestActivityOnChainPosts(
 			const res = await getSubSquareContentAndTitle(
 				strProposalType as ProposalType,
 				network,
-				postId,
+				postId
 			);
 			subsquareTitle = res?.title;
 
@@ -206,7 +206,7 @@ export async function getLatestActivityOnChainPosts(
 				status: status,
 				title: subsquareTitle,
 				track_number: trackNumber,
-				type,
+				type
 			};
 		});
 
@@ -221,23 +221,23 @@ export async function getLatestActivityOnChainPosts(
 		posts = await getSpamUsersCountForPosts(
 			network,
 			posts,
-			strProposalType,
+			strProposalType
 		);
 
 		const data: ILatestActivityPostsListingResponse = {
 			count: Number(subsquidData?.proposalsConnection.totalCount),
-			posts,
+			posts
 		};
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
@@ -248,7 +248,7 @@ const handler: NextApiHandler<
 	const {
 		trackNo,
 		proposalType = ProposalType.DEMOCRACY_PROPOSALS,
-		listingLimit = LISTING_LIMIT,
+		listingLimit = LISTING_LIMIT
 	} = req.query;
 
 	const network = String(req.headers['x-network']);
@@ -259,7 +259,7 @@ const handler: NextApiHandler<
 		listingLimit,
 		network,
 		proposalType,
-		trackNo,
+		trackNo
 	});
 
 	if (error || !data) {

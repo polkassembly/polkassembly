@@ -21,7 +21,7 @@ const CreatePost = dynamic(() => import('~src/components/Post/CreatePost'), {
 			<Skeleton.Button className="mt-8" active />
 		</div>
 	),
-	ssr: false,
+	ssr: false
 });
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {

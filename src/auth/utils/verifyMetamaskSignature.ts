@@ -8,11 +8,11 @@ const sigUtil = require('eth-sig-util');
 export const verifyMetamaskSignature = (
 	message: string,
 	address: string,
-	signature: string,
+	signature: string
 ): boolean => {
 	const msgParams = {
 		data: message,
-		sig: signature,
+		sig: signature
 	};
 	const recovered = sigUtil.recoverPersonalSignature(msgParams);
 

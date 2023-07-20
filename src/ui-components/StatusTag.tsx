@@ -14,7 +14,7 @@ import {
 	proposalStatus,
 	referendumStatus,
 	tipStatus,
-	tipStatusMap,
+	tipStatusMap
 } from 'src/global/statuses';
 import styled from 'styled-components';
 
@@ -32,7 +32,7 @@ const StatusTag = ({
 	content,
 	status,
 	colorInverted,
-	type,
+	type
 }: Props) => {
 	if (content && type === 'Tip' && tipStatusMap[content]) {
 		content = tipStatusMap[content];
@@ -59,7 +59,7 @@ const StatusTag = ({
 
 export default styled(StatusTag).attrs(({ status }: Props) => ({
 	className: status,
-	content: status,
+	content: status
 }))`
 	max-width: min-content;
 

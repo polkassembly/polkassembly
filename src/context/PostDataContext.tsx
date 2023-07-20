@@ -68,7 +68,7 @@ export interface IPostDataContext {
 }
 
 export const PostDataContext: React.Context<IPostDataContext> = createContext(
-	{} as IPostDataContext,
+	{} as IPostDataContext
 );
 
 const PostDataContextProvider: FC<IPostDataContextProviderProps> = (props) => {
@@ -76,8 +76,8 @@ const PostDataContextProvider: FC<IPostDataContextProviderProps> = (props) => {
 	const [postData, setPostData] = useState(
 		initialPostData || {
 			postIndex: '',
-			postType: ProposalType.DISCUSSIONS,
-		},
+			postType: ProposalType.DISCUSSIONS
+		}
 	);
 
 	return (

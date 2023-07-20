@@ -5,7 +5,7 @@
 export enum EMentionType {
 	COMMENT = 'comment',
 	REPLY = 'reply',
-	POST = 'post',
+	POST = 'post'
 }
 export interface INotificationObject {
 	[index: string]: {

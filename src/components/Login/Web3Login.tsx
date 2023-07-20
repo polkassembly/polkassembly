@@ -7,7 +7,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import {
 	Injected,
 	InjectedAccount,
-	InjectedWindow,
+	InjectedWindow
 } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
@@ -46,7 +46,7 @@ const initAuthResponse: IAuthResponse = {
 	isTFAEnabled: false,
 	tfa_token: '',
 	token: '',
-	user_id: 0,
+	user_id: 0
 };
 
 const Web3Login: FC<Props> = ({
@@ -56,7 +56,7 @@ const Web3Login: FC<Props> = ({
 	isModal,
 	setLoginOpen,
 	setSignupOpen,
-	onWalletUpdate,
+	onWalletUpdate
 }) => {
 	const { network } = useNetworkContext();
 
@@ -129,12 +129,12 @@ const Web3Login: FC<Props> = ({
 				'Pending authorisation request already exists for this site. Please accept or reject the request.'
 			) {
 				setWalletError(
-					'Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.',
+					'Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.'
 				);
 				handleToggle();
 			} else if (err?.message == 'Wallet Timeout') {
 				setWalletError(
-					'Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.',
+					'Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.'
 				);
 				handleToggle();
 			}
@@ -169,7 +169,7 @@ const Web3Login: FC<Props> = ({
 	const onAccountChange = (address: string) => setAddress(address);
 
 	const handleLogin: (
-		values: React.BaseSyntheticEvent<object, any, any> | undefined,
+		values: React.BaseSyntheticEvent<object, any, any> | undefined
 	) => void = async () => {
 		if (!accounts.length) return getAccounts(chosenWallet);
 
@@ -208,7 +208,7 @@ const Web3Login: FC<Props> = ({
 			const { data: loginStartData, error: loginStartError } =
 				await nextApiClientFetch<ChallengeMessage>(
 					'api/v1/auth/actions/addressLoginStart',
-					{ address: substrate_address, wallet: chosenWallet },
+					{ address: substrate_address, wallet: chosenWallet }
 				);
 			if (loginStartError) {
 				console.log('Error in address login start', loginStartError);
@@ -225,7 +225,7 @@ const Web3Login: FC<Props> = ({
 			const { signature } = await signRaw({
 				address: substrate_address,
 				data: stringToHex(signMessage),
-				type: 'bytes',
+				type: 'bytes'
 			});
 
 			const { data: addressLoginData, error: addressLoginError } =
@@ -234,8 +234,8 @@ const Web3Login: FC<Props> = ({
 					{
 						address: substrate_address,
 						signature,
-						wallet: chosenWallet,
-					},
+						wallet: chosenWallet
+					}
 				);
 			if (addressLoginError) {
 				setError(addressLoginError);
@@ -250,7 +250,7 @@ const Web3Login: FC<Props> = ({
 						const { data, error } =
 							await nextApiClientFetch<ChallengeMessage>(
 								'api/v1/auth/actions/addressSignupStart',
-								{ address: substrate_address },
+								{ address: substrate_address }
 							);
 						if (error || !data) {
 							setError(error || 'Something went wrong');
@@ -268,7 +268,7 @@ const Web3Login: FC<Props> = ({
 						const { signature } = await signRaw({
 							address: substrate_address,
 							data: stringToHex(signMessage),
-							type: 'bytes',
+							type: 'bytes'
 						});
 
 						const { data: confirmData, error: confirmError } =
@@ -277,8 +277,8 @@ const Web3Login: FC<Props> = ({
 								{
 									address: substrate_address,
 									signature: signature,
-									wallet: chosenWallet,
-								},
+									wallet: chosenWallet
+								}
 							);
 
 						if (confirmError || !confirmData) {
@@ -293,11 +293,11 @@ const Web3Login: FC<Props> = ({
 							currentUser.delegationDashboardAddress = address;
 							localStorage.setItem(
 								'delegationWallet',
-								chosenWallet,
+								chosenWallet
 							);
 							localStorage.setItem(
 								'delegationDashboardAddress',
-								address,
+								address
 							);
 							localStorage.setItem('loginWallet', chosenWallet);
 							handleTokenChange(confirmData.token, currentUser);
@@ -363,8 +363,8 @@ const Web3Login: FC<Props> = ({
 				login_address: address,
 				login_wallet: chosenWallet,
 				tfa_token: authResponse.tfa_token,
-				user_id: Number(authResponse.user_id),
-			},
+				user_id: Number(authResponse.user_id)
+			}
 		);
 
 		if (error || !data) {

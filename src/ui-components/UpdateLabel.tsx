@@ -18,7 +18,7 @@ const UpdateLabel = ({
 	className,
 	created_at,
 	updated_at,
-	isHistory,
+	isHistory
 }: Props) => {
 	if (!updated_at) return null;
 	const defaultTime = 'a few minutes ago';

@@ -13,7 +13,7 @@ export const gov2Routes = [
 	'referenda',
 	'fellowship',
 	'member-referenda',
-	'delegation',
+	'delegation'
 ];
 
 for (const trackName of Object.keys(networkTrackInfo.kusama)) {
@@ -21,7 +21,7 @@ for (const trackName of Object.keys(networkTrackInfo.kusama)) {
 		trackName
 			.split(/(?=[A-Z])/)
 			.join('-')
-			.toLowerCase(),
+			.toLowerCase()
 	);
 }
 
@@ -29,7 +29,7 @@ export default function checkGov2Route(
 	pathname: string,
 	query?: ParsedUrlQuery,
 	prevRoute?: string,
-	network?: string,
+	network?: string
 ): boolean {
 	if (network === 'collectives') {
 		return false;

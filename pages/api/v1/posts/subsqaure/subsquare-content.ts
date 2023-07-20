@@ -15,11 +15,11 @@ const urlMapper = {
 		`https://${network}.subsquare.io/api/motions/${id}`,
 	[ProposalType.DEMOCRACY_PROPOSALS]: (
 		id: number | string,
-		network: string,
+		network: string
 	) => `https://${network}.subsquare.io/api/democracy/proposals/${id}`,
 	[ProposalType.FELLOWSHIP_REFERENDUMS]: (
 		id: number | string,
-		network: string,
+		network: string
 	) => `https://${network}.subsquare.io/api/fellowship/referenda/${id}`,
 	[ProposalType.REFERENDUMS]: (id: number | string, network: string) =>
 		`https://${network}.subsquare.io/api/democracy/referendums/${id}`,
@@ -27,18 +27,18 @@ const urlMapper = {
 		`https://${network}.subsquare.io/api/gov2/referendums/${id}`,
 	[ProposalType.TECH_COMMITTEE_PROPOSALS]: (
 		id: number | string,
-		network: string,
+		network: string
 	) => `https://${network}.subsquare.io/api/tech-comm/motions/${id}`,
 	[ProposalType.TIPS]: (id: number | string, network: string) =>
 		`https://${network}.subsquare.io/api/treasury/tips/${id}`,
 	[ProposalType.TREASURY_PROPOSALS]: (id: number | string, network: string) =>
-		`https://${network}.subsquare.io/api/treasury/proposals/${id}`,
+		`https://${network}.subsquare.io/api/treasury/proposals/${id}`
 };
 
 export const getSubSquareContentAndTitle = async (
 	proposalType: string | string[],
 	network: string,
-	id: number | string,
+	id: number | string
 ) => {
 	try {
 		if (!proposalType) {
@@ -47,7 +47,7 @@ export const getSubSquareContentAndTitle = async (
 		if (typeof proposalType !== 'string') {
 			throw apiErrorWithStatusCode(
 				'can not send String[] in Proposal type',
-				400,
+				400
 			);
 		}
 
@@ -69,10 +69,7 @@ export const getSubSquareContentAndTitle = async (
 		}
 		const postId = ProposalType.TIPS !== proposalType ? Number(id) : id;
 		const url = new URL(
-			urlMapper[proposalType as keyof typeof urlMapper]?.(
-				postId,
-				network,
-			),
+			urlMapper[proposalType as keyof typeof urlMapper]?.(postId, network)
 		);
 		const data = await (await fetch(url)).json();
 
@@ -87,14 +84,14 @@ export const getSubSquareContentAndTitle = async (
 			subsqTitle.includes('[Root] Referendum #')
 				? (subsqTitle = subsqTitle.replace(
 						/\[Root\] Referendum #\d+: /,
-						'',
+						''
 				  ))
 				: '';
 		}
 
 		const subsquareData = {
 			content: data?.content || '',
-			title: subsqTitle,
+			title: subsqTitle
 		};
 		return subsquareData;
 	} catch (error) {
@@ -116,7 +113,7 @@ const handler: NextApiHandler<
 	const data = await getSubSquareContentAndTitle(
 		proposalType as string,
 		network,
-		String(id),
+		String(id)
 	);
 
 	res.status(200).json({ data });

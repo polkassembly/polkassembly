@@ -22,13 +22,13 @@ const PollComponent = ({ postId, canEdit, proposalType }: Props) => {
 	const [error, setError] = useState('');
 	const {
 		postData: { polls },
-		setPostData,
+		setPostData
 	} = usePostDataContext();
 
 	const getPolls = useCallback(async () => {
 		const { data: fetchData, error: fetchError } =
 			await nextApiClientFetch<IPollsResponse>(
-				`api/v1/polls?postId=${postId}&pollType=${POLL_TYPE.NORMAL}&proposalType=${proposalType}`,
+				`api/v1/polls?postId=${postId}&pollType=${POLL_TYPE.NORMAL}&proposalType=${proposalType}`
 			);
 
 		if (fetchError) {
@@ -41,7 +41,7 @@ const PollComponent = ({ postId, canEdit, proposalType }: Props) => {
 			setPostData((prev) => {
 				return {
 					...prev,
-					polls: fetchData.polls,
+					polls: fetchData.polls
 				};
 			});
 		}

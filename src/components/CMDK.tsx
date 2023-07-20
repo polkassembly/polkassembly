@@ -7,7 +7,7 @@ import 'react-cmdk/dist/cmdk.css';
 import CommandPalette, {
 	filterItems,
 	getItemIndex,
-	useHandleOpenCommandPalette,
+	useHandleOpenCommandPalette
 } from 'react-cmdk';
 import React, { useMemo, useState } from 'react';
 import DemocracyProposalsSVG from '~assets/sidebar/democracy_proposals.svg';
@@ -44,7 +44,7 @@ const CMDK = () => {
 	if (isLoggedOut()) {
 		if (homeMenus && Array.isArray(homeMenus) && homeMenus.length > 0) {
 			const index = homeMenus?.[0]?.items?.findIndex(
-				(item) => item?.value === 'settings',
+				(item) => item?.value === 'settings'
 			);
 			if (index >= 0) {
 				homeMenus[0].items.splice(index, 1);
@@ -52,7 +52,7 @@ const CMDK = () => {
 		}
 	}
 	const foldedMenu = homeMenus.filter(
-		(menu: any) => menu.name && menu.items.length,
+		(menu: any) => menu.name && menu.items.length
 	);
 
 	const pages = useMemo(() => {
@@ -67,17 +67,17 @@ const CMDK = () => {
 								children: i.name,
 								href: i.pathname,
 								icon: () => i.icon,
-								id: m.name + '-' + i.name + `-${idx}`,
+								id: m.name + '-' + i.name + `-${idx}`
 							};
-						}),
-					},
+						})
+					}
 				],
-				search,
+				search
 			);
 			return {
 				filteredItems,
 				id: m.name,
-				searchPrefix: [m.name.toLowerCase()],
+				searchPrefix: [m.name.toLowerCase()]
 			};
 		});
 
@@ -92,7 +92,7 @@ const CMDK = () => {
 									children: i.name,
 									href: i.pathname,
 									icon: () => i.icon,
-									id: i.name,
+									id: i.name
 								};
 							}),
 							...foldedMenu.map((m: any) => {
@@ -123,18 +123,18 @@ const CMDK = () => {
 									onClick() {
 										setSearch('');
 										setPage(m.name);
-									},
+									}
 								};
-							}),
-						],
+							})
+						]
 					},
 					...(search
 						? subPageItems.map((i) => i.filteredItems).flat()
-						: []),
+						: [])
 				],
-				search,
+				search
 			),
-			id: 'home',
+			id: 'home'
 		};
 		return [homepageItem, ...subPageItems];
 	}, [foldedMenu, search]);
@@ -165,7 +165,7 @@ const CMDK = () => {
 											key={id}
 											index={getItemIndex(
 												page.filteredItems,
-												id,
+												id
 											)}
 											{...rest}
 										/>
@@ -190,33 +190,33 @@ const commonMenus = {
 			icon: <OverviewSVG />,
 			name: 'Overview',
 			pathname: '/',
-			value: 'overview',
+			value: 'overview'
 		},
 		{
 			icon: <SettingOutlined />,
 			name: 'Settings',
 			pathname: '/settings',
-			value: 'settings',
+			value: 'settings'
 		},
 		{
 			icon: <CalendarSVG />,
 			name: 'Calendar',
 			pathname: '/calendar',
-			value: 'calendar',
+			value: 'calendar'
 		},
 		{
 			icon: <DiscussionsSVG />,
 			name: 'Discussions',
 			pathname: '/discussions',
-			value: 'discussions',
+			value: 'discussions'
 		},
 		{
 			icon: <ParachainsSVG />,
 			name: 'Parachains',
 			pathname: '/parachains',
-			value: 'parachains',
-		},
-	],
+			value: 'parachains'
+		}
+	]
 };
 
 const democracy = {
@@ -225,16 +225,16 @@ const democracy = {
 			icon: <DemocracyProposalsSVG />,
 			name: 'Democracy',
 			pathname: '/proposals',
-			value: 'democracyProposals',
+			value: 'democracyProposals'
 		},
 		{
 			icon: <ReferendaSVG />,
 			name: 'Referenda',
 			pathname: '/referenda',
-			value: 'referenda',
-		},
+			value: 'referenda'
+		}
 	],
-	name: 'DEMOCRACY',
+	name: 'DEMOCRACY'
 };
 
 const treasury = {
@@ -243,28 +243,28 @@ const treasury = {
 			icon: <TreasuryProposalsSVG />,
 			name: 'Treasury',
 			pathname: '/treasury-proposals',
-			value: 'treasuryProposals',
+			value: 'treasuryProposals'
 		},
 		{
 			icon: <BountiesSVG />,
 			name: 'Bounties',
 			pathname: '/bounties',
-			value: 'bounties',
+			value: 'bounties'
 		},
 		{
 			icon: <BountiesSVG />,
 			name: 'Child Bounties',
 			pathname: '/child_bounties',
-			value: 'childBounties',
+			value: 'childBounties'
 		},
 		{
 			icon: <TipsSVG />,
 			name: 'Tips',
 			pathname: '/tips',
-			value: 'tips',
-		},
+			value: 'tips'
+		}
 	],
-	name: 'TREASURY',
+	name: 'TREASURY'
 };
 
 const council = {
@@ -273,16 +273,16 @@ const council = {
 			icon: <MotionsSVG />,
 			name: 'Motions',
 			pathname: '/motions',
-			value: 'motions',
+			value: 'motions'
 		},
 		{
 			icon: <MembersSVG />,
 			name: 'Council Members',
 			pathname: '/council',
-			value: 'councilMembers',
-		},
+			value: 'councilMembers'
+		}
 	],
-	name: 'COUNCIL',
+	name: 'COUNCIL'
 };
 
 const techComm = {
@@ -291,10 +291,10 @@ const techComm = {
 			icon: <DemocracyProposalsSVG />,
 			name: 'Proposals',
 			pathname: '/tech-comm-proposals',
-			value: 'techCommProposals',
-		},
+			value: 'techCommProposals'
+		}
 	],
-	name: 'TECH.COMM.',
+	name: 'TECH.COMM.'
 };
 
 const getHomeMenu = (network: string) => {
@@ -306,7 +306,7 @@ const getHomeMenu = (network: string) => {
 		democracy,
 		treasury,
 		council,
-		techComm,
+		techComm
 	];
 };
 
@@ -329,18 +329,18 @@ const getReferenda = (network: string) => {
 						?.split('_')
 						?.map(
 							(s: string) =>
-								s?.charAt(0)?.toUpperCase() + s?.slice(1),
+								s?.charAt(0)?.toUpperCase() + s?.slice(1)
 						)
 						.join(' '),
 					pathname: v?.name?.split('_')?.join('-') || '',
-					value: v.name,
+					value: v.name
 				});
 			}
 		});
 	}
 	return {
 		items,
-		name: 'OPENGOV_REFERENDA',
+		name: 'OPENGOV_REFERENDA'
 	};
 };
 
@@ -366,20 +366,20 @@ const getFellowship = (network: string) => {
 				icon: <Gov2FellowshipGroupSVG />,
 				name: 'Members',
 				pathname: '/fellowship',
-				value: 'fellowshipMembers',
+				value: 'fellowshipMembers'
 			});
 			items.push({
 				icon: <ReferendaSVG />,
 				name: 'Member Referenda',
 				pathname: '/member-referenda',
-				value: 'memberReferenda',
+				value: 'memberReferenda'
 			});
 			if (isWhiteListedCallerFound) {
 				items.push({
 					icon: <Gov2FellowshipGroupSVG />,
 					name: 'Whitelisted Caller',
 					pathname: '/whitelisted-caller',
-					value: 'whitelistedCaller',
+					value: 'whitelistedCaller'
 				});
 			}
 			if (isFellowshipAdmin) {
@@ -387,14 +387,14 @@ const getFellowship = (network: string) => {
 					icon: <Gov2FellowshipGroupSVG />,
 					name: 'Fellowship Admin',
 					pathname: '/fellowship-admin',
-					value: 'fellowshipAdmin',
+					value: 'fellowshipAdmin'
 				});
 			}
 		}
 	}
 	return {
 		items,
-		name: 'FELLOWSHIP',
+		name: 'FELLOWSHIP'
 	};
 };
 
@@ -417,19 +417,19 @@ const getWhitelist = (network: string) => {
 					icon: <ReferendaSVG />,
 					name: 'Whitelisted Caller',
 					pathname: '/whitelisted-caller',
-					value: 'whitelistedCaller',
+					value: 'whitelistedCaller'
 				});
 			}
 			items.push({
 				icon: <Gov2FellowshipGroupSVG />,
 				name: 'Whitelist Members',
 				pathname: '/members',
-				value: 'whitelistMembers',
+				value: 'whitelistMembers'
 			});
 		}
 	}
 	return {
 		items,
-		name: 'WHITELIST',
+		name: 'WHITELIST'
 	};
 };

@@ -12,8 +12,8 @@ const AboutTrackCard = dynamic(
 	() => import('~src/components/Listing/FellowshipReferendum/AboutTrackCard'),
 	{
 		loading: () => <Skeleton active />,
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 
 interface ITrackListingProps {

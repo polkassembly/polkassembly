@@ -24,7 +24,7 @@ type Props = {
 	onSetPrimaryNetwork: (network: string) => Promise<void>;
 	onSetNetworkPreferences: (networks: Array<string>) => Promise<void>;
 	onCopyPrimaryNetworkNotification: (
-		selectedNetwork: Array<string>,
+		selectedNetwork: Array<string>
 	) => Promise<void>;
 	selectedNetwork: ISelectedNetwork;
 	setSelectedNetwork: React.Dispatch<React.SetStateAction<ISelectedNetwork>>;
@@ -37,7 +37,7 @@ export default function Parachain({
 	onSetNetworkPreferences,
 	onCopyPrimaryNetworkNotification,
 	selectedNetwork,
-	setSelectedNetwork,
+	setSelectedNetwork
 }: Props) {
 	const { network } = useNetworkContext();
 	const [openModal, setOpenModal] = useState(false);
@@ -49,7 +49,7 @@ export default function Parachain({
 			Object.values(networks)
 				.flatMap((chain) => chain)
 				.filter((net: any) => net.selected)
-				.map((net) => net.name),
+				.map((net) => net.name)
 		);
 	};
 
@@ -64,11 +64,11 @@ export default function Parachain({
 
 	const handleClose = (name: string) => {
 		const networks = selectedNetwork[chainProperties[name].category].map(
-			(net) => (net.name == name ? { ...net, selected: false } : net),
+			(net) => (net.name == name ? { ...net, selected: false } : net)
 		);
 		setSelectedNetwork({
 			...selectedNetwork,
-			[chainProperties[name].category]: networks,
+			[chainProperties[name].category]: networks
 		});
 	};
 
@@ -190,7 +190,7 @@ export default function Parachain({
 							Object.values(selectedNetwork)
 								.flatMap((chain) => chain)
 								.filter((network) => network.selected)
-								.map(({ name }: { name: string }) => name),
+								.map(({ name }: { name: string }) => name)
 						);
 						setCopyPreferencesModal(false);
 					}}

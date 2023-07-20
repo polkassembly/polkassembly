@@ -12,7 +12,7 @@ import {
 	Popover,
 	Radio,
 	RadioChangeEvent,
-	Collapse,
+	Collapse
 } from 'antd';
 import _ from 'lodash';
 import { useNetworkContext } from '~src/context';
@@ -27,7 +27,7 @@ import SearchErrorsCard from './SearchErrorsCard';
 import { post_topic } from '~src/global/post_topics';
 import {
 	optionTextToTopic,
-	topicToOptionText,
+	topicToOptionText
 } from '../Post/CreatePost/TopicsRadio';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { poppins } from 'pages/_app';
@@ -51,7 +51,7 @@ const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
 export const algolia_client = algoliasearch(
 	ALGOLIA_APP_ID || '',
-	ALGOLIA_SEARCH_API_KEY || '',
+	ALGOLIA_SEARCH_API_KEY || ''
 );
 
 export const allowedNetwork = ['KUSAMA', 'POLKADOT'];
@@ -65,7 +65,7 @@ interface IAutocompleteResults {
 
 const initAutocompleteResults: IAutocompleteResults = {
 	posts: [],
-	users: [],
+	users: []
 };
 
 interface Props {
@@ -79,21 +79,21 @@ interface Props {
 export enum EFilterBy {
 	Referenda = 'on-chain-posts',
 	People = 'people',
-	Discussions = 'off-chain-posts',
+	Discussions = 'off-chain-posts'
 }
 
 export enum EMultipleCheckFilters {
 	Tracks = 'track',
 	Tags = 'tags',
 	Topic = 'topic',
-	Chain = 'chains',
+	Chain = 'chains'
 }
 
 export enum EDateFilter {
 	Today = 'today',
 	Last_7_days = 'last_7_days',
 	Last_30_days = 'last_30_days',
-	Last_3_months = 'last_3_months',
+	Last_3_months = 'last_3_months'
 }
 
 const gov1Tracks = [
@@ -104,7 +104,7 @@ const gov1Tracks = [
 	'treasury_proposals',
 	'democracy_proposals',
 	'tech_committee_proposals',
-	'referendums',
+	'referendums'
 ];
 const getTrackNameFromId = (network: string, trackId: number) => {
 	let trackName = '';
@@ -122,7 +122,7 @@ const NewSearch = ({
 	openModal,
 	setOpenModal,
 	isSuperSearch,
-	setIsSuperSearch,
+	setIsSuperSearch
 }: Props) => {
 	const userIndex = algolia_client.initIndex('polkassembly_users');
 	const postIndex = algolia_client.initIndex('polkassembly_posts');
@@ -141,7 +141,7 @@ const NewSearch = ({
 		CheckboxValueType[]
 	>([]);
 	const [selectedTopics, setSelectedTopics] = useState<CheckboxValueType[]>(
-		[],
+		[]
 	);
 	const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
 	const [peopleResults, setPeopleResults] = useState<any[] | null>(null);
@@ -164,7 +164,7 @@ const NewSearch = ({
 	}>({ date: false, topic: false, track: false });
 	const [searchInputErr, setSearchInputErr] = useState({
 		clicked: false,
-		err: false,
+		err: false
 	});
 	const [autoCompleteResults, setAutoCompleteResults] =
 		useState<IAutocompleteResults>(initAutocompleteResults);
@@ -172,7 +172,7 @@ const NewSearch = ({
 	const [justStart, setJustStart] = useState<boolean>(true);
 
 	Object.keys(post_topic).map((topic) =>
-		topicOptions.push(topicToOptionText(topic)),
+		topicOptions.push(topicToOptionText(topic))
 	);
 
 	const openGovTracks: { name: string; trackId: number }[] = [];
@@ -182,7 +182,7 @@ const NewSearch = ({
 			if (!value.fellowshipOrigin) {
 				openGovTracks.push({
 					name: key === 'root' ? 'Root' : value?.name,
-					trackId: value?.trackId,
+					trackId: value?.trackId
 				});
 			}
 		});
@@ -194,28 +194,26 @@ const NewSearch = ({
 		if (filterBy === EFilterBy.Referenda) {
 			postTypeFilter.push(
 				[`post_type:-${ProposalType.DISCUSSIONS}`],
-				[`post_type:-${ProposalType.GRANTS}`],
+				[`post_type:-${ProposalType.GRANTS}`]
 			);
 			if (selectedGov1Tracks.length > 0) {
 				postTypeFilter.push(
-					...selectedGov1Tracks.map((track) => [
-						`post_type:${track}`,
-					]),
+					...selectedGov1Tracks.map((track) => [`post_type:${track}`])
 				);
 			}
 		} else if (filterBy === EFilterBy.Discussions) {
 			postTypeFilter.push([
 				`post_type:${ProposalType.DISCUSSIONS}`,
-				`post_type:${ProposalType.GRANTS}`,
+				`post_type:${ProposalType.GRANTS}`
 			]);
 		}
 		const tracksFilter = [
 			(isOpenGovSupported(network) || isSuperSearch) &&
 			filterBy !== EFilterBy.Discussions
 				? selectedOpengovTracks.map(
-						(trackId) => `track_number:${Number(trackId)}`,
+						(trackId) => `track_number:${Number(trackId)}`
 				  )
-				: [],
+				: []
 		];
 
 		return [
@@ -225,10 +223,10 @@ const NewSearch = ({
 				? [`network:${network}`]
 				: selectedNetworks.length > 0
 				? selectedNetworks.map(
-						(networkStr) => `network:${networkStr.toLowerCase()}`,
+						(networkStr) => `network:${networkStr.toLowerCase()}`
 				  )
 				: allowedNetwork.map(
-						(networkStr) => `network:${networkStr.toLowerCase()}`,
+						(networkStr) => `network:${networkStr.toLowerCase()}`
 				  ),
 			selectedTags.map((tag) => {
 				return `tags:${tag}`;
@@ -238,11 +236,11 @@ const NewSearch = ({
 					`topic_id:${
 						post_topic[
 							optionTextToTopic(
-								String(topic),
+								String(topic)
 							) as keyof typeof post_topic
 						]
-					}`,
-			),
+					}`
+			)
 		];
 	};
 
@@ -260,15 +258,15 @@ const NewSearch = ({
 				return `created_at:${currentDate.unix()} TO ${currentDate.unix()}`;
 			case EDateFilter.Last_7_days:
 				return `created_at:${currentDate.unix()} TO ${getPreviousDate(
-					7,
+					7
 				)}`;
 			case EDateFilter.Last_30_days:
 				return `created_at:${currentDate.unix()} TO ${getPreviousDate(
-					30,
+					30
 				)}`;
 			case EDateFilter.Last_3_months:
 				return `created_at:${currentDate.unix()} TO ${getPreviousDate(
-					91,
+					91
 				)}`;
 		}
 	};
@@ -294,7 +292,7 @@ const NewSearch = ({
 		if (!addressIndex) return;
 
 		const userIds = data.map(
-			(people: any) => `user_id:${Number(people?.objectID)}`,
+			(people: any) => `user_id:${Number(people?.objectID)}`
 		);
 
 		addressIndex
@@ -322,7 +320,7 @@ const NewSearch = ({
 				facetFilters: getFacetFileters(EFilterBy.Referenda),
 				filters: getDateFilter(),
 				hitsPerPage: LISTING_LIMIT,
-				page: postsPage - 1,
+				page: postsPage - 1
 			})
 			.then(({ hits, nbHits }) => {
 				setOnchainPostResults({ data: hits, total: nbHits });
@@ -338,7 +336,7 @@ const NewSearch = ({
 				facetFilters: getFacetFileters(EFilterBy.Discussions),
 				filters: getDateFilter(),
 				hitsPerPage: LISTING_LIMIT,
-				page: postsPage - 1,
+				page: postsPage - 1
 			})
 			.then(({ hits, nbHits }) => {
 				setOffchainPostResults({ data: hits, total: nbHits });
@@ -352,7 +350,7 @@ const NewSearch = ({
 		await userIndex
 			.search(finalSearchInput, {
 				hitsPerPage: LISTING_LIMIT,
-				page: peoplePage.page - 1,
+				page: peoplePage.page - 1
 			})
 			.then(({ hits, nbHits }) => {
 				setPeoplePage({ ...peoplePage, totalPeople: nbHits });
@@ -394,7 +392,7 @@ const NewSearch = ({
 		selectedGov1Tracks,
 		selectedOpengovTracks,
 		dateFilter,
-		searchInputErr.err,
+		searchInputErr.err
 	]);
 
 	const handleClearFilters = (close?: boolean) => {
@@ -431,10 +429,10 @@ const NewSearch = ({
 				highlightPreTag: '<mark>',
 				highlightPostTag: '</mark>',
 				page: 1,
-				restrictSearchableAttributes: ['title', 'parsed_content'],
+				restrictSearchableAttributes: ['title', 'parsed_content']
 			})
 			.catch((error) =>
-				console.log('Posts autocomplete fetch error: ', error),
+				console.log('Posts autocomplete fetch error: ', error)
 			);
 
 		const userResults = await userIndex
@@ -446,23 +444,23 @@ const NewSearch = ({
 				restrictSearchableAttributes: [
 					'username',
 					'profile.bio',
-					'profile.title',
-				],
+					'profile.title'
+				]
 			})
 			.catch((error) =>
-				console.log('Users autocomplete fetch error: ', error),
+				console.log('Users autocomplete fetch error: ', error)
 			);
 
 		setAutoCompleteResults({
 			posts: postResults?.hits || [],
-			users: userResults?.hits || [],
+			users: userResults?.hits || []
 		});
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debouncedAutoCompleteFn = useCallback(
 		_.debounce(getAutoCompleteData, 500),
-		[],
+		[]
 	);
 
 	const handleSearchOnChange = async (queryStr: string) => {
@@ -501,7 +499,7 @@ const NewSearch = ({
 	const getCleanString = (str: string) => {
 		return str.replace(
 			/<[^>]+>|\n|<br\s*\/?>|[*_~`]|(?:^|\s)#\S+|!\[.*?\]\(.*?\)|\[.*?\]\(.*?\)/g,
-			'',
+			''
 		);
 	};
 
@@ -527,7 +525,7 @@ const NewSearch = ({
 
 		function extractContent(
 			str: string,
-			extraContentLength: number = 40,
+			extraContentLength: number = 40
 		): string {
 			// Find the first occurrence of <mark> tag in the input string
 			const match = str.match(/<mark>(.*?)<\/mark>/);
@@ -544,7 +542,7 @@ const NewSearch = ({
 			// Extract the substring including the first <mark> tag and its content
 			return `${str.substring(
 				markIndex,
-				endIndex,
+				endIndex
 			)}${cleanSubStrAfterMark.substring(0, extraContentLength)}${
 				cleanSubStrAfterMark.length > extraContentLength ? '...' : ''
 			}`;
@@ -688,7 +686,7 @@ const NewSearch = ({
 									const isPost = 'post_type' in item;
 									const str =
 										getAutocompleteMarkedText(
-											item._highlightResult,
+											item._highlightResult
 										) || 'No title';
 									const cleanStr = getCleanString(str);
 
@@ -702,17 +700,17 @@ const NewSearch = ({
 														: item.post_type ===
 														  'discussions'
 														? EFilterBy.Discussions
-														: EFilterBy.Referenda,
+														: EFilterBy.Referenda
 												);
 												handleSearchOnChange(
 													cleanStr.endsWith('...')
 														? cleanStr.slice(0, -3)
-														: cleanStr,
+														: cleanStr
 												);
 												setFinalSearchInput(
 													cleanStr.endsWith('...')
 														? cleanStr.slice(0, -3)
-														: cleanStr,
+														: cleanStr
 												);
 											}}
 										>
@@ -823,7 +821,7 @@ const NewSearch = ({
 									finalSearchInput.length > 0 &&
 									setOpenFilter({
 										...openFilter,
-										date: !openFilter.date,
+										date: !openFilter.date
 									})
 								}
 								content={
@@ -932,7 +930,7 @@ const NewSearch = ({
 										finalSearchInput.length > 0 &&
 										setOpenFilter({
 											...openFilter,
-											track: !openFilter.track,
+											track: !openFilter.track
 										})
 									}
 									content={
@@ -949,7 +947,7 @@ const NewSearch = ({
 													className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`}
 													onChange={(list) =>
 														setSelectedGov1Tracks(
-															list,
+															list
 														)
 													}
 													value={selectedGov1Tracks}
@@ -964,7 +962,7 @@ const NewSearch = ({
 																	}
 																	className={`text-xs font-normal py-1.5 ml-0 ${
 																		selectedGov1Tracks.includes(
-																			track,
+																			track
 																		)
 																			? 'text-bodyBlue'
 																			: 'text-[#667589]'
@@ -973,14 +971,14 @@ const NewSearch = ({
 																	<div className="mt-[2px] capitalize">
 																		{track
 																			?.split(
-																				'_',
+																				'_'
 																			)
 																			?.join(
-																				' ',
+																				' '
 																			)}
 																	</div>
 																</Checkbox>
-															),
+															)
 														)}
 												</Checkbox.Group>
 											</Collapse.Panel>
@@ -993,7 +991,7 @@ const NewSearch = ({
 													className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`}
 													onChange={(list) =>
 														setSelectedOpengovTracks(
-															list,
+															list
 														)
 													}
 													value={
@@ -1012,7 +1010,7 @@ const NewSearch = ({
 																	}
 																	className={`text-xs font-normal py-1.5 ml-0 ${
 																		selectedOpengovTracks.includes(
-																			track?.name,
+																			track?.name
 																		)
 																			? 'text-bodyBlue'
 																			: 'text-[#667589]'
@@ -1021,14 +1019,14 @@ const NewSearch = ({
 																	<div className="mt-[2px] capitalize">
 																		{track?.name
 																			?.split(
-																				'_',
+																				'_'
 																			)
 																			?.join(
-																				' ',
+																				' '
 																			)}
 																	</div>
 																</Checkbox>
-															),
+															)
 														)}
 												</Checkbox.Group>
 											</Collapse.Panel>
@@ -1064,7 +1062,7 @@ const NewSearch = ({
 									finalSearchInput.length > 0 &&
 									setOpenFilter({
 										...openFilter,
-										topic: !openFilter.topic,
+										topic: !openFilter.topic
 									})
 								}
 								content={
@@ -1082,7 +1080,7 @@ const NewSearch = ({
 													value={topic}
 													className={`text-xs font-normal py-1.5 ml-0 ${
 														selectedTopics.includes(
-															topic,
+															topic
 														)
 															? 'text-bodyBlue'
 															: 'text-[#667589]'
@@ -1141,7 +1139,7 @@ const NewSearch = ({
 														selectedNetworks.length -
 															1 && ', '}
 												</span>
-											),
+											)
 										)}
 									</span>
 								</div>
@@ -1182,7 +1180,7 @@ const NewSearch = ({
 													>
 														{getTrackNameFromId(
 															network,
-															Number(trackId),
+															Number(trackId)
 														)
 															?.split('_')
 															?.join(' ')}
@@ -1190,7 +1188,7 @@ const NewSearch = ({
 															selectedOpengovTracks.length -
 																1 && ', '}{' '}
 													</span>
-												),
+												)
 											)}
 											{selectedGov1Tracks.map(
 												(track, index) => (
@@ -1208,7 +1206,7 @@ const NewSearch = ({
 															selectedGov1Tracks.length -
 																1 && ', '}{' '}
 													</span>
-												),
+												)
 											)}
 										</span>
 									</div>

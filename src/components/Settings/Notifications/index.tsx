@@ -23,7 +23,7 @@ const getAllNetworks = (network: string) => {
 	for (const category of Object.keys(networks)) {
 		const chains = networks[category];
 		const chainToUpdate = chains.find(
-			(chain: any) => chain.name === network,
+			(chain: any) => chain.name === network
 		);
 		if (chainToUpdate) {
 			chainToUpdate.selected = true;
@@ -38,12 +38,12 @@ export default function Notifications({ network }: { network: string }) {
 		id,
 		networkPreferences,
 		setUserDetailsContextState,
-		primaryNetwork,
+		primaryNetwork
 	} = useUserDetailsContext();
 
 	const [notificationPreferences, dispatch] = useReducer(
 		reducer,
-		notificationInitialState(network),
+		notificationInitialState(network)
 	);
 	const [selectedNetwork, setSelectedNetwork] = useState<{
 		[index: string]: Array<{ name: string; selected: boolean }>;
@@ -57,9 +57,9 @@ export default function Notifications({ network }: { network: string }) {
 				...prev.networkPreferences,
 				triggerPreferences: {
 					...prev.networkPreferences.triggerPreferences,
-					[network]: obj,
-				},
-			},
+					[network]: obj
+				}
+			}
 		}));
 	};
 
@@ -69,7 +69,7 @@ export default function Notifications({ network }: { network: string }) {
 		}
 		try {
 			const { data, error } = (await nextApiClientFetch(
-				'api/v1/auth/data/notificationSettings',
+				'api/v1/auth/data/notificationSettings'
 			)) as { data: any; error: null | string };
 			if (error) {
 				throw new Error(error);
@@ -80,8 +80,8 @@ export default function Notifications({ network }: { network: string }) {
 					networkPreferences: {
 						...prev.networkPreferences,
 						channelPreferences:
-							data?.notification_preferences?.channelPreferences,
-					},
+							data?.notification_preferences?.channelPreferences
+					}
 				}));
 			}
 			if (data?.notification_preferences?.triggerPreferences) {
@@ -90,16 +90,16 @@ export default function Notifications({ network }: { network: string }) {
 					networkPreferences: {
 						...prev.networkPreferences,
 						triggerPreferences:
-							data?.notification_preferences?.triggerPreferences,
-					},
+							data?.notification_preferences?.triggerPreferences
+					}
 				}));
 				dispatch({
 					payload: {
 						data: data?.notification_preferences
 							?.triggerPreferences?.[network],
-						network,
+						network
 					},
-					type: ACTIONS.GET_NOTIFICATION_OBJECT,
+					type: ACTIONS.GET_NOTIFICATION_OBJECT
 				});
 			}
 			setLoading(false);
@@ -111,7 +111,7 @@ export default function Notifications({ network }: { network: string }) {
 	const getPrimaryNetwork = async () => {
 		try {
 			const { data, error } = (await nextApiClientFetch(
-				`api/v1/auth/data/user?userId=${id}`,
+				`api/v1/auth/data/user?userId=${id}`
 			)) as { data: PublicUser; error: null | string };
 			if (error) {
 				throw new Error(error);
@@ -119,7 +119,7 @@ export default function Notifications({ network }: { network: string }) {
 			if (data.primary_network) {
 				setUserDetailsContextState((prev) => ({
 					...prev,
-					primaryNetwork: data.primary_network || '',
+					primaryNetwork: data.primary_network || ''
 				}));
 			} else {
 				handleSetPrimaryNetwork(network);
@@ -133,10 +133,10 @@ export default function Notifications({ network }: { network: string }) {
 		try {
 			setUserDetailsContextState((prev) => ({
 				...prev,
-				primaryNetwork: network,
+				primaryNetwork: network
 			}));
 			await nextApiClientFetch('api/v1/auth/actions/setPrimaryNetwork', {
-				primary_network: network,
+				primary_network: network
 			});
 		} catch (e) {
 			console.log(e);
@@ -153,8 +153,8 @@ export default function Notifications({ network }: { network: string }) {
 				{
 					network_preferences:
 						networkPreferences.triggerPreferences[network],
-					networks,
-				},
+					networks
+				}
 			)) as { data: { message: string }; error: string | null };
 			if (error || !data.message) {
 				throw new Error(error || '');
@@ -165,7 +165,7 @@ export default function Notifications({ network }: { network: string }) {
 	};
 
 	const handleCopyPrimaryNetworkNotification = async (
-		selectedNetwork: Array<string>,
+		selectedNetwork: Array<string>
 	) => {
 		try {
 			const primarySettings =
@@ -174,8 +174,8 @@ export default function Notifications({ network }: { network: string }) {
 				'api/v1/auth/actions/setNetworkPreferences',
 				{
 					network_preferences: primarySettings,
-					networks: selectedNetwork,
-				},
+					networks: selectedNetwork
+				}
 			)) as { data: { message: string }; error: string | null };
 			if (error || !data.message) {
 				throw new Error(error || '');
@@ -193,15 +193,15 @@ export default function Notifications({ network }: { network: string }) {
 					...prev.networkPreferences,
 					channelPreferences: {
 						...prev.networkPreferences.channelPreferences,
-						[channel]: {},
-					},
-				},
+						[channel]: {}
+					}
+				}
 			}));
 			const { data, error } = (await nextApiClientFetch(
 				'api/v1/auth/actions/resetChannelNotification',
 				{
-					channel,
-				},
+					channel
+				}
 			)) as { data: { message: string }; error: string | null };
 			if (error || !data.message) {
 				throw new Error(error || '');
@@ -224,17 +224,17 @@ export default function Notifications({ network }: { network: string }) {
 						[channel]: {
 							...prev.networkPreferences?.channelPreferences
 								?.channel,
-							enabled: enabled,
-						},
-					},
-				},
+							enabled: enabled
+						}
+					}
+				}
 			}));
 			const { data, error } = (await nextApiClientFetch(
 				'api/v1/auth/actions/updateChannelNotification',
 				{
 					channel,
-					enabled,
-				},
+					enabled
+				}
 			)) as { data: { message: string }; error: string | null };
 			if (error || !data.message) {
 				throw new Error(error || '');

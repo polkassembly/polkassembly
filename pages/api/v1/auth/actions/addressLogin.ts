@@ -10,7 +10,7 @@ import { MessageType, IAuthResponse } from '~src/auth/types';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<IAuthResponse | MessageType>,
+	res: NextApiResponse<IAuthResponse | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -27,7 +27,7 @@ async function handler(
 		isTFAEnabled = false,
 		tfa_token = '',
 		token = '',
-		user_id,
+		user_id
 	} = await authServiceInstance.AddressLogin(address, signature, wallet);
 	if (!token && !isTFAEnabled)
 		return res

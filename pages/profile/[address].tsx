@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const network = getNetworkFromReqHeaders(context.req.headers);
 
 	const { data, error } = await getProfileWithAddress({
-		address,
+		address
 	});
 	const props: IProfileProps = {
 		network,
@@ -38,17 +38,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				bio: '',
 				image: '',
 				social_links: [],
-				title: '',
+				title: ''
 			},
-			error: error,
-		},
+			error: error
+		}
 	};
 	return { props: props };
 };
 
 const ProfileComponent = dynamic(() => import('~src/components/Profile'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 const Profile: FC<IProfileProps> = (props) => {

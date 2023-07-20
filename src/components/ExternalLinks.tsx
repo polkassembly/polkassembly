@@ -11,7 +11,7 @@ import {
 	isCereSupport,
 	isExplorerSupport,
 	isPolkaholicSupport,
-	isSubscanSupport,
+	isSubscanSupport
 } from '~src/util/subscanCheck';
 
 interface IExternalLinksProps {
@@ -25,7 +25,7 @@ enum EService {
 	EXPLORER = 'explorer',
 	SUBSCAN = 'subscan',
 	POLKAHOLIC = 'polkaholic',
-	CERE = 'cere',
+	CERE = 'cere'
 }
 
 const getService = (network: string) => {
@@ -71,7 +71,7 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 			if (
 				[
 					ProposalType.REFERENDUM_V2.toString(),
-					ProposalType.OPEN_GOV.toString(),
+					ProposalType.OPEN_GOV.toString()
 				].includes(proposalType)
 			) {
 				url = `${host}/referenda_v2/${onchainId}`;
@@ -83,7 +83,7 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 
 			return {
 				label: 'Show in Subscan',
-				url,
+				url
 			};
 		},
 		[EService.EXPLORER]: (network: string) => {
@@ -96,7 +96,7 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 
 			return {
 				label: 'Show in Explorer',
-				url,
+				url
 			};
 		},
 		[EService.POLKAHOLIC]: (network: string) => {
@@ -110,7 +110,7 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 
 			return {
 				label: 'Show in Polkaholic',
-				url,
+				url
 			};
 		},
 		[EService.CERE]: (network: string) => {
@@ -123,13 +123,13 @@ const ExternalLinks: FC<IExternalLinksProps> = (props) => {
 
 			return {
 				label: 'Show in Cere',
-				url,
+				url
 			};
-		},
+		}
 	};
 
 	const getUrlAndLabel = (
-		service: EService,
+		service: EService
 	):
 		| {
 				label: string;

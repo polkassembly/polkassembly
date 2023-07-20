@@ -28,14 +28,14 @@ function CustomToolbar(props: any) {
 		{ key: '8', label: 'September' },
 		{ key: '9', label: 'October' },
 		{ key: '10', label: 'November' },
-		{ key: '11', label: 'December' },
+		{ key: '11', label: 'December' }
 	];
 
 	const viewStateOptions: MenuProps['items'] = [
 		{ key: 'month', label: 'Month' },
 		{ key: 'week', label: 'Week' },
 		{ key: 'day', label: 'Day' },
-		{ key: 'agenda', label: 'Agenda' },
+		{ key: 'agenda', label: 'Agenda' }
 	];
 
 	if (props.small) {
@@ -51,13 +51,13 @@ function CustomToolbar(props: any) {
 			{ key: '8', label: 'Sep' },
 			{ key: '9', label: 'Oct' },
 			{ key: '10', label: 'Nov' },
-			{ key: '11', label: 'Dec' },
+			{ key: '11', label: 'Dec' }
 		];
 	}
 
 	const [viewState, setViewState] = useState<string>('month');
 	const [selectedMonth, setSelectedMonth] = useState<number>(
-		props.date.getMonth(),
+		props.date.getMonth()
 	);
 
 	function addMonths(date: any, months: any) {
@@ -169,7 +169,7 @@ function CustomToolbar(props: any) {
 								!props.small && !(props.width <= 991)
 									? props.leftPanelWidth &&
 									  -props.leftPanelWidth
-									: 0,
+									: 0
 						}}
 					>
 						<NetworkSelect
@@ -182,7 +182,7 @@ function CustomToolbar(props: any) {
 								trigger={['click']}
 								menu={{
 									items: viewStateOptions,
-									onClick: onViewStateChange,
+									onClick: onViewStateChange
 								}}
 							>
 								<Space className="text-pink_primary cursor-pointer capitalize mt-1">
@@ -242,7 +242,7 @@ function CustomToolbar(props: any) {
 									className="select-month-dropdown"
 									menu={{
 										items: months,
-										onClick: onSelectMonthChange,
+										onClick: onSelectMonthChange
 									}}
 								>
 									<Space className="text-pink_primary cursor-pointer capitalize">
@@ -283,7 +283,7 @@ function CustomToolbar(props: any) {
 									className="select-view-dropdown"
 									menu={{
 										items: viewStateOptions,
-										onClick: onViewStateChange,
+										onClick: onViewStateChange
 									}}
 								>
 									<Space className="text-pink_primary cursor-pointer capitalize">

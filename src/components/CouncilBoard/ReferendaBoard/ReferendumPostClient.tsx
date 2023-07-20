@@ -19,14 +19,14 @@ interface IReferendumPostClientProps {
 
 const ReferendumPostClient: FC<IReferendumPostClientProps> = ({
 	councilBoardSidebar = false,
-	postID,
+	postID
 }) => {
 	const [error, setError] = useState('');
 	const [post, setPost] = useState<IPostResponse>();
 	const proposalType = ProposalType.REFERENDUMS;
 	useEffect(() => {
 		nextApiClientFetch<IPostResponse>(
-			`api/v1/posts/on-chain-post?proposalType=${proposalType}&postId=${postID}`,
+			`api/v1/posts/on-chain-post?proposalType=${proposalType}&postId=${postID}`
 		)
 			.then((res) => {
 				if (res.data) {

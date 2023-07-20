@@ -12,7 +12,7 @@ import messages from '~src/auth/utils/messages';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ChangeResponseType | MessageType>,
+	res: NextApiResponse<ChangeResponseType | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -47,12 +47,12 @@ async function handler(
 		ss58Prefix,
 		threshold,
 		signatory,
-		signature,
+		signature
 	);
 
 	return res.status(200).json({
 		message: messages.ADDRESS_LINKING_SUCCESSFUL,
-		token: updatedJWT,
+		token: updatedJWT
 	});
 }
 

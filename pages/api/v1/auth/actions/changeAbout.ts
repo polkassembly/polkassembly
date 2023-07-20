@@ -31,7 +31,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		description,
 		image = '',
 		signature,
-		wallet,
+		wallet
 	} = req.body;
 	if (!address || !title || !description || !signature || !wallet)
 		return res
@@ -51,7 +51,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		badges: [],
 		bio: description,
 		image: '',
-		title,
+		title
 	};
 
 	const firestore = firebaseAdmin.firestore();
@@ -61,13 +61,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		.get();
 	if (!addressDoc.exists) {
 		const signMessage = await authServiceInstance.AddressSignupStart(
-			address,
+			address
 		);
 		const { user_id } = await authServiceInstance.AddressSignupConfirm(
 			network,
 			address,
 			signMessage,
-			wallet as Wallet,
+			wallet as Wallet
 		);
 		userId = user_id!;
 	} else {
@@ -77,7 +77,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		newProfile = {
 			...oldProfile,
 			bio: description,
-			title: title,
+			title: title
 		};
 	}
 

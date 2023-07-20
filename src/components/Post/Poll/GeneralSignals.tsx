@@ -36,7 +36,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({
 	pollId,
 	canEdit,
 	proposalType,
-	votes,
+	votes
 }) => {
 	const { id } = useUserDetailsContext();
 	const [error, setErr] = useState('');
@@ -66,7 +66,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({
 
 	const {
 		postData: { postIndex },
-		setPostData,
+		setPostData
 	} = usePostDataContext();
 
 	const cancelVote = useCallback(async () => {
@@ -80,8 +80,8 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({
 					pollType: POLL_TYPE.NORMAL,
 					postId: postIndex,
 					proposalType,
-					userId: id,
-				},
+					userId: id
+				}
 			);
 
 		if (deleteVoteErr) {
@@ -96,13 +96,13 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({
 								if (String(poll.id) === String(pollId)) {
 									poll.poll_votes =
 										poll.poll_votes.filter(
-											(vote) => vote.user_id !== id,
+											(vote) => vote.user_id !== id
 										) || [];
 								}
 								return {
-									...poll,
+									...poll
 								};
-							}) || [],
+							}) || []
 					};
 				});
 			}
@@ -125,8 +125,8 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({
 						postId: postIndex,
 						proposalType,
 						userId: id,
-						vote,
-					},
+						vote
+					}
 				);
 
 			if (addVoteErr) {
@@ -146,14 +146,14 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({
 												created_at: date,
 												updated_at: date,
 												user_id: id,
-												vote,
-											},
+												vote
+											}
 										];
 									}
 									return {
-										...poll,
+										...poll
 									};
-								}) || [],
+								}) || []
 						};
 					});
 				}
@@ -161,7 +161,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({
 			setLoading(false);
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		},
-		[id, pollId, postIndex, proposalType],
+		[id, pollId, postIndex, proposalType]
 	);
 
 	const extendsPoll = useCallback(async () => {
@@ -176,8 +176,8 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({
 					pollType: POLL_TYPE.NORMAL,
 					postId: postIndex,
 					proposalType,
-					userId: id,
-				},
+					userId: id
+				}
 			);
 
 		if (editPollErr) {
@@ -194,9 +194,9 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({
 								poll.block_end = pollEndBlock;
 							}
 							return {
-								...poll,
+								...poll
 							};
-						}) || [],
+						}) || []
 				};
 			});
 		}

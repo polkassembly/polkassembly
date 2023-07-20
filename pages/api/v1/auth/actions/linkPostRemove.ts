@@ -8,7 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import {
 	isOffChainProposalTypeValid,
 	isProposalTypeValid,
-	isValidNetwork,
+	isValidNetwork
 } from '~src/api-utils';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
@@ -24,7 +24,7 @@ export interface ILinkPostRemoveResponse {
 
 const handler: NextApiHandler<ILinkPostRemoveResponse | MessageType> = async (
 	req,
-	res,
+	res
 ) => {
 	if (req.method !== 'POST')
 		return res
@@ -64,7 +64,7 @@ const handler: NextApiHandler<ILinkPostRemoveResponse | MessageType> = async (
 			if (!isOffChainPost && !isOnChainPost) {
 				throw apiErrorWithStatusCode(
 					`The post type of the name "${type}" does not exist.`,
-					400,
+					400
 				);
 			}
 		});
@@ -74,21 +74,21 @@ const handler: NextApiHandler<ILinkPostRemoveResponse | MessageType> = async (
 				{
 					id: currPostId,
 					isExistChecked: true,
-					type: currPostType,
+					type: currPostType
 				},
 				{
 					id: postId,
 					isExistChecked: false,
-					type: postType,
-				},
-			],
+					type: postType
+				}
+			]
 		});
 		if (postsRefWithData.length !== 2) {
 			throw apiErrorWithStatusCode('Something went wrong!', 500);
 		}
 		const [
 			{ data: currPostData, ref: currPostDocRef },
-			{ data: postData, ref: postDocRef },
+			{ data: postData, ref: postDocRef }
 		] = postsRefWithData;
 		let params = {
 			currPostData,
@@ -100,20 +100,20 @@ const handler: NextApiHandler<ILinkPostRemoveResponse | MessageType> = async (
 			network,
 			postId,
 			postType,
-			user,
+			user
 		};
 		if (isOffChainProposalTypeValid(String(postType))) {
 			if (!postData) {
 				throw apiErrorWithStatusCode(
 					`Post with id: "${postId}" and type: "${postType}" does not exist.`,
-					404,
+					404
 				);
 			}
 			const isAuthor = user.id === postData.user_id;
 			if (!isAuthor) {
 				throw apiErrorWithStatusCode(
 					'You can not unlink the post, because you are not the user who created this post.',
-					403,
+					403
 				);
 			}
 			params = {
@@ -126,7 +126,7 @@ const handler: NextApiHandler<ILinkPostRemoveResponse | MessageType> = async (
 				network,
 				postId: currPostId,
 				postType: currPostType,
-				user,
+				user
 			};
 		}
 

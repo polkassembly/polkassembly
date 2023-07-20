@@ -76,14 +76,14 @@ interface ISentimentsPercentage {
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
 	const {
-		postData: { postType, timeline, created_at, comments },
+		postData: { postType, timeline, created_at, comments }
 	} = usePostDataContext();
 	const targetOffset = 10;
 	const [timelines, setTimelines] = useState<ITimeline[]>([]);
 	const isGrantClosed: boolean = Boolean(
 		postType === ProposalType.GRANTS &&
 			created_at &&
-			dayjs(created_at).isBefore(dayjs().subtract(6, 'days')),
+			dayjs(created_at).isBefore(dayjs().subtract(6, 'days'))
 	);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [filteredSentiment, setFilteredSentiment] =
@@ -97,18 +97,18 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			for: 0,
 			neutral: 0,
 			slightlyAgainst: 0,
-			slightlyFor: 0,
+			slightlyFor: 0
 		});
 
 	const getCommentCountAndFirstIdBetweenDates = (
 		startDate: Dayjs,
 		endDate: Dayjs,
-		comments: any[],
+		comments: any[]
 	) => {
 		if (startDate.isAfter(endDate)) {
 			return {
 				count: 0,
-				firstCommentId: '',
+				firstCommentId: ''
 			};
 		}
 		const filteredComments = comments.filter((comment: any) => {
@@ -122,13 +122,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		return {
 			count: filteredComments.length,
 			firstCommentId:
-				filteredComments.length > 0 ? filteredComments[0].id : '',
+				filteredComments.length > 0 ? filteredComments[0].id : ''
 		};
 	};
 
 	const handleTimelineClick = (
 		e: React.MouseEvent<HTMLElement>,
-		link: { title: React.ReactNode; href: string },
+		link: { title: React.ReactNode; href: string }
 	) => {
 		if (link.href === '#') {
 			e.preventDefault();
@@ -140,7 +140,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		setFilteredSentiment((pre) =>
 			pre.sentiment === sentiment && pre.active === true
 				? { ...pre, active: false }
-				: { active: true, sentiment: sentiment },
+				: { active: true, sentiment: sentiment }
 		);
 	};
 
@@ -153,13 +153,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					date: dayjs(obj?.created_at),
 					firstCommentId: '',
 					id: timelines.length + 1,
-					status: getStatus(obj?.type),
+					status: getStatus(obj?.type)
 				});
 			});
 
 			if (timelines.length >= 1) {
 				const newComments = comments.sort((a, b) =>
-					dayjs(a.created_at).diff(b.created_at),
+					dayjs(a.created_at).diff(b.created_at)
 				);
 				timelines = timelines.map((timelineObj, i) => {
 					const { count, firstCommentId } =
@@ -168,12 +168,12 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								? dayjs(newComments[0].created_at)
 								: timelineObj.date,
 							timelines[i + 1]?.date || dayjs(),
-							newComments,
+							newComments
 						);
 					return {
 						...timelineObj,
 						commentsCount: count,
-						firstCommentId,
+						firstCommentId
 					};
 				});
 				setTimelines(timelines);
@@ -222,7 +222,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				Number(Math.round((slightlyAgainstCount / totalCount) * 100)) ||
 				0,
 			slightlyFor:
-				Number(Math.round((slightlyForCount / totalCount) * 100)) || 0,
+				Number(Math.round((slightlyForCount / totalCount) * 100)) || 0
 		});
 
 		comments?.length === 0
@@ -249,7 +249,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			setFilteredComments(comments);
 		} else {
 			const filteredData = comments.filter(
-				(comment) => comment?.sentiment === sentiment,
+				(comment) => comment?.sentiment === sentiment
 			);
 			setFilteredComments(filteredData);
 		}
@@ -328,7 +328,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<div
 								onClick={() => {
 									handleSetFilteredComments(
-										ESentiments.Against,
+										ESentiments.Against
 									);
 									getFilteredComments(ESentiments.Against);
 								}}
@@ -367,10 +367,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<div
 								onClick={() => {
 									handleSetFilteredComments(
-										ESentiments.SlightlyAgainst,
+										ESentiments.SlightlyAgainst
 									);
 									getFilteredComments(
-										ESentiments.SlightlyAgainst,
+										ESentiments.SlightlyAgainst
 									);
 								}}
 								className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${
@@ -408,7 +408,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<div
 								onClick={() => {
 									handleSetFilteredComments(
-										ESentiments.Neutral,
+										ESentiments.Neutral
 									);
 									getFilteredComments(ESentiments.Neutral);
 								}}
@@ -447,10 +447,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<div
 								onClick={() => {
 									handleSetFilteredComments(
-										ESentiments.SlightlyFor,
+										ESentiments.SlightlyFor
 									);
 									getFilteredComments(
-										ESentiments.SlightlyFor,
+										ESentiments.SlightlyFor
 									);
 								}}
 								className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${
@@ -527,7 +527,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 									date,
 									firstCommentId,
 									id,
-									status,
+									status
 								}) => {
 									return commentsCount > 0 ? (
 										<AnchorLink
@@ -563,7 +563,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											</div>
 										</div>
 									);
-								},
+								}
 							)}
 						</Anchor>
 					</div>

@@ -19,7 +19,7 @@ interface IDiscussionPostClient {
 
 const DiscussionPostClient: FC<IDiscussionPostClient> = ({
 	councilBoardSidebar = false,
-	postID,
+	postID
 }) => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
@@ -27,7 +27,7 @@ const DiscussionPostClient: FC<IDiscussionPostClient> = ({
 	useEffect(() => {
 		setLoading(true);
 		nextApiClientFetch<IPostResponse>(
-			`api/v1/posts/discussion?postId=${postID}`,
+			`api/v1/posts/discussion?postId=${postID}`
 		)
 			.then((res) => {
 				if (res.data) {

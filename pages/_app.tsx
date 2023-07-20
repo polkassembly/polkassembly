@@ -25,17 +25,17 @@ export const poppins = Poppins({
 	style: ['italic', 'normal'],
 	subsets: ['latin'],
 	variable: '--font-poppins',
-	weight: ['200', '300', '400', '500', '600', '700'],
+	weight: ['200', '300', '400', '500', '600', '700']
 });
 const robotoMono = Roboto_Mono({
 	display: 'swap',
 	style: 'normal',
 	subsets: ['latin'],
-	weight: ['400', '500'],
+	weight: ['400', '500']
 });
 const workSans = Work_Sans({
 	display: 'swap',
-	subsets: ['latin'],
+	subsets: ['latin']
 });
 
 import 'antd/dist/reset.css';
@@ -61,14 +61,14 @@ export default function App({ Component, pageProps }: AppProps) {
 			style={{
 				background: '#F5F5F5',
 				minHeight: '100vh',
-				minWidth: '100vw',
+				minWidth: '100vw'
 			}}
 		>
 			<Image
 				style={{
 					left: 'calc(50vw - 16px)',
 					position: 'absolute',
-					top: 'calc(50vh - 16px)',
+					top: 'calc(50vh - 16px)'
 				}}
 				width={32}
 				height={32}

@@ -10,7 +10,7 @@ import {
 	FailingThresholdResult,
 	PassingThresholdResult,
 	VoteThreshold,
-	VoteThresholdEnum,
+	VoteThresholdEnum
 } from './types';
 
 interface ThresholdBase {
@@ -49,7 +49,7 @@ interface FandFpType {
 const getFAndFp = function ({
 	totalIssuance,
 	votes,
-	votesWithoutConviction,
+	votesWithoutConviction
 }: FAndFpParamsTypes): FandFpType {
 	return {
 		f: (x: BN) => {
@@ -63,15 +63,15 @@ const getFAndFp = function ({
 		fp: (x: BN) => {
 			// 3*x^2 + 2*v*x
 			return THREE.mul(x.pow(TWO)).add(
-				TWO.mul(votesWithoutConviction).mul(x),
+				TWO.mul(votesWithoutConviction).mul(x)
 			);
-		},
+		}
 	};
 };
 
 const raphsonIterations = function (
 	f: PolynomialFunction,
-	fp: PolynomialFunction,
+	fp: PolynomialFunction
 ): NewtonRaphsonResult {
 	const initialGuess = ONE;
 	let result: NewtonRaphsonResult = { foundRoot: false };
@@ -93,14 +93,14 @@ export function getFailingThreshold({
 	ayes,
 	ayesWithoutConviction,
 	totalIssuance,
-	threshold,
+	threshold
 }: getFailingThresholdParamsType): FailingThresholdResult {
 	if (ayes.isZero() || ayesWithoutConviction.isZero()) {
 		// there is no vote against, any number of aye>0 would work
 
 		return {
 			failingThreshold: ONE,
-			isValid: true,
+			isValid: true
 		};
 	}
 
@@ -108,14 +108,14 @@ export function getFailingThreshold({
 	// than the (total issuance) /2 it can't fail
 	if (ayesWithoutConviction.gt(totalIssuance.divn(2))) {
 		return {
-			isValid: false,
+			isValid: false
 		};
 	}
 
 	if (threshold === VoteThresholdEnum.Simplemajority) {
 		return {
 			failingThreshold: ayes,
-			isValid: true,
+			isValid: true
 		};
 	}
 
@@ -123,17 +123,17 @@ export function getFailingThreshold({
 		const { f, fp } = getFAndFp({
 			totalIssuance,
 			votes: ayes,
-			votesWithoutConviction: ayesWithoutConviction,
+			votesWithoutConviction: ayesWithoutConviction
 		});
 		const result = raphsonIterations(f, fp);
 
 		return result.foundRoot
 			? {
 					failingThreshold: result.result as BN,
-					isValid: true,
+					isValid: true
 			  }
 			: {
-					isValid: false,
+					isValid: false
 			  };
 	} else {
 		// SuperMajorityRejection
@@ -142,12 +142,12 @@ export function getFailingThreshold({
 		const res = solveQuadraticEquation(
 			totalIssuance.neg(),
 			ayes.pow(TWO),
-			ayes.pow(TWO).mul(ayesWithoutConviction),
+			ayes.pow(TWO).mul(ayesWithoutConviction)
 		);
 
 		return {
 			failingThreshold: BN.max(res[0], res[1]),
-			isValid: true,
+			isValid: true
 		};
 	}
 }
@@ -161,13 +161,13 @@ export function getPassingThreshold({
 	nays,
 	naysWithoutConviction,
 	totalIssuance,
-	threshold,
+	threshold
 }: getPassingThresholdParamsType): PassingThresholdResult {
 	if (nays.isZero() || naysWithoutConviction.isZero()) {
 		// there is no vote against, any number of aye>0 would work
 		return {
 			isValid: true,
-			passingThreshold: ONE,
+			passingThreshold: ONE
 		};
 	}
 
@@ -175,14 +175,14 @@ export function getPassingThreshold({
 	// than the (total issuance) /2 it can't pass
 	if (naysWithoutConviction.gt(totalIssuance.divn(2))) {
 		return {
-			isValid: false,
+			isValid: false
 		};
 	}
 
 	if (threshold === VoteThresholdEnum.Simplemajority) {
 		return {
 			isValid: true,
-			passingThreshold: nays,
+			passingThreshold: nays
 		};
 	}
 
@@ -190,16 +190,16 @@ export function getPassingThreshold({
 		const { f, fp } = getFAndFp({
 			totalIssuance,
 			votes: nays,
-			votesWithoutConviction: naysWithoutConviction,
+			votesWithoutConviction: naysWithoutConviction
 		});
 		const result = raphsonIterations(f, fp);
 		return result.foundRoot
 			? {
 					isValid: true,
-					passingThreshold: result.result as BN,
+					passingThreshold: result.result as BN
 			  }
 			: {
-					isValid: false,
+					isValid: false
 			  };
 	} else {
 		// SuperMajorityRejection
@@ -208,11 +208,11 @@ export function getPassingThreshold({
 		const res = solveQuadraticEquation(
 			totalIssuance.neg(),
 			nays.pow(TWO),
-			nays.pow(TWO).mul(naysWithoutConviction),
+			nays.pow(TWO).mul(naysWithoutConviction)
 		);
 		return {
 			isValid: true,
-			passingThreshold: BN.max(res[0], res[1]),
+			passingThreshold: BN.max(res[0], res[1])
 		};
 	}
 }

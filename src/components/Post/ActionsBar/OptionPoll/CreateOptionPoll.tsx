@@ -5,7 +5,7 @@
 import {
 	AuditOutlined,
 	MinusCircleOutlined,
-	PlusOutlined,
+	PlusOutlined
 } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Select } from 'antd';
 import { ICreatePollResponse } from 'pages/api/v1/auth/actions/createPoll';
@@ -33,7 +33,7 @@ for (let i = 0; i < 59; i++) {
 		daysOptions.push(
 			<Select.Option key={i + 1} value={i + 1}>
 				{i + 1}
-			</Select.Option>,
+			</Select.Option>
 		);
 	}
 
@@ -41,14 +41,14 @@ for (let i = 0; i < 59; i++) {
 		hoursOptions.push(
 			<Select.Option key={i + 1} value={i + 1}>
 				{i + 1}
-			</Select.Option>,
+			</Select.Option>
 		);
 	}
 
 	minutesOptions.push(
 		<Select.Option key={i + 1} value={i + 1}>
 			{i + 1}
-		</Select.Option>,
+		</Select.Option>
 	);
 }
 
@@ -87,15 +87,15 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 						pollType: POLL_TYPE.OPTION,
 						postId,
 						proposalType,
-						question,
-					},
+						question
+					}
 				);
 
 			if (apiError || !data) {
 				queueNotification({
 					header: 'Error!',
 					message: 'There was an error in creating the poll :(',
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				console.error('Error creating poll', apiError);
 				setError(apiError || 'Error in creating poll');
@@ -108,7 +108,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 				queueNotification({
 					header: 'Success!',
 					message: 'Poll Created',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				setPostData((prev) => {
 					const newOptionPolls: IOptionPoll[] = [];
@@ -120,7 +120,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 						option_poll_votes: [],
 						options: options,
 						question: question || '',
-						updated_at: date,
+						updated_at: date
 					};
 					if (prev.optionPolls && Array.isArray(prev.optionPolls)) {
 						newOptionPolls.push(...prev.optionPolls, optionPoll);
@@ -129,7 +129,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 					}
 					return {
 						...prev,
-						optionPolls: newOptionPolls,
+						optionPolls: newOptionPolls
 					};
 				});
 			}
@@ -181,7 +181,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 						onClick={handleCreate}
 					>
 						Create Poll
-					</Button>,
+					</Button>
 				]}
 			>
 				<Form
@@ -216,12 +216,12 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 									if (!options || options.length < 2) {
 										return Promise.reject(
 											new Error(
-												'Please add atleast 2 options',
-											),
+												'Please add atleast 2 options'
+											)
 										);
 									}
-								},
-							},
+								}
+							}
 						]}
 					>
 						{(fields, { add, remove }, { errors }) => (
@@ -236,15 +236,15 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 											{...field}
 											validateTrigger={[
 												'onChange',
-												'onBlur',
+												'onBlur'
 											]}
 											rules={[
 												{
 													message:
 														'Please input an option text or remove this field.',
 													required: true,
-													whitespace: true,
-												},
+													whitespace: true
+												}
 											]}
 											noStyle
 										>

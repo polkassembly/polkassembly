@@ -43,7 +43,7 @@ const Settings: FC<Props> = (props) => {
 			{
 				children: <UserAccount network={network} />,
 				key: 'account',
-				label: 'Account',
+				label: 'Account'
 			},
 			{
 				children: AVAILABLE_NETWORK.includes(network) ? (
@@ -52,15 +52,15 @@ const Settings: FC<Props> = (props) => {
 					<NotificationUpgradingState />
 				),
 				key: 'notifications',
-				label: 'Notifications',
+				label: 'Notifications'
 			},
 			{
 				children: <Tracker network={network} />,
 				key: 'tracker',
-				label: 'Tracker',
-			},
+				label: 'Tracker'
+			}
 		],
-		[network],
+		[network]
 	);
 
 	useEffect(() => {

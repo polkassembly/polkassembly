@@ -21,12 +21,12 @@ const WalletConnectModal = dynamic(
 	() => import('./DelegationWalletConnectModal'),
 	{
 		loading: () => <Skeleton.Avatar active />,
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 	loading: () => <Skeleton.Avatar active />,
-	ssr: false,
+	ssr: false
 });
 
 const DelegationDashboardHome = ({ className }: Props) => {
@@ -48,7 +48,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 					...prev,
 					delegationDashboardAddress:
 						address || userDetails?.delegationDashboardAddress,
-					loginWallet: wallet as Wallet,
+					loginWallet: wallet as Wallet
 				};
 			});
 		if (window.innerWidth < 768) {
@@ -71,7 +71,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	}, [
 		userDetails?.username,
 		userDetails?.delegationDashboardAddress,
-		isMobile,
+		isMobile
 	]);
 
 	return (

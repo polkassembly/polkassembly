@@ -5,7 +5,7 @@
 import {
 	ClockCircleOutlined,
 	DislikeOutlined,
-	LikeOutlined,
+	LikeOutlined
 } from '@ant-design/icons';
 import { Divider, Modal, Tooltip } from 'antd';
 import { poppins } from 'pages/_app';
@@ -48,7 +48,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 		post_id,
 		tags,
 		spam_users_count,
-		className,
+		className
 	} = props;
 	const currentUser = useContext(UserDetailsContext);
 	const ownPost = currentUser.username === username;
@@ -158,7 +158,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 												background: '#D2D8E050',
 												borderRadius: '20px',
 												fontSize: '10px',
-												padding: '4px 8px',
+												padding: '4px 8px'
 											}}
 											onClick={(e) => {
 												e.stopPropagation();
@@ -192,7 +192,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 										type="vertical"
 										className="max-lg:hidden sm:mt-1"
 										style={{
-											borderLeft: '1px solid #485F7D',
+											borderLeft: '1px solid #485F7D'
 										}}
 									/>
 									<TopicTag
@@ -326,7 +326,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 												background: '#D2D8E050',
 												borderRadius: '20px',
 												fontSize: '10px',
-												padding: '4px 8px',
+												padding: '4px 8px'
 											}}
 											onClick={(e) => {
 												e.stopPropagation();

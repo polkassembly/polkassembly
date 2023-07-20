@@ -13,7 +13,7 @@ import messages from '~src/auth/utils/messages';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ChangeResponseType | MessageType>,
+	res: NextApiResponse<ChangeResponseType | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -37,12 +37,12 @@ async function handler(
 
 	const updatedJWT = await authServiceInstance.ChangeUsername(
 		token,
-		username,
+		username
 	);
 
 	return res.status(200).json({
 		message: messages.NOTIFICATION_PREFERENCE_CHANGE_SUCCESSFUL,
-		token: updatedJWT,
+		token: updatedJWT
 	});
 }
 

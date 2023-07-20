@@ -28,7 +28,7 @@ export default function NetworkTags({
 	name,
 	selected = true,
 	onActionClick,
-	onClose,
+	onClose
 }: Props) {
 	return (
 		<Tag

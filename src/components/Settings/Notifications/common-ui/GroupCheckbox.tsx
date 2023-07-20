@@ -20,7 +20,7 @@ export default function GroupCheckbox({
 	classname,
 	Icon,
 	onChange,
-	handleCategoryAllClick,
+	handleCategoryAllClick
 }: Props) {
 	const [all, setAll] = useState(false);
 

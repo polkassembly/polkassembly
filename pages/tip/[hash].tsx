@@ -5,7 +5,7 @@
 import { GetServerSideProps } from 'next';
 import {
 	getOnChainPost,
-	IPostResponse,
+	IPostResponse
 } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
 import Post from 'src/components/Post/Post';
@@ -29,7 +29,7 @@ import { useState } from 'react';
 const proposalType = ProposalType.TIPS;
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { hash } = query;
 
@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: hash,
-		proposalType,
+		proposalType
 	});
 	return { props: { data, error, network, status } };
 };
@@ -68,7 +68,7 @@ const TipPost: FC<ITipPostProps> = (props) => {
 		}
 		(async () => {
 			setIsUnFinalized(
-				Boolean(await checkIsOnChain(String(hash), proposalType, api)),
+				Boolean(await checkIsOnChain(String(hash), proposalType, api))
 			);
 		})();
 	}, [api, apiReady, error, status, hash]);

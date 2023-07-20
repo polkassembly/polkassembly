@@ -8,7 +8,7 @@ import React, { FC, PropsWithChildren } from 'react';
 interface Props extends PropsWithChildren {
 	className?: string;
 	onSubmit?: (
-		values: React.BaseSyntheticEvent<object, any, any> | undefined,
+		values: React.BaseSyntheticEvent<object, any, any> | undefined
 	) => void;
 }
 

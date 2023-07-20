@@ -11,7 +11,7 @@ import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import {
 	getFirestoreProposalType,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 import { GET_ONCHAIN_POSTS_BY_PROPOSER_ADDRESSES } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
@@ -89,36 +89,36 @@ export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
 		gov1: {
 			collective: {
 				council_motions: [],
-				tech_comm_proposals: [],
+				tech_comm_proposals: []
 			},
 			democracy: {
 				proposals: [],
-				referenda: [],
+				referenda: []
 			},
 			discussions: {
-				posts: [],
+				posts: []
 			},
 			treasury: {
 				bounties: [],
 				tips: [],
-				treasury_proposals: [],
-			},
+				treasury_proposals: []
+			}
 		},
 		open_gov: {
 			auction_admin: [],
 			discussions: {
-				posts: [],
+				posts: []
 			},
 			fellowship: {
 				fellowship_admin: [],
 				member_referenda: [],
-				whitelisted_caller: [],
+				whitelisted_caller: []
 			},
 			governance: {
 				general_admin: [],
 				lease_admin: [],
 				referendum_canceller: [],
-				referendum_killer: [],
+				referendum_killer: []
 			},
 			root: [],
 			staking_admin: [],
@@ -128,9 +128,9 @@ export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
 				medium_spender: [],
 				small_spender: [],
 				small_tipper: [],
-				treasurer: [],
-			},
-		},
+				treasurer: []
+			}
+		}
 	};
 };
 
@@ -141,7 +141,7 @@ interface IGetPostsByAddressParams {
 }
 
 type TGetUserPosts = (
-	params: IGetPostsByAddressParams,
+	params: IGetPostsByAddressParams
 ) => Promise<IApiResponse<IUserPostsListingResponse>>;
 
 export const getUserPosts: TGetUserPosts = async (params) => {
@@ -150,7 +150,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 		if (!userId && userId !== 0 && !addresses) {
 			throw apiErrorWithStatusCode(
 				'Missing parameters in request body',
-				400,
+				400
 			);
 		}
 		const numUserId = Number(userId);
@@ -185,7 +185,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 		}
 		const discussionsQuerySnapshot = await postsByTypeRef(
 			network,
-			ProposalType.DISCUSSIONS,
+			ProposalType.DISCUSSIONS
 		)
 			.where('user_id', '==', numUserId)
 			.get();
@@ -199,12 +199,12 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 						id: data.id,
 						post_reactions: {
 							'👍': 0,
-							'👎': 0,
+							'👎': 0
 						},
 						proposer: proposer,
 						title: data.title || '',
 						type: ProposalType.DISCUSSIONS,
-						username,
+						username
 					};
 					const postReactionsQuerySnapshot = await doc.ref
 						.collection('post_reactions')
@@ -220,10 +220,10 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 					});
 					return newData;
 				}
-			},
+			}
 		);
 		const discussionsPromiseSettledResult = await Promise.allSettled(
-			discussionsPromise,
+			discussionsPromise
 		);
 		discussionsPromiseSettledResult.forEach((result) => {
 			if (result && result.status === 'fulfilled' && result.value) {
@@ -238,9 +238,9 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 			variables: {
 				proposer_in:
 					(addresses as string[])?.map((address) =>
-						getEncodedAddress(address, network),
-					) || [],
-			},
+						getEncodedAddress(address, network)
+					) || []
+			}
 		});
 		const edges = subsquidRes?.data?.proposalsConnection?.edges;
 		if (edges && Array.isArray(edges)) {
@@ -255,7 +255,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 						proposalArguments,
 						proposer,
 						preimage,
-						trackNumber,
+						trackNumber
 					} = edge.node;
 					const proposalType = getFirestoreProposalType(type);
 					const id = type === 'Tip' ? hash : index;
@@ -269,7 +269,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 						id: id,
 						post_reactions: {
 							'👍': 0,
-							'👎': 0,
+							'👎': 0
 						},
 						proposer:
 							proposer ||
@@ -279,11 +279,11 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 						title:
 							preimage && preimage.method ? preimage.method : '',
 						track_number: trackNumber,
-						type: proposalType as ProposalType,
+						type: proposalType as ProposalType
 					};
 					const doc = await postsByTypeRef(
 						network,
-						proposalType as any,
+						proposalType as any
 					)
 						.doc(String(id))
 						.get();
@@ -317,7 +317,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 				}
 			});
 			const onChainPostsPromiseSettledResult = await Promise.allSettled(
-				onChainPostsPromise,
+				onChainPostsPromise
 			);
 			onChainPostsPromiseSettledResult.forEach((result) => {
 				if (result && result.status === 'fulfilled' && result.value) {
@@ -337,7 +337,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 						userPosts.gov1.collective.council_motions.push(value);
 					} else if (ProposalType.TECH_COMMITTEE_PROPOSALS === type) {
 						userPosts.gov1.collective.tech_comm_proposals.push(
-							value,
+							value
 						);
 					} else if (ProposalType.REFERENDUM_V2 === type) {
 						const track_number = value.track_number;
@@ -351,79 +351,79 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 									break;
 								case 1:
 									userPosts.open_gov.fellowship.whitelisted_caller.push(
-										value,
+										value
 									);
 									break;
 								case 10:
 									userPosts.open_gov.staking_admin.push(
-										value,
+										value
 									);
 									break;
 								case 11:
 									userPosts.open_gov.treasury.treasurer.push(
-										value,
+										value
 									);
 									break;
 								case 12:
 									userPosts.open_gov.governance.lease_admin.push(
-										value,
+										value
 									);
 									break;
 								case 13:
 									userPosts.open_gov.fellowship.fellowship_admin.push(
-										value,
+										value
 									);
 									break;
 								case 14:
 									userPosts.open_gov.governance.general_admin.push(
-										value,
+										value
 									);
 									break;
 								case 15:
 									userPosts.open_gov.auction_admin.push(
-										value,
+										value
 									);
 									break;
 								case 20:
 									userPosts.open_gov.governance.referendum_canceller.push(
-										value,
+										value
 									);
 									break;
 								case 21:
 									userPosts.open_gov.governance.referendum_killer.push(
-										value,
+										value
 									);
 									break;
 								case 30:
 									userPosts.open_gov.treasury.small_tipper.push(
-										value,
+										value
 									);
 									break;
 								case 31:
 									userPosts.open_gov.treasury.big_tipper.push(
-										value,
+										value
 									);
 									break;
 								case 32:
 									userPosts.open_gov.treasury.small_spender.push(
-										value,
+										value
 									);
 									break;
 								case 33:
 									userPosts.open_gov.treasury.medium_spender.push(
-										value,
+										value
 									);
 									break;
 								case 34:
 									userPosts.open_gov.treasury.big_spender.push(
-										value,
+										value
 									);
 									break;
 							}
 						}
 					} else if (ProposalType.FELLOWSHIP_REFERENDUMS === type) {
 						userPosts.open_gov.fellowship.member_referenda.push(
-							value,
+							value
 						);
 					}
 				}
@@ -432,13 +432,13 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 		return {
 			data: JSON.parse(JSON.stringify(userPosts)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 };
@@ -446,7 +446,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 // expects proposerAddress
 const handler: NextApiHandler<IUserPostsListingResponse | MessageType> = async (
 	req,
-	res,
+	res
 ) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network))
@@ -457,7 +457,7 @@ const handler: NextApiHandler<IUserPostsListingResponse | MessageType> = async (
 	const { data, error, status } = await getUserPosts({
 		addresses,
 		network,
-		userId,
+		userId
 	});
 
 	if (error || !data) {

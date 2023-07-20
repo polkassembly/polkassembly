@@ -20,7 +20,7 @@ const { Panel } = Collapse;
 const Row = ({
 	label,
 	data,
-	handleEdit,
+	handleEdit
 }: {
 	label: string;
 	data: string;
@@ -57,7 +57,7 @@ const Row = ({
 export enum ModalType {
 	USERNAME = 'username',
 	EMAIL = 'email',
-	PASSWORD = 'password',
+	PASSWORD = 'password'
 }
 
 export default function ProfileSettings() {

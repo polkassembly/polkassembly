@@ -8,7 +8,7 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import {
 	useApiContext,
 	useNetworkContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from '~src/context';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
@@ -30,7 +30,7 @@ const ProposalDisplay: FC<IProposalDisplayProps> = (props) => {
 		canVote,
 		getAccounts,
 		onAccountChange,
-		seconds,
+		seconds
 	} = props;
 	const { api, apiReady } = useApiContext();
 	const [deposit, setDeposit] = useState('');
@@ -39,19 +39,19 @@ const ProposalDisplay: FC<IProposalDisplayProps> = (props) => {
 	const metaMaskError = useHandleMetaMask();
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: false,
-		message: 'Loading proposal info',
+		message: 'Loading proposal info'
 	});
 
 	useEffect(() => {
 		setLoadingStatus((prev) => ({
 			...prev,
-			isLoading: true,
+			isLoading: true
 		}));
 		if (!api || !apiReady) return;
 		setDeposit(api.consts.democracy?.minimumDeposit?.toString() || '0');
 		setLoadingStatus((prev) => ({
 			...prev,
-			isLoading: false,
+			isLoading: false
 		}));
 	}, [api, apiReady]);
 

@@ -5,5 +5,5 @@
 // TODO: remove this file once the backend is updated
 export const post_type = {
 	OFF_CHAIN: 1,
-	ON_CHAIN: 2,
+	ON_CHAIN: 2
 };

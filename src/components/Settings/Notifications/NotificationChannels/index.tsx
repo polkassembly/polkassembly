@@ -30,13 +30,13 @@ export enum CHANNEL {
 	DISCORD = 'discord',
 	EMAIL = 'email',
 	SLACK = 'slack',
-	ELEMENT = 'element',
+	ELEMENT = 'element'
 }
 
 // eslint-disable-next-line no-empty-pattern
 export default function NotificationChannels({
 	handleEnableDisabled,
-	handleReset,
+	handleReset
 }: Props) {
 	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
 	const { network } = useNetworkContext();
@@ -54,11 +54,11 @@ export default function NotificationChannels({
 				{
 					body: JSON.stringify({
 						channel,
-						userId: id,
+						userId: id
 					}),
 					headers: firebaseFunctionsHeader(network),
-					method: 'POST',
-				},
+					method: 'POST'
+				}
 			);
 
 			const { data: verifyToken, error: verifyTokenError } =
@@ -71,7 +71,7 @@ export default function NotificationChannels({
 				queueNotification({
 					header: 'Failed!',
 					message: verifyTokenError,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				return;
 			}
@@ -83,7 +83,7 @@ export default function NotificationChannels({
 			queueNotification({
 				header: 'Failed!',
 				message: 'Error in generating token.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 	};
@@ -242,24 +242,24 @@ const Bots = [
 		Icon: <TelegramIcon />,
 		channel: CHANNEL.TELEGRAM,
 		description: 'a Telegram chat to get Telegram notifications',
-		title: 'Telegram',
+		title: 'Telegram'
 	},
 	{
 		Icon: <DiscordIcon />,
 		channel: CHANNEL.DISCORD,
 		description: 'a Discord Channel chat to get Discord notifications',
-		title: 'Discord',
+		title: 'Discord'
 	},
 	{
 		Icon: <SlackIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
 		channel: CHANNEL.SLACK,
 		description: '',
-		title: 'Slack',
+		title: 'Slack'
 	},
 	{
 		Icon: <ElementIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
 		channel: CHANNEL.ELEMENT,
 		description: '',
-		title: 'Element',
-	},
+		title: 'Element'
+	}
 ];

@@ -35,5 +35,5 @@ export {
 	useUserDetailsContext,
 	useApiContext,
 	useNetworkContext,
-	usePostDataContext,
+	usePostDataContext
 };

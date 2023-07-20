@@ -8,7 +8,7 @@
 export const proposalStatus = {
 	CLEARED: 'Cleared',
 	PROPOSED: 'Proposed',
-	TABLED: 'Tabled',
+	TABLED: 'Tabled'
 };
 
 export const referendumStatus = {
@@ -17,7 +17,7 @@ export const referendumStatus = {
 	NOTPASSED: 'NotPassed',
 	PASSED: 'Passed',
 	STARTED: 'Started',
-	VETOED: 'Vetoed',
+	VETOED: 'Vetoed'
 };
 
 export const gov2ReferendumStatus = {
@@ -30,7 +30,7 @@ export const gov2ReferendumStatus = {
 	KILLED: 'Killed',
 	REJECTED: 'Rejected',
 	SUBMITTED: 'Submitted',
-	TIMEDOUT: 'TimedOut',
+	TIMEDOUT: 'TimedOut'
 };
 
 export const motionStatus = {
@@ -39,21 +39,21 @@ export const motionStatus = {
 	DISAPPROVED: 'Disapproved',
 	EXECUTED: 'Executed',
 	PROPOSED: 'Proposed',
-	VOTED: 'Voted',
+	VOTED: 'Voted'
 };
 
 export const tipStatus = {
 	CLOSED: 'Closed',
 	CLOSING: 'Closing',
 	OPENED: 'Opened',
-	RETRACTED: 'Retracted',
+	RETRACTED: 'Retracted'
 };
 
 export const tipStatusMap = {
 	[tipStatus.OPENED]: 'Opened',
 	[tipStatus.CLOSING]: 'Closing',
 	[tipStatus.CLOSED]: 'Rewarded',
-	[tipStatus.RETRACTED]: 'Retracted',
+	[tipStatus.RETRACTED]: 'Retracted'
 };
 
 export const bountyStatus = {
@@ -63,7 +63,7 @@ export const bountyStatus = {
 	CLAIMED: 'Claimed',
 	EXTENDED: 'Extended',
 	PROPOSED: 'Proposed',
-	REJECTED: 'Rejected',
+	REJECTED: 'Rejected'
 };
 
 export const bountyStatusMap = {
@@ -73,33 +73,33 @@ export const bountyStatusMap = {
 	[bountyStatus.CLAIMED]: 'Claimed',
 	[bountyStatus.EXTENDED]: 'Extended',
 	[bountyStatus.PROPOSED]: 'Proposed',
-	[bountyStatus.REJECTED]: 'Rejected',
+	[bountyStatus.REJECTED]: 'Rejected'
 };
 
 export const childBountyStatus = {
 	ADDED: 'Added',
 	AWARDED: 'Awarded',
 	CANCELED: 'Canceled',
-	CLAIMED: 'Claimed',
+	CLAIMED: 'Claimed'
 };
 
 export const childBountyStatusMap = {
 	[childBountyStatus.ADDED]: 'Added',
 	[childBountyStatus.AWARDED]: 'Awarded',
 	[childBountyStatus.CANCELED]: 'Canceled',
-	[childBountyStatus.CLAIMED]: 'Claimed',
+	[childBountyStatus.CLAIMED]: 'Claimed'
 };
 
 export const approvalStatus = {
 	APPROVED: 'approved',
 	PENDING: 'pending',
-	REJECTED: 'rejected',
+	REJECTED: 'rejected'
 };
 
 export const announcementStatus = {
-	Announced: 'Announced',
+	Announced: 'Announced'
 };
 
 export const announcementStatusMap = {
-	[announcementStatus.Announced]: 'Announced',
+	[announcementStatus.Announced]: 'Announced'
 };

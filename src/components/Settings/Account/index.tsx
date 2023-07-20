@@ -14,17 +14,17 @@ const { Panel } = Collapse;
 
 const Address = dynamic(() => import('./Address'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 const MultiSignatureAddress = dynamic(() => import('./MultiSignatureAddress'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 const Proxy = dynamic(() => import('./Proxy'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 interface IAddressHeaderProps {
@@ -42,7 +42,7 @@ const AddressHeader: FC<IAddressHeaderProps> = ({
 	id,
 	onChange,
 	modal,
-	subHeading,
+	subHeading
 }) => {
 	return (
 		<>

@@ -15,12 +15,12 @@ export interface NetworkContextType {
 }
 
 export const NetworkContext: React.Context<NetworkContextType> = createContext(
-	{} as NetworkContextType,
+	{} as NetworkContextType
 );
 
 export function NetworkContextProvider({
 	initialNetwork,
-	children,
+	children
 }: NetworkContextProviderProps): React.ReactElement {
 	const [network, setNetwork] = useState(initialNetwork || '');
 

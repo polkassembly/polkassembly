@@ -18,7 +18,7 @@ import { IPostTag, Post } from '~src/types';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<CreatePostResponseType>,
+	res: NextApiResponse<CreatePostResponseType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -44,7 +44,7 @@ async function handler(
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType))
 		return res.status(400).json({
-			message: `The off chain proposal type "${proposalType}" is invalid.`,
+			message: `The off chain proposal type "${proposalType}" is invalid.`
 		});
 
 	const token = getTokenFromReq(req);
@@ -56,7 +56,7 @@ async function handler(
 
 	const lastPostQuerySnapshot = await postsByTypeRef(
 		network,
-		strProposalType as ProposalType,
+		strProposalType as ProposalType
 	)
 		.orderBy('id', 'desc')
 		.limit(1)
@@ -67,12 +67,12 @@ async function handler(
 	const newID = Number(postsCount) + 1;
 
 	const userDefaultAddress = await getDefaultUserAddressFromId(
-		Number(userId),
+		Number(userId)
 	);
 
 	const postDocRef = postsByTypeRef(
 		network,
-		strProposalType as ProposalType,
+		strProposalType as ProposalType
 	).doc(String(newID));
 
 	const last_comment_at = new Date();
@@ -90,7 +90,7 @@ async function handler(
 		title,
 		topic_id: strProposalType === ProposalType.GRANTS ? 6 : Number(topicId),
 		user_id: user.id,
-		username: user.username,
+		username: user.username
 	};
 
 	const batch = firestore_db.batch();
@@ -100,7 +100,7 @@ async function handler(
 				const tagRef = firestore_db.collection('tags').doc(tag);
 				const newTag: IPostTag = {
 					last_used_at: new Date(),
-					name: tag.toLowerCase(),
+					name: tag.toLowerCase()
 				};
 				batch.set(tagRef, newTag, { merge: true });
 			}

@@ -18,7 +18,7 @@ const messages = {
 		'Username should be at least 3 characters long.',
 	VALIDATION_USERNAME_PATTERN_ERROR:
 		'Invalid character found, you can use letters, numbers and the following characters ._-',
-	VALIDATION_USERNAME_REQUIRED_ERROR: 'Username is mandatory.',
+	VALIDATION_USERNAME_REQUIRED_ERROR: 'Username is mandatory.'
 };
 
 export default messages;

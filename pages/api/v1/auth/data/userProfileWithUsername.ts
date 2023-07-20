@@ -12,7 +12,7 @@ import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 export async function getUserIdWithAddress(
-	address: string,
+	address: string
 ): Promise<IApiResponse<number>> {
 	try {
 		const docSnapshot = await firestore_db
@@ -24,7 +24,7 @@ export async function getUserIdWithAddress(
 			return {
 				data: null,
 				error: messages.NO_USER_FOUND_WITH_ADDRESS,
-				status: 404,
+				status: 404
 			};
 		}
 		const data = docSnapshot.data();
@@ -32,25 +32,25 @@ export async function getUserIdWithAddress(
 			return {
 				data: null,
 				error: messages.NO_USER_FOUND_WITH_ADDRESS,
-				status: 404,
+				status: 404
 			};
 		}
 		return {
 			data: JSON.parse(JSON.stringify(data?.user_id)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
 
 export async function getUserProfileWithUserId(
-	userId: number,
+	userId: number
 ): Promise<IApiResponse<ProfileDetailsResponse>> {
 	try {
 		const userDoc = await firestore_db
@@ -61,7 +61,7 @@ export async function getUserProfileWithUserId(
 			return {
 				data: null,
 				error: messages.NO_USER_FOUND_WITH_USER_ID,
-				status: 404,
+				status: 404
 			};
 		}
 		const data = userDoc.data();
@@ -75,25 +75,25 @@ export async function getUserProfileWithUserId(
 			title: '',
 			user_id: userDoc.id,
 			username: data?.username,
-			...data?.profile,
+			...data?.profile
 		};
 
 		return {
 			data: JSON.parse(JSON.stringify(user)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
 
 export async function getUserProfileWithUsername(
-	username: string,
+	username: string
 ): Promise<IApiResponse<ProfileDetailsResponse>> {
 	try {
 		const userQuerySnapshot = await firestore_db
@@ -105,7 +105,7 @@ export async function getUserProfileWithUsername(
 		if (userQuerySnapshot.size == 0)
 			throw apiErrorWithStatusCode(
 				messages.NO_USER_FOUND_WITH_USERNAME,
-				404,
+				404
 			);
 
 		const userDoc = userQuerySnapshot.docs[0].data() as User;
@@ -119,26 +119,26 @@ export async function getUserProfileWithUsername(
 			title: '',
 			user_id: userDoc.id,
 			username: userDoc.username,
-			...userDoc.profile,
+			...userDoc.profile
 		};
 
 		return {
 			data: JSON.parse(JSON.stringify(user)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ProfileDetailsResponse | MessageType>,
+	res: NextApiResponse<ProfileDetailsResponse | MessageType>
 ) {
 	const { username = '' } = req.query;
 	if (typeof username !== 'string' || !username)

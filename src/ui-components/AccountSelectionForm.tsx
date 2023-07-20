@@ -39,7 +39,7 @@ const AccountSelectionForm = ({
 	inputClassName,
 	isSwitchButton,
 	setSwitchModalOpen,
-	withoutInfo,
+	withoutInfo
 }: Props) => (
 	<article className={`w-full flex flex-col ${className}`}>
 		<div className="flex items-center gap-x-2 ml-[-6px]">

@@ -10,7 +10,7 @@ import { poppins } from 'pages/_app';
 import {
 	ErrorState,
 	LoadingState,
-	PostEmptyState,
+	PostEmptyState
 } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
 
@@ -23,11 +23,11 @@ interface ITrackListingAllTabContentProps {
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (
-	props,
+	props
 ) => {
 	const { className, posts, error, count } = props;
 

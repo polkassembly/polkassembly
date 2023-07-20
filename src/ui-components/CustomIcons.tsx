@@ -131,7 +131,7 @@ export const NewsIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 
 export const TreasuryProposalsIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={TreasuryProposalsSVG} {...props} />;
 
 export const BountiesIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -147,7 +147,7 @@ export const TipsIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 
 export const DemocracyProposalsIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={DemocracyProposalsSVG} {...props} />;
 
 export const MembersIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -159,7 +159,7 @@ export const MotionsIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 
 export const TechComProposalIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={TechCommProposalSVG} {...props} />;
 
 export const ParachainsIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -235,11 +235,11 @@ export const PreparePeriodIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 
 export const DecisionPeriodIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={DecisionPeriodSVG} {...props} />;
 
 export const EnactmentPeriodIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={EnactmentPeriodSVG} {...props} />;
 
 export const RightArrowIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -251,7 +251,7 @@ export const CastVoteIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 
 export const VoteCalculationIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={VoteCalculationSVG} {...props} />;
 
 export const VoteAmountIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -259,7 +259,7 @@ export const VoteAmountIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 
 export const ConvictionPeriodIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={ConvictionPeriodSVG} {...props} />;
 
 export const LikeDislikeIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -271,7 +271,7 @@ export const ArrowDownIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 
 export const ThresholdGraphIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={ThresholdGraphSVG} {...props} />;
 
 export const PostEditIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -283,7 +283,7 @@ export const PostLinkingIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 
 export const WarningMessageIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={WarningMessageSVG} {...props} />;
 
 export const VotingHistoryIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -303,7 +303,7 @@ export const StakingAdminIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 
 export const GovernanceGroupIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={GovernanceGroupSVG} {...props} />;
 
 export const TreasuryGroupIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -311,7 +311,7 @@ export const TreasuryGroupIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 
 export const FellowshipGroupIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={FellowshipGroupSVG} {...props} />;
 export const PreimagesIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={PreimagesSVG} {...props} />
@@ -320,25 +320,25 @@ export const AgainstIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={AgainstSVG} {...props} />
 );
 export const AgainstUnfilledIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={AgainstUnfilledSVG} {...props} />;
 export const SlightlyAgainstIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={SlightlyAgainstSVG} {...props} />;
 export const SlightlyAgainstUnfilledIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={SlightlyAgainstUnfilledSVG} {...props} />;
 export const NeutralIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={NeutralSVG} {...props} />
 );
 export const NeutralUnfilledIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={NeutralUnfilledSVG} {...props} />;
 export const SlightlyForIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={SlightlyForSVG} {...props} />
 );
 export const SlightlyForUnfilledIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={SlightlyForUnfilledSVG} {...props} />;
 export const ForIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={ForSVG} {...props} />
@@ -351,20 +351,20 @@ export const DelegatedIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 
 export const DelegateDelegationIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={DelegatedSVGDelegation} {...props} />;
 
 export const UnDelegatedIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={UndelegatedSVG} {...props} />
 );
 export const ReceivedDelegationIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={ReceivedDelegationSVG} {...props} />;
 export const FilterIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={FilterSVG} {...props} />
 );
 export const FilterUnfilledIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={FilterUnfilledSVG} {...props} />;
 
 export const SearchIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -383,48 +383,48 @@ export const RootTrackIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={RootTrackSVG} {...props} />
 );
 export const AuctionAdminTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={AuctionAdminTrackSVG} {...props} />;
 export const WhitelistedCallerTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={WhitelistedCallerSVG} {...props} />;
 export const GeneralAdminTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={GeneralAdminSVG} {...props} />;
 export const LeaseAdminTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={LeaseAdminSVG} {...props} />;
 export const SmallTipperTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={SmallTipperSVG} {...props} />;
 export const MediumSpenderTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={MediumSpenderSVG} {...props} />;
 export const StakingAdminTrackTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={StakingAdminTrackSVG} {...props} />;
 export const TreasurerTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={TreasurerSVG} {...props} />;
 export const FellowshipAdminTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={FellowshipAdminSVG} {...props} />;
 export const ReferendumKillerTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={ReferendumKillerSVG} {...props} />;
 export const BigSpenderTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={BigSpenderSVG} {...props} />;
 export const BigTipperTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={BigTipperSVG} {...props} />;
 
 export const ReferendumCancellerTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={ReferendumCancellerSVG} {...props} />;
 export const SmallSpenderTrackIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={SmallSpenderSVG} {...props} />;
 export const DelegationSidebarIcon = (
-	props: Partial<CustomIconComponentProps>,
+	props: Partial<CustomIconComponentProps>
 ) => <Icon component={DelegationSVG} {...props} />;

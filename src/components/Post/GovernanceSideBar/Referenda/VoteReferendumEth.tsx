@@ -5,7 +5,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import {
 	InjectedAccountWithMeta,
-	InjectedWindow,
+	InjectedWindow
 } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Button, Form, Modal, Segmented, Select, Spin, Alert } from 'antd';
@@ -17,7 +17,7 @@ import {
 	ILastVote,
 	LoadingStatusType,
 	NotificationStatus,
-	Wallet,
+	Wallet
 } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
@@ -30,7 +30,7 @@ import {
 	useApiContext,
 	useNetworkContext,
 	usePostDataContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import addEthereumChain from '~src/util/addEthereumChain';
@@ -67,7 +67,7 @@ const VoteReferendum = ({
 	referendumId,
 	onAccountChange,
 	lastVote,
-	setLastVote,
+	setLastVote
 }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const userDetails = useUserDetailsContext();
@@ -75,10 +75,10 @@ const VoteReferendum = ({
 		walletConnectProvider,
 		setWalletConnectProvider,
 		isLoggedOut,
-		loginAddress,
+		loginAddress
 	} = userDetails;
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(
-		undefined,
+		undefined
 	);
 	const { apiReady, api } = useApiContext();
 	const [address, setAddress] = useState<string>('');
@@ -86,7 +86,7 @@ const VoteReferendum = ({
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
 	const {
 		setPostData,
-		postData: { postType: proposalType },
+		postData: { postType: proposalType }
 	} = usePostDataContext();
 	const { network } = useNetworkContext();
 	const [wallet, setWallet] = useState<Wallet>();
@@ -94,10 +94,10 @@ const VoteReferendum = ({
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: false,
-		message: '',
+		message: ''
 	});
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map(
-		(lock, index) => [index + 1, lock],
+		(lock, index) => [index + 1, lock]
 	);
 	const [balanceErr, setBalanceErr] = useState('');
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
@@ -114,7 +114,7 @@ const VoteReferendum = ({
 			proposalType,
 			api,
 			apiReady,
-			network,
+			network
 		);
 	}, [CONVICTIONS, proposalType, api, apiReady, network]);
 
@@ -161,7 +161,7 @@ const VoteReferendum = ({
 		setPostData((prev) => {
 			return {
 				...prev,
-				postType: ProposalType.REFERENDUMS,
+				postType: ProposalType.REFERENDUMS
 			};
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -184,7 +184,7 @@ const VoteReferendum = ({
 		try {
 			await addEthereumChain({
 				ethereum,
-				network,
+				network
 			});
 		} catch (error) {
 			setIsAccountLoading(false);
@@ -192,7 +192,7 @@ const VoteReferendum = ({
 		}
 
 		const addresses = await ethereum.request({
-			method: 'eth_requestAccounts',
+			method: 'eth_requestAccounts'
 		});
 
 		if (addresses.length === 0) {
@@ -212,12 +212,12 @@ const VoteReferendum = ({
 					meta: {
 						genesisHash: null,
 						name: 'metamask',
-						source: 'metamask',
-					},
+						source: 'metamask'
+					}
 				};
 
 				return account;
-			},
+			}
 		);
 
 		if (accounts && Array.isArray(accounts)) {
@@ -226,7 +226,7 @@ const VoteReferendum = ({
 				(account) =>
 					(
 						getSubstrateAddress(account?.address) || ''
-					).toLowerCase() === (substrate_address || '').toLowerCase(),
+					).toLowerCase() === (substrate_address || '').toLowerCase()
 			);
 			if (index >= 0) {
 				const account = accounts[index];
@@ -253,8 +253,8 @@ const VoteReferendum = ({
 			rpc: {
 				1284: 'https://rpc.api.moonbeam.network',
 				1285: 'https://rpc.api.moonriver.moonbeam.network',
-				1287: 'https://rpc.api.moonbase.moonbeam.network',
-			},
+				1287: 'https://rpc.api.moonbase.moonbeam.network'
+			}
 		});
 		await wcPprovider.wc.createSession();
 		setWalletConnectProvider(wcPprovider);
@@ -284,13 +284,13 @@ const VoteReferendum = ({
 						meta: {
 							genesisHash: null,
 							name: 'walletConnect',
-							source: 'walletConnect',
-						},
+							source: 'walletConnect'
+						}
 					};
 
 					return account;
-				},
-			),
+				}
+			)
 		);
 
 		if (checksumAddresses.length > 0) {
@@ -308,7 +308,7 @@ const VoteReferendum = ({
 
 		getAccountsHandler(
 			walletConnectProvider.wc.accounts,
-			walletConnectProvider.wc.chainId,
+			walletConnectProvider.wc.chainId
 		);
 
 		setIsAccountLoading(false);
@@ -378,7 +378,7 @@ const VoteReferendum = ({
 			web3 = new Web3(
 				wallet === Wallet.TALISMAN
 					? (window as any).talismanEth
-					: (window as any).ethereum,
+					: (window as any).ethereum
 			);
 			chainId = await web3.eth.net.getId();
 		}
@@ -387,14 +387,14 @@ const VoteReferendum = ({
 			queueNotification({
 				header: 'Wrong Network!',
 				message: `Please change to ${network} network`,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
 
 		setLoadingStatus({
 			isLoading: true,
-			message: 'Waiting for confirmation',
+			message: 'Waiting for confirmation'
 		});
 
 		const voteContract = new web3.eth.Contract(abi, contractAddress);
@@ -407,11 +407,11 @@ const VoteReferendum = ({
 				referendumId,
 				aye,
 				lockedBalance.toString(),
-				conviction,
+				conviction
 			)
 			.send({
 				from: address,
-				to: contractAddress,
+				to: contractAddress
 			})
 			.then(() => {
 				setLoadingStatus({ isLoading: false, message: '' });
@@ -419,14 +419,14 @@ const VoteReferendum = ({
 					balance: lockedBalance,
 					conviction: conviction,
 					decision: vote,
-					time: new Date(),
+					time: new Date()
 				});
 				setShowModal(false);
 				setSuccessModal(true);
 				queueNotification({
 					header: 'Success!',
 					message: `Vote on referendum #${referendumId} successful.`,
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 			})
 			.catch((error: any) => {
@@ -435,7 +435,7 @@ const VoteReferendum = ({
 				queueNotification({
 					header: 'Failed!',
 					message: error.message,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			});
 	};
@@ -465,7 +465,7 @@ const VoteReferendum = ({
 
 	const handleWalletClick = async (
 		event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-		wallet: Wallet,
+		wallet: Wallet
 	) => {
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
 		event.preventDefault();
@@ -507,7 +507,7 @@ const VoteReferendum = ({
 					<span className="font-medium">Aye</span>
 				</div>
 			),
-			value: 'aye',
+			value: 'aye'
 		},
 		{
 			label: (
@@ -524,8 +524,8 @@ const VoteReferendum = ({
 					<span className="font-medium">Nay</span>
 				</div>
 			),
-			value: 'nay',
-		},
+			value: 'nay'
+		}
 	];
 
 	return (
@@ -573,7 +573,7 @@ const VoteReferendum = ({
 									onClick={(event) =>
 										handleWalletClick(
 											event as any,
-											Wallet.TALISMAN,
+											Wallet.TALISMAN
 										)
 									}
 									name="Talisman"
@@ -596,7 +596,7 @@ const VoteReferendum = ({
 									onClick={(event) =>
 										handleWalletClick(
 											event as any,
-											Wallet.METAMASK,
+											Wallet.METAMASK
 										)
 									}
 									name="MetaMask"

@@ -72,7 +72,7 @@ interface IReferendaUnlockStatus {
 const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 	className,
 	isBalanceUpdated,
-	setIsBalanceUpdated,
+	setIsBalanceUpdated
 }) => {
 	const { network } = useNetworkContext();
 	const [address, setAddress] = useState<string>('');
@@ -81,7 +81,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 	const [lockedBalance, setLockedBalance] = useState<BN>(new BN(0));
 	const [loadingStatus, setLoadingStatus] = useState<IReferendaUnlockStatus>({
 		remove: {},
-		unlock: {},
+		unlock: {}
 	});
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(true);
@@ -115,7 +115,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 				if (obj && Array.isArray(obj) && obj.length > 1) {
 					unlocks.push({
 						amount: new BN(obj[1].replaceAll(',', '')),
-						trackId: Number(obj[0]),
+						trackId: Number(obj[0])
 					});
 				}
 			});
@@ -151,16 +151,16 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 						refIndex,
 						trackId: Number(arr[1]),
 						unlocksAt: votingInfo.asCasting.prior[0].toString(),
-						vote: vote[1].asStandard.vote.isAye,
+						vote: vote[1].asStandard.vote.isAye
 					};
-				}),
+				})
 			);
 		});
 
 		setVotes(votes);
 		votes.forEach((vote) => {
 			const unlockIndex = unlocks.findIndex(
-				(unlock) => unlock.trackId === vote.trackId,
+				(unlock) => unlock.trackId === vote.trackId
 			);
 			if (unlockIndex >= 0) {
 				unlocks.splice(unlockIndex, 1);
@@ -194,7 +194,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 		try {
 			await addEthereumChain({
 				ethereum,
-				network,
+				network
 			});
 		} catch (error) {
 			setIsAccountLoading(false);
@@ -205,7 +205,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 
 		try {
 			addresses = await ethereum.request({
-				method: 'eth_requestAccounts',
+				method: 'eth_requestAccounts'
 			});
 		} catch (e) {
 			setIsAccountLoading(false);
@@ -224,12 +224,12 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 					meta: {
 						genesisHash: null,
 						name: 'metamask',
-						source: 'metamask',
-					},
+						source: 'metamask'
+					}
 				};
 
 				return account;
-			}),
+			})
 		);
 
 		if (addresses.length > 0) {
@@ -257,7 +257,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 			queueNotification({
 				header: 'Wrong Network!',
 				message: `Please change to ${currentNetwork} network`,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
@@ -269,9 +269,9 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 					...prev.remove,
 					[vote.refIndex.toString()]: {
 						isLoading: true,
-						message: 'Waiting for confirmation',
-					},
-				},
+						message: 'Waiting for confirmation'
+					}
+				}
 			};
 		});
 
@@ -284,7 +284,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 			.removeVoteForTrack(vote.refIndex, vote.trackId)
 			.send({
 				from: address,
-				to: contractAddress,
+				to: contractAddress
 			})
 			.then((result: any) => {
 				console.log(result);
@@ -295,15 +295,15 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 							...prev.remove,
 							[vote.refIndex.toString()]: {
 								isLoading: false,
-								message: '',
-							},
-						},
+								message: ''
+							}
+						}
 					};
 				});
 				queueNotification({
 					header: 'Success!',
 					message: 'Remove Vote successful.',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				getLockedBalance();
 			})
@@ -316,15 +316,15 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 							...prev.remove,
 							[vote.refIndex.toString()]: {
 								isLoading: false,
-								message: '',
-							},
-						},
+								message: ''
+							}
+						}
 					};
 				});
 				queueNotification({
 					header: 'Failed!',
 					message: error.message,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				getLockedBalance();
 			});
@@ -340,7 +340,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 			queueNotification({
 				header: 'Wrong Network!',
 				message: `Please change to ${currentNetwork} network`,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
@@ -352,9 +352,9 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 					...prev.unlock,
 					[unlock.trackId.toString()]: {
 						isLoading: true,
-						message: 'Waiting for confirmation',
-					},
-				},
+						message: 'Waiting for confirmation'
+					}
+				}
 			};
 		});
 
@@ -367,7 +367,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 			.unlock(unlock.trackId, address)
 			.send({
 				from: address,
-				to: contractAddress,
+				to: contractAddress
 			})
 			.then((result: any) => {
 				console.log(result);
@@ -378,15 +378,15 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 							...prev.unlock,
 							[unlock.trackId.toString()]: {
 								isLoading: false,
-								message: '',
-							},
-						},
+								message: ''
+							}
+						}
 					};
 				});
 				queueNotification({
 					header: 'Success!',
 					message: 'Unlock successful.',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				getLockedBalance();
 			})
@@ -399,15 +399,15 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 							...prev.unlock,
 							[unlock.trackId.toString()]: {
 								isLoading: false,
-								message: '',
-							},
-						},
+								message: ''
+							}
+						}
 					};
 				});
 				queueNotification({
 					header: 'Failed!',
 					message: error.message,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				getLockedBalance();
 			});
@@ -474,9 +474,9 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 											String(lockedBalance),
 											{
 												numberAfterComma: 2,
-												withUnit: true,
+												withUnit: true
 											},
-											network,
+											network
 										)}
 										.
 									</span>
@@ -517,9 +517,9 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 															String(vote.amount),
 															{
 																numberAfterComma: 2,
-																withUnit: true,
+																withUnit: true
 															},
-															network,
+															network
 														)}
 													</span>
 													<span className="col-span-2">
@@ -531,7 +531,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 															className="bg-pink_primary rounded-md outline-none border-none text-white"
 															onClick={() =>
 																handleRemove(
-																	vote,
+																	vote
 																)
 															}
 															loading={
@@ -569,7 +569,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 											const { amount, trackId } = unlock;
 											const name = getTrackName(
 												network,
-												trackId,
+												trackId
 											);
 											return (
 												<>
@@ -583,7 +583,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 																href={`/${name
 																	.split('_')
 																	.join(
-																		'-',
+																		'-'
 																	)}`}
 															>
 																{name
@@ -597,9 +597,9 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 																{
 																	numberAfterComma: 2,
 																	withUnit:
-																		true,
+																		true
 																},
-																network,
+																network
 															)}
 														</span>
 														<span className="col-span-2">
@@ -608,7 +608,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({
 																className="bg-pink_primary rounded-md outline-none border-none text-white"
 																onClick={() =>
 																	handleUnlock(
-																		unlock,
+																		unlock
 																	)
 																}
 																loading={

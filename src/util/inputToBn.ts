@@ -35,7 +35,7 @@ function isValidNumber(bn: BN, isZeroable?: boolean): boolean {
 export function inputToBn(
 	input: string,
 	network: string,
-	isZeroable?: boolean,
+	isZeroable?: boolean
 ): [BN, boolean] {
 	const tokenDecimal = chainProperties[network]?.tokenDecimals;
 	const tokenDecimalBN = new BN(tokenDecimal);
@@ -63,7 +63,7 @@ export function inputToBn(
 			.add(mod.mul(TEN.pow(new BN(tokenDecimal - modString.length))));
 	} else {
 		result = new BN(input.replace(/[^\d]/g, '')).mul(
-			TEN.pow(tokenDecimalBN),
+			TEN.pow(tokenDecimalBN)
 		);
 	}
 

@@ -46,7 +46,7 @@ const RequestResetPassword: FC<Props> = (props) => {
 		if (email) {
 			const { data, error } = await nextApiClientFetch<MessageType>(
 				'api/v1/auth/actions/requestResetPassword',
-				{ email },
+				{ email }
 			);
 			if (error) {
 				console.log('error requesting reset passoword : ', error);
@@ -57,7 +57,7 @@ const RequestResetPassword: FC<Props> = (props) => {
 				queueNotification({
 					header: 'Success!',
 					message: data.message,
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				setLoading(false);
 				router.push('/login');
@@ -90,8 +90,8 @@ const RequestResetPassword: FC<Props> = (props) => {
 									{
 										message:
 											messages.VALIDATION_EMAIL_ERROR,
-										pattern: validation.email.pattern,
-									},
+										pattern: validation.email.pattern
+									}
 								]}
 							>
 								<Input

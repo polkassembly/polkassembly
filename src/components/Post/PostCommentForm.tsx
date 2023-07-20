@@ -30,10 +30,10 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { id, username } = useUserDetailsContext();
 	const {
 		postData: { postIndex, postType },
-		setPostData,
+		setPostData
 	} = usePostDataContext();
 	const [content, setContent] = useState(
-		global.window.localStorage.getItem(commentKey()) || '',
+		global.window.localStorage.getItem(commentKey()) || ''
 	);
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
@@ -52,7 +52,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const createSubscription = async (postId: number | string) => {
 		const { data, error } = await nextApiClientFetch<ChangeResponseType>(
 			'api/v1/auth/actions/postSubscribe',
-			{ post_id: postId, proposalType: postType },
+			{ post_id: postId, proposalType: postType }
 		);
 		if (error) console.error('Error subscribing to post', error);
 		if (data) console.log(data.message);
@@ -80,8 +80,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					postId: postIndex,
 					postType: postType,
 					sentiment: isSentimentPost ? sentiment : 0,
-					userId: id,
-				},
+					userId: id
+				}
 			);
 
 		if (error || !data) {
@@ -89,7 +89,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			queueNotification({
 				header: 'Failed!',
 				message: error,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 
@@ -102,7 +102,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			queueNotification({
 				header: 'Success!',
 				message: 'Comment created successfully.',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 			setPostData((prev) => ({
 				...prev,
@@ -112,12 +112,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 						comment_reactions: {
 							'👍': {
 								count: 0,
-								usernames: [],
+								usernames: []
 							},
 							'👎': {
 								count: 0,
-								usernames: [],
-							},
+								usernames: []
+							}
 						},
 						content,
 						created_at: new Date(),
@@ -127,9 +127,9 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 						sentiment: isSentimentPost ? sentiment : 0,
 						updated_at: new Date(),
 						user_id: id as any,
-						username: username || '',
-					},
-				],
+						username: username || ''
+					}
+				]
 			}));
 		}
 		setLoading(false);
@@ -161,7 +161,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					layout="vertical"
 					onFinish={handleModalOpen}
 					initialValues={{
-						content,
+						content
 					}}
 					disabled={loading}
 					validateMessages={{ required: "Please add the  '${name}'" }}

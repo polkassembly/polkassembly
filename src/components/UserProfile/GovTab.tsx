@@ -85,7 +85,7 @@ const GovTab: FC<IGovTabProps> = (props) => {
 				}}
 				options={Object.keys(posts).map((key) => ({
 					label: getLabel(key),
-					value: key,
+					value: key
 				}))}
 			/>
 			<div className="my-5 flex items-center gap-x-2 max-w-full overflow-x-auto scroll-hidden">
@@ -108,7 +108,7 @@ const GovTab: FC<IGovTabProps> = (props) => {
 									{getLabel(key)}
 								</button>
 							);
-						},
+						}
 					)}
 			</div>
 			<div>
@@ -118,7 +118,7 @@ const GovTab: FC<IGovTabProps> = (props) => {
 				) : (
 					(posts as any)?.[selectedPostsType]?.[selectedPost] &&
 					Array.isArray(
-						(posts as any)?.[selectedPostsType]?.[selectedPost],
+						(posts as any)?.[selectedPostsType]?.[selectedPost]
 					) && (
 						<PostTab
 							posts={

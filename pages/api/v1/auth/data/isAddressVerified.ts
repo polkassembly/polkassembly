@@ -11,7 +11,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<IVerified | MessageType>,
+	res: NextApiResponse<IVerified | MessageType>
 ) {
 	const { address } = req.body;
 

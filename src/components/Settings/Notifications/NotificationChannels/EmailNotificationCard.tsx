@@ -17,7 +17,7 @@ export default function EmailNotificationCard({
 	verifiedEmail,
 	handleEnableDisabled,
 	verified,
-	notificationEnabled,
+	notificationEnabled
 }: Props) {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const handleToggleClick = () => {

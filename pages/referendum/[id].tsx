@@ -6,7 +6,7 @@ import { GetServerSideProps } from 'next';
 import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import {
 	getOnChainPost,
-	IPostResponse,
+	IPostResponse
 } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import Post from 'src/components/Post/Post';
@@ -15,7 +15,7 @@ import BackToListingView from 'src/ui-components/BackToListingView';
 import {
 	ErrorState,
 	LoadingState,
-	PostEmptyState,
+	PostEmptyState
 } from 'src/ui-components/UIStates';
 import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -29,14 +29,14 @@ import { checkIsOnChain } from '~src/util/checkIsOnChain';
 const proposalType = ProposalType.REFERENDUMS;
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { id } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,
-		proposalType,
+		proposalType
 	});
 	const comments = await getSubSquareComments(proposalType, network, id);
 	const post = data && { ...data, comments: [...data.comments, ...comments] };
@@ -64,7 +64,7 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 		}
 		(async () => {
 			setIsUnFinalized(
-				Boolean(await checkIsOnChain(String(id), proposalType, api)),
+				Boolean(await checkIsOnChain(String(id), proposalType, api))
 			);
 		})();
 	}, [api, apiReady, error, status, id]);

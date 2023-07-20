@@ -14,7 +14,7 @@ import {
 	Calendar,
 	DateHeaderProps,
 	dayjsLocalizer,
-	View,
+	View
 } from 'react-big-calendar';
 import SidebarRight from 'src/components/SidebarRight';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
@@ -34,7 +34,7 @@ import CreateEventSidebar from '../../src/components/Calendar/CreateEventSidebar
 import CustomToolbar from '../../src/components/Calendar/CustomToolbar';
 import CustomToolbarMini from '../../src/components/Calendar/CustomToolbarMini';
 import CustomWeekHeader, {
-	TimeGutterHeader,
+	TimeGutterHeader
 } from '../../src/components/Calendar/CustomWeekHeader';
 import NetworkSelect from '../../src/components/Calendar/NetworkSelect';
 import {
@@ -48,7 +48,7 @@ import {
 	fetchSocietyChallenge,
 	fetchSocietyRotate,
 	fetchStakingInfo,
-	fetchTreasurySpend,
+	fetchTreasurySpend
 } from '~src/util/getCalendarEvents';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 
@@ -69,8 +69,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 	return {
 		props: {
-			network,
-		},
+			network
+		}
 	};
 };
 
@@ -81,7 +81,7 @@ const categoryOptions = [
 	{ label: 'Treasury', value: 'Treasury' },
 	{ label: 'Democracy', value: 'Democracy' },
 	{ label: 'Society', value: 'Society' },
-	{ label: 'Parachains', value: 'Parachains' },
+	{ label: 'Parachains', value: 'Parachains' }
 ];
 
 const initCategories = [
@@ -91,14 +91,14 @@ const initCategories = [
 	'Treasury',
 	'Democracy',
 	'Society',
-	'Parachains',
+	'Parachains'
 ];
 
 const CalendarView: FC<ICalendarViewProps> = ({
 	className,
 	small = false,
 	emitCalendarEvents = undefined,
-	network,
+	network
 }) => {
 	const { api, apiReady } = useApiContext();
 	const { setNetwork } = useNetworkContext();
@@ -110,7 +110,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 	const [selectedNetwork, setSelectedNetwork] = useState<string>(network);
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [miniCalSelectedDate, setMiniCalSelectedDate] = useState<Date>(
-		new Date(),
+		new Date()
 	);
 	const [selectedCategories, setSelectedCategories] =
 		useState<CheckboxValueType[]>(initCategories);
@@ -120,7 +120,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 	const [categoriesLoading, setCategoriesLoading] = useState(true);
 
 	const [queryApprovalStatus, setQueryApprovalStatus] = useState<string>(
-		approvalStatus.APPROVED,
+		approvalStatus.APPROVED
 	);
 	const [eventApprovalStatus, setEventApprovalStatus] =
 		useState<string>(queryApprovalStatus);
@@ -132,7 +132,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 				window.innerWidth > 0 ? window.innerWidth : screen.width;
 			setWidth(width);
 			setCalLeftPanelWidth(
-				document?.getElementById('calendar-left-panel')?.clientWidth,
+				document?.getElementById('calendar-left-panel')?.clientWidth
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -165,7 +165,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 						start_time: dayjs(eventObj.startDate).toDate(),
 						status: 'approved',
 						title,
-						url: '',
+						url: ''
 					});
 				});
 			}
@@ -173,7 +173,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 			if (selectedCategories.includes('Council')) {
 				const councilMotionEvents = await fetchCouncilMotions(
 					api,
-					network,
+					network
 				);
 
 				councilMotionEvents.forEach((eventObj, i) => {
@@ -185,13 +185,13 @@ const CalendarView: FC<ICalendarViewProps> = ({
 						start_time: dayjs(eventObj.endDate).toDate(),
 						status: 'approved',
 						title: 'Council Motion',
-						url: '',
+						url: ''
 					});
 				});
 
 				const councilElectionEvents = await fetchCouncilElection(
 					api,
-					network,
+					network
 				);
 				councilElectionEvents.forEach((eventObj, i) => {
 					eventsArr.push({
@@ -202,7 +202,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 						start_time: dayjs(eventObj.endDate).toDate(),
 						status: 'approved',
 						title: 'Start New Council Election',
-						url: '',
+						url: ''
 					});
 				});
 			}
@@ -221,7 +221,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 						start_time: dayjs(eventObj.endDate).toDate(),
 						status: 'approved',
 						title: 'Scheduled Task',
-						url: '',
+						url: ''
 					});
 				});
 			}
@@ -229,7 +229,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 			if (selectedCategories.includes('Treasury')) {
 				const treasurySpendEvents = await fetchTreasurySpend(
 					api,
-					network,
+					network
 				);
 
 				treasurySpendEvents.forEach((eventObj, i) => {
@@ -241,7 +241,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 						start_time: dayjs(eventObj.endDate).toDate(),
 						status: 'approved',
 						title: 'Start Spend Period',
-						url: '',
+						url: ''
 					});
 				});
 			}
@@ -249,7 +249,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 			if (selectedCategories.includes('Democracy')) {
 				const democracyDispatchEvents = await fetchDemocracyDispatches(
 					api,
-					network,
+					network
 				);
 
 				democracyDispatchEvents.forEach((eventObj, i) => {
@@ -261,13 +261,13 @@ const CalendarView: FC<ICalendarViewProps> = ({
 						start_time: dayjs(eventObj.endDate).toDate(),
 						status: 'approved',
 						title: 'Democracy Dispatch',
-						url: '',
+						url: ''
 					});
 				});
 
 				const democracyLaunchEvents = await fetchDemocracyLaunch(
 					api,
-					network,
+					network
 				);
 
 				democracyLaunchEvents.forEach((eventObj, i) => {
@@ -279,7 +279,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 						start_time: dayjs(eventObj.endDate).toDate(),
 						status: 'approved',
 						title: 'Start Referendum Voting Period',
-						url: '',
+						url: ''
 					});
 				});
 			}
@@ -287,7 +287,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 			if (selectedCategories.includes('Society')) {
 				const societyRotateEvents = await fetchSocietyRotate(
 					api,
-					network,
+					network
 				);
 
 				societyRotateEvents.forEach((eventObj, i) => {
@@ -299,13 +299,13 @@ const CalendarView: FC<ICalendarViewProps> = ({
 						start_time: dayjs(eventObj.endDate).toDate(),
 						status: 'approved',
 						title: 'New Members & Bids',
-						url: '',
+						url: ''
 					});
 				});
 
 				const societyChallengeEvents = await fetchSocietyChallenge(
 					api,
-					network,
+					network
 				);
 				societyChallengeEvents.forEach((eventObj, i) => {
 					eventsArr.push({
@@ -316,7 +316,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 						start_time: dayjs(eventObj.endDate).toDate(),
 						status: 'approved',
 						title: 'Start Membership Challenge Period',
-						url: '',
+						url: ''
 					});
 				});
 			}
@@ -333,13 +333,13 @@ const CalendarView: FC<ICalendarViewProps> = ({
 						start_time: dayjs(eventObj.endDate).toDate(),
 						status: 'approved',
 						title: 'End Parachain Auction',
-						url: '',
+						url: ''
 					});
 				});
 
 				const parachainLeaseEvents = await fetchParachainLease(
 					api,
-					network,
+					network
 				);
 
 				parachainLeaseEvents.forEach((eventObj, i) => {
@@ -351,7 +351,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 						start_time: dayjs(eventObj.endDate).toDate(),
 						status: 'approved',
 						title: 'Start Parachain Lease Period',
-						url: '',
+						url: ''
 					});
 				});
 			}
@@ -380,23 +380,23 @@ const CalendarView: FC<ICalendarViewProps> = ({
 	const approvalStatusDropdown: MenuProps['items'] = [
 		{
 			key: approvalStatus.APPROVED,
-			label: 'Approved',
+			label: 'Approved'
 		},
 		{
 			key: approvalStatus.PENDING,
-			label: 'Pending',
+			label: 'Pending'
 		},
 		{
 			key: approvalStatus.REJECTED,
-			label: 'Rejected',
-		},
+			label: 'Rejected'
+		}
 	];
 
 	const getNetworkEvents = useCallback(async () => {
 		const { data, error: fetchError } = await nextApiClientFetch<
 			NetworkEvent[]
 		>('api/v1/events', {
-			approval_status: queryApprovalStatus,
+			approval_status: queryApprovalStatus
 		});
 
 		if (fetchError || !data) {
@@ -419,7 +419,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 						start_time: dayjs(eventObj.end_time).toDate(),
 						status: eventObj.status,
 						title: eventObj.title,
-						url: eventObj.url,
+						url: eventObj.url
 					});
 				}
 			});
@@ -461,7 +461,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 			NetworkEvent[]
 		>('api/v1/auth/actions/updateApprovalStatus', {
 			approval_status: queryApprovalStatus,
-			eventId: sidebarEvent.id,
+			eventId: sidebarEvent.id
 		});
 
 		if (fetchError || !data) {
@@ -469,7 +469,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 			queueNotification({
 				header: 'Error!',
 				message: 'Error updating event',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			console.error('Error updating event :', fetchError);
 		}
@@ -479,7 +479,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 			queueNotification({
 				header: 'Success!',
 				message: 'Event updated successfully',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 			setCalendarEvents((prev) => {
 				return (
@@ -488,7 +488,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 							event.status = queryApprovalStatus.toLowerCase();
 						}
 						return {
-							...event,
+							...event
 						};
 					}) || []
 				);
@@ -548,7 +548,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 	const listData = [
 		{ color: '#EA8612', label: 'Working' },
 		{ color: '#5BC044', label: 'Completed' },
-		{ color: '#FF0000', label: 'Overdue' },
+		{ color: '#FF0000', label: 'Overdue' }
 	];
 
 	return (
@@ -597,7 +597,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 									<p className="text-sidebarBlue font-medium text-md text-center mb-2">
 										Current Time:{' '}
 										{dayjs(utcDate).format(
-											'D-MM-YY | h:mm a UTC',
+											'D-MM-YY | h:mm a UTC'
 										)}{' '}
 									</p>
 
@@ -619,7 +619,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 													EventWrapperComponent,
 												month: {
 													dateHeader:
-														MonthDateComponentHeader,
+														MonthDateComponentHeader
 												},
 												toolbar: (props: any) => (
 													<CustomToolbarMini
@@ -628,7 +628,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 															calLeftPanelWidth
 														}
 													/>
-												),
+												)
 											}}
 										/>
 									</Spin>
@@ -738,11 +738,11 @@ const CalendarView: FC<ICalendarViewProps> = ({
 																width < 768
 															}
 														/>
-													),
-												},
+													)
+												}
 											}}
 											formats={{
-												timeGutterFormat: 'h A',
+												timeGutterFormat: 'h A'
 											}}
 											onNavigate={setSelectedDate}
 											onView={setSelectedView}
@@ -751,7 +751,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 												day: true,
 												month: true,
 												week: true,
-												work_week: false,
+												work_week: false
 											}}
 										/>
 									) : (
@@ -784,7 +784,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 									// value={eventApprovalStatus}
 									menu={{
 										items: approvalStatusDropdown,
-										onClick: onApprovalStatusChange,
+										onClick: onApprovalStatusChange
 									}}
 									// disabled={loadingUpdate}
 								>
@@ -803,7 +803,7 @@ const CalendarView: FC<ICalendarViewProps> = ({
 								<div
 									className={`status-icon ${
 										dayjs(sidebarEvent.end_time).isBefore(
-											new Date(),
+											new Date()
 										)
 											? 'overdue-color'
 											: `${sidebarEvent.status?.toLowerCase()}-color`

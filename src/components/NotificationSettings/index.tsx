@@ -34,7 +34,7 @@ const NotificationSettings = () => {
 	useEffect(() => {
 		setLoading(true);
 		nextApiClientFetch<NotificationSettings>(
-			'api/v1/auth/data/notificationPreference',
+			'api/v1/auth/data/notificationPreference'
 		)
 			.then((res) => {
 				if (res.error) {
@@ -59,7 +59,7 @@ const NotificationSettings = () => {
 			new_proposal: newProposal,
 			own_proposal: ownProposal,
 			post_created: postCreated,
-			post_participated: postParticipated,
+			post_participated: postParticipated
 		});
 
 		if (error) {
@@ -67,7 +67,7 @@ const NotificationSettings = () => {
 			queueNotification({
 				header: 'Failed!',
 				message: error,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			console.error('change name error', error);
 			setLoading(false);
@@ -78,7 +78,7 @@ const NotificationSettings = () => {
 			queueNotification({
 				header: 'Success!',
 				message: data.message,
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 			setChanged(false);
 			setNotification(data.updated);

@@ -4,23 +4,23 @@
 import { sendPostSpamReportMail } from '~src/auth/email';
 import {
 	getSinglePostLinkFromProposalType,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 
 export default async function _sendReportMail(
 	network: string,
 	postType: string,
 	postId: string,
-	spam_users_count: number,
+	spam_users_count: number
 ) {
 	const postUrl = `https://${network}.polkassembly.io/${getSinglePostLinkFromProposalType(
-		postType as ProposalType,
+		postType as ProposalType
 	)}/${postId}`;
 	sendPostSpamReportMail(
 		postType,
 		postId,
 		postUrl,
 		network,
-		spam_users_count,
+		spam_users_count
 	);
 }

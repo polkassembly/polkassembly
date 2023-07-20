@@ -12,7 +12,7 @@ import SEOHead from '~src/global/SEOHead';
 export enum EMembersType {
 	WHITELIST = 'whitelist',
 	FELLOWSHIP = 'fellowship',
-	COUNCIL = 'council',
+	COUNCIL = 'council'
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {

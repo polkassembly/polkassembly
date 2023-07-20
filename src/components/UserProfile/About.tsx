@@ -14,7 +14,7 @@ import {
 	IdentityIcon,
 	RiotIcon,
 	TwitterIcon,
-	WalletIcon,
+	WalletIcon
 } from '~src/ui-components/CustomIcons';
 import { TitleBio } from './Details';
 
@@ -29,7 +29,7 @@ const About: FC<IAboutProps> = (props) => {
 	const { bio, title, addresses, className } = props;
 	const { api, apiReady } = useApiContext();
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(
-		null,
+		null
 	);
 
 	useEffect(() => {
@@ -59,7 +59,7 @@ const About: FC<IAboutProps> = (props) => {
 
 	const judgements = identity
 		? identity.judgements.filter(
-				([, judgement]): boolean => !judgement.isFeePaid,
+				([, judgement]): boolean => !judgement.isFeePaid
 		  )
 		: [];
 	const displayJudgements = judgements
@@ -67,11 +67,11 @@ const About: FC<IAboutProps> = (props) => {
 		.join(', ');
 	const isGood = judgements.some(
 		([, judgement]): boolean =>
-			judgement.isKnownGood || judgement.isReasonable,
+			judgement.isKnownGood || judgement.isReasonable
 	);
 	const isBad = judgements.some(
 		([, judgement]): boolean =>
-			judgement.isErroneous || judgement.isLowQuality,
+			judgement.isErroneous || judgement.isLowQuality
 	);
 
 	const color: 'brown' | 'green' | 'grey' = isGood
@@ -200,7 +200,7 @@ const About: FC<IAboutProps> = (props) => {
 												</div>
 												<a
 													href={`https://twitter.com/${identity.twitter.substring(
-														1,
+														1
 													)}`}
 													className="text-[#5E7087] text-sm font-normal mt-1"
 												>

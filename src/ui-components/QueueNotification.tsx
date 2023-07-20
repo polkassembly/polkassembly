@@ -17,12 +17,12 @@ const queueNotification = ({
 	header,
 	message,
 	durationInSeconds = 4.5,
-	status,
+	status
 }: Props) => {
 	const args = {
 		message: header,
 		description: message,
-		duration: durationInSeconds,
+		duration: durationInSeconds
 	};
 
 	// queues notifcation

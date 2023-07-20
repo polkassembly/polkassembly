@@ -9,7 +9,7 @@ export default function getDaysTimeObj(line: string) {
 		words.forEach((word) => {
 			if (word && typeof word === 'string' && word.length > 1) {
 				const lastChar = word.charAt(
-					word.length - 1,
+					word.length - 1
 				) as keyof typeof daysTimeObj;
 				if (!['d', 'h', 'm'].includes(lastChar)) return;
 

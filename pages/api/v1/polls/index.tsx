@@ -45,7 +45,7 @@ const handler: NextApiHandler<
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType))
 		return res.status(400).json({
-			message: `The off chain proposal type of the name "${proposalType}" does not exist.`,
+			message: `The off chain proposal type of the name "${proposalType}" does not exist.`
 		});
 
 	const strPollType = String(pollType);
@@ -56,7 +56,7 @@ const handler: NextApiHandler<
 
 	const pollsQuery = await postsByTypeRef(
 		network,
-		strProposalType as ProposalType,
+		strProposalType as ProposalType
 	)
 		.doc(String(postId))
 		.collection(getPollCollectionName(strPollType))
@@ -81,7 +81,7 @@ const handler: NextApiHandler<
 						option_poll_votes: data.option_poll_votes || [],
 						options: data.options || [],
 						question: data.question || '',
-						updated_at: data.updated_at,
+						updated_at: data.updated_at
 					});
 				} else if (strPollType === POLL_TYPE.NORMAL) {
 					polls.push({
@@ -89,7 +89,7 @@ const handler: NextApiHandler<
 						created_at: data.created_at,
 						id: data.id,
 						poll_votes: data.poll_votes || [],
-						updated_at: data.updated_at,
+						updated_at: data.updated_at
 					});
 				}
 			}
@@ -97,11 +97,11 @@ const handler: NextApiHandler<
 	});
 	if (strPollType === POLL_TYPE.OPTION) {
 		res.status(200).json({
-			optionPolls,
+			optionPolls
 		});
 	} else if (strPollType === POLL_TYPE.NORMAL) {
 		res.status(200).json({
-			polls,
+			polls
 		});
 	} else {
 		return res

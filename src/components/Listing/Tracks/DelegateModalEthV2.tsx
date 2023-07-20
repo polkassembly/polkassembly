@@ -50,7 +50,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map(
-		(lock, index) => [index + 1, lock],
+		(lock, index) => [index + 1, lock]
 	);
 	const convictionOpts = useMemo(
 		() => [
@@ -64,9 +64,9 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 				>{`${value}x voting balance, locked for ${
 					lock * oneEnactmentPeriodInDays[network]
 				} days`}</Select.Option>
-			)),
+			))
 		],
-		[CONVICTIONS, network],
+		[CONVICTIONS, network]
 	);
 
 	useEffect(() => {
@@ -89,18 +89,18 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 		try {
 			await addEthereumChain({
 				ethereum,
-				network,
+				network
 			});
 		} catch (error) {
 			setErrorArr((prev) => [
 				...prev,
-				error?.message || 'Something went wrong',
+				error?.message || 'Something went wrong'
 			]);
 			return;
 		}
 
 		const addresses = await ethereum.request({
-			method: 'eth_requestAccounts',
+			method: 'eth_requestAccounts'
 		});
 
 		if (addresses.length === 0) {
@@ -115,12 +115,12 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 					meta: {
 						genesisHash: null,
 						name: 'metamask',
-						source: 'metamask',
-					},
+						source: 'metamask'
+					}
 				};
 
 				return account;
-			}),
+			})
 		);
 
 		if (addresses.length > 0) {
@@ -139,8 +139,8 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 			rpc: {
 				1284: 'https://rpc.api.moonbeam.network',
 				1285: 'https://rpc.api.moonriver.moonbeam.network',
-				1287: 'https://rpc.api.moonbase.moonbeam.network',
-			},
+				1287: 'https://rpc.api.moonbase.moonbeam.network'
+			}
 		});
 		await wcPprovider.wc.createSession();
 		setWalletConnectProvider(wcPprovider);
@@ -170,13 +170,13 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 						meta: {
 							genesisHash: null,
 							name: 'walletConnect',
-							source: 'walletConnect',
-						},
+							source: 'walletConnect'
+						}
 					};
 
 					return account;
-				},
-			),
+				}
+			)
 		);
 
 		if (checksumAddresses.length > 0) {
@@ -194,7 +194,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 
 		getAccountsHandler(
 			walletConnectProvider.wc.accounts,
-			walletConnectProvider.wc.chainId,
+			walletConnectProvider.wc.chainId
 		);
 
 		setLoading(false);
@@ -267,7 +267,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 			queueNotification({
 				header: 'Wrong Network!',
 				message: `Please change to ${network} network`,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
@@ -280,14 +280,14 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 			.delegate(trackNum, target, conviction, bnBalance)
 			.send({
 				from: address,
-				to: contractAddress,
+				to: contractAddress
 			})
 			.then((result: any) => {
 				console.log(result);
 				queueNotification({
 					header: 'Success!',
 					message: 'Delegation successful.',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				setLoading(false);
 			})
@@ -297,7 +297,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 				queueNotification({
 					header: 'Failed!',
 					message: error.message,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			});
 	};
@@ -348,7 +348,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 						onClick={handleSubmit}
 					>
 						Confirm
-					</Button>,
+					</Button>
 				]}
 			>
 				<Spin spinning={loading} indicator={<LoadingOutlined />}>

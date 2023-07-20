@@ -8,7 +8,7 @@ import {
 	isCustomOpenGovStatusValid,
 	isProposalTypeValid,
 	isTrackNoValid,
-	isValidNetwork,
+	isValidNetwork
 } from '~src/api-utils';
 import messages from '~src/util/messages';
 import { IPostsListingResponse } from './on-chain-posts';
@@ -17,7 +17,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import {
 	ProposalType,
 	getStatusesFromCustomStatus,
-	getSubsquidProposalType,
+	getSubsquidProposalType
 } from '~src/global/proposalType';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_PROPOSALS_LISTING_COUNT_BY_TYPE } from '~src/queries';
@@ -32,7 +32,7 @@ interface IGetOnChainPostsCountParams {
 
 // Only support for Open Gov
 export async function getOnChainPostsCount(
-	params: IGetOnChainPostsCountParams,
+	params: IGetOnChainPostsCountParams
 ): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
 		const { network, page, proposalType, trackNo, trackStatus } = params;
@@ -46,7 +46,7 @@ export async function getOnChainPostsCount(
 		if (!isProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(
 				`The proposal type of the name "${proposalType}" does not exist.`,
-				400,
+				400
 			);
 		}
 
@@ -56,7 +56,7 @@ export async function getOnChainPostsCount(
 			if (!isTrackNoValid(numTrackNo, network)) {
 				throw apiErrorWithStatusCode(
 					`The OpenGov trackNo "${trackNo}" is invalid.`,
-					400,
+					400
 				);
 			}
 			if (
@@ -66,17 +66,17 @@ export async function getOnChainPostsCount(
 			) {
 				throw apiErrorWithStatusCode(
 					`The Track status of the name "${trackStatus}" is invalid.`,
-					400,
+					400
 				);
 			}
 		}
 
 		const subsquidProposalType = getSubsquidProposalType(
-			strProposalType as any,
+			strProposalType as any
 		);
 
 		const postsVariables: any = {
-			type_in: subsquidProposalType,
+			type_in: subsquidProposalType
 		};
 
 		if (strProposalType === ProposalType.OPEN_GOV) {
@@ -87,7 +87,7 @@ export async function getOnChainPostsCount(
 				isCustomOpenGovStatusValid(strTrackStatus)
 			) {
 				postsVariables.status_in = getStatusesFromCustomStatus(
-					strTrackStatus as any,
+					strTrackStatus as any
 				);
 			}
 		} else if (strProposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
@@ -103,26 +103,26 @@ export async function getOnChainPostsCount(
 		const subsquidRes = await fetchSubsquid({
 			network,
 			query: GET_PROPOSALS_LISTING_COUNT_BY_TYPE,
-			variables: postsVariables,
+			variables: postsVariables
 		});
 
 		const subsquidData = subsquidRes?.data;
 
 		const data: IPostsListingResponse = {
 			count: subsquidData.proposalsConnection?.totalCount || 0,
-			posts: [],
+			posts: []
 		};
 
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
@@ -141,7 +141,7 @@ const handler: NextApiHandler<
 		page,
 		proposalType,
 		trackNo,
-		trackStatus,
+		trackStatus
 	});
 
 	if (error || !data) {

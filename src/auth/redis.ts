@@ -54,7 +54,7 @@ export const redisSet = (key: string, value: string): Promise<string | null> =>
 export const redisSetex = (
 	key: string,
 	ttl: number,
-	value: string,
+	value: string
 ): Promise<string> =>
 	new Promise((resolve, reject) => {
 		client

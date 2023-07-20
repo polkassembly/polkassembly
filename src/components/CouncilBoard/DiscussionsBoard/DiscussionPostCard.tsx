@@ -27,7 +27,7 @@ const DiscussionPostCard = ({
 	title,
 	username,
 	commentsCount,
-	createdAt,
+	createdAt
 }: Props) => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
@@ -42,7 +42,7 @@ const DiscussionPostCard = ({
 	useEffect(() => {
 		setLoading(true);
 		nextApiClientFetch<IPostResponse>(
-			`api/v1/posts/discussion?postId=${id}`,
+			`api/v1/posts/discussion?postId=${id}`
 		)
 			.then((res) => {
 				if (res.data) {

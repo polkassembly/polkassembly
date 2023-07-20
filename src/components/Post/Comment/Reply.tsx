@@ -26,7 +26,7 @@ export const Reply = ({ className, commentId, reply, userName }: Props) => {
 		id,
 		updated_at,
 		proposer,
-		is_custom_username,
+		is_custom_username
 	} = reply;
 	const { asPath } = useRouter();
 	const replyRef = useRef<HTMLDivElement>(null);

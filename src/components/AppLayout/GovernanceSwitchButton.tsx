@@ -22,7 +22,7 @@ const GovernanceSwitchButton = ({ className, previousRoute }: Props) => {
 		pathname,
 		query,
 		previousRoute,
-		network,
+		network
 	);
 
 	return (

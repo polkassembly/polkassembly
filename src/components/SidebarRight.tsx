@@ -20,7 +20,7 @@ const SidebarRight = ({
 	children,
 	open,
 	width,
-	closeSidebar,
+	closeSidebar
 }: Props) => {
 	return (
 		<Drawer

@@ -7,7 +7,7 @@ import React from 'react';
 import {
 	ProposalType,
 	getFirestoreProposalType,
-	getSinglePostLinkFromProposalType,
+	getSinglePostLinkFromProposalType
 } from '~src/global/proposalType';
 
 interface Props {
@@ -41,7 +41,7 @@ const LinkCard = ({ timeline, proposalType }: Props) => {
 						key={index}
 						className="text-lg font-medium text-[#243A57] cursor-pointer max-md:text-sm"
 						href={`/${getSinglePostLinkFromProposalType(
-							proposal_type as any,
+							proposal_type as any
 						)}/${item?.type === 'Tip' ? item?.hash : item?.index}`}
 					>
 						<span className="">

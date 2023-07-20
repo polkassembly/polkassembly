@@ -5,7 +5,7 @@
 import { CheckOutlined } from '@ant-design/icons';
 import {
 	InjectedAccount,
-	InjectedAccountWithMeta,
+	InjectedAccountWithMeta
 } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
@@ -52,7 +52,7 @@ const initAuthResponse: IAuthResponse = {
 	isTFAEnabled: false,
 	tfa_token: '',
 	token: '',
-	user_id: 0,
+	user_id: 0
 };
 
 export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
@@ -80,7 +80,7 @@ const MetamaskLogin: FC<Props> = ({
 	isModal,
 	setLoginOpen,
 	setSignupOpen,
-	onWalletUpdate,
+	onWalletUpdate
 }) => {
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
@@ -118,7 +118,7 @@ const MetamaskLogin: FC<Props> = ({
 		try {
 			await addEthereumChain({
 				ethereum,
-				network,
+				network
 			});
 		} catch (error) {
 			setError(error?.message || 'Something went wrong');
@@ -127,7 +127,7 @@ const MetamaskLogin: FC<Props> = ({
 		}
 
 		let addresses = await ethereum.request({
-			method: 'eth_requestAccounts',
+			method: 'eth_requestAccounts'
 		});
 		addresses = addresses.map((address: string) => address);
 
@@ -144,12 +144,12 @@ const MetamaskLogin: FC<Props> = ({
 					meta: {
 						genesisHash: null,
 						name: 'metamask',
-						source: 'metamask',
-					},
+						source: 'metamask'
+					}
 				};
 
 				return account;
-			}),
+			})
 		);
 
 		if (addresses.length > 0) {
@@ -162,7 +162,7 @@ const MetamaskLogin: FC<Props> = ({
 	const onAccountChange = (address: string) => setAddress(address);
 
 	const handleLogin: (
-		values: React.BaseSyntheticEvent<object, any, any> | undefined,
+		values: React.BaseSyntheticEvent<object, any, any> | undefined
 	) => void = async () => {
 		setError('');
 		if (!(window as any).ethereum.isMetaMask) {
@@ -176,7 +176,7 @@ const MetamaskLogin: FC<Props> = ({
 			const { data: loginStartData, error: loginStartError } =
 				await nextApiClientFetch<ChallengeMessage>(
 					'api/v1/auth/actions/addressLoginStart',
-					{ address },
+					{ address }
 				);
 
 			if (loginStartError) {
@@ -202,7 +202,7 @@ const MetamaskLogin: FC<Props> = ({
 				{
 					from,
 					method,
-					params,
+					params
 				},
 				async (err: any, result: any) => {
 					if (err) {
@@ -217,14 +217,14 @@ const MetamaskLogin: FC<Props> = ({
 							{
 								address,
 								signature: result.result,
-								wallet: Wallet.METAMASK,
-							},
+								wallet: Wallet.METAMASK
+							}
 						);
 
 					if (addressLoginError) {
 						console.log(
 							'Error in address login',
-							addressLoginError,
+							addressLoginError
 						);
 						setError(addressLoginError);
 						// TODO: change this method of checking if user is already signed up
@@ -238,7 +238,7 @@ const MetamaskLogin: FC<Props> = ({
 								const { data, error } =
 									await nextApiClientFetch<ChallengeMessage>(
 										'api/v1/auth/actions/addressSignupStart',
-										{ address },
+										{ address }
 									);
 								if (error || !data) {
 									setError(error || 'Something went wrong');
@@ -263,7 +263,7 @@ const MetamaskLogin: FC<Props> = ({
 									{
 										from,
 										method,
-										params,
+										params
 									},
 									async (err: any, result: any) => {
 										if (err) {
@@ -274,20 +274,20 @@ const MetamaskLogin: FC<Props> = ({
 
 										const {
 											data: confirmData,
-											error: confirmError,
+											error: confirmError
 										} = await nextApiClientFetch<TokenType>(
 											'api/v1/auth/actions/addressSignupConfirm',
 											{
 												address,
 												signature: result.result,
-												wallet: Wallet.METAMASK,
-											},
+												wallet: Wallet.METAMASK
+											}
 										);
 
 										if (confirmError || !confirmData) {
 											setError(
 												confirmError ||
-													'Something went wrong',
+													'Something went wrong'
 											);
 											setLoading(false);
 											return;
@@ -301,19 +301,19 @@ const MetamaskLogin: FC<Props> = ({
 												address;
 											localStorage.setItem(
 												'delegationWallet',
-												Wallet.METAMASK,
+												Wallet.METAMASK
 											);
 											localStorage.setItem(
 												'delegationDashboardAddress',
-												address,
+												address
 											);
 											localStorage.setItem(
 												'loginWallet',
-												Wallet.METAMASK,
+												Wallet.METAMASK
 											);
 											handleTokenChange(
 												confirmData.token,
-												currentUser,
+												currentUser
 											);
 											if (isModal) {
 												setLoginOpen &&
@@ -324,10 +324,10 @@ const MetamaskLogin: FC<Props> = ({
 											router.push('/');
 										} else {
 											throw new Error(
-												'Web3 Login failed',
+												'Web3 Login failed'
 											);
 										}
-									},
+									}
 								);
 							} catch (error) {
 								console.log(error);
@@ -343,11 +343,11 @@ const MetamaskLogin: FC<Props> = ({
 						currentUser.delegationDashboardAddress = address;
 						localStorage.setItem(
 							'delegationWallet',
-							Wallet.METAMASK,
+							Wallet.METAMASK
 						);
 						localStorage.setItem(
 							'delegationDashboardAddress',
-							address,
+							address
 						);
 						localStorage.setItem('loginWallet', Wallet.METAMASK);
 
@@ -361,7 +361,7 @@ const MetamaskLogin: FC<Props> = ({
 					} else if (addressLoginData?.isTFAEnabled) {
 						if (!addressLoginData?.tfa_token) {
 							setError(
-								error || 'TFA token missing. Please try again.',
+								error || 'TFA token missing. Please try again.'
 							);
 							setLoading(false);
 							return;
@@ -370,7 +370,7 @@ const MetamaskLogin: FC<Props> = ({
 						setAuthResponse(addressLoginData);
 						setLoading(false);
 					}
-				},
+				}
 			);
 		} catch (error) {
 			setError(error.message);
@@ -390,8 +390,8 @@ const MetamaskLogin: FC<Props> = ({
 				login_address: address,
 				login_wallet: Wallet.METAMASK,
 				tfa_token: authResponse.tfa_token,
-				user_id: Number(authResponse.user_id),
-			},
+				user_id: Number(authResponse.user_id)
+			}
 		);
 
 		if (error || !data) {

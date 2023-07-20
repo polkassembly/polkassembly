@@ -10,7 +10,7 @@ import firebaseAdmin from '~src/services/firebaseInit';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ProfileDetailsResponse | MessageType>,
+	res: NextApiResponse<ProfileDetailsResponse | MessageType>
 ) {
 	const firestore = firebaseAdmin.firestore();
 	const { userId = null } = req.query;
@@ -41,7 +41,7 @@ async function handler(
 		title: '',
 		user_id: userDoc.id,
 		username: userDoc.username,
-		...userDoc.profile,
+		...userDoc.profile
 	};
 
 	res.status(200).json(user);

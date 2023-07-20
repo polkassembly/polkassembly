@@ -38,10 +38,10 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	setReactionsDisabled,
 	setLikeModalOpen,
 	setDislikeModalOpen,
-	importedReactions = false,
+	importedReactions = false
 }) => {
 	const {
-		postData: { postIndex, postType },
+		postData: { postIndex, postType }
 	} = usePostDataContext();
 	const { id, username } = useContext(UserDetailsContext);
 
@@ -50,7 +50,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 
 	const getReactionIcon = (
 		reaction: string,
-		reacted: string | boolean | null | undefined,
+		reacted: string | boolean | null | undefined
 	) => {
 		if (reaction == '👍') {
 			return reacted ? (
@@ -103,8 +103,8 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 					postId: postIndex,
 					postType,
 					reaction,
-					userId: id,
-				},
+					userId: id
+				}
 			);
 
 			if (error || !data) {
@@ -117,12 +117,12 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 					newReactions[reaction as IReaction].count--;
 					newReactions[reaction as IReaction].usernames =
 						newReactions[reaction as IReaction].usernames?.filter(
-							(name) => name !== username,
+							(name) => name !== username
 						);
 				} else {
 					newReactions[reaction as IReaction].count++;
 					newReactions[reaction as IReaction].usernames?.push(
-						username || '',
+						username || ''
 					);
 
 					//remove username from other reactions
@@ -130,7 +130,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 						if (
 							key !== reaction &&
 							newReactions[key as IReaction].usernames?.includes(
-								username,
+								username
 							)
 						) {
 							newReactions[key as IReaction].count--;
@@ -138,7 +138,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 								newReactions[
 									key as IReaction
 								].usernames?.filter(
-									(name) => name !== username,
+									(name) => name !== username
 								);
 						}
 					});

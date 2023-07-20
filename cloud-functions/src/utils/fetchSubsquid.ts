@@ -8,7 +8,7 @@ const subsquidUrlMap = {
 	polkadot: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
 	moonbeam: 'https://squid.subsquid.io/moonbeam-polkassembly/graphql',
 	moonriver: 'https://squid.subsquid.io/moonriver-polkassembly/graphql',
-	vara: 'https://squid.subsquid.io/vara-polkassembly/graphql',
+	vara: 'https://squid.subsquid.io/vara-polkassembly/graphql'
 };
 
 interface Args {
@@ -20,7 +20,7 @@ interface Args {
 export default async function fetchSubsquid({
 	query,
 	variables,
-	network,
+	network
 }: Args) {
 	const body = variables ? { query, variables } : { query };
 
@@ -31,8 +31,8 @@ export default async function fetchSubsquid({
 		.post(`${subsquidUrl}`, {
 			body: JSON.stringify(body),
 			headers: {
-				'Content-Type': 'application/json',
-			},
+				'Content-Type': 'application/json'
+			}
 		})
 		.then((result) => result)
 		.catch((e) => {

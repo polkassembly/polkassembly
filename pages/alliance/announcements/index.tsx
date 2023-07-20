@@ -18,7 +18,7 @@ import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { page = 1, sortBy = sortValues.NEWEST } = query;
 	const proposalType = ProposalType.ANNOUNCEMENT;
@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 		network,
 		page,
 		proposalType,
-		sortBy,
+		sortBy
 	});
 	return { props: { data, error, network } };
 };
@@ -57,8 +57,8 @@ const Announcements = (props: IAnnouncementProps) => {
 	const onPaginationChange = (page: number) => {
 		router.push({
 			query: {
-				page,
-			},
+				page
+			}
 		});
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};

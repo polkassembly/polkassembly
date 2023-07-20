@@ -27,7 +27,7 @@ import {
 	SmallTipperTrackIcon,
 	StakingAdminTrackTrackIcon,
 	TreasurerTrackIcon,
-	WhitelistedCallerTrackIcon,
+	WhitelistedCallerTrackIcon
 } from '~src/ui-components/CustomIcons';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
@@ -94,7 +94,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: '#',
-			width: '7%',
+			width: '7%'
 		},
 
 		{
@@ -109,7 +109,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Tracks',
-			width: '25%',
+			width: '25%'
 		},
 
 		{
@@ -123,7 +123,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Description',
-			width: '40%',
+			width: '40%'
 		},
 
 		{
@@ -137,7 +137,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Active proposals',
-			width: '10%',
+			width: '10%'
 		},
 
 		{
@@ -176,14 +176,14 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 										.toUpperCase() +
 										item?.split('_').join(' ').slice(1)}
 								</h2>
-							),
+							)
 						)}
 					</div>
 				);
 			},
 			title: 'Status',
-			width: '20%',
-		},
+			width: '20%'
+		}
 	];
 
 	const DelegatedColumns: ColumnsType<ITrackDataType> = [
@@ -198,7 +198,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: '#',
-			width: '7%',
+			width: '7%'
 		},
 
 		{
@@ -215,7 +215,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Tracks',
-			width: '20%',
+			width: '20%'
 		},
 
 		{
@@ -229,7 +229,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Description',
-			width: '38%',
+			width: '38%'
 		},
 
 		{
@@ -247,7 +247,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Delegated to',
-			width: '20%',
+			width: '20%'
 		},
 
 		{
@@ -261,8 +261,8 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Active proposals',
-			width: '15%',
-		},
+			width: '15%'
+		}
 	];
 
 	const UndelegatedColumns: ColumnsType<ITrackDataType> = [
@@ -277,7 +277,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: '#',
-			width: '7%',
+			width: '7%'
 		},
 
 		{
@@ -294,7 +294,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Tracks',
-			width: '23%',
+			width: '23%'
 		},
 
 		{
@@ -308,7 +308,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Description',
-			width: '50%',
+			width: '50%'
 		},
 
 		{
@@ -322,8 +322,8 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Active proposals',
-			width: '15%',
-		},
+			width: '15%'
+		}
 	];
 
 	const ReceivedDelegationColumns: ColumnsType<ITrackDataType> = [
@@ -338,7 +338,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: '#',
-			width: '7%',
+			width: '7%'
 		},
 
 		{
@@ -355,7 +355,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Tracks',
-			width: '20%',
+			width: '20%'
 		},
 
 		{
@@ -369,7 +369,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Description',
-			width: '38%',
+			width: '38%'
 		},
 
 		{
@@ -391,7 +391,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Delegated by',
-			width: '20%',
+			width: '20%'
 		},
 
 		{
@@ -405,8 +405,8 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				);
 			},
 			title: 'Active proposals',
-			width: '15%',
-		},
+			width: '15%'
+		}
 	];
 
 	if (status === ETrackDelegationStatus.All) {
@@ -424,7 +424,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 };
 const GetTracksColumns = (
 	status: ETrackDelegationStatus,
-	setOpen: (pre: boolean) => void,
+	setOpen: (pre: boolean) => void
 ) => {
 	const { network } = useNetworkContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -440,7 +440,7 @@ const GetTracksColumns = (
 					</div>
 				),
 				title: '#',
-				width: '10%',
+				width: '10%'
 			},
 			{
 				dataIndex: 'delegatedTo',
@@ -455,7 +455,7 @@ const GetTracksColumns = (
 					</div>
 				),
 				title: 'Delegated to',
-				width: '20%',
+				width: '20%'
 			},
 			{
 				dataIndex: 'balance',
@@ -466,7 +466,7 @@ const GetTracksColumns = (
 					</div>
 				),
 				title: 'Balance',
-				width: '15%',
+				width: '15%'
 			},
 			{
 				dataIndex: 'lockPeriod',
@@ -477,7 +477,7 @@ const GetTracksColumns = (
 					</div>
 				),
 				title: 'Conviction',
-				width: '15%',
+				width: '15%'
 			},
 			{
 				dataIndex: 'delegatedOn',
@@ -488,7 +488,7 @@ const GetTracksColumns = (
 					</div>
 				),
 				title: 'Delegated on',
-				width: '20%',
+				width: '20%'
 			},
 			{
 				dataIndex: 'action',
@@ -507,8 +507,8 @@ const GetTracksColumns = (
 					</div>
 				),
 				title: 'Action',
-				width: '10%',
-			},
+				width: '10%'
+			}
 		];
 		return TrackColumn;
 	} else if (status === ETrackDelegationStatus.Received_Delegation) {
@@ -522,7 +522,7 @@ const GetTracksColumns = (
 					</div>
 				),
 				title: '#',
-				width: '10%',
+				width: '10%'
 			},
 			{
 				dataIndex: 'delegatedFrom',
@@ -537,7 +537,7 @@ const GetTracksColumns = (
 					</div>
 				),
 				title: 'Delegated by',
-				width: '20%',
+				width: '20%'
 			},
 			{
 				dataIndex: 'balance',
@@ -548,7 +548,7 @@ const GetTracksColumns = (
 					</div>
 				),
 				title: 'Balance',
-				width: '15%',
+				width: '15%'
 			},
 			{
 				dataIndex: 'lockPeriod',
@@ -559,7 +559,7 @@ const GetTracksColumns = (
 					</div>
 				),
 				title: 'Conviction',
-				width: '15%',
+				width: '15%'
 			},
 			{
 				dataIndex: 'delegatedOn',
@@ -570,8 +570,8 @@ const GetTracksColumns = (
 					</div>
 				),
 				title: 'Delegated on',
-				width: '20%',
-			},
+				width: '20%'
+			}
 		];
 		return TrackColumn;
 	}

@@ -24,7 +24,7 @@ export default function Proposals({
 	onSetNotification,
 	dispatch,
 	options,
-	userNotification,
+	userNotification
 }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
@@ -35,9 +35,9 @@ export default function Proposals({
 	const handleAllClick = (checked: boolean) => {
 		dispatch({
 			payload: {
-				params: { checked },
+				params: { checked }
 			},
-			type: ACTIONS.MY_PROPOSAL_ALL_CHANGE,
+			type: ACTIONS.MY_PROPOSAL_ALL_CHANGE
 		});
 		const notification = Object.assign({}, userNotification);
 		options.forEach((option: any) => {
@@ -46,12 +46,12 @@ export default function Proposals({
 				notification[option.triggerName] = {
 					enabled: checked,
 					mention_types: [EMentionType.COMMENT, EMentionType.REPLY],
-					name: option?.triggerPreferencesName,
+					name: option?.triggerPreferencesName
 				};
 			} else if (trigger === 'ownProposalCreated') {
 				notification[option.triggerName] = {
 					enabled: checked,
-					name: option?.triggerPreferencesName,
+					name: option?.triggerPreferencesName
 				};
 			} else {
 				let subTriggers =
@@ -61,13 +61,13 @@ export default function Proposals({
 						subTriggers.push(trigger);
 				} else {
 					subTriggers = subTriggers.filter(
-						(postType: string) => postType !== trigger,
+						(postType: string) => postType !== trigger
 					);
 				}
 				notification[option.triggerName] = {
 					enabled: subTriggers.length > 0,
 					name: option?.triggerName,
-					sub_triggers: subTriggers,
+					sub_triggers: subTriggers
 				};
 			}
 		});
@@ -78,13 +78,13 @@ export default function Proposals({
 	const handleChange = (
 		categoryOptions: any,
 		checked: boolean,
-		value: string,
+		value: string
 	) => {
 		dispatch({
 			payload: {
-				params: { categoryOptions, checked, value },
+				params: { categoryOptions, checked, value }
 			},
-			type: ACTIONS.MY_PROPOSAL_SINGLE_CHANGE,
+			type: ACTIONS.MY_PROPOSAL_SINGLE_CHANGE
 		});
 		const notification = Object.assign({}, userNotification);
 		const option = categoryOptions.find((opt: any) => opt.label === value);
@@ -93,12 +93,12 @@ export default function Proposals({
 			notification[option.triggerName] = {
 				enabled: checked,
 				mention_types: [EMentionType.COMMENT, EMentionType.REPLY],
-				name: option?.triggerPreferencesName,
+				name: option?.triggerPreferencesName
 			};
 		} else if (trigger === 'ownProposalCreated') {
 			notification[option.triggerName] = {
 				enabled: checked,
-				name: option?.triggerPreferencesName,
+				name: option?.triggerPreferencesName
 			};
 		} else {
 			let subTriggers =
@@ -107,13 +107,13 @@ export default function Proposals({
 				if (!subTriggers.includes(trigger)) subTriggers.push(trigger);
 			} else {
 				subTriggers = subTriggers.filter(
-					(postType: string) => postType !== trigger,
+					(postType: string) => postType !== trigger
 				);
 			}
 			notification[option.triggerName] = {
 				enabled: subTriggers.length > 0,
 				name: option?.triggerName,
-				sub_triggers: subTriggers,
+				sub_triggers: subTriggers
 			};
 		}
 		onSetNotification(notification);

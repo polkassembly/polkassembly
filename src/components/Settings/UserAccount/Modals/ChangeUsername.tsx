@@ -15,7 +15,7 @@ const ChangeUsername = ({
 	open,
 	onConfirm,
 	onCancel,
-	username,
+	username
 }: {
 	open: boolean;
 	onConfirm?: () => void;
@@ -34,8 +34,8 @@ const ChangeUsername = ({
 			const { data, error } = await nextApiClientFetch<any>(
 				'api/v1/auth/actions/changeUsername',
 				{
-					username: newUsername,
-				},
+					username: newUsername
+				}
 			);
 			if (error) {
 				queueNotification({
@@ -43,18 +43,18 @@ const ChangeUsername = ({
 					message:
 						error ||
 						'Not able to change username please try again later',
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			}
 			if (data) {
 				setUserDetailsContextState((prev) => ({
 					...prev,
-					username: newUsername,
+					username: newUsername
 				}));
 				queueNotification({
 					header: 'Success!',
 					message: 'Username changed successfully.',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				form.resetFields();
 				onCancel();
@@ -68,7 +68,7 @@ const ChangeUsername = ({
 				message:
 					error ||
 					'Not able to change username please try again later',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 	};
@@ -116,18 +116,18 @@ const ChangeUsername = ({
 								{
 									message:
 										messages.VALIDATION_USERNAME_REQUIRED_ERROR,
-									required: usernameValidation.required,
+									required: usernameValidation.required
 								},
 								{
 									max: usernameValidation.maxLength,
 									message:
-										messages.VALIDATION_USERNAME_MAXLENGTH_ERROR,
+										messages.VALIDATION_USERNAME_MAXLENGTH_ERROR
 								},
 								{
 									message:
 										messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
-									min: usernameValidation.minLength,
-								},
+									min: usernameValidation.minLength
+								}
 							]}
 						>
 							<Input

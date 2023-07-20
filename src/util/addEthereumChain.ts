@@ -19,13 +19,13 @@ const addEthereumChain: TAddEthereumChainFn = async (params) => {
 	if (parseInt(metaMaskChainId, 16) !== chainId) {
 		const rpcUrls = [
 			rpcEndpoint.replace('wss', 'https').replace('wss', 'rpc'),
-			rpcEndpoint,
+			rpcEndpoint
 		];
 		const newChainId = `0x${chainId.toString(16)}`;
 		try {
 			await ethereum.request({
 				method: 'wallet_switchEthereumChain',
-				params: [{ chainId: newChainId }],
+				params: [{ chainId: newChainId }]
 			});
 		} catch (error) {
 			if (
@@ -41,15 +41,15 @@ const addEthereumChain: TAddEthereumChainFn = async (params) => {
 							nativeCurrency: {
 								decimals: tokenDecimals,
 								name: network,
-								symbol: tokenSymbol,
+								symbol: tokenSymbol
 							},
-							rpcUrls: rpcUrls,
-						},
-					],
+							rpcUrls: rpcUrls
+						}
+					]
 				});
 				await ethereum.request({
 					method: 'wallet_switchEthereumChain',
-					params: [{ chainId: newChainId }],
+					params: [{ chainId: newChainId }]
 				});
 			}
 		}

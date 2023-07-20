@@ -23,7 +23,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import {
 	EGovType,
 	OffChainProposalType,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
@@ -33,8 +33,8 @@ const TreasuryOverview = dynamic(
 	() => import('~src/components/Home/TreasuryOverview'),
 	{
 		loading: () => <Skeleton active />,
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 
 interface Props {
@@ -53,8 +53,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		return {
 			props: {},
 			redirect: {
-				destination: '/opengov',
-			},
+				destination: '/opengov'
+			}
 		};
 	}
 	const LATEST_POSTS_LIMIT = 8;
@@ -69,13 +69,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		allGov2Posts: getLatestActivityAllPosts({
 			govType: EGovType.OPEN_GOV,
 			listingLimit: LATEST_POSTS_LIMIT,
-			network,
+			network
 		}),
 		discussionPosts: getLatestActivityOffChainPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
 			network,
-			proposalType: OffChainProposalType.DISCUSSIONS,
-		}),
+			proposalType: OffChainProposalType.DISCUSSIONS
+		})
 	};
 
 	for (const trackName of Object.keys(networkTrackInfo[network])) {
@@ -84,7 +84,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
 				proposalType: ProposalType.OPEN_GOV,
-				trackNo: networkTrackInfo[network][trackName].trackId,
+				trackNo: networkTrackInfo[network][trackName].trackId
 			});
 	}
 
@@ -93,7 +93,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const gov2LatestPosts = {
 		allGov2Posts: responseArr[Object.keys(fetches).indexOf('allGov2Posts')],
 		discussionPosts:
-			responseArr[Object.keys(fetches).indexOf('discussionPosts')],
+			responseArr[Object.keys(fetches).indexOf('discussionPosts')]
 	};
 
 	for (const trackName of Object.keys(networkTrackInfo[network])) {
@@ -107,7 +107,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		error: '',
 		gov2LatestPosts,
 		network,
-		networkSocialsData,
+		networkSocialsData
 	};
 
 	return { props };
@@ -117,7 +117,7 @@ const Gov2Home = ({
 	error,
 	gov2LatestPosts,
 	network,
-	networkSocialsData,
+	networkSocialsData
 }: Props) => {
 	const { setNetwork } = useNetworkContext();
 

@@ -14,7 +14,7 @@ interface Options {
 export default function formatBnBalance(
 	value: BN | string,
 	options: Options,
-	network: string,
+	network: string
 ): string {
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
 	const valueString = value.toString();
@@ -34,7 +34,7 @@ export default function formatBnBalance(
 	const {
 		numberAfterComma,
 		withThousandDelimitor = true,
-		withUnit,
+		withUnit
 	} = options;
 	const numberAfterCommaLtZero = numberAfterComma && numberAfterComma < 0;
 

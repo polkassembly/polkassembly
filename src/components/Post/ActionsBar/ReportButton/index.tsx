@@ -28,7 +28,7 @@ const reasons = [
 	"It's suspicious or spam",
 	"It's abusive or harmful",
 	'It expresses intentions of self-harm or suicide',
-	'other (please let us know in the field below)',
+	'other (please let us know in the field below)'
 ];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
@@ -62,8 +62,8 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 					proposalType,
 					reason,
 					reply_id: replyId,
-					type,
-				},
+					type
+				}
 			);
 
 		if (reportError) {
@@ -71,7 +71,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 			queueNotification({
 				header: 'Error!',
 				message: cleanError(reportError),
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			setFormDisabled(false);
 			setError(reportError);
@@ -81,14 +81,14 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 			queueNotification({
 				header: 'Success!',
 				message: reportData.message,
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 			setPostData &&
 				setPostData((prev) => {
 					if (type === 'post') {
 						return {
 							...prev,
-							spam_reports_count: reportData.spam_users_count,
+							spam_reports_count: reportData.spam_users_count
 						};
 					} else if (type === 'comment') {
 						return {
@@ -98,14 +98,14 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 									return {
 										...comment,
 										spam_users_count:
-											reportData.spam_users_count,
+											reportData.spam_users_count
 									};
 								} else {
 									return {
-										...comment,
+										...comment
 									};
 								}
-							}),
+							})
 						};
 					} else {
 						return {
@@ -120,22 +120,22 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 													return {
 														...reply,
 														spam_users_count:
-															reportData.spam_users_count,
+															reportData.spam_users_count
 													};
 												} else {
 													return {
-														...reply,
+														...reply
 													};
 												}
-											},
-										),
+											}
+										)
 									};
 								} else {
 									return {
-										...comment,
+										...comment
 									};
 								}
-							}),
+							})
 						};
 					}
 				});
@@ -180,7 +180,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						onClick={handleReport}
 					>
 						Report
-					</Button>,
+					</Button>
 				]}
 			>
 				<Form
@@ -192,7 +192,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 					validateMessages={{ required: "Please add the '${name}'" }}
 					initialValues={{
 						comments: '',
-						reason: reasons[0],
+						reason: reasons[0]
 					}}
 				>
 					{error && <ErrorAlert errorMsg={error} className="mb-4" />}
@@ -208,7 +208,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 							options={reasons.map((reason) => {
 								return {
 									label: reason,
-									value: reason,
+									value: reason
 								};
 							})}
 						/>

@@ -19,7 +19,7 @@ const PostSidebar = ({
 	className,
 	closeSidebar,
 	open,
-	sidebarState,
+	sidebarState
 }: Props) => {
 	return (
 		<SidebarRight

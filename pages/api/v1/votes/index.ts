@@ -9,7 +9,7 @@ import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { VoteType, voteTypes } from '~src/global/proposalType';
 import {
 	isVotesSortOptionsValid,
-	votesSortValues,
+	votesSortValues
 } from '~src/global/sortOptions';
 import {
 	GET_CONVICTION_VOTES_FOR_ADDRESS_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX,
@@ -19,7 +19,7 @@ import {
 	GET_VOTES_LISTING_BY_TYPE_AND_INDEX,
 	GET_VOTES_LISTING_BY_TYPE_AND_INDEX_MOONBEAM,
 	GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX,
-	GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_MOONBEAM,
+	GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_MOONBEAM
 } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
@@ -41,7 +41,7 @@ export interface IVotesResponse {
 // expects optional id, page, voteType and listingLimit
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<IVotesResponse | { error: string }>,
+	res: NextApiResponse<IVotesResponse | { error: string }>
 ) {
 	const {
 		postId = 0,
@@ -49,7 +49,7 @@ async function handler(
 		voteType = VoteType.REFERENDUM,
 		listingLimit = VOTES_LISTING_LIMIT,
 		sortBy = votesSortValues.TIME,
-		address,
+		address
 	} = req.query;
 
 	const network = String(req.headers['x-network']);
@@ -60,7 +60,7 @@ async function handler(
 	const numListingLimit = Number(listingLimit);
 	if (isNaN(numListingLimit)) {
 		res.status(400).json({
-			error: `The listingLimit "${listingLimit}" is invalid.`,
+			error: `The listingLimit "${listingLimit}" is invalid.`
 		});
 	}
 
@@ -103,7 +103,7 @@ async function handler(
 				: isOpenGov
 				? ['createdAtBlock_DESC', 'id_DESC']
 				: ['timestamp_DESC', 'id_DESC'],
-		type_eq: voteType,
+		type_eq: voteType
 	};
 
 	// if ayes count,  votes (decision = 'ays', offset = 0 , limit 10)
@@ -149,24 +149,24 @@ async function handler(
 			return fetchSubsquid({
 				network,
 				query: votesQuery,
-				variables,
+				variables
 			});
-		}),
+		})
 	);
 
 	const resObj: IVotesResponse = {
 		abstain: {
 			count: 0,
-			votes: [],
+			votes: []
 		},
 		no: {
 			count: 0,
-			votes: [],
+			votes: []
 		},
 		yes: {
 			count: 0,
-			votes: [],
-		},
+			votes: []
+		}
 	};
 
 	promiseResults.forEach((result, i) => {

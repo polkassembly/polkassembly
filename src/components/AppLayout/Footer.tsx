@@ -20,7 +20,7 @@ const Footer = ({ className }: { className?: string }) => {
 
 	const getNetworkSocials = useCallback(async () => {
 		const { data, error } = await nextApiClientFetch<NetworkSocials>(
-			'api/v1/network-socials',
+			'api/v1/network-socials'
 		);
 		if (error) {
 			console.log('error fetching network socials : ', error);

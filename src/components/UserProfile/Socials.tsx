@@ -51,28 +51,28 @@ const Socials: FC<ISocialsProps> = (props) => {
 												isUpdated = true;
 												return {
 													...link,
-													link: value,
+													link: value
 												};
 											}
 											return {
-												...link,
+												...link
 											};
 										}) || [];
 									if (!isUpdated) {
 										social_links.push({
 											link: value,
-											type: socialLink,
+											type: socialLink
 										});
 									}
 									return {
 										...prev,
-										social_links,
+										social_links
 									};
 								});
 							}}
 							value={
 								profile?.social_links?.find(
-									(link) => link.type === strLink,
+									(link) => link.type === strLink
 								)?.link
 							}
 							disabled={loading}

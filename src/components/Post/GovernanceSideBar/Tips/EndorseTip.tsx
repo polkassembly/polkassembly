@@ -15,7 +15,7 @@ import styled from 'styled-components';
 import {
 	useApiContext,
 	useNetworkContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from '~src/context';
 import LoginToEndorse from '../LoginToVoteOrEndorse';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -41,12 +41,12 @@ const EndorseTip = ({
 	getAccounts,
 	tipHash,
 	onAccountChange,
-	setAccounts,
+	setAccounts
 }: Props) => {
 	const ZERO = new BN(0);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: false,
-		message: '',
+		message: ''
 	});
 	const [endorseValue, setEndorseValue] = useState<BN>(ZERO);
 	const [isCouncil, setIsCouncil] = useState(false);
@@ -63,7 +63,7 @@ const EndorseTip = ({
 				const substrateAddress = getSubstrateAddress(account.address);
 				return currentCouncil.some(
 					(council) =>
-						getSubstrateAddress(council) === substrateAddress,
+						getSubstrateAddress(council) === substrateAddress
 				);
 			});
 			if (index >= 0) {
@@ -72,7 +72,7 @@ const EndorseTip = ({
 				accounts.splice(index, 1);
 				accounts.unshift({
 					...account,
-					isCouncil: true,
+					isCouncil: true
 				});
 				setAccounts(accounts);
 				onAccountChange(account.address);
@@ -96,10 +96,10 @@ const EndorseTip = ({
 			}
 			api.query.council.members().then((memberAccounts) => {
 				const members = memberAccounts.map((member) =>
-					member.toString(),
+					member.toString()
 				);
 				setCurrentCouncil(
-					members.filter((member) => !!member) as string[],
+					members.filter((member) => !!member) as string[]
 				);
 			});
 		} catch (error) {
@@ -115,7 +115,7 @@ const EndorseTip = ({
 		queueNotification({
 			header: 'Success!',
 			message: `Endorse tip #${tipHash} successful.`,
-			status: NotificationStatus.SUCCESS,
+			status: NotificationStatus.SUCCESS
 		});
 		setLoadingStatus({ isLoading: false, message: '' });
 	};
@@ -123,7 +123,7 @@ const EndorseTip = ({
 		queueNotification({
 			header: 'Failed!',
 			message,
-			status: NotificationStatus.ERROR,
+			status: NotificationStatus.ERROR
 		});
 	};
 
@@ -150,7 +150,7 @@ const EndorseTip = ({
 			network,
 			onFailed,
 			onSuccess,
-			tx: endorse,
+			tx: endorse
 		});
 	};
 

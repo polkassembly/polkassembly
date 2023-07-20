@@ -21,14 +21,14 @@ const Tracker: FC<ITrackerProps> = ({ className, network }) => {
 		referendum: [],
 		techCommitteeProposal: [],
 		tipProposal: [],
-		treasuryProposal: [],
+		treasuryProposal: []
 	});
 
 	useEffect(() => {
 		let trackerMap: any = {};
 		if (typeof window !== undefined) {
 			trackerMap = JSON.parse(
-				global.window?.localStorage.getItem('trackMap') || '{}',
+				global.window?.localStorage.getItem('trackMap') || '{}'
 			);
 		}
 		const ids: any = {
@@ -38,11 +38,11 @@ const Tracker: FC<ITrackerProps> = ({ className, network }) => {
 			referendum: [],
 			techCommitteeProposal: [],
 			tipProposal: [],
-			treasuryProposal: [],
+			treasuryProposal: []
 		};
 		Object.entries(trackerMap || {}).forEach(([key, value]) => {
 			ids[key] = Object.keys(value || {}).map((k) =>
-				key === 'tipProposal' ? String(k) : Number(k),
+				key === 'tipProposal' ? String(k) : Number(k)
 			);
 		});
 		setIds(ids);

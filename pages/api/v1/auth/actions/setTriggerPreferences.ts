@@ -56,10 +56,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 					[network]: {
 						...(userData?.notification_preferences
 							?.triggerPreferences?.[network] || {}),
-						[trigger_name]: trigger_preferences,
-					},
-				},
-			},
+						[trigger_name]: trigger_preferences
+					}
+				}
+			}
 		})
 		.then(() => {
 			return res.status(200).json({ message: 'Success' });

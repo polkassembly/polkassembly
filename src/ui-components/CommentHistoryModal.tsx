@@ -13,7 +13,7 @@ import {
 	ForIcon,
 	NeutralIcon,
 	SlightlyAgainstIcon,
-	SlightlyForIcon,
+	SlightlyForIcon
 } from './CustomIcons';
 import { poppins } from 'pages/_app';
 import UserAvatar from './UserAvatar';
@@ -39,7 +39,7 @@ const CommentHistoryModal = ({
 	history,
 	defaultAddress,
 	username,
-	user_id,
+	user_id
 }: Props) => {
 	const [historyData, setHistoryData] = useState<IHistoryData[]>(history);
 
@@ -58,7 +58,7 @@ const CommentHistoryModal = ({
 							>
 								Completely Against
 							</div>
-						),
+						)
 				  }
 				: null,
 			item?.sentiment === 2
@@ -70,7 +70,7 @@ const CommentHistoryModal = ({
 							>
 								Slightly Against
 							</div>
-						),
+						)
 				  }
 				: null,
 			item?.sentiment === 3
@@ -82,7 +82,7 @@ const CommentHistoryModal = ({
 							>
 								Neutral
 							</div>
-						),
+						)
 				  }
 				: null,
 			item?.sentiment === 4
@@ -94,7 +94,7 @@ const CommentHistoryModal = ({
 							>
 								Slightly For
 							</div>
-						),
+						)
 				  }
 				: null,
 			item?.sentiment === 5
@@ -106,9 +106,9 @@ const CommentHistoryModal = ({
 							>
 								Completely For
 							</div>
-						),
+						)
 				  }
-				: null,
+				: null
 		];
 
 		return {
@@ -230,7 +230,7 @@ const CommentHistoryModal = ({
 					id={user_id || 0}
 				/>
 			),
-			key: index,
+			key: index
 		};
 	});
 

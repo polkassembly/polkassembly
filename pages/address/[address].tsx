@@ -6,12 +6,12 @@ import { Select, Tabs } from 'antd';
 import { GetServerSideProps } from 'next';
 import {
 	getUserIdWithAddress,
-	getUserProfileWithUserId,
+	getUserProfileWithUserId
 } from 'pages/api/v1/auth/data/userProfileWithUsername';
 import {
 	getDefaultUserPosts,
 	getUserPosts,
-	IUserPostsListingResponse,
+	IUserPostsListingResponse
 } from 'pages/api/v1/listing/user-posts';
 import React, { FC, useEffect, useState } from 'react';
 import { useNetworkContext } from 'src/context';
@@ -46,8 +46,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	if (!address) {
 		return {
 			props: {
-				error: 'No address provided',
-			},
+				error: 'No address provided'
+			}
 		};
 	}
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -55,21 +55,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	if (error || !data || isNaN(Number(data))) {
 		return {
 			props: {
-				error: error,
-			},
+				error: error
+			}
 		};
 	}
 	const userProfile = await getUserProfileWithUserId(Number(data));
 	const userPosts = await getUserPosts({
 		addresses: userProfile?.data?.addresses || [],
 		network,
-		userId: userProfile?.data?.user_id,
+		userId: userProfile?.data?.user_id
 	});
 	const props: IUserProfileProps = {
 		network,
 		userPosts: {
 			data: userPosts.data || getDefaultUserPosts(),
-			error: userPosts.error,
+			error: userPosts.error
 		},
 		userProfile: {
 			data: userProfile.data || {
@@ -80,13 +80,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				social_links: [],
 				title: '',
 				user_id: data,
-				username: '',
+				username: ''
 			},
-			error: userProfile.error,
-		},
+			error: userProfile.error
+		}
 	};
 	return {
-		props,
+		props
 	};
 };
 
@@ -145,9 +145,9 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 						label={key?.split('_').join(' ') || ''}
 						count={count}
 					/>
-				),
+				)
 			};
-		},
+		}
 	);
 	return (
 		<>
@@ -164,7 +164,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 						<Select
 							value={selectedGov}
 							style={{
-								width: 120,
+								width: 120
 							}}
 							onChange={(v) => {
 								setSelectedGov(v);
@@ -172,12 +172,12 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							options={[
 								{
 									label: 'Gov1',
-									value: 'gov1',
+									value: 'gov1'
 								},
 								{
 									label: 'OpenGov',
-									value: 'open_gov',
-								},
+									value: 'open_gov'
+								}
 							]}
 						/>
 					</div>

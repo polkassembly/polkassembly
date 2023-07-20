@@ -7,7 +7,7 @@ import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import {
 	isOffChainProposalTypeValid,
-	isProposalTypeValid,
+	isProposalTypeValid
 } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
@@ -18,7 +18,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { CommentReply } from '~src/types';
 import {
 	FIREBASE_FUNCTIONS_URL,
-	firebaseFunctionsHeader,
+	firebaseFunctionsHeader
 } from '~src/components/Settings/Notifications/utils';
 
 export interface IAddCommentReplyResponse {
@@ -27,7 +27,7 @@ export interface IAddCommentReplyResponse {
 
 const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (
 	req,
-	res,
+	res
 ) => {
 	if (req.method !== 'POST')
 		return res
@@ -52,7 +52,7 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (
 		!isProposalTypeValid(strProposalType)
 	)
 		return res.status(400).json({
-			message: `The post type of the name "${postType}" does not exist.`,
+			message: `The post type of the name "${postType}" does not exist.`
 		});
 
 	const token = getTokenFromReq(req);
@@ -64,7 +64,7 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (
 
 	const postRef = postsByTypeRef(
 		network,
-		strProposalType as ProposalType,
+		strProposalType as ProposalType
 	).doc(String(postId));
 	const last_comment_at = new Date();
 	const newReplyRef = postRef
@@ -80,14 +80,14 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (
 		updated_at: last_comment_at,
 		user_id: user.id,
 		user_profile_img: user?.profile?.image || '',
-		username: user.username,
+		username: user.username
 	};
 
 	await newReplyRef
 		.set(newReply)
 		.then(() => {
 			postRef.update({
-				last_comment_at,
+				last_comment_at
 			});
 
 			const triggerName = 'newReplyAdded';
@@ -97,20 +97,20 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (
 				network,
 				postId: String(postId),
 				postType: strProposalType,
-				replyId: newReplyRef.id,
+				replyId: newReplyRef.id
 			};
 
 			fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
 				body: JSON.stringify({
 					args,
-					trigger: triggerName,
+					trigger: triggerName
 				}),
 				headers: firebaseFunctionsHeader(network),
-				method: 'POST',
+				method: 'POST'
 			});
 
 			return res.status(200).json({
-				id: newReply.id,
+				id: newReply.id
 			});
 		})
 		.catch((error) => {

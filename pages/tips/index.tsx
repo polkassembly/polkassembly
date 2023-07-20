@@ -6,7 +6,7 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import {
 	getOnChainPosts,
-	IPostsListingResponse,
+	IPostsListingResponse
 } from 'pages/api/v1/listing/on-chain-posts';
 import React, { FC, useEffect } from 'react';
 
@@ -25,7 +25,7 @@ import TipIcon from '~assets/icons/tip-icon.svg';
 
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const proposalType = ProposalType.TIPS;
@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 		network,
 		page,
 		proposalType,
-		sortBy,
+		sortBy
 	});
 	return { props: { data, error, network, page } };
 };
@@ -70,8 +70,8 @@ const Tips: FC<ITipsProps> = (props) => {
 	const onPaginationChange = (page: number) => {
 		router.push({
 			query: {
-				page,
-			},
+				page
+			}
 		});
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};

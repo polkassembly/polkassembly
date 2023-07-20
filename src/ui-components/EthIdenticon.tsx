@@ -8,7 +8,7 @@ import { useEffect, useRef } from 'react';
 const EthIdenticon = ({
 	address,
 	size,
-	className,
+	className
 }: {
 	address: string;
 	size: number;
@@ -21,7 +21,7 @@ const EthIdenticon = ({
 		if (numericAddress && ref.current) {
 			ref.current.innerHTML = '';
 			ref.current.appendChild(
-				Jazzicon(size > 18 ? size - 8 : size, numericAddress),
+				Jazzicon(size > 18 ? size - 8 : size, numericAddress)
 			);
 		}
 	}, [numericAddress, size]);

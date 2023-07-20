@@ -15,8 +15,8 @@ export default async function fetchTokenToUSDPrice(network: string) {
 						? coinGeckoNetworks[network]
 						: network,
 					include_24hr_change: 'true',
-					vs_currencies: 'usd',
-				}),
+					vs_currencies: 'usd'
+				})
 		);
 		const responseJSON = await response.json();
 		if (
@@ -25,7 +25,7 @@ export default async function fetchTokenToUSDPrice(network: string) {
 					coinGeckoNetworks[network]
 						? coinGeckoNetworks[network]
 						: network
-				] || {},
+				] || {}
 			).length == 0
 		) {
 			return 'N/A';
@@ -35,7 +35,7 @@ export default async function fetchTokenToUSDPrice(network: string) {
 					coinGeckoNetworks[network]
 						? coinGeckoNetworks[network]
 						: network
-				]['usd'],
+				]['usd']
 			);
 		}
 	} catch (error) {

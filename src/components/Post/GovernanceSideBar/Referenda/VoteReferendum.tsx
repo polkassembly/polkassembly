@@ -7,7 +7,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import {
 	Injected,
 	InjectedAccount,
-	InjectedWindow,
+	InjectedWindow
 } from '@polkadot/extension-inject/types';
 import { Alert, Button, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
@@ -17,7 +17,7 @@ import {
 	ILastVote,
 	LoadingStatusType,
 	NotificationStatus,
-	Wallet,
+	Wallet
 } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
@@ -28,7 +28,7 @@ import WalletButton from '~src/components/WalletButton';
 import {
 	useApiContext,
 	useNetworkContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from '~src/context';
 import { APPNAME } from '~src/global/appName';
 import { ProposalType } from '~src/global/proposalType';
@@ -77,15 +77,15 @@ export const getConvictionVoteOptions = (
 	proposalType: ProposalType,
 	api: ApiPromise | undefined,
 	apiReady: boolean,
-	network: string,
+	network: string
 ) => {
 	if (
 		[
 			ProposalType.REFERENDUM_V2,
-			ProposalType.FELLOWSHIP_REFERENDUMS,
+			ProposalType.FELLOWSHIP_REFERENDUMS
 		].includes(proposalType) &&
 		![AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(
-			network,
+			network
 		)
 	) {
 		if (api && apiReady) {
@@ -109,7 +109,7 @@ export const getConvictionVoteOptions = (
 						>{`${value}x voting balance, locked for ${lock}x duration (${
 							Number(lock) * Number(days)
 						} days)`}</Select.Option>
-					)),
+					))
 				];
 			}
 		}
@@ -128,7 +128,7 @@ export const getConvictionVoteOptions = (
 				key={value}
 				value={value}
 			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
-		)),
+		))
 	];
 };
 
@@ -139,7 +139,7 @@ const VoteReferendum = ({
 	lastVote,
 	setLastVote,
 	proposalType,
-	address,
+	address
 }: Props) => {
 	const userDetails = useUserDetailsContext();
 	const { addresses, isLoggedOut, loginAddress } = userDetails;
@@ -148,7 +148,7 @@ const VoteReferendum = ({
 	const { api, apiReady } = useApiContext();
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: false,
-		message: '',
+		message: ''
 	});
 	const [isFellowshipMember, setIsFellowshipMember] =
 		useState<boolean>(false);
@@ -158,7 +158,7 @@ const VoteReferendum = ({
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map(
-		(lock, index) => [index + 1, lock],
+		(lock, index) => [index + 1, lock]
 	);
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
@@ -173,13 +173,13 @@ const VoteReferendum = ({
 	const [walletErr, setWalletErr] = useState<INetworkWalletErr>({
 		description: '',
 		error: 0,
-		message: '',
+		message: ''
 	});
 	const [voteValues, setVoteValues] = useState({
 		abstainVoteValue: ZERO_BN,
 		ayeVoteValue: ZERO_BN,
 		nayVoteValue: ZERO_BN,
-		totalVoteValue: ZERO_BN,
+		totalVoteValue: ZERO_BN
 	});
 
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
@@ -206,7 +206,7 @@ const VoteReferendum = ({
 
 	const getAccounts = async (
 		chosenWallet: Wallet,
-		chosenAddress?: string,
+		chosenAddress?: string
 	): Promise<undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
 
@@ -260,7 +260,7 @@ const VoteReferendum = ({
 				(account) =>
 					(
 						getSubstrateAddress(account?.address) || ''
-					).toLowerCase() === (substrate_address || '').toLowerCase(),
+					).toLowerCase() === (substrate_address || '').toLowerCase()
 			);
 			if (index >= 0) {
 				const account = accounts[index];
@@ -296,7 +296,7 @@ const VoteReferendum = ({
 
 	useEffect(() => {
 		setWalletErr(
-			checkWalletForSubstrateNetwork(network) as INetworkWalletErr,
+			checkWalletForSubstrateNetwork(network) as INetworkWalletErr
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [availableWallets, network]);
@@ -314,7 +314,7 @@ const VoteReferendum = ({
 	};
 	const handleWalletClick = async (
 		event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-		wallet: Wallet,
+		wallet: Wallet
 	) => {
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
 		setAccounts([]);
@@ -330,7 +330,7 @@ const VoteReferendum = ({
 			proposalType,
 			api,
 			apiReady,
-			network,
+			network
 		);
 	}, [CONVICTIONS, proposalType, api, apiReady, network]);
 
@@ -395,9 +395,9 @@ const VoteReferendum = ({
 					// key split into args part to extract
 					const [
 						{
-							args: [accountId],
+							args: [accountId]
 						},
-						optInfo,
+						optInfo
 					] = entries[i];
 					if (optInfo.isSome) {
 						members.push(accountId.toString());
@@ -479,7 +479,7 @@ const VoteReferendum = ({
 			.add(lockedBalance || ZERO_BN);
 		setVoteValues((prevState) => ({
 			...prevState,
-			totalVoteValue: totalVoteValue,
+			totalVoteValue: totalVoteValue
 		}));
 		if (totalVoteValue?.gte(availableBalance)) {
 			setBalanceErr('Insufficient balance.');
@@ -495,15 +495,15 @@ const VoteReferendum = ({
 				voteTx = api.tx.convictionVoting.vote(referendumId, {
 					Standard: {
 						balance: lockedBalance,
-						vote: { aye: true, conviction },
-					},
+						vote: { aye: true, conviction }
+					}
 				});
 			} else if (vote === EVoteDecisionType.NAY) {
 				voteTx = api.tx.convictionVoting.vote(referendumId, {
 					Standard: {
 						balance: lockedBalance,
-						vote: { aye: false, conviction },
-					},
+						vote: { aye: false, conviction }
+					}
 				});
 			} else if (vote === EVoteDecisionType.SPLIT) {
 				try {
@@ -515,10 +515,10 @@ const VoteReferendum = ({
 					setVoteValues((prevState) => ({
 						...prevState,
 						ayeVoteValue: ayeVoteValue,
-						nayVoteValue: nayVoteValue,
+						nayVoteValue: nayVoteValue
 					}));
 					voteTx = api.tx.convictionVoting.vote(referendumId, {
-						Split: { aye: `${ayeVote}`, nay: `${nayVote}` },
+						Split: { aye: `${ayeVote}`, nay: `${nayVote}` }
 					});
 				} catch (e) {
 					console.log(e);
@@ -541,14 +541,14 @@ const VoteReferendum = ({
 						...prevState,
 						abstainVoteValue: abstainVoteValue,
 						ayeVoteValue: ayeVoteValue,
-						nayVoteValue: nayVoteValue,
+						nayVoteValue: nayVoteValue
 					}));
 					voteTx = api.tx.convictionVoting.vote(referendumId, {
 						SplitAbstain: {
 							abstain: `${abstainVote}`,
 							aye: `${ayeVote}`,
-							nay: `${nayVote}`,
-						},
+							nay: `${nayVote}`
+						}
 					});
 				} catch (e) {
 					console.log(e);
@@ -569,15 +569,15 @@ const VoteReferendum = ({
 				voteTx = api.tx.democracy.vote(referendumId, {
 					Standard: {
 						balance: lockedBalance,
-						vote: { aye: true, conviction },
-					},
+						vote: { aye: true, conviction }
+					}
 				});
 			} else {
 				voteTx = api.tx.democracy.vote(referendumId, {
 					Standard: {
 						balance: lockedBalance,
-						vote: { aye: false, conviction },
-					},
+						vote: { aye: false, conviction }
+					}
 				});
 			}
 		}
@@ -587,13 +587,13 @@ const VoteReferendum = ({
 			queueNotification({
 				header: 'Success!',
 				message: `Vote on referendum #${referendumId} successful.`,
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 			setLastVote({
 				balance: totalVoteValue,
 				conviction: conviction,
 				decision: vote,
-				time: new Date(),
+				time: new Date()
 			});
 			setShowModal(false);
 			setSuccessModal(true);
@@ -604,7 +604,7 @@ const VoteReferendum = ({
 			queueNotification({
 				header: 'Failed!',
 				message,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		};
 		if (!voteTx) return;
@@ -617,12 +617,12 @@ const VoteReferendum = ({
 			onBroadcast: () =>
 				setLoadingStatus({
 					isLoading: true,
-					message: 'Broadcasting the vote',
+					message: 'Broadcasting the vote'
 				}),
 			onFailed,
 			onSuccess,
 			params: network == 'equilibrium' ? { nonce: -1 } : {},
-			tx: voteTx,
+			tx: voteTx
 		});
 	};
 
@@ -643,7 +643,7 @@ const VoteReferendum = ({
 							<span className="font-medium text-base">Aye</span>
 						</div>
 					),
-					value: 'aye',
+					value: 'aye'
 				},
 				{
 					label: (
@@ -660,7 +660,7 @@ const VoteReferendum = ({
 							<span className="font-medium text-base">Nay</span>
 						</div>
 					),
-					value: 'nay',
+					value: 'nay'
 				},
 				{
 					label: (
@@ -680,7 +680,7 @@ const VoteReferendum = ({
 							<span className="font-medium text-base">Split</span>{' '}
 						</div>
 					),
-					value: 'split',
+					value: 'split'
 				},
 				{
 					label: (
@@ -697,8 +697,8 @@ const VoteReferendum = ({
 							</span>
 						</div>
 					),
-					value: 'abstain',
-				},
+					value: 'abstain'
+				}
 		  ]
 		: [
 				{
@@ -716,7 +716,7 @@ const VoteReferendum = ({
 							<span className="font-medium text-base">Aye</span>
 						</div>
 					),
-					value: 'aye',
+					value: 'aye'
 				},
 				{
 					label: (
@@ -733,8 +733,8 @@ const VoteReferendum = ({
 							<span className="font-medium text-base">Nay</span>
 						</div>
 					),
-					value: 'nay',
-				},
+					value: 'nay'
+				}
 		  ];
 
 	const VoteUI = (
@@ -785,7 +785,7 @@ const VoteReferendum = ({
 											onClick={(event) =>
 												handleWalletClick(
 													event as any,
-													Wallet.POLKADOT,
+													Wallet.POLKADOT
 												)
 											}
 											name="Polkadot"
@@ -808,7 +808,7 @@ const VoteReferendum = ({
 											onClick={(event) =>
 												handleWalletClick(
 													event as any,
-													Wallet.TALISMAN,
+													Wallet.TALISMAN
 												)
 											}
 											name="Talisman"
@@ -831,7 +831,7 @@ const VoteReferendum = ({
 											onClick={(event) =>
 												handleWalletClick(
 													event as any,
-													Wallet.SUBWALLET,
+													Wallet.SUBWALLET
 												)
 											}
 											name="Subwallet"
@@ -856,7 +856,7 @@ const VoteReferendum = ({
 												onClick={(event) =>
 													handleWalletClick(
 														event as any,
-														Wallet.NOVAWALLET,
+														Wallet.NOVAWALLET
 													)
 												}
 												name="Nova Wallet"
@@ -877,7 +877,7 @@ const VoteReferendum = ({
 											onClick={(event) =>
 												handleWalletClick(
 													event as any,
-													Wallet.POLYWALLET,
+													Wallet.POLYWALLET
 												)
 											}
 											className={`${
@@ -955,27 +955,27 @@ const VoteReferendum = ({
 										setVote(value as EVoteDecisionType);
 										ayeNayForm.setFieldValue(
 											'balance',
-											ZERO_BN,
+											ZERO_BN
 										);
 										splitForm.setFieldValue(
 											'nayVote',
-											ZERO_BN,
+											ZERO_BN
 										);
 										splitForm.setFieldValue(
 											'ayeVote',
-											ZERO_BN,
+											ZERO_BN
 										);
 										abstainFrom.setFieldValue(
 											'abstainVote',
-											ZERO_BN,
+											ZERO_BN
 										);
 										abstainFrom.setFieldValue(
 											'ayeVote',
-											ZERO_BN,
+											ZERO_BN
 										);
 										abstainFrom.setFieldValue(
 											'nayVote',
-											ZERO_BN,
+											ZERO_BN
 										);
 										onBalanceChange(ZERO_BN);
 									}}

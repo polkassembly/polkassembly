@@ -15,7 +15,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<TokenType | MessageType>,
+	res: NextApiResponse<TokenType | MessageType>
 ) {
 	const firestore = firebaseAdmin.firestore();
 	if (req.method !== 'POST')
@@ -30,7 +30,7 @@ async function handler(
 		title,
 		social_links: socialLinksString,
 		username,
-		custom_username = false,
+		custom_username = false
 	} = req.body;
 	if (!username)
 		return res
@@ -59,8 +59,8 @@ async function handler(
 				...prev,
 				{
 					link: curr.link,
-					type: curr.type,
-				},
+					type: curr.type
+				}
 			];
 		}
 		return [...prev];
@@ -93,14 +93,14 @@ async function handler(
 		bio: bio || '',
 		image: image || '',
 		social_links: newSocialLinks || [],
-		title: title || '',
+		title: title || ''
 	};
 
 	const updated_token = await authServiceInstance.getSignedToken({
 		...user,
 		custom_username,
 		profile,
-		username,
+		username
 	});
 
 	await userRef

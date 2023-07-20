@@ -30,7 +30,7 @@ export default function BotSetupCard({
 	enabled,
 	isBotSetup,
 	handleEnableDisabled,
-	handleReset,
+	handleReset
 }: Props) {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [showResetModal, setShowResetModal] = useState<boolean>(false);
@@ -65,7 +65,7 @@ export default function BotSetupCard({
 											? handleClick()
 											: handleEnableDisabled(
 													channel,
-													true,
+													true
 											  )
 									}
 								/>

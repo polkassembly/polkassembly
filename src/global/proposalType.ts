@@ -20,16 +20,16 @@ export enum ProposalType {
 	DISCUSSIONS = 'discussions',
 	GRANTS = 'grants',
 	ANNOUNCEMENT = 'announcement',
-	ALLIANCE_MOTION = 'alliance_motion',
+	ALLIANCE_MOTION = 'alliance_motion'
 }
 export enum OffChainProposalType {
 	DISCUSSIONS = 'discussions',
-	GRANTS = 'grants',
+	GRANTS = 'grants'
 }
 
 export enum EGovType {
 	OPEN_GOV = 'open_gov',
-	GOV1 = 'gov1',
+	GOV1 = 'gov1'
 }
 
 export const govTypes = ['open_gov'];
@@ -53,7 +53,7 @@ export function getSubsquidProposalType(
 	proposalType: Exclude<
 		ProposalType,
 		ProposalType.DISCUSSIONS | ProposalType.GRANTS
-	>,
+	>
 ): TSubsquidProposalType {
 	switch (proposalType) {
 		case ProposalType.DEMOCRACY_PROPOSALS:
@@ -141,7 +141,7 @@ export function getProposalTypeTitle(proposalType: ProposalType) {
 	}
 }
 export function getSinglePostLinkFromProposalType(
-	proposalType: ProposalType | OffChainProposalType,
+	proposalType: ProposalType | OffChainProposalType
 ): string {
 	switch (proposalType) {
 		case ProposalType.BOUNTIES:
@@ -176,7 +176,7 @@ export function getSinglePostLinkFromProposalType(
 	return '';
 }
 export function getProposalTypeFromSinglePostLink(
-	link: string,
+	link: string
 ): ProposalType | undefined {
 	switch (link) {
 		case 'bounty':
@@ -219,7 +219,7 @@ export const proposalTypes = [
 	'open_gov',
 	'referendums_v2',
 	'alliance_motion',
-	'announcement',
+	'announcement'
 ];
 export const offChainProposalTypes = ['discussions', 'grants'];
 
@@ -235,7 +235,7 @@ export const gov1ProposalTypes = [
 	'CouncilMotion',
 	'Bounty',
 	'Tip',
-	'ChildBounty',
+	'ChildBounty'
 ];
 
 export enum VoteType {
@@ -243,7 +243,7 @@ export enum VoteType {
 	FELLOWSHIP = 'Fellowship',
 	REFERENDUM = 'Referendum',
 	REFERENDUM_V2 = 'ReferendumV2',
-	DEMOCRACY_PROPOSAL = 'DemocracyProposal',
+	DEMOCRACY_PROPOSAL = 'DemocracyProposal'
 }
 
 export const voteTypes = ['Motion', 'Fellowship', 'Referendum', 'ReferendumV2'];
@@ -256,11 +256,11 @@ export enum TrackPostStatus {
 	KILLED = 'Killed',
 	SUBMITTED = 'Submitted',
 	REJECTED = 'Rejected',
-	TIMED_OUT = 'TimedOut',
+	TIMED_OUT = 'TimedOut'
 }
 
 export const tracksNo = [
-	0, 1, 10, 11, 12, 13, 14, 15, 20, 21, 30, 31, 32, 33, 34,
+	0, 1, 10, 11, 12, 13, 14, 15, 20, 21, 30, 31, 32, 33, 34
 ];
 
 export const trackPostStatuses = [
@@ -273,14 +273,14 @@ export const trackPostStatuses = [
 	'Killed',
 	'Submitted',
 	'Rejected',
-	'TimedOut',
+	'TimedOut'
 ];
 export const customOpenGovStatuses = [
 	'All',
 	'CustomStatusSubmitted',
 	'CustomStatusVoting',
 	'CustomStatusClosed',
-	'CustomStatusActive',
+	'CustomStatusActive'
 ];
 
 export const getStatusesFromCustomStatus = (customStatus: CustomStatus) => {
@@ -292,7 +292,7 @@ export const getStatusesFromCustomStatus = (customStatus: CustomStatus) => {
 				'DecisionDepositPlaced',
 				'Deciding',
 				'ConfirmStarted',
-				'ConfirmAborted',
+				'ConfirmAborted'
 			];
 		case CustomStatus.Closed:
 			return [
@@ -301,7 +301,7 @@ export const getStatusesFromCustomStatus = (customStatus: CustomStatus) => {
 				'Confirmed',
 				'Approved',
 				'Rejected',
-				'Executed',
+				'Executed'
 			];
 		case CustomStatus.Active:
 			return [
@@ -309,7 +309,7 @@ export const getStatusesFromCustomStatus = (customStatus: CustomStatus) => {
 				'Submitted',
 				'Deciding',
 				'ConfirmStarted',
-				'ConfirmAborted',
+				'ConfirmAborted'
 			];
 	}
 };

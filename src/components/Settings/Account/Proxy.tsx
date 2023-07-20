@@ -4,7 +4,7 @@
 import {
 	web3Accounts,
 	web3Enable,
-	web3FromSource,
+	web3FromSource
 } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
@@ -107,7 +107,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 		const { signature } = await signRaw({
 			address: proxyAddress,
 			data: stringToHex(message || ''),
-			type: 'bytes',
+			type: 'bytes'
 		});
 
 		setLoading(true);
@@ -118,8 +118,8 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 				message,
 				proxied: substrate_address,
 				proxy: proxyAddress,
-				signature,
-			},
+				signature
+			}
 		);
 
 		if (error || !data) {
@@ -128,7 +128,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 			queueNotification({
 				header: 'Failed!',
 				message: cleanError(error || ''),
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 
@@ -174,7 +174,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 							className="bg-white text-pink_primary outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center"
 						>
 							Cancel
-						</Button>,
+						</Button>
 					]}
 				</div>
 			}

@@ -27,7 +27,7 @@ interface IGetPreimagesParams {
 }
 
 export async function getPreimages(
-	params: IGetPreimagesParams,
+	params: IGetPreimagesParams
 ): Promise<IApiResponse<IPreimagesListingResponse>> {
 	try {
 		const { network, listingLimit, page } = params;
@@ -36,7 +36,7 @@ export async function getPreimages(
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(
 				`Invalid listingLimit "${listingLimit}"`,
-				400,
+				400
 			);
 		}
 
@@ -49,25 +49,25 @@ export async function getPreimages(
 			query: GET_PREIMAGES_TABLE_QUERY,
 			variables: {
 				limit: numListingLimit,
-				offset: numListingLimit * (numPage - 1),
-			},
+				offset: numListingLimit * (numPage - 1)
+			}
 		});
 
 		const subsquidData = subsquidRes?.data;
 		const data: IPreimagesListingResponse = {
 			count: Number(subsquidData?.preimagesConnection?.totalCount),
-			preimages: subsquidData?.preimages || [],
+			preimages: subsquidData?.preimages || []
 		};
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
@@ -84,7 +84,7 @@ const handler: NextApiHandler<
 	const { data, error, status } = await getPreimages({
 		listingLimit,
 		network,
-		page,
+		page
 	});
 
 	if (error || !data) {

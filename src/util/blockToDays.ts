@@ -7,7 +7,7 @@ import { chainProperties } from 'src/global/networkConstants';
 export default function blockToDays(
 	blocks: BN | number,
 	network: string,
-	blocktime?: number,
+	blocktime?: number
 ): number {
 	if (!blocktime) {
 		blocktime = chainProperties?.[network]?.blockTime / 1000;

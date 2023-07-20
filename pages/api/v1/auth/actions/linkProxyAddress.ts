@@ -11,7 +11,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ChangeResponseType | MessageType>,
+	res: NextApiResponse<ChangeResponseType | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -38,7 +38,7 @@ async function handler(
 		proxied,
 		proxy,
 		message,
-		signature,
+		signature
 	);
 
 	return res

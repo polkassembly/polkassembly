@@ -11,7 +11,7 @@ import {
 	EmptyLatestActivity,
 	Gov2PopulatedLatestActivityCard,
 	LoadingLatestActivity,
-	PopulatedLatestActivity,
+	PopulatedLatestActivity
 } from 'src/ui-components/LatestActivityStates';
 import NameLabel from 'src/ui-components/NameLabel';
 import StatusTag from 'src/ui-components/StatusTag';
@@ -21,7 +21,7 @@ import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
 import {
 	getFirestoreProposalType,
-	getSinglePostLinkFromProposalType,
+	getSinglePostLinkFromProposalType
 } from '~src/global/proposalType';
 
 const columns: ColumnsType<IPostsRowData> = [
@@ -31,7 +31,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		key: 'id',
 		render: (post_id: any) => <div className="truncate">{post_id}</div>,
 		width: 80,
-		fixed: 'left',
+		fixed: 'left'
 	},
 	{
 		title: 'Title',
@@ -45,7 +45,7 @@ const columns: ColumnsType<IPostsRowData> = [
 					<h4 className="truncate m-0">{title}</h4>
 				</>
 			);
-		},
+		}
 	},
 	{
 		title: 'Posted By',
@@ -61,7 +61,7 @@ const columns: ColumnsType<IPostsRowData> = [
 				/>
 			</div>
 		),
-		width: 200,
+		width: 200
 	},
 	{
 		title: 'Created',
@@ -71,7 +71,7 @@ const columns: ColumnsType<IPostsRowData> = [
 			const relativeCreatedAt = getRelativeCreatedAt(createdAt);
 			return <span>{relativeCreatedAt}</span>;
 		},
-		width: 140,
+		width: 140
 	},
 	{
 		title: 'Origin',
@@ -86,7 +86,7 @@ const columns: ColumnsType<IPostsRowData> = [
 				</span>
 			);
 		},
-		width: 160,
+		width: 160
 	},
 	{
 		title: 'Status',
@@ -95,8 +95,8 @@ const columns: ColumnsType<IPostsRowData> = [
 		render: (status) => {
 			if (status) return <StatusTag status={status} />;
 		},
-		width: 160,
-	},
+		width: 160
+	}
 ];
 
 interface IAllGov2PostsTableProps {
@@ -109,7 +109,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 
 	function gotoPost(rowData: IPostsRowData): void {
 		const path = getSinglePostLinkFromProposalType(
-			getFirestoreProposalType(rowData.type) as any,
+			getFirestoreProposalType(rowData.type) as any
 		);
 		if (
 			(event as KeyboardEvent).ctrlKey ||
@@ -151,7 +151,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					status: post.status || '-',
 					sub_title: subTitle,
 					track: Number(post.track_number),
-					type: post.type,
+					type: post.type
 				};
 
 				tableData.push(tableDataObj);

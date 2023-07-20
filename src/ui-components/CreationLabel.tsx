@@ -17,7 +17,7 @@ import {
 	SlightlyForIcon,
 	NeutralIcon,
 	ForIcon,
-	WarningMessageIcon,
+	WarningMessageIcon
 } from '~src/ui-components/CustomIcons';
 import Link from 'next/link';
 import HelperTooltip from './HelperTooltip';
@@ -87,7 +87,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		commentSource = 'polkassembly',
 		cid,
 		spam_users_count = 0,
-		truncateUsername,
+		truncateUsername
 	} = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 
@@ -101,7 +101,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						>
 							Completely Against
 						</div>
-					),
+					)
 			  }
 			: null,
 		sentiment === 2
@@ -113,7 +113,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						>
 							Slightly Against
 						</div>
-					),
+					)
 			  }
 			: null,
 		sentiment === 3
@@ -125,7 +125,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						>
 							Neutral
 						</div>
-					),
+					)
 			  }
 			: null,
 		sentiment === 4
@@ -137,7 +137,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						>
 							Slightly For
 						</div>
-					),
+					)
 			  }
 			: null,
 		sentiment === 5
@@ -149,9 +149,9 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						>
 							Completely For
 						</div>
-					),
+					)
 			  }
-			: null,
+			: null
 	];
 
 	return (

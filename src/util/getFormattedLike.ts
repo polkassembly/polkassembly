@@ -4,6 +4,6 @@
 export function getFormattedLike(v: number) {
 	return Intl.NumberFormat('en-US', {
 		maximumFractionDigits: 1,
-		notation: 'compact',
+		notation: 'compact'
 	}).format(v);
 }

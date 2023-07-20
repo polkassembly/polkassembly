@@ -41,7 +41,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 
 	const postDocRef = postsByTypeRef(
 		network,
-		ProposalType.TREASURY_PROPOSALS,
+		ProposalType.TREASURY_PROPOSALS
 	).doc(String(postId));
 
 	const postDoc = await postDocRef.get();
@@ -62,7 +62,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 		proposer_address: proposerAddress,
 		title,
 		topic_id: 4,
-		user_id: user.id,
+		user_id: user.id
 	};
 
 	await postDocRef
@@ -71,7 +71,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 			return res.status(200).json({
 				message:
 					'Treasury proposals successfully created, it will appear on polkassembly as soon as it is synced on chain.',
-				post_id: postId,
+				post_id: postId
 			});
 		})
 		.catch((error) => {

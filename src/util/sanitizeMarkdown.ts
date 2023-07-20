@@ -12,7 +12,7 @@ const sanitizeMarkdown = (str?: string) => {
 				.replace(/&nbsp;/g, ' ')
 				.replace(/&amp;/g, '&')
 				.replace(/\[.*?\]\((.*?)\)/g, '')
-				.replace(/!\[.*?\]\((.*?)\)/g, ''),
+				.replace(/!\[.*?\]\((.*?)\)/g, '')
 		);
 		const plainText = html.replace(/(<([^>]+)>)/gi, '');
 		return plainText;

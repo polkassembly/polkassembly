@@ -37,9 +37,9 @@ export const getDelegatesData = async (network: string, address?: string) => {
 			variables: {
 				address: String(encodedAddr),
 				createdAt_gte: new Date(
-					currentDate.getTime() - 30 * 24 * 60 * 60 * 1000,
-				).toISOString(), // 30 days ago
-			},
+					currentDate.getTime() - 30 * 24 * 60 * 60 * 1000
+				).toISOString() // 30 days ago
+			}
 		});
 	} else {
 		novaDelegates.map((novaDelegate) => {
@@ -49,15 +49,15 @@ export const getDelegatesData = async (network: string, address?: string) => {
 				variables: {
 					address: String(novaDelegate.address),
 					createdAt_gte: new Date(
-						currentDate.getTime() - 30 * 24 * 60 * 60 * 1000,
-					).toISOString(), // 30 days ago
-				},
+						currentDate.getTime() - 30 * 24 * 60 * 60 * 1000
+					).toISOString() // 30 days ago
+				}
 			});
 		});
 	}
 
 	const subsquidResults = await Promise.allSettled(
-		Object.values(subsquidFetches),
+		Object.values(subsquidFetches)
 	);
 
 	const result: IDelegate[] = [];
@@ -66,10 +66,10 @@ export const getDelegatesData = async (network: string, address?: string) => {
 		if (!delegateData || delegateData.status !== 'fulfilled') continue;
 		const delegationCount = Number(
 			delegateData.value.data?.votingDelegationsConnection?.totalCount ||
-				0,
+				0
 		);
 		const votesCount = Number(
-			delegateData.value.data?.convictionVotesConnection?.totalCount || 0,
+			delegateData.value.data?.convictionVotesConnection?.totalCount || 0
 		);
 
 		const address = Object.keys(subsquidFetches)[index];
@@ -77,8 +77,8 @@ export const getDelegatesData = async (network: string, address?: string) => {
 
 		const isNovaWalletDelegate = Boolean(
 			novaDelegates.find(
-				(novaDelegate) => novaDelegate.address === address,
-			),
+				(novaDelegate) => novaDelegate.address === address
+			)
 		);
 		let bio = '';
 
@@ -98,7 +98,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 			bio,
 			isNovaWalletDelegate,
 			name: novaDelegates[index].name,
-			voted_proposals_count: votesCount,
+			voted_proposals_count: votesCount
 		};
 
 		result.push(newDelegate);
@@ -109,7 +109,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<IDelegate[] | { error: string }>,
+	res: NextApiResponse<IDelegate[] | { error: string }>
 ) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network))
@@ -129,7 +129,7 @@ async function handler(
 
 	const result = await getDelegatesData(
 		network,
-		address ? String(address) : undefined,
+		address ? String(address) : undefined
 	);
 	return res.status(200).json(result as IDelegate[]);
 }

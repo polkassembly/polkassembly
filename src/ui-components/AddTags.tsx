@@ -28,7 +28,7 @@ const AddTags = ({ tags, setTags, className }: Props) => {
 
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch<IPostTag[]>(
-			'api/v1/all-tags',
+			'api/v1/all-tags'
 		);
 		if (error) console.error('Error in getting all-tags', error);
 		else if (data) {
@@ -119,7 +119,7 @@ const AddTags = ({ tags, setTags, className }: Props) => {
 								No tag found.
 							</span>
 						</div>
-					),
+					)
 			  }
 			: null,
 		...filteredTags.slice(0, 5).map((tag, index) => {
@@ -135,9 +135,9 @@ const AddTags = ({ tags, setTags, className }: Props) => {
 					>
 						{tag?.name}
 					</div>
-				),
+				)
 			};
-		}),
+		})
 	];
 
 	return (

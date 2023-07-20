@@ -4,7 +4,7 @@
 
 import {
 	IPostListing,
-	IPostsListingResponse,
+	IPostsListingResponse
 } from 'pages/api/v1/listing/on-chain-posts';
 import React, { useEffect, useState } from 'react';
 
@@ -25,7 +25,7 @@ const DiscussionsBoard = ({ className, openSidebar }: Props) => {
 	useEffect(() => {
 		setLoading(true);
 		nextApiClientFetch<IPostsListingResponse>(
-			`api/v1/posts/discussions?listingLimit=${10}`,
+			`api/v1/posts/discussions?listingLimit=${10}`
 		)
 			.then((res) => {
 				if (res.data) {

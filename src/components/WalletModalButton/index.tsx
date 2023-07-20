@@ -7,7 +7,7 @@ import styled from 'styled-components';
 const WalletModalButton = ({
 	onClick,
 	icon,
-	name,
+	name
 }: {
 	onClick: () => void;
 	icon?: JSX.Element;

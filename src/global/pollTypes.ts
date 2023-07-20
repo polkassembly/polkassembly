@@ -4,7 +4,7 @@
 
 const POLL_TYPE = {
 	NORMAL: 'normal',
-	OPTION: 'option',
+	OPTION: 'option'
 };
 
 export function isPollTypeValid(pollType: string) {

@@ -20,7 +20,7 @@ const PassingInfoTag = ({ className, isPassing }: Props) => {
 
 	const [text, setText] = useState(NO_INFO_TEXT);
 	const {
-		postData: { status, postType },
+		postData: { status, postType }
 	} = usePostDataContext();
 
 	useEffect(() => {
@@ -28,7 +28,7 @@ const PassingInfoTag = ({ className, isPassing }: Props) => {
 			[
 				ProposalType.REFERENDUM_V2,
 				ProposalType.FELLOWSHIP_REFERENDUMS,
-				ProposalType.OPEN_GOV,
+				ProposalType.OPEN_GOV
 			].includes(postType)
 		) {
 			if (isPassing !== null) {

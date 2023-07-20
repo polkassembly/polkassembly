@@ -12,7 +12,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
-	ssr: false,
+	ssr: false
 });
 
 interface IBasicInformationProps {
@@ -33,7 +33,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 		setUsername,
 		username,
 		className,
-		errorCheck,
+		errorCheck
 	} = props;
 	const [newBadge, setNewBadge] = useState<string>('');
 
@@ -46,7 +46,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			setProfile((prev) => {
 				return {
 					...prev,
-					badges: [...badges, newBadge.toLowerCase()],
+					badges: [...badges, newBadge.toLowerCase()]
 				};
 			});
 			setNewBadge('');
@@ -62,7 +62,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 			setProfile((prev) => {
 				return {
 					...prev,
-					badges: badgesArr,
+					badges: badgesArr
 				};
 			});
 		}
@@ -113,7 +113,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							setProfile((prev) => {
 								return {
 									...prev,
-									image: e.target.value,
+									image: e.target.value
 								};
 							})
 						}
@@ -144,7 +144,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								setProfile((prev) => {
 									return {
 										...prev,
-										title: e.target.value,
+										title: e.target.value
 									};
 								})
 							}
@@ -181,7 +181,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 								setProfile((prev) => {
 									return {
 										...prev,
-										bio: e.target.value,
+										bio: e.target.value
 									};
 								})
 							}

@@ -24,18 +24,18 @@ const ArgumentsTableJSONView = dynamic(
 	() => import('./ArgumentsTableJSONView'),
 	{
 		loading: () => <Skeleton active />,
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
-	ssr: false,
+	ssr: false
 });
 
 const BlocksToTime = dynamic(() => import('src/components/BlocksToTime'), {
 	loading: () => <Skeleton.Button active />,
-	ssr: false,
+	ssr: false
 });
 
 export interface IOnChainInfo {
@@ -91,13 +91,13 @@ export const tipStatus = {
 	CLOSED: 'Closed',
 	CLOSING: 'Closing',
 	OPENED: 'Opened',
-	RETRACTED: 'Retracted',
+	RETRACTED: 'Retracted'
 };
 
 export const getBlockNumber = (
 	statusHistory?: {
 		block: number;
-	}[],
+	}[]
 ) => {
 	if (
 		statusHistory &&
@@ -152,7 +152,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 		reward,
 		payee,
 		statusHistory,
-		version,
+		version
 	} = onChainInfo;
 
 	const blockNumber = getBlockNumber(statusHistory);
@@ -161,7 +161,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 		if (!currentBlock) return;
 		const { seconds } = blockToTime(
 			currentBlock.toNumber() - blockNo,
-			network,
+			network
 		);
 
 		if (seconds === 0) {
@@ -218,7 +218,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 									{formatBnBalance(
 										String(submitted_amount),
 										{ numberAfterComma: 2, withUnit: true },
-										network,
+										network
 									)}
 								</div>
 							</li>
@@ -247,8 +247,8 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 											<span>
 												{formattedBlockToTime(
 													Number(
-														enactment_after_block,
-													),
+														enactment_after_block
+													)
 												)}
 											</span>
 											<a
@@ -276,7 +276,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 										<div>
 											<span>
 												{formattedBlockToTime(
-													Number(enactment_at_block),
+													Number(enactment_at_block)
 												)}
 											</span>
 											<a
@@ -304,7 +304,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 										<div>
 											<span>
 												{formattedBlockToTime(
-													Number(deciding.since),
+													Number(deciding.since)
 												)}
 											</span>
 											<a
@@ -332,7 +332,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 										<div>
 											<span>
 												{formattedBlockToTime(
-													Number(deciding.confirming),
+													Number(deciding.confirming)
 												)}
 											</span>
 											<a
@@ -357,7 +357,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 									{formatBnBalance(
 										String(decision_deposit_amount),
 										{ numberAfterComma: 2, withUnit: true },
-										network,
+										network
 									)}
 								</div>
 							</li>
@@ -371,7 +371,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 									{formatBnBalance(
 										String(submission_deposit_amount),
 										{ numberAfterComma: 2, withUnit: true },
-										network,
+										network
 									)}
 								</div>
 							</li>
@@ -398,7 +398,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 											{dayjs
 												.utc(ended_at)
 												.format(
-													'DD MMM YYYY, HH:mm:ss',
+													'DD MMM YYYY, HH:mm:ss'
 												)}
 										</div>
 									</>
@@ -426,7 +426,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 										Math.pow(
 											10,
 											chainProperties[network]
-												?.tokenDecimals,
+												?.tokenDecimals
 										) +
 										' ' +
 										chainProperties[network]?.tokenSymbol}
@@ -466,7 +466,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 											{dayjs
 												.utc(ended_at)
 												.format(
-													'DD MMM YYYY, HH:mm:ss',
+													'DD MMM YYYY, HH:mm:ss'
 												)}
 										</div>
 									</>
@@ -538,7 +538,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 										Math.pow(
 											10,
 											chainProperties[network]
-												?.tokenDecimals,
+												?.tokenDecimals
 										) +
 										' ' +
 										chainProperties[network]?.tokenSymbol}
@@ -557,7 +557,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 										Math.pow(
 											10,
 											chainProperties[network]
-												?.tokenDecimals,
+												?.tokenDecimals
 										) +
 										' ' +
 										chainProperties[network]?.tokenSymbol}
@@ -576,7 +576,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 										Math.pow(
 											10,
 											chainProperties[network]
-												?.tokenDecimals,
+												?.tokenDecimals
 										) +
 										' ' +
 										chainProperties[network]?.tokenSymbol}
@@ -595,7 +595,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 										Math.pow(
 											10,
 											chainProperties[network]
-												?.tokenDecimals,
+												?.tokenDecimals
 										) +
 										' ' +
 										chainProperties[network]?.tokenSymbol}

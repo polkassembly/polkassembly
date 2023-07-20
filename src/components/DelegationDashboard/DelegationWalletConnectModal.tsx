@@ -17,7 +17,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import {
 	Injected,
 	InjectedAccount,
-	InjectedWindow,
+	InjectedWindow
 } from '@polkadot/extension-inject/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { inputToBn } from '~src/util/inputToBn';
@@ -56,7 +56,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 			return {
 				...prev,
 				delegationDashboardAddress: address,
-				loginWallet: wallet || null,
+				loginWallet: wallet || null
 			};
 		});
 		setOpen(false);
@@ -136,7 +136,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 
 	const handleWalletClick = async (
 		event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-		wallet: Wallet,
+		wallet: Wallet
 	) => {
 		setAccounts([]);
 		setAddress('');
@@ -174,7 +174,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 					className="text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-6 rounded-[4px]"
 				>
 					Continue
-				</Button>,
+				</Button>
 			]}
 			closable={closable ? true : false}
 			onCancel={() => (closable ? setOpen(false) : setOpen(true))}
@@ -196,7 +196,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 								onClick={(event) =>
 									handleWalletClick(
 										event as any,
-										Wallet.POLKADOT,
+										Wallet.POLKADOT
 									)
 								}
 								name="Polkadot"
@@ -219,7 +219,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 								onClick={(event) =>
 									handleWalletClick(
 										event as any,
-										Wallet.TALISMAN,
+										Wallet.TALISMAN
 									)
 								}
 								name="Talisman"
@@ -242,7 +242,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 								onClick={(event) =>
 									handleWalletClick(
 										event as any,
-										Wallet.SUBWALLET,
+										Wallet.SUBWALLET
 									)
 								}
 								name="Subwallet"
@@ -266,7 +266,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 									onClick={(event) =>
 										handleWalletClick(
 											event as any,
-											Wallet.NOVAWALLET,
+											Wallet.NOVAWALLET
 										)
 									}
 									name="Nova Wallet"
@@ -290,7 +290,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 								onClick={(event) =>
 									handleWalletClick(
 										event as any,
-										Wallet.POLYWALLET,
+										Wallet.POLYWALLET
 									)
 								}
 								name="PolyWallet"

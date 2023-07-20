@@ -5,7 +5,7 @@
 import { GetServerSideProps } from 'next';
 import {
 	getOnChainPosts,
-	IPostsListingResponse,
+	IPostsListingResponse
 } from 'pages/api/v1/listing/on-chain-posts';
 import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
 import React, { FC } from 'react';
@@ -27,15 +27,15 @@ export interface IFellowshipReferendumPostsByTrackName {
 
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackName } = query;
 	if (!trackName) {
 		return {
 			props: {},
 			redirect: {
-				destination: '/member-referenda?trackName=All&page=1',
-			},
+				destination: '/member-referenda?trackName=All&page=1'
+			}
 		};
 	}
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -61,7 +61,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 					filterBy:
 						filterBy &&
 						Array.isArray(
-							JSON.parse(decodeURIComponent(String(filterBy))),
+							JSON.parse(decodeURIComponent(String(filterBy)))
 						)
 							? JSON.parse(decodeURIComponent(String(filterBy)))
 							: [],
@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 					page,
 					proposalType,
 					sortBy,
-					trackNo: trackId,
+					trackNo: trackId
 				});
 			} else {
 				prev[currTrackName] = getOnChainPostsCount({
@@ -78,12 +78,12 @@ export const getServerSideProps: GetServerSideProps = async ({
 					page,
 					proposalType,
 					trackNo: trackId,
-					trackStatus: 'all',
+					trackStatus: 'all'
 				});
 			}
 			return prev;
 		},
-		{},
+		{}
 	);
 
 	const responseArr = await Promise.allSettled(Object.values(fetches));
@@ -94,13 +94,13 @@ export const getServerSideProps: GetServerSideProps = async ({
 		} else {
 			return {
 				data: null,
-				error: result.reason,
+				error: result.reason
 			} as IApiResponse<IPostsListingResponse>;
 		}
 	});
 	const props: IFellowshipReferendumProps = {
 		network,
-		posts: {},
+		posts: {}
 	};
 	Object.keys(fetches).forEach((key, index) => {
 		(props.posts as any)[key] = results[index];

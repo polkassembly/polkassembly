@@ -23,14 +23,14 @@ export const typesBundleCrust = {
 							total_fee_reduction_quota: 'Compact<Balance>',
 							total_market_active_funds: 'Compact<Balance>',
 							used_fee_reduction_quota: 'Compact<Balance>',
-							active_era: 'Compact<EraIndex>',
+							active_era: 'Compact<EraIndex>'
 						},
 						FundsType: {
-							_enum: ['SWORK', 'MARKET'],
+							_enum: ['SWORK', 'MARKET']
 						},
 						FundsUnlockChunk: {
 							value: 'Compact<Balance>',
-							era: 'Compact<EraIndex>',
+							era: 'Compact<EraIndex>'
 						},
 						MarketBenefit: {
 							total_funds: 'Compact<Balance>',
@@ -38,7 +38,7 @@ export const typesBundleCrust = {
 							used_fee_reduction_quota: 'Compact<Balance>',
 							file_reward: 'Compact<Balance>',
 							refreshed_at: 'Compact<EraIndex>',
-							unlocking_funds: 'Vec<FundsUnlockChunk<Balance>>',
+							unlocking_funds: 'Vec<FundsUnlockChunk<Balance>>'
 						},
 						SworkBenefit: {
 							total_funds: 'Compact<Balance>',
@@ -46,24 +46,24 @@ export const typesBundleCrust = {
 							total_fee_reduction_count: 'u32',
 							used_fee_reduction_count: 'u32',
 							refreshed_at: 'Compact<EraIndex>',
-							unlocking_funds: 'Vec<FundsUnlockChunk<Balance>>',
+							unlocking_funds: 'Vec<FundsUnlockChunk<Balance>>'
 						},
 						BridgeChainId: 'u8',
 						ChainId: 'u8',
 						ResourceId: 'H256',
 						DepositNonce: 'u64',
 						ProposalStatus: {
-							_enum: ['Initiated', 'Approved', 'Rejected'],
+							_enum: ['Initiated', 'Approved', 'Rejected']
 						},
 						ProposalVotes: {
 							votes_for: 'Vec<AccountId>',
 							votes_against: 'Vec<AccountId>',
 							status: 'ProposalStatus',
-							expiry: 'BlockNumber',
+							expiry: 'BlockNumber'
 						},
 						Erc721Token: {
 							id: 'TokenId',
-							metadata: 'Vec<u8>',
+							metadata: 'Vec<u8>'
 						},
 						TokenId: 'U256',
 						ETHAddress: 'Vec<u8>',
@@ -71,11 +71,11 @@ export const typesBundleCrust = {
 						Lock: {
 							total: 'Compact<Balance>',
 							last_unlock_at: 'BlockNumber',
-							lock_type: 'LockType',
+							lock_type: 'LockType'
 						},
 						LockType: {
 							delay: 'BlockNumber',
-							lock_period: 'u32',
+							lock_period: 'u32'
 						},
 						FileInfo: {
 							file_size: 'u64',
@@ -85,7 +85,7 @@ export const typesBundleCrust = {
 							amount: 'Compact<Balance>',
 							prepaid: 'Compact<Balance>',
 							reported_replica_count: 'u32',
-							replicas: 'Vec<Replica<AccountId>>',
+							replicas: 'Vec<Replica<AccountId>>'
 						},
 						FileInfoV2: {
 							file_size: 'u64',
@@ -96,41 +96,41 @@ export const typesBundleCrust = {
 							prepaid: 'Compact<Balance>',
 							reported_replica_count: 'u32',
 							remaining_paid_count: 'u32',
-							replicas: 'BTreeMap<AccountId, Replica<AccountId>>',
+							replicas: 'BTreeMap<AccountId, Replica<AccountId>>'
 						},
 						Replica: {
 							who: 'AccountId',
 							valid_at: 'BlockNumber',
 							anchor: 'SworkerAnchor',
 							is_reported: 'bool',
-							created_at: 'Option<BlockNumber>',
+							created_at: 'Option<BlockNumber>'
 						},
 						Guarantee: {
 							targets:
 								'Vec<IndividualExposure<AccountId, Balance>>',
 							total: 'Compact<Balance>',
 							submitted_in: 'EraIndex',
-							suppressed: 'bool',
+							suppressed: 'bool'
 						},
 						ValidatorPrefs: {
-							guarantee_fee: 'Compact<Perbill>',
+							guarantee_fee: 'Compact<Perbill>'
 						},
 						Group: {
 							members: 'BTreeSet<AccountId>',
-							allowlist: 'BTreeSet<AccountId>',
+							allowlist: 'BTreeSet<AccountId>'
 						},
 						IASSig: 'Vec<u8>',
 						Identity: {
 							anchor: 'SworkerAnchor',
 							punishment_deadline: 'u64',
-							group: 'Option<AccountId>',
+							group: 'Option<AccountId>'
 						},
 						ISVBody: 'Vec<u8>',
 						MerkleRoot: 'Vec<u8>',
 						ReportSlot: 'u64',
 						PKInfo: {
 							code: 'SworkerCode',
-							anchor: 'Option<SworkerAnchor>',
+							anchor: 'Option<SworkerAnchor>'
 						},
 						SworkerAnchor: 'Vec<u8>',
 						SworkerCert: 'Vec<u8>',
@@ -143,12 +143,12 @@ export const typesBundleCrust = {
 							free: 'u64',
 							reported_files_size: 'u64',
 							reported_srd_root: 'MerkleRoot',
-							reported_files_root: 'MerkleRoot',
-						},
-					},
-				},
+							reported_files_root: 'MerkleRoot'
+						}
+					}
+				}
 			],
-			alias: {},
-		},
-	},
+			alias: {}
+		}
+	}
 } as unknown as OverrideBundleType;

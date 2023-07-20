@@ -24,12 +24,12 @@ const validateContent = (content: string): ValidationResult => {
 	if (content) {
 		return {
 			errorMsg: null,
-			validateStatus: 'success',
+			validateStatus: 'success'
 		};
 	}
 	return {
 		errorMsg: 'Please add the content.',
-		validateStatus: 'error',
+		validateStatus: 'error'
 	};
 };
 
@@ -37,11 +37,11 @@ const ContentForm = ({
 	className,
 	height,
 	onChange,
-	value,
+	value
 }: Props): JSX.Element => {
 	const [validationStatus, setValidation] = useState<ValidationResult>({
 		errorMsg: null,
-		validateStatus: 'success',
+		validateStatus: 'success'
 	});
 
 	const onChangeWrapper = (content: string) => {

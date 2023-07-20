@@ -14,7 +14,7 @@ import { redisDel, redisGet } from '~src/auth/redis';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<TokenType | MessageType>,
+	res: NextApiResponse<TokenType | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -26,7 +26,7 @@ async function handler(
 		tfa_token = null,
 		user_id = null,
 		login_address,
-		login_wallet,
+		login_wallet
 	} = req.body;
 	if (isNaN(auth_code) || !tfa_token || isNaN(user_id))
 		return res
@@ -62,13 +62,13 @@ async function handler(
 		issuer: 'Polkassembly',
 		label: `${user.id}`,
 		period: 30,
-		secret: user.two_factor_auth?.base32_secret,
+		secret: user.two_factor_auth?.base32_secret
 	});
 
 	const isValidToken =
 		totp.validate({
 			token: String(auth_code).replaceAll(/\s/g, ''),
-			window: 1,
+			window: 1
 		}) !== null;
 	if (!isValidToken)
 		return res
@@ -78,7 +78,7 @@ async function handler(
 	const updatedJWT = await authServiceInstance.getSignedToken({
 		...user,
 		login_address: login_address,
-		login_wallet: login_wallet,
+		login_wallet: login_wallet
 	});
 	await redisDel(get2FAKey(Number(user_id)));
 

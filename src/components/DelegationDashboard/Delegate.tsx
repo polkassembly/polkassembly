@@ -10,7 +10,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import {
 	useApiContext,
 	useNetworkContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from '~src/context';
 import { IDelegate } from '~src/types';
 
@@ -24,7 +24,7 @@ import CollapseIcon from '~assets/icons/collapse.svg';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 interface Props {
@@ -74,7 +74,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<IDelegate[]>(
-			`api/v1/delegations/delegates?address=${address}`,
+			`api/v1/delegations/delegates?address=${address}`
 		);
 
 		if (data) {
@@ -212,7 +212,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 								.filter(
 									(item) =>
 										item?.address ===
-										'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ',
+										'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'
 								)
 								.map((delegate, index) => (
 									<DelegateCard
@@ -226,12 +226,12 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 								.filter(
 									(item) =>
 										item?.address !==
-										'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ',
+										'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'
 								)
 								.sort(
 									(a, b) =>
 										b.active_delegation_count -
-										a.active_delegation_count,
+										a.active_delegation_count
 								)
 								.map((delegate, index) => (
 									<DelegateCard

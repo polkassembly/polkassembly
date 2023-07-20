@@ -8,7 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import {
 	isFirestoreProposalTypeValid,
 	isSortByValid,
-	isValidNetwork,
+	isValidNetwork
 } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
@@ -25,7 +25,7 @@ import { getReactions } from '../posts/on-chain-post';
 import {
 	IPostsListingResponse,
 	getProposerAddressFromFirestorePostData,
-	getSpamUsersCountForPosts,
+	getSpamUsersCountForPosts
 } from './on-chain-posts';
 
 interface IGetOffChainPostsParams {
@@ -38,7 +38,7 @@ interface IGetOffChainPostsParams {
 }
 
 export async function getOffChainPosts(
-	params: IGetOffChainPostsParams,
+	params: IGetOffChainPostsParams
 ): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
 		const { network, listingLimit, page, proposalType, sortBy, filterBy } =
@@ -49,7 +49,7 @@ export async function getOffChainPosts(
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(
 				`Invalid listingLimit "${listingLimit}"`,
-				400,
+				400
 			);
 		}
 
@@ -57,7 +57,7 @@ export async function getOffChainPosts(
 		if (!isFirestoreProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(
 				`The off chain proposal type of the name "${proposalType}" does not exist.`,
-				400,
+				400
 			);
 		}
 
@@ -79,7 +79,7 @@ export async function getOffChainPosts(
 
 		const offChainCollRef = postsByTypeRef(
 			network,
-			strProposalType as ProposalType,
+			strProposalType as ProposalType
 		);
 		const postsSnapshotArr =
 			filterBy && filterBy.length > 0
@@ -89,7 +89,7 @@ export async function getOffChainPosts(
 						.limit(Number(listingLimit) || LISTING_LIMIT)
 						.offset(
 							(Number(page) - 1) *
-								Number(listingLimit || LISTING_LIMIT),
+								Number(listingLimit || LISTING_LIMIT)
 						)
 						.get()
 				: await offChainCollRef
@@ -97,7 +97,7 @@ export async function getOffChainPosts(
 						.limit(Number(listingLimit) || LISTING_LIMIT)
 						.offset(
 							(Number(page) - 1) *
-								Number(listingLimit || LISTING_LIMIT),
+								Number(listingLimit || LISTING_LIMIT)
 						)
 						.get();
 
@@ -123,7 +123,7 @@ export async function getOffChainPosts(
 					const reactions = getReactions(post_reactionsQuerySnapshot);
 					const post_reactions = {
 						'👍': reactions['👍']?.count || 0,
-						'👎': reactions['👎']?.count || 0,
+						'👎': reactions['👎']?.count || 0
 					};
 
 					const commentsQuerySnapshot = await postDocRef
@@ -144,7 +144,7 @@ export async function getOffChainPosts(
 						post_reactions,
 						proposer: getProposerAddressFromFirestorePostData(
 							docData,
-							network,
+							network
 						),
 						tags: docData?.tags || [],
 						title: docData?.title || null,
@@ -153,11 +153,11 @@ export async function getOffChainPosts(
 							: isTopicIdValid(topic_id)
 							? {
 									id: topic_id,
-									name: getTopicNameFromTopicId(topic_id),
+									name: getTopicNameFromTopicId(topic_id)
 							  }
 							: getTopicFromType(strProposalType as ProposalType),
 						user_id: docData?.user_id || 1,
-						username: docData?.username,
+						username: docData?.username
 					};
 				}
 			}
@@ -197,10 +197,7 @@ export async function getOffChainPosts(
 					.where(
 						'user_id',
 						'in',
-						newIds.slice(
-							i,
-							newIdsLen > i + 30 ? i + 30 : newIdsLen,
-						),
+						newIds.slice(i, newIdsLen > i + 30 ? i + 30 : newIdsLen)
 					)
 					.where('default', '==', true)
 					.get();
@@ -211,7 +208,7 @@ export async function getOffChainPosts(
 							if (v && v.user_id == data.user_id) {
 								return {
 									...v,
-									proposer: data.address,
+									proposer: data.address
 								};
 							}
 							return v;
@@ -227,8 +224,8 @@ export async function getOffChainPosts(
 						'in',
 						newIds.slice(
 							lastIndex,
-							lastIndex === newIdsLen ? newIdsLen + 1 : newIdsLen,
-						),
+							lastIndex === newIdsLen ? newIdsLen + 1 : newIdsLen
+						)
 					)
 					.where('default', '==', true)
 					.get();
@@ -239,7 +236,7 @@ export async function getOffChainPosts(
 							if (v && v.user_id == data.user_id) {
 								return {
 									...v,
-									proposer: data.address,
+									proposer: data.address
 								};
 							}
 							return v;
@@ -252,24 +249,24 @@ export async function getOffChainPosts(
 		posts = await getSpamUsersCountForPosts(
 			network,
 			posts,
-			strProposalType,
+			strProposalType
 		);
 
 		const data: IPostsListingResponse = {
 			count,
-			posts: posts.filter((post) => post !== undefined) as any,
+			posts: posts.filter((post) => post !== undefined) as any
 		};
 
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
@@ -283,7 +280,7 @@ const handler: NextApiHandler<
 		proposalType = OffChainProposalType.DISCUSSIONS,
 		sortBy = sortValues.COMMENTED,
 		listingLimit = LISTING_LIMIT,
-		filterBy,
+		filterBy
 	} = req.query;
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network))
@@ -299,7 +296,7 @@ const handler: NextApiHandler<
 		network,
 		page,
 		proposalType,
-		sortBy,
+		sortBy
 	});
 
 	if (error || !data) {

@@ -7,7 +7,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import {
 	Injected,
 	InjectedAccount,
-	InjectedWindow,
+	InjectedWindow
 } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Alert, Button, Divider } from 'antd';
@@ -47,7 +47,7 @@ const Web3Signup: FC<Props> = ({
 	isModal,
 	setSignupOpen,
 	setLoginOpen,
-	onWalletUpdate,
+	onWalletUpdate
 }) => {
 	const { network } = useNetworkContext();
 
@@ -117,12 +117,12 @@ const Web3Signup: FC<Props> = ({
 				'Pending authorisation request already exists for this site. Please accept or reject the request.'
 			) {
 				setWalletError(
-					'Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.',
+					'Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.'
 				);
 				handleToggle();
 			} else if (err?.message == 'Wallet Timeout') {
 				setWalletError(
-					'Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.',
+					'Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.'
 				);
 				handleToggle();
 			}
@@ -156,7 +156,7 @@ const Web3Signup: FC<Props> = ({
 	const onAccountChange = (address: string) => setAddress(address);
 
 	const handleSignup: (
-		values: React.BaseSyntheticEvent<object, any, any> | undefined,
+		values: React.BaseSyntheticEvent<object, any, any> | undefined
 	) => void = async () => {
 		if (!accounts.length) return getAccounts(chosenWallet);
 
@@ -196,7 +196,7 @@ const Web3Signup: FC<Props> = ({
 			setLoading(true);
 			const { data, error } = await nextApiClientFetch<ChallengeMessage>(
 				'api/v1/auth/actions/addressSignupStart',
-				{ address: substrate_address },
+				{ address: substrate_address }
 			);
 			if (error || !data) {
 				setErr(error || 'Something went wrong');
@@ -214,7 +214,7 @@ const Web3Signup: FC<Props> = ({
 			const { signature } = await signRaw({
 				address: substrate_address,
 				data: stringToHex(signMessage),
-				type: 'bytes',
+				type: 'bytes'
 			});
 
 			const { data: confirmData, error: confirmError } =
@@ -223,8 +223,8 @@ const Web3Signup: FC<Props> = ({
 					{
 						address: substrate_address,
 						signature,
-						wallet: chosenWallet,
-					},
+						wallet: chosenWallet
+					}
 				);
 
 			if (confirmError || !confirmData) {

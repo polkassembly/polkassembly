@@ -18,7 +18,7 @@ import SEOHead from '~src/global/SEOHead';
 
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { id } = query;
 
@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 	const { data, error } = await getOffChainPost({
 		network,
 		postId: id,
-		proposalType: OffChainProposalType.GRANTS,
+		proposalType: OffChainProposalType.GRANTS
 	});
 	return { props: { data, error, network } };
 };

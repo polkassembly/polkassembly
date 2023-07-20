@@ -7,17 +7,17 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
 import {
 	blocksToRelevantTime,
-	getTrackData,
+	getTrackData
 } from '~src/components/Listing/Tracks/AboutTrackCard';
 import {
 	useApiContext,
 	useNetworkContext,
-	usePostDataContext,
+	usePostDataContext
 } from '~src/context';
 import {
 	DecisionPeriodIcon,
 	EnactmentPeriodIcon,
-	PreparePeriodIcon,
+	PreparePeriodIcon
 } from '~src/ui-components/CustomIcons';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import CloseIcon from 'public/assets/icons/close.svg';
@@ -35,7 +35,7 @@ export const getPeriodData = (
 	network: string,
 	date: Dayjs,
 	trackData: any,
-	fieldKey: string,
+	fieldKey: string
 ) => {
 	const period = blocksToRelevantTime(network, Number(trackData[fieldKey]));
 	let periodEndsAt = date.clone();
@@ -44,22 +44,22 @@ export const getPeriodData = (
 		if (period.includes('hrs')) {
 			periodEndsAt = periodEndsAt.add(
 				Number(period.split(' ')[0]),
-				'hour',
+				'hour'
 			);
 		} else if (period.includes('days')) {
 			periodEndsAt = periodEndsAt.add(
 				Number(period.split(' ')[0]),
-				'day',
+				'day'
 			);
 		} else if (period.includes('min')) {
 			periodEndsAt = periodEndsAt.add(
 				Number(period.split(' ')[0]),
-				'minute',
+				'minute'
 			);
 		}
 		periodPercent = Math.round(
 			(dayjs().diff(date, 'minute') / periodEndsAt.diff(date, 'minute')) *
-				100,
+				100
 		);
 	}
 	const periodCardVisible = periodEndsAt.diff(dayjs(), 'second') > 0;
@@ -67,7 +67,7 @@ export const getPeriodData = (
 		period,
 		periodCardVisible,
 		periodEndsAt,
-		periodPercent,
+		periodPercent
 	};
 };
 
@@ -83,14 +83,14 @@ export const getDefaultPeriod = () => {
 		period: '',
 		periodCardVisible: false,
 		periodEndsAt: dayjs(),
-		periodPercent: 0,
+		periodPercent: 0
 	};
 };
 
 export const getStatusBlock = (
 	timeline: any[],
 	type: string[],
-	status: string,
+	status: string
 ) => {
 	let deciding: any;
 	if (timeline && Array.isArray(timeline)) {
@@ -137,8 +137,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			created_at,
 			status,
 			timeline,
-			requested,
-		},
+			requested
+		}
 	} = usePostDataContext();
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useApiContext();
@@ -148,43 +148,43 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const [decision, setDecision] = useState<IPeriod>(getDefaultPeriod());
 	const [confirm, setConfirm] = useState<IPeriod>(getDefaultPeriod());
 	const [minEnactment, setMinEnactment] = useState<IPeriod>(
-		getDefaultPeriod(),
+		getDefaultPeriod()
 	);
 	const [spend, setSpend] = useState<IPeriod>(getDefaultPeriod());
 	const [open, setOpen] = useState(false);
 	const isTreasuryProposal = trackData.group === 'Treasury';
 	const isProposalPassed = ['Executed', 'Confirmed', 'Approved'].includes(
-		status,
+		status
 	);
 	const isProposalFailed = [
 		'Rejected',
 		'TimedOut',
 		'Cancelled',
-		'Killed',
+		'Killed'
 	].includes(status);
 	const decidingStatusBlock = getStatusBlock(
 		timeline || [],
 		['ReferendumV2', 'FellowshipReferendum'],
-		'Deciding',
+		'Deciding'
 	);
 	const confirmStartedStatusBlock = getStatusBlock(
 		timeline || [],
 		['ReferendumV2', 'FellowshipReferendum'],
-		'ConfirmStarted',
+		'ConfirmStarted'
 	);
 	const confirmedStatusBlock = getStatusBlock(
 		timeline || [],
 		['ReferendumV2', 'FellowshipReferendum'],
-		'Confirmed',
+		'Confirmed'
 	);
 	const awardedStatusBlock = getStatusBlock(
 		timeline || [],
 		['TreasuryProposal'],
-		'Awarded',
+		'Awarded'
 	);
 	const isTreasuryProposalPresent = checkProposalPresent(
 		timeline || [],
-		'TreasuryProposal',
+		'TreasuryProposal'
 	);
 
 	const Button: FC<IButtonProps> = (props) => {
@@ -206,7 +206,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			network,
 			proposalCreatedAt,
 			trackData,
-			'preparePeriod',
+			'preparePeriod'
 		);
 		setPrepare(prepare);
 
@@ -218,7 +218,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			network,
 			decisionPeriodStartsAt,
 			trackData,
-			'decisionPeriod',
+			'decisionPeriod'
 		);
 		setDecision(decision);
 
@@ -230,7 +230,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			network,
 			confirmPeriodEndsAt,
 			trackData,
-			'confirmPeriod',
+			'confirmPeriod'
 		);
 		setConfirm(confirm);
 
@@ -242,7 +242,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 			network,
 			minEnactmentPeriodStartsAt,
 			trackData,
-			'minEnactmentPeriod',
+			'minEnactmentPeriod'
 		);
 		setMinEnactment(minEnactment);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -259,13 +259,13 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				const spendPeriod = spendPeriodConst.toNumber();
 				const goneBlocks = currentBlock.toNumber() % spendPeriod;
 				const percentage = ((goneBlocks / spendPeriod) * 100).toFixed(
-					0,
+					0
 				);
 				setSpend({
 					period: blocksToRelevantTime(network, spendPeriod),
 					periodCardVisible: false,
 					periodEndsAt: dayjs(),
-					periodPercent: Number(percentage),
+					periodPercent: Number(percentage)
 				});
 			})();
 		}
@@ -470,7 +470,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 										(Math.min(prepare.periodPercent, 100) /
 											100) *
 										150
-									}px`,
+									}px`
 								}}
 								className="bg-pink_primary rounded-full border-0"
 							></div>
@@ -514,12 +514,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 										decidingStatusBlock
 											? (Math.min(
 													decision.periodPercent,
-													100,
+													100
 											  ) /
 													100) *
 											  300
 											: 0
-									}px`,
+									}px`
 								}}
 								className="bg-pink_primary rounded-full border-0"
 							></div>
@@ -575,7 +575,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								style={{
 									height: `${
 										minEnactment.periodPercent > 0 ? 30 : 0
-									}px`,
+									}px`
 								}}
 								className="bg-pink_primary rounded-full border-0"
 							></div>
@@ -636,7 +636,7 @@ const FailedReferendaText: FC<{
 	const block = getStatusBlock(
 		timeline || [],
 		['ReferendumV2', 'FellowshipReferendum'],
-		status,
+		status
 	);
 	const BlockElement = (
 		<a

@@ -13,7 +13,7 @@ import firebaseAdmin, { firestore_db } from '~src/services/firebaseInit';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<TokenType | MessageType>,
+	res: NextApiResponse<TokenType | MessageType>
 ) {
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Missing user token' });
@@ -31,12 +31,12 @@ async function handler(
 		.collection('users')
 		.doc(String(user.id))
 		.update({
-			two_factor_auth: firebaseAdmin.firestore.FieldValue.delete(),
+			two_factor_auth: firebaseAdmin.firestore.FieldValue.delete()
 		})
 		.catch((error) => {
 			console.error('Error disabling 2FA : ', error);
 			return res.status(500).json({
-				message: 'Error disabling two factor authentication.',
+				message: 'Error disabling two factor authentication.'
 			});
 		});
 

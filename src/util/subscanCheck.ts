@@ -11,7 +11,7 @@ export function isSubscanSupport(network: string) {
 		'amplitude',
 		'myriad',
 		'frequency',
-		'cere',
+		'cere'
 	].includes(network);
 }
 

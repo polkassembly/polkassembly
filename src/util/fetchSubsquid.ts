@@ -16,16 +16,16 @@ interface Args {
 export default async function fetchSubsquid({
 	query,
 	variables,
-	network,
+	network
 }: Args) {
 	const body = variables ? { query, variables } : { query };
 	const subsquidUrl = chainProperties[network]?.subsquidUrl;
 	return fetch(`${subsquidUrl}`, {
 		body: JSON.stringify(body),
 		headers: {
-			'Content-Type': 'application/json',
+			'Content-Type': 'application/json'
 		},
-		method: 'POST',
+		method: 'POST'
 	})
 		.then((res) => res.json())
 		.then((result) => result)

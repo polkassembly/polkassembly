@@ -38,7 +38,7 @@ const WalletConnectSignup = ({
 	className,
 	setMethod,
 	isModal,
-	setSignupOpen,
+	setSignupOpen
 }: Props): JSX.Element => {
 	const [error, setError] = useState('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -50,7 +50,7 @@ const WalletConnectSignup = ({
 	const currentUser = useContext(UserDetailsContext);
 	const { setModal } = useContext(ModalContext);
 	const [provider, setProvider] = useState<WalletConnectProvider | null>(
-		null,
+		null
 	);
 	const router = useRouter();
 
@@ -69,8 +69,8 @@ const WalletConnectSignup = ({
 			rpc: {
 				1284: 'https://rpc.api.moonbeam.network',
 				1285: 'https://rpc.api.moonriver.moonbeam.network',
-				1287: 'https://rpc.api.moonbase.moonbeam.network',
-			},
+				1287: 'https://rpc.api.moonbase.moonbeam.network'
+			}
 		});
 		setProvider(wcPprovider);
 	};
@@ -147,13 +147,13 @@ const WalletConnectSignup = ({
 						meta: {
 							genesisHash: null,
 							name: 'walletConnect',
-							source: 'walletConnect',
-						},
+							source: 'walletConnect'
+						}
 					};
 
 					return account;
-				},
-			),
+				}
+			)
 		);
 
 		if (checksumAddresses.length > 0) {
@@ -188,7 +188,7 @@ const WalletConnectSignup = ({
 			setLoading(true);
 			const { data, error } = await nextApiClientFetch<ChallengeMessage>(
 				'api/v1/auth/actions/addressSignupStart',
-				{ address },
+				{ address }
 			);
 			if (error || !data) {
 				setError(error || 'Something went wrong');
@@ -215,7 +215,7 @@ const WalletConnectSignup = ({
 
 		const tx = {
 			method,
-			params,
+			params
 		};
 
 		provider.wc
@@ -228,8 +228,8 @@ const WalletConnectSignup = ({
 							{
 								address,
 								signature: result,
-								wallet: Wallet.WALLETCONNECT,
-							},
+								wallet: Wallet.WALLETCONNECT
+							}
 						);
 
 					if (confirmData?.token) {
@@ -239,22 +239,22 @@ const WalletConnectSignup = ({
 						currentUser.delegationDashboardAddress = address;
 						localStorage.setItem(
 							'delegationWallet',
-							Wallet.WALLETCONNECT,
+							Wallet.WALLETCONNECT
 						);
 						localStorage.setItem(
 							'delegationDashboardAddress',
-							address,
+							address
 						);
 						localStorage.setItem(
 							'loginWallet',
-							Wallet.WALLETCONNECT,
+							Wallet.WALLETCONNECT
 						);
 						handleTokenChange(confirmData.token, currentUser);
 
 						setModal({
 							content:
 								'Add an email in settings if you want to be able to recover your account!',
-							title: 'Add optional email',
+							title: 'Add optional email'
 						});
 						if (isModal) {
 							setSignupOpen && setSignupOpen(false);

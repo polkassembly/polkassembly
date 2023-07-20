@@ -41,7 +41,7 @@ const Cards = function ({
 	project: name,
 	status,
 	token,
-	w3fGrant,
+	w3fGrant
 }: AllParachainsCardProps) {
 	function toTitleCase(str: string): string {
 		return str.replace(/\w\S*/g, function (txt) {
@@ -54,15 +54,15 @@ const Cards = function ({
 		if (w3fGrant) {
 			if (w3fGrant.terminated) {
 				content = toTitleCase(
-					`W3F grant TERMINATED: "${w3fGrant.terminationReason}"`,
+					`W3F grant TERMINATED: "${w3fGrant.terminationReason}"`
 				);
 			} else if (w3fGrant.milestoneText) {
 				content = toTitleCase(
-					`${w3fGrant.received} received, ${w3fGrant.milestoneText}`,
+					`${w3fGrant.received} received, ${w3fGrant.milestoneText}`
 				);
 			} else {
 				content = toTitleCase(
-					`${w3fGrant.received} received, ${w3fGrant.completed} completed`,
+					`${w3fGrant.received} received, ${w3fGrant.completed} completed`
 				);
 			}
 		} else {
@@ -190,7 +190,7 @@ const Cards = function ({
 									borderRadius: '48px',
 									color: '#ffffff',
 									marginRight: '10px',
-									padding: '4px 10px',
+									padding: '4px 10px'
 								}}
 							>
 								{badge}

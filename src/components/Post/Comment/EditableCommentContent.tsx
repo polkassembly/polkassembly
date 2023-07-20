@@ -40,7 +40,7 @@ import {
 	SlightlyAgainstUnfilledIcon,
 	NeutralUnfilledIcon,
 	SlightlyForUnfilledIcon,
-	ForUnfilledIcon,
+	ForUnfilledIcon
 } from '~src/ui-components/CustomIcons';
 
 import { poppins } from 'pages/_app';
@@ -84,11 +84,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		prevSentiment,
 		userName,
 		is_custom_username,
-		proposer,
+		proposer
 	} = props;
 	const {
 		setPostData,
-		postData: { postType, postIndex },
+		postData: { postType, postIndex }
 	} = usePostDataContext();
 	const { asPath } = useRouter();
 
@@ -124,7 +124,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		replyForm.setFieldValue('content', usernameContent);
 		global.window.localStorage.setItem(
 			replyKey(commentId),
-			usernameContent,
+			usernameContent
 		);
 		setIsReplying(!isReplying);
 	};
@@ -160,19 +160,19 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					postId: props.postId,
 					postType: props.proposalType,
 					sentiment: sentiment,
-					userId: id,
-				},
+					userId: id
+				}
 			);
 
 		if (editPostCommentError || !data) {
 			setError(
 				editPostCommentError ||
-					'There was an error in editing your comment.',
+					'There was an error in editing your comment.'
 			);
 			queueNotification({
 				header: 'Error!',
 				message: 'There was an error in editing your comment.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			console.error('Error saving comment ', editPostCommentError);
 		}
@@ -190,29 +190,29 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								{
 									content: newComment?.content,
 									created_at: newComment?.created_at,
-									sentiment: newComment?.sentiment || 0,
+									sentiment: newComment?.sentiment || 0
 								},
-								...(newComment?.history || []),
+								...(newComment?.history || [])
 							]),
 								(newComment.content = newContent);
 							newComment.updated_at = new Date();
 							newComment.sentiment = sentiment || 0;
 						}
 						return {
-							...newComment,
+							...newComment
 						};
 					});
 				}
 				return {
 					...prev,
-					comments: comments,
+					comments: comments
 				};
 			});
 			form.setFieldValue('content', currentContent.current);
 			queueNotification({
 				header: 'Success!',
 				message: 'Your comment was edited.',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 		}
 
@@ -236,8 +236,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						content: replyContent,
 						postId: props.postId,
 						postType: props.proposalType,
-						userId: id,
-					},
+						userId: id
+					}
 				);
 
 			if (addCommentError || !data) {
@@ -246,7 +246,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				queueNotification({
 					header: 'Error!',
 					message: 'There was an error in saving your reply.',
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			}
 
@@ -269,25 +269,25 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 										updated_at: new Date(),
 										user_id: id,
 										user_profile_img: picture || '',
-										username: username,
+										username: username
 									});
 								}
 							}
 							return {
-								...comment,
+								...comment
 							};
 						});
 					}
 					return {
 						...prev,
-						comments: comments,
+						comments: comments
 					};
 				});
 				replyForm.setFieldValue('content', '');
 				queueNotification({
 					header: 'Success!',
 					message: 'Your reply was added.',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 			}
 
@@ -305,7 +305,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		queueNotification({
 			header: 'Copied!',
 			message: 'Comment link copied to clipboard.',
-			status: NotificationStatus.INFO,
+			status: NotificationStatus.INFO
 		});
 	};
 
@@ -316,8 +316,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				{
 					commentId,
 					postId: props.postId,
-					postType: props.proposalType,
-				},
+					postType: props.proposalType
+				}
 			);
 
 		if (deleteCommentError || !data) {
@@ -327,7 +327,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				message:
 					deleteCommentError ||
 					'There was an error in deleting your comment.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 
@@ -336,18 +336,18 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				let comments: IComment[] = [];
 				if (prev?.comments && Array.isArray(prev.comments)) {
 					comments = prev.comments.filter(
-						(comment) => comment.id !== commentId,
+						(comment) => comment.id !== commentId
 					);
 				}
 				return {
 					...prev,
-					comments: comments,
+					comments: comments
 				};
 			});
 			queueNotification({
 				header: 'Success!',
 				message: 'Your comment was deleted.',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 		}
 	};
@@ -365,7 +365,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								Edit
 							</span>
 						</div>
-					),
+					)
 			  }
 			: null,
 		{
@@ -379,7 +379,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				>
 					<CopyIcon className="mr-1" /> Copy link
 				</div>
-			),
+			)
 		},
 		id && !isEditing
 			? {
@@ -392,7 +392,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							commentId={commentId}
 							postId={postIndex}
 						/>
-					),
+					)
 			  }
 			: null,
 		id === userId
@@ -408,9 +408,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							<DeleteIcon className="mr-1" />
 							Delete
 						</div>
-					),
+					)
 			  }
-			: null,
+			: null
 	];
 
 	const handleSentimentText = () => {
@@ -445,14 +445,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						layout="vertical"
 						disabled={loading}
 						validateMessages={{
-							required: "Please add the '${name}'",
+							required: "Please add the '${name}'"
 						}}
 					>
 						<ContentForm
 							onChange={(content: string) => {
 								global.window.localStorage.setItem(
 									editCommentKey(commentId),
-									content,
+									content
 								);
 								return content.length ? content : null;
 							}}
@@ -610,7 +610,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								layout="vertical"
 								disabled={loadingReply}
 								validateMessages={{
-									required: "Please add the '${name}'",
+									required: "Please add the '${name}'"
 								}}
 								className="mt-4"
 							>
@@ -618,7 +618,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									onChange={(content: string) => {
 										global.window.localStorage.setItem(
 											replyKey(commentId),
-											content,
+											content
 										);
 										return content.length ? content : null;
 									}}

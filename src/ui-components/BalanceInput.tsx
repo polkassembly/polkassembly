@@ -45,7 +45,7 @@ const BalanceInput = ({
 	balance,
 	inputClassName,
 	noRules,
-	formItemName = 'balance',
+	formItemName = 'balance'
 }: Props) => {
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -62,7 +62,7 @@ const BalanceInput = ({
 		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol,
+			unit: chainProperties[network].tokenSymbol
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,7 +96,7 @@ const BalanceInput = ({
 						: [
 								{
 									message: 'Lock Balance is required.',
-									required: true,
+									required: true
 								},
 								{
 									message:
@@ -111,7 +111,7 @@ const BalanceInput = ({
 										} else {
 											callback();
 										}
-									},
+									}
 								},
 								{
 									message: 'Invalid Balance',
@@ -131,8 +131,8 @@ const BalanceInput = ({
 										} else {
 											callback();
 										}
-									},
-								},
+									}
+								}
 						  ]
 				}
 			>

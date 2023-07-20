@@ -44,10 +44,10 @@ const Parachains = ({ className, network }: Props) => {
 	}, []);
 
 	const polkadotProjects = parachainsData?.filter(
-		(item: any) => item?.chain === 'polkadot',
+		(item: any) => item?.chain === 'polkadot'
 	).length;
 	const kusamaProjects = parachainsData?.filter(
-		(item: any) => item?.chain === 'kusama',
+		(item: any) => item?.chain === 'kusama'
 	).length;
 
 	const tabItems = [
@@ -55,14 +55,14 @@ const Parachains = ({ className, network }: Props) => {
 		{
 			label: <CountBadgePill label="Polkadot" count={polkadotProjects} />,
 			key: 'polkadot',
-			children: <ChainDataTable data={parachainsData} chain="polkadot" />,
+			children: <ChainDataTable data={parachainsData} chain="polkadot" />
 		},
 		// eslint-disable-next-line sort-keys
 		{
 			label: <CountBadgePill label="Kusama" count={kusamaProjects} />,
 			key: 'kusama',
-			children: <ChainDataTable data={parachainsData} chain="kusama" />,
-		},
+			children: <ChainDataTable data={parachainsData} chain="kusama" />
+		}
 	];
 
 	return (

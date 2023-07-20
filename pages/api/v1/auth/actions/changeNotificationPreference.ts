@@ -10,7 +10,7 @@ import authServiceInstance from '~src/auth/auth';
 import {
 	MessageType,
 	NotificationSettings,
-	UpdatedDataResponseType,
+	UpdatedDataResponseType
 } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
@@ -19,7 +19,7 @@ async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse<
 		UpdatedDataResponseType<NotificationSettings> | MessageType
-	>,
+	>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -53,13 +53,13 @@ async function handler(
 					new_proposal,
 					own_proposal,
 					post_created,
-					post_participated,
+					post_participated
 				},
-				network,
+				network
 			);
 		return res.status(200).json({
 			message: messages.NOTIFICATION_PREFERENCE_CHANGE_SUCCESSFUL,
-			updated: notification_preferences,
+			updated: notification_preferences
 		});
 	} catch (error) {
 		return res.status(Number(error.name)).json({ message: error?.message });

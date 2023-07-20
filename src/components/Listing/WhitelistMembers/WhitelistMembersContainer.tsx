@@ -11,7 +11,7 @@ import { ApiContext } from 'src/context/ApiContext';
 import {
 	ErrorState,
 	LoadingState,
-	PostEmptyState,
+	PostEmptyState
 } from 'src/ui-components/UIStates';
 
 import { NetworkContext } from '~src/context/NetworkContext';
@@ -24,7 +24,7 @@ export type WhitelistMember = { accountId: string; rank?: number };
 
 const WhitelistMembersContainer = ({
 	className,
-	membersType,
+	membersType
 }: {
 	className?: string;
 	membersType: EMembersType;
@@ -59,7 +59,7 @@ const WhitelistMembersContainer = ({
 
 				member.forEach((m: any) => {
 					members.push({
-						accountId: m.toString(),
+						accountId: m.toString()
 					});
 				});
 
@@ -81,14 +81,14 @@ const WhitelistMembersContainer = ({
 						// key split into args part to extract
 						const [
 							{
-								args: [accountId],
+								args: [accountId]
 							},
-							optInfo,
+							optInfo
 						] = entries[i];
 						if (optInfo.isSome) {
 							members.push({
 								accountId: accountId.toString(),
-								rank: Number(optInfo.unwrap().rank.toString()),
+								rank: Number(optInfo.unwrap().rank.toString())
 							});
 						}
 					}

@@ -35,7 +35,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [editPostValue, setEditPostValue] = useState({
 		content: '',
-		title: '',
+		title: ''
 	});
 
 	const {
@@ -46,9 +46,9 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 			title,
 			post_link,
 			timeline,
-			tags: oldTags,
+			tags: oldTags
 		},
-		setPostData,
+		setPostData
 	} = usePostDataContext();
 	const { network } = useNetworkContext();
 
@@ -57,7 +57,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 	useEffect(() => {
 		setEditPostValue({
 			content,
-			title,
+			title
 		});
 	}, [content, title]);
 
@@ -71,7 +71,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 				tags: post_link.tags,
 				title: post_link.title,
 				topic: post_link.topic,
-				username: post_link.username,
+				username: post_link.username
 			});
 		}
 	}, [post_link]);
@@ -79,7 +79,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 	const onFinish = async ({
 		url,
 		content: updatedContent,
-		title: updatedTitle,
+		title: updatedTitle
 	}: any) => {
 		setError('');
 		setFormDisabled(true);
@@ -107,8 +107,8 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 							proposalType: postType,
 							tags: tags && Array.isArray(tags) ? tags : [],
 							timeline,
-							title: updatedTitle,
-						},
+							title: updatedTitle
+						}
 					);
 				if (editError || !data) {
 					setError(editError || 'Error in editing the post.');
@@ -121,7 +121,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					queueNotification({
 						header: 'Success!',
 						message: 'Your post was edited',
-						status: NotificationStatus.SUCCESS,
+						status: NotificationStatus.SUCCESS
 					});
 					const { content, proposer, title, topic, last_edited_at } =
 						data;
@@ -132,7 +132,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						proposer,
 						tags: tags && Array.isArray(tags) ? tags : [],
 						title,
-						topic,
+						topic
 					}));
 					setLoading(false);
 					setFormDisabled(false);
@@ -157,8 +157,8 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 							'api/v1/auth/actions/linkPostStart',
 							{
 								postId: postTypeAndId.id,
-								postType: postTypeAndId.type,
-							},
+								postType: postTypeAndId.type
+							}
 						);
 					if (error || !data) {
 						setError(error || 'Something went wrong');
@@ -170,7 +170,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						queueNotification({
 							header: 'Success!',
 							message: 'Post data fetched successfully.',
-							status: NotificationStatus.SUCCESS,
+							status: NotificationStatus.SUCCESS
 						});
 						setPost(data);
 					}
@@ -189,8 +189,8 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 								currPostId: postIndex,
 								currPostType: postType,
 								postId: postTypeAndId.id,
-								postType: postTypeAndId.type,
-							},
+								postType: postTypeAndId.type
+							}
 						);
 					if (error || !data) {
 						setError(error || 'Something went wrong');
@@ -202,7 +202,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						queueNotification({
 							header: 'Success!',
 							message: 'Post linked successfully.',
-							status: NotificationStatus.SUCCESS,
+							status: NotificationStatus.SUCCESS
 						});
 						setPostData((prev) => ({
 							...prev,
@@ -220,7 +220,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 										? post?.tags
 										: prev.tags,
 								title: post?.title,
-								type: postTypeAndId.type,
+								type: postTypeAndId.type
 							},
 							tags:
 								post?.tags && Array.isArray(post?.tags)
@@ -229,7 +229,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 							timeline: data.timeline,
 							title: isOnchainPost
 								? post?.title || ''
-								: prev.title,
+								: prev.title
 						}));
 					}
 				}
@@ -277,13 +277,13 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 								onFinish({
 									updatedContent: content,
 									updatedTitle: title,
-									url,
+									url
 								});
 							} else {
 								onFinish({
 									updatedContent: editPostValue.content,
 									updatedTitle: editPostValue.title,
-									url,
+									url
 								});
 							}
 						}}
@@ -299,7 +299,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 							? 'Save'
 							: 'Preview'}
 					</Button>
-				</div>,
+				</div>
 			]}
 			className="md:min-w-[674px]"
 		>
@@ -315,7 +315,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					disabled={formDisabled || loading}
 					initialValues={{
 						content,
-						title: title,
+						title: title
 					}}
 					validateMessages={{ required: "Please add the '${name}'" }}
 				>
@@ -328,8 +328,8 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 						}
 						rules={[
 							{
-								required: true,
-							},
+								required: true
+							}
 						]}
 						className="mt-5"
 					>
@@ -339,7 +339,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 							onChange={(e) =>
 								setEditPostValue((prev) => ({
 									...prev,
-									title: e.target.value,
+									title: e.target.value
 								}))
 							}
 							placeholder="Add your title here"
@@ -354,7 +354,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 							onChange={(content) => {
 								setEditPostValue((prev) => ({
 									...prev,
-									content: content,
+									content: content
 								}));
 								return content.length ? content : null;
 							}}

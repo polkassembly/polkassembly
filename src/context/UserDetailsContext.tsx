@@ -27,13 +27,13 @@ const initialUserDetailsContext: UserDetailsContextType = {
 	loginWallet: null,
 	networkPreferences: {
 		channelPreferences: {},
-		triggerPreferences: {},
+		triggerPreferences: {}
 	},
 	picture: null,
 	primaryNetwork: '',
 	setUserDetailsContextState: (): void => {
 		throw new Error(
-			'setUserDetailsContextState function must be overridden',
+			'setUserDetailsContextState function must be overridden'
 		);
 	},
 	setWalletConnectProvider: (): void => {
@@ -41,7 +41,7 @@ const initialUserDetailsContext: UserDetailsContextType = {
 	},
 	username: null,
 	walletConnectProvider: null,
-	web3signup: false,
+	web3signup: false
 };
 
 const accessToken = getLocalStorageToken();
@@ -61,7 +61,7 @@ try {
 			email_verified,
 			web3signup,
 			login_address,
-			login_wallet,
+			login_wallet
 		} = tokenPayload as JWTPayloadType;
 
 		if (id) {
@@ -90,10 +90,10 @@ try {
 export const UserDetailsContext = createContext(initialUserDetailsContext);
 
 export const UserDetailsProvider = ({
-	children,
+	children
 }: React.PropsWithChildren<{}>) => {
 	const [userDetailsContextState, setUserDetailsContextState] = useState(
-		initialUserDetailsContext,
+		initialUserDetailsContext
 	);
 	const [walletConnectProvider, setWalletConnectProvider] =
 		useState<WalletConnectProvider | null>(null);
@@ -112,7 +112,7 @@ export const UserDetailsProvider = ({
 				isLoggedOut,
 				setUserDetailsContextState,
 				setWalletConnectProvider,
-				walletConnectProvider,
+				walletConnectProvider
 			}}
 		>
 			{children}

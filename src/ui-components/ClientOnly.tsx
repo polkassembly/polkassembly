@@ -30,7 +30,7 @@ const Search: FC<{ network: string }> = (props) => {
 				className="gcse-search"
 				data-as_sitesearch={
 					['moonbase', 'moonbeam', 'moonriver', 'kilt'].includes(
-						network,
+						network
 					)
 						? `${network}.polkassembly.network`
 						: `${network}.polkassembly.io`

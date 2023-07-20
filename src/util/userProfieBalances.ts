@@ -21,7 +21,7 @@ const userProfileBalances = ({
 	network,
 	setBalance,
 	setLockBalance,
-	setTransferableBalance,
+	setTransferableBalance
 }: Props) => {
 	if (!api || !apiReady || !address) return;
 
@@ -48,7 +48,7 @@ const userProfileBalances = ({
 						.replaceAll(',', '') || '0';
 				if (new BN(positive).cmp(new BN(locked))) {
 					setBalance(
-						new BN(positive).sub(new BN(locked)).toString() || '0',
+						new BN(positive).sub(new BN(locked)).toString() || '0'
 					);
 					setLockBalance && setLockBalance(locked);
 				} else {
@@ -70,11 +70,11 @@ const userProfileBalances = ({
 							(
 								result.data?.free?.toBigInt() -
 								result.data?.frozen?.toBigInt()
-							).toString() || '0',
+							).toString() || '0'
 						);
 					setLockBalance &&
 						setLockBalance(
-							result.data?.frozen?.toBigInt().toString(),
+							result.data?.frozen?.toBigInt().toString()
 						);
 					setBalance(result.data?.free?.toBigInt().toString());
 				} else {

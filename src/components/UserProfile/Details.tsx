@@ -14,7 +14,7 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/accounts/types';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
-	ssr: false,
+	ssr: false
 });
 
 import dynamic from 'next/dynamic';
@@ -29,7 +29,7 @@ export const socialLinks = [
 	ESocialType.RIOT,
 	ESocialType.TWITTER,
 	ESocialType.TELEGRAM,
-	ESocialType.DISCORD,
+	ESocialType.DISCORD
 ];
 
 interface IDetailsProps {
@@ -80,7 +80,7 @@ const Details: FC<IDetailsProps> = (props) => {
 
 	const [onChainIdentity, setOnChainIdentity] = useState<TOnChainIdentity>({
 		judgements: [],
-		nickname: '',
+		nickname: ''
 	});
 
 	const [profileDetails, setProfileDetails] =
@@ -92,7 +92,7 @@ const Details: FC<IDetailsProps> = (props) => {
 			social_links: [],
 			title: '',
 			user_id: 0,
-			username: '',
+			username: ''
 		});
 
 	const { bio, title, badges, username, image, social_links, addresses } =
@@ -126,25 +126,25 @@ const Details: FC<IDetailsProps> = (props) => {
 			if (email && !isEmailAvailable) {
 				social_links.push({
 					link: email,
-					type: ESocialType.EMAIL,
+					type: ESocialType.EMAIL
 				});
 			}
 			if (twitter && !isTwitterAvailable) {
 				social_links.push({
 					link: `https://twitter.com/${twitter.substring(1)}`,
-					type: ESocialType.TWITTER,
+					type: ESocialType.TWITTER
 				});
 			}
 			if (riot && !isRiotAvailable) {
 				social_links.push({
 					link: `https://matrix.to/#/${riot}`,
-					type: ESocialType.RIOT,
+					type: ESocialType.RIOT
 				});
 			}
 			setProfileDetails((prev) => {
 				return {
 					...prev,
-					social_links: social_links,
+					social_links: social_links
 				};
 			});
 		}
@@ -163,7 +163,7 @@ const Details: FC<IDetailsProps> = (props) => {
 		let unsubscribes: (() => void)[];
 		const onChainIdentity: TOnChainIdentity = {
 			judgements: [],
-			nickname: '',
+			nickname: ''
 		};
 		const resolved: any[] = [];
 		addresses.forEach((address) => {
@@ -206,11 +206,11 @@ const Details: FC<IDetailsProps> = (props) => {
 	const { nickname, display, legal } = onChainIdentity;
 	const newUsername = legal || display || nickname || username;
 	const judgements = onChainIdentity.judgements.filter(
-		([, judgement]): boolean => !judgement.isFeePaid,
+		([, judgement]): boolean => !judgement.isFeePaid
 	);
 	const isGood = judgements.some(
 		([, judgement]): boolean =>
-			judgement.isKnownGood || judgement.isReasonable,
+			judgement.isKnownGood || judgement.isReasonable
 	);
 
 	return (
@@ -255,7 +255,7 @@ const Details: FC<IDetailsProps> = (props) => {
 							const link =
 								social_links && Array.isArray(social_links)
 									? social_links?.find(
-											(s) => s.type === social,
+											(s) => s.type === social
 									  )?.link || ''
 									: '';
 							return (
@@ -318,18 +318,18 @@ const Details: FC<IDetailsProps> = (props) => {
 								/>
 							),
 							key: 'about',
-							label: 'About',
+							label: 'About'
 						},
 						{
 							children: <GovTab posts={userPosts.gov1} />,
 							key: 'gov1',
-							label: 'Gov 1',
+							label: 'Gov 1'
 						},
 						{
 							children: <GovTab posts={userPosts.open_gov} />,
 							key: 'open_gov',
-							label: 'OpenGov',
-						},
+							label: 'OpenGov'
+						}
 					]}
 				/>
 			</div>

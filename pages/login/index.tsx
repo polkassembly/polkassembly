@@ -24,21 +24,21 @@ interface Props {
 
 const Web3Login = dynamic(() => import('src/components/Login/Web3Login'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 const MetamaskLogin = dynamic(
 	() => import('src/components/Login/MetamaskLogin'),
 	{
 		loading: () => <Skeleton active />,
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 const WalletConnectLogin = dynamic(
 	() => import('src/components/Login/WalletConnectLogin'),
 	{
 		loading: () => <Skeleton active />,
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
@@ -51,7 +51,7 @@ const Login = ({
 	setLoginOpen,
 	setSignupOpen,
 	isModal,
-	isDelegation,
+	isDelegation
 }: Props) => {
 	const { setNetwork } = useNetworkContext();
 

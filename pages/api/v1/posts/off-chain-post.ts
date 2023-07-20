@@ -8,14 +8,14 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import {
 	isFirestoreProposalTypeValid,
 	isProposalTypeValid,
-	isValidNetwork,
+	isValidNetwork
 } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import {
 	getFirestoreProposalType,
 	getSubsquidProposalType,
 	OffChainProposalType,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 import { GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
@@ -25,7 +25,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import {
 	getTopicFromType,
 	getTopicNameFromTopicId,
-	isTopicIdValid,
+	isTopicIdValid
 } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
@@ -35,7 +35,7 @@ import {
 	getSpamUsersCount,
 	IPostResponse,
 	isDataExist,
-	updatePostTimeline,
+	updatePostTimeline
 } from './on-chain-post';
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
@@ -64,7 +64,7 @@ export const getUpdatedAt = (data: any) => {
 };
 
 export async function getOffChainPost(
-	params: IGetOffChainPostParams,
+	params: IGetOffChainPostParams
 ): Promise<IApiResponse<IPostResponse>> {
 	try {
 		const { network, postId, proposalType, isExternalApiCall } = params;
@@ -76,19 +76,19 @@ export async function getOffChainPost(
 		if (!isFirestoreProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(
 				`The off chain proposal type "${proposalType}" is invalid.`,
-				400,
+				400
 			);
 		}
 
 		const postDocRef = postsByTypeRef(
 			network,
-			strProposalType as ProposalType,
+			strProposalType as ProposalType
 		).doc(String(postId));
 		const discussionPostDoc = await postDocRef.get();
 		if (!(discussionPostDoc && discussionPostDoc.exists)) {
 			throw apiErrorWithStatusCode(
 				`The Post with id "${postId}" is not found.`,
-				400,
+				400
 			);
 		}
 
@@ -112,11 +112,11 @@ export async function getOffChainPost(
 						status: 'Created',
 						timestamp: data?.created_at?.toDate
 							? data?.created_at?.toDate()
-							: data?.created_at,
-					},
+							: data?.created_at
+					}
 				],
-				type: 'Discussions',
-			},
+				type: 'Discussions'
+			}
 		];
 
 		const topic = data?.topic;
@@ -125,7 +125,7 @@ export async function getOffChainPost(
 			network,
 			proposalType,
 			Number(postId),
-			'post',
+			'post'
 		);
 		const tags = data?.tags || [];
 		const gov_type = data?.gov_type;
@@ -135,7 +135,7 @@ export async function getOffChainPost(
 						...item,
 						created_at: item?.created_at?.toDate
 							? item?.created_at.toDate()
-							: item?.created_at,
+							: item?.created_at
 					};
 			  })
 			: [];
@@ -164,7 +164,7 @@ export async function getOffChainPost(
 				: isTopicIdValid(topic_id)
 				? {
 						id: topic_id,
-						name: getTopicNameFromTopicId(topic_id),
+						name: getTopicNameFromTopicId(topic_id)
 				  }
 				: getTopicFromType(strProposalType as ProposalType),
 			type:
@@ -174,7 +174,7 @@ export async function getOffChainPost(
 					? 'Grants'
 					: '',
 			user_id: data?.user_id,
-			username: data?.username,
+			username: data?.username
 		};
 
 		if (post && (post.user_id || post.user_id === 0)) {
@@ -214,10 +214,10 @@ export async function getOffChainPost(
 			}
 			if (isProposalTypeValid(type)) {
 				const subsquidProposalType = getSubsquidProposalType(
-					type as any,
+					type as any
 				);
 				const variables: any = {
-					type_eq: subsquidProposalType,
+					type_eq: subsquidProposalType
 				};
 
 				if (type === ProposalType.TIPS) {
@@ -228,13 +228,13 @@ export async function getOffChainPost(
 				const subsquidRes = await fetchSubsquid({
 					network,
 					query: GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING,
-					variables: variables,
+					variables: variables
 				});
 				const subsquidData = subsquidRes?.data;
 				if (!isDataExist(subsquidData)) {
 					throw apiErrorWithStatusCode(
 						`The Post with id: "${id}" and type: "${type}" is not found.`,
-						400,
+						400
 					);
 				}
 				const postData = subsquidData.proposals[0];
@@ -262,13 +262,13 @@ export async function getOffChainPost(
 			const commentPromises = post.timeline.map(async (timeline: any) => {
 				const postDocRef = postsByTypeRef(
 					network,
-					getFirestoreProposalType(timeline.type) as ProposalType,
+					getFirestoreProposalType(timeline.type) as ProposalType
 				).doc(
 					String(
 						timeline.type === 'Tips'
 							? timeline.hash
-							: timeline.index,
-					),
+							: timeline.index
+					)
 				);
 				const commentsSnapshot = await postDocRef
 					.collection('comments')
@@ -277,12 +277,12 @@ export async function getOffChainPost(
 					commentsSnapshot,
 					postDocRef,
 					network,
-					strProposalType,
+					strProposalType
 				);
 				return comments;
 			});
 			const commentPromiseSettledResults = await Promise.allSettled(
-				commentPromises,
+				commentPromises
 			);
 			commentPromiseSettledResults.forEach((result) => {
 				if (
@@ -301,7 +301,7 @@ export async function getOffChainPost(
 			if (post.post_link) {
 				const { id, type } = post.post_link;
 				const postDocRef = postsByTypeRef(network, type).doc(
-					String(id),
+					String(id)
 				);
 				const commentsSnapshot = await postDocRef
 					.collection('comments')
@@ -310,7 +310,7 @@ export async function getOffChainPost(
 					commentsSnapshot,
 					postDocRef,
 					network,
-					strProposalType,
+					strProposalType
 				);
 			}
 			const commentsSnapshot = await postDocRef
@@ -320,7 +320,7 @@ export async function getOffChainPost(
 				commentsSnapshot,
 				postDocRef,
 				network,
-				strProposalType,
+				strProposalType
 			);
 			if (post.comments && Array.isArray(post.comments)) {
 				post.comments = post.comments.concat(comments);
@@ -332,13 +332,13 @@ export async function getOffChainPost(
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
@@ -346,7 +346,7 @@ export async function getOffChainPost(
 // expects optional discussionType and postId of proposal
 const handler: NextApiHandler<IPostResponse | { error: string }> = async (
 	req,
-	res,
+	res
 ) => {
 	const { postId = 0, proposalType = OffChainProposalType.DISCUSSIONS } =
 		req.query;
@@ -359,7 +359,7 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (
 		isExternalApiCall: true,
 		network,
 		postId,
-		proposalType,
+		proposalType
 	});
 
 	if (error || !data) {

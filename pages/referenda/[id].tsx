@@ -6,7 +6,7 @@ import { GetServerSideProps } from 'next';
 import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import {
 	getOnChainPost,
-	IPostResponse,
+	IPostResponse
 } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
 import Post from 'src/components/Post/Post';
@@ -14,7 +14,7 @@ import BackToListingView from 'src/ui-components/BackToListingView';
 import {
 	ErrorState,
 	LoadingState,
-	PostEmptyState,
+	PostEmptyState
 } from 'src/ui-components/UIStates';
 import { useState } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -31,7 +31,7 @@ import { useApiContext } from '~src/context';
 const proposalType = ProposalType.OPEN_GOV;
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { id } = query;
 
@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 	const { data, error, status } = await getOnChainPost({
 		network,
 		postId: id,
-		proposalType,
+		proposalType
 	});
 	const comments = await getSubSquareComments(proposalType, network, id);
 	const post = data && { ...data, comments: [...data.comments, ...comments] };
@@ -72,7 +72,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 		}
 		(async () => {
 			setIsUnFinalized(
-				Boolean(await checkIsOnChain(String(id), proposalType, api)),
+				Boolean(await checkIsOnChain(String(id), proposalType, api))
 			);
 		})();
 	}, [api, apiReady, error, status, id]);

@@ -13,7 +13,7 @@ import { NetworkEvent } from '~src/types';
 
 const handler: NextApiHandler<NetworkEvent[] | MessageType> = async (
 	req,
-	res,
+	res
 ) => {
 	const { approval_status = approvalStatus.APPROVED } = req.body;
 
@@ -34,7 +34,7 @@ const handler: NextApiHandler<NetworkEvent[] | MessageType> = async (
 			}
 			return events;
 		},
-		[] as NetworkEvent[],
+		[] as NetworkEvent[]
 	);
 	return res.status(200).json(events);
 };

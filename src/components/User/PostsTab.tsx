@@ -33,7 +33,7 @@ const PostsTab: FC<IPostsTabProps> = (props) => {
 								label={key.split('_').join(' ')}
 								count={value.length}
 							/>
-						),
+						)
 					};
 				});
 	return (

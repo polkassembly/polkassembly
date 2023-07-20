@@ -33,7 +33,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType))
 		return res.status(400).json({
-			message: `The off chain proposal type "${proposalType}" is invalid.`,
+			message: `The off chain proposal type "${proposalType}" is invalid.`
 		});
 
 	const token = getTokenFromReq(req);
@@ -45,7 +45,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		title,
 		content,
 		signature,
-		strProposalType as ProposalType,
+		strProposalType as ProposalType
 	);
 
 	return res.status(200).json({ message: 'Post created successfully' });

@@ -8,7 +8,7 @@ import React, { FC, useState } from 'react';
 import { useNetworkContext, usePostDataContext } from '~src/context';
 import {
 	ProposalType,
-	getProposalTypeFromSinglePostLink,
+	getProposalTypeFromSinglePostLink
 } from '~src/global/proposalType';
 import { NotificationStatus } from '~src/types';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
@@ -44,7 +44,7 @@ export const getPostTypeAndId = (currNetwork: string, url: any) => {
 			if (postType && !isNaN(postIndex)) {
 				post = {
 					id: postIndex,
-					type: postType,
+					type: postType
 				};
 			}
 		} catch (error) {
@@ -66,7 +66,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 	const { network } = useNetworkContext();
 	const {
 		postData: { postIndex, postType },
-		setPostData,
+		setPostData
 	} = usePostDataContext();
 
 	const onFinish = async ({ url }: any) => {
@@ -87,8 +87,8 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 						'api/v1/auth/actions/linkPostStart',
 						{
 							postId: postTypeAndId.id,
-							postType: postTypeAndId.type,
-						},
+							postType: postTypeAndId.type
+						}
 					);
 				if (error || !data) {
 					setError(error || 'Something went wrong');
@@ -100,7 +100,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 					queueNotification({
 						header: 'Success!',
 						message: 'Post data fetched successfully.',
-						status: NotificationStatus.SUCCESS,
+						status: NotificationStatus.SUCCESS
 					});
 					setPost(data);
 				}
@@ -112,8 +112,8 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 							currPostId: postIndex,
 							currPostType: postType,
 							postId: postTypeAndId.id,
-							postType: postTypeAndId.type,
-						},
+							postType: postTypeAndId.type
+						}
 					);
 				if (error || !data) {
 					setError(error || 'Something went wrong');
@@ -125,7 +125,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 					queueNotification({
 						header: 'Success!',
 						message: 'Post linked successfully.',
-						status: NotificationStatus.SUCCESS,
+						status: NotificationStatus.SUCCESS
 					});
 					setPostData((prev) => ({
 						...prev,
@@ -137,10 +137,10 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 							id: postTypeAndId.id,
 							last_edited_at: post?.last_edited_at,
 							title: post?.title,
-							type: postTypeAndId.type,
+							type: postTypeAndId.type
 						},
 						timeline: data.timeline,
-						title: post?.title || '',
+						title: post?.title || ''
 					}));
 					form.setFieldValue('url', '');
 					setLoading(false);
@@ -201,7 +201,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 					>
 						{url && prevUrl === url ? 'Save' : 'Preview'}
 					</Button>
-				</div>,
+				</div>
 			]}
 			className="md:min-w-[674px]"
 		>
@@ -226,8 +226,8 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 						}
 						rules={[
 							{
-								required: true,
-							},
+								required: true
+							}
 						]}
 						className="my-0 mt-5"
 					>

@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import {
 	web3Accounts,
 	web3Enable,
-	web3FromSource,
+	web3FromSource
 } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { Alert, Button, Modal, Spin } from 'antd';
@@ -28,7 +28,7 @@ interface Props {
 const ClaimPayoutModal = ({
 	className,
 	parentBountyId,
-	childBountyId,
+	childBountyId
 }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 
@@ -72,7 +72,7 @@ const ClaimPayoutModal = ({
 		queueNotification({
 			header: 'Success!',
 			message: 'Claim Payout successful.',
-			status: NotificationStatus.SUCCESS,
+			status: NotificationStatus.SUCCESS
 		});
 		setIsLoading(false);
 		setShowModal(false);
@@ -84,7 +84,7 @@ const ClaimPayoutModal = ({
 		queueNotification({
 			header: 'Payout Claim Failed!',
 			message,
-			status: NotificationStatus.ERROR,
+			status: NotificationStatus.ERROR
 		});
 	};
 
@@ -109,7 +109,7 @@ const ClaimPayoutModal = ({
 		try {
 			const claim = api.tx.childBounties.claimChildBounty(
 				parentBountyId,
-				childBountyId,
+				childBountyId
 			);
 			await executeTx({
 				address: selectedAddress,
@@ -118,7 +118,7 @@ const ClaimPayoutModal = ({
 				network,
 				onFailed,
 				onSuccess,
-				tx: claim,
+				tx: claim
 			});
 		} catch (error) {
 			setIsLoading(false);
@@ -128,7 +128,7 @@ const ClaimPayoutModal = ({
 			queueNotification({
 				header: 'Payout Claim Failed!',
 				message: error.message,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 	};
@@ -154,7 +154,7 @@ const ClaimPayoutModal = ({
 						disabled={extensionNotAvailable || !apiReady}
 					>
 						Sign &amp; Submit
-					</Button>,
+					</Button>
 				]}
 			>
 				<Spin spinning={isLoading} indicator={<LoadingOutlined />}>

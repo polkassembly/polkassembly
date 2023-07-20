@@ -35,7 +35,7 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({
 	posts,
 	className,
 	count,
-	proposalType,
+	proposalType
 }) => {
 	const router = useRouter();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
@@ -43,7 +43,7 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({
 	const handleSortByClick = ({ key }: { key: string }) => {
 		router.push({
 			pathname: '',
-			query: { ...router.query, sortBy: key },
+			query: { ...router.query, sortBy: key }
 		});
 		setSortBy(key);
 	};
@@ -55,7 +55,7 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({
 				defaultSelectedKeys: [sortValues.COMMENTED],
 				items: sortByOptions,
 				onClick: handleSortByClick,
-				selectable: true,
+				selectable: true
 			}}
 			trigger={['click']}
 		>

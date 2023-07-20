@@ -20,11 +20,11 @@ function parseHTML(html: string): string {
 				options: {
 					hideLinkHrefIfSameAsText: true,
 					ignoreHref: true,
-					noLinkBrackets: true,
-				},
+					noLinkBrackets: true
+				}
 			},
-			{ selector: 'img', format: 'skip' },
-		],
+			{ selector: 'img', format: 'skip' }
+		]
 	});
 }
 

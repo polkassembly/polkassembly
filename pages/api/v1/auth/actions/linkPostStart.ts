@@ -8,7 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import {
 	isOffChainProposalTypeValid,
 	isProposalTypeValid,
-	isValidNetwork,
+	isValidNetwork
 } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
@@ -19,14 +19,14 @@ import messages from '~src/auth/utils/messages';
 import {
 	getFirestoreProposalType,
 	getSubsquidProposalType,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 import { GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import {
 	getTopicFromFirestoreData,
-	isDataExist,
+	isDataExist
 } from '../../posts/on-chain-post';
 import { getUpdatedAt } from '../../posts/off-chain-post';
 import { firestore_db } from '~src/services/firebaseInit';
@@ -46,7 +46,7 @@ export interface ILinkPostStartResponse {
 
 const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (
 	req,
-	res,
+	res
 ) => {
 	if (req.method !== 'POST')
 		return res
@@ -77,7 +77,7 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (
 	const isOnChainPost = isProposalTypeValid(strProposalType);
 	if (!isOffChainPost && !isOnChainPost)
 		return res.status(400).json({
-			message: `The post type of the name "${postType}" does not exist.`,
+			message: `The post type of the name "${postType}" does not exist.`
 		});
 
 	const linkPostRes: ILinkPostStartResponse = {
@@ -86,10 +86,10 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (
 		proposer: '',
 		tags: [],
 		title: '',
-		username: '',
+		username: ''
 	};
 	const postDocRef = postsByTypeRef(network, strProposalType).doc(
-		String(postId),
+		String(postId)
 	);
 	const postDoc = await postDocRef.get();
 	const postData = postDoc.data();
@@ -97,13 +97,12 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (
 	if (isOffChainPost) {
 		if (!isPostExist) {
 			return res.status(404).json({
-				message: `Post with id: "${postId}" and type: "${postType}" does not exist, please create a post.`,
+				message: `Post with id: "${postId}" and type: "${postType}" does not exist, please create a post.`
 			});
 		}
 		if (postData.post_link) {
 			return res.status(403).json({
-				message:
-					'Discussion is already linked with other onchain post.',
+				message: 'Discussion is already linked with other onchain post.'
 			});
 		}
 		linkPostRes.title = postData?.title;
@@ -111,7 +110,7 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (
 		linkPostRes.username = postData?.username;
 		linkPostRes.topic = getTopicFromFirestoreData(
 			postData,
-			ProposalType.DISCUSSIONS,
+			ProposalType.DISCUSSIONS
 		);
 		linkPostRes.last_edited_at = getUpdatedAt(postData);
 		linkPostRes.created_at =
@@ -138,11 +137,11 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (
 		}
 	} else {
 		const subsquidProposalType = getSubsquidProposalType(
-			strProposalType as any,
+			strProposalType as any
 		);
 
 		const variables: any = {
-			type_eq: subsquidProposalType,
+			type_eq: subsquidProposalType
 		};
 
 		if (strProposalType === ProposalType.TIPS) {
@@ -153,22 +152,21 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (
 		const subsquidRes = await fetchSubsquid({
 			network,
 			query: GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING,
-			variables: variables,
+			variables: variables
 		});
 
 		// Subsquid Data
 		const subsquidData = subsquidRes?.data;
 		if (!isDataExist(subsquidData)) {
 			return res.status(400).json({
-				message: `The Post with index "${postId}" is not found.`,
+				message: `The Post with index "${postId}" is not found.`
 			});
 		}
 		const post = subsquidData.proposals[0];
 		const preimage = post?.preimage;
 		if (!post || (!post?.proposer && !preimage?.proposer))
 			return res.status(500).json({
-				message:
-					'Proposer address is not present in subsquid response.',
+				message: 'Proposer address is not present in subsquid response.'
 			});
 
 		const proposerAddress =
@@ -178,19 +176,19 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (
 		if (!substrateAddress)
 			return res.status(500).json({
 				message:
-					'Something went wrong while getting encoded address corresponding to network',
+					'Something went wrong while getting encoded address corresponding to network'
 			});
 
 		const userAddresses = await getAddressesFromUserId(user.id, true);
 		const isAuthor =
 			userAddresses.some(
-				(address) => address.address === substrateAddress,
+				(address) => address.address === substrateAddress
 			) ||
 			(isPostExist && user.id === postData.user_id);
 		if (!isAuthor) {
 			return res.status(403).json({
 				message:
-					'You can not link the post, because you are not the user who created this post.',
+					'You can not link the post, because you are not the user who created this post.'
 			});
 		}
 		if (isPostExist) {
@@ -205,7 +203,7 @@ const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (
 			}
 			linkPostRes.topic = getTopicFromFirestoreData(
 				postData,
-				getFirestoreProposalType(post.type) as any,
+				getFirestoreProposalType(post.type) as any
 			);
 			linkPostRes.last_edited_at = getUpdatedAt(postData);
 			if (postData?.tags && Array.isArray(postData?.tags)) {

@@ -13,7 +13,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ChangeResponseType | MessageType>,
+	res: NextApiResponse<ChangeResponseType | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -37,12 +37,12 @@ async function handler(
 		token,
 		substrateAddress,
 		signature,
-		wallet,
+		wallet
 	);
 
 	return res.status(200).json({
 		message: messages.ADDRESS_LINKING_SUCCESSFUL,
-		token: updatedJWT,
+		token: updatedJWT
 	});
 }
 

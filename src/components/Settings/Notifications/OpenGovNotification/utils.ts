@@ -18,20 +18,20 @@ const options = [
 		label: 'New Referendum submitted',
 		triggerName: 'openGovReferendumSubmitted',
 		triggerPreferencesName: 'openGovReferendumSubmitted',
-		value: 'New Referendum submitted',
+		value: 'New Referendum submitted'
 	},
 	{
 		label: 'Referendum in voting',
 		triggerName: 'openGovReferendumInVoting',
 		triggerPreferencesName: 'openGovReferendumInVoting',
-		value: 'Referendum in voting',
+		value: 'Referendum in voting'
 	},
 	{
 		label: 'Referendum closed',
 		triggerName: 'openGovReferendumClosed',
 		triggerPreferencesName: 'openGovReferendumClosed',
-		value: 'Referendum closed',
-	},
+		value: 'Referendum closed'
+	}
 ];
 
 export const fellowShipOptions = [
@@ -39,20 +39,20 @@ export const fellowShipOptions = [
 		label: 'New Referendum submitted',
 		triggerName: 'fellowShipReferendumSubmitted',
 		triggerPreferencesName: 'fellowShipReferendumSubmitted',
-		value: 'New Referendum submitted',
+		value: 'New Referendum submitted'
 	},
 	{
 		label: 'Referendum in voting',
 		triggerName: 'fellowShipReferendumInVoting',
 		triggerPreferencesName: 'fellowShipReferendumInVoting',
-		value: 'Referendum in voting',
+		value: 'Referendum in voting'
 	},
 	{
 		label: 'Referendum closed',
 		triggerName: 'fellowShipReferendumClosed',
 		triggerPreferencesName: 'fellowShipReferendumClosed',
-		value: 'Referendum closed',
-	},
+		value: 'Referendum closed'
+	}
 ];
 
 export const getOpenGov = (network: string) => {

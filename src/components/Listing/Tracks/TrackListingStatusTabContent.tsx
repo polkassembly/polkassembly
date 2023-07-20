@@ -11,13 +11,13 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import {
 	ErrorState,
 	LoadingState,
-	PostEmptyState,
+	PostEmptyState
 } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 interface ITrackListingStatusTabContentProps {
@@ -30,7 +30,7 @@ interface ITrackListingStatusTabContentProps {
 }
 
 const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (
-	props,
+	props
 ) => {
 	const { posts, className, error, count } = props;
 	const noPosts = count === 0 || isNaN(Number(count));

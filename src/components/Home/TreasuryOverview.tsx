@@ -5,7 +5,7 @@
 import {
 	CaretDownOutlined,
 	CaretUpOutlined,
-	LoadingOutlined,
+	LoadingOutlined
 } from '@ant-design/icons';
 import type { Balance } from '@polkadot/types/interfaces';
 import { BN_MILLION, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
@@ -46,20 +46,20 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const [available, setAvailable] = useState({
 		isLoading: true,
 		value: '',
-		valueUSD: '',
+		valueUSD: ''
 	});
 	const [nextBurn, setNextBurn] = useState({
 		isLoading: true,
 		value: '',
-		valueUSD: '',
+		valueUSD: ''
 	});
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
-		value: '',
+		value: ''
 	});
 	const [priceWeeklyChange, setPriceWeeklyChange] = useState({
 		isLoading: true,
-		value: '',
+		value: ''
 	});
 	const [spendPeriod, setSpendPeriod] = useState({
 		isLoading: true,
@@ -68,8 +68,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			days: 0,
 			hours: 0,
 			minutes: 0,
-			total: 0,
-		},
+			total: 0
+		}
 	});
 
 	useEffect(() => {
@@ -84,8 +84,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				days: 0,
 				hours: 0,
 				minutes: 0,
-				total: 0,
-			},
+				total: 0
+			}
 		});
 		api.derive.chain
 			.bestNumber((currentBlock) => {
@@ -97,7 +97,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					const totalSpendPeriod: number = blockToDays(
 						spendPeriod,
 						network,
-						blockTime,
+						blockTime
 					);
 					const goneBlocks = currentBlock.toNumber() % spendPeriod;
 					// const spendPeriodElapsed: number = blockToDays(goneBlocks, network, blockTime);
@@ -105,7 +105,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					const { time } = blockToTime(
 						spendPeriod - goneBlocks,
 						network,
-						blockTime,
+						blockTime
 					);
 					const { d, h, m } = getDaysTimeObj(time);
 
@@ -122,8 +122,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							days: d,
 							hours: h,
 							minutes: m,
-							total: totalSpendPeriod,
-						},
+							total: totalSpendPeriod
+						}
 					});
 				}
 			})
@@ -135,8 +135,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						days: 0,
 						hours: 0,
 						minutes: 0,
-						total: 0,
-					},
+						total: 0
+					}
 				});
 			});
 	}, [api, apiReady, blockTime, network]);
@@ -149,13 +149,13 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		setAvailable({
 			isLoading: true,
 			value: '',
-			valueUSD: '',
+			valueUSD: ''
 		});
 
 		setNextBurn({
 			isLoading: true,
 			value: '',
-			valueUSD: '',
+			valueUSD: ''
 		});
 
 		const treasuryAccount = u8aConcat(
@@ -163,7 +163,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			api.consts.treasury && api.consts.treasury.palletId
 				? api.consts.treasury.palletId.toU8a(true)
 				: 'py/trsry',
-			EMPTY_U8A_32,
+			EMPTY_U8A_32
 		);
 		api.derive.balances
 			?.account(u8aToHex(treasuryAccount))
@@ -179,7 +179,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						setAvailable({
 							isLoading: false,
 							value: '',
-							valueUSD: '',
+							valueUSD: ''
 						});
 					})
 					.finally(() => {
@@ -204,10 +204,10 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										{
 											numberAfterComma: 2,
 											withThousandDelimitor: false,
-											withUnit: false,
+											withUnit: false
 										},
-										network,
-									),
+										network
+									)
 								);
 								if (
 									nextBurnValueUSD &&
@@ -218,7 +218,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										(
 											nextBurnValueUSD *
 											Number(currentTokenPrice.value)
-										).toString(),
+										).toString()
 									);
 								}
 								value = formatUSDWithUnits(
@@ -227,22 +227,22 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										{
 											numberAfterComma: 0,
 											withThousandDelimitor: false,
-											withUnit: false,
+											withUnit: false
 										},
-										network,
-									),
+										network
+									)
 								);
 							}
 
 							setNextBurn({
 								isLoading: false,
 								value,
-								valueUSD,
+								valueUSD
 							});
 						}
 						{
 							const freeBalance = treasuryBalance.freeBalance.gt(
-								BN_ZERO,
+								BN_ZERO
 							)
 								? treasuryBalance.freeBalance
 								: undefined;
@@ -257,10 +257,10 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										{
 											numberAfterComma: 2,
 											withThousandDelimitor: false,
-											withUnit: false,
+											withUnit: false
 										},
-										network,
-									),
+										network
+									)
 								);
 								if (
 									availableValueUSD &&
@@ -271,7 +271,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										(
 											availableValueUSD *
 											Number(currentTokenPrice.value)
-										).toString(),
+										).toString()
 									);
 								}
 								value = formatUSDWithUnits(
@@ -280,17 +280,17 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										{
 											numberAfterComma: 0,
 											withThousandDelimitor: false,
-											withUnit: false,
+											withUnit: false
 										},
-										network,
-									),
+										network
+									)
 								);
 							}
 
 							setAvailable({
 								isLoading: false,
 								value,
-								valueUSD,
+								valueUSD
 							});
 						}
 					});
@@ -306,14 +306,14 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 		setCurrentTokenPrice({
 			isLoading: true,
-			value: '',
+			value: ''
 		});
 		fetchTokenToUSDPrice(network)
 			.then((formattedUSD) => {
 				if (formattedUSD === 'N/A') {
 					setCurrentTokenPrice({
 						isLoading: false,
-						value: formattedUSD,
+						value: formattedUSD
 					});
 					return;
 				}
@@ -323,13 +323,13 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					value:
 						network == 'cere'
 							? parseFloat(formattedUSD).toFixed(4)
-							: parseFloat(formattedUSD).toFixed(2),
+							: parseFloat(formattedUSD).toFixed(2)
 				});
 			})
 			.catch(() => {
 				setCurrentTokenPrice({
 					isLoading: false,
-					value: 'N/A',
+					value: 'N/A'
 				});
 			});
 
@@ -351,7 +351,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 		setPriceWeeklyChange({
 			isLoading: true,
-			value: '',
+			value: ''
 		});
 		async function fetchWeekAgoTokenPrice() {
 			if (cancel) return;
@@ -362,23 +362,23 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					{
 						body: JSON.stringify({
 							end: weekAgoDate,
-							start: weekAgoDate,
+							start: weekAgoDate
 						}),
 						headers: subscanApiHeaders,
-						method: 'POST',
-					},
+						method: 'POST'
+					}
 				);
 				const responseJSON = await response.json();
 				if (responseJSON['message'] == 'Success') {
 					const weekAgoPrice = responseJSON['data']['ema7_average'];
 					const currentTokenPriceNum: number = parseFloat(
-						currentTokenPrice.value,
+						currentTokenPrice.value
 					);
 					const weekAgoPriceNum: number = parseFloat(weekAgoPrice);
 					if (weekAgoPriceNum == 0) {
 						setPriceWeeklyChange({
 							isLoading: false,
-							value: 'N/A',
+							value: 'N/A'
 						});
 						return;
 					}
@@ -388,18 +388,18 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						100;
 					setPriceWeeklyChange({
 						isLoading: false,
-						value: percentChange.toFixed(2),
+						value: percentChange.toFixed(2)
 					});
 					return;
 				}
 				setPriceWeeklyChange({
 					isLoading: false,
-					value: 'N/A',
+					value: 'N/A'
 				});
 			} catch (err) {
 				setPriceWeeklyChange({
 					isLoading: false,
-					value: 'N/A',
+					value: 'N/A'
 				});
 			}
 		}
@@ -452,14 +452,14 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								</div>
 							</div>
 							{!['polymesh', 'polymesh-test'].includes(
-								network,
+								network
 							) && (
 								<>
 									<div className="flex flex-col justify-center text-bodyBlue font-medium gap-y-3">
 										<Divider
 											style={{
 												background: '#D2D8E0',
-												width: '100%',
+												width: '100%'
 											}}
 											className="m-0 p-0"
 										/>
@@ -517,7 +517,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											<span>N/A</span>
 										) : currentTokenPrice.value &&
 										  !isNaN(
-												Number(currentTokenPrice.value),
+												Number(currentTokenPrice.value)
 										  ) ? (
 											<>
 												<span className="text-lightBlue">
@@ -533,7 +533,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								<div className="flex flex-col justify-center text-bodyBlue font-medium gap-y-3">
 									<Divider
 										style={{
-											background: '#D2D8E0',
+											background: '#D2D8E0'
 										}}
 										className="m-0 p-0"
 									/>
@@ -549,19 +549,19 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 													<span className="font-semibold">
 														{Math.abs(
 															Number(
-																priceWeeklyChange.value,
-															),
+																priceWeeklyChange.value
+															)
 														)}
 														%
 													</span>
 													{Number(
-														priceWeeklyChange.value,
+														priceWeeklyChange.value
 													) < 0 ? (
 														<CaretDownOutlined
 															style={{
 																color: 'red',
 																marginLeft:
-																	'1.5px',
+																	'1.5px'
 															}}
 														/>
 													) : (
@@ -569,7 +569,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 															style={{
 																color: '#52C41A',
 																marginLeft:
-																	'1.5px',
+																	'1.5px'
 															}}
 														/>
 													)}
@@ -626,7 +626,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								<div className="flex flex-col justify-center text-sidebarBlue font-medium gap-y-3">
 									<Divider
 										style={{
-											background: '#D2D8E0',
+											background: '#D2D8E0'
 										}}
 										className="m-0 p-0"
 									/>
@@ -738,7 +738,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											<div className="flex flex-col justify-center font-medium gap-y-3">
 												<Divider
 													style={{
-														background: '#D2D8E0',
+														background: '#D2D8E0'
 													}}
 													className="m-0 p-0"
 												/>
@@ -748,8 +748,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 														percent={
 															!isNaN(
 																Number(
-																	spendPeriod.percentage,
-																),
+																	spendPeriod.percentage
+																)
 															)
 																? spendPeriod.percentage
 																: 0

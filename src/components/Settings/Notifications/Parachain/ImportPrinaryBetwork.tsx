@@ -11,7 +11,7 @@ const ImportPrimaryNetworkSettingModal = ({
 	open,
 	onConfirm,
 	onCancel,
-	primaryNetwork,
+	primaryNetwork
 }: {
 	open: boolean;
 	onConfirm: () => void;
@@ -39,7 +39,7 @@ const ImportPrimaryNetworkSettingModal = ({
 					className="h-10 rounded-[6px] bg-[#E5007A] border border-solid border-pink_primary px-[36px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize"
 				>
 					Confirm
-				</Button>,
+				</Button>
 			]}
 		>
 			<div className="flex gap-[10px] flex-wrap items-center mb-6">

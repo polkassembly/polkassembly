@@ -5,7 +5,7 @@
 import { GetServerSideProps } from 'next';
 import {
 	getOnChainPosts,
-	IPostsListingResponse,
+	IPostsListingResponse
 } from 'pages/api/v1/listing/on-chain-posts';
 import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
 import { IReferendumV2PostsByStatus } from 'pages/root';
@@ -24,20 +24,20 @@ import { ErrorState } from '~src/ui-components/UIStates';
 
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const {
 		page = 1,
 		sortBy = sortValues.NEWEST,
 		filterBy,
-		trackStatus,
+		trackStatus
 	} = query;
 	if (!trackStatus) {
 		return {
 			props: {},
 			redirect: {
-				destination: '/referendum-canceller?trackStatus=all&page=1',
-			},
+				destination: '/referendum-canceller?trackStatus=all&page=1'
+			}
 		};
 	}
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -54,7 +54,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 		'CustomStatusSubmitted',
 		'CustomStatusVoting',
 		'CustomStatusClosed',
-		'All',
+		'All'
 	].reduce((prev: any, status) => {
 		const strTrackStatus = String(trackStatus);
 		if (status.toLowerCase().includes(strTrackStatus)) {
@@ -62,7 +62,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 				filterBy:
 					filterBy &&
 					Array.isArray(
-						JSON.parse(decodeURIComponent(String(filterBy))),
+						JSON.parse(decodeURIComponent(String(filterBy)))
 					)
 						? JSON.parse(decodeURIComponent(String(filterBy)))
 						: [],
@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 				proposalType,
 				sortBy,
 				trackNo: trackId,
-				trackStatus: status,
+				trackStatus: status
 			});
 		} else {
 			prev[status.toLowerCase().replace('customstatus', '')] =
@@ -81,7 +81,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 					page,
 					proposalType,
 					trackNo: trackId,
-					trackStatus: status,
+					trackStatus: status
 				});
 		}
 		return prev;
@@ -95,13 +95,13 @@ export const getServerSideProps: GetServerSideProps = async ({
 		} else {
 			return {
 				data: null,
-				error: result.reason,
+				error: result.reason
 			} as IApiResponse<IPostsListingResponse>;
 		}
 	});
 	const props: IReferendumCancellerProps = {
 		network,
-		posts: {},
+		posts: {}
 	};
 	Object.keys(fetches).forEach((key, index) => {
 		(props.posts as any)[key] = results[index];
@@ -131,7 +131,7 @@ const ReferendumCanceller: FC<IReferendumCancellerProps> = (props) => {
 		<>
 			<SEOHead
 				title={PostOrigin.REFERENDUM_CANCELLER.split(/(?=[A-Z])/).join(
-					' ',
+					' '
 				)}
 				network={network}
 			/>

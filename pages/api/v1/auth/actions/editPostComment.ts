@@ -6,7 +6,7 @@ import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import {
 	isOffChainProposalTypeValid,
-	isProposalTypeValid,
+	isProposalTypeValid
 } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
@@ -41,7 +41,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		!isProposalTypeValid(strProposalType)
 	)
 		return res.status(400).json({
-			message: `The post type of the name "${postType}" does not exist.`,
+			message: `The post type of the name "${postType}" does not exist.`
 		});
 
 	const token = getTokenFromReq(req);
@@ -53,7 +53,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	const postRef = postsByTypeRef(
 		network,
-		strProposalType as ProposalType,
+		strProposalType as ProposalType
 	).doc(String(postId));
 	const last_comment_at = new Date();
 
@@ -72,7 +72,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		created_at: commentData?.created_at?.toDate
 			? commentData?.created_at.toDate()
 			: commentData?.created_at,
-		sentiment: commentData?.sentiment || 0,
+		sentiment: commentData?.sentiment || 0
 	};
 
 	const history =
@@ -85,12 +85,12 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			content,
 			history,
 			sentiment,
-			updated_at: last_comment_at,
+			updated_at: last_comment_at
 		})
 		.then(() => {
 			postRef
 				.update({
-					last_comment_at,
+					last_comment_at
 				})
 				.then(() => {});
 			return res.status(200).json({ message: 'Comment saved.' });

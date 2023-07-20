@@ -10,7 +10,7 @@ import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import {
 	getSinglePostLinkFromProposalType,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 
 interface IListingProps {
@@ -51,7 +51,7 @@ const Listing: FC<IListingProps> = (props) => {
 					method,
 					end,
 					tags,
-					spam_users_count,
+					spam_users_count
 				} = post;
 				const id = isTip ? hash : post_id;
 				return (
@@ -59,7 +59,7 @@ const Listing: FC<IListingProps> = (props) => {
 						{
 							<Link
 								href={`/${getSinglePostLinkFromProposalType(
-									proposalType,
+									proposalType
 								)}/${id}`}
 							>
 								<GovernanceCard

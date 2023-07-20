@@ -22,7 +22,7 @@ import { Network, Role, Wallet } from '../types';
 import {
 	sendResetPasswordEmail,
 	sendUndoEmailChangeEmail,
-	sendVerificationEmail,
+	sendVerificationEmail
 } from './email';
 import { redisDel, redisGet, redisSetex } from './redis';
 import {
@@ -36,7 +36,7 @@ import {
 	NotificationSettings,
 	ProfileDetails,
 	UndoEmailChangeToken,
-	User,
+	User
 } from './types';
 import getAddressesFromUserId from './utils/getAddressesFromUserId';
 import getDefaultUserAddressFromId from './utils/getDefaultUserAddressFromId';
@@ -74,14 +74,14 @@ export const NOTIFICATION_DEFAULTS: NotificationSettings = {
 	new_proposal: false,
 	own_proposal: true,
 	post_created: true,
-	post_participated: true,
+	post_participated: true
 };
 
 const PROFILE_DETAILS_DEFAULTS: ProfileDetails = {
 	badges: [],
 	bio: '',
 	image: '',
-	title: '',
+	title: ''
 };
 
 const getProxiesEndpoint = (network: Network, address: string): string => {
@@ -132,10 +132,10 @@ class AuthService {
 		username: string,
 		web3signup: boolean,
 		network: string,
-		custom_username: boolean = false,
+		custom_username: boolean = false
 	): Promise<User> {
 		const { password, salt } = await this.getSaltAndHashedPassword(
-			newPassword,
+			newPassword
 		);
 
 		const newUserId = (await this.getLatestUserCount()) + 1;
@@ -151,7 +151,7 @@ class AuthService {
 			profile: PROFILE_DETAILS_DEFAULTS,
 			salt: salt,
 			username: username,
-			web3_signup: web3signup,
+			web3_signup: web3signup
 		};
 		const newUserRef = firebaseAdmin
 			.firestore()
@@ -165,7 +165,7 @@ class AuthService {
 		const newUserPreference: IUserPreference = {
 			notification_preferences: NOTIFICATION_DEFAULTS,
 			post_subscriptions: {},
-			user_id: newUserId,
+			user_id: newUserId
 		};
 		const newUserPreferenceRef = networkDocRef(network)
 			.collection('user_preferences')
@@ -174,7 +174,7 @@ class AuthService {
 			console.log('error in creating user preference', err);
 			throw apiErrorWithStatusCode(
 				messages.ERROR_CREATING_USER_PREFERENCE,
-				500,
+				500
 			);
 		});
 
@@ -187,7 +187,7 @@ class AuthService {
 		defaultAddress: boolean,
 		user_id: number,
 		is_erc20?: boolean,
-		wallet?: Wallet,
+		wallet?: Wallet
 	): Promise<Address> {
 		if (address.startsWith('0x')) {
 			address = address.toLowerCase();
@@ -202,7 +202,7 @@ class AuthService {
 			sign_message: '',
 			user_id,
 			verified: true,
-			wallet: wallet || '',
+			wallet: wallet || ''
 		};
 
 		await firebaseAdmin
@@ -216,14 +216,14 @@ class AuthService {
 
 	private async createAndSendEmailVerificationToken(
 		user: User,
-		network: string,
+		network: string
 	): Promise<void> {
 		if (user.email) {
 			const verifyToken = uuidv4();
 			await redisSetex(
 				getEmailVerificationTokenKey(verifyToken),
 				ONE_DAY,
-				user.email,
+				user.email
 			);
 
 			// send verification email in background
@@ -233,14 +233,14 @@ class AuthService {
 
 	private async sendEmailVerificationToken(
 		user: User,
-		network: string,
+		network: string
 	): Promise<any> {
 		if (user.email) {
 			const verifyToken = uuidv4();
 			await redisSetex(
 				getEmailVerificationTokenKey(verifyToken),
 				ONE_DAY,
-				user.email,
+				user.email
 			);
 
 			// send verification email in background
@@ -249,20 +249,20 @@ class AuthService {
 	}
 
 	private async getSaltAndHashedPassword(
-		plainPassword: string,
+		plainPassword: string
 	): Promise<HashedPassword> {
 		const salt = randomBytes(32);
 		const hashedPassword = await argon2.hash(plainPassword, { salt });
 
 		return {
 			password: hashedPassword,
-			salt: salt.toString('hex'),
+			salt: salt.toString('hex')
 		};
 	}
 
 	public async Login(
 		username: string,
-		password: string,
+		password: string
 	): Promise<IAuthResponse> {
 		const isEmail = username.split('@')[1];
 
@@ -284,7 +284,7 @@ class AuthService {
 			if (userQuery.size === 0)
 				throw apiErrorWithStatusCode(
 					messages.NO_USER_FOUND_WITH_EMAIL,
-					404,
+					404
 				);
 		} else {
 			userQuery = await collection
@@ -294,7 +294,7 @@ class AuthService {
 			if (userQuery.size === 0)
 				throw apiErrorWithStatusCode(
 					messages.NO_USER_FOUND_WITH_USERNAME,
-					404,
+					404
 				);
 		}
 
@@ -302,7 +302,7 @@ class AuthService {
 
 		const isCorrectPassword = await verifyUserPassword(
 			user.password,
-			password,
+			password
 		);
 		if (!isCorrectPassword)
 			throw apiErrorWithStatusCode(messages.INCORRECT_PASSWORD, 401);
@@ -316,13 +316,13 @@ class AuthService {
 			return {
 				isTFAEnabled,
 				tfa_token,
-				user_id: user.id,
+				user_id: user.id
 			};
 		}
 
 		return {
 			isTFAEnabled,
-			token: await this.getSignedToken(user),
+			token: await this.getSignedToken(user)
 		};
 	}
 
@@ -332,7 +332,7 @@ class AuthService {
 
 		const isCorrectPassword = await verifyUserPassword(
 			user.password,
-			password,
+			password
 		);
 		if (!isCorrectPassword)
 			throw apiErrorWithStatusCode(messages.INCORRECT_PASSWORD, 401);
@@ -358,13 +358,13 @@ class AuthService {
 			email_verified: false,
 			password: hashedPassword.password,
 			salt: hashedPassword.salt,
-			username,
+			username
 		});
 	}
 
 	public async SetDefaultAddress(
 		token: string,
-		address: string,
+		address: string
 	): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const user = await getUserFromUserId(userId);
@@ -403,7 +403,7 @@ class AuthService {
 		await redisSetex(
 			getAddressLoginKey(address),
 			ADDRESS_LOGIN_TTL,
-			signMessage,
+			signMessage
 		);
 
 		return signMessage;
@@ -412,13 +412,13 @@ class AuthService {
 	public async AddressLogin(
 		address: string,
 		signature: string,
-		wallet: Wallet,
+		wallet: Wallet
 	): Promise<IAuthResponse> {
 		const signMessage = await redisGet(getAddressLoginKey(address));
 		if (!signMessage)
 			throw apiErrorWithStatusCode(
 				messages.ADDRESS_LOGIN_SIGN_MESSAGE_EXPIRED,
-				401,
+				401
 			);
 
 		const isValidSr =
@@ -429,7 +429,7 @@ class AuthService {
 		if (!isValidSr)
 			throw apiErrorWithStatusCode(
 				messages.ADDRESS_LOGIN_INVALID_SIGNATURE,
-				401,
+				401
 			);
 
 		const firestore = firebaseAdmin.firestore();
@@ -445,7 +445,7 @@ class AuthService {
 		if (!addressDoc.exists)
 			throw apiErrorWithStatusCode(
 				'Please sign up prior to logging in with a web3 address',
-				404,
+				404
 			);
 
 		const addressObj = addressDoc.data() as Address;
@@ -465,7 +465,7 @@ class AuthService {
 			return {
 				isTFAEnabled,
 				tfa_token,
-				user_id: user.id,
+				user_id: user.id
 			};
 		}
 
@@ -474,8 +474,8 @@ class AuthService {
 			token: await this.getSignedToken({
 				...user,
 				login_address: address,
-				login_wallet: wallet,
-			}),
+				login_wallet: wallet
+			})
 		};
 	}
 
@@ -488,7 +488,7 @@ class AuthService {
 		if (addressDoc.exists)
 			throw apiErrorWithStatusCode(
 				messages.ADDRESS_SIGNUP_ALREADY_EXISTS,
-				401,
+				401
 			);
 
 		const signMessage = address.startsWith('0x')
@@ -498,7 +498,7 @@ class AuthService {
 		await redisSetex(
 			getAddressSignupKey(address),
 			ADDRESS_LOGIN_TTL,
-			signMessage,
+			signMessage
 		);
 
 		return signMessage;
@@ -510,7 +510,7 @@ class AuthService {
 		proxied: string,
 		proxy: string,
 		message: string,
-		signature: string,
+		signature: string
 	): Promise<string> {
 		if (!message)
 			throw apiErrorWithStatusCode('Sign message not provided', 400);
@@ -519,7 +519,7 @@ class AuthService {
 		if (!isValidSr)
 			throw apiErrorWithStatusCode(
 				'Proxy address linking failed. Invalid signature',
-				400,
+				400
 			);
 
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
@@ -528,9 +528,9 @@ class AuthService {
 
 		const getProxies = await fetch(networkEndpoint, {
 			headers: {
-				'content-type': 'application/json',
+				'content-type': 'application/json'
 			},
-			method: 'GET',
+			method: 'GET'
 		});
 
 		const { proxies } = (await getProxies.json()) as any;
@@ -538,12 +538,12 @@ class AuthService {
 		if (!proxies || proxies.length === 0)
 			throw apiErrorWithStatusCode(
 				`Address ${proxy} has no proxy accounts.`,
-				400,
+				400
 			);
 		if (proxies.includes(proxy) === false)
 			apiErrorWithStatusCode(
 				`Address ${proxy} is not a proxy of ${proxied}`,
-				403,
+				403
 			);
 
 		const firestore = firebaseAdmin.firestore();
@@ -554,7 +554,7 @@ class AuthService {
 		if (alreadyExists)
 			apiErrorWithStatusCode(
 				'There is already an account associated with this proxied address',
-				403,
+				403
 			);
 
 		// If this linked address is the first address to be linked. Then set it as default.
@@ -571,13 +571,13 @@ class AuthService {
 		network: Network,
 		address: string,
 		signature: string,
-		wallet: Wallet,
+		wallet: Wallet
 	): Promise<AuthObjectType> {
 		const signMessage = await redisGet(getAddressSignupKey(address));
 		if (!signMessage)
 			throw apiErrorWithStatusCode(
 				messages.ADDRESS_SIGNUP_SIGN_MESSAGE_EXPIRED,
-				403,
+				403
 			);
 
 		const isValidSr =
@@ -588,7 +588,7 @@ class AuthService {
 		if (!isValidSr)
 			throw apiErrorWithStatusCode(
 				messages.ADDRESS_SIGNUP_INVALID_SIGNATURE,
-				400,
+				400
 			);
 
 		const addressDoc = await firebaseAdmin
@@ -599,7 +599,7 @@ class AuthService {
 		if (addressDoc.exists)
 			throw apiErrorWithStatusCode(
 				messages.ADDRESS_SIGNUP_ALREADY_EXISTS,
-				400,
+				400
 			);
 
 		const username = uuidv4().split('-').join('').substring(0, 25);
@@ -611,7 +611,7 @@ class AuthService {
 			username,
 			true,
 			network,
-			false,
+			false
 		);
 
 		await this.createAddress(
@@ -620,13 +620,13 @@ class AuthService {
 			true,
 			user.id,
 			address.startsWith('0x'),
-			wallet,
+			wallet
 		);
 		await redisDel(getAddressSignupKey(address));
 
 		return {
 			token: await this.getSignedToken(user),
-			user_id: user.id,
+			user_id: user.id
 		};
 	}
 
@@ -634,7 +634,7 @@ class AuthService {
 		email: string,
 		password: string,
 		username: string,
-		network: string,
+		network: string
 	): Promise<AuthObjectType> {
 		const firestore = firebaseAdmin.firestore();
 		const userQuerySnapshot = await firestore
@@ -659,7 +659,7 @@ class AuthService {
 			if (!userQuerySnapshot.empty)
 				throw apiErrorWithStatusCode(
 					messages.USER_EMAIL_ALREADY_EXISTS,
-					400,
+					400
 				);
 		}
 
@@ -669,38 +669,38 @@ class AuthService {
 			username,
 			false,
 			network,
-			true,
+			true
 		);
 
 		await this.createAndSendEmailVerificationToken(user, network);
 
 		return {
-			token: await this.getSignedToken(user),
+			token: await this.getSignedToken(user)
 		};
 	}
 
 	public async ChangePassword(
 		token: string,
 		oldPassword: string,
-		newPassword: string,
+		newPassword: string
 	): Promise<void> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const user = (await getUserFromUserId(userId)) as User;
 		const isCorrectPassword = await verifyUserPassword(
 			user.password,
-			oldPassword,
+			oldPassword
 		);
 		if (!isCorrectPassword)
 			throw apiErrorWithStatusCode(messages.INCORRECT_PASSWORD, 400);
 		if (validator.equals(oldPassword, newPassword)) {
 			throw apiErrorWithStatusCode(
 				messages.OLD_AND_NEW_PASSWORD_MUST_DIFFER,
-				400,
+				400
 			);
 		}
 
 		const { password, salt } = await this.getSaltAndHashedPassword(
-			newPassword,
+			newPassword
 		);
 
 		await firebaseAdmin
@@ -709,13 +709,13 @@ class AuthService {
 			.doc(String(userId))
 			.update({
 				password,
-				salt,
+				salt
 			});
 	}
 
 	public async AddressUnlink(
 		token: string,
-		address: string,
+		address: string
 	): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const user = await getUserFromUserId(userId);
@@ -739,7 +739,7 @@ class AuthService {
 		if (addressObj.default)
 			throw apiErrorWithStatusCode(
 				messages.ADDRESS_UNLINK_NOT_ALLOWED,
-				403,
+				403
 			);
 
 		await firestore.collection('addresses').doc(address).delete();
@@ -751,7 +751,7 @@ class AuthService {
 		token: string,
 		address: string,
 		signature: string,
-		wallet: Wallet,
+		wallet: Wallet
 	): Promise<string> {
 		const user = await this.GetUser(token);
 		if (!user) throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
@@ -776,12 +776,12 @@ class AuthService {
 				? verifyMetamaskSignature(
 						addressToLink.sign_message,
 						addressToLink.address,
-						signature,
+						signature
 				  )
 				: verifySignature(
 						addressToLink.sign_message,
 						addressToLink.address,
-						signature,
+						signature
 				  );
 		if (!isValidSr)
 			throw apiErrorWithStatusCode(messages.ADDRESS_LINKING_FAILED, 400);
@@ -801,7 +801,7 @@ class AuthService {
 			is_erc20: address.startsWith('0x'),
 			public_key: getPublicKey(address),
 			verified: true,
-			wallet: wallet,
+			wallet: wallet
 		};
 
 		await firestore.collection('addresses').doc(address).set(newAddress);
@@ -818,7 +818,7 @@ class AuthService {
 		if (addressDoc.exists)
 			throw apiErrorWithStatusCode(
 				messages.MULTISIG_ADDRESS_ALREADY_EXISTS,
-				400,
+				400
 			);
 
 		const signMessage = `<Bytes>${uuidv4()}</Bytes>`;
@@ -826,7 +826,7 @@ class AuthService {
 		await redisSetex(
 			getMultisigAddressKey(address),
 			ADDRESS_LOGIN_TTL,
-			signMessage,
+			signMessage
 		);
 
 		return signMessage;
@@ -840,7 +840,7 @@ class AuthService {
 		ss58Prefix: number,
 		threshold: number,
 		signatory: string,
-		signature: string,
+		signature: string
 	): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 
@@ -848,7 +848,7 @@ class AuthService {
 		if (!signMessage)
 			throw apiErrorWithStatusCode(
 				messages.MULTISIG_SIGN_MESSAGE_EXPIRED,
-				403,
+				403
 			);
 
 		const signatories = addresses
@@ -859,7 +859,7 @@ class AuthService {
 		const multisigAddress = getMultisigAddress(
 			signatories,
 			ss58Prefix,
-			threshold,
+			threshold
 		);
 		if (address !== multisigAddress)
 			throw apiErrorWithStatusCode(messages.MULTISIG_NOT_MATCHING, 400);
@@ -888,7 +888,7 @@ class AuthService {
 		if (!email)
 			throw apiErrorWithStatusCode(
 				messages.EMAIL_VERIFICATION_TOKEN_NOT_FOUND,
-				400,
+				400
 			);
 
 		const firestore = firebaseAdmin.firestore();
@@ -901,7 +901,7 @@ class AuthService {
 		if (userQuerySnapshot.empty)
 			throw apiErrorWithStatusCode(
 				messages.EMAIL_VERIFICATION_USER_NOT_FOUND,
-				400,
+				400
 			);
 
 		const userDoc = userQuerySnapshot.docs[0];
@@ -916,10 +916,10 @@ class AuthService {
 					email: {
 						enabled: true,
 						handle: email.toLowerCase(),
-						verified: true,
-					},
-				},
-			},
+						verified: true
+					}
+				}
+			}
 		});
 		await redisDel(getEmailVerificationTokenKey(token));
 
@@ -934,9 +934,9 @@ class AuthService {
 			post_participated,
 			post_created,
 			new_proposal,
-			own_proposal,
+			own_proposal
 		}: NotificationSettings,
-		network: string,
+		network: string
 	): Promise<NotificationSettings> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 
@@ -946,7 +946,7 @@ class AuthService {
 		const userPreferenceSnapshot = await userPreferenceRef.get();
 
 		const getUpdatedNotificationSettings: (
-			notification_preferences: NotificationSettings,
+			notification_preferences: NotificationSettings
 		) => NotificationSettings = (notification_preferences) => {
 			return {
 				new_proposal:
@@ -964,12 +964,12 @@ class AuthService {
 				post_participated:
 					post_participated === undefined
 						? notification_preferences.post_participated
-						: post_participated,
+						: post_participated
 			};
 		};
 
 		let update: NotificationSettings = getUpdatedNotificationSettings(
-			NOTIFICATION_DEFAULTS,
+			NOTIFICATION_DEFAULTS
 		);
 		if (userPreferenceSnapshot.exists) {
 			const { notification_preferences } =
@@ -977,13 +977,13 @@ class AuthService {
 			update = getUpdatedNotificationSettings(notification_preferences);
 			await userPreferenceRef
 				.update({
-					notification_preferences: update,
+					notification_preferences: update
 				})
 				.catch((err) => {
 					console.log('error in updating user preference', err);
 					throw apiErrorWithStatusCode(
 						messages.ERROR_UPDATING_USER_PREFERENCE,
-						500,
+						500
 					);
 				});
 		} else {
@@ -991,13 +991,13 @@ class AuthService {
 				.set({
 					notification_preferences: update,
 					post_subscriptions: {},
-					user_id: userId,
+					user_id: userId
 				})
 				.catch((err) => {
 					console.log('error in creating user preference', err);
 					throw apiErrorWithStatusCode(
 						messages.ERROR_CREATING_USER_PREFERENCE,
-						500,
+						500
 					);
 				});
 		}
@@ -1006,7 +1006,7 @@ class AuthService {
 
 	public async GetNotificationPreference(
 		token: string,
-		network: string,
+		network: string
 	): Promise<NotificationSettings> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 
@@ -1021,13 +1021,13 @@ class AuthService {
 				.set({
 					notification_preferences: notification_preferences,
 					post_subscriptions: {},
-					user_id: userId,
+					user_id: userId
 				})
 				.catch((err) => {
 					console.log('error in creating user preference', err);
 					throw apiErrorWithStatusCode(
 						messages.ERROR_CREATING_USER_PREFERENCE,
-						500,
+						500
 					);
 				});
 		} else {
@@ -1040,7 +1040,7 @@ class AuthService {
 
 	public async resendVerifyEmailToken(
 		token: string,
-		network: string,
+		network: string
 	): Promise<void> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const user = await getUserFromUserId(userId);
@@ -1064,7 +1064,7 @@ class AuthService {
 		await redisSetex(
 			getSetCredentialsKey(address),
 			ADDRESS_LOGIN_TTL,
-			signMessage,
+			signMessage
 		);
 
 		return signMessage;
@@ -1076,20 +1076,20 @@ class AuthService {
 		newPassword: string,
 		signature: string,
 		username: string,
-		network: string,
+		network: string
 	): Promise<string> {
 		const signMessage = await redisGet(getSetCredentialsKey(address));
 		if (!signMessage)
 			throw apiErrorWithStatusCode(
 				messages.SET_CREDENTIALS_SIGN_MESSAGE_EXPIRED,
-				400,
+				400
 			);
 
 		const isValidSr = verifySignature(signMessage, address, signature);
 		if (!isValidSr)
 			throw apiErrorWithStatusCode(
 				messages.SET_CREDENTIALS_INVALID_SIGNATURE,
-				403,
+				403
 			);
 
 		const firestore = firebaseAdmin.firestore();
@@ -1115,7 +1115,7 @@ class AuthService {
 		if (!userEmailQuerySnapshot.empty)
 			throw apiErrorWithStatusCode(
 				messages.USER_EMAIL_ALREADY_EXISTS,
-				400,
+				400
 			);
 
 		const addressObj = addressDoc.data() as Address;
@@ -1123,7 +1123,7 @@ class AuthService {
 
 		let user = await getUserFromUserId(userId);
 		const { password, salt } = await this.getSaltAndHashedPassword(
-			newPassword,
+			newPassword
 		);
 
 		await firestore.collection('users').doc(String(userId)).update({
@@ -1131,7 +1131,7 @@ class AuthService {
 			password,
 			salt,
 			username: username.toLowerCase(),
-			web3signup: false,
+			web3signup: false
 		});
 
 		user = await getUserFromUserId(userId);
@@ -1145,7 +1145,7 @@ class AuthService {
 
 	public async ChangeUsername(
 		token: string,
-		username: string,
+		username: string
 	): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const firestore = firebaseAdmin.firestore();
@@ -1175,7 +1175,7 @@ class AuthService {
 		token: string,
 		email: string,
 		password: string,
-		network: string,
+		network: string
 	): Promise<string> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const firestore = firebaseAdmin.firestore();
@@ -1191,7 +1191,7 @@ class AuthService {
 			if (alreadyExists)
 				throw apiErrorWithStatusCode(
 					messages.USER_EMAIL_ALREADY_EXISTS,
-					400,
+					400
 				);
 		}
 
@@ -1199,7 +1199,7 @@ class AuthService {
 
 		const isCorrectPassword = await verifyUserPassword(
 			user.password,
-			password,
+			password
 		);
 		if (!isCorrectPassword)
 			throw apiErrorWithStatusCode(messages.INCORRECT_PASSWORD, 403);
@@ -1221,7 +1221,7 @@ class AuthService {
 			if (hours < 48) {
 				throw apiErrorWithStatusCode(
 					messages.EMAIL_CHANGE_NOT_ALLOWED_YET,
-					403,
+					403
 				);
 			}
 		}
@@ -1231,7 +1231,7 @@ class AuthService {
 			email: user.email,
 			token: uuidv4(),
 			user_id: user.id,
-			valid: true,
+			valid: true
 		};
 
 		await firestore
@@ -1240,7 +1240,7 @@ class AuthService {
 
 		await firestore.collection('users').doc(String(user.id)).update({
 			email,
-			email_verified: false,
+			email_verified: false
 		});
 
 		user = await getUserFromUserId(userId);
@@ -1255,7 +1255,7 @@ class AuthService {
 
 	public async RequestResetPassword(
 		email: string,
-		network: string,
+		network: string
 	): Promise<string> {
 		const userQuerySnapshot = await firebaseAdmin
 			.firestore()
@@ -1279,28 +1279,28 @@ class AuthService {
 	public async ResetPassword(
 		token: string,
 		userId: number,
-		newPassword: string,
+		newPassword: string
 	): Promise<void> {
 		const key = getPwdResetTokenKey(userId);
 		const storedToken = await redisGet(key);
 		if (!storedToken)
 			throw apiErrorWithStatusCode(
 				messages.PASSWORD_RESET_TOKEN_NOT_FOUND,
-				403,
+				403
 			);
 
 		const isValid = timingSafeEqual(
 			Buffer.from(token),
-			Buffer.from(storedToken),
+			Buffer.from(storedToken)
 		);
 		if (!isValid)
 			throw apiErrorWithStatusCode(
 				messages.PASSWORD_RESET_TOKEN_INVALID,
-				403,
+				403
 			);
 
 		const { password, salt } = await this.getSaltAndHashedPassword(
-			newPassword,
+			newPassword
 		);
 
 		await firebaseAdmin
@@ -1309,14 +1309,14 @@ class AuthService {
 			.doc(String(userId))
 			.update({
 				password,
-				salt,
+				salt
 			});
 
 		await redisDel(key);
 	}
 
 	public async UndoEmailChange(
-		token: string,
+		token: string
 	): Promise<{ email: string; updatedToken: string }> {
 		const firestore = firebaseAdmin.firestore();
 
@@ -1330,7 +1330,7 @@ class AuthService {
 		if (undoTokenSnapshot.empty)
 			throw apiErrorWithStatusCode(
 				messages.EMAIL_UNDO_TOKEN_NOT_FOUND,
-				400,
+				400
 			);
 
 		const undoToken =
@@ -1338,7 +1338,7 @@ class AuthService {
 		if (!undoToken.valid)
 			throw apiErrorWithStatusCode(
 				messages.INVALID_EMAIL_UNDO_TOKEN,
-				403,
+				403
 			);
 
 		await firestore
@@ -1346,7 +1346,7 @@ class AuthService {
 			.doc(String(undoToken.user_id))
 			.update({
 				email: undoToken.email,
-				email_verified: false,
+				email_verified: false
 			});
 
 		await undoTokenSnapshot.docs[0].ref.update({ valid: false });
@@ -1355,7 +1355,7 @@ class AuthService {
 
 		return {
 			email: user.email,
-			updatedToken: await this.getSignedToken(user),
+			updatedToken: await this.getSignedToken(user)
 		};
 	}
 
@@ -1367,7 +1367,7 @@ class AuthService {
 		web3_signup,
 		two_factor_auth,
 		login_address,
-		login_wallet,
+		login_wallet
 	}: User & {
 		login_address?: string;
 		login_wallet?: Wallet;
@@ -1422,11 +1422,11 @@ class AuthService {
 			id,
 			roles: {
 				allowedRoles,
-				currentRole,
+				currentRole
 			},
 			sub: `${id}`,
 			username,
-			web3signup: web3_signup || false,
+			web3signup: web3_signup || false
 		};
 
 		if (login_address) {
@@ -1440,14 +1440,14 @@ class AuthService {
 		if (two_factor_auth?.enabled && two_factor_auth?.verified) {
 			tokenContent = {
 				...tokenContent,
-				is2FAEnabled: true,
+				is2FAEnabled: true
 			};
 		}
 
 		return jwt.sign(
 			tokenContent,
 			{ key: privateKey, passphrase },
-			{ algorithm: 'RS256', expiresIn: '30d' },
+			{ algorithm: 'RS256', expiresIn: '30d' }
 		);
 	}
 
@@ -1457,7 +1457,7 @@ class AuthService {
 		await redisSetex(
 			getCreatePostKey(address),
 			CREATE_POST_TTL,
-			signMessage,
+			signMessage
 		);
 
 		return signMessage;
@@ -1469,14 +1469,14 @@ class AuthService {
 		title: string,
 		content: string,
 		signature: string,
-		proposalType: ProposalType,
+		proposalType: ProposalType
 	): Promise<void> {
 		const challenge = await redisGet(getCreatePostKey(address));
 
 		if (!challenge) {
 			throw apiErrorWithStatusCode(
 				messages.POST_CREATE_SIGN_MESSAGE_EXPIRED,
-				400,
+				400
 			);
 		}
 
@@ -1486,7 +1486,7 @@ class AuthService {
 		if (!isValidSr)
 			throw apiErrorWithStatusCode(
 				messages.POST_CREATE_INVALID_SIGNATURE,
-				403,
+				403
 			);
 
 		const firestore = firebaseAdmin.firestore();
@@ -1512,7 +1512,7 @@ class AuthService {
 				password,
 				randomUsername,
 				true,
-				network,
+				network
 			);
 
 			await this.createAddress(network, address, true, user.id);
@@ -1542,10 +1542,10 @@ class AuthService {
 				name:
 					proposalType === ProposalType.DISCUSSIONS
 						? 'Democracy'
-						: 'Grant',
+						: 'Grant'
 			},
 			user_id: user.id,
-			username: user.username,
+			username: user.username
 		});
 	}
 
@@ -1564,13 +1564,13 @@ class AuthService {
 		content: string,
 		signature: string,
 		proposalType: string,
-		proposalId: string,
+		proposalId: string
 	): Promise<void> {
 		const challenge = await redisGet(getEditPostKey(address));
 		if (!challenge)
 			throw apiErrorWithStatusCode(
 				messages.POST_EDIT_SIGN_MESSAGE_EXPIRED,
-				403,
+				403
 			);
 
 		const signContent = `<Bytes>network:${network}::address:${address}::title:${title}::content:${content}::challenge:${challenge}</Bytes>`;
@@ -1579,7 +1579,7 @@ class AuthService {
 		if (!isValidSr)
 			throw apiErrorWithStatusCode(
 				messages.POST_EDIT_INVALID_SIGNATURE,
-				400,
+				400
 			);
 
 		const firestore = firebaseAdmin.firestore();
@@ -1605,7 +1605,7 @@ class AuthService {
 				password,
 				randomUsername,
 				true,
-				network,
+				network
 			);
 
 			await this.createAddress(network, address, true, user.id);
@@ -1631,11 +1631,11 @@ class AuthService {
 					title,
 					topic: {
 						id: 1,
-						name: 'Democracy',
+						name: 'Democracy'
 					},
-					user_id: user.id,
+					user_id: user.id
 				},
-				{ merge: true },
+				{ merge: true }
 			);
 	}
 
@@ -1645,7 +1645,7 @@ class AuthService {
 		deadline: string,
 		token: string,
 		network: string,
-		start_time: string,
+		start_time: string
 	): Promise<void> {
 		if (
 			!token ||
@@ -1657,7 +1657,7 @@ class AuthService {
 		)
 			throw apiErrorWithStatusCode(
 				messages.INVALID_PROPOSAL_TRACKER_PARAMS,
-				400,
+				400
 			);
 
 		const user = await this.GetUser(token);
@@ -1682,7 +1682,7 @@ class AuthService {
 			status: status,
 			title: 'Deadline for onchain proposal #' + onchain_proposal_id,
 			url: `https://${network.toLowerCase()}/treasury/${onchain_proposal_id}`,
-			user_id: user_id,
+			user_id: user_id
 		};
 
 		await newEventDocRef.set(event);
@@ -1691,12 +1691,12 @@ class AuthService {
 	public async ProposalTrackerUpdate(
 		id: string,
 		status: string,
-		token: string,
+		token: string
 	): Promise<void> {
 		if (!token || !status || !id)
 			throw apiErrorWithStatusCode(
 				messages.INVALID_PROPOSAL_TRACKER_PARAMS,
-				400,
+				400
 			);
 
 		const user = await this.GetUser(token);
@@ -1712,24 +1712,24 @@ class AuthService {
 		if (!proposalEventDoc.exists)
 			throw apiErrorWithStatusCode(
 				messages.ERROR_IN_PROPOSAL_TRACKER,
-				400,
+				400
 			);
 
 		const proposalEventData = proposalEventDoc.data() as CalendarEvent;
 		if (proposalEventData.user_id !== user_id)
 			throw apiErrorWithStatusCode(
 				messages.ERROR_IN_PROPOSAL_TRACKER,
-				400,
+				400
 			);
 
 		proposalEventDoc.ref.update({
-			status: status,
+			status: status
 		});
 	}
 	public async SendVerifyEmail(
 		token: string,
 		email: string,
-		network: string,
+		network: string
 	): Promise<any> {
 		const userId = getUserIdFromJWT(token, jwtPublicKey);
 		const firestore = firebaseAdmin.firestore();
@@ -1746,7 +1746,7 @@ class AuthService {
 			if (alreadyExists)
 				throw apiErrorWithStatusCode(
 					messages.USER_EMAIL_ALREADY_EXISTS,
-					400,
+					400
 				);
 		}
 
@@ -1769,7 +1769,7 @@ class AuthService {
 			if (hours < 48) {
 				throw apiErrorWithStatusCode(
 					messages.EMAIL_CHANGE_NOT_ALLOWED_YET,
-					403,
+					403
 				);
 			}
 		}
@@ -1783,7 +1783,7 @@ class AuthService {
 
 		await firestore.collection('users').doc(String(user.id)).update({
 			email,
-			email_verified: false,
+			email_verified: false
 		});
 
 		user = await getUserFromUserId(userId);
@@ -1796,7 +1796,7 @@ class AuthService {
 				email: oldMail,
 				token: uuidv4(),
 				user_id: user.id,
-				valid: true,
+				valid: true
 			};
 			await firestore
 				.collection('undo_email_change_tokens')

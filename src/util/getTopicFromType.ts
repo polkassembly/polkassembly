@@ -12,7 +12,7 @@ export function getTopicFromType(proposalType: ProposalType) {
 		[
 			ProposalType.DEMOCRACY_PROPOSALS,
 			ProposalType.REFERENDUMS,
-			ProposalType.OPEN_GOV,
+			ProposalType.OPEN_GOV
 		].includes(proposalType)
 	) {
 		topic.id = post_topic.DEMOCRACY;
@@ -22,7 +22,7 @@ export function getTopicFromType(proposalType: ProposalType) {
 			ProposalType.TREASURY_PROPOSALS,
 			ProposalType.TIPS,
 			ProposalType.BOUNTIES,
-			ProposalType.CHILD_BOUNTIES,
+			ProposalType.CHILD_BOUNTIES
 		].includes(proposalType)
 	) {
 		topic.id = post_topic.TREASURY;
@@ -51,7 +51,7 @@ export const topicIdToNameMap = {
 	8: 'Auction Admin',
 	9: 'Governance',
 	// eslint-disable-next-line sort-keys
-	10: 'Fellowship',
+	10: 'Fellowship'
 };
 
 export const isTopicIdValid = (topicId: any) => {
@@ -63,7 +63,7 @@ export const isTopicIdValid = (topicId: any) => {
 };
 
 export function getTopicNameFromTopicId(
-	topicId: keyof typeof topicIdToNameMap,
+	topicId: keyof typeof topicIdToNameMap
 ): string {
 	return topicIdToNameMap[topicId];
 }

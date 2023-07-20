@@ -25,7 +25,7 @@ export interface IReportContentResponse {
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<IReportContentResponse | MessageType>,
+	res: NextApiResponse<IReportContentResponse | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -46,7 +46,7 @@ async function handler(
 		proposalType,
 		post_id,
 		reply_id,
-		comment_id,
+		comment_id
 	} = req.body;
 	if (!type || !reason || !comments || !proposalType)
 		return res
@@ -109,7 +109,7 @@ async function handler(
 		reason,
 		resolved: false,
 		type,
-		user_id: user.id,
+		user_id: user.id
 	};
 
 	if (type === 'comment') {
@@ -137,25 +137,25 @@ async function handler(
 
 			if (type == 'post' && checkReportThreshold(totalUsers)) {
 				const postReportKey = await redisGet(
-					`postReportKey-${network}_${strPostType}_${post_id}`,
+					`postReportKey-${network}_${strPostType}_${post_id}`
 				);
 				if (!postReportKey) {
 					_sendPostSpamReportMail(
 						network,
 						strPostType,
 						contentId,
-						totalUsers,
+						totalUsers
 					);
 					await redisSetex(
 						`postReportKey-${network}_${strPostType}_${post_id}`,
 						TTL_DURATION,
-						'true',
+						'true'
 					);
 				}
 			}
 			if (type == 'comment' && checkReportThreshold(totalUsers)) {
 				const commentReportKey = await redisGet(
-					`commentReportKey-${network}_${strPostType}_${post_id}_${comment_id}`,
+					`commentReportKey-${network}_${strPostType}_${post_id}_${comment_id}`
 				);
 				if (!commentReportKey) {
 					_sendCommentReportMail(
@@ -163,18 +163,18 @@ async function handler(
 						strPostType,
 						post_id,
 						comment_id,
-						totalUsers,
+						totalUsers
 					);
 					await redisSetex(
 						`commentReportKey-${network}_${strPostType}_${post_id}_${comment_id}`,
 						TTL_DURATION,
-						'true',
+						'true'
 					);
 				}
 			}
 			if (type == 'reply' && checkReportThreshold(totalUsers)) {
 				const replyReportKey = await redisGet(
-					`replyReportKey-${network}_${strPostType}_${post_id}_${comment_id}_${reply_id}`,
+					`replyReportKey-${network}_${strPostType}_${post_id}_${comment_id}_${reply_id}`
 				);
 				if (!replyReportKey) {
 					_sendReplyReportMail(
@@ -183,18 +183,18 @@ async function handler(
 						post_id,
 						comment_id,
 						reply_id,
-						totalUsers,
+						totalUsers
 					);
 					await redisSetex(
 						`replyReportKey-${network}_${strPostType}_${post_id}_${comment_id}_${reply_id}`,
 						TTL_DURATION,
-						'true',
+						'true'
 					);
 				}
 			}
 			return res.status(200).json({
 				message: messages.CONTENT_REPORT_SUCCESSFUL,
-				spam_users_count: checkReportThreshold(totalUsers),
+				spam_users_count: checkReportThreshold(totalUsers)
 			});
 		})
 		.catch((error) => {

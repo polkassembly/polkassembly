@@ -19,7 +19,7 @@ import TrackPostsTable from './TrackPostsTable';
 
 const Gov2LatestActivity = ({
 	className,
-	gov2LatestPosts,
+	gov2LatestPosts
 }: {
 	className?: string;
 	gov2LatestPosts: any;
@@ -41,7 +41,7 @@ const Gov2LatestActivity = ({
 					label="All"
 					count={gov2LatestPosts.allGov2Posts?.data?.count}
 				/>
-			),
+			)
 		},
 		{
 			children: (
@@ -59,8 +59,8 @@ const Gov2LatestActivity = ({
 					label="Discussions"
 					count={gov2LatestPosts.discussionPosts?.data?.count}
 				/>
-			),
-		},
+			)
+		}
 	];
 
 	if (network) {
@@ -81,7 +81,7 @@ const Gov2LatestActivity = ({
 						label={trackName.split(/(?=[A-Z])/).join(' ')}
 						count={gov2LatestPosts[trackName]?.data?.count}
 					/>
-				),
+				)
 			});
 		}
 	}

@@ -19,7 +19,7 @@ const CommentReactionBar: FC<ICommentReactionBarProps> = ({
 	className,
 	comment_reactions,
 	commentId,
-	importedReactions = false,
+	importedReactions = false
 }) => {
 	const [reactionsDisabled, setReactionsDisabled] = useState(false);
 	const [reactions, setReactions] = useState<IReactions>(comment_reactions);

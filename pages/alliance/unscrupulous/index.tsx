@@ -11,8 +11,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 	return {
 		props: {
-			network,
-		},
+			network
+		}
 	};
 };
 

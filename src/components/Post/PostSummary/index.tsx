@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import {
 	AiStarIcon,
 	OpenAiIcon,
-	SummaryModalClose,
+	SummaryModalClose
 } from '~src/ui-components/CustomIcons';
 import { usePostDataContext } from '~src/context';
 
@@ -30,7 +30,7 @@ const sanitizeSummary = (md: string) => {
 const PostSummary: FC<IPostSummaryProps> = (props) => {
 	const { className } = props;
 	const {
-		postData: { summary },
+		postData: { summary }
 	} = usePostDataContext();
 	const [open, setOpen] = useState(false);
 	return (
@@ -56,7 +56,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 			<Modal
 				className={classNames(
 					className,
-					'pl-0 pb-0 ml-0 md:ml-auto h-[calc(100vh-250px)] md:min-w-[604px]',
+					'pl-0 pb-0 ml-0 md:ml-auto h-[calc(100vh-250px)] md:min-w-[604px]'
 				)}
 				open={open}
 				onCancel={() => setOpen(false)}

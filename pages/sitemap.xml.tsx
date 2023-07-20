@@ -23,7 +23,7 @@ const PROPOSAL_TYPES = [
 	ProposalType.REFERENDUM_V2,
 	ProposalType.GRANTS,
 	ProposalType.ANNOUNCEMENT,
-	ProposalType.ALLIANCE_MOTION,
+	ProposalType.ALLIANCE_MOTION
 ];
 
 const SLUG: { [key: string]: string } = {
@@ -38,11 +38,11 @@ const SLUG: { [key: string]: string } = {
 	[ProposalType.CHILD_BOUNTIES]: 'child_bounty',
 	[ProposalType.TIPS]: 'tip',
 	[ProposalType.REFERENDUM_V2]: 'referenda',
-	[ProposalType.GRANTS]: 'grant',
+	[ProposalType.GRANTS]: 'grant'
 };
 
 const GOV2: { [key: string]: boolean } = {
-	kusama: true,
+	kusama: true
 };
 
 const generateSiteMap = (network: string, urls: string[]): string => {
@@ -170,7 +170,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 			.listDocuments();
 		const urls = docs.map(
 			(doc) =>
-				`https://${network}.${DOMAIN}/${SLUG[proposalType]}/${doc.id}`,
+				`https://${network}.${DOMAIN}/${SLUG[proposalType]}/${doc.id}`
 		);
 		allUrls.push(...urls);
 	}

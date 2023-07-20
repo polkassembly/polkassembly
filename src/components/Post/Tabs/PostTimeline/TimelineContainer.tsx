@@ -11,7 +11,7 @@ import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { useNetworkContext } from '~src/context';
 import {
 	getFirestoreProposalType,
-	getSinglePostLinkFromProposalType,
+	getSinglePostLinkFromProposalType
 } from '~src/global/proposalType';
 import { getBlockLink } from '~src/util/subscanCheck';
 
@@ -104,7 +104,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 									{timestamp && blockDate ? (
 										<p className="flex items-center m-0">
 											{blockDate.format(
-												"Do MMM 'YY, h:mm a",
+												"Do MMM 'YY, h:mm a"
 											)}
 										</p>
 									) : null}
@@ -120,7 +120,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 			<div className="min-h-[300px] bg-pink_primary w-[2px] relative">
 				<Link
 					href={`/${getSinglePostLinkFromProposalType(
-						getFirestoreProposalType(type as any) as any,
+						getFirestoreProposalType(type as any) as any
 					)}/${type === 'Tip' ? timeline.hash : timeline.index}`}
 				>
 					<span className="bg-pink_primary rounded-2xl font-medium text-base text-white whitespace-nowrap min-w-[100px] px-5 h-[33px] flex items-center justify-center absolute -left-5 -top-5 shadow-lg shadow-grey_secondary border-.15 border-solid border-pink_primary transition-all ease-in-out  hover:bg-white hover:text-pink_primary">

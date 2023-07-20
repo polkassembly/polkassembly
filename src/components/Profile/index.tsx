@@ -6,12 +6,12 @@ import { CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
 import {
 	DeriveAccountFlags,
 	DeriveAccountInfo,
-	DeriveAccountRegistration,
+	DeriveAccountRegistration
 } from '@polkadot/api-derive/types';
 import {
 	web3Accounts,
 	web3Enable,
-	web3FromSource,
+	web3FromSource
 } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
@@ -53,8 +53,8 @@ const SetOnChainIdentityButton = dynamic(
 	() => import('src/components/Settings/setOnChainIdentityButton'),
 	{
 		loading: () => <Skeleton.Button active />,
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 
 const Profile = ({ className, profileDetails }: Props): JSX.Element => {
@@ -68,11 +68,11 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 	const { api, apiReady } = useContext(ApiContext);
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(
-		null,
+		null
 	);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [flags, setFlags] = useState<DeriveAccountFlags | undefined>(
-		undefined,
+		undefined
 	);
 	const [title, setTitle] = useState(aboutTitle || '');
 	const [description, setDescription] = useState(aboutDescription || '');
@@ -162,7 +162,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 	const judgements = identity
 		? identity.judgements.filter(
-				([, judgement]): boolean => !judgement.isFeePaid,
+				([, judgement]): boolean => !judgement.isFeePaid
 		  )
 		: [];
 	const displayJudgements = judgements
@@ -170,11 +170,11 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 		.join(', ');
 	const isGood = judgements.some(
 		([, judgement]): boolean =>
-			judgement.isKnownGood || judgement.isReasonable,
+			judgement.isKnownGood || judgement.isReasonable
 	);
 	const isBad = judgements.some(
 		([, judgement]): boolean =>
-			judgement.isErroneous || judgement.isLowQuality,
+			judgement.isErroneous || judgement.isLowQuality
 	);
 
 	const color: 'brown' | 'green' | 'grey' = isGood
@@ -210,7 +210,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 				header: 'Failed',
 				message:
 					'No web 3 account integration could be found. To be able to vote on-chain, visit this page on a computer with polkadot-js entension.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
@@ -222,7 +222,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 				header: 'Failed',
 				message:
 					'You need at least one account in Polkadot-js extenstion to login.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
@@ -239,7 +239,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 			queueNotification({
 				header: 'Failed',
 				message: 'Address not available.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
@@ -250,7 +250,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 			queueNotification({
 				header: 'Failed',
 				message: 'Signer not available.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
@@ -271,7 +271,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 		const { signature } = await signRaw({
 			address: `${substrate_address}`,
 			data: stringToHex(signMessage),
-			type: 'bytes',
+			type: 'bytes'
 		});
 
 		setLoading(true);
@@ -286,15 +286,15 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 					network,
 					signature,
 					title: title || '',
-					wallet: injected.name || '',
-				},
+					wallet: injected.name || ''
+				}
 			);
 
 		if (fetchError) {
 			queueNotification({
 				header: 'Failed',
 				message: fetchError,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			setError(fetchError);
 		}
@@ -303,7 +303,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 			queueNotification({
 				header: 'SUCCESS.',
 				message: data.message || 'Profile Updated.',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 		}
 		setIsEditing(false);
@@ -438,7 +438,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 										</div>
 										<a
 											href={`https://twitter.com/${identity.twitter.substring(
-												1,
+												1
 											)}`}
 											className="text-navBlue hover:text-pink_primary"
 										>
@@ -460,7 +460,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 		// eslint-disable-next-line sort-keys
 		{ label: 'Description', key: 'description', children: descriptionTab },
 		// eslint-disable-next-line sort-keys
-		{ label: 'Voting History', key: 'voting_history', children: votingTab },
+		{ label: 'Voting History', key: 'voting_history', children: votingTab }
 	];
 
 	return (

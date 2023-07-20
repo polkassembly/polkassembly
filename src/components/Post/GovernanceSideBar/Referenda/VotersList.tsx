@@ -8,7 +8,7 @@ import {
 	LikeFilled,
 	MinusCircleFilled,
 	RightOutlined,
-	SwapOutlined,
+	SwapOutlined
 } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Dropdown, Pagination, PaginationProps, Segmented, Spin } from 'antd';
@@ -42,7 +42,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: true,
-		message: 'Loading votes',
+		message: 'Loading votes'
 	});
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [decision, setDecision] = useState<DecisionType>();
@@ -52,10 +52,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	useEffect(() => {
 		setLoadingStatus({
 			isLoading: true,
-			message: 'Loading votes',
+			message: 'Loading votes'
 		});
 		nextApiClientFetch<IVotesResponse>(
-			`api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`,
+			`api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`
 		)
 			.then((res) => {
 				if (res.error) {
@@ -83,7 +83,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			.finally(() => {
 				setLoadingStatus({
 					isLoading: false,
-					message: '',
+					message: ''
 				});
 			});
 	}, [referendumId, currentPage, voteType, sortBy]);
@@ -95,7 +95,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					<LikeFilled className="mr-1.5" /> <span>Ayes</span>
 				</div>
 			),
-			value: 'yes',
+			value: 'yes'
 		},
 		{
 			label: (
@@ -103,8 +103,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					<DislikeFilled className="mr-1.5" /> <span>Nays</span>
 				</div>
 			),
-			value: 'no',
-		},
+			value: 'no'
+		}
 	];
 
 	if (voteType === VoteType.REFERENDUM_V2) {
@@ -115,7 +115,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					<span>Abstain</span>
 				</div>
 			),
-			value: 'abstain',
+			value: 'abstain'
 		});
 	}
 
@@ -131,7 +131,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				defaultSelectedKeys: [votesSortValues.TIME],
 				items: [...votesSortOptions],
 				onClick: handleSortByClick,
-				selectable: true,
+				selectable: true
 			}}
 			trigger={['click']}
 		>
@@ -227,11 +227,11 @@ const VotersList: FC<IVotersListProps> = (props) => {
 													numberAfterComma: 1,
 													withThousandDelimitor:
 														false,
-													withUnit: true,
+													withUnit: true
 												},
-												network,
+												network
 											),
-											1,
+											1
 										)}
 									</div>
 
@@ -259,7 +259,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										</div>
 									)}
 								</div>
-							),
+							)
 						)
 					) : (
 						<PostEmptyState />
@@ -288,7 +288,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									Math.floor(
 										(votesRes && decision
 											? votesRes[decision]?.count || 0
-											: 0) / VOTES_LISTING_LIMIT,
+											: 0) / VOTES_LISTING_LIMIT
 									)
 										? 'text-grey_secondary'
 										: ''

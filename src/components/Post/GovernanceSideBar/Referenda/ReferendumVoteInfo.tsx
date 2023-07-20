@@ -11,7 +11,7 @@ import React, {
 	useContext,
 	useEffect,
 	useMemo,
-	useState,
+	useState
 } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { subscanApiHeaders } from 'src/global/apiHeaders';
@@ -54,7 +54,7 @@ const ZERO = new BN(0);
 const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 	referendumId,
 	setOpen,
-	voteThreshold,
+	voteThreshold
 }) => {
 	const { network } = useNetworkContext();
 
@@ -62,7 +62,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 	const [totalIssuance, setTotalIssuance] = useState<BN | null>(null);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: true,
-		message: 'Loading votes',
+		message: 'Loading votes'
 	});
 	const [voteInfo, setVoteInfo] = useState<VoteInfo | null>(null);
 	const [isFetchingCereVoteInfo, setIsFetchingCereVoteInfo] = useState(true);
@@ -71,11 +71,11 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 		`${chainProperties[network]?.externalLinks}/api/scan/democracy/referendum`,
 		{
 			body: JSON.stringify({
-				referendum_index: referendumId,
+				referendum_index: referendumId
 			}),
 			headers: subscanApiHeaders,
-			method: 'POST',
-		},
+			method: 'POST'
+		}
 	);
 
 	useEffect(() => {
@@ -87,8 +87,8 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 					query: GET_TOTAL_VOTES_COUNT,
 					variables: {
 						index_eq: referendumId,
-						type_eq: 'Referendum',
-					},
+						type_eq: 'Referendum'
+					}
 				});
 				const totalCount = res?.data?.votesConnection?.totalCount;
 				if (totalCount) {
@@ -98,8 +98,8 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 						variables: {
 							index_eq: referendumId,
 							limit: totalCount,
-							type_eq: 'Referendum',
-						},
+							type_eq: 'Referendum'
+						}
 					});
 					if (
 						res &&
@@ -114,7 +114,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 							nay_amount: ZERO,
 							nay_without_conviction: ZERO,
 							turnout: ZERO,
-							voteThreshold: '',
+							voteThreshold: ''
 						};
 						res.data.votes.forEach((vote: any) => {
 							if (vote) {
@@ -122,48 +122,48 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 								if (decision === 'yes') {
 									voteInfo.aye_without_conviction =
 										voteInfo.aye_without_conviction.add(
-											new BN(balance.value),
+											new BN(balance.value)
 										);
 									if (lockPeriod === 0) {
 										voteInfo.aye_amount =
 											voteInfo.aye_amount.add(
 												new BN(balance.value).div(
-													new BN(10),
-												),
+													new BN(10)
+												)
 											);
 									} else {
 										voteInfo.aye_amount =
 											voteInfo.aye_amount.add(
 												new BN(balance.value).mul(
-													new BN(lockPeriod),
-												),
+													new BN(lockPeriod)
+												)
 											);
 									}
 								} else {
 									voteInfo.nay_without_conviction =
 										voteInfo.nay_without_conviction.add(
-											new BN(balance.value),
+											new BN(balance.value)
 										);
 									if (lockPeriod === 0) {
 										voteInfo.nay_amount =
 											voteInfo.nay_amount.add(
 												new BN(balance.value).div(
-													new BN(10),
-												),
+													new BN(10)
+												)
 											);
 									} else {
 										voteInfo.nay_amount =
 											voteInfo.nay_amount.add(
 												new BN(balance.value).mul(
-													new BN(lockPeriod),
-												),
+													new BN(lockPeriod)
+												)
 											);
 									}
 								}
 							}
 						});
 						voteInfo.turnout = voteInfo.aye_without_conviction.add(
-							voteInfo.nay_without_conviction,
+							voteInfo.nay_without_conviction
 						);
 						if (voteThreshold) {
 							voteInfo.voteThreshold = voteThreshold
@@ -175,7 +175,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 								capitalizedVoteThreshold = `${capitalizedVoteThreshold
 									.charAt(0)
 									.toUpperCase()}${capitalizedVoteThreshold.slice(
-									1,
+									1
 								)}`;
 								//nays needed for a referendum to fail
 								const { failingThreshold } =
@@ -185,13 +185,13 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 											voteInfo.aye_without_conviction,
 										threshold:
 											capitalizedVoteThreshold as any,
-										totalIssuance: totalIssuance,
+										totalIssuance: totalIssuance
 									});
 								if (failingThreshold) {
 									try {
 										if (
 											voteInfo.nay_amount.gte(
-												failingThreshold,
+												failingThreshold
 											)
 										) {
 											voteInfo.isPassing = false;
@@ -201,7 +201,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 									} catch (e) {
 										console.log(
 											'Error calculating Passing state: ',
-											e,
+											e
 										);
 									}
 								}
@@ -228,7 +228,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 
 		setLoadingStatus({
 			isLoading: true,
-			message: 'Loading Data',
+			message: 'Loading Data'
 		});
 
 		if (['equilibrium'].includes(network)) {
@@ -237,7 +237,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 			// eslint-disable-next-line  @typescript-eslint/no-unused-vars
 			const { collateral, debt } = api.query.eqAggregates.totalUserGroup(
 				'Balances',
-				{ '0': 1734700659 },
+				{ '0': 1734700659 }
 			) as any;
 			setTotalIssuance(collateral);
 		} else {
@@ -257,7 +257,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 	useEffect(() => {
 		setLoadingStatus({
 			isLoading: true,
-			message: 'Loading Data',
+			message: 'Loading Data'
 		});
 
 		if (
@@ -275,16 +275,16 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 				nay_amount: ZERO,
 				nay_without_conviction: ZERO,
 				turnout: ZERO,
-				voteThreshold: '',
+				voteThreshold: ''
 			};
 
 			voteInfo.aye_amount = new BN(info.aye_amount);
 			voteInfo.aye_without_conviction = new BN(
-				info.aye_without_conviction,
+				info.aye_without_conviction
 			);
 			voteInfo.nay_amount = new BN(info.nay_amount);
 			voteInfo.nay_without_conviction = new BN(
-				info.nay_without_conviction,
+				info.nay_without_conviction
 			);
 			voteInfo.turnout = new BN(info.turnout);
 			voteInfo.voteThreshold = info.vote_threshold
@@ -302,7 +302,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 					ayes: voteInfo.aye_amount,
 					ayesWithoutConviction: voteInfo.aye_without_conviction,
 					threshold: capitalizedVoteThreshold,
-					totalIssuance: totalIssuance,
+					totalIssuance: totalIssuance
 				});
 
 				if (failingThreshold) {
@@ -323,7 +323,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 
 		setLoadingStatus({
 			isLoading: false,
-			message: 'Loading Data',
+			message: 'Loading Data'
 		});
 	}, [voteInfoData, voteInfoError, totalIssuance]);
 
@@ -391,11 +391,11 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 													numberAfterComma: 2,
 													withThousandDelimitor:
 														false,
-													withUnit: true,
+													withUnit: true
 												},
-												network,
+												network
 											),
-											1,
+											1
 										)}
 									</div>
 								</article>
@@ -413,11 +413,11 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 													numberAfterComma: 2,
 													withThousandDelimitor:
 														false,
-													withUnit: true,
+													withUnit: true
 												},
-												network,
+												network
 											),
-											1,
+											1
 										)}
 									</div>
 								</article>
@@ -435,11 +435,11 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 													numberAfterComma: 2,
 													withThousandDelimitor:
 														false,
-													withUnit: true,
+													withUnit: true
 												},
-												network,
+												network
 											),
-											1,
+											1
 										)}
 									</div>
 								</article>
@@ -458,11 +458,11 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 														numberAfterComma: 2,
 														withThousandDelimitor:
 															false,
-														withUnit: true,
+														withUnit: true
 													},
-													network,
+													network
 												),
-												1,
+												1
 											)}
 										</div>
 									</article>
@@ -531,11 +531,11 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 													numberAfterComma: 2,
 													withThousandDelimitor:
 														false,
-													withUnit: true,
+													withUnit: true
 												},
-												network,
+												network
 											),
-											1,
+											1
 										)}
 									</div>
 								</article>
@@ -553,11 +553,11 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 													numberAfterComma: 2,
 													withThousandDelimitor:
 														false,
-													withUnit: true,
+													withUnit: true
 												},
-												network,
+												network
 											),
-											1,
+											1
 										)}
 									</div>
 								</article>
@@ -575,11 +575,11 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 													numberAfterComma: 2,
 													withThousandDelimitor:
 														false,
-													withUnit: true,
+													withUnit: true
 												},
-												network,
+												network
 											),
-											1,
+											1
 										)}
 									</div>
 								</article>
@@ -598,11 +598,11 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({
 														numberAfterComma: 2,
 														withThousandDelimitor:
 															false,
-														withUnit: true,
+														withUnit: true
 													},
-													network,
+													network
 												),
-												1,
+												1
 											)}
 										</div>
 									</article>

@@ -25,7 +25,7 @@ function LatestActivityEmptyState({ width = 80 }: Props): ReactElement {
 					position: 'absolute',
 					top: '50%',
 					transform: 'translate(-50%, -50%)',
-					width: '70px',
+					width: '70px'
 				}}
 			/>
 			<Lottie
@@ -36,7 +36,7 @@ function LatestActivityEmptyState({ width = 80 }: Props): ReactElement {
 					position: 'absolute',
 					top: '50%',
 					transform: 'translate(-50%, -50%)',
-					width: width,
+					width: width
 				}}
 				onMouseEnter={() => setPlaying(true)}
 				onMouseLeave={() => setPlaying(false)}

@@ -25,7 +25,7 @@ const SetPrimaryNetworkSettingModal = ({
 	open,
 	onConfirm,
 	onCancel,
-	network,
+	network
 }: {
 	open: boolean;
 	onConfirm: () => void;
@@ -53,7 +53,7 @@ const SetPrimaryNetworkSettingModal = ({
 					className="h-10 rounded-[6px] bg-[#E5007A] border border-solid border-pink_primary px-[36px] py-[4px] text-white font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize"
 				>
 					Confirm
-				</Button>,
+				</Button>
 			]}
 		>
 			<p className="text-[16px] font-medium m-0 my-6 leading-[21px] text-[#243A57]">

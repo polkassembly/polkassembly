@@ -23,7 +23,7 @@ const Poll: FC<IPollProps> = ({
 	endBlock,
 	canEdit,
 	votes,
-	proposalType,
+	proposalType
 }) => {
 	return (
 		<>

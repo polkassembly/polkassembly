@@ -23,7 +23,7 @@ const TelegramInfoModal = ({
 	open,
 	getVerifyToken,
 	generatedToken = '',
-	onClose,
+	onClose
 }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [token, setToken] = useState(generatedToken);
@@ -84,7 +84,7 @@ const TelegramInfoModal = ({
 						<span
 							onClick={() =>
 								handleCopyClicked(
-									'/add <username> <verificationToken>',
+									'/add <username> <verificationToken>'
 								)
 							}
 							className="p-1 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary"
@@ -106,7 +106,7 @@ const TelegramInfoModal = ({
 								<div
 									onClick={() =>
 										handleCopyClicked(
-											`/add ${username} ${token}`,
+											`/add ${username} ${token}`
 										)
 									}
 									className="flex items-center max-w-[230px] p-0 cursor-pointer mx-2 rounded-md bg-bg-secondary text-pink_primary border border-solid border-text_secondary h-[30px]"

@@ -13,7 +13,7 @@ import * as validation from 'src/util/validation';
 const ChangePassword = ({
 	open,
 	onConfirm,
-	onCancel,
+	onCancel
 }: {
 	open: boolean;
 	onConfirm?: () => void;
@@ -38,8 +38,8 @@ const ChangePassword = ({
 					'api/v1/auth/actions/changePassword',
 					{
 						newPassword: newPassword,
-						oldPassword: currentPassword,
-					},
+						oldPassword: currentPassword
+					}
 				);
 
 				if (error || !data || !data.message) {
@@ -47,7 +47,7 @@ const ChangePassword = ({
 					queueNotification({
 						header: 'Failed!',
 						message: error || 'Something went wrong',
-						status: NotificationStatus.ERROR,
+						status: NotificationStatus.ERROR
 					});
 				}
 
@@ -57,7 +57,7 @@ const ChangePassword = ({
 						queueNotification({
 							header: 'Success!',
 							message: data.message,
-							status: NotificationStatus.SUCCESS,
+							status: NotificationStatus.SUCCESS
 						});
 					}
 					onCancel();
@@ -69,7 +69,7 @@ const ChangePassword = ({
 			queueNotification({
 				header: 'Failed!',
 				message: error || 'Something went wrong',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
@@ -108,12 +108,12 @@ const ChangePassword = ({
 							rules={[
 								{
 									message: messages.VALIDATION_PASSWORD_ERROR,
-									required: password.required,
+									required: password.required
 								},
 								{
 									message: messages.VALIDATION_PASSWORD_ERROR,
-									min: password.minLength,
-								},
+									min: password.minLength
+								}
 							]}
 						>
 							<Input
@@ -131,12 +131,12 @@ const ChangePassword = ({
 							rules={[
 								{
 									message: messages.VALIDATION_PASSWORD_ERROR,
-									required: password.required,
+									required: password.required
 								},
 								{
 									message: messages.VALIDATION_PASSWORD_ERROR,
-									min: password.minLength,
-								},
+									min: password.minLength
+								}
 							]}
 						>
 							<Input
@@ -156,7 +156,7 @@ const ChangePassword = ({
 							rules={[
 								{
 									message: 'Please confirm your password!',
-									required: true,
+									required: true
 								},
 								({ getFieldValue }) => ({
 									validator(_, value) {
@@ -169,11 +169,11 @@ const ChangePassword = ({
 										}
 										return Promise.reject(
 											new Error(
-												'Password that you entered do not match!',
-											),
+												'Password that you entered do not match!'
+											)
 										);
-									},
-								}),
+									}
+								})
 							]}
 						>
 							<Input

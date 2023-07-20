@@ -30,8 +30,8 @@ const ListingContainer: FC<IListingContainerProps> = (props) => {
 			nextApiClientFetch<IPostsListingResponse>(
 				`api/v1/listing/on-chain-posts?proposalType=${proposalType}`,
 				{
-					postIds: postIds,
-				},
+					postIds: postIds
+				}
 			)
 				.then((res) => {
 					if (res.error) {

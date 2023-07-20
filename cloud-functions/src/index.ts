@@ -17,7 +17,7 @@ const GET_PROPOSAL_TRACKS = `query MyQuery($index_eq:Int,$type_eq:ProposalType) 
 exports.onPostWritten = functions
 	.region('europe-west1')
 	.firestore.document(
-		'networks/{network}/post_types/{postType}/posts/{postId}',
+		'networks/{network}/post_types/{postType}/posts/{postId}'
 	)
 	.onWrite(async (change, context) => {
 		const { network, postType, postId } = context.params;
@@ -27,14 +27,14 @@ exports.onPostWritten = functions
 
 		if (!ALGOLIA_APP_ID || !ALGOLIA_WRITE_API_KEY) {
 			logger.error(
-				`Error indexing ${network}, ${postType}, ${postId} : Algolia env variables not set`,
+				`Error indexing ${network}, ${postType}, ${postId} : Algolia env variables not set`
 			);
 			return;
 		}
 
 		const algoliaClient = algoliasearch(
 			ALGOLIA_APP_ID,
-			ALGOLIA_WRITE_API_KEY,
+			ALGOLIA_WRITE_API_KEY
 		);
 		const index = algoliaClient.initIndex('polkassembly_posts');
 
@@ -50,8 +50,8 @@ exports.onPostWritten = functions
 				query: GET_PROPOSAL_TRACKS,
 				variables: {
 					index_eq: Number(postId),
-					type_eq: 'ReferendumV2',
-				},
+					type_eq: 'ReferendumV2'
+				}
 			}));
 
 		const subsquidData = subsquidRes && subsquidRes?.data?.proposals?.[0];
@@ -63,19 +63,19 @@ exports.onPostWritten = functions
 			objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
 			network,
 			created_at: dayjs(
-				post?.created_at?.toDate?.() || new Date(),
+				post?.created_at?.toDate?.() || new Date()
 			).unix(),
 			last_comment_at: dayjs(
-				post?.last_comment_at?.toDate?.() || new Date(),
+				post?.last_comment_at?.toDate?.() || new Date()
 			).unix(),
 			last_edited_at: dayjs(
-				post?.last_edited_at?.toDate?.() || new Date(),
+				post?.last_edited_at?.toDate?.() || new Date()
 			).unix(),
 			parsed_content: parsedContent || post?.content || '',
 			updated_at: dayjs(
-				post?.updated_at?.toDate?.() || new Date(),
+				post?.updated_at?.toDate?.() || new Date()
 			).unix(),
-			post_type: postType,
+			post_type: postType
 		};
 
 		if (post?.topic) delete post?.topic;
@@ -96,7 +96,7 @@ exports.onPostWritten = functions
 				logger.info('Post indexed successfully:', {
 					network,
 					postType,
-					postId,
+					postId
 				});
 			})
 			.catch((error) => {
@@ -104,7 +104,7 @@ exports.onPostWritten = functions
 					error,
 					network,
 					postType,
-					postId,
+					postId
 				});
 			});
 	});
@@ -120,7 +120,7 @@ exports.onUserWritten = functions
 
 		const algoliaClient = algoliasearch(
 			ALGOLIA_APP_ID,
-			ALGOLIA_WRITE_API_KEY,
+			ALGOLIA_WRITE_API_KEY
 		);
 		const index = algoliaClient.initIndex('polkassembly_users');
 
@@ -134,10 +134,10 @@ exports.onUserWritten = functions
 		const userRecord = {
 			objectID: userId, // Unique identifier for the object
 			created_at: dayjs(
-				userData?.created_at.toDate?.() || new Date(),
+				userData?.created_at.toDate?.() || new Date()
 			).unix(),
 			username: userData?.username || '',
-			profile: userData?.profile || {},
+			profile: userData?.profile || {}
 		};
 
 		// Update the Algolia index
@@ -162,7 +162,7 @@ exports.onAddressWritten = functions
 
 		const algoliaClient = algoliasearch(
 			ALGOLIA_APP_ID,
-			ALGOLIA_WRITE_API_KEY,
+			ALGOLIA_WRITE_API_KEY
 		);
 		const index = algoliaClient.initIndex('polkassembly_addresses');
 
@@ -185,8 +185,8 @@ exports.onAddressWritten = functions
 			verified: addressData?.verified || false,
 			wallet: addressData?.wallet || '',
 			created_at: dayjs(
-				addressData?.created_at?.toDate?.() || new Date(),
-			).unix(),
+				addressData?.created_at?.toDate?.() || new Date()
+			).unix()
 		};
 
 		// Update the Algolia index
@@ -203,7 +203,7 @@ exports.onAddressWritten = functions
 exports.onCommentWritten = functions
 	.region('europe-west1')
 	.firestore.document(
-		'networks/{network}/post_types/{postType}/posts/{postId}/comments/{commentId}',
+		'networks/{network}/post_types/{postType}/posts/{postId}/comments/{commentId}'
 	)
 	.onWrite(async (change, context) => {
 		const { network, postType, postId, commentId } = context.params;
@@ -211,7 +211,7 @@ exports.onCommentWritten = functions
 			network,
 			postType,
 			postId,
-			commentId,
+			commentId
 		});
 
 		const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID;
@@ -219,14 +219,14 @@ exports.onCommentWritten = functions
 
 		if (!ALGOLIA_APP_ID || !ALGOLIA_WRITE_API_KEY) {
 			logger.error(
-				`Error indexing ${network}, ${postType}, ${postId} : Algolia env variables not set`,
+				`Error indexing ${network}, ${postType}, ${postId} : Algolia env variables not set`
 			);
 			return;
 		}
 
 		const algoliaClient = algoliasearch(
 			ALGOLIA_APP_ID,
-			ALGOLIA_WRITE_API_KEY,
+			ALGOLIA_WRITE_API_KEY
 		);
 		const index = algoliaClient.initIndex('polkassembly_posts');
 
@@ -247,7 +247,7 @@ exports.onCommentWritten = functions
 		await index
 			.partialUpdateObject({
 				comments_count,
-				objectID: `${network}_${postType}_${postId}`,
+				objectID: `${network}_${postType}_${postId}`
 			})
 			.then(({ objectID }) => {
 				logger.info('Post indexed successfully:', { objectID });
@@ -257,7 +257,7 @@ exports.onCommentWritten = functions
 exports.onReactionWritten = functions
 	.region('europe-west1')
 	.firestore.document(
-		'networks/{network}/post_types/{postType}/posts/{postId}/post_reactions/{reactionId}',
+		'networks/{network}/post_types/{postType}/posts/{postId}/post_reactions/{reactionId}'
 	)
 	.onWrite(async (change, context) => {
 		const { network, postType, postId, reactionId } = context.params;
@@ -265,7 +265,7 @@ exports.onReactionWritten = functions
 			network,
 			postType,
 			postId,
-			reactionId,
+			reactionId
 		});
 
 		const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID;
@@ -273,14 +273,14 @@ exports.onReactionWritten = functions
 
 		if (!ALGOLIA_APP_ID || !ALGOLIA_WRITE_API_KEY) {
 			logger.error(
-				`Error indexing ${network}, ${postType}, ${postId} : Algolia env variables not set`,
+				`Error indexing ${network}, ${postType}, ${postId} : Algolia env variables not set`
 			);
 			return;
 		}
 
 		const algoliaClient = algoliasearch(
 			ALGOLIA_APP_ID,
-			ALGOLIA_WRITE_API_KEY,
+			ALGOLIA_WRITE_API_KEY
 		);
 		const index = algoliaClient.initIndex('polkassembly_posts');
 
@@ -307,7 +307,7 @@ exports.onReactionWritten = functions
 		await index
 			.partialUpdateObject({
 				reaction_count: { [reactionData.reaction]: reactionCount },
-				objectID: `${network}_${postType}_${postId}`,
+				objectID: `${network}_${postType}_${postId}`
 			})
 			.then(({ objectID }) => {
 				logger.info('Post indexed successfully:', { objectID });

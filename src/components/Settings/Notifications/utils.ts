@@ -11,5 +11,5 @@ export const firebaseFunctionsHeader = (network: string) => ({
 	'Content-Type': 'application/json',
 	'x-api-key': NOTIFICATION_ENGINE_API_KEY,
 	'x-network': network,
-	'x-source': 'polkassembly',
+	'x-source': 'polkassembly'
 });

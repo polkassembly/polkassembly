@@ -5,7 +5,7 @@
 import { GetServerSideProps } from 'next';
 import {
 	getOnChainPosts,
-	IPostsListingResponse,
+	IPostsListingResponse
 } from 'pages/api/v1/listing/on-chain-posts';
 import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { FC, useEffect } from 'react';
@@ -24,7 +24,7 @@ import { ErrorState } from '~src/ui-components/UIStates';
 
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -49,7 +49,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 			proposalType,
 			sortBy,
 			trackNo: trackId,
-			trackStatus: 'All',
+			trackStatus: 'All'
 		}),
 		closed: getOnChainPosts({
 			filterBy:
@@ -63,7 +63,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 			proposalType,
 			sortBy,
 			trackNo: trackId,
-			trackStatus: CustomStatus.Closed,
+			trackStatus: CustomStatus.Closed
 		}),
 		submitted: getOnChainPosts({
 			filterBy:
@@ -77,7 +77,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 			proposalType,
 			sortBy,
 			trackNo: trackId,
-			trackStatus: CustomStatus.Submitted,
+			trackStatus: CustomStatus.Submitted
 		}),
 		voting: getOnChainPosts({
 			filterBy:
@@ -91,8 +91,8 @@ export const getServerSideProps: GetServerSideProps = async ({
 			proposalType,
 			sortBy,
 			trackNo: trackId,
-			trackStatus: CustomStatus.Voting,
-		}),
+			trackStatus: CustomStatus.Voting
+		})
 	};
 
 	const responseArr = await Promise.allSettled(Object.values(fetches));
@@ -103,13 +103,13 @@ export const getServerSideProps: GetServerSideProps = async ({
 		} else {
 			return {
 				data: null,
-				error: result.reason,
+				error: result.reason
 			} as IApiResponse<IPostsListingResponse>;
 		}
 	});
 	const props: IFellowshipAdminProps = {
 		network,
-		posts: {},
+		posts: {}
 	};
 	Object.keys(fetches).forEach((key, index) => {
 		(props.posts as any)[key] = results[index];

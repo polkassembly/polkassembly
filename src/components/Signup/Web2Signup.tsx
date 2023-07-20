@@ -29,8 +29,8 @@ const WalletButtons = dynamic(
 				<Skeleton className="mt-8" active />
 			</div>
 		),
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 
 interface Props {
@@ -50,7 +50,7 @@ const Web2Signup: FC<Props> = ({
 	isModal,
 	setLoginOpen,
 	setSignupOpen,
-	isDelegation,
+	isDelegation
 }) => {
 	const { password, username } = validation;
 	const router = useRouter();
@@ -62,7 +62,7 @@ const Web2Signup: FC<Props> = ({
 	const [loading, setLoading] = useState(false);
 	const [signUpInfo, setSignUpInfo] = useState({
 		email: '',
-		username: '',
+		username: ''
 	});
 	const [firstPassword, setFirstPassword] = useState('');
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
@@ -85,8 +85,8 @@ const Web2Signup: FC<Props> = ({
 					{
 						email,
 						password: second_password,
-						username,
-					},
+						username
+					}
 				);
 
 				if (error || !data) {
@@ -115,23 +115,23 @@ const Web2Signup: FC<Props> = ({
 
 			const { data: resData, error } =
 				await nextApiClientFetch<IUsernameExistResponse>(
-					`api/v1/users/username-exist?username=${username}`,
+					`api/v1/users/username-exist?username=${username}`
 				);
 			if (error || !resData) {
 				setError(
-					error || 'Error while checking username exist or not.',
+					error || 'Error while checking username exist or not.'
 				);
 			} else {
 				if (resData.isExist) {
 					setError(
-						'Username already exists. Please choose a different username.',
+						'Username already exists. Please choose a different username.'
 					);
 				} else {
 					if (username && email) {
 						setSignUpInfo((prevInfo) => ({
 							...prevInfo,
 							email,
-							username,
+							username
 						}));
 						setIsPassword(true);
 					}
@@ -225,13 +225,13 @@ const Web2Signup: FC<Props> = ({
 									{
 										message:
 											messages.VALIDATION_PASSWORD_ERROR,
-										required: password.required,
+										required: password.required
 									},
 									{
 										message:
 											messages.VALIDATION_PASSWORD_ERROR,
-										min: password.minLength,
-									},
+										min: password.minLength
+									}
 								]}
 							>
 								<Input.Password
@@ -262,13 +262,13 @@ const Web2Signup: FC<Props> = ({
 												value !== firstPassword
 											) {
 												callback(
-													rule?.message?.toString(),
+													rule?.message?.toString()
 												);
 											} else {
 												callback();
 											}
-										},
-									},
+										}
+									}
 								]}
 							>
 								<Input.Password
@@ -294,23 +294,23 @@ const Web2Signup: FC<Props> = ({
 									{
 										message:
 											messages.VALIDATION_USERNAME_REQUIRED_ERROR,
-										required: username.required,
+										required: username.required
 									},
 									{
 										message:
 											messages.VALIDATION_USERNAME_PATTERN_ERROR,
-										pattern: username.pattern,
+										pattern: username.pattern
 									},
 									{
 										max: username.maxLength,
 										message:
-											messages.VALIDATION_USERNAME_MAXLENGTH_ERROR,
+											messages.VALIDATION_USERNAME_MAXLENGTH_ERROR
 									},
 									{
 										message:
 											messages.VALIDATION_USERNAME_MINLENGTH_ERROR,
-										min: username.minLength,
-									},
+										min: username.minLength
+									}
 								]}
 							>
 								<Input
@@ -333,8 +333,8 @@ const Web2Signup: FC<Props> = ({
 									{
 										message:
 											messages.VALIDATION_EMAIL_ERROR,
-										pattern: validation.email.pattern,
-									},
+										pattern: validation.email.pattern
+									}
 								]}
 							>
 								<Input
@@ -393,7 +393,7 @@ const Web2Signup: FC<Props> = ({
 						>
 							Got it!
 						</Button>
-					</div>,
+					</div>
 				]}
 			>
 				We sent you an email to verify your address. Click on the link

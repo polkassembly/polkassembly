@@ -34,7 +34,7 @@ const initAuthResponse: IAuthResponse = {
 	isTFAEnabled: false,
 	tfa_token: '',
 	token: '',
-	user_id: 0,
+	user_id: 0
 };
 
 const NETWORK = getNetwork();
@@ -44,7 +44,7 @@ const WalletConnectLogin = ({
 	setDisplayWeb2,
 	setPolkadotWallet,
 	isModal,
-	setLoginOpen,
+	setLoginOpen
 }: Props): JSX.Element => {
 	const currentUser = useContext(UserDetailsContext);
 	const { setWalletConnectProvider } = currentUser;
@@ -58,7 +58,7 @@ const WalletConnectLogin = ({
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 	const [provider, setProvider] = useState<WalletConnectProvider | null>(
-		null,
+		null
 	);
 	const [authResponse, setAuthResponse] =
 		useState<IAuthResponse>(initAuthResponse);
@@ -76,8 +76,8 @@ const WalletConnectLogin = ({
 			rpc: {
 				1284: 'https://rpc.api.moonbeam.network',
 				1285: 'https://rpc.api.moonriver.moonbeam.network',
-				1287: 'https://rpc.api.moonbase.moonbeam.network',
-			},
+				1287: 'https://rpc.api.moonbase.moonbeam.network'
+			}
 		});
 		setProvider(wcPprovider);
 	};
@@ -134,7 +134,7 @@ const WalletConnectLogin = ({
 	const getAccountsHandler = async (addresses: string[], chainId: number) => {
 		if (chainId !== chainProperties[NETWORK].chainId) {
 			setError(
-				`Please login using the ${NETWORK} network on WalletConnect`,
+				`Please login using the ${NETWORK} network on WalletConnect`
 			);
 			setAccountsNotFound(true);
 			setIsAccountLoading(false);
@@ -157,13 +157,13 @@ const WalletConnectLogin = ({
 						meta: {
 							genesisHash: null,
 							name: 'walletConnect',
-							source: 'walletConnect',
-						},
+							source: 'walletConnect'
+						}
 					};
 
 					return account;
-				},
-			),
+				}
+			)
 		);
 
 		if (checksumAddresses.length > 0) {
@@ -200,7 +200,7 @@ const WalletConnectLogin = ({
 			const { data: loginStartData, error: loginStartError } =
 				await nextApiClientFetch<ChallengeMessage>(
 					'api/v1/auth/actions/addressLoginStart',
-					{ address },
+					{ address }
 				);
 			if (loginStartError) {
 				console.log('Error in address login start', loginStartError);
@@ -224,7 +224,7 @@ const WalletConnectLogin = ({
 
 			const tx = {
 				method,
-				params,
+				params
 			};
 
 			provider.wc
@@ -233,20 +233,20 @@ const WalletConnectLogin = ({
 					try {
 						const {
 							data: addressLoginData,
-							error: addressLoginError,
+							error: addressLoginError
 						} = await nextApiClientFetch<IAuthResponse>(
 							'api/v1/auth/actions/addressLogin',
 							{
 								address,
 								signature: result,
-								wallet: Wallet.WALLETCONNECT,
-							},
+								wallet: Wallet.WALLETCONNECT
+							}
 						);
 
 						if (addressLoginError) {
 							console.log(
 								'Error in address login',
-								addressLoginError,
+								addressLoginError
 							);
 							setError(addressLoginError);
 
@@ -260,11 +260,11 @@ const WalletConnectLogin = ({
 									const { data, error } =
 										await nextApiClientFetch<ChallengeMessage>(
 											'api/v1/auth/actions/addressSignupStart',
-											{ address },
+											{ address }
 										);
 									if (error || !data) {
 										setError(
-											error || 'Something went wrong',
+											error || 'Something went wrong'
 										);
 										setLoading(false);
 										return;
@@ -292,7 +292,7 @@ const WalletConnectLogin = ({
 											{
 												from,
 												method,
-												params,
+												params
 											},
 											async (err: any, result: any) => {
 												if (err) {
@@ -303,7 +303,7 @@ const WalletConnectLogin = ({
 
 												const {
 													data: confirmData,
-													error: confirmError,
+													error: confirmError
 												} =
 													await nextApiClientFetch<TokenType>(
 														'api/v1/auth/actions/addressSignupConfirm',
@@ -311,8 +311,8 @@ const WalletConnectLogin = ({
 															address,
 															signature:
 																result.result,
-															wallet: Wallet.WALLETCONNECT,
-														},
+															wallet: Wallet.WALLETCONNECT
+														}
 													);
 
 												if (
@@ -321,7 +321,7 @@ const WalletConnectLogin = ({
 												) {
 													setError(
 														confirmError ||
-															'Something went wrong',
+															'Something went wrong'
 													);
 													setLoading(false);
 													return;
@@ -336,20 +336,20 @@ const WalletConnectLogin = ({
 														address;
 													localStorage.setItem(
 														'delegationWallet',
-														Wallet.WALLETCONNECT,
+														Wallet.WALLETCONNECT
 													);
 													localStorage.setItem(
 														'delegationDashboardAddress',
-														address,
+														address
 													);
 													localStorage.setItem(
 														'loginWallet',
-														Wallet.WALLETCONNECT,
+														Wallet.WALLETCONNECT
 													);
 
 													handleTokenChange(
 														confirmData.token,
-														currentUser,
+														currentUser
 													);
 													if (isModal) {
 														setLoginOpen &&
@@ -360,10 +360,10 @@ const WalletConnectLogin = ({
 													router.back();
 												} else {
 													throw new Error(
-														'Web3 Login failed',
+														'Web3 Login failed'
 													);
 												}
-											},
+											}
 										);
 									}
 								} catch (error) {
@@ -381,20 +381,20 @@ const WalletConnectLogin = ({
 							currentUser.delegationDashboardAddress = address;
 							localStorage.setItem(
 								'delegationWallet',
-								Wallet.WALLETCONNECT,
+								Wallet.WALLETCONNECT
 							);
 							localStorage.setItem(
 								'delegationDashboardAddress',
-								address,
+								address
 							);
 							localStorage.setItem(
 								'loginWallet',
-								Wallet.WALLETCONNECT,
+								Wallet.WALLETCONNECT
 							);
 
 							handleTokenChange(
 								addressLoginData.token,
-								currentUser,
+								currentUser
 							);
 							if (isModal) {
 								setLoginOpen?.(false);
@@ -406,7 +406,7 @@ const WalletConnectLogin = ({
 							if (!addressLoginData?.tfa_token) {
 								setError(
 									error ||
-										'TFA token missing. Please try again.',
+										'TFA token missing. Please try again.'
 								);
 								setLoading(false);
 								return;
@@ -446,8 +446,8 @@ const WalletConnectLogin = ({
 				login_address: address,
 				login_wallet: Wallet.WALLETCONNECT,
 				tfa_token: authResponse.tfa_token,
-				user_id: Number(authResponse.user_id),
-			},
+				user_id: Number(authResponse.user_id)
+			}
 		);
 
 		if (error || !data) {

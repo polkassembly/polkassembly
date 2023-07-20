@@ -32,7 +32,7 @@ const SearchErrorsCard = ({
 	postResultsCounts,
 	peopleResultsCounts,
 	setPostsPage,
-	setPeoplePage,
+	setPeoplePage
 }: Props) => {
 	const router = useRouter();
 
@@ -75,7 +75,7 @@ const SearchErrorsCard = ({
 				<span
 					onClick={() => {
 						router.push(
-							checkGov2Route(router?.pathname) ? '/opengov' : '/',
+							checkGov2Route(router?.pathname) ? '/opengov' : '/'
 						);
 						setOpenModal(false);
 					}}

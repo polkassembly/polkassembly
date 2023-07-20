@@ -31,14 +31,14 @@ const getDefaultTrackMetaData = () => {
 		maxDeciding: '',
 		minEnactmentPeriod: '',
 		preparePeriod: '',
-		trackId: 0,
+		trackId: 0
 	};
 };
 
 export const getTrackData = (
 	network: string,
 	trackName?: string,
-	trackNumber?: number,
+	trackNumber?: number
 ) => {
 	const defaultTrackMetaData = getDefaultTrackMetaData();
 	if (!network) return defaultTrackMetaData;
@@ -47,7 +47,7 @@ export const getTrackData = (
 		trackMetaData = networkTrackInfo[network][trackName];
 	} else if (trackNumber || trackNumber === 0) {
 		trackMetaData = Object.values(networkTrackInfo[network]).find(
-			(v) => v && v.trackId === trackNumber,
+			(v) => v && v.trackId === trackNumber
 		);
 	}
 	if (trackMetaData) {
@@ -64,7 +64,7 @@ export const getTrackData = (
 					v &&
 					Array.isArray(v) &&
 					v.length > 1 &&
-					v[0] === trackMetaData?.trackId,
+					v[0] === trackMetaData?.trackId
 			);
 			if (
 				currTrackMetaDataArr &&
@@ -78,7 +78,7 @@ export const getTrackData = (
 					'decisionPeriod',
 					'maxDeciding',
 					'minEnactmentPeriod',
-					'preparePeriod',
+					'preparePeriod'
 				];
 				keys.forEach((key) => {
 					if (currTrackMetaData[key]) {
@@ -94,7 +94,7 @@ export const getTrackData = (
 
 export const blocksToRelevantTime = (
 	network: string,
-	blocks: number,
+	blocks: number
 ): string => {
 	const blockTimeSeconds: number =
 		chainProperties?.[network]?.blockTime / 1000;
@@ -122,7 +122,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 	const { className, trackName } = props;
 	const [trackMetaData, setTrackMetaData] = useState(
-		getDefaultTrackMetaData(),
+		getDefaultTrackMetaData()
 	);
 	useEffect(() => {
 		setTrackMetaData(getTrackData(network, trackName));
@@ -176,7 +176,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						<div className="text-lg font-medium leading-7 text-bodyBlue my-2 whitespace-pre">
 							{blocksToRelevantTime(
 								network,
-								Number(trackMetaData.confirmPeriod),
+								Number(trackMetaData.confirmPeriod)
 							)}
 						</div>
 					</div>
@@ -190,7 +190,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						<div className="whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-2">
 							{blocksToRelevantTime(
 								network,
-								Number(trackMetaData.minEnactmentPeriod),
+								Number(trackMetaData.minEnactmentPeriod)
 							)}
 						</div>
 					</div>
@@ -204,7 +204,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						<div className="whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-2">
 							{blocksToRelevantTime(
 								network,
-								Number(trackMetaData.decisionPeriod),
+								Number(trackMetaData.decisionPeriod)
 							)}
 						</div>
 					</div>
@@ -220,23 +220,23 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								formatUSDWithUnits(
 									formatBnBalance(
 										`${trackMetaData.decisionDeposit}`.startsWith(
-											'0x',
+											'0x'
 										)
 											? new BN(
 													`${trackMetaData.decisionDeposit}`.slice(
-														2,
+														2
 													),
-													'hex',
+													'hex'
 											  )
 											: trackMetaData.decisionDeposit,
 										{
 											numberAfterComma: 2,
 											withThousandDelimitor: false,
-											withUnit: true,
+											withUnit: true
 										},
-										network,
+										network
 									),
-									1,
+									1
 								)}
 						</div>
 					</div>
@@ -250,7 +250,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						<div className="whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-2 whitespace-pre">
 							{blocksToRelevantTime(
 								network,
-								Number(trackMetaData.preparePeriod),
+								Number(trackMetaData.preparePeriod)
 							)}
 						</div>
 					</div>

@@ -7,7 +7,7 @@ import getEncodedAddress from '../getEncodedAddress';
 jest.mock('../getNetwork', () =>
 	jest.fn(() => {
 		return 'polkadot';
-	}),
+	})
 );
 const getNetwork = require('../getNetwork');
 

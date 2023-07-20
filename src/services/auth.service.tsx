@@ -47,7 +47,7 @@ export const deleteLocalStorageToken = (): void => {
  */
 export const handleTokenChange = (
 	token: string,
-	currentUser: UserDetailsContextType,
+	currentUser: UserDetailsContextType
 ) => {
 	token && storeLocalStorageToken(token);
 	try {
@@ -65,7 +65,7 @@ export const handleTokenChange = (
 				web3signup,
 				is2FAEnabled = false,
 				login_address,
-				login_wallet,
+				login_wallet
 			} = tokenPayload as JWTPayloadType;
 
 			currentUser.setUserDetailsContextState((prevState) => {
@@ -85,7 +85,7 @@ export const handleTokenChange = (
 						currentUser.loginWallet ||
 						prevState.loginWallet,
 					username,
-					web3signup,
+					web3signup
 				};
 			});
 		}
@@ -95,7 +95,7 @@ export const handleTokenChange = (
 };
 
 export const logout = (
-	setUserDetailsContextState: UserDetailsContextType['setUserDetailsContextState'],
+	setUserDetailsContextState: UserDetailsContextType['setUserDetailsContextState']
 ) => {
 	deleteLocalStorageToken();
 	localStorage.removeItem('delegationDashboardAddress');
@@ -116,10 +116,10 @@ export const logout = (
 			loginWallet: null,
 			networkPreferences: {
 				channelPreferences: {},
-				triggerPreferences: {},
+				triggerPreferences: {}
 			},
 			username: null,
-			web3signup: false,
+			web3signup: false
 		};
 	});
 };

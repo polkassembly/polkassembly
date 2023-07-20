@@ -14,7 +14,7 @@ import {
 	LeasePeriodOf,
 	ReferendumStatus,
 	Scheduled,
-	UnappliedSlash,
+	UnappliedSlash
 } from '@polkadot/types/interfaces';
 import { QueryableModuleConsts } from '@polkadot/api/types';
 import type { DeriveCollectiveProposal } from '@polkadot/api-derive/types';
@@ -24,7 +24,7 @@ function generateCalendarItemDuration(
 	network: string,
 	blockNumber: number,
 	duration: number,
-	offset = 0,
+	offset = 0
 ): PjsCalendarItemDuration | void {
 	const blockTime = chainProperties[network].blockTime;
 
@@ -44,14 +44,14 @@ function generateCalendarItemDuration(
 			endDate: new Date(endTimestamp),
 			startBlockNumber,
 			endBlockNumber,
-			duration,
+			duration
 		};
 	}
 }
 
 export async function fetchAuctionInfo(
 	api: ApiPromise,
-	network: string,
+	network: string
 ): Promise<PjsCalendarItem[]> {
 	// End of auction period and calculated start.
 	// Jaco:  End of the current parachain auction
@@ -86,8 +86,8 @@ export async function fetchAuctionInfo(
 			data: {
 				leasePeriod: leasePeriod?.toJSON() as number,
 				leasePeriodPerSlot:
-					(leasePeriodPerSlot?.toJSON() as number) || 3,
-			},
+					(leasePeriodPerSlot?.toJSON() as number) || 3
+			}
 		};
 
 		calendarItems.push(auctionItem);
@@ -97,7 +97,7 @@ export async function fetchAuctionInfo(
 
 export async function fetchCouncilMotions(
 	api: ApiPromise,
-	network: string,
+	network: string
 ): Promise<PjsCalendarItem[]> {
 	// Jaco:  Voting ends on council motion {{id}}
 	const calendarItems: any[] = [];
@@ -121,8 +121,8 @@ export async function fetchCouncilMotions(
 					endBlockNumber,
 					data: {
 						hash: hash.toHex(),
-						votes: votes,
-					},
+						votes: votes
+					}
 				};
 				calendarItems.push(item);
 			}
@@ -134,7 +134,7 @@ export async function fetchCouncilMotions(
 
 export async function fetchDemocracyDispatches(
 	api: ApiPromise,
-	network: string,
+	network: string
 ): Promise<PjsCalendarItem[]> {
 	// Jaco:  'Enactment of the result of referendum {{}}'
 
@@ -156,8 +156,8 @@ export async function fetchDemocracyDispatches(
 				endDate: new Date(endTimestamp),
 				endBlockNumber,
 				data: {
-					index: index?.toJSON() as number,
-				},
+					index: index?.toJSON() as number
+				}
 			};
 			calendarItems.push(item);
 		});
@@ -168,7 +168,7 @@ export async function fetchDemocracyDispatches(
 
 export async function fetchReferendums(
 	api: ApiPromise,
-	network: string,
+	network: string
 ): Promise<PjsCalendarItem[]> {
 	// JACO: referendumDispatch  'Potential dispatch of referendum (if passed)'
 	// JACO: referendumVote  Voting ends for referendum'
@@ -205,9 +205,9 @@ export async function fetchReferendums(
 					index,
 					referendum: {
 						endDate: new Date(referendumEndTimestamp),
-						endBlock: endBlock,
-					},
-				},
+						endBlock: endBlock
+					}
+				}
 			};
 			calendarItems.push(enactItem);
 
@@ -221,9 +221,9 @@ export async function fetchReferendums(
 					isPending: true,
 					referendum: {
 						endDate: new Date(referendumEndTimestamp),
-						endBlock: endBlock,
-					},
-				},
+						endBlock: endBlock
+					}
+				}
 			};
 			calendarItems.push(voteItem);
 		});
@@ -233,7 +233,7 @@ export async function fetchReferendums(
 
 export async function fetchStakingInfo(
 	api: ApiPromise,
-	network: string,
+	network: string
 ): Promise<PjsCalendarItem[]> {
 	// JACO:  stakingEpoch   Start of a new staking session
 	// JACO:  stakingEra     Start of a new staking era
@@ -264,8 +264,8 @@ export async function fetchStakingInfo(
 				startBlockNumber: eraEndBlockNumber,
 				startDate: new Date(eraEndTimestamp),
 				data: {
-					index: nextEra,
-				},
+					index: nextEra
+				}
 			};
 
 			calendarItems.push(eraItem);
@@ -285,8 +285,8 @@ export async function fetchStakingInfo(
 				endBlockNumber: sessionEndBlockNumber,
 				endDate: new Date(sessionEndTimestamp),
 				data: {
-					index: nextSessionIndex,
-				},
+					index: nextSessionIndex
+				}
 			};
 
 			calendarItems.push(epochItem);
@@ -297,7 +297,7 @@ export async function fetchStakingInfo(
 			try {
 				slashDeferDuration = (
 					(await Promise.resolve(
-						api.consts.staking?.slashDeferDuration,
+						api.consts.staking?.slashDeferDuration
 					)) as u32
 				)?.toJSON() as number;
 
@@ -312,7 +312,7 @@ export async function fetchStakingInfo(
 				const unappliedSlashes =
 					(await api.query.staking?.unappliedSlashes.entries()) as [
 						{ args: [EraIndex] },
-						UnappliedSlash[],
+						UnappliedSlash[]
 					][];
 				if (unappliedSlashes) {
 					unappliedSlashes.forEach(([{ args }, values]) => {
@@ -334,8 +334,8 @@ export async function fetchStakingInfo(
 								endBlockNumber: slashEndBlockNumber,
 								endDate: new Date(slashEndTimestamp),
 								data: {
-									index: slashEraIndex,
-								},
+									index: slashEraIndex
+								}
 							};
 							calendarItems.push(slashItem);
 						}
@@ -350,7 +350,7 @@ export async function fetchStakingInfo(
 
 export async function fetchScheduled(
 	api: ApiPromise,
-	network: string,
+	network: string
 ): Promise<PjsCalendarItem[]> {
 	const calendarItems: any[] = [];
 
@@ -359,7 +359,7 @@ export async function fetchScheduled(
 
 	const scheduled = (await api.query.scheduler?.agenda.entries()) as [
 		{ args: [BlockNumber] },
-		Option<Scheduled>[],
+		Option<Scheduled>[]
 	][];
 
 	if (scheduled) {
@@ -384,8 +384,8 @@ export async function fetchScheduled(
 						endBlockNumber: scheduledBlockNumber,
 						endDate: new Date(endTimestamp),
 						data: {
-							id,
-						},
+							id
+						}
 					};
 					calendarItems.push(item);
 				});
@@ -397,7 +397,7 @@ export async function fetchScheduled(
 
 export async function fetchCouncilElection(
 	api: ApiPromise,
-	network: string,
+	network: string
 ): Promise<PjsCalendarItem[]> {
 	const calendarItems: any[] = [];
 
@@ -406,10 +406,10 @@ export async function fetchCouncilElection(
 	const responses = await Promise.allSettled([
 		api.consts.elections,
 		api.consts.phragmenElection,
-		api.consts.electionsPhragmen,
+		api.consts.electionsPhragmen
 	]);
 	const response = responses.find(
-		(r) => r.status === 'fulfilled' && r.value,
+		(r) => r.status === 'fulfilled' && r.value
 	) as PromiseFulfilledResult<QueryableModuleConsts>;
 	if (!response) {
 		return [];
@@ -420,7 +420,7 @@ export async function fetchCouncilElection(
 	const itemDuration = generateCalendarItemDuration(
 		network,
 		blockNumber,
-		duration?.toJSON() as number,
+		duration?.toJSON() as number
 	);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
@@ -431,11 +431,11 @@ export async function fetchCouncilElection(
 				data: {
 					electionRound: Math.floor(
 						(itemDuration.startBlockNumber as number) /
-							(itemDuration.duration as number),
-					),
-				},
+							(itemDuration.duration as number)
+					)
+				}
 			},
-			itemDuration,
+			itemDuration
 		);
 
 		calendarItems.push(item);
@@ -446,7 +446,7 @@ export async function fetchCouncilElection(
 
 export async function fetchDemocracyLaunch(
 	api: ApiPromise,
-	network: string,
+	network: string
 ): Promise<PjsCalendarItem[]> {
 	const calendarItems: any[] = [];
 
@@ -456,7 +456,7 @@ export async function fetchDemocracyLaunch(
 	const itemDuration = generateCalendarItemDuration(
 		network,
 		blockNumber,
-		duration?.toJSON() as number,
+		duration?.toJSON() as number
 	);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
@@ -467,11 +467,11 @@ export async function fetchDemocracyLaunch(
 				data: {
 					launchPeriod: Math.floor(
 						(itemDuration.startBlockNumber as number) /
-							(itemDuration.duration as number),
-					),
-				},
+							(itemDuration.duration as number)
+					)
+				}
 			},
-			itemDuration,
+			itemDuration
 		);
 
 		calendarItems.push(item);
@@ -482,7 +482,7 @@ export async function fetchDemocracyLaunch(
 
 export async function fetchTreasurySpend(
 	api: ApiPromise,
-	network: string,
+	network: string
 ): Promise<PjsCalendarItem[]> {
 	const calendarItems: any[] = [];
 
@@ -491,7 +491,7 @@ export async function fetchTreasurySpend(
 	const itemDuration = generateCalendarItemDuration(
 		network,
 		blockNumber,
-		duration?.toJSON() as number,
+		duration?.toJSON() as number
 	);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
@@ -502,11 +502,11 @@ export async function fetchTreasurySpend(
 				data: {
 					spendingPeriod: Math.floor(
 						(itemDuration.startBlockNumber as number) /
-							(itemDuration.duration as number),
-					),
-				},
+							(itemDuration.duration as number)
+					)
+				}
 			},
-			itemDuration,
+			itemDuration
 		);
 
 		calendarItems.push(item);
@@ -517,7 +517,7 @@ export async function fetchTreasurySpend(
 
 export async function fetchSocietyRotate(
 	api: ApiPromise,
-	network: string,
+	network: string
 ): Promise<PjsCalendarItem[]> {
 	const calendarItems: any[] = [];
 
@@ -527,7 +527,7 @@ export async function fetchSocietyRotate(
 	const itemDuration = generateCalendarItemDuration(
 		network,
 		blockNumber,
-		duration?.toJSON() as number,
+		duration?.toJSON() as number
 	);
 
 	if (itemDuration) {
@@ -538,11 +538,11 @@ export async function fetchSocietyRotate(
 				data: {
 					rotateRound: Math.floor(
 						(itemDuration.startBlockNumber as number) /
-							(itemDuration.duration as number),
-					),
-				},
+							(itemDuration.duration as number)
+					)
+				}
 			},
-			itemDuration,
+			itemDuration
 		);
 
 		calendarItems.push(item);
@@ -553,7 +553,7 @@ export async function fetchSocietyRotate(
 
 export async function fetchSocietyChallenge(
 	api: ApiPromise,
-	network: string,
+	network: string
 ): Promise<PjsCalendarItem[]> {
 	const calendarItems: any[] = [];
 
@@ -562,7 +562,7 @@ export async function fetchSocietyChallenge(
 	const itemDuration = generateCalendarItemDuration(
 		network,
 		blockNumber,
-		duration?.toJSON() as number,
+		duration?.toJSON() as number
 	);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
@@ -573,11 +573,11 @@ export async function fetchSocietyChallenge(
 				data: {
 					challengePeriod: Math.floor(
 						(itemDuration.startBlockNumber as number) /
-							(itemDuration.duration as number),
-					),
-				},
+							(itemDuration.duration as number)
+					)
+				}
 			},
-			itemDuration,
+			itemDuration
 		);
 
 		calendarItems.push(item);
@@ -588,7 +588,7 @@ export async function fetchSocietyChallenge(
 
 export async function fetchParachainLease(
 	api: ApiPromise,
-	network: string,
+	network: string
 ): Promise<PjsCalendarItem[]> {
 	const calendarItems: any[] = [];
 
@@ -599,7 +599,7 @@ export async function fetchParachainLease(
 		network,
 		blockNumber,
 		duration?.toJSON() as number,
-		offset?.toJSON() as number,
+		offset?.toJSON() as number
 	);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
@@ -611,11 +611,11 @@ export async function fetchParachainLease(
 					leasePeriod:
 						Math.floor(
 							(itemDuration.startBlockNumber as number) /
-								(itemDuration.duration as number),
-						) + 1,
-				},
+								(itemDuration.duration as number)
+						) + 1
+				}
 			},
-			itemDuration,
+			itemDuration
 		);
 
 		calendarItems.push(item);

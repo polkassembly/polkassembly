@@ -7,7 +7,7 @@ import {
 	blake2AsU8a,
 	decodeAddress,
 	encodeAddress,
-	encodeMultiAddress,
+	encodeMultiAddress
 } from '@polkadot/util-crypto';
 
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -15,11 +15,11 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 const derivePubkey = (addresses: string[], threshold = 1): Uint8Array => {
 	const prefix = 'modlpy/utilisuba';
 	const payload = new Uint8Array(
-		prefix.length + 1 + 32 * addresses.length + 2,
+		prefix.length + 1 + 32 * addresses.length + 2
 	);
 	payload.set(
 		Array.from(prefix).map((c) => c.charCodeAt(0)),
-		0,
+		0
 	);
 	payload[prefix.length] = addresses.length << 2;
 	const pubkeys = addresses.map((addr) => decodeAddress(addr));
@@ -42,12 +42,12 @@ const derivePubkey = (addresses: string[], threshold = 1): Uint8Array => {
 export default function getMultisigAddress(
 	addresses: string[],
 	ss58Prefix: number,
-	threshold: number,
+	threshold: number
 ): string {
 	if (!addresses || !addresses.length)
 		throw apiErrorWithStatusCode(
 			'Please provide the addresses option.',
-			400,
+			400
 		);
 
 	let multisigAddress = '';

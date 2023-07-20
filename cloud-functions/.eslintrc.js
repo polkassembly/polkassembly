@@ -2,7 +2,7 @@ module.exports = {
 	root: true,
 	env: {
 		es6: true,
-		node: true,
+		node: true
 	},
 	extends: [
 		'eslint:recommended',
@@ -10,15 +10,15 @@ module.exports = {
 		'plugin:import/warnings',
 		'plugin:import/typescript',
 		'google',
-		'plugin:@typescript-eslint/recommended',
+		'plugin:@typescript-eslint/recommended'
 	],
 	parser: '@typescript-eslint/parser',
 	parserOptions: {
 		tsconfigRootDir: __dirname,
-		sourceType: 'module',
+		sourceType: 'module'
 	},
 	ignorePatterns: [
-		'/lib/**/*', // Ignore built files.
+		'/lib/**/*' // Ignore built files.
 	],
 	plugins: ['@typescript-eslint', 'import'],
 	rules: {
@@ -42,8 +42,8 @@ module.exports = {
 		'import/no-unresolved': [
 			'error',
 			{
-				ignore: ['^firebase-functions/.+'],
-			},
-		],
-	},
+				ignore: ['^firebase-functions/.+']
+			}
+		]
+	}
 };

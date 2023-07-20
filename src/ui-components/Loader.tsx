@@ -18,7 +18,7 @@ const Loader = ({
 	timeout,
 	text,
 	timeoutText = 'Process timeout',
-	size = 'default',
+	size = 'default'
 }: Props) => {
 	const [displayLoader, setDisplayLoader] = useState(true);
 

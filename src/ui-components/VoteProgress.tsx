@@ -34,7 +34,7 @@ export const VoteProgressLegacy = ({
 	className,
 	nayVotes,
 	ayesNum,
-	naysNum,
+	naysNum
 }: IVoteProgressLegacyProps) => {
 	const { network } = useNetworkContext();
 
@@ -43,8 +43,8 @@ export const VoteProgressLegacy = ({
 			formatBnBalance(
 				bn,
 				{ numberAfterComma: 6, withThousandDelimitor: false },
-				network,
-			),
+				network
+			)
 		);
 	};
 
@@ -108,7 +108,7 @@ const VoteProgress: FC<IVoteProgressProps> = ({
 	nayVotes,
 	ayesNum,
 	naysNum,
-	turnoutPercentage,
+	turnoutPercentage
 }) => {
 	const { network } = useNetworkContext();
 
@@ -117,8 +117,8 @@ const VoteProgress: FC<IVoteProgressProps> = ({
 			formatBnBalance(
 				bn,
 				{ numberAfterComma: 6, withThousandDelimitor: false },
-				network,
-			),
+				network
+			)
 		);
 	};
 
@@ -168,13 +168,13 @@ const VoteProgress: FC<IVoteProgressProps> = ({
 						{
 							color: '#6DE1A2',
 							title: 'Aye',
-							value: isAyeNaN ? 50 : ayePercent,
+							value: isAyeNaN ? 50 : ayePercent
 						},
 						{
 							color: '#FF778F',
 							title: 'Nay',
-							value: isNayNaN ? 50 : nayPercent,
-						},
+							value: isNayNaN ? 50 : nayPercent
+						}
 					]}
 				/>
 			</>

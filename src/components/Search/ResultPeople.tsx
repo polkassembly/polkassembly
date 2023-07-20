@@ -29,7 +29,7 @@ const ResultPeople = ({
 	className,
 	peopleData,
 	peoplePage,
-	setPeoplePage,
+	setPeoplePage
 }: Props) => {
 	return peopleData.length > 0 ? (
 		<>

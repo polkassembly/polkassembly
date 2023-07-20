@@ -38,7 +38,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const strProposalType = String(proposalType);
 	if (!isOffChainProposalTypeValid(strProposalType))
 		return res.status(400).json({
-			message: `The off chain proposal type of the name "${proposalType}" does not exist.`,
+			message: `The off chain proposal type of the name "${proposalType}" does not exist.`
 		});
 
 	const strPollType = String(pollType);

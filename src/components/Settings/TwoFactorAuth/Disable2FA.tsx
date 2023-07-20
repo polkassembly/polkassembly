@@ -38,7 +38,7 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 
 		try {
 			const { data, error } = await nextApiClientFetch<TokenType>(
-				'api/v1/auth/actions/2fa/disable',
+				'api/v1/auth/actions/2fa/disable'
 			);
 
 			if (error || !data || !data.token) {
@@ -52,7 +52,7 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 			queueNotification({
 				header: 'Success',
 				message: 'Two factor authentication disabled successfully!',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 
 			setShowModal(false);
@@ -93,7 +93,7 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 						disabled={loading}
 					>
 						Cancel
-					</Button>,
+					</Button>
 				]}
 			>
 				{currentUser.is2FAEnabled ? (

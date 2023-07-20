@@ -11,14 +11,14 @@ import {
 	ProposalType,
 	TSubsquidProposalType,
 	VoteType,
-	getSubsquidProposalType,
+	getSubsquidProposalType
 } from '~src/global/proposalType';
 import {
 	CONVICTION_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX,
 	MOONBEAM_VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX,
 	VOTING_HISTORY_BY_VOTER_ADDRESS,
 	VOTING_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_TYPE_AND_PROPOSAL_INDEX,
-	VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM,
+	VOTING_HISTORY_BY_VOTER_ADDRESS_MOONBEAM
 } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -28,7 +28,7 @@ import messages from '~src/util/messages';
 export enum EDecision {
 	YES = 'yes',
 	NO = 'no',
-	ABSTAIN = 'abstain',
+	ABSTAIN = 'abstain'
 }
 
 export interface IVoteHistory {
@@ -66,7 +66,7 @@ export interface IGetVotesHistoryParams {
 	proposalIndex?: string | string[] | number;
 }
 export async function getVotesHistory(
-	params: IGetVotesHistoryParams,
+	params: IGetVotesHistoryParams
 ): Promise<IApiResponse<IVotesHistoryResponse>> {
 	try {
 		const {
@@ -75,12 +75,12 @@ export async function getVotesHistory(
 			listingLimit,
 			page,
 			proposalIndex,
-			proposalType,
+			proposalType
 		} = params;
 		if (!voterAddress) {
 			throw apiErrorWithStatusCode(
 				`Voter address ${voterAddress} can't be empty`,
-				400,
+				400
 			);
 		}
 
@@ -88,7 +88,7 @@ export async function getVotesHistory(
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(
 				`The listingLimit "${listingLimit}" is invalid.`,
-				400,
+				400
 			);
 		}
 
@@ -104,7 +104,7 @@ export async function getVotesHistory(
 		let variables: any = {
 			limit: numListingLimit,
 			offset: numListingLimit * (numPage - 1),
-			voter_eq: String(voterAddress),
+			voter_eq: String(voterAddress)
 		};
 
 		if (
@@ -116,7 +116,7 @@ export async function getVotesHistory(
 			variables = {
 				...variables,
 				index_eq: Number(proposalIndex),
-				type_eq: getSubsquidProposalType(proposalType as any),
+				type_eq: getSubsquidProposalType(proposalType as any)
 			};
 			if (proposalType === ProposalType.REFERENDUM_V2) {
 				query =
@@ -134,7 +134,7 @@ export async function getVotesHistory(
 		const subsquidRes = await fetchSubsquid({
 			network,
 			query: query,
-			variables: variables,
+			variables: variables
 		});
 		const subsquidData = subsquidRes?.data;
 		const isDataAbsent =
@@ -144,7 +144,7 @@ export async function getVotesHistory(
 		if (!subsquidData || isDataAbsent) {
 			throw apiErrorWithStatusCode(
 				`Votes history of voter "${voterAddress}" is not found.`,
-				404,
+				404
 			);
 		}
 
@@ -154,7 +154,7 @@ export async function getVotesHistory(
 				: subsquidData?.votes;
 		const res: IVotesHistoryResponse = {
 			count: 0,
-			votes: [],
+			votes: []
 		};
 		const count =
 			proposalType === ProposalType.REFERENDUM_V2
@@ -169,7 +169,7 @@ export async function getVotesHistory(
 				if (vote) {
 					res.votes.push({
 						proposalType: vote?.proposal?.type,
-						...vote,
+						...vote
 					} as IVoteHistory);
 				}
 			});
@@ -177,26 +177,26 @@ export async function getVotesHistory(
 		return {
 			data: JSON.parse(JSON.stringify(res)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<IVotesHistoryResponse | MessageType>,
+	res: NextApiResponse<IVotesHistoryResponse | MessageType>
 ) {
 	const {
 		listingLimit = VOTES_LISTING_LIMIT,
 		page = 0,
 		voterAddress,
 		proposalType,
-		proposalIndex,
+		proposalIndex
 	} = req.query;
 
 	const network = String(req.headers['x-network']);
@@ -208,7 +208,7 @@ async function handler(
 		page,
 		proposalIndex,
 		proposalType,
-		voterAddress,
+		voterAddress
 	});
 
 	if (error || !data) {

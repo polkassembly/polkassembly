@@ -109,7 +109,7 @@ export const network = {
 	VARA: 'vara',
 	WESTEND: 'westend',
 	WESTENDCOLLECTIVES: 'westend-collectives',
-	XX: 'xx',
+	XX: 'xx'
 };
 
 export const tokenSymbol = {
@@ -160,7 +160,7 @@ export const tokenSymbol = {
 	XRT: 'XRT',
 	UNIT: 'UNIT',
 	VARA: 'VARA',
-	XX: 'XX',
+	XX: 'XX'
 };
 
 export const chainProperties: types.ChainPropType = {
@@ -182,37 +182,37 @@ export const chainProperties: types.ChainPropType = {
 		rpcEndpoints: [
 			{
 				label: 'via On-finality',
-				key: 'wss://polkadot.api.onfinality.io/public-ws',
+				key: 'wss://polkadot.api.onfinality.io/public-ws'
 			},
 			{
 				label: 'via Dwellir',
-				key: 'wss://polkadot-rpc.dwellir.com',
+				key: 'wss://polkadot-rpc.dwellir.com'
 			},
 			{
 				label: 'via Parity',
-				key: 'wss://rpc.polkadot.io',
+				key: 'wss://rpc.polkadot.io'
 			},
 			{
 				label: 'via Pinknode',
-				key: 'wss://public-rpc.pinknode.io/polkadot',
+				key: 'wss://public-rpc.pinknode.io/polkadot'
 			},
 			{
 				label: 'via IBP-GeoDNS1',
-				key: 'wss://rpc.ibp.network/polkadot',
+				key: 'wss://rpc.ibp.network/polkadot'
 			},
 			{
 				label: 'via IBP-GeoDNS2',
-				key: 'wss://rpc.dotters.network/polkadot',
+				key: 'wss://rpc.dotters.network/polkadot'
 			},
 			{
 				label: 'via RadiumBlock',
-				key: 'wss://polkadot.public.curie.radiumblock.co/ws',
+				key: 'wss://polkadot.public.curie.radiumblock.co/ws'
 			},
 			{
 				label: 'light client (experimental)',
-				key: 'light://substrate-connect/polkadot',
-			},
-		],
+				key: 'light://substrate-connect/polkadot'
+			}
+		]
 	},
 	[network.KUSAMA]: {
 		blockTime: 6000,
@@ -232,33 +232,33 @@ export const chainProperties: types.ChainPropType = {
 		rpcEndpoints: [
 			{
 				label: 'via On-finality',
-				key: 'wss://kusama.api.onfinality.io/public-ws',
+				key: 'wss://kusama.api.onfinality.io/public-ws'
 			},
 			{
 				label: 'via Dwellir',
-				key: 'wss://kusama-rpc.dwellir.com',
+				key: 'wss://kusama-rpc.dwellir.com'
 			},
 			{
 				label: 'via Parity',
-				key: 'wss://kusama-rpc.polkadot.io',
+				key: 'wss://kusama-rpc.polkadot.io'
 			},
 			{
 				label: 'via IBP-GeoDNS1',
-				key: 'wss://rpc.ibp.network/kusama',
+				key: 'wss://rpc.ibp.network/kusama'
 			},
 			{
 				label: 'via IBP-GeoDNS2',
-				key: 'wss://rpc.dotters.network/kusama',
+				key: 'wss://rpc.dotters.network/kusama'
 			},
 			{
 				label: 'via RadiumBlock',
-				key: 'wss://kusama.public.curie.radiumblock.co/ws',
+				key: 'wss://kusama.public.curie.radiumblock.co/ws'
 			},
 			{
 				label: 'light client (experimental)',
-				key: 'light://substrate-connect/kusama',
-			},
-		],
+				key: 'light://substrate-connect/kusama'
+			}
+		]
 	},
 	[network.ACALA]: {
 		blockTime: 12000,
@@ -275,7 +275,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '50',
 		externalLinks: 'https://acala.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.ACUITY]: {
 		blockTime: 6000,
@@ -292,7 +292,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.ALTAIR]: {
 		blockTime: 12000,
@@ -309,7 +309,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '500',
 		externalLinks: 'https://altair.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.AMPLITUDE]: {
 		blockTime: 12000,
@@ -326,7 +326,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://polkaholic.io',
 		gTag: 'G-CJQ1ZL472N',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.ASTAR]: {
 		blockTime: 12000,
@@ -343,7 +343,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://astar.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.AUTOMATA]: {
 		blockTime: 6000,
@@ -360,7 +360,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.BASILISK]: {
 		blockTime: 12000,
@@ -377,7 +377,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '50000',
 		externalLinks: 'https://basilisk.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.PIONEER]: {
 		blockTime: 12000,
@@ -394,7 +394,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '50',
 		externalLinks: 'https://pioneer.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.CALAMARI]: {
 		blockTime: 12000,
@@ -411,7 +411,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://calamari.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.CENTRIFUGE]: {
 		blockTime: 12000,
@@ -429,7 +429,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '5000',
 		externalLinks: 'https://centrifuge.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.CERE]: {
 		blockTime: 6000,
@@ -446,7 +446,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://stats.cere.network',
 		gTag: 'G-7E14M1ZSCB',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	//TODO: Aleem=> Need to update collective network, currently using polkadot data
 	[network.COLLECTIVES]: {
@@ -459,26 +459,26 @@ export const chainProperties: types.ChainPropType = {
 			{ key: 'wss://1rpc.io/dot', label: 'Automata 1RPC' },
 			{
 				key: 'wss://polkadot-public-rpc.blockops.network/ws',
-				label: 'BlockOps',
+				label: 'BlockOps'
 			},
 			{ key: 'wss://polkadot-rpc.dwellir.com', label: 'Dwellir' },
 			{
 				key: 'wss://polkadot-rpc-tn.dwellir.com',
-				label: 'Dwellir Tunisia',
+				label: 'Dwellir Tunisia'
 			},
 			{ key: 'wss://rpc.ibp.network/polkadot', label: 'IBP-GeoDNS1' },
 			{ key: 'wss://rpc.dotters.network/polkadot', label: 'IBP-GeoDNS2' },
 			{ key: 'wss://rpc-polkadot.luckyfriday.io', label: 'LuckyFriday' },
 			{
 				key: 'wss://polkadot.api.onfinality.io/public-ws',
-				label: 'OnFinality',
+				label: 'OnFinality'
 			},
 			{ key: 'wss://rpc.polkadot.io', label: 'Parity' },
 			{
 				key: 'wss://polkadot.public.curie.radiumblock.co/ws',
-				label: 'RadiumBlock',
+				label: 'RadiumBlock'
 			},
-			{ key: 'wss://dot-rpc.stakeworld.io', label: 'Stakeworld' },
+			{ key: 'wss://dot-rpc.stakeworld.io', label: 'Stakeworld' }
 		],
 		ss58Format: 0,
 		subsquidUrl:
@@ -490,7 +490,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.COMPOSABLE]: {
 		blockTime: 12000,
@@ -507,7 +507,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '1000',
 		externalLinks: 'https://composable.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.CRUST]: {
 		blockTime: 12000,
@@ -524,7 +524,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://crust.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.CRUSTSHADOW]: {
 		blockTime: 12000,
@@ -541,7 +541,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.EQUILIBRIUM]: {
 		blockTime: 12000,
@@ -559,7 +559,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://equilibrium.api.subscan.io',
 		gTag: 'G-PPZV91T0GH',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.FREQUENCY]: {
 		blockTime: 12000,
@@ -576,7 +576,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: 'G-26N0DJ37DD',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.GEAR]: {
 		blockTime: 1000,
@@ -593,7 +593,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.GENSHIRO]: {
 		blockTime: 6000,
@@ -610,7 +610,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://genshiro.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.GMORDIE]: {
 		blockTime: 9000,
@@ -627,7 +627,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.HASHED]: {
 		blockTime: 12000,
@@ -644,7 +644,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '0.0000033333333',
 		externalLinks: '',
 		gTag: 'G-KQYQ8N8337',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.HEIKO]: {
 		blockTime: 13000,
@@ -661,7 +661,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.HYDRADX]: {
 		blockTime: 12000,
@@ -678,7 +678,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '50000',
 		externalLinks: 'https://hydradx.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.INTEGRITEE]: {
 		blockTime: 12000,
@@ -696,7 +696,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '50000',
 		externalLinks: 'https://integritee.api.subscan.io',
 		gTag: 'G-D4LGZ5LEGK',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.KARURA]: {
 		blockTime: 12000,
@@ -713,7 +713,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '25',
 		externalLinks: 'https://karura.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.KYLIN]: {
 		blockTime: 12000,
@@ -730,7 +730,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.KHALA]: {
 		blockTime: 12000,
@@ -747,7 +747,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://khala.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.KILT]: {
 		blockTime: 12000,
@@ -764,7 +764,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://spiritnet.api.subscan.io',
 		gTag: 'G-J37GVF0HCS',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.MANTA]: {
 		blockTime: 12000,
@@ -781,7 +781,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.MOONBASE]: {
 		blockTime: 12000,
@@ -798,7 +798,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://moonbase.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.SHIBUYA]: {
 		blockTime: 12000,
@@ -815,7 +815,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://shibuya.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.MOONBEAM]: {
 		blockTime: 12000,
@@ -832,7 +832,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://moonbeam.api.subscan.io',
 		gTag: 'G-FS09G34H85',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.MOONRIVER]: {
 		blockTime: 12000,
@@ -849,7 +849,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://moonriver.api.subscan.io',
 		gTag: 'G-RMV9VEZFF2',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.MYRIAD]: {
 		blockTime: 6000,
@@ -866,7 +866,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://explorer.mainnet.oct.network/myriad',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.PARALLEL]: {
 		blockTime: 12000,
@@ -883,7 +883,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '5',
 		externalLinks: 'https://parallel.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.PENDULUM]: {
 		blockTime: 12000,
@@ -900,7 +900,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://polkaholic.io',
 		gTag: 'G-EGV0NKCPZG',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.POLKADEX]: {
 		blockTime: 12000,
@@ -917,7 +917,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '100',
 		externalLinks: 'https://polkadex.api.subscan.io',
 		gTag: 'G-EB50MSH198',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.POLYMESH]: {
 		blockTime: 6000,
@@ -934,7 +934,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://polymesh.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.POLYMESHTEST]: {
 		blockTime: 6000,
@@ -951,7 +951,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.PICASSO]: {
 		blockTime: 12000,
@@ -968,7 +968,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '10000',
 		externalLinks: 'https://picasso.api.subscan.io',
 		gTag: 'G-2MRWG10DTE',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.PICHIUROCOCO]: {
 		blockTime: 12000,
@@ -985,7 +985,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.PICHIU]: {
 		blockTime: 12000,
@@ -1002,7 +1002,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '25',
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.ROBONOMICS]: {
 		blockTime: 12000,
@@ -1020,7 +1020,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://robonomics.api.subscan.io',
 		gTag: 'G-P13GPB87GC',
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.SHIBUYA]: {
 		blockTime: 12000,
@@ -1037,7 +1037,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://shibuya.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.SHIDEN]: {
 		blockTime: 12000,
@@ -1054,7 +1054,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://shiden.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.SNOW]: {
 		blockTime: 12000,
@@ -1071,7 +1071,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://snow.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.TANGANIKA]: {
 		blockTime: 12000,
@@ -1088,7 +1088,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.TIDECHAIN]: {
 		blockTime: 12000,
@@ -1105,7 +1105,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.TURING]: {
 		blockTime: 12000,
@@ -1122,7 +1122,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '5',
 		externalLinks: 'https://turing.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.VARA]: {
 		blockTime: 2000,
@@ -1139,7 +1139,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.WESTENDCOLLECTIVES]: {
 		blockTime: 6000,
@@ -1156,7 +1156,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.WESTEND]: {
 		blockTime: 6000,
@@ -1173,7 +1173,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://westend.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: [],
+		rpcEndpoints: []
 	},
 	[network.XX]: {
 		blockTime: 6000,
@@ -1190,8 +1190,8 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://explorer.xx.network',
 		gTag: 'G-23WF4VNWK4',
-		rpcEndpoints: [],
-	},
+		rpcEndpoints: []
+	}
 };
 
 export const chainLinks: types.ChainLinksType = {
@@ -1203,7 +1203,7 @@ export const chainLinks: types.ChainLinksType = {
 		reddit: 'https://www.reddit.com/r/polkadot',
 		telegram: 'https://t.me/PolkadotOfficial',
 		twitter: 'https://twitter.com/Polkadot',
-		youtube: 'https://www.youtube.com/channel/UCB7PbjuZLEba_znc7mEGNgw',
+		youtube: 'https://www.youtube.com/channel/UCB7PbjuZLEba_znc7mEGNgw'
 	},
 	[network.KUSAMA]: {
 		blockExplorer: 'https://kusama.api.subscan.io/',
@@ -1213,15 +1213,15 @@ export const chainLinks: types.ChainLinksType = {
 		reddit: 'https://www.reddit.com/r/Kusama/',
 		telegram: 'https://t.me/kusamanetworkofficial',
 		twitter: 'https://twitter.com/kusamanetwork',
-		youtube: 'https://www.youtube.com/channel/UCq4MRrQhdoIR0b44GxcCPxw',
-	},
+		youtube: 'https://www.youtube.com/channel/UCq4MRrQhdoIR0b44GxcCPxw'
+	}
 };
 
 export const chainDetails: { [index: string]: string } = {
 	[network.POLKADOT]:
 		'Polkadot enables scalability by allowing specialized blockchains to communicate with each other in a secure, trust-free environment. Polkadot is built to connect and secure unique blockchains, whether they be public, permission-less networks, private consortium chains, or oracles and other Web3 technologies. It enables an internet where independent blockchains can exchange information under common security guarantees. Polkadot uses a sophisticated governance mechanism that allows it to evolve gracefully overtime at the ultimate behest of its assembled stakeholders. The stated goal is to ensure that the majority of the stake can always command the network.',
 	[network.KUSAMA]:
-		'Kusama is an early release of Polkadot: a scalable, multichain network for radical innovation. Kusama serves as a proving ground that allows teams and developers to build and deploy a parachain, and experiment with Polkadot’s governance and NPoS functionality in a real environment.',
+		'Kusama is an early release of Polkadot: a scalable, multichain network for radical innovation. Kusama serves as a proving ground that allows teams and developers to build and deploy a parachain, and experiment with Polkadot’s governance and NPoS functionality in a real environment.'
 };
 
 export const addressPrefix: Record<string, number> = {
@@ -1229,5 +1229,5 @@ export const addressPrefix: Record<string, number> = {
 	moonbeam: 1284,
 	moonriver: 1285,
 	moonbase: 1287,
-	polkadot: 0,
+	polkadot: 0
 };

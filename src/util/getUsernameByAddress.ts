@@ -12,7 +12,7 @@ export default async function getUsernameByAddress(address: string) {
 
 	const { data, error } =
 		await nextApiClientFetch<IGetProfileWithAddressResponse>(
-			`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`,
+			`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`
 		);
 	if (error || !data || !data.username) return null;
 

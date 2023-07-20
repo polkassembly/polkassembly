@@ -13,7 +13,7 @@ import messages from './messages';
  */
 export default function getUserIdFromJWT(
 	token: string,
-	publicKey: string | undefined,
+	publicKey: string | undefined
 ): number {
 	if (!publicKey) {
 		const key =

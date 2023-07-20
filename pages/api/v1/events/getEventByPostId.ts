@@ -11,7 +11,7 @@ import { NetworkEvent } from '~src/types';
 
 const handler: NextApiHandler<NetworkEvent | MessageType> = async (
 	req,
-	res,
+	res
 ) => {
 	const network = String(req.headers['x-network']);
 	if (!network)

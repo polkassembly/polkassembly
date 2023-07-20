@@ -14,7 +14,7 @@ import messages from '~src/auth/utils/messages';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<Subscription | MessageType>,
+	res: NextApiResponse<Subscription | MessageType>
 ) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network))
@@ -25,7 +25,7 @@ async function handler(
 	const strProposalType = String(proposalType);
 	if (!isFirestoreProposalTypeValid(strProposalType)) {
 		return res.status(400).json({
-			message: `The proposal type "${proposalType}" is invalid.`,
+			message: `The proposal type "${proposalType}" is invalid.`
 		});
 	}
 	const numPostId = Number(post_id);

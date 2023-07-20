@@ -31,7 +31,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 	useEffect(() => {
 		setLoading(true);
 		nextApiClientFetch<IChildBountiesResponse>(
-			`api/v1/child_bounties?page=${currentPage}&listingLimit=${VOTES_LISTING_LIMIT}&postId=${bountyId}`,
+			`api/v1/child_bounties?page=${currentPage}&listingLimit=${VOTES_LISTING_LIMIT}&postId=${bountyId}`
 		)
 			.then((res) => {
 				const data = res.data;
@@ -76,7 +76,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 										</div>
 									</div>
 								</Link>
-							),
+							)
 					)
 				) : (
 					<PostEmptyState />

@@ -22,7 +22,7 @@ import {
 	fetchSocietyChallenge,
 	fetchSocietyRotate,
 	fetchStakingInfo,
-	fetchTreasurySpend,
+	fetchTreasurySpend
 } from '~src/util/getCalendarEvents';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -60,7 +60,7 @@ const UpcomingEvents = ({ className }: Props) => {
 				fetchSocietyRotate(api, network),
 				fetchSocietyChallenge(api, network),
 				fetchAuctionInfo(api, network),
-				fetchParachainLease(api, network),
+				fetchParachainLease(api, network)
 			];
 
 			const eventsSettled = await Promise.allSettled(eventPromises);
@@ -74,7 +74,7 @@ const UpcomingEvents = ({ className }: Props) => {
 						eventSettled.value.forEach((eventObj, i) => {
 							const type = eventObj?.type?.replace(
 								/([A-Z])/g,
-								' $1',
+								' $1'
 							);
 							const title =
 								type.charAt(0).toUpperCase() + type.slice(1);
@@ -92,10 +92,10 @@ const UpcomingEvents = ({ className }: Props) => {
 								start_time: dayjs(eventObj.startDate).toDate(),
 								status: 'approved',
 								title,
-								url: '',
+								url: ''
 							});
 							const eventDateStr = dayjs(
-								eventObj.startDate,
+								eventObj.startDate
 							).format('L');
 							eventDatesArr.push(eventDateStr);
 						});
@@ -105,7 +105,7 @@ const UpcomingEvents = ({ className }: Props) => {
 						eventSettled.value.forEach((eventObj, i) => {
 							eventsArr.push({
 								content: `Council Motion ${String(
-									eventObj?.data?.hash,
+									eventObj?.data?.hash
 								)?.substring(0, 10)}...`,
 								end_time: dayjs(eventObj.endDate).toDate(),
 								id: `councilMotionEvent_${i}`,
@@ -113,10 +113,10 @@ const UpcomingEvents = ({ className }: Props) => {
 								start_time: dayjs(eventObj.endDate).toDate(),
 								status: 'approved',
 								title: 'Council Motion',
-								url: '',
+								url: ''
 							});
 							const eventDateStr = dayjs(eventObj.endDate).format(
-								'L',
+								'L'
 							);
 							eventDatesArr.push(eventDateStr);
 						});
@@ -132,10 +132,10 @@ const UpcomingEvents = ({ className }: Props) => {
 								start_time: dayjs(eventObj.endDate).toDate(),
 								status: 'approved',
 								title: 'Start New Council Election',
-								url: '',
+								url: ''
 							});
 							const eventDateStr = dayjs(eventObj.endDate).format(
-								'L',
+								'L'
 							);
 							eventDatesArr.push(eventDateStr);
 						});
@@ -146,7 +146,7 @@ const UpcomingEvents = ({ className }: Props) => {
 							eventsArr.push({
 								content: eventObj?.data?.id
 									? `Execute named scheduled task ${String(
-											eventObj?.data?.id,
+											eventObj?.data?.id
 									  )?.substring(0, 10)}...`
 									: 'Execute anonymous scheduled task',
 								end_time: dayjs(eventObj.endDate).toDate(),
@@ -155,10 +155,10 @@ const UpcomingEvents = ({ className }: Props) => {
 								start_time: dayjs(eventObj.endDate).toDate(),
 								status: 'approved',
 								title: 'Scheduled Task',
-								url: '',
+								url: ''
 							});
 							const eventDateStr = dayjs(eventObj.endDate).format(
-								'L',
+								'L'
 							);
 							eventDatesArr.push(eventDateStr);
 						});
@@ -174,10 +174,10 @@ const UpcomingEvents = ({ className }: Props) => {
 								start_time: dayjs(eventObj.endDate).toDate(),
 								status: 'approved',
 								title: 'Start Spend Period',
-								url: '',
+								url: ''
 							});
 							const eventDateStr = dayjs(eventObj.endDate).format(
-								'L',
+								'L'
 							);
 							eventDatesArr.push(eventDateStr);
 						});
@@ -193,10 +193,10 @@ const UpcomingEvents = ({ className }: Props) => {
 								start_time: dayjs(eventObj.endDate).toDate(),
 								status: 'approved',
 								title: 'Democracy Dispatch',
-								url: '',
+								url: ''
 							});
 							const eventDateStr = dayjs(eventObj.endDate).format(
-								'L',
+								'L'
 							);
 							eventDatesArr.push(eventDateStr);
 						});
@@ -212,10 +212,10 @@ const UpcomingEvents = ({ className }: Props) => {
 								start_time: dayjs(eventObj.endDate).toDate(),
 								status: 'approved',
 								title: 'Start Referendum Voting Period',
-								url: '',
+								url: ''
 							});
 							const eventDateStr = dayjs(eventObj.endDate).format(
-								'L',
+								'L'
 							);
 							eventDatesArr.push(eventDateStr);
 						});
@@ -231,10 +231,10 @@ const UpcomingEvents = ({ className }: Props) => {
 								start_time: dayjs(eventObj.endDate).toDate(),
 								status: 'approved',
 								title: 'New Members & Bids',
-								url: '',
+								url: ''
 							});
 							const eventDateStr = dayjs(eventObj.endDate).format(
-								'L',
+								'L'
 							);
 							eventDatesArr.push(eventDateStr);
 						});
@@ -250,10 +250,10 @@ const UpcomingEvents = ({ className }: Props) => {
 								start_time: dayjs(eventObj.endDate).toDate(),
 								status: 'approved',
 								title: 'Start Membership Challenge Period',
-								url: '',
+								url: ''
 							});
 							const eventDateStr = dayjs(eventObj.endDate).format(
-								'L',
+								'L'
 							);
 							eventDatesArr.push(eventDateStr);
 						});
@@ -269,10 +269,10 @@ const UpcomingEvents = ({ className }: Props) => {
 								start_time: dayjs(eventObj.endDate).toDate(),
 								status: 'approved',
 								title: 'End Parachain Auction',
-								url: '',
+								url: ''
 							});
 							const eventDateStr = dayjs(eventObj.endDate).format(
-								'L',
+								'L'
 							);
 							eventDatesArr.push(eventDateStr);
 						});
@@ -288,10 +288,10 @@ const UpcomingEvents = ({ className }: Props) => {
 								start_time: dayjs(eventObj.endDate).toDate(),
 								status: 'approved',
 								title: 'Start Parachain Lease Period',
-								url: '',
+								url: ''
 							});
 							const eventDateStr = dayjs(eventObj.endDate).format(
-								'L',
+								'L'
 							);
 							eventDatesArr.push(eventDateStr);
 						});
@@ -331,7 +331,7 @@ const UpcomingEvents = ({ className }: Props) => {
 						start_time: dayjs(eventObj.end_time).toDate(),
 						status: eventObj.status,
 						title: eventObj.title,
-						url: eventObj.url,
+						url: eventObj.url
 					});
 					const eventDateStr = dayjs(eventObj.end_time).format('L');
 					eventDatesArr.push(eventDateStr);
@@ -411,7 +411,7 @@ const UpcomingEvents = ({ className }: Props) => {
 				dataSource={calendarEvents.sort(
 					(a, b) =>
 						(a?.end_time?.getTime() || a?.start_time?.getTime()) -
-						(b?.end_time?.getTime() || b?.start_time?.getTime()),
+						(b?.end_time?.getTime() || b?.start_time?.getTime())
 				)}
 				renderItem={(item) => {
 					return (

@@ -13,7 +13,7 @@ enum ESentiment {
 	SlightlyAgainst = 2,
 	Neutral = 3,
 	SlightlyFor = 4,
-	For = 5,
+	For = 5
 }
 
 interface Props {
@@ -33,7 +33,7 @@ const CommentSentimentModal = ({
 	setIsSentimentPost,
 	className,
 	sentiment,
-	setSentiment,
+	setSentiment
 }: Props) => {
 	const handleClick = () => {
 		setIsSentimentPost(true);
@@ -79,7 +79,7 @@ const CommentSentimentModal = ({
 						Done
 						<CheckOutlined />
 					</Button>
-				</div>,
+				</div>
 			]}
 			closeIcon={<CloseIcon />}
 			zIndex={1002}
@@ -102,7 +102,7 @@ const CommentSentimentModal = ({
 						2: { label: <span></span> },
 						3: { label: <span></span> },
 						4: { label: <span></span> },
-						5: { label: <span></span> },
+						5: { label: <span></span> }
 					}}
 					min={1}
 					max={5}
@@ -116,7 +116,7 @@ const CommentSentimentModal = ({
 	);
 };
 export default styled(CommentSentimentModal).attrs(({ sentiment }: Props) => ({
-	className: sentiment,
+	className: sentiment
 }))`
 	.padding .ant-modal-content {
 		border-radius: 4px !important;

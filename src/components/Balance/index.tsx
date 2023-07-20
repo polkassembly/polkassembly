@@ -22,7 +22,7 @@ const Balance = ({
 	address,
 	onChange,
 	isBalanceUpdated,
-	setAvailableBalance,
+	setAvailableBalance
 }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
@@ -32,10 +32,10 @@ const Balance = ({
 	const isReferendum = [
 		ProposalType.REFERENDUMS,
 		ProposalType.REFERENDUM_V2,
-		ProposalType.FELLOWSHIP_REFERENDUMS,
+		ProposalType.FELLOWSHIP_REFERENDUMS
 	].includes(postData?.postType);
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(
-		postData?.postType,
+		postData?.postType
 	);
 
 	useEffect(() => {
@@ -48,7 +48,7 @@ const Balance = ({
 					setBalance(result.toHuman()?.Positive?.toString() || '0');
 					setAvailableBalance &&
 						setAvailableBalance(
-							result.toHuman()?.Positive?.toString() || '0',
+							result.toHuman()?.Positive?.toString() || '0'
 						);
 					onChange &&
 						onChange(result.toHuman()?.Positive?.toString() || '0');
@@ -63,21 +63,21 @@ const Balance = ({
 							result
 								.toHuman()
 								.data?.V0?.balance?.[0]?.[1]?.Positive?.toString()
-								.replaceAll(',', '') || '0',
+								.replaceAll(',', '') || '0'
 						);
 						setAvailableBalance &&
 							setAvailableBalance(
 								result
 									.toHuman()
 									.data?.V0?.balance?.[0]?.[1]?.Positive?.toString()
-									.replaceAll(',', '') || '0',
+									.replaceAll(',', '') || '0'
 							);
 						onChange &&
 							onChange(
 								result
 									.toHuman()
 									.data?.V0?.balance?.[0]?.[1]?.Positive?.toString()
-									.replaceAll(',', '') || '0',
+									.replaceAll(',', '') || '0'
 							);
 					} else {
 						const locked =
@@ -94,19 +94,19 @@ const Balance = ({
 							setBalance(
 								new BN(positive)
 									.sub(new BN(locked))
-									.toString() || '0',
+									.toString() || '0'
 							);
 							setAvailableBalance &&
 								setAvailableBalance(
 									new BN(positive)
 										.sub(new BN(locked))
-										.toString() || '0',
+										.toString() || '0'
 								);
 							onChange &&
 								onChange(
 									new BN(positive)
 										.sub(new BN(locked))
-										.toString() || '0',
+										.toString() || '0'
 								);
 						} else {
 							setBalance(positive);
@@ -131,7 +131,7 @@ const Balance = ({
 						setBalance(result.data?.free?.toString() || '0');
 						setAvailableBalance &&
 							setAvailableBalance(
-								result.data?.free?.toString() || '0',
+								result.data?.free?.toString() || '0'
 							);
 						onChange &&
 							onChange(result.data?.free?.toString() || '0');
@@ -143,7 +143,7 @@ const Balance = ({
 						setBalance(
 							(
 								result.data?.free?.toBigInt() + reserved
-							).toString() || '0',
+							).toString() || '0'
 						);
 						setAvailableBalance &&
 							setAvailableBalance(
@@ -151,13 +151,13 @@ const Balance = ({
 									result.data?.free?.toBigInt() +
 									reserved -
 									frozen
-								).toString() || '0',
+								).toString() || '0'
 							);
 						onChange &&
 							onChange(
 								(
 									result.data?.free?.toBigInt() + reserved
-								).toString() || '0',
+								).toString() || '0'
 							);
 					} else if (
 						result.data.free &&
@@ -166,19 +166,19 @@ const Balance = ({
 						setBalance(
 							(
 								result.data?.free?.toBigInt() - frozen
-							).toString() || '0',
+							).toString() || '0'
 						);
 						setAvailableBalance &&
 							setAvailableBalance(
 								(
 									result.data?.free?.toBigInt() - frozen
-								).toString() || '0',
+								).toString() || '0'
 							);
 						onChange &&
 							onChange(
 								(
 									result.data?.free?.toBigInt() - frozen
-								).toString() || '0',
+								).toString() || '0'
 							);
 					} else {
 						setBalance('0');
@@ -200,7 +200,7 @@ const Balance = ({
 				{formatBnBalance(
 					balance,
 					{ numberAfterComma: 2, withUnit: true },
-					network,
+					network
 				)}
 			</span>
 		</div>

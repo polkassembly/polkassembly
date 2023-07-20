@@ -22,12 +22,12 @@ export interface IChildBountiesResponse {
 // expects optional id, page, voteType and listingLimit
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<IChildBountiesResponse | { error: string }>,
+	res: NextApiResponse<IChildBountiesResponse | { error: string }>
 ) {
 	const {
 		postId = 0,
 		page = 1,
-		listingLimit = VOTES_LISTING_LIMIT,
+		listingLimit = VOTES_LISTING_LIMIT
 	} = req.query;
 
 	const network = String(req.headers['x-network']);
@@ -38,7 +38,7 @@ async function handler(
 	const numListingLimit = Number(listingLimit);
 	if (isNaN(numListingLimit)) {
 		res.status(400).json({
-			error: `The listingLimit "${listingLimit}" is invalid.`,
+			error: `The listingLimit "${listingLimit}" is invalid.`
 		});
 	}
 
@@ -59,13 +59,13 @@ async function handler(
 	const variables: any = {
 		limit: numListingLimit,
 		offset: numListingLimit * (numPage - 1),
-		parentBountyIndex_eq: numPostId,
+		parentBountyIndex_eq: numPostId
 	};
 
 	const subsquidRes = await fetchSubsquid({
 		network,
 		query: GET_CHILD_BOUNTIES_BY_PARENT_INDEX,
-		variables,
+		variables
 	});
 
 	const subsquidData = subsquidRes?.data;
@@ -77,21 +77,20 @@ async function handler(
 	) {
 		throw apiErrorWithStatusCode(
 			`Child bounties of bounty index "${postId}" is not found.`,
-			404,
+			404
 		);
 	}
 
 	const resObj: IChildBountiesResponse = {
 		child_bounties: [],
-		child_bounties_count:
-			subsquidData?.proposalsConnection?.totalCount || 0,
+		child_bounties_count: subsquidData?.proposalsConnection?.totalCount || 0
 	};
 
 	subsquidData.proposals.forEach((childBounty: any) => {
 		resObj.child_bounties.push({
 			description: childBounty.description,
 			index: childBounty.index,
-			status: childBounty.status,
+			status: childBounty.status
 		});
 	});
 

@@ -39,7 +39,7 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 					label="All"
 					count={posts?.All?.data?.count || 0}
 				/>
-			),
+			)
 		},
 		...fellowshipReferendumPostOrigins.map((value) => {
 			return {
@@ -56,15 +56,15 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 						label={value.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
 						count={posts?.[value]?.data?.count || 0}
 					/>
-				),
+				)
 			};
 		}),
 		{
 			key: 'Filter',
 			label: (
 				<FilterByTags className="hidden sm:flex sm:mr-1 sm:mt-1 sm:mb-2" />
-			),
-		},
+			)
+		}
 	];
 	const router = useRouter();
 	const trackName = router.query['trackName'];
@@ -84,8 +84,8 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 			query: {
 				...query,
 				page: 1,
-				trackName: key,
-			},
+				trackName: key
+			}
 		});
 	};
 
@@ -95,8 +95,8 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 			query: {
 				...router.query,
 				page,
-				trackName: activeTab,
-			},
+				trackName: activeTab
+			}
 		});
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};

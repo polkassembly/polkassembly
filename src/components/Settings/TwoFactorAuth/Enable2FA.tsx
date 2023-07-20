@@ -9,7 +9,7 @@ import {
 	Modal,
 	QRCode as QRCodeAntD,
 	Spin,
-	message,
+	message
 } from 'antd';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -36,7 +36,7 @@ const Title = (
 
 const init2FARes: I2FAGenerateResponse = {
 	base32_secret: '',
-	url: '',
+	url: ''
 };
 
 const Enable2FA: FC<{ className?: string }> = ({ className }) => {
@@ -64,7 +64,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 			// send as string just in case it starts with 0
 			const { data, error } = await nextApiClientFetch<TokenType>(
 				'api/v1/auth/actions/2fa/verify',
-				{ authCode: String(authCode) },
+				{ authCode: String(authCode) }
 			);
 
 			if (error || !data || !data.token) {
@@ -78,7 +78,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 			queueNotification({
 				header: 'Success',
 				message: 'Two factor authentication enabled successfully!',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 
 			setShowModal(false);
@@ -105,14 +105,14 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<I2FAGenerateResponse>(
-			'api/v1/auth/actions/2fa/generate',
+			'api/v1/auth/actions/2fa/generate'
 		);
 		if (error || !data || !data.base32_secret || !data.url) {
 			setError(error || 'Error generating 2FA secret');
 			queueNotification({
 				header: 'Failed!',
 				message: error,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			console.error('2FA error : ', error);
 			return;
@@ -163,7 +163,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 						className="rounded-lg font-semibold text-md leading-7 text-white py-5 outline-none border-none px-7 inline-flex items-center justify-center bg-pink_primary"
 					>
 						Enable
-					</Button>,
+					</Button>
 				]}
 			>
 				{!currentUser.is2FAEnabled ? (
@@ -237,7 +237,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 									<span
 										onClick={() =>
 											handleCopyClicked(
-												tfaResponse.base32_secret,
+												tfaResponse.base32_secret
 											)
 										}
 										className="p-1 px-2 cursor-pointer rounded-md text-pink_primary border border-solid border-text_secondary text-sm"
@@ -265,7 +265,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 											validator(
 												rule,
 												value = '',
-												callback,
+												callback
 											) {
 												// 7 is just in case the user inputs with a space in between (Google auth formats it with a space)
 												if (
@@ -275,13 +275,13 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 														isNaN(Number(value)))
 												) {
 													callback(
-														rule?.message?.toString(),
+														rule?.message?.toString()
 													);
 												} else {
 													callback();
 												}
-											},
-										},
+											}
+										}
 									]}
 								>
 									<Input

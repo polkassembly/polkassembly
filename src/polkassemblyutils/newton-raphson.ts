@@ -32,7 +32,7 @@ export function newtonRaphson(
 	f: (x: BN) => BN,
 	fp: (x: BN) => BN,
 	x0: BN,
-	options?: Options,
+	options?: Options
 ): NewtonRaphsonResult {
 	let x1: BN, y: BN, yp: BN, iter: number;
 
@@ -55,7 +55,7 @@ export function newtonRaphson(
 		if (yp.abs().lte(eps.mul(y.abs()))) {
 			if (verbose) {
 				console.log(
-					'Newton-Raphson: failed to converged due to nearly zero first derivative',
+					'Newton-Raphson: failed to converged due to nearly zero first derivative'
 				);
 			}
 			return { foundRoot: false };
@@ -72,7 +72,7 @@ export function newtonRaphson(
 						x1.toString() +
 						' after ' +
 						iter +
-						' iterations',
+						' iterations'
 				);
 			}
 			return { foundRoot: true, result: x1 };
@@ -84,7 +84,7 @@ export function newtonRaphson(
 
 	if (verbose) {
 		console.log(
-			'Newton-Raphson: Maximum iterations reached (' + maxIter + ')',
+			'Newton-Raphson: Maximum iterations reached (' + maxIter + ')'
 		);
 	}
 

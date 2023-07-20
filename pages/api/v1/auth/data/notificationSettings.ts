@@ -32,7 +32,7 @@ async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse<
 		{ notification_preferences: IUserNotificationSettings } | MessageType
-	>,
+	>
 ) {
 	const token = getTokenFromReq(req);
 	if (!token) res.status(400).json({ message: 'Token not found' });

@@ -7,14 +7,14 @@ import {
 	LeftOutlined,
 	LikeFilled,
 	LoadingOutlined,
-	RightOutlined,
+	RightOutlined
 } from '@ant-design/icons';
 import { Pagination, PaginationProps, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import Link from 'next/link';
 import {
 	IVoteHistory,
-	IVotesHistoryResponse,
+	IVotesHistoryResponse
 } from 'pages/api/v1/votes/history';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -22,7 +22,7 @@ import { useNetworkContext } from '~src/context';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import {
 	getFirestoreProposalType,
-	getSinglePostLinkFromProposalType,
+	getSinglePostLinkFromProposalType
 } from '~src/global/proposalType';
 
 import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
@@ -53,7 +53,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 				return (
 					<Link
 						href={`/${getSinglePostLinkFromProposalType(
-							getFirestoreProposalType(obj.proposalType) as any,
+							getFirestoreProposalType(obj.proposalType) as any
 						)}/${index}`}
 					>
 						<div className="text-sidebarBlue">
@@ -62,7 +62,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 					</Link>
 				);
 			},
-			title: 'Proposals',
+			title: 'Proposals'
 		},
 		{
 			dataIndex: 'blockNumber',
@@ -72,7 +72,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 					<div className="text-sidebarBlue">#{block}</div>
 				</a>
 			),
-			title: 'Block',
+			title: 'Block'
 		},
 		{
 			dataIndex: 'decision',
@@ -92,14 +92,14 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 					)}
 				</>
 			),
-			title: 'Vote',
-		},
+			title: 'Vote'
+		}
 	];
 
 	useEffect(() => {
 		setLoading(true);
 		nextApiClientFetch<IVotesHistoryResponse>(
-			`api/v1/votes/history?page=${currentPage}&voterAddress=${address}`,
+			`api/v1/votes/history?page=${currentPage}&voterAddress=${address}`
 		)
 			.then((res) => {
 				if (res.error) {
@@ -148,7 +148,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 											currentPage >
 											Math.floor(
 												(count || 0) /
-													VOTES_LISTING_LIMIT,
+													VOTES_LISTING_LIMIT
 											)
 												? 'text-grey_secondary'
 												: ''

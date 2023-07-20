@@ -46,7 +46,7 @@ const convertAnyHexToASCII = (obj: any, network: string): any => {
 		if (isHex(obj)) {
 			try {
 				const str = u8aToString(
-					Buffer.from(obj.replace('0x', ''), 'hex'),
+					Buffer.from(obj.replace('0x', ''), 'hex')
 				);
 				if (containsBinaryData(str)) {
 					const ss58Format = chainProperties?.[network]?.ss58Format;
@@ -89,7 +89,7 @@ const convertAnyHexToASCII = (obj: any, network: string): any => {
 const ArgumentsTableJSONView = ({
 	className,
 	postArguments,
-	showAccountArguments,
+	showAccountArguments
 }: Props) => {
 	const { network } = useNetworkContext();
 	if (postArguments) {
@@ -114,7 +114,7 @@ const ArgumentsTableJSONView = ({
 					</div>
 				),
 				key: 'table',
-				label: 'Table',
+				label: 'Table'
 			},
 			{
 				children: (
@@ -128,8 +128,8 @@ const ArgumentsTableJSONView = ({
 					</div>
 				),
 				key: 'json',
-				label: 'JSON',
-			},
+				label: 'JSON'
+			}
 		];
 
 		return (

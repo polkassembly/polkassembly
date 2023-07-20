@@ -6,7 +6,7 @@ import {
 	ClockCircleOutlined,
 	DislikeOutlined,
 	LikeOutlined,
-	PaperClipOutlined,
+	PaperClipOutlined
 } from '@ant-design/icons';
 import { Divider, Modal, Skeleton, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
@@ -56,7 +56,7 @@ interface IGovernanceProps {
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <Skeleton.Button active />,
-	ssr: false,
+	ssr: false
 });
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const {
@@ -79,7 +79,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		username,
 		tags,
 		spam_users_count,
-		requestedAmount,
+		requestedAmount
 	} = props;
 	const currentUser = useContext(UserDetailsContext);
 	let titleString = title || method || tipReason || noTitle;
@@ -179,7 +179,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<div className="xs:hidden text-lightBlue sm:flex items-center">
 										<NewChatIcon
 											style={{
-												color: '#485F7D',
+												color: '#485F7D'
 											}}
 											className="mr-1 text-lightBlue"
 										/>{' '}
@@ -210,7 +210,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 											style={{
 												background: '#D2D8E080',
 												borderRadius: '20px',
-												padding: '4px 8px',
+												padding: '4px 8px'
 											}}
 											onClick={(e) => {
 												e.stopPropagation();
@@ -239,7 +239,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<Divider
 										type="vertical"
 										style={{
-											borderLeft: '1px solid #485F7D',
+											borderLeft: '1px solid #485F7D'
 										}}
 									/>
 								</>
@@ -259,7 +259,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										type="vertical"
 										className="max-lg:hidden sm:mt-1"
 										style={{
-											borderLeft: '1px solid #485F7D',
+											borderLeft: '1px solid #485F7D'
 										}}
 									/>
 									<TopicTag
@@ -421,7 +421,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 											style={{
 												background: '#D2D8E080',
 												borderRadius: '20px',
-												padding: '4px 8px',
+												padding: '4px 8px'
 											}}
 											onClick={(e) => {
 												e.stopPropagation();

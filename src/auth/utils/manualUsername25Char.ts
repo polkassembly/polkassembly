@@ -4,7 +4,7 @@
 const MANUAL_USERNAME_25_CHAR: string[] = [
 	'marcosdanieldasilvasantos',
 	'masterquincyleroyharrison',
-	'sasha.fleur.polkaassembly',
+	'sasha.fleur.polkaassembly'
 ];
 
 export default MANUAL_USERNAME_25_CHAR;

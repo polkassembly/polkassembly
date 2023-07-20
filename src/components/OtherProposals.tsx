@@ -6,7 +6,7 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import { Collapse, Space } from 'antd';
 import {
 	IPostsByAddressListingResponse,
-	IProposalsObj,
+	IProposalsObj
 } from 'pages/api/v1/listing/posts-by-address';
 import React, { FC, useEffect, useState } from 'react';
 import Address from 'src/ui-components/Address';
@@ -32,13 +32,13 @@ const OtherProposals: FC<IOtherProposalsProps> = ({
 	className,
 	closeSidebar,
 	currPostOnchainID,
-	proposerAddress,
+	proposerAddress
 }) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [proposals, setProposals] = useState<IProposalsObj>({
 		democracy: [],
-		treasury: [],
+		treasury: []
 	});
 
 	useEffect(() => {
@@ -52,7 +52,7 @@ const OtherProposals: FC<IOtherProposalsProps> = ({
 		}
 
 		nextApiClientFetch<IPostsByAddressListingResponse>(
-			`api/v1/listing/posts-by-address?proposerAddress=${substrate_address}`,
+			`api/v1/listing/posts-by-address?proposerAddress=${substrate_address}`
 		)
 			.then((res) => {
 				setLoading(false);
@@ -115,7 +115,7 @@ const OtherProposals: FC<IOtherProposalsProps> = ({
 																	{' '}
 																	<ClockCircleOutlined className="mr-2" />{' '}
 																	{getRelativeCreatedAt(
-																		post.createdAt,
+																		post.createdAt
 																	)}
 																</div>
 															</div>
@@ -163,7 +163,7 @@ const OtherProposals: FC<IOtherProposalsProps> = ({
 																	{' '}
 																	<ClockCircleOutlined className="mr-2" />{' '}
 																	{getRelativeCreatedAt(
-																		post.createdAt,
+																		post.createdAt
 																	)}
 																</div>
 															</div>

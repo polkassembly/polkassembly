@@ -30,9 +30,9 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 			postType: proposalType,
 			postIndex,
 			timeline,
-			tags: oldTags,
+			tags: oldTags
 		},
-		setPostData,
+		setPostData
 	} = usePostDataContext();
 
 	const [tags, setTags] = useState<string[]>(oldTags);
@@ -53,8 +53,8 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 					proposalType,
 					tags: tags && Array.isArray(tags) ? tags : [],
 					timeline,
-					title,
-				},
+					title
+				}
 			);
 
 		if (editError || !data) {
@@ -62,7 +62,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 			queueNotification({
 				header: 'Error!',
 				message: 'Error in saving your post.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			setFormDisabled(false);
 			setError(editError || 'Error in saving post');
@@ -72,7 +72,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 			queueNotification({
 				header: 'Success!',
 				message: 'Your post was edited',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 
 			const { content, proposer, title, topic, last_edited_at } = data;
@@ -83,7 +83,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 				proposer,
 				tags: tags && Array.isArray(tags) ? tags : [],
 				title,
-				topic,
+				topic
 			}));
 			setFormDisabled(false);
 			setEditModalOpen(false);
@@ -108,7 +108,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 					>
 						Save
 					</Button>
-				</div>,
+				</div>
 			]}
 			className="md:min-w-[674px]"
 		>
@@ -133,8 +133,8 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 						}
 						rules={[
 							{
-								required: true,
-							},
+								required: true
+							}
 						]}
 						className="mt-5"
 					>

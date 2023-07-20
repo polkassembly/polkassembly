@@ -5,7 +5,7 @@
 import {
 	ClockCircleOutlined,
 	DislikeOutlined,
-	LikeOutlined,
+	LikeOutlined
 } from '@ant-design/icons';
 import { dayjs } from 'dayjs-init';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
@@ -37,7 +37,7 @@ const ReferendaPostCard = ({
 	postStatus,
 	referendumId,
 	title,
-	method,
+	method
 }: Props) => {
 	const { defaultAddress } = useContext(UserDetailsContext);
 	const [loading, setLoading] = useState(true);
@@ -47,7 +47,7 @@ const ReferendaPostCard = ({
 	useEffect(() => {
 		setLoading(true);
 		nextApiClientFetch<IPostResponse>(
-			`api/v1/posts/on-chain-post?proposalType=${ProposalType.REFERENDUMS}&postId=${referendumId}&voterAddress=${defaultAddress}`,
+			`api/v1/posts/on-chain-post?proposalType=${ProposalType.REFERENDUMS}&postId=${referendumId}&voterAddress=${defaultAddress}`
 		)
 			.then((res) => {
 				if (res.data) {

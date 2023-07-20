@@ -31,7 +31,7 @@ const getMedian = (
 	list: ITippersInfo[],
 	members: string[],
 	proposer?: string,
-	receiver?: string,
+	receiver?: string
 ): BN => {
 	let median = new BN(0);
 	if (list.length > 0) {
@@ -96,7 +96,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 	if (!tippers) return <PostEmptyState />;
 
 	const pendingTippers = members.filter(
-		(item) => !tippers?.find((tip) => tip.tipper === item),
+		(item) => !tippers?.find((tip) => tip.tipper === item)
 	);
 
 	return (
@@ -121,7 +121,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 							{formatBnBalance(
 								median,
 								{ numberAfterComma: 2, withUnit: true },
-								network,
+								network
 							)}
 						</Col>
 					</Row>
@@ -151,9 +151,9 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 											String(value),
 											{
 												numberAfterComma: 2,
-												withUnit: true,
+												withUnit: true
 											},
-											network,
+											network
 										)}
 									</Col>
 								</Row>

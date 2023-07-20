@@ -7,7 +7,7 @@ import BN from 'bn.js';
 export enum VoteThresholdEnum {
 	Supermajorityapproval = 'Supermajorityapproval',
 	Supermajorityrejection = 'Supermajorityrejection',
-	Simplemajority = 'Simplemajority',
+	Simplemajority = 'Simplemajority'
 }
 
 export type VoteThreshold = keyof typeof VoteThresholdEnum;

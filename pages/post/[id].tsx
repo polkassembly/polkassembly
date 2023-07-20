@@ -20,7 +20,7 @@ import SEOHead from '~src/global/SEOHead';
 
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { id } = query;
 
@@ -28,12 +28,12 @@ export const getServerSideProps: GetServerSideProps = async ({
 	const { data, error } = await getOffChainPost({
 		network,
 		postId: id,
-		proposalType: OffChainProposalType.DISCUSSIONS,
+		proposalType: OffChainProposalType.DISCUSSIONS
 	});
 	const comments = await getSubSquareComments(
 		OffChainProposalType.DISCUSSIONS,
 		network,
-		id,
+		id
 	);
 	const post = data && { ...data, comments: [...data.comments, ...comments] };
 	return { props: { error, network, post } };

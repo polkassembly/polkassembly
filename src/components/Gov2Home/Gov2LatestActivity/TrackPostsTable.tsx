@@ -12,7 +12,7 @@ import {
 	ErrorLatestActivity,
 	Gov2PopulatedLatestActivityCard,
 	LoadingLatestActivity,
-	PopulatedLatestActivity,
+	PopulatedLatestActivity
 } from 'src/ui-components/LatestActivityStates';
 import NameLabel from 'src/ui-components/NameLabel';
 import StatusTag from 'src/ui-components/StatusTag';
@@ -26,7 +26,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		dataIndex: 'post_id',
 		key: 'id',
 		width: 65,
-		fixed: 'left',
+		fixed: 'left'
 	},
 	{
 		title: 'Title',
@@ -40,7 +40,7 @@ const columns: ColumnsType<IPostsRowData> = [
 					<div className="truncate">{title}</div>
 				</>
 			);
-		},
+		}
 	},
 	{
 		title: 'Posted By',
@@ -53,7 +53,7 @@ const columns: ColumnsType<IPostsRowData> = [
 				username={username}
 				disableIdenticon={false}
 			/>
-		),
+		)
 	},
 	{
 		title: 'Created',
@@ -62,7 +62,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		render: (createdAt) => {
 			const relativeCreatedAt = getRelativeCreatedAt(createdAt);
 			return <span>{relativeCreatedAt}</span>;
-		},
+		}
 	},
 	{
 		title: 'Status',
@@ -70,8 +70,8 @@ const columns: ColumnsType<IPostsRowData> = [
 		key: 'status',
 		render: (status) => {
 			if (status) return <StatusTag status={status} />;
-		},
-	},
+		}
+	}
 ];
 
 interface ITrackPostsTableProps {
@@ -129,7 +129,7 @@ const TrackPostsTable: FC<ITrackPostsTableProps> = ({ posts, error }) => {
 					origin: post.origin || null,
 					status: post.status || null,
 					track: Number(post.track_number),
-					type: post.type,
+					type: post.type
 				};
 
 				tableData.push(tableDataObj);

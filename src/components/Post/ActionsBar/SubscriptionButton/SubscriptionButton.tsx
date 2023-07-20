@@ -25,12 +25,12 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 
 	const {
 		postData: { subscribers },
-		setPostData,
+		setPostData
 	} = usePostDataContext();
 
 	const { id } = useContext(UserDetailsContext);
 	const [subscribed, setSubscribed] = useState<boolean>(
-		Boolean(id && subscribers.includes(id)),
+		Boolean(id && subscribers.includes(id))
 	);
 	const [loading, setLoading] = useState(false);
 
@@ -42,13 +42,13 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 			const { data, error } =
 				await nextApiClientFetch<ChangeResponseType>(
 					'api/v1/auth/actions/postUnsubscribe',
-					{ post_id: postId, proposalType },
+					{ post_id: postId, proposalType }
 				);
 			if (error) {
 				queueNotification({
 					header: 'Failed!',
 					message: cleanError(error),
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			}
 
@@ -56,27 +56,27 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 				queueNotification({
 					header: 'Success!',
 					message: data.message,
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				setSubscribed(false);
 				setPostData((prev) => ({
 					...prev,
 					subscribers: prev.subscribers.filter(
-						(subscriber) => subscriber !== id,
-					),
+						(subscriber) => subscriber !== id
+					)
 				}));
 			}
 		} else {
 			const { data, error } =
 				await nextApiClientFetch<ChangeResponseType>(
 					'api/v1/auth/actions/postSubscribe',
-					{ post_id: postId, proposalType },
+					{ post_id: postId, proposalType }
 				);
 			if (error) {
 				queueNotification({
 					header: 'Failed!',
 					message: cleanError(error),
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			}
 
@@ -84,12 +84,12 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 				queueNotification({
 					header: 'Success!',
 					message: data.message,
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				setSubscribed(true);
 				setPostData((prev) => ({
 					...prev,
-					subscribers: [...prev.subscribers, Number(id)],
+					subscribers: [...prev.subscribers, Number(id)]
 				}));
 			}
 		}

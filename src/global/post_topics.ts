@@ -12,5 +12,5 @@ export const post_topic = {
 	ROOT: 6,
 	STAKING_ADMIN: 7,
 	TECHNICAL_COMMITTEE: 3,
-	TREASURY: 4,
+	TREASURY: 4
 };

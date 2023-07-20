@@ -7,7 +7,7 @@ import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import {
 	Injected,
 	InjectedAccount,
-	InjectedWindow,
+	InjectedWindow
 } from '@polkadot/extension-inject/types';
 import { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
@@ -30,7 +30,7 @@ const initResponse: Response = {
 	accountsMap: {},
 	noAccounts: true,
 	noExtension: true,
-	signersMap: {},
+	signersMap: {}
 };
 
 const useGetAllAccounts = (get_erc20?: boolean) => {
@@ -40,7 +40,7 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 	const [response, setResponse] = useState<Response>(initResponse);
 
 	const getWalletAccounts = async (
-		chosenWallet: Wallet,
+		chosenWallet: Wallet
 	): Promise<InjectedAccount[] | undefined> => {
 		const injectedWindow = window as Window & InjectedWindow;
 
@@ -101,7 +101,7 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 		if (!ethereum) return [];
 
 		let addresses = await ethereum.request({
-			method: 'eth_requestAccounts',
+			method: 'eth_requestAccounts'
 		});
 		addresses = addresses.map((address: string) => address);
 
@@ -111,7 +111,7 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 					address: address.toLowerCase(),
 					genesisHash: null,
 					name: 'metamask',
-					type: 'ethereum',
+					type: 'ethereum'
 				};
 			});
 		}
@@ -169,7 +169,7 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 			) {
 				signersMapLocal['polywallet'] = extObj.signer;
 				polywalletJSAccounts = await getWalletAccounts(
-					Wallet.POLYWALLET,
+					Wallet.POLYWALLET
 				);
 			}
 		}

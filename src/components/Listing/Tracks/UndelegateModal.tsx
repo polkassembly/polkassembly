@@ -47,7 +47,7 @@ const UndelegateModal = ({
 	open,
 	setOpen,
 	conviction,
-	balance,
+	balance
 }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkContext();
@@ -68,7 +68,7 @@ const UndelegateModal = ({
 		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol,
+			unit: chainProperties[network].tokenSymbol
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -94,7 +94,7 @@ const UndelegateModal = ({
 		trackNum,
 		conviction,
 		network,
-		target,
+		target
 	]);
 
 	useEffect(() => {
@@ -112,7 +112,7 @@ const UndelegateModal = ({
 		queueNotification({
 			header: 'Success!',
 			message: 'Undelegate successful.',
-			status: NotificationStatus.SUCCESS,
+			status: NotificationStatus.SUCCESS
 		});
 		setLoading(false);
 		setOpenSuccessPopup(true);
@@ -122,7 +122,7 @@ const UndelegateModal = ({
 		queueNotification({
 			header: 'Undelegate failed!',
 			message,
-			status: NotificationStatus.ERROR,
+			status: NotificationStatus.ERROR
 		});
 		setLoading(false);
 	};
@@ -180,7 +180,7 @@ const UndelegateModal = ({
 			network,
 			onFailed,
 			onSuccess,
-			tx: delegateTxn,
+			tx: delegateTxn
 		});
 	};
 
@@ -219,7 +219,7 @@ const UndelegateModal = ({
 								onClick={handleSubmit}
 							>
 								Undelegate
-							</Button>,
+							</Button>
 						]}
 					</div>
 				}
@@ -233,7 +233,7 @@ const UndelegateModal = ({
 								className="text-[14px]"
 								message={`An approximate fees of ${formatBalance(
 									txFee.toNumber(),
-									{ forceUnit: unit },
+									{ forceUnit: unit }
 								)} will be applied to the transaction`}
 							/>
 						}
@@ -275,7 +275,7 @@ const UndelegateModal = ({
 								<div className="text-[#7c899b] px-0 rounded-[6px] py-[px] h-[40px] cursor-not-allowed">
 									{`${formatedBalance(
 										balance.toString(),
-										unit,
+										unit
 									)} ${unit}`}
 								</div>
 							</div>

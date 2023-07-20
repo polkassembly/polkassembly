@@ -20,20 +20,20 @@ export async function getUser(userId: number): Promise<PublicUser | null> {
 
 	const addresses = await getAddressesFromUserId(Number(userId));
 	const default_address = addresses.find(
-		(address: any) => address.default === true,
+		(address: any) => address.default === true
 	);
 
 	return {
 		default_address: default_address?.address || '',
 		id: userData.id,
 		primary_network: userData.primary_network || '',
-		username: userData.username,
+		username: userData.username
 	} as PublicUser;
 }
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<PublicUser | MessageType>,
+	res: NextApiResponse<PublicUser | MessageType>
 ) {
 	const { userId = null } = req.query;
 	if (!userId || isNaN(Number(userId)))

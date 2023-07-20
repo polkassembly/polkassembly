@@ -39,7 +39,7 @@ const VerifyEmail = ({ network }: { network: string }) => {
 
 	const handleVerifyEmail = useCallback(async () => {
 		const { data, error } = await nextApiClientFetch<ChangeResponseType>(
-			'api/v1/auth/actions/verifyEmail',
+			'api/v1/auth/actions/verifyEmail'
 		);
 		if (error) {
 			console.error('Email verification error ', error);
@@ -48,7 +48,7 @@ const VerifyEmail = ({ network }: { network: string }) => {
 				header: 'Error!',
 				message:
 					'There was an error in verifying your email. Please try again.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 
@@ -57,7 +57,7 @@ const VerifyEmail = ({ network }: { network: string }) => {
 			queueNotification({
 				header: 'Success!',
 				message: data.message,
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 			router.replace('/');
 		}

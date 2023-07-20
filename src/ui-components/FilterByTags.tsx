@@ -30,7 +30,7 @@ const FilterByTags = ({
 	isSearch = false,
 	setSelectedTags,
 	disabled,
-	clearTags,
+	clearTags
 }: Props) => {
 	const defaultTags = useGetFilterByFromUrl();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
@@ -44,7 +44,7 @@ const FilterByTags = ({
 
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch<IPostTag[]>(
-			'api/v1/all-tags',
+			'api/v1/all-tags'
 		);
 		if (error) console.error('Error in getting all-tags', error);
 		else if (data) {
@@ -71,15 +71,15 @@ const FilterByTags = ({
 				pathname: '',
 				query: {
 					...router.query,
-					filterBy: encodeURIComponent(JSON.stringify(key)),
-				},
+					filterBy: encodeURIComponent(JSON.stringify(key))
+				}
 			});
 		} else if (router.query.sortBy) {
 			router.replace({
 				pathname: '',
 				query: {
-					sortBy: router.query.sortBy,
-				},
+					sortBy: router.query.sortBy
+				}
 			});
 		} else {
 			router.push({ pathname: '' });
@@ -128,7 +128,7 @@ const FilterByTags = ({
 			setDisplayTags([
 				...tags,
 				...(filteredTags?.slice(0, 5).map((tag) => tag?.name) ||
-					filteredTags.map((tag) => tag?.name)),
+					filteredTags.map((tag) => tag?.name))
 			]);
 		}
 	}, [filteredTags, searchInput.length, tags, trendingTags, allTags]);

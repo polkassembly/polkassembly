@@ -13,7 +13,7 @@ const ChangeEmail = ({
 	open,
 	onConfirm,
 	onCancel,
-	email,
+	email
 }: {
 	open: boolean;
 	onConfirm?: () => void;
@@ -31,21 +31,21 @@ const ChangeEmail = ({
 			const { data, error } = await nextApiClientFetch<any>(
 				'api/v1/auth/actions/sendVerificationEmail',
 				{
-					email: newEmail,
-				},
+					email: newEmail
+				}
 			);
 			if (error) {
 				queueNotification({
 					header: 'Failed!',
 					message: error,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			}
 			if (data) {
 				queueNotification({
 					header: 'Success!',
 					message: 'Verification Email Sent.',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				form.resetFields();
 				onCancel();
@@ -57,7 +57,7 @@ const ChangeEmail = ({
 			queueNotification({
 				header: 'Failed!',
 				message: error,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 	};
@@ -106,8 +106,8 @@ const ChangeEmail = ({
 								{
 									message: messages.VALIDATION_EMAIL_ERROR,
 									required: true,
-									type: 'email',
-								},
+									type: 'email'
+								}
 							]}
 						>
 							<Input

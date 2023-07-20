@@ -6,7 +6,7 @@ import { ProposalType } from '~src/global/proposalType';
 
 export const onTagClickFilter = (
 	proposalType: ProposalType,
-	trackName: string,
+	trackName: string
 ) => {
 	if (proposalType === ProposalType.DISCUSSIONS) {
 		return 'discussions';

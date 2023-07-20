@@ -28,14 +28,14 @@ const StyledDiv = styled.div`
 
 function NetworkSelect({
 	selectedNetwork,
-	setSelectedNetwork,
+	setSelectedNetwork
 }: {
 	selectedNetwork: string;
 	setSelectedNetwork: React.Dispatch<React.SetStateAction<string>>;
 }) {
 	const StyledNetworkItem = ({
 		className,
-		showNetwork,
+		showNetwork
 	}: {
 		className?: string;
 		showNetwork: string;
@@ -65,7 +65,7 @@ function NetworkSelect({
 				<StyledNetworkItem
 					showNetwork={network[key as keyof typeof network]}
 				/>
-			),
+			)
 		};
 
 		networkOptions.push(optionObj);
@@ -89,7 +89,7 @@ function NetworkSelect({
 				)}
 				menu={{
 					items: networkOptions,
-					onClick: handleSetSelectedNetwork,
+					onClick: handleSetSelectedNetwork
 				}}
 			>
 				<Space className="cursor-pointer">

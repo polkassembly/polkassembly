@@ -14,7 +14,7 @@ import messages from '~src/auth/utils/messages';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ChangeResponseType | MessageType>,
+	res: NextApiResponse<ChangeResponseType | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -30,7 +30,7 @@ async function handler(
 	const strProposalType = String(proposalType);
 	if (!isFirestoreProposalTypeValid(strProposalType)) {
 		return res.status(400).json({
-			message: `The proposal type "${proposalType}" is invalid.`,
+			message: `The proposal type "${proposalType}" is invalid.`
 		});
 	}
 	if (post_id === null)
@@ -63,16 +63,16 @@ async function handler(
 	await postRef
 		.update({
 			subscribers: postSubs.filter(
-				(i: any) => Number(i) !== Number(user.id),
-			),
+				(i: any) => Number(i) !== Number(user.id)
+			)
 		})
 		.catch((error) => {
 			console.log(
 				' Error while removing user from post subscribers : ',
-				error,
+				error
 			);
 			return res.status(400).json({
-				message: 'Error while removing user from post subscribers.',
+				message: 'Error while removing user from post subscribers.'
 			});
 		});
 

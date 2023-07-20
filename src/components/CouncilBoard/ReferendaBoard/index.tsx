@@ -4,7 +4,7 @@
 
 import {
 	IPostListing,
-	IPostsListingResponse,
+	IPostsListingResponse
 } from 'pages/api/v1/listing/on-chain-posts';
 import React, { useEffect, useState } from 'react';
 
@@ -28,7 +28,7 @@ const ReferendaBoard = ({ className, openSidebar }: Props) => {
 		nextApiClientFetch<IPostsListingResponse>(
 			`api/v1/posts/on-chain-posts?proposalType=${
 				ProposalType.REFERENDUMS
-			}&listingLimit=${10}`,
+			}&listingLimit=${10}`
 		)
 			.then((res) => {
 				if (res.data) {

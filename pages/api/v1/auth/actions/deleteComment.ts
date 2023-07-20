@@ -51,7 +51,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		.delete()
 		.then(() => {
 			postRef.update({
-				last_comment_at,
+				last_comment_at
 			});
 			return res.status(200).json({ message: 'Comment saved.' });
 		})

@@ -30,33 +30,33 @@ interface Props {
 
 const Delegate = dynamic(() => import('./Delegate'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 const ActiveProposals = dynamic(() => import('./ActiveProposals'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 const WalletConnectModal = dynamic(
 	() => import('./DelegationWalletConnectModal'),
 	{
 		loading: () => <Skeleton active />,
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 const UndelegateModal = dynamic(
 	() => import('../Listing/Tracks/UndelegateModal'),
 	{
 		loading: () => <Skeleton active />,
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 export interface ITrackRowData {
@@ -85,7 +85,7 @@ export const handleTrack = (track: string) => {
 
 const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 	const {
-		query: { track },
+		query: { track }
 	} = useRouter();
 	const { network } = useNetworkContext();
 	const [status, setStatus] = useState<ETrackDelegationStatus[]>([]);
@@ -95,7 +95,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 		delegationDashboardAddress: address,
 		loginWallet,
 		isLoggedOut,
-		setUserDetailsContextState,
+		setUserDetailsContextState
 	} = useUserDetailsContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [rowData, setRowData] = useState<ITrackRowData[]>([]);
@@ -116,7 +116,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 			return {
 				...prev,
 				delegationDashboardAddress: address,
-				loginWallet: wallet as Wallet,
+				loginWallet: wallet as Wallet
 			};
 		});
 
@@ -124,7 +124,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol,
+			unit: chainProperties[network].tokenSymbol
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -150,7 +150,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(
-			`api/v1/delegations?address=${address}&track=${trackDetails?.trackId}`,
+			`api/v1/delegations?address=${address}&track=${trackDetails?.trackId}`
 		);
 
 		if (data) {
@@ -163,9 +163,9 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 						delegatedOn: delegation?.createdAt,
 						delegatedTo: delegation?.to,
 						index: index + 1,
-						lockPeriod: delegation?.lockPeriod,
+						lockPeriod: delegation?.lockPeriod
 					};
-				},
+				}
 			);
 
 			setRowData(rowData);
@@ -238,7 +238,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 							status.map(
 								(
 									item: ETrackDelegationStatus,
-									index: number,
+									index: number
 								) => (
 									<span
 										key={index}
@@ -263,7 +263,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 											.toUpperCase() +
 											item?.split('_').join(' ').slice(1)}
 									</span>
-								),
+								)
 							)}
 					</div>
 					<p className="mt-5 text-sm text-bodyBlue tracking-[0.01em] font-normal">
@@ -274,7 +274,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 							status.map(
 								(
 									item: ETrackDelegationStatus,
-									index: number,
+									index: number
 								) => (
 									<div
 										className="flex gap-2 flex-col"
@@ -291,7 +291,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 												className="column"
 												columns={GetTracksColumns(
 													item,
-													setOpenUndelegateModal,
+													setOpenUndelegateModal
 												)}
 												dataSource={
 													item ===
@@ -300,44 +300,44 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 																.filter(
 																	(row) =>
 																		row.delegatedTo ===
-																		address,
+																		address
 																)
 																?.map(
 																	(
 																		item,
-																		index,
+																		index
 																	) => {
 																		return {
 																			...item,
 																			index:
 																				index +
-																				1,
+																				1
 																		};
-																	},
+																	}
 																)
 														: rowData
 																.filter(
 																	(row) =>
 																		row.delegatedTo !==
-																		address,
+																		address
 																)
 																?.map(
 																	(
 																		item,
-																		index,
+																		index
 																	) => {
 																		return {
 																			...item,
 																			index:
 																				index +
-																				1,
+																				1
 																		};
-																	},
+																	}
 																)
 												}
 												pagination={
 													status.includes(
-														ETrackDelegationStatus.Delegated,
+														ETrackDelegationStatus.Delegated
 													)
 														? false
 														: { pageSize: 5 }
@@ -346,7 +346,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 											/>
 										</div>
 									</div>
-								),
+								)
 							)}
 					</div>
 					{status.includes(ETrackDelegationStatus.Undelegated) && (
@@ -385,7 +385,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 						delegatedTo={
 							status.includes(ETrackDelegationStatus.Delegated)
 								? rowData.filter(
-										(row) => row.delegatedTo !== address,
+										(row) => row.delegatedTo !== address
 								  )[0].delegatedTo
 								: null
 						}
@@ -399,7 +399,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 				<div>
 					<Delegate
 						disabled={status.includes(
-							ETrackDelegationStatus.Delegated,
+							ETrackDelegationStatus.Delegated
 						)}
 						trackDetails={trackDetails}
 					/>
@@ -434,8 +434,8 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 					balance={
 						new BN(
 							rowData.filter(
-								(row) => row.delegatedTo !== address,
-							)[0]?.balance,
+								(row) => row.delegatedTo !== address
+							)[0]?.balance
 						)
 					}
 					open={openUndelegateModal}

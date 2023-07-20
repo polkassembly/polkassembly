@@ -30,7 +30,7 @@ interface Props {
 
 enum Profile {
 	Polkadot = 'polkadot',
-	Kusama = 'kusamanetwork',
+	Kusama = 'kusamanetwork'
 }
 
 const News: FC<Props> = ({ data, error, network }) => {
@@ -53,7 +53,7 @@ const News: FC<Props> = ({ data, error, network }) => {
 
 	const vh = Math.max(
 		document.documentElement.clientHeight || 0,
-		window.innerHeight || 0,
+		window.innerHeight || 0
 	);
 
 	return (

@@ -14,7 +14,7 @@ import messages from '~src/auth/utils/messages';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ChangeResponseType | MessageType>,
+	res: NextApiResponse<ChangeResponseType | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -42,14 +42,14 @@ async function handler(
 		token,
 		email,
 		password,
-		network,
+		network
 	);
 
 	return res.status(200).json({
 		message: email
 			? messages.EMAIL_CHANGE_REQUEST_SUCCESSFUL
 			: messages.EMAIL_REMOVE_SUCCESSFUL,
-		token: updatedJWT,
+		token: updatedJWT
 	});
 }
 

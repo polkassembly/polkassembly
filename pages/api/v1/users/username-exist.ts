@@ -13,7 +13,7 @@ export interface IUsernameExistResponse {
 
 const handler: NextApiHandler<IUsernameExistResponse | MessageType> = async (
 	req,
-	res,
+	res
 ) => {
 	const { username } = req.query;
 	if (!username) {

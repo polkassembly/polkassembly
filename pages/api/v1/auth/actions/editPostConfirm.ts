@@ -46,7 +46,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		content,
 		signature,
 		proposalType,
-		proposalId,
+		proposalId
 	);
 
 	return res.status(200).json({ message: 'Post edited successfully' });

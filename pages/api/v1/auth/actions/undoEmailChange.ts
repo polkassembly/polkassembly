@@ -12,7 +12,7 @@ import messages from '~src/auth/utils/messages';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<UndoEmailChangeResponseType | MessageType>,
+	res: NextApiResponse<UndoEmailChangeResponseType | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -23,13 +23,13 @@ async function handler(
 	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const { updatedToken, email } = await authServiceInstance.UndoEmailChange(
-		token,
+		token
 	);
 
 	return res.status(200).json({
 		email,
 		message: messages.EMAIL_UNDO_SUCCESSFUL,
-		token: updatedToken,
+		token: updatedToken
 	});
 }
 

@@ -8,7 +8,7 @@ import { getUserProfileWithUsername } from 'pages/api/v1/auth/data/userProfileWi
 import {
 	getDefaultUserPosts,
 	getUserPosts,
-	IUserPostsListingResponse,
+	IUserPostsListingResponse
 } from 'pages/api/v1/listing/user-posts';
 import React, { FC, useEffect, useState } from 'react';
 import { useNetworkContext } from 'src/context';
@@ -42,8 +42,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	if (!username) {
 		return {
 			props: {
-				error: 'No username provided',
-			},
+				error: 'No username provided'
+			}
 		};
 	}
 	const req = context.req;
@@ -53,13 +53,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const userPosts = await getUserPosts({
 		addresses: userProfile?.data?.addresses || [],
 		network,
-		userId: userProfile?.data?.user_id,
+		userId: userProfile?.data?.user_id
 	});
 	const props: IUserProfileProps = {
 		network,
 		userPosts: {
 			data: userPosts.data || getDefaultUserPosts(),
-			error: userPosts.error,
+			error: userPosts.error
 		},
 		userProfile: {
 			data: userProfile.data || {
@@ -70,13 +70,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				social_links: [],
 				title: '',
 				user_id: 0,
-				username: String(username),
+				username: String(username)
 			},
-			error: userProfile.error,
-		},
+			error: userProfile.error
+		}
 	};
 	return {
-		props,
+		props
 	};
 };
 
@@ -135,9 +135,9 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 						label={key?.split('_').join(' ') || ''}
 						count={count}
 					/>
-				),
+				)
 			};
-		},
+		}
 	);
 	return (
 		<>
@@ -154,7 +154,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 						<Select
 							value={selectedGov}
 							style={{
-								width: 120,
+								width: 120
 							}}
 							onChange={(v) => {
 								setSelectedGov(v);
@@ -162,12 +162,12 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 							options={[
 								{
 									label: 'Gov1',
-									value: 'gov1',
+									value: 'gov1'
 								},
 								{
 									label: 'OpenGov',
-									value: 'open_gov',
-								},
+									value: 'open_gov'
+								}
 							]}
 						/>
 					</div>

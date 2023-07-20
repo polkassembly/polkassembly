@@ -15,7 +15,7 @@ import PostDataContextProvider from '~src/context/PostDataContext';
 import {
 	checkIsOnChainPost,
 	getFirestoreProposalType,
-	ProposalType,
+	ProposalType
 } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
@@ -38,37 +38,37 @@ import styled from 'styled-components';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 const PostAudit = dynamic(() => import('./Tabs/PostTimeline/Audit'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 const GovernanceSideBar = dynamic(() => import('./GovernanceSideBar'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 const Poll = dynamic(() => import('./Poll'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 const PostTimeline = dynamic(() => import('./Tabs/PostTimeline'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 const ClaimPayoutModal = dynamic(() => import('./ClaimPayoutModal'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 const PostOnChainInfo = dynamic(() => import('./Tabs/PostOnChainInfo'), {
 	loading: () => <Skeleton active />,
-	ssr: false,
+	ssr: false
 });
 
 interface IPostProps {
@@ -126,7 +126,7 @@ const Post: FC<IPostProps> = (props) => {
 			post_id == 23
 		) {
 			isProposer = addresses?.includes(
-				'0xbb1e1722513a8fa80f7593617bb0113b1258b7f1',
+				'0xbb1e1722513a8fa80f7593617bb0113b1258b7f1'
 			);
 		}
 		if (
@@ -135,7 +135,7 @@ const Post: FC<IPostProps> = (props) => {
 			post_id == 3
 		) {
 			isProposer = addresses?.includes(
-				'0x16095c509f728721ad19a51704fc39116157be3a',
+				'0x16095c509f728721ad19a51704fc39116157be3a'
 			);
 		}
 
@@ -148,14 +148,14 @@ const Post: FC<IPostProps> = (props) => {
 				await nextApiClientFetch<IVerified>(
 					'api/v1/auth/data/isAddressVerified',
 					{
-						address: substrateAddress,
-					},
+						address: substrateAddress
+					}
 				);
 
 			if (fetchError || !data)
 				return console.log(
 					'error checking verified address : ',
-					fetchError,
+					fetchError
 				);
 
 			if (data.verified && !isEditing) {
@@ -230,9 +230,9 @@ const Post: FC<IPostProps> = (props) => {
 					headers: {
 						Accept: 'application/vnd.github.v3+json',
 						Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
-						'X-GitHub-Api-Version': '2022-11-28',
-					},
-				},
+						'X-GitHub-Api-Version': '2022-11-28'
+					}
+				}
 			);
 			if (response.ok) {
 				const data = await response.json();
@@ -241,7 +241,7 @@ const Post: FC<IPostProps> = (props) => {
 					data.filter(
 						(file: any) =>
 							file.name.endsWith('.pdf') ||
-							file.name.endsWith('.png'),
+							file.name.endsWith('.png')
 					).length || 0;
 				setTotalAuditCount(count);
 			} else {
@@ -261,9 +261,9 @@ const Post: FC<IPostProps> = (props) => {
 					headers: {
 						Accept: 'application/vnd.github.v3+json',
 						Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
-						'X-GitHub-Api-Version': '2022-11-28',
-					},
-				},
+						'X-GitHub-Api-Version': '2022-11-28'
+					}
+				}
 			);
 			if (response.ok) {
 				const data = await response.json();
@@ -351,8 +351,8 @@ const Post: FC<IPostProps> = (props) => {
 			{
 				children: <PostTimeline />,
 				key: 'timeline',
-				label: 'Timeline',
-			},
+				label: 'Timeline'
+			}
 		];
 		if (['polkadot', 'kusama'].includes(network)) {
 			tabs.push({
@@ -369,7 +369,7 @@ const Post: FC<IPostProps> = (props) => {
 							</span>
 						)}{' '}
 					</div>
-				),
+				)
 			});
 		}
 
@@ -414,14 +414,14 @@ const Post: FC<IPostProps> = (props) => {
 							submitted_amount: post?.submitted_amount,
 							track_number: post?.track_number,
 							version: post?.version,
-							vote_threshold: post?.vote_threshold,
+							vote_threshold: post?.vote_threshold
 						}}
 						handleOpenSidebar={handleOpenSidebar}
 						proposalType={proposalType}
 					/>
 				),
 				key: 'onChainInfo',
-				label: 'On Chain Info',
+				label: 'On Chain Info'
 			});
 		}
 
@@ -442,9 +442,9 @@ const Post: FC<IPostProps> = (props) => {
 				/>
 			),
 			key: 'description',
-			label: 'Description',
+			label: 'Description'
 		},
-		...getOnChainTabs(),
+		...getOnChainTabs()
 	];
 	return (
 		<PostDataContextProvider
@@ -477,7 +477,7 @@ const Post: FC<IPostProps> = (props) => {
 				topic: post?.topic,
 				track_name: trackName,
 				track_number: post?.track_number,
-				username: post?.username,
+				username: post?.username
 			}}
 		>
 			<>
@@ -526,7 +526,7 @@ const Post: FC<IPostProps> = (props) => {
 					<div className="xl:col-span-8">
 						{proposalType === ProposalType.GRANTS &&
 							dayjs(post.created_at).isAfter(
-								dayjs().subtract(6, 'days'),
+								dayjs().subtract(6, 'days')
 							) && (
 								<div className="bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading">
 									This grant will be closed in{' '}

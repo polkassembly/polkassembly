@@ -15,7 +15,7 @@ import {
 	IPeriod,
 	getDefaultPeriod,
 	getPeriodData,
-	getStatusBlock,
+	getStatusBlock
 } from '../Post/GovernanceSideBar/Referenda/ReferendaV2Messages';
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import dayjs from 'dayjs';
@@ -40,7 +40,7 @@ const ActiveProposalCard = ({
 	proposal,
 	trackDetails,
 	status,
-	delegatedTo,
+	delegatedTo
 }: Props) => {
 	const { network } = useNetworkContext();
 	const timeline = [{ created_at: proposal.created_at, hash: proposal.hash }];
@@ -48,7 +48,7 @@ const ActiveProposalCard = ({
 	const decidingStatusBlock = getStatusBlock(
 		timeline || [],
 		['ReferendumV2', 'FellowshipReferendum'],
-		'Deciding',
+		'Deciding'
 	);
 	const [votingData, setVotingData] = useState<IVotesResponse>();
 	const [balance, setBalance] = useState<BN>(BN_ZERO);
@@ -70,7 +70,7 @@ const ActiveProposalCard = ({
 		</span>
 	);
 	const relativeCreatedAt = getRelativeCreatedAt(
-		new Date(proposal?.created_at),
+		new Date(proposal?.created_at)
 	);
 
 	const convertRemainingTime = (preiodEndsAt: any) => {
@@ -93,7 +93,7 @@ const ActiveProposalCard = ({
 		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol,
+			unit: chainProperties[network].tokenSymbol
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -116,7 +116,7 @@ const ActiveProposalCard = ({
 		}
 
 		const { data, error } = await nextApiClientFetch<IVotesResponse>(
-			`api/v1/votes?listingLimit=10&postId=${proposal?.post_id}&voteType=ReferendumV2&page=1&address=${votesAddress}`,
+			`api/v1/votes?listingLimit=10&postId=${proposal?.post_id}&voteType=ReferendumV2&page=1&address=${votesAddress}`
 		);
 		if (data) {
 			setVotingData(data);
@@ -136,7 +136,7 @@ const ActiveProposalCard = ({
 			network,
 			dayjs(proposal.created_at),
 			trackDetails,
-			'preparePeriod',
+			'preparePeriod'
 		);
 
 		const decisionPeriodStartsAt =
@@ -147,7 +147,7 @@ const ActiveProposalCard = ({
 			network,
 			decisionPeriodStartsAt,
 			trackDetails,
-			'decisionPeriod',
+			'decisionPeriod'
 		);
 		setDecision(decision);
 
@@ -198,7 +198,7 @@ const ActiveProposalCard = ({
 									style={{
 										border: '1px solid #485F7D',
 										marginLeft: '4px',
-										marginRight: '4px',
+										marginRight: '4px'
 									}}
 								/>
 								{relativeCreatedAt && (
@@ -217,7 +217,7 @@ const ActiveProposalCard = ({
 										style={{
 											border: '1px solid #485F7D',
 											marginLeft: '4px',
-											marginRight: '4px',
+											marginRight: '4px'
 										}}
 									/>
 									<div
@@ -241,7 +241,7 @@ const ActiveProposalCard = ({
 							'opacity-50'
 						}`}
 						disabled={status.includes(
-							ETrackDelegationStatus.Delegated,
+							ETrackDelegationStatus.Delegated
 						)}
 					>
 						<VoteIcon />
@@ -281,7 +281,7 @@ const ActiveProposalCard = ({
 									Balance:
 									<span className="text-[#243A57] font-medium">
 										{formatBalance(balance.toString(), {
-											forceUnit: unit,
+											forceUnit: unit
 										})}
 									</span>
 								</div>
@@ -307,7 +307,7 @@ const ActiveProposalCard = ({
 					votingData && (
 						<div className="border-solid py-2 px-6 flex gap-2 border-[1px] rounded-b-[5px] bg-[#fff7ef] border-[#F89118]">
 							{status.includes(
-								ETrackDelegationStatus.Delegated,
+								ETrackDelegationStatus.Delegated
 							) && (
 								<Address
 									address={String(delegatedTo)}

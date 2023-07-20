@@ -7,7 +7,7 @@ export const openGovNetworks = [
 	'moonbase',
 	'moonriver',
 	'vara',
-	'polkadot',
+	'polkadot'
 ];
 
 export const isOpenGovSupported = (network: string) => {

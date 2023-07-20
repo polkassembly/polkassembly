@@ -17,7 +17,7 @@ interface IPostReactionBarProps {
 
 const PostReactionBar: FC<IPostReactionBarProps> = ({
 	className,
-	post_reactions,
+	post_reactions
 }) => {
 	const [reactionsDisabled, setReactionsDisabled] = useState<boolean>(false);
 	const [openLikeModal, setLikeModalOpen] = useState<boolean>(false);

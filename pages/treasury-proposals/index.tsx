@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import {
 	getOnChainPosts,
-	IPostsListingResponse,
+	IPostsListingResponse
 } from 'pages/api/v1/listing/on-chain-posts';
 import React, { FC, useContext, useEffect } from 'react';
 
@@ -34,20 +34,20 @@ const TreasuryProposalFormButton = dynamic(
 			'src/components/CreateTreasuryProposal/TreasuryProposalFormButton'
 		),
 	{
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 
 const TreasuryOverview = dynamic(
 	() => import('src/components/Home/TreasuryOverview'),
 	{
-		ssr: false,
-	},
+		ssr: false
+	}
 );
 
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	const proposalType = ProposalType.TREASURY_PROPOSALS;
@@ -62,7 +62,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 		network,
 		page,
 		proposalType,
-		sortBy,
+		sortBy
 	});
 	return { props: { data, error, network } };
 };
@@ -93,8 +93,8 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 	const onPaginationChange = (page: number) => {
 		router.push({
 			query: {
-				page,
-			},
+				page
+			}
 		});
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};

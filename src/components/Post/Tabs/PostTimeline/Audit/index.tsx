@@ -65,13 +65,13 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 		setSelectedType(e.target.value);
 	};
 	const pdfCount = auditData?.filter(
-		(file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png'),
+		(file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png')
 	).length;
 
 	useEffect(() => {
 		const pdfCount = auditData?.filter(
 			(file: any) =>
-				file.name.endsWith('.pdf') || file.name.endsWith('.png'),
+				file.name.endsWith('.pdf') || file.name.endsWith('.png')
 		).length;
 		const selectedValue = pdfCount === 0 ? 'videos' : 'reports';
 		setSelectedType(selectedValue);
@@ -148,11 +148,11 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 								.filter(
 									(item) =>
 										item.name.endsWith('.pdf') ||
-										item.name.endsWith('.png'),
+										item.name.endsWith('.png')
 								)
 								.map((item, index) => {
 									const date = formatDate(
-										item.name.split(' - ')[1],
+										item.name.split(' - ')[1]
 									);
 									return (
 										<article

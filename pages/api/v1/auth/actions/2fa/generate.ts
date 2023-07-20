@@ -15,7 +15,7 @@ import { TOTP } from 'otpauth';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<I2FAGenerateResponse | MessageType>,
+	res: NextApiResponse<I2FAGenerateResponse | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -37,7 +37,7 @@ async function handler(
 		issuer: 'Polkassembly',
 		label: `${user.id}`,
 		period: 30,
-		secret: base32_secret,
+		secret: base32_secret
 	});
 
 	const otpauth_url = totp.toString();
@@ -50,8 +50,8 @@ async function handler(
 				base32_secret: base32_secret,
 				enabled: false,
 				url: otpauth_url,
-				verified: false,
-			},
+				verified: false
+			}
 		})
 		.then(() => {
 			return res

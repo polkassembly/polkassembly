@@ -13,7 +13,7 @@ import { chainProperties } from 'src/global/networkConstants';
  */
 export default function getEncodedAddress(
 	address: string,
-	network: string,
+	network: string
 ): string | null {
 	const ss58Format = chainProperties?.[network]?.ss58Format;
 

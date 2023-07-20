@@ -35,12 +35,12 @@ const AddressInput = ({
 	onChange,
 	defaultAddress,
 	skipFormatCheck,
-	inputClassName,
+	inputClassName
 }: Props) => {
 	const { network } = useContext(NetworkContext);
 
 	const [address, setAddress] = useState<string>(
-		defaultAddress ? defaultAddress : '',
+		defaultAddress ? defaultAddress : ''
 	);
 
 	const [isValid, setIsValid] = useState<boolean>(false);
@@ -59,7 +59,7 @@ const AddressInput = ({
 
 		const isValidMetaAddress = Web3.utils.isAddress(
 			address,
-			addressPrefix[network],
+			addressPrefix[network]
 		);
 		const [validAddress] = checkAddress(address, addressPrefix[network]);
 
@@ -86,7 +86,7 @@ const AddressInput = ({
 
 		const isValidMetaAddress = Web3.utils.isAddress(
 			address,
-			addressPrefix[network],
+			addressPrefix[network]
 		);
 		const [validAddress] = checkAddress(address, addressPrefix[network]);
 

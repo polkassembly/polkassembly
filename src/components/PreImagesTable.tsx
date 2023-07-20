@@ -33,14 +33,14 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			width: 350,
 			render: (hash) => (
 				<span className="text-sidebarBlue font-medium">{hash}</span>
-			),
+			)
 		},
 		{
 			title: 'Author',
 			dataIndex: 'proposer',
 			key: 'author',
 			width: 200,
-			render: (proposer) => <NameLabel defaultAddress={proposer} />,
+			render: (proposer) => <NameLabel defaultAddress={proposer} />
 		},
 		{
 			title: 'Deposit',
@@ -53,10 +53,10 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 						formatBnBalance(
 							deposit,
 							{ numberAfterComma: 2, withUnit: true },
-							network,
+							network
 						)}
 				</span>
-			),
+			)
 		},
 		{
 			title: 'Arguments',
@@ -78,7 +78,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 							/>
 						)}
 					</div>
-				),
+				)
 		},
 		{
 			title: 'Size',
@@ -87,7 +87,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			width: 65,
 			render: (length) => (
 				<span className="text-sidebarBlue font-medium">{length}</span>
-			),
+			)
 		},
 		{
 			title: 'Status',
@@ -96,8 +96,8 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			width: 135,
 			render: (status) => (
 				<span className="text-sidebarBlue font-medium">{status}</span>
-			),
-		},
+			)
+		}
 	];
 
 	if (preimages) {
@@ -127,7 +127,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 						<Button key="back" onClick={() => setModalArgs(null)}>
 							{' '}
 							Close{' '}
-						</Button>,
+						</Button>
 					]}
 				>
 					{modalArgs && (

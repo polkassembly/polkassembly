@@ -14,13 +14,13 @@ import {
 	updateOpenGovAll,
 	updateOpenGovProposal,
 	updateOpenGovProposalAll,
-	updateSubscribedProposal,
+	updateSubscribedProposal
 } from './action';
 
 // of the Apache-2.0 license. See the LICENSE file for details.
 export function reducer(
 	state: IReducerState,
-	action: { type: string; payload: any },
+	action: { type: string; payload: any }
 ) {
 	switch (action.type) {
 		case ACTIONS.INITIAL_SET: {

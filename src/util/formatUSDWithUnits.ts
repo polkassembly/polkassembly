@@ -4,7 +4,7 @@
 
 export default function formatUSDWithUnits(
 	usd: String,
-	numberAfterDot?: number,
+	numberAfterDot?: number
 ) {
 	const toFixed =
 		numberAfterDot && !isNaN(Number(numberAfterDot)) ? numberAfterDot : 2;

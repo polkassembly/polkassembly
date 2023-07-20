@@ -18,7 +18,7 @@ import { useUserDetailsContext } from '~src/context';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
-	ssr: false,
+	ssr: false
 });
 
 interface Props {
@@ -32,7 +32,7 @@ const DelegationProfile = ({
 	username,
 	address,
 	isSearch,
-	className,
+	className
 }: Props) => {
 	const userProfile = useUserDetailsContext();
 	const [profileDetails, setProfileDetails] =
@@ -44,7 +44,7 @@ const DelegationProfile = ({
 			social_links: [],
 			title: '',
 			user_id: 0,
-			username: '',
+			username: ''
 		});
 
 	const {
@@ -52,14 +52,14 @@ const DelegationProfile = ({
 		social_links,
 		bio,
 		username: userName,
-		addresses,
+		addresses
 	} = profileDetails;
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch(
-			`api/v1/auth/data/userProfileWithUsername?username=${username}`,
+			`api/v1/auth/data/userProfileWithUsername?username=${username}`
 		);
 
 		if (data) {
@@ -78,7 +78,7 @@ const DelegationProfile = ({
 		messageApi.open({
 			content: 'Address copied to clipboard',
 			duration: 10,
-			type: 'success',
+			type: 'success'
 		});
 	};
 	const copyLink = (address: string) => {
@@ -155,7 +155,7 @@ const DelegationProfile = ({
 							const link =
 								social_links && Array.isArray(social_links)
 									? social_links?.find(
-											(s) => s.type === social,
+											(s) => s.type === social
 									  )?.link || ''
 									: '';
 							return (

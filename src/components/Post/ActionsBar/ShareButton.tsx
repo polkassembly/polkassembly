@@ -18,7 +18,7 @@ const ShareButton = function ({ title }: { title?: string | null }) {
 
 		if (title) {
 			twitterParameters.push(
-				`text=${encodeURI(`[${network}] ${title}`)}`,
+				`text=${encodeURI(`[${network}] ${title}`)}`
 			);
 		}
 

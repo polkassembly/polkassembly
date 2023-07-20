@@ -145,7 +145,7 @@ const messages = {
 	USERNAME_INVALID_ERROR:
 		'Username must be between 3 to 30 characters long, letters and numbers are allowed.',
 	USER_EMAIL_ALREADY_EXISTS: 'A user with this email already exists.',
-	USER_NOT_FOUND: 'User not found.',
+	USER_NOT_FOUND: 'User not found.'
 };
 
 export default messages;

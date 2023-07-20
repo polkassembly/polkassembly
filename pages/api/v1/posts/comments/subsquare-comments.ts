@@ -28,7 +28,7 @@ const urlMapper: any = {
 	[ProposalType.TIPS]: (id: any, network: string) =>
 		`https://${network}.subsquare.io/api/treasury/tips/${id}/comments`,
 	[ProposalType.TREASURY_PROPOSALS]: (id: any, network: string) =>
-		`https://${network}.subsquare.io/api/treasury/proposals/${id}/comments`,
+		`https://${network}.subsquare.io/api/treasury/proposals/${id}/comments`
 };
 
 const getTrimmedUsername = (username?: string) => {
@@ -56,19 +56,19 @@ const extractContent = async (markdownContent: string, network: any) => {
 			if (label.startsWith('@')) {
 				const address = addressWithNetwork.split('-')[0]; // splitting the address and network
 				const { data, error } = await getProfileWithAddress({
-					address: address,
+					address: address
 				});
 				if (data && !error) {
 					const link = `https://${network}.polkassembly.io/user/${data?.username}`;
 					updatedContent = updatedContent.replace(
 						match,
-						`[${label}](${link})`,
+						`[${label}](${link})`
 					);
 				} else {
 					const link = `https://${network}.polkassembly.io/address/${address}`;
 					updatedContent = updatedContent.replace(
 						match,
-						`[${label}](${link})`,
+						`[${label}](${link})`
 					);
 				}
 			}
@@ -91,7 +91,7 @@ const convertReply = async (subSquareReply: any, network: any) => {
 				reply_source: 'subsquare',
 				updated_at: reply.updatedAt,
 				user_id: getTrimmedUsername(),
-				username: getTrimmedUsername(reply.author?.username),
+				username: getTrimmedUsername(reply.author?.username)
 			});
 		}
 	}
@@ -100,7 +100,7 @@ const convertReply = async (subSquareReply: any, network: any) => {
 
 const convertDataToComment = async (
 	data: any[],
-	network: string | string[] | undefined,
+	network: string | string[] | undefined
 ) => {
 	const res = [];
 	for (const comment of data) {
@@ -111,12 +111,12 @@ const convertDataToComment = async (
 				comment_reactions: {
 					'👍': {
 						count: reactionUsers.length,
-						usernames: reactionUsers,
+						usernames: reactionUsers
 					},
 					'👎': {
 						count: 0,
-						usernames: [],
-					},
+						usernames: []
+					}
 				},
 				comment_source: 'subsquare',
 				content: comment.content,
@@ -126,7 +126,7 @@ const convertDataToComment = async (
 				replies,
 				updated_at: comment?.updatedAt,
 				user_id: uuid(),
-				username: getTrimmedUsername(comment.author?.username),
+				username: getTrimmedUsername(comment.author?.username)
 			});
 		}
 	}
@@ -136,7 +136,7 @@ const convertDataToComment = async (
 export const getSubSquareComments = async (
 	proposalType: string,
 	network: string | string[] | undefined,
-	id: string | string[] | undefined,
+	id: string | string[] | undefined
 ) => {
 	try {
 		const url = urlMapper[proposalType]?.(id, network);
@@ -150,7 +150,7 @@ export const getSubSquareComments = async (
 
 const handler: NextApiHandler<{ data: any } | { error: string }> = async (
 	req,
-	res,
+	res
 ) => {
 	const { proposalType, id } = req.query;
 	const network = String(req.headers['x-network']);
@@ -161,7 +161,7 @@ const handler: NextApiHandler<{ data: any } | { error: string }> = async (
 	const data = await getSubSquareComments(
 		proposalType as string,
 		network,
-		id,
+		id
 	);
 	if (data.length === 0) {
 		res.status(200).json({ data: [] });

@@ -7,7 +7,7 @@ import { ProposalType } from '~src/global/proposalType';
 export async function checkIsOnChain(
 	id: number | string,
 	postType: ProposalType,
-	api: ApiPromise,
+	api: ApiPromise
 ) {
 	let dataFromChain: any[] = [];
 	switch (postType) {
@@ -15,7 +15,7 @@ export async function checkIsOnChain(
 			return Boolean(await api.query.bounties.bounties(Number(id)));
 		case ProposalType.CHILD_BOUNTIES:
 			return Boolean(
-				await api.query.childBounties.childBounties(Number(id)),
+				await api.query.childBounties.childBounties(Number(id))
 			);
 		case ProposalType.DEMOCRACY_PROPOSALS:
 			dataFromChain =
@@ -25,12 +25,12 @@ export async function checkIsOnChain(
 		case ProposalType.FELLOWSHIP_REFERENDUMS:
 			return Boolean(
 				await api.query.fellowshipReferenda.referendumInfoFor(
-					Number(id),
-				),
+					Number(id)
+				)
 			);
 		case ProposalType.OPEN_GOV || ProposalType.REFERENDUM_V2:
 			return Boolean(
-				await api.query.referenda.referendumInfoFor(Number(id)),
+				await api.query.referenda.referendumInfoFor(Number(id))
 			);
 		case ProposalType.TECH_COMMITTEE_PROPOSALS:
 			dataFromChain =
@@ -40,7 +40,7 @@ export async function checkIsOnChain(
 			return Boolean(dataFromChain.filter(([id]) => id === id).length);
 		case ProposalType.TREASURY_PROPOSALS:
 			return Boolean(
-				(await api.query.treasury.proposals(Number(id))).toJSON(),
+				(await api.query.treasury.proposals(Number(id))).toJSON()
 			);
 		case ProposalType.COUNCIL_MOTIONS:
 			dataFromChain =
@@ -50,7 +50,7 @@ export async function checkIsOnChain(
 			return Boolean(
 				(
 					await api.query.democracy.referendumInfoOf(Number(id))
-				).toJSON(),
+				).toJSON()
 			);
 		case ProposalType.TIPS:
 			return Boolean(await api.query.tips.tips(String(id)));

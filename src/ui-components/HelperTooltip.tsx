@@ -18,7 +18,7 @@ const HelperTooltip = ({
 	className,
 	text,
 	bgColor = '#E5007A',
-	placement,
+	placement
 }: Props) => {
 	return (
 		<Tooltip

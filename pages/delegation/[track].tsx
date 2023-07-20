@@ -5,7 +5,7 @@
 import { GetServerSideProps } from 'next';
 import {
 	IPostsListingResponse,
-	getOnChainPosts,
+	getOnChainPosts
 } from 'pages/api/v1/listing/on-chain-posts';
 import { FC, useEffect } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -21,7 +21,7 @@ import getQueryToTrack from '~src/util/getQueryToTrack';
 
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, track } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 		proposalType: ProposalType.OPEN_GOV,
 		sortBy,
 		trackNo: trackDetails?.trackId,
-		trackStatus: CustomStatus.Active,
+		trackStatus: CustomStatus.Active
 	});
 
 	return {
@@ -42,8 +42,8 @@ export const getServerSideProps: GetServerSideProps = async ({
 			data,
 			error,
 			network,
-			trackDetails,
-		},
+			trackDetails
+		}
 	};
 };
 

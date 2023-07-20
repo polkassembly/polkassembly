@@ -6,7 +6,7 @@ export const defaultNetwork = (() => {
 	const defaultNetwork = process.env.NEXT_PUBLIC_DEFAULT_NETWORK;
 	if (!defaultNetwork) {
 		throw Error(
-			'Please set "NEXT_PUBLIC_DEFAULT_NETWORK" environment variable',
+			'Please set "NEXT_PUBLIC_DEFAULT_NETWORK" environment variable'
 		);
 	}
 	return defaultNetwork;

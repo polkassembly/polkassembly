@@ -6,7 +6,7 @@ import { CheckCircleFilled, DownOutlined, UpOutlined } from '@ant-design/icons';
 import {
 	web3Accounts,
 	web3Enable,
-	web3FromSource,
+	web3FromSource
 } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import Identicon from '@polkadot/react-identicon';
@@ -41,7 +41,7 @@ interface Props {
 }
 
 enum AvailableAccountsInput {
-	submitWithAccount,
+	submitWithAccount
 }
 interface ValueState {
 	info: Record<string, unknown>;
@@ -60,12 +60,12 @@ const DEPOSIT: Record<string, number> = {
 	kusama: 33.3333,
 	moonbeam: 12.58,
 	moonriver: 1.0258,
-	polkadot: 20.258,
+	polkadot: 20.258
 };
 
 function setHasVal(
 	val: string,
-	setActive: null | ((isActive: boolean) => void),
+	setActive: null | ((isActive: boolean) => void)
 ): void {
 	if (val) {
 		setActive && setActive(true);
@@ -77,7 +77,7 @@ function setHasVal(
 function setData(
 	data: Data,
 	setActive: null | ((isActive: boolean) => void),
-	setVal: (val: string) => void,
+	setVal: (val: string) => void
 ): void {
 	if (data.asRaw.length != 0) {
 		setActive && setActive(true);
@@ -93,7 +93,7 @@ function checkValue(
 	excludes: string[],
 	starting: string[],
 	notStarting: string[] = WHITESPACE,
-	notEnding: string[] = WHITESPACE,
+	notEnding: string[] = WHITESPACE
 ): boolean {
 	return (
 		!hasValue ||
@@ -102,7 +102,7 @@ function checkValue(
 			includes.reduce(
 				(hasIncludes: boolean, check) =>
 					hasIncludes && value.includes(check),
-				true,
+				true
 			) &&
 			(!starting.length ||
 				starting.some((check) => value.startsWith(check))) &&
@@ -113,7 +113,7 @@ function checkValue(
 }
 
 const SetOnChainIdentityButton = ({
-	className, // setTipModalOpen,
+	className // setTipModalOpen,
 }: Props) => {
 	const { id } = useContext(UserDetailsContext);
 	const { network } = useContext(NetworkContext);
@@ -133,7 +133,7 @@ const SetOnChainIdentityButton = ({
 	const [identityOpt, setidentityOpt] = useState<Option<Registration>>();
 	const [
 		{ info, okAll, okDisplay, okEmail, okLegal, okRiot, okTwitter, okWeb },
-		setInfo,
+		setInfo
 	] = useState<ValueState>({ info: {}, okAll: false });
 	const [hasEmail, setHasEmail] = useState(false);
 	const [hasLegal, setHasLegal] = useState(false);
@@ -145,13 +145,13 @@ const SetOnChainIdentityButton = ({
 	const [showAvailableAccountsObj, setShowAvailableAccountsObj] = useState<{
 		[key: string]: boolean;
 	}>({
-		submitWithAccount: false,
+		submitWithAccount: false
 	});
 	const [submitWithAccount, setSubmitWithAccount] = useState<string>('');
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: false,
-		message: '',
+		message: ''
 	});
 
 	const [, setErrorsFound] = useState<string[]>([]);
@@ -185,7 +185,7 @@ const SetOnChainIdentityButton = ({
 		setAvailableAccounts(allAccounts);
 
 		const availableAccountsObj: { [key: string]: boolean } = {
-			submitWithAccount: false,
+			submitWithAccount: false
 		};
 
 		switch (updateForInput) {
@@ -200,7 +200,7 @@ const SetOnChainIdentityButton = ({
 
 	const isSelected = (
 		updateForInput: AvailableAccountsInput,
-		address: string,
+		address: string
 	) => {
 		switch (updateForInput) {
 			case AvailableAccountsInput.submitWithAccount:
@@ -210,7 +210,7 @@ const SetOnChainIdentityButton = ({
 
 	const handleSelectAvailableAccount = (
 		updateForInput: AvailableAccountsInput,
-		address: string,
+		address: string
 	) => {
 		switch (updateForInput) {
 			case AvailableAccountsInput.submitWithAccount:
@@ -220,7 +220,7 @@ const SetOnChainIdentityButton = ({
 
 		// Close dropdown on select
 		const availableAccountsObj: { [key: string]: boolean } = {
-			submitWithAccount: false,
+			submitWithAccount: false
 		};
 		setShowAvailableAccountsObj(availableAccountsObj);
 	};
@@ -242,7 +242,7 @@ const SetOnChainIdentityButton = ({
 								onClick={() =>
 									handleSelectAvailableAccount(
 										updateForInput,
-										address,
+										address
 									)
 								}
 								className=" mb-[10px] flex justify-between items-center cursor-pointer"
@@ -264,7 +264,7 @@ const SetOnChainIdentityButton = ({
 											border: '1px solid grey',
 											borderRadius: '50%',
 											height: '1em',
-											width: '1em',
+											width: '1em'
 										}}
 									></div>
 								)}
@@ -287,7 +287,7 @@ const SetOnChainIdentityButton = ({
 
 		const [validAddress] = checkAddress(
 			submitWithAccount,
-			addressPrefix[network],
+			addressPrefix[network]
 		);
 
 		setValidAddress(validAddress);
@@ -295,7 +295,7 @@ const SetOnChainIdentityButton = ({
 		if (validAddress) {
 			try {
 				api.query.identity.identityOf(submitWithAccount, (data: any) =>
-					setidentityOpt(data),
+					setidentityOpt(data)
 				);
 			} catch (e) {
 				setidentityOpt(undefined);
@@ -316,7 +316,7 @@ const SetOnChainIdentityButton = ({
 					info.legal,
 					info.riot,
 					info.twitter,
-					info.web,
+					info.web
 				].some((info: Data) => {
 					if (info.isRaw) {
 						return true;
@@ -361,16 +361,16 @@ const SetOnChainIdentityButton = ({
 		setHasVal(riotName, setHasRiot);
 		const okRiot = checkValue(hasRiot, riotName, 6, [':'], WHITESPACE, [
 			'@',
-			'~',
+			'~'
 		]);
 		setHasVal(twitter, setHasTwitter);
 		const okTwitter = checkValue(hasTwitter, twitter, 3, [], WHITESPACE, [
-			'@',
+			'@'
 		]);
 		setHasVal(website, setHasWeb);
 		const okWeb = checkValue(hasWeb, website, 8, ['.'], WHITESPACE, [
 			'https://',
-			'http://',
+			'http://'
 		]);
 
 		setInfo({
@@ -378,24 +378,24 @@ const SetOnChainIdentityButton = ({
 				display: { [okDisplay ? 'raw' : 'none']: displayName || null },
 				email: {
 					[okEmail && hasEmail ? 'raw' : 'none']:
-						okEmail && hasEmail ? email : null,
+						okEmail && hasEmail ? email : null
 				},
 				legal: {
 					[okLegal && hasLegal ? 'raw' : 'none']:
-						okLegal && hasLegal ? legalName : null,
+						okLegal && hasLegal ? legalName : null
 				},
 				riot: {
 					[okRiot && hasRiot ? 'raw' : 'none']:
-						okRiot && hasRiot ? riotName : null,
+						okRiot && hasRiot ? riotName : null
 				},
 				twitter: {
 					[okTwitter && hasTwitter ? 'raw' : 'none']:
-						okTwitter && hasTwitter ? twitter : null,
+						okTwitter && hasTwitter ? twitter : null
 				},
 				web: {
 					[okWeb && hasWeb ? 'raw' : 'none']:
-						okWeb && hasWeb ? website : null,
-				},
+						okWeb && hasWeb ? website : null
+				}
 			},
 			okAll:
 				okDisplay && okEmail && okLegal && okRiot && okTwitter && okWeb,
@@ -404,7 +404,7 @@ const SetOnChainIdentityButton = ({
 			okLegal,
 			okRiot,
 			okTwitter,
-			okWeb,
+			okWeb
 		});
 	}, [
 		hasEmail,
@@ -417,7 +417,7 @@ const SetOnChainIdentityButton = ({
 		legalName,
 		riotName,
 		twitter,
-		website,
+		website
 	]);
 
 	const handleSignAndSubmit = async () => {
@@ -443,7 +443,7 @@ const SetOnChainIdentityButton = ({
 			queueNotification({
 				header: 'Success!',
 				message: `Identity credentials submitted for verification, you will recieve an email from registrar shortly. Txn hash ${identity.hash}`,
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 			setLoadingStatus({ isLoading: false, message: '' });
 			setModalOpen(false);
@@ -452,7 +452,7 @@ const SetOnChainIdentityButton = ({
 			queueNotification({
 				header: 'Failed!',
 				message,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		};
 
@@ -463,7 +463,7 @@ const SetOnChainIdentityButton = ({
 			network,
 			onFailed,
 			onSuccess,
-			tx: identity,
+			tx: identity
 		});
 	};
 	const triggerBtn = (
@@ -519,7 +519,7 @@ const SetOnChainIdentityButton = ({
 						onClick={handleSignAndSubmit}
 					>
 						Set Identity
-					</Button>,
+					</Button>
 				]}
 				onCancel={() => setModalOpen(false)}
 			>
@@ -567,7 +567,7 @@ const SetOnChainIdentityButton = ({
 											}`}
 											onChange={(e) =>
 												onSubmitWithAccountChange(
-													e.target.value,
+													e.target.value
 												)
 											}
 											placeholder="Account Address"
@@ -580,7 +580,7 @@ const SetOnChainIdentityButton = ({
 										<div
 											onClick={() =>
 												handleDetect(
-													AvailableAccountsInput.submitWithAccount,
+													AvailableAccountsInput.submitWithAccount
 												)
 											}
 											className=" text-pink_primary cursor-pointer ml-[1.5em] mt-[0.25em]"
@@ -606,7 +606,7 @@ const SetOnChainIdentityButton = ({
 								] &&
 									availableAccounts.length > 0 &&
 									getAvailableAccounts(
-										AvailableAccountsInput.submitWithAccount,
+										AvailableAccountsInput.submitWithAccount
 									)}
 							</div>
 							{/* Display Name */}
@@ -677,7 +677,7 @@ const SetOnChainIdentityButton = ({
 										placeholder="somebody@example.com"
 										onChange={(e) =>
 											setEmail(
-												e.target.value.toLowerCase(),
+												e.target.value.toLowerCase()
 											)
 										}
 									/>

@@ -10,7 +10,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 
 export default async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ChallengeMessage | MessageType>,
+	res: NextApiResponse<ChallengeMessage | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -40,7 +40,7 @@ export default async function handler(
 		deadline,
 		token,
 		network,
-		start_time,
+		start_time
 	);
 
 	return { message: 'Status set successfully' };

@@ -29,7 +29,7 @@ export const LoadingLatestActivity = () => {
 };
 
 export const ErrorLatestActivity = ({
-	errorMessage,
+	errorMessage
 }: {
 	errorMessage: string;
 }) => {
@@ -57,7 +57,7 @@ interface IPopulatedLatestActivityProps {
 export const PopulatedLatestActivity: FC<IPopulatedLatestActivityProps> = ({
 	columns,
 	tableData,
-	onClick,
+	onClick
 }) => {
 	return (
 		<Table
@@ -67,7 +67,7 @@ export const PopulatedLatestActivity: FC<IPopulatedLatestActivityProps> = ({
 			scroll={{ x: 1000, y: 650 }}
 			onRow={(rowData) => {
 				return {
-					onClick: () => onClick(rowData),
+					onClick: () => onClick(rowData)
 				};
 			}}
 		/>
@@ -142,13 +142,13 @@ export const PopulatedLatestActivityCard: FC<
 						<span className="text-lightBlue mx-1.5">
 							{rowData.created_at
 								? dayjs(rowData.created_at).isAfter(
-										dayjs().subtract(1, 'w'),
+										dayjs().subtract(1, 'w')
 								  )
 									? dayjs(rowData.created_at)
 											.startOf('day')
 											.fromNow()
 									: dayjs(rowData.created_at).format(
-											"Do MMM 'YY",
+											"Do MMM 'YY"
 									  )
 								: null}
 						</span>
@@ -223,13 +223,13 @@ export const Gov2PopulatedLatestActivityCard: FC<
 						<span className="text-lightBlue mx-1.5">
 							{rowData.created_at
 								? dayjs(rowData.created_at).isAfter(
-										dayjs().subtract(1, 'w'),
+										dayjs().subtract(1, 'w')
 								  )
 									? dayjs(rowData.created_at)
 											.startOf('day')
 											.fromNow()
 									: dayjs(rowData.created_at).format(
-											"Do MMM 'YY",
+											"Do MMM 'YY"
 									  )
 								: null}
 						</span>

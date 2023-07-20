@@ -13,7 +13,7 @@ import {
 	LineElement,
 	Title,
 	Tooltip,
-	Legend,
+	Legend
 } from 'chart.js';
 import { Spin } from 'antd';
 
@@ -24,7 +24,7 @@ ChartJS.register(
 	LineElement,
 	Title,
 	Tooltip,
-	Legend,
+	Legend
 );
 
 export interface IProgress {
@@ -64,19 +64,19 @@ const Curves: FC<ICurvesProps> = (props) => {
 										? [0, 2].includes(i)
 											? '#5BC044'
 											: '#E5007A'
-										: 'transparent',
+										: 'transparent'
 							};
 						}
 						return { ...dataset };
-					}),
+					})
 				];
 				return {
 					...prev,
-					datasets: datasets,
+					datasets: datasets
 				};
 			}
 			return {
-				...prev,
+				...prev
 			};
 		});
 	};
@@ -96,17 +96,17 @@ const Curves: FC<ICurvesProps> = (props) => {
 							plugins={[hoverLinePlugin]}
 							options={{
 								animation: {
-									duration: 0,
+									duration: 0
 								},
 								clip: false,
 								plugins: {
 									hoverLine: {
 										lineColor: '#0F0F',
-										lineWidth: 1,
+										lineWidth: 1
 									},
 									legend: {
 										display: false,
-										position: 'bottom',
+										position: 'bottom'
 									},
 									tooltip: {
 										callbacks: {
@@ -114,14 +114,14 @@ const Curves: FC<ICurvesProps> = (props) => {
 												const {
 													dataIndex,
 													parsed,
-													dataset,
+													dataset
 												} = tooltipItem;
 
 												// only display one item
 												if (
 													[
 														'Approval',
-														'Current Approval',
+														'Current Approval'
 													].includes(dataset.label)
 												) {
 													return '';
@@ -144,14 +144,14 @@ const Curves: FC<ICurvesProps> = (props) => {
 															typeof currentApproval ===
 																'object'
 																? currentApproval.y
-																: currentApproval,
+																: currentApproval
 														).toFixed(2);
 													const currentSupportValue =
 														Number(
 															typeof currentSupport ===
 																'object'
 																? currentSupport.y
-																: currentSupport,
+																: currentSupport
 														).toFixed(2);
 													return `Current Support: ${currentSupportValue}% Current Approval: ${currentApprovalValue}%`;
 												}
@@ -168,30 +168,30 @@ const Curves: FC<ICurvesProps> = (props) => {
 												const approvalValue = Number(
 													typeof approval === 'object'
 														? approval.y
-														: approval,
+														: approval
 												).toFixed(2);
 												const supportValue = Number(
 													typeof support === 'object'
 														? support.y
-														: support,
+														: support
 												).toFixed(2);
 
 												const result = `Time: ${(
 													hs / 60
 												).toFixed(
-													0,
+													0
 												)}hs Support: ${supportValue}% Approval: ${approvalValue}%`;
 
 												return result;
 											},
 											title() {
 												return '';
-											},
+											}
 										},
 										displayColors: false,
 										intersect: false,
-										mode: 'index',
-									},
+										mode: 'index'
+									}
 								} as any,
 								scales: {
 									x: {
@@ -199,19 +199,19 @@ const Curves: FC<ICurvesProps> = (props) => {
 										display: true,
 										grid: {
 											display: true,
-											drawOnChartArea: false,
+											drawOnChartArea: false
 										},
 										ticks: {
 											callback(v: any) {
 												return (v / (60 * 24)).toFixed(
-													0,
+													0
 												);
 											},
 											max: labelsLength,
 											stepSize: Math.round(
 												labelsLength /
-													(labelsLength / (60 * 24)),
-											),
+													(labelsLength / (60 * 24))
+											)
 										} as any,
 										title: {
 											display: true,
@@ -223,11 +223,11 @@ const Curves: FC<ICurvesProps> = (props) => {
 												weight:
 													window.innerWidth > 400
 														? '500'
-														: '400',
+														: '400'
 											},
-											text: 'Days',
+											text: 'Days'
 										},
-										type: 'linear',
+										type: 'linear'
 									},
 									y: {
 										beginAtZero: false,
@@ -238,7 +238,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 											callback(val: any) {
 												return val + '%';
 											},
-											stepSize: 10,
+											stepSize: 10
 										},
 										title: {
 											display: true,
@@ -250,12 +250,12 @@ const Curves: FC<ICurvesProps> = (props) => {
 												weight:
 													window.innerWidth > 400
 														? '500'
-														: '400',
+														: '400'
 											},
-											text: 'Passing Percentage',
-										},
-									},
-								},
+											text: 'Passing Percentage'
+										}
+									}
+								}
 							}}
 						/>
 					</article>
@@ -369,7 +369,7 @@ const hoverLinePlugin = {
 			ctx.moveTo(chart.tooltip._active[0].element.x, chart.chartArea.top);
 			ctx.lineTo(
 				chart.tooltip._active[0].element.x,
-				chart.chartArea.bottom,
+				chart.chartArea.bottom
 			);
 			ctx.lineWidth = lineWidth;
 			ctx.strokeStyle = lineColor;
@@ -377,5 +377,5 @@ const hoverLinePlugin = {
 			ctx.restore();
 		}
 	},
-	id: 'hoverLine',
+	id: 'hoverLine'
 };

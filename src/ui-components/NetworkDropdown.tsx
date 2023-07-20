@@ -59,7 +59,7 @@ for (const key of Object.keys(network)) {
 				</span>
 			</div>
 		),
-		link,
+		link
 	};
 
 	switch (chainProperties[keyVal]?.category) {
@@ -93,7 +93,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 		isSearch,
 		setSelectedNetworks,
 		selectedNetworks = [],
-		allowedNetwork,
+		allowedNetwork
 	} = props;
 	const { network } = useNetworkContext();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
@@ -104,7 +104,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 		if (isSearch && setSelectedNetworks && selectedNetworks) {
 			if (!allowedNetwork?.includes(option.key)) return;
 			const filterArr = selectedNetworks.filter(
-				(network) => network !== option?.key,
+				(network) => network !== option?.key
 			);
 			if (filterArr?.length < selectedNetworks.length) {
 				setSelectedNetworks([...filterArr]);
@@ -139,13 +139,13 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 										} ${
 											isSearch &&
 											selectedNetworks?.includes(
-												optionObj.key,
+												optionObj.key
 											) &&
 											'text-pink_primary font-medium cursor-pointer'
 										} ${
 											isSearch &&
 											!allowedNetwork?.includes(
-												optionObj?.key,
+												optionObj?.key
 											) &&
 											'text-[#B5BFCC] cursor-not-allowed'
 										}`}
@@ -169,13 +169,13 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 										} ${
 											isSearch &&
 											selectedNetworks?.includes(
-												optionObj.key,
+												optionObj.key
 											) &&
 											'text-pink_primary font-medium cursor-pointer'
 										} ${
 											isSearch &&
 											!allowedNetwork?.includes(
-												optionObj?.key,
+												optionObj?.key
 											) &&
 											'text-[#B5BFCC] cursor-not-allowed'
 										}`}
@@ -199,13 +199,13 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 										} ${
 											isSearch &&
 											selectedNetworks?.includes(
-												optionObj.key,
+												optionObj.key
 											) &&
 											'text-pink_primary font-medium cursor-pointer'
 										} ${
 											isSearch &&
 											!allowedNetwork?.includes(
-												optionObj?.key,
+												optionObj?.key
 											) &&
 											'text-[#B5BFCC] cursor-not-allowed'
 										}`}
@@ -229,13 +229,13 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 										} ${
 											isSearch &&
 											selectedNetworks?.includes(
-												optionObj.key,
+												optionObj.key
 											) &&
 											'text-pink_primary font-medium cursor-pointer'
 										} ${
 											isSearch &&
 											!allowedNetwork?.includes(
-												optionObj?.key,
+												optionObj?.key
 											) &&
 											'text-[#B5BFCC] cursor-not-allowed'
 										}`}

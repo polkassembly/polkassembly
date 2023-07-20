@@ -26,11 +26,11 @@ const imageMapper: any = {
 	polkadot: { large: 'polkadot.png', small: 'polkadot-small.png' },
 	polkassembly: {
 		large: 'polkassembly.png',
-		small: 'polkassembly-small.png',
+		small: 'polkassembly-small.png'
 	},
 	polymesh: { large: 'polymesh.png', small: 'polymesh-small.png' },
 	robonomics: { large: 'robonomics.png', small: 'robonomics-small.png' },
-	turing: { large: 'turing.png', small: 'turing-small.png' },
+	turing: { large: 'turing.png', small: 'turing-small.png' }
 };
 
 const SEOHead = ({ title, desc, network }: Props) => {

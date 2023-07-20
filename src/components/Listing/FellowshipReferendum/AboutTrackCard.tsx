@@ -103,23 +103,23 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 									formatUSDWithUnits(
 										formatBnBalance(
 											`${trackMetaData.decisionDeposit}`.startsWith(
-												'0x',
+												'0x'
 											)
 												? new BN(
 														`${trackMetaData.decisionDeposit}`.slice(
-															2,
+															2
 														),
-														'hex',
+														'hex'
 												  )
 												: trackMetaData.decisionDeposit,
 											{
 												numberAfterComma: 2,
 												withThousandDelimitor: false,
-												withUnit: true,
+												withUnit: true
 											},
-											network,
+											network
 										),
-										1,
+										1
 									)}
 							</div>
 						</div>
@@ -134,7 +134,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							</div>
 							<div className="text-lg font-medium leading-7 my-2 text-bodyBlue">
 								{blocksToRelevantTime(
-									Number(trackMetaData.confirmPeriod),
+									Number(trackMetaData.confirmPeriod)
 								)}
 							</div>
 						</div>
@@ -148,7 +148,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							</div>
 							<div className="text-lg font-medium leading-7 my-2 text-bodyBlue">
 								{blocksToRelevantTime(
-									Number(trackMetaData.preparePeriod),
+									Number(trackMetaData.preparePeriod)
 								)}
 							</div>
 						</div>
@@ -163,7 +163,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							</div>
 							<div className="text-lg font-medium leading-7 my-2 text-bodyBlue">
 								{blocksToRelevantTime(
-									Number(trackMetaData.minEnactmentPeriod),
+									Number(trackMetaData.minEnactmentPeriod)
 								)}
 							</div>
 						</div>
@@ -177,7 +177,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							</div>
 							<div className="text-lg font-medium leading-7 my-2 text-bodyBlue">
 								{blocksToRelevantTime(
-									Number(trackMetaData.decisionPeriod),
+									Number(trackMetaData.decisionPeriod)
 								)}
 							</div>
 						</div>

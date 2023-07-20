@@ -81,7 +81,7 @@ export default function ChatFloatingModal() {
 		[globalNework.KILT]: ['2035', '5144'],
 		[globalNework.KUSAMA]: ['2027', '5138'],
 		[globalNework.MOONBEAM]: ['2065', '5142'],
-		[globalNework.POLKADOT]: ['3638', '754'],
+		[globalNework.POLKADOT]: ['3638', '754']
 	};
 
 	const { network } = useNetworkContext();
@@ -101,7 +101,7 @@ export default function ChatFloatingModal() {
 					channelsQuery.set('channels', filterChannels.join(','));
 					iframe.src += `&${channelsQuery.toString()}`;
 					return iframe;
-				},
+				}
 			});
 		}
 		hasOpened.current = true;

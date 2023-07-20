@@ -12,7 +12,7 @@ import {
 	Modal,
 	Popover,
 	Slider,
-	Spin,
+	Spin
 } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -63,7 +63,7 @@ const DelegateModal = ({
 	defaultTarget,
 	open,
 	setOpen,
-	trackNum,
+	trackNum
 }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useContext(NetworkContext);
@@ -97,7 +97,7 @@ const DelegateModal = ({
 		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol,
+			unit: chainProperties[network].tokenSymbol
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,14 +154,14 @@ const DelegateModal = ({
 				networkTrackInfo[network][trackName.toString()].trackId,
 				target,
 				conviction,
-				bnBalance.toString(),
-			),
+				bnBalance.toString()
+			)
 		);
 		const delegateTxn = api.tx.utility.batchAll(txArr);
 
 		(async () => {
 			const info = await delegateTxn.paymentInfo(
-				delegationDashboardAddress,
+				delegationDashboardAddress
 			);
 			setTxFee(new BN(info.partialFee.toString() || 0));
 			setLoading(false);
@@ -178,7 +178,7 @@ const DelegateModal = ({
 		network,
 		target,
 		checkedTrack,
-		validationOn,
+		validationOn
 	]);
 
 	const getData = async () => {
@@ -187,18 +187,18 @@ const DelegateModal = ({
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(
-			`api/v1/delegations?address=${delegationDashboardAddress}`,
+			`api/v1/delegations?address=${delegationDashboardAddress}`
 		);
 		if (data) {
 			const trackData = data.filter(
 				(item) =>
-					!item.status.includes(ETrackDelegationStatus.Delegated),
+					!item.status.includes(ETrackDelegationStatus.Delegated)
 			);
 			if (network) {
 				const tracks = trackData.map((item) => {
 					// eslint-disable-next-line @typescript-eslint/no-unused-vars
 					const values = Object.entries(
-						networkTrackInfo?.[network],
+						networkTrackInfo?.[network]
 					).find(([key, value]) => {
 						return value.trackId === item?.track;
 					});
@@ -206,13 +206,13 @@ const DelegateModal = ({
 					return values
 						? {
 								name: values[0],
-								trackId: values[1].trackId,
+								trackId: values[1].trackId
 						  }
 						: null;
 				});
 				setTrackArr(tracks);
 				const defaultCheck = tracks.filter(
-					(item) => item?.trackId === trackNum,
+					(item) => item?.trackId === trackNum
 				);
 				defaultCheck.length > 0 &&
 					defaultCheck?.[0] &&
@@ -232,7 +232,7 @@ const DelegateModal = ({
 
 	const onCheckAllChange = (e: CheckboxChangeEvent) => {
 		setCheckedList(
-			e.target.checked ? trackArr.map((track) => track?.name) : [],
+			e.target.checked ? trackArr.map((track) => track?.name) : []
 		);
 		setIndeterminate(false);
 		setCheckAll(e.target.checked);
@@ -253,7 +253,7 @@ const DelegateModal = ({
 			delegationDashboardAddress === getEncodedAddress(target, network)
 		) {
 			setTargetErr(
-				'You can not delegate to the same address. Please provide a different target address.',
+				'You can not delegate to the same address. Please provide a different target address.'
 			);
 			errors.push('');
 		}
@@ -274,7 +274,7 @@ const DelegateModal = ({
 
 		if (availableBalance.lte(txFee)) {
 			errors.push(
-				'Available balance is not sufficient for transaction fee',
+				'Available balance is not sufficient for transaction fee'
 			);
 		}
 
@@ -285,7 +285,7 @@ const DelegateModal = ({
 		queueNotification({
 			header: 'Success!',
 			message: 'Delegation successful.',
-			status: NotificationStatus.SUCCESS,
+			status: NotificationStatus.SUCCESS
 		});
 		setOpenSuccessPopup(true);
 		setLoading(false);
@@ -295,7 +295,7 @@ const DelegateModal = ({
 		queueNotification({
 			header: 'Failed!',
 			message,
-			status: NotificationStatus.ERROR,
+			status: NotificationStatus.ERROR
 		});
 		setLoading(false);
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
@@ -334,8 +334,8 @@ const DelegateModal = ({
 				networkTrackInfo[network][trackName.toString()].trackId,
 				target,
 				conviction,
-				bnBalance.toString(),
-			),
+				bnBalance.toString()
+			)
 		);
 		const delegateTxn = api.tx.utility.batchAll(txArr);
 
@@ -346,7 +346,7 @@ const DelegateModal = ({
 			network,
 			onFailed,
 			onSuccess,
-			tx: delegateTxn,
+			tx: delegateTxn
 		});
 	};
 
@@ -448,7 +448,7 @@ const DelegateModal = ({
 								}}
 							>
 								Delegate
-							</Button>,
+							</Button>
 						]}
 					</div>
 				}
@@ -464,7 +464,7 @@ const DelegateModal = ({
 											key={errorMsg}
 											errorMsg={errorMsg}
 										/>
-									),
+									)
 							)}
 
 						<Form form={form} disabled={loading}>
@@ -519,9 +519,9 @@ const DelegateModal = ({
 											Number(
 												formatedBalance(
 													availableBalance.toString(),
-													unit,
-												),
-											),
+													unit
+												)
+											)
 										);
 									}}
 								>
@@ -568,7 +568,7 @@ const DelegateModal = ({
 										tooltip={{ open: false }}
 										className="text-[12px] mt-[9px]"
 										trackStyle={{
-											backgroundColor: '#FF49AA',
+											backgroundColor: '#FF49AA'
 										}}
 										onChange={(value: number) => {
 											if (value === 1) {
@@ -578,10 +578,10 @@ const DelegateModal = ({
 												setLockValue(1);
 											} else {
 												setConviction(
-													Number(value - 1),
+													Number(value - 1)
 												);
 												setLockValue(
-													Number(2 ** (value - 2)),
+													Number(2 ** (value - 2))
 												);
 											}
 										}}
@@ -592,57 +592,57 @@ const DelegateModal = ({
 												style: {
 													color: 'var(--bodyBlue)',
 													fontSize: '12px',
-													marginTop: '16px',
-												},
+													marginTop: '16px'
+												}
 											},
 											2: {
 												label: <div>1x</div>,
 												style: {
 													color: 'var(--bodyBlue)',
 													fontSize: '12px',
-													marginTop: '16px',
-												},
+													marginTop: '16px'
+												}
 											},
 											3: {
 												label: <div>2x</div>,
 												style: {
 													color: 'var(--bodyBlue)',
 													fontSize: '12px',
-													marginTop: '16px',
-												},
+													marginTop: '16px'
+												}
 											},
 											4: {
 												label: <div>3x</div>,
 												style: {
 													color: 'var(--bodyBlue)',
 													fontSize: '12px',
-													marginTop: '16px',
-												},
+													marginTop: '16px'
+												}
 											},
 											5: {
 												label: <div>4x</div>,
 												style: {
 													color: 'var(--bodyBlue)',
 													fontSize: '12px',
-													marginTop: '16px',
-												},
+													marginTop: '16px'
+												}
 											},
 											6: {
 												label: <div>5x</div>,
 												style: {
 													color: 'var(--bodyBlue)',
 													fontSize: '12px',
-													marginTop: '16px',
-												},
+													marginTop: '16px'
+												}
 											},
 											7: {
 												label: <div>6x</div>,
 												style: {
 													color: 'var(--bodyBlue)',
 													fontSize: '12px',
-													marginTop: '16px',
-												},
-											},
+													marginTop: '16px'
+												}
+											}
 										}}
 										min={1}
 										max={7}
@@ -690,7 +690,7 @@ const DelegateModal = ({
 										checkedList
 											.filter(
 												(item) =>
-													item !== checkedTrack?.name,
+													item !== checkedTrack?.name
 											)
 											.map((list, index) => (
 												<div
@@ -701,7 +701,7 @@ const DelegateModal = ({
 													<span
 														onClick={() =>
 															handleClose(
-																String(list),
+																String(list)
 															)
 														}
 														className="flex justify-center items-center"
@@ -721,7 +721,7 @@ const DelegateModal = ({
 								className="mb-4 "
 								message={`An approximate fees of ${formatBalance(
 									txFee.toString(),
-									{ forceUnit: unit },
+									{ forceUnit: unit }
 								)} will be applied to the transaction`}
 							/>
 						)}

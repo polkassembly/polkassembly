@@ -22,7 +22,7 @@ const AyeNayButton = ({
 	onClickAye,
 	onClickNay,
 	size,
-	customWidth,
+	customWidth
 }: Props) => (
 	<div
 		className={`${className} flex items-center justify-between max-w-[256px]`}

@@ -22,7 +22,7 @@ export const checkWalletForSubstrateNetwork = (network: string) => {
 				description:
 					'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.',
 				error: 1,
-				message: 'Wallet extension not detected.',
+				message: 'Wallet extension not detected.'
 			};
 		}
 		if (network === 'polymesh' && !availableWallets[Wallet.POLYWALLET]) {
@@ -30,7 +30,7 @@ export const checkWalletForSubstrateNetwork = (network: string) => {
 				description:
 					'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.',
 				error: 1,
-				message: 'Wallet extension not detected.',
+				message: 'Wallet extension not detected.'
 			};
 		}
 	}

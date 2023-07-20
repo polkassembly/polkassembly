@@ -12,7 +12,7 @@ import messages from '~src/auth/utils/messages';
 
 async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<ChallengeMessage | MessageType>,
+	res: NextApiResponse<ChallengeMessage | MessageType>
 ) {
 	if (req.method !== 'POST')
 		return res
@@ -31,7 +31,7 @@ async function handler(
 
 	return res.status(200).json({
 		message: messages.CREDENTIALS_CHANGE_SUCCESSFUL,
-		signMessage: await authServiceInstance.SetCredentialsStart(address),
+		signMessage: await authServiceInstance.SetCredentialsStart(address)
 	});
 }
 

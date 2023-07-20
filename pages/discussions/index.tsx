@@ -27,7 +27,7 @@ interface IDiscussionsProps {
 
 export const getServerSideProps: GetServerSideProps = async ({
 	req,
-	query,
+	query
 }) => {
 	const { page = 1, sortBy = sortValues.COMMENTED, filterBy } = query;
 
@@ -40,8 +40,8 @@ export const getServerSideProps: GetServerSideProps = async ({
 		return {
 			redirect: {
 				destination: `/discussions?page=${page}&sortBy=${sortValues.COMMENTED}&filterBy=${filterBy}`,
-				permanent: false,
-			},
+				permanent: false
+			}
 		};
 	}
 
@@ -57,15 +57,15 @@ export const getServerSideProps: GetServerSideProps = async ({
 		network,
 		page: Number(page),
 		proposalType: OffChainProposalType.DISCUSSIONS,
-		sortBy: String(sortBy),
+		sortBy: String(sortBy)
 	});
 
 	return {
 		props: {
 			data,
 			error,
-			network,
-		},
+			network
+		}
 	};
 };
 

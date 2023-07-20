@@ -19,7 +19,7 @@ import addEthereumChain from '~src/util/addEthereumChain';
 import {
 	useApiContext,
 	useNetworkContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from '~src/context';
 import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -39,18 +39,18 @@ const abi = require('src/moonbeamAbi.json');
 const SecondProposalEth = ({
 	className,
 	proposalId,
-	seconds,
+	seconds
 }: SecondProposalProps) => {
 	const {
 		walletConnectProvider,
 		setWalletConnectProvider,
 		id,
-		loginAddress,
+		loginAddress
 	} = useUserDetailsContext();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: false,
-		message: '',
+		message: ''
 	});
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
@@ -74,7 +74,7 @@ const SecondProposalEth = ({
 	const connect = async () => {
 		setLoadingStatus({
 			isLoading: true,
-			message: 'Connecting to WalletConnect',
+			message: 'Connecting to WalletConnect'
 		});
 
 		//  Create new WalletConnect Provider
@@ -83,8 +83,8 @@ const SecondProposalEth = ({
 			rpc: {
 				1284: 'https://rpc.api.moonbeam.network',
 				1285: 'https://rpc.api.moonriver.moonbeam.network',
-				1287: 'https://rpc.api.moonbase.moonbeam.network',
-			},
+				1287: 'https://rpc.api.moonbase.moonbeam.network'
+			}
 		});
 		await wcPprovider.wc.createSession();
 		setWalletConnectProvider(wcPprovider);
@@ -98,19 +98,19 @@ const SecondProposalEth = ({
 
 		getAccountsHandler(
 			walletConnectProvider.wc.accounts,
-			walletConnectProvider.wc.chainId,
+			walletConnectProvider.wc.chainId
 		);
 
 		setLoadingStatus({
 			isLoading: false,
-			message: '',
+			message: ''
 		});
 
 		walletConnectProvider.wc.on('session_update', (error, payload) => {
 			if (error) {
 				setLoadingStatus({
 					isLoading: true,
-					message: 'Fetching Account',
+					message: 'Fetching Account'
 				});
 				return;
 			}
@@ -127,21 +127,21 @@ const SecondProposalEth = ({
 			// setAccountsNotFound(true);
 			setLoadingStatus({
 				isLoading: false,
-				message: 'Connecting to WalletConnect',
+				message: 'Connecting to WalletConnect'
 			});
 			return;
 		}
 
 		const web3 = new Web3(walletConnectProvider as any);
 		const checksumAddresses = addresses.map((address: string) =>
-			web3.utils.toChecksumAddress(address),
+			web3.utils.toChecksumAddress(address)
 		);
 
 		if (checksumAddresses.length === 0) {
 			// setAccountsNotFound(true);
 			setLoadingStatus({
 				isLoading: false,
-				message: '',
+				message: ''
 			});
 			return;
 		}
@@ -154,13 +154,13 @@ const SecondProposalEth = ({
 						meta: {
 							genesisHash: null,
 							name: 'walletConnect',
-							source: 'walletConnect',
-						},
+							source: 'walletConnect'
+						}
 					};
 
 					return account;
-				},
-			),
+				}
+			)
 		);
 
 		if (checksumAddresses.length > 0) {
@@ -169,7 +169,7 @@ const SecondProposalEth = ({
 
 		setLoadingStatus({
 			isLoading: false,
-			message: '',
+			message: ''
 		});
 	};
 
@@ -183,14 +183,14 @@ const SecondProposalEth = ({
 		try {
 			await addEthereumChain({
 				ethereum,
-				network,
+				network
 			});
 		} catch (error) {
 			return;
 		}
 
 		const addresses = await ethereum.request({
-			method: 'eth_requestAccounts',
+			method: 'eth_requestAccounts'
 		});
 
 		if (addresses.length === 0) {
@@ -204,11 +204,11 @@ const SecondProposalEth = ({
 					meta: {
 						genesisHash: null,
 						name: 'metamask',
-						source: 'metamask',
-					},
+						source: 'metamask'
+					}
 				};
 				return account;
-			},
+			}
 		);
 
 		if (accounts && Array.isArray(accounts)) {
@@ -217,7 +217,7 @@ const SecondProposalEth = ({
 				(account) =>
 					(
 						getSubstrateAddress(account?.address) || ''
-					).toLowerCase() === (substrate_address || '').toLowerCase(),
+					).toLowerCase() === (substrate_address || '').toLowerCase()
 			);
 			if (index >= 0) {
 				const account = accounts[index];
@@ -248,7 +248,7 @@ const SecondProposalEth = ({
 
 		setLoadingStatus({
 			isLoading: true,
-			message: 'Waiting for confirmation',
+			message: 'Waiting for confirmation'
 		});
 
 		if (walletConnectProvider?.wc.connected) {
@@ -262,7 +262,7 @@ const SecondProposalEth = ({
 				queueNotification({
 					header: 'Wrong Network!',
 					message: `Please change to ${currentNetwork} network`,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				return;
 			}
@@ -274,14 +274,14 @@ const SecondProposalEth = ({
 			.second(proposalId, seconds)
 			.send({
 				from: address,
-				to: contractAddress,
+				to: contractAddress
 			})
 			.then(() => {
 				setLoadingStatus({ isLoading: false, message: '' });
 				queueNotification({
 					header: 'Success!',
 					message: `Vote on proposal #${proposalId} successful.`,
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 			})
 			.catch((error: any) => {
@@ -290,7 +290,7 @@ const SecondProposalEth = ({
 				queueNotification({
 					header: 'Failed!',
 					message: error.message,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			});
 	};
@@ -330,7 +330,7 @@ const SecondProposalEth = ({
 						onClick={secondProposal}
 					>
 						Second
-					</Button>,
+					</Button>
 				]}
 			>
 				<Spin

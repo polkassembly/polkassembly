@@ -52,13 +52,13 @@ export const Comment: FC<ICommentProps> = (props) => {
 		sentiment,
 		comment_source = 'polkassembly',
 		history,
-		spam_users_count,
+		spam_users_count
 	} = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
 	const [newSentiment, setNewSentiment] = useState<number>(sentiment || 0);
 	const {
-		postData: { postIndex, postType },
+		postData: { postIndex, postType }
 	} = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
@@ -69,7 +69,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 		if (commentScrollRef && commentScrollRef.current && hash === `${id}`) {
 			commentScrollRef.current.scrollIntoView({
 				behavior: 'smooth',
-				block: 'start',
+				block: 'start'
 			});
 		}
 	}, [asPath, id]);
@@ -164,9 +164,9 @@ export const Comment: FC<ICommentProps> = (props) => {
 						{
 							content: content,
 							created_at: updated_at,
-							sentiment: newSentiment || sentiment || 0,
+							sentiment: newSentiment || sentiment || 0
 						},
-						...history,
+						...history
 					]}
 					defaultAddress={comment?.proposer}
 					username={comment?.username}

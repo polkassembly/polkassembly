@@ -7,5 +7,5 @@ export const AVAILABLE_NETWORK = [
 	AllNetworks.CERE,
 	AllNetworks.KUSAMA,
 	AllNetworks.POLKADOT,
-	AllNetworks.COLLECTIVES,
+	AllNetworks.COLLECTIVES
 ];

@@ -23,7 +23,7 @@ const ProposalVoteInfo = ({
 	className,
 	deposit,
 	loadingStatus,
-	seconds,
+	seconds
 }: Props) => {
 	const { network } = useContext(NetworkContext);
 
@@ -41,9 +41,9 @@ const ProposalVoteInfo = ({
 								deposit,
 								{
 									numberAfterComma: 2,
-									withUnit: true,
+									withUnit: true
 								},
-								network,
+								network
 							)}
 						</div>
 					</div>
@@ -64,9 +64,9 @@ const ProposalVoteInfo = ({
 								new BN(deposit).mul(new BN(seconds)),
 								{
 									numberAfterComma: 2,
-									withUnit: true,
+									withUnit: true
 								},
-								network,
+								network
 							)}
 						</div>
 					</div>

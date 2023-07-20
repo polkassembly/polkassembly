@@ -9,7 +9,7 @@ import {
 	IAddProfileResponse,
 	ISocial,
 	ProfileDetails,
-	ProfileDetailsResponse,
+	ProfileDetailsResponse
 } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import { handleTokenChange } from 'src/services/auth.service';
@@ -42,7 +42,7 @@ const getDefaultProfile: () => ProfileDetails = () => {
 		bio: '',
 		imgUrl: '',
 		social_links: [],
-		title: '',
+		title: ''
 	};
 };
 
@@ -53,28 +53,28 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const [loading, setLoading] = useState(false);
 	const [errorCheck, setErrorCheck] = useState({
 		basicInformationError: '',
-		socialsError: '',
+		socialsError: ''
 	});
 	const userDetailsContext = useUserDetailsContext();
 	const [username, setUsername] = useState<string>(
-		userDetailsContext.username || '',
+		userDetailsContext.username || ''
 	);
 	const router = useRouter();
 
 	const validateData = (
 		image: string | undefined,
-		social_links: ISocial[] | undefined,
+		social_links: ISocial[] | undefined
 	) => {
 		// eslint-disable-next-line no-useless-escape
 		const regex = validator.isURL(image || '', {
 			protocols: ['http', 'https'],
-			require_protocol: true,
+			require_protocol: true
 		});
 
 		if (image && image.trim() && !regex) {
 			setErrorCheck({
 				...errorCheck,
-				basicInformationError: 'Image URL is invalid.',
+				basicInformationError: 'Image URL is invalid.'
 			});
 			return true;
 		} else if (regex) {
@@ -88,7 +88,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					link.link &&
 					!validator.isURL(link.link, {
 						protocols: ['http', 'https'],
-						require_protocol: true,
+						require_protocol: true
 					}) &&
 					!validator.isEmail(link.link)
 				) {
@@ -96,7 +96,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 						...errorCheck,
 						socialsError: `${link.type} ${
 							link.type === 'Email' ? '' : 'URL'
-						} is invalid.`,
+						} is invalid.`
 					});
 					return true;
 				} else {
@@ -118,7 +118,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			queueNotification({
 				header: 'Error',
 				message: messages.USERNAME_INVALID_ERROR,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			errorUsername += 1;
 		}
@@ -128,7 +128,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				queueNotification({
 					header: 'Error',
 					message: messages.USERNAME_BANNED,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				errorUsername += 1;
 			}
@@ -153,7 +153,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				bio,
 				image,
 				social_links,
-				title,
+				title
 			});
 		} else {
 			setProfile(getDefaultProfile());
@@ -168,7 +168,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		if (!profile) {
 			setErrorCheck({
 				...errorCheck,
-				basicInformationError: 'Please fill in the required fields.',
+				basicInformationError: 'Please fill in the required fields.'
 			});
 			return;
 		}
@@ -189,8 +189,8 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				social_links: JSON.stringify(social_links || []),
 				title: title,
 				user_id: Number(id),
-				username: username || userDetailsContext.username,
-			},
+				username: username || userDetailsContext.username
+			}
 		);
 
 		if (error || !data) {
@@ -198,11 +198,11 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			queueNotification({
 				header: 'Error!',
 				message: error || 'Your profile was not updated.',
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			setErrorCheck({
 				...errorCheck,
-				basicInformationError: 'Your profile was not updated.',
+				basicInformationError: 'Your profile was not updated.'
 			});
 		}
 
@@ -210,7 +210,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			queueNotification({
 				header: 'Success!',
 				message: 'Your profile was updated.',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 			setProfileDetails((prev) => {
 				return {
@@ -219,13 +219,13 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					bio: bio || '',
 					image: image || '',
 					social_links: social_links || [],
-					title: title || '',
+					title: title || ''
 				};
 			});
 			setProfile(getDefaultProfile());
 			handleTokenChange(data?.token, {
 				...userDetailsContext,
-				picture: image,
+				picture: image
 			});
 			router.push(`/user/${username}`);
 		}
@@ -278,7 +278,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 											basicInformationError:
 												error?.message || error,
 											socialInformationError:
-												error?.socialInformationError,
+												error?.socialInformationError
 										}));
 									}
 								}}
@@ -286,7 +286,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 								className="border-pink_primary border border-solid rounded-[4px] w-[134px] h-[40px] text-white bg-pink_primary font-medium text-sm"
 							>
 								Save
-							</Button>,
+							</Button>
 						]}
 					</div>
 				}
@@ -311,7 +311,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 								/>
 							),
 							key: 'basic_information',
-							label: 'Basic Information',
+							label: 'Basic Information'
 						},
 						{
 							children: (
@@ -323,8 +323,8 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 								/>
 							),
 							key: 'socials',
-							label: 'Socials',
-						},
+							label: 'Socials'
+						}
 					]}
 				/>
 			</Modal>

@@ -15,7 +15,7 @@ import TopicTag from '~src/ui-components/TopicTag';
 import { getTopicNameFromTopicId } from '~src/util/getTopicFromType';
 import {
 	ProposalType,
-	getSinglePostLinkFromProposalType,
+	getSinglePostLinkFromProposalType
 } from '~src/global/proposalType';
 import { getTopicFromType } from '~src/util/getTopicFromType';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
@@ -40,7 +40,7 @@ const ResultPosts = ({
 	isSuperSearch,
 	postsPage,
 	setPostsPage,
-	totalPage,
+	totalPage
 }: Props) => {
 	return postsData.length > 0 ? (
 		<>
@@ -62,7 +62,7 @@ const ResultPosts = ({
 						<a
 							rel="noreferrer"
 							href={`https://${post?.network}.polkassembly.io/${getSinglePostLinkFromProposalType(
-								post?.post_type,
+								post?.post_type
 							)}/${post?.id}`}
 							key={index}
 							target="_blank"
@@ -90,7 +90,7 @@ const ResultPosts = ({
 									<div className="flex gap-2 items-center text-xs text-lightBlue md:hidden">
 										<Divider
 											style={{
-												border: '1px solid var(--lightBlue)',
+												border: '1px solid var(--lightBlue)'
 											}}
 											type="vertical"
 										/>
@@ -98,7 +98,7 @@ const ResultPosts = ({
 										{getRelativeCreatedAt(
 											dayjs
 												.unix(post?.created_at)
-												.toDate(),
+												.toDate()
 										)}
 									</div>
 								</div>
@@ -134,7 +134,7 @@ const ResultPosts = ({
 										</div>
 										<Divider
 											style={{
-												border: '1px solid var(--lightBlue)',
+												border: '1px solid var(--lightBlue)'
 											}}
 											type="vertical"
 										/>
@@ -146,7 +146,7 @@ const ResultPosts = ({
 												.map(
 													(
 														tag: string,
-														index: number,
+														index: number
 													) => (
 														<div
 															key={index}
@@ -154,7 +154,7 @@ const ResultPosts = ({
 														>
 															{tag}
 														</div>
-													),
+													)
 												)}
 											{post?.tags.length > 2 && (
 												<span className="text-[10px] font-medium text-[#243A57] px-2 py-1 bg-[#e7e9ee] rounded-[50px]">
@@ -163,7 +163,7 @@ const ResultPosts = ({
 											)}
 											<Divider
 												style={{
-													border: '1px solid var(--lightBlue)',
+													border: '1px solid var(--lightBlue)'
 												}}
 												type="vertical"
 											/>
@@ -174,11 +174,11 @@ const ResultPosts = ({
 										{getRelativeCreatedAt(
 											dayjs
 												.unix(post?.created_at)
-												.toDate(),
+												.toDate()
 										)}
 										<Divider
 											style={{
-												border: '1px solid var(--lightBlue)',
+												border: '1px solid var(--lightBlue)'
 											}}
 											type="vertical"
 										/>
@@ -193,15 +193,15 @@ const ResultPosts = ({
 														: getTopicNameFromTopicId(
 																(post?.topic_id ||
 																	getTopicFromType(
-																		post?.postType as ProposalType,
+																		post?.postType as ProposalType
 																	)
-																		?.id) as any,
+																		?.id) as any
 														  )
 												}
 											/>
 											<Divider
 												style={{
-													border: '1px solid var(--lightBlue)',
+													border: '1px solid var(--lightBlue)'
 												}}
 												type="vertical"
 											/>

@@ -32,12 +32,12 @@ const SecondProposal = ({
 	address,
 	accounts,
 	onAccountChange,
-	getAccounts,
+	getAccounts
 }: SecondProposalProps) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: false,
-		message: '',
+		message: ''
 	});
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useContext(NetworkContext);
@@ -50,7 +50,7 @@ const SecondProposal = ({
 		queueNotification({
 			header: 'Success!',
 			message: `Vote on proposal #${proposalId} successful.`,
-			status: NotificationStatus.SUCCESS,
+			status: NotificationStatus.SUCCESS
 		});
 	};
 
@@ -59,7 +59,7 @@ const SecondProposal = ({
 		queueNotification({
 			header: 'Failed!',
 			message,
-			status: NotificationStatus.ERROR,
+			status: NotificationStatus.ERROR
 		});
 	};
 	const secondProposal = async () => {
@@ -96,12 +96,12 @@ const SecondProposal = ({
 			onBroadcast: () =>
 				setLoadingStatus({
 					isLoading: true,
-					message: 'Broadcasting the vote',
+					message: 'Broadcasting the vote'
 				}),
 			onFailed,
 			onSuccess,
 			params: network == 'equilibrium' ? { nonce: -1 } : {},
-			tx: second,
+			tx: second
 		});
 	};
 
@@ -136,7 +136,7 @@ const SecondProposal = ({
 						onClick={secondProposal}
 					>
 						Second
-					</Button>,
+					</Button>
 				]}
 			>
 				<Spin

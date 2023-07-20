@@ -22,7 +22,7 @@ function CustomWeekHeader({ date, localizer, small }: any): JSX.Element {
 export function TimeGutterHeader({
 	localizer,
 	date,
-	selectedView,
+	selectedView
 }: any): JSX.Element {
 	return (
 		<span className="time-gutter-header-text">

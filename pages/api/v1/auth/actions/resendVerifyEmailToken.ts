@@ -27,7 +27,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	await authServiceInstance.resendVerifyEmailToken(token, network);
 
 	return res.status(200).json({
-		message: messages.RESEND_VERIFY_EMAIL_TOKEN_REQUEST_SUCCESSFUL,
+		message: messages.RESEND_VERIFY_EMAIL_TOKEN_REQUEST_SUCCESSFUL
 	});
 }
 

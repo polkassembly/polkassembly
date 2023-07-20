@@ -41,7 +41,7 @@ const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
 const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 	className,
 	isBalanceUpdated,
-	setIsBalanceUpdated,
+	setIsBalanceUpdated
 }) => {
 	const { network } = useNetworkContext();
 	const [address, setAddress] = useState<string>('');
@@ -49,7 +49,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 	const [lockedBalance, setLockedBalance] = useState<BN>(new BN(0));
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
 		isLoading: false,
-		message: '',
+		message: ''
 	});
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [unlocksAt, setUnlocksAt] = useState<string>('');
@@ -109,9 +109,9 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 					amount: vote[1].asStandard.balance,
 					conviction: conviction,
 					refIndex,
-					vote: vote[1].asStandard.vote.isAye,
+					vote: vote[1].asStandard.vote.isAye
 				};
-			}),
+			})
 		);
 
 		votes.sort((a, b) => a.conviction - b.conviction);
@@ -139,7 +139,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 		try {
 			await addEthereumChain({
 				ethereum,
-				network,
+				network
 			});
 		} catch (error) {
 			setIsAccountLoading(false);
@@ -150,7 +150,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 
 		try {
 			addresses = await ethereum.request({
-				method: 'eth_requestAccounts',
+				method: 'eth_requestAccounts'
 			});
 		} catch (e) {
 			setIsAccountLoading(false);
@@ -169,12 +169,12 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 					meta: {
 						genesisHash: null,
 						name: 'metamask',
-						source: 'metamask',
-					},
+						source: 'metamask'
+					}
 				};
 
 				return account;
-			}),
+			})
 		);
 
 		if (addresses.length > 0) {
@@ -206,14 +206,14 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 			queueNotification({
 				header: 'Wrong Network!',
 				message: `Please change to ${currentNetwork} network`,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
 
 		setLoadingStatus({
 			isLoading: true,
-			message: 'Waiting for confirmation',
+			message: 'Waiting for confirmation'
 		});
 
 		const contract = new web3.eth.Contract(abi, contractAddress);
@@ -225,14 +225,14 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 			.remove_vote(refIndex.toString())
 			.send({
 				from: address,
-				to: contractAddress,
+				to: contractAddress
 			})
 			.then((result: any) => {
 				console.log(result);
 				queueNotification({
 					header: 'Success!',
 					message: 'Remove Vote successful.',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				setLoadingStatus({ isLoading: false, message: '' });
 				setCanBeUnlocked(true);
@@ -242,7 +242,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 				queueNotification({
 					header: 'Failed!',
 					message: error.message,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				setLoadingStatus({ isLoading: false, message: '' });
 				setCanBeUnlocked(false);
@@ -259,14 +259,14 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 			queueNotification({
 				header: 'Wrong Network!',
 				message: `Please change to ${currentNetwork} network`,
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
 
 		setLoadingStatus({
 			isLoading: true,
-			message: 'Waiting for confirmation',
+			message: 'Waiting for confirmation'
 		});
 
 		const contract = new web3.eth.Contract(abi, contractAddress);
@@ -278,7 +278,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 			.unlock(address)
 			.send({
 				from: address,
-				to: contractAddress,
+				to: contractAddress
 			})
 			.then((result: any) => {
 				console.log(result);
@@ -286,7 +286,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 				queueNotification({
 					header: 'Success!',
 					message: 'Unlock successful.',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				setCanBeUnlocked(false);
 				getLockedBalance();
@@ -297,7 +297,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 				queueNotification({
 					header: 'Failed!',
 					message: error.message,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 				setCanBeUnlocked(true);
 				getLockedBalance();
@@ -363,7 +363,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 									{formatBnBalance(
 										String(lockedBalance),
 										{ numberAfterComma: 2, withUnit: true },
-										network,
+										network
 									)}
 									.
 								</span>
@@ -416,9 +416,9 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 														String(vote.amount),
 														{
 															numberAfterComma: 2,
-															withUnit: true,
+															withUnit: true
 														},
-														network,
+														network
 													)}
 												</span>
 												<span className="col-span-2">
@@ -445,7 +445,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({
 																className="bg-pink_primary rounded-md outline-none border-none text-white"
 																onClick={() =>
 																	handleRemove(
-																		vote.refIndex,
+																		vote.refIndex
 																	)
 																}
 																loading={

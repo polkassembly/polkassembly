@@ -9,12 +9,12 @@ if (!process.env.FIREBASE_SERVICE_ACC_CONFIG) {
 }
 
 const serviceAccount = JSON.parse(
-	process.env.FIREBASE_SERVICE_ACC_CONFIG,
+	process.env.FIREBASE_SERVICE_ACC_CONFIG
 ) as firebaseAdmin.ServiceAccount;
 
 try {
 	firebaseAdmin.initializeApp({
-		credential: firebaseAdmin.credential.cert(serviceAccount),
+		credential: firebaseAdmin.credential.cert(serviceAccount)
 	});
 	console.log('Firebase admin Initialized.');
 } catch (error) {

@@ -6,7 +6,7 @@ import blockToTime from '../blockToTime';
 jest.mock('../getNetwork', () =>
 	jest.fn(() => {
 		return 'polkadot';
-	}),
+	})
 );
 const getNetwork = require('../getNetwork');
 

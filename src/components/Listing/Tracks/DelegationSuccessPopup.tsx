@@ -57,7 +57,7 @@ const DelegationSuccessPopup = ({
 	ayeVoteValue,
 	nayVoteValue,
 	abstainVoteValue,
-	isVote = false,
+	isVote = false
 }: Props) => {
 	const { network } = useNetworkContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -66,7 +66,7 @@ const DelegationSuccessPopup = ({
 		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol,
+			unit: chainProperties[network].tokenSymbol
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -115,7 +115,7 @@ const DelegationSuccessPopup = ({
 										{ayeVoteValue
 											? formatedBalance(
 													ayeVoteValue.toString(),
-													unit,
+													unit
 											  )
 											: 0}
 										{` ${unit}`}
@@ -127,7 +127,7 @@ const DelegationSuccessPopup = ({
 										{nayVoteValue
 											? formatedBalance(
 													nayVoteValue.toString(),
-													unit,
+													unit
 											  )
 											: 0}
 										{` ${unit}`}
@@ -147,7 +147,7 @@ const DelegationSuccessPopup = ({
 										{abstainVoteValue
 											? formatedBalance(
 													abstainVoteValue.toString(),
-													unit,
+													unit
 											  )
 											: 0}
 										{` ${unit}`}
@@ -163,7 +163,7 @@ const DelegationSuccessPopup = ({
 										{ayeVoteValue
 											? formatedBalance(
 													ayeVoteValue.toString(),
-													unit,
+													unit
 											  )
 											: 0}
 										{` ${unit}`}
@@ -175,7 +175,7 @@ const DelegationSuccessPopup = ({
 										{nayVoteValue
 											? formatedBalance(
 													nayVoteValue.toString(),
-													unit,
+													unit
 											  )
 											: 0}
 										{` ${unit}`}

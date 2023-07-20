@@ -29,7 +29,7 @@ export default function Gov1Notification({
 	onSetNotification,
 	userNotification,
 	dispatch,
-	options,
+	options
 }: Props) {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const [all, setAll] = useState(false);
@@ -37,9 +37,9 @@ export default function Gov1Notification({
 	const handleAllClick = (checked: boolean) => {
 		dispatch({
 			payload: {
-				params: { checked },
+				params: { checked }
 			},
-			type: ACTIONS.GOV_ONE_ALL_CHANGE,
+			type: ACTIONS.GOV_ONE_ALL_CHANGE
 		});
 		const notification = Object.assign({}, userNotification);
 		Object.keys(options).forEach((key) => {
@@ -59,7 +59,7 @@ export default function Gov1Notification({
 				notification[option.triggerName] = {
 					enabled: postTypes.length > 0,
 					name: option?.triggerPreferencesName,
-					post_types: postTypes,
+					post_types: postTypes
 				};
 			});
 		});
@@ -69,7 +69,7 @@ export default function Gov1Notification({
 
 	useEffect(() => {
 		const allSelected = Object.values(options).every((option: any) =>
-			option.every((item: any) => item.selected),
+			option.every((item: any) => item.selected)
 		);
 		setAll(allSelected);
 	}, [options]);
@@ -77,14 +77,14 @@ export default function Gov1Notification({
 	const handleCategoryAllClick = (
 		checked: boolean,
 		categoryOptions: any,
-		title: string,
+		title: string
 	) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
-				params: { checked, key: title },
+				params: { checked, key: title }
 			},
-			type: ACTIONS.GOV_ONE_PROPOSAL_ALL_CHANGE,
+			type: ACTIONS.GOV_ONE_PROPOSAL_ALL_CHANGE
 		});
 		const notification = Object.assign({}, userNotification);
 		options[title].forEach((option: any) => {
@@ -103,7 +103,7 @@ export default function Gov1Notification({
 			notification[option.triggerName] = {
 				enabled: postTypes.length > 0,
 				name: option?.triggerPreferencesName,
-				post_types: postTypes,
+				post_types: postTypes
 			};
 		});
 		onSetNotification(notification);
@@ -113,14 +113,14 @@ export default function Gov1Notification({
 		categoryOptions: any,
 		checked: boolean,
 		value: string,
-		title: string,
+		title: string
 	) => {
 		title = titleMapper(title) as string;
 		dispatch({
 			payload: {
-				params: { checked, key: title, value },
+				params: { checked, key: title, value }
 			},
-			type: ACTIONS.GOV_ONE_PROPOSAL_SINGLE_CHANGE,
+			type: ACTIONS.GOV_ONE_PROPOSAL_SINGLE_CHANGE
 		});
 		const notification = Object.assign({}, userNotification);
 		const option = categoryOptions.find((opt: any) => opt.label === value);
@@ -132,13 +132,13 @@ export default function Gov1Notification({
 			if (!postTypes.includes(title)) postTypes.push(title);
 		} else {
 			postTypes = postTypes.filter(
-				(postType: string) => postType !== title,
+				(postType: string) => postType !== title
 			);
 		}
 		notification[option.triggerName] = {
 			enabled: postTypes.length > 0,
 			name: option?.triggerPreferencesName,
-			post_types: postTypes,
+			post_types: postTypes
 		};
 		onSetNotification(notification);
 	};

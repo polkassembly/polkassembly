@@ -29,7 +29,7 @@ const Index: any = {
 	key: 'index',
 	render: (post_id: any) => <div className="truncate">{post_id}</div>,
 	title: '#',
-	width: 75,
+	width: 75
 };
 
 const Title: any = {
@@ -38,7 +38,7 @@ const Title: any = {
 	key: 'title',
 	render: (title: any) => <div className="truncate">{title}</div>,
 	title: 'Title',
-	width: 420,
+	width: 420
 };
 
 const Creator: any = {
@@ -53,7 +53,7 @@ const Creator: any = {
 				} else {
 					await goToProfileByAddress(record.proposer || '');
 				}
-			},
+			}
 		};
 	},
 	render: (username: any, { proposer }: { proposer: any }) => (
@@ -66,7 +66,7 @@ const Creator: any = {
 			/>
 		</div>
 	),
-	title: 'Creator',
+	title: 'Creator'
 };
 
 const Status: any = {
@@ -91,7 +91,7 @@ const Status: any = {
 			);
 	},
 	title: 'Status',
-	width: 200,
+	width: 200
 };
 
 const CreatedAt: any = {
@@ -101,7 +101,7 @@ const CreatedAt: any = {
 		const relativeCreatedAt = getRelativeCreatedAt(createdAt);
 		return <span>{relativeCreatedAt}</span>;
 	},
-	title: 'Created',
+	title: 'Created'
 };
 
 const columns: ColumnsType<IPostsRowData> = [
@@ -109,7 +109,7 @@ const columns: ColumnsType<IPostsRowData> = [
 	Title,
 	Creator,
 	Status,
-	CreatedAt,
+	CreatedAt
 ];
 
 const allColumns: ColumnsType<IPostsRowData> = [
@@ -126,7 +126,7 @@ const allColumns: ColumnsType<IPostsRowData> = [
 			);
 		},
 		title: 'Title',
-		width: 350,
+		width: 350
 	},
 	{
 		dataIndex: 'username',
@@ -140,7 +140,7 @@ const allColumns: ColumnsType<IPostsRowData> = [
 					} else {
 						await goToProfileByAddress(record.proposer || '');
 					}
-				},
+				}
 			};
 		},
 		render: (username, { proposer }) => (
@@ -153,7 +153,7 @@ const allColumns: ColumnsType<IPostsRowData> = [
 				/>
 			</div>
 		),
-		title: 'Posted By',
+		title: 'Posted By'
 	},
 	CreatedAt,
 	{
@@ -167,9 +167,9 @@ const allColumns: ColumnsType<IPostsRowData> = [
 			);
 		},
 		title: 'Type',
-		width: 200,
+		width: 200
 	},
-	Status,
+	Status
 ];
 
 const tipColumns: ColumnsType<IPostsRowData> = [
@@ -178,12 +178,12 @@ const tipColumns: ColumnsType<IPostsRowData> = [
 		fixed: 'left',
 		key: 'index',
 		title: '#',
-		width: 75,
+		width: 75
 	},
 	Title,
 	Creator,
 	Status,
-	CreatedAt,
+	CreatedAt
 ];
 
 const offChainColumns: ColumnsType<IPostsRowData> = [
@@ -200,20 +200,20 @@ const offChainColumns: ColumnsType<IPostsRowData> = [
 			);
 		},
 		title: 'Title',
-		width: 500,
+		width: 500
 	},
 	{
 		dataIndex: 'topic',
 		key: 'topic',
 		title: 'Topic',
-		width: 160,
+		width: 160
 	},
 	Creator,
-	CreatedAt,
+	CreatedAt
 ];
 
 export function getColumns(
-	key: 'all' | ProposalType,
+	key: 'all' | ProposalType
 ): ColumnsType<IPostsRowData> {
 	if (key === 'all') {
 		return allColumns;
@@ -225,7 +225,7 @@ export function getColumns(
 			ProposalType.DEMOCRACY_PROPOSALS,
 			ProposalType.REFERENDUMS,
 			ProposalType.COUNCIL_MOTIONS,
-			ProposalType.TREASURY_PROPOSALS,
+			ProposalType.TREASURY_PROPOSALS
 		].includes(key)
 	) {
 		return columns;

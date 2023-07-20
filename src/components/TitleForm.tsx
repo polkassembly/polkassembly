@@ -22,19 +22,19 @@ const validateTitle = (content: string): ValidationResult => {
 	if (content) {
 		return {
 			errorMsg: null,
-			validateStatus: 'success',
+			validateStatus: 'success'
 		};
 	}
 	return {
 		errorMsg: 'Please add the title.',
-		validateStatus: 'error',
+		validateStatus: 'error'
 	};
 };
 
 const TitleForm = ({ className, onChange, value = '' }: Props): JSX.Element => {
 	const [validationStatus, setValidation] = useState<ValidationResult>({
 		errorMsg: null,
-		validateStatus: 'success',
+		validateStatus: 'success'
 	});
 
 	const onChangeWrapper = (event: React.ChangeEvent<HTMLInputElement>) => {

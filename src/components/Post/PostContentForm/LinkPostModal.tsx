@@ -6,7 +6,7 @@ import {
 	CheckOutlined,
 	DeleteOutlined,
 	LinkOutlined,
-	LoadingOutlined,
+	LoadingOutlined
 } from '@ant-design/icons';
 import { Button, Form, Input, Modal, Select, Spin } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
@@ -26,51 +26,51 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 const onChainOptions = [
 	{
 		label: 'Democracy Proposals',
-		value: ProposalType.DEMOCRACY_PROPOSALS.toString(),
+		value: ProposalType.DEMOCRACY_PROPOSALS.toString()
 	},
 	{
 		label: 'Tech Committee Proposals',
-		value: ProposalType.TECH_COMMITTEE_PROPOSALS.toString(),
+		value: ProposalType.TECH_COMMITTEE_PROPOSALS.toString()
 	},
 	{
 		label: 'Treasury Proposals',
-		value: ProposalType.TREASURY_PROPOSALS.toString(),
+		value: ProposalType.TREASURY_PROPOSALS.toString()
 	},
 	{
 		label: 'Referendums',
-		value: ProposalType.REFERENDUMS.toString(),
+		value: ProposalType.REFERENDUMS.toString()
 	},
 	{
 		label: 'Fellowship Referendums',
-		value: ProposalType.FELLOWSHIP_REFERENDUMS.toString(),
+		value: ProposalType.FELLOWSHIP_REFERENDUMS.toString()
 	},
 	{
 		label: 'Motions',
-		value: ProposalType.COUNCIL_MOTIONS.toString(),
+		value: ProposalType.COUNCIL_MOTIONS.toString()
 	},
 	{
 		label: 'Bounties',
-		value: ProposalType.BOUNTIES.toString(),
+		value: ProposalType.BOUNTIES.toString()
 	},
 	{
 		label: 'Tips',
-		value: ProposalType.TIPS.toString(),
+		value: ProposalType.TIPS.toString()
 	},
 	{
 		label: 'OpenGov',
-		value: ProposalType.OPEN_GOV.toString(),
-	},
+		value: ProposalType.OPEN_GOV.toString()
+	}
 ];
 
 const offChainOptions = [
 	{
 		label: 'Discussions',
-		value: ProposalType.DISCUSSIONS.toString(),
+		value: ProposalType.DISCUSSIONS.toString()
 	},
 	{
 		label: 'Grants',
-		value: ProposalType.GRANTS.toString(),
-	},
+		value: ProposalType.GRANTS.toString()
+	}
 ];
 
 interface ILinkPostModalProps {
@@ -110,8 +110,8 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					'api/v1/auth/actions/linkPostStart',
 					{
 						postId,
-						postType,
-					},
+						postType
+					}
 				);
 			if (error) {
 				setErr(error);
@@ -137,8 +137,8 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 						currPostId,
 						currPostType,
 						postId,
-						postType,
-					},
+						postType
+					}
 				);
 			if (error) {
 				setErr(error);
@@ -150,14 +150,14 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 						description: data?.description,
 						id: postId,
 						title: data?.title,
-						type: postType,
+						type: postType
 					},
-					timeline: resData.timeline || [],
+					timeline: resData.timeline || []
 				}));
 				queueNotification({
 					header: 'Success',
 					message: 'Successfully post linked.',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 			}
 		} catch (error) {
@@ -180,8 +180,8 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 						currPostId,
 						currPostType,
 						postId,
-						postType,
-					},
+						postType
+					}
 				);
 			if (error) {
 				setErr(error);
@@ -190,13 +190,13 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 				setPostData((prev) => ({
 					...prev,
 					post_link: undefined,
-					timeline: resData.timeline || [],
+					timeline: resData.timeline || []
 				}));
 				setData(undefined);
 				queueNotification({
 					header: 'Success',
 					message: 'Successfully removed post linked.',
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 			}
 		} catch (error) {
@@ -227,7 +227,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					className="mr-auto"
 				>
 					Remove
-				</Button>,
+				</Button>
 			);
 		} else if (data) {
 			footer.push(
@@ -241,7 +241,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					className="bg-green_primary"
 				>
 					Confirm
-				</Button>,
+				</Button>
 			);
 		} else {
 			footer.push(
@@ -254,11 +254,11 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					onClick={handleSubmit}
 				>
 					Link
-				</Button>,
+				</Button>
 			);
 		}
 		setFooter(
-			<div className="flex items-center justify-end">{footer}</div>,
+			<div className="flex items-center justify-end">{footer}</div>
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data, postId, postType, postData, loading]);

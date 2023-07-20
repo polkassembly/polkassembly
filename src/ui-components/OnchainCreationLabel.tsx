@@ -18,7 +18,7 @@ interface Props {
 const OnchainCreationLabel = ({
 	address,
 	username,
-	truncateUsername,
+	truncateUsername
 }: Props) => {
 	return (
 		<div className="flex justify-between min-[340px]:flex-row min-[340px]:items-center text-xs text-[#485F7D] w-full min-[340px]:w-auto">

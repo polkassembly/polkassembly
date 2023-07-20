@@ -46,7 +46,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol,
+			unit: chainProperties[network].tokenSymbol
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,9 +61,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				setSocial_links([
 					...social_links,
 					{ link: info.identity?.email, type: ESocialType.EMAIL },
-					{ link: info.identity?.twitter, type: ESocialType.TWITTER },
+					{ link: info.identity?.twitter, type: ESocialType.TWITTER }
 				]);
-			},
+			}
 		);
 
 		userProfileBalances({
@@ -73,7 +73,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			network,
 			setBalance,
 			setLockBalance,
-			setTransferableBalance,
+			setTransferableBalance
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,13 +113,13 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							?.filter(
 								(item) =>
 									item === ESocialType.EMAIL ||
-									item === ESocialType.TWITTER,
+									item === ESocialType.TWITTER
 							)
 							.map((social, index) => {
 								const link =
 									social_links && Array.isArray(social_links)
 										? social_links?.find(
-												(s) => s.type === social,
+												(s) => s.type === social
 										  )?.link || ''
 										: '';
 								return (
@@ -226,7 +226,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 										social_links &&
 										Array.isArray(social_links)
 											? social_links?.find(
-													(s) => s.type === social,
+													(s) => s.type === social
 											  )?.link || ''
 											: '';
 									return (

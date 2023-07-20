@@ -15,7 +15,7 @@ interface IGetNetworkSocialsParams {
 }
 
 export async function getNetworkSocials(
-	params: IGetNetworkSocialsParams,
+	params: IGetNetworkSocialsParams
 ): Promise<IApiResponse<NetworkSocials>> {
 	try {
 		const { network } = params;
@@ -31,7 +31,7 @@ export async function getNetworkSocials(
 		if (!networkData?.blockchain_socials) {
 			throw apiErrorWithStatusCode(
 				'No socials found for this network',
-				404,
+				404
 			);
 		}
 
@@ -40,20 +40,20 @@ export async function getNetworkSocials(
 		return {
 			data: JSON.parse(JSON.stringify(networkSocials)),
 			error: null,
-			status: 200,
+			status: 200
 		};
 	} catch (error) {
 		return {
 			data: null,
 			error: error.message || messages.API_FETCH_ERROR,
-			status: Number(error.name) || 500,
+			status: Number(error.name) || 500
 		};
 	}
 }
 
 const handler: NextApiHandler<NetworkSocials | { error: string }> = async (
 	req,
-	res,
+	res
 ) => {
 	const network = req.headers['x-network'] as string;
 	if (!network)
@@ -62,7 +62,7 @@ const handler: NextApiHandler<NetworkSocials | { error: string }> = async (
 			.json({ error: 'Missing network name in request headers' });
 
 	const { data, error, status } = await getNetworkSocials({
-		network,
+		network
 	});
 
 	if (error || !data) {

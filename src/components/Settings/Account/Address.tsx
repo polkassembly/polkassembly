@@ -10,7 +10,7 @@ import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
 import {
 	useApiContext,
 	useNetworkContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { NotificationStatus, Wallet } from 'src/types';
@@ -70,14 +70,14 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 
 		const { data, error } = await nextApiClientFetch<ChangeResponseType>(
 			'api/v1/auth/actions/setDefaultAddress',
-			{ address: substrate_address, network },
+			{ address: substrate_address, network }
 		);
 		if (error) {
 			console.error(error);
 			queueNotification({
 				header: 'Failed!',
 				message: cleanError(error),
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 
@@ -85,7 +85,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 			queueNotification({
 				header: 'Success!',
 				message: data.message || '',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 			handleTokenChange(data.token, currentUser);
 		}
@@ -93,7 +93,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 
 	const handleLink = async (
 		address: InjectedAccount['address'],
-		wallet: Wallet,
+		wallet: Wallet
 	) => {
 		const signRaw =
 			!address.startsWith('0x') &&
@@ -111,13 +111,13 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 
 		const { data, error } = await nextApiClientFetch<ChallengeMessage>(
 			'api/v1/auth/actions/addressLinkStart',
-			{ address: substrate_address },
+			{ address: substrate_address }
 		);
 		if (error || !data?.signMessage) {
 			queueNotification({
 				header: 'Failed!',
 				message: cleanError(error || 'Something went wrong'),
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 			return;
 		}
@@ -135,7 +135,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 				{
 					from,
 					method,
-					params,
+					params
 				},
 				async (err: any, result: any) => {
 					if (result) {
@@ -148,8 +148,8 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 							{
 								address: substrate_address,
 								signature,
-								wallet,
-							},
+								wallet
+							}
 						);
 
 					if (confirmError) {
@@ -157,7 +157,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 						queueNotification({
 							header: 'Failed!',
 							message: cleanError(confirmError),
-							status: NotificationStatus.ERROR,
+							status: NotificationStatus.ERROR
 						});
 					}
 
@@ -166,17 +166,17 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 						queueNotification({
 							header: 'Success!',
 							message: confirmData.message || '',
-							status: NotificationStatus.SUCCESS,
+							status: NotificationStatus.SUCCESS
 						});
 					}
-				},
+				}
 			);
 		} else {
 			if (signRaw) {
 				const { signature: substrate_signature } = await signRaw({
 					address: substrate_address,
 					data: stringToHex(data?.signMessage || ''),
-					type: 'bytes',
+					type: 'bytes'
 				});
 				signature = substrate_signature;
 
@@ -186,8 +186,8 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 						{
 							address: substrate_address,
 							signature,
-							wallet,
-						},
+							wallet
+						}
 					);
 
 				if (confirmError) {
@@ -195,7 +195,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 					queueNotification({
 						header: 'Failed!',
 						message: cleanError(confirmError),
-						status: NotificationStatus.ERROR,
+						status: NotificationStatus.ERROR
 					});
 				}
 
@@ -204,7 +204,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 					queueNotification({
 						header: 'Success!',
 						message: confirmData.message || '',
-						status: NotificationStatus.SUCCESS,
+						status: NotificationStatus.SUCCESS
 					});
 				}
 			}
@@ -222,7 +222,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 
 		const { data, error } = await nextApiClientFetch<ChangeResponseType>(
 			'api/v1/auth/actions/addressUnlink',
-			{ address: substrate_address },
+			{ address: substrate_address }
 		);
 
 		if (error) {
@@ -230,7 +230,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 			queueNotification({
 				header: 'Failed!',
 				message: cleanError(error),
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 		if (data?.token) {
@@ -238,14 +238,14 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 			queueNotification({
 				header: 'Success!',
 				message: data.message || '',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 		}
 	};
 
 	const UnlinkButton: FC<{ address: string }> = ({ address }) => {
 		const StyledUnlinkButton: FC<{ withClickHandler?: boolean }> = ({
-			withClickHandler = false,
+			withClickHandler = false
 		}) => {
 			return (
 				<Button
@@ -295,7 +295,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 			(prev, account) => {
 				const address = getEncodedAddress(account.address, network);
 				const encodedUserAddresses = currentUser.addresses?.map(
-					(address) => getEncodedAddress(address, network),
+					(address) => getEncodedAddress(address, network)
 				);
 				const isLinked =
 					address && encodedUserAddresses?.includes(address);
@@ -308,7 +308,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 						const obj = {
 							account: account,
 							address: address,
-							isLinked: isLinked as boolean,
+							isLinked: isLinked as boolean
 						};
 						if (prev[walletName]) {
 							prev[walletName].push(obj);
@@ -324,7 +324,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 						const obj = {
 							account: account,
 							address: account.address,
-							isLinked: isLinked as boolean,
+							isLinked: isLinked as boolean
 						};
 						if (prev[walletName]) {
 							prev[walletName].push(obj);
@@ -337,7 +337,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 				const obj = {
 					account: account,
 					address: account.address,
-					isLinked: isLinked as boolean,
+					isLinked: isLinked as boolean
 				};
 				if (prev['other']) {
 					prev['other'].push(obj);
@@ -352,7 +352,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 					isLinked: boolean;
 					address: string;
 				}[];
-			},
+			}
 		);
 
 		return (
@@ -378,7 +378,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 													const {
 														account,
 														isLinked,
-														address,
+														address
 													} = v;
 													return (
 														address && (
@@ -424,7 +424,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 																				onClick={() =>
 																					handleLink(
 																						address,
-																						key as Wallet,
+																						key as Wallet
 																					)
 																				}
 																				icon={
@@ -447,7 +447,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 										</div>
 									)
 								);
-							},
+							}
 						)}
 				</div>
 			</article>
@@ -482,9 +482,9 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 										get_erc20: [
 											'moonbase',
 											'moonriver',
-											'moonbeam',
+											'moonbeam'
 										].includes(network),
-										network,
+										network
 									})
 										.then((res) => {
 											setAccountsInfo(res);
@@ -504,7 +504,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 							className="bg-white text-pink_primary outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center"
 						>
 							Cancel
-						</Button>,
+						</Button>
 					]}
 				</div>
 			}
@@ -529,16 +529,16 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 							accounts:
 								currentUser?.addresses?.sort().map(
 									(address): InjectedAccount => ({
-										address: address,
+										address: address
 										// meta: { source: '' }
-									}),
+									})
 								) || [],
-							title: 'Linked addresses',
+							title: 'Linked addresses'
 						})}
 					{accounts.length &&
 						addressList({
 							accounts,
-							title: 'Available addresses',
+							title: 'Available addresses'
 						})}
 				</section>
 			)}

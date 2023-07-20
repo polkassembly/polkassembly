@@ -38,7 +38,7 @@ const Password: FC<IPasswordProps> = ({
 	name,
 	placeholder,
 	rules,
-	onChange,
+	onChange
 }) => {
 	return (
 		<div className="flex flex-col gap-y-2 h-full max-w-[250px]">
@@ -66,7 +66,7 @@ const ChangeEmail: FC<IEmailProps> = ({
 	name,
 	label,
 	rules,
-	onChange,
+	onChange
 }) => {
 	return (
 		<div className="flex flex-col gap-y-2 h-full max-w-[250px]">
@@ -136,21 +136,21 @@ const Profile = () => {
 				const { data, error } = await nextApiClientFetch<any>(
 					'api/v1/auth/actions/sendVerificationEmail',
 					{
-						email,
-					},
+						email
+					}
 				);
 				if (error) {
 					queueNotification({
 						header: 'Failed!',
 						message: error,
-						status: NotificationStatus.ERROR,
+						status: NotificationStatus.ERROR
 					});
 				}
 				if (data) {
 					queueNotification({
 						header: 'Success!',
 						message: 'Verification Email Sent.',
-						status: NotificationStatus.SUCCESS,
+						status: NotificationStatus.SUCCESS
 					});
 				}
 				setLoading(false);
@@ -160,7 +160,7 @@ const Profile = () => {
 				queueNotification({
 					header: 'Failed!',
 					message: error,
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			}
 		}
@@ -173,8 +173,8 @@ const Profile = () => {
 				'api/v1/auth/actions/changeEmail',
 				{
 					email: email,
-					password: currentPassword,
-				},
+					password: currentPassword
+				}
 			);
 
 			if (error || !data || !data.message) {
@@ -184,7 +184,7 @@ const Profile = () => {
 				queueNotification({
 					header: 'Failed!',
 					message: cleanError(error || 'Something went wrong'),
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			}
 
@@ -197,7 +197,7 @@ const Profile = () => {
 					queueNotification({
 						header: 'Success!',
 						message: data.message,
-						status: NotificationStatus.SUCCESS,
+						status: NotificationStatus.SUCCESS
 					});
 				}
 			}
@@ -210,8 +210,8 @@ const Profile = () => {
 				'api/v1/auth/actions/changePassword',
 				{
 					newPassword: new_password,
-					oldPassword: old_password,
-				},
+					oldPassword: old_password
+				}
 			);
 
 			if (error || !data || !data.message) {
@@ -221,7 +221,7 @@ const Profile = () => {
 				queueNotification({
 					header: 'Failed!',
 					message: cleanError(error || 'Something went wrong'),
-					status: NotificationStatus.ERROR,
+					status: NotificationStatus.ERROR
 				});
 			}
 
@@ -232,7 +232,7 @@ const Profile = () => {
 					queueNotification({
 						header: 'Success!',
 						message: data.message,
-						status: NotificationStatus.SUCCESS,
+						status: NotificationStatus.SUCCESS
 					});
 				}
 			}
@@ -269,8 +269,8 @@ const Profile = () => {
 						rules={[
 							{
 								message: messages.VALIDATION_EMAIL_ERROR,
-								pattern: emailValidation.pattern,
-							},
+								pattern: emailValidation.pattern
+							}
 						]}
 					/>
 				</article>
@@ -282,7 +282,7 @@ const Profile = () => {
 								onChange={(e) => {
 									setPasswords((prev) => ({
 										...prev,
-										old: e?.target?.value,
+										old: e?.target?.value
 									}));
 								}}
 								name="old_password"
@@ -291,20 +291,20 @@ const Profile = () => {
 									{
 										message:
 											messages.VALIDATION_PASSWORD_ERROR,
-										required: password.required,
+										required: password.required
 									},
 									{
 										message:
 											messages.VALIDATION_PASSWORD_ERROR,
-										min: password.minLength,
-									},
+										min: password.minLength
+									}
 								]}
 							/>
 							<Password
 								onChange={(e) =>
 									setPasswords((prev) => ({
 										...prev,
-										new: e?.target?.value,
+										new: e?.target?.value
 									}))
 								}
 								name="new_password"
@@ -313,13 +313,13 @@ const Profile = () => {
 									{
 										message:
 											messages.VALIDATION_PASSWORD_ERROR,
-										required: password.required,
+										required: password.required
 									},
 									{
 										message:
 											messages.VALIDATION_PASSWORD_ERROR,
-										min: password.minLength,
-									},
+										min: password.minLength
+									}
 								]}
 							/>
 
@@ -351,13 +351,13 @@ const Profile = () => {
 									{
 										message:
 											messages.VALIDATION_PASSWORD_ERROR,
-										required: password.required,
+										required: password.required
 									},
 									{
 										message:
 											messages.VALIDATION_PASSWORD_ERROR,
-										min: password.minLength,
-									},
+										min: password.minLength
+									}
 								]}
 							/>
 							<Button

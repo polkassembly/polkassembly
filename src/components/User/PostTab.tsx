@@ -26,7 +26,7 @@ const PostTab: FC<IPostTabProps> = (props) => {
 						<Link
 							key={post.id}
 							href={`/${getSinglePostLinkFromProposalType(
-								post.type,
+								post.type
 							)}/${post.id}`}
 						>
 							<GovernanceCard

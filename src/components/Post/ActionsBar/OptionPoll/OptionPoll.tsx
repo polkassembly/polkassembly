@@ -33,11 +33,11 @@ const OptionPoll: FC<IOptionPollProps> = ({
 	options,
 	endAt,
 	votes,
-	proposalType,
+	proposalType
 }) => {
 	const {
 		postData: { postIndex },
-		setPostData,
+		setPostData
 	} = usePostDataContext();
 	const [addPollVoteErr, setAddPollVoteErr] = useState('');
 	const [deletePollVoteErr, setDeletePollVoteErr] = useState('');
@@ -71,8 +71,8 @@ const OptionPoll: FC<IOptionPollProps> = ({
 						pollType: POLL_TYPE.OPTION,
 						postId: postIndex,
 						proposalType,
-						userId: id,
-					},
+						userId: id
+					}
 				);
 
 			if (deleteVoteErr) {
@@ -89,13 +89,13 @@ const OptionPoll: FC<IOptionPollProps> = ({
 											optionPoll?.option_poll_votes?.filter(
 												(optionPollVote) =>
 													optionPollVote.user_id !==
-													id,
+													id
 											) || [];
 									}
 									return {
-										...optionPoll,
+										...optionPoll
 									};
-								}) || [],
+								}) || []
 						};
 					});
 				}
@@ -110,8 +110,8 @@ const OptionPoll: FC<IOptionPollProps> = ({
 						pollType: POLL_TYPE.OPTION,
 						postId: postIndex,
 						proposalType,
-						userId: id,
-					},
+						userId: id
+					}
 				);
 
 			if (addVoteErr) {
@@ -131,14 +131,14 @@ const OptionPoll: FC<IOptionPollProps> = ({
 												created_at: date,
 												option,
 												updated_at: date,
-												user_id: id,
-											},
+												user_id: id
+											}
 										];
 									}
 									return {
-										...optionPoll,
+										...optionPoll
 									};
-								}) || [],
+								}) || []
 						};
 					});
 				}
@@ -147,7 +147,7 @@ const OptionPoll: FC<IOptionPollProps> = ({
 			setLoading(false);
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		},
-		[id, optionPollId, postIndex, proposalType],
+		[id, optionPollId, postIndex, proposalType]
 	);
 
 	if (addPollVoteErr && deletePollVoteErr) {
@@ -184,7 +184,7 @@ const OptionPoll: FC<IOptionPollProps> = ({
 								totalVotes &&
 								Math.round(
 									((optionMap[option] || 0) * 100) /
-										totalVotes,
+										totalVotes
 								)
 							}
 							format={(percent) => <div> {percent} % </div>}

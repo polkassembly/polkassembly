@@ -12,7 +12,7 @@ import messages from '~src/auth/utils/messages';
 import firebaseAdmin from '~src/services/firebaseInit';
 import {
 	IUserNotificationSettings,
-	IUserNotificationTriggerPreferences,
+	IUserNotificationTriggerPreferences
 } from '~src/types';
 
 function isValidNetworkPreferences(network_preferences: any): boolean {
@@ -87,8 +87,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		...(userData?.notification_preferences || {}),
 		triggerPreferences: {
 			...(userData?.notification_preferences?.triggerPreferences || {}),
-			...payload,
-		},
+			...payload
+		}
 	};
 
 	await userRef

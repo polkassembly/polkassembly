@@ -8,7 +8,7 @@ const handleFilterResults = (
 	defaultTags: IPostTag[],
 	setDefaultTag: (string: IPostTag[]) => void,
 	selectedTags: string[],
-	searchInput: string,
+	searchInput: string
 ) => {
 	const keyword = searchInput.toLowerCase();
 	const filteredData = defaultTags.filter((tag: IPostTag) => {

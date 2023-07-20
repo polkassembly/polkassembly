@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const props: Props = {
 		network: getNetworkFromReqHeaders(context.req.headers),
 		token: `${context.query.token}`,
-		userId: `${context.query.userId}`,
+		userId: `${context.query.userId}`
 	};
 
 	return { props };
@@ -54,7 +54,7 @@ const ResetPassword = ({ network, token, userId }: Props): JSX.Element => {
 		if (value.password) {
 			const { data, error } = await nextApiClientFetch<MessageType>(
 				'api/v1/auth/actions/resetPassword',
-				{ newPassword, userId },
+				{ newPassword, userId }
 			);
 			if (error) {
 				console.log('error resetting passoword : ', error);
@@ -66,7 +66,7 @@ const ResetPassword = ({ network, token, userId }: Props): JSX.Element => {
 				queueNotification({
 					header: 'Success!',
 					message: data.message,
-					status: NotificationStatus.SUCCESS,
+					status: NotificationStatus.SUCCESS
 				});
 				setLoading(false);
 				router.push('/login');
@@ -103,21 +103,21 @@ const ResetPassword = ({ network, token, userId }: Props): JSX.Element => {
 													message:
 														messages.VALIDATION_PASSWORD_ERROR,
 													min: validation.password
-														.minLength,
+														.minLength
 												},
 												{
 													message:
 														messages.VALIDATION_PASSWORD_ERROR,
 													required:
 														validation.password
-															.required,
-												},
+															.required
+												}
 											]}
 										>
 											<Input.Password
 												onChange={(e) =>
 													setNewPassword(
-														e.target.value,
+														e.target.value
 													)
 												}
 												placeholder="eg. password123"

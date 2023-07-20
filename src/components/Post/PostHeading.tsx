@@ -26,7 +26,7 @@ const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 			<Skeleton.Input active />
 		</div>
 	),
-	ssr: false,
+	ssr: false
 });
 
 interface IPostHeadingProps {
@@ -55,8 +55,8 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			cid,
 			history,
 			content,
-			summary,
-		},
+			summary
+		}
 	} = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 
@@ -70,8 +70,8 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			router.replace({
 				pathname: `/${pathname}`,
 				query: {
-					filterBy: encodeURIComponent(JSON.stringify([filterBy])),
-				},
+					filterBy: encodeURIComponent(JSON.stringify([filterBy]))
+				}
 			});
 	};
 	return (
@@ -84,7 +84,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						{formatBnBalance(
 							String(requestedAmt),
 							{ numberAfterComma: 2, withUnit: true },
-							network,
+							network
 						)}
 					</h5>
 				)}
@@ -133,9 +133,9 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								handleTagClick(
 									onTagClickFilter(
 										proposalType,
-										track_name || '',
+										track_name || ''
 									),
-									tag,
+									tag
 								)
 							}
 							className="rounded-full px-[16px] py-[4px] border-navBlue border-solid border-[1px] text-navBlue text-xs traking-2 cursor-pointer hover:border-pink_primary hover:text-pink_primary"
@@ -154,9 +154,9 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						{
 							content: content,
 							created_at: last_edited_at || '',
-							title: title,
+							title: title
 						},
-						...history,
+						...history
 					]}
 					username={username}
 					defaultAddress={proposer}

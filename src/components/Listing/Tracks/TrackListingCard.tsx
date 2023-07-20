@@ -27,7 +27,7 @@ export enum CustomStatus {
 	Submitted = 'CustomStatusSubmitted',
 	Voting = 'CustomStatusVoting',
 	Closed = 'CustomStatusClosed',
-	Active = 'CustomStatusActive',
+	Active = 'CustomStatusActive'
 }
 
 const TrackListingCard = ({ className, posts, trackName }: Props) => {
@@ -46,7 +46,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 					error={posts?.all?.error}
 					count={posts?.all?.data?.count || 0}
 				/>
-			),
+			)
 		},
 		{
 			label: (
@@ -64,7 +64,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 					count={posts?.submitted?.data?.count || 0}
 					status={CustomStatus.Submitted}
 				/>
-			),
+			)
 		},
 		{
 			label: (
@@ -82,7 +82,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 					count={posts?.voting?.data?.count || 0}
 					status={CustomStatus.Voting}
 				/>
-			),
+			)
 		},
 		{
 			label: (
@@ -100,12 +100,12 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 					count={posts?.closed?.data?.count || 0}
 					status={CustomStatus.Closed}
 				/>
-			),
+			)
 		},
 		{
 			label: <FilterByTags className="xs:hidden sm:block sm:mr-5" />,
-			key: 'Filter',
-		},
+			key: 'Filter'
+		}
 	];
 	const router = useRouter();
 	const trackStatus = router.query['trackStatus'];
@@ -124,8 +124,8 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			query: {
 				...router.query,
 				page: 1,
-				trackStatus: key.toLowerCase(),
-			},
+				trackStatus: key.toLowerCase()
+			}
 		});
 	};
 
@@ -135,8 +135,8 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			query: {
 				...router.query,
 				page,
-				trackStatus: activeTab.toLowerCase(),
-			},
+				trackStatus: activeTab.toLowerCase()
+			}
 		});
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};

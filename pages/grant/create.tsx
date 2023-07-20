@@ -24,7 +24,7 @@ const CreatePost = dynamic(() => import('~src/components/Post/CreatePost'), {
 			<Skeleton.Button className="mt-8" active />
 		</div>
 	),
-	ssr: false,
+	ssr: false
 });
 
 const Create = ({ network }: { network: string }) => {

@@ -5,12 +5,12 @@ import {
 	DownOutlined,
 	PlusOutlined,
 	UpOutlined,
-	MinusCircleOutlined,
+	MinusCircleOutlined
 } from '@ant-design/icons';
 import {
 	web3Accounts,
 	web3Enable,
-	web3FromSource,
+	web3FromSource
 } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
@@ -22,13 +22,13 @@ import {
 	Form,
 	Input,
 	InputNumber,
-	Modal,
+	Modal
 } from 'antd';
 import React, { FC, useState } from 'react';
 import {
 	useApiContext,
 	useNetworkContext,
-	useUserDetailsContext,
+	useUserDetailsContext
 } from 'src/context';
 import { APPNAME } from 'src/global/appName';
 import { chainProperties } from 'src/global/networkConstants';
@@ -104,13 +104,13 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 			if (!isSelected(address)) {
 				setSignatories({
 					...signatories,
-					[Object.keys(signatories).length]: address,
+					[Object.keys(signatories).length]: address
 				});
 			}
 		} else {
 			setSignatories((prev) => {
 				const key = Object.keys(signatories).find(
-					(key) => signatories[key] === address,
+					(key) => signatories[key] === address
 				);
 				const newSignatories = { ...prev };
 				if (key) {
@@ -138,7 +138,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 									onChange={(e) => {
 										handleAddSignatories(
 											e.target.checked,
-											address,
+											address
 										);
 									}}
 								/>
@@ -214,7 +214,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 	const handleSign = async (
 		multisigAddress: string,
 		signatory: string,
-		threshold: number,
+		threshold: number
 	) => {
 		if (!accounts.length) return;
 		const injected = await web3FromSource(accounts[0].meta.source);
@@ -233,7 +233,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 
 		const { data, error } = await nextApiClientFetch<ChallengeMessage>(
 			'api/v1/auth/actions/multisigLinkStart',
-			{ address: substrate_address },
+			{ address: substrate_address }
 		);
 		if (error || !data) {
 			setLoading(false);
@@ -245,7 +245,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		const { signature } = await signRaw({
 			address: signatory,
 			data: stringToHex(data.signMessage || ''),
-			type: 'bytes',
+			type: 'bytes'
 		});
 
 		const { data: confirmData, error: confirmError } =
@@ -257,8 +257,8 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 					signatory,
 					signature,
 					ss58Prefix: chainProperties?.[network]?.ss58Format,
-					threshold,
-				},
+					threshold
+				}
 			);
 
 		if (confirmError || !confirmData) {
@@ -267,7 +267,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 			queueNotification({
 				header: 'Failed!',
 				message: cleanError(confirmError || ''),
-				status: NotificationStatus.ERROR,
+				status: NotificationStatus.ERROR
 			});
 		}
 
@@ -276,7 +276,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 			queueNotification({
 				header: 'Success!',
 				message: confirmData?.message || '',
-				status: NotificationStatus.SUCCESS,
+				status: NotificationStatus.SUCCESS
 			});
 			dismissModal && dismissModal();
 		}
@@ -288,7 +288,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 			handleSign(
 				data?.multisigAddress,
 				signatory,
-				Number(data?.threshold),
+				Number(data?.threshold)
 			);
 		} else {
 			handleLink();
@@ -345,7 +345,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 							className="bg-white text-pink_primary outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center"
 						>
 							Cancel
-						</Button>,
+						</Button>
 					]}
 				</div>
 			}
@@ -437,8 +437,8 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 						rules={[
 							{
 								message: 'Multisig Address is required',
-								required: true,
-							},
+								required: true
+							}
 						]}
 					>
 						<Input
@@ -462,8 +462,8 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 						rules={[
 							{
 								message: 'Threshold is required',
-								required: true,
-							},
+								required: true
+							}
 						]}
 					>
 						<InputNumber

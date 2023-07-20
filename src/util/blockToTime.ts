@@ -20,7 +20,7 @@ function secondsToDhm(seconds: number) {
 export default function blockToTime(
 	blocks: BN | number,
 	network: string,
-	blocktime?: number,
+	blocktime?: number
 ): { time: string; seconds: number } {
 	if (!blocktime) {
 		blocktime = chainProperties?.[network]?.blockTime / 1000;

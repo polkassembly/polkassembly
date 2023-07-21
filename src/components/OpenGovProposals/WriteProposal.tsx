@@ -69,7 +69,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 			setIsDiscussionFound(false);
 			queueNotification({
 				header: 'Failed!',
-				message: error || 'Invalid discussion link. ' ,
+				message: 'Unable to fetch data for this discussion number.' ,
 				status: NotificationStatus.ERROR
 			});
 		}

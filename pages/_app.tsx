@@ -18,6 +18,7 @@ import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
 import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
+import { initGA, logPageView } from '../analytics';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,
@@ -40,7 +41,6 @@ const workSans = Work_Sans({
 
 import 'antd/dist/reset.css';
 import '../styles/globals.css';
-import Script from 'next/script';
 
 {/* <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJQJLZ7Q5D"></script>
 <script>
@@ -66,6 +66,16 @@ export default function App({ Component, pageProps }: AppProps) {
 		setNetwork(networkStr);
 	}, []);
 
+	useEffect(() => {
+		// @ts-ignore
+		if (!window.GA_INITIALIZED) {
+			initGA();
+			// @ts-ignore
+			window.GA_INITIALIZED = true;
+		}
+		logPageView();
+	}, []);
+
 	const SplashLoader = () => <div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
 		<Image
 			style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}
@@ -78,18 +88,6 @@ export default function App({ Component, pageProps }: AppProps) {
 
 	return (
 		<>
-			<Script strategy='lazyOnload' id='1' src="https://www.googletagmanager.com/gtag/js?id=G-WJQJLZ7Q5D" />
-			<Script strategy='lazyOnload' id='2'>
-				{
-					`
-						window.dataLayer = window.dataLayer || [];
-						function gtag(){dataLayer.push(arguments);}
-						gtag('js', new Date());
-
-						gtag('config', 'G-WJQJLZ7Q5D');
-					`
-				}
-			</Script>
 			<ConfigProvider theme={antdTheme}>
 				<ModalProvider>
 					<UserDetailsProvider>

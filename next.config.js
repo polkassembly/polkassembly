@@ -7,7 +7,8 @@
 // https://nextjs.org/docs/api-reference/next.config.js/introduction
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 const { withSentryConfig } = require('@sentry/nextjs');
-
+const withPWA = require('next-pwa');
+const runtimeCaching = require('next-pwa/cache.js');
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
@@ -80,7 +81,14 @@ const nextConfig = {
 module.exports = nextConfig;
 
 module.exports = withSentryConfig(
-  module.exports,
+  withPWA({
+    dest: 'public',
+    disable: false,
+    reloadOnOnline: true,
+    register: true,
+    skipWaiting: true,
+    runtimeCaching
+  })(module.exports),
   { silent: true },
   { hideSourcemaps: true }
 );

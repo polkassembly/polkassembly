@@ -604,10 +604,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					if (requestedCall) {
 						requested = requestedCall.amount;
 					}
-					const remarkCall = calls.find((call) => !!call.remark);
-					if (remarkCall && typeof remarkCall.remark === 'string' && !containsBinaryData(remarkCall.remark)) {
-						remark = remarkCall.remark;
-					}
+					calls.forEach((call) => {
+						if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
+							remark += call.remark + '\n';
+						}
+					});
 				}
 			}
 		}

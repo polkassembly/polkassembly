@@ -87,7 +87,12 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 			<SEOHead title='Discussions' network={network}/>
 
 			<div className='flex flex-col sm:flex-row w-full justify-between align-middle mt-3'>
-				<div className='text-bodyBlue font-semibold text-2xl mx-2 flex'><DiscussionsIcon className='xs:mr-3 mt-2 sm:mr-2 sm:mt-1.5' />Latest Discussions({count})</div>
+				<div className='text-bodyBlue font-semibold text-xl mx-2 flex'><DiscussionsIcon className='xs:mr-3 mt-1 sm:mr-2 sm:mt-1' />
+        Latest Discussions
+					<span className='text-sm text-bodyBlue bg-[#D2D8E080] flex items-center rounded-[20px] px-2 ml-2'>
+						{count}
+					</span>
+				</div>
 				<button onClick={handleClick} className='outline-none text-sm mr-[2px] whitespace-pre border-none p-3 sm:w-[150px] h-[40px] font-medium shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary sm:-mt-1 xs:mt-3 tracking-wide'>+ Add Post</button>
 			</div>
 

@@ -18,7 +18,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import MotionsIcon from '~assets/icons/motions-icon.svg';
+import { MotionIcon } from '~src/ui-components/CustomIcons';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
@@ -66,9 +66,14 @@ const Motions: FC<IMotionsProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Motions' network={network}/>
-			<div className='flex sm:items-center mt-3'>
-				<MotionsIcon className='sm:-mt-3.5 xs:mt-0.5'/>
-				<h1 className='text-bodyBlue font-semibold text-2xl mx-2'>On Chain Motions ({count})</h1>
+			<div className='flex sm:items-center mt-3 text-2xl'>
+				<MotionIcon className='sm:-mt-3 xs:mt-0.5'/>
+				<h1 className='text-bodyBlue font-semibold text-xl mx-2'>
+          On Chain Motions
+					<span className='text-sm text-bodyBlue bg-[#D2D8E080] rounded-[20px] py-1 px-2 ml-2'>
+						{count}
+					</span>
+				</h1>
 			</div>
 
 			{/* Intro and Create Post Button */}
@@ -79,7 +84,7 @@ const Motions: FC<IMotionsProps> = (props) => {
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-4'>
+			<div className='shadow-md bg-white py-3 px-0 rounded-xxl mt-4'>
 				<div className='flex items-center justify-between'>
 					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
 						<FilteredTags/>

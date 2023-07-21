@@ -84,8 +84,12 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 		<>
 			<SEOHead title='Treasury Proposals' network={network}/>
 
-			<div className='w-full flex flex-col sm:flex-row sm:items-center mt-3'>
-				<h1 className='text-bodyBlue font-semibold text-2xl mx-2 flex-1 mb-2 flex'><DiamondIcon className='mr-2 justify-self-center'/>Treasury Proposals ({count})</h1>
+			<div className='w-full flex flex-col sm:flex-row items-center mt-3'>
+				<h1 className='text-bodyBlue font-semibold text-xl mx-2 flex-1 mb-2 flex'><DiamondIcon className='mr-2 justify-self-center'/>
+        Treasury Proposals
+					<span className='text-sm text-bodyBlue bg-[#D2D8E080] rounded-[20px] py-1 px-2 ml-2'>
+						{count}
+					</span></h1>
 				{isCreationOfTreasuryProposalSupported(network) && <TreasuryProposalFormButton  />}
 			</div>
 
@@ -107,7 +111,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 			{/* Treasury Overview Cards */}
 			<TreasuryOverview className='my-6'/>
 
-			<div className='shadow-md bg-white py-5 px-0 rounded-xxl'>
+			<div className='shadow-md bg-white py-3 px-0 rounded-xxl'>
 				<div className='flex items-center justify-between'>
 					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
 						<FilteredTags/>

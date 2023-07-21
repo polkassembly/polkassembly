@@ -97,6 +97,12 @@ import BigTipperSVG from '~assets/delegation-tracks/big-tipper.svg';
 import SmallSpenderSVG from '~assets/delegation-tracks/small-spender.svg';
 import DelegationSVG from '~assets/sidebar/delegation-icon.svg';
 import Dislike from '~assets/icons/dislike.svg';
+import ProposalsSVG from '~assets/icons/proposals-icon.svg';
+import OnchainReferendaSVG from '~assets/icons/discussion_icon.svg';
+import DollarSVG from '~assets/icons/dollar-icon.svg';
+import TipSVG from '~assets/icons/tip-icon.svg';
+import MotionSVG from '~assets/icons/motions-icon.svg';
+import TechComSVG from '~assets/icons/tech-com-icon.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
@@ -427,4 +433,23 @@ export const SmallSpenderTrackIcon = (props: Partial<CustomIconComponentProps>) 
 );
 export const DelegationSidebarIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DelegationSVG} {...props} />
+);
+export const ProposalsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ProposalsSVG} {...props}/>
+);
+
+export const OnchainReferendaIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={OnchainReferendaSVG} {...props}/>
+);
+export const DollarIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DollarSVG} {...props}/>
+);
+export const TipIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={TipSVG} {...props}/>
+);
+export const MotionIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={MotionSVG} {...props}/>
+);
+export const TechComIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={TechComSVG} {...props}/>
 );

@@ -25,7 +25,7 @@ const Members = (props : { network: string }) => {
 	return (
 		<>
 			<SEOHead title='Council' network={props.network}/>
-			<h1 className='text-bodyBlue font-semibold text-2xl mx-2'>Council</h1>
+			<h1 className='text-bodyBlue font-semibold text-xl mx-2'>Council</h1>
 
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row">

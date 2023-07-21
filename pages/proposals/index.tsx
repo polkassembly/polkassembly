@@ -18,7 +18,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import ProposalsIcon from '~assets/icons/proposals-icon.svg';
+import { ProposalsIcon } from '~src/ui-components/CustomIcons';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
@@ -68,9 +68,9 @@ const Proposals: FC<IProposalsProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Proposals' network={network}/>
-			<div className='flex items-center mt-3'>
-				<ProposalsIcon className='-mt-3.5' />
-				<h1 className='text-bodyBlue font-semibold text-2xl mx-2'>On Chain Proposals</h1>
+			<div className='flex items-center mt-3 text-xl'>
+				<ProposalsIcon className='-mt-3 ml-1' />
+				<h1 className='text-bodyBlue font-semibold text-xl mx-2'>On Chain Proposals</h1>
 			</div>
 
 			{/* Intro and Create Post Button */}
@@ -81,7 +81,7 @@ const Proposals: FC<IProposalsProps> = (props) => {
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-4'>
+			<div className='shadow-md bg-white py-3 px-0 rounded-xxl mt-4'>
 				<div className='flex items-center justify-between'>
 					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
 						<FilteredTags/>

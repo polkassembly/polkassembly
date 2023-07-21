@@ -18,7 +18,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import TechComIcon from '~assets/icons/tech-com-icon.svg';
+import { TechComIcon } from '~src/ui-components/CustomIcons';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
@@ -68,9 +68,9 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Tech Committee Proposals' network={network}/>
-			<div className='flex sm:items-center mt-3'>
-				<TechComIcon className='sm:-mt-3.5 xs:mt-1' />
-				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Tech Committee Proposals</h1>
+			<div className='flex sm:items-center mt-3 text-xl'>
+				<TechComIcon className='sm:-mt-3 xs:mt-1' />
+				<h1 className='text-bodyBlue font-semibold text-xl leading-9 mx-2'>Tech Committee Proposals</h1>
 			</div>
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row">
@@ -80,7 +80,7 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-4'>
+			<div className='shadow-md bg-white py-3 px-0 rounded-xxl mt-4'>
 				<div className='flex items-center justify-between'>
 					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
 						<FilteredTags/>

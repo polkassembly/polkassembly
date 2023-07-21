@@ -6,7 +6,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Dispatch, SetStateAction } from 'react';
 
 import { network, tokenSymbol } from './global/networkConstants';
-import { EGovType, ProposalType } from './global/proposalType';
+import { ProposalType } from './global/proposalType';
 import BN from 'bn.js';
 
 export interface UserDetailsContextType {
@@ -18,7 +18,6 @@ export interface UserDetailsContextType {
   addresses?: string[] | null;
   allowed_roles?: string[] | null;
   defaultAddress?: string | null;
-  govType: EGovType;
   setUserDetailsContextState: Dispatch<SetStateAction<UserDetailsContextType>>;
   web3signup?: boolean | null;
   walletConnectProvider: WalletConnectProvider | null;

@@ -100,7 +100,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 	return (
 		<div className={`${className} bg-white drop-shadow-md rounded-xxl md:p-8`}>
-			<div className="flex justify-between p-4">
+			<div className="flex justify-between px-4">
 				<div className='flex items-center gap-x-2 xs:flex-wrap'>
 					<h2 className="text-xl font-semibold leading-8 text-bodyBlue">
         About {trackName.split(/(?=[A-Z])/).join(' ')}
@@ -110,6 +110,10 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
           #{trackMetaData.trackId}
 						</h4>
 					</Tooltip>
+				</div>
+				<div className="xs:hidden sm:flex justify-end sm:p-2">
+					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
+    <DelegateModal trackNum={trackMetaData?.trackId} />}
 				</div>
 			</div>
 
@@ -165,7 +169,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 			<Divider />
 
-			<div className="flex justify-end pt-0 px-4 pb-4 sm:p-4">
+			<div className="sm:hidden xs:flex justify-end pt-0 px-4 pb-4 sm:p-4">
 				{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
       <DelegateModal trackNum={trackMetaData?.trackId} />}
 			</div>

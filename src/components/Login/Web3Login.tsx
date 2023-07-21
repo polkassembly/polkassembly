@@ -99,6 +99,51 @@ const Web3Login: FC<Props> = ({
 			: null;
 
 		if (!wallet) {
+			window.addEventListener('message', (event) => {
+				if(event.data.type ==='dataResponse'){
+					const accounts = event.data.data;
+					accounts.forEach((account:any) => {
+						account.address = getEncodedAddress(account.address, network) || account.address;
+					});
+					console.log('Received data from the extension:', accounts);
+					setIsAccountLoading(false);
+					setExtensionNotFound(false);
+					setAccounts(accounts);
+					if (accounts.length > 0) {
+						setAddress(accounts[0].address);
+					}
+				}
+				if(event.data.type ==='loginDataResponse'){
+					const addressLoginData = event.data.data;
+					if(addressLoginData?.token){
+						setExtensionNotFound(false);
+						currentUser.loginWallet= chosenWallet;
+						currentUser.loginAddress = multisigAddress || address;
+						currentUser.delegationDashboardAddress = multisigAddress || address;
+						currentUser.multisigAssociatedAddress = address;
+						localStorage.setItem('delegationWallet', chosenWallet);
+						localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
+						localStorage.setItem('loginWallet', chosenWallet);
+						localStorage.setItem('multisigAssociatedAddress', address);
+						handleTokenChange(addressLoginData.token, currentUser);
+						if(isModal){
+							setLoginOpen?.(false);
+							setLoading(false);
+							return;
+						}
+						router.push('/');
+					}else if(addressLoginData?.isTFAEnabled) {
+						if(!addressLoginData?.tfa_token) {
+							setError(error || 'TFA token missing. Please try again.');
+							setLoading(false);
+							return;
+						}
+						setAuthResponse(addressLoginData);
+						setLoading(false);
+					}
+				}
+			});
+			window.parent.postMessage({ type: 'getData' }, '*');
 			setExtensionNotFound(true);
 			setIsAccountLoading(false);
 			return;
@@ -181,6 +226,9 @@ const Web3Login: FC<Props> = ({
 				: null;
 
 			if (!wallet) {
+				window.parent.postMessage({ data: {
+					address, chosenWallet, multisigAddress, network
+				}, type: 'loginPlease' }, '*');
 				setExtensionNotFound(true);
 				setIsAccountLoading(false);
 				return;

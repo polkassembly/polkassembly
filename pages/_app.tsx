@@ -53,7 +53,20 @@ export default function App({ Component, pageProps }: AppProps) {
 	useEffect(() => {
 		if(!global?.window) return;
 		const networkStr = getNetwork();
+		window.addEventListener('message', (event) => {
+			console.log(event.data);
+			if(event.data.type ==='loginByPolkasafeApp'){
+				const addressLoginData = event.data.data;
+				if(addressLoginData?.token){
+					localStorage.setItem('delegationWallet', addressLoginData.chosenWallet);
+					localStorage.setItem('delegationDashboardAddress', addressLoginData.multisigAddress || addressLoginData.address);
+					localStorage.setItem('loginWallet', addressLoginData.chosenWallet);
+					localStorage.setItem('multisigAssociatedAddress', addressLoginData.address);
+				}
+			}
+		});
 		setNetwork(networkStr);
+		// Event listener to receive messages from the parent window (extension)
 	}, []);
 
 	const SplashLoader = () => <div style={{ background:'#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>

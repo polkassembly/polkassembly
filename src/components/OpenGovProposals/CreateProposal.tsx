@@ -210,7 +210,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			<div className='mt-4 text-sm font-normal text-lightBlue'>
 				<label className='font-medium'>Preimage Details:</label>
 				<div className='mt-[10px] flex flex-col gap-2'>
-					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address address={proposerAddress} identiconSize={24}/></span>
+					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address addressClassName='text-bodyBlue font-semibold text-sm' address={proposerAddress} identiconSize={24}/></span>
 					<span className='flex'><span className='w-[150px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
 					<span className='flex'><span className='w-[150px]'>Funding Amount:</span><span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
 					<span className='flex items-center'><span className='w-[150px]'>Preimage Hash:</span>
@@ -231,11 +231,11 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					</span>
 				</div>
 			</div>
-			{showAlert && <Alert className={`mt-6 text-bodyBlue rounded-[4px] ${poppins.className} ${poppins.variable}`} showIcon type='info' message={<span className='text-sm text-bodyBlue'>An amount of <span className='font-medium'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span> will be required to submit proposal.</span>}
-				description={<div className='mt-[10px] flex flex-col gap-1 font-normal'>
-					<span className='flex gap-3 text-xs text-lightBlue'><span className='w-[150px]'>Deposit amount</span><span className='text-bodyBlue font-medium'>{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}</span></span>
-					<span className='flex gap-3 text-xs text-lightBlue'><span className='w-[150px]'>Gas fees</span><span className='text-bodyBlue font-medium'>{formatedBalance(String(txFee.toString()), unit)} {unit}</span></span>
-					<span className='flex gap-3 text-sm text-lightBlue font-semibold'><span className='w-[150px]'>Total</span><span className='text-bodyBlue'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span></span>
+			{showAlert && <Alert className='mt-6 text-bodyBlue rounded-[4px]' showIcon type='info' message={<span className='text-sm text-bodyBlue'>An amount of <span className='font-semibold'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span> will be required to submit proposal.</span>}
+				description={<div className='mt-[10px] flex flex-col gap-1'>
+					<span className='flex justify-between text-xs text-lightBlue pr-[70px] font-normal'><span className='w-[150px]'>Deposit amount</span><span className='text-bodyBlue font-medium'>{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}</span></span>
+					<span className='flex justify-between text-xs text-lightBlue pr-[70px] font-normal'><span className='w-[150px]'>Gas fees</span><span className='text-bodyBlue font-medium'>{formatedBalance(String(txFee.toString()), unit)} {unit}</span></span>
+					<span className='flex justify-between text-sm text-lightBlue pr-[70px] font-semibold'><span className='w-[150px]'>Total</span><span className='text-bodyBlue'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span></span>
 				</div>}/>}
 			<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
 				<Button onClick={() => handleSubmitTreasuryProposal() } className='bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px]'>

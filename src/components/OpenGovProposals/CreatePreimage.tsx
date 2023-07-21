@@ -98,7 +98,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
 	const checkPreimageHash = (preimageLength: number| null, preimageHash: string) => {
-		if((!preimageHash && !preimageLength)) return false;
+		if((!preimageHash ||( preimageLength === null))) return false;
 		return (!isHex(preimageHash, 256) || (!preimageLength || preimageLength === 0));
 	};
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -588,7 +588,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 								address={proposerAddress}
 								identiconSize={30}
 								disableAddressClick
-								addressClassName=' text-sm text-lightBlue'
+								addressClassName='text-sm text-bodyBlue text-semibold'
 								textClassName='text-bodyBlue font-medium' />
 						</div>
 					</div>

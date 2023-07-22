@@ -30,7 +30,7 @@ const OpenGovHeaderBanner = () => {
 				className='m-0 p-0 text-white flex items-center gap-x-2 font-medium font-poppins text-sm md:text-[24px] leading-[21px] md:leading-[36px]'
 			>
 				<Image alt='party image' src='/assets/confetti.png' width={30} height={30} />
-				<span>OpenGov is now LIVE on Polkadot</span>
+				<span>OpenGov is now LIVE on Moonbeam and Moonriver</span>
 			</h2>
 		</section>
 	);

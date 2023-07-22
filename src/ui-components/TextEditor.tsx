@@ -121,6 +121,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							onChange(content);
 						}}
 						apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
+						cloudChannel='5-stable'
 						onInit={() => setLoading(false)}
 						onFocusIn={() => document.querySelectorAll('.tox-editor-header').forEach(elem => elem.classList?.add('focused'))}
 						onFocusOut={() => document.querySelectorAll('.tox-editor-header').forEach(elem => elem.classList?.remove('focused'))}

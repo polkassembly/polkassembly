@@ -90,12 +90,16 @@ export const Comment: FC<ICommentProps> = (props) => {
 					spam_users_count={spam_users_count}
 					truncateUsername = {false}
 				>
-					<div className='cursor-pointer' onClick={() => setOpenModal(true)}>
-						<UpdateLabel
-							created_at={created_at}
-							updated_at={updated_at}
-							isHistory={history && history?.length > 0}
-						/></div>
+					{
+						history && history.length > 0 &&
+						<div className='cursor-pointer' onClick={() => setOpenModal(true)}>
+							<UpdateLabel
+								created_at={created_at}
+								updated_at={updated_at}
+								isHistory={history && history?.length > 0}
+							/>
+						</div>
+					}
 				</CreationLabel>
 				<EditableCommentContent
 					userId={user_id}

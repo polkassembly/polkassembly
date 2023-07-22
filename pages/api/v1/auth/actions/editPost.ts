@@ -19,12 +19,14 @@ import { GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_A
 import { firestore_db } from '~src/services/firebaseInit';
 import { IPostHistory, IPostTag, Post } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
+import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFromType';
 
 export interface IEditPostResponse {
 	content: string;
 	proposer: string;
+	summary: string;
 	title: string;
 	topic: {
 		id: number,
@@ -191,6 +193,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 
 	const last_comment_at = new Date();
 
+	const summary = (await fetchContentSummary(content, proposalType)) || '';
+
 	const newPostDoc: Omit<Post, 'last_comment_at'> = {
 		content,
 		created_at,
@@ -199,6 +203,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,
 		proposer_address: proposer_address,
+		summary: summary,
 		tags: tags || [],
 		title,
 		topic_id : topic_id || getTopicFromType(proposalType).id,
@@ -234,6 +239,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					last_edited_at: last_comment_at,
 					post_link: post_link,
 					proposer_address: proposer_address,
+					summary: summary,
 					tags: tags || [],
 					title,
 					topic_id : topic_id || getTopicFromType(proposalType).id,
@@ -255,6 +261,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		content,
 		last_edited_at: last_edited_at,
 		proposer: proposer_address,
+		summary: summary,
 		title,
 		topic: {
 			id: topicId,

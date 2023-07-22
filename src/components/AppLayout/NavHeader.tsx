@@ -63,12 +63,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[network]);
 
-	const handleClick = () => {
-		if(!isOpenGovSupported(network)) return;
-		router.push(govType === EGovType.OPEN_GOV ? '/' : '/opengov' );
-		setGovTypeToContext(govType === EGovType.OPEN_GOV  ? EGovType.GOV1 : EGovType.OPEN_GOV);
-	};
-
 	return (
 		<Header className={`${className} shadow-md z-[1001] sticky top-0 flex items-center bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
 			<MenuOutlined className='lg:hidden mr-5' onClick={() => {
@@ -76,7 +70,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 			}} />
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<div className='flex cursor-pointer' onClick={handleClick}>
+					<div className='flex cursor-pointer' onClick={() => router.push(govType)}>
 						<PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' />
 					</div>
 					<div className='flex items-center'>

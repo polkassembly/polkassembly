@@ -417,7 +417,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				</Drawer>
 				{
-					((['kusama', 'polkadot', 'moonbeam', 'moonriver'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
+					((['moonbeam', 'moonriver'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
 						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
 							{/* Dummy Collapsed Sidebar for auto margins */}
 							<OpenGovHeaderBanner />

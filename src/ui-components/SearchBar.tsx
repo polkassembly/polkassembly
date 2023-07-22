@@ -23,7 +23,7 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 	const [open, setOpen] = useState(false);
 	const [isSuperSearch, setIsSuperSearch] = useState<boolean>(false);
 
-	return (allowedNetwork.includes(network.toUpperCase()) ?
+	return (allowedNetwork?.includes(network?.toUpperCase()) ?
 		<div className={className}>
 			{
 				isSmallScreen?

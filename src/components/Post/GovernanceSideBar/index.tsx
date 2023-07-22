@@ -571,6 +571,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	}, [address]);
 
 	useEffect(() => {
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
 		getVotingHistory();
 	}, [getVotingHistory]);
 

@@ -74,7 +74,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								: null
 						}
 					</div>
-					<div className="font-medium text-bodyBlue text-xs mt-1.5 sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
+					<div className="font-medium text-bodyBlue text-xs mt-1 sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
 
 						<div className='flex items-center gap-x-2'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>

@@ -189,7 +189,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				(decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='m-0 text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
+							<h3 className='m-0 text-bodyBlue font-medium text-lg tracking-[0.0015em]'>Voting has Started</h3>
 							<Button>2</Button>
 						</div>
 						<div className='mt-[30px]'>

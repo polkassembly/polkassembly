@@ -87,7 +87,8 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 			<SEOHead title='Discussions' network={network}/>
 
 			<div className='flex flex-col sm:flex-row w-full justify-between align-middle mt-3'>
-				<div className='text-bodyBlue font-semibold text-xl mx-2 flex'><DiscussionsIcon className='xs:mr-3 mt-1 sm:mr-2 sm:mt-1' />
+				<div className='text-bodyBlue font-semibold text-xl mx-2 flex h-[30px]'>
+					<DiscussionsIcon className='xs:mr-3 mt-1 sm:mr-2 sm:mt-1' />
         Latest Discussions
 					<span className='text-sm text-bodyBlue bg-[#D2D8E080] flex items-center rounded-[20px] px-2 ml-2'>
 						{count}

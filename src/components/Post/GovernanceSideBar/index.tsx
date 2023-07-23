@@ -62,6 +62,7 @@ import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
+import { formatBalance } from '@polkadot/util';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -569,6 +570,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		api?.setSigner(signer);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
+
+	useEffect(() => {
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		getVotingHistory();

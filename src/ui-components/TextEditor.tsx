@@ -79,6 +79,16 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	const ref = useRef<Editor | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
+	const parseMarkdownLinksToHTML = (content: string) => {
+		const caretPosition = ref.current?.editor?.selection?.getRng();
+		console.log('caretPosition : ', caretPosition);
+		// eslint-disable-next-line no-useless-escape
+		const mdLinkRegex = /!?\[([^\]]*)?\]\(((https:\/\/)?[A-Za-z0-9\:\/\. ]+)(\"(.+)\")?\)/gm;
+		const mdLinkParsedContent = content.replace(mdLinkRegex, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+		if(caretPosition) ref.current?.editor?.selection?.setRng(caretPosition);
+		return mdLinkParsedContent;
+	};
+
 	return (
 		<>
 			{loading &&  (
@@ -114,7 +124,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });
 						}}
 						textareaName={name}
-						value={converter.makeHtml(value || '')}
+						value={parseMarkdownLinksToHTML(converter.makeHtml(value || ''))}
 						ref={ref}
 						disabled={isDisabled}
 						onEditorChange={(content) => {
@@ -174,7 +184,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							paste_data_images: true,
 							placeholder: 'Please type here...',
 							plugins: [
-								'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+								'advlist', 'lists', 'link', 'image', 'charmap', 'preview',
 								'searchreplace', 'visualblocks', 'fullscreen',
 								'insertdatetime', 'media', 'table', 'textpattern', 'emoticons'
 							],

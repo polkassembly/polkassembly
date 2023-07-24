@@ -100,7 +100,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 						<div className='flex mt-2'>
 							<span>
 								{
-									!rowData.proposer ? <span className='username mx-2 text-[#243a57] font-semibold'> { rowData.username } </span> :
+									!rowData.proposer ? <span className='username mx-2 text-bodyBlue font-semibold'> { rowData.username } </span> :
 										<Address
 											address={rowData.proposer}
 											className='text-sm mx-2'
@@ -145,7 +145,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 						<div className='flex mt-2'>
 							<span>
 								{
-									!rowData.proposer ? <span className='username mx-2 text-[#243a57] font-semibold'> { rowData.username } </span> :
+									!rowData.proposer ? <span className='username mx-2 text-bodyBlue font-semibold'> { rowData.username } </span> :
 										<Address
 											address={rowData.proposer}
 											className='text-sm mx-2'

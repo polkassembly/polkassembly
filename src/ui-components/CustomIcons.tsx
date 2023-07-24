@@ -97,6 +97,7 @@ import BigTipperSVG from '~assets/delegation-tracks/big-tipper.svg';
 import SmallSpenderSVG from '~assets/delegation-tracks/small-spender.svg';
 import DelegationSVG from '~assets/sidebar/delegation-icon.svg';
 import Dislike from '~assets/icons/dislike.svg';
+import WebSVG from '~assets/icons/website-icon.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
@@ -428,3 +429,7 @@ export const SmallSpenderTrackIcon = (props: Partial<CustomIconComponentProps>) 
 export const DelegationSidebarIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DelegationSVG} {...props} />
 );
+export const WebIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={WebSVG} {...props} />
+);
+

@@ -1542,6 +1542,29 @@
   dependencies:
     tslib "^2.1.0"
 
+"@giphy/js-fetch-api@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@giphy/js-fetch-api/-/js-fetch-api-5.0.0.tgz#52379f6e5371b89f5d91d7b9d3a3f6c3c76bd964"
+  integrity sha512-tS3/0/RewzgpOqMyT3QCTKyPaSQfMfq023UWPkEH9GwbJGlOVN2s9acQNfun+w9SCTdIaZmW/f9HbDpsoz7jWg==
+  dependencies:
+    "@giphy/js-types" "*"
+    "@giphy/js-util" "*"
+    qs "^6.9.4"
+
+"@giphy/js-types@*":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@giphy/js-types/-/js-types-4.4.0.tgz#4f491a408293e52d77aa4d6b38d20f6b2828723a"
+  integrity sha512-W9G6crS2oqTn7g0RpvYu1l/sna4LnivRTk25jmxdzujOFb9kvQ+VFM/v9RPYV2GIBnzT/maW/EwjFIba9jkflA==
+
+"@giphy/js-util@*":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@giphy/js-util/-/js-util-5.0.0.tgz#4d4a95f928787f87e149cdb46b5c1e8533249929"
+  integrity sha512-LYBmpcdE2Iumt+Wj1/EUEeAc3NNDrsC4UW64ywlmTO61VTvkgQo0iFC2tZrHV0BENMww1jGsQj+uH82S/UpCGQ==
+  dependencies:
+    "@giphy/js-types" "*"
+    dompurify "^2.2.2"
+    uuid "^9.0.0"
+
 "@google-cloud/firestore@^6.5.0":
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/@google-cloud/firestore/-/firestore-6.5.0.tgz#5049740e40eca75956264377ca9ffaab2c0f345d"
@@ -2837,7 +2860,7 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@tinymce/tinymce-react@^4.2.0":
+"@tinymce/tinymce-react@^4.3.0":
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/@tinymce/tinymce-react/-/tinymce-react-4.3.0.tgz#5e2f5a58526a1bba9710f54f5fcf16abd4c742a1"
   integrity sha512-iB4cUsYfcJL4NGuKhqCGYuTmFTje3nPxyPv1HxprTsp/YMGuuiiSNWrv3zwI31QX5Cn8qeq9MrMDnbxuRugHyg==
@@ -3221,10 +3244,10 @@
     "@types/mime" "*"
     "@types/node" "*"
 
-"@types/showdown@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@types/showdown/-/showdown-2.0.0.tgz#3e800eca8573848cac4e5555f4377ba3a0e7b1f2"
-  integrity sha512-70xBJoLv+oXjB5PhtA8vo7erjLDp9/qqI63SRHm4REKrwuPOLs8HhXwlZJBJaB4kC18cCZ1UUZ6Fb/PLFW4TCA==
+"@types/showdown@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@types/showdown/-/showdown-2.0.1.tgz#24134738ba3107237d6a783e054a54773e739f81"
+  integrity sha512-xdnAw2nFqomkaL0QdtEk0t7yz26UkaVPl4v1pYJvtE1T0fmfQEH3JaxErEhGByEAl3zUZrkNBlneuJp0WJGqEA==
 
 "@types/styled-components@^5.1.26":
   version "5.1.26"
@@ -5287,6 +5310,11 @@ domhandler@^4.0.0, domhandler@^4.2.0, domhandler@^4.3.1:
   integrity sha512-GrwoxYN+uWlzO8uhUXRl0P+kHE4GtVPfYzVLcUxPL7KNdHKj66vvlhiweIHqYYXWlw+T8iLMp42Lm67ghw4WMQ==
   dependencies:
     domelementtype "^2.2.0"
+
+dompurify@^2.2.2:
+  version "2.4.5"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.4.5.tgz#0e89a27601f0bad978f9a924e7a05d5d2cccdd87"
+  integrity sha512-jggCCd+8Iqp4Tsz0nIvpcb22InKEBrGz5dw3EQJMs8HPJDsKbFIO3STYtAvCfDx26Muevn1MHVI0XxjgFfmiSA==
 
 domutils@^2.5.2, domutils@^2.8.0:
   version "2.8.0"
@@ -9833,6 +9861,13 @@ qs@6.11.0:
   dependencies:
     side-channel "^1.0.4"
 
+qs@^6.9.4:
+  version "6.11.2"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.11.2.tgz#64bea51f12c1f5da1bc01496f48ffcff7c69d7d9"
+  integrity sha512-tDNIz22aBzCDxLtVH++VnTfzxlfeK5CbqohpSqpJgj1Wg/cQbStNAz3NuqCs5vV+pjBsK4x4pN9HlVh7rcYRiA==
+  dependencies:
+    side-channel "^1.0.4"
+
 qs@~6.5.2:
   version "6.5.3"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.3.tgz#3aeeffc91967ef6e35c0e488ef46fb296ab76aad"
@@ -11605,6 +11640,11 @@ tinymce@^6.3.1:
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-6.4.1.tgz#9c28f798074668d53371805fb6f1c68e582a4549"
   integrity sha512-+/cS2AM9l6p72IBs2uolHbGsBUztLs0WslqNgFaTXtmMksTNUOhh8p08xtA/fa03UGlWEC6/EJoeV95/QDXa2A==
+
+tinymce@^6.5.1:
+  version "6.5.1"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-6.5.1.tgz#f228bf2dc1abf28565523f359b849dad1706357d"
+  integrity sha512-J67fxJiX3tjvVqer1dg1+cOxMeE2P55ESGhaakvqGPbAUU45HnCMLSioaOsxV1KfcXustw9WJo0rtn1SNQlVKQ==
 
 tmp@^0.2.1:
   version "0.2.1"

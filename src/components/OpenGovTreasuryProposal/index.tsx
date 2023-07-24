@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
@@ -16,6 +16,9 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import CloseIcon from '~assets/icons/close.svg';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import { BN_HUNDRED } from '@polkadot/util';
+import { CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
+import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
+import { UserDetailsContext } from '~src/context/UserDetailsContext';
 
 interface Props{
   className?: string;
@@ -50,7 +53,7 @@ export interface IPreimage{
 	storageFee:BN;
 }
 const ZERO_BN = new BN(0);
-const OpenGovProposals = ({ className }: Props) => {
+const OpenGovTreasuryProposal = ({ className }: Props) => {
 
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
@@ -74,6 +77,8 @@ const OpenGovProposals = ({ className }: Props) => {
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
 	const [openSuccess, setOpenSuccess] = useState<boolean>(false);
 	const [postId, setPostId] = useState<number>(0);
+	const { id } = useContext(UserDetailsContext);
+	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -105,8 +110,21 @@ const OpenGovProposals = ({ className }: Props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [title]);
 
+	const handleClick = () => {
+		if(id){
+			proposerAddress.length > 0 ? setOpenModal(!openModal) : setOpenAddressLinkedModal(true);
+		}else{
+			setOpenLoginPrompt(true);
+		}
+	};
+
 	return <div className={className}>
-		<Button className='text-sm bg-pink_primary text-white font-medium rounded-[4px]' onClick={() => proposerAddress.length > 0 ? setOpenModal(!openModal) : setOpenAddressLinkedModal(true)}>Create Treasury Proposal</Button>
+		<div className='ml-[-37px] flex justify-center text-[35px] items-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+			onClick={ handleClick }
+		>
+			<CreatePropoosalIcon className='cursor-pointer ml-[-31px]' />
+			<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%] '>Create Treasury Proposal</p>
+		</div>
 		<WalletConnectModal walletKey='treasuryProposalProposerWallet' LinkAddressNeeded closable addressKey='treasuryProposalProposerAddress' open={openAddressLinkedModal} setOpen={setOpenAddressLinkedModal} onConfirm={() => setOpenModal(true)} />
 		<Modal
 			maskClosable={false}
@@ -222,9 +240,18 @@ const OpenGovProposals = ({ className }: Props) => {
 					preimageLength={preimageLength} />}
 			</div>
 		</Modal>
+
+		<ReferendaLoginPrompts
+			modalOpen={openLoginPrompt}
+			setModalOpen={setOpenLoginPrompt}
+			image="/assets/referenda-endorse.png"
+			title="Join Polkassembly to start creating a proposal."
+			subtitle="Please login with a desktop computer to start creating a proposal."
+		/>
+
 	</div>;
 };
-export default styled(OpenGovProposals)`
+export default styled(OpenGovTreasuryProposal)`
 .opengov-proposals .ant-modal-content{
   padding: 16px 0px !important;
 }

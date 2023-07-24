@@ -88,7 +88,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 					sentiment={newSentiment}
 					commentSource={comment_source}
 					spam_users_count={spam_users_count}
-					truncateUsername = {false}
 				>
 					<div className='cursor-pointer' onClick={() => setOpenModal(true)}>
 						<UpdateLabel

@@ -62,7 +62,7 @@ import CloseIcon from '~assets/icons/close.svg';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
 
-const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovProposals/DecisionDepositCard'), {
+const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });

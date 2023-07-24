@@ -20,11 +20,12 @@ interface Props {
     className?:string;
 }
 
-const ReferendaLoginPrompts=({ image,title,subtitle,modalOpen,setModalOpen,className }:Props ) => {
-	const [openLogin,setLoginOpen]=useState<boolean>(false);
-	const [openSignup,setSignupOpen]=useState<boolean>(false);
+const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen, className }:Props ) => {
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+
 	const handleClick=(path:String) => {
-		if(path==='login'){
+		if(path === 'login'){
 			setLoginOpen(true);
 		} else{
 			setSignupOpen(true);
@@ -37,21 +38,22 @@ const ReferendaLoginPrompts=({ image,title,subtitle,modalOpen,setModalOpen,class
 			open={modalOpen}
 			className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 w-[570px] max-sm:w-[100%] text`}
 			onCancel={() => setModalOpen(false)}
-			closeIcon={<CloseIcon/>}centered
+			closeIcon={<CloseIcon/>}
+			centered
 			zIndex={1002}
 			wrapClassName={className}
-			footer={[
-				<div key="1" className="justify-center center-aligned flex flex-col items-center gap-4 pb-8  mt-[32px]">
+			footer={
+				<div className="justify-center center-aligned flex flex-col items-center gap-4 pb-8 mt-[32px]">
 					<Button
-						className='bg-pink_primary hover:bg-pink_secondary text-white h-[40px] border-pink_primary hover:border-pink_primary flex items-center justify-center p-5 w-[60%] text-[14px] font-medium rounded leading-5'
+						className='bg-pink_primary hover:bg-pink_secondary text-white h-[40px] border-pink_primary hover:border-pink_primary flex items-center justify-center p-5 w-[60%] text-sm font-medium rounded leading-5'
 						onClick={() => handleClick('login')} >Login</Button>
 					<Button
-						className='hover:bg-pink_secondary text-pink_primary h-[40px] border-pink_primary hover:border-pink_primary hover:text-white rounded flex items-center justify-center p-5 w-[60%] -ml-0 text-[14px] leading-5 font-medium'
+						className='hover:bg-pink_secondary text-pink_primary h-[40px] border-pink_primary hover:border-pink_primary hover:text-white rounded flex items-center justify-center p-5 w-[60%] -ml-0 text-sm leading-5 font-medium'
 						onClick={() => handleClick('signup')}>Signup</Button>
-				</div>]}>
+				</div>}>
 			<div className="flex flex-col items-center p-1"><Image width={280} height={221}  src={`${image}`} alt=""/>
-				<h5 className="text-[20px] leading-24 traking-normal mt-[32px] font-semibold max-sm:text-[16px]">{title}</h5>
-				<h5 className="text-[14px] tracking-normal font-medium leading-21 font-poppins max-sm:text-[12px]">{subtitle}</h5></div>
+				<h5 className="text-xl leading-24 traking-normal mt-8 font-semibold max-sm:text-base text-center">{title}</h5>
+				<h5 className="text-sm tracking-normal font-medium leading-21 font-poppins max-sm:text-xs text-center">{subtitle}</h5></div>
 		</Modal>
 		<SignupPopup setLoginOpen={setLoginOpen} modalOpen={openSignup} setModalOpen={setSignupOpen} isModal={true} />
 		<LoginPopup setSignupOpen={setSignupOpen} modalOpen={openLogin} setModalOpen={setLoginOpen} isModal={true} />
@@ -59,7 +61,7 @@ const ReferendaLoginPrompts=({ image,title,subtitle,modalOpen,setModalOpen,class
 };
 export default styled(ReferendaLoginPrompts)`
 .text .ant-modal-content{
-  color: #243A57  !important;
-  border-radius:4px !important;
+  color: var(--bodyBlue)  !important;
+  border-radius: 4px !important;
 }
 `;

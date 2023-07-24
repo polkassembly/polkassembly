@@ -4,7 +4,7 @@
 
 import { Button } from 'antd';
 import React, { FC, useState } from 'react';
-import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 
 interface ILoginToVoteOrEndorseProps {
 	to?: string;

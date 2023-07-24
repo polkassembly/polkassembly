@@ -315,7 +315,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 			getAccounts(loginWallet);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[]);
+	},[loginWallet]);
 
 	return <Modal
 		wrapClassName={className}

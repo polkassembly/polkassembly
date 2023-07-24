@@ -99,8 +99,8 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	}, [network, trackName]);
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md rounded-xxl md:p-8`}>
-			<div className="flex justify-between px-4">
+		<div className={`${className} bg-white drop-shadow-md rounded-xxl md:p-4`}>
+			<div className="flex justify-between px-4 xs:pt-2.5 sm:py-2">
 				<div className='flex items-center gap-x-2 xs:flex-wrap'>
 					<h2 className="text-xl font-semibold leading-8 text-bodyBlue">
         About {trackName.split(/(?=[A-Z])/).join(' ')}
@@ -119,7 +119,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 			<p className="mt-0 font-normal text-base leading-6 text-bodyBlue px-4">{trackMetaData?.description}</p>
 
-			<div className="mt-8 text-xs w-full flex flex-wrap gap-x-0 lg:gap-x-5 xl:gap-x-12">
+			<div className="mt-8 sm:pb-2 lg:pb-0 text-xs w-full flex flex-wrap gap-x-0 lg:gap-x-5 xl:gap-x-12">
 				<div className="xs:w-1/2 md:w-1/3 lg:w-auto px-4">
 					<div className="flex flex-col">
 						<div className="font-medium text-sm text-lightBlue whitespace-pre">Max Deciding</div>
@@ -167,7 +167,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				</div>
 			</div>
 
-			<Divider />
+			<Divider className='xs:block sm:hidden' />
 
 			<div className="sm:hidden xs:flex justify-end pt-0 px-4 pb-4 sm:p-4">
 				{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&

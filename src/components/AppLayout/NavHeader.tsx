@@ -25,6 +25,7 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import { EGovType } from '~src/global/proposalType';
 import { UserDetailsContextType } from '~src/types';
+import Link from 'next/link';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -70,9 +71,9 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 			}} />
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<div className='flex cursor-pointer' onClick={() => router.push(govType === EGovType.GOV1 ? '/' : 'opengov')}>
+					<Link href={ govType === EGovType.GOV1 ? '/' : 'opengov' } className='flex cursor-pointer '>
 						<PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' />
-					</div>
+					</Link>
 					<div className='flex items-center'>
 						<span className='bg-pink_primary h-5 md:h-10 w-[1.5px] ml-[2px] mr-[8px] md:mr-[10px]'></span>
 						<h2 className='m-0 p-0 text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>

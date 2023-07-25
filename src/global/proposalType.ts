@@ -120,7 +120,7 @@ export function getProposalTypeTitle(proposalType: ProposalType) {
 	case ProposalType.TREASURY_PROPOSALS:
 		return 'treasury proposal';
 	case ProposalType.TECH_COMMITTEE_PROPOSALS:
-		return 'techincal committee proposal';
+		return 'technical committee proposal';
 	case ProposalType.DEMOCRACY_PROPOSALS:
 		return 'democracy proposal';
 	case ProposalType.COUNCIL_MOTIONS:

@@ -331,7 +331,8 @@ export interface Post {
   gov_type?: 'gov_1' | 'open_gov'
   tags?: string[] | [];
   history?: IPostHistory[];
-  subscribers?: number[]
+  subscribers?: number[];
+  summary?: string;
 }
 export interface IPostTag {
   name: string;

@@ -70,7 +70,6 @@ const Footer = ({ className } : { className?:string }) => {
 											Terms and Conditions
 										</Link>
 									</div>
-
 									<div>
 										<a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer'>
 											Report an Issue
@@ -81,7 +80,11 @@ const Footer = ({ className } : { className?:string }) => {
 											Feedback
 										</a>
 									</div>
-
+									<div>
+										<a href='https://github.com/polkassembly/polkassembly' target='_blank' rel='noreferrer'>
+											Github
+										</a>
+									</div>
 								</div>
 							</nav>
 						</div>

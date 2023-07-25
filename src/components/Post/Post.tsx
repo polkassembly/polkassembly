@@ -210,11 +210,10 @@ const Post: FC<IPostProps> = (props) => {
 				setTotalAuditCount(count);
 
 			} else {
-				throw new Error('Request failed');
+				// throw new Error('Request failed');
 			}
-		}
-		catch (error) {
-			console.log('Error:', error);
+		} catch (error) {
+			// console.log('Error:', error);
 		}
 
 	};
@@ -235,11 +234,10 @@ const Post: FC<IPostProps> = (props) => {
 				setTotalVideoCount(JSON.parse(decoded).length);
 
 			} else {
-				throw new Error('Request failed');
+				// throw new Error('Request failed');
 			}
-		}
-		catch (error) {
-			console.log('Error:', error);
+		} catch (error) {
+			// console.log('Error:', error);
 		}
 	};
 

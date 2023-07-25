@@ -12,7 +12,6 @@ import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { Wallet } from 'src/types';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
-import { EGovType } from '~src/global/proposalType';
 // import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 interface Props{
@@ -50,7 +49,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const { id, govType } = useUserDetailsContext();
+	const currentUser = useUserDetailsContext();
 	const router = useRouter();
 	const [displayWeb, setDisplayWeb] = useState(2);
 	const [chosenWallet, setChosenWallet] = useState<Wallet |null>(null);
@@ -75,15 +74,11 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 	};
 
 	useEffect(() => {
-		if (id && !isModal) {
-			if(govType === EGovType.OPEN_GOV){
-				router.push('/open-gov');
-			}else{
-				router.push('/');
-			}
+		if (currentUser?.id && !isModal) {
+			router.push('/');
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[id, router]);
+	},[currentUser?.id, router]);
 	return (
 		<>
 			<SEOHead title="Login" network={network}/>

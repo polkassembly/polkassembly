@@ -16,7 +16,7 @@ import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/co
 import LoginToVote from '../LoginToVoteOrEndorse';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { EDecision, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
-import { network } from '~src/global/networkConstants';
+import { chainProperties, network } from '~src/global/networkConstants';
 import { ProposalType } from '~src/global/proposalType';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
@@ -24,6 +24,7 @@ import dayjs from 'dayjs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import executeTx from '~src/util/executeTx';
+import { formatBalance } from '@polkadot/util';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[]
@@ -107,6 +108,16 @@ const VoteMotion = ({
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentCouncil, accounts]);
+
+	useEffect(() => {
+		if(!Network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[Network].tokenDecimals,
+			unit: chainProperties[Network].tokenSymbol
+		});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	useEffect( () => {
 		if (!api) {
 			return;

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import classNames from 'classnames';
 import { Modal, Skeleton } from 'antd';
@@ -26,6 +26,7 @@ interface ITextEditorProps {
     onChange: (value: string) => void;
 		isDisabled?: boolean;
     name: string;
+		autofocus?: boolean;
 }
 
 const gifSVGData = `<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512.000000 512.000000">
@@ -74,10 +75,18 @@ img {
 `;
 
 const TextEditor: FC<ITextEditorProps> = (props) => {
-	const { className, height, onChange, isDisabled, value, name } = props;
+	const { className, height, onChange, isDisabled, value, name, autofocus } = props;
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+
+	useEffect(() => {
+		//if value is a link with a username it it, shift caret position to the end of the text
+		if (!value || !value.startsWith('<p><a href="../user/') || !value.endsWith('<p>&nbsp;</p>')) return;
+		ref.current?.editor?.selection.select(ref.current?.editor?.getBody(), true);
+		ref.current?.editor?.selection.collapse(false);
+		ref.current?.editor?.focus();
+	}, [value]);
 
 	return (
 		<>
@@ -179,6 +188,9 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								'insertdatetime', 'media', 'table', 'textpattern', 'emoticons'
 							],
 							setup: (editor) => {
+								editor.on('init', () => {
+									if (autofocus) editor.focus();
+								});
 								editor.ui.registry.addIcon('custom-icon', gifSVGData);
 								editor.ui.registry.addButton('customButton', { icon: 'custom-icon', onAction: () => setIsModalVisible(true) });
 							},

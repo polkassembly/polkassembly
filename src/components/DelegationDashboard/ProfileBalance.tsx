@@ -25,14 +25,14 @@ interface Props{
   address: string;
 }
 
-const DelegationWalletConnectModal = dynamic(() => import('./DelegationWalletConnectModal'), {
+const WalletConnectModal = dynamic(() => import('~src/ui-components/WalletConnectModal'), {
 	ssr: false
 });
 
 export const formatedBalance = (balance: string, unit: string) => {
 	const formated = formatBalance(balance, { forceUnit: unit, withUnit: false }).split('.');
-	if(Number(formated?.[0]) > 0){
-		return formated?.[1] ? `${formated[0]}.${formated[1].slice(0,2)}`: '0';
+	if(Number(formated?.[0][0]) > 0){
+		return formated?.[1] ? `${formated[0]}.${formated[1].slice(0,1)}`: `${formated[0]}`;
 	}else{
 		return formated.join('.');
 	}
@@ -75,7 +75,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
 
-		if(!api || !apiReady || !chosenWallet) return;
+		if(!api || !apiReady || !chosenWallet ) return;
 
 		const injectedWindow = window as Window & InjectedWindow;
 
@@ -168,7 +168,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				<div className='h-[71px] flex flex-col py-2 gap-1'>
 					<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
 						{formatedBalance(transferableBalance, unit)}
-						<span className='text-sm font-medium text-white tracking-[0.015em] ml-[1px]'>{unit}</span></div>
+						<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
 					<div className='flex items-center justify-start gap-2 ml-1'>
 						<RightTickIcon/>
 						<span className='text-white text-sm font-normal tracking-[0.01em]'>
@@ -179,7 +179,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
 					<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
 						{formatedBalance(lockBalance, unit)}
-						<span className='text-sm font-medium text-white tracking-[0.015em] ml-[1px]'>{unit}</span></div>
+						<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
 					<div className='flex items-center justify-start gap-2 ml-1'>
 						<LockBalanceIcon/>
 						<span className='text-white text-sm font-normal tracking-[0.01em]'>
@@ -201,7 +201,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				setSwitchModalOpen={setOpenModal}
 				withoutInfo={true}
 			/>}</div>
-		<DelegationWalletConnectModal open={openModal} setOpen={setOpenModal} closable={true}/>
+		<WalletConnectModal walletKey='delegationWallet' addressKey='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} closable={true}/>
 	</div>;
 };
 export default ProfileBalances;

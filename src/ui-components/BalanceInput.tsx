@@ -14,6 +14,7 @@ import Balance from '~src/components/Balance';
 import styled from 'styled-components';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
+import HelperTooltip from './HelperTooltip';
 
 const ZERO_BN = new BN(0);
 
@@ -31,9 +32,11 @@ interface Props{
 	noRules?: boolean;
 	formItemName?: string;
   size?: 'large' | 'small' | 'middle';
+  tooltipMessage?: string;
+  setInputValue? : (pre: string)=> void;
 }
 
-const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance' }: Props) => {
+const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance', tooltipMessage, setInputValue }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -41,9 +44,11 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
 		if(isValid){
+			setInputValue && setInputValue(value || '0');
 			onChange(balance);
 		}else{
 			onChange(ZERO_BN);
+			setInputValue && setInputValue('0');
 		}
 	};
 
@@ -60,7 +65,12 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 
 	return <div className={`${className} w-full flex flex-col balance-input`}>
 		{(label || (address && withBalance)) && <label className='mb-[2px] inner-headings'>
-			{label}
+			<span className='flex items-center'>
+				{label}
+				<span>
+					{tooltipMessage && <HelperTooltip text={tooltipMessage}  className='ml-1'/>}
+				</span>
+			</span>
 			{address && withBalance && <span><Balance address={address} onChange={onAccountBalanceChange} /></span>
 			}
 		</label>}
@@ -68,10 +78,6 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 			name={formItemName}
 			initialValue={balance ? Number(formatedBalance(balance.toString(), unit)) : ''}
 			rules={noRules ? []: [
-				{
-					message: 'Lock Balance is required.',
-					required: true
-				},
 				{
 					message: 'Lock Balance must be greater than 0.',
 					validator(rule, value, callback) {
@@ -85,8 +91,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 				{
 					message: 'Invalid Balance',
 					validator(rule, value, callback) {
-
-						if (callback && (isNaN(Number(value)) || (Number(value) !== 0 && (value?.split('.')?.[1]?.length && chainProperties[network]?.tokenDecimals  < (value?.split('.')?.[1].length))))){
+						if (callback && (isNaN(Number(value)) || (Number(value) > 0 ) && (value?.split('.')?.[1]?.length && ( chainProperties[network]?.tokenDecimals  < (value?.split('.')?.[1].length || 0))))){
 							callback(rule?.message?.toString());
 						}else {
 							callback();
@@ -99,7 +104,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name={formItemName || 'balance'}
 				className={`w-full h-[39px] border-[1px] ${inputClassName} text-sm mt-0 suffixColor hover:border-pink_primary balance-input`}
-				onChange={(e) => onBalanceChange(e.target.value)}
+				onChange={(e) => onBalanceChange(e.target.value) }
 				placeholder={placeholder}
 				value={(formatedBalance(String(balance || ZERO_BN), unit))}
 				size={size || 'middle'}
@@ -116,7 +121,7 @@ export default styled(BalanceInput)`
   border-radius:0px 4px 4px 0px !important ;
 }
 .suffixColor .ant-input{
-	color:#7c899b !important;
+	color:var(--bodyBlue) !important;
   border-radius: 4px 0px 0px 4px !important;
   height: 40px !important;
 }

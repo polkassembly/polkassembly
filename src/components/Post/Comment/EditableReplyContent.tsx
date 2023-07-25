@@ -22,19 +22,21 @@ import { IComment } from './Comment';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 
 interface Props {
-	userId: number,
-	className?: string,
-	reply: any,
-	commentId: string,
-	content: string,
-	replyId: string,
-	userName?:string
+	userId: number;
+	className?: string;
+	reply: any;
+	commentId: string;
+	content: string;
+	replyId: string;
+	userName?: string;
+	is_custom_username?: boolean;
+	proposer?: string;
 }
 
 const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.location.href}`;
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
-const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply }: Props) => {
+const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply, proposer, is_custom_username }: Props) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const { id , username ,picture } = useContext(UserDetailsContext);
 	const toggleEdit = () => setIsEditing(!isEditing);
@@ -54,8 +56,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	}, [content, form, replyId]);
 
 	useEffect(() => {
-		replyToreplyForm.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})<p>&nbsp;</p>` || '');
-	}, [replyToreplyForm, userName]);
+		let usernameContent = '';
+		if (!is_custom_username && proposer) {
+			usernameContent = `[@${proposer}](${global.window.location.origin}/address/${proposer})`;
+		} else {
+			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
+		}
+		replyToreplyForm.setFieldValue('content', `${usernameContent}<p>&nbsp;</p>` || '');
+	}, [is_custom_username, proposer, replyToreplyForm, userName]);
 
 	const handleCancel = () => {
 		toggleEdit();

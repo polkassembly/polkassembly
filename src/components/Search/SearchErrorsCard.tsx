@@ -46,11 +46,11 @@ const SearchErrorsCard = ({ isSearchErr, setIsSuperSearch, setOpenModal, setFilt
 				<Divider className='text-[#90A0B7] border-[1px]'><span className='text-[10px] font-medium'>OR</span></Divider>
 			</div>
 			<div className='text-sm text-bodyBlue font-medium tracking-[0.01em] flex gap-1'><span>See </span>
-				<Link href={govType === EGovType.OPEN_GOV ? '/' : '/opengov'} onClick={(e) =>  {
+				<Link href={govType === EGovType.OPEN_GOV ? '/opengov' : '/'} onClick={(e) =>  {
 					e.stopPropagation();
 					e.preventDefault();
 					setOpenModal(false);
-					router.push(govType === EGovType.OPEN_GOV ? '/' : '/opengov');
+					router.push(govType === EGovType.OPEN_GOV ? '/opengov' : '/');
 				}}
 				className='text-pink_primary mx-[2px] border-solid border-[0px] border-b-[1px] leading-[-8px] cursor-pointer'>
           Latest Activity</Link>

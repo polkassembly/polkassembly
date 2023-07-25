@@ -9,6 +9,7 @@ import { EFilterBy } from '.';
 import { useUserDetailsContext } from '~src/context';
 import { EGovType } from '~src/global/proposalType';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 interface Props{
   setIsSuperSearch: (pre: boolean) => void;
@@ -26,6 +27,7 @@ interface Props{
 const SearchErrorsCard = ({ isSearchErr, setIsSuperSearch, setOpenModal, setFilterBy, isSuperSearch, filterBy, postResultsCounts, peopleResultsCounts, setPostsPage, setPeoplePage }: Props) =>
 {
 	const { govType } = useUserDetailsContext();
+	const router = useRouter();
 
 	return (((filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && postResultsCounts === 0)
       || (filterBy ===  EFilterBy.People && peopleResultsCounts === 0 )

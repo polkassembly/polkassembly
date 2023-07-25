@@ -583,12 +583,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								value={vote}
 								onChange={(value) => {
 									setVote(value as EVoteDecisionType);
-									ayeNayForm.setFieldValue('balance', ZERO_BN);
-									splitForm.setFieldValue('nayVote',ZERO_BN);
-									splitForm.setFieldValue('ayeVote',ZERO_BN);
-									abstainFrom.setFieldValue('abstainVote', ZERO_BN);
-									abstainFrom.setFieldValue('ayeVote', ZERO_BN);
-									abstainFrom.setFieldValue('nayVote', ZERO_BN);
+									ayeNayForm.setFieldValue('balance', '');
+									splitForm.setFieldValue('nayVote','');
+									splitForm.setFieldValue('ayeVote','');
+									abstainFrom.setFieldValue('abstainVote', '');
+									abstainFrom.setFieldValue('ayeVote', '');
+									abstainFrom.setFieldValue('nayVote', '');
 									onBalanceChange(ZERO_BN);
 								}}
 								options={decisionOptions}

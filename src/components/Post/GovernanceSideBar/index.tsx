@@ -66,6 +66,7 @@ const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasur
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
+import { formatBalance } from '@polkadot/util';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -574,6 +575,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		api?.setSigner(signer);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
+
+	useEffect(() => {
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		getVotingHistory();

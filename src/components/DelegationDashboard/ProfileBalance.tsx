@@ -31,8 +31,8 @@ const WalletConnectModal = dynamic(() => import('~src/ui-components/WalletConnec
 
 export const formatedBalance = (balance: string, unit: string) => {
 	const formated = formatBalance(balance, { forceUnit: unit, withUnit: false }).split('.');
-	if(Number(formated?.[0]) > 0){
-		return formated?.[1] ? `${formated[0]}.${formated[1].slice(0,2)}`: '0';
+	if(Number(formated?.[0][0]) > 0){
+		return formated?.[1] ? `${formated[0]}.${formated[1].slice(0,1)}`: `${formated[0]}`;
 	}else{
 		return formated.join('.');
 	}

@@ -64,7 +64,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 			<span className='desc text-bodyBlue font-medium flex items-center text-sm'>
 				<LegalIcon className='mr-1.5'/>legal:
 			</span>
-			<span className='text-xs text-bodyBlue font-normal break-all pt-0.5'>{identity.legal}</span>
+			<span className='text-xs text-bodyBlue font-normal truncate pt-0.5'>{identity.legal}</span>
 		</li>
 		}
 		{identity?.email &&
@@ -72,37 +72,37 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 			<span className='desc text-bodyBlue font-medium flex items-center text-sm'>
 				<EmailIcon className='mr-2'/>Email:
 			</span>
-			<span className='text-xs text-bodyBlue font-normal break-all pt-0.5'>{identity.email}</span>
+			<span className='text-xs text-bodyBlue font-normal truncate pt-0.5'>{identity.email}</span>
 		</li>
 		}
 		{(identity?.judgements?.length || 0) > 0 &&
 		<li className='flex items-center'>
 			<span className='desc flex items-center text-sm text-bodyBlue font-medium'><JudgementIcon className='mr-1.5'/>Judgements:</span>
-			<span className='text-xs break-all text-bodyBlue'>{displayJudgements}</span>
+			<span className='text-xs truncate text-bodyBlue'>{displayJudgements}</span>
 		</li>
 		}
 		{identity?.pgp &&
 		<li className='flex items-center'>
 			<span className='desc flex items-center text-sm text-bodyBlue font-medium'><PgpIcon className='mr-1'/>pgp:</span>
-			<span className='text-xs text-bodyblue break-all font-normal'>{identity.pgp}</span>
+			<span className='text-xs text-bodyblue truncate font-normal'>{identity.pgp}</span>
 		</li>
 		}
 		{identity?.riot &&
 		<li className='flex items-center'>
 			<span className='desc flex items-center text-sm text-bodyBlue font-medium'><RiotIcon className='mr-1.5' />riot: </span>
-			<span className='text-xs text-bodyBlue break-all font-normal'>{identity.riot}</span>
+			<span className='text-xs text-bodyBlue truncate font-normal'>{identity.riot}</span>
 		</li>
 		}
 		{identity?.twitter &&
 		<li className='flex items-center'>
 			<span className='desc text-bodyBlue font-medium flex text-sm'><TwitterIcon className='mr-1.5 mt-1'/>Twitter: </span>
-			<span className='text-xs font-normal break-all text-bodyBlue'>{identity.twitter}</span>
+			<span className='text-xs font-normal truncate text-bodyBlue'>{identity.twitter}</span>
 		</li>
 		}
 		{identity?.web &&
 		<li className='flex items-center'>
 			<span className='desc text-bodyBlue font-medium flex text-sm'><WebIcon className='mr-1.5 mt-1 -ml-0.5' />Web: </span>
-			<span className='text-xs text-bodyBlue break-all font-normal pt-0.5'>{identity.web}</span>
+			<span className='text-xs text-bodyBlue truncate font-normal pt-0.5'>{identity.web}</span>
 		</li>
 		}
 		{flags?.isCouncil &&

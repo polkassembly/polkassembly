@@ -48,6 +48,7 @@ const SearchErrorsCard = ({ isSearchErr, setIsSuperSearch, setOpenModal, setFilt
 					e.stopPropagation();
 					e.preventDefault();
 					setOpenModal(false);
+					router.push(govType === EGovType.OPEN_GOV ? '/' : '/opengov');
 				}}
 				className='text-pink_primary mx-[2px] border-solid border-[0px] border-b-[1px] leading-[-8px] cursor-pointer'>
           Latest Activity</Link>

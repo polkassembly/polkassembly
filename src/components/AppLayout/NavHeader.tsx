@@ -70,7 +70,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 			}} />
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<div className='flex cursor-pointer' onClick={() => router.push(govType)}>
+					<div className='flex cursor-pointer' onClick={() => router.push(govType === EGovType.GOV1 ? '/' : 'opengov')}>
 						<PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' />
 					</div>
 					<div className='flex items-center'>

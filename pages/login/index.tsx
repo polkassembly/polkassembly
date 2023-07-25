@@ -75,11 +75,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 
 	useEffect(() => {
 		if (id && !isModal) {
-			if(govType === EGovType.OPEN_GOV){
-				router.push('/open-gov');
-			}else{
-				router.push('/');
-			}
+			router.push(govType === EGovType.OPEN_GOV ? '/opengov' : '/');
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[id, router]);

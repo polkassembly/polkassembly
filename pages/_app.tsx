@@ -41,7 +41,6 @@ const workSans = Work_Sans({
 import 'antd/dist/reset.css';
 import '../styles/globals.css';
 import ErrorBoundary from '~src/ui-components/ErrorBoundary';
-import Fallback from '~src/ui-components/ErrorBoundary/Fallback';
 
 export default function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
@@ -70,7 +69,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
 	return <ConfigProvider theme={antdTheme}>
 		<ModalProvider>
-			<ErrorBoundary fallback={<Fallback />}>
+			<ErrorBoundary>
 				<UserDetailsProvider>
 					<ApiContextProvider network={network}>
 						<NetworkContextProvider initialNetwork={network}>

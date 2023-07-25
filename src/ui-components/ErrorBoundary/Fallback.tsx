@@ -4,12 +4,17 @@
 
 import { Result } from 'antd';
 import Link from 'next/link';
-import React from 'react';
+import React, { FC } from 'react';
 
 import NothingFoundSVG from '~assets/nothing-found.svg';
-const Fallback = () => {
+
+interface IFallbackProps {
+	onReset: () => void;
+}
+
+const Fallback: FC<IFallbackProps> = (props) => {
 	return (
-		<section className='flex flex-col items-center justify-center h-screen w-screen'>
+		<section className='absolute inset-0 z-[9999999] bg-[#F5F6F8] flex flex-col items-center justify-center h-screen w-screen'>
 			<Result
 				icon={
 					<div className='w-1/2 h-auto mx-auto max-w-[900px]'>
@@ -18,7 +23,7 @@ const Fallback = () => {
 				}
 				title="Unfortunately something has gone wrong. Please try again."
 				extra={
-					<Link href='/' className='py-2 px-6 bg-pink_primary text-white border-white hover:bg-pink_secondary rounded-md text-lg h-[50px] w-[215px]'>
+					<Link onClick={props.onReset} href='/' className='py-2 px-6 bg-pink_primary text-white border-white hover:bg-pink_secondary rounded-md text-lg h-[50px] w-[215px]'>
 						Go To Home
 					</Link>
 				}

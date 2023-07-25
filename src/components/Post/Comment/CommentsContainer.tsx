@@ -217,7 +217,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			}
-			<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1 sticky top-[10%]'>
+			<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1'>
 				<span className='text-lg font-medium text-bodyBlue'>
 					{filteredComments?.length}
 					<span className='ml-1'>Comments</span>

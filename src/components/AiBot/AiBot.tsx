@@ -134,38 +134,40 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 			}
 		]
 		:
-		[
-			{
-				component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
-					onClick={() =>  id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true)}
-				>
-					<CreateDiscussionIcon className='cursor-pointer ml-[-53px] mt-[5px]' />
-					<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%] '>Create Discussion Post</p>
+		[{
+			component: <OpenGovTreasuryProposal/>
+		},
+		{
+			component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+				onClick={() =>  id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true)}
+			>
+				<CreateDiscussionIcon className='cursor-pointer ml-[-53px] mt-[5px]' />
+				<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%] '>Create Discussion Post</p>
+			</div>
+		},
+		{
+			component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+				onClick={() => {
+					if (!grillChat)
+						(window as any).DocsBotAI.toggle();
+					setIsAIChatBotOpen(!isAIChatBotOpen);
+				}}
+			>
+				<AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
+				<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>AI Bot</p>
+			</div>
+		},
+		{
+			component: <a href='https://polkassembly.hellonext.co/'
+				target='_blank'
+				rel='noreferrer'
+				className='text-lightBlue hover:text-bodyBlue ml-[-37px]'>
+				<div className='flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px]  rounded-[8px] cursor-pointer'>
+					<CautionIcon className='cursor-pointer ml-[-105px] mt-[5px]' />
+					<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>Report An Issue</p>
 				</div>
-			},
-			{
-				component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
-					onClick={() => {
-						if (!grillChat)
-							(window as any).DocsBotAI.toggle();
-						setIsAIChatBotOpen(!isAIChatBotOpen);
-					}}
-				>
-					<AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
-					<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>AI Bot</p>
-				</div>
-			},
-			{
-				component: <a href='https://polkassembly.hellonext.co/'
-					target='_blank'
-					rel='noreferrer'
-					className='text-lightBlue hover:text-bodyBlue ml-[-37px]'>
-					<div className='flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px]  rounded-[8px] cursor-pointer'>
-						<CautionIcon className='cursor-pointer ml-[-105px] mt-[5px]' />
-						<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>Report An Issue</p>
-					</div>
-				</a>
-			}
+			</a>
+		}
 		];
 
 	return (

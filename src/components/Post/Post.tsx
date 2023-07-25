@@ -29,6 +29,8 @@ import { useNetworkContext } from '~src/context';
 import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { ILastVote } from '~src/types';
+import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
+import styled from 'styled-components';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -97,7 +99,10 @@ const Post: FC<IPostProps> = (props) => {
 	const [canEdit, setCanEdit] = useState(false);
 	const { network } = useNetworkContext();
 	const [duration, setDuration] = useState(dayjs.duration(0));
-
+	const [totalAuditCount, setTotalAuditCount] = useState<number>(0);
+	const [totalVideoCount, setTotalVideoCount] = useState<number>(0);
+	const [auditData, setAuditData] = useState<IDataType[]>([]);
+	const [videoData, setVideoData] = useState<IDataVideoType[]>([]);
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
 	const [lastVote, setLastVote] = useState< ILastVote | undefined >(undefined);
@@ -178,6 +183,72 @@ const Post: FC<IPostProps> = (props) => {
 		}
 	}, [post]);
 
+	const networkModified =  network?.charAt(0)?.toUpperCase() + network?.slice(1);
+	let postType:any = proposalType;
+
+	if(postType === ProposalType.REFERENDUM_V2){
+		postType = 'OpenGov';
+	}
+	else if(postType === ProposalType.DISCUSSIONS){
+		postType = 'Discussion';
+	}
+	const productData = async () => {
+		try {
+			const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postType === ProposalType.TIPS? post.hash: post.post_id}`,
+				{
+					headers: {
+						'Accept': 'application/vnd.github.v3+json',
+						'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+						'X-GitHub-Api-Version': '2022-11-28'
+					}
+				}
+			);
+			if (response.ok) {
+				const data = await response.json();
+				setAuditData(data);
+				const count = (data.filter((file: any) => file.name.endsWith('.pdf') || file.name.endsWith('.png'))).length || 0;
+				setTotalAuditCount(count);
+
+			} else {
+				throw new Error('Request failed');
+			}
+		}
+		catch (error) {
+			console.log('Error:', error);
+		}
+
+	};
+	const videosData = async () => {
+		try {
+			const response = await fetch(`https://api.github.com/repos/CoinStudioDOT/OpenGov/contents/${networkModified}/${postType}/${postType === ProposalType.TIPS? post.hash: post.post_id}/video.json`,
+				{
+					headers: {
+						'Accept': 'application/vnd.github.v3+json',
+						'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+						'X-GitHub-Api-Version': '2022-11-28'
+					}
+				});
+			if (response.ok) {
+				const data = await response.json();
+				const decoded = atob(data.content).replace(/}\s*{/g, '}, {');
+				setVideoData(JSON.parse(decoded) as IDataVideoType[]);
+				setTotalVideoCount(JSON.parse(decoded).length);
+
+			} else {
+				throw new Error('Request failed');
+			}
+		}
+		catch (error) {
+			console.log('Error:', error);
+		}
+	};
+
+	useEffect(() => {
+		productData().then(() => {});
+		videosData().then(() => {});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
+
 	if (!post) {
 		return (
 			<div className='mt-16'>
@@ -185,13 +256,13 @@ const Post: FC<IPostProps> = (props) => {
 			</div>
 		);
 	}
-
 	const { post_id, hash, status: postStatus } = post;
 	const onchainId = proposalType === ProposalType.TIPS? hash :post_id;
 
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
+
 				<GovernanceSideBar
 					toggleEdit={toggleEdit}
 					proposalType={proposalType}
@@ -203,7 +274,10 @@ const Post: FC<IPostProps> = (props) => {
 					tally={post?.tally}
 					lastVote={lastVote}
 					setLastVote={setLastVote}
+					trackName={trackName}
 				/>
+				{/* decision deposite placed. */}
+
 				{
 					isOffchainPost &&
 					<>
@@ -237,7 +311,7 @@ const Post: FC<IPostProps> = (props) => {
 		setProposerAddress(address);
 	};
 	const getOnChainTabs = () => {
-		const tabs = [
+		const tabs: any[] = [
 			{
 				children: (
 					<PostTimeline />
@@ -249,10 +323,13 @@ const Post: FC<IPostProps> = (props) => {
 		if (['polkadot', 'kusama'].includes(network)){
 			tabs.push({
 				children: (
-					<PostAudit />
+					<PostAudit auditData={auditData} videoData={videoData}/>
 				),
 				key: 'audit',
-				label: 'Audit'
+				label:<div className='flex gap-2 items-center justify-center audit'>
+          Audit
+					{(totalAuditCount + totalVideoCount) > 0 && <span className='bg-[#d6d8da] card-bg text-xs font-medium rounded-full px-1.5 text-bodyBlue py-0.5'>{totalAuditCount + totalVideoCount}</span>
+					}          </div>
 			});
 		}
 
@@ -345,10 +422,11 @@ const Post: FC<IPostProps> = (props) => {
 			spam_users_count: post?.spam_users_count,
 			status: post?.status,
 			subscribers: post?.subscribers || [],
+			summary: post?.summary,
 			tags: post?.tags || [],
 			timeline: post?.timeline,
-			title: post?.title,
-			topic: post?.topic,
+			title: post?.title || '',
+			topic: post?.topic || '',
 			track_name: trackName,
 			track_number: post?.track_number,
 			username: post?.username
@@ -422,4 +500,10 @@ const Post: FC<IPostProps> = (props) => {
 	);
 };
 
-export default Post;
+export default styled(Post)`
+.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn .audit .card-bg{
+  background-color: var(--pink_primary) !important;
+  color: white !important;
+
+}
+`;

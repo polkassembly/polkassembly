@@ -6,6 +6,9 @@ import Icon from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import React from 'react';
 
+import OpenAiSVG from '~assets/icons/openai.svg';
+import AiStarSVG from '~assets/icons/ai-star.svg';
+import SummaryModalCloseSVG from '~assets/icons/summary-modal-close.svg';
 import OpenGovBannerSVG from '~assets/icons/opengov_banner.svg';
 import CubeSVG from '~assets/icons/cube.svg';
 import DiscordSVG from '~assets/icons/discord.svg';
@@ -94,9 +97,23 @@ import BigTipperSVG from '~assets/delegation-tracks/big-tipper.svg';
 import SmallSpenderSVG from '~assets/delegation-tracks/small-spender.svg';
 import DelegationSVG from '~assets/sidebar/delegation-icon.svg';
 import Dislike from '~assets/icons/dislike.svg';
+import CopySVG from '~assets/icons/content-copy.svg';
+import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
+);
+
+export const OpenAiIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={OpenAiSVG} {...props} />
+);
+
+export const AiStarIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={AiStarSVG} {...props} />
+);
+
+export const SummaryModalClose = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={SummaryModalCloseSVG} {...props} />
 );
 
 export const OpenGovBannerIcon = (props: Partial<CustomIconComponentProps>) => (
@@ -412,4 +429,11 @@ export const SmallSpenderTrackIcon = (props: Partial<CustomIconComponentProps>) 
 );
 export const DelegationSidebarIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DelegationSVG} {...props} />
+);
+
+export const CopyIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CopySVG} {...props} />
+);
+export const CreatePropoosalIcon  = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CreatePropoosalSVG} {...props} />
 );

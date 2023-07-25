@@ -2728,6 +2728,14 @@
     eventemitter3 "^4.0.7"
     smoldot "1.0.1"
 
+"@substrate/connect@^0.7.30":
+  version "0.7.30"
+  resolved "https://registry.yarnpkg.com/@substrate/connect/-/connect-0.7.30.tgz#bc633d869e47efb32dc6b7b39f716b5d8d83646c"
+  integrity sha512-njt7lVc3GsoLWfynAh3VhOgjBRQYdT3Cd4N+QPANhHk3GTLQmfxvDUU4zQm1O3pYORY/lZOHlBtR0HoJklte0Q==
+  dependencies:
+    "@substrate/connect-extension-protocol" "^1.0.1"
+    smoldot "1.0.11"
+
 "@substrate/ss58-registry@^1.39.0":
   version "1.39.0"
   resolved "https://registry.yarnpkg.com/@substrate/ss58-registry/-/ss58-registry-1.39.0.tgz#eb916ff5fea7fa02e77745823fde21af979273d2"
@@ -2860,7 +2868,7 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@tinymce/tinymce-react@^4.3.0":
+"@tinymce/tinymce-react@^4.2.0":
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/@tinymce/tinymce-react/-/tinymce-react-4.3.0.tgz#5e2f5a58526a1bba9710f54f5fcf16abd4c742a1"
   integrity sha512-iB4cUsYfcJL4NGuKhqCGYuTmFTje3nPxyPv1HxprTsp/YMGuuiiSNWrv3zwI31QX5Cn8qeq9MrMDnbxuRugHyg==
@@ -3244,10 +3252,10 @@
     "@types/mime" "*"
     "@types/node" "*"
 
-"@types/showdown@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@types/showdown/-/showdown-2.0.1.tgz#24134738ba3107237d6a783e054a54773e739f81"
-  integrity sha512-xdnAw2nFqomkaL0QdtEk0t7yz26UkaVPl4v1pYJvtE1T0fmfQEH3JaxErEhGByEAl3zUZrkNBlneuJp0WJGqEA==
+"@types/showdown@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/showdown/-/showdown-2.0.0.tgz#3e800eca8573848cac4e5555f4377ba3a0e7b1f2"
+  integrity sha512-70xBJoLv+oXjB5PhtA8vo7erjLDp9/qqI63SRHm4REKrwuPOLs8HhXwlZJBJaB4kC18cCZ1UUZ6Fb/PLFW4TCA==
 
 "@types/styled-components@^5.1.26":
   version "5.1.26"
@@ -11160,6 +11168,13 @@ smoldot@1.0.1:
     pako "^2.0.4"
     ws "^8.8.1"
 
+smoldot@1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/smoldot/-/smoldot-1.0.11.tgz#cd3fa68be0c51bd4d312772d4e9b8835d05d759d"
+  integrity sha512-sDp8oo6RWFPId59nuNKxKzBP9wu0czfFDW7WHMqxwopo12ffpijOo3aTL1PVcNFVo6lZhXxOKFCudhQCfhrZ7w==
+  dependencies:
+    ws "^8.8.1"
+
 source-map-js@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.0.2.tgz#adbc361d9c62df380125e7f161f71c826f1e490c"
@@ -11640,11 +11655,6 @@ tinymce@^6.3.1:
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-6.4.1.tgz#9c28f798074668d53371805fb6f1c68e582a4549"
   integrity sha512-+/cS2AM9l6p72IBs2uolHbGsBUztLs0WslqNgFaTXtmMksTNUOhh8p08xtA/fa03UGlWEC6/EJoeV95/QDXa2A==
-
-tinymce@^6.5.1:
-  version "6.5.1"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-6.5.1.tgz#f228bf2dc1abf28565523f359b849dad1706357d"
-  integrity sha512-J67fxJiX3tjvVqer1dg1+cOxMeE2P55ESGhaakvqGPbAUU45HnCMLSioaOsxV1KfcXustw9WJo0rtn1SNQlVKQ==
 
 tmp@^0.2.1:
   version "0.2.1"

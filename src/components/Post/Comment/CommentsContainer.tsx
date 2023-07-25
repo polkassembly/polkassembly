@@ -12,7 +12,7 @@ import { ProposalType } from '~src/global/proposalType';
 
 import PostCommentForm from '../PostCommentForm';
 import Comments from './Comments';
-import RefendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import RefendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import Image from 'next/image';
 import UnfilterAgainstIcon from '~assets/overall-sentiment/against.svg';
 import UnfilterSlightlyAgainstIcon from '~assets/overall-sentiment/slightly-against.svg';

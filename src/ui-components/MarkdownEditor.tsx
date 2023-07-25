@@ -9,11 +9,11 @@ import styled from 'styled-components';
 import Markdown from './Markdown';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import { useUserDetailsContext } from '~src/context';
-import HelperTooltip from 'src/ui-components/HelperTooltip';
 import { useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import debounce from 'lodash/debounce';
+import { Alert } from 'antd';
 
 const StyledTextArea = styled.div`
 
@@ -172,7 +172,8 @@ interface Props {
 	height?: number
 	name?: string
 	onChange:  ((value: string) => void) | undefined
-	value: string
+	value: string;
+  disabled?: boolean;
 }
 
 function MarkdownEditor(props: Props): React.ReactElement {
@@ -252,19 +253,19 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	const onChange = async (content:string) => {
 		const inputValue = content;
 		setInput(inputValue);
-		const matches = inputValue.match(/(?<!\[)@\w+/g);
+
+		const matches = inputValue.match(/(?<!\S)@(\w+)(?!\.\w)/g);
 		if (matches && matches.length > 0) {
-			const usernameQuery = matches[matches.length - 1].substring(1);
+			const usernameQuery = matches[matches.length - 1].replace('@','');
 			if (!validUsers.includes(usernameQuery)) {
-				debouncedAPIcall(usernameQuery,content);
+				debouncedAPIcall(usernameQuery, content);
 			}
-			else if(validUsers.includes(usernameQuery)){
+			else if (validUsers.includes(usernameQuery)) {
 				let inputData = content;
 				const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
-
 				inputData = inputData.replace(
 					regex,
-					`[@${usernameQuery}](${global.window.location.origin}/user/${usernameQuery})`
+					`[@${usernameQuery}](${window.location.origin}/user/${usernameQuery})`
 				);
 				setInput(inputData);
 			}
@@ -278,7 +279,8 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	return (
 		<StyledTextArea className='container'>
 			<ReactMde
-				generateMarkdownPreview={markdown => Promise.resolve(<Markdown isPreview={true} md={markdown} />)}
+				readOnly={props.disabled}
+				generateMarkdownPreview={markdown => Promise.resolve(<Markdown isPreview={true} md={markdown}  />)}
 				minEditorHeight={props.height}
 				minPreviewHeight={props.height}
 				name={props.name}
@@ -291,9 +293,9 @@ function MarkdownEditor(props: Props): React.ReactElement {
 					saveImage: handleSaveImage
 				}}
 				onChange={ onChange }
-				value={input}
+				value={props.value || input}
 			/>
-			<HelperTooltip className='ml-2' text='Attach images by dragging & dropping, selecting or pasting them.' />
+			<Alert type='info' showIcon className='rounded-none rounded-b-[4px] h-[30px] max-md:h-[50px]' message={<span className='text-xs text-[#485F7D]'>Attach images by dragging & dropping, selecting or pasting them.</span>} />
 		</StyledTextArea>
 	);
 }

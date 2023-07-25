@@ -37,6 +37,7 @@ import { useRouter } from 'next/router';
 import Web3 from 'web3';
 import Balance from '~src/components/Balance';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
+import executeTx from '~src/util/executeTx';
 
 const ZERO_BN = new BN(0);
 
@@ -203,6 +204,25 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 		setErrorArr(errors);
 		return errors.length === 0;
 	};
+	const onSuccess = () => {
+		queueNotification({
+			header: 'Success!',
+			message: 'Delegation successful.',
+			status: NotificationStatus.SUCCESS
+		});
+		setOpenSuccessPopup(true);
+		setLoading(false);
+		setOpen ? setOpen?.(false) : setDefaultOpen(false);
+	};
+	const onFailed = (message: string) => {
+		queueNotification({
+			header: 'Failed!',
+			message,
+			status: NotificationStatus.ERROR
+		});
+		setLoading(false);
+		setOpen ? setOpen?.(false) : setDefaultOpen(false);
+	};
 
 	const handleSubmit = async () => {
 
@@ -223,52 +243,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 		const txArr = checkedArr?.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
 		const delegateTxn = api.tx.utility.batchAll(txArr);
 
-		delegateTxn.signAndSend(delegationDashboardAddress, ({ status, events }: any) => {
-			if (status.isFinalized) {
-				for (const { event } of events) {
-					if (event.method === 'ExtrinsicSuccess') {
-						queueNotification({
-							header: 'Success!',
-							message: 'Delegation successful.',
-							status: NotificationStatus.SUCCESS
-						});
-						setOpenSuccessPopup(true);
-						setOpen ? setOpen?.(false) : setDefaultOpen(false);
-
-					} else if (event.method === 'ExtrinsicFailed') {
-						const errorModule = (event.data as any)?.dispatchError?.asModule;
-						let message = 'Delegation failed.';
-
-						if(errorModule) {
-							const { method, section, docs } = api.registry.findMetaError(errorModule);
-							message = `${section}.${method} : ${docs.join(' ')}`;
-						}
-
-						queueNotification({
-							header: 'Delegation failed!',
-							message,
-							status: NotificationStatus.ERROR
-						});
-						// TODO: error state popup
-					}
-				}
-
-				setLoading(false);
-				setOpen ? setOpen?.(false) : setDefaultOpen(false);
-				console.log(`Delegation: completed at block hash #${status.toString()}`);
-			} else {
-				console.log(`Delegation: Current status: ${status.type}`);
-			}
-		}).catch((error: any) => {
-			console.log(':( transaction failed');
-			console.error('ERROR:', error);
-			queueNotification({
-				header: 'Delegation failed!',
-				message: error.message,
-				status: NotificationStatus.ERROR
-			});
-			setLoading(false);
-		});
+		await executeTx({ address: delegationDashboardAddress, api, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 
 	const handleOnBalanceChange = (balanceStr: string) => {
@@ -397,7 +372,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 								<label  className='text-lightBlue flex items-center text-sm'>
                   Conviction
 									<span>
-										<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
+										<HelperTooltip className='ml-1' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
 									</span>
 								</label>
 

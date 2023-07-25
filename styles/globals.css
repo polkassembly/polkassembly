@@ -342,31 +342,30 @@ a.command-palette-list-item svg {
 .track-popover .ant-collapse>.ant-collapse-item >.ant-collapse-header{
 color: var(--lightBlue) !important;
 }
+.icon-alert .ant-alert-icon{
+  margin-top: -41px !important;
+}
 
-/* TINY MCE CSS */
-
-.tox-tinymce {
-  border-radius: 0 !important;
-}
-.proposal_error {
-  border-color: var(--red_primary) !important;
-}
-.tox-tinymce .proposal_error {
-  border-color: var(--red_primary) !important;
-}
-.tox-statusbar__path-item, .tox-statusbar__path-divider {
-  display: none !important;
-}
-.html-content ul, ol {
-  padding-left: 15px;
-}
-.html-content td {
-  padding: 3px 6px;
-}
-.html-content a {
-  color: var(--blue_primary) !important;
-}
-.tox-notifications-container {
-  display: none !important;
-}
-/* TINY MCE CSS */
+@keyframes wave {
+	0% {
+	  transform: scale(1);
+	  opacity: 0.6;
+	}
+	100% {
+	  transform: scale(5);
+	  opacity: 0.06;
+	}
+  }
+  
+  .wave-effect {
+	position: fixed;
+	bottom:32px;
+  right:38px;
+	transform: translate(-50%, -50%);
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	background-color:#E5007A;
+	pointer-events: none;
+	animation: wave 1s linear infinite;
+  }

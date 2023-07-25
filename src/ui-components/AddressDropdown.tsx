@@ -57,10 +57,15 @@ const AddressDropdown = ({
 				return EAddressOtherTextType.COUNCIL_CONNECTED;
 			}
 			return EAddressOtherTextType.COUNCIL;
-		} else if (isConnected) {
-			return EAddressOtherTextType.CONNECTED;
-		} else if (substrate_addresses.includes(account_substrate_address)) {
+		} else if (isConnected && substrate_addresses.includes(account_substrate_address)) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
+		}else if(isConnected && !substrate_addresses.includes(account_substrate_address)){
+			return EAddressOtherTextType.CONNECTED;
+		}
+		else if (substrate_addresses.includes(account_substrate_address)) {
+			return EAddressOtherTextType.LINKED_ADDRESS;
+		}else{
+			return EAddressOtherTextType.UNLINKED_ADDRESS;
 		}
 	};
 
@@ -89,7 +94,7 @@ const AddressDropdown = ({
 		key: 1,
 		label: (
 			<div className='flex items-center justify-center mt-2'>
-				<Button onClick={() => setSwitchModalOpen(true)} className={`w-[164px] h-[40px] rounded-[8px] text-sm text-[#fff] bg-pink_primary font-medium flex justify-center items-center ${poppins.variable} ${poppins.className}`}>Switch Wallet</Button>
+				<Button onClick={() => setSwitchModalOpen(true)} className={`w-full h-[40px] rounded-[8px] text-sm text-[#fff] bg-pink_primary font-medium flex justify-center items-center ${poppins.variable} ${poppins.className}`}>Switch Wallet</Button>
 			</div>
 		)
 	});

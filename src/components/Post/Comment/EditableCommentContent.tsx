@@ -84,7 +84,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [isReplying, setIsReplying] = useState(false);
 
 	const toggleReply = () => {
-		const usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
+		const usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})<p>&nbsp;</p>`;
 		replyForm.setFieldValue('content', usernameContent);
 		global.window.localStorage.setItem(replyKey(commentId), usernameContent);
 		setIsReplying(!isReplying);

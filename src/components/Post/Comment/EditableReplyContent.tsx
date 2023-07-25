@@ -54,7 +54,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	}, [content, form, replyId]);
 
 	useEffect(() => {
-		replyToreplyForm.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})` || '');
+		replyToreplyForm.setFieldValue('content', `[@${userName}](${global.window.location.origin}/user/${userName})<p>&nbsp;</p>` || '');
 	}, [replyToreplyForm, userName]);
 
 	const handleCancel = () => {

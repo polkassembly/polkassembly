@@ -50,6 +50,7 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:
 	const [chosenWallet, setChosenWallet] = useState<Wallet |null>(null);
 	const [walletError, setWalletError] =  useState<string | undefined>();
 	const [withPolkasafe, setWithPolkasafe] = useState<boolean>(false);
+	const [method, setMethod] = useState('');
 
 	const setDisplayWeb2 = () => setDisplayWeb(2);
 
@@ -57,11 +58,12 @@ const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, isDelegation }:
 		setChosenWallet(wallet);
 		setDisplayWeb(3);
 	};
+
 	const onWalletUpdate = () => {
 		setChosenWallet(null);
+		setWithPolkasafe(false);
 		setDisplayWeb(2);
 	};
-	const [method, setMethod] = useState('');
 
 	useEffect(() => {
 		if(!method) return;

@@ -45,6 +45,7 @@ import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import executeTx from '~src/util/executeTx';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import PolkasafeIcon from '~assets/polkasafe-logo.svg';
 
 const ZERO_BN = new BN(0);
 
@@ -472,6 +473,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						throw new Error(error.error);
 					}
 					setLoadingStatus({ isLoading: false, message: '' });
+					setShowModal(false);
+					setSuccessModal(true);
 					queueNotification({
 						header: 'Success!',
 						message: `Your vote on Referendum #${referendumId} will be successful once approved by other signatories.`,
@@ -483,8 +486,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						decision: vote,
 						time: new Date()
 					});
-					setShowModal(false);
-					setSuccessModal(true);
 				}catch(error){
 					setLoadingStatus({ isLoading: false, message: '' });
 					console.log(':( transaction failed');
@@ -496,7 +497,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					});
 				}
 			};
-			voteReferendumByMultisig(voteTx);
+			await voteReferendumByMultisig(voteTx);
 			return;
 		}
 
@@ -579,22 +580,22 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`w-[500px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
+				className={`w-[600px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
 				title={
 					showMultisig ?
-						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 justify-center'>
+						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2 '>
 							<ArrowLeft onClick={() => {setShowMultisig(false); setMultisig('');}} className='cursor-pointer absolute left-[24px] mt-1'/>
 							<div className='flex gap-[8px] items-center'>
-								<CastVoteIcon className='mt-1'/>
+								<PolkasafeIcon className='ml-14'/>
 								<span className='text-bodyBlue font-semibold tracking-[0.0015em] text-xl'>Cast Vote with Polkasafe Multisig</span>
 							</div>
 
 						</div>
 						:
-						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center justify-center gap-2'>
-							<CastVoteIcon className='mt-1'/>
+						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2'>
+							<CastVoteIcon className='ml-6'/>
 							<span className='text-bodyBlue font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
 						</div>
 				}
@@ -618,12 +619,18 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									}
 								</div>
 								{ canUsePolkasafe(network) && !showMultisig &&
-							<div className='w-[55%] flex flex-col m-auto'>
+							<div className='w-[50%] flex flex-col m-auto mt-3 gap-3'>
 								<Divider className='m-0'>OR</Divider>
 								<div className='w-full flex justify-center'>
-									<WalletButton disabled={!apiReady} onClick={() => {
-										setShowMultisig(!showMultisig);
-									}} name="SubWallet" icon={<WalletIcon which={Wallet.POLKASAFE} className='h-6 w-6'/>} text={'Cast Vote with Multisig'} className='text-[18px] font-semibold'/>
+									<WalletButton
+										className='text-sm text-bodyBlue font-semibold'
+										disabled={!apiReady}
+										onClick={() => {
+											setShowMultisig(!showMultisig);
+										}}
+										name="Polkasafe"
+										icon={<WalletIcon which={Wallet.POLKASAFE} className='w-6 h-6'/> }
+										text={'Cast Vote with Multisig'} />
 								</div>
 							</div>
 								}
@@ -644,7 +651,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
 											wallet={multisig}
 											setWallet={setMultisig}
-											containerClassName='gap-[28px]'
+											containerClassName='gap-[20px]'
 										/> :
 										<AccountSelectionForm
 											title='Vote with Account'
@@ -781,9 +788,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
-			{ successModal &&
-				<VoteInitiatedModal title='Voting with Polkasafe Multisig initiated'  vote={vote} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} multisig={multisig ? multisig : ''} conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} icon={multisig ? <MultisigSuccessIcon/>: <SuccessIcon/>}/>
-			}
+			<VoteInitiatedModal title='Voting with Polkasafe Multisig initiated'  vote={vote} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} multisig={multisig ? multisig : ''} conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} icon={multisig ? <MultisigSuccessIcon/>: <SuccessIcon/>}/>
 		</div>
 	</>;
 

@@ -54,7 +54,6 @@ export default function App({ Component, pageProps }: AppProps) {
 		if(!global?.window) return;
 		const networkStr = getNetwork();
 		setNetwork(networkStr);
-		// Event listener to receive messages from the parent window (extension)
 	}, []);
 
 	const SplashLoader = () => <div style={{ background:'#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>

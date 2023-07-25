@@ -298,7 +298,7 @@ const Web3Signup: FC<Props> = ({
 			{fetchAccounts ?
 				<div className='flex flex-col justify-center items-center'>
 					<p className='text-base text-[#243A57]'>
-							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
+						{withPolkasafe ? 'To fetch your Multisig details, please select a wallet extension' :'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 					</p>
 					<div className='flex'>
 						<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() => handleBackToSignUp()}>

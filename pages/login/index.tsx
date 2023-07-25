@@ -66,6 +66,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 	// TODO: FIX ambiguous function name
 	const onWalletUpdate = () => {
 		setChosenWallet(null);
+		setWithPolkasafe(false);
 		setDisplayWeb(2);
 	};
 

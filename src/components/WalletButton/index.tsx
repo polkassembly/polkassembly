@@ -14,11 +14,15 @@ interface Props {
 	text?:string
 }
 
-const WalletButton = ({ disabled, onClick, icon, className, text }: Props) => {
+const WalletButton = ({ disabled, onClick, icon, className, text, name }: Props) => {
 	return (
-		<Button className={`flex items-center py-6 px-5 justify-center rounded-[7px] border-[#F8E3EE]   ${className}`} onClick={onClick} disabled={disabled}>
-			<span className='mt-1.5'>{icon}</span>
-			{text && text}
+		<Button className={`flex items-center justify-center rounded-[7px] border-[#F8E3EE] ${name !== 'Polkasafe' ? 'py-6 px-5': 'py-5 px-3'} ${className}`} onClick={onClick} disabled={disabled}>
+			<span className={name !== 'Polkasafe' ? 'mt-1.5' : 'mt-3'}>{icon}</span>
+			{ text &&
+				<p className='p-0 m-0'>
+					{text}
+				</p>
+			}
 		</Button>
 	);
 };

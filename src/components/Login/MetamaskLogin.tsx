@@ -63,7 +63,7 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 	case Wallet.TALISMAN:
 		return <TalismanIcon className={`h-8 w-8 ${className}`} />;
 	case Wallet.SUBWALLET:
-		return <SubWalletIcon className={`h-8 w-8 ${className}`} />;
+		return <SubWalletIcon className={`h-8 w-6 ${className}`} />;
 	case Wallet.NOVAWALLET:
 		return <NovaWalletIcon className={`h-8 w-8 ${className}`} />;
 	case Wallet.POLYWALLET:
@@ -71,7 +71,7 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 	case Wallet.METAMASK:
 		return <MetamaskIcon className={`h-8 w-8 ${className}`} />;
 	case Wallet.POLKASAFE:
-		return <PolkasafeIcon className={`h-8 w-8 ${className}`} />;
+		return <PolkasafeIcon className={`h-8 w-6 ${className}`} />;
 	default:
 		return null;
 	}

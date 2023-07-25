@@ -383,7 +383,7 @@ const Web3Login: FC<Props> = ({
 		<>
 			<div className='flex items-center'>
 				<LoginLogo className='ml-6 mr-2' />
-				<h3 className="text-[20px] font-semibold text-bodyBlue mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Login'}</h3>
+				<h3 className="text-xl font-semibold text-bodyBlue mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Login'}</h3>
 			</div>
 			<hr className='text-[#D2D8E0] ' />
 			<article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-3">
@@ -409,7 +409,7 @@ const Web3Login: FC<Props> = ({
 				{fetchAccounts ?
 					<div className='flex flex-col justify-center items-center'>
 						<p className='text-base text-bodyBlue'>
-							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
+							{withPolkasafe ? 'To fetch your Multisig details, please select a wallet extension' :'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 						</p>
 						<div className='flex'>
 							<Button className='text-[#E5007A] outline-none border border-pink_primary border-solid rounded-md py-5 px-8 mr-3 font-medium text-lg leading-none flex items-center justify-center' onClick={() => handleBackToLogin()}>
@@ -487,6 +487,7 @@ const Web3Login: FC<Props> = ({
 											<div className="flex justify-center items-center">
 												<Button
 													loading={loading}
+													disabled={withPolkasafe && !multisigAddress}
 													htmlType="submit"
 													size="large"
 													className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"

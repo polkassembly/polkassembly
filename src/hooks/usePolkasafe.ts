@@ -9,21 +9,11 @@ import { APPNAME } from '~src/global/appName';
 
 export default function usePolkasafe(address?:string)  {
 	const client = new Polkasafe();
-	const substrateAddress = getSubstrateAddress(address || localStorage.getItem('multisigAssociatedAddress') || '');
-	if(!substrateAddress){
-		throw new Error('Invalid address');
-	}
+	const substrateAddress = getSubstrateAddress(address || localStorage.getItem('multisigAssociatedAddress') || '') || '';
 	const { network } = useNetworkContext();
-	const wallet = localStorage.getItem('loginWallet') ;
-	if(!wallet){
-		throw new Error('wallet not found');
-	}
+	const wallet = localStorage.getItem('loginWallet') || ''; // if user is not login only then
 	const injectedWindow = window as Window & InjectedWindow;
 	const selectedWallet = injectedWindow.injectedWeb3[wallet];
-	if (!selectedWallet) {
-		throw new Error('Invalid wallet');
-	}
-
 	const connect = async () => {
 		const injected = selectedWallet && selectedWallet.enable && await selectedWallet.enable(APPNAME);
 		if(!injected){

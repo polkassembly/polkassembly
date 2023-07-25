@@ -135,7 +135,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		]
 		:
 		[{
-			component:<OpenGovTreasuryProposal/>
+			component: <OpenGovTreasuryProposal/>
 		},
 		{
 			component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'

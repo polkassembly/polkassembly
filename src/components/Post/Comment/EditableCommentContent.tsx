@@ -44,11 +44,13 @@ interface IEditableCommentContentProps {
 	proposalType: ProposalType
 	postId: number | string
 	disableEdit?: boolean
-  sentiment: number,
+	sentiment: number,
 	setSentiment: (pre:number)=>void;
 	prevSentiment: number;
 	isSubsquareUser: boolean;
 	userName?:string;
+	is_custom_username?: boolean;
+	proposer?: string;
 }
 
 const editCommentKey = (commentId: string) => `comment:${commentId}:${global.window.location.href}`;
@@ -58,7 +60,7 @@ const replyKey = (commentId: string) => `reply:${commentId}:${global.window.loca
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { network } = useContext(NetworkContext);
 
-	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment ,userName } = props;
+	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment ,userName, is_custom_username, proposer } = props;
 	const { setPostData, postData: { postType , postIndex } } = usePostDataContext();
 	const { asPath } = useRouter();
 
@@ -84,7 +86,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [isReplying, setIsReplying] = useState(false);
 
 	const toggleReply = () => {
-		const usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
+		let usernameContent = '';
+		if (!is_custom_username && proposer) {
+			usernameContent = `[@${proposer}](${global.window.location.origin}/address/${proposer})`;
+		} else {
+			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
+		}
 		replyForm.setFieldValue('content', usernameContent);
 		global.window.localStorage.setItem(replyKey(commentId), usernameContent);
 		setIsReplying(!isReplying);

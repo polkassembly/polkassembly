@@ -203,6 +203,14 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via IBP-GeoDNS2',
 				key: 'wss://rpc.dotters.network/polkadot'
+			},
+			{
+				label: 'via RadiumBlock',
+				key: 'wss://polkadot.public.curie.radiumblock.co/ws'
+			},
+			{
+				label: 'light client (experimental)',
+				key: 'light://substrate-connect/polkadot'
 			}
 		]
 	},
@@ -241,6 +249,14 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via IBP-GeoDNS2',
 				key: 'wss://rpc.dotters.network/kusama'
+			},
+			{
+				label: 'via RadiumBlock',
+				key: 'wss://kusama.public.curie.radiumblock.co/ws'
+			},
+			{
+				label: 'light client (experimental)',
+				key: 'light://substrate-connect/kusama'
 			}
 		]
 	},
@@ -438,6 +454,19 @@ export const chainProperties: types.ChainPropType = {
 		chainId: 0,
 		logo: collectivesLogo,
 		rpcEndpoint: 'wss://sys.dotters.network/collectives-polkadot',
+		relayRpcEndpoints: [
+			{ key: 'wss://1rpc.io/dot', label: 'Automata 1RPC' },
+			{ key: 'wss://polkadot-public-rpc.blockops.network/ws', label: 'BlockOps' },
+			{ key: 'wss://polkadot-rpc.dwellir.com', label: 'Dwellir' },
+			{ key: 'wss://polkadot-rpc-tn.dwellir.com', label: 'Dwellir Tunisia' },
+			{ key: 'wss://rpc.ibp.network/polkadot', label: 'IBP-GeoDNS1' },
+			{ key: 'wss://rpc.dotters.network/polkadot', label: 'IBP-GeoDNS2' },
+			{ key: 'wss://rpc-polkadot.luckyfriday.io', label: 'LuckyFriday' },
+			{ key: 'wss://polkadot.api.onfinality.io/public-ws', label: 'OnFinality' },
+			{ key: 'wss://rpc.polkadot.io', label: 'Parity' },
+			{ key: 'wss://polkadot.public.curie.radiumblock.co/ws', label: 'RadiumBlock' },
+			{ key: 'wss://dot-rpc.stakeworld.io', label: 'Stakeworld' }
+		],
 		ss58Format: 0,
 		subsquidUrl: 'https://squid.subsquid.io/collectives-polkassembly/graphql',
 		tokenDecimals: 10,

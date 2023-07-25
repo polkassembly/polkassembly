@@ -183,7 +183,7 @@ const Post: FC<IPostProps> = (props) => {
 		}
 	}, [post]);
 
-	const networkModified = network.charAt(0).toUpperCase() + network.slice(1);
+	const networkModified = network?.charAt(0)?.toUpperCase() + network?.slice(1);
 	let postType:any = proposalType;
 
 	if(postType === ProposalType.REFERENDUM_V2){
@@ -419,6 +419,7 @@ const Post: FC<IPostProps> = (props) => {
 			spam_users_count: post?.spam_users_count,
 			status: post?.status,
 			subscribers: post?.subscribers || [],
+			summary: post?.summary,
 			tags: post?.tags || [],
 			timeline: post?.timeline,
 			title: post?.title,

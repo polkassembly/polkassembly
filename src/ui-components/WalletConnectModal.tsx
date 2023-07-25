@@ -62,6 +62,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const substrate_address = getSubstrateAddress(loginAddress);
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
+	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 
 	const getAddressType = (account?: InjectedTypeWithCouncilBoolean) => {
 		const account_substrate_address = getSubstrateAddress(account?.address || '');
@@ -230,65 +231,95 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 		}
 	};
 
-	const getWallet=() => {
+	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(injectedWindow.injectedWeb3);
+		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
+
 	};
 
+	const getMetamaskAccounts = async (): Promise<InjectedAccount[]> => {
+		const ethereum = (window as any).ethereum;
+		if (!ethereum) return [];
+
+		let addresses = await ethereum.request({ method: 'eth_requestAccounts' });
+		addresses = addresses.map((address: string) => address);
+
+		if (addresses.length > 0) {
+			addresses = addresses.map((address: string): InjectedAccount => {
+				return {
+					address: address.toLowerCase(),
+					genesisHash: null,
+					name: 'metamask',
+					type: 'ethereum'
+				};
+			});
+		}
+
+		return addresses as InjectedAccount[];
+	};
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
+
 		if(!api || !apiReady) return;
 		setLoading(true);
 
 		setExtentionOpen(false);
-		const injectedWindow = window as Window & InjectedWindow;
 
-		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[chosenWallet]
-			: null;
+		if(chosenWallet === Wallet.METAMASK){
+			const accounts = await getMetamaskAccounts();
+			setAccounts(accounts);
+			setAddress(accounts[0].address);
+		}else{
+			const injectedWindow = window as Window & InjectedWindow;
 
-		if (!wallet) {
-			setExtentionOpen(true);
-			setLoading(false);
-			return;
-		}
+			const wallet = isWeb3Injected
+				? injectedWindow.injectedWeb3[chosenWallet]
+				: null;
 
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if(wallet && wallet.enable) {
-					wallet.enable(APPNAME)
-						.then((value) => { clearTimeout(timeoutId); resolve(value); })
-						.catch((error) => { reject(error); });
-				}
-			});
-		} catch (err) {
-			console.log(err?.message);
-		}
-		if (!injected) {
-			setLoading(false);
-			return;
-		}
-
-		const accounts = await injected.accounts.get();
-		if (accounts.length === 0) {
-			return;
-		}
-
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
-
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			if(api && apiReady) {
-				api.setSigner(injected.signer);
+			if (!wallet) {
+				setExtentionOpen(true);
+				setLoading(false);
+				return;
 			}
 
-			setAddress(accounts[0].address);
+			let injected: Injected | undefined;
+			try {
+				injected = await new Promise((resolve, reject) => {
+					const timeoutId = setTimeout(() => {
+						reject(new Error('Wallet Timeout'));
+					}, 60000); // wait 60 sec
+
+					if(wallet && wallet.enable) {
+						wallet.enable(APPNAME)
+							.then((value) => { clearTimeout(timeoutId); resolve(value); })
+							.catch((error) => { reject(error); });
+					}
+				});
+			} catch (err) {
+				console.log(err?.message);
+			}
+			if (!injected) {
+				setLoading(false);
+				return;
+			}
+
+			const accounts = await injected.accounts.get();
+			if (accounts.length === 0) {
+				return;
+			}
+
+			accounts.forEach((account) => {
+				account.address = getEncodedAddress(account.address, network) || account.address;
+			});
+
+			setAccounts(accounts);
+			if (accounts.length > 0) {
+				if(api && apiReady) {
+					api.setSigner(injected.signer);
+				}
+
+				setAddress(accounts[0].address);
+			}
 		}
 		setLoading(false);
 		return;
@@ -344,18 +375,32 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 				}
 				<h3 className='text-sm font-normal text-[#485F7D] text-center'>Select a wallet</h3>
 				<div className='flex items-center justify-center gap-x-4 mb-6'>
-					{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
-					{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-					{defaultWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
-					{
-						(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
-                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
-					}
-					{
-						['polymesh'].includes(network) && defaultWallets[Wallet.POLYWALLET]?
-							<WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
-							: null
-					}
+					{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? <>
+
+						{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+						{
+							['moonbase', 'moonbeam', 'moonriver'].includes(network) && isMetamaskWallet ?
+								<WalletButton disabled={!apiReady} className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
+								: null
+						}
+						{
+							(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
+                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
+						}
+					</> :  <>
+						{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
+						{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+						{defaultWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
+						{
+							['polymesh'].includes(network)?
+								<WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
+								: null
+						}
+						{
+							(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
+                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
+						}
+					</>}
 				</div>
 
 				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message={`For using ${LinkAddressNeeded ? 'Treasury proposal creation' : 'Delegation dashboard'}:`} description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
@@ -378,7 +423,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 											withBalance={true}
 											onAccountChange={(address) => setAddress(address)}
 											onBalanceChange={handleOnBalanceChange}
-											className='text-[#485F7D] text-sm'
+											className='text-lightBlue text-sm'
 										/> : !wallet && Object.keys(defaultWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 								</Form>}
 				{LinkAddressNeeded && !loading && accounts.length > 0 && <>

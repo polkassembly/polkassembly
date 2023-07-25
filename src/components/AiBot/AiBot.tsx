@@ -13,7 +13,7 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useNetworkContext } from '~src/context';
 import { network as globalNework } from '~src/global/networkConstants';
 
-import AIbotIcon from '~assets/icons/ai-bot-icon.svg';
+// import AIbotIcon from '~assets/icons/ai-bot-icon.svg';
 import CautionIcon from '~assets/icons/caution-icon.svg';
 import CreateDiscussionIcon from '~assets/icons/create-icon.svg';
 import CloseIcon from '~assets/icons/close-cross-icon.svg';
@@ -96,7 +96,9 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					onClick={() =>  id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true)}
 				>
 					<CreateDiscussionIcon className='cursor-pointer ml-[-53px] mt-[5px]' />
-					<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%] '>Create Discussion Post</p>
+					<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>
+                    Create Discussion Post
+					</p>
 				</div>
 			},
 			// {
@@ -145,18 +147,18 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%] '>Create Discussion Post</p>
 			</div>
 		},
-		{
-			component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
-				onClick={() => {
-					if (!grillChat)
-						(window as any).DocsBotAI.toggle();
-					setIsAIChatBotOpen(!isAIChatBotOpen);
-				}}
-			>
-				<AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
-				<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>AI Bot</p>
-			</div>
-		},
+		// {
+		// component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+		// onClick={() => {
+		// if (!grillChat)
+		// (window as any).DocsBotAI.toggle();
+		// setIsAIChatBotOpen(!isAIChatBotOpen);
+		// }}
+		// >
+		// <AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
+		// <p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>AI Bot</p>
+		// </div>
+		// },
 		{
 			component: <a href='https://polkassembly.hellonext.co/'
 				target='_blank'

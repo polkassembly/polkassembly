@@ -77,8 +77,6 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, delegationDashboardAddress, api, apiReady]);
 
-	console.log(delegatesData);
-
 	return <div className=  {`${className} rounded-[14px] bg-white py-6 px-[37px] mt-[22px]`}>
 		<div onClick={() => setExpandProposals(!expandProposals) } className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
 			<div  className='flex jutify-center items-center gap-2'>

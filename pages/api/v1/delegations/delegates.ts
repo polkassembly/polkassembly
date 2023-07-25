@@ -10,8 +10,6 @@ import { RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import Web3 from 'web3';
-// import novaDelegatesKusama from './nova-delegates-kusama.json';
-// import novaDelegatesPolkadot from './nova-delegates-polkadot.json';
 import { IDelegate } from '~src/types';
 import { getProfileWithAddress } from '../auth/data/profileWithAddress';
 

@@ -28,7 +28,7 @@ import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import OpenGovHeaderBanner from './OpenGovHeaderBanner';
+// import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 
 const { Content, Sider } = Layout;
 

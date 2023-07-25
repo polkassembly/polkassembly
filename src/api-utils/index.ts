@@ -113,6 +113,9 @@ export function getNetworkFromReqHeaders(headers: IncomingHttpHeaders) {
 		else if(network == 'moonriver-test'){
 			network = 'moonriver';
 		}
+		else if(network == 'moonbase-test'){
+			network = 'moonbase';
+		}
 		else{
 			network = process.env.NEXT_PUBLIC_APP_ENV === 'development' ? defaultNetwork : network;
 		}

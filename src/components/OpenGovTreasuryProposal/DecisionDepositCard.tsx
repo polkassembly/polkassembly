@@ -238,7 +238,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 												className='text-[#485F7D] text-sm'
 											/>: !wallet && Object.keys(defaultWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 
-										<div className='mt-6 flex gap-8 items-center mb-4'>
+										<div className='mt-6 flex gap-4 items-center mb-4'>
 											<span className='text-sm text-lightBlue tracking-wide flex gap-1.5'>
                                  Decision Deposit
 												<HelperTooltip text='Decision deposit should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.'/>

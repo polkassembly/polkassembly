@@ -276,6 +276,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 												localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
 												localStorage.setItem('delegationDashboardAddress', address);
 												localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
+												localStorage.setItem('loginAddress', address);
 
 												handleTokenChange(confirmData.token, currentUser);
 												if(isModal){
@@ -307,6 +308,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 							localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
 							localStorage.setItem('delegationDashboardAddress', address);
 							localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
+							localStorage.setItem('loginAddress', address);
 
 							handleTokenChange(addressLoginData.token, currentUser);
 							if(isModal){
@@ -374,6 +376,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 			localStorage.setItem('delegationWallet', Wallet.WALLETCONNECT);
 			localStorage.setItem('delegationDashboardAddress', address);
 			localStorage.setItem('loginWallet', Wallet.WALLETCONNECT);
+			localStorage.setItem('loginAddress', address);
 
 			handleTokenChange(data.token, currentUser);
 			if(isModal){

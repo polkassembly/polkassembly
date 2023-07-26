@@ -337,7 +337,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								<Button key="back" disabled={loading} className='h-[40px] w-[134px]' onClick={() => setOpen?.(false)}>
 										Cancel
 								</Button>,
-								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] ' disabled={loading} onClick={() => {handleSubmit(); setValidationOn(true);}}>
+								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] ' disabled={loading} onClick={async () => {
+									await handleSubmit();
+									setValidationOn(true);
+								}}>
 										Delegate
 								</Button>
 							]

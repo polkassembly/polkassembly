@@ -119,7 +119,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							const content = e.clipboardData?.getData('text/plain') || '';
 							const caretPosition = ref.current?.editor?.selection.getRng();
 							const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
-							const parsed_content = converter.makeHtml(sanitisedContent).replace(/<p>|<\/p>/g, '');
+							const parsed_content = converter.makeHtml(sanitisedContent);
 							ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });
 						}}
 						textareaName={name}

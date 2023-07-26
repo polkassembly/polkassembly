@@ -9,7 +9,7 @@ import { APPNAME } from '~src/global/appName';
 
 export default function usePolkasafe(address?:string)  {
 	const client = new Polkasafe();
-	const substrateAddress = getSubstrateAddress(address || localStorage.getItem('multisigAssociatedAddress') || '') || '';
+	const substrateAddress = getSubstrateAddress(address || '') || '';
 	const { network } = useNetworkContext();
 	const wallet = localStorage.getItem('loginWallet') || ''; // if user is not login only then
 	const injectedWindow = window as Window & InjectedWindow;

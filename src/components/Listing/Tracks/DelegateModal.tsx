@@ -38,6 +38,7 @@ import Web3 from 'web3';
 import Balance from '~src/components/Balance';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import executeTx from '~src/util/executeTx';
+import usePolkasafe from '~src/hooks/usePolkasafe';
 
 const ZERO_BN = new BN(0);
 
@@ -47,9 +48,10 @@ interface Props {
   defaultTarget?: string;
   open?: boolean;
   setOpen?: (pre:boolean) => void;
+  isMultisig?:boolean;
 }
 
-const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Props ) => {
+const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig }: Props ) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useContext(NetworkContext);
 	const [form] = Form.useForm();
@@ -77,7 +79,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 	const [balanceErr, setBalanceErr] = useState<string>('');
 	const [validationOn, setValidationOn] = useState<boolean>(false);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
-
+	const multisigDelegationAssociatedAddress = localStorage.getItem('multisigDelegationAssociatedAddress') || '';
+	const { client, connect } = usePolkasafe(multisigDelegationAssociatedAddress);
 	useEffect(() => {
 
 		if(!network) return ;
@@ -242,6 +245,35 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 
 		const txArr = checkedArr?.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
 		const delegateTxn = api.tx.utility.batchAll(txArr);
+		if(isMultisig){
+			const voteReferendumByMultisig = async (tx:any) => {
+				try{
+					setLoading(true);
+					await connect();
+					setLoading(true);
+					const statusGrabber = () => {
+						setLoading(true);
+					};
+					const { error } = await client.customTransactionAsMulti(delegationDashboardAddress, tx, statusGrabber, false);
+					if(error){
+						throw new Error(error.error);
+					}
+					queueNotification({
+						header: 'Success!',
+						message: 'Delegation will be successful once approved by other signatories.',
+						status: NotificationStatus.SUCCESS
+					});
+					setOpenSuccessPopup(true);
+					setLoading(false);
+					setOpen ? setOpen?.(false) : setDefaultOpen(false);
+				}catch(error){
+					onFailed(error.message);
+				}
+			};
+			setLoading(true);
+			await voteReferendumByMultisig(delegateTxn);
+			return;
+		}
 
 		await executeTx({ address: delegationDashboardAddress, api, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
@@ -439,7 +471,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 				</Spin>
 
 			</Modal>
-			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedTrackArr} address={target} isDelegate={true} balance={bnBalance} trackNum= {trackNum} conviction={conviction} />
+			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedTrackArr} address={target} isMultisig={isMultisig} isDelegate={true} balance={bnBalance} trackNum= {trackNum} conviction={conviction} title={isMultisig? 'Delegation with Polkasafe initiated':''}/>
 		</>
 	);
 };

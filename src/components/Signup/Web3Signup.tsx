@@ -236,6 +236,9 @@ const Web3Signup: FC<Props> = ({
 				handleTokenChange(confirmData.token, currentUser);
 				localStorage.setItem('loginWallet', chosenWallet);
 				localStorage.setItem('multisigAssociatedAddress', address);
+				localStorage.setItem('delegationWallet', chosenWallet);
+				localStorage.setItem('delegationDashboardAddress', multiWallet || address);
+				localStorage.setItem('multisigDelegationAssociatedAddress', address );
 				if(isModal){
 					setSignupOpen && setSignupOpen(false);
 					return;

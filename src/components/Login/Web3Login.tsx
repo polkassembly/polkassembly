@@ -270,6 +270,7 @@ const Web3Login: FC<Props> = ({
 							currentUser.delegationDashboardAddress = multisigAddress || address;
 							localStorage.setItem('delegationWallet', chosenWallet);
 							localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
+							localStorage.setItem('multisigDelegationAssociatedAddress', address );
 							localStorage.setItem('loginWallet', chosenWallet);
 							localStorage.setItem('multisigAssociatedAddress', address);
 							handleTokenChange(confirmData.token, currentUser);
@@ -300,6 +301,7 @@ const Web3Login: FC<Props> = ({
 				currentUser.multisigAssociatedAddress = address;
 				localStorage.setItem('delegationWallet', chosenWallet);
 				localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
+				localStorage.setItem('multisigDelegationAssociatedAddress', address );
 				localStorage.setItem('loginWallet', chosenWallet);
 				localStorage.setItem('multisigAssociatedAddress', address);
 				handleTokenChange(addressLoginData.token, currentUser);

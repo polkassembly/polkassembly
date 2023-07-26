@@ -2,8 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Form, Input } from 'antd';
+import { Button, Divider, Form, Input } from 'antd';
 import React from 'react';
+import styled from 'styled-components';
 import AuthForm from '~src/ui-components/AuthForm';
 import FilteredError from '~src/ui-components/FilteredError';
 
@@ -21,7 +22,7 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 			onSubmit={onSubmit}
 			className={`${className} flex flex-col gap-y-3`}
 		>
-			<div className="flex flex-col gap-y-1">
+			<div className="flex flex-col gap-y-1 px-5">
 				<h1 className='text-sidebarBlue'>Two Factor Authentication</h1>
 				<p className='text-sidebarBlue'>Please open the two-step verification app or extension and input the authentication code for your Polkassembly account.</p>
 
@@ -62,19 +63,29 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 									Login
 					</Button>
 
-					<Button
-						onClick={onBack}
-						disabled={loading}
-						htmlType="button"
-						size="small"
-						className="w-56 rounded-md outline-none border-none text-pink_primary"
-					>
+					<div className='w-[260px]'>
+						<Divider className='border-[#90A0B7] border-[0.5px]'>
+							<Button
+								onClick={onBack}
+								disabled={loading}
+								htmlType="button"
+								size="small"
+								className="rounded-md outline-none border-none text-pink_primary"
+							>
 									Go back
-					</Button>
+							</Button>
+						</Divider>
+					</div>
+
 				</div>
+
 			</div>
 		</AuthForm>
 	);
 };
 
-export default TFALoginForm;
+export default styled(TFALoginForm)`
+.ant-divider-inner-text{
+	padding: 0 0 !important;
+}
+`;

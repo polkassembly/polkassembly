@@ -5,20 +5,26 @@
 import { Button, FloatButton, List } from 'antd';
 import ChatFloatingModal from '../ChatBot/ChatFloatingModal';
 import { FC, useEffect, useState, useContext } from 'react';
-import AIbotIcon from '~assets/icons/ai-bot-icon.svg';
+import styled from 'styled-components';
+import { useRouter } from 'next/router';
+import Script from 'next/script';
+import { UserDetailsContext } from 'src/context/UserDetailsContext';
+import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import { useNetworkContext } from '~src/context';
+import { network as globalNework } from '~src/global/networkConstants';
+
+// import AIbotIcon from '~assets/icons/ai-bot-icon.svg';
 import CautionIcon from '~assets/icons/caution-icon.svg';
 import CreateDiscussionIcon from '~assets/icons/create-icon.svg';
 import CloseIcon from '~assets/icons/close-cross-icon.svg';
 import CloseWhite from '~assets/icons/close-cross-thinner.svg';
 import FabButton from '~assets/icons/fab-icon.svg';
-import styled from 'styled-components';
 import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
-import { useRouter } from 'next/router';
-import { UserDetailsContext } from 'src/context/UserDetailsContext';
-import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
-import { useNetworkContext } from '~src/context';
-import { network as globalNework } from '~src/global/networkConstants';
-import Script from 'next/script';
+// import dynamic from 'next/dynamic';
+
+// const  OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'),{
+// ssr: false
+// });
 
 interface IAiChatbotProps {
 	floatButtonOpen: boolean;
@@ -34,9 +40,8 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const [grillChat, setGrillChat] = useState(false);
 	const router = useRouter();
 	const { id } = useContext(UserDetailsContext);
-	const [openModal, setModalOpen] = useState<boolean>(false);
+	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
 	const { network } = useNetworkContext();
-	const [animationState, setAnimationState] = useState('');
 
 	useEffect(() => {
 		if (!isAIChatBotOpen) return;
@@ -46,22 +51,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		docsBotElement.style.right = '1em';
 		docsBotElement.style.bottom = '80px';
 	}, [isAIChatBotOpen, floatButtonOpen]);
-
-	useEffect(() => {
-		// check for the presence of a dom element inside a setInterval until it is found
-		const interval = setInterval(() => {
-			const docsBotElement = ((window as any)?.DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
-			if (!docsBotElement) return;
-
-			clearInterval(interval);
-			docsBotElement.style.display = 'none';
-		}, 600);
-
-		if(localStorage.getItem('animationKey')){
-			setAnimationState('hidden');
-		}
-		return () => clearInterval(interval);
-	}, []);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -79,89 +68,87 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-	const handleAddDiscussion = () => {
-		if (id) {
-			router.push('/post/create');
-		} else {
-			setModalOpen(true);
-		}
-
-	};
 
 	const data = network === globalNework.CERE || network === globalNework.KILT || network === globalNework.KUSAMA || network === globalNework.MOONBEAM || network === globalNework.POLKADOT ?
 		[
+			// {
+			// component: <OpenGovTreasuryProposal/>
+			// },
 			{
-				component: <div className='ml-[-37px] flex justify-center align-middle text-[#485F7D] hover:text-[#243A57] hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
-					onClick={() => { handleAddDiscussion(); }}
+				component: <div className='ml-[-37px] text-xl flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+					onClick={() =>  id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true)}
 				>
 					<CreateDiscussionIcon className='cursor-pointer ml-[-53px] mt-[5px]' />
-					<p className='ml-4 mt-[10px] mb-[12px] font-medium text-[14px] leading-5 tracking-[1.25%] '>Create Discussion Post</p>
+					<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%] '>Create Discussion Post</p>
 				</div>
 			},
+			// {
+			// component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+			// onClick={() => {
+			// if (!grillChat)
+			// (window as any).DocsBotAI.toggle();
+			// setIsAIChatBotOpen(!isAIChatBotOpen);
+			// }}
+			// >
+			// <AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
+			// <p className='ml-4 mt-2.5 mb-3  font-medium text-sm leading-5 tracking-[1.25%]'>AI Bot</p>
+			// </div>
+			// },
 			{
-				component: <div className='ml-[-37px] flex justify-center align-middle text-[#485F7D] hover:text-[#243A57] hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
-					onClick={() => {
-						if (!grillChat)
-							(window as any).DocsBotAI.toggle();
-						setIsAIChatBotOpen(!isAIChatBotOpen);
-					}}
-				>
-					<AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
-					<p className='ml-4 mt-[10px] mb-[12px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p>
-				</div>
-			},
-			{
-				component: <div className='ml-[-34px] flex justify-center align-middle text-[#485F7D] hover:text-[#243A57] hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+				component: <div className='ml-[-34px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 					onClick={() => {
 						if (!isAIChatBotOpen) setGrillChat(!grillChat);
 					}}
 				>
 					<GrillChatIcon className='cursor-pointer ml-[-149px] mt-[5px]' />
-					<p className='ml-4 mt-[10px] mb-[12px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>Grill Chat</p>
+					<p className='ml-4 mt-2.5 mb-3  font-medium text-sm leading-5 tracking-[1.25%]'>Grill Chat</p>
 				</div>
 			},
 			{
 				component: <a href='https://polkassembly.hellonext.co/'
 					target='_blank'
 					rel='noreferrer'
-					className='text-[#485F7D] hover:text-[#243A57] ml-[-34px]'>
+					className='text-lightBlue hover:text-bodyBlue ml-[-34px]'>
 					<div className='flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px]  rounded-[8px] cursor-pointer'>
 						<CautionIcon className='cursor-pointer ml-[-105px] mt-[5px]' />
-						<p className='ml-4 mt-[10px] mb-[12px] font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p>
+						<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>Report An Issue</p>
 					</div>
 				</a>
 			}
 		]
 		:
 		[
+			// {
+			// component: <OpenGovTreasuryProposal/>
+			// },
 			{
-				component: <div className='ml-[-37px] flex justify-center align-middle text-[#485F7D] hover:text-[#243A57] hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
-					onClick={() => { handleAddDiscussion(); }}
+				component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+					onClick={() =>  id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true)}
 				>
 					<CreateDiscussionIcon className='cursor-pointer ml-[-53px] mt-[5px]' />
-					<p className='ml-4 mt-[10px] mb-[12px] font-medium text-[14px] leading-5 tracking-[1.25%] '>Create Discussion Post</p>
+					<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%] '>Create Discussion Post</p>
 				</div>
 			},
-			{
-				component: <div className='ml-[-37px] flex justify-center align-middle text-[#485F7D] hover:text-[#243A57] hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
-					onClick={() => {
-						if (!grillChat)
-							(window as any).DocsBotAI.toggle();
-						setIsAIChatBotOpen(!isAIChatBotOpen);
-					}}
-				>
-					<AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
-					<p className='ml-4 mt-[10px] mb-[12px]  font-medium text-[14px] leading-5 tracking-[1.25%]'>AI Bot</p>
-				</div>
-			},
+			// {
+			// component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+			// onClick={() => {
+			// if (!grillChat)
+			// (window as any).DocsBotAI.toggle();
+			// setIsAIChatBotOpen(!isAIChatBotOpen);
+			// }}
+			// >
+			// <AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
+			// <p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>AI Bot</p>
+			//</div>
+			// },
 			{
 				component: <a href='https://polkassembly.hellonext.co/'
 					target='_blank'
 					rel='noreferrer'
-					className='text-[#485F7D] hover:text-[#243A57] ml-[-37px]'>
+					className='text-lightBlue hover:text-bodyBlue ml-[-37px]'>
 					<div className='flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px]  rounded-[8px] cursor-pointer'>
 						<CautionIcon className='cursor-pointer ml-[-105px] mt-[5px]' />
-						<p className='ml-4 mt-[10px] mb-[12px] font-medium text-[14px] leading-5 tracking-[1.25%]'>Report An Issue</p>
+						<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>Report An Issue</p>
 					</div>
 				</a>
 			}
@@ -178,8 +165,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				{'DocsBotAI.init({id: "X6zGLB8jx6moWVb6L5S9/D7XT9ksDuTZCvdf99KSW"});'}
 			</Script>
 
-			<div className={`wave-effect ${animationState}`} ></div>
-
 			<FloatButton.Group
 				trigger='click'
 				type='primary'
@@ -189,9 +174,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
 						onClick={() => {
-							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 500);
-							setAnimationState('hidden');
-							localStorage.setItem('animationKey','true');
+							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
 						}}
 					>
 						<FabButton className='mt-1' />
@@ -201,7 +184,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					<Button
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
-						onClick={() => { setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 500);
+						onClick={() => { setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200 );
 							(window as any).DocsBotAI.close();
 							setIsAIChatBotOpen(false);
 							setGrillChat(false);
@@ -219,7 +202,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				<List
 					style={{ bottom: '85px', position: 'fixed', right: '20px', zIndex: '999' }}
 					header={
-						<div className='flex justify-between font-semibold text-[20px] text-[#485F7D] h-[38px]'>
+						<div className='flex justify-between font-semibold text-xl text-lightBlue h-[38px]'>
 							<p className='mt-2 h-[25px]'>
 							Menu
 							</p>
@@ -244,7 +227,12 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 			{
 				grillChat && <ChatFloatingModal />
 			}
-			<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title='Join Polkassembly to Start a New Discussion.' subtitle='Discuss, contribute and get regular updates from Polkassembly.' />
+			<ReferendaLoginPrompts
+				modalOpen={openDiscussionLoginPrompt}
+				setModalOpen={setOpenDiscussionLoginPrompt}
+				image='/assets/referenda-discussion.png' title='Join Polkassembly to Start a New Discussion.'
+				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
+			/>
 		</>
 	);
 };

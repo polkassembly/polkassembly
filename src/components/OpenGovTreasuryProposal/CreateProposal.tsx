@@ -182,8 +182,6 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 				const post_id = Number(api.query.referenda.referendumCount()) - 1;
 				await handleSaveTreasuryProposal(post_id);
 				setLoading(false);
-				setOpenSuccess(true);
-				setOpenModal(false);
 			};
 
 			const onFailed = () => {

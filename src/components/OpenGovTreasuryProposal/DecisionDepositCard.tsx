@@ -39,7 +39,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 	const { network } = useNetworkContext();
 	const { api, apiReady } = useApiContext();
 	const router = useRouter();
-	const { loginWallet } = useUserDetailsContext();
+	const { loginWallet, loginAddress } = useUserDetailsContext();
 	const [address, setAddress] = useState<string>('');
 	const [form] = Form.useForm();
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
@@ -51,6 +51,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 	const balance = networkTrackInfo?.[network]?.[trackName]?.decisionDeposit || ZERO_BN;
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [amount, setAmount] = useState<BN>(ZERO_BN);
+	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 
 	const handleOnBalanceChange = (balanceStr: string) => {
 		setAvailableBalance(new BN(balanceStr.toString() || ZERO_BN));
@@ -59,62 +60,98 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(injectedWindow.injectedWeb3);
+		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
+
 	};
 
-	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
+	const getMetamaskAccounts = async (): Promise<InjectedAccount[]> => {
+		const ethereum = (window as any).ethereum;
+		if (!ethereum) return [];
+
+		let addresses = await ethereum.request({ method: 'eth_requestAccounts' });
+		addresses = addresses.map((address: string) => address);
+
+		if (addresses.length > 0) {
+			addresses = addresses.map((address: string): InjectedAccount => {
+				return {
+					address: address.toLowerCase(),
+					genesisHash: null,
+					name: 'metamask',
+					type: 'ethereum'
+				};
+			});
+		}
+
+		return addresses as InjectedAccount[];
+	};
+	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?:string | null): Promise<undefined> => {
+
 		if(!api || !apiReady) return;
 		setLoading(true);
 
 		setExtentionOpen(false);
-		const injectedWindow = window as Window & InjectedWindow;
 
-		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[chosenWallet]
-			: null;
+		if(chosenWallet === Wallet.METAMASK){
+			const accounts = await getMetamaskAccounts();
+			setAccounts(accounts);
+			setAddress(accounts[0].address);
+			if(defaultWalletAddress) {
+				setAddress(accounts.filter((account) => account.address === defaultWalletAddress)[0].address);
+			}
+		}else{
+			const injectedWindow = window as Window & InjectedWindow;
 
-		if (!wallet) {
-			setExtentionOpen(true);
-			setLoading(false);
-			return;
-		}
+			const wallet = isWeb3Injected
+				? injectedWindow.injectedWeb3[chosenWallet]
+				: null;
 
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if(wallet && wallet.enable) {
-					wallet.enable(APPNAME)
-						.then((value) => { clearTimeout(timeoutId); resolve(value); })
-						.catch((error) => { reject(error); });
-				}
-			});
-		} catch (err) {
-			console.log(err?.message);
-		}
-		if (!injected) {
-			setLoading(false);
-			return;
-		}
-
-		const accounts = await injected.accounts.get();
-		if (accounts.length === 0) {
-			return;
-		}
-
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
-
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			if(api && apiReady) {
-				api.setSigner(injected.signer);
+			if (!wallet) {
+				setExtentionOpen(true);
+				setLoading(false);
+				return;
 			}
 
-			setAddress(accounts[0].address);
+			let injected: Injected | undefined;
+			try {
+				injected = await new Promise((resolve, reject) => {
+					const timeoutId = setTimeout(() => {
+						reject(new Error('Wallet Timeout'));
+					}, 60000); // wait 60 sec
+
+					if(wallet && wallet.enable) {
+						wallet.enable(APPNAME)
+							.then((value) => { clearTimeout(timeoutId); resolve(value); })
+							.catch((error) => { reject(error); });
+					}
+				});
+			} catch (err) {
+				console.log(err?.message);
+			}
+			if (!injected) {
+				setLoading(false);
+				return;
+			}
+
+			const accounts = await injected.accounts.get();
+			if (accounts.length === 0) {
+				return;
+			}
+
+			accounts.forEach((account) => {
+				account.address = getEncodedAddress(account.address, network) || account.address;
+			});
+
+			setAccounts(accounts);
+			if (accounts.length > 0) {
+				if(api && apiReady) {
+					api.setSigner(injected.signer);
+				}
+
+				setAddress(accounts[0].address);
+				if(defaultWalletAddress) {
+					setAddress(accounts.filter((account) => (account.address) === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))[0].address);
+				}
+			}
 		}
 		setLoading(false);
 		return;
@@ -135,10 +172,15 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
+
 		getWallet();
-		loginWallet !== null && getAccounts(loginWallet);
+
+		const wallet = localStorage.getItem('loginWallet') || '';
+		const address = localStorage.getItem('loginAddress');
+		setWallet((loginWallet || wallet) as Wallet);
+		getAccounts((loginWallet || wallet) as Wallet, loginAddress || address);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[]);
+	},[loginWallet]);
 
 	const handleSubmit = async() => {
 		const bnValue:BN = new BN(balance.toString() || ZERO_BN);
@@ -203,18 +245,32 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				<div className='flex flex-col px-6'>
 					<h3 className='text-sm font-normal text-[#485F7D] text-center'>Select a wallet</h3>
 					<div className='flex items-center justify-center gap-x-4 mb-6'>
-						{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
-						{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-						{defaultWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
-						{
-							(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
-                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
-						}
-						{
-							['polymesh'].includes(network) && defaultWallets[Wallet.POLYWALLET]?
-								<WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
-								: null
-						}
+						{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? <>
+
+							{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+							{
+								['moonbase', 'moonbeam', 'moonriver'].includes(network) && isMetamaskWallet ?
+									<WalletButton disabled={!apiReady} className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
+									: null
+							}
+							{
+								(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
+                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
+							}
+						</> :  <>
+							{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
+							{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+							{defaultWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
+							{
+								['polymesh'].includes(network)?
+									<WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
+									: null
+							}
+							{
+								(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
+                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
+							}
+						</>}
 					</div>
 					{ availableBalance.lte(amount) && <Alert showIcon type='info' className='text-sm text-bodyBlue rounded-[4px] mb-4' message='Insufficient available balance.'/>}
 
@@ -238,7 +294,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 												className='text-[#485F7D] text-sm'
 											/>: !wallet && Object.keys(defaultWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 
-										<div className='mt-6 flex gap-8 items-center mb-4'>
+										<div className='mt-6 flex gap-4 items-center mb-4'>
 											<span className='text-sm text-lightBlue tracking-wide flex gap-1.5'>
                                  Decision Deposit
 												<HelperTooltip text='Decision deposit should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.'/>

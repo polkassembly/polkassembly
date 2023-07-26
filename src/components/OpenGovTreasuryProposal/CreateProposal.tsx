@@ -46,7 +46,7 @@ interface Props{
   setPostId: (pre: number) => void;
 }
 
-const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess,title, content, tags, setPostId }: Props) => {
+const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess, title, content, tags, setPostId }: Props) => {
 	const { network } = useNetworkContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -116,16 +116,20 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 		if(data && data?.post_id){
 			setPostId(data?.post_id);
+			setOpenSuccess(true);
+			setOpenModal(false);
+			setLoading(false);
+			console.log(postId);
 		}
 		else if(apiError || !data?.post_id) {
 			queueNotification({
 				header: 'Error',
-				message: 'There was an error creating your treasury post.',
+				message: 'There was an error creating your treasury proposal.',
 				status: NotificationStatus.ERROR
 			});
 			console.error(apiError);
 		}
-
+		setLoading(false);
 	};
 
 	const handleSubmitTreasuryProposal = async() => {
@@ -178,8 +182,6 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 				const post_id = Number(api.query.referenda.referendumCount()) - 1;
 				await handleSaveTreasuryProposal(post_id);
 				setLoading(false);
-				setOpenSuccess(true);
-				setOpenModal(false);
 			};
 
 			const onFailed = () => {

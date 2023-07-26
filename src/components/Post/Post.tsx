@@ -271,10 +271,11 @@ const Post: FC<IPostProps> = (props) => {
 					tally={post?.tally}
 					lastVote={lastVote}
 					setLastVote={setLastVote}
+					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
 				/>
 				{
 					isOffchainPost &&
-					<>
+					<div className={'sticky top-[65px] mb-6 '}>
 						<Poll
 							proposalType={proposalType}
 							postId={post.post_id}
@@ -285,7 +286,7 @@ const Post: FC<IPostProps> = (props) => {
 							postId={proposalType === ProposalType.TIPS? post.hash: post.post_id}
 							canEdit={post.user_id === id}
 						/>
-					</>
+					</div>
 				}
 			</div>
 		);
@@ -461,7 +462,7 @@ const Post: FC<IPostProps> = (props) => {
 						}
 
 						{/* Post Content */}
-						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6'>
+						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6 '>
 							{isEditing &&
               <EditablePostContent toggleEdit={toggleEdit} />}
 

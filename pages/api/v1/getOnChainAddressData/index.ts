@@ -30,7 +30,7 @@ export const getOnChainAddressDetails = async (address: string | string[] | unde
 	}
 };
 
-const handler: NextApiHandler<{ data: any } | {error: string | null }> = async (req, res) => {
+const handler: NextApiHandler<{ data: any } | { error: string | null }> = async (req, res) => {
 	const { address } = req.body;
 
 	const network = String(req.headers['x-network']);

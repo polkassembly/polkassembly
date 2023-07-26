@@ -34,6 +34,7 @@ interface Props{
   size?: 'large' | 'small' | 'middle';
   tooltipMessage?: string;
   setInputValue? : (pre: string)=> void;
+
 }
 
 const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance', tooltipMessage, setInputValue }: Props) => {
@@ -79,19 +80,9 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 			initialValue={balance ? Number(formatedBalance(balance.toString(), unit)) : ''}
 			rules={noRules ? []: [
 				{
-					message: 'Lock Balance must be greater than 0.',
-					validator(rule, value, callback) {
-						if (callback && value.length && Number(value) <= 0 ){
-							callback(rule?.message?.toString());
-						}else {
-							callback();
-						}
-					}
-				},
-				{
 					message: 'Invalid Balance',
 					validator(rule, value, callback) {
-						if (callback && (isNaN(Number(value)) || (Number(value) > 0 ) && (value?.split('.')?.[1]?.length && ( chainProperties[network]?.tokenDecimals  < (value?.split('.')?.[1].length || 0))))){
+						if (callback && (isNaN(Number(value)) || (Number(value) > 0 ) && (value?.split('.')?.[1]?.length && ( chainProperties[network]?.tokenDecimals  < (value?.split('.')?.[1].length || 0))) || (value.length && Number(value) <= 0))  ){
 							callback(rule?.message?.toString());
 						}else {
 							callback();

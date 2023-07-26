@@ -206,8 +206,8 @@ const MetamaskLogin: FC<Props> = ({
 					// TODO: change this method of checking if user is already signed up
 					if(addressLoginError === 'Please sign up prior to logging in with a web3 address'){
 						setIsSignUp(true);
-						try {
 
+						try {
 							setLoading(true);
 							const { data , error } = await nextApiClientFetch<ChallengeMessage>( 'api/v1/auth/actions/addressSignupStart', { address });
 							if (error || !data) {
@@ -229,7 +229,7 @@ const MetamaskLogin: FC<Props> = ({
 							const params = [msg, from];
 							const method = 'personal_sign';
 
-							(window as any).web3.currentProvider.sendAsync({
+							(window as any).ethereum.sendAsync({
 								from,
 								method,
 								params
@@ -259,6 +259,7 @@ const MetamaskLogin: FC<Props> = ({
 									localStorage.setItem('delegationWallet', Wallet.METAMASK);
 									localStorage.setItem('delegationDashboardAddress', address);
 									localStorage.setItem('loginWallet', Wallet.METAMASK);
+									localStorage.setItem('loginAddress', address);
 									handleTokenChange(confirmData.token,currentUser);
 									if(isModal){
 										setLoginOpen && setLoginOpen(false);
@@ -287,6 +288,7 @@ const MetamaskLogin: FC<Props> = ({
 					localStorage.setItem('delegationWallet', Wallet.METAMASK);
 					localStorage.setItem('delegationDashboardAddress', address);
 					localStorage.setItem('loginWallet', Wallet.METAMASK);
+					localStorage.setItem('loginAddress', address);
 
 					handleTokenChange(addressLoginData.token, currentUser);
 					if(isModal){
@@ -342,6 +344,7 @@ const MetamaskLogin: FC<Props> = ({
 			localStorage.setItem('delegationWallet', Wallet.METAMASK);
 			localStorage.setItem('delegationDashboardAddress', address);
 			localStorage.setItem('loginWallet', Wallet.METAMASK);
+			localStorage.setItem('loginAddress', address);
 
 			handleTokenChange(data.token, currentUser);
 			if(isModal){

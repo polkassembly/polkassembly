@@ -258,7 +258,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 
 		return addresses as InjectedAccount[];
 	};
-	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
+	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?:string | null): Promise<undefined> => {
 
 		if(!api || !apiReady) return;
 		setLoading(true);
@@ -269,6 +269,9 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 			const accounts = await getMetamaskAccounts();
 			setAccounts(accounts);
 			setAddress(accounts[0].address);
+			if(defaultWalletAddress) {
+				setAddress(accounts.filter((account) => account.address === defaultWalletAddress)[0].address);
+			}
 		}else{
 			const injectedWindow = window as Window & InjectedWindow;
 
@@ -319,6 +322,9 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 				}
 
 				setAddress(accounts[0].address);
+				if(defaultWalletAddress) {
+					setAddress(accounts.filter((account) => (account.address) === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))[0].address);
+				}
 			}
 		}
 		setLoading(false);
@@ -340,11 +346,10 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 
 	useEffect(() => {
 		getWallet();
-
-		if(loginWallet !== null ){
-			setWallet(loginWallet);
-			getAccounts(loginWallet);
-		}
+		const wallet = localStorage.getItem('loginWallet') || '';
+		const address = localStorage.getItem('loginAddress');
+		setWallet((loginWallet || wallet) as Wallet);
+		getAccounts((loginWallet || wallet) as Wallet, loginAddress || address);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[loginWallet]);
 

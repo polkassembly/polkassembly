@@ -42,7 +42,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const { id } = useContext(UserDetailsContext);
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
 	const { network } = useNetworkContext();
-	const [animationState, setAnimationState] = useState('');
 
 	useEffect(() => {
 		if (!isAIChatBotOpen) return;
@@ -52,22 +51,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		docsBotElement.style.right = '1em';
 		docsBotElement.style.bottom = '80px';
 	}, [isAIChatBotOpen, floatButtonOpen]);
-
-	useEffect(() => {
-		// check for the presence of a dom element inside a setInterval until it is found
-		const interval = setInterval(() => {
-			const docsBotElement = ((window as any)?.DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
-			if (!docsBotElement) return;
-
-			clearInterval(interval);
-			docsBotElement.style.display = 'none';
-		}, 600);
-
-		if(localStorage.getItem('animationKey')){
-			setAnimationState('hidden');
-		}
-		return () => clearInterval(interval);
-	}, []);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -183,8 +166,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				{'DocsBotAI.init({id: "X6zGLB8jx6moWVb6L5S9/D7XT9ksDuTZCvdf99KSW"});'}
 			</Script>
 
-			<div className={`wave-effect ${animationState}`} ></div>
-
 			<FloatButton.Group
 				trigger='click'
 				type='primary'
@@ -194,9 +175,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
 						onClick={() => {
-							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 500);
-							setAnimationState('hidden');
-							localStorage.setItem('animationKey','true');
+							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
 						}}
 					>
 						<FabButton className='mt-1' />

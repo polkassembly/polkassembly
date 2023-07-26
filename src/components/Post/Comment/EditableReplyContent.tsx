@@ -321,7 +321,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 												{ required: "Please add the '${name}'" }
 											}
 										>
-											<ContentForm onChange={(content: string) => {
+											<ContentForm height={250} onChange={(content: string) => {
 												global.window.localStorage.setItem(newReplyKey(commentId), content);
 												return content.length ? content : null;
 											}}  />

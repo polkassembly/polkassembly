@@ -410,7 +410,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									}
 									className='mt-4'
 								>
-									<ContentForm onChange={(content: string) => {
+									<ContentForm height={250} onChange={(content: string) => {
 										global.window.localStorage.setItem(replyKey(commentId), content);
 										return content.length ? content : null;
 									}} />

@@ -119,7 +119,6 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			setOpenSuccess(true);
 			setOpenModal(false);
 			setLoading(false);
-
 			console.log(postId);
 		}
 		else if(apiError || !data?.post_id) {

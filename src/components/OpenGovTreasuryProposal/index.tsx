@@ -145,7 +145,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				</div>
 			</div>
 		</Modal>
-		{openSuccess && <TreasuryProposalSuccessPopup
+		<TreasuryProposalSuccessPopup
 			open={openSuccess}
 			setOpen={setOpenSuccess}
 			selectedTrack={selectedTrack}
@@ -155,7 +155,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			preimageHash={preimageHash}
 			preimageLength={preimageLength}
 			postId={postId}
-		/>}
+		/>
 
 		<Modal
 			open={openModal}

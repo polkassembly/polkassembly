@@ -72,9 +72,8 @@ const TreasuryProposalSuccessPopup= ({ className, open, setOpen, fundingAmount, 
 		<div className='flex justify-center items-center flex-col -mt-[132px]'>
 			<SuccessIcon/>
 			<label className='text-xl text-bodyBlue font-semibold'>Proposal created successfully for</label>
-			<span className='text-2xl font-semibold text-pink_primary mt-2'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span>
-
-			<div className='flex my-2'>
+			{fundingAmount && <span className='text-2xl font-semibold text-pink_primary mt-2'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span>}
+			{(proposerAddress && beneficiaryAddress && selectedTrack && preimageHash && preimageLength) && <div className='flex my-2'>
 				<div className='mt-[10px] flex flex-col text-sm text-lightBlue gap-1.5'>
 					<span className='flex'><span className='w-[172px]'>Proposer Address:</span><Address addressClassName='text-bodyBlue font-semibold text-sm'  address={proposerAddress} identiconSize={24}/></span>
 					<span className='flex'><span className='w-[172px]'>Beneficiary Address:</span><Address textClassName='text-bodyBlue font-medium text-sm' displayInline address={beneficiaryAddress} identiconSize={24}/></span>
@@ -93,7 +92,7 @@ const TreasuryProposalSuccessPopup= ({ className, open, setOpen, fundingAmount, 
 						</span>
 					</span>
 				</div>
-			</div>
+			</div>}
 			<Alert showIcon type='warning' className='rounded-[4px] m-2 text-sm w-full' message={<span className='text-sm font-medium text-bodyBlue'>Place a decision deposit in X days to prevent your proposal from being timed out.</span>} description={<span className='text-xs text-pink_primary font-medium cursor-pointer' onClick={() => router.push(`https://${network}.polkassembly.io/referenda/${postId}`)}>Pay Decision Deposit</span>} />
 		</div>
 

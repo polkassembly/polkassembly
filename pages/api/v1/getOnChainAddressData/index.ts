@@ -34,8 +34,12 @@ const handler: NextApiHandler<{ data: any } | { error: string | null }> = async 
 	const { address } = req.body;
 
 	const network = String(req.headers['x-network']);
-	if (!address) res.status(400).json({ data: null, error: 'Invalid params' });
-	if (!network || !isValidNetwork(network)) res.status(400).json({ data: null, error: 'Invalid network in request header' });
+	if (!address) {
+		return res.status(400).json({ data: null, error: 'Invalid params' });
+	}
+	if (!network || !isValidNetwork(network)) {
+		return res.status(400).json({ data: null, error: 'Invalid network in request header' });
+	}
 
 	const data = await getOnChainAddressDetails(address, network);
 

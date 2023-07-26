@@ -189,35 +189,32 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 
 		const tx = api.tx.referenda.placeDecisionDeposit(Number(router?.query?.id));
 
+		const onSuccess = async() => {
+			queueNotification({
+				header: 'Success!',
+				message: `Decision Deposit ${tx.hash} successful.`,
+				status: NotificationStatus.SUCCESS
+			});
+			setLoading(false);
+			setOpenModal(false);
+			router.reload();
+		};
+
+		const onFailed = () => {
+			queueNotification({
+				header: 'Failed!',
+				message: 'Transaction failed!',
+				status: NotificationStatus.ERROR
+			});
+			setLoading(false);
+		};
+
 		try{
 			setLoading(true);
-			const onSuccess = () => {
-				queueNotification({
-					header: 'Success!',
-					message: `Decision Deposit ${tx.hash} successful.`,
-					status: NotificationStatus.SUCCESS
-				});
-				setLoading(false);
-			};
-
-			const onFailed = () => {
-				queueNotification({
-					header: 'Failed!',
-					message: 'Transaction failed!',
-					status: NotificationStatus.ERROR
-				});
-				setLoading(false);
-			};
 			await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
 
 		}catch(error){
-			console.log(':( transaction failed');
-			console.error('ERROR:', error);
-			queueNotification({
-				header: 'Failed!',
-				message: error.message,
-				status: NotificationStatus.ERROR
-			});
+			onFailed();
 			setLoading(false);
 		}
 

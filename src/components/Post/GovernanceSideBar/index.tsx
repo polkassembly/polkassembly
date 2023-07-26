@@ -67,7 +67,6 @@ const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasur
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
-import { formatBalance } from '@polkadot/util';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined

@@ -53,6 +53,19 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	}, [isAIChatBotOpen, floatButtonOpen]);
 
 	useEffect(() => {
+		// check for the presence of a dom element inside a setInterval until it is found
+		const interval = setInterval(() => {
+			const docsBotElement = ((window as any)?.DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
+			if (!docsBotElement) return;
+
+			clearInterval(interval);
+			docsBotElement.style.display = 'none';
+		}, 600);
+
+		return () => clearInterval(interval);
+	}, []);
+
+	useEffect(() => {
 		const handleRouteChange = () => {
 			if ((window as any).DocsBotAI.isChatbotOpen) {
 				(window as any).DocsBotAI.close();
@@ -97,7 +110,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 			{
 				component: <div className='ml-[-34px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 					onClick={() => {
-						if (!isAIChatBotOpen) setGrillChat(!grillChat);
+						!isAIChatBotOpen && setGrillChat(!grillChat);
 					}}
 				>
 					<GrillChatIcon className='cursor-pointer ml-[-149px] mt-[5px]' />
@@ -119,7 +132,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		:
 		[
 			// {
-			// component: <OpenGovTreasuryProposal/>
+			//component: <OpenGovTreasuryProposal/>
 			// },
 			{
 				component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
@@ -184,7 +197,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					<Button
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
-						onClick={() => { setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200 );
+						onClick={() => { setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
 							(window as any).DocsBotAI.close();
 							setIsAIChatBotOpen(false);
 							setGrillChat(false);

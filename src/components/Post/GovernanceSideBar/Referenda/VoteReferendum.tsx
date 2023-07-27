@@ -47,7 +47,7 @@ interface Props {
 	className?: string;
 	referendumId?: number | null | undefined;
 	onAccountChange: (address: string) => void;
-	lastVote: ILastVote;
+	lastVote: ILastVote | undefined;
 	setLastVote: (pre: ILastVote) => void;
 	proposalType: ProposalType;
   address: string;
@@ -485,7 +485,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
 			onFailed,
 			onSuccess,
-			params: network == 'equilibrium' ? { nonce: -1 } : {},
+			params: network === 'equilibrium' ? { nonce: -1 } : {},
 			tx: voteTx
 		});
 

@@ -138,7 +138,7 @@ export function getTrackFunctions(trackInfo: any) {
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit } = props;
-	const [lastVote, setLastVote] = useState< ILastVote | undefined >(undefined);
+	const [lastVote, setLastVote] = useState< ILastVote>();
 
 	const { network } = useNetworkContext();
 	const currentBlock = useCurrentBlock();

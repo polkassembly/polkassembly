@@ -92,7 +92,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
 		}
-		replyForm.setFieldValue('content', usernameContent);
+		replyForm.setFieldValue('content', `${usernameContent}<p>&nbsp;</p>`);
 		global.window.localStorage.setItem(replyKey(commentId), usernameContent);
 		setIsReplying(!isReplying);
 	};

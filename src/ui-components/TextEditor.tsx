@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import classNames from 'classnames';
 import { Modal, Skeleton } from 'antd';
@@ -26,6 +26,7 @@ interface ITextEditorProps {
     onChange: (value: string) => void;
 		isDisabled?: boolean;
     name: string;
+		autofocus?: boolean;
 }
 
 const gifSVGData = `<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512.000000 512.000000">
@@ -74,10 +75,18 @@ img {
 `;
 
 const TextEditor: FC<ITextEditorProps> = (props) => {
-	const { className, height, onChange, isDisabled, value, name } = props;
+	const { className, height, onChange, isDisabled, value, name, autofocus } = props;
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+
+	useEffect(() => {
+		//if value is a link with a username it it, shift caret position to the end of the text
+		if (!value || !value.startsWith('<p><a href="../user/') || !value.endsWith('<p>&nbsp;</p>')) return;
+		ref.current?.editor?.selection.select(ref.current?.editor?.getBody(), true);
+		ref.current?.editor?.selection.collapse(false);
+		ref.current?.editor?.focus();
+	}, [value]);
 
 	return (
 		<>
@@ -110,7 +119,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							const content = e.clipboardData?.getData('text/plain') || '';
 							const caretPosition = ref.current?.editor?.selection.getRng();
 							const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
-							const parsed_content = converter.makeHtml(sanitisedContent).replace(/<p>|<\/p>/g, '');
+							const parsed_content = converter.makeHtml(sanitisedContent);
 							ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });
 						}}
 						textareaName={name}
@@ -132,44 +141,42 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							height: height || 400,
 							icons: 'thin',
 							images_file_types: 'jpg,png,jpeg,gif,svg',
-							images_upload_handler: (blobInfo, progress) => {
-								return new Promise<string>((resolve, reject) => {
-									const xhr = new XMLHttpRequest();
-									xhr.withCredentials = false;
-									xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
+							images_upload_handler: ((blobInfo: any, resolve: any, reject: any, progress: any) => {
+								const xhr = new XMLHttpRequest();
+								xhr.withCredentials = false;
+								xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
 
-									xhr.upload.onprogress = (e) => {
-										progress(Number((e.loaded / e.total * 100).toPrecision(2)));
-									};
+								xhr.upload.onprogress = (e) => {
+									progress(Number((e.loaded / e.total * 100).toPrecision(2)));
+								};
 
-									xhr.onload = () => {
-										if (xhr.status === 403) {
-											reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
-											return;
-										}
+								xhr.onload = () => {
+									if (xhr.status === 403) {
+										reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
+										return;
+									}
 
-										if (xhr.status < 200 || xhr.status >= 300) {
-											reject('HTTP Error: ' + xhr.status);
-											return;
-										}
+									if (xhr.status < 200 || xhr.status >= 300) {
+										reject('HTTP Error: ' + xhr.status);
+										return;
+									}
 
-										const json = JSON.parse(xhr.responseText);
+									const json = JSON.parse(xhr.responseText);
 
-										if (!json || typeof json?.data?.display_url != 'string') {
-											reject('Invalid JSON: ' + xhr.responseText);
-											return;
-										}
+									if (!json || typeof json?.data?.display_url != 'string') {
+										reject('Invalid JSON: ' + xhr.responseText);
+										return;
+									}
 
-										resolve(json?.data?.display_url);
-									};
-									xhr.onerror = () => {
-										reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
-									};
-									const formData = new FormData();
-									formData.append('image', blobInfo.blob(), `${blobInfo.filename()}`);
-									xhr.send(formData);
-								});
-							},
+									resolve(json?.data?.display_url);
+								};
+								xhr.onerror = () => {
+									reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+								};
+								const formData = new FormData();
+								formData.append('image', blobInfo.blob(), `${blobInfo.filename()}`);
+								xhr.send(formData);
+							}) as any,
 							menubar: false,
 							paste_data_images: true,
 							placeholder: 'Please type here...',
@@ -179,6 +186,9 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								'insertdatetime', 'media', 'table', 'textpattern', 'emoticons'
 							],
 							setup: (editor) => {
+								editor.on('init', () => {
+									if (autofocus) editor.focus();
+								});
 								editor.ui.registry.addIcon('custom-icon', gifSVGData);
 								editor.ui.registry.addButton('customButton', { icon: 'custom-icon', onAction: () => setIsModalVisible(true) });
 							},

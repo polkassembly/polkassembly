@@ -492,5 +492,6 @@ export default styled(TreasuryProposalFormButton)`
 	}
 	input[type=number] {
 		-moz-appearance: textfield;
+		appearance: textfield;
 	}
 `;

@@ -82,7 +82,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
 
-	const mainTitle = <span className={tipReason ? 'tipTitle' : ''}><div>{titleString}</div></span>;
+	const mainTitle = <span className={tipReason && 'tipTitle'}>{titleString}</span>;
 	const subTitle = title && tipReason && method && <h5>{title}</h5>;
 	const currentBlock = useCurrentBlock()?.toNumber() || 0;
 	const ownProposal = currentUser?.addresses?.includes(address);
@@ -229,29 +229,22 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						}
 					</div>
-					<div className='sm:hidden xs:flex xs:justify-start gap-x-2 lg:items-start lg:flex-row my-2 '>
-						<span className='font-medium text-center xs:w-[45px] text-bodyBlue xs:mt-0'>#{isTip? tip_index: onchainId}</span>
-						<div className='xs:mt-0 lg:mt-0'>
-							<h1 className='text-bodyBlue flex overflow-hidden lg:max-w-none'>
-								<span className='text-bodyBlue text-sm font-medium mt-0 xs:mt-[-1.4px]'>{ mainTitle }</span>
-							</h1>
-							<h2 className='text-bodyBlue font-medium text-sm'>{subTitle}</h2>
-						</div>
-						<div className='sm:hidden xs:flex justify-between items-center gap-x-2'>
-							{
-								spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
-									<div className='flex items-center justify-center'>
-										<Tooltip color="#E5007A" title="This post could be a spam.">
-											<WarningMessageIcon className='text-xl text-[#FFA012]' />
-										</Tooltip>
-									</div>
-									: null
-							}
-							{/* {status  && <StatusTag className='mt-[-36px]' status={status} />} */}
-						</div>
+					<div className='sm:hidden xs:flex justify-between items-center gap-x-2'>
+						{
+							spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
+								<div className='flex items-center justify-center'>
+									<Tooltip color="#E5007A" title="This post could be a spam.">
+										<WarningMessageIcon className='text-xl text-[#FFA012]' />
+									</Tooltip>
+								</div>
+								: null
+						}
+					</div>
+					<div className='max-xs-hidden m-2.5'>
+						#{isTip? tip_index: onchainId} {mainTitle} {subTitle}
 					</div>
 
-					<div className="mt-0 sm:gap-2.5 xs:gap-0 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row items-start lg:items-center">
+					<div className="mt-0 sm:gap-2.5 xs:gap-0 xs:ml-2 sm:ml-0 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row items-start lg:items-center">
 						<div className="sm:hidden xs:flex xs:justify-start xs:flex-wrap">
 							<OnchainCreationLabel address={address} username={username} />
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
@@ -277,7 +270,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{
 								!tags || tags.length === 0?
 									status  &&
-									<StatusTag className='mt-1' status={status} />
+									<StatusTag className='mt-0.5' status={status} />
 									: null
 							}
 						</div>

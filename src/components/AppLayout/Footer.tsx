@@ -78,12 +78,6 @@ const Footer = ({ className } : { className?:string }) => {
 										<a href='https://feedback.polkassembly.io' target='_blank' rel='noreferrer'>
 											Feedback
 										</a>
-										<RedirectIcon className='ml-3' />
-									</div>
-									<div className='max-[650px]:hidden'>
-										<Link href='/terms-and-conditions'>
-											Terms and Conditions
-										</Link>
 									</div>
 
 								</div>

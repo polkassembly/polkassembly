@@ -7,7 +7,7 @@ import getNetwork from './getNetwork';
 
 import messages from './messages';
 
-async function nextApiClientFetch<T>(url: string, data?: {[key: string]: any}) : Promise<{ data?: T, error?: string }> {
+async function nextApiClientFetch<T>(url: string, data?: {[key: string]: any}, method?: 'GET' | 'POST') : Promise<{ data?: T, error?: string }> {
 	const network = getNetwork();
 
 	const currentURL = new URL(window.location.href);
@@ -20,7 +20,7 @@ async function nextApiClientFetch<T>(url: string, data?: {[key: string]: any}) :
 			'Content-Type': 'application/json',
 			'x-network': network
 		},
-		method: 'POST'
+		method: method || 'POST'
 	});
 
 	const resJSON = await response.json();

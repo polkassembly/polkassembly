@@ -183,7 +183,7 @@ const Post: FC<IPostProps> = (props) => {
 		}
 	}, [post]);
 
-	const networkModified = network.charAt(0).toUpperCase() + network.slice(1);
+	const networkModified = network?.charAt(0)?.toUpperCase() + network?.slice(1);
 	let postType:any = proposalType;
 
 	if(postType === ProposalType.REFERENDUM_V2){
@@ -210,11 +210,10 @@ const Post: FC<IPostProps> = (props) => {
 				setTotalAuditCount(count);
 
 			} else {
-				throw new Error('Request failed');
+				// throw new Error('Request failed');
 			}
-		}
-		catch (error) {
-			console.log('Error:', error);
+		} catch (error) {
+			// console.log('Error:', error);
 		}
 
 	};
@@ -235,11 +234,10 @@ const Post: FC<IPostProps> = (props) => {
 				setTotalVideoCount(JSON.parse(decoded).length);
 
 			} else {
-				throw new Error('Request failed');
+				// throw new Error('Request failed');
 			}
-		}
-		catch (error) {
-			console.log('Error:', error);
+		} catch (error) {
+			// console.log('Error:', error);
 		}
 	};
 
@@ -273,10 +271,11 @@ const Post: FC<IPostProps> = (props) => {
 					tally={post?.tally}
 					lastVote={lastVote}
 					setLastVote={setLastVote}
+					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
 				/>
 				{
 					isOffchainPost &&
-					<>
+					<div className={'sticky top-[65px] mb-6 '}>
 						<Poll
 							proposalType={proposalType}
 							postId={post.post_id}
@@ -287,7 +286,7 @@ const Post: FC<IPostProps> = (props) => {
 							postId={proposalType === ProposalType.TIPS? post.hash: post.post_id}
 							canEdit={post.user_id === id}
 						/>
-					</>
+					</div>
 				}
 			</div>
 		);
@@ -418,6 +417,7 @@ const Post: FC<IPostProps> = (props) => {
 			spam_users_count: post?.spam_users_count,
 			status: post?.status,
 			subscribers: post?.subscribers || [],
+			summary: post?.summary,
 			tags: post?.tags || [],
 			timeline: post?.timeline,
 			title: post?.title,
@@ -462,7 +462,7 @@ const Post: FC<IPostProps> = (props) => {
 						}
 
 						{/* Post Content */}
-						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6'>
+						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6 '>
 							{isEditing &&
               <EditablePostContent toggleEdit={toggleEdit} />}
 

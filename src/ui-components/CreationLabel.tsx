@@ -83,7 +83,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		<div className='text-xs flex flex-col md:flex-row md:items-center'>
 			<div className={'flex min-[320px]:flex-row min-[320px]:items-center w-full min-[320px]:w-auto '}>
 				<div className={'flex items-center '}>
-					{!text && <span className='mr-2 text-lightBlue'>By:</span>}
+					<span className='mr-2 text-lightBlue'>By:</span>
 					<NameLabel
 						defaultAddress={defaultAddress}
 						username={username}
@@ -107,7 +107,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				&nbsp;
 					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 				</>}
-				{created_at && <span className='flex items-center'><ClockCircleOutlined className='sm:mx-1' />{relativeCreatedAt}</span>}
+				{created_at && <span className='flex items-center pl-5 mt-2 md:pl-0 md:mt-0'><ClockCircleOutlined className='mx-1' />{relativeCreatedAt}</span>}
 				{children}
 			</div>
 		</div>

@@ -73,13 +73,14 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 				status: NotificationStatus.SUCCESS
 			});
 
-			const { content, proposer, title, topic, last_edited_at } = data;
+			const { content, proposer, title, topic, last_edited_at, summary } = data;
 			setPostData((prev) => ({
 				...prev,
 				content,
 				history: [{ content: prev?.content, created_at: prev?.last_edited_at || '', title: prev?.title }, ...(prev?.history || [])] ,
 				last_edited_at,
 				proposer,
+				summary: summary,
 				tags,
 				title,
 				topic

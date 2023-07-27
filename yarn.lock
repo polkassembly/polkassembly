@@ -2705,6 +2705,14 @@
     eventemitter3 "^4.0.7"
     smoldot "1.0.1"
 
+"@substrate/connect@^0.7.30":
+  version "0.7.30"
+  resolved "https://registry.yarnpkg.com/@substrate/connect/-/connect-0.7.30.tgz#bc633d869e47efb32dc6b7b39f716b5d8d83646c"
+  integrity sha512-njt7lVc3GsoLWfynAh3VhOgjBRQYdT3Cd4N+QPANhHk3GTLQmfxvDUU4zQm1O3pYORY/lZOHlBtR0HoJklte0Q==
+  dependencies:
+    "@substrate/connect-extension-protocol" "^1.0.1"
+    smoldot "1.0.11"
+
 "@substrate/ss58-registry@^1.39.0":
   version "1.39.0"
   resolved "https://registry.yarnpkg.com/@substrate/ss58-registry/-/ss58-registry-1.39.0.tgz#eb916ff5fea7fa02e77745823fde21af979273d2"
@@ -11125,6 +11133,13 @@ smoldot@1.0.1:
     pako "^2.0.4"
     ws "^8.8.1"
 
+smoldot@1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/smoldot/-/smoldot-1.0.11.tgz#cd3fa68be0c51bd4d312772d4e9b8835d05d759d"
+  integrity sha512-sDp8oo6RWFPId59nuNKxKzBP9wu0czfFDW7WHMqxwopo12ffpijOo3aTL1PVcNFVo6lZhXxOKFCudhQCfhrZ7w==
+  dependencies:
+    ws "^8.8.1"
+
 source-map-js@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.0.2.tgz#adbc361d9c62df380125e7f161f71c826f1e490c"
@@ -12493,9 +12508,9 @@ wide-align@^1.1.2:
     string-width "^1.0.2 || 2 || 3 || 4"
 
 word-wrap@^1.2.3, word-wrap@~1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.3.tgz#610636f6b1f703891bd34771ccb17fb93b47079c"
-  integrity sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.4.tgz#cb4b50ec9aca570abd1f52f33cd45b6c61739a9f"
+  integrity sha512-2V81OA4ugVo5pRo46hAoD2ivUJx8jXmWXfUkY4KFNw0hEptvN0QfH3K4nHiwzGeKl5rFKedV48QVoqYavy4YpA==
 
 wrap-ansi@^5.1.0:
   version "5.1.0"

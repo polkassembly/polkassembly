@@ -12,17 +12,19 @@ import AyeNayButtons from 'src/ui-components/AyeNayButtons';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import { useApiContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { EDecision, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
-import { network } from '~src/global/networkConstants';
+import { chainProperties, network } from '~src/global/networkConstants';
 import { ProposalType } from '~src/global/proposalType';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import dayjs from 'dayjs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
+import executeTx from '~src/util/executeTx';
+import { formatBalance } from '@polkadot/util';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[]
@@ -54,6 +56,7 @@ const VoteMotion = ({
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
 	const { isLoggedOut } = useUserDetailsContext();
+	const { network: Network } = useNetworkContext();
 	const [vote,setVote] = useState<{
 		timestamp: string | undefined,
 		decision:EDecision,
@@ -105,6 +108,16 @@ const VoteMotion = ({
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentCouncil, accounts]);
+
+	useEffect(() => {
+		if(!Network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[Network].tokenDecimals,
+			unit: chainProperties[Network].tokenSymbol
+		});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	useEffect( () => {
 		if (!api) {
 			return;
@@ -134,6 +147,24 @@ const VoteMotion = ({
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address,api,apiReady,network,proposalType,motionId]);
 
+	const onSuccess = () => {
+		queueNotification({
+			header: 'Success!',
+			message: `Vote on motion #${motionId} successful.`,
+			status: NotificationStatus.SUCCESS
+		});
+		setLoadingStatus({ isLoading: false, message: '' });
+	};
+
+	const onFailed = (message: string) => {
+		setLoadingStatus({ isLoading: false, message: '' });
+		queueNotification({
+			header: 'Failed!',
+			message,
+			status: NotificationStatus.ERROR
+		});
+	};
+
 	const voteMotion = async (aye: boolean) => {
 		if (!motionId && motionId !== 0) {
 			console.error('motionId not set');
@@ -157,30 +188,14 @@ const VoteMotion = ({
 
 		const vote = api.tx.council.vote(motionProposalHash, motionId, aye);
 
-		vote.signAndSend(address, ({ status }) => {
-			if (status.isInBlock) {
-				queueNotification({
-					header: 'Success!',
-					message: `Vote on motion #${motionId} successful.`,
-					status: NotificationStatus.SUCCESS
-				});
-				setLoadingStatus({ isLoading: false, message: '' });
-				console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-			} else {
-				if (status.isBroadcast){
-					setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' });
-				}
-				console.log(`Current status: ${status.type}`);
-			}
-		}).catch((error) => {
-			setLoadingStatus({ isLoading: false, message: '' });
-			console.log(':( transaction failed');
-			console.error('ERROR:', error);
-			queueNotification({
-				header: 'Failed!',
-				message: error.message,
-				status: NotificationStatus.ERROR
-			});
+		await executeTx({ address,
+			api,
+			errorMessageFallback: 'Transaction failed.',
+			network: Network,
+			onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
+			onFailed,
+			onSuccess,
+			tx: vote
 		});
 	};
 

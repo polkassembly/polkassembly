@@ -51,11 +51,11 @@ import formatBnBalance from '~src/util/formatBnBalance';
 const ZERO_BN = new BN(0);
 
 interface Props {
-	className?: string
-	referendumId?: number | null | undefined
-	onAccountChange: (address: string) => void
-	lastVote: ILastVote | undefined
-	setLastVote: React.Dispatch<React.SetStateAction< ILastVote | undefined >>
+	className?: string;
+	referendumId?: number | null | undefined;
+	onAccountChange: (address: string) => void;
+	lastVote: ILastVote | undefined;
+	setLastVote: (pre: ILastVote) => void;
 	proposalType: ProposalType;
   address: string;
 }
@@ -106,7 +106,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [balanceErr, setBalanceErr] = useState('');
-	const [successModal,setSuccessModal] = useState(false);
+	const [successModal,setSuccessModal] = useState<boolean>(false);
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
 	const [ayeNayForm] = Form.useForm();
@@ -396,7 +396,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			return;
 		}
 
-		const totalVoteValue = new BN(ayeVoteValue || ZERO_BN).add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN).add(lockedBalance || ZERO_BN);
+		const totalVoteValue = (ayeVoteValue || ZERO_BN).add(nayVoteValue || ZERO_BN)?.add(abstainVoteValue || ZERO_BN).add(lockedBalance || ZERO_BN);
 		setVoteValues((prevState) => ({
 			...prevState,
 			totalVoteValue:totalVoteValue
@@ -558,7 +558,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
 			onFailed,
 			onSuccess,
-			params: network == 'equilibrium' ? { nonce: -1 } : {},
+			params: network === 'equilibrium' ? { nonce: -1 } : {},
 			tx: voteTx
 		});
 
@@ -597,7 +597,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[100%]'
 				onClick={() => setShowModal(true)}
 			>
-				{lastVote == null || lastVote == undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }
+				{lastVote === null || lastVote === undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }
 			</Button>
 			<Modal
 				open={showModal}

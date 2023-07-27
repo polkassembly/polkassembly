@@ -240,7 +240,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								: null
 						}
 					</div>
-					<div className='max-xs-hidden m-2.5'>
+					<div className='max-xs-hidden m-2.5 text-bodyBlue font-medium text-sm'>
 						#{isTip? tip_index: onchainId} {mainTitle} {subTitle}
 					</div>
 

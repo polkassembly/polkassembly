@@ -123,13 +123,8 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								<TopicTag className='xs:my-0.5 xs:mx-0.5' topic={topic} />
 							</div>
 					}
-					<div className="sm:hidden xs:flex xs:justify-start gap-x-2 lg:items-start lg:flex-row mt-2 mb-1">
-						<span className='font-medium text-center mr-2 flex-none xs:w-[45px] text-bodyBlue xs:mt-0'>#{post_id}</span>
-						<div className='xs:mt-0 lg:mt-0'>
-							<h1 className='text-bodyBlue font-medium flex'>
-								{title}
-							</h1>
-						</div>
+					<div className='max-xs-hidden m-2.5 text-bodyBlue font-medium text-sm'>
+						#{post_id} {title}
 						<div className='flex justify-between items-center'>
 
 							{
@@ -152,7 +147,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								: null
 						}
 					</div>
-					<div className="xs:mt-1 xs:gap-0 sm:gap-2.5 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row items-start lg:items-center">
+					<div className="xs:mt-1 xs:gap-0 sm:gap-2.5 xs:ml-2 sm:ml-0 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row items-start lg:items-center">
 
 						<div className='sm:hidden xs:flex xs:justify-start'>
 							<OnchainCreationLabel address={address} username={username} />

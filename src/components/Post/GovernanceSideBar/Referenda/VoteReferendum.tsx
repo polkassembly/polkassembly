@@ -662,6 +662,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								<Alert
 									message={`The Free Balance in your selected account is less than the Minimum Deposit ${formatBnBalance(totalDeposit, { numberAfterComma: 3, withUnit: true }, network)} required to create a Transaction.`}
 									showIcon
+									className='mb-6'
 								/>
 							}
 							{balanceErr.length > 0 && wallet && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}

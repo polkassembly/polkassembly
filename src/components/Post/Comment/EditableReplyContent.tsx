@@ -62,7 +62,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
 		}
-		replyToreplyForm.setFieldValue('content', `${usernameContent}<p>&nbsp;</p>` || '');
+		replyToreplyForm.setFieldValue('content', `${usernameContent}&nbsp;` || '');
 	}, [is_custom_username, proposer, replyToreplyForm, userName]);
 
 	const handleCancel = () => {
@@ -321,7 +321,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 												{ required: "Please add the '${name}'" }
 											}
 										>
-											<ContentForm onChange={(content: string) => {
+											<ContentForm height={250} onChange={(content: string) => {
 												global.window.localStorage.setItem(newReplyKey(commentId), content);
 												return content.length ? content : null;
 											}}  />

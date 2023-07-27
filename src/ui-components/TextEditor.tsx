@@ -141,44 +141,42 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							height: height || 400,
 							icons: 'thin',
 							images_file_types: 'jpg,png,jpeg,gif,svg',
-							images_upload_handler: (blobInfo, progress) => {
-								return new Promise<string>((resolve, reject) => {
-									const xhr = new XMLHttpRequest();
-									xhr.withCredentials = false;
-									xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
+							images_upload_handler: ((blobInfo: any, resolve: any, reject: any, progress: any) => {
+								const xhr = new XMLHttpRequest();
+								xhr.withCredentials = false;
+								xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
 
-									xhr.upload.onprogress = (e) => {
-										progress(Number((e.loaded / e.total * 100).toPrecision(2)));
-									};
+								xhr.upload.onprogress = (e) => {
+									progress(Number((e.loaded / e.total * 100).toPrecision(2)));
+								};
 
-									xhr.onload = () => {
-										if (xhr.status === 403) {
-											reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
-											return;
-										}
+								xhr.onload = () => {
+									if (xhr.status === 403) {
+										reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
+										return;
+									}
 
-										if (xhr.status < 200 || xhr.status >= 300) {
-											reject('HTTP Error: ' + xhr.status);
-											return;
-										}
+									if (xhr.status < 200 || xhr.status >= 300) {
+										reject('HTTP Error: ' + xhr.status);
+										return;
+									}
 
-										const json = JSON.parse(xhr.responseText);
+									const json = JSON.parse(xhr.responseText);
 
-										if (!json || typeof json?.data?.display_url != 'string') {
-											reject('Invalid JSON: ' + xhr.responseText);
-											return;
-										}
+									if (!json || typeof json?.data?.display_url != 'string') {
+										reject('Invalid JSON: ' + xhr.responseText);
+										return;
+									}
 
-										resolve(json?.data?.display_url);
-									};
-									xhr.onerror = () => {
-										reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
-									};
-									const formData = new FormData();
-									formData.append('image', blobInfo.blob(), `${blobInfo.filename()}`);
-									xhr.send(formData);
-								});
-							},
+									resolve(json?.data?.display_url);
+								};
+								xhr.onerror = () => {
+									reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+								};
+								const formData = new FormData();
+								formData.append('image', blobInfo.blob(), `${blobInfo.filename()}`);
+								xhr.send(formData);
+							}) as any,
 							menubar: false,
 							paste_data_images: true,
 							placeholder: 'Please type here...',

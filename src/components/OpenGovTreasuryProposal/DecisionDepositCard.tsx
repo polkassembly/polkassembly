@@ -27,6 +27,7 @@ import { formatedBalance } from '../DelegationDashboard/ProfileBalance';
 import { formatBalance } from '@polkadot/util';
 import CloseIcon from '~assets/icons/close.svg';
 import executeTx from '~src/util/executeTx';
+import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 
 const ZERO_BN = new BN(0);
 
@@ -209,10 +210,12 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 			setLoading(false);
 		};
 
+		setLoading(true);
 		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
+		setLoading(false);
 
 	};
-	return <div className='w-full p-6 text-bodyBlue rounded-[14px] mb-8 bg-white shadow-[0px 6px 18px 0px #0000000F]'>
+	return <GovSidebarCard className='overflow-y-hidden'>
 		<h2 className='font-medium tracking-[0.015em] text-xl'>Decision Deposit</h2>
 		<div className='flex mt-6 gap-2'>
 			<span><CautionIcon/></span>
@@ -298,7 +301,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				</div>
 			</Spin>
 		</Modal>
-	</div>;
+	</GovSidebarCard>;
 };
 
 export default styled(DecisionDepositCard)`

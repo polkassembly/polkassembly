@@ -291,49 +291,37 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		api.setSigner(injected.signer);
 
 		setLoading(true);
-		try {
+		const proposal = api.tx.treasury.spend(fundingAmount.toString(), beneficiaryAddress);
+		const preimage: any = getState(api, proposal);
 
-			const proposal = api.tx.treasury.spend(fundingAmount.toString(), beneficiaryAddress);
-			const preimage: any = getState(api, proposal);
-
-			const onSuccess = () => {
-				queueNotification({
-					header: 'Success!',
-					message: `Preimage #${proposal.hash} successful.`,
-					status: NotificationStatus.SUCCESS
-				});
-				setPreimage(preimage);
-				setPreimageHash(preimage.preimageHash);
-				setPreimageLength(preimage.preimageLength);
-				setPreimageCreated(true);
-				onChangeLocalStorageSet({ preimageCreated: true,  preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength }, Boolean(isPreimage), true);
-				setLoading(false);
-				setSteps({ percent: 100, step: 2 });
-			};
-
-			const onFailed = () => {
-				queueNotification({
-					header: 'failed!',
-					message: 'Transaction failed!',
-					status: NotificationStatus.ERROR
-				});
-				setLoading(false);
-			};
-			setLoading(true);
-
-			await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage?.notePreimageTx });
-		}
-		catch(error){
-			console.log(':( transaction failed');
-			console.error('ERROR:', error);
+		const onSuccess = () => {
 			queueNotification({
-				header: 'Failed!',
-				message: error.message,
+				header: 'Success!',
+				message: `Preimage #${proposal.hash} successful.`,
+				status: NotificationStatus.SUCCESS
+			});
+			setPreimage(preimage);
+			setPreimageHash(preimage.preimageHash);
+			setPreimageLength(preimage.preimageLength);
+			setPreimageCreated(true);
+			onChangeLocalStorageSet({ preimageCreated: true,  preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength }, Boolean(isPreimage), true);
+			setLoading(false);
+			setSteps({ percent: 100, step: 2 });
+		};
+
+		const onFailed = () => {
+			queueNotification({
+				header: 'failed!',
+				message: 'Transaction failed!',
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
+		};
+		setLoading(true);
 
-		}
+		await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage?.notePreimageTx });
+		setLoading(false);
+
 	};
 
 	const handleSubmit = async() => {
@@ -398,7 +386,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					value: values?.[index]?.toString()
 				};
 			});
-			if(preImageArguments){
+			if(preImageArguments && proposal.section === 'Treasury' && proposal?.method === 'spend'){
 				const balance = new BN(preImageArguments[0].value || '0') || ZERO_BN;
 				setBeneficiaryAddress(preImageArguments[1].value || '');
 				setFundingAmount(balance);
@@ -413,6 +401,15 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					}
 				}
 
+			}
+			else{
+				setPreimageLength(0);
+
+				queueNotification({
+					header: 'Incorrect Preimage Added!',
+					message: 'Please enter a preimage for a treasury related track.',
+					status: NotificationStatus.ERROR
+				});
 			}
 		}catch(error){
 			queueNotification({
@@ -430,10 +427,15 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}`);
 		if(data){
-			if(data.hash === preimageHash){
+			if(data.section === 'Treasury' && data.method === 'spend' && data.hash === preimageHash){
 				if(!data.proposedCall.args && !data?.proposedCall?.args?.beneficiary && !data?.proposedCall?.args?.amount){
+					console.log('fetching data from polkadotjs');
 					getExistPreimageDataFromPolkadot(preimageHash, Boolean(isPreimage));
-				}else{
+				}
+				else
+				{
+					console.log('fetching data from subsquid');
+
 					form.setFieldValue('preimage_length', data?.length);
 					setBeneficiaryAddress(data?.proposedCall?.args?.beneficiary || '');
 					const balance = new BN(data?.proposedCall?.args?.amount || '0') || ZERO_BN;
@@ -441,7 +443,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					setPreimageLength(data.length);
 					form.setFieldValue('preimage_length', data.length);
 					onChangeLocalStorageSet({ beneficiaryAddress: data?.proposedCall?.args?.beneficiary || '', fundingAmount: balance.toString(), preimageLength: data?.length || '' }, Boolean(isPreimage));
-					setSteps({ percent: 100 ,step: 1 });
+					//select track
 					for(const i in maxSpendArr){
 						const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
 						if(maxSpend.gte(balance)){
@@ -450,9 +452,23 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 							break;
 						}
 					}
-				}}
+
+					setSteps({ percent: 100 ,step: 1 });
+
+				}
+			}else {
+				setPreimageLength(0);
+				form.setFieldValue('preimage_length', 0);
+
+				queueNotification({
+					header: 'Incorrect Preimage Added!',
+					message: 'Please enter a preimage for a treasury related track.',
+					status: NotificationStatus.ERROR
+				});
+			}
 		}
 		else if(error){
+			console.log('fetching data from polkadotjs');
 			getExistPreimageDataFromPolkadot(preimageHash, Boolean(isPreimage));
 		}
 		setLoading(false);

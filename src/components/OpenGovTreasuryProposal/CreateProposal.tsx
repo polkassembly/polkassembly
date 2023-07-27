@@ -117,8 +117,11 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 		if(data && data?.post_id){
 			setPostId(data?.post_id);
 			setOpenSuccess(true);
-			setOpenModal(false);
 			console.log(postId, 'postId');
+			localStorage.removeItem('treasuryProposalProposerAddress');
+			localStorage.removeItem('treasuryProposalProposerWallet');
+			localStorage.removeItem('treasuryProposalData');
+			setOpenModal(false);
 		}
 		else if(apiError || !data?.post_id) {
 			queueNotification({
@@ -180,6 +183,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 				const post_id =  Number(await api.query.referenda.referendumCount()) - 1;
 				await handleSaveTreasuryProposal(post_id);
 				setLoading(false);
+
 			};
 
 			const onFailed = async() => {
@@ -190,8 +194,9 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 				});
 				setLoading(false);
 			};
+			setLoading(true);
 			await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: proposal });
-
+			setLoading(false);
 		}
 		catch(error){
 			setLoading(false);

@@ -40,11 +40,11 @@ import { getConvictionVoteOptions } from './VoteReferendum';
 const ZERO_BN = new BN(0);
 
 interface Props {
-	className?: string
-	referendumId?: number | null | undefined
-	onAccountChange: (address: string) => void
-	lastVote: ILastVote | undefined
-	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
+	className?: string;
+	referendumId?: number | null | undefined;
+	onAccountChange: (address: string) => void;
+	lastVote: ILastVote;
+	setLastVote: (pre: ILastVote) => void
 }
 
 const abi = require('../../../../moonbeamConvictionVoting.json');

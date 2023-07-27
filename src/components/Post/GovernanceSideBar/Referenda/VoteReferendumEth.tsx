@@ -40,8 +40,8 @@ interface Props {
 	className?: string
 	referendumId?: number | null | undefined
 	onAccountChange: (address: string) => void
-	lastVote:ILastVote | undefined
-	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
+	lastVote: ILastVote;
+	setLastVote: (pre: ILastVote) => void;
 }
 
 const abi = require('../../../../moonbeamAbi.json');

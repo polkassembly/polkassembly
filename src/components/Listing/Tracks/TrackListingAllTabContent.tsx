@@ -24,7 +24,6 @@ const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 
 const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) => {
 	const { className, posts, error , count } = props;
-	console.log('all tab posts',posts);
 	const noPosts = count === 0 || isNaN(Number(count));
 	if (error) return <ErrorState errorMessage={error} />;
 

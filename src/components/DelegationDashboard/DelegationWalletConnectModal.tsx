@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Alert, Button, Divider, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { Wallet } from '~src/types';
@@ -23,6 +23,7 @@ import styled from 'styled-components';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import ArrowLeft from '~assets/icons/arrow-left.svg';
+import formatBnBalance from '~src/util/formatBnBalance';
 
 interface Props{
   className?: string;
@@ -49,6 +50,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 	const [multisig, setMultisig] = useState<string>('');
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const [totalDeposit, setTotalDeposit] = useState<BN>(new BN(0));
+	const [initiatorBalance, setInitiatorBalance] = useState<BN>(new BN(0));
 
 	const handleSubmit = () => {
 		setLoading(true);
@@ -153,6 +156,26 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
+	const handleInitiatorBalance = useCallback(
+		async () => {
+			if (!api || !apiReady) {
+				return;
+			}
+			//deposit balance
+			const depositBase = api.consts.multisig.depositBase.toString();
+			const depositFactor = api.consts.multisig.depositFactor.toString();
+			setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
+			//initiator balance
+			const initiatorBalance = await api.query.system.account(address);
+			setInitiatorBalance(new BN(initiatorBalance.data.free.toString()));
+		},
+		[address, api, apiReady]
+	);
+
+	useEffect(() => {
+		handleInitiatorBalance();
+	}, [address, handleInitiatorBalance]);
+
 	return <Modal
 		wrapClassName={className}
 		className = {`${poppins.className} ${poppins.variable} w-[453px] radius`}
@@ -168,14 +191,14 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 				Connect your wallet
 			</div>
 		}
-		footer = {[<Button onClick={handleSubmit} disabled={accounts.length === 0 || (showMultisig && !multisig)} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-6 rounded-[4px]'>Continue</Button>]}
+		footer = {[<Button onClick={handleSubmit} disabled={accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-6 rounded-[4px]'>Continue</Button>]}
 		closable = {closable? true : false}
 		onCancel={() => closable ? setOpen(false) : setOpen(true)}
 	>
 		<Spin spinning={loading} indicator={<LoadingOutlined />}>
 			<div className='flex flex-col'>
 				<h3 className='text-sm font-normal text-[#485F7D] text-center'>Select a wallet</h3>
-				<div className='flex items-center justify-center gap-x-4'>
+				<div className={`flex items-center justify-center gap-x-4 ${showMultisig ? 'mb-6':''}`}>
 					{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
 					{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
 					{defaultWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
@@ -206,6 +229,13 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 							</div>
 				}
 
+				{showMultisig && initiatorBalance.lte(totalDeposit) &&
+					<Alert
+						message={`The Free Balance in your selected account is less than the Minimum Deposit ${formatBnBalance(totalDeposit, { numberAfterComma: 3, withUnit: true }, network)} required to create a Transaction.`}
+						showIcon
+						className='mb-6'
+					/>
+				}
 				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message='For using delegation dashboard:' description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
 				{Object.keys(defaultWallets || {}).length === 0 && !loading && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
 				{

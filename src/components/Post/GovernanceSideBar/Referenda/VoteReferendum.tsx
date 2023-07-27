@@ -7,7 +7,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Alert, Button, Divider, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
-import React, { useEffect, useMemo,useState } from 'react';
+import React, { useCallback, useEffect, useMemo,useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType,NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import BalanceInput from 'src/ui-components/BalanceInput';
@@ -46,6 +46,7 @@ import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import executeTx from '~src/util/executeTx';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
+import formatBnBalance from '~src/util/formatBnBalance';
 
 const ZERO_BN = new BN(0);
 
@@ -120,6 +121,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const { client, connect } = usePolkasafe(address);
 
 	const [vote, setVote] = useState< EVoteDecisionType>(EVoteDecisionType.AYE);
+	const [totalDeposit, setTotalDeposit] = useState<BN>(new BN(0));
+	const [initiatorBalance, setInitiatorBalance] = useState<BN>(new BN(0));
 
 	useEffect(() => {
 		if (userDetails.loginWallet) {
@@ -210,6 +213,26 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		getAccounts(loginWallet);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[loginWallet]);
+
+	const handleInitiatorBalance = useCallback(
+		async () => {
+			if (!api || !apiReady) {
+				return;
+			}
+			//deposit balance
+			const depositBase = api.consts.multisig.depositBase.toString();
+			const depositFactor = api.consts.multisig.depositFactor.toString();
+			setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
+			//initiator balance
+			const initiatorBalance = await api.query.system.account(address);
+			setInitiatorBalance(new BN(initiatorBalance.data.free.toString()));
+		},
+		[address, api, apiReady]
+	);
+
+	useEffect(() => {
+		handleInitiatorBalance();
+	}, [address, handleInitiatorBalance]);
 
 	useEffect(() => {
 		if(!address || !wallet) return;
@@ -635,6 +658,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							</div>
 								}
 							</div>
+							{showMultisig && initiatorBalance.lte(totalDeposit) &&
+								<Alert
+									message={`The Free Balance in your selected account is less than the Minimum Deposit ${formatBnBalance(totalDeposit, { numberAfterComma: 3, withUnit: true }, network)} required to create a Transaction.`}
+									showIcon
+								/>
+							}
 							{balanceErr.length > 0 && wallet && <Alert type='info' message={balanceErr} showIcon className='mb-4'/>}
 							{walletErr.error === 1 && !loadingStatus.isLoading && <Alert message={walletErr.message} description={walletErr.description} showIcon/>}
 							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
@@ -707,7 +736,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 								<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1.5px] border-[#D2D8E0]'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>
-									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance || (showMultisig && !multisig)}>Confirm</Button>
+									<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-[#E5007A] mr-[24px] font-semibold border-0 ${(!wallet || !lockedBalance) && 'opacity-50'}`} htmlType='submit' disabled={!wallet || !lockedBalance || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}>Confirm</Button>
 								</div>
 							</Form>
 							}

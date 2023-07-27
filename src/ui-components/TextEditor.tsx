@@ -82,9 +82,8 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
-		if (!value || !value.startsWith('<p><a href="../user/') || !value.endsWith('<p>&nbsp;</p>')) return;
-		ref.current?.editor?.selection.select(ref.current?.editor?.getBody(), true);
-		ref.current?.editor?.selection.collapse(false);
+		if (!value || !value.startsWith('<p><a href="../user/') || !value.endsWith('</a>&nbsp;</p>')) return;
+		ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
 		ref.current?.editor?.focus();
 	}, [value]);
 

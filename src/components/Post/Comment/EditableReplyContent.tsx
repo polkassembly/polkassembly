@@ -62,7 +62,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
 		}
-		replyToreplyForm.setFieldValue('content', `${usernameContent}<p>&nbsp;</p>` || '');
+		replyToreplyForm.setFieldValue('content', `${usernameContent}&nbsp;` || '');
 	}, [is_custom_username, proposer, replyToreplyForm, userName]);
 
 	const handleCancel = () => {

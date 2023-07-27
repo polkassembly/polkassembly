@@ -120,7 +120,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					{
 						topic &&
 							<div className='flex justify-start'>
-								<TopicTag className='xs:my-0.5 xs:mx-0.5' topic={topic} />
+								<TopicTag className='xs:my-0.5 xs:mx-2' topic={topic} />
 							</div>
 					}
 					<div className='max-xs-hidden m-2.5 text-bodyBlue font-medium text-sm'>

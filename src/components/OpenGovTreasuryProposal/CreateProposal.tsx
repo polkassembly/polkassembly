@@ -118,7 +118,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			setPostId(data?.post_id);
 			setOpenSuccess(true);
 			setOpenModal(false);
-			setLoading(false);
+			console.log(postId, 'postId');
 		}
 		else if(apiError || !data?.post_id) {
 			queueNotification({
@@ -177,7 +177,6 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					message: `Proposal #${proposal.hash} successful.`,
 					status: NotificationStatus.SUCCESS
 				});
-				setLoading(false);
 				const post_id =  Number(await api.query.referenda.referendumCount()) - 1;
 				await handleSaveTreasuryProposal(post_id);
 				setLoading(false);

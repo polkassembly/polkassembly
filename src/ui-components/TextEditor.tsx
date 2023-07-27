@@ -230,6 +230,10 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 };
 
 export default styled(TextEditor)`
+	.tox-tinymce {
+		border-radius: 1rem;
+	}
+
 	.tox-editor-header {
 		opacity: 0.3;
 		box-shadow: none !important;

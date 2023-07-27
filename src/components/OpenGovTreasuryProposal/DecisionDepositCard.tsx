@@ -189,10 +189,10 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 
 		const tx = api.tx.referenda.placeDecisionDeposit(Number(router?.query?.id));
 
-		const onSuccess = async() => {
+		const onSuccess = () => {
 			queueNotification({
 				header: 'Success!',
-				message: `Decision Deposit ${tx.hash} successful.`,
+				message: 'Decision Deposit successful.',
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading(false);
@@ -209,18 +209,11 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 			setLoading(false);
 		};
 
-		try{
-			setLoading(true);
-			await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
-
-		}catch(error){
-			onFailed();
-			setLoading(false);
-		}
+		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
 
 	};
-	return <div className='w-full p-6 text-bodyBlue rounded-[14px] mb-8 bg-white'>
-		<h2 className='font-semibold tracking-[0.015em] text-xl shadow-[0px 6px 18px 0px #0000000F]'>Decision Deposit</h2>
+	return <div className='w-full p-6 text-bodyBlue rounded-[14px] mb-8 bg-white shadow-[0px 6px 18px 0px #0000000F]'>
+		<h2 className='font-medium tracking-[0.015em] text-xl'>Decision Deposit</h2>
 		<div className='flex mt-6 gap-2'>
 			<span><CautionIcon/></span>
 			<span className='text-sm tracking-wide'>Decision deposit should be paid before completion of the decision period for a proposal to pass. It can be paid by anyone.</span>

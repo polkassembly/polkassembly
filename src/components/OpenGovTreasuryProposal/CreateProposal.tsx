@@ -105,9 +105,9 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	}, [proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
 
 	const handleSaveTreasuryProposal = async(postId: number) => {
-		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/action/createOpengovTreasuryProposal',{
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal',{
 			content,
-			postId : postId,
+			postId ,
 			proposerAddress,
 			tags,
 			title,
@@ -119,7 +119,6 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			setOpenSuccess(true);
 			setOpenModal(false);
 			setLoading(false);
-			console.log(postId);
 		}
 		else if(apiError || !data?.post_id) {
 			queueNotification({
@@ -179,12 +178,12 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					status: NotificationStatus.SUCCESS
 				});
 				setLoading(false);
-				const post_id = Number(api.query.referenda.referendumCount()) - 1;
+				const post_id =  Number(await api.query.referenda.referendumCount()) - 1;
 				await handleSaveTreasuryProposal(post_id);
 				setLoading(false);
 			};
 
-			const onFailed = () => {
+			const onFailed = async() => {
 				queueNotification({
 					header: 'Failed!',
 					message: 'Transaction failed!',

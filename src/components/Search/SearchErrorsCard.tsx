@@ -6,8 +6,10 @@ import React from 'react';
 import SuperSearchIcon from '~assets/icons/super-search.svg';
 import EmptyResultsIcon from '~assets/search/empty-search.svg';
 import { EFilterBy } from '.';
+import { useUserDetailsContext } from '~src/context';
+import { EGovType } from '~src/global/proposalType';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-import checkGov2Route from '~src/util/checkGov2Route';
 
 interface Props{
   setIsSuperSearch: (pre: boolean) => void;
@@ -24,6 +26,7 @@ interface Props{
 
 const SearchErrorsCard = ({ isSearchErr, setIsSuperSearch, setOpenModal, setFilterBy, isSuperSearch, filterBy, postResultsCounts, peopleResultsCounts, setPostsPage, setPeoplePage }: Props) =>
 {
+	const { govType } = useUserDetailsContext();
 	const router = useRouter();
 
 	return (((filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && postResultsCounts === 0)
@@ -42,7 +45,17 @@ const SearchErrorsCard = ({ isSearchErr, setIsSuperSearch, setOpenModal, setFilt
 			<div className='w-[50%] max-md:w-[80%] my-4'>
 				<Divider className='text-[#90A0B7] border-[1px]'><span className='text-[10px] font-medium'>OR</span></Divider>
 			</div>
-			<div className='text-sm text-bodyBlue font-medium tracking-[0.01em] flex gap-1'><span>See </span><span onClick={() =>  {router.push(checkGov2Route(router?.pathname) ? '/opengov' : '/'); setOpenModal(false);}} className='text-pink_primary mx-[2px] border-solid border-[0px] border-b-[1px] leading-[-8px] cursor-pointer'>Latest Activity</span><span >on Polkassembly.</span></div>
+			<div className='text-sm text-bodyBlue font-medium tracking-[0.01em] flex gap-1'><span>See </span>
+				<Link href={govType === EGovType.OPEN_GOV ? '/opengov' : '/'} onClick={(e) =>  {
+					e.stopPropagation();
+					e.preventDefault();
+					setOpenModal(false);
+					router.push(govType === EGovType.OPEN_GOV ? '/opengov' : '/');
+				}}
+				className='text-pink_primary mx-[2px] border-solid border-[0px] border-b-[1px] leading-[-8px] cursor-pointer'>
+          Latest Activity</Link>
+				<span>on Polkassembly.</span>
+			</div>
 		</div>
 		:!isSuperSearch ?
 			<div className='flex flex-col justify-center items-center mb-2'>

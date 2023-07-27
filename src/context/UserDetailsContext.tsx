@@ -11,6 +11,10 @@ import { JWTPayloadType } from '~src/auth/types';
 import { getLocalStorageToken } from '../services/auth.service';
 import { UserDetailsContextType } from '../types';
 
+ enum EGovType {
+	OPEN_GOV = 'open_gov',
+	GOV1 = 'gov1'
+}
 const initialUserDetailsContext : UserDetailsContextType = {
 	addresses: [],
 	allowed_roles: [],
@@ -18,6 +22,7 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	delegationDashboardAddress:'',
 	email: null,
 	email_verified: false,
+	govType: EGovType.OPEN_GOV,
 	id: null,
 	is2FAEnabled: false,
 	isLoggedOut: (): boolean => {

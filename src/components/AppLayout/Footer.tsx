@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import PaLogo from './PaLogo';
 import RedirectIcon from '~assets/icons/redirect-icon.svg';
 import { Divider, Space } from 'antd';
-import TwitterIcon from '~assets/icons/twitter-icon.svg';
+import TwitterIcon from '~assets/icons/twitter-pink-bg.svg';
 import DiscordIcon from '~assets/icons/discord-icon.svg';
 import TelegramIcon from '~assets/icons/telegram-icon.svg';
 import InternetIcon from '~assets/icons/internet-icon.svg';
@@ -19,7 +19,7 @@ const Footer = ({ className } : { className?:string }) => {
 
 	return (
 		<footer aria-label="Site Footer" className={`${className} bg-white max-[650px]:rounded-[14px] `}>
-			<div className="mx-auto max-w-screen-xl px-4 pt-8  sm:px-6 lg:px-8 ">
+			<div className="mx-auto max-w-screen-xl px-4 pt-8  sm:px-6 lg:pl-8 lg:pr-2">
 				<div className="flex flex-col md:flex-row ">
 					{/* Logo and Network Link */}
 					<div>
@@ -63,29 +63,39 @@ const Footer = ({ className } : { className?:string }) => {
 					{/* Terms Links */}
 					<div className="mt-8 md:mt-0 mx-auto md:mx-0 md:ml-auto flex flex-col md:flex-row justify-center md:justify-end">
 						<div className="md:ml-10 lg:ml-14 text-center sm:text-left">
-							<p className="text-lg font-bold text-[#243A57] mb-[-5px]">Help Center</p>
+							<p className="text-lg font-bold text-[#243A57] mb-[-5px] max-[650px]:mt-[-15px] ">Help Center</p>
 
 							<nav aria-label="Footer About Nav" className="mt-4 md:mt-3">
 								<div className="space-y-2 text-sm text-[#485F7D] font-normal">
 
-									<div className=''>
+									<div>
 										<a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer'>
 											Report an Issue
+											<RedirectIcon className='ml-3' />
 										</a>
-										<RedirectIcon className='ml-3' />
 									</div>
 									<div className='max-[650px]:mb-[-5px]'>
 										<a href='https://feedback.polkassembly.io' target='_blank' rel='noreferrer'>
 											Feedback
+											<RedirectIcon className='ml-3' />
 										</a>
 									</div>
-
+									<div className='max-[650px]:hidden'>
+										<Link href='/terms-and-conditions'>
+											Terms and Conditions
+										</Link>
+									</div>
+									<div>
+										<a href='https://github.com/polkassembly/polkassembly' target='_blank' rel='noreferrer'>
+											Github
+										</a>
+									</div>
 								</div>
 							</nav>
 						</div>
 
 						<div className="mt-8 md:mt-0 md:ml-10 lg:ml-14 text-center sm:text-left text-[#485F7D] font-normal">
-							<p className="text-lg font-bold text-[#243A57] mb-[-5px]">Our Services</p>
+							<p className="text-lg font-bold text-[#243A57] mb-[-5px] max-[650px]:mt-[-15px] ">Our Services</p>
 
 							<nav aria-label="Footer Services Nav" className="mt-4 md:mt-3">
 								<div className="space-y-2 text-sm">
@@ -114,7 +124,7 @@ const Footer = ({ className } : { className?:string }) => {
 				</div>
 
 				{/* Below divider */}
-				<Divider className='mb-0 ' />
+				<Divider className='mb-0' />
 				<div className="mt-5 pb-3 text-sm text-[#485F7D] font-medium">
 					<div className="text-center sm:flex sm:justify-between sm:text-left">
 						<div className='flex max-[650px]:flex-col'>

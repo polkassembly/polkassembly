@@ -146,7 +146,7 @@ const MultisigNotFound = () => <Alert
 	}
 	description={
 		<div className='max-w-md'>
-            Please integrate a multisig account or change your address. To create a multisig account, please visit <a href='https://polkasafe.xyz/' target='_blank' rel="noreferrer">Polkasafe</a> to create or manage your multisig account.
+            Please integrate a multisig account or change your address. To create a multisig account, please visit <a className='text-pink_primary' href='https://polkasafe.xyz/' target='_blank' rel="noreferrer">Polkasafe</a> to create or manage your multisig account.
 		</div>
 	}
 	type="info"

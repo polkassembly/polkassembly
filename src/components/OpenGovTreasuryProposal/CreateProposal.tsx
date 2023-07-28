@@ -180,7 +180,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					message: `Proposal #${proposal.hash} successful.`,
 					status: NotificationStatus.SUCCESS
 				});
-				const post_id =  Number(await api.query.referenda.referendumCount()) - 1;
+				const post_id =  Number(await api.query.referenda.referendumCount());
 				await handleSaveTreasuryProposal(post_id);
 				setLoading(false);
 
@@ -196,7 +196,6 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			};
 			setLoading(true);
 			await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: proposal });
-			setLoading(false);
 		}
 		catch(error){
 			setLoading(false);

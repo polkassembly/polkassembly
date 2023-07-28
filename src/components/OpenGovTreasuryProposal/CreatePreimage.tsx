@@ -5,7 +5,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import { EEnactment, IEnactment, IPreimage, ISteps } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import Address from '~src/ui-components/Address';
 import BN from 'bn.js';
 import dynamic from 'next/dynamic';
 import SelectTracks from './SelectTracks';
@@ -295,11 +294,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		const preimage: any = getState(api, proposal);
 
 		const onSuccess = () => {
-			queueNotification({
-				header: 'Success!',
-				message: `Preimage #${proposal.hash} successful.`,
-				status: NotificationStatus.SUCCESS
-			});
+
 			setPreimage(preimage);
 			setPreimageHash(preimage.preimageHash);
 			setPreimageLength(preimage.preimageLength);
@@ -318,9 +313,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			setLoading(false);
 		};
 		setLoading(true);
-
 		await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage?.notePreimageTx });
-		setLoading(false);
 
 	};
 
@@ -564,7 +557,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				form={form}
 				disabled={loading}
 				onFinish={handleSubmit}
-				initialValues={{ address: beneficiaryAddress, after_blocks: String(advancedDetails.afterNoOfBlocks?.toString()), at_block: String(advancedDetails.atBlockNo?.toString()), preimage_hash: preimageHash, preimage_length: preimageLength || 0 }}
+				initialValues={{ address: beneficiaryAddress, after_blocks: String(advancedDetails.afterNoOfBlocks?.toString()), at_block: String(advancedDetails.atBlockNo?.toString()), preimage_hash: preimageHash, preimage_length: preimageLength || 0, proposerAddress }}
 				validateMessages= {
 					{ required: "Please add the '${name}' " }
 				}>
@@ -599,14 +592,15 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 								<Balance address={proposerAddress} onChange={handleOnAvailableBalanceChange}/>
 							</span>
 						</div>
-						<div className=' px-2 rounded-[4px] h-[45px] cursor-not-allowed border-solid border-[1px] bg-[#F6F7F9] border-[#D2D8E0] flex items-center'>
-							<Address
-								address={proposerAddress}
-								identiconSize={30}
-								disableAddressClick
-								addressClassName='text-sm text-bodyBlue text-semibold'
-								textClassName='text-bodyBlue font-medium' />
-						</div>
+						<AddressInput
+							name='proposerAddress'
+							defaultAddress={proposerAddress}
+							onChange={() => console.log(proposerAddress)}
+							inputClassName={' font-normal text-sm h-[40px]'}
+							className='text-lightBlue text-sm font-normal -mt-6'
+							disabled
+						/>
+
 					</div>
 					<AddressInput
 						defaultAddress={beneficiaryAddress}
@@ -621,11 +615,12 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						skipFormatCheck={true}
 						checkValidAddress= {setValidBeneficiaryAddress}
 					/>
+
 					{addressAlert && <Alert className='mb mt-2' showIcon message='The substrate address has been changed to Kusama address.'/> }
 					<div  className='mt-6 -mb-6'>
 						<div className='flex justify-between items-center text-lightBlue text-sm mb-[2px]'>
 							<label>Funding Amount <span><HelperTooltip text='Amount requested by the proposer.' className='ml-1'/></span></label>
-							<span className='text-xs text-bodyBlue'>Current Value: <span className='text-pink_primary'>{Number(inputAmountValue)*Number(currentTokenPrice.value) || 0} USD</span></span>
+							<span className='text-xs text-bodyBlue'>Current Value: <span className='text-pink_primary'>{(Number(inputAmountValue)*Number(currentTokenPrice.value) || 0)} USD</span></span>
 						</div>
 						<BalanceInput address={proposerAddress} placeholder='Add funding amount' setInputValue={(input: string) => {setInputAmountValue(input); onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage)); }} formItemName='funding_amount' onChange= { handleFundingAmountChange }/>
 					</div>

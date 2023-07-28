@@ -27,10 +27,11 @@ interface Props{
   identiconSize?: number;
   iconClassName?: string;
   checkValidAddress?: (pre: boolean) => void;
-
+disabled?: boolean;
+name?:string;
 }
 
-const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName, identiconSize, iconClassName, checkValidAddress } : Props) => {
+const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName, identiconSize, iconClassName, checkValidAddress, disabled, name } : Props) => {
 	const { network } = useContext(NetworkContext);
 
 	const [address, setAddress] = useState<string>(defaultAddress ? defaultAddress : '');
@@ -111,7 +112,8 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 				<Form.Item name='address' className='mb-0 w-full' validateStatus={(address && !isValid) ? 'error' : 'success'}>
 					<Input
 						value={address}
-						name='address'
+						disabled={disabled}
+						name={name || 'address'}
 						className={`${!isValid ? 'px-[0.5em]' : 'pl-[46px]'} text-sm w-full h-[40px] border-[1px] rounded-[4px] ${inputClassName}`}
 						onChange={ (e) => {handleAddressChange(e.target.value); onChange(e.target.value);}}
 						placeholder={placeholder || 'Address'}

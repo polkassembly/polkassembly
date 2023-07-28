@@ -74,8 +74,6 @@ interface IGovernanceSidebarProps {
 	tally?: any;
 	post: IPostResponse;
 	toggleEdit?: () => void;
-	lastVote: ILastVote | undefined;
-	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -139,7 +137,8 @@ export function getTrackFunctions(trackInfo: any) {
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, lastVote ,setLastVote } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit } = props;
+	const [lastVote, setLastVote] = useState< ILastVote>();
 
 	const { network } = useNetworkContext();
 	const currentBlock = useCurrentBlock();

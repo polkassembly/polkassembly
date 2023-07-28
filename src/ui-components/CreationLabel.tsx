@@ -83,7 +83,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		<div className='text-xs flex flex-col md:flex-row md:items-center'>
 			<div className={'flex min-[320px]:flex-row min-[320px]:items-center w-full min-[320px]:w-auto '}>
 				<div className={'flex items-center '}>
-					{!text && <span className='mr-2 text-lightBlue'>By:</span>}
+					<span className='mr-2 text-lightBlue'>By:</span>
 					<NameLabel
 						defaultAddress={defaultAddress}
 						username={username}

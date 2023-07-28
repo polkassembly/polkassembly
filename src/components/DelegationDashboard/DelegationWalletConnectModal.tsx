@@ -135,6 +135,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 	};
 
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
+		localStorage.setItem('selectedWallet', wallet);
 		setAccounts([]);
 		setAddress('');
 		event.preventDefault();
@@ -217,7 +218,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 								<Divider className='m-0'>OR</Divider>
 								<div className='w-full flex justify-center'>
 									<WalletButton
-										className='text-sm text-bodyBlue font-semibold'
+										className='text-sm text-bodyBlue font-semibold border-[#D2D8E0]'
 										disabled={!apiReady}
 										onClick={() => {
 											setShowMultisig(!showMultisig);

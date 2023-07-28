@@ -258,6 +258,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setAvailableBalance(balance);
 	};
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
+		localStorage.setItem('selectedWallet', wallet);
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
 		setAccounts([]);
 		onAccountChange('');
@@ -646,7 +647,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								<Divider className='m-0'>OR</Divider>
 								<div className='w-full flex justify-center'>
 									<WalletButton
-										className='text-sm text-bodyBlue font-semibold'
+										className='text-sm text-bodyBlue font-semibold !border-[#D2D8E0]'
 										disabled={!apiReady}
 										onClick={() => {
 											setShowMultisig(!showMultisig);

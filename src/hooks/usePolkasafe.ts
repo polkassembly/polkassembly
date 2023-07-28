@@ -11,7 +11,7 @@ export default function usePolkasafe(address?:string)  {
 	const client = new Polkasafe();
 	const substrateAddress = getSubstrateAddress(address || '') || '';
 	const { network } = useNetworkContext();
-	const wallet = localStorage.getItem('loginWallet') || ''; // if user is not login only then
+	const wallet = localStorage.getItem('selectedWallet') || localStorage.getItem('loginWallet') || ''; // if user is not login only then
 	const injectedWindow = window as Window & InjectedWindow;
 	const selectedWallet = injectedWindow.injectedWeb3[wallet];
 	const connect = async () => {

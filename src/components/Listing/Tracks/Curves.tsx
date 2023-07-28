@@ -34,12 +34,33 @@ interface ICurvesProps {
 
 const Curves: FC<ICurvesProps> = (props) => {
 	const { data } = props;
+	const options = {
+		plugins:{
+			legend: {
+				display: false
+			}
+		},
+		scales: {
+			x: {
+				grid: {
+					display: false // Hide x-axis grid lines
+				}
+			},
+			y: {
+				grid: {
+					display: false // Hide y-axis grid lines
+				}
+			}
+		}
+	};
 	return(
 		<>
 			<article className='-mx-3 md:m-0'>
 				<Chart.Line
 					className='h-full w-full'
-					data={data} />
+					data={data}
+					options={options}
+				/>
 			</article>
 			<article className='mt-5 flex items-center justify-start gap-x-5'>
 				<div className='flex flex-col items-center'>

@@ -153,9 +153,8 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							{
 								backgroundColor: 'transparent',
 								borderColor: '#5BC044',
-								borderWidth: 2,
+								borderWidth: 1,
 								data: approvalData,
-								label: 'Approval',
 								pointHitRadius: 10,
 								pointHoverRadius: 5,
 								pointRadius: 0,
@@ -164,9 +163,8 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							{
 								backgroundColor: 'transparent',
 								borderColor: '#E5007A',
-								borderWidth: 2,
+								borderWidth: 1,
 								data: supportData,
-								label: 'Support',
 								pointHitRadius: 10,
 								pointHoverRadius: 5,
 								pointRadius: 0,

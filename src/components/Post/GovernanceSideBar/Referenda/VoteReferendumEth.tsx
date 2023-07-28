@@ -40,8 +40,8 @@ interface Props {
 	className?: string
 	referendumId?: number | null | undefined
 	onAccountChange: (address: string) => void
-	lastVote:ILastVote | undefined
-	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
+	lastVote: ILastVote | undefined;
+	setLastVote: (pre: ILastVote) => void;
 }
 
 const abi = require('../../../../moonbeamAbi.json');
@@ -418,7 +418,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-[4px] flex items-center justify-center p-6 w-[100%]'
 				onClick={openModal}
 			>
-				{lastVote == null || lastVote == undefined ? 'Cast Vote Now' : 'Cast Vote Again' }
+				{lastVote === undefined ? 'Cast Vote Now' : 'Cast Vote Again' }
 			</Button>
 			<Modal
 				open={showModal}

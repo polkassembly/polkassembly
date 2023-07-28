@@ -79,6 +79,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 					</p>
 					: <section>
 						<article className='-mx-3 md:m-0'>
+							<p>Reason</p>
 							<Chart.Line
 								className='h-full w-full'
 								data={data}
@@ -192,7 +193,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 							/>
 						</article>
 						<article className='mt-3 flex items-center justify-center gap-x-3 xs:gap-x-5'>
-							<button onClick={() => {
+							{/* <button onClick={() => {
 								toggleData(1);
 							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
 								<span className='h-1 border-0 border-t border-solid border-[#E5007A] w-[32px]'></span>
@@ -215,7 +216,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 							}} className='border-none outline-none bg-transparent flex flex-col justify-center cursor-pointer'>
 								<span className='h-1 border-0 border-t border-dashed border-[#5BC044] w-[32px]'></span>
 								<span className='text-sidebarBlue font-normal text-[8px] sm:text-[10px] leading-[12px]'>Current Approval</span>
-							</button>
+							</button> */}
 						</article>
 						<article className='mt-5 flex items-center justify-between gap-x-2'>
 							<div className='flex-1 p-[12.5px] bg-[#FFF5FB] rounded-[5px] shadow-[0px_6px_10px_rgba(0,0,0,0.06)]'>

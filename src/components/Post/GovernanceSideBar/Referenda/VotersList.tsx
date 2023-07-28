@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DislikeFilled, LeftOutlined, LikeFilled, MinusCircleFilled, RightOutlined, SwapOutlined } from '@ant-design/icons';
+import { DislikeFilled, LeftOutlined, LikeFilled, MinusCircleFilled, RightOutlined, SwapOutlined,StopOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Dropdown, Pagination, PaginationProps, Segmented, Spin } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
@@ -20,6 +20,11 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import classNames from 'classnames';
+import styled from 'styled-components';
+import LikeGray from '~assets/icons/like-gray.svg';
+import DislikeWhite from '~assets/icons/dislike-white.svg';
+import DislikeGray from '~assets/icons/dislike-gray.svg';
+import LikeWhite from '~assets/icons/like-white.svg';
 
 interface IVotersListProps {
 	className?: string;
@@ -79,18 +84,33 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 	const decisionOptions = [
 		{
-			label: <div className='flex items-center justify-center'><LikeFilled className='mr-1.5' /> <span>Ayes</span></div>,
+			label: <div className='flex items-center justify-center align-middle h-[32px]'><LikeFilled className='mr-1.5' /> <span>Ayes</span></div>,
 			value: 'yes'
 		},
 		{
-			label: <div className='flex items-center justify-center'><DislikeFilled className='mr-1.5' /> <span>Nays</span></div>,
+			label: <div className='flex items-center justify-center align-middle h-[32px]'><DislikeFilled className='mr-1.5' /> <span>Nays</span></div>,
 			value: 'no'
+		}
+	];
+
+	const des = [
+		{
+			label: <div className={`flex items-center justify-center text-[#576D8B] max-w-[166px] h-[32px] rounded-[20px] ${decision === 'yes'? 'bg-[#2ED47A] text-white' : ''}`}>{decision === 'yes' ? <LikeWhite className='mr-2 mb-[3px]' /> : <LikeGray className='mr-2 mb-[3px]' /> }<span className='font-medium text-base'>Aye</span></div>,
+			value: 'yes'
+		},
+		{
+			label: <div className={`flex items-center justify-center text-[#576D8B] max-w-[166px] h-[32px] rounded-[20px] ${decision === 'no'? 'bg-[#F53C3C] text-white' : ''}`}>{decision === 'no' ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' /> } <span className='font-medium text-base'>Nay</span></div>,
+			value: 'no'
+		},
+		{
+			label: <div className={` flex items-center justify-center text-[#576D8B] mr-2  max-w-[166px] h-[32px] rounded-[20px] ${decision === 'abstain'? 'bg-[#407BFF] text-white' : ''}`}><StopOutlined className='mr-2 mb-[3px]'/> <span className='font-medium text-base'>Abstain</span></div>,
+			value: 'abstain'
 		}
 	];
 
 	if(voteType === VoteType.REFERENDUM_V2) {
 		decisionOptions.push({
-			label: <div className='flex items-center justify-center'><MinusCircleFilled className='mr-1.5' /> <span>Abstain</span></div>,
+			label: <div className='flex items-center justify-center align-middle h-[32px]'><MinusCircleFilled className='mr-1.5' /> <span>Abstain</span></div>,
 			value: 'abstain'
 		});
 	}
@@ -129,31 +149,31 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				<div className="w-full flex items-center justify-center mb-8">
 					<Segmented
 						block
-						className='px-3 py-2 rounded-md w-full'
+						className={`${className} px-3 pt-[3px] bg-white rounded-[20px] h-[40px] border border-solid border-1 w-full`}
 						size="large"
 						value={decision}
 						onChange={(value) => {
 							setDecision(String(value) as DecisionType);
 							setCurrentPage(1);
 						}}
-						options={decisionOptions}
+						options={des}
 					/>
 				</div>
 
+				<div className='flex text-xs items-center justify-between mb-9 font-semibold'>
+					<div className='w-[110px]'>Voter</div>
+					<div className={classNames('', {
+						'w-[100px]': network === AllNetworks.COLLECTIVES,
+						'w-[60px]': network !== AllNetworks.COLLECTIVES
+					})}><span className='hidden md:inline-block'>Amount</span><span className='inline-block md:hidden'>Amt.</span></div>
+					{
+						network !== AllNetworks.COLLECTIVES?
+							<div className='w-[70px]'>Conviction</div>
+							: null
+					}
+					<div className='w-[30px]'>Vote</div>
+				</div>
 				<div className='flex flex-col text-xs xl:text-sm xl:max-h-screen gap-y-1 overflow-y-auto px-0 text-sidebarBlue'>
-					<div className='flex text-xs items-center justify-between mb-9 font-semibold'>
-						<div className='w-[110px]'>Voter</div>
-						<div className={classNames('', {
-							'w-[100px]': network === AllNetworks.COLLECTIVES,
-							'w-[60px]': network !== AllNetworks.COLLECTIVES
-						})}><span className='hidden md:inline-block'>Amount</span><span className='inline-block md:hidden'>Amt.</span></div>
-						{
-							network !== AllNetworks.COLLECTIVES?
-								<div className='w-[70px]'>Conviction</div>
-								: null
-						}
-						<div className='w-[30px]'>Vote</div>
-					</div>
 
 					{
 						votesRes && decision && !!votesRes[decision]?.votes?.length ?
@@ -227,4 +247,9 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	);
 };
 
-export default VotersList;
+export default styled(VotersList)`
+	.ant-segmented-item-selected{
+		border-radius:20px !important;
+		height: 32px !important;
+	}
+`;

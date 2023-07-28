@@ -63,6 +63,7 @@ import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import { formatBalance } from '@polkadot/util';
+import VotingDataIcon from '~assets/icons/voting-info-icon.svg';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -885,19 +886,27 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															}}
 															open={thresholdOpen}
 															footer={[]}
-															className='md:min-w-[700px]'
+															className='md:min-w-[604px]'
 															closeIcon={<CloseIcon />}
-															title={
-																<h2 className='text-bodyBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
+															title={<div className='border-b flex align-middle'>
+																<VotingDataIcon className='mr-2 mt-2'/>
+																<h2 className='text-bodyBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>Voting Data</h2>
+															</div>
 															}
 														>
 															<div className='mt-5'>
+																<p>REason 222</p>
 																<Curves
 																	curvesError={curvesError}
 																	curvesLoading={curvesLoading}
 																	data={data}
 																	progress={progress}
 																	setData={setData}
+																/>
+																<VotersList
+																	className={className}
+																	referendumId={onchainId as number}
+																	voteType={getVotingTypeFromProposalType(proposalType)}
 																/>
 															</div>
 														</Modal>

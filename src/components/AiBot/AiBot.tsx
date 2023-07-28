@@ -170,13 +170,13 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	return (
 		<>
 			{/* Script for AI Bot */}
-			<Script id='ai-bot-script'>
+			{/* <Script id='ai-bot-script'>
 				{'window.DocsBotAI=window.DocsBotAI||{ },DocsBotAI.init=function(c){return new Promise(function(e,o){var t=document.createElement("Script");t.type="text/javascript",t.async=!0,t.src="https://widget.docsbot.ai/chat.js";var n=document.getElementsByTagName("Script")[0];n.parentNode.insertBefore(t,n),t.addEventListener("load",function(){window.DocsBotAI.mount({ id: c.id, supportCallback: c.supportCallback, identify: c.identify });var t;t=function(n){return new Promise(function(e){if(document.querySelector(n))return e(document.querySelector(n));var o=new MutationObserver(function(t){document.querySelector(n) && (e(document.querySelector(n)), o.disconnect())});o.observe(document.body,{childList:!0,subtree:!0})})},t&&t("#docsbotai-root").then(e).catch(o)}),t.addEventListener("error",function(t){o(t.message)})})};'}
 			</Script>
 
 			<Script id='ai-bot-init'>
 				{'DocsBotAI.init({id: "X6zGLB8jx6moWVb6L5S9/D7XT9ksDuTZCvdf99KSW"});'}
-			</Script>
+			</Script> */}
 
 			<FloatButton.Group
 				trigger='click'
@@ -198,8 +198,8 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
 						onClick={() => { setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
-							(window as any).DocsBotAI.close();
-							setIsAIChatBotOpen(false);
+							// (window as any).DocsBotAI.close();
+							// setIsAIChatBotOpen(false);
 							setGrillChat(false);
 						}
 						}>

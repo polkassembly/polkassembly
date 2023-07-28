@@ -84,15 +84,9 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 				tableData.map((rowData,index) => (
 					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 h-auto min-h-[140px] ${poppins.variable} ${poppins.className}`} onClick={() => onClick(rowData)}>
 						{/* Meta Data Row */}
-						<div className="flex items-center justify-between text-bodyBlue">
-							<div className="flex my-3">
-								<span className='mx-3'>#{
-									rowData.tip_id ? rowData.tip_id : rowData.post_id
-								}</span>
-								<span className='mx-0.5'>
-									{/* truncate rowData.title to 50 characters */}
-									{rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
-								</span>
+						<div className="flex items-center justify-between text-bodyBlue m-2.5">
+							<div className="max-xs-hidden">
+								#{rowData.tip_id ? rowData.tip_id : rowData.post_id} {rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
 							</div>
 						</div>
 
@@ -132,13 +126,11 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 				tableData.map((rowData,index) => (
 					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 h-auto min-h-[140px] ${poppins.variable} ${poppins.className}`} onClick={() => onClick(rowData)}>
 						{/* Meta Data Row */}
-						<div className="flex items-center justify-between text-bodyBlue">
-							<div className="flex my-3">
-								<span className='mx-3'>#{rowData.post_id}</span>
-								<span className='mx-0.5'>
-									{rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
-								</span>
-								{rowData.sub_title && <div className='text-sm text-bodyBlue'>{rowData.sub_title}</div>}
+						<div className="flex items-center justify-between text-bodyBlue m-2.5">
+							<div className="max-xs-hidden">
+								#{rowData.post_id} {rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
+								{rowData.sub_title && <div className='text-sm text-bodyBlue'>{rowData.sub_title}
+								</div>}
 							</div>
 						</div>
 						{/* Created by and on */}

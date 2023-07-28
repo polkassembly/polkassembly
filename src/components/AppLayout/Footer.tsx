@@ -88,6 +88,7 @@ const Footer = ({ className } : { className?:string }) => {
 									<div>
 										<a href='https://github.com/polkassembly/polkassembly' target='_blank' rel='noreferrer'>
 											Github
+											<RedirectIcon className='ml-3' />
 										</a>
 									</div>
 								</div>

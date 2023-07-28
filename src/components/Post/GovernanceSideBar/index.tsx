@@ -37,7 +37,7 @@ import EditProposalStatus from './TreasuryProposals/EditProposalStatus';
 import VotersList from './Referenda/VotersList';
 import ReferendaV2Messages from './Referenda/ReferendaV2Messages';
 import blockToTime from '~src/util/blockToTime';
-import { makeLinearCurve, makeReciprocalCurve } from './Referenda/util';
+import { getTrackFunctions } from './Referenda/util';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
 import dayjs from 'dayjs';
@@ -109,31 +109,6 @@ export function checkVotingStart(timeline: any[], openGovType: TOpenGov) {
 export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: number, endHeight: number) {
 	const gone = endHeight - decidingSince;
 	return Math.min(gone / decisionPeriod, 1);
-}
-
-export function getTrackFunctions(trackInfo: any) {
-	let supportCalc: any = null;
-	let approvalCalc: any = null;
-	if (trackInfo) {
-		if (trackInfo.minApproval) {
-			if (trackInfo.minApproval.reciprocal) {
-				approvalCalc = makeReciprocalCurve(trackInfo.minApproval.reciprocal);
-			} else if (trackInfo.minApproval.linearDecreasing) {
-				approvalCalc = makeLinearCurve(trackInfo.minApproval.linearDecreasing);
-			}
-		}
-		if (trackInfo.minSupport) {
-			if (trackInfo.minSupport.reciprocal) {
-				supportCalc = makeReciprocalCurve(trackInfo.minSupport.reciprocal);
-			} else if (trackInfo.minSupport.linearDecreasing) {
-				supportCalc = makeLinearCurve(trackInfo.minSupport.linearDecreasing);
-			}
-		}
-	}
-	return {
-		approvalCalc,
-		supportCalc
-	};
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {

@@ -12,8 +12,12 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import Curves from './Curves';
 import DelegateModal from './DelegateModal';
-import { useNetworkContext } from '~src/context';
+import { useApiContext, useNetworkContext } from '~src/context';
 import { TrackProps } from '~src/types';
+import { ChartData, Point } from 'chart.js';
+import { getTrackFunctions } from '../../Post/GovernanceSideBar/Referenda/util';
+import blockToTime from '~src/util/blockToTime';
+
 // import DelegateModalEthV2 from './DelegateModalEthV2';
 
 interface IAboutTrackCardProps {
@@ -91,23 +95,94 @@ export const blocksToRelevantTime = (network: string, blocks:number): string => 
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const { network } = useNetworkContext();
-
 	const { className, trackName } = props;
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 	useEffect(() => {
 		setTrackMetaData(getTrackData(network, trackName));
 	}, [network, trackName]);
-	const labels = ['1', '2', '3', '4', '5', '6', '7'];
-	const data = {
-		datasets: [{
-			borderColor: '#5BC044',
-			data: [65, 59, 80, 81, 56, 55, 40],
-			fill: false,
-			label: 'My First Dataset',
-			tension: 0.1
-		}],
-		labels: labels
-	};
+	const [data, setData] = useState<any>({
+		datasets: [],
+		labels: []
+	});
+	//get the track number of the track
+	const track_number = trackMetaData?.trackId;
+	const { api, apiReady } = useApiContext();
+	useEffect(() => {
+		if (!api || !apiReady) {
+			return;
+		}
+		const getData = async () => {
+			const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
+			if (tracks && Array.isArray(tracks)) {
+				const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
+				if (track && Array.isArray(track) && track.length > 1) {
+					const trackInfo = track[1] as any;
+					const { decisionPeriod } = trackInfo;
+					const strArr = blockToTime(decisionPeriod, network)['time'].split(' ');
+					let decisionPeriodHrs = 0;
+					if (strArr && Array.isArray(strArr)) {
+						strArr.forEach((str) => {
+							if (str.includes('h')) {
+								decisionPeriodHrs += parseInt(str.replace('h', ''));
+							} else if (str.includes('d')) {
+								decisionPeriodHrs += parseInt(str.replace('d', '')) * 24;
+							}
+						});
+					}
+					const labels: number[] = [];
+					const supportData: { x: number; y: number; }[] = [];
+					const approvalData: { x: number; y: number; }[] = [];
+					const { approvalCalc, supportCalc } = getTrackFunctions(trackInfo);
+					for (let i = 0; i < (decisionPeriodHrs * 60); i++) {
+						labels.push(i);
+						if (supportCalc) {
+							supportData.push({
+								x: i,
+								y: supportCalc((i / (decisionPeriodHrs * 60))) * 100
+							});
+						}
+						if (approvalCalc) {
+							approvalData.push({
+								x: i,
+								y: approvalCalc((i / (decisionPeriodHrs * 60))) * 100
+							});
+						}
+					}
+					const newData: ChartData<'line', (number | Point | null)[]> = {
+						datasets: [
+							{
+								backgroundColor: 'transparent',
+								borderColor: '#5BC044',
+								borderWidth: 2,
+								data: approvalData,
+								label: 'Approval',
+								pointHitRadius: 10,
+								pointHoverRadius: 5,
+								pointRadius: 0,
+								tension: 0.1
+							},
+							{
+								backgroundColor: 'transparent',
+								borderColor: '#E5007A',
+								borderWidth: 2,
+								data: supportData,
+								label: 'Support',
+								pointHitRadius: 10,
+								pointHoverRadius: 5,
+								pointRadius: 0,
+								tension: 0.1
+							}
+						],
+						labels
+					};
+					setData(JSON.parse(JSON.stringify(newData)));
+				}
+			}
+		};
+		getData();
+	}
+	, [api, apiReady, network , track_number]);
+
 	return (
 		<div className={`${className} bg-white drop-shadow-md rounded-xxl p-4 md:p-8`}>
 			<div className="flex justify-between">

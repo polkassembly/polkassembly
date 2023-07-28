@@ -25,13 +25,6 @@ ChartJS.register(
 	Legend
 );
 
-export interface IProgress {
-	approval: number,
-	approvalThreshold: number,
-	support: number,
-	supportThreshold: number
-}
-
 interface ICurvesProps {
     data: {
 		datasets: any[],
@@ -42,72 +35,23 @@ interface ICurvesProps {
 const Curves: FC<ICurvesProps> = (props) => {
 	const { data } = props;
 	return(
-		<article className='-mx-3 md:m-0'>
-			<Chart.Line
-				className='h-full w-full'
-				data={data}
-				options={{
-					animation: {
-						duration: 0
-					},
-					clip: false,
-					plugins: {
-						hoverLine: {
-							lineColor: '#0F0F',
-							lineWidth: 1
-						},
-						legend: {
-							display: false,
-							position: 'bottom'
-						}
-					} as any,
-					scales: {
-						x: {
-							beginAtZero: false,
-							display: true,
-							grid: {
-								display: true,
-								drawOnChartArea: false
-							},
-							ticks: {
-								max: 10,
-								stepSize: 2
-							} as any,
-							title: {
-								display: true,
-								font: {
-									size: window.innerWidth < 400? 10: 12,
-									weight: window.innerWidth > 400? '500': '400'
-								},
-								text: 'Days'
-							},
-							type: 'linear'
-						},
-						y: {
-							beginAtZero: false,
-							display: true,
-							max: 100,
-							min: 0,
-							ticks: {
-								callback(val: any) {
-									return val + '%';
-								},
-								stepSize: 20
-							},
-							title: {
-								display: true,
-								font: {
-									size: window.innerWidth < 400? 10: 12,
-									weight: window.innerWidth > 400? '500': '400'
-								},
-								text: 'Passing Percentage'
-							}
-						}
-					}
-				}}
-			/>
-		</article>
+		<>
+			<article className='-mx-3 md:m-0'>
+				<Chart.Line
+					className='h-full w-full'
+					data={data} />
+			</article>
+			<article className='mt-5 flex items-center justify-start gap-x-5'>
+				<div className='flex flex-col items-center'>
+					<div className='w-10 h-0.5 rounded-full bg-[#E5007A]'></div>
+					<p className='text-xs text-bodyBlue my-0.5'>Support</p>
+				</div>
+				<div className='flex flex-col items-center'>
+					<div className='w-10 h-0.5 rounded-full bg-[#5BC044]'></div>
+					<p className='text-xs text-bodyBlue my-0.5'>Approval</p>
+				</div>
+			</article>
+		</>
 	);
 };
-
 export default Curves;

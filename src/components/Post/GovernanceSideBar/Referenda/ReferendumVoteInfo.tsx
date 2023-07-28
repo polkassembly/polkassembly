@@ -23,7 +23,7 @@ import { isSubscanSupport } from 'src/util/subscanCheck';
 import { chainProperties } from '~src/global/networkConstants';
 import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { GET_TOTAL_VOTES_COUNT, GET_VOTES_WITH_LIMIT } from '~src/queries';
+import { GET_TOTAL_VOTES_COUNT, GET_VOTES_WITH_LIMIT_IS_NULL_TRUE } from '~src/queries';
 
 interface IReferendumVoteInfoProps {
 	className?: string
@@ -80,7 +80,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 				if (totalCount) {
 					const res = await fetchSubsquid({
 						network,
-						query: GET_VOTES_WITH_LIMIT,
+						query: GET_VOTES_WITH_LIMIT_IS_NULL_TRUE,
 						variables: {
 							index_eq: referendumId,
 							limit: totalCount,

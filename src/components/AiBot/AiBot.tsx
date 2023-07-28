@@ -46,7 +46,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	useEffect(() => {
 		if (!isAIChatBotOpen) return;
 
-		const docsBotElement = ((window as any).DocsBotAI.el.shadowRoot?.lastChild) as HTMLElement;
+		const docsBotElement = ((window as any).DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
 		docsBotElement.style.position = 'fixed';
 		docsBotElement.style.right = '1em';
 		docsBotElement.style.bottom = '80px';
@@ -67,8 +67,8 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 
 	useEffect(() => {
 		const handleRouteChange = () => {
-			if ((window as any).DocsBotAI.isChatbotOpen) {
-				(window as any).DocsBotAI.close();
+			if ((window as any).DocsBotAI?.isChatbotOpen) {
+				(window as any).DocsBotAI?.close();
 			}
 			setFloatButtonOpen(false);
 			setGrillChat(false);

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import classNames from 'classnames';
 import { Modal, Skeleton } from 'antd';
@@ -11,6 +11,8 @@ import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import showdown from 'showdown';
 import styled from 'styled-components';
 import Gif from './Gif';
+import usernamesPattern from '~src/util/usernamesPattern';
+import { debounce } from 'lodash';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -79,13 +81,34 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const cursorRef = useRef<any>(null);
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
 		if (!value || !value.startsWith('<p><a href="../user/') || !value.endsWith('</a>&nbsp;</p>')) return;
+
 		ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
 		ref.current?.editor?.focus();
 	}, [value]);
+
+	const handleOnInput = (value: string) => {
+		// find all usernames in the text (matches for spaces around it and/or html tags, except for the anchor tag) and replace them with links
+		const updatedText = value.replace(usernamesPattern, (matchedUsername) => `<a href="${window.location.origin}/user/${matchedUsername.replace('@', '')}">${matchedUsername}</a>`);
+
+		console.log('updatedText: ', updatedText);
+		ref?.current?.editor?.setContent(updatedText);
+
+		const cursorBookmark = cursorRef?.current;
+		if(cursorBookmark){
+			console.log('stored cursorBookmark: ', cursorBookmark);
+			ref?.current?.editor?.selection.moveToBookmark(cursorBookmark);
+		} else {
+			ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
+		}
+	};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const debouncedOnInputChange = useCallback(debounce(handleOnInput, 500), []);
 
 	return (
 		<>
@@ -190,6 +213,18 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								editor.on('init', () => {
 									if (autofocus) editor.focus();
 								});
+
+								editor.on('input', function(e) {
+									const value: string = String(e.target.innerHTML);
+
+									const bookmark = ref?.current?.editor?.selection.getBookmark(2, true);
+									console.log('bookmark on input: ', bookmark);
+
+									cursorRef.current = bookmark;
+
+									debouncedOnInputChange(value);
+								});
+
 								editor.ui.registry.addIcon('custom-icon', gifSVGData);
 								editor.ui.registry.addButton('customButton', { icon: 'custom-icon', onAction: () => setIsModalVisible(true) });
 							},

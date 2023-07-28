@@ -123,7 +123,7 @@ const AddressDropdown = ({
 					className={`flex items-center flex-1 ${isMultisig ? 'ml-4':''}`}
 					otherTextClassName='ml-auto'
 				/>
-				<span className='mx-2'>
+				<span className='mx-2 mb-1'>
 					<DownIcon />
 				</span>
 			</div>

@@ -41,7 +41,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					<WalletButton disabled={disabled} onClick={(event) => {
 						onPolkasafeSelect(true);
 						handleWalletClick((event as any), Wallet.POLKASAFE);
-					}} name="polkasafe" icon={<WalletIcon which={Wallet.POLKASAFE} className='h-7 w-6'/>} />
+					}} name="polkasafe" icon={<WalletIcon which={Wallet.POLKASAFE} className='h-7 w-6 !mt-1'/>} />
 
 				}
 				{

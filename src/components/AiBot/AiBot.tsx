@@ -43,27 +43,27 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
 	const { network } = useNetworkContext();
 
-	useEffect(() => {
-		if (!isAIChatBotOpen) return;
+	// useEffect(() => {
+	// if (!isAIChatBotOpen) return;
 
-		const docsBotElement = ((window as any).DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
-		docsBotElement.style.position = 'fixed';
-		docsBotElement.style.right = '1em';
-		docsBotElement.style.bottom = '80px';
-	}, [isAIChatBotOpen, floatButtonOpen]);
+	// const docsBotElement = ((window as any).DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
+	// docsBotElement.style.position = 'fixed';
+	// docsBotElement.style.right = '1em';
+	// docsBotElement.style.bottom = '80px';
+	// }, [isAIChatBotOpen, floatButtonOpen]);
 
-	useEffect(() => {
-		// check for the presence of a dom element inside a setInterval until it is found
-		const interval = setInterval(() => {
-			const docsBotElement = ((window as any)?.DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
-			if (!docsBotElement) return;
+	// useEffect(() => {
+	// check for the presence of a dom element inside a setInterval until it is found
+	// const interval = setInterval(() => {
+	// const docsBotElement = ((window as any)?.DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
+	// if (!docsBotElement) return;
 
-			clearInterval(interval);
-			docsBotElement.style.display = 'none';
-		}, 600);
+	// clearInterval(interval);
+	// docsBotElement.style.display = 'none';
+	// }, 600);
 
-		return () => clearInterval(interval);
-	}, []);
+	// return () => clearInterval(interval);
+	// }, []);
 
 	useEffect(() => {
 		const handleRouteChange = () => {

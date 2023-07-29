@@ -221,7 +221,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		setShowAlert(false);
 		form.validateFields();
 
-		if(isPreimage || !proposerAddress || !beneficiaryAddress || !getEncodedAddress(beneficiaryAddress, network) ||
+		if(isPreimage || !proposerAddress || !beneficiaryAddress || !getEncodedAddress(beneficiaryAddress, network) || !Web3.utils.isAddress(beneficiaryAddress) ||
 		!api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN) || fundingAmount.eq(ZERO_BN))return;
 		if(!selectedTrack) return;
 		debounceTxFn();
@@ -615,6 +615,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						skipFormatCheck={true}
 						checkValidAddress= {setValidBeneficiaryAddress}
 					/>
+					{!(getEncodedAddress(beneficiaryAddress, network) || Web3.utils.isAddress(beneficiaryAddress)) && <span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span>}
 
 					{addressAlert && <Alert className='mb mt-2' showIcon message='The substrate address has been changed to Kusama address.'/> }
 					<div  className='mt-6 -mb-6'>

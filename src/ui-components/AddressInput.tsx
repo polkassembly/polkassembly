@@ -109,7 +109,11 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 					</>
 				}
 
-				<Form.Item name='address' className='mb-0 w-full' validateStatus={(address && !isValid) ? 'error' : 'success'}>
+				<Form.Item
+					name={name || 'address'}
+					className='mb-0 w-full'
+					validateStatus={(address && !isValid) ? 'error' : 'success'}
+				>
 					<Input
 						value={address}
 						disabled={disabled}

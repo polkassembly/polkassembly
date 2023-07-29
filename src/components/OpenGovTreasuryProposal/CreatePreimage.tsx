@@ -557,7 +557,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				form={form}
 				disabled={loading}
 				onFinish={handleSubmit}
-				initialValues={{ address: beneficiaryAddress, after_blocks: String(advancedDetails.afterNoOfBlocks?.toString()), at_block: String(advancedDetails.atBlockNo?.toString()), preimage_hash: preimageHash, preimage_length: preimageLength || 0, proposerAddress }}
+				initialValues={{ address: beneficiaryAddress, after_blocks: String(advancedDetails.afterNoOfBlocks?.toString()), at_block: String(advancedDetails.atBlockNo?.toString()), preimage_hash: preimageHash, preimage_length: preimageLength || 0, proposer_address: proposerAddress }}
 				validateMessages= {
 					{ required: "Please add the '${name}' " }
 				}>
@@ -593,7 +593,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 							</span>
 						</div>
 						<AddressInput
-							name='proposerAddress'
+							name='proposer_address'
 							defaultAddress={proposerAddress}
 							onChange={() => console.log(proposerAddress)}
 							inputClassName={' font-normal text-sm h-[40px]'}
@@ -620,7 +620,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					<div  className='mt-6 -mb-6'>
 						<div className='flex justify-between items-center text-lightBlue text-sm mb-[2px]'>
 							<label>Funding Amount <span><HelperTooltip text='Amount requested by the proposer.' className='ml-1'/></span></label>
-							<span className='text-xs text-bodyBlue'>Current Value: <span className='text-pink_primary'>{(Number(inputAmountValue)*Number(currentTokenPrice.value) || 0)} USD</span></span>
+							<span className='text-xs text-bodyBlue'>Current Value: <span className='text-pink_primary'>{Math.floor(Number(inputAmountValue)*Number(currentTokenPrice.value) || 0)} USD</span></span>
 						</div>
 						<BalanceInput address={proposerAddress} placeholder='Add funding amount' setInputValue={(input: string) => {setInputAmountValue(input); onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage)); }} formItemName='funding_amount' onChange= { handleFundingAmountChange }/>
 					</div>

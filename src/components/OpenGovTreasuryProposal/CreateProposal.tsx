@@ -126,7 +126,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 		else if(apiError || !data?.post_id) {
 			queueNotification({
 				header: 'Error',
-				message: 'There was an error creating your treasury proposal.',
+				message: apiError,
 				status: NotificationStatus.ERROR
 			});
 			console.error(apiError);

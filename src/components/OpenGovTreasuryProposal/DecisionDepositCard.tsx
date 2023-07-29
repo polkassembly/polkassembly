@@ -11,7 +11,7 @@ import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import CautionIcon from '~assets/icons/grey-caution.svg';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { APPNAME } from '~src/global/appName';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { NotificationStatus, Wallet } from '~src/types';
@@ -53,6 +53,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [amount, setAmount] = useState<BN>(ZERO_BN);
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
+	const { setPostData } = usePostDataContext();
 
 	const handleOnBalanceChange = (balanceStr: string) => {
 		setAvailableBalance(new BN(balanceStr.toString() || ZERO_BN));
@@ -196,6 +197,8 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				message: 'Decision Deposit successful.',
 				status: NotificationStatus.SUCCESS
 			});
+			setPostData((prev: any) => {return { ...prev, statusHistory: [...(prev?.statusHistory || []), { status:'DecisionDepositPlaced' } ] };});
+
 			setLoading(false);
 			setOpenModal(false);
 			router.reload();

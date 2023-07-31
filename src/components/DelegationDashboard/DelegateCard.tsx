@@ -18,8 +18,8 @@ import SocialLink from '~src/ui-components/SocialLinks';
 import { socialLinks } from '../UserProfile/Details';
 import { ESocialType } from '~src/auth/types';
 import { formatBalance } from '@polkadot/util';
+import { formatedBalance } from './ProfileBalance';
 import CloseIcon from '~assets/icons/close.svg';
-import { formatedBalance } from '~src/util/formatedBalance';
 
 interface Props{
   delegate: IDelegate;

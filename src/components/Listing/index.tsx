@@ -5,10 +5,10 @@
 import Link from 'next/link';
 import React, { FC } from 'react';
 import { poppins } from 'pages/_app';
+import GovernanceCard from 'src/components/GovernanceCard';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import { getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
-import GovernanceCard from '../GovernanceCard';
 
 interface IListingProps {
   className?: string;
@@ -48,7 +48,6 @@ const Listing: FC<IListingProps> = (props) => {
 					method,
 					end,
 					tags,
-					tally,
 					spam_users_count
 				} = post;
 				const id = isTip ? hash : post_id;
@@ -74,7 +73,6 @@ const Listing: FC<IListingProps> = (props) => {
 									isTip={isTip}
 									tags={tags}
 									spam_users_count={spam_users_count}
-									tally={tally}
 								/>
 							</Link>
 						}

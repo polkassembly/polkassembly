@@ -11,7 +11,7 @@ import Address from '~src/ui-components/Address';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import VoteIcon from '~assets/icons/vote.svg';
 import Link from 'next/link';
-import { getDefaultPeriod } from '../Post/GovernanceSideBar/Referenda/ReferendaV2Messages';
+import { IPeriod, getDefaultPeriod, getPeriodData, getStatusBlock } from '../Post/GovernanceSideBar/Referenda/ReferendaV2Messages';
 import { useNetworkContext, useUserDetailsContext } from '~src/context';
 import dayjs from 'dayjs';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -21,10 +21,8 @@ import NayIcon from '~assets/delegation-tracks/nay-delegation.svg';
 import CautionIcon from '~assets/delegation-tracks/caution.svg';
 import BN from 'bn.js';
 import { BN_ZERO, formatBalance } from '@polkadot/util';
-import { ETrackDelegationStatus, IPeriod } from '~src/types';
+import { ETrackDelegationStatus } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
-import { getStatusBlock } from '~src/util/getStatusBlock';
-import { getPeriodData } from '~src/util/getPeriodData';
 
 interface Props{
   proposal: IPostListing;

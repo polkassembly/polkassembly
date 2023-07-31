@@ -36,8 +36,8 @@ import { chainProperties } from '~src/global/networkConstants';
 import { useRouter } from 'next/router';
 import Web3 from 'web3';
 import Balance from '~src/components/Balance';
+import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import executeTx from '~src/util/executeTx';
-import { formatedBalance } from '~src/util/formatedBalance';
 
 const ZERO_BN = new BN(0);
 

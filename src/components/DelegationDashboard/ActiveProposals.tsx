@@ -29,7 +29,7 @@ const ActiveProposals = ( { className, posts, trackDetails, status, delegatedTo 
 	const count = posts.length;
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
 
-	return <div className={`${className} rounded-[14px] bg-white py-[24px] px-[37px] mt-[22px]`}>
+	return <div className=  {`${className} rounded-[14px] bg-white py-[24px] px-[37px] mt-[22px]`}>
 		<div onClick={() =>  setExpandProposals(!expandProposals)}  className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
 			<div className='flex jutify-center items-center gap-2'>
 				<ActiveProposalsIcon className='mr-[4px]'/>

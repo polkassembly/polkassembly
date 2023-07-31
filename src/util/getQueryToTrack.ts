@@ -5,41 +5,56 @@
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { PostOrigin } from '~src/types';
 
+const getDefaultTrackMetaData = () => {
+	return {
+		confirmPeriod: '',
+		decisionDeposit: '',
+		decisionPeriod: '',
+		description: '',
+		group: '',
+		maxDeciding: '',
+		minEnactmentPeriod: '',
+		preparePeriod: '',
+		trackId: 0
+	};
+};
+
 const getQueryToTrack = (track: string, network:string) => {
+	if(!network) return getDefaultTrackMetaData ;
 
 	const originTrack = track && !Array.isArray(track) && track.split('-').join('_').toUpperCase();
 
 	switch (originTrack){
 	case 'ROOT':
-		return networkTrackInfo[network][PostOrigin.ROOT];
+		return networkTrackInfo[network]?.[PostOrigin.ROOT];
 	case 'AUCTION_ADMIN':
-		return networkTrackInfo[network][PostOrigin.AUCTION_ADMIN];
+		return networkTrackInfo[network]?.[PostOrigin.AUCTION_ADMIN];
 	case'BIG_SPENDER':
-		return networkTrackInfo[network][PostOrigin.BIG_SPENDER];
+		return networkTrackInfo[network]?.[PostOrigin.BIG_SPENDER];
 	case 'BIG_TIPPER':
-		return networkTrackInfo[network][PostOrigin.BIG_TIPPER];
+		return networkTrackInfo[network]?.[PostOrigin.BIG_TIPPER];
 	case 'FELLOWSHIP_ADMIN':
-		return networkTrackInfo[network][PostOrigin.FELLOWSHIP_ADMIN];
+		return networkTrackInfo[network]?.[PostOrigin.FELLOWSHIP_ADMIN];
 	case 'GENERAL_ADMIN':
-		return networkTrackInfo[network][PostOrigin.GENERAL_ADMIN];
+		return networkTrackInfo[network]?.[PostOrigin.GENERAL_ADMIN];
 	case 'LEASE_ADMIN':
-		return networkTrackInfo[network][PostOrigin.LEASE_ADMIN];
+		return networkTrackInfo[network]?.[PostOrigin.LEASE_ADMIN];
 	case 'MEDIUM_SPENDER':
-		return networkTrackInfo[network][PostOrigin.MEDIUM_SPENDER];
+		return networkTrackInfo[network]?.[PostOrigin.MEDIUM_SPENDER];
 	case  'REFERENDUM_CANCELLER':
-		return networkTrackInfo[network][PostOrigin.REFERENDUM_CANCELLER];
+		return networkTrackInfo[network]?.[PostOrigin.REFERENDUM_CANCELLER];
 	case 'REFERENDUM_KILLER':
-		return networkTrackInfo[network][PostOrigin.REFERENDUM_KILLER];
+		return networkTrackInfo[network]?.[PostOrigin.REFERENDUM_KILLER];
 	case 'WHITELISTED_CALLER':
-		return networkTrackInfo[network][PostOrigin.WHITELISTED_CALLER];
+		return networkTrackInfo[network]?.[PostOrigin.WHITELISTED_CALLER];
 	case 'TREASURER':
-		return  networkTrackInfo[network][PostOrigin.TREASURER];
+		return  networkTrackInfo[network]?.[PostOrigin.TREASURER];
 	case 'SMALL_SPENDER':
-		return networkTrackInfo[network][PostOrigin.SMALL_SPENDER];
+		return networkTrackInfo[network]?.[PostOrigin.SMALL_SPENDER];
 	case 'STAKING_ADMIN':
-		return networkTrackInfo[network][PostOrigin.STAKING_ADMIN];
+		return networkTrackInfo[network]?.[PostOrigin.STAKING_ADMIN];
 	case 'SMALL_TIPPER':
-		return networkTrackInfo[network][PostOrigin.SMALL_TIPPER];
+		return networkTrackInfo[network]?.[PostOrigin.SMALL_TIPPER];
 	}
 };
 

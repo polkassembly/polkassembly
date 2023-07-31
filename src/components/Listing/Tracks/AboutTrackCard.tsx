@@ -159,7 +159,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<div className="w-full sm:w-1/2 md:w-1/3 lg:w-auto gap-6">
 					<div className='flex flex-col'>
 						<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Prepare Period</div>
-						<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-2 whitespace-pre'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</div>
+						<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-2'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</div>
 					</div>
 				</div>
 			</div>

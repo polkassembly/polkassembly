@@ -56,13 +56,13 @@ import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
 import MoneyIcon from '~assets/icons/money-icon-gray.svg';
 import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
+import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import { formatBalance } from '@polkadot/util';
-import { formatedBalance } from '~src/util/formatedBalance';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined

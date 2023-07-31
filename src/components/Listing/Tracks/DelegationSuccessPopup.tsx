@@ -21,7 +21,7 @@ import AbstainGray from '~assets/icons/abstainGray.svg';
 import { EVoteDecisionType } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
-import { formatedBalance } from '~src/util/formatedBalance';
+import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 
 interface Props{
   className?: string;

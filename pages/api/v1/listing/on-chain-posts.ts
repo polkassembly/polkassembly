@@ -42,7 +42,6 @@ export interface IPostListing {
 	parent_bounty_index?: number
 	method?: string;
 	status?: string;
-  status_history:any[]
 	title: string;
 	topic: {
 		id: number;
@@ -222,7 +221,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					});
 				}
 				const status = subsquidPost.status;
-				const statusHistory = subsquidPost.statusHistory;
 				const postId = proposalType === ProposalType.TIPS ? hash : index;
 				const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 
@@ -260,7 +258,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							post_reactions,
 							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 							status,
-							status_history: statusHistory,
 							tags: data?.tags || [],
 							title: data?.title || subsquareTitle || null,
 							topic: topic ? topic : isTopicIdValid(topic_id) ? {
@@ -290,7 +287,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					post_reactions,
 					proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 					status: status,
-					status_history: statusHistory,
 					title: subsquareTitle,
 					topic: topicFromType,
 					type: type || subsquidProposalType,
@@ -540,7 +536,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							}
 						});
 					}
-					const statusHistory= subsquidPost.statusHistory;
 					let status = subsquidPost.status;
 					if (status === 'DecisionDepositPlaced') {
 						const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
@@ -588,7 +583,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 								requestedAmount: preimage?.proposedCall?.args?.amount || preimage?.proposedCall?.args?.value || null,
 								status,
-								status_history: statusHistory,
 								tags: data?.tags || [],
 								title: data?.title || subsquareTitle,
 								topic: topic ? topic : isTopicIdValid(topic_id) ? {
@@ -620,7 +614,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 						requestedAmount: preimage?.proposedCall?.args?.amount || preimage?.proposedCall?.args?.value || null,
 						status: status,
-						status_history: statusHistory,
 						title: subsquareTitle,
 						topic: topicFromType,
 						type: type || subsquidProposalType,

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Modal, Progress } from 'antd';
 import BN from 'bn.js';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
 import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Tracks/AboutTrackCard';
 import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
@@ -12,9 +12,6 @@ import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import CloseIcon from 'public/assets/icons/close.svg';
 import { getBlockLink } from '~src/util/subscanCheck';
 import { IProgress } from './Curves';
-import { IPeriod } from '~src/types';
-import { getPeriodData } from '~src/util/getPeriodData';
-import { getStatusBlock } from '~src/util/getStatusBlock';
 
 interface IReferendaV2Messages {
     className?: string;
@@ -23,6 +20,36 @@ interface IReferendaV2Messages {
 
 interface IButtonProps extends PropsWithChildren {}
 
+export const getPeriodData = (network: string, date: Dayjs, trackData: any, fieldKey: string) => {
+	const period = blocksToRelevantTime(network, Number(trackData[fieldKey]));
+	let periodEndsAt = date.clone();
+	let periodPercent = 0;
+	if (period) {
+		if (period.includes('hrs')) {
+			periodEndsAt = periodEndsAt.add(Number(period.split(' ')[0]), 'hour');
+		} else if (period.includes('days')) {
+			periodEndsAt = periodEndsAt.add(Number(period.split(' ')[0]), 'day');
+		} else if (period.includes('min')) {
+			periodEndsAt = periodEndsAt.add(Number(period.split(' ')[0]), 'minute');
+		}
+		periodPercent = Math.round(dayjs().diff(date, 'minute') / periodEndsAt.diff(date, 'minute') * 100);
+	}
+	const periodCardVisible = periodEndsAt.diff(dayjs(), 'second') > 0;
+	return {
+		period,
+		periodCardVisible,
+		periodEndsAt,
+		periodPercent
+	};
+};
+
+export interface IPeriod {
+	period: string;
+	periodCardVisible: boolean;
+	periodEndsAt: dayjs.Dayjs;
+	periodPercent: number;
+}
+
 export const getDefaultPeriod = () => {
 	return {
 		period: '',
@@ -30,6 +57,26 @@ export const getDefaultPeriod = () => {
 		periodEndsAt: dayjs(),
 		periodPercent: 0
 	};
+};
+
+export const getStatusBlock = (timeline: any[], type: string[], status: string) => {
+	let deciding: any;
+	if (timeline && Array.isArray(timeline)) {
+		timeline.some((v) => {
+			if (v && type.includes(v.type)  && v.statuses && Array.isArray(v.statuses)) {
+				let isFind = false;
+				v.statuses.some((v: any) => {
+					if (v && v.status === status) {
+						isFind = true;
+						deciding = v;
+					}
+				});
+				return isFind;
+			}
+			return false;
+		});
+	}
+	return deciding;
 };
 
 export const checkProposalPresent = (timeline: any[], type: string) => {

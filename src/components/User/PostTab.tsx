@@ -6,7 +6,7 @@ import { IUserPost } from 'pages/api/v1/listing/user-posts';
 import React, { FC } from 'react';
 import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
-import GovernanceCard from '~src/components/GovernanceCard';
+import GovernanceCard from '../GovernanceCard';
 
 interface IPostTabProps {
     posts: IUserPost[];

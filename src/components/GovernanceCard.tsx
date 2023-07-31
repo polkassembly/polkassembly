@@ -104,7 +104,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
 
-	const mainTitle = <span className={tipReason ? 'tipTitle' : ''}><div>{titleString}</div></span>;
+	const mainTitle = <span className={tipReason && 'tipTitle'}>{titleString}</span>;
 	const subTitle = title && tipReason && method && <h5>{title}</h5>;
 	const currentBlock = useCurrentBlock()?.toNumber() || 0;
 	const ownProposal = currentUser?.addresses?.includes(address);
@@ -226,9 +226,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							requestedAmount &&
 							<div className='flex justify-center items-center'>
 								{requestedAmount > 100 ?
-									<span className='text-lightBlue text-sm font-medium sm:mr-[2.63rem]'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue text-sm font-medium sm:mr-[2.63rem] whitespace-pre'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 									:
-									<span className='text-lightBlue text-sm font-medium sm:mr-[2.65rem]'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue text-sm font-medium sm:mr-[2.65rem] whitespace-pre'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 								}
 							</div>
 						}
@@ -302,7 +302,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{
 								topic?
 									<div className='flex items-center sm:-mt-1'>
-										<Divider type="vertical" className='max-lg:hidden sm:mt-1' style={{ borderLeft: '1px solid #485F7D' }} />
+										<Divider type="vertical" className='sm:mt-1' style={{ borderLeft: '1px solid #485F7D' }} />
 										<TopicTag className='sm:mt-0 sm:mx-1' topic={topic} />
 									</div>
 									: null
@@ -344,36 +344,37 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			</div>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200  xs:px-2 xs:py-2 md:pb-6 min-h-[147px] xs:flex h-auto sm:hidden`}>
 				<div className="sm:hidden xs:flex flex-col flex-1 xs:mt-1">
-					{
-						requestedAmount &&
-							<div className='xs:flex xs:justify-end xs:mr-5'>
+					<div className="xs:flex sm:hidden justify-between xs:my-1 sm:my-0">
+						{
+							topic &&
+							<div>
+								<TopicTag className='xs:mx-1.5' topic={topic} />
+							</div>
+						}
+						{
+							requestedAmount &&
+							<div className='xs:mr-5 sm:m-0'>
 								{requestedAmount > 100 ?
-									<span className='text-lightBlue text-sm font-medium sm:mr-[54px]'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue text-sm font-medium'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 									:
-									<span className='text-lightBlue text-sm font-medium sm:mr-20'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue text-sm font-medium'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
 								}
 							</div>
-					}
-					<div className='sm:hidden xs:flex xs:justify-start gap-x-2 lg:items-start lg:flex-row my-2 '>
-						<span className='font-medium text-center xs:w-[45px] text-bodyBlue xs:mt-0'>#{isTip? tip_index: onchainId}</span>
-						<div className='xs:mt-0 lg:mt-0'>
-							<h1 className='text-bodyBlue flex overflow-hidden lg:max-w-none'>
-								<span className='text-bodyBlue text-sm font-medium mt-0 xs:mt-[-1.5px]'>{ mainTitle }</span>
-							</h1>
-							<h2 className='text-bodyBlue font-medium text-sm'>{subTitle}</h2>
-						</div>
-						<div className='sm:hidden xs:flex justify-between items-center gap-x-2'>
-							{
-								spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
-									<div className='flex items-center justify-center'>
-										<Tooltip color="#E5007A" title="This post could be a spam.">
-											<WarningMessageIcon className='text-xl text-[#FFA012]' />
-										</Tooltip>
-									</div>
-									: null
-							}
-							{/* {status  && <StatusTag className='mt-[-36px]' status={status} />} */}
-						</div>
+						}
+					</div>
+					<div className='sm:hidden xs:flex justify-between items-center gap-x-2'>
+						{
+							spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
+								<div className='flex items-center justify-center'>
+									<Tooltip color="#E5007A" title="This post could be a spam.">
+										<WarningMessageIcon className='text-xl text-[#FFA012]' />
+									</Tooltip>
+								</div>
+								: null
+						}
+					</div>
+					<div className='max-xs-hidden m-2.5 text-bodyBlue font-medium text-sm'>
+						#{isTip? tip_index: onchainId} {mainTitle} {subTitle}
 					</div>
 
 					<div className="mt-0 sm:gap-2.5 xs:gap-0 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center items-center">
@@ -415,7 +416,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{
 								!tags || tags.length === 0?
 									status  &&
-									<StatusTag className='mt-1' status={status} />
+									<StatusTag className='mt-0.5' status={status} />
 									: null
 							}
 						</div>

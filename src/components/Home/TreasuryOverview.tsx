@@ -383,8 +383,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									<div className='flex flex-col justify-center text-bodyBlue font-medium gap-y-3'>
 										<Divider
 											style={{
-												background: '#D2D8E0',
-												width: '100%'
+												background: '#D2D8E0'
 											}}
 											className='m-0 p-0' />
 										<span className='flex flex-col justify-center text-lightBlue text-xs font-medium'>
@@ -434,7 +433,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											}
 										</div>
 									</div>
-									<div className="flex flex-col justify-center text-bodyBlue font-medium gap-y-3">
+									<div className="flex flex-col justify-center overflow-hidden text-bodyBlue font-medium gap-y-3">
 										<Divider
 											style={{
 												background: '#D2D8E0'

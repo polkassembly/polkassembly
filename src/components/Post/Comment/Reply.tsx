@@ -5,7 +5,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef } from 'react';
 import CreationLabel from 'src/ui-components/CreationLabel';
-import UpdateLabel from 'src/ui-components/UpdateLabel';
 import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 
@@ -19,7 +18,7 @@ interface Props{
 }
 
 export const Reply = ({ className, commentId, reply ,userName } : Props) => {
-	const { user_id, username, content, created_at, id, updated_at, proposer, is_custom_username } = reply;
+	const { user_id, username, content, created_at, id, proposer, is_custom_username } = reply;
 	const { asPath } = useRouter();
 	const replyRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
@@ -52,10 +51,6 @@ export const Reply = ({ className, commentId, reply ,userName } : Props) => {
 					spam_users_count={reply.spam_users_count}
 					commentSource={reply.reply_source}
 				>
-					<UpdateLabel
-						created_at={created_at}
-						updated_at={updated_at}
-					/>
 				</CreationLabel>
 				<EditableReplyContent
 					userId={user_id}

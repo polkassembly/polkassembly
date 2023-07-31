@@ -48,7 +48,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
 	const { postData: { postIndex, postType } } = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
-
 	useEffect(() => {
 		if (typeof window == 'undefined') return;
 		const hashArr = asPath.split('#');
@@ -88,14 +87,17 @@ export const Comment: FC<ICommentProps> = (props) => {
 					sentiment={newSentiment}
 					commentSource={comment_source}
 					spam_users_count={spam_users_count}
-					truncateUsername = {false}
 				>
-					<div className='cursor-pointer' onClick={() => setOpenModal(true)}>
-						<UpdateLabel
-							created_at={created_at}
-							updated_at={updated_at}
-							isHistory={history && history?.length > 0}
-						/></div>
+					{
+						history && history.length > 0 &&
+						<div className='cursor-pointer' onClick={() => setOpenModal(true)}>
+							<UpdateLabel
+								created_at={created_at}
+								updated_at={updated_at}
+								isHistory={history && history?.length > 0}
+							/>
+						</div>
+					}
 				</CreationLabel>
 				<EditableCommentContent
 					userId={user_id}

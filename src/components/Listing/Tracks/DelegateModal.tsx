@@ -22,7 +22,7 @@ import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useUserDetailsContext } from '~src/context';
 
-import DelegateProfileIcon from '~assets/icons/delegate-popup-profile.svg';
+import DelegateProfileIcon from '~assets/icons/delegation-listing.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import { ITrackDelegation } from 'pages/api/v1/delegations';

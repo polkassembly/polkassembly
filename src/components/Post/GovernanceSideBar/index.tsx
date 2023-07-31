@@ -62,6 +62,7 @@ import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
+import { formatBalance } from '@polkadot/util';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -73,8 +74,6 @@ interface IGovernanceSidebarProps {
 	tally?: any;
 	post: IPostResponse;
 	toggleEdit?: () => void;
-	lastVote: ILastVote | undefined;
-	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -138,7 +137,8 @@ export function getTrackFunctions(trackInfo: any) {
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, lastVote ,setLastVote } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit } = props;
+	const [lastVote, setLastVote] = useState< ILastVote>();
 
 	const { network } = useNetworkContext();
 	const currentBlock = useCurrentBlock();
@@ -569,6 +569,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		api?.setSigner(signer);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
+
+	useEffect(() => {
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		getVotingHistory();

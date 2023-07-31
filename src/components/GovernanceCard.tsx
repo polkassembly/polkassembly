@@ -257,7 +257,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{tags && tags.length > 0 && <>
 								<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								{ tags?.slice(0,2).map((tag, index) =>
-									(<div key={index} className='text-lightBlue rounded-xl px-sm py-1 border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
+									(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-1 border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
 										{tag}
 									</div>))}
 								{tags.length>2 && <span className='text-bodyBlue' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
@@ -377,8 +377,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						#{isTip? tip_index: onchainId} {mainTitle} {subTitle}
 					</div>
 
-					<div className="mt-0 sm:gap-2.5 xs:gap-0 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center items-center">
-						<div className="sm:hidden xs:flex xs:justify-start xs:flex-wrap items-center">
+					<div className="mt-0 sm:gap-2.5 xs:gap-0 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center">
+						<div className="sm:hidden xs:flex xs:justify-start xs:flex-wrap items-center h-[32px]">
 							<OnchainCreationLabel address={address} username={username} />
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
 							{relativeCreatedAt && <>
@@ -400,16 +400,18 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						</div>
 
-						<div className='xs:flex justify-between items-center xs:mt-3 xs:gap-x-2'>
-							{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />}
-							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
-								(<div key={index} className='text-lightBlue rounded-xl px-sm py-1 border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
-									{tag}
-								</div>))}
-							{tags.length>2 && <span className='text-bodyBlue' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+						<div className='xs:flex justify-between xs:mt-3 xs:gap-x-2'>
+							{tags && tags.length > 0 && <div className='flex'>
+								<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
+								<div className='flex gap-1'>
+									{ tags?.slice(0,2).map((tag, index) =>
+										(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-1 border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
+											{tag}
+										</div>))}
+									{tags.length>2 && <span className='text-bodyBlue' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
                 +{tags.length-2}
-							</span>}
-							</>}
+									</span>}</div>
+							</div>}
 							{tags && tags.length > 0?
 								status  && <StatusTag className='xs:mt-0 xs:absolute xs:right-[5%]' status={status} />
 								: null}
@@ -423,22 +425,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 					</div>
 				</div>
-				<Modal
-					open= {tagsModal}
-					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
-					footer={false}
-					className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 max-sm:w-[100%] h-[120px]`}
-				><div className='flex'>
-						<TagsIcon className='mr-2 mt-1.5' />
-						<h2 className='text-lg tracking-wide font-semibold text-bodyBlue mb-2'>Tags</h2>
-					</div>
-					<div className='w-full h-[1px] bg-[#D2D8E0]' />
-					<div className='flex gap-2 flex-wrap mt-4' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
-						(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] px-[16px] py-[2px] font-normal text-[10px] text-lightBlue' >
-							{tag}
-						</div>))}
-					</>}</div>
-				</Modal>
 			</div>
 		</>
 	);

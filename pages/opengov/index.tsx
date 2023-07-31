@@ -104,20 +104,20 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 	return (
 		<>
 			<SEOHead title='OpenGov' network={network}/>
-			<h1 className='text-bodyBlue font-semibold text-2xl mx-2'>Overview</h1>
+			<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
 			<div className="mt-6 mx-1">
 				{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData?.data} showGov2Links />}
 			</div>
 
-			<div className="mt-6 mx-1">
+			<div className="mt-8 mx-1">
 				<TreasuryOverview />
 			</div>
 
-			<div className="mt-6 mx-1">
+			<div className="mt-8 mx-1">
 				<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
 			</div>
 
-			<div className="mt-6 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">
+			<div className="mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">
 				<div className='w-full xl:w-[60%]'>
 					<UpcomingEvents />
 				</div>

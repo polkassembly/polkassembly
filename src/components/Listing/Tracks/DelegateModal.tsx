@@ -37,7 +37,6 @@ import { useRouter } from 'next/router';
 import Web3 from 'web3';
 import Balance from '~src/components/Balance';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
-import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
 import executeTx from '~src/util/executeTx';
 
 const ZERO_BN = new BN(0);
@@ -280,16 +279,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 
 	return (
 		<>
-			{!open && !setOpen && <Button
-				onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true); }}
-				className={'h-[40px] border-pink_primary hover:border-solid py-1 border-solid px-4 flex justify-around items-center rounded-[4px] text-pink_primary bg-transparent shadow-none gap-2 ml-1 mt-[1px]'}
-			>
-				<DelegatesProfileIcon/>
-				<span className='text-sm font-medium'>
-              Delegate
-				</span>
-			</Button>
-			}
+			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm bg-pink_primary flex gap-0 items-center justify-center p-5 rounded-md text-white'>
+				<DelegateProfileIcon className='mr-2'/>
+				<span >Delegate</span>
+			</Button>}
 
 			<Modal
 				maskClosable={false}

@@ -41,40 +41,18 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 
 	return (
 		<>
-			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-4 md:p-4 min-h-[120px] sm:flex xs:hidden ${className}`}>
+			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 p-3 md:p-4 min-h-[120px] sm:flex xs:hidden ${className}`}>
 				<span className='font-medium text-center flex-none sm:w-[120px] text-bodyBlue sm:mt-2'>#{post_id}</span>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-[6px]">
 					<OnchainCreationLabel address={address} topic={topic} username={username} />
-					<div className="hidden sm:flex sm:justify-between lg:items-start lg:flex-row">
-						<label className='text-bodyBlue font-medium text-sm flex'>
-							{title}
-						</label>
-						<div className='flex justify-between items-center'>
-							{relativeCreatedAt &&
-							<div className='flex items-center text-lightBlue lg:hidden text-sm'>
-								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
-							</div>}
-							{
-								spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
-									<div className='flex lg:hidden items-center justify-center'>
-										<Tooltip color="#E5007A" title="This post could be a spam.">
-											<WarningMessageIcon className='text-xl text-[#FFA012]' />
-										</Tooltip>
-									</div>
-									: null
-							}
+					<div className="hidden sm:mt-2 sm:mb-1 sm:flex sm:justify-between sm:items-start sm:flex-row">
+						<div className='mt-3 lg:mt-1'>
+							<h1 className='text-bodyBlue font-medium text-sm flex'>
+								{title}
+							</h1>
 						</div>
-						{
-							spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
-								<div className='hidden lg:flex items-center justify-center'>
-									<Tooltip color="#E5007A" title="This post could be a spam.">
-										<WarningMessageIcon className='text-xl text-[#FFA012]' />
-									</Tooltip>
-								</div>
-								: null
-						}
 					</div>
-					<div className="font-medium text-bodyBlue text-xs mt-1 sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
+					<div className="font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
 
 						<div className='flex items-center gap-x-2'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>

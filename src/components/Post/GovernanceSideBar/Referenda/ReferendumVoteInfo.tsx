@@ -264,7 +264,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 				<GovSidebarCard>
 					<Spin spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
 						<div className='flex items-center justify-between gap-x-2'>
-							<h6 className='text-bodyBlue font-medium text-lg m-0 p-0'>Voting</h6>
+							<h6 className='text-bodyBlue font-medium text-xl leading-[24px] m-0 p-0'>Voting</h6>
 							<div className='flex items-center justify-center gap-x-2'>
 								<div className={'text-bodyBlue border-solid border-bodyBlue border xl:max-w-[120px] 2xl:max-w-[100%] text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min'}>
 									{ voteInfo?.voteThreshold }
@@ -350,7 +350,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 						<GovSidebarCard>
 							<Spin spinning={isFetchingCereVoteInfo} className='bg-white' indicator={<LoadingOutlined />}>
 								<div className='flex items-center justify-between gap-x-2'>
-									<h6 className='text-bodyBlue font-medium text-lg m-0 p-0'>Voting</h6>
+									<h6 className='text-bodyBlue font-medium text-xl leading-[24px] m-0 p-0'>Voting</h6>
 									<div className='flex items-center justify-center gap-x-2 relative z-50'>
 										<div title={voteInfo?.voteThreshold} className={'text-bodyBlue border-solid border-navBlue border xl:max-w-[120px] 2xl:max-w-[100%] text-xs rounded-full px-3 py-1 whitespace-nowrap truncate h-min'}>
 											{ voteInfo?.voteThreshold }

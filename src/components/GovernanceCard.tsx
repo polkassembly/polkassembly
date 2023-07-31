@@ -378,7 +378,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 
 					<div className="mt-0 sm:gap-2.5 xs:gap-0 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center">
-						<div className="sm:hidden xs:flex xs:justify-start xs:flex-wrap items-center h-[32px]">
+						<div className="sm:hidden xs:flex xs:justify-start xs:flex-wrap items-center h-[32px] -mt-2">
 							<OnchainCreationLabel address={address} username={username} />
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
 							{relativeCreatedAt && <>

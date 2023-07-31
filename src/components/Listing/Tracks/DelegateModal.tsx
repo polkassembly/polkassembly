@@ -242,7 +242,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 
 		const txArr = checkedArr?.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
 		const delegateTxn = api.tx.utility.batchAll(txArr);
-
+		setLoading(true);
 		await executeTx({ address: delegationDashboardAddress, api, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 

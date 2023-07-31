@@ -62,7 +62,7 @@ interface IGovernanceProps {
 	spam_users_count?: number;
 	cid?:string;
 	requestedAmount?:number;
-  tally?: any;
+  tally?:  any;
   timeline?: any[];
   statusHistory?: any[];
   index?: number;

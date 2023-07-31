@@ -30,6 +30,7 @@ import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
+import { checkIsProposer } from './utils/checkIsProposer';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -90,7 +91,7 @@ const Post: FC<IPostProps> = (props) => {
 		proposalType
 	} = props;
 
-	const { id, addresses } = useContext(UserDetailsContext);
+	const { id, addresses, loginAddress } = useContext(UserDetailsContext);
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
@@ -105,14 +106,11 @@ const Post: FC<IPostProps> = (props) => {
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
 
-	useEffect(() => {
-		if(!post) return;
-
+	const handleCanEdit = async () => {
 		const { post_id, proposer } = post;
 
 		if(isOffchainPost) {
 			setCanEdit(post.user_id === id);
-			return;
 		}
 
 		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
@@ -125,8 +123,14 @@ const Post: FC<IPostProps> = (props) => {
 		}
 
 		const substrateAddress = getSubstrateAddress(proposer);
+		if(!isProposer){
+			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...addresses || loginAddress ] );
+			if(isProposer){
+				setCanEdit(true);
+				return;
+			}
+		}
 		if(!isProposer || !substrateAddress) return;
-
 		(async () => {
 			//check if proposer address is verified
 			const { data , error: fetchError } = await nextApiClientFetch<IVerified>( 'api/v1/auth/data/isAddressVerified', {
@@ -139,8 +143,13 @@ const Post: FC<IPostProps> = (props) => {
 				setCanEdit(true);
 			}
 		})();
+	};
+
+	useEffect(() => {
+		if(!post) return;
+		handleCanEdit();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [addresses, id, isEditing, post, proposalType]);
+	}, [post]);
 
 	useEffect(() => {
 		if (proposalType !== ProposalType.GRANTS || dayjs(post.created_at).isBefore(dayjs().subtract(6, 'days'))) return;

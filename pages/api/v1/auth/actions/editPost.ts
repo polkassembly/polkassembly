@@ -22,6 +22,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFromType';
+import { checkIsProposer } from './utils/checkIsProposer';
 
 export interface IEditPostResponse {
 	content: string;
@@ -72,7 +73,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const postDoc = await postDocRef.get();
 	const post = postDoc.data();
 	let isAuthor = false;
-
+	let proposerAddress = post?.proposer_address || '';
 	if(postDoc.exists && !isNaN(post?.user_id)) {
 		if(![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)){
 			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
@@ -104,7 +105,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			if(!post) return res.status(500).json({ message: 'Something went wrong.' });
 			if(!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
 
-			const proposerAddress = post?.proposer || post?.preimage?.proposer;
+			proposerAddress = post?.proposer || post?.preimage?.proposer;
 
 			const substrateAddress = getSubstrateAddress(proposerAddress);
 			if(!substrateAddress)  return res.status(500).json({ message: 'Something went wrong.' });
@@ -124,7 +125,9 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		else if(post?.user_id === user.id){
 			isAuthor = true;
 		}
-
+		else{
+			isAuthor = await checkIsProposer(proposerAddress, userAddresses.map(a => a.address), network);
+		}
 		if(!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
 		created_at = post?.created_at?.toDate();
 		topic_id = post?.topic_id;

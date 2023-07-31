@@ -790,7 +790,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className="text-bodyBlue font-medium text-lg mx-0.5 mb-6">Cast your Vote!</h6>
+														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendumEth
 															referendumId={onchainId as number}
 															onAccountChange={onAccountChange}
@@ -801,7 +801,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														}
 													</> :
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className="text-bodyBlue font-medium text-lg mx-0.5 mb-6">Cast your Vote!</h6>
+														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -837,7 +837,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className="text-bodyBlue font-medium text-lg mx-0.5 mb-6">Cast your Vote!</h6>
+														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendumEthV2
 															referendumId={onchainId as number}
 															onAccountChange={onAccountChange}
@@ -849,7 +849,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														}
 													</> : <GovSidebarCard className='overflow-y-hidden'>
-														<h6 className="text-bodyBlue font-medium text-lg mx-0.5 mb-6">Cast your Vote!</h6>
+														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}

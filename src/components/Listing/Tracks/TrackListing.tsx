@@ -22,9 +22,9 @@ const TrackListing: FC<ITrackListingProps> = (props) => {
 	const { posts, trackName } = props;
 	return (
 		<>
-			<AboutTrackCard trackName={trackName}/>
+			<AboutTrackCard trackName={trackName}  />
 			<TrackListingCard
-				className='mt-6'
+				className='mt-12'
 				posts={posts}
 				trackName={trackName}
 			/>

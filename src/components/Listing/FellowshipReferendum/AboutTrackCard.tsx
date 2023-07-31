@@ -67,12 +67,12 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 			<p className="mt-0 font-normal text-base leading-6 text-bodyBlue">{trackMetaData?.description}</p>
 
-			<div className="mt-8 w-full flex flex-wrap justify-between lg:gap-x-8">
+			<div className="mt-8 text-xs w-full flex flex-wrap lg:gap-x-24">
 				<div className="w-full sm:w-1/2 md:w-1/3 lg:w-auto">
 					{trackMetaData.maxDeciding &&
 						<div className="flex flex-col">
 							<div className='font-medium leading-5 text-sm text-lightBlue'>Max Deciding:</div>
-							<div className='text-lg font-medium leading-7 my-1 text-bodyBlue'>{trackMetaData.maxDeciding}</div>
+							<div className='text-lg font-medium leading-7 my-2 text-bodyBlue'>{trackMetaData.maxDeciding}</div>
 						</div>
 					}
 				</div>
@@ -81,7 +81,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					{trackMetaData.decisionDeposit &&
 						<div className="flex flex-col">
 							<div className='font-medium leading-5 text-sm text-lightBlue'>Decision Deposit:</div>
-							<div className='text-lg font-medium leading-7 my-1 text-bodyBlue'>
+							<div className='text-lg font-medium leading-7 my-2 text-bodyBlue'>
 								{trackMetaData.decisionDeposit &&
 									formatUSDWithUnits(formatBnBalance(`${trackMetaData.decisionDeposit}`.startsWith('0x') ? new BN(`${trackMetaData.decisionDeposit}`.slice(2), 'hex') : trackMetaData.decisionDeposit, { numberAfterComma: 2,
 										withThousandDelimitor: false, withUnit: true }, network), 1)
@@ -95,7 +95,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					{trackMetaData.confirmPeriod &&
 						<div className="flex flex-col">
 							<div className='font-medium leading-5 text-sm text-lightBlue'>Confirm Period:</div>
-							<div className='text-lg font-medium leading-7 my-1 text-bodyBlue'>{blocksToRelevantTime(Number(trackMetaData.confirmPeriod))}</div>
+							<div className='text-lg font-medium leading-7 my-2 text-bodyBlue'>{blocksToRelevantTime(Number(trackMetaData.confirmPeriod))}</div>
 						</div>
 					}
 				</div>
@@ -103,7 +103,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					{trackMetaData.preparePeriod &&
 						<div className="flex flex-col">
 							<div className='font-medium leading-5 text-sm text-lightBlue'>Prepare Period:</div>
-							<div className='text-lg font-medium leading-7 my-1 text-bodyBlue'>{blocksToRelevantTime(Number(trackMetaData.preparePeriod))}</div>
+							<div className='text-lg font-medium leading-7 my-2 text-bodyBlue'>{blocksToRelevantTime(Number(trackMetaData.preparePeriod))}</div>
 						</div>
 					}
 				</div>
@@ -112,7 +112,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					{trackMetaData.minEnactmentPeriod &&
 						<div className="flex flex-col">
 							<div className='font-medium leading-5 text-sm text-lightBlue'>Min. Enactment Period:</div>
-							<div className='text-lg font-medium leading-7 my-1 text-bodyBlue'>{blocksToRelevantTime(Number(trackMetaData.minEnactmentPeriod))}</div>
+							<div className='text-lg font-medium leading-7 my-2 text-bodyBlue'>{blocksToRelevantTime(Number(trackMetaData.minEnactmentPeriod))}</div>
 						</div>
 					}
 				</div>
@@ -120,7 +120,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					{trackMetaData.decisionPeriod &&
 						<div className="flex flex-col">
 							<div className='font-medium leading-5 text-sm text-lightBlue'>Decision Period:</div>
-							<div className='text-lg font-medium leading-7 my-1 text-bodyBlue'>{blocksToRelevantTime(Number(trackMetaData.decisionPeriod))}</div>
+							<div className='text-lg font-medium leading-7 my-2 text-bodyBlue'>{blocksToRelevantTime(Number(trackMetaData.decisionPeriod))}</div>
 						</div>
 					}
 				</div>

@@ -18,7 +18,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import { TechComIcon } from '~src/ui-components/CustomIcons';
+import TechComIcon from '~assets/icons/tech-com-icon.svg';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
@@ -68,19 +68,19 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Tech Committee Proposals' network={network}/>
-			<div className='flex sm:items-center mt-3 text-xl'>
-				<TechComIcon className='sm:-mt-3 xs:mt-1' />
-				<h1 className='text-bodyBlue font-semibold text-xl leading-9 mx-2'>Tech Committee Proposals</h1>
+			<div className='flex sm:items-center mt-3'>
+				<TechComIcon className='sm:-mt-3.5 xs:mt-1' />
+				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Tech Committee Proposals</h1>
 			</div>
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row">
-				<p className="text-bodyBlue text-sm font-medium bg-white max-md:p-4 p-6 rounded-xxl w-full shadow-md">
+				<p className="text-bodyBlue text-sm font-medium bg-white p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
 					This is the place to discuss on-chain technical committee proposals. On-chain posts are automatically generated as soon as they are created on the chain.
 					Only the proposer is able to edit them.
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white py-3 px-0 rounded-xxl mt-4'>
+			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-6'>
 				<div className='flex items-center justify-between'>
 					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
 						<FilteredTags/>

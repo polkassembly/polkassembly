@@ -31,30 +31,23 @@ const Footer = ({ className } : { className?:string }) => {
 
 						<div className='mt-3 flex justify-center md:inline-block max-[650px]:hidden'>
 							<Space size={19} className='items-center '>
-								{
-									<a href={'https://twitter.com/polk_gov'} target='_blank' rel='noreferrer'>
-										<TwitterIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
-									</a>
 
-								}
-								{
-									<a href={'https://discord.com/invite/CYmYWHgPha'} target='_blank' rel='noreferrer'>
-										<DiscordIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
-									</a>
+								<a href={'https://twitter.com/polk_gov'} target='_blank' rel='noreferrer'>
+									<TwitterIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+								</a>
 
-								}
-								{
-									<a href={'https://t.me/+6WQDzi6RuIw3YzY1'} target='_blank' rel='noreferrer'>
-										<TelegramIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
-									</a>
+								<a href={'https://discord.com/invite/CYmYWHgPha'} target='_blank' rel='noreferrer'>
+									<DiscordIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+								</a>
 
-								}
-								{
-									<a href={'https://polkassembly.io/'} target='_blank' rel='noreferrer'>
-										<InternetIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
-									</a>
+								<a href={'https://t.me/+6WQDzi6RuIw3YzY1'} target='_blank' rel='noreferrer'>
+									<TelegramIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+								</a>
 
-								}
+								<a href={'https://polkassembly.io/'} target='_blank' rel='noreferrer'>
+									<InternetIcon className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+								</a>
+
 							</Space>
 
 						</div>
@@ -63,10 +56,10 @@ const Footer = ({ className } : { className?:string }) => {
 					{/* Terms Links */}
 					<div className="mt-8 md:mt-0 mx-auto md:mx-0 md:ml-auto flex flex-col md:flex-row justify-center md:justify-end">
 						<div className="md:ml-10 lg:ml-14 text-center sm:text-left">
-							<p className="text-lg font-bold text-[#243A57] mb-[-5px] max-[650px]:mt-[-15px] ">Help Center</p>
+							<p className="text-lg font-bold text-bodyBlue mb-[-5px] max-[650px]:mt-[-15px] ">Help Center</p>
 
 							<nav aria-label="Footer About Nav" className="mt-4 md:mt-3">
-								<div className="space-y-2 text-sm text-[#485F7D] font-normal">
+								<div className="space-y-2 text-sm text-lightBlue font-normal">
 
 									<div>
 										<a href='https://polkassembly.hellonext.co/' target='_blank' rel='noreferrer'>
@@ -95,8 +88,8 @@ const Footer = ({ className } : { className?:string }) => {
 							</nav>
 						</div>
 
-						<div className="mt-8 md:mt-0 md:ml-10 lg:ml-14 text-center sm:text-left text-[#485F7D] font-normal">
-							<p className="text-lg font-bold text-[#243A57] mb-[-5px] max-[650px]:mt-[-15px] ">Our Services</p>
+						<div className="mt-8 md:mt-0 md:ml-10 lg:ml-14 text-center sm:text-left text-lightBlue font-normal">
+							<p className="text-lg font-bold text-bodyBlue mb-[-5px] max-[650px]:mt-[-15px] ">Our Services</p>
 
 							<nav aria-label="Footer Services Nav" className="mt-4 md:mt-3">
 								<div className="space-y-2 text-sm">
@@ -126,7 +119,7 @@ const Footer = ({ className } : { className?:string }) => {
 
 				{/* Below divider */}
 				<Divider className='mb-0' />
-				<div className="mt-5 pb-3 text-sm text-[#485F7D] font-medium">
+				<div className="mt-5 pb-3 text-sm text-lightBlue font-medium">
 					<div className="text-center sm:flex sm:justify-between sm:text-left">
 						<div className='flex max-[650px]:flex-col'>
 							<p className=" max-[650px]:mb-0 mr-1 ">
@@ -145,30 +138,23 @@ const Footer = ({ className } : { className?:string }) => {
 				<div className='md:hidden'>
 					<div className='mt-1 flex justify-center'>
 						<Space size={19} className='items-center '>
-							{
-								<a href={'https://twitter.com/polk_gov'} target='_blank' rel='noreferrer'>
-									<TwitterIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
-								</a>
 
-							}
-							{
-								<a href={'https://discord.com/invite/CYmYWHgPha'} target='_blank' rel='noreferrer'>
-									<DiscordIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
-								</a>
+							<a href={'https://twitter.com/polk_gov'} target='_blank' rel='noreferrer'>
+								<TwitterIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+							</a>
 
-							}
-							{
-								<a href={'https://t.me/+6WQDzi6RuIw3YzY1'} target='_blank' rel='noreferrer'>
-									<TelegramIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
-								</a>
+							<a href={'https://discord.com/invite/CYmYWHgPha'} target='_blank' rel='noreferrer'>
+								<DiscordIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+							</a>
 
-							}
-							{
-								<a href={'https://polkassembly.io/'} target='_blank' rel='noreferrer'>
-									<InternetIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
-								</a>
+							<a href={'https://t.me/+6WQDzi6RuIw3YzY1'} target='_blank' rel='noreferrer'>
+								<TelegramIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+							</a>
 
-							}
+							<a href={'https://polkassembly.io/'} target='_blank' rel='noreferrer'>
+								<InternetIconSm className='text-sm md:text-lg md:mr-1 text-lightBlue' />
+							</a>
+
 						</Space>
 					</div>
 

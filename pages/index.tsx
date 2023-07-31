@@ -8,7 +8,6 @@ import { Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { FC, useEffect } from 'react';
-import Script from 'next/script';
 import SEOHead from 'src/global/SEOHead';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -29,9 +28,9 @@ import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } fr
 import { getNetworkSocials } from './api/v1/network-socials';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
 import Gov2LatestActivity from '~src/components/Gov2Home/Gov2LatestActivity';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import Script from 'next/script';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -151,7 +150,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	return (
 		<>
@@ -166,6 +165,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					gtag('config', ${chainProperties[network].gTag});
 				`}
 			</Script></> : null}
+
 			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network}/>
 			<main>
 				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
@@ -199,7 +199,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 						<News twitter={networkSocialsData?.data?.twitter || ''} />
 					</div>
 				</div>
-				<ChatFloatingModal/>
+				{/* <AiBot isAIChatBotOpen={isAIChatBotOpen} setIsAIChatBotOpen={setIsAIChatBotOpen} floatButtonOpen={floatButtonOpen} setFloatButtonOpen={setFloatButtonOpen} /> */}
 			</main>
 		</>
 	);

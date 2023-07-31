@@ -14,8 +14,32 @@ import TwitterIconSm from '~assets/icons/twitter-icon-sm.svg';
 import DiscordIconSm from '~assets/icons/discord-icon-sm.svg';
 import TelegramIconSm from '~assets/icons/telegram-icon-sm.svg';
 import InternetIconSm from '~assets/icons/internet-icon-sm.svg';
+import AiBot from '../AiBot/AiBot';
 
 const Footer = ({ className } : { className?:string }) => {
+	const { network } = useContext(NetworkContext);
+
+	const [socials, setSocials] = useState<NetworkSocials>();
+	const [error, setError] = useState('');
+
+	const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
+	const [floatButtonOpen , setFloatButtonOpen] = useState(false);
+
+	const getNetworkSocials = useCallback(async () => {
+		const { data , error } = await nextApiClientFetch<NetworkSocials>( 'api/v1/network-socials');
+		if(error) {
+			console.log('error fetching network socials : ', error);
+			setError(error);
+		}
+
+		if(data) {
+			setSocials(data);
+		}
+	}, []);
+
+	useEffect(() => {
+		getNetworkSocials();
+	}, [getNetworkSocials]);
 
 	return (
 		<footer aria-label="Site Footer" className={`${className} bg-white max-[650px]:rounded-[14px] `}>
@@ -174,6 +198,7 @@ const Footer = ({ className } : { className?:string }) => {
 
 				</div>
 			</div>
+			<AiBot isAIChatBotOpen={isAIChatBotOpen} setIsAIChatBotOpen={setIsAIChatBotOpen} floatButtonOpen={floatButtonOpen} setFloatButtonOpen={setFloatButtonOpen} />
 		</footer>
 	);
 };

@@ -11,12 +11,16 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import { socialLinks } from '../Home/AboutNetwork';
 import PaLogo from './PaLogo';
+import AiBot from '../AiBot/AiBot';
 
 const Footer = ({ className } : { className?:string }) => {
 	const { network } = useContext(NetworkContext);
 
 	const [socials, setSocials] = useState<NetworkSocials>();
 	const [error, setError] = useState('');
+
+	const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
+	const [floatButtonOpen , setFloatButtonOpen] = useState(false);
 
 	const getNetworkSocials = useCallback(async () => {
 		const { data , error } = await nextApiClientFetch<NetworkSocials>( 'api/v1/network-socials');
@@ -126,6 +130,7 @@ const Footer = ({ className } : { className?:string }) => {
 					</div>
 				</div>
 			</div>
+			<AiBot isAIChatBotOpen={isAIChatBotOpen} setIsAIChatBotOpen={setIsAIChatBotOpen} floatButtonOpen={floatButtonOpen} setFloatButtonOpen={setFloatButtonOpen} />
 		</footer>
 	);
 };

@@ -182,8 +182,8 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	, [api, apiReady, network , track_number]);
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md rounded-xxl p-4 md:p-8`}>
-			<div className="flex justify-between">
+		<div className={`${className} bg-white drop-shadow-md rounded-xxl md:p-4`}>
+			<div className="flex justify-between px-4 xs:pt-2.5 sm:py-2">
 				<div className='flex items-center gap-x-2 xs:flex-wrap'>
 					<h2 className="text-xl font-semibold leading-8 text-bodyBlue">
         About {trackName.split(/(?=[A-Z])/).join(' ')}
@@ -194,10 +194,13 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						</h4>
 					</Tooltip>
 				</div>
-				<h2 className="text-sm text-pink_primary">{trackMetaData?.group}</h2>
+				<div className="xs:hidden sm:flex justify-end sm:p-2">
+					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
+    <DelegateModal trackNum={trackMetaData?.trackId} />}
+				</div>
 			</div>
 
-			<p className="mt-0 font-normal text-base leading-6 text-bodyBlue">{trackMetaData?.description}</p>
+			<p className="mt-0 font-normal text-base leading-6 text-bodyBlue px-4">{trackMetaData?.description}</p>
 
 			<div className='sm:flex sm:justify-between'>
 				<div className="mt-8 text-xs w-full sm:w-[60%] sm:grid sm:grid-cols-3 flex flex-wrap">
@@ -252,9 +255,9 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				</div>
 			</div>
 
-			<Divider />
+			<Divider className='xs:block sm:hidden' />
 
-			<div className="flex justify-end">
+			<div className="sm:hidden xs:flex justify-end pt-0 px-4 pb-4 sm:p-4">
 				{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
       <DelegateModal trackNum={trackMetaData?.trackId} />}
 			</div>

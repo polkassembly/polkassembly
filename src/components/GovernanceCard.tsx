@@ -280,7 +280,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<span>Nay = {formatedBalance(tallyData.nays.toString() || '0', unit)} {unit} ({Math.round(isNayNaN ? 50 : nayPercent)}%) </span>
 								</div>}>
 									<div>
-										<Progress size={30} percent={50} success={{ percent: Math.round((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='-rotate-90 mt-3' gapPosition='bottom' strokeWidth={16} trailColor={((index%2) === 0) ? '#fbfbfc' : 'white' } />
+										<Progress size={30} percent={50} success={{ percent: Math.round((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={((index%2) === 0) ? '#fbfbfc' : 'white' } />
 									</div>
 								</Tooltip>
 							</>
@@ -389,13 +389,13 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{(decision && !remainingTime.includes('-')) && <div className='flex items-center'>
 								<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div className='min-w-[30px] mt-2'>
-									<Progress  percent={decision.periodPercent || 0} strokeColor='#407AFC' trailColor='#D4E0FC' strokeWidth={5} />
+									<Progress percent={decision.periodPercent || 0} strokeColor='#407AFC' trailColor='#D4E0FC' strokeWidth={5} />
 								</div>
 							</div>}
 							<div className='flex items-center'>
 								<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div>
-									<Progress size={30} percent={50} success={{ percent: Math.round((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='-rotate-90 mt-3' gapPosition='bottom' strokeWidth={16} trailColor={( (index%2) === 0) ? '#fbfbfc' : 'white' }/>
+									<Progress size={30} percent={50} success={{ percent: Math.round((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={( (index%2) === 0) ? '#fbfbfc' : 'white' }/>
 								</div>
 							</div>
 						</div>
@@ -458,12 +458,11 @@ export default styled(GovernanceCard)`
   display: none;
 }
 
-.ant-progress-line{
-  margin-inline-end: -40px;
-}
-
 .ant-progress.ant-progress-show-info .ant-progress-outer {
     margin-inline-end: 0px; 
      padding-inline-end: 0px;
+}
+.progress-rotate{
+transform: rotate(-87deg);
 }
 `;

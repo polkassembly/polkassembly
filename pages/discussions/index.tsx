@@ -87,17 +87,23 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 			<SEOHead title='Discussions' network={network}/>
 
 			<div className='flex flex-col sm:flex-row w-full justify-between align-middle mt-3'>
-				<div className='text-bodyBlue font-semibold text-2xl leading-9 mx-2 flex'><DiscussionsIcon className='xs:mr-3 mt-2 sm:mr-2 sm:mt-1.5' />Latest Discussions({count})</div>
-				<button onClick={handleClick} className='outline-none whitespace-pre border-none p-3 sm:w-[120px] sm:h-[40px] font-medium  leading-[20px] tracking-[0.01em] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] rounded-[4px] flex items-center justify-center text-white bg-pink_primary cursor-pointer sm:-mt-1 xs:mt-3'>+ Add Post</button>
+				<div className='text-bodyBlue font-semibold text-xl mx-2 flex h-[30px]'>
+					<DiscussionsIcon className='xs:mr-3 mt-1 sm:mr-2 sm:mt-1' />
+        Latest Discussions
+					<span className='text-sm text-bodyBlue bg-[#D2D8E080] flex items-center rounded-[20px] px-2 ml-2'>
+						{count}
+					</span>
+				</div>
+				<button onClick={handleClick} className='outline-none text-sm mr-[2px] whitespace-pre border-none p-3 sm:w-[150px] h-[40px] font-medium shadow-[0px_6px_18px_rgba(0,0,0,0.06)] flex items-center justify-center rounded-[4px] text-white bg-pink_primary sm:-mt-1 xs:mt-3 tracking-wide'>+ Add Post</button>
 			</div>
 
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row mt-3">
-				<p className="text-bodyBlue text-sm font-medium bg-white p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
+				<p className="text-bodyBlue text-sm font-medium bg-white max-md:p-4 p-6 rounded-xxl w-full shadow-md">
 						This is the place to discuss all things polkadot. Anyone can start a new discussion.
 				</p>
 			</div>
-			<OffChainPostsContainer proposalType={OffChainProposalType.DISCUSSIONS} posts={posts} count={count} className='mt-6' />
+			<OffChainPostsContainer proposalType={OffChainProposalType.DISCUSSIONS} posts={posts} count={count} className='mt-4' />
 			<ReferendaLoginPrompts modalOpen={openModal} setModalOpen={setModalOpen} image='/assets/referenda-discussion.png' title="Join Polkassembly to Start a New Discussion." subtitle="Discuss, contribute and get regular updates from Polkassembly."/>
 		</>
 	);

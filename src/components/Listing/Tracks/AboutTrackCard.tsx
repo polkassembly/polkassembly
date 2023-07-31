@@ -102,13 +102,13 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 		<div className={`${className} bg-white drop-shadow-md rounded-xxl md:p-4`}>
 			<div className="flex justify-between px-4 xs:pt-2.5 sm:py-2">
 				<div className='flex items-center gap-x-2 xs:flex-wrap'>
-					<h2 className="text-xl font-semibold leading-8 text-bodyBlue">
+					<span className="text-xl font-semibold text-bodyBlue">
         About {trackName.split(/(?=[A-Z])/).join(' ')}
-					</h2>
+					</span>
 					<Tooltip color='#E5007A' title='Track Number' className='cursor-pointer'>
-						<h4 className=' text-[#E5007A] text-xl font-semibold leading-8 tracking-[0.01em]'>
+						<span className=' text-[#E5007A] text-xl font-semibold tracking-[0.01em]'>
           #{trackMetaData.trackId}
-						</h4>
+						</span>
 					</Tooltip>
 				</div>
 				<div className="xs:hidden sm:flex justify-end sm:p-2">
@@ -117,41 +117,41 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				</div>
 			</div>
 
-			<p className="mt-0 font-normal text-base leading-6 text-bodyBlue px-4">{trackMetaData?.description}</p>
+			<p className="mt-3 font-normal text-base text-bodyBlue">{trackMetaData?.description}</p>
 
-			<div className="mt-8 sm:pb-2 lg:pb-0 text-xs w-full flex flex-wrap gap-x-0 lg:gap-x-5 xl:gap-x-12">
-				<div className="xs:w-1/2 md:w-1/3 lg:w-auto px-4">
+			<div className="mt-6 w-full flex flex-wrap justify-between">
+				<div className="w-full sm:w-1/2 md:w-1/3 lg:w-auto">
 					<div className="flex flex-col">
 						<div className="font-medium text-sm text-lightBlue whitespace-pre">Max Deciding</div>
-						<div className="text-lg font-medium leading-7 text-bodyBlue my-2 whitespace-pre">{trackMetaData.maxDeciding}</div>
+						<div className="text-base font-medium leading-7 text-bodyBlue my-1 whitespace-pre">{trackMetaData.maxDeciding}</div>
 					</div>
 				</div>
 
 				<div className="xs:w-1/2 md:w-1/3 lg:w-auto px-4">
 					<div className="flex flex-col">
 						<div className="font-medium text-sm text-lightBlue whitespace-pre">Confirm Period</div>
-						<div className="text-lg font-medium leading-7 text-bodyBlue my-2 whitespace-pre">{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}</div>
+						<div className="text-base font-medium leading-7 text-bodyBlue my-1 whitespace-pre">{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}</div>
 					</div>
 				</div>
 
 				<div className="xs:w-1/2 md:w-1/3 lg:w-auto px-4">
 					<div className='flex flex-col'>
 						<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Min. Enactment Period</div>
-						<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-2'>{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}</div>
+						<div className='whitespace-pre text-base font-medium leading-7 text-bodyBlue my-1'>{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}</div>
 					</div>
 				</div>
 
 				<div className="xs:w-1/2 md:w-1/3 lg:w-auto px-4">
 					<div className='flex flex-col'>
 						<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Period</div>
-						<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-2'>{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}</div>
+						<div className='whitespace-pre text-base font-medium leading-7 text-bodyBlue my-1'>{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}</div>
 					</div>
 				</div>
 
 				<div className="xs:w-1/2 md:w-1/3 lg:w-auto px-4">
 					<div className='flex flex-col'>
 						<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Deposit</div>
-						<div className='text-lg font-medium leading-7 text-bodyBlue my-2 whitespace-pre'>
+						<div className='text-base font-medium leading-7 text-bodyBlue my-1 whitespace-pre'>
 							{trackMetaData.decisionDeposit &&
               formatUSDWithUnits(formatBnBalance(`${trackMetaData.decisionDeposit}`.startsWith('0x') ? new BN(`${trackMetaData.decisionDeposit}`.slice(2), 'hex') : trackMetaData.decisionDeposit, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)
 							}
@@ -162,14 +162,13 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<div className="xs:w-1/2 md:w-1/3 lg:w-auto px-4">
 					<div className='flex flex-col'>
 						<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Prepare Period</div>
-						<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-2 whitespace-pre'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</div>
+						<div className='text-base font-medium leading-7 text-bodyBlue my-1 whitespace-pre'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</div>
 					</div>
 				</div>
 			</div>
 
-			<Divider className='xs:block sm:hidden' />
-
-			<div className="sm:hidden xs:flex justify-end pt-0 px-4 pb-4 sm:p-4">
+			<Divider />
+			<div className="flex justify-end">
 				{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
       <DelegateModal trackNum={trackMetaData?.trackId} />}
 			</div>

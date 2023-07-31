@@ -18,7 +18,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import ProposalsIcon from '~assets/icons/proposals-icon.svg';
+import { ProposalsIcon } from '~src/ui-components/CustomIcons';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
@@ -68,20 +68,20 @@ const Proposals: FC<IProposalsProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Proposals' network={network}/>
-			<div className='flex items-center mt-3'>
-				<ProposalsIcon className='-mt-3.5' />
-				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>On Chain Proposals</h1>
+			<div className='flex items-center mt-3 text-xl'>
+				<ProposalsIcon className='-mt-3 ml-1' />
+				<h1 className='text-bodyBlue font-semibold text-xl mx-2'>On Chain Proposals</h1>
 			</div>
 
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row">
-				<p className="text-bodyBlue text-sm font-medium bg-white p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
+				<p className="text-bodyBlue text-sm font-medium bg-white p-6 rounded-xxl w-full shadow-md ">
 					This is the place to discuss on-chain proposals. On-chain posts are automatically generated as soon as they are created on the chain.
 					Only the proposer is able to edit them.
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-6'>
+			<div className='shadow-md bg-white py-3 px-0 rounded-xxl mt-4'>
 				<div className='flex items-center justify-between'>
 					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
 						<FilteredTags/>

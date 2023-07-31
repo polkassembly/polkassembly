@@ -19,7 +19,7 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import DollarIcon from '~assets/icons/dollar-icon.svg';
+import { DollarIcon } from '~src/ui-components/CustomIcons';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
@@ -69,20 +69,25 @@ const Bounties: FC<IBountiesProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='Bounties' network={network}/>
-			<div className='flex sm:items-center mt-3'>
-				<DollarIcon  className='sm:-mt-3.5 xs:mt-1'/>
-				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>On Chain Bounties ({count})</h1>
+			<div className='flex items-center mt-3 text-xl'>
+				<DollarIcon  className='sm:-mt-3 xs:mt-1'/>
+				<h1 className='text-bodyBlue font-semibold text-xl mx-2'>
+          On Chain Bounties
+					<span className='text-sm text-bodyBlue bg-[#D2D8E080] rounded-[20px] py-1 px-2 ml-2'>
+						{count}
+					</span>
+				</h1>
 			</div>
 
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row">
-				<p className="text-bodyBlue text-sm font-medium bg-white p-4 md:p-8 rounded-xxl w-full shadow-md mb-4">
+				<p className="text-bodyBlue text-sm font-medium bg-white max-md:p-4 p-6 rounded-xxl w-full shadow-md mb-4">
 					This is the place to discuss on-chain bounties. Bounty posts are automatically generated as soon as they are created on-chain.
 					Only the proposer is able to edit them.
 				</p>
 			</div>
 
-			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-6'>
+			<div className='shadow-md bg-white py-3 px-0 rounded-xxl mt-4'>
 				<div className='flex items-center justify-between'>
 					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
 						<FilteredTags/>

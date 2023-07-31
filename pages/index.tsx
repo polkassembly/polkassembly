@@ -168,16 +168,16 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 
 			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network}/>
 			<main>
-				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
+				<h1 className='text-bodyBlue font-semibold text-2xl mx-2'>Overview</h1>
 				<div className="mt-6 mx-1">
 					{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}
 				</div>
 				{ network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES &&
-					<div className="mt-8 mx-1">
+					<div className="mt-6 mx-1">
 						<TreasuryOverview />
 					</div>
 				}
-				<div className="mt-8 mx-1">
+				<div className="mt-6 mx-1">
 					{
 						network !== AllNetworks.COLLECTIVES?
 							<LatestActivity latestPosts={latestPosts} />
@@ -189,7 +189,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					}
 				</div>
 
-				<div className="mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">
+				<div className="mt-6 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">
 
 					<div className='w-full xl:w-[60%]'>
 						<UpcomingEvents />

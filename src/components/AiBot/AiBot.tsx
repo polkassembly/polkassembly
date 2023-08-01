@@ -257,7 +257,7 @@ export default styled(AiBot)`
 	width:56px !important;
 	height:56px !important;
 	background: radial-gradient(circle,#E5007A,#BA0566,#9A0856);
-	box-shadow: 0 0 10px 0 rgba(229, 0, 122, 0.3), 0 0 20px 5px rgba(229, 0, 122, 0.2);
+	box-shadow: 2px 4px 2px 0px #7393B3;
 }
 .ant-float-btn-primary {
     background: rgba(76, 175, 80, 0.001)

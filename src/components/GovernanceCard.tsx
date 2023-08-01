@@ -32,6 +32,7 @@ import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { formatBalance } from '@polkadot/util';
+import CloseIcon from '~assets/icons/close.svg';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
 	loading: () => <Skeleton.Button active />,
@@ -322,24 +323,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 					</div>
 				</div>
-				<Modal
-					open= {tagsModal}
-					onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
-					footer={false}
-					className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
-				><div className='flex'>
-						<h2 className='text-lg tracking-wide font-medium text-bodyBlue mb-2'>
-							<TagsIcon className='mr-2' />
-							Tags
-						</h2>
-					</div>
-					<div className='w-full h-[1px] bg-[#D2D8E0]' />
-					<div className='flex gap-2 flex-wrap mt-4' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
-						(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] px-[16px] py-[2px] font-normal text-[10px] text-lightBlue' >
-							{tag}
-						</div>))}
-					</>}</div>
-				</Modal>
 			</div>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200  xs:px-2 xs:py-2 md:pb-6 min-h-[147px] xs:flex h-auto sm:hidden`}>
 				<div className="sm:hidden xs:flex flex-col flex-1 xs:mt-1">
@@ -400,6 +383,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 
 						<div className='xs:flex justify-between xs:gap-x-2 mb-1 items-center'>
+							{status  && <StatusTag status={status} />}
 							{tags && tags.length > 0 && <div className='flex'>
 								<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div className='flex gap-1'>
@@ -411,20 +395,32 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
                 +{tags.length-2}
 									</span>}</div>
 							</div>}
-							{tags && tags.length > 0?
-								status  && <StatusTag className='xs:mt-0 xs:absolute xs:right-[5%]' status={status} />
-								: null}
-							{
-								!tags || tags.length === 0?
-									status  &&
-									<StatusTag className='mt-0.5' status={status} />
-									: null
-							}
 						</div>
 
 					</div>
 				</div>
 			</div>
+			<Modal
+				open= {tagsModal}
+				onCancel={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(false);}}
+				footer={false}
+				closeIcon={<CloseIcon/>}
+				className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
+				title={<>
+					<label className='text-lg tracking-wide font-medium text-bodyBlue mb-2'>
+						<TagsIcon className='mr-2' />
+							Tags
+					</label>
+					<Divider type="horizontal" style={{ borderLeft: '2px solid #D2D8E0' }} />
+				</>}
+			>
+				<div className='flex gap-2 flex-wrap mt-3' >{tags && tags.length>0 && <>{ tags?.map((tag,index) =>
+					(<div key={index} className='rounded-xl border-solid border-[1px] border-[#D2D8E0] px-4 py-1 font-normal text-xs text-lightBlue' >
+						{tag}
+					</div>))}
+				</>}
+				</div>
+			</Modal>
 		</>
 	);
 };

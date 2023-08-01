@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 // import Script from 'next/script';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
-import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useNetworkContext } from '~src/context';
 import { network as globalNework } from '~src/global/networkConstants';
 
@@ -36,7 +36,7 @@ interface IAiChatbotProps {
 
 const AiBot: FC<IAiChatbotProps> = (props) => {
 
-	const { floatButtonOpen, setFloatButtonOpen, isAIChatBotOpen, setIsAIChatBotOpen, className } = props;
+	const { floatButtonOpen, setFloatButtonOpen, isAIChatBotOpen, className } = props;
 	const [grillChat, setGrillChat] = useState(false);
 	const router = useRouter();
 	const { id } = useContext(UserDetailsContext);

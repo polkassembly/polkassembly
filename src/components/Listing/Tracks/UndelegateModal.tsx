@@ -160,15 +160,11 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		const delegateTxn = api.tx.convictionVoting.undelegate(trackNum);
 
 		if(isMultisig){
-			const voteReferendumByMultisig = async (tx:any) => {
+			const unDelegationByMultisig = async (tx:any) => {
 				try{
 					setLoading(true);
 					await connect();
-					setLoading(true);
-					const statusGrabber = () => {
-						setLoading(true);
-					};
-					const { error } = await client.customTransactionAsMulti(defaultAddress, tx, statusGrabber, false);
+					const { error } = await client.customTransactionAsMulti(defaultAddress, tx);
 					if(error){
 						throw new Error(error.error);
 					}
@@ -183,10 +179,12 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 					setOpen(false);
 				}catch(error){
 					onFailed(error.message);
+				}finally{
+					setLoading(false);
 				}
 			};
 			setLoading(true);
-			await voteReferendumByMultisig(delegateTxn);
+			await unDelegationByMultisig(delegateTxn);
 			return;
 		}
 

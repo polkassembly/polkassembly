@@ -34,8 +34,8 @@ interface Props {
     isSwitchButton?: boolean;
     setSwitchModalOpen?: (pre: boolean) => void;
     withoutInfo?: boolean;
-    wallet?:any;
-    setWallet?:any;
+    walletAddress?:any;
+    setWalletAddress?:any;
 	containerClassName?:string
 }
 
@@ -52,8 +52,8 @@ const MultisigAccountSelectionForm = ({
 	isSwitchButton,
 	setSwitchModalOpen,
 	withoutInfo,
-	wallet,
-	setWallet,
+	walletAddress,
+	setWalletAddress,
 	containerClassName
 }: Props) => {
 	const [multisig, setMultisig] = useState<any>(null);
@@ -67,7 +67,7 @@ const MultisigAccountSelectionForm = ({
 		setLoader(false);
 	};
 	const handleChange = (address:string) => {
-		setWallet(address);
+		setWalletAddress(address);
 	};
 	useEffect(() => {
 		const substrateAddress = getSubstrateAddress(address);
@@ -76,9 +76,9 @@ const MultisigAccountSelectionForm = ({
 	}, [address, network]);
 	useEffect(() => {
 		if (multisig && multisig.length > 0) {
-			setWallet(multisig[0].address);
+			setWalletAddress(multisig[0].address);
 		}
-	}, [multisig, setWallet]);
+	}, [multisig, setWalletAddress]);
 
 	return (
 		<Container style={{ width: '100%' }} className={containerClassName}>
@@ -122,7 +122,7 @@ const MultisigAccountSelectionForm = ({
 					<AddressDropdown
 						isDisabled={isDisabled}
 						accounts={multisig}
-						defaultAddress={wallet}
+						defaultAddress={walletAddress}
 						onAccountChange={handleChange}
 						className={inputClassName}
 						isSwitchButton={isSwitchButton}

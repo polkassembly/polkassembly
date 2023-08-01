@@ -474,8 +474,8 @@ const Web3Login: FC<Props> = ({
 														accounts={accounts}
 														address={address}
 														onAccountChange={onAccountChange}
-														wallet={multisigAddress}
-														setWallet={setMultisigAddress}
+														walletAddress={multisigAddress}
+														setWalletAddress={setMultisigAddress}
 													/>
 												) : (
 													<AccountSelectionForm

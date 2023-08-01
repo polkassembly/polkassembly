@@ -50,8 +50,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 	const [multisig, setMultisig] = useState<string>('');
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
-	const [totalDeposit, setTotalDeposit] = useState<BN>(new BN(0));
-	const [initiatorBalance, setInitiatorBalance] = useState<BN>(new BN(0));
+	const [totalDeposit, setTotalDeposit] = useState<BN>(ZERO_BN);
+	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 
 	const handleSubmit = () => {
 		setLoading(true);
@@ -162,20 +162,27 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 			if (!api || !apiReady) {
 				return;
 			}
-			//deposit balance
-			const depositBase = api.consts.multisig.depositBase.toString();
-			const depositFactor = api.consts.multisig.depositFactor.toString();
-			setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
-			//initiator balance
-			const initiatorBalance = await api.query.system.account(address);
-			setInitiatorBalance(new BN(initiatorBalance.data.free.toString()));
+			try{
+				//deposit balance
+				const depositBase = api.consts.multisig.depositBase?.toString() || '0';
+				const depositFactor = api.consts.multisig.depositFactor?.toString() || '0';
+				setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
+			}catch(e){
+				setTotalDeposit(ZERO_BN);
+			}finally{
+				//initiator balance
+				const initiatorBalance = await api.query.system.account(address);
+				setInitiatorBalance(new BN(initiatorBalance.data.free.toString()));
+			}
 		},
 		[address, api, apiReady]
 	);
 
 	useEffect(() => {
-		handleInitiatorBalance();
-	}, [address, handleInitiatorBalance]);
+		if(canUsePolkasafe(network)){
+			handleInitiatorBalance();
+		}
+	}, [address, handleInitiatorBalance, network]);
 
 	return <Modal
 		wrapClassName={className}
@@ -219,7 +226,6 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 								<div className='w-full flex justify-center'>
 									<WalletButton
 										className='text-sm text-bodyBlue font-semibold border-[#D2D8E0]'
-										disabled={!apiReady}
 										onClick={() => {
 											setShowMultisig(!showMultisig);
 										}}
@@ -258,8 +264,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 												}}
 												onBalanceChange={handleOnBalanceChange}
 												className='text-[#485F7D] text-sm'
-												wallet={multisig}
-												setWallet={setMultisig}
+												walletAddress={multisig}
+												setWalletAddress={setMultisig}
 												containerClassName='gap-[20px]'
 											/> :
 											<AccountSelectionForm

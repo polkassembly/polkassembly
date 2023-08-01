@@ -169,7 +169,7 @@ const VoteInitiatedModal = ({
 						</div>
 
 						{multisig &&
-							<div className='flex gap-3 text-sm text-[#485F7D] font-normal'>
+							<div className='flex gap-[17px] text-sm text-[#485F7D] font-normal'>
 								With Multisig:{' '}
 								<span className='font-medium'>
 									<Address
@@ -224,6 +224,12 @@ const VoteInitiatedModal = ({
                             Time of Vote :{' '}
 							<span className='font-medium text-bodyBlue'>
 								{votedAt}
+							</span>
+						</div>
+						<div className='flex h-[21px] gap-11 text-sm text-[#485F7D] font-normal'>
+                            Vote Link:{' '}
+							<span className='font-medium text-bodyBlue'>
+								<a className='text-pink_primary' href='https://app.polkasafe.xyz/transactions' target='_blank' rel="noreferrer">Polkasafe</a>
 							</span>
 						</div>
 					</div>

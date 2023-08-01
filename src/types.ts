@@ -8,6 +8,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { network, tokenSymbol } from './global/networkConstants';
 import { ProposalType } from './global/proposalType';
 import BN from 'bn.js';
+import dayjs from 'dayjs';
 
 export interface UserDetailsContextType {
   id?: number | null;
@@ -29,6 +30,13 @@ export interface UserDetailsContextType {
   networkPreferences: INetworkPreferences;
   primaryNetwork: string;
   is2FAEnabled?: boolean;
+}
+
+export interface IPeriod {
+	period: string;
+	periodCardVisible: boolean;
+	periodEndsAt: dayjs.Dayjs;
+	periodPercent: number;
 }
 
 export interface INetworkPreferences {

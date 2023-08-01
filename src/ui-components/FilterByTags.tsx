@@ -163,7 +163,7 @@ const FilterByTags=({ className, isSearch = false, setSelectedTags, disabled, cl
 			arrow={isSearch}
 		>
 
-			{!isSearch ? <div className={'text-sm tracking-wide font-normal flex items-center text-pink_primary mt-[3.5px] cursor-pointer'}>
+			{!isSearch ? <div className={'text-base tracking-wide font-normal flex items-center text-pink_primary mt-[3.5px] cursor-pointer'}>
 				<span> Filter</span>
 				<span className='text-lg ml-2'>
 					<FilterIcon/>

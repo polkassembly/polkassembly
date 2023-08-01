@@ -18,7 +18,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { checkReportThreshold, getReactions } from '../posts/on-chain-post';
+import { checkReportThreshold, getReactions, getTimeline } from '../posts/on-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
@@ -44,6 +44,7 @@ export interface IPostListing {
 	status?: string;
   status_history:any[]
 	title: string;
+  tally?:any;
 	topic: {
 		id: number;
 		name: string;
@@ -52,6 +53,7 @@ export interface IPostListing {
 	username?: string;
 	tags?: string[] | [];
 	gov_type?: 'gov_1' | 'open_gov';
+  timeline?: any;
 }
 
 export interface IPostsListingResponse {
@@ -125,21 +127,21 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 		}
 
 		if (filterBy && Array.isArray(filterBy) && filterBy.length > 0) {
-			const offChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
+			const onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
 			let order: 'desc' | 'asc' = sortBy === sortValues.NEWEST ? 'desc' : 'asc';
 			let orderedField = 'created_at';
 			if (sortBy === sortValues.COMMENTED) {
 				order = 'desc';
 				orderedField = 'last_comment_at';
 			}
-			const postsSnapshotArr = await offChainCollRef
+			const postsSnapshotArr = await onChainCollRef
 				.orderBy(orderedField, order)
 				.where('tags', 'array-contains-any', filterBy)
 				.limit(Number(listingLimit) || LISTING_LIMIT)
 				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
 				.get();
 
-			const count = (await offChainCollRef.where('tags', 'array-contains-any', filterBy).count().get()).data().count;
+			const count = (await onChainCollRef.where('tags', 'array-contains-any', filterBy).count().get()).data().count;
 			const postsPromise = postsSnapshotArr.docs.map(async (doc) => {
 				if (doc && doc.exists) {
 					const docData = doc.data();
@@ -149,7 +151,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const res = await getSubSquareContentAndTitle(strProposalType,network,docData.id);
 							subsquareTitle = res?.title;
 						}
-						const postDocRef = offChainCollRef.doc(String(docData.id));
+						const postDocRef = onChainCollRef.doc(String(docData.id));
 
 						const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 						const reactions = getReactions(post_reactionsQuerySnapshot);
@@ -223,6 +225,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				}
 				const status = subsquidPost.status;
 				const statusHistory = subsquidPost.statusHistory;
+				const tally = subsquidPost.tally;
 				const postId = proposalType === ProposalType.TIPS ? hash : index;
 				const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 
@@ -246,6 +249,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 						const topic = data?.topic;
 						const topic_id = data?.topic_id;
+						const tally = data?.tally;
+						const isStatus = {
+							swap: false
+						};
+						const proposalTimeline = getTimeline(group.proposals, isStatus) || [];
 						return {
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							created_at: createdAt,
@@ -262,6 +270,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							status,
 							status_history: statusHistory,
 							tags: data?.tags || [],
+							tally,
+							timeline: proposalTimeline,
 							title: data?.title || subsquareTitle || null,
 							topic: topic ? topic : isTopicIdValid(topic_id) ? {
 								id: topic_id,
@@ -291,6 +301,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 					status: status,
 					status_history: statusHistory,
+					tally,
 					title: subsquareTitle,
 					topic: topicFromType,
 					type: type || subsquidProposalType,
@@ -541,6 +552,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						});
 					}
 					const statusHistory= subsquidPost.statusHistory;
+					const tally = subsquidPost?.tally;
 					let status = subsquidPost.status;
 					if (status === 'DecisionDepositPlaced') {
 						const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
@@ -573,6 +585,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 							const topic = data?.topic;
 							const topic_id = data?.topic_id;
+							const isStatus = {
+								swap: false
+							};
+							const proposalTimeline = getTimeline(group?.proposals, isStatus) || [];
 							return {
 								comments_count: commentsQuerySnapshot.data()?.count || 0,
 								created_at: createdAt,
@@ -590,6 +606,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								status,
 								status_history: statusHistory,
 								tags: data?.tags || [],
+								tally,
+								timeline: proposalTimeline,
 								title: data?.title || subsquareTitle,
 								topic: topic ? topic : isTopicIdValid(topic_id) ? {
 									id: topic_id,
@@ -621,6 +639,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						requestedAmount: preimage?.proposedCall?.args?.amount || preimage?.proposedCall?.args?.value || null,
 						status: status,
 						status_history: statusHistory,
+						tally,
 						title: subsquareTitle,
 						topic: topicFromType,
 						type: type || subsquidProposalType,

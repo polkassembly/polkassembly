@@ -114,6 +114,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
 	const { api, apiReady } = useApiContext();
+	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
+	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
+	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(status || '');
+
 	const requestedAmountFormatted = requestedAmount ? new BN(requestedAmount).div(new BN(10).pow(new BN(tokenDecimals))).toString() : 0;
 	const [tallyData, setTallyData] = useState({
 		ayes: ZERO || 0,
@@ -134,6 +138,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [decision, setDecision] = useState<IPeriod>();
 	const [remainingTime, setRemainingTime] = useState<string>('');
 	const decidingBlock = statusHistory.filter((status) => status.status === 'Deciding' )?.[0]?.block || 0;
+	console.log(timeline);
 	const convertRemainingTime = (preiodEndsAt: any ) => {
 
 		const diffMilliseconds = preiodEndsAt.diff();
@@ -191,8 +196,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		const trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
 
 		if (!created_at) return;
-
-		const decidingStatusBlock = getStatusBlock( timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 
 		const prepare = getPeriodData(network, dayjs(created_at), trackDetails, 'preparePeriod');
 
@@ -279,7 +282,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<ClockCircleOutlined className='mr-1' /> <span className='whitespace-nowrap'>{relativeCreatedAt}</span>
 								</div>
 							</>}
-							{(decision && !remainingTime.includes('-')) && <>
+							{(decision && (decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed) && <>
 								<Divider type="vertical" className='max-sm:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<Tooltip overlayClassName='max-w-none' title={<div className={`p-1.5 ${poppins.className} ${poppins.variable} whitespace-nowrap flex items-center text-xs`}>{ `Deciding ends in ${remainingTime} ${(decidingBlock !== 0) ? `#${decidingBlock}` :''}`}</div>} color='#575255'>
 									<div className='min-w-[30px] mt-2'>
@@ -368,7 +371,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<ClockCircleOutlined className='mr-1 mt-0' /><span> {relativeCreatedAt}</span>
 								</div>
 							</>}
-							{(decision && !remainingTime.includes('-')) && <div className='flex items-center'>
+							{(decision  && (decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed) && <div className='flex items-center'>
 								<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div className='min-w-[30px] mt-2'>
 									<Progress percent={decision.periodPercent || 0} strokeColor='#407AFC' trailColor='#D4E0FC' strokeWidth={5} />

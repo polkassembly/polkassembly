@@ -215,7 +215,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							{status && <StatusTag className='sm:mr-10' status={status} />}
 						</div>
 					</div>
-					<div className="flex justify-between items-center">
+					<div className="flex justify-between items-center mt-1">
 						<div className="flex flex-grow ml-[120px]">
 							<h1 className='text-bodyBlue text-sm mt-0.5 flex overflow-hidden lg:max-w-none'>
 								<span className='break-all text-bodyBlue font-medium text-sm'>{ mainTitle }</span>
@@ -344,11 +344,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			</div>
 			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200  xs:px-2 xs:py-2 md:pb-6 min-h-[147px] xs:flex h-auto sm:hidden`}>
 				<div className="sm:hidden xs:flex flex-col flex-1 xs:mt-1">
-					<div className="xs:flex sm:hidden justify-between xs:my-1 sm:my-0">
+					<div className="xs:flex sm:hidden justify-between sm:my-0">
 						{
 							topic &&
 							<div>
-								<TopicTag className='xs:mx-1.5' topic={topic} />
+								<TopicTag className='xs:mx-1' topic={topic} />
 							</div>
 						}
 						{
@@ -377,7 +377,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						#{isTip? tip_index: onchainId} {mainTitle} {subTitle}
 					</div>
 
-					<div className="mt-1 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center pl-1 gap-3">
+					<div className="mt-0.5 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center pl-1 gap-3">
 						<div className="sm:hidden xs:flex xs:justify-start items-center h-[32px] flex-shrink-0">
 							<OnchainCreationLabel address={address} username={username} />
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
@@ -400,7 +400,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						</div>
 
-						<div className='xs:flex justify-between mt-1 xs:gap-x-2 mb-1'>
+						<div className='xs:flex justify-between xs:gap-x-2 mb-1'>
 							{tags && tags.length > 0 && <div className='flex'>
 								<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div className='flex gap-1'>

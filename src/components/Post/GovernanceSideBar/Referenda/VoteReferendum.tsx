@@ -489,14 +489,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			const voteReferendumByMultisig = async (tx:any) => {
 				try{
 					await connect();
-					const statusGrabber = (message?:string) => {
-						setLoadingStatus({ isLoading: true, message:message || '' });
-					};
-					const { error } = await client.customTransactionAsMulti(multisig, tx, statusGrabber, false);
+					const { error } = await client.customTransactionAsMulti(multisig, tx);
 					if(error){
 						throw new Error(error.error);
 					}
-					setLoadingStatus({ isLoading: false, message: '' });
 					setShowModal(false);
 					setSuccessModal(true);
 					queueNotification({
@@ -504,14 +500,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						message: `Your vote on Referendum #${referendumId} will be successful once approved by other signatories.`,
 						status: NotificationStatus.SUCCESS
 					});
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
 				}catch(error){
-					setLoadingStatus({ isLoading: false, message: '' });
 					console.log(':( transaction failed');
 					console.error('ERROR:', error);
 					queueNotification({
@@ -519,6 +508,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						message: error.message,
 						status: NotificationStatus.ERROR
 					});
+				}finally{
+					setLoadingStatus({ isLoading: false, message: '' });
 				}
 			};
 			await voteReferendumByMultisig(voteTx);
@@ -648,7 +639,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								<div className='w-full flex justify-center'>
 									<WalletButton
 										className='text-sm text-bodyBlue font-semibold !border-[#D2D8E0]'
-										disabled={!apiReady}
 										onClick={() => {
 											setShowMultisig(!showMultisig);
 										}}
@@ -680,8 +670,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											onAccountChange={onAccountChange}
 											onBalanceChange={handleOnBalanceChange}
 											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
-											wallet={multisig}
-											setWallet={setMultisig}
+											walletAddress={multisig}
+											setWalletAddress={setMultisig}
 											containerClassName='gap-[20px]'
 										/> :
 										<AccountSelectionForm

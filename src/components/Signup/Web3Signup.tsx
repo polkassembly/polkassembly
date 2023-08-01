@@ -264,9 +264,14 @@ const Web3Signup: FC<Props> = ({
 	useEffect(() => {
 		if(withPolkasafe && accounts.length === 0 && chosenWallet !== Wallet.POLKASAFE){
 			getAccounts(chosenWallet)
-				.then(() => {setLoading(false);setFetchAccounts(false);})
+				.then(() => {
+					setFetchAccounts(false);
+				})
 				.catch((err) => {
 					console.error(err);
+				})
+				.finally(() => {
+					setLoading(false);
 				});
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -357,8 +362,8 @@ const Web3Signup: FC<Props> = ({
 												accounts={accounts}
 												address={address}
 												onAccountChange={onAccountChange}
-												wallet={multiWallet}
-												setWallet={setMultiWallet}
+												walletAddress={multiWallet}
+												setWalletAddress={setMultiWallet}
 											/>
 										):(
 											<AccountSelectionForm

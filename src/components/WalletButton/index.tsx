@@ -9,7 +9,7 @@ interface Props {
 	onClick: (React.MouseEventHandler<HTMLAnchorElement> & React.MouseEventHandler<HTMLButtonElement>)
 	icon?: JSX.Element
 	name: string
-	disabled: boolean;
+	disabled?: boolean;
 	className?: string;
 	text?:string
 }

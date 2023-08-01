@@ -246,15 +246,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 		const txArr = checkedArr?.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
 		const delegateTxn = api.tx.utility.batchAll(txArr);
 		if(isMultisig){
-			const voteReferendumByMultisig = async (tx:any) => {
+			const delegationByMultisig = async (tx:any) => {
 				try{
 					setLoading(true);
 					await connect();
-					setLoading(true);
-					const statusGrabber = () => {
-						setLoading(true);
-					};
-					const { error } = await client.customTransactionAsMulti(delegationDashboardAddress, tx, statusGrabber, false);
+					const { error } = await client.customTransactionAsMulti(delegationDashboardAddress, tx);
 					if(error){
 						throw new Error(error.error);
 					}
@@ -264,14 +260,15 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 						status: NotificationStatus.SUCCESS
 					});
 					setOpenSuccessPopup(true);
-					setLoading(false);
 					setOpen ? setOpen?.(false) : setDefaultOpen(false);
 				}catch(error){
 					onFailed(error.message);
+				}finally{
+					setLoading(false);
 				}
 			};
 			setLoading(true);
-			await voteReferendumByMultisig(delegateTxn);
+			await delegationByMultisig(delegateTxn);
 			return;
 		}
 

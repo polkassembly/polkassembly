@@ -28,6 +28,10 @@ const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'
 	ssr: false
 });
 
+const Container = styled.article`
+.changeColor .ant-alert-message{
+	color:#243A57;
+}`;
 interface Props {
 	onWalletSelect: (wallet: Wallet) => void;
 	walletError: string | undefined;
@@ -36,9 +40,10 @@ interface Props {
 	setSignupOpen?: (pre: boolean)=> void;
   isDelegation?: boolean;
   className?: string;
+  setWithPolkasafe?: any;
 }
 
-const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation }) => {
+const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation, setWithPolkasafe }) => {
 	const { password, username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
@@ -128,7 +133,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	}, [isDelegation]);
 
 	return (
-		<article className={`bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className}`}>
+		<Container className={`bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className}`}>
 			<div className='grid grid-cols-2'>
 				<div onClick={() => {
 					setIsPassword(false);
@@ -293,6 +298,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					<WalletButtons
 						disabled={loading}
 						onWalletSelect={onWalletSelect}
+						showPolkasafe={true}
+						onPolkasafeSelect={setWithPolkasafe}
 					/>
 				</div>
 				{error && <FilteredError text={error} />}
@@ -320,11 +327,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 			>
 				We sent you an email to verify your address. Click on the link in the email.
 			</Modal>
-		</article>
+		</Container>
 	);
 };
 
-export default styled(Web2Signup)`
-.changeColor .ant-alert-message{
-color:#243A57;
-}`;
+export default Web2Signup;

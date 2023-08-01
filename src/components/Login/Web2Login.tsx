@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 // import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
-import { useNetworkContext, useUserDetailsContext } from 'src/context';
+import { useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AuthForm from 'src/ui-components/AuthForm';
@@ -20,7 +20,6 @@ import LoginLogo from '~assets/icons/login-logo.svg';
 import { IAuthResponse } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import TFALoginForm from './TFALoginForm';
-import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
 	loading: () => <div className="flex flex-col mt-6 bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
@@ -59,7 +58,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	const [error, setError] = useState<string | null>(null);
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
 	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
-	const { network } = useNetworkContext();
+
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(Object.keys(injectedWindow?.injectedWeb3 || {}));
@@ -228,7 +227,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					</div>
 
 					<div>
-						<WalletButtons disabled={loading} onWalletSelect={onWalletSelect} showPolkasafe={canUsePolkasafe(network)} onPolkasafeSelect={setWithPolkasafe}/>
+						<WalletButtons disabled={loading} onWalletSelect={onWalletSelect} showPolkasafe={true} onPolkasafeSelect={setWithPolkasafe}/>
 					</div>
 
 					{error && <FilteredError text={error} />}

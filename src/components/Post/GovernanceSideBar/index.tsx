@@ -78,8 +78,6 @@ interface IGovernanceSidebarProps {
 	tally?: any;
 	post: IPostResponse;
 	toggleEdit?: () => void;
-	lastVote: ILastVote | undefined;
-	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
   trackName?: string;
 }
 
@@ -144,7 +142,8 @@ export function getTrackFunctions(trackInfo: any) {
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, lastVote ,setLastVote, trackName } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, trackName } = props;
+	const [lastVote, setLastVote] = useState< ILastVote>();
 
 	const { network } = useNetworkContext();
 	const currentBlock = useCurrentBlock();

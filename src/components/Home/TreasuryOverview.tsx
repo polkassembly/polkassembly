@@ -350,7 +350,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	}, [currentTokenPrice, network]);
 
 	return (
-		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col xs:gap-6 sm:gap-8 xl:flex`}>
+		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col xs:gap-6 sm:gap-8 xl:gap-4 xl:flex`}>
 			{/* Available */}
 			<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 				<div className='lg:flex flex-col flex-1 gap-x-0 w-full'>
@@ -388,8 +388,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									<div className='flex flex-col justify-center text-bodyBlue font-medium gap-y-3'>
 										<Divider
 											style={{
-												background: '#D2D8E0',
-												width: '100%'
+												background: '#D2D8E0'
 											}}
 											className='m-0 p-0' />
 										<span className='flex flex-col justify-center text-lightBlue text-xs font-medium'>
@@ -439,7 +438,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											}
 										</div>
 									</div>
-									<div className="flex flex-col justify-center text-bodyBlue font-medium gap-y-3">
+									<div className="flex flex-col justify-center overflow-hidden text-bodyBlue font-medium gap-y-3">
 										<Divider
 											style={{
 												background: '#D2D8E0'

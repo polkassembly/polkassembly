@@ -400,7 +400,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						</div>
 
-						<div className='xs:flex justify-between xs:mt-3 xs:gap-x-2'>
+						<div className='xs:flex justify-between xs:mt-3 xs:gap-x-2 mb-1'>
 							{tags && tags.length > 0 && <div className='flex'>
 								<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div className='flex gap-1'>

@@ -265,6 +265,19 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								</span>}
 							</>}
 
+							<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+							{
+								cid ?
+									<>
+										<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
+										<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+									</> : null
+							}
+							{relativeCreatedAt && <>
+								<div className='flex text-lightBlue items-center sm:mt-0'>
+									<ClockCircleOutlined className='mr-1' /> <span className='whitespace-nowrap'>{relativeCreatedAt}</span>
+								</div>
+							</>}
 							{(decision && !remainingTime.includes('-')) && <>
 								<Divider type="vertical" className='max-sm:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<Tooltip overlayClassName='max-w-none' title={<div className={`p-1.5 ${poppins.className} ${poppins.variable} whitespace-nowrap flex items-center text-xs`}>{ `Deciding ends in ${remainingTime} ${(decidingBlock !== 0) ? `#${decidingBlock}` :''}`}</div>} color='#575255'>
@@ -284,20 +297,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</div>
 								</Tooltip>
 							</>
-
-							<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
-							{
-								cid ?
-									<>
-										<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
-										<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
-									</> : null
-							}
-							{relativeCreatedAt && <>
-								<div className='flex text-lightBlue items-center sm:mt-0'>
-									<ClockCircleOutlined className='mr-1' /> <span className='whitespace-nowrap'>{relativeCreatedAt}</span>
-								</div>
-							</>}
 
 							{
 								topic?
@@ -373,17 +372,17 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								: null
 						}
 					</div>
-					<div className='max-xs-hidden my-2.5 mx-1 text-bodyBlue font-medium text-sm'>
+					<div className='max-xs-hidden my-3 mx-1 text-bodyBlue font-medium text-sm'>
 						#{isTip? tip_index: onchainId} {mainTitle} {subTitle}
 					</div>
 
-					<div className="mt-0.5 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center pl-1 gap-3">
-						<div className="sm:hidden xs:flex xs:justify-start items-center h-[32px] flex-shrink-0">
+					<div className="font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center pl-1 gap-3">
+						<div className="sm:hidden xs:flex xs:justify-start items-center h-[30px] flex-shrink-0">
 							<OnchainCreationLabel address={address} username={username} />
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
 							{relativeCreatedAt && <>
-								<div className='flex text-lightBlue xs:-mt-0.5 mt-0 items-center'>
-									<ClockCircleOutlined className='mr-1 mt-0 xs:-mt-0.5' /> {relativeCreatedAt}
+								<div className='flex text-lightBlue mt-0 items-center'>
+									<ClockCircleOutlined className='mr-1 mt-0' /><span> {relativeCreatedAt}</span>
 								</div>
 							</>}
 							{(decision && !remainingTime.includes('-')) && <div className='flex items-center'>
@@ -400,7 +399,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						</div>
 
-						<div className='xs:flex justify-between xs:gap-x-2 mb-1'>
+						<div className='xs:flex justify-between xs:gap-x-2 mb-1 items-center'>
 							{tags && tags.length > 0 && <div className='flex'>
 								<Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div className='flex gap-1'>

@@ -250,10 +250,25 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						const topic = data?.topic;
 						const topic_id = data?.topic_id;
 						const tally = data?.tally;
+
 						const isStatus = {
 							swap: false
 						};
-						const proposalTimeline = getTimeline(group.proposals, isStatus) || [];
+
+						let proposalTimeline;
+						if(!group?.proposals){
+							proposalTimeline = getTimeline([
+								{
+									createdAt,
+									hash,
+									index,
+									statusHistory,
+									type
+								}
+							],isStatus);
+						}else{
+							proposalTimeline = getTimeline(group?.proposals, isStatus) || [];
+						}
 						return {
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							created_at: createdAt,
@@ -588,7 +603,21 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const isStatus = {
 								swap: false
 							};
-							const proposalTimeline = getTimeline(group?.proposals, isStatus) || [];
+
+							let proposalTimeline;
+							if(!group?.proposals){
+								proposalTimeline=    getTimeline([
+									{
+										createdAt,
+										hash,
+										index,
+										statusHistory,
+										type
+									}
+								],isStatus);
+							}else{
+								proposalTimeline= getTimeline(group?.proposals, isStatus) || [];
+							}
 							return {
 								comments_count: commentsQuerySnapshot.data()?.count || 0,
 								created_at: createdAt,

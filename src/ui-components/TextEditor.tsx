@@ -11,6 +11,7 @@ import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import showdown from 'showdown';
 import styled from 'styled-components';
 import Gif from './Gif';
+import { algolia_client } from '~src/components/Search';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -24,9 +25,9 @@ interface ITextEditorProps {
     height?: number | string;
     value?: string;
     onChange: (value: string) => void;
-		isDisabled?: boolean;
-    name: string;
-		autofocus?: boolean;
+	isDisabled?: boolean;
+	name: string;
+	autofocus?: boolean;
 }
 
 const gifSVGData = `<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512.000000 512.000000">
@@ -76,6 +77,7 @@ img {
 
 const TextEditor: FC<ITextEditorProps> = (props) => {
 	const { className, height, onChange, isDisabled, value, name, autofocus } = props;
+
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -83,6 +85,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
 		if (!value || !value.startsWith('<p><a href="../user/') || !value.endsWith('</a>&nbsp;</p>')) return;
+
 		ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
 		ref.current?.editor?.focus();
 	}, [value]);
@@ -188,6 +191,84 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								editor.on('init', () => {
 									if (autofocus) editor.focus();
 								});
+
+								editor.ui.registry.addAutocompleter('specialchars_cardmenuitems', {
+									ch: '@',
+									minChars: 1,
+									columns: 1,
+									fetch: (pattern: string) => {
+										// eslint-disable-next-line no-async-promise-executor
+										return new Promise(async (resolve) => {
+											const queries = [{
+												indexName: 'polkassembly_users',
+												query: pattern,
+												params: {
+													hitsPerPage: 6,
+													restrictSearchableAttributes: ['username']
+												}
+											}, {
+												indexName: 'polkassembly_addresses',
+												query: pattern,
+												params: {
+													hitsPerPage: 4,
+													restrictSearchableAttributes: ['address']
+												}
+											}];
+
+											const hits = await algolia_client.search(queries, { strategy: 'none' });
+
+											const usernameHits = hits.results[0]?.hits || [];
+											const addressHits = hits.results[1]?.hits || [];
+
+											const usernameResults = (usernameHits || [])?.map((user: any) => ({
+												type: 'cardmenuitem',
+												value: `<a target="_blank" href="/user/${user.username}">@${user.username}</a>`,
+												label: user.username,
+												items: [
+													{
+														type: 'cardcontainer',
+														direction: 'vertical',
+														items: [
+															{
+																type: 'cardtext',
+																text: user.username,
+																name: 'char_name'
+															}
+														]
+													}
+												]
+											}));
+
+											const addressResults = (addressHits || [])?.map((user: any) => ({
+												type: 'cardmenuitem',
+												value: `<a target="_blank" href="/address/${user.address}">@${user.address}</a>`,
+												label: user.address,
+												items: [
+													{
+														type: 'cardcontainer',
+														direction: 'vertical',
+														items: [
+															{
+																type: 'cardtext',
+																text: user.address,
+																name: 'char_name'
+															}
+														]
+													}
+												]
+											}));
+
+											resolve((usernameResults || []).concat(addressResults || []) as any);
+										});
+									},
+									highlightOn: ['char_name'],
+									onAction: (autocompleteApi, rng, value) => {
+										editor.selection.setRng(rng);
+										editor.insertContent(value);
+										autocompleteApi.hide();
+									}
+								});
+
 								editor.ui.registry.addIcon('custom-icon', gifSVGData);
 								editor.ui.registry.addButton('customButton', { icon: 'custom-icon', onAction: () => setIsModalVisible(true) });
 							},

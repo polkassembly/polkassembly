@@ -166,7 +166,7 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
 `;
 
 export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!]) {
-  proposals(where: {type_eq: $type_eq, index_in: $index_in, tally_isNull: false, tally: {}}, limit: $limit) {
+  proposals(where: {type_eq: $type_eq, index_in: $index_in, tally: {}}, limit: $limit) {
     proposer
     curator
     createdAt
@@ -181,15 +181,18 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
     description
     type
     origin
-    trackNumber
+    statusHistory {
+      id
+    }
     tally {
       ayes
       nays
       support
     }
+    trackNumber
     group {
       proposals(limit: 10, orderBy: createdAt_ASC) {
-        type
+ type
         statusHistory(limit: 10, orderBy: timestamp_ASC) {
           status
           timestamp
@@ -216,8 +219,7 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
     }
     status
   }
-}
-`;
+}`;
 
 export const GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING = `
 query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal) {

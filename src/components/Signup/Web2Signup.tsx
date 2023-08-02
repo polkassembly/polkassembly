@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { IUsernameExistResponse } from 'pages/api/v1/users/username-exist';
 import React, { FC, useEffect, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
+import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AuthForm from 'src/ui-components/AuthForm';
@@ -19,6 +19,7 @@ import * as validation from 'src/util/validation';
 import styled from 'styled-components';
 
 import { TokenType } from '~src/auth/types';
+import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
@@ -58,7 +59,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	});
 	const [firstPassword, setFirstPassword] = useState('');
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
-
+	const { network } = useNetworkContext();
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(Object.keys(injectedWindow?.injectedWeb3 || {}));
@@ -298,7 +299,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					<WalletButtons
 						disabled={loading}
 						onWalletSelect={onWalletSelect}
-						showPolkasafe={true}
+						showPolkasafe={canUsePolkasafe(network)}
 						onPolkasafeSelect={setWithPolkasafe}
 					/>
 				</div>

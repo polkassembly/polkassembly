@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Tooltip } from 'antd';
+import { Divider, Tooltip , Skeleton } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -10,14 +10,18 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import Curves from './Curves';
 import DelegateModal from './DelegateModal';
 import { useApiContext, useNetworkContext } from '~src/context';
 import { TrackProps } from '~src/types';
 import { ChartData, Point } from 'chart.js';
 import { getTrackFunctions } from '../../Post/GovernanceSideBar/Referenda/util';
 import blockToTime from '~src/util/blockToTime';
+import dynamic from 'next/dynamic';
 
+const Curves = dynamic(() => import('./Curves'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
 // import DelegateModalEthV2 from './DelegateModalEthV2';
 
 interface IAboutTrackCardProps {

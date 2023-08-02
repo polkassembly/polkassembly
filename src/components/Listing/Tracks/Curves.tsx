@@ -46,17 +46,18 @@ const Curves: FC<ICurvesProps> = (props) => {
 		},
 		scales: {
 			x: {
-				beginAtZero: true,
+				beginAtZero: false,
 				display: true,
 				grid: {
-					display: false // Hide x-axis grid lines
+					display: true,
+					drawOnChartArea: false
 				},
 				ticks: {
-					callback(val: any) {
-						return val + 1;
+					callback(v: any) {
+						return (v / (60 * 24)).toFixed(0);
 					},
 					max: labelsLength,
-					stepSize: 2
+					stepSize: Math.round(labelsLength / (labelsLength/(60 * 24)))
 				} as any
 			},
 			y: {
@@ -79,7 +80,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 	return(
 		<Spin indicator={<LoadingOutlined />} spinning={curvesLoading}>
 
-			<article className='-mx-3 md:m-0'>
+			<article className='-mx-3 md:m-0 max-w-[350px]'>
 				<Chart.Line
 					className='h-full w-full'
 					data={data}

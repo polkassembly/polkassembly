@@ -201,7 +201,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						</h4>
 					</Tooltip>
 				</div>
-				<div className="xs:hidden sm:flex justify-end sm:p-2">
+				<div className="xs:hidden md:flex justify-end md:p-2">
 					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
     <DelegateModal trackNum={trackMetaData?.trackId} />}
 				</div>
@@ -209,37 +209,37 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 			<p className="mt-0 font-normal text-base leading-6 text-bodyBlue px-4">{trackMetaData?.description}</p>
 
-			<div className='sm:flex sm:justify-between'>
-				<div className="mt-8 text-xs w-full sm:w-[60%] sm:grid sm:grid-cols-3 flex flex-wrap">
-					<div className="xs:w-1/2 sm:w-1/2 md:w-1/3 lg:w-auto px-4">
+			<div className='md:flex md:justify-between'>
+				<div className="mt-1.5 text-xs w-full md:w-[70%] md:grid md:grid-cols-3 flex flex-wrap">
+					<div className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className="flex flex-col">
 							<div className="font-medium text-sm text-lightBlue whitespace-pre">Max Deciding</div>
 							<div className="text-lg font-medium leading-7 text-bodyBlue my-2 whitespace-pre">{trackMetaData.maxDeciding}</div>
 						</div>
 					</div>
 
-					<div className="xs:w-1/2 sm:w-1/2 md:w-1/3 lg:w-auto px-4">
+					<div className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className="flex flex-col">
 							<div className="font-medium text-sm text-lightBlue whitespace-pre">Confirm Period</div>
 							<div className="text-lg font-medium leading-7 text-bodyBlue my-2 whitespace-pre">{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}</div>
 						</div>
 					</div>
 
-					<div className="xs:w-1/2 sm:w-1/2 md:w-1/3 lg:w-auto px-4">
+					<div className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className='flex flex-col'>
 							<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Min. Enactment Period</div>
 							<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-2'>{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}</div>
 						</div>
 					</div>
 
-					<div className="xs:w-1/2 sm:w-1/2 md:w-1/3 lg:w-auto px-4">
+					<div className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className='flex flex-col'>
 							<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Period</div>
 							<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-2'>{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}</div>
 						</div>
 					</div>
 
-					<div className="xs:w-1/2 sm:w-1/2 md:w-1/3 lg:w-auto px-4">
+					<div className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className='flex flex-col'>
 							<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Deposit</div>
 							<div className='text-lg font-medium leading-7 text-bodyBlue my-2 whitespace-pre'>
@@ -250,21 +250,21 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						</div>
 					</div>
 
-					<div className="xs:w-1/2 sm:w-1/2 md:w-1/3 lg:w-auto px-4">
+					<div className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className='flex flex-col'>
 							<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Prepare Period</div>
 							<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-2 whitespace-pre'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</div>
 						</div>
 					</div>
 				</div>
-				<div className='w-full sm:w-[40%]'>
+				<div className='flex justify-center xs:mt-5 sm:mt-0 sm:m-0 md:w-[35%]'>
 					<Curves curvesLoading={curvesLoading} data={data} />
 				</div>
 			</div>
 
 			<Divider className='xs:block sm:hidden' />
 
-			<div className="sm:hidden xs:flex justify-end pt-0 px-4 pb-4 sm:p-4">
+			<div className="md:hidden xs:flex justify-end pt-0 px-4 pb-4 md:p-4">
 				{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
       <DelegateModal trackNum={trackMetaData?.trackId} />}
 			</div>

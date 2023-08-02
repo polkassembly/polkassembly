@@ -80,7 +80,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 	return(
 		<Spin indicator={<LoadingOutlined />} spinning={curvesLoading}>
 
-			<article className='-mx-3 md:m-0 max-w-[350px]'>
+			<article className='sm:-mx-3 md:m-0 max-w-[350px] max-h-[800px]'>
 				<Chart.Line
 					className='h-full w-full'
 					data={data}
@@ -88,7 +88,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 					plugins={[hoverLinePlugin]}
 				/>
 			</article>
-			<article className='mt-5 flex items-center justify-start gap-x-5'>
+			<article className='mt-5 mx-10 flex items-center justify-start gap-x-5'>
 				<div className='flex flex-col items-center'>
 					<div className='w-10 h-0.5 rounded-full bg-[#E5007A]'></div>
 					<p className='text-xs text-bodyBlue my-0.5'>Support</p>
@@ -113,7 +113,7 @@ const hoverLinePlugin = {
 
 		const { lineWidth, lineColor } = options ?? {};
 
-		if (chart.tooltip._active && chart.tooltip._active.length) {
+		if (chart?.tooltip?._active && chart?.tooltip?._active.length) {
 			const { ctx } = chart;
 			ctx.save();
 

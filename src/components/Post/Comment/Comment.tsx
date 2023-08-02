@@ -32,6 +32,8 @@ export interface IComment {
 	history?: ICommentHistory[];
 	spam_users_count?: number;
 	is_custom_username?: boolean;
+	post_index?: number;
+	post_type?: string;
 }
 
 interface ICommentProps {
@@ -87,7 +89,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 					sentiment={newSentiment}
 					commentSource={comment_source}
 					spam_users_count={spam_users_count}
-					truncateUsername = {false}
 				>
 					{
 						history && history.length > 0 &&

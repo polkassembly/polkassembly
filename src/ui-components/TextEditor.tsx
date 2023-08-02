@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import classNames from 'classnames';
 import { Modal, Skeleton } from 'antd';
@@ -11,8 +11,7 @@ import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import showdown from 'showdown';
 import styled from 'styled-components';
 import Gif from './Gif';
-import usernamesPattern from '~src/util/usernamesPattern';
-import { debounce } from 'lodash';
+import { algolia_client } from '~src/components/Search';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -26,9 +25,9 @@ interface ITextEditorProps {
     height?: number | string;
     value?: string;
     onChange: (value: string) => void;
-		isDisabled?: boolean;
-    name: string;
-		autofocus?: boolean;
+	isDisabled?: boolean;
+	name: string;
+	autofocus?: boolean;
 }
 
 const gifSVGData = `<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512.000000 512.000000">
@@ -78,10 +77,10 @@ img {
 
 const TextEditor: FC<ITextEditorProps> = (props) => {
 	const { className, height, onChange, isDisabled, value, name, autofocus } = props;
+	const userIndex = algolia_client.initIndex('polkassembly_users');
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const cursorRef = useRef<any>(null);
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
@@ -90,25 +89,6 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
 		ref.current?.editor?.focus();
 	}, [value]);
-
-	const handleOnInput = (value: string) => {
-		// find all usernames in the text (matches for spaces around it and/or html tags, except for the anchor tag) and replace them with links
-		const updatedText = value.replace(usernamesPattern, (matchedUsername) => `<a href="${window.location.origin}/user/${matchedUsername.replace('@', '')}">${matchedUsername}</a>`);
-
-		console.log('updatedText: ', updatedText);
-		ref?.current?.editor?.setContent(updatedText);
-
-		const cursorBookmark = cursorRef?.current;
-		if(cursorBookmark){
-			console.log('stored cursorBookmark: ', cursorBookmark);
-			ref?.current?.editor?.selection.moveToBookmark(cursorBookmark);
-		} else {
-			ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
-		}
-	};
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedOnInputChange = useCallback(debounce(handleOnInput, 500), []);
 
 	return (
 		<>
@@ -214,15 +194,43 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									if (autofocus) editor.focus();
 								});
 
-								editor.on('input', function(e) {
-									const value: string = String(e.target.innerHTML);
-
-									const bookmark = ref?.current?.editor?.selection.getBookmark(2, true);
-									console.log('bookmark on input: ', bookmark);
-
-									cursorRef.current = bookmark;
-
-									debouncedOnInputChange(value);
+								editor.ui.registry.addAutocompleter('specialchars_cardmenuitems', {
+									ch: '@',
+									minChars: 1,
+									columns: 1,
+									fetch: (pattern: string) => {
+										return new Promise((resolve) => {
+											userIndex.search(pattern, { hitsPerPage: 10, page: 1 }).then(({ hits }) => {
+												const results = (hits || [])?.map((user: any) => ({
+													type: 'cardmenuitem',
+													value: `<a style="color: #e5007a;" target="_blank" href="/user/${user.username}">${user.username}</a>`,
+													label: user.username,
+													items: [
+														{
+															type: 'cardcontainer',
+															direction: 'vertical',
+															items: [
+																{
+																	type: 'cardtext',
+																	text: user.username,
+																	name: 'char_name'
+																}
+															]
+														}
+													]
+												}));
+												resolve(results as any);
+											}).catch(() => {
+												resolve([]);
+											});
+										});
+									},
+									highlightOn: ['char_name'],
+									onAction: (autocompleteApi, rng, value) => {
+										editor.selection.setRng(rng);
+										editor.insertContent(value);
+										autocompleteApi.hide();
+									}
 								});
 
 								editor.ui.registry.addIcon('custom-icon', gifSVGData);

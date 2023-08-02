@@ -34,14 +34,15 @@ import DelegationSuccessPopup from '~src/components/Listing/Tracks/DelegationSuc
 import { useNetworkSelector } from '~src/redux/selectors';
 import dayjs from 'dayjs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { getConvictionVoteOptions } from './VoteReferendum';
 const ZERO_BN = new BN(0);
 
 interface Props {
 	className?: string
 	referendumId?: number | null | undefined
 	onAccountChange: (address: string) => void
-	lastVote:ILastVote | undefined
-	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
+	lastVote: ILastVote | undefined;
+	setLastVote: (pre: ILastVote) => void;
 }
 
 const abi = require('../../../../moonbeamAbi.json');
@@ -53,11 +54,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const userDetails = useUserDetailsContext();
 	const { walletConnectProvider, setWalletConnectProvider, isLoggedOut, loginAddress } = userDetails;
 	const [lockedBalance, setLockedBalance] = useState<BN | undefined>(undefined);
-	const { apiReady } = useApiContext();
+	const { apiReady, api } = useApiContext();
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
-	const { setPostData } = usePostDataContext();
+	const { setPostData, postData: { postType: proposalType } } = usePostDataContext();
 	const { network } = useNetworkSelector();
 	const [wallet, setWallet] = useState<Wallet>();
 	const [loginWallet, setLoginWallet] = useState<Wallet>();
@@ -73,12 +74,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
 	const [successModal,setSuccessModal] = useState(false);
 
-	const convictionOpts = useMemo(() => [
-		<Select.Option className={`text-[#243A57] ${poppins.variable} ${poppins.className}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
-		...CONVICTIONS.map(([value, lock]) =>
-			<Select.Option  key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
-		)
-	],[CONVICTIONS]);
+	const convictionOpts = useMemo(() => {
+		return getConvictionVoteOptions(CONVICTIONS, proposalType, api, apiReady, network);
+	},[CONVICTIONS, proposalType, api, apiReady, network]);
 
 	const [conviction, setConviction] = useState<number>(0);
 
@@ -421,7 +419,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-[4px] flex items-center justify-center p-6 w-[100%]'
 				onClick={openModal}
 			>
-				{lastVote == null || lastVote == undefined ? 'Cast Vote Now' : 'Cast Vote Again' }
+				{lastVote === undefined ? 'Cast Vote Now' : 'Cast Vote Again' }
 			</Button>
 			<Modal
 				open={showModal}

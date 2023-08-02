@@ -84,15 +84,9 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 				tableData.map((rowData,index) => (
 					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 h-auto min-h-[140px] ${poppins.variable} ${poppins.className}`} onClick={() => onClick(rowData)}>
 						{/* Meta Data Row */}
-						<div className="flex items-center justify-between text-bodyBlue">
-							<div className="flex my-3">
-								<span className='mx-3'>#{
-									rowData.tip_id ? rowData.tip_id : rowData.post_id
-								}</span>
-								<span className='mx-0.5'>
-									{/* truncate rowData.title to 50 characters */}
-									{rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
-								</span>
+						<div className="flex items-center justify-between text-bodyBlue m-2.5">
+							<div className="max-xs-hidden">
+								#{rowData.tip_id ? rowData.tip_id : rowData.post_id} {rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
 							</div>
 						</div>
 
@@ -100,7 +94,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 						<div className='flex mt-2'>
 							<span>
 								{
-									!rowData.proposer ? <span className='username mx-2 text-[#243a57] font-semibold'> { rowData.username } </span> :
+									!rowData.proposer ? <span className='username mx-2 text-bodyBlue font-semibold'> { rowData.username } </span> :
 										<Address
 											address={rowData.proposer}
 											className='text-sm mx-2'
@@ -109,12 +103,12 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 										/>
 								}
 							</span>
-							<Divider type="vertical" className='mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
-							<span className='text-lightBlue mx-1.5'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
+							<Divider type="vertical" className='mt-1 font-normal text-xs' style={{ borderLeft: '1px solid #485F7D' }} />
+							<span className='text-lightBlue mx-1.5 font-normal text-xs'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
 						</div>
 						{
 							rowData.status !== '-' &&
-								<div className='flex items-center justify-between my-2 mx-1'>
+								<div className='flex items-center justify-between my-2 mx-2'>
 									<StatusTag className='my-1.5' status={rowData.status} />
 								</div>
 						}
@@ -132,20 +126,18 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 				tableData.map((rowData,index) => (
 					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 h-auto min-h-[140px] ${poppins.variable} ${poppins.className}`} onClick={() => onClick(rowData)}>
 						{/* Meta Data Row */}
-						<div className="flex items-center justify-between text-bodyBlue">
-							<div className="flex my-3">
-								<span className='mx-3'>#{rowData.post_id}</span>
-								<span className='mx-0.5'>
-									{rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
-								</span>
-								{rowData.sub_title && <div className='text-sm text-bodyBlue'>{rowData.sub_title}</div>}
+						<div className="flex items-center justify-between text-bodyBlue m-2.5">
+							<div className="max-xs-hidden">
+								#{rowData.post_id} {rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
+								{rowData.sub_title && <div className='text-sm text-bodyBlue'>{rowData.sub_title}
+								</div>}
 							</div>
 						</div>
 						{/* Created by and on */}
 						<div className='flex mt-2'>
 							<span>
 								{
-									!rowData.proposer ? <span className='username mx-2 text-[#243a57] font-semibold'> { rowData.username } </span> :
+									!rowData.proposer ? <span className='username mx-2 text-bodyBlue font-semibold'> { rowData.username } </span> :
 										<Address
 											address={rowData.proposer}
 											className='text-sm mx-2'
@@ -154,12 +146,12 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 										/>
 								}
 							</span>
-							<Divider type="vertical" className='mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
-							<span className='text-lightBlue mx-1.5'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
+							<Divider type="vertical" className='mt-1 font-normal text-xs' style={{ borderLeft: '1px solid #485F7D' }} />
+							<span className='text-lightBlue mx-1.5 font-normal text-xs'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
 						</div>
 						{
 							rowData.status !== '-' &&
-								<div className='flex items-center justify-between my-2 mx-1'>
+								<div className='flex items-center justify-between my-2 mx-2'>
 									<StatusTag className='my-1.5' status={rowData.status} />
 								</div>
 						}

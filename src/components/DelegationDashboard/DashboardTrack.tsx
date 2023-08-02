@@ -22,6 +22,7 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { checkIsAddressMultisig } from './utils/checkIsAddressMultisig';
 
 interface Props{
   className?: string;
@@ -89,6 +90,13 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
+	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
+	useEffect(() => {
+		setIsSelectedAddressMultisig(false);
+		if(address){
+			checkIsAddressMultisig(address).then((isMulti) => setIsSelectedAddressMultisig(isMulti));
+		}
+	},[address]);
 
 	useEffect(() => {
 		if(!window) return;
@@ -261,8 +269,9 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			defaultTarget={rowData.filter((row ) => row.delegatedTo !== address )[0]?.delegatedTo}
 			trackNum={trackDetails?.trackId}
 			conviction={rowData.filter((row ) => row.delegatedTo !== address )[0]?.lockPeriod}
+			isMultisig={isSelectedAddressMultisig}
 		/>}
-		<DelegateModal open={openDelegateModal} setOpen={setOpenDelegateModal} trackNum={trackDetails?.trackId} />
+		<DelegateModal open={openDelegateModal} setOpen={setOpenDelegateModal} trackNum={trackDetails?.trackId} isMultisig={isSelectedAddressMultisig}/>
 	</div>;
 };
 

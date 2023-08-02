@@ -14,6 +14,7 @@ import { LoadingStatusType,NotificationStatus } from '../../../../types';
 import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
 import { useApiContext, useUserDetailsContext } from '~src/context';
 import { useNetworkSelector } from '~src/redux/selectors';
+import executeTx from '~src/util/executeTx';
 
 export interface SecondProposalProps {
 	accounts: InjectedAccount[]
@@ -33,7 +34,25 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 	const [seconds, setSeconds] = useState<number>(0);
 	const { id }=useUserDetailsContext();
 
+	const onSuccess = () => {
+		setLoadingStatus({ isLoading: false, message: '' });
+		queueNotification({
+			header: 'Success!',
+			message: `Vote on proposal #${proposalId} successful.`,
+			status: NotificationStatus.SUCCESS
+		});
+	};
+
+	const onFailed = (message: string) => {
+		setLoadingStatus({ isLoading: false, message: '' });
+		queueNotification({
+			header: 'Failed!',
+			message,
+			status: NotificationStatus.ERROR
+		});
+	};
 	const secondProposal = async () => {
+
 		if (!proposalId && proposalId !== 0) {
 			console.error('proposalId not set');
 			return;
@@ -59,63 +78,17 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 			second = api.tx.democracy.second(proposalId);
 		}
 
-		if(network == 'equilibrium'){
-			second.signAndSend(address, { nonce : -1 }, ({ status }: any) => {
-				if (status.isInBlock) {
-					setLoadingStatus({ isLoading: false, message: '' });
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on proposal #${proposalId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
+		await executeTx({ address,
+			api,
+			errorMessageFallback: 'Transaction failed.',
+			network,
+			onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
+			onFailed,
+			onSuccess,
+			params: network == 'equilibrium' ? { nonce: -1 } : {},
+			tx: second
+		});
 
-					console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-				} else {
-					if (status.isBroadcast) {
-						setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' });
-					}
-					console.log(`Current status: ${status.type}`);
-				}
-			}).catch((error: any) => {
-				setLoadingStatus({ isLoading: false, message: '' });
-				console.log(':( transaction failed');
-				console.error('ERROR:', error);
-				queueNotification({
-					header: 'Failed!',
-					message: error.message,
-					status: NotificationStatus.ERROR
-				});
-			});
-		} else {
-			{
-				second.signAndSend(address, ({ status }: any) => {
-					if (status.isInBlock) {
-						setLoadingStatus({ isLoading: false, message: '' });
-						queueNotification({
-							header: 'Success!',
-							message: `Vote on proposal #${proposalId} successful.`,
-							status: NotificationStatus.SUCCESS
-						});
-
-						console.log(`Completed at block hash #${status.asInBlock.toString()}`);
-					} else {
-						if (status.isBroadcast) {
-							setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' });
-						}
-						console.log(`Current status: ${status.type}`);
-					}
-				}).catch((error: any) => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					console.log(':( transaction failed');
-					console.error('ERROR:', error);
-					queueNotification({
-						header: 'Failed!',
-						message: error.message,
-						status: NotificationStatus.ERROR
-					});
-				});
-			}
-		}
 	};
 
 	const openModal = () => {

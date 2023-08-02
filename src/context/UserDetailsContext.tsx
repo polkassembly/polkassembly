@@ -25,6 +25,7 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	},
 	loginAddress: '',
 	loginWallet: null,
+	multisigAssociatedAddress: '',
 	networkPreferences:{
 		channelPreferences: {},
 		triggerPreferences:{}

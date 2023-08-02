@@ -28,6 +28,8 @@ import { APPNAME } from '~src/global/appName';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { useNetworkSelector } from '~src/redux/selectors';
+import executeTx from '~src/util/executeTx';
+import usePolkasafe from '~src/hooks/usePolkasafe';
 
 const ZERO_BN = new BN(0);
 
@@ -39,8 +41,9 @@ interface Props {
   setOpen: (pre:boolean) => void;
   conviction: number;
   balance : BN;
+  isMultisig?:boolean
 }
-const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance }: Props ) => {
+const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, isMultisig }: Props ) => {
 
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkSelector();
@@ -55,6 +58,9 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
+
+	const multisigDelegationAssociatedAddress = localStorage.getItem('multisigDelegationAssociatedAddress') || '';
+	const { client, connect } = usePolkasafe(multisigDelegationAssociatedAddress);
 
 	useEffect(() => {
 
@@ -92,6 +98,25 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [defaultAddress]);
+
+	const onSuccess = () => {
+		queueNotification({
+			header: 'Success!',
+			message: 'Undelegate successful.',
+			status: NotificationStatus.SUCCESS
+		});
+		setLoading(false);
+		setOpenSuccessPopup(true);
+		setOpen(false);
+	};
+	const onFailed = (message: string) => {
+		queueNotification({
+			header: 'Undelegate failed!',
+			message,
+			status: NotificationStatus.ERROR
+		});
+		setLoading(false);
+	};
 
 	const handleSubmit = async () => {
 
@@ -135,54 +160,36 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 		// TODO: check .toNumber()
 		const delegateTxn = api.tx.convictionVoting.undelegate(trackNum);
 
-		delegateTxn.signAndSend(defaultAddress, ({ status, events }: any) => {
-			if (status.isFinalized) {
-				for (const { event } of events) {
-					if (event.method === 'ExtrinsicSuccess') {
-						queueNotification({
-							header: 'Success!',
-							message: 'Undelegate successful.',
-							status: NotificationStatus.SUCCESS
-						});
-						setLoading(false);
-						setOpenSuccessPopup(true);
-						setOpen(false);
-
-					} else if (event.method === 'ExtrinsicFailed') {
-						const errorModule = (event.data as any)?.dispatchError?.asModule;
-						let message = 'Undelegate failed.';
-
-						if(errorModule) {
-							const { method, section, docs } = api.registry.findMetaError(errorModule);
-							message = `${section}.${method} : ${docs.join(' ')}`;
-						}
-
-						queueNotification({
-							header: 'Undelegate failed!',
-							message,
-							status: NotificationStatus.ERROR
-						});
-						// TODO: error state popup
+		if(isMultisig){
+			const unDelegationByMultisig = async (tx:any) => {
+				try{
+					setLoading(true);
+					await connect();
+					const { error } = await client.customTransactionAsMulti(defaultAddress, tx);
+					if(error){
+						throw new Error(error.error);
 					}
+					queueNotification({
+						header: 'Success!',
+						message: 'Undelegate will be successful once approved by other signatories.',
+						status: NotificationStatus.SUCCESS
+					});
+
+					setLoading(false);
+					setOpenSuccessPopup(true);
+					setOpen(false);
+				}catch(error){
+					onFailed(error.message);
+				}finally{
+					setLoading(false);
 				}
+			};
+			setLoading(true);
+			await unDelegationByMultisig(delegateTxn);
+			return;
+		}
 
-				setLoading(false);
-
-				console.log(`Undelegate: completed at block hash #${status.toString()}`);
-			} else {
-				console.log(`Undelegate: Current status: ${status.type}`);
-			}
-		}).catch((error: any) => {
-			console.log(':( transaction failed');
-			console.error('ERROR:', error);
-			queueNotification({
-				header: 'Undelegate failed!',
-				message: error.message,
-				status: NotificationStatus.ERROR
-			});
-			setLoading(false);
-
-		});
+		await executeTx({ address: defaultAddress, api, errorMessageFallback: 'Undelegate successful.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 
 	return (
@@ -266,7 +273,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 					</div>
 				</Spin>
 			</Modal>
-			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={balance}/>
+			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={balance} isMultisig={isMultisig} title={isMultisig ? 'Undelegation with Polkasafe initiated':''}/>
 		</>
 	);
 };

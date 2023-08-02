@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from '@ant-design/icons';
 import { Alert, Button, Checkbox, Form, Modal, Popover, Slider, Spin } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -20,7 +20,7 @@ import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useApiContext, useUserDetailsContext } from '~src/context';
 
-import DelegateProfileIcon from '~assets/icons/delegate-popup-profile.svg';
+import DelegateProfileIcon from '~assets/icons/delegation-listing.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
@@ -36,6 +36,8 @@ import Web3 from 'web3';
 import Balance from '~src/components/Balance';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
+import executeTx from '~src/util/executeTx';
+import usePolkasafe from '~src/hooks/usePolkasafe';
 
 const ZERO_BN = new BN(0);
 
@@ -45,9 +47,10 @@ interface Props {
   defaultTarget?: string;
   open?: boolean;
   setOpen?: (pre:boolean) => void;
+  isMultisig?:boolean;
 }
 
-const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Props ) => {
+const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig }: Props ) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const [form] = Form.useForm();
@@ -75,7 +78,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 	const [balanceErr, setBalanceErr] = useState<string>('');
 	const [validationOn, setValidationOn] = useState<boolean>(false);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
-
+	const multisigDelegationAssociatedAddress = localStorage.getItem('multisigDelegationAssociatedAddress') || '';
+	const { client, connect } = usePolkasafe(multisigDelegationAssociatedAddress);
 	useEffect(() => {
 
 		if(!network) return ;
@@ -202,6 +206,25 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 		setErrorArr(errors);
 		return errors.length === 0;
 	};
+	const onSuccess = () => {
+		queueNotification({
+			header: 'Success!',
+			message: 'Delegation successful.',
+			status: NotificationStatus.SUCCESS
+		});
+		setOpenSuccessPopup(true);
+		setLoading(false);
+		setOpen ? setOpen?.(false) : setDefaultOpen(false);
+	};
+	const onFailed = (message: string) => {
+		queueNotification({
+			header: 'Failed!',
+			message,
+			status: NotificationStatus.ERROR
+		});
+		setLoading(false);
+		setOpen ? setOpen?.(false) : setDefaultOpen(false);
+	};
 
 	const handleSubmit = async () => {
 
@@ -221,53 +244,34 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 
 		const txArr = checkedArr?.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
 		const delegateTxn = api.tx.utility.batchAll(txArr);
-
-		delegateTxn.signAndSend(delegationDashboardAddress, ({ status, events }: any) => {
-			if (status.isFinalized) {
-				for (const { event } of events) {
-					if (event.method === 'ExtrinsicSuccess') {
-						queueNotification({
-							header: 'Success!',
-							message: 'Delegation successful.',
-							status: NotificationStatus.SUCCESS
-						});
-						setOpenSuccessPopup(true);
-						setOpen ? setOpen?.(false) : setDefaultOpen(false);
-
-					} else if (event.method === 'ExtrinsicFailed') {
-						const errorModule = (event.data as any)?.dispatchError?.asModule;
-						let message = 'Delegation failed.';
-
-						if(errorModule) {
-							const { method, section, docs } = api.registry.findMetaError(errorModule);
-							message = `${section}.${method} : ${docs.join(' ')}`;
-						}
-
-						queueNotification({
-							header: 'Delegation failed!',
-							message,
-							status: NotificationStatus.ERROR
-						});
-						// TODO: error state popup
+		if(isMultisig){
+			const delegationByMultisig = async (tx:any) => {
+				try{
+					setLoading(true);
+					await connect();
+					const { error } = await client.customTransactionAsMulti(delegationDashboardAddress, tx);
+					if(error){
+						throw new Error(error.error);
 					}
+					queueNotification({
+						header: 'Success!',
+						message: 'Delegation will be successful once approved by other signatories.',
+						status: NotificationStatus.SUCCESS
+					});
+					setOpenSuccessPopup(true);
+					setOpen ? setOpen?.(false) : setDefaultOpen(false);
+				}catch(error){
+					onFailed(error.message);
+				}finally{
+					setLoading(false);
 				}
+			};
+			setLoading(true);
+			await delegationByMultisig(delegateTxn);
+			return;
+		}
 
-				setLoading(false);
-				setOpen ? setOpen?.(false) : setDefaultOpen(false);
-				console.log(`Delegation: completed at block hash #${status.toString()}`);
-			} else {
-				console.log(`Delegation: Current status: ${status.type}`);
-			}
-		}).catch((error: any) => {
-			console.log(':( transaction failed');
-			console.error('ERROR:', error);
-			queueNotification({
-				header: 'Delegation failed!',
-				message: error.message,
-				status: NotificationStatus.ERROR
-			});
-			setLoading(false);
-		});
+		await executeTx({ address: delegationDashboardAddress, api, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 
 	const handleOnBalanceChange = (balanceStr: string) => {
@@ -303,8 +307,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 
 	return (
 		<>
-			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm text-pink_primary hover:bg-pink_primary hover:text-white flex gap-0 items-center justify-center py-3 px-6 rounded-[4px]'>
-				<PlusOutlined/>
+			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm bg-pink_primary flex gap-0 items-center justify-center p-5 rounded-md text-white'>
+				<DelegateProfileIcon className='mr-2'/>
 				<span >Delegate</span>
 			</Button>}
 
@@ -329,7 +333,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 								<Button key="back" disabled={loading} className='h-[40px] w-[134px]' onClick={() => setOpen?.(false)}>
 										Cancel
 								</Button>,
-								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] ' disabled={loading} onClick={() => {handleSubmit(); setValidationOn(true);}}>
+								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] ' disabled={loading} onClick={async () => {
+									await handleSubmit();
+									setValidationOn(true);
+								}}>
 										Delegate
 								</Button>
 							]
@@ -463,7 +470,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum }: Pr
 				</Spin>
 
 			</Modal>
-			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedTrackArr} address={target} isDelegate={true} balance={bnBalance} trackNum= {trackNum} conviction={conviction} />
+			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedTrackArr} address={target} isMultisig={isMultisig} isDelegate={true} balance={bnBalance} trackNum= {trackNum} conviction={conviction} title={isMultisig? 'Delegation with Polkasafe initiated':''}/>
 		</>
 	);
 };

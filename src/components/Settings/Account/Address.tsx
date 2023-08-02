@@ -116,7 +116,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 			const params = [msg, from];
 			const method = 'personal_sign';
 
-			(window as any).web3.currentProvider.sendAsync({
+			(window as any).ethereum.sendAsync({
 				from,
 				method,
 				params

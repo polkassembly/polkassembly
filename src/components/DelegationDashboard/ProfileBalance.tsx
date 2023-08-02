@@ -32,8 +32,8 @@ const DelegationWalletConnectModal = dynamic(() => import('./DelegationWalletCon
 
 export const formatedBalance = (balance: string, unit: string) => {
 	const formated = formatBalance(balance, { forceUnit: unit, withUnit: false }).split('.');
-	if(Number(formated?.[0]) > 0){
-		return formated?.[1] ? `${formated[0]}.${formated[1].slice(0,2)}`: '0';
+	if(Number(formated?.[0][0]) > 0){
+		return formated?.[1] ? `${formated[0]}.${formated[1].slice(0,1)}`: `${formated[0]}`;
 	}else{
 		return formated.join('.');
 	}
@@ -75,7 +75,6 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	}, [address, api, apiReady]);
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
-
 		if(!api || !apiReady || !chosenWallet) return;
 
 		const injectedWindow = window as Window & InjectedWindow;
@@ -141,7 +140,6 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	};
 
 	useEffect(() => {
-
 		loginWallet && getAccounts(loginWallet);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -190,7 +188,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				</div>
 			</div>
 		</div>
-		<div className='w-[195px] mr-6 -mt-6'>
+		<div className='w-[250px] mr-6 -mt-6'>
 			{ accounts.length > 0 && <AccountSelectionForm
 				accounts={accounts}
 				address={delegationDashboardAddress}

@@ -16,7 +16,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
 import { useApiContext, usePostDataContext, useUserDetailsContext } from '~src/context';
-import { ProposalType, VoteType, getSubsquidProposalType } from '~src/global/proposalType';
+import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import { useNetworkSelector } from '~src/redux/selectors';
 
@@ -63,6 +63,7 @@ import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
+import { formatBalance } from '@polkadot/util';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -74,8 +75,6 @@ interface IGovernanceSidebarProps {
 	tally?: any;
 	post: IPostResponse;
 	toggleEdit?: () => void;
-	lastVote: ILastVote | undefined;
-	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -139,7 +138,8 @@ export function getTrackFunctions(trackInfo: any) {
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, lastVote ,setLastVote } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit } = props;
+	const [lastVote, setLastVote] = useState< ILastVote>();
 
 	const { network } = useNetworkSelector();
 	const currentBlock = useCurrentBlock();
@@ -572,6 +572,15 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	}, [address]);
 
 	useEffect(() => {
+		if(!network) return ;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
 		getVotingHistory();
 	}, [getVotingHistory]);
 
@@ -660,25 +669,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			<LastVoteInfoOnChain {...onChainLastVote}/> :
 			null;
 
-	if (extensionNotFound) {
-		return (
-			<div className={className}>
-				<GovSidebarCard>
-					<ExtensionNotDetected />
-				</GovSidebarCard>
-			</div>
-		);
-	}
-
-	if (accountsNotFound) {
-		return (
-			<GovSidebarCard>
-				<div className='mb-4'>You need at least one account in Polkadot-js extenstion to use this feature.</div>
-				<div className='text-muted'>Please reload this page after adding accounts.</div>
-			</GovSidebarCard>
-		);
-	}
-
 	return (
 		<>
 			{<div className={className}>
@@ -704,8 +694,31 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							</Button>
 						</div>
 					</div>}
+					{
+						(accountsNotFound || extensionNotFound)? (
+							<GovSidebarCard>
+								{
+									accountsNotFound? (
+										<div className='mb-4'>
+											<p className='mb-4'>
+												You need at least one account in Polkadot-js extension to use this feature.
+											</p>
+											<p className='text-muted m-0'>
+												Please reload this page after adding accounts.
+											</p>
+										</div>
+									): null
+								}
+								{
+									extensionNotFound? (
+										<ExtensionNotDetected />
+									): null
+								}
+							</GovSidebarCard>
+						): null
+					}
 					{proposalType === ProposalType.COUNCIL_MOTIONS && <>
-						{canVote &&
+						{canVote && !(extensionNotFound) &&
 							<VoteMotion
 								setAccounts={setAccounts}
 								accounts={accounts}
@@ -723,7 +736,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						}
 					</>}
 					{proposalType === ProposalType.ALLIANCE_MOTION && <>
-						{canVote &&
+						{canVote && !(extensionNotFound) &&
 							<VoteMotion
 								setAccounts={setAccounts}
 								accounts={accounts}
@@ -919,7 +932,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 									<VotersList
 										className={className}
 										referendumId={onchainId as number}
-										voteType={proposalType === ProposalType.REFERENDUMS?VoteType.REFERENDUM: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS? VoteType.FELLOWSHIP: VoteType.REFERENDUM_V2}
+										voteType={getVotingTypeFromProposalType(proposalType)}
 									/>
 								</Modal>
 							}

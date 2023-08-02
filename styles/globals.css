@@ -10,6 +10,7 @@
   --black_primary: #2e2f30;
   --blue_primary: #4d9999;
   --blue_secondary: #ebf0f5;
+  --blue: #3C74E1;
   --green_primary: #4dd18f;
   --green_secondary: #399969;
   --grey_app_background: #eaeef0;
@@ -341,3 +342,27 @@ a.command-palette-list-item svg {
 .track-popover .ant-collapse>.ant-collapse-item >.ant-collapse-header{
 color: var(--lightBlue) !important;
 }
+
+@keyframes wave {
+	0% {
+	  transform: scale(1);
+	  opacity: 0.6;
+	}
+	100% {
+	  transform: scale(5);
+	  opacity: 0.06;
+	}
+  }
+  
+  .wave-effect {
+	position: fixed;
+	bottom:32px;
+  right:38px;
+	transform: translate(-50%, -50%);
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	background-color:#E5007A;
+	pointer-events: none;
+	animation: wave 1s linear infinite;
+  }

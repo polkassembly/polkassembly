@@ -16,7 +16,6 @@ import News from 'src/components/Home/News';
 import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
 import { useDispatch } from 'react-redux';
 import { networkActions } from '~src/redux/network';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -24,6 +23,7 @@ import { EGovType, OffChainProposalType, ProposalType } from '~src/global/propos
 import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import styled from 'styled-components';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active /> ,
@@ -92,6 +92,8 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Props) => {
 	const dispatch = useDispatch();
+	// const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
+	// const [floatButtonOpen , setFloatButtonOpen] = useState(false);
 
 	useEffect(() => {
 		dispatch(networkActions.setNetwork(network));
@@ -125,9 +127,30 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 					<News twitter={networkSocialsData?.data?.twitter || ''} />
 				</div>
 			</div>
-			<ChatFloatingModal/>
+
+			{/* <AiBot isAIChatBotOpen={isAIChatBotOpen} setIsAIChatBotOpen={setIsAIChatBotOpen} floatButtonOpen={floatButtonOpen} setFloatButtonOpen={setFloatButtonOpen} /> */}
+
 		</>
 	);
 };
 
-export default Gov2Home;
+export default styled(Gov2Home)`
+.docsbot-wrapper {
+	z-index:1 !important;
+	margin-left:250px;
+	pointer-events: none !important;
+}
+  .floating-button{
+	display:none !important;
+}
+.docsbot-chat-inner-container{
+	z-index:1 !important;
+	margin-right:250px !important;
+	pointer-events: none !important;
+	background-color:red;
+
+}
+.ant-float-btn-group-circle {
+	display:none !important;
+}
+`;

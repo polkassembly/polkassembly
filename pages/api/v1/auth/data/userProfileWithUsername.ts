@@ -11,6 +11,77 @@ import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
+export async function getUserIdWithAddress(address: string) : Promise<IApiResponse<number>> {
+	try{
+		const docSnapshot = await firestore_db.collection('addresses').doc(address).get();
+
+		if (!docSnapshot.exists) {
+			return {
+				data: null,
+				error: messages.NO_USER_FOUND_WITH_ADDRESS,
+				status: 404
+			};
+		}
+		const data = docSnapshot.data();
+		if (!data?.user_id || isNaN(Number(data?.user_id))) {
+			return {
+				data: null,
+				error: messages.NO_USER_FOUND_WITH_ADDRESS,
+				status: 404
+			};
+		}
+		return {
+			data: JSON.parse(JSON.stringify(data?.user_id)),
+			error: null,
+			status: 200
+		};
+	} catch (error) {
+		return {
+			data: null,
+			error: error.message,
+			status: Number(error.name) || 500
+		};
+	}
+}
+
+export async function getUserProfileWithUserId(userId: number) : Promise<IApiResponse<ProfileDetailsResponse>> {
+	try{
+		const userDoc = await firestore_db.collection('users').doc(String(userId)).get();
+		if (!userDoc.exists) {
+			return {
+				data: null,
+				error: messages.NO_USER_FOUND_WITH_USER_ID,
+				status: 404
+			};
+		}
+		const data = userDoc.data();
+		const user_addresses = await getAddressesFromUserId(userId);
+
+		const user: ProfileDetailsResponse = {
+			addresses: user_addresses.map((a) => a?.address) || [],
+			badges: [],
+			bio: '',
+			image: '',
+			title: '',
+			user_id: userDoc.id,
+			username: data?.username,
+			...data?.profile
+		};
+
+		return {
+			data: JSON.parse(JSON.stringify(user)),
+			error: null,
+			status: 200
+		};
+	} catch (error) {
+		return {
+			data: null,
+			error: error.message,
+			status: Number(error.name) || 500
+		};
+	}
+}
+
 export async function getUserProfileWithUsername(username: string) : Promise<IApiResponse<ProfileDetailsResponse>> {
 	try{
 		const userQuerySnapshot = await firestore_db.collection('users').where('username', '==', username).limit(1).get();

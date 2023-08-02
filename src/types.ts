@@ -26,6 +26,7 @@ export interface UserDetailsContextType {
   loginWallet: Wallet | null;
   delegationDashboardAddress: string;
   loginAddress: string;
+  multisigAssociatedAddress?:string;
   networkPreferences: INetworkPreferences;
   primaryNetwork: string;
   is2FAEnabled?: boolean;
@@ -112,6 +113,7 @@ export interface ChainProps {
   'treasuryProposalMaxBond': string | null;
   'externalLinks': string;
   'rpcEndpoints': TRPCEndpoint[];
+  'relayRpcEndpoints'?: TRPCEndpoint[];
   'gTag': string | null;
 }
 
@@ -185,6 +187,7 @@ export enum Wallet {
   WALLETCONNECT = 'walletconnect',
   NOVAWALLET = 'polkadot-js',
   POLYWALLET = 'polywallet',
+  POLKASAFE = 'polkasafe',
   OTHER = ''
 }
 
@@ -330,7 +333,8 @@ export interface Post {
   gov_type?: 'gov_1' | 'open_gov'
   tags?: string[] | [];
   history?: IPostHistory[];
-  subscribers?: number[]
+  subscribers?: number[];
+  summary?: string;
 }
 export interface IPostTag {
   name: string;

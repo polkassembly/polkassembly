@@ -12,10 +12,10 @@ import messages from '~src/auth/utils/messages';
 async function handler(req: NextApiRequest, res: NextApiResponse<ChallengeMessage | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
-	const { address } = req.body;
+	const { address, multisig } = req.body;
 	if(!address) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	const signMessage = await authServiceInstance.AddressSignupStart(address);
+	const signMessage = await authServiceInstance.AddressSignupStart(address, multisig);
 
 	return res.status(200).json({ message: messages.ADDRESS_SIGNUP_STARTED, signMessage });
 }

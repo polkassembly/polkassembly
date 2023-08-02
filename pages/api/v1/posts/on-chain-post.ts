@@ -21,6 +21,10 @@ import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-pos
 import { getUpdatedAt } from './off-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
+import { getContentSummary } from '~src/util/getPostContentAiSummary';
+import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
+import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
+import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -31,7 +35,7 @@ export const getTimeline = (proposals: any, isStatus?: {
 }) => {
 	return proposals?.map((obj: any) => {
 		const statuses = obj?.statusHistory as { status: string }[];
-		if (obj.type === 'ReferendumV2') {
+		if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
 			const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');
 			if (index >= 0) {
 				const decidingIndex = statuses.findIndex((v) => v.status === 'Deciding');
@@ -95,6 +99,7 @@ interface IGetOnChainPostParams {
 	postId?: string | number | string[];
 	voterAddress?: string | string[];
 	proposalType: string | string[];
+	isExternalApiCall?: boolean;
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -220,6 +225,9 @@ const getAndSetNewData = async (params: IParams) => {
 							if (data.post_link && !newData.post_link) {
 								newData.post_link = data.post_link;
 							}
+							if (data.summary && !newData.summary) {
+								newData.summary = data.summary;
+							}
 							if(data.tags && Array.isArray(data.tags)){
 								newData.tags = data?.tags;
 							}
@@ -304,7 +312,8 @@ const getAndSetNewData = async (params: IParams) => {
 	return newData;
 };
 
-export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>, postDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>, network: string, proposalType: string): Promise<any[]> {
+export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>, postDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>, network: string, postType: string, postIndex: number | string): Promise<any[]> {
+	const userIds = new Set<number>();
 	const commentsPromise = commentsSnapshot.docs.map(async (doc) => {
 		if (doc && doc.exists) {
 			const data = doc.data();
@@ -312,118 +321,79 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
 			const commentsReactionsSnapshot = await commentDocRef.collection('comment_reactions').get();
 			const comment_reactions = getReactions(commentsReactionsSnapshot);
+
+			if (typeof data.user_id === 'number') {
+				userIds.add(data.user_id);
+			} else {
+				const numUserId = Number(data.user_id);
+				if (!isNaN(numUserId)) {
+					userIds.add(numUserId);
+				}
+			}
+
 			const comment = {
 				comment_reactions: comment_reactions,
 				content: data.content,
 				created_at: data.created_at?.toDate ? data.created_at.toDate(): data.created_at,
 				history: history,
 				id: data.id,
+				is_custom_username: false,
+				post_index: postIndex,
+				post_type: postType,
 				proposer: '',
 				replies: [] as any[],
 				sentiment:data.sentiment || 0,
 				spam_users_count: 0,
 				updated_at: getUpdatedAt(data),
-				user_id: data.user_id || data.user_id,
+				user_id: data.user_id,
 				username: data.username
 			};
 
+			const replyIds: string[] = [];
 			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').get();
 			repliesSnapshot.docs.forEach((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();
 					if (data) {
 						const { created_at, id, username, comment_id, content, user_id } = data;
+						if (id) {
+							replyIds.push(id);
+						}
+						if (typeof user_id === 'number') {
+							userIds.add(user_id);
+						} else {
+							const numUserId = Number(user_id);
+							if (!isNaN(numUserId)) {
+								userIds.add(numUserId);
+							}
+						}
 						comment.replies.push({
 							comment_id,
 							content,
 							created_at: created_at?.toDate? created_at.toDate(): created_at,
 							id: id,
+							is_custom_username: false,
+							post_index: postIndex,
+							post_type: postType,
 							proposer: '',
 							spam_users_count: 0,
 							updated_at: getUpdatedAt(data),
-							user_id: user_id || user_id,
+							user_id: user_id,
 							username
 						});
 					}
 				}
 			});
 
-			const idsSet = new Set<number>();
-			const replyIds: string[] = [];
-			comment.replies.forEach((reply) => {
-				if (reply) {
-					const { user_id , id } = reply;
-					if (id) {
-						replyIds.push(id);
-					}
-
-					if (typeof user_id === 'number') {
-						idsSet.add(user_id);
-					} else {
-						const numUserId = Number(user_id);
-						if (!isNaN(numUserId)) {
-							idsSet.add(numUserId);
-						}
-					}
-				}
-			});
-
-			const newIds = Array.from(idsSet);
-
-			if (newIds.length > 0) {
-				const newIdsLen = newIds.length;
-				let lastIndex = 0;
-				for (let i = 0; i < newIdsLen; i+=30) {
-					lastIndex = i;
-					const slice = newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen);
-					if (slice.length > 0) {
-						const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
-						addressesQuery.docs.map((doc) => {
-							if (doc && doc.exists) {
-								const data = doc.data();
-								comment.replies = comment.replies.map((v) => {
-									if (v && v.user_id == data.user_id) {
-										return {
-											...v,
-											proposer: data.address
-										};
-									}
-									return v;
-								});
-							}
-						});
-					}
-				}
-				lastIndex += 30;
-				if (lastIndex <= newIdsLen) {
-					const slice = newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen);
-					if (slice.length > 0) {
-						const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
-						addressesQuery.docs.map((doc) => {
-							if (doc && doc.exists) {
-								const data = doc.data();
-								comment.replies = comment.replies.map((v) => {
-									if (v && v.user_id == data.user_id) {
-										return {
-											...v,
-											proposer: data.address
-										};
-									}
-									return v;
-								});
-							}
-						});
-					}
-				}
-			}
 			if (replyIds.length > 0) {
-				const newIdsLen = replyIds.length;
-				let lastIndex = 0;
-				for (let i = 0; i < newIdsLen; i+=30) {
-					lastIndex = i;
-					const slice = replyIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen);
+				const chunkSize = 30;
+				const totalChunks = Math.ceil(replyIds.length / chunkSize);
+				for (let i = 0; i < totalChunks; i++) {
+					const startIndex = i * chunkSize;
+					const endIndex = startIndex + chunkSize;
+					const slice = replyIds.slice(startIndex, endIndex);
 					if (slice.length > 0) {
-						const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+						const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', postType).where('content_id', 'in', slice).get();
 						reportsQuery.docs.map((doc) => {
 							if (doc && doc.exists) {
 								const data = doc.data();
@@ -432,27 +402,6 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 										return {
 											...v,
 											spam_users_count:(Number(v.spam_users_count) + 1)
-										};
-									}
-									return v;
-								});
-							}
-						});
-					}
-				}
-				lastIndex += 30;
-				if (lastIndex <= newIdsLen) {
-					const slice = replyIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen);
-					if (slice.length > 0) {
-						const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
-						reportsQuery.docs.map((doc) => {
-							if (doc && doc.exists) {
-								const data = doc.data();
-								comment.replies = comment.replies.map((v) => {
-									if (v && v.id == data.content_id) {
-										return {
-											...v,
-											spam_users_count: (Number(v.spam_users_count) + 1)
 										};
 									}
 									return v;
@@ -473,75 +422,57 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			};
 		}
 	});
+
+	const commentIds: string[] = [];
 	let comments = await Promise.all(commentsPromise);
 	comments =  comments.reduce((prev, comment) => {
 		if (comment) {
+			const { id } = comment;
+			if (id) {
+				commentIds.push(id);
+			}
 			prev.push(comment);
 		}
 		return prev;
 	}, [] as any[]);
 
-	const idsSet = new Set<number>();
-	const commentIds: string[] = [];
-	comments.forEach((comment) => {
-		if (comment) {
-			const { user_id, id } = comment;
-			if (id) {
-				commentIds.push(id);
-			}
-			if (typeof user_id === 'number') {
-				idsSet.add(user_id);
-			} else {
-				const numUserId = Number(user_id);
-				if (!isNaN(numUserId)) {
-					idsSet.add(numUserId);
-				}
-			}
+	const newIds = Array.from(userIds);
+	const userIdToUserMap: {
+		[key: number]: {
+			username: string;
+			proposer: string;
+			is_custom_username: boolean;
 		}
-	});
-
-	const newIds = Array.from(idsSet);
+	} = {};
 
 	if (newIds.length > 0) {
-		const newIdsLen = newIds.length;
-		let lastIndex = 0;
-		for (let i = 0; i < newIdsLen; i+=30) {
-			lastIndex = i;
-			const slice = newIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen);
+		const chunkSize = 30;
+		const totalChunks = Math.ceil(newIds.length / chunkSize);
+		for (let i = 0; i < totalChunks; i++) {
+			const startIndex = i * chunkSize;
+			const endIndex = startIndex + chunkSize;
+			const slice = newIds.slice(startIndex, endIndex);
 			if (slice.length > 0) {
-				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
-				addressesQuery.docs.map((doc) => {
+				const usersQuery = await firestore_db.collection('users').where('id', 'in', slice).get();
+				usersQuery.docs.forEach((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
-						comments = comments.map((v) => {
-							if (v && v.user_id == data.user_id) {
-								return {
-									...v,
-									proposer: data.address
-								};
-							}
-							return v;
-						});
+						userIdToUserMap[data.id] = {
+							is_custom_username: (MANUAL_USERNAME_25_CHAR.includes(data.username) || data.custom_username || data.username.length !== 25),
+							proposer: userIdToUserMap?.[data.user_id]?.proposer || '',
+							username: data.username || ''
+						};
 					}
 				});
-			}
-		}
-		if (lastIndex <= newIdsLen) {
-			const slice = newIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen);
-			if (slice.length > 0) {
 				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
-				addressesQuery.docs.map((doc) => {
+				addressesQuery.docs.forEach((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
-						comments = comments.map((v) => {
-							if (v && v.user_id == data.user_id) {
-								return {
-									...v,
-									proposer: data.address
-								};
-							}
-							return v;
-						});
+						userIdToUserMap[data.user_id] = {
+							is_custom_username: userIdToUserMap?.[data.user_id]?.is_custom_username,
+							proposer: data.address,
+							username: userIdToUserMap?.[data.user_id]?.username || ''
+						};
 					}
 				});
 			}
@@ -549,13 +480,14 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 	}
 
 	if (commentIds.length > 0) {
-		const newIdsLen = commentIds.length;
-		let lastIndex = 0;
-		for (let i = 0; i < newIdsLen; i+=30) {
-			lastIndex = i;
-			const slice = commentIds.slice(i, newIdsLen > (i + 30)? (i + 30): newIdsLen);
+		const chunkSize = 30;
+		const totalChunks = Math.ceil(commentIds.length / chunkSize);
+		for (let i = 0; i < totalChunks; i++) {
+			const startIndex = i * chunkSize;
+			const endIndex = startIndex + chunkSize;
+			const slice = commentIds.slice(startIndex, endIndex);
 			if (slice.length > 0) {
-				const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+				const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', postType).where('content_id', 'in', slice).get();
 				reportsQuery.docs.map((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -572,31 +504,24 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				});
 			}
 		}
-		lastIndex += 30;
-		if (lastIndex <= newIdsLen) {
-			const slice = commentIds.slice(lastIndex, (lastIndex === newIdsLen)? (newIdsLen + 1): newIdsLen);
-			if (slice.length > 0) {
-				const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
-				reportsQuery.docs.map((doc) => {
-					if (doc && doc.exists) {
-						const data = doc.data();
-						comments = comments.map((v) => {
-							if (v && v.id == data.content_id) {
-								return {
-									...v,
-									spam_users_count: (Number(v.spam_users_count) + 1)
-								};
-							}
-							return v;
-						});
-					}
-				});
-			}
-		}
 	}
 
 	return comments.map((comment) => {
-
+		if (comment && userIdToUserMap[comment?.user_id]) {
+			comment.proposer = userIdToUserMap[comment.user_id].proposer || comment.proposer;
+			comment.username = userIdToUserMap[comment.user_id].username || comment.username;
+			comment.is_custom_username = userIdToUserMap[comment.user_id].is_custom_username;
+			if (comment.replies && Array.isArray(comment.replies) && comment.replies.length > 0) {
+				comment.replies = comment.replies.map((reply) => {
+					if (reply && userIdToUserMap[reply?.user_id]) {
+						reply.proposer = userIdToUserMap[reply.user_id].proposer || reply.proposer;
+						reply.username = userIdToUserMap[reply.user_id].username || reply.username;
+						reply.is_custom_username = userIdToUserMap[reply.user_id].is_custom_username;
+					}
+					return reply;
+				});
+			}
+		}
 		return {
 			...comment,
 			spam_users_count: checkReportThreshold(Number(comment?.spam_users_count))
@@ -606,7 +531,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 
 export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IApiResponse<IPostResponse>> {
 	try {
-		const { network, postId, voterAddress, proposalType } = params;
+		const { network, postId, voterAddress, proposalType, isExternalApiCall } = params;
 		const netDocRef = networkDocRef(network);
 
 		const numPostId = Number(postId);
@@ -670,6 +595,27 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const preimage = postData?.preimage;
 		const proposalArguments = postData?.proposalArguments  || postData?.callData;
 		const proposedCall = preimage?.proposedCall;
+		let remark = '';
+		let requested: any;
+		if (proposedCall?.args) {
+			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
+			if (proposedCall.args.amount) {
+				requested = proposedCall.args.amount;
+			} else {
+				const calls = proposedCall.args.calls;
+				if (calls && Array.isArray(calls) && calls.length > 0) {
+					const requestedCall = calls.find((call) => !!call.amount);
+					if (requestedCall) {
+						requested = requestedCall.amount;
+					}
+					calls.forEach((call) => {
+						if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
+							remark += call.remark + '\n';
+						}
+					});
+				}
+			}
+		}
 		const status = postData?.status;
 		let proposer = postData?.proposer || preimage?.proposer || postData?.curator;
 		if (!proposer && (postData?.parentBountyIndex || postData?.parentBountyIndex === 0)) {
@@ -731,7 +677,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,
 			proposer,
-			requested: proposedCall?.args?.amount,
+			requested: requested,
 			reward: postData?.reward,
 			status,
 			statusHistory: postData?.statusHistory,
@@ -751,6 +697,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		if(proposalType === ProposalType.ANNOUNCEMENT){
 			const proposal = postData.proposal;
+			const isStatus = {
+				swap: false
+			};
 			const proposalTimeline = getTimeline([
 				{
 					createdAt: proposal.createdAt,
@@ -759,12 +708,20 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					statusHistory: proposal.statusHistory,
 					type: proposal.type
 				}
-			]);
+			], isStatus);
 			post.timeline = [...proposalTimeline , ...post.timeline ];
+			if (isStatus.swap) {
+				if (post.status === 'DecisionDepositPlaced') {
+					post.status = 'Deciding';
+				}
+			}
 		}
 		if(proposalType === ProposalType.ALLIANCE_MOTION){
 			const announcement = postData.announcement;
-			if(announcement){
+			if (announcement) {
+				const isStatus = {
+					swap: false
+				};
 				const announcementTimeline = getTimeline([
 					{
 						createdAt: announcement.createdAt,
@@ -773,8 +730,13 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 						statusHistory: announcement.statusHistory,
 						type: announcement.type
 					}
-				]);
+				], isStatus);
 				post.timeline = [...post.timeline, ...announcementTimeline ];
+				if (isStatus.swap) {
+					if (post.status === 'DecisionDepositPlaced') {
+						post.status = 'Deciding';
+					}
+				}
 			}
 		}
 
@@ -858,6 +820,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}
 			// Populate firestore post data into the post object
 			if (data && post) {
+				post.summary = data.summary;
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
 				post.content = data.content;
 				if (!post.proposer) {
@@ -902,14 +865,22 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				}
 				post.post_link = post_link;
 			}
+
+			if(post.content === '' || post.title === '' || post.title === undefined || post.content === undefined){
+				const res =  await getSubSquareContentAndTitle(proposalType,network,numPostId);
+				post.content =  res.content;
+				post.title = res.title;
+			}
 		}
 
 		// Comments
 		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 			const commentPromises = post.timeline.map(async (timeline: any) => {
-				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+				const post_index = (timeline.type === 'Tip'? timeline.hash: timeline.index);
+				const type = getFirestoreProposalType(timeline.type) as ProposalType;
+				const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
 				const commentsSnapshot = await postDocRef.collection('comments').get();
-				const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+				const comments = await getComments(commentsSnapshot, postDocRef, network, type, post_index);
 				return comments;
 			});
 			const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
@@ -926,10 +897,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				const { id, type } = post.post_link;
 				const postDocRef = postsByTypeRef(network, type).doc(String(id));
 				const commentsSnapshot = await postDocRef.collection('comments').get();
-				post.comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+				post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
 			}
 			const commentsSnapshot = await postDocRef.collection('comments').get();
-			const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+			const comments = await getComments(commentsSnapshot, postDocRef, network, (strProposalType.toString() === 'open_gov'? ProposalType.REFERENDUM_V2: strProposalType), (strProposalType === ProposalType.TIPS? strPostId: numPostId));
 			if (post.comments && Array.isArray(post.comments)) {
 				post.comments = post.comments.concat(comments);
 			} else {
@@ -945,18 +916,22 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		post.spam_users_count = await getSpamUsersCount(network, proposalType, (proposalType === ProposalType.TIPS? strPostId: numPostId), 'post');
 
 		if (!post.content || post.content?.trim().length === 0) {
-			const proposer = post.proposer;
-			if (proposer) {
-				post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+			if (remark) {
+				post.content = remark.replace(/\n/g, '<br/>');
 			} else {
-				post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+				const proposer = post.proposer;
+				if (proposer) {
+					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+				} else {
+					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+				}
 			}
 		}
 
 		if((proposalType === ProposalType.ALLIANCE_MOTION || proposalType === ProposalType.ANNOUNCEMENT) && !post.title){
 			post.title = splitterAndCapitalizer(postData?.callData?.method || '', '_') || postData?.cid;
 		}
-
+		await getContentSummary(post, network, isExternalApiCall);
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,
@@ -1000,6 +975,7 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) res.status(400).json({ error: 'Invalid network in request header' });
 	const { data, error, status } = await getOnChainPost({
+		isExternalApiCall: true,
 		network,
 		postId,
 		proposalType,
@@ -1009,6 +985,9 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	if(error || !data) {
 		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
 	}else {
+		if (data.summary) {
+			delete data.summary;
+		}
 		res.status(status).json(data);
 	}
 };

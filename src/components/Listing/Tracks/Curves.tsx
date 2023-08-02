@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { FC } from 'react';
+import { LoadingOutlined } from '@ant-design/icons';
 import * as Chart from 'react-chartjs-2';
 import {
 	Chart as ChartJS,
@@ -14,6 +15,7 @@ import {
 	Tooltip,
 	Legend
 } from 'chart.js';
+import { Spin } from 'antd';
 
 ChartJS.register(
 	CategoryScale,
@@ -30,10 +32,12 @@ interface ICurvesProps {
 		datasets: any[],
 		labels: any[]
 	};
+	curvesLoading: boolean;
 }
 
 const Curves: FC<ICurvesProps> = (props) => {
-	const { data } = props;
+	const { data, curvesLoading } = props;
+	const labelsLength = data.labels.length;
 	const options = {
 		plugins:{
 			legend: {
@@ -42,24 +46,45 @@ const Curves: FC<ICurvesProps> = (props) => {
 		},
 		scales: {
 			x: {
+				beginAtZero: true,
+				display: true,
 				grid: {
 					display: false // Hide x-axis grid lines
-				}
+				},
+				ticks: {
+					callback(val: any) {
+						return val + 1;
+					},
+					max: labelsLength,
+					stepSize: 2
+				} as any
 			},
 			y: {
+				beginAtZero: false,
+				display: true,
 				grid: {
 					display: false // Hide y-axis grid lines
+				},
+				max: 100,
+				min: 0,
+				ticks: {
+					callback(val: any) {
+						return val + '%';
+					},
+					stepSize: 20
 				}
 			}
 		}
 	};
 	return(
-		<>
+		<Spin indicator={<LoadingOutlined />} spinning={curvesLoading}>
+
 			<article className='-mx-3 md:m-0'>
 				<Chart.Line
 					className='h-full w-full'
 					data={data}
 					options={options}
+					plugins={[hoverLinePlugin]}
 				/>
 			</article>
 			<article className='mt-5 flex items-center justify-start gap-x-5'>
@@ -72,7 +97,33 @@ const Curves: FC<ICurvesProps> = (props) => {
 					<p className='text-xs text-bodyBlue my-0.5'>Approval</p>
 				</div>
 			</article>
-		</>
+		</Spin>
 	);
 };
 export default Curves;
+
+const hoverLinePlugin = {
+	beforeDraw: (chart: any) => {
+		const options = chart.config.options?.plugins?.hoverLine ?? {};
+
+		if (!options) {
+			return;
+		}
+
+		const { lineWidth, lineColor } = options ?? {};
+
+		if (chart.tooltip._active && chart.tooltip._active.length) {
+			const { ctx } = chart;
+			ctx.save();
+
+			ctx.beginPath();
+			ctx.moveTo(chart.tooltip._active[0].element.x, chart.chartArea.top);
+			ctx.lineTo(chart.tooltip._active[0].element.x, chart.chartArea.bottom);
+			ctx.lineWidth = lineWidth;
+			ctx.strokeStyle = lineColor;
+			ctx.stroke();
+			ctx.restore();
+		}
+	},
+	id: 'hoverLine'
+};

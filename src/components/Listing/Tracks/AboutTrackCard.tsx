@@ -104,6 +104,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 		datasets: [],
 		labels: []
 	});
+	const [curvesLoading, setCurvesLoading] = useState(true);
 	//get the track number of the track
 	const track_number = trackMetaData?.trackId;
 	const { api, apiReady } = useApiContext();
@@ -111,6 +112,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 		if (!api || !apiReady) {
 			return;
 		}
+		setCurvesLoading(true);
 		const getData = async () => {
 			const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
 			if (tracks && Array.isArray(tracks)) {
@@ -176,6 +178,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					setData(JSON.parse(JSON.stringify(newData)));
 				}
 			}
+			setCurvesLoading(false);
 		};
 		getData();
 	}
@@ -251,7 +254,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					</div>
 				</div>
 				<div className='w-full sm:w-[40%]'>
-					<Curves data={data} />
+					<Curves curvesLoading={curvesLoading} data={data} />
 				</div>
 			</div>
 

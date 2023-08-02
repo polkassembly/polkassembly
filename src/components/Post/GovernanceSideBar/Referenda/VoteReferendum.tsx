@@ -673,6 +673,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											walletAddress={multisig}
 											setWalletAddress={setMultisig}
 											containerClassName='gap-[20px]'
+											canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
 										/> :
 										<AccountSelectionForm
 											title='Vote with Account'

@@ -138,7 +138,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [decision, setDecision] = useState<IPeriod>();
 	const [remainingTime, setRemainingTime] = useState<string>('');
 	const decidingBlock = statusHistory.filter((status) => status.status === 'Deciding' )?.[0]?.block || 0;
-	console.log(timeline);
 	const convertRemainingTime = (preiodEndsAt: any ) => {
 
 		const diffMilliseconds = preiodEndsAt.diff();

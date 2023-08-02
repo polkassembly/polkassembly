@@ -234,7 +234,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const gov2TrackItems: {[x:string]: ItemType[]} = {
 		mainItems: [],
 		governanceItems : [],
-		treasuryItems: [],
+		treasuryItems: [getSiderMenuItem('Bounties', '/bounties'),
+			getSiderMenuItem('Child Bounties', '/child_bounties')],
 		fellowshipItems: [
 			getSiderMenuItem('Members', '/members')
 		]

@@ -77,7 +77,7 @@ img {
 
 const TextEditor: FC<ITextEditorProps> = (props) => {
 	const { className, height, onChange, isDisabled, value, name, autofocus } = props;
-	const userIndex = algolia_client.initIndex('polkassembly_users');
+
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -199,30 +199,68 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									minChars: 1,
 									columns: 1,
 									fetch: (pattern: string) => {
-										return new Promise((resolve) => {
-											userIndex.search(pattern, { hitsPerPage: 10, page: 1 }).then(({ hits }) => {
-												const results = (hits || [])?.map((user: any) => ({
-													type: 'cardmenuitem',
-													value: `<a style="color: #e5007a;" target="_blank" href="/user/${user.username}">${user.username}</a>`,
-													label: user.username,
-													items: [
-														{
-															type: 'cardcontainer',
-															direction: 'vertical',
-															items: [
-																{
-																	type: 'cardtext',
-																	text: user.username,
-																	name: 'char_name'
-																}
-															]
-														}
-													]
-												}));
-												resolve(results as any);
-											}).catch(() => {
-												resolve([]);
-											});
+										// eslint-disable-next-line no-async-promise-executor
+										return new Promise(async (resolve) => {
+											const queries = [{
+												indexName: 'polkassembly_users',
+												query: pattern,
+												params: {
+													hitsPerPage: 6,
+													restrictSearchableAttributes: ['username']
+												}
+											}, {
+												indexName: 'polkassembly_addresses',
+												query: pattern,
+												params: {
+													hitsPerPage: 4,
+													restrictSearchableAttributes: ['address']
+												}
+											}];
+
+											const hits = await algolia_client.search(queries, { strategy: 'none' });
+
+											const usernameHits = hits.results[0]?.hits || [];
+											const addressHits = hits.results[1]?.hits || [];
+
+											const usernameResults = (usernameHits || [])?.map((user: any) => ({
+												type: 'cardmenuitem',
+												value: `<a target="_blank" href="/user/${user.username}">@${user.username}</a>`,
+												label: user.username,
+												items: [
+													{
+														type: 'cardcontainer',
+														direction: 'vertical',
+														items: [
+															{
+																type: 'cardtext',
+																text: user.username,
+																name: 'char_name'
+															}
+														]
+													}
+												]
+											}));
+
+											const addressResults = (addressHits || [])?.map((user: any) => ({
+												type: 'cardmenuitem',
+												value: `<a target="_blank" href="/address/${user.address}">@${user.address}</a>`,
+												label: user.address,
+												items: [
+													{
+														type: 'cardcontainer',
+														direction: 'vertical',
+														items: [
+															{
+																type: 'cardtext',
+																text: user.address,
+																name: 'char_name'
+															}
+														]
+													}
+												]
+											}));
+
+											resolve((usernameResults || []).concat(addressResults || []) as any);
 										});
 									},
 									highlightOn: ['char_name'],

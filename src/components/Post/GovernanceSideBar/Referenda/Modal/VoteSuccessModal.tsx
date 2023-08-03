@@ -16,7 +16,7 @@ import AbstainGray from '~assets/icons/abstainGray.svg';
 import { EVoteDecisionType } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
-import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
+import { formatedBalance } from '~src/util/formatedBalance';
 import { ReactElement } from 'react-markdown/lib/react-markdown';
 
 interface Props {

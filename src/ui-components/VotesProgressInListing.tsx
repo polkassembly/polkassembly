@@ -164,7 +164,7 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType }
 
 	return loading ? <Skeleton.Button active={loading}/>
 		: <>
-			<div className='max-xs:hidden'>
+			<div className='max-sm:hidden'>
 				<Tooltip color='#575255' overlayClassName='max-w-none' title={<div className={`flex flex-col whitespace-nowrap text-xs gap-1 p-1.5 ${poppins.className} ${poppins.variable}`}>
 					<span>Aye = {formatedBalance(tallyData.ayes.toString() || '0', unit)} {unit} ({Math.round(isAyeNaN ? 50 : ayePercent)}%) </span>
 					<span>Nay = {formatedBalance(tallyData.nays.toString() || '0', unit)} {unit} ({Math.round(isNayNaN ? 50 : nayPercent)}%) </span>
@@ -174,7 +174,7 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType }
 					</div>
 				</Tooltip>
 			</div>
-			<div className='xs:hidden'>
+			<div className='sm:hidden'>
 				<Progress size={30} percent={50} success={{ percent: Math.round((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={((index%2) === 0) ? '#fbfbfc' : 'white' } />
 			</div>
 		</>

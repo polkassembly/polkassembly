@@ -37,7 +37,7 @@ const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
 	loading: () => <Skeleton.Button active />,
 	ssr: false
 });
-const VotesInListing = dynamic(() => import('~src/ui-components/VotesProgressInListing'),{
+const VotesProgressInListing = dynamic(() => import('~src/ui-components/VotesProgressInListing'),{
 	loading: () => <Skeleton.Button  />,
 	ssr: false
 });
@@ -241,7 +241,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</>}
 							<>
 								<Divider type="vertical" className='max-sm:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
-								<VotesInListing index={index} proposalType={proposalType} onchainId={onchainId} status={status} tally={tally}/>
+								<VotesProgressInListing index={index} proposalType={proposalType} onchainId={onchainId} status={status} tally={tally}/>
 							</>
 
 							{
@@ -322,7 +322,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							<div className='flex items-center'>
 								<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div>
-									<VotesInListing index={index} proposalType={proposalType} onchainId={onchainId} status={status} tally={tally}/>
+									<VotesProgressInListing index={index} proposalType={proposalType} onchainId={onchainId} status={status} tally={tally}/>
 								</div>
 							</div>
 						</div>

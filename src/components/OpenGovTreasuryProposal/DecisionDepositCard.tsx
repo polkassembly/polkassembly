@@ -45,9 +45,9 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 	const [form] = Form.useForm();
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [defaultWallets, setDefaultWallets] = useState<any>({});
+	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [wallet,setWallet] = useState<Wallet>();
-	const [extensionOpen, setExtentionOpen] = useState<boolean>(false);
+	const [extensionOpen, setExtensionOpen] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const balance = networkTrackInfo?.[network]?.[trackName]?.decisionDeposit || ZERO_BN;
 	const unit = chainProperties[network]?.tokenSymbol;
@@ -59,11 +59,10 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 		setAvailableBalance(new BN(balanceStr.toString() || ZERO_BN));
 	};
 
-	const getWallet=() => {
+	const getAvailableWallets=() => {
 		const injectedWindow = window as Window & InjectedWindow;
-		setDefaultWallets(injectedWindow.injectedWeb3);
+		setAvailableWallets(injectedWindow.injectedWeb3);
 		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
-
 	};
 
 	const getMetamaskAccounts = async (): Promise<InjectedAccount[]> => {
@@ -91,7 +90,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 		if(!api || !apiReady) return;
 		setLoading(true);
 
-		setExtentionOpen(false);
+		setExtensionOpen(false);
 
 		if(chosenWallet === Wallet.METAMASK){
 			const accounts = await getMetamaskAccounts();
@@ -108,7 +107,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				: null;
 
 			if (!wallet) {
-				setExtentionOpen(true);
+				setExtensionOpen(true);
 				setLoading(false);
 				return;
 			}
@@ -175,7 +174,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 			unit: chainProperties[network].tokenSymbol
 		});
 
-		getWallet();
+		getAvailableWallets();
 
 		const wallet = localStorage.getItem('loginWallet') || '';
 		const address = localStorage.getItem('loginAddress');
@@ -198,10 +197,8 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				status: NotificationStatus.SUCCESS
 			});
 			setPostData((prev: any) => {return { ...prev, statusHistory: [...(prev?.statusHistory || []), { status:'DecisionDepositPlaced' } ] };});
-
 			setLoading(false);
 			setOpenModal(false);
-			router.reload();
 		};
 
 		const onFailed = () => {
@@ -242,35 +239,33 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 					<div className='flex items-center justify-center gap-x-4 mb-6'>
 						{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? <>
 
-							{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+							{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
 							{
-								['moonbase', 'moonbeam', 'moonriver'].includes(network) && isMetamaskWallet ?
+								['moonbase', 'moonbeam', 'moonriver'].includes(network) && isMetamaskWallet &&
 									<WalletButton disabled={!apiReady} className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
-									: null
 							}
 							{
-								(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
+								(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
                     <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
 							}
 						</> :  <>
-							{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
-							{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-							{defaultWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
+							{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
+							{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+							{availableWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
 							{
-								['polymesh'].includes(network)?
+								['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET]  &&
 									<WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
-									: null
 							}
 							{
-								(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
+								(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
                     <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
 							}
 						</>}
 					</div>
 					{ availableBalance.lte(amount) && <Alert showIcon type='info' className='text-sm text-bodyBlue rounded-[4px] mb-4' message='Insufficient available balance.'/>}
 
-					{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message='For using delegation dashboard:' description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
-					{Object.keys(defaultWallets || {}).length === 0 && !loading && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
+					{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message='For using delegation dashboard:' description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
+					{Object.keys(availableWallets || {}).length === 0 && !loading && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
 
 					{
 						!extensionOpen &&
@@ -287,7 +282,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 												onAccountChange={(address) => setAddress(address)}
 												onBalanceChange={handleOnBalanceChange}
 												className='text-[#485F7D] text-sm'
-											/>: !wallet && Object.keys(defaultWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
+											/>: !wallet && Object.keys(availableWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 
 										<div className='mt-6 flex gap-4 items-center mb-4'>
 											<span className='text-sm text-lightBlue tracking-wide flex gap-1.5'>

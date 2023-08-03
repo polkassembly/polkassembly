@@ -16,7 +16,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import styled from 'styled-components';
 import DownArrow from '~assets/icons/down-icon.svg';
 import { GetCurrentTokenPrice } from '../Home/TreasuryOverview';
-import { BN_HUNDRED, BN_ONE, BN_THOUSAND, formatBalance, isHex } from '@polkadot/util';
+import { BN_HUNDRED, BN_MAX_INTEGER, BN_ONE, BN_THOUSAND, formatBalance, isHex } from '@polkadot/util';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { APPNAME } from '~src/global/appName';
@@ -112,13 +112,18 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
 			if(value.group === 'Treasury'){
 				trackArr.push(key);
-				maxSpendArr.push({ maxSpend: value?.maxSpend, track: key });
+				if(value?.maxSpend === -1){
+					maxSpendArr.push({ maxSpend: Number(BN_MAX_INTEGER.toString()), track: key });
+				}else{
+					maxSpendArr.push({ maxSpend: value?.maxSpend, track: key });
+				}
 			}
 		});
 	}
 
 	maxSpendArr.sort((a,b) => a.maxSpend - b.maxSpend );
 
+	console.log(maxSpendArr);
 	const handleStateChange = (createPreimageForm: any) => {
 		setSteps({ percent: 20, step: 1 });
 		(createPreimageForm.preimageHash && createPreimageForm.preimageLength  && createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) &&  setSteps({ percent: 100, step: 1 });
@@ -148,6 +153,17 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		}
 	};
 
+	const handleSelectTrack = (fundingAmount:BN) => {
+		for(const i in maxSpendArr){
+			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
+			if(maxSpend.gte(fundingAmount)){
+				setSelectedTrack(maxSpendArr[i].track);
+				onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
+				break;
+			}
+		}
+	};
+
 	useEffect(() => {
 		form.setFieldValue('at_block', currentBlock?.add(BN_THOUSAND) || BN_ONE  );
 		let data: any = localStorage.getItem('treasuryProposalData');
@@ -170,7 +186,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
-	const onChangeLocalStorageSet = (obj: any, isPreimage: boolean, preimageCreated?: boolean, preimageLinked?: boolean, isPreimageStateChange?: boolean) => {
+	const onChangeLocalStorageSet = (changedKeyValueObj: any, isPreimage: boolean, preimageCreated?: boolean, preimageLinked?: boolean, isPreimageStateChange?: boolean) => {
 		let data: any = localStorage.getItem('treasuryProposalData');
 		if(data){data = JSON.parse(data);}
 
@@ -181,7 +197,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			...data,
 			createPreimageForm: {
 				...createPreimageFormData,
-				[createPreimageFormKey]: { ...createPreimageKeysData, ...obj }
+				[createPreimageFormKey]: { ...createPreimageKeysData, ...changedKeyValueObj }
 			},
 			isPreimage: isPreimage,
 			preimageCreated: Boolean(preimageCreated),
@@ -215,7 +231,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debounceTxFn = useCallback(_.debounce(getPreimageTxFee, 2000),[form, proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, selectedTrack, availableBalance]);
+	const debounceGetPreimageTxFee = useCallback(_.debounce(getPreimageTxFee, 2000),[form, proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, selectedTrack, availableBalance]);
 
 	useEffect(() => {
 		setShowAlert(false);
@@ -224,9 +240,9 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		if(isPreimage || !proposerAddress || !beneficiaryAddress || !getEncodedAddress(beneficiaryAddress, network) || !Web3.utils.isAddress(beneficiaryAddress) ||
 		!api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN) || fundingAmount.eq(ZERO_BN))return;
 		if(!selectedTrack) return;
-		debounceTxFn();
+		debounceGetPreimageTxFee();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debounceTxFn]);
+	}, [debounceGetPreimageTxFee]);
 
 	const getState = (api: ApiPromise, proposal: SubmittableExtrinsic<'promise'>): IPreimage => {
 		let preimageHash = EMPTY_HASH;
@@ -363,10 +379,6 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 		try{
 			const proposal = constructProposal(api, preimage);
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { meta, method, section } = api.registry.findMetaCall(
-				proposal?.callIndex as any
-			);
 			const params = proposal?.meta ? proposal?.meta.args
 				.filter(({ type }): boolean => type.toString() !== 'Origin')
 				.map(({ name }) => name.toString()) : [];
@@ -385,15 +397,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				setFundingAmount(balance);
 				onChangeLocalStorageSet({ beneficiaryAddress: preImageArguments[1].value || '', fundingAmount: balance.toString() }, Boolean(isPreimage));
 				setSteps({ percent: 100 ,step: 1 });
-				for(const i in maxSpendArr){
-					const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
-					if(maxSpend.gte(balance)){
-						setSelectedTrack(maxSpendArr[i].track);
-						onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
-						break;
-					}
-				}
-
+				handleSelectTrack(balance);
 			}
 			else{
 				setPreimageLength(0);
@@ -437,14 +441,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					form.setFieldValue('preimage_length', data.length);
 					onChangeLocalStorageSet({ beneficiaryAddress: data?.proposedCall?.args?.beneficiary || '', fundingAmount: balance.toString(), preimageLength: data?.length || '' }, Boolean(isPreimage));
 					//select track
-					for(const i in maxSpendArr){
-						const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
-						if(maxSpend.gte(balance)){
-							setSelectedTrack(maxSpendArr[i].track);
-							onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
-							break;
-						}
-					}
+					handleSelectTrack(balance);
 
 					setSteps({ percent: 100 ,step: 1 });
 
@@ -532,15 +529,9 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		setPreimageLinked(false);
 		setSteps({ percent: (beneficiaryAddress?.length > 0 && fundingAmount.gt(ZERO_BN)) ? 100 : 60, step: 1 });
 		if(!isAutoSelectTrack || !fundingAmount || fundingAmount.eq(ZERO_BN)) return;
-		for(const i in maxSpendArr){
-			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
-			if(maxSpend.gte(fundingAmount)){
-				setSelectedTrack(maxSpendArr[i].track);
-				onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
-				break;
-			}
-		}
+		handleSelectTrack(fundingAmount);
 	};
+
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
 		<div className={`${className} create-preimage`}>
 			<div className='my-8 flex flex-col'>
@@ -599,6 +590,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 							inputClassName={' font-normal text-sm h-[40px]'}
 							className='text-lightBlue text-sm font-normal -mt-6'
 							disabled
+							size='large'
+							identiconSize={30}
 						/>
 
 					</div>
@@ -615,7 +608,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						skipFormatCheck={true}
 						checkValidAddress= {setValidBeneficiaryAddress}
 					/>
-					{!(getEncodedAddress(beneficiaryAddress, network) || Web3.utils.isAddress(beneficiaryAddress)) && <span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span>}
+					{(beneficiaryAddress && !(getEncodedAddress(beneficiaryAddress, network) || Web3.utils.isAddress(beneficiaryAddress))) && <span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span>}
 
 					{addressAlert && <Alert className='mb mt-2' showIcon message='The substrate address has been changed to Kusama address.'/> }
 					<div  className='mt-6 -mb-6'>

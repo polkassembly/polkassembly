@@ -171,7 +171,6 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 		setLoading(true);
 		try {
-			setLoading(true);
 			const proposal = api.tx.referenda.submit(origin ,{ Lookup: { hash: preimageHash, len: String(preimageLength) } }, enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value }: { After: enactment.value }): { After: BN_HUNDRED });
 
 			const onSuccess = async() => {
@@ -208,6 +207,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			});
 		}
 	};
+
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
 		<div className={`create-proposal ${className}`}>
 			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-bodyBlue text-sm rounded-[4px] mt-8 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>

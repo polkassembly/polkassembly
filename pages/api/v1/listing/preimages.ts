@@ -13,7 +13,9 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 
-export interface IPreimagesListing {}
+export interface IPreimagesListing {
+  proposedCall?: any;
+}
 
 export interface IPreimagesListingResponse {
     count: number;

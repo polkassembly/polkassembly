@@ -37,15 +37,15 @@ interface Props{
   open: boolean;
   setOpen: (pre: boolean) => void;
   closable?: boolean;
-  walletKey: string;
-  addressKey: string;
+  localStorageWalletKeyName: string;
+  localStorageAddressKeyName: string;
   onConfirm?: () => void;
   LinkAddressNeeded?: boolean;
 }
 
 const ZERO_BN = new BN(0);
 
-const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, addressKey, onConfirm, LinkAddressNeeded }: Props) => {
+const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWalletKeyName, localStorageAddressKeyName, onConfirm, LinkAddressNeeded }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
@@ -55,7 +55,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 	const [form] = Form.useForm();
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [defaultWallets, setDefaultWallets] = useState<any>({});
+	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [wallet, setWallet] = useState<Wallet>(loginWallet as Wallet);
 	const [extensionOpen, setExtentionOpen] = useState<boolean>(false);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -83,7 +83,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 
 	const isUnlinkedAddress = (getAddressType(accounts.filter((account) => account.address === address)[0]) === EAddressOtherTextType.UNLINKED_ADDRESS);
 
-	const handleLink = async (address: InjectedAccount['address'], chosenWallet: Wallet) => {
+	const handleAddressLink = async (address: InjectedAccount['address'], chosenWallet: Wallet) => {
 		setLoading(true);
 		try{
 			const injectedWindow = window as Window & InjectedWindow;
@@ -213,11 +213,11 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 	const handleSubmit = () => {
 		if(!address || !wallet || !accounts) return;
 		if (LinkAddressNeeded && isUnlinkedAddress){
-			handleLink(address, wallet as Wallet);
+			handleAddressLink(address, wallet as Wallet);
 		}else{
 			setLoading(true);
-			localStorage.setItem(walletKey,  String(wallet));
-			localStorage.setItem(addressKey, (address) );
+			localStorage.setItem(localStorageWalletKeyName,  String(wallet));
+			localStorage.setItem(localStorageAddressKeyName, (address) );
 			setUserDetailsContextState((prev) => {
 
 				return { ...prev,
@@ -233,7 +233,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
-		setDefaultWallets(injectedWindow.injectedWeb3);
+		setAvailableWallets(injectedWindow.injectedWeb3);
 		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
 
 	};
@@ -258,7 +258,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 
 		return addresses as InjectedAccount[];
 	};
-	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?:string | null): Promise<undefined> => {
+
+	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?:string | null): Promise<void> => {
 
 		if(!api || !apiReady) return;
 		setLoading(true);
@@ -382,34 +383,32 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 				<div className='flex items-center justify-center gap-x-4 mb-6'>
 					{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? <>
 
-						{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+						{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
 						{
-							['moonbase', 'moonbeam', 'moonriver'].includes(network) && isMetamaskWallet ?
+							['moonbase', 'moonbeam', 'moonriver'].includes(network) && isMetamaskWallet &&
 								<WalletButton disabled={!apiReady} className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
-								: null
 						}
 						{
-							(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
+							(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
                     <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
 						}
 					</> :  <>
-						{defaultWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
-						{defaultWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-						{defaultWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
+						{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
+						{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+						{availableWallets[Wallet.SUBWALLET] && <WalletButton className={`${wallet === Wallet.SUBWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.SUBWALLET)} name="Subwallet" icon={<WalletIcon which={Wallet.SUBWALLET} className='h-6 w-6' />} />}
 						{
-							['polymesh'].includes(network)?
+							['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET] &&
 								<WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
-								: null
 						}
 						{
-							(window as any).walletExtension?.isNovaWallet && defaultWallets[Wallet.NOVAWALLET] &&
+							(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
                     <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
 						}
 					</>}
 				</div>
 
-				{Object.keys(defaultWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message={`For using ${LinkAddressNeeded ? 'Treasury proposal creation' : 'Delegation dashboard'}:`} description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
-				{Object.keys(defaultWallets || {}).length === 0 && !loading && <Alert
+				{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message={`For using ${LinkAddressNeeded ? 'Treasury proposal creation' : 'Delegation dashboard'}:`} description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
+				{Object.keys(availableWallets || {}).length === 0 && !loading && <Alert
 					message={LinkAddressNeeded ? 'Please install a wallet and create an address to start creating a proposal.' : 'Wallet extension not detected.'}
 					description={`${LinkAddressNeeded ? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.': 'No web3 wallet was found with an active address.'}`}
 					type='info' showIcon className='text-[#243A57] changeColor text-md'/>}
@@ -429,7 +428,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, walletKey, add
 											onAccountChange={(address) => setAddress(address)}
 											onBalanceChange={handleOnBalanceChange}
 											className='text-lightBlue text-sm'
-										/> : !wallet && Object.keys(defaultWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
+										/> : !wallet && Object.keys(availableWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 								</Form>}
 				{LinkAddressNeeded && !loading && accounts.length > 0 && <>
 					<Alert showIcon type='info' message={<span className='text-bodyBlue'>

@@ -21,8 +21,7 @@ import { chainProperties } from 'src/global/networkConstants';
 import NewChatIcon from '~assets/icons/chat-icon.svg';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import { getFormattedLike } from '~src/util/getFormattedLike';
-import { useApiContext, useNetworkContext } from '~src/context';
-import formatBnBalance from '~src/util/formatBnBalance';
+import { useNetworkContext } from '~src/context';
 import { useRouter } from 'next/router';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
@@ -30,12 +29,16 @@ import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
-import { formatedBalance } from '~src/util/formatedBalance';
-import { formatBalance } from '@polkadot/util';
 import CloseIcon from '~assets/icons/close.svg';
+import checkGov2Route from '~src/util/checkGov2Route';
+import { ProposalType } from '~src/global/proposalType';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
 	loading: () => <Skeleton.Button active />,
+	ssr: false
+});
+const VotesInListing = dynamic(() => import('~src/ui-components/VotesProgressInListing'),{
+	loading: () => <Skeleton.Button  />,
 	ssr: false
 });
 
@@ -67,9 +70,8 @@ interface IGovernanceProps {
   timeline?: any[];
   statusHistory?: any[];
   index?: number;
+  proposalType?: ProposalType;
 }
-
-const ZERO = new BN(0);
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const {
@@ -95,8 +97,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		requestedAmount,
 		tally,
 		timeline,
-		statusHistory=[],
-		index = 0
+		statusHistory = [],
+		index = 0,
+		proposalType
 	} = props;
 	const router= useRouter();
 	const currentUser = useContext(UserDetailsContext);
@@ -113,31 +116,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const [tagsModal, setTagsModal] = useState<boolean>(false);
 
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
-	const { api, apiReady } = useApiContext();
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(status || '');
 
 	const requestedAmountFormatted = requestedAmount ? new BN(requestedAmount).div(new BN(10).pow(new BN(tokenDecimals))).toString() : 0;
-	const [tallyData, setTallyData] = useState({
-		ayes: ZERO || 0,
-		nays: ZERO || 0,
-		support: ZERO || 0
-	});
 
-	const bnToIntBalance = function (bn: BN): number{
-		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
-	};
-	const unit =`${chainProperties[network]?.tokenSymbol}`;
-	const ayeVotesNumber =  bnToIntBalance(tallyData.ayes || ZERO);
-	const totalVotesNumber = bnToIntBalance(tallyData.ayes?.add(tallyData.nays|| ZERO) || ZERO);
-	const ayePercent = ayeVotesNumber/totalVotesNumber*100;
-	const nayPercent = 100 - ayePercent;
-	const isAyeNaN = isNaN(ayePercent);
-	const isNayNaN = isNaN(nayPercent);
 	const [decision, setDecision] = useState<IPeriod>();
 	const [remainingTime, setRemainingTime] = useState<string>('');
-	const decidingBlock = statusHistory.filter((status) => status.status === 'Deciding' )?.[0]?.block || 0;
+	const decidingBlock = statusHistory?.filter((status) => status.status === 'Deciding' )?.[0]?.block || 0;
 	const convertRemainingTime = (preiodEndsAt: any ) => {
 
 		const diffMilliseconds = preiodEndsAt.diff();
@@ -154,44 +141,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	};
 
 	useEffect(() => {
-
-		if( !api || !apiReady || !status || !network) return;
-		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol
-		});
-
-		if(['confirmed', 'executed', 'timedout', 'cancelled', 'rejected'].includes(status.toLowerCase())){
-			setTallyData({
-				ayes: String(tally?.ayes).startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
-				nays: String(tally?.nays).startsWith('0x') ? new BN(tally?.nays || 0, 'hex') : new BN(tally?.nays || 0),
-				support: String(tally?.support).startsWith('0x') ? new BN(tally?.support || 0, 'hex') : new BN(tally?.support || 0)
-			});
-			return;
-		}
-
-		(async () => {
-			const referendumInfoOf = await api.query.referenda.referendumInfoFor(onchainId);
-			const parsedReferendumInfo: any = referendumInfoOf.toJSON();
-			if (parsedReferendumInfo?.ongoing?.tally) {
-				setTallyData({
-					ayes: typeof parsedReferendumInfo.ongoing.tally.ayes === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex') : new BN(parsedReferendumInfo.ongoing.tally.ayes),
-					nays: typeof parsedReferendumInfo.ongoing.tally.nays === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex') : new BN(parsedReferendumInfo.ongoing.tally.nays),
-					support: typeof parsedReferendumInfo.ongoing.tally.support === 'string' ? new BN(parsedReferendumInfo.ongoing.tally.support.slice(2), 'hex') : new BN(parsedReferendumInfo.ongoing.tally.support)
-				});
-			} else {
-				setTallyData({
-					ayes: new BN(tally?.ayes || 0, 'hex'),
-					nays: new BN(tally?.nays || 0, 'hex'),
-					support: new BN(tally?.support || 0, 'hex')
-				});
-			}
-		})();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status, api, apiReady]);
-
-	useEffect(() => {
-		if(!window )return;
+		if(!window || !checkGov2Route(router.pathname, router.query)) return;
 		const trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
 
 		if (!created_at) return;
@@ -291,14 +241,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</>}
 							<>
 								<Divider type="vertical" className='max-sm:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
-								<Tooltip color='#575255' overlayClassName='max-w-none' title={<div className={`flex flex-col whitespace-nowrap text-xs gap-1 p-1.5 ${poppins.className} ${poppins.variable}`}>
-									<span>Aye = {formatedBalance(tallyData.ayes.toString() || '0', unit)} {unit} ({Math.round(isAyeNaN ? 50 : ayePercent)}%) </span>
-									<span>Nay = {formatedBalance(tallyData.nays.toString() || '0', unit)} {unit} ({Math.round(isNayNaN ? 50 : nayPercent)}%) </span>
-								</div>}>
-									<div>
-										<Progress size={30} percent={50} success={{ percent: Math.round((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={((index%2) === 0) ? '#fbfbfc' : 'white' } />
-									</div>
-								</Tooltip>
+								<VotesInListing index={index} proposalType={proposalType} onchainId={onchainId} status={status} tally={tally}/>
 							</>
 
 							{
@@ -379,7 +322,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							<div className='flex items-center'>
 								<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div>
-									<Progress size={30} percent={50} success={{ percent: Math.round((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={( (index%2) === 0) ? '#fbfbfc' : 'white' }/>
+									<VotesInListing index={index} proposalType={proposalType} onchainId={onchainId} status={status} tally={tally}/>
 								</div>
 							</div>
 						</div>

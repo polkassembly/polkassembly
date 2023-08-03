@@ -10,7 +10,7 @@ import { ApiContext } from 'src/context/ApiContext';
 import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { useFetch } from 'src/hooks';
 import { getFailingThreshold } from 'src/polkassemblyutils';
-import { LoadingStatusType } from 'src/types';
+import { LoadingStatusType, VoteInfo } from 'src/types';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import Loader from 'src/ui-components/Loader';
 import PassingInfoTag from 'src/ui-components/PassingInfoTag';
@@ -30,16 +30,6 @@ interface IReferendumVoteInfoProps {
 	referendumId: number
 	setOpen: (value: React.SetStateAction<boolean>) => void;
 	voteThreshold?: string;
-}
-
-type VoteInfo = {
-	aye_amount: BN;
-	aye_without_conviction: BN;
-	isPassing: boolean | null;
-	nay_amount: BN;
-	nay_without_conviction: BN;
-	turnout: BN;
-	voteThreshold: string;
 }
 
 const ZERO = new BN(0);

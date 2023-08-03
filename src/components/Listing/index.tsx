@@ -75,6 +75,7 @@ const Listing: FC<IListingProps> = (props) => {
 									tags={tags}
 									spam_users_count={spam_users_count}
 									tally={tally}
+									proposalType={proposalType}
 								/>
 							</Link>
 						}

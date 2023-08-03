@@ -27,7 +27,7 @@ const nextConfig = {
           { key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
           { key: 'Access-Control-Allow-Headers', value: '*' },
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-          { key: 'Content-Security-Policy', value: `default-src 'self'; img-src '*'` },
+          { key: 'Content-Security-Policy', value: "default-src 'self'; img-src '*'" }
         ]
       }
     ];

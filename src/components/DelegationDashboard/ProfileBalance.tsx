@@ -65,7 +65,6 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	}, [address, api, apiReady]);
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
-
 		if(!api || !apiReady || !chosenWallet) return;
 
 		const injectedWindow = window as Window & InjectedWindow;
@@ -131,7 +130,6 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	};
 
 	useEffect(() => {
-
 		loginWallet && getAccounts(loginWallet);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps

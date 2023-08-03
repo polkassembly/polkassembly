@@ -28,6 +28,7 @@ import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
+import usePolkasafe from '~src/hooks/usePolkasafe';
 
 const ZERO_BN = new BN(0);
 
@@ -39,8 +40,9 @@ interface Props {
   setOpen: (pre:boolean) => void;
   conviction: number;
   balance : BN;
+  isMultisig?:boolean
 }
-const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance }: Props ) => {
+const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, conviction, balance, isMultisig }: Props ) => {
 
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkContext();
@@ -55,6 +57,9 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
+
+	const multisigDelegationAssociatedAddress = localStorage.getItem('multisigDelegationAssociatedAddress') || '';
+	const { client, connect } = usePolkasafe(multisigDelegationAssociatedAddress);
 
 	useEffect(() => {
 
@@ -153,6 +158,36 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 		// TODO: check .toNumber()
 		const delegateTxn = api.tx.convictionVoting.undelegate(trackNum);
+
+		if(isMultisig){
+			const unDelegationByMultisig = async (tx:any) => {
+				try{
+					setLoading(true);
+					await connect();
+					const { error } = await client.customTransactionAsMulti(defaultAddress, tx);
+					if(error){
+						throw new Error(error.error);
+					}
+					queueNotification({
+						header: 'Success!',
+						message: 'Undelegate will be successful once approved by other signatories.',
+						status: NotificationStatus.SUCCESS
+					});
+
+					setLoading(false);
+					setOpenSuccessPopup(true);
+					setOpen(false);
+				}catch(error){
+					onFailed(error.message);
+				}finally{
+					setLoading(false);
+				}
+			};
+			setLoading(true);
+			await unDelegationByMultisig(delegateTxn);
+			return;
+		}
+
 		await executeTx({ address: defaultAddress, api, errorMessageFallback: 'Undelegate successful.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 
@@ -237,7 +272,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 					</div>
 				</Spin>
 			</Modal>
-			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={balance}/>
+			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} balance={balance} isMultisig={isMultisig} title={isMultisig ? 'Undelegation with Polkasafe initiated':''}/>
 		</>
 	);
 };

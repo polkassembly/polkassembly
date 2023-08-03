@@ -249,7 +249,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 						const topic = data?.topic;
 						const topic_id = data?.topic_id;
-						const tally = data?.tally;
 
 						const isStatus = {
 							swap: false

@@ -166,7 +166,7 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
 `;
 
 export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!]) {
-  proposals(where: {type_eq: $type_eq, index_in: $index_in, tally: {}}, limit: $limit) {
+  proposals(where: {type_eq: $type_eq, index_in: $index_in}, limit: $limit) {
     proposer
     curator
     createdAt
@@ -192,7 +192,7 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
     trackNumber
     group {
       proposals(limit: 10, orderBy: createdAt_ASC) {
- type
+        type
         statusHistory(limit: 10, orderBy: timestamp_ASC) {
           status
           timestamp

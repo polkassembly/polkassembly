@@ -36,12 +36,15 @@ interface IUserProfileProps {
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { params, req } = context;
 	const address = params?.address;
+
 	if (!address) {
 		return { props: {
 			error: 'No address provided'
 		} };
 	}
+
 	const network = getNetworkFromReqHeaders(req.headers);
+
 	const { data, error } = await getUserIdWithAddress(address.toString());
 	if (error || !data || isNaN(Number(data))) {
 		return {
@@ -50,12 +53,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 			}
 		};
 	}
+
 	const userProfile = await getUserProfileWithUserId(Number(data));
+
 	const userPosts = await getUserPosts({
 		addresses: userProfile?.data?.addresses || [],
 		network,
 		userId: userProfile?.data?.user_id
 	});
+
 	const props: IUserProfileProps = {
 		network,
 		userPosts: {
@@ -76,6 +82,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 			error: userProfile.error
 		}
 	};
+
 	return {
 		props
 	};
@@ -92,8 +99,7 @@ const EmptyState = styled.div`
 	}
 `;
 
-const UserProfile: FC<IUserProfileProps> = (props) => {
-	const { userPosts, network, userProfile, className } = props;
+const UserProfile: FC<IUserProfileProps> = ({ userPosts, network, userProfile, className }) => {
 	const { setNetwork } = useNetworkContext();
 	const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
 

@@ -27,6 +27,7 @@ export interface UserDetailsContextType {
   loginWallet: Wallet | null;
   delegationDashboardAddress: string;
   loginAddress: string;
+  multisigAssociatedAddress?:string;
   networkPreferences: INetworkPreferences;
   primaryNetwork: string;
   is2FAEnabled?: boolean;
@@ -187,6 +188,7 @@ export enum Wallet {
   WALLETCONNECT = 'walletconnect',
   NOVAWALLET = 'polkadot-js',
   POLYWALLET = 'polywallet',
+  POLKASAFE = 'polkasafe',
   OTHER = ''
 }
 

@@ -257,7 +257,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						</div>
 					</div>
 				</div>
-				<div className='flex justify-center xs:mt-5 sm:mt-0 sm:m-0 md:w-[35%]'>
+				<div className='flex justify-center xs:mt-6 sm:mt-0 mr-6 md:w-[35%]'>
 					<Curves curvesLoading={curvesLoading} data={data} />
 				</div>
 			</div>

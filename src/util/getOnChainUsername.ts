@@ -18,5 +18,5 @@ export default async function getOnChainUsername(api:ApiPromise, address:string,
 	}
 
 	const accountInfo = await api.derive.accounts.info(address);
-	return accountInfo.identity.displayParent || accountInfo.identity.display || '';
+	return accountInfo?.identity?.displayParent || accountInfo?.identity?.display || '';
 }

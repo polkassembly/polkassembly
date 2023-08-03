@@ -190,18 +190,18 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 	return (
 		<div className={`${className} bg-white drop-shadow-md rounded-xxl md:p-4`}>
-			<div className="flex justify-between px-4 xs:pt-2.5 sm:py-2">
+			<div className="flex justify-between px-4 xs:pt-1.5">
 				<div className='flex items-center gap-x-2 xs:flex-wrap'>
-					<h2 className="text-xl font-semibold leading-8 text-bodyBlue">
+					<h2 className="text-xl mb-0 font-semibold leading-8 text-bodyBlue">
         About {trackName.split(/(?=[A-Z])/).join(' ')}
 					</h2>
 					<Tooltip color='#E5007A' title='Track Number' className='cursor-pointer'>
-						<h4 className=' text-[#E5007A] text-xl font-semibold leading-8 tracking-[0.01em]'>
+						<h4 className=' text-[#E5007A] text-xl mb-0 font-semibold leading-8 tracking-[0.01em]'>
           #{trackMetaData.trackId}
 						</h4>
 					</Tooltip>
 				</div>
-				<div className="xs:hidden md:flex justify-end md:p-2">
+				<div className="xs:hidden md:flex justify-end md:p-1 lg:mr-5">
 					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
     <DelegateModal trackNum={trackMetaData?.trackId} />}
 				</div>
@@ -257,7 +257,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						</div>
 					</div>
 				</div>
-				<div className='flex justify-center xs:mt-6 sm:mt-0 mr-6 md:w-[35%]'>
+				<div className='flex justify-center xs:mt-6 sm:mt-0 mr-6 md:w-[30%]'>
 					<Curves curvesLoading={curvesLoading} data={data} />
 				</div>
 			</div>

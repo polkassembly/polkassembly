@@ -17,7 +17,6 @@ import BackToListingView from '~src/ui-components/BackToListingView';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import NotificationUpgradingState from '~src/components/Settings/Notifications/NotificationChannels/NotificationUpgradingState';
 import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
-import { useNetworkSelector } from '~src/redux/selectors';
 import { networkActions } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 
@@ -31,7 +30,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Settings: FC<Props> = (props) => {
-	const { network } = useNetworkSelector();
+	const { network } = props;
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const tab = router.query?.tab as string;
@@ -63,7 +62,7 @@ const Settings: FC<Props> = (props) => {
 	}, [id, router, router.isReady, searchQuery, tab, tabItems]);
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

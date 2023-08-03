@@ -92,7 +92,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

@@ -8,7 +8,6 @@ import CloseIcon from '~assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
-import { useNetworkContext } from '~src/context';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
@@ -18,6 +17,7 @@ import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import { ReactElement } from 'react-markdown/lib/react-markdown';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
     className?: string;
@@ -52,7 +52,7 @@ const VoteInitiatedModal = ({
 	abstainVoteValue,
 	icon
 }: Props) => {
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	useEffect(() => {
 		if (!network) return;

@@ -21,6 +21,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const Delegation = ( props : { network: string } ) => {
+	const { network } = props;
 
 	const dispatch = useDispatch();
 	const { asPath } = useRouter();
@@ -34,12 +35,12 @@ const Delegation = ( props : { network: string } ) => {
 	};
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return <>
-		<SEOHead title='Delegation Dashboard' network={props.network} />
+		<SEOHead title='Delegation Dashboard' network={network} />
 		<div className='hidden sm:block'><DelegationDashboard/></div>
 		<div className='sm:hidden w-full'>
 			<h1 className='text-bodyBlue text-center text-2xl font-semibold'>Delegation Dashboard</h1>

@@ -22,16 +22,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const WhitelistMembers = (props: { network: string }) => {
+	const { network } = props;
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
 		<>
-			<SEOHead title='Whitelist' network={props.network}/>
+			<SEOHead title='Whitelist' network={network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>Open Tech Committee Members</h1>
 
 			{/* Intro and Create Post Button */}

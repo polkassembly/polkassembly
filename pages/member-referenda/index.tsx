@@ -103,7 +103,7 @@ interface IFellowshipReferendumProps {
 const FellowshipAdmin: FC<IFellowshipReferendumProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
-	dispatch(networkActions.setNetwork(props.network));
+	dispatch(networkActions.setNetwork(network));
 
 	if (error) return <ErrorState errorMessage={error} />;
 	const fellowshipReferendumPostOrigins: string[] = [];

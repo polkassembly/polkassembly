@@ -61,7 +61,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 	const { network } = useNetworkSelector();
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

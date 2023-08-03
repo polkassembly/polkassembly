@@ -17,16 +17,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const FellowshipMembers = (props: { network: string }) => {
+	const { network } = props;
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
 		<>
-			<SEOHead title='Fellowship' network={props.network}/>
+			<SEOHead title='Fellowship' network={network}/>
 			<h1 className='dashboard-heading mb-4 md:mb-6'>Fellowship</h1>
 
 			{/* Intro and Create Post Button */}

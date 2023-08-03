@@ -47,7 +47,7 @@ const TechCommProposals: FC<ITechCommProposalsProps> = (props) => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

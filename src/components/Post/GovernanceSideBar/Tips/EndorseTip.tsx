@@ -12,11 +12,12 @@ import BalanceInput from 'src/ui-components/BalanceInput';
 import Loader from 'src/ui-components/Loader';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useUserDetailsContext } from '~src/context';
 import LoginToEndorse from '../LoginToVoteOrEndorse';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import executeTx from '~src/util/executeTx';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[]
@@ -45,7 +46,7 @@ const EndorseTip = ({
 	const [currentCouncil, setCurrentCouncil] = useState<string[]>([]);
 	const { api, apiReady } = useApiContext();
 	const { isLoggedOut } = useUserDetailsContext();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	useEffect(() => {
 		// it will iterate through all accounts

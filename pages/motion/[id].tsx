@@ -55,7 +55,7 @@ const MotionPost: FC<IMotionPostProps> = (props) => {
 	const { id } = router.query;
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

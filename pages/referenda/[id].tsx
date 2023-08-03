@@ -53,7 +53,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

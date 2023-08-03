@@ -9,11 +9,11 @@ import Balance from 'src/components/Balance';
 import AddressDropdown from './AddressDropdown';
 import HelperTooltip from './HelperTooltip';
 import { Polkasafe } from 'polkasafe';
-import { useNetworkContext } from '~src/context';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Loader from '~src/ui-components/Loader';
 import styled from 'styled-components';
 import { Alert } from 'antd';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const Container = styled.div`
     display: flex;
@@ -58,7 +58,7 @@ const MultisigAccountSelectionForm = ({
 }: Props) => {
 	const [multisig, setMultisig] = useState<any>(null);
 	const client = new Polkasafe();
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 	const [loader, setLoader] = useState<boolean>(false);
 	const handleGetMultisig = async (address: string, network: string) => {
 		setLoader(true);

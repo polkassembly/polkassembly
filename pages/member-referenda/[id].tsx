@@ -48,7 +48,7 @@ interface IReferendaPostProps {
 }
 
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
-	const { post, error , status } = props;
+	const { post, error , status, network } = props;
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { api, apiReady } = useApiContext();
@@ -56,7 +56,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	const { id } = router.query;
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
@@ -78,14 +78,14 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 
 	if (post) {
 		let trackName = '';
-		for (const key of Object.keys(networkTrackInfo[props.network])) {
-			if(networkTrackInfo[props.network][key].trackId == post.track_number && ('fellowshipOrigin' in networkTrackInfo[props.network][key])) {
+		for (const key of Object.keys(networkTrackInfo[network])) {
+			if(networkTrackInfo[network][key].trackId == post.track_number && ('fellowshipOrigin' in networkTrackInfo[network][key])) {
 				trackName = key;
 			}
 		}
 
 		return <>
-			<SEOHead title={post.title || `${noTitle} - Referenda V2`} desc={post.content} network={props.network}/>
+			<SEOHead title={post.title || `${noTitle} - Referenda V2`} desc={post.content} network={network}/>
 
 			<BackToListingView trackName={'member-referenda'} />
 

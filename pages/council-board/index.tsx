@@ -16,15 +16,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const CouncilBoard = (props : { network: string}) => {
+	const { network } = props;
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return <>
-		<SEOHead title='Council Board' network={props.network}/>
+		<SEOHead title='Council Board' network={network}/>
 		<CouncilBoardContainer />
 	</>;
 };

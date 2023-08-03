@@ -93,18 +93,18 @@ interface IMediumSpenderProps {
 }
 
 const MediumSpender: FC<IMediumSpenderProps> = (props) => {
-	const { posts, error } = props;
+	const { posts, error, network } = props;
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return <>
-		<SEOHead title={PostOrigin.MEDIUM_SPENDER.split(/(?=[A-Z])/).join(' ')} network={props.network}/>
+		<SEOHead title={PostOrigin.MEDIUM_SPENDER.split(/(?=[A-Z])/).join(' ')} network={network}/>
 		<TrackListing
 			trackName={PostOrigin.MEDIUM_SPENDER}
 			posts={posts}

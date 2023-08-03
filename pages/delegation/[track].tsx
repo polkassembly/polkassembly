@@ -50,11 +50,11 @@ interface ITrackProps {
 }
 
 const DashboardTracks:FC<ITrackProps> = ( props  ) => {
-	const { data, error ,trackDetails } = props;
+	const { data, error , trackDetails, network } = props;
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -63,7 +63,7 @@ const DashboardTracks:FC<ITrackProps> = ( props  ) => {
 	const { posts } = data;
 
 	return <>
-		<SEOHead title='Delegation Dashboard' network={props.network}/>
+		<SEOHead title='Delegation Dashboard' network={network}/>
 		<DashboardTrackListing posts= {posts} trackDetails= {trackDetails}/>
 	</>;
 };

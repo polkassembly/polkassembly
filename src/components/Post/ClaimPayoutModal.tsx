@@ -12,7 +12,7 @@ import { APPNAME } from 'src/global/appName';
 import { NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
-import { useNetworkContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import executeTx from '~src/util/executeTx';
 
 interface Props {
@@ -29,7 +29,7 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId } : Props) 
 	const [availableAccounts, setAvailableAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [extensionNotAvailable, setExtensionNotAvailable] = useState<boolean>(false);
 	const [selectedAddress, setSelectedAddress] = useState<string>('');
-	const { network } = useNetworkContext();
+	const { network } = useNetworkSelector();
 
 	const getAccounts = async () => {
 		setIsLoading(true);

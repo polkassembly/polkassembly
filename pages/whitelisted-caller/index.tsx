@@ -93,11 +93,11 @@ interface IWhitelistedCallerProps {
 }
 
 const WhitelistedCaller: FC<IWhitelistedCallerProps> = (props) => {
-	const { posts, error } = props;
+	const { posts, error, network } = props;
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(networkActions.setNetwork(props.network));
+		dispatch(networkActions.setNetwork(network));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -105,7 +105,7 @@ const WhitelistedCaller: FC<IWhitelistedCallerProps> = (props) => {
 
 	if (!posts || Object.keys(posts).length === 0) return null;
 	return <>
-		<SEOHead title={PostOrigin.WHITELISTED_CALLER.split(/(?=[A-Z])/).join(' ')} network={props.network}/>
+		<SEOHead title={PostOrigin.WHITELISTED_CALLER.split(/(?=[A-Z])/).join(' ')} network={network}/>
 		<TrackListing
 			trackName={PostOrigin.WHITELISTED_CALLER}
 			posts={posts}

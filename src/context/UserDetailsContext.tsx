@@ -9,12 +9,8 @@ import { decodeToken } from 'react-jwt';
 import { JWTPayloadType } from '~src/auth/types';
 
 import { getLocalStorageToken } from '../services/auth.service';
-import { UserDetailsContextType } from '../types';
+import { EGovType, UserDetailsContextType } from '../types';
 
- enum EGovType {
-	OPEN_GOV = 'open_gov',
-	GOV1 = 'gov1'
-}
 const initialUserDetailsContext : UserDetailsContextType = {
 	addresses: [],
 	allowed_roles: [],

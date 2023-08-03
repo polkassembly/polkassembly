@@ -23,8 +23,8 @@ import PaLogo from './PaLogo';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
-import { EGovType } from '~src/global/proposalType';
-import { UserDetailsContextType } from '~src/types';
+
+import { EGovType, UserDetailsContextType } from '~src/types';
 import Link from 'next/link';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
@@ -58,8 +58,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 	};
 
 	useEffect(() => {
-		if(network){
-			!isOpenGovSupported(network) && setGovTypeToContext(EGovType.GOV1);
+		if(network && !isOpenGovSupported(network)){
+			setGovTypeToContext(EGovType.GOV1);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[network]);

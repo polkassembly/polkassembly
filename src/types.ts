@@ -6,7 +6,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Dispatch, SetStateAction } from 'react';
 
 import { network, tokenSymbol } from './global/networkConstants';
-import { EGovType, ProposalType } from './global/proposalType';
+import { ProposalType } from './global/proposalType';
 import BN from 'bn.js';
 
 export interface UserDetailsContextType {
@@ -229,6 +229,10 @@ export interface TrackProps {
   [index: string]: any;
 }
 
+export enum EGovType {
+	OPEN_GOV = 'open_gov',
+	GOV1 = 'gov1'
+}
 export interface NetworkSocials {
   homepage: string,
   twitter: string,

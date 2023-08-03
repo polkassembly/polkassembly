@@ -7,6 +7,7 @@ import { Modal } from 'antd';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import CloseIcon from '~assets/icons/close.svg';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
+import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import UndelegateCloseIcon from '~assets/icons/white-close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
@@ -40,9 +41,10 @@ interface Props{
   nayVoteValue?:BN;
   abstainVoteValue?:BN;
   isVote?:boolean;
+  isMultisig?:boolean;
 }
 
-const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction , title = 'Delegated', vote ,votedAt, ayeVoteValue, nayVoteValue, abstainVoteValue,isVote = false }: Props) => {
+const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isDelegate, balance, conviction , title = 'Delegated', vote ,votedAt, ayeVoteValue, nayVoteValue, abstainVoteValue,isVote = false, isMultisig }: Props) => {
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const router = useRouter();
@@ -67,8 +69,8 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 		maskClosable={false}
 	>
 		<div className='flex justify-center items-center flex-col -mt-[132px]'>
-			<SuccessIcon/>
-			<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-4'>{isDelegate ? `${title} successfully` : 'Undelegated successfully' }</h2>
+			{isMultisig ? <MultisigSuccessIcon/> :<SuccessIcon/>}
+			<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-4'>{isDelegate ? isMultisig ? `${title}`: `${title} successfully` : isMultisig ? `${title}`: 'Undelegated successfully' }</h2>
 			{isDelegate && <div className='flex flex-col justify-center items-center gap-[14px]'>
 				{balance && <div className='text-pink_primary text-[24px] font-semibold'>{formatedBalance(balance.toString(), unit)}{` ${unit}`}</div>}
 				{

@@ -11,12 +11,12 @@ import { chainProperties } from 'src/global/networkConstants';
  * @param address An address
  *
  */
-export default function getEncodedAddress(address: string, network:string): string | null {
+export default function getEncodedAddress(address: string, network?:string): string | null {
+	if(!network) return 'address';
+
 	const ss58Format = chainProperties?.[network]?.ss58Format;
 
-	if (!network || ss58Format === undefined) {
-		return null;
-	}
+	if (!network || ss58Format === undefined) return null;
 
 	if(address.startsWith('0x')) return address;
 

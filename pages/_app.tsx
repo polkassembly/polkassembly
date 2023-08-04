@@ -42,15 +42,6 @@ const workSans = Work_Sans({
 import 'antd/dist/reset.css';
 import '../styles/globals.css';
 
-{/* <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJQJLZ7Q5D"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-WJQJLZ7Q5D');
-</script> */}
-
 export default function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
 	const [showSplashScreen, setShowSplashScreen] = useState(true);
@@ -64,9 +55,7 @@ export default function App({ Component, pageProps }: AppProps) {
 		if (!global?.window) return;
 		const networkStr = getNetwork();
 		setNetwork(networkStr);
-	}, []);
 
-	useEffect(() => {
 		// @ts-ignore
 		if (!window.GA_INITIALIZED) {
 			initGA();
@@ -74,6 +63,10 @@ export default function App({ Component, pageProps }: AppProps) {
 			window.GA_INITIALIZED = true;
 		}
 		logPageView();
+	}, []);
+
+	useEffect(() => {
+
 	}, []);
 
 	const SplashLoader = () => <div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>

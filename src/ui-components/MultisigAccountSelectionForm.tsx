@@ -5,15 +5,17 @@
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import React, { useState, useEffect } from 'react';
 import Balance from 'src/components/Balance';
-
+import { poppins } from 'pages/_app';
 import AddressDropdown from './AddressDropdown';
 import HelperTooltip from './HelperTooltip';
 import { Polkasafe } from 'polkasafe';
-import { useNetworkContext } from '~src/context';
+import { useApiContext, useNetworkContext } from '~src/context';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Loader from '~src/ui-components/Loader';
 import styled from 'styled-components';
 import { Alert } from 'antd';
+import { BN } from '@polkadot/util';
+import formatBnBalance from '~src/util/formatBnBalance';
 
 const Container = styled.div`
     display: flex;
@@ -55,12 +57,13 @@ const MultisigAccountSelectionForm = ({
 	withoutInfo,
 	walletAddress,
 	setWalletAddress,
-	containerClassName,
-	canMakeTransaction = true
+	containerClassName
 }: Props) => {
 	const [multisig, setMultisig] = useState<any>(null);
+	const { api } = useApiContext();
 	const client = new Polkasafe();
 	const { network } = useNetworkContext();
+	const [multisigBalance, setMultisigBalance] = useState<BN>(new BN(0));
 	const [loader, setLoader] = useState<boolean>(false);
 	const handleGetMultisig = async (address: string, network: string) => {
 		setLoader(true);
@@ -68,18 +71,32 @@ const MultisigAccountSelectionForm = ({
 		setMultisig(data);
 		setLoader(false);
 	};
+	const handleMultisigBalance = async (address:string) => {
+		if(!api) {
+			return;
+		}
+		const initiatorBalance = await api.query.system.account(address);
+		setMultisigBalance(new BN(initiatorBalance.data.free.toString()));
+	};
 	const handleChange = (address:string) => {
 		setWalletAddress(address);
+		handleMultisigBalance(address);
 	};
+
 	useEffect(() => {
 		const substrateAddress = getSubstrateAddress(address);
 		if (substrateAddress) handleGetMultisig(substrateAddress, network);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, network]);
+
 	useEffect(() => {
 		if (multisig && multisig.length > 0) {
 			setWalletAddress(multisig[0].address);
+			handleMultisigBalance(multisig[0].address);
+			return;
 		}
+		setWalletAddress('');
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [multisig, setWalletAddress]);
 
 	return (
@@ -130,10 +147,15 @@ const MultisigAccountSelectionForm = ({
 						isSwitchButton={isSwitchButton}
 						setSwitchModalOpen={setSwitchModalOpen}
 					/>
+					{walletAddress &&  (
+						<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px]`}>
+							Available: <span className='text-pink_primary'>{formatBnBalance(multisigBalance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+						</div>
+					)}
 				</article>
-			) : canMakeTransaction ? (
+			) : (
 				<MultisigNotFound/>
-			) : <></>
+			)
 			}
 		</Container>
 	);

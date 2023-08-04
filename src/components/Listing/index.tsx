@@ -77,8 +77,8 @@ const Listing: FC<IListingProps> = (props) => {
 					end,
 					tags,
 					tally,
-					spam_users_count
-					// votesData, TODO: Enable
+					spam_users_count,
+					votesData
 				} = post;
 				const id = isTip ? hash : post_id;
 				return (
@@ -105,7 +105,7 @@ const Listing: FC<IListingProps> = (props) => {
 									spam_users_count={spam_users_count}
 									tally={tally}
 									proposalType={proposalType}
-									// votesData={votesData}
+									votesData={votesData}
 								/>
 							</Link>
 						}

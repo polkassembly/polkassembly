@@ -23,9 +23,10 @@ onchainId?: number | string | null;
 status?: string | null ;
 proposalType?: ProposalType;
 index:number;
+votesData: any;
 }
 
-const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType }:Props) => {
+const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType, votesData }:Props) => {
 	const { network } = useNetworkContext();
 	const  { api, apiReady } = useApiContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
@@ -47,11 +48,7 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType }
 	const isNayNaN = isNaN(nayPercent);
 
 	const getReferendumVoteInfo = async() => {
-		if(!onchainId) return;
-		// TODO: populate here
-		const referendumInfo: any = null;
-		if(!referendumInfo)return;
-		setLoading(true);
+		if(!onchainId || !votesData) return;
 		if (network === 'cere') {
 			(async () => {
 				const res = await fetchSubsquid({
@@ -101,13 +98,16 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType }
 				}
 			})();
 			setLoading(false);
-		}else if(!referendumInfo.voteInfoError && referendumInfo.voteInfoData && referendumInfo.voteInfoData.data && referendumInfo.voteInfoData.data.info) {
-			const info = referendumInfo.voteInfoData.data.info;
+		}else if( votesData && !votesData.error && votesData.data) {
+			setLoading(true);
+
+			const info = votesData.data;
 
 			const voteInfo = {
 				ayes : ZERO,
 				nays: ZERO
 			};
+			console.log(info);
 
 			voteInfo.ayes = new BN(info.aye_amount);
 			voteInfo.nays = new BN(info.nay_amount);
@@ -160,7 +160,7 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType }
 			getReferendumV2VoteInfo();
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady]);
+	}, [api, apiReady, votesData]);
 
 	return loading ? <Skeleton.Button active={loading}/>
 		: <>

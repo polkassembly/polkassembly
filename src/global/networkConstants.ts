@@ -209,6 +209,10 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://polkadot.public.curie.radiumblock.co/ws'
 			},
 			{
+				label: 'via LuckyFriday',
+				key: 'wss://rpc-polkadot.luckyfriday.io'
+			},
+			{
 				label: 'light client (experimental)',
 				key: 'light://substrate-connect/polkadot'
 			}
@@ -253,6 +257,10 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via RadiumBlock',
 				key: 'wss://kusama.public.curie.radiumblock.co/ws'
+			},
+			{
+				label: 'via LuckyFriday',
+				key: 'wss://rpc-kusama.luckyfriday.io'
 			},
 			{
 				label: 'light client (experimental)',

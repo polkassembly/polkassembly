@@ -130,7 +130,13 @@ const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWa
 				const params = [msg, from];
 				const method = 'personal_sign';
 
-				(window as any).web3.currentProvider.sendAsync({
+				let sendAsyncQuery;
+				if(isMetamaskWallet){
+					sendAsyncQuery = (window as any).ethereum;
+				}else{
+					sendAsyncQuery = (window as any).web3.currentProvider;
+				}
+				sendAsyncQuery.sendAsync({
 					from,
 					method,
 					params
@@ -165,6 +171,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWa
 						setLoading(false);
 					}
 				});
+
 			}else {
 				if(signRaw) {
 					const { signature: substrate_signature } = await signRaw({

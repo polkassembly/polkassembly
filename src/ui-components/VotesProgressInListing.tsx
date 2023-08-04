@@ -14,7 +14,6 @@ import { GET_TOTAL_VOTES_COUNT, GET_VOTES_WITH_LIMIT_IS_NULL_TRUE } from '~src/q
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { formatedBalance } from '~src/util/formatedBalance';
 
 const ZERO = new BN(0);
 
@@ -30,7 +29,6 @@ votesData: any;
 const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType, votesData }:Props) => {
 	const { network } = useNetworkContext();
 	const  { api, apiReady } = useApiContext();
-	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [tallyData, setTallyData] = useState({
 		ayes: ZERO || 0,
 		nays: ZERO || 0

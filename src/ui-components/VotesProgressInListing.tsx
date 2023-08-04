@@ -14,7 +14,6 @@ import { GET_TOTAL_VOTES_COUNT, GET_VOTES_WITH_LIMIT_IS_NULL_TRUE } from '~src/q
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { formatedBalance } from '~src/util/formatedBalance';
-import debounceGetReferendumVotesFn from '~src/util/getReferendumVotes';
 
 const ZERO = new BN(0);
 
@@ -49,7 +48,8 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType }
 
 	const getReferendumVoteInfo = async() => {
 		if(!onchainId) return;
-		const referendumInfo = await debounceGetReferendumVotesFn(network, onchainId);
+		// TODO: populate here
+		const referendumInfo: any = null;
 		if(!referendumInfo)return;
 		setLoading(true);
 		if (network === 'cere') {

@@ -1,46 +1,48 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import _ from 'lodash';
+
 import { chainProperties } from '~src/global/networkConstants';
 import { subscanApiHeaders } from '~src/global/apiHeaders';
 
 interface IReturnResponse {
-  voteInfoData?: null | any,
-  voteInfoError?: null| string;
+  data?: null | any,
+  error?: null| string;
 }
 
-const getReferendumVotes = async(network:string, onchainId:number | string):Promise<IReturnResponse> => {
+/**
+ * get referendum votes from subscan
+ * @param {string} network - polkadot network name
+ * @param {number} onchainId - referendum onchain id
+ * @returns {IReturnResponse} - returns data or error in an object
+ **/
+export default async function getReferendumVotes(network:string, onchainId:number | string):Promise<IReturnResponse> {
 	const returnResponse:IReturnResponse = {
-		voteInfoData: null,
-		voteInfoError: null
+		data: null,
+		error: null
 	} ;
 
 	try {
-		const response = await fetch(`${chainProperties[network]?.externalLinks}/api/scan/democracy/referendum`,
-			{
-				body: JSON.stringify({
-					referendum_index: Number(onchainId)
-				}),
-				headers: subscanApiHeaders,
-				method: 'POST'
-			}
-		);
-		if (response.ok) {
-			const data = await response.json();
-			returnResponse.voteInfoData = data;
+		const response = await fetch(`${chainProperties[network]?.externalLinks}/api/scan/democracy/referendum`, {
+			body: JSON.stringify({
+				referendum_index: Number(onchainId)
+			}),
+			headers: subscanApiHeaders,
+			method: 'POST'
+		});
 
+		if (response.ok) {
+			const resJSON = await response.json();
+
+			if(resJSON?.data?.info) throw new Error('Vote data unavailable');
+
+			returnResponse.data = resJSON?.data?.info;
 		}else{
-			returnResponse.voteInfoError = 'no data';
+			throw new Error('Vote data unavailable');
 		}
 	} catch (error) {
-
-		returnResponse.voteInfoError = error || 'no data';
-
+		returnResponse.error = error || 'Vote data unavailable.';
 	}
+
 	return returnResponse;
-};
-
-const debounceGetReferendumVotesFn = _.debounce(getReferendumVotes, 500);
-
-export default debounceGetReferendumVotesFn;
+}

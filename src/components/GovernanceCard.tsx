@@ -101,10 +101,12 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		index = 0,
 		proposalType
 	} = props;
+
 	const router= useRouter();
 	const currentUser = useContext(UserDetailsContext);
-	let titleString = title || method || tipReason || noTitle;
 	const { network } = useNetworkContext();
+
+	let titleString = title || method || tipReason || noTitle;
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
 
@@ -241,7 +243,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</>}
 							<>
 								<Divider type="vertical" className='max-sm:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
-								<VotesProgressInListing index={index} proposalType={proposalType} onchainId={onchainId} status={status} tally={tally}/>
+								{/* TODO: Enable */}
+								{/* { votesData.data && <VotesProgressInListing index={index} proposalType={proposalType} onchainId={onchainId} status={status} tally={tally}/> } */}
 							</>
 
 							{

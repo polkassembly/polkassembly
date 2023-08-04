@@ -9,61 +9,85 @@ import { MessageType } from '~src/auth/types';
 import firebaseAdmin, { firestore_db } from '~src/services/firebaseInit';
 import { cryptoRandomStringAsync } from 'crypto-random-string';
 
+interface IReq {
+	type: 'email' | 'twitter'
+}
+
 export enum VerificationStatus {
-    ALREADY_VERIFIED = 'Already verified',
-    VERFICATION_EMAIL_SENT = 'Verification email sent'
+	ALREADY_VERIFIED = 'Already verified',
+	VERFICATION_EMAIL_SENT = 'Verification email sent'
 }
 
 export interface IVerificationResponse {
-    status: VerificationStatus;
+	status: VerificationStatus;
 }
 
 const apiKey = process.env.SENDGRID_API_KEY;
 const FROM = {
-    email: 'noreply@polkassembly.io',
-    name: 'Polkassembly'
+	email: 'noreply@polkassembly.io',
+	name: 'Polkassembly'
 };
 
 if (apiKey) {
-    sgMail.setApiKey(apiKey);
+	sgMail.setApiKey(apiKey);
 }
 
 const firestore = firebaseAdmin.firestore();
 
 const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req, res) => {
-    const { email } = req.body;
-    if (!email) {
-        return res.status(400).json({ message: 'Please provide an email to verify' });
-    }
-    const user = await firestore_db.collection('users').where('email', '==', email).where('email_verified', '==', true).limit(1).get();
-    if (user.docs[0]?.exists) {
-        res.status(200).json({ status: VerificationStatus.ALREADY_VERIFIED });
-    }
+	const { type } = req.query as unknown as IReq;
+	const { account } = req.body;
 
-    const verificationToken = await cryptoRandomStringAsync({ length: 20, type: 'url-safe' });
+	if (!account || !type) {
+		return res.status(400).json({ message: 'Please provide valid params.' });
+	}
 
-    const message = {
-        to: email,
-        from: FROM.email,
-        subject: 'Email Verification',
-        html: `Click the following link to verify your email: <a href="http://localhost:3000/api/verify/${verificationToken}">Verify Email</a>`
-    };
-    await sgMail
-        .send(message)
-        .then(() => res.json({ message: 'Verification email sent successfully' }))
-        .catch(error => {
-            console.log('error', error);
-            res.status(500).json({ error: 'Error sending email' });
-        });
+	const verificationToken = await cryptoRandomStringAsync({ length: 20, type: 'url-safe' });
 
-    const tokenVerificationRef = firestore.collection('email_verification_tokens').doc(email);
+	if (type == 'email') {
+		const user = await firestore_db.collection('users').where('email', '==', account).where('email_verified', '==', true).limit(1).get();
+		if (user.docs[0]?.exists) {
+			return res.status(200).json({ status: VerificationStatus.ALREADY_VERIFIED });
+		}
 
-    await tokenVerificationRef.set({
-        created_at: new Date(),
-        token: verificationToken,
-        email,
-        verified: false
-    });
+		const message = {
+			from: FROM.email,
+			html: `Click the following link to verify your email: <a href="http://localhost:3000/api/verify/${verificationToken}">Verify Email</a>`,
+			subject: 'Email Verification',
+			to: account
+		};
+		await sgMail
+			.send(message)
+			.then(() => res.json({ message: 'Verification email sent successfully' }))
+			.catch(error => {
+				console.log('error', error);
+				return res.status(500).json({ message: 'Error sending email' });
+			});
+
+		const tokenVerificationRef = firestore.collection('email_verification_tokens').doc(account);
+
+		await tokenVerificationRef.set({
+			created_at: new Date(),
+			email: account,
+			token: verificationToken,
+			verified: false
+		});
+	} else if (type == 'twitter') {
+		const tokenVerificationRef = firestore.collection('email_verification_tokens').doc(account);
+
+		if ((await (tokenVerificationRef.get())).exists && (await (tokenVerificationRef.get())).data()?.verified) {
+			return res.status(200).json({ status: VerificationStatus.ALREADY_VERIFIED });
+		} else {
+			await tokenVerificationRef.set({
+				created_at: new Date(),
+				token: verificationToken,
+				twitter: account,
+				verified: false
+			});
+
+			return res.status(200).json({ message: verificationToken });
+		}
+	}
 };
 
 export default withErrorHandling(handler);

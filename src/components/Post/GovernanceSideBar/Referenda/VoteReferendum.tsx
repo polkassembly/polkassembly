@@ -414,7 +414,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			return;
 		}
 
-		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
+		setLoadingStatus({ isLoading: true, message: '' });
 
 		let voteTx = null;
 
@@ -556,7 +556,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			api,
 			errorMessageFallback: 'Transaction failed.',
 			network,
-			onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
+			onBroadcast:() => setLoadingStatus({ isLoading: true, message: '' }),
 			onFailed,
 			onSuccess,
 			params: network === 'equilibrium' ? { nonce: -1 } : {},

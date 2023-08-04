@@ -314,7 +314,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
 							{relativeCreatedAt && <>
 								<div className='flex text-lightBlue mt-0 items-center'>
-									<ClockCircleOutlined className='mr-1 mt-0' /><span> {relativeCreatedAt}</span>
+									<span> {relativeCreatedAt}</span>
 								</div>
 							</>}
 							{(decision  && (decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed) && <div className='flex items-center'>

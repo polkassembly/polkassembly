@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, FloatButton, List } from 'antd';
+import { Button, FloatButton, List, Skeleton } from 'antd';
 import ChatFloatingModal from '../ChatBot/ChatFloatingModal';
 import { FC, useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
@@ -21,6 +21,7 @@ import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import dynamic from 'next/dynamic';
 
 const  OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'),{
+	loading: () => <Skeleton.Button className='w-[90%]' active />,
 	ssr: false
 });
 

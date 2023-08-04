@@ -81,12 +81,12 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 	useEffect(() => {
 		setShowAlert(false);
-		setLoading(true);
 		const obj = localStorage.getItem('treasuryProposalData');
 		obj && localStorage.setItem('treasuryProposalData', JSON.stringify({ ...JSON.parse(obj), step: 2 }));
 
-		if(!proposerAddress || !api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN) || fundingAmount.eq(ZERO_BN)) return;
+		if(!proposerAddress || !api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN)) return;
 		if(selectedTrack.length === 0 ) return;
+		setLoading(true);
 
 		const origin: any = { Origins: selectedTrack };
 		setLoading(true);
@@ -227,7 +227,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					<span className='flex'><span className='w-[150px]'>Preimage Length:</span><span className='text-bodyBlue font-medium'>{preimageLength}</span></span>
 					<span className='flex items-center'>
 						<span className='w-[150px]'>Preimage Link:</span>
-						<a target='_blank' rel='noreferrer' href={`https://${network}.polkassembly.io/preimages/${preimageHash}`} className='text-bodyBlue font-medium'>{`https://${network}.polkassembly.io/preimages/${preimageHash.slice(0,5)}...`}</a>
+						<a target='_blank' rel='noreferrer' href={`/preimages/${preimageHash}`} className='text-bodyBlue font-medium'>{`https://${network}.polkassembly.io/preimages/${preimageHash.slice(0,5)}...`}</a>
 						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/preimages/${preimageHash}`) ;success('Preimage link copied to clipboard.');}}>
 							{contextHolder}
 							<CopyIcon/>

@@ -123,7 +123,6 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 	maxSpendArr.sort((a,b) => a.maxSpend - b.maxSpend );
 
-	console.log(maxSpendArr);
 	const handleStateChange = (createPreimageForm: any) => {
 		setSteps({ percent: 20, step: 1 });
 		(createPreimageForm.preimageHash && createPreimageForm.preimageLength  && createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) &&  setSteps({ percent: 100, step: 1 });
@@ -236,8 +235,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	useEffect(() => {
 		setShowAlert(false);
 		form.validateFields();
-
-		if(isPreimage || !proposerAddress || !beneficiaryAddress || !getEncodedAddress(beneficiaryAddress, network) || !Web3.utils.isAddress(beneficiaryAddress) ||
+		if(isPreimage || !proposerAddress || !beneficiaryAddress || !getEncodedAddress(beneficiaryAddress, network) ||
 		!api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN) || fundingAmount.eq(ZERO_BN))return;
 		if(!selectedTrack) return;
 		debounceGetPreimageTxFee();
@@ -416,7 +414,6 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			});
 		}
 	};
-
 	const existPreimageData = async(preimageHash: string, isPreimage: boolean) => {
 		setPreimageLength(0);
 		form.setFieldValue('preimage_length', 0);

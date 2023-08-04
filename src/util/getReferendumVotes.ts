@@ -34,7 +34,7 @@ export default async function getReferendumVotes(network:string, onchainId:numbe
 		if (response.ok) {
 			const resJSON = await response.json();
 
-			if(resJSON?.data?.info) throw new Error('Vote data unavailable');
+			if(!resJSON?.data?.info) throw new Error('Vote data unavailable');
 
 			returnResponse.data = resJSON?.data?.info;
 		}else{

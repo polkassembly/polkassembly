@@ -28,7 +28,7 @@ const Listing: FC<IListingProps> = (props) => {
 	const [posts, setPosts] = useState(props.posts || []);
 
 	useEffect(() => {
-		if(!network || !posts || !posts.length || proposalType != ProposalType.REFERENDUMS) return;
+		if(!network || !props.posts || !props.posts.length || proposalType != ProposalType.REFERENDUMS) return;
 
 		(async () => {
 			// function to await for ms milliseconds
@@ -46,7 +46,8 @@ const Listing: FC<IListingProps> = (props) => {
 			setPosts(postsWithVotesData);
 		})();
 
-	}, [network, posts, proposalType]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, props.posts, proposalType]);
 
 	if (!posts || !posts.length) {
 		return (

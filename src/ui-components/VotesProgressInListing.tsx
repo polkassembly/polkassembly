@@ -107,7 +107,6 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType, 
 				ayes : ZERO,
 				nays: ZERO
 			};
-			console.log(info);
 
 			voteInfo.ayes = new BN(info.aye_amount);
 			voteInfo.nays = new BN(info.nay_amount);

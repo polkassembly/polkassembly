@@ -340,7 +340,7 @@ a.command-palette-list-item svg {
   border:none !important;
 }
 .track-popover .ant-collapse>.ant-collapse-item >.ant-collapse-header{
-color: var(--lightBlue) !important;
+  color: var(--lightBlue) !important;
 }
 .icon-alert .ant-alert-icon{
   margin-top: -41px !important;
@@ -355,17 +355,27 @@ color: var(--lightBlue) !important;
 	  transform: scale(5);
 	  opacity: 0.06;
 	}
-  }
+}
   
-  .wave-effect {
-	position: fixed;
-	bottom:32px;
+.wave-effect {
+  position: fixed;
+  bottom:32px;
   right:38px;
-	transform: translate(-50%, -50%);
-	width: 30px;
-	height: 30px;
-	border-radius: 50%;
-	background-color:#E5007A;
-	pointer-events: none;
-	animation: wave 1s linear infinite;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color:#E5007A;
+  pointer-events: none;
+  animation: wave 1s linear infinite;
+}
+
+  
+.tox-autocompleter {
+  border: 1px solid #e5e5e5 !important;
+  border-radius: 8px !important;
+
+  .tox-menu {
+    border-radius: 8px !important;
   }
+}

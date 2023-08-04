@@ -13,6 +13,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { GET_TOTAL_VOTES_COUNT, GET_VOTES_WITH_LIMIT_IS_NULL_TRUE } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import formatBnBalance from '~src/util/formatBnBalance';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { formatedBalance } from '~src/util/formatedBalance';
 
 const ZERO = new BN(0);
@@ -21,7 +22,7 @@ interface Props{
 tally: any;
 onchainId?: number | string | null;
 status?: string | null ;
-proposalType?: ProposalType;
+proposalType?: ProposalType | string;
 index:number;
 votesData: any;
 }
@@ -165,16 +166,16 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType, 
 		: <>
 			<div className='max-sm:hidden'>
 				<Tooltip color='#575255' overlayClassName='max-w-none' title={<div className={`flex flex-col whitespace-nowrap text-xs gap-1 p-1.5 ${poppins.className} ${poppins.variable}`}>
-					<span>Aye = {formatedBalance(tallyData.ayes.toString() || '0', unit)} {unit} ({Math.round(isAyeNaN ? 50 : ayePercent)}%) </span>
-					<span>Nay = {formatedBalance(tallyData.nays.toString() || '0', unit)} {unit} ({Math.round(isNayNaN ? 50 : nayPercent)}%) </span>
+					<span>Aye = {formatUSDWithUnits(formatBnBalance(tallyData.ayes || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isAyeNaN ? 50 : ayePercent).toFixed(2)}%) </span>
+					<span>Nay = {formatUSDWithUnits(formatBnBalance(tallyData.nays || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isNayNaN ? 50 : nayPercent).toFixed(2)}%) </span>
 				</div>}>
 					<div>
-						<Progress size={30} percent={50} success={{ percent: Math.round((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={((index%2) === 0) ? '#fbfbfc' : 'white' } />
+						<Progress size={30} percent={50} success={{ percent: ((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={((index%2) === 0) ? '#fbfbfc' : 'white' } />
 					</div>
 				</Tooltip>
 			</div>
 			<div className='sm:hidden'>
-				<Progress size={30} percent={50} success={{ percent: Math.round((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={((index%2) === 0) ? '#fbfbfc' : 'white' } />
+				<Progress size={30} percent={50} success={{ percent: ((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={((index%2) === 0) ? '#fbfbfc' : 'white' } />
 			</div>
 		</>
 	;

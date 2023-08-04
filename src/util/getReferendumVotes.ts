@@ -21,7 +21,6 @@ export default async function getReferendumVotes(network:string, onchainId:numbe
 		data: null,
 		error: null
 	} ;
-
 	try {
 		const response = await fetch(`${chainProperties[network]?.externalLinks}/api/scan/democracy/referendum`, {
 			body: JSON.stringify({

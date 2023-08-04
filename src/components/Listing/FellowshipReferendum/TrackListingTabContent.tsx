@@ -56,6 +56,7 @@ const TrackListingTabContent: FC<ITrackListingTabContentProps> = (props) => {
 									timeline={post?.timeline || []}
 									statusHistory={post?.status_history || []}
 									index={index}
+									proposalType={post?.type}
 								/>
 							</Link>}
 						</div>

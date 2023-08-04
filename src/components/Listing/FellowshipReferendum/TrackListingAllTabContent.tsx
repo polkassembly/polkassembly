@@ -58,6 +58,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 										statusHistory={post?.status_history || []}
 										index={index}
 										tally={post?.tally}
+										proposalType={post?.type}
 									/>
 								</Link>}
 							</div>

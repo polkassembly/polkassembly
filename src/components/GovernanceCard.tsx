@@ -70,7 +70,7 @@ interface IGovernanceProps {
   timeline?: any[];
   statusHistory?: any[];
   index?: number;
-  proposalType?: ProposalType;
+  proposalType?: ProposalType | string;
   votesData?: any
 }
 
@@ -243,11 +243,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</div>
 								</Tooltip>
 							</>}
-							{ (votesData?.data || tally) && <>
+							{((proposalType === 'ReferendumV2' || proposalType === ProposalType.REFERENDUMS ) && (votesData?.data || tally)) && <>
 								<Divider type="vertical" className='max-sm:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<VotesProgressInListing index={index} proposalType={proposalType} votesData={votesData} onchainId={onchainId} status={status} tally={tally}/>
-							</>}
-
+							</>
+							}
 							{
 								topic?
 									<div className='flex items-center sm:-mt-1'>

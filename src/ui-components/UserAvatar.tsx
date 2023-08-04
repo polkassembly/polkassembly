@@ -38,4 +38,4 @@ const UserAvatar = ({ className, id, username, size }: Props) => {
 	);
 };
 
-export default UserAvatar;
+export default React.memo(UserAvatar);

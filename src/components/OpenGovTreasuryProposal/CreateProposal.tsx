@@ -136,6 +136,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 	const handleSubmitTreasuryProposal = async() => {
 		if(!api || !apiReady) return;
+		const post_id =  Number(await api.query.referenda.referendumCount());
 		const origin: any = { Origins: selectedTrack };
 		const proposerWallet = localStorage.getItem('treasuryProposalProposerWallet') || '';
 
@@ -174,15 +175,8 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			const proposal = api.tx.referenda.submit(origin ,{ Lookup: { hash: preimageHash, len: String(preimageLength) } }, enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value }: { After: enactment.value }): { After: BN_HUNDRED });
 
 			const onSuccess = async() => {
-				queueNotification({
-					header: 'Success!',
-					message: `Proposal #${proposal.hash} successful.`,
-					status: NotificationStatus.SUCCESS
-				});
-				const post_id =  Number(await api.query.referenda.referendumCount());
 				await handleSaveTreasuryProposal(post_id);
 				setLoading(false);
-
 			};
 
 			const onFailed = async() => {

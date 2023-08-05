@@ -149,7 +149,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const currentBlock = useCurrentBlock();
 	const { api, apiReady } = useApiContext();
 	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();
-	const { postData: { created_at, track_number, post_link } } = usePostDataContext();
+	const { postData: { created_at, track_number, post_link, statusHistory } } = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
 
 	const [address, setAddress] = useState<string>('');
@@ -683,7 +683,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						</>
 					}
 					{/* decision deposite placed. */}
-					{(post?.statusHistory?.filter((status: any) => status.status === 'DecisionDepositPlaced')?.length === 0) && trackName && <DecisionDepositCard trackName={String(trackName)} />}
+					{(statusHistory && statusHistory?.filter((status: any) => status.status === gov2ReferendumStatus.DECISION_DEPOSIT_PLACED)?.length === 0) && trackName && <DecisionDepositCard trackName={String(trackName)} />}
 
 					{canEdit && graphicOpen && post_link && !(post.tags && Array.isArray(post.tags) && post.tags.length > 0) && <div className=' rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] pb-[36px] mb-8'>
 						<div className='flex justify-end py-[17px] px-[20px] items-center' onClick={ () => setGraphicOpen(false)}>

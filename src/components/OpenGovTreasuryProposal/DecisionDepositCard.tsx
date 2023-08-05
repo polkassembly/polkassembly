@@ -28,6 +28,7 @@ import { formatBalance } from '@polkadot/util';
 import CloseIcon from '~assets/icons/close.svg';
 import executeTx from '~src/util/executeTx';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
+import { gov2ReferendumStatus } from '~src/global/statuses';
 
 const ZERO_BN = new BN(0);
 
@@ -196,7 +197,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				message: 'Decision Deposit successful.',
 				status: NotificationStatus.SUCCESS
 			});
-			setPostData((prev: any) => {return { ...prev, statusHistory: [...(prev?.statusHistory || []), { status:'DecisionDepositPlaced' } ] };});
+			setPostData((prev: any) => {return { ...prev, statusHistory: [...(prev?.statusHistory || []), { status: gov2ReferendumStatus.DECISION_DEPOSIT_PLACED } ] };});
 			setLoading(false);
 			setOpenModal(false);
 		};

@@ -179,6 +179,7 @@ const Post: FC<IPostProps> = (props) => {
 				}
 			});
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [post]);
 
 	const networkModified =  network?.charAt(0)?.toUpperCase() + network?.slice(1);
@@ -416,6 +417,7 @@ const Post: FC<IPostProps> = (props) => {
 			reward: post?.reward,
 			spam_users_count: post?.spam_users_count,
 			status: post?.status,
+			statusHistory: post?.statusHistory,
 			subscribers: post?.subscribers || [],
 			summary: post?.summary,
 			tags: post?.tags || [],

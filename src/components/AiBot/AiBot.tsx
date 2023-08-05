@@ -21,7 +21,7 @@ import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import dynamic from 'next/dynamic';
 
 const  OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'),{
-	loading: () => <Skeleton.Button className='w-[90%]' active />,
+	loading: () => <Skeleton.Button className='w-[100%]' active />,
 	ssr: false
 });
 

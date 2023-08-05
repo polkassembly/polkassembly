@@ -185,6 +185,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					message: 'Transaction failed!',
 					status: NotificationStatus.ERROR
 				});
+
 				setLoading(false);
 			};
 			setLoading(true);

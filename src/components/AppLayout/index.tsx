@@ -13,7 +13,7 @@ import React, { memo, ReactNode, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
-import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon } from 'src/ui-components/CustomIcons';
+import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, TechComProposalIcon , DelegatedIcon } from 'src/ui-components/CustomIcons';
 import getCurrGovType from '~src/util/getCurrGovType';
 import styled from 'styled-components';
 
@@ -21,7 +21,7 @@ import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { EGovType, PostOrigin, UserDetailsContextType } from '~src/types';
+import { PostOrigin, UserDetailsContextType } from '~src/types';
 import Footer from './Footer';
 import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
@@ -138,28 +138,27 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	const gov1Items: {[x:string]: ItemType[]} = {
 		overviewItems: [
-			getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white' />),
-			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
-			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
-			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
-			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-3' />)
+			// getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white' />),
+			// getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
+			// getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
+			// // getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
+			// getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-3' />)
 		],
 		democracyItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
 			getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='text-white' />)
 		] : [],
-		councilItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Motions', '/motions', <MotionsIcon className='text-white' />),
-			getSiderMenuItem('Members', '/council', <MembersIcon className='text-white' />)
+		councilItems: chainProperties[network] ? [
+			//getSiderMenuItem('Members', '/council', <MembersIcon className='text-white' />)
 		] : [],
 		treasuryItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
-			getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
-			getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />),
+			//getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
+			//getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />),
 			getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
 		] : [],
 		techCommItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
+			getSiderMenuItem('Tech Comitee Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
 		] : [],
 		allianceItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-white' />),
@@ -193,41 +192,35 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Treasury', 'treasury_group', null, [
 				...gov1Items.treasuryItems
 			]),
-
-			getSiderMenuItem('Council', 'council_group', null, [
-				...gov1Items.councilItems
-			]),
-
-			getSiderMenuItem('Tech. Comm.', 'tech_comm_group', null, [
-				...gov1Items.techCommItems
-			])
+			getSiderMenuItem('Council Motions', '/motions', <MotionsIcon className='text-white' />),
+			getSiderMenuItem('Tech Committee Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
 		]);
 	}
 
-	let collapsedItems: MenuProps['items'] = [
-		...gov1Items.overviewItems
-	];
+	// let collapsedItems: MenuProps['items'] = [
+	// ...gov1Items.overviewItems
+	// ];
 
-	if(chainProperties[network]?.subsquidUrl) {
-		collapsedItems = collapsedItems.concat([
-			...gov1Items.democracyItems,
-			...gov1Items.treasuryItems,
-			...gov1Items.councilItems,
-			...gov1Items.techCommItems
-		]);
-	}
+	// if(chainProperties[network]?.subsquidUrl) {
+	// collapsedItems = collapsedItems.concat([
+	// ...gov1Items.democracyItems,
+	// ...gov1Items.treasuryItems,
+	// ...gov1Items.councilItems,
+	// ...gov1Items.techCommItems
+	// ]);
+	// }
 
 	if(network === AllNetworks.COLLECTIVES){
 		const fellowshipItems = [getSiderMenuItem('Members', '/fellowship', <MembersIcon className='text-white' />), getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='text-sidebarBlue' />)];
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
 			...gov1Items.allianceItems
 		]), getSiderMenuItem('Fellowship', 'fellowship_group', null, fellowshipItems)];
-		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems, ...fellowshipItems];
+		// collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems, ...fellowshipItems];
 	} else if (network === AllNetworks.WESTENDCOLLECTIVES) {
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [
 			...gov1Items.allianceItems
 		])];
-		collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems];
+		// collapsedItems = [...gov1Items.overviewItems, ...gov1Items.allianceItems];
 	}
 
 	const gov2TrackItems: {[x:string]: ItemType[]} = {
@@ -299,6 +292,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	const gov2Items:MenuProps['items'] = [
 		...gov2OverviewItems,
+
 		// Tracks Heading
 		getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 uppercase text-base font-medium'>Tracks</span>, 'tracksHeading', null),
 		...gov2TrackItems.mainItems,
@@ -321,6 +315,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			...gov2TrackItems.treasuryItems
 		]));
 	}
+
+	// gov2Items.splice(gov2Items.length - 1,0,getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 text-base font-medium'>Gov1</span>, 'tracksHeading', null, [
+	// ...items
+	// ]));
+	gov2Items.push(getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 text-base font-medium'>Gov1</span>, 'tracksHeading', null, [
+		...items
+	]));
 
 	const gov2CollapsedItems:MenuProps['items'] = [
 		...gov2OverviewItems,
@@ -370,11 +371,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	const userDropdown = getUserDropDown(handleLogout, picture, username!);
 
-	let sidebarItems = !sidedrawer ? collapsedItems : items;
+	let sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 
-	if(govType === EGovType.OPEN_GOV) {
-		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
-	}
+	// if(govType === EGovType.OPEN_GOV) {
+	// sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
+	// }
 
 	if(username) {
 		sidebarItems = [userDropdown, ...sidebarItems];

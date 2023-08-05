@@ -18,7 +18,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import SearchBar from '~src/ui-components/SearchBar';
 
-import GovernanceSwitchButton from './GovernanceSwitchButton';
+//import GovernanceSwitchButton from './GovernanceSwitchButton';
 import PaLogo from './PaLogo';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
@@ -39,7 +39,7 @@ interface Props {
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	const { network } = useNetworkContext();
 	const { govType, username, setUserDetailsContextState } = useUserDetailsContext();
 	const router = useRouter();
@@ -85,11 +85,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 				</div>
 
 				{
-					isOpenGovSupported(network)?
-						<>
-							<GovernanceSwitchButton previousRoute={previousRoute} className='hidden lg:flex' />
-						</> :
-						<div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
+					// isOpenGovSupported(network)?
+					// 	<div className='bg-red-300'>
+					// 		<GovernanceSwitchButton previousRoute={previousRoute} className='hidden lg:flex' />
+					// 	</div> :
+					// 	<div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
 				}
 				<div className="flex items-center justify-between gap-x-2 md:gap-x-4">
 					<SearchBar/>

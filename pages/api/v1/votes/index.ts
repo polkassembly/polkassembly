@@ -55,9 +55,10 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 		return res.status(400).json({ error: `The postId "${postId}" is invalid.` });
 	}
 
-	const isOpenGov = voteType === VoteType.REFERENDUM_V2;
-
 	const strSortBy = String(sortBy);
+	const isOpenGov = voteType === VoteType.REFERENDUM_V2;
+	const isConvinctionSort = strSortBy === votesSortValues.CONVICTION;
+	const isBalanceSort = strSortBy === votesSortValues.BALANCE;
 	if (!isVotesSortOptionsValid(strSortBy)) {
 		return res.status(400).json({ error: `The sortBy "${sortBy}" is invalid.` });
 	}
@@ -65,7 +66,7 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 		index_eq: numPostId,
 		limit: numListingLimit,
 		offset: numListingLimit * (numPage - 1),
-		orderBy: strSortBy === votesSortValues.BALANCE ? ['balance_value_DESC', 'id_DESC'] : strSortBy === votesSortValues.CONVICTION ? ['lockPeriod_DESC', 'id_DESC'] : isOpenGov ? ['createdAtBlock_DESC', 'id_DESC'] : ['timestamp_DESC', 'id_DESC'],
+		orderBy: isBalanceSort ? ['balance_value_DESC', 'id_DESC'] : isConvinctionSort ? ['lockPeriod_DESC', 'id_DESC'] : isOpenGov ? ['createdAtBlock_DESC', 'id_DESC'] : ['timestamp_DESC', 'id_DESC'],
 		type_eq: voteType
 	};
 

@@ -310,11 +310,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 					<div className="font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center pl-1 gap-3">
 						<div className="sm:hidden xs:flex xs:justify-start items-center h-[30px] flex-shrink-0">
-							<OnchainCreationLabel address={address} username={username} />
+							<OnchainCreationLabel address={address} truncateUsername username={username} />
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
 							{relativeCreatedAt && <>
 								<div className='flex text-lightBlue mt-0 items-center'>
-									<span> {relativeCreatedAt}</span>
+									<ClockCircleOutlined className='mr-1' /> <span> {relativeCreatedAt}</span>
 								</div>
 							</>}
 							{(decision  && (decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed) && <div className='flex items-center'>

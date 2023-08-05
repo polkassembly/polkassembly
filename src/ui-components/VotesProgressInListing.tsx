@@ -18,12 +18,12 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 const ZERO = new BN(0);
 
 interface Props{
-tally: any;
-onchainId?: number | string | null;
-status?: string | null ;
-proposalType?: ProposalType | string;
-index:number;
-votesData: any;
+  tally: any;
+  onchainId?: number | string | null;
+  status?: string | null ;
+  proposalType?: ProposalType | string;
+  index:number;
+  votesData: any;
 }
 
 const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType, votesData }:Props) => {

@@ -38,7 +38,7 @@ const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
 	ssr: false
 });
 const VotesProgressInListing = dynamic(() => import('~src/ui-components/VotesProgressInListing'),{
-	loading: () => <Skeleton.Button  />,
+	loading: () => <Skeleton.Button active />,
 	ssr: false
 });
 
@@ -387,12 +387,11 @@ export default styled(GovernanceCard)`
 .ant-progress .ant-progress-text{
   display: none;
 }
-
 .ant-progress.ant-progress-show-info .ant-progress-outer {
-    margin-inline-end: 0px; 
-     padding-inline-end: 0px;
+  margin-inline-end: 0px; 
+  padding-inline-end: 0px;
 }
 .progress-rotate{
-transform: rotate(-87deg);
+  transform: rotate(-87deg);
 }
 `;

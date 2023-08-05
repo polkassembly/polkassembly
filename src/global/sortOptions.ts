@@ -27,6 +27,7 @@ export const sortOptions = [
 
 export const votesSortValues = {
 	BALANCE: 'balance',
+	CONVICTION: 'conviction',
 	TIME: 'time'
 };
 
@@ -38,6 +39,10 @@ export const votesSortOptions = [
 	{
 		key: votesSortValues.BALANCE,
 		label: 'Balance'
+	},
+	{
+		key: votesSortValues.CONVICTION,
+		label: 'Conviction'
 	}
 ];
 

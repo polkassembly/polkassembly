@@ -180,7 +180,7 @@ export default function getTermsAndConditions(network: string) {
 </div>
 <div  style="border-radius:20px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:20px;  background:#fff; ">
    <h1 class="mb-0">  8. Changes to these Terms</h1>
-    1.  We may make changes to these terms from time to time (if, for example, there is a change in the law that means we need to change 
+        We may make changes to these terms from time to time (if, for example, there is a change in the law that means we need to change 
         these Terms).We will give you at least thirty days' advance notice of such changes. If you do not wish to continue using the Forum following 
         the changes, you can cancel your agreement to these Terms by cancelling your Account. Your continued use of the Forum following the 
         prior notification of the amended terms will be understood as your acceptance of the new terms.

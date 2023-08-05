@@ -13,14 +13,17 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
+import FilterByTags from '~src/ui-components/FilterByTags';
+import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { page = 1, sortBy = sortValues.NEWEST } = query;
-	const proposalType = ProposalType.TECH_COMMITTEE_PROPOSALS;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
+	const proposalType = ProposalType.TECHNICAL_PIPS;
 	const network = getNetworkFromReqHeaders(req.headers);
 	const { data, error } = await getOnChainPosts({
+		filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
@@ -74,6 +77,12 @@ const TechnicalPIPs: FC<ITechCommProposalsProps> = (props) => {
 			</div>
 
 			<div className='shadow-md bg-white py-5 px-0 rounded-xxl mt-6'>
+				<div className='flex items-center justify-between'>
+					<div className='mt-3.5 mx-1 sm:mt-3 sm:mx-12'>
+						<FilteredTags/>
+					</div>
+					<FilterByTags className='my-6 sm:mr-14 xs:mx-6 xs:my-2'/>
+				</div>
 				<Listing posts={posts} proposalType={ProposalType.TECHNICAL_PIPS} />
 				<div className='flex justify-end mt-6'>
 					{

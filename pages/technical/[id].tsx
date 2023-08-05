@@ -23,7 +23,7 @@ import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import { useApiContext } from '~src/context';
 import { useState } from 'react';
 
-const proposalType = ProposalType.TECH_COMMITTEE_PROPOSALS;
+const proposalType = ProposalType.TECHNICAL_PIPS;
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 
@@ -73,7 +73,6 @@ const TechnicalPIPsPost: FC<ITechCommPostProps> = (props) => {
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!post) return null;
-
 	if (post) return (<>
 		<SEOHead title={post.title || `${noTitle} - Technical PIPs.`} desc={post.content} network={network}/>
 

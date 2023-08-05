@@ -50,7 +50,10 @@ export type TSubsquidProposalType =
 	| 'Tip'
 	| 'ChildBounty'
 	| 'ReferendumV2'
-	| 'FellowshipReferendum';
+	| 'FellowshipReferendum'
+  | 'TechnicalCommittee'
+  | 'Community'
+  | 'UpgradeCommittee';
 
 export function getSubsquidProposalType(proposalType: Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>): TSubsquidProposalType | undefined{
 	switch(proposalType) {
@@ -78,6 +81,12 @@ export function getSubsquidProposalType(proposalType: Exclude<ProposalType, Prop
 		return 'AllianceMotion';
 	case ProposalType.ANNOUNCEMENT:
 		return 'Announcement';
+	case ProposalType.TECHNICAL_PIPS:
+		return 'TechnicalCommittee';
+	case ProposalType.COMMUNITY_PIPS:
+		return 'Community';
+	case ProposalType.UPGRADE_PIPS:
+		return 'UpgradeCommittee';
 	}
 }
 export function getFirestoreProposalType(proposalType: string): string {
@@ -168,6 +177,12 @@ export function getSinglePostLinkFromProposalType(proposalType: ProposalType | O
 		return 'alliance/motion';
 	case ProposalType.ANNOUNCEMENT:
 		return 'alliance/announcement';
+	case ProposalType.TECHNICAL_PIPS:
+		return 'technical';
+	case ProposalType.COMMUNITY_PIPS:
+		return 'community';
+	case ProposalType.UPGRADE_PIPS:
+		return 'upgrade';
 	}
 	return '';
 }
@@ -200,7 +215,7 @@ export function getProposalTypeFromSinglePostLink(link: string): ProposalType | 
 	}
 }
 
-export const proposalTypes = ['democracy_proposals', 'tech_committee_proposals', 'treasury_proposals', 'referendums', 'fellowship_referendums', 'council_motions', 'bounties', 'tips', 'child_bounties', 'open_gov', 'referendums_v2', 'alliance_motion', 'announcement'];
+export const proposalTypes = ['democracy_proposals', 'tech_committee_proposals', 'treasury_proposals', 'referendums', 'fellowship_referendums', 'council_motions', 'bounties', 'tips', 'child_bounties', 'open_gov', 'referendums_v2', 'alliance_motion', 'announcement','technical_PIPs','community_PIPs','upgrade_PIPs'];
 export const offChainProposalTypes = ['discussions', 'grants'];
 
 export const checkIsOnChainPost = (proposalType: string) => {

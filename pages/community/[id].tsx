@@ -23,7 +23,7 @@ import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import { useApiContext } from '~src/context';
 import { useState } from 'react';
 
-const proposalType = ProposalType.TECH_COMMITTEE_PROPOSALS;
+const proposalType = ProposalType.COMMUNITY_PIPS;
 export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 

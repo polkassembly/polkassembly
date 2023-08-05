@@ -145,24 +145,24 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
 			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-3' />)
 		],
-		democracyItems: chainProperties[network]?.subsquidUrl ? [
+		democracyItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh'  ) ? [
 			getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
 			getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='text-white' />)
 		] : [],
-		councilItems: chainProperties[network]?.subsquidUrl ? [
+		councilItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh' ) ? [
 			getSiderMenuItem('Motions', '/motions', <MotionsIcon className='text-white' />),
 			getSiderMenuItem('Members', '/council', <MembersIcon className='text-white' />)
 		] : [],
-		treasuryItems: chainProperties[network]?.subsquidUrl ? [
+		treasuryItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh' ) ? [
 			getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
 			getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
 			getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />),
 			getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
 		] : [],
-		techCommItems: chainProperties[network]?.subsquidUrl ? [
+		techCommItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh' ) ? [
 			getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
 		] : [],
-		allianceItems: chainProperties[network]?.subsquidUrl ? [
+		allianceItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh' ) ? [
 			getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-white' />),
 			getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='text-white' />),
 			getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-white' />),
@@ -185,7 +185,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		...gov1Items.overviewItems
 	];
 
-	if(chainProperties[network]?.subsquidUrl) {
+	if(chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
 		items = items.concat([
 			getSiderMenuItem('Democracy', 'democracy_group', null, [
 				...gov1Items.democracyItems

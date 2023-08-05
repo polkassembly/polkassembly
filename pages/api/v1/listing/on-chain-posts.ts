@@ -10,7 +10,7 @@ import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
-import { GET_ALLIANCE_ANNOUNCEMENTS, GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES, GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES } from '~src/queries';
+import { GET_ALLIANCE_ANNOUNCEMENTS, GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES, GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES, GET_PROPOSALS_LISTING_FOR_POLYMESH, GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -124,21 +124,21 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 		}
 
 		if (filterBy && Array.isArray(filterBy) && filterBy.length > 0) {
-			const offChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
+			const onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
 			let order: 'desc' | 'asc' = sortBy === sortValues.NEWEST ? 'desc' : 'asc';
 			let orderedField = 'created_at';
 			if (sortBy === sortValues.COMMENTED) {
 				order = 'desc';
 				orderedField = 'last_comment_at';
 			}
-			const postsSnapshotArr = await offChainCollRef
+			const postsSnapshotArr = await onChainCollRef
 				.orderBy(orderedField, order)
 				.where('tags', 'array-contains-any', filterBy)
 				.limit(Number(listingLimit) || LISTING_LIMIT)
 				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
 				.get();
 
-			const count = (await offChainCollRef.where('tags', 'array-contains-any', filterBy).count().get()).data().count;
+			const count = (await onChainCollRef.where('tags', 'array-contains-any', filterBy).count().get()).data().count;
 			const postsPromise = postsSnapshotArr.docs.map(async (doc) => {
 				if (doc && doc.exists) {
 					const docData = doc.data();
@@ -148,7 +148,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const res = await getSubSquareContentAndTitle(strProposalType,network,docData.id);
 							subsquareTitle = res?.title;
 						}
-						const postDocRef = offChainCollRef.doc(String(docData.id));
+						const postDocRef = onChainCollRef.doc(String(docData.id));
 
 						const post_reactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();
 						const reactions = getReactions(post_reactionsQuerySnapshot);
@@ -197,10 +197,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				offset: numListingLimit * (numPage - 1),
 				type_eq: subsquidProposalType
 			};
+			let query =  GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
+			if(network === 'polymesh'){
+				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
+			}
 
 			const subsquidRes = await fetchSubsquid({
 				network,
-				query: GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
+				query,
 				variables: postsVariables
 			});
 
@@ -360,6 +364,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			}
 			else {
 				query = GET_PROPOSALS_LISTING_BY_TYPE;
+			}
+			if(network === AllNetworks.POLYMESH){
+				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
 			}
 
 			const subsquidRes = await fetchSubsquid({

@@ -18,7 +18,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { checkReportThreshold, getReactions } from '../posts/on-chain-post';
+import { checkReportThreshold, getReactions, getTimeline } from '../posts/on-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
@@ -42,7 +42,15 @@ export interface IPostListing {
 	parent_bounty_index?: number
 	method?: string;
 	status?: string;
+  status_history:{
+    block:number;
+    status: string;
+  }[];
 	title: string;
+  tally?: {
+    ayes: string;
+    nays: string;
+  };
 	topic: {
 		id: number;
 		name: string;
@@ -51,6 +59,7 @@ export interface IPostListing {
 	username?: string;
 	tags?: string[] | [];
 	gov_type?: 'gov_1' | 'open_gov';
+  timeline?: any;
 }
 
 export interface IPostsListingResponse {
@@ -211,7 +220,27 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals;
 			const subsquidPostsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex } = subsquidPost;
+				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory } = subsquidPost;
+
+				const isStatus = {
+					swap: false
+				};
+
+				let proposalTimeline;
+				if(!group?.proposals){
+					proposalTimeline = getTimeline([
+						{
+							createdAt,
+							hash,
+							index,
+							statusHistory,
+							type
+						}
+					],isStatus);
+				}else{
+					proposalTimeline = getTimeline(group?.proposals, isStatus) || [];
+				}
+
 				let otherPostProposer = '';
 				if (group?.proposals?.length) {
 					group.proposals.forEach((obj: any) => {
@@ -225,6 +254,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					});
 				}
 				const status = subsquidPost.status;
+				const tally = subsquidPost.tally;
 				const postId = proposalType === ProposalType.TIPS ? hash : index;
 				const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 
@@ -248,6 +278,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 						const topic = data?.topic;
 						const topic_id = data?.topic_id;
+
 						return {
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							created_at: createdAt,
@@ -262,7 +293,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							post_reactions,
 							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 							status,
+							status_history: statusHistory,
 							tags: data?.tags || [],
+							tally,
+							timeline: proposalTimeline,
 							title: data?.title || subsquareTitle || null,
 							topic: topic ? topic : isTopicIdValid(topic_id) ? {
 								id: topic_id,
@@ -291,6 +325,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					post_reactions,
 					proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 					status: status,
+					status_history: statusHistory,
+					tally,
+					timeline: proposalTimeline,
 					title: subsquareTitle,
 					topic: topicFromType,
 					type: type || subsquidProposalType,
@@ -529,7 +566,27 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			else {
 
 				postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex } = subsquidPost;
+					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory } = subsquidPost;
+
+					const isStatus = {
+						swap: false
+					};
+
+					let proposalTimeline;
+					if(!group?.proposals){
+						proposalTimeline=    getTimeline([
+							{
+								createdAt,
+								hash,
+								index,
+								statusHistory,
+								type
+							}
+						],isStatus);
+					}else{
+						proposalTimeline= getTimeline(group?.proposals, isStatus) || [];
+					}
+
 					let otherPostProposer = '';
 					const method = splitterAndCapitalizer(subsquidPost.callData?.method || '', '_');
 					if (group?.proposals?.length) {
@@ -543,6 +600,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							}
 						});
 					}
+					const tally = subsquidPost?.tally;
 					let status = subsquidPost.status;
 					if (status === 'DecisionDepositPlaced') {
 						const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
@@ -575,6 +633,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 							const topic = data?.topic;
 							const topic_id = data?.topic_id;
+
 							return {
 								comments_count: commentsQuerySnapshot.data()?.count || 0,
 								created_at: createdAt,
@@ -590,7 +649,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 								requestedAmount: preimage?.proposedCall?.args?.amount || preimage?.proposedCall?.args?.value || null,
 								status,
+								status_history: statusHistory,
 								tags: data?.tags || [],
+								tally,
+								timeline: proposalTimeline,
 								title: data?.title || subsquareTitle,
 								topic: topic ? topic : isTopicIdValid(topic_id) ? {
 									id: topic_id,
@@ -621,6 +683,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 						requestedAmount: preimage?.proposedCall?.args?.amount || preimage?.proposedCall?.args?.value || null,
 						status: status,
+						status_history: statusHistory,
+						tally,
+						timeline: proposalTimeline,
 						title: subsquareTitle,
 						topic: topicFromType,
 						type: type || subsquidProposalType,

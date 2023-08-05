@@ -47,11 +47,37 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
     createdAt
     updatedAt
     status
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+     
+    }
     preimage {
       method
       proposer
     }
     index
+    group {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
+       type
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
+        proposer
+        preimage {
+          proposer
+        }
+        hash
+      }
+    }
     end
     hash
     description
@@ -132,7 +158,6 @@ query PolymeshPrposalsQuery($type_in: ProposalType, $limit: Int = 10, $offset: I
     totalCount
   }
 }
-
 `;
 
 export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!]) {
@@ -151,13 +176,30 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
     description
     type
     origin
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+    }
     trackNumber
     group {
       proposals(limit: 10, orderBy: createdAt_ASC) {
+        type
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
         proposer
         preimage {
           proposer
         }
+        hash
       }
     }
     proposalArguments {

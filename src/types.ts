@@ -8,6 +8,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { network, tokenSymbol } from './global/networkConstants';
 import { ProposalType } from './global/proposalType';
 import BN from 'bn.js';
+import dayjs from 'dayjs';
 
 export interface UserDetailsContextType {
   id?: number | null;
@@ -26,9 +27,17 @@ export interface UserDetailsContextType {
   loginWallet: Wallet | null;
   delegationDashboardAddress: string;
   loginAddress: string;
+  multisigAssociatedAddress?:string;
   networkPreferences: INetworkPreferences;
   primaryNetwork: string;
   is2FAEnabled?: boolean;
+}
+
+export interface IPeriod {
+	period: string;
+	periodCardVisible: boolean;
+	periodEndsAt: dayjs.Dayjs;
+	periodPercent: number;
 }
 
 export interface INetworkPreferences {
@@ -186,6 +195,7 @@ export enum Wallet {
   WALLETCONNECT = 'walletconnect',
   NOVAWALLET = 'polkadot-js',
   POLYWALLET = 'polywallet',
+  POLKASAFE = 'polkasafe',
   OTHER = ''
 }
 
@@ -458,4 +468,14 @@ export interface ILastVote {
 	time:  Date | string | null;
 	balance: BN | string;
 	conviction:  number;
+}
+
+export type VoteInfo = {
+	aye_amount: BN;
+	aye_without_conviction: BN;
+	isPassing: boolean | null;
+	nay_amount: BN;
+	nay_without_conviction: BN;
+	turnout: BN;
+	voteThreshold: string;
 }

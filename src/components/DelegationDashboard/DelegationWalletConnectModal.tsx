@@ -273,6 +273,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 												walletAddress={multisig}
 												setWalletAddress={setMultisig}
 												containerClassName='gap-[20px]'
+												showMultisigBalance={true}
 												canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
 											/> :
 											<AccountSelectionForm

@@ -27,9 +27,7 @@ const MdScreen = ({ md } : Props) => {
 const StyledMdScreen = MdScreen;
 
 export const TermsAndConditions = () => {
-	const { network } = useNetworkContext();
-	console.log(getTermsAndConditions(network),"===");
-	
+	const { network } = useNetworkContext();	
 	return <StyledMdScreen md={getTermsAndConditions(network)}/> ;
 };
 export const PrivacyPolicy = () => {

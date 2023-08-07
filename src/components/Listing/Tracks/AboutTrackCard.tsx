@@ -201,7 +201,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						</h4>
 					</Tooltip>
 				</div>
-				<div className="xs:hidden md:flex justify-end md:p-1 lg:mr-5">
+				<div className="xs:hidden md:flex justify-end md:p-1 lg:mr-3 xl:mr-1.5">
 					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
     <DelegateModal trackNum={trackMetaData?.trackId} />}
 				</div>
@@ -257,7 +257,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						</div>
 					</div>
 				</div>
-				<div className='flex justify-center xs:mt-6 sm:mt-0 mr-6 mb-5 md:w-[30%]'>
+				<div className='flex justify-center xs:mt-6 sm:mt-0 mr-5 mb-5 md:w-[30%]'>
 					<Curves curvesLoading={curvesLoading} data={data} />
 				</div>
 			</div>

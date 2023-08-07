@@ -54,6 +54,11 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 										created_at={post.created_at}
 										tags={post?.tags}
 										spam_users_count={post?.spam_users_count}
+										timeline={post?.timeline || []}
+										statusHistory={post?.status_history || []}
+										index={index}
+										tally={post?.tally}
+										proposalType={post?.type}
 									/>
 								</Link>}
 							</div>

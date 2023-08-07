@@ -22,12 +22,12 @@ import { formatBalance } from '@polkadot/util';
 import DelegationSuccessPopup from './DelegationSuccessPopup';
 import { chainProperties } from '~src/global/networkConstants';
 import Address from '~src/ui-components/Address';
-import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { APPNAME } from '~src/global/appName';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import executeTx from '~src/util/executeTx';
+import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
 
 const ZERO_BN = new BN(0);

@@ -2,198 +2,198 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { ReactNode } from 'react';
-import styled from 'styled-components';
+import React, { ReactNode } from "react";
+import styled from "styled-components";
 
 interface Props {
-	children: ReactNode;
-	className?: string;
+    children: ReactNode;
+    className?: string;
 }
 
 const OnchainInfoWrapper = ({ children, className }: Props) => {
-	return <div className={className}>{children}</div>;
+    return <div className={className}>{children}</div>;
 };
 
 export default styled(OnchainInfoWrapper)`
-	background-color: white;
-	font-size: sm;
-	overflow-wrap: break-word;
-	margin-bottom: 1rem;
+    background-color: white;
+    font-size: sm;
+    overflow-wrap: break-word;
+    margin-bottom: 1rem;
 
-	h6 {
-		margin-bottom: 8px;
-		font-weight: 500;
-	}
+    h6 {
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
 
-	.ant-col,
-	.arguments {
-		margin-bottom: 48px;
-	}
+    .ant-col,
+    .arguments {
+        margin-bottom: 48px;
+    }
 
-	.methodArguments {
-		display: inline-block;
-		overflow-x: auto;
-		overflow-y: auto;
-		width: 100%;
-		max-height: 20rem;
-		word-wrap: normal;
-	}
+    .methodArguments {
+        display: inline-block;
+        overflow-x: auto;
+        overflow-y: auto;
+        width: 100%;
+        max-height: 20rem;
+        word-wrap: normal;
+    }
 
-	.motion-sub-info {
-		.row {
-			width: 100%;
-		}
-		&.with-table {
-			background-color: #fff;
-			.arguments-col {
-				margin-top: 16px;
-				margin-bottom: 20px;
-			}
-		}
-		&.treasury-info {
-			margin: 12px 9px 6px 9px;
-		}
-	}
+    .motion-sub-info {
+        .row {
+            width: 100%;
+        }
+        &.with-table {
+            background-color: #fff;
+            .arguments-col {
+                margin-top: 16px;
+                margin-bottom: 20px;
+            }
+        }
+        &.treasury-info {
+            margin: 12px 9px 6px 9px;
+        }
+    }
 
-	.child-bounty-item {
-		margin-top: 4px;
-		margin-bottom: 4px;
+    .child-bounty-item {
+        margin-top: 4px;
+        margin-bottom: 4px;
 
-		.child-bounty-item-header {
-			margin-bottom: 2px !important;
-			color: #4183c4 !important;
-		}
-	}
+        .child-bounty-item-header {
+            margin-bottom: 2px !important;
+            color: #4183c4 !important;
+        }
+    }
 
-	.child-bounty-show-btn {
-		margin-top: 4px;
-	}
+    .child-bounty-show-btn {
+        margin-top: 4px;
+    }
 
-	/* Arguments Style */
-	.arguments-heading {
-		margin-bottom: 12px;
-		display: flex;
-		align-items: center;
-		&.mt {
-			margin-top: 16px;
-		}
-		.buttons {
-			margin-left: 12px;
-			.active-btn {
-				background: #e5007a !important;
-				color: #fff;
-			}
-		}
-	}
+    /* Arguments Style */
+    .arguments-heading {
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        &.mt {
+            margin-top: 16px;
+        }
+        .buttons {
+            margin-left: 12px;
+            .active-btn {
+                background: #e5007a !important;
+                color: #fff;
+            }
+        }
+    }
 
-	.json-view,
-	.table-view {
-		width: 100%;
-		max-width: 100%;
-		overflow-x: auto;
-		background: #fff !important;
-		border-bottom: 1px solid rgb(238, 238, 238);
-	}
+    .json-view,
+    .table-view {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        background: #fff !important;
+        border-bottom: 1px solid rgb(238, 238, 238);
+    }
 
-	.react-json-view {
-		padding: 8px;
-		font-size: 14px;
-		min-width: min-content;
+    .react-json-view {
+        padding: 8px;
+        font-size: 14px;
+        min-width: min-content;
 
-		.variable-value {
-			max-width: 70vw;
-			min-width: 956px !important;
-			word-break: break-all;
-		}
-	}
+        .variable-value {
+            max-width: 70vw;
+            min-width: 956px !important;
+            word-break: break-all;
+        }
+    }
 
-	.json-view {
-		overflow-x: auto;
-		background-color: #fff !important;
-	}
+    .json-view {
+        overflow-x: auto;
+        background-color: #fff !important;
+    }
 
-	.table-view,
-	.json-view {
-		max-height: 500px;
-		overflow-y: auto;
-		table {
-			width: 100%;
-			border-spacing: 0px;
-		}
-		td {
-			width: 70vw;
-			word-break: break-all;
-			white-space: pre-line;
-			overflow-wrap: break-word;
-			text-align: justify;
-			text-overflow: ellipsis;
-			overflow: hidden;
+    .table-view,
+    .json-view {
+        max-height: 500px;
+        overflow-y: auto;
+        table {
+            width: 100%;
+            border-spacing: 0px;
+        }
+        td {
+            width: 70vw;
+            word-break: break-all;
+            white-space: pre-line;
+            overflow-wrap: break-word;
+            text-align: justify;
+            text-overflow: ellipsis;
+            overflow: hidden;
 
-			&.direct-data.data-2 {
-				min-width: 400px !important;
-			}
+            &.direct-data.data-2 {
+                min-width: 400px !important;
+            }
 
-			&.indirect-data {
-				background: #fff;
-			}
+            &.indirect-data {
+                background: #fff;
+            }
 
-			&.direct-data {
-				font-style: normal;
-				font-weight: normal;
-				font-size: 14px;
-				line-height: 20px;
-				height: 40px;
-				border-style: solid;
-				border-width: 1px 1px 0px 1px;
-				border-color: rgb(238, 238, 238);
-				min-width: 160px;
-				padding: 10px 24px;
-				background: #fff;
-			}
-		}
-		th {
-			width: 70vw;
-			word-break: break-all;
-			white-space: pre-line;
-			overflow-wrap: break-word;
-			text-align: justify;
-			text-overflow: ellipsis;
-			overflow: hidden;
+            &.direct-data {
+                font-style: normal;
+                font-weight: normal;
+                font-size: 14px;
+                line-height: 20px;
+                height: 40px;
+                border-style: solid;
+                border-width: 1px 1px 0px 1px;
+                border-color: rgb(238, 238, 238);
+                min-width: 160px;
+                padding: 10px 24px;
+                background: #fff;
+            }
+        }
+        th {
+            width: 70vw;
+            word-break: break-all;
+            white-space: pre-line;
+            overflow-wrap: break-word;
+            text-align: justify;
+            text-overflow: ellipsis;
+            overflow: hidden;
 
-			&.direct-data.data-2 {
-				min-width: 400px !important;
-			}
+            &.direct-data.data-2 {
+                min-width: 400px !important;
+            }
 
-			&.indirect-data {
-				background: #fff;
-			}
+            &.indirect-data {
+                background: #fff;
+            }
 
-			&.direct-data {
-				font-style: normal;
-				font-weight: 700;
-				font-size: 14px;
-				line-height: 20px;
-				height: 40px;
-				border-style: solid;
-				border-width: 1px 1px 0px 1px;
-				border-color: rgb(238, 238, 238);
-				min-width: 160px;
-				padding: 10px 24px;
-				background: var(--grey_app_background);
-			}
-		}
-	}
+            &.direct-data {
+                font-style: normal;
+                font-weight: 700;
+                font-size: 14px;
+                line-height: 20px;
+                height: 40px;
+                border-style: solid;
+                border-width: 1px 1px 0px 1px;
+                border-color: rgb(238, 238, 238);
+                min-width: 160px;
+                padding: 10px 24px;
+                background: var(--grey_app_background);
+            }
+        }
+    }
 
-	.prev-proposals-btn {
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-		color: pink_primary;
-		margin-left: 6px;
-		font-weight: 500;
+    .prev-proposals-btn {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        color: pink_primary;
+        margin-left: 6px;
+        font-weight: 500;
 
-		& > div {
-			margin-left: 12px;
-		}
-	}
+        & > div {
+            margin-left: 12px;
+        }
+    }
 `;

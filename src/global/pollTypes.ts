@@ -3,12 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 const POLL_TYPE = {
-	NORMAL: 'normal',
-	OPTION: 'option'
+    NORMAL: "normal",
+    OPTION: "option"
 };
 
 export function isPollTypeValid(pollType: string) {
-	return pollTypes.includes(pollType);
+    return pollTypes.includes(pollType);
 }
 
 export const pollTypes = [POLL_TYPE.NORMAL, POLL_TYPE.OPTION];

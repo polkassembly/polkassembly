@@ -3,32 +3,32 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import { marked } from 'marked';
-import { convert } from 'html-to-text';
+import { marked } from "marked";
+import { convert } from "html-to-text";
 
 function convertStringToHtml(markdown: string): string {
-	return marked.parse(markdown);
+    return marked.parse(markdown);
 }
 
 function parseHTML(html: string): string {
-	return convert(html, {
-		wordwrap: false,
-		preserveNewlines: false,
-		selectors: [
-			{
-				selector: 'a',
-				options: {
-					hideLinkHrefIfSameAsText: true,
-					ignoreHref: true,
-					noLinkBrackets: true
-				}
-			},
-			{ selector: 'img', format: 'skip' }
-		]
-	});
+    return convert(html, {
+        wordwrap: false,
+        preserveNewlines: false,
+        selectors: [
+            {
+                selector: "a",
+                options: {
+                    hideLinkHrefIfSameAsText: true,
+                    ignoreHref: true,
+                    noLinkBrackets: true
+                }
+            },
+            { selector: "img", format: "skip" }
+        ]
+    });
 }
 
 export function htmlOrMarkdownToText(str: string): string {
-	const input = convertStringToHtml(str);
-	return parseHTML(input);
+    const input = convertStringToHtml(str);
+    return parseHTML(input);
 }

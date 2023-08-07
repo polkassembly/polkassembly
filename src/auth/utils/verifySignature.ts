@@ -2,16 +2,16 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { signatureVerify } from '@polkadot/util-crypto';
+import { signatureVerify } from "@polkadot/util-crypto";
 
-import getPublicKey from './getPublicKey';
+import getPublicKey from "./getPublicKey";
 
 export default function verifySignature(
-	message: string,
-	address: string,
-	signature: string
+    message: string,
+    address: string,
+    signature: string
 ): boolean {
-	const publicKey = getPublicKey(address);
+    const publicKey = getPublicKey(address);
 
-	return signatureVerify(message, signature, publicKey).isValid;
+    return signatureVerify(message, signature, publicKey).isValid;
 }

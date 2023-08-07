@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import util from 'util';
+import util from "util";
 
 /*
  * Pretty console log
@@ -13,5 +13,5 @@ import util from 'util';
  * only use in server side code
  */
 export default function console_pretty(data: any) {
-	console.log(util.inspect(data, false, null, true));
+    console.log(util.inspect(data, false, null, true));
 }

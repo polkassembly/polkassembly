@@ -2,48 +2,48 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import queryString from 'query-string';
+import queryString from "query-string";
 
-import { defaultNetwork } from '~src/global/defaultNetwork';
+import { defaultNetwork } from "~src/global/defaultNetwork";
 
-import { network as networkConstants } from '../global/networkConstants';
-import { Network } from '../types';
+import { network as networkConstants } from "../global/networkConstants";
+import { Network } from "../types";
 /**
  * Return the current network
  *
  */
 
 export default function getNetwork(): Network {
-	if (!global?.window) return defaultNetwork;
-	let network: string;
+    if (!global?.window) return defaultNetwork;
+    let network: string;
 
-	const url = global.window.location.href;
-	const qs = queryString.parse(global.window.location.search);
+    const url = global.window.location.href;
+    const qs = queryString.parse(global.window.location.search);
 
-	if (qs.network) {
-		network = qs.network.toString();
-	} else {
-		try {
-			network = url.split('//')[1].split('.')[0];
-		} catch (error) {
-			network = defaultNetwork;
-			console.error(error);
-		}
-	}
+    if (qs.network) {
+        network = qs.network.toString();
+    } else {
+        try {
+            network = url.split("//")[1].split(".")[0];
+        } catch (error) {
+            network = defaultNetwork;
+            console.error(error);
+        }
+    }
 
-	const possibleNetworks = Object.values(networkConstants);
+    const possibleNetworks = Object.values(networkConstants);
 
-	if (network == 'test') {
-		network = 'kusama';
-	} else if (network == 'test-polkadot') {
-		network = 'polkadot';
-	} else if (network == 'moonriver-test') {
-		network = 'moonriver';
-	}
+    if (network == "test") {
+        network = "kusama";
+    } else if (network == "test-polkadot") {
+        network = "polkadot";
+    } else if (network == "moonriver-test") {
+        network = "moonriver";
+    }
 
-	if (!possibleNetworks.includes(network)) {
-		network = defaultNetwork;
-	}
+    if (!possibleNetworks.includes(network)) {
+        network = defaultNetwork;
+    }
 
-	return network;
+    return network;
 }

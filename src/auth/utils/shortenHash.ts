@@ -3,5 +3,5 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 export default function shortenHash(hash: string): string {
-	return `${hash.substring(0, 3)}...${hash.substring(hash.length - 3)}`;
+    return `${hash.substring(0, 3)}...${hash.substring(hash.length - 3)}`;
 }

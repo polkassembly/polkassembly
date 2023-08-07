@@ -115,10 +115,19 @@
     "@types/showdown": "^2.0.0",
     "@types/styled-components": "^5.1.26",
     "autoprefixer": "^10.4.13",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3",
     "postcss": "^8.4.20",
     "tailwindcss": "^3.2.4"
   },
   "resolutions": {
     "styled-components": "^5"
-  }
+  },
+  "lint-staged": {
+  "*.{js,jsx,ts,tsx}": [
+    "eslint --fix",
+    "prettier --write",
+    "git add"
+  ]
+}
 }

@@ -2,38 +2,38 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import "dayjs-init";
+import 'dayjs-init';
 
-import { Skeleton } from "antd";
-import { GetServerSideProps } from "next";
-import dynamic from "next/dynamic";
-import { FC, useEffect } from "react";
-import SEOHead from "src/global/SEOHead";
+import { Skeleton } from 'antd';
+import { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
+import { FC, useEffect } from 'react';
+import SEOHead from 'src/global/SEOHead';
 
-import { getNetworkFromReqHeaders } from "~src/api-utils";
-import AboutNetwork from "~src/components/Home/AboutNetwork";
-import LatestActivity from "~src/components/Home/LatestActivity";
-import News from "~src/components/Home/News";
-import UpcomingEvents from "~src/components/Home/UpcomingEvents";
-import { useNetworkContext } from "~src/context";
-import { isGrantsSupported } from "~src/global/grantsNetworks";
-import { LATEST_POSTS_LIMIT } from "~src/global/listingLimit";
-import { isOpenGovSupported } from "~src/global/openGovNetworks";
-import { OffChainProposalType, ProposalType } from "~src/global/proposalType";
-import { IApiResponse, NetworkSocials } from "~src/types";
+import { getNetworkFromReqHeaders } from '~src/api-utils';
+import AboutNetwork from '~src/components/Home/AboutNetwork';
+import LatestActivity from '~src/components/Home/LatestActivity';
+import News from '~src/components/Home/News';
+import UpcomingEvents from '~src/components/Home/UpcomingEvents';
+import { useNetworkContext } from '~src/context';
+import { isGrantsSupported } from '~src/global/grantsNetworks';
+import { LATEST_POSTS_LIMIT } from '~src/global/listingLimit';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
+import { IApiResponse, NetworkSocials } from '~src/types';
 
-import { getLatestActivityAllPosts } from "./api/v1/latest-activity/all-posts";
-import { getLatestActivityOffChainPosts } from "./api/v1/latest-activity/off-chain-posts";
+import { getLatestActivityAllPosts } from './api/v1/latest-activity/all-posts';
+import { getLatestActivityOffChainPosts } from './api/v1/latest-activity/off-chain-posts';
 import {
 	getLatestActivityOnChainPosts,
 	ILatestActivityPostsListingResponse,
-} from "./api/v1/latest-activity/on-chain-posts";
-import { getNetworkSocials } from "./api/v1/network-socials";
-import { chainProperties } from "~src/global/networkConstants";
-import { network as AllNetworks } from "~src/global/networkConstants";
-import Gov2LatestActivity from "~src/components/Gov2Home/Gov2LatestActivity";
-import { networkTrackInfo } from "~src/global/post_trackInfo";
-import Script from "next/script";
+} from './api/v1/latest-activity/on-chain-posts';
+import { getNetworkSocials } from './api/v1/network-socials';
+import { chainProperties } from '~src/global/networkConstants';
+import { network as AllNetworks } from '~src/global/networkConstants';
+import Gov2LatestActivity from '~src/components/Gov2Home/Gov2LatestActivity';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
+import Script from 'next/script';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		return {
 			props: {},
 			redirect: {
-				destination: "/opengov",
+				destination: '/opengov',
 			},
 		};
 	}
@@ -113,14 +113,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	}
 
 	if (isGrantsSupported(network)) {
-		(fetches as any)["grants"] = getLatestActivityOffChainPosts({
+		(fetches as any)['grants'] = getLatestActivityOffChainPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
 			network,
 			proposalType: OffChainProposalType.GRANTS,
 		});
 	}
 
-	if (network === "collectives") {
+	if (network === 'collectives') {
 		for (const trackName of Object.keys(networkTrackInfo[network])) {
 			fetches[trackName as keyof typeof fetches] =
 				getLatestActivityOnChainPosts({
@@ -147,7 +147,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 const TreasuryOverview = dynamic(
-	() => import("~src/components/Home/TreasuryOverview"),
+	() => import('~src/components/Home/TreasuryOverview'),
 	{
 		loading: () => <Skeleton active />,
 		ssr: false,
@@ -225,7 +225,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 
 					<div className="w-full xl:w-[40%]">
 						<News
-							twitter={networkSocialsData?.data?.twitter || ""}
+							twitter={networkSocialsData?.data?.twitter || ''}
 						/>
 					</div>
 				</div>

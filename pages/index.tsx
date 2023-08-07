@@ -38,6 +38,7 @@ import Script from 'next/script';
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
 };
+
 interface IHomeProps {
 	networkSocialsData?: IApiResponse<NetworkSocials>;
 	latestPosts: {
@@ -151,7 +152,7 @@ const TreasuryOverview = dynamic(
 	{
 		loading: () => <Skeleton active />,
 		ssr: false,
-	},
+	}
 );
 
 const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {

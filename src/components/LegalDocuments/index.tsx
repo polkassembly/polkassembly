@@ -17,8 +17,8 @@ interface Props{
 const MdScreen = ({ md } : Props) => {
 	return (
 		<section>
-<article className={`${poppins.variable} ${poppins.className}bg-white text-sm rounded-md  whitespace-pre-wrap mb-[-6px]`}>
-<Markdown className="markdown text-black " md={md} />
+			<article className={`${poppins.variable} ${poppins.className}bg-white text-sm rounded-md  whitespace-pre-wrap mb-[-6px]`}>
+				<Markdown className="markdown text-black " md={md} />
 			</article>
 		</section>
 	);
@@ -27,7 +27,7 @@ const MdScreen = ({ md } : Props) => {
 const StyledMdScreen = MdScreen;
 
 export const TermsAndConditions = () => {
-	const { network } = useNetworkContext();	
+	const { network } = useNetworkContext();
 	return <StyledMdScreen md={getTermsAndConditions(network)}/> ;
 };
 export const PrivacyPolicy = () => {

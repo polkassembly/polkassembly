@@ -36,7 +36,8 @@ interface Props {
     withoutInfo?: boolean;
     walletAddress?:any;
     setWalletAddress?:any;
-	containerClassName?:string
+	containerClassName?:string;
+	canMakeTransaction?:boolean
 }
 
 const MultisigAccountSelectionForm = ({
@@ -54,7 +55,8 @@ const MultisigAccountSelectionForm = ({
 	withoutInfo,
 	walletAddress,
 	setWalletAddress,
-	containerClassName
+	containerClassName,
+	canMakeTransaction = true
 }: Props) => {
 	const [multisig, setMultisig] = useState<any>(null);
 	const client = new Polkasafe();
@@ -129,9 +131,10 @@ const MultisigAccountSelectionForm = ({
 						setSwitchModalOpen={setSwitchModalOpen}
 					/>
 				</article>
-			) : (
+			) : canMakeTransaction ? (
 				<MultisigNotFound/>
-			)}
+			) : <></>
+			}
 		</Container>
 	);
 };

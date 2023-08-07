@@ -374,6 +374,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 		</Form.Item>;
 
+	const handleOnVoteChange = (value:any) => {
+		setVote(value as EVoteDecisionType);
+		ayeNayForm.setFieldValue('balance', '');
+		splitForm.setFieldValue('nayVote','');
+		splitForm.setFieldValue('ayeVote','');
+		abstainFrom.setFieldValue('abstainVote', '');
+		abstainFrom.setFieldValue('ayeVote', '');
+		abstainFrom.setFieldValue('nayVote', '');
+		onBalanceChange(ZERO_BN);
+	};
+
 	const handleSubmit = async () => {
 
 		if (!referendumId && referendumId !== 0) {
@@ -673,6 +684,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											walletAddress={multisig}
 											setWalletAddress={setMultisig}
 											containerClassName='gap-[20px]'
+											canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
 										/> :
 										<AccountSelectionForm
 											title='Vote with Account'
@@ -696,14 +708,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								size="large"
 								value={vote}
 								onChange={(value) => {
-									setVote(value as EVoteDecisionType);
-									ayeNayForm.setFieldValue('balance', ZERO_BN);
-									splitForm.setFieldValue('nayVote',ZERO_BN);
-									splitForm.setFieldValue('ayeVote',ZERO_BN);
-									abstainFrom.setFieldValue('abstainVote', ZERO_BN);
-									abstainFrom.setFieldValue('ayeVote', ZERO_BN);
-									abstainFrom.setFieldValue('nayVote', ZERO_BN);
-									onBalanceChange(ZERO_BN);
+									handleOnVoteChange(value);
 								}}
 								options={decisionOptions}
 								disabled={!api || !apiReady}

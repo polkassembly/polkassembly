@@ -25,6 +25,7 @@ import Footer from './Footer';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 // import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 
 const { Content, Sider } = Layout;
@@ -135,16 +136,17 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}, []);
 
 	const gov1Items: {[x:string]: ItemType[]} = {
+		overviewItems: [
+		],
 		democracyItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/proposals', null),
 			getSiderMenuItem('Referenda', '/referenda', null)
 		] : [],
+		councilItems: chainProperties[network]?.subsquidUrl ? [
+		] : [],
 		treasuryItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/treasury-proposals', null),
-			getSiderMenuItem('Tips', '/tips', null)
-		] : [],
-		techCommItems: chainProperties[network]?.subsquidUrl ? [
-			getSiderMenuItem('Tech Comitee Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
+			getSiderMenuItem('Tips', '/tips',null)
 		] : [],
 		allianceItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-white' />),
@@ -154,11 +156,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		] : []
 	};
 
-	if (isGrantsSupported(network)) {
-		gov1Items['overviewItems'].splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
-	}
-
-	let items: MenuProps['items'] = [];
+	let items: MenuProps['items'] = [
+		...gov1Items.overviewItems
+	];
 
 	if(chainProperties[network]?.subsquidUrl) {
 		items = items.concat([
@@ -245,7 +245,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
 	}
 
-	const gov2Items:MenuProps['items'] = [
+	const gov2Items:MenuProps['items'] = isOpenGovSupported(network) ? [
 		...gov2OverviewItems,
 
 		// Tracks Heading
@@ -257,7 +257,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue' />, [
 			...gov2TrackItems.fellowshipItems
 		])
-	];
+	] : [...gov2OverviewItems];
 
 	if (isFellowshipSupported(network)) {
 		gov2Items.splice(gov2Items.length - 1, 1, getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='text-sidebarBlue mt-1' />, [
@@ -271,7 +271,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]));
 	}
 
-	gov2Items.push(getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 uppercase text-base font-medium'>Gov1</span>, 'tracksHeading', null,[
+	gov2Items.push(getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2  text-base font-medium'>Gov1</span>, 'tracksHeading', null,[
 		...items
 	]));
 

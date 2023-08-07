@@ -26,9 +26,9 @@ const ErrorBoundary: FC<IErrorBoundaryProps> = (props) => {
 
 	return (
 		<div className='relative'>
-			{
+			{/* {
 				hasError? <Fallback onReset={() => setHasError(false)}  />: null
-			}
+			} */}
 			{children}
 		</div>
 	);

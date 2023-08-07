@@ -193,7 +193,9 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				</h1>
 				<div className="mt-6 mx-1">
 					{networkSocialsData && (
-						<AboutNetwork networkSocialsData={networkSocialsData.data} />
+						<AboutNetwork
+							networkSocialsData={networkSocialsData.data}
+						/>
 					)}
 				</div>
 				{network !== AllNetworks.COLLECTIVES &&
@@ -222,7 +224,9 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					</div>
 
 					<div className="w-full xl:w-[40%]">
-						<News twitter={networkSocialsData?.data?.twitter || ""} />
+						<News
+							twitter={networkSocialsData?.data?.twitter || ""}
+						/>
 					</div>
 				</div>
 				{/* <AiBot isAIChatBotOpen={isAIChatBotOpen} setIsAIChatBotOpen={setIsAIChatBotOpen} floatButtonOpen={floatButtonOpen} setFloatButtonOpen={setFloatButtonOpen} /> */}

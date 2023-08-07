@@ -64,10 +64,6 @@ export default function App({ Component, pageProps }: AppProps) {
 		logPageView();
 	}, []);
 
-	useEffect(() => {
-
-	}, []);
-
 	const SplashLoader = () => <div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
 		<Image
 			style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}

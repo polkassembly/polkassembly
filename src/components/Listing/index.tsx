@@ -49,6 +49,10 @@ const Listing: FC<IListingProps> = (props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, props.posts, proposalType]);
 
+	useEffect(() => {
+		setPosts(props?.posts || []);
+	},[props.posts]);
+
 	if (!posts || !posts.length) {
 		return (
 			<div className={className}>

@@ -39,7 +39,7 @@
 		"react/react-in-jsx-scope": "off",
 		"@typescript-eslint/no-unused-vars": "error",
 		"arrow-spacing":["warn",{ "before": true, "after": true }],
-		"comma-dangle": ["error", "never"],
+		"comma-dangle": ["error", "always"],
 		"header/header": [2, "./header.js"],
 		"indent": "off",
 		"no-multiple-empty-lines": ["error", {"max": 1}],

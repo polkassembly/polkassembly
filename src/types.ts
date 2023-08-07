@@ -9,6 +9,10 @@ import { network, tokenSymbol } from './global/networkConstants';
 import { ProposalType } from './global/proposalType';
 import BN from 'bn.js';
 
+declare global {
+  interface Window { GA_INITIALIZED: any; }
+}
+
 export interface UserDetailsContextType {
   id?: number | null;
   picture?: string | null;
@@ -37,17 +41,17 @@ export interface INetworkPreferences {
       verification_token?: string,
       verification_token_expires?: Date
       enabled?: boolean;
-      handle?:string;
+      handle?: string;
     }
   },
   triggerPreferences: {
     [index: string]: {
-      [index: string]:{
+      [index: string]: {
         enabled: boolean;
         name: string;
         post_types?: Array<string>,
         tracks?: Array<number>,
-        mention_types?:Array<string>,
+        mention_types?: Array<string>,
         sub_triggers?: Array<string>,
       }
     }
@@ -453,8 +457,8 @@ export interface IUserNotificationSettings {
   }
 }
 export interface ILastVote {
-	decision: EVoteDecisionType | null
-	time:  Date | string | null;
-	balance: BN | string;
-	conviction:  number;
+  decision: EVoteDecisionType | null
+  time: Date | string | null;
+  balance: BN | string;
+  conviction: number;
 }

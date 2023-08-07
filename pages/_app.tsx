@@ -56,7 +56,6 @@ export default function App({ Component, pageProps }: AppProps) {
 		const networkStr = getNetwork();
 		setNetwork(networkStr);
 
-		// @ts-ignore
 		if (!window.GA_INITIALIZED) {
 			initGA();
 			// @ts-ignore

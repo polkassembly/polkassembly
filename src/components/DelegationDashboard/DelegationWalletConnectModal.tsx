@@ -144,7 +144,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 	};
 
 	const handleOnBalanceChange = async (balanceStr: string) => {
-		if(!api){
+		if(!api || !apiReady){
 			return;
 		}
 		if(multisig){

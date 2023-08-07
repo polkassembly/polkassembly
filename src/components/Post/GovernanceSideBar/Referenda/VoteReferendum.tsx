@@ -246,7 +246,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	}, [availableWallets, network]);
 
 	const handleOnBalanceChange = async (balanceStr: string) => {
-		if(!api){
+		if(!api || !apiReady){
 			return;
 		}
 		let balance = ZERO_BN;
@@ -567,7 +567,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			api,
 			errorMessageFallback: 'Transaction failed.',
 			network,
-			onBroadcast:() => setLoadingStatus({ isLoading: true, message: '' }),
 			onFailed,
 			onSuccess,
 			params: network === 'equilibrium' ? { nonce: -1 } : {},

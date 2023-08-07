@@ -63,7 +63,7 @@ const MultisigAccountSelectionForm = ({
 	showMultisigBalance = false
 }: Props) => {
 	const [multisig, setMultisig] = useState<any>(null);
-	const { api } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const client = new Polkasafe();
 	const { network } = useNetworkContext();
 	const [multisigBalance, setMultisigBalance] = useState<BN>(new BN(0));
@@ -75,7 +75,7 @@ const MultisigAccountSelectionForm = ({
 		setLoader(false);
 	};
 	const handleMultisigBalance = async (address: string) => {
-		if (!api) {
+		if (!api || !apiReady) {
 			return;
 		}
 		const initiatorBalance = await api.query.system.account(address);

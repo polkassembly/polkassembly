@@ -88,7 +88,7 @@ const Account: FC<Props> = ({ className }) => {
 								header='Link Address'
 								id='link_address'
 								onChange={setIsLinkAddress}
-								subHeading='For participating in governance activities with your multisig'
+								subHeading='For participating in governance activities with your wallet address'
 								modal={
 									<Address
 										open={isLinkAddress}
@@ -104,7 +104,7 @@ const Account: FC<Props> = ({ className }) => {
 								header='Link Multi Signature Address'
 								id='link_multi_address'
 								onChange={setIsMultiSigAddress}
-								subHeading='For participating in governance activities with your proxy account'
+								subHeading='For participating in governance activities with your multisig'
 								modal={
 									<MultiSignatureAddress
 										open={isMultiSigAddress}
@@ -120,7 +120,7 @@ const Account: FC<Props> = ({ className }) => {
 								header='Link Proxy Address'
 								id='link_proxy'
 								onChange={setIsLinkProxy}
-								subHeading='For participating in governance activities with your wallet address'
+								subHeading='For participating in governance activities with your proxy account'
 								modal={
 									<Proxy
 										open={isLinkProxy}

@@ -26,7 +26,7 @@ import { getLatestActivityAllPosts } from './api/v1/latest-activity/all-posts';
 import { getLatestActivityOffChainPosts } from './api/v1/latest-activity/off-chain-posts';
 import {
 	getLatestActivityOnChainPosts,
-	ILatestActivityPostsListingResponse
+	ILatestActivityPostsListingResponse,
 } from './api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from './api/v1/network-socials';
 import { chainProperties } from '~src/global/networkConstants';
@@ -53,8 +53,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		return {
 			props: {},
 			redirect: {
-				destination: '/opengov'
-			}
+				destination: '/opengov',
+			},
 		};
 	}
 
@@ -63,13 +63,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	let fetches = {
 		all: getLatestActivityAllPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
-			network
+			network,
 		}),
 		discussions: getLatestActivityOffChainPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
 			network,
-			proposalType: OffChainProposalType.DISCUSSIONS
-		})
+			proposalType: OffChainProposalType.DISCUSSIONS,
+		}),
 	};
 
 	if (
@@ -81,33 +81,33 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
-				proposalType: ProposalType.BOUNTIES
+				proposalType: ProposalType.BOUNTIES,
 			}),
 			council_motions: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
-				proposalType: ProposalType.COUNCIL_MOTIONS
+				proposalType: ProposalType.COUNCIL_MOTIONS,
 			}),
 			democracy_proposals: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
-				proposalType: ProposalType.DEMOCRACY_PROPOSALS
+				proposalType: ProposalType.DEMOCRACY_PROPOSALS,
 			}),
 			referendums: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
-				proposalType: ProposalType.REFERENDUMS
+				proposalType: ProposalType.REFERENDUMS,
 			}),
 			tips: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
-				proposalType: ProposalType.TIPS
+				proposalType: ProposalType.TIPS,
 			}),
 			treasury_proposals: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
-				proposalType: ProposalType.TREASURY_PROPOSALS
-			})
+				proposalType: ProposalType.TREASURY_PROPOSALS,
+			}),
 		};
 
 		fetches = { ...fetches, ...onChainFetches };
@@ -117,7 +117,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		(fetches as any)['grants'] = getLatestActivityOffChainPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
 			network,
-			proposalType: OffChainProposalType.GRANTS
+			proposalType: OffChainProposalType.GRANTS,
 		});
 	}
 
@@ -128,16 +128,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 					listingLimit: LATEST_POSTS_LIMIT,
 					network,
 					proposalType: ProposalType.FELLOWSHIP_REFERENDUMS,
-					trackNo: networkTrackInfo[network][trackName].trackId
+					trackNo: networkTrackInfo[network][trackName].trackId,
 				});
 		}
 	}
 
 	const responseArr = await Promise.all(Object.values(fetches));
 	const props: IHomeProps = {
-		    latestPosts: {},
+		latestPosts: {},
 		network,
-		networkSocialsData
+		networkSocialsData,
 	};
 
 	Object.keys(fetches).forEach((key, index) => {
@@ -151,7 +151,7 @@ const TreasuryOverview = dynamic(
 	() => import('~src/components/Home/TreasuryOverview'),
 	{
 		loading: () => <Skeleton active />,
-		ssr: false
+		ssr: false,
 	}
 );
 
@@ -201,10 +201,10 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				</div>
 				{network !== AllNetworks.COLLECTIVES &&
 					network !== AllNetworks.WESTENDCOLLECTIVES && (
-					<div className="mt-8 mx-1">
-						<TreasuryOverview />
-					</div>
-				)}
+						<div className="mt-8 mx-1">
+							<TreasuryOverview />
+						</div>
+					)}
 				<div className="mt-8 mx-1">
 					{network !== AllNetworks.COLLECTIVES ? (
 						<LatestActivity latestPosts={latestPosts} />
@@ -213,7 +213,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 							gov2LatestPosts={{
 								allGov2Posts: latestPosts.all,
 								discussionPosts: latestPosts.discussions,
-								...latestPosts
+								...latestPosts,
 							}}
 						/>
 					)}

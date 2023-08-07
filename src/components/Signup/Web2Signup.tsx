@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { IUsernameExistResponse } from 'pages/api/v1/users/username-exist';
 import React, { FC, useEffect, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
+import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AuthForm from 'src/ui-components/AuthForm';
@@ -20,6 +20,7 @@ import styled from 'styled-components';
 import { trackEvent } from 'analytics';
 
 import { TokenType } from '~src/auth/types';
+import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
@@ -29,17 +30,22 @@ const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'
 	ssr: false
 });
 
+const Container = styled.article`
+.changeColor .ant-alert-message{
+	color:#243A57;
+}`;
 interface Props {
 	onWalletSelect: (wallet: Wallet) => void;
 	walletError: string | undefined;
 	isModal?: boolean
-	setLoginOpen?: (pre: boolean) => void;
-	setSignupOpen?: (pre: boolean) => void;
-	isDelegation?: boolean;
-	className?: string;
+	setLoginOpen?: (pre: boolean)=> void;
+	setSignupOpen?: (pre: boolean)=> void;
+  isDelegation?: boolean;
+  className?: string;
+  setWithPolkasafe?: any;
 }
 
-const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation }) => {
+const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation, setWithPolkasafe }) => {
 	const { password, username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
@@ -54,8 +60,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	});
 	const [firstPassword, setFirstPassword] = useState('');
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
-
-	const getWallet = () => {
+	const { network } = useNetworkContext();
+	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(Object.keys(injectedWindow?.injectedWeb3 || {}));
 	};
@@ -132,7 +138,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	}, [isDelegation]);
 
 	return (
-		<article className={`bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className}`}>
+		<Container className={`bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className}`}>
 			<div className='grid grid-cols-2'>
 				<div onClick={() => {
 					setIsPassword(false);
@@ -297,6 +303,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					<WalletButtons
 						disabled={loading}
 						onWalletSelect={onWalletSelect}
+						showPolkasafe={canUsePolkasafe(network)}
+						onPolkasafeSelect={setWithPolkasafe}
 					/>
 				</div>
 				{error && <FilteredError text={error} />}
@@ -324,11 +332,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 			>
 				We sent you an email to verify your address. Click on the link in the email.
 			</Modal>
-		</article>
+		</Container>
 	);
 };
 
-export default styled(Web2Signup)`
-.changeColor .ant-alert-message{
-color:#243A57;
-}`;
+export default Web2Signup;

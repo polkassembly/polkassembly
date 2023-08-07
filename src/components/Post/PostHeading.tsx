@@ -13,7 +13,7 @@ import UpdateLabel from 'src/ui-components/UpdateLabel';
 
 import { useNetworkContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
-import { ProposalType } from '~src/global/proposalType';
+import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
@@ -45,6 +45,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 				filterBy:encodeURIComponent(JSON.stringify([filterBy]))
 			} }));
 	};
+	const newTitle = title || description || noTitle;
 	return (
 		<div className={className} >
 			<div className="flex justify-between items-center">
@@ -52,7 +53,11 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 				{ requestedAmt && <h5 className='text-sm text-bodyBlue font-medium'>Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}</h5>}
 			</div>
 			<h2 className='text-lg text-bodyBlue font-medium mb-3 leading-7'>
-				{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {title || description || noTitle}
+				{
+					newTitle === noTitle?
+						`${(getProposalTypeTitle(proposalType) || '')?.split(' ')?.map((v) => v === 'referendumV2'? 'Referenda': v.charAt(0).toUpperCase() + v.slice(1)).join(' ')} #${onchainId}`
+						: <>{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {newTitle}</>
+				}
 			</h2>
 			<div className='mb-8'>
 				<>
@@ -64,14 +69,16 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						topic={topic && topic?.name}
 						cid={cid}
 					>
-						<div className='cursor-pointer mt-2 md:mt-0' onClick={() => setOpenModal(true)}>
-							<UpdateLabel
-								className='md'
-								created_at={created_at}
-								updated_at={last_edited_at}
-								isHistory={history && history?.length > 0}
-							/>
-						</div>
+						{ history && history?.length > 0 &&
+							<div className='cursor-pointer mt-2 md:mt-0' onClick={() => setOpenModal(true)}>
+								<UpdateLabel
+									className='md'
+									created_at={created_at}
+									updated_at={last_edited_at}
+									isHistory={history && history?.length > 0}
+								/>
+							</div>
+						}
 						{
 							summary?
 								<PostSummary className='hidden md:flex' />

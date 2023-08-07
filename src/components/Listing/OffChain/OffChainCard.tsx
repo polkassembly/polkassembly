@@ -45,36 +45,12 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 				<span className='font-medium text-center flex-none sm:w-[120px] text-bodyBlue sm:mt-2'>#{post_id}</span>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-[6px]">
 					<OnchainCreationLabel address={address} topic={topic} username={username} />
-					<div className="hidden sm:mt-2 sm:mb-1 sm:flex sm:justify-between lg:items-start lg:flex-row">
+					<div className="hidden sm:mt-2 sm:mb-1 sm:flex sm:justify-between sm:items-start sm:flex-row">
 						<div className='mt-3 lg:mt-1'>
 							<h1 className='text-bodyBlue font-medium text-sm flex'>
 								{title}
 							</h1>
 						</div>
-						<div className='flex justify-between items-center'>
-							{relativeCreatedAt &&
-							<div className='flex items-center text-lightBlue lg:hidden text-sm'>
-								<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
-							</div>}
-							{
-								spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
-									<div className='flex lg:hidden items-center justify-center'>
-										<Tooltip color="#E5007A" title="This post could be a spam.">
-											<WarningMessageIcon className='text-xl text-[#FFA012]' />
-										</Tooltip>
-									</div>
-									: null
-							}
-						</div>
-						{
-							spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
-								<div className='hidden lg:flex items-center justify-center'>
-									<Tooltip color="#E5007A" title="This post could be a spam.">
-										<WarningMessageIcon className='text-xl text-[#FFA012]' />
-									</Tooltip>
-								</div>
-								: null
-						}
 					</div>
 					<div className="font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center">
 
@@ -103,16 +79,16 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
                 +{tags.length-2}
 							</span>}
 							</>}
-							{tags && tags.length>0 && <Divider type="vertical" className='max-lg:hidden' style={{ borderLeft: '1px solid #485F7D' }} />}
+							{tags && tags.length>0 && <Divider type="vertical" className='max-sm:hidden' style={{ borderLeft: '1px solid #485F7D' }} />}
 							{relativeCreatedAt && <>
-								<div className='hidden text-lightBlue lg:flex items-center text-sm'>
+								<div className='hidden text-lightBlue sm:flex items-center'>
 									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
 								</div>
 							</>}
 							{
 								topic?
 									<div className='flex items-center sm:-mt-1'>
-										<Divider type="vertical" className='max-lg:hidden sm:mt-1' style={{ borderLeft: '1px solid #485F7D' }} />
+										<Divider type="vertical" className='max-sm:hidden sm:mt-1' style={{ borderLeft: '1px solid #485F7D' }} />
 										<TopicTag className='sm:mt-0 sm:mx-2' topic={topic} />
 									</div>
 									: null
@@ -141,13 +117,14 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 			</div>
 			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 xs:p-2 md:p-4 min-h-[150px] h-auto xs:flex sm:hidden ${className}`}>
 				<div className="sm:hidden xs:flex flex-col flex-1 xs:mt-1">
-					<div className="sm:hidden xs:flex xs:justify-start gap-x-2 lg:items-start lg:flex-row my-2">
-						<span className='font-medium text-center mr-2 flex-none xs:w-[45px] text-bodyBlue xs:mt-0'>#{post_id}</span>
-						<div className='xs:mt-0 lg:mt-0'>
-							<h1 className='text-bodyBlue font-medium flex'>
-								{title}
-							</h1>
-						</div>
+					{
+						topic &&
+							<div className='flex justify-start'>
+								<TopicTag className='xs:my-0.5 xs:mx-2' topic={topic} />
+							</div>
+					}
+					<div className='max-xs-hidden m-2.5 text-bodyBlue font-medium text-sm'>
+						#{post_id} {title}
 						<div className='flex justify-between items-center'>
 
 							{
@@ -170,7 +147,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 								: null
 						}
 					</div>
-					<div className="xs:mt-2 xs:gap-0 sm:gap-2.5 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row items-start lg:items-center">
+					<div className="xs:mt-1 xs:gap-0 sm:gap-2.5 xs:ml-2 sm:ml-0 font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row items-start lg:items-center">
 
 						<div className='sm:hidden xs:flex xs:justify-start'>
 							<OnchainCreationLabel address={address} username={username} />

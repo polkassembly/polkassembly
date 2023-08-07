@@ -86,8 +86,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		const { data, error: editReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/editCommentReply', {
 			commentId,
 			content: newContent,
-			postId: postIndex,
-			postType: postType,
+			postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
+			postType: reply.post_type || postType,
 			replyId,
 			userId: id
 		});
@@ -211,8 +211,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		setLoading(true);
 		const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentReply', {
 			commentId,
-			postId: postIndex,
-			postType: postType,
+			postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
+			postType: reply.post_type || postType,
 			replyId
 		});
 

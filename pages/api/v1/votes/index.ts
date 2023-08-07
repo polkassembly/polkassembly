@@ -8,7 +8,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { VoteType, voteTypes } from '~src/global/proposalType';
 import { isVotesSortOptionsValid, votesSortValues } from '~src/global/sortOptions';
-import { GET_CONVICTION_VOTES_FOR_ADDRESS_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX, GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX, GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX, GET_CONVICTION_VOTES_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX, GET_VOTES_LISTING_BY_TYPE_AND_INDEX, GET_VOTES_LISTING_BY_TYPE_AND_INDEX_MOONBEAM, GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX, GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_MOONBEAM } from '~src/queries';
+import { GET_CONVICTION_VOTES_FOR_ADDRESS_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX, GET_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX, GET_CONVICTION_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX, GET_CONVICTION_VOTES_WITH_TXN_HASH_LISTING_BY_TYPE_AND_INDEX, GET_VOTES_LISTING_BY_TYPE_AND_INDEX, GET_VOTES_LISTING_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE, GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX, GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 export interface IVotesResponse {
@@ -55,9 +55,10 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 		return res.status(400).json({ error: `The postId "${postId}" is invalid.` });
 	}
 
-	const isOpenGov = voteType === VoteType.REFERENDUM_V2;
-
 	const strSortBy = String(sortBy);
+	const isOpenGov = voteType === VoteType.REFERENDUM_V2;
+	const isConvinctionSort = strSortBy === votesSortValues.CONVICTION;
+	const isBalanceSort = strSortBy === votesSortValues.BALANCE;
 	if (!isVotesSortOptionsValid(strSortBy)) {
 		return res.status(400).json({ error: `The sortBy "${sortBy}" is invalid.` });
 	}
@@ -65,7 +66,7 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 		index_eq: numPostId,
 		limit: numListingLimit,
 		offset: numListingLimit * (numPage - 1),
-		orderBy: strSortBy === votesSortValues.BALANCE? ['balance_value_DESC', 'id_DESC']: isOpenGov? ['createdAtBlock_DESC', 'id_DESC']:['timestamp_DESC', 'id_DESC'],
+		orderBy: isBalanceSort ? ['balance_value_DESC', 'id_DESC'] : isConvinctionSort ? ['lockPeriod_DESC', 'id_DESC'] : isOpenGov ? ['createdAtBlock_DESC', 'id_DESC'] : ['timestamp_DESC', 'id_DESC'],
 		type_eq: voteType
 	};
 
@@ -73,10 +74,10 @@ async function handler (req: NextApiRequest, res: NextApiResponse<IVotesResponse
 
 	// if nays count,
 
-	let votesQuery = network === 'moonbeam' ? GET_VOTES_LISTING_BY_TYPE_AND_INDEX_MOONBEAM : GET_VOTES_LISTING_BY_TYPE_AND_INDEX;
+	let votesQuery = ['moonbeam', 'cere'].includes(network)? GET_VOTES_LISTING_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE : GET_VOTES_LISTING_BY_TYPE_AND_INDEX;
 
 	if(address) {
-		votesQuery = network === 'moonbeam' ? GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_MOONBEAM : GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
+		votesQuery = ['moonbeam', 'cere'].includes(network)? GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE : GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX;
 
 		variables['voter_eq'] = address;
 	}

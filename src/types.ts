@@ -8,6 +8,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { network, tokenSymbol } from './global/networkConstants';
 import { ProposalType } from './global/proposalType';
 import BN from 'bn.js';
+import dayjs from 'dayjs';
 
 declare global {
   interface Window { GA_INITIALIZED: any; }
@@ -30,9 +31,17 @@ export interface UserDetailsContextType {
   loginWallet: Wallet | null;
   delegationDashboardAddress: string;
   loginAddress: string;
+  multisigAssociatedAddress?:string;
   networkPreferences: INetworkPreferences;
   primaryNetwork: string;
   is2FAEnabled?: boolean;
+}
+
+export interface IPeriod {
+	period: string;
+	periodCardVisible: boolean;
+	periodEndsAt: dayjs.Dayjs;
+	periodPercent: number;
 }
 
 export interface INetworkPreferences {
@@ -190,6 +199,7 @@ export enum Wallet {
   WALLETCONNECT = 'walletconnect',
   NOVAWALLET = 'polkadot-js',
   POLYWALLET = 'polywallet',
+  POLKASAFE = 'polkasafe',
   OTHER = ''
 }
 
@@ -335,7 +345,8 @@ export interface Post {
   gov_type?: 'gov_1' | 'open_gov'
   tags?: string[] | [];
   history?: IPostHistory[];
-  subscribers?: number[]
+  subscribers?: number[];
+  summary?: string;
 }
 export interface IPostTag {
   name: string;
@@ -457,8 +468,18 @@ export interface IUserNotificationSettings {
   }
 }
 export interface ILastVote {
-  decision: EVoteDecisionType | null
-  time: Date | string | null;
-  balance: BN | string;
-  conviction: number;
+	decision: EVoteDecisionType | null
+	time:  Date | string | null;
+	balance: BN | string;
+	conviction:  number;
+}
+
+export type VoteInfo = {
+	aye_amount: BN;
+	aye_without_conviction: BN;
+	isPassing: boolean | null;
+	nay_amount: BN;
+	nay_without_conviction: BN;
+	turnout: BN;
+	voteThreshold: string;
 }

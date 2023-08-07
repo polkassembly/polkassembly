@@ -18,7 +18,7 @@ import SocialLink from '~src/ui-components/SocialLinks';
 import { socialLinks } from '../UserProfile/Details';
 import { ESocialType } from '~src/auth/types';
 import { formatBalance } from '@polkadot/util';
-import { formatedBalance } from './ProfileBalance';
+import { formatedBalance } from '~src/util/formatedBalance';
 import CloseIcon from '~assets/icons/close.svg';
 
 interface Props{

@@ -46,4 +46,8 @@ export default styled(TopicTag)`
 		background-color: #FEF7DD !important;
 		color: #75610E;
 	}
+	&.General {
+		background-color: #FDF5F0 !important;
+		color: #EF884A;
+	}
 `;

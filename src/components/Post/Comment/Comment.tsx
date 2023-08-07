@@ -32,6 +32,8 @@ export interface IComment {
 	history?: ICommentHistory[];
 	spam_users_count?: number;
 	is_custom_username?: boolean;
+	post_index?: number;
+	post_type?: string;
 }
 
 interface ICommentProps {
@@ -48,7 +50,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
 	const { postData: { postIndex, postType } } = usePostDataContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
-
 	useEffect(() => {
 		if (typeof window == 'undefined') return;
 		const hashArr = asPath.split('#');
@@ -88,7 +89,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 					sentiment={newSentiment}
 					commentSource={comment_source}
 					spam_users_count={spam_users_count}
-					truncateUsername = {false}
 				>
 					{
 						history && history.length > 0 &&

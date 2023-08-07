@@ -36,7 +36,7 @@ const Listing: FC<IListingProps> = (props) => {
 
 			const postsWithVotesData = [];
 
-			for (const post of posts) {
+			for (const post of props.posts || []) {
 				const votesData =  await getReferendumVotes(network, post.post_id);
 				postsWithVotesData.push({ ...post, votesData });
 

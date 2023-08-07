@@ -265,7 +265,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]));
 	}
 
-	if(!['moonbeam', 'moonbase', 'moonriver'].includes(network)){
+	if(!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network)){
 		gov2Items.splice(-1, 0 , getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [
 			...gov2TrackItems.treasuryItems
 		]));

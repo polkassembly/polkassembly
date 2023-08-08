@@ -218,7 +218,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 		};
 
 		setLoading(true);
-		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
+		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed: onSuccess, onSuccess, tx });
 
 	};
 	return <GovSidebarCard className='overflow-y-hidden'>
@@ -237,7 +237,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 			title = {<div className='text-lg font-semibold text-bodyBlue items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0]'>Pay Decision Deposit</div>}
 			footer = {<div className='px-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] pt-4'>
 				<Button onClick={() => setOpenModal(false)} disabled={accounts.length === 0} className='text-sm font-medium text-pink_primary border-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider'>Back</Button>
-				<Button  onClick={handleSubmit} disabled={(accounts.length === 0) || availableBalance.lte(amount)} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider'>Continue</Button>
+				<Button onClick={handleSubmit} disabled={!accounts.length || availableBalance.lte(amount)} className={`text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider ${!accounts.length || availableBalance.lte(amount) && 'opacity-50'}`}>Continue</Button>
 			</div>}
 		>
 			<Spin spinning={loading} indicator={<LoadingOutlined />}>

@@ -504,7 +504,9 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		setPreimageLinked(false);
 		!isPreimage && onChangeLocalStorageSet({ beneficiaryAddress: beneficiaryAddress }, Boolean(isPreimage));
 		setSteps({ percent:(fundingAmount.gt(ZERO_BN) && address?.length > 0 )? 100: 60, step: 1 });
-		address.length > 0 && (getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
+		if(address.length > 0){
+			(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
+		}
 		setTimeout(() => { setAddressAlert(false);}, 5000);
 	};
 	const handleOnAvailableBalanceChange = (balanceStr: string) => {
@@ -584,7 +586,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						<AddressInput
 							name='proposer_address'
 							defaultAddress={proposerAddress}
-							onChange={() => console.log(proposerAddress)}
+							onChange={() => setLoading(false)}
 							inputClassName={' font-normal text-sm h-[40px]'}
 							className='text-lightBlue text-sm font-normal -mt-6'
 							disabled
@@ -606,7 +608,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						skipFormatCheck={true}
 						checkValidAddress= {setValidBeneficiaryAddress}
 					/>
-					{(beneficiaryAddress && !(getEncodedAddress(beneficiaryAddress, network) || Web3.utils.isAddress(beneficiaryAddress))) && <span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span>}
+					{beneficiaryAddress ? !(getEncodedAddress(beneficiaryAddress, network) || Web3.utils.isAddress(beneficiaryAddress)) && <span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span> : null}
 
 					{addressAlert && <Alert className='mb mt-2' showIcon message='The substrate address has been changed to Kusama address.'/> }
 					<div  className='mt-6 -mb-6'>

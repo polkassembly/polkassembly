@@ -93,7 +93,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 		setPreimageHash('');
 		setPreimage(undefined);
 		setSelectedTrack('');
-		setEnactment({ key:null, value: null });
+		setEnactment({ key: null, value: null });
 		localStorage.removeItem('treasuryProposalProposerAddress');
 		localStorage.removeItem('treasuryProposalProposerWallet');
 		localStorage.removeItem('treasuryProposalData');
@@ -147,7 +147,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 		</Modal>
 		<TreasuryProposalSuccessPopup
 			open={openSuccess}
-			setOpen={setOpenSuccess}
+			onCancel={() => {setOpenSuccess(false); handleClose();}}
 			selectedTrack={selectedTrack}
 			proposerAddress={proposerAddress}
 			beneficiaryAddress={beneficiaryAddress}

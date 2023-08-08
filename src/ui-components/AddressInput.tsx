@@ -63,11 +63,17 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 
 	useEffect(() => {
 		if(skipFormatCheck) {
-			if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
-				setIsValid(true);
-				checkValidAddress && checkValidAddress(true);
-				onChange(address);
-			}else{
+			if(address){
+				if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
+					setIsValid(true);
+					checkValidAddress && checkValidAddress(true);
+					onChange(address);
+				}else{
+					setIsValid(false);
+					checkValidAddress && checkValidAddress(false);
+				}
+			}
+			else{
 				setIsValid(false);
 				checkValidAddress && checkValidAddress(false);
 			}

@@ -23,7 +23,7 @@ import { useRouter } from 'next/router';
 interface Props{
   className?: string;
    open: boolean;
-  setOpen: (pre:boolean) => void;
+  onCancel: () => void;
   proposerAddress: string;
   fundingAmount: BN;
   selectedTrack: string;
@@ -33,7 +33,7 @@ interface Props{
   postId: number;
 }
 
-const TreasuryProposalSuccessPopup= ({ className, open, setOpen, fundingAmount, preimageHash, proposerAddress, beneficiaryAddress, preimageLength, selectedTrack, postId }: Props) => {
+const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount, preimageHash, proposerAddress, beneficiaryAddress, preimageLength, selectedTrack, postId }: Props) => {
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -65,7 +65,7 @@ const TreasuryProposalSuccessPopup= ({ className, open, setOpen, fundingAmount, 
 		className={`${poppins.variable} ${poppins.className} w-[550px] max-md:w-full`}
 		wrapClassName={className}
 		closeIcon={<CloseIcon/>}
-		onCancel={() => setOpen(false)}
+		onCancel={onCancel}
 		footer={<div className='flex items-center'><Button onClick={() => {router.push(`https://${network}.polkassembly.io/referenda/${postId}`);}} className='w-full bg-pink_primary text-white text-sm font-medium h-[40px] rounded-[4px]'>View Proposal</Button></div>}
 		maskClosable={false}
 	>
@@ -85,7 +85,7 @@ const TreasuryProposalSuccessPopup= ({ className, open, setOpen, fundingAmount, 
 					</span>
 					<span className='flex'><span className='w-[172px]'>Preimage Length:</span><span className='text-bodyBlue font-medium'>{preimageLength}</span></span>
 					<span className='flex items-center'><span className='w-[172px]'>Link to proposal:</span>
-						<Link href={`https://${network}.polkassembly.io/referenda/${postId}`} className='text-pink_primary font-medium'><u>{`https://${network}.../${postId}`}</u></Link>
+						<Link href={`/referenda/${postId}`} className='text-pink_primary font-medium'><u>{`https://${network}.../${postId}`}</u></Link>
 						<span className='flex items-center cursor-pointer ml-1' onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/referenda/${postId}`) ;success('Preimage link copied to clipboard.');}}>
 							{contextHolder}
 							<RedirectIcon/>

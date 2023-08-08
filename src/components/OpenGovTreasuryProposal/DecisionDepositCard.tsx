@@ -218,7 +218,7 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 		};
 
 		setLoading(true);
-		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed: onSuccess, onSuccess, tx });
+		await executeTx({ address, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx });
 
 	};
 	return <GovSidebarCard className='overflow-y-hidden'>

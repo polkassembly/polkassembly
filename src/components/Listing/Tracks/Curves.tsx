@@ -38,54 +38,78 @@ interface ICurvesProps {
 const Curves: FC<ICurvesProps> = (props) => {
 	const { data, curvesLoading } = props;
 	const labelsLength = data.labels.length;
-	const options = {
-		plugins:{
-			legend: {
-				display: false
-			}
-		},
-		scales: {
-			x: {
-				beginAtZero: false,
-				display: true,
-				grid: {
-					display: true,
-					drawOnChartArea: false
-				},
-				ticks: {
-					callback(v: any) {
-						return (v / (60 * 24)).toFixed(0);
-					},
-					max: labelsLength,
-					stepSize: Math.round(labelsLength / (labelsLength/(60 * 24)))
-				} as any
-			},
-			y: {
-				beginAtZero: false,
-				display: true,
-				grid: {
-					display: false // Hide y-axis grid lines
-				},
-				max: 100,
-				min: 0,
-				ticks: {
-					callback(val: any) {
-						return val + '%';
-					},
-					stepSize: 20
-				}
-			}
-		}
-	};
 	return(
 		<Spin indicator={<LoadingOutlined />} spinning={curvesLoading}>
 
-			<article className='sm:-mx-3 md:m-0 max-w-[350px] max-h-[800px]'>
+			<article className='sm:-mx-3 md:m-0 max-w-[300px] max-h-[800px]'>
 				<Chart.Line
 					className='h-full w-full'
 					data={data}
-					options={options}
-					plugins={[hoverLinePlugin]}
+					options={{
+						plugins:{
+							legend: {
+								display: false
+							},
+							tooltip: {
+								callbacks: {
+									label(tooltipItem: any) {
+										const { dataIndex, parsed } = tooltipItem;
+										const hs = parsed.x;
+										const approval = data.datasets[0].data[dataIndex];
+										const support = data.datasets[1].data[dataIndex];
+										const approvalValue = Number(
+											typeof approval === 'object'? approval.y: approval
+										).toFixed(2);
+										const supportValue = Number(
+											typeof support === 'object'? support.y: support
+										).toFixed(2);
+
+										const result = `Time: ${(hs/60).toFixed(0)}hs Support: ${supportValue}% Approval: ${approvalValue}%`;
+
+										return result;
+									},
+									title() {
+										return '';
+									}
+								},
+								displayColors: false,
+								intersect: false,
+								mode: 'index'
+							}
+						},
+						scales: {
+							x: {
+								beginAtZero: false,
+								display: true,
+								grid: {
+									display: true,
+									drawOnChartArea: false
+								},
+								ticks: {
+									callback(v: any) {
+										return (v / (60 * 24)).toFixed(0);
+									},
+									max: labelsLength,
+									stepSize: Math.round(labelsLength / (labelsLength/(60 * 24)))
+								} as any
+							},
+							y: {
+								beginAtZero: false,
+								display: true,
+								grid: {
+									display: false // Hide y-axis grid lines
+								},
+								max: 100,
+								min: 0,
+								ticks: {
+									callback(val: any) {
+										return val + '%';
+									},
+									stepSize: 20
+								}
+							}
+						}
+					}}
 				/>
 			</article>
 			<article className='mt-5 mx-10 flex items-center justify-start gap-x-5'>
@@ -102,29 +126,3 @@ const Curves: FC<ICurvesProps> = (props) => {
 	);
 };
 export default Curves;
-
-const hoverLinePlugin = {
-	beforeDraw: (chart: any) => {
-		const options = chart.config.options?.plugins?.hoverLine ?? {};
-
-		if (!options) {
-			return;
-		}
-
-		const { lineWidth, lineColor } = options ?? {};
-
-		if (chart?.tooltip?._active && chart?.tooltip?._active.length) {
-			const { ctx } = chart;
-			ctx.save();
-
-			ctx.beginPath();
-			ctx.moveTo(chart.tooltip._active[0].element.x, chart.chartArea.top);
-			ctx.lineTo(chart.tooltip._active[0].element.x, chart.chartArea.bottom);
-			ctx.lineWidth = lineWidth;
-			ctx.strokeStyle = lineColor;
-			ctx.stroke();
-			ctx.restore();
-		}
-	},
-	id: 'hoverLine'
-};

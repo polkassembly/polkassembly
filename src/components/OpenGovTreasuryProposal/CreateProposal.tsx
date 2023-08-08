@@ -114,7 +114,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			userId
 		});
 
-		if(data && data?.post_id){
+		if(data && !isNaN(Number(data?.post_id))){
 			setPostId(data?.post_id);
 			setOpenSuccess(true);
 			console.log(postId, 'postId');

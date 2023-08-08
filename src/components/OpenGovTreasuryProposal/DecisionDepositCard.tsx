@@ -197,7 +197,13 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 				message: 'Decision Deposit successful.',
 				status: NotificationStatus.SUCCESS
 			});
-			setPostData((prev: any) => {return { ...prev, statusHistory: [...(prev?.statusHistory || []), { status: gov2ReferendumStatus.DECISION_DEPOSIT_PLACED } ] };});
+			setPostData((prev: any) => {
+				return {
+					...prev,
+					status: gov2ReferendumStatus.DECISION_DEPOSIT_PLACED,
+					statusHistory: [...(prev?.statusHistory || []), { status: gov2ReferendumStatus.DECISION_DEPOSIT_PLACED } ]
+				};
+			});
 			setLoading(false);
 			setOpenModal(false);
 		};
@@ -230,8 +236,8 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 			onCancel={() => setOpenModal(false)}
 			title = {<div className='text-lg font-semibold text-bodyBlue items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0]'>Pay Decision Deposit</div>}
 			footer = {<div className='px-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] pt-4'>
-				<Button onClick={() => setOpenModal(false)} disabled={accounts.length === 0} key={1} className='text-sm font-medium text-pink_primary border-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider'>Back</Button>
-				<Button onClick={handleSubmit} disabled={accounts.length === 0} key={1} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider'>Continue</Button>
+				<Button onClick={() => setOpenModal(false)} disabled={accounts.length === 0} className='text-sm font-medium text-pink_primary border-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider'>Back</Button>
+				<Button  onClick={handleSubmit} disabled={(accounts.length === 0) || availableBalance.lte(amount)} className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] rounded-[4px] tracking-wider'>Continue</Button>
 			</div>}
 		>
 			<Spin spinning={loading} indicator={<LoadingOutlined />}>

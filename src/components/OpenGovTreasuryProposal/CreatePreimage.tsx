@@ -235,6 +235,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	useEffect(() => {
 		setShowAlert(false);
 		form.validateFields();
+		if(!beneficiaryAddress) return;
 		if(isPreimage || !proposerAddress || !beneficiaryAddress || !getEncodedAddress(beneficiaryAddress, network) ||
 		!api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN) || fundingAmount.eq(ZERO_BN))return;
 		if(!selectedTrack) return;

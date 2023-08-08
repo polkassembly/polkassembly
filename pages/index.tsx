@@ -69,7 +69,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		})
 	};
 
-	if(chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
+	if(chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && network !== AllNetworks.POLYMESH) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
@@ -106,6 +106,27 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		fetches = { ...fetches, ...onChainFetches };
 	}
 
+	if(chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH){
+		const onChainFetches = {
+			community_PIPs: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.COMMUNITY_PIPS
+			}),
+			technical_PIPs: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.TECHNICAL_PIPS
+			}),
+			upgrade_PIPs: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.UPGRADE_PIPS
+			})
+		};
+
+		fetches = { ...fetches, ...onChainFetches };
+	}
 	if (isGrantsSupported(network)) {
 		(fetches as any)['grants'] = getLatestActivityOffChainPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
@@ -151,7 +172,6 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-
 	return (
 		<>
 			{chainProperties[network]?.gTag ? <><Script

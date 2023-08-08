@@ -119,6 +119,12 @@ export function getFirestoreProposalType(proposalType: string): string {
 		return 'alliance_motion';
 	case 'Announcement':
 		return 'announcement';
+	case 'Community':
+		return 'community_PIPs';
+	case 'TechnicalCommittee':
+		return 'technical_PIPs';
+	case 'UpgradeCommitte':
+		return 'upgrade_PIPs';
 	}
 	return '';
 }
@@ -145,6 +151,12 @@ export function getProposalTypeTitle(proposalType: ProposalType) {
 		return 'referendumV2';
 	case ProposalType.TIPS:
 		return 'tip';
+	case ProposalType.TECHNICAL_PIPS:
+		return 'technical committee';
+	case ProposalType.UPGRADE_PIPS:
+		return 'technical committee';
+	case ProposalType.COMMUNITY_PIPS:
+		return 'community';
 	}
 }
 export function getSinglePostLinkFromProposalType(proposalType: ProposalType | OffChainProposalType): string {

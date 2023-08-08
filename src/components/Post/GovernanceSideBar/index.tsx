@@ -63,6 +63,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
+import PIPsVoteInfo from './PIPs/PIPsVoteInfo';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -775,7 +776,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						/>
 					}
 
-					{[ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS, ProposalType.REFERENDUMS].includes(proposalType) &&
+					{[ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS, ProposalType.REFERENDUMS, ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS ].includes(proposalType) &&
 						<>
 							{
 								proposalType === ProposalType.REFERENDUMS?
@@ -864,9 +865,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</GovSidebarCard>}
 											</>
 										}
-										<ReferendaV2Messages
+										{![ ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS ].includes(proposalType) && <ReferendaV2Messages
 											progress={progress}
-										/>
+										/>}
 
 										{(onchainId || onchainId === 0) &&
 											<>
@@ -916,7 +917,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										}
 									</>
 							}
-
 							{
 								(onchainId || onchainId === 0) &&
 								<Modal
@@ -947,6 +947,30 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								}
 							</div>
 						</>
+					}
+					{[ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(proposalType) && <>
+						<GovSidebarCard>
+							<PIPsVoteInfo setOpen={setOpen} proposalType={proposalType} className='mt-0' status={status} pipId={onchainId as number}/>
+						</GovSidebarCard>
+						{
+							(onchainId || onchainId === 0) &&
+								<Modal
+									closeIcon={false}
+									onCancel={() => {
+										setOpen(false);
+									}}
+									open={open}
+									footer={[]}
+									closable={false}
+								>
+									<VotersList
+										className={className}
+										referendumId={onchainId as number}
+										voteType={getVotingTypeFromProposalType(proposalType)}
+									/>
+								</Modal>
+						}
+					</>
 					}
 
 					{proposalType === ProposalType.TIPS &&

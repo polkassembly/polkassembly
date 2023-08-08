@@ -9,7 +9,7 @@ import { isGovTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, gov1ProposalTypes, ProposalType } from '~src/global/proposalType';
-import { GET_PROPOSALS_LISTING_BY_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_LATEST_ACTIVITY } from '~src/queries';
+import { GET_PROPOSALS_LISTING_BY_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_LATEST_ACTIVITY, GET_PROPOSALS_LISTING_FOR_POLYMESH } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -41,7 +41,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			throw apiErrorWithStatusCode(`Invalid govType "${govType}"`, 400);
 		}
 
-		const variables: any = {
+		let variables: any = {
 			limit: numListingLimit,
 			type_in: gov1ProposalTypes
 		};
@@ -119,10 +119,17 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 		}
 
 		if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
+			let query = GET_PROPOSALS_LISTING_BY_TYPE;
+			if(network === AllNetworks.POLYMESH){
+				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
+				variables ={
+					limit: numListingLimit
+				};
+			}
 
 			const subsquidRes = await fetchSubsquid({
 				network,
-				query: GET_PROPOSALS_LISTING_BY_TYPE,
+				query,
 				variables
 			});
 

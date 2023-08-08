@@ -97,6 +97,9 @@ import BigTipperSVG from '~assets/delegation-tracks/big-tipper.svg';
 import SmallSpenderSVG from '~assets/delegation-tracks/small-spender.svg';
 import DelegationSVG from '~assets/sidebar/delegation-icon.svg';
 import Dislike from '~assets/icons/dislike.svg';
+import TechnicalCommitteePIPsSVG from '~assets/icons/tech-commitee.svg';
+import UpgradeCommitteePIPsSVG from '~assets/icons/upgrade-community-pips.svg';
+import CommunityPIPsSVG from '~assets/icons/community-pips.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
@@ -427,4 +430,13 @@ export const SmallSpenderTrackIcon = (props: Partial<CustomIconComponentProps>) 
 );
 export const DelegationSidebarIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={DelegationSVG} {...props} />
+);
+export const TechnicalCommitteePIPsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={TechnicalCommitteePIPsSVG} {...props} />
+);
+export const UpgradeCommitteePIPsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={UpgradeCommitteePIPsSVG} {...props} />
+);
+export const CommunityPIPsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CommunityPIPsSVG} {...props} />
 );

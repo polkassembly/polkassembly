@@ -429,77 +429,82 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 		let voteTx = null;
 
-		if(proposalType === ProposalType.OPEN_GOV){
-
-			if(vote === EVoteDecisionType.AYE ) {
-
-				voteTx = api.tx.convictionVoting.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } });
-
-			}
-			else if(vote === EVoteDecisionType.NAY ) {
-
-				voteTx = api.tx.convictionVoting.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:false, conviction } } });
-
-			}
-
-			else if(vote === EVoteDecisionType.SPLIT) {
-				try {
-					await splitForm.validateFields();
-
-					// if form is valid
-					const  ayeVote = ayeVoteValue?.toString();
-					const  nayVote = nayVoteValue?.toString();
-					setVoteValues((prevState) => ({
-						...prevState,
-						ayeVoteValue:ayeVoteValue,
-						nayVoteValue:nayVoteValue
-					}));
-					voteTx = api.tx.convictionVoting.vote(referendumId, { Split: { aye:`${ayeVote}`,nay:`${nayVote}` } });
-				} catch (e) {
-					console.log(e);
-				}
-				finally{
-					setAyeVoteValue(ZERO_BN);
-					setNayVoteValue(ZERO_BN);
-				}
-			}
-
-			else if(vote === EVoteDecisionType.ABSTAIN && ayeVoteValue && nayVoteValue) {
-				try {
-					await abstainFrom.validateFields();
-					// if form is valid
-					const  abstainVote = abstainVoteValue?.toString();
-					const  ayeVote = ayeVoteValue?.toString();
-					const  nayVote = nayVoteValue?.toString();
-					setVoteValues((prevState) => ({
-						...prevState,
-						abstainVoteValue:abstainVoteValue,
-						ayeVoteValue:ayeVoteValue,
-						nayVoteValue:nayVoteValue
-					}));
-					voteTx = api.tx.convictionVoting.vote(referendumId, { SplitAbstain: {  abstain:`${abstainVote}`,aye:`${ayeVote}`, nay:`${nayVote}` } });
-				} catch (e) {
-					console.log(e);
-				}
-				finally{
-					setAbstainVoteValue(ZERO_BN);
-					setNayVoteValue(ZERO_BN);
-					setAyeVoteValue(ZERO_BN);
-				}
-			}
-		} else if(proposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
-			if(vote === EVoteDecisionType.AYE){
-				voteTx = api.tx.fellowshipCollective.vote(referendumId, true);
-			}else{
-				voteTx = api.tx.fellowshipCollective.vote(referendumId, false);
-			}
+		if(network === AllNetworks.POLYMESH){
+			voteTx = api.tx.pips.vote(referendumId, vote, lockedBalance);
 		}
 		else{
-			if(vote === EVoteDecisionType.AYE){
-				voteTx = api.tx.democracy.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } });
+			if(proposalType === ProposalType.OPEN_GOV){
+
+				if(vote === EVoteDecisionType.AYE ) {
+
+					voteTx = api.tx.convictionVoting.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } });
+
+				}
+				else if(vote === EVoteDecisionType.NAY ) {
+
+					voteTx = api.tx.convictionVoting.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:false, conviction } } });
+
+				}
+
+				else if(vote === EVoteDecisionType.SPLIT) {
+					try {
+						await splitForm.validateFields();
+
+						// if form is valid
+						const  ayeVote = ayeVoteValue?.toString();
+						const  nayVote = nayVoteValue?.toString();
+						setVoteValues((prevState) => ({
+							...prevState,
+							ayeVoteValue:ayeVoteValue,
+							nayVoteValue:nayVoteValue
+						}));
+						voteTx = api.tx.convictionVoting.vote(referendumId, { Split: { aye:`${ayeVote}`,nay:`${nayVote}` } });
+					} catch (e) {
+						console.log(e);
+					}
+					finally{
+						setAyeVoteValue(ZERO_BN);
+						setNayVoteValue(ZERO_BN);
+					}
+				}
+
+				else if(vote === EVoteDecisionType.ABSTAIN && ayeVoteValue && nayVoteValue) {
+					try {
+						await abstainFrom.validateFields();
+						// if form is valid
+						const  abstainVote = abstainVoteValue?.toString();
+						const  ayeVote = ayeVoteValue?.toString();
+						const  nayVote = nayVoteValue?.toString();
+						setVoteValues((prevState) => ({
+							...prevState,
+							abstainVoteValue:abstainVoteValue,
+							ayeVoteValue:ayeVoteValue,
+							nayVoteValue:nayVoteValue
+						}));
+						voteTx = api.tx.convictionVoting.vote(referendumId, { SplitAbstain: {  abstain:`${abstainVote}`,aye:`${ayeVote}`, nay:`${nayVote}` } });
+					} catch (e) {
+						console.log(e);
+					}
+					finally{
+						setAbstainVoteValue(ZERO_BN);
+						setNayVoteValue(ZERO_BN);
+						setAyeVoteValue(ZERO_BN);
+					}
+				}
+			} else if(proposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
+				if(vote === EVoteDecisionType.AYE){
+					voteTx = api.tx.fellowshipCollective.vote(referendumId, true);
+				}else{
+					voteTx = api.tx.fellowshipCollective.vote(referendumId, false);
+				}
 			}
 			else{
-				voteTx = api.tx.democracy.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:false , conviction } } });
+				if(vote === EVoteDecisionType.AYE){
+					voteTx = api.tx.democracy.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } });
+				}
+				else{
+					voteTx = api.tx.democracy.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:false , conviction } } });
+				}
 			}
 		}
 
@@ -614,7 +619,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`w-[600px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
+				className={`w-[500px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[605px] rounded-[6px] alignment-close vote-referendum `}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
 				title={

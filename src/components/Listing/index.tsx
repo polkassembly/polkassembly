@@ -28,8 +28,8 @@ const Listing: FC<IListingProps> = (props) => {
 	const [posts, setPosts] = useState(props.posts || []);
 
 	useEffect(() => {
+		setPosts(props.posts || []);
 		if(!network || !props.posts || !props.posts.length || proposalType != ProposalType.REFERENDUMS) return;
-
 		(async () => {
 			// function to await for ms milliseconds
 			const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

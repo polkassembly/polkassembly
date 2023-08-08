@@ -160,6 +160,28 @@ query PolymeshPrposalsQuery($type_in: ProposalType, $limit: Int = 10, $offset: I
 }
 `;
 
+export const GET_VOTES_FOR_POLYMESH = `query PolymeshVotesQuery($index_eq:Int, $type_eq:ProposalType) {
+  votes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}}) {
+    decision
+    voter
+    timestamp
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    proposal {
+      description
+    }
+  }
+}
+`;
+
 export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!]) {
   proposals(where: {type_eq: $type_eq, index_in: $index_in}, limit: $limit) {
     proposer

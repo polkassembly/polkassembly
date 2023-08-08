@@ -62,7 +62,6 @@ const TechnicalPIPs: FC<ITechCommProposalsProps> = (props) => {
 		});
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
-
 	return (
 		<>
 			<SEOHead title='Tech Committee Proposals' network={network}/>

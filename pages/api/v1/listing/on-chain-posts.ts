@@ -403,6 +403,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				query = GET_PROPOSALS_LISTING_BY_TYPE;
 			}
 			if(network === AllNetworks.POLYMESH){
+
 				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
 			}
 

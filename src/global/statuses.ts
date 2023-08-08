@@ -14,8 +14,10 @@ export const proposalStatus = {
 export const referendumStatus = {
 	CANCELLED: 'Cancelled',
 	EXECUTED: 'Executed',
+	EXPIRED: 'Expired',
 	NOTPASSED: 'NotPassed',
 	PASSED: 'Passed',
+	SCHEDULED: 'Scheduled',
 	STARTED: 'Started',
 	VETOED: 'Vetoed'
 };

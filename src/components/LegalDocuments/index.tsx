@@ -17,8 +17,8 @@ interface Props{
 const MdScreen = ({ md } : Props) => {
 	return (
 		<section>
-			<article className={`${poppins.variable} ${poppins.className}bg-white text-sm rounded-md  whitespace-pre-wrap mb-[-6px]`}>
-				<Markdown className="markdown text-black " md={md} />
+			<article className={`${poppins.variable} ${poppins.className} bg-white text-sm rounded-md whitespace-pre-wrap mb-[-6px]`}>
+				<Markdown className="markdown text-black" md={md}/>
 			</article>
 		</section>
 	);

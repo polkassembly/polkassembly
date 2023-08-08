@@ -114,7 +114,6 @@ export default styled(Markdown)`
 
 		pre {
 			background-color: grey_light;
-			// padding: 1.6rem;
 			overflow: auto;
 			border-radius: 0.3rem;
 		}
@@ -123,12 +122,11 @@ export default styled(Markdown)`
 			font-size: 12px;
 			margin: 0;
 			border-radius: 3px;
-			// color: #c7254e;
 			white-space: pre-wrap;
 			&::before, &::after {
 				letter-spacing: -0.2em;
 			}
-			// margin-bottom: -6px; //offset for horizontal scrollbar
+
 			padding-left: 4px;
 			padding-right: 4px;
 			background-color: #fbfbfd;

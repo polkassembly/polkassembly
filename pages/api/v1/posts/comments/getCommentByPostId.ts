@@ -32,7 +32,7 @@ export const getPostComments = async ({ postId, network, postType, pageSize, las
 		else {
 			commentsSnapshot = await postRef.collection('comments').orderBy(sortingField, 'asc').limit(pageSize).get();
 		}
-		const comments = await getComments(commentsSnapshot, postRef, network, postType) as Array<IComment>;
+		const comments = await getComments(commentsSnapshot, postRef, network, postType, postId) as Array<IComment>;
 		const count = (await postRef.collection('comments').get()).size;
 		return {
 			data: { comments, count },

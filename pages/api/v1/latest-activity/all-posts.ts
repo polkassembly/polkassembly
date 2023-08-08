@@ -77,7 +77,16 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			const subsquidPosts: any[] = subsquidData?.proposals || [];
 
 			const posts = subsquidPosts?.map(async (subsquidPost) => {
-				const { createdAt, description, hash, index, proposer, status, type } = subsquidPost;
+				const { createdAt, description, hash, index, proposer, type } = subsquidPost;
+				let status = subsquidPost.status;
+				if (status === 'DecisionDepositPlaced') {
+					const statuses = (subsquidPost?.statusHistory || []) as { status: string }[];
+					statuses.forEach((obj) => {
+						if (obj.status === 'Deciding') {
+							status = 'Deciding';
+						}
+					});
+				}
 				const title = subsquidPost.callData?.method?.split('_').map((word:string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 				const singlePost = {
 					created_at: createdAt,

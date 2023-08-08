@@ -22,12 +22,13 @@ import { IComment } from './Comment/Comment';
 
 interface IPostCommentFormProps {
 	className?: string;
+	setCurrentState?:(postId: string, comment: IComment) => void;
 }
 
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className } = props;
+	const { className, setCurrentState } = props;
 	const { id, username, picture } = useUserDetailsContext();
 	const { postData: { postIndex, postType }, setPostData } = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
@@ -124,6 +125,29 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				...prev,
 				comments: handleAddComments(prev.comments)
 			}));
+			const comment=  {
+				comment_reactions: {
+					'👍': {
+						count: 0,
+						usernames: []
+					},
+					'👎': {
+						count: 0,
+						usernames: []
+					}
+				},
+				content,
+				created_at: new Date(),
+				history: [],
+				id: data?.id || '',
+				profile: picture || '',
+				replies: [],
+				sentiment:isSentimentPost? sentiment : 0,
+				updated_at: new Date(),
+				user_id: id as any,
+				username: username || ''
+			};
+			setCurrentState && setCurrentState(postIndex.toString(), comment);
 		}
 		setLoading(false);
 		setIsComment(false);

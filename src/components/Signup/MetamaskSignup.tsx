@@ -138,7 +138,7 @@ const MetamaskSignup: FC<Props> = ({
 			const params = [msg, from];
 			const method = 'personal_sign';
 
-			(window as any).web3.currentProvider.sendAsync({
+			(window as any).ethereum.sendAsync({
 				from,
 				method,
 				params

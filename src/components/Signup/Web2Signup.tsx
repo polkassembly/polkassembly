@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { IUsernameExistResponse } from 'pages/api/v1/users/username-exist';
 import React, { FC, useEffect, useState } from 'react';
-import { useUserDetailsContext } from 'src/context';
+import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AuthForm from 'src/ui-components/AuthForm';
@@ -17,17 +17,23 @@ import FilteredError from 'src/ui-components/FilteredError';
 import messages from 'src/util/messages';
 import * as validation from 'src/util/validation';
 import styled from 'styled-components';
+import { trackEvent } from 'analytics';
 
 import { TokenType } from '~src/auth/types';
+import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => <div className="flex flex-col mt-6 bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
 		<Skeleton className='mt-8' active />
-	</div> ,
+	</div>,
 	ssr: false
 });
 
+const Container = styled.article`
+.changeColor .ant-alert-message{
+	color:#243A57;
+}`;
 interface Props {
 	onWalletSelect: (wallet: Wallet) => void;
 	walletError: string | undefined;
@@ -36,9 +42,10 @@ interface Props {
 	setSignupOpen?: (pre: boolean)=> void;
   isDelegation?: boolean;
   className?: string;
+  setWithPolkasafe?: any;
 }
 
-const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation }) => {
+const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal, setLoginOpen, setSignupOpen, isDelegation, setWithPolkasafe }) => {
 	const { password, username } = validation;
 	const router = useRouter();
 	const currentUser = useUserDetailsContext();
@@ -53,7 +60,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	});
 	const [firstPassword, setFirstPassword] = useState('');
 	const [defaultWallets, setDefaultWallets] = useState<string[]>([]);
-
+	const { network } = useNetworkContext();
 	const getWallet=() => {
 		const injectedWindow = window as Window & InjectedWindow;
 		setDefaultWallets(Object.keys(injectedWindow?.injectedWeb3 || {}));
@@ -61,13 +68,15 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 
 	const handleSubmitForm = async (data: any) => {
 		setError('');
+
 		if (isPassword) {
+			trackEvent('Signup', 'Click', 'Sign Up');
 			const { second_password } = data;
 			if (second_password) {
 				const { email, username } = signUpInfo;
 
 				setLoading(true);
-				const { data , error } = await nextApiClientFetch<TokenType>( 'api/v1/auth/actions/signup', {
+				const { data, error } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/signup', {
 					email,
 					password: second_password,
 					username
@@ -79,12 +88,12 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					setLoading(false);
 				}
 
-				if(data) {
+				if (data) {
 					if (data.token) {
 						handleTokenChange(data.token, currentUser);
-						if(isModal){
+						if (isModal) {
 							setLoading(false);
-							setSignupOpen &&  setSignupOpen(false);
+							setSignupOpen && setSignupOpen(false);
 							return;
 						}
 						if (email) {
@@ -95,10 +104,11 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 
 			}
 		} else {
+			trackEvent('Signup', 'Click', 'Next');
 			const { username, email } = data;
 			setLoading(true);
 
-			const { data: resData , error } = await nextApiClientFetch<IUsernameExistResponse>( `api/v1/users/username-exist?username=${username}`);
+			const { data: resData, error } = await nextApiClientFetch<IUsernameExistResponse>(`api/v1/users/username-exist?username=${username}`);
 			if (error || !resData) {
 				setError(error || 'Error while checking username exist or not.');
 			} else {
@@ -115,11 +125,11 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 		}
 	};
 
-	const handleClick=() => {
-		if(isModal && setSignupOpen &&setLoginOpen){
+	const handleClick = () => {
+		if (isModal && setSignupOpen && setLoginOpen) {
 			setSignupOpen(false);
 			setLoginOpen(true);
-		}else{
+		} else {
 			router.push('/login');
 		}
 	};
@@ -128,33 +138,33 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	}, [isDelegation]);
 
 	return (
-		<article className={`bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className}`}>
+		<Container className={`bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className}`}>
 			<div className='grid grid-cols-2'>
 				<div onClick={() => {
 					setIsPassword(false);
 					if (error) setError('');
-				}} className={`cursor-pointer font-medium text-grey_primary flex flex-col gap-y-2 text-xs justify-center items-center sm:flex-row sm:text-sm gap-x-2 border-b-2 pb-2 ${!isPassword &&'border-pink_primary'}`}>
-					<span className={`flex justify-center items-center w-6 h-6 sm:w-8 sm:h-8 text-white ${isPassword?'bg-green_primary':'bg-pink_primary'} rounded-full`}>1</span>
+				}} className={`cursor-pointer font-medium text-grey_primary flex flex-col gap-y-2 text-xs justify-center items-center sm:flex-row sm:text-sm gap-x-2 border-b-2 pb-2 ${!isPassword && 'border-pink_primary'}`}>
+					<span className={`flex justify-center items-center w-6 h-6 sm:w-8 sm:h-8 text-white ${isPassword ? 'bg-green_primary' : 'bg-pink_primary'} rounded-full`}>1</span>
 					<span>Create Username</span>
 				</div>
-				<div className={`font-medium text-grey_primary flex flex-col gap-y-2 text-xs justify-center items-center sm:flex-row sm:text-sm gap-x-2 border-b-2 pb-2 ${isPassword &&'border-pink_primary'}`}>
-					<span className={`flex justify-center items-center w-6 h-6 sm:w-8 sm:h-8 text-white ${isPassword?'bg-pink_primary':'bg-grey_secondary'} rounded-full`}>2</span>
+				<div className={`font-medium text-grey_primary flex flex-col gap-y-2 text-xs justify-center items-center sm:flex-row sm:text-sm gap-x-2 border-b-2 pb-2 ${isPassword && 'border-pink_primary'}`}>
+					<span className={`flex justify-center items-center w-6 h-6 sm:w-8 sm:h-8 text-white ${isPassword ? 'bg-pink_primary' : 'bg-grey_secondary'} rounded-full`}>2</span>
 					<span>Set Password</span>
 				</div>
 			</div>
 
 			<h3 className="text-2xl font-semibold text-[#1E232C]">
-				{isPassword?'Set Password': 'Sign Up'}
+				{isPassword ? 'Set Password' : 'Sign Up'}
 			</h3>
 
-			{ defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor'/>}
+			{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor' />}
 			{walletError && <Alert message={walletError} type="error" />}
 			<AuthForm
 				onSubmit={handleSubmitForm}
 				className='flex flex-col gap-y-6'
 			>
 				{
-					isPassword?
+					isPassword ?
 						<>
 							<div className="flex flex-col gap-y-1">
 								<label
@@ -199,9 +209,9 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 										{
 											message: 'Password don\'t match',
 											validator(rule, value, callback) {
-												if (callback && value !== firstPassword){
+												if (callback && value !== firstPassword) {
 													callback(rule?.message?.toString());
-												}else {
+												} else {
 													callback();
 												}
 											}
@@ -216,7 +226,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 								</Form.Item>
 							</div>
 						</>
-						:<>
+						: <>
 							<div className="flex flex-col gap-y-1">
 								<label
 									className="text-base text-[#485F7D]  tracking-wide"
@@ -286,13 +296,15 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						size="large"
 						className="bg-pink_primary w-56 rounded-md outline-none border-none text-white"
 					>
-						{isPassword?'Sign Up': 'Next'}
+						{isPassword ? 'Sign Up' : 'Next'}
 					</Button>
 				</div>
 				<div>
 					<WalletButtons
 						disabled={loading}
 						onWalletSelect={onWalletSelect}
+						showPolkasafe={canUsePolkasafe(network)}
+						onPolkasafeSelect={setWithPolkasafe}
 					/>
 				</div>
 				{error && <FilteredError text={error} />}
@@ -320,11 +332,8 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 			>
 				We sent you an email to verify your address. Click on the link in the email.
 			</Modal>
-		</article>
+		</Container>
 	);
 };
 
-export default styled(Web2Signup)`
-.changeColor .ant-alert-message{
-color:#243A57;
-}`;
+export default Web2Signup;

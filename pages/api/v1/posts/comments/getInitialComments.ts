@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import dayjs, { Dayjs } from 'dayjs';
-import { getCommentsWithId } from './getCommentsWithId';
 import { IReactions } from '../on-chain-post';
 import { ICommentHistory } from '~src/types';
 import { getPostComments } from './getCommentByPostId';
@@ -58,7 +57,7 @@ interface ITimeline {
 	type: string;
 }
 // of the Apache-2.0 license. See the LICENSE file for details.
-export const getInitialComments = async (timeline:any, network:string, commentId?:string ) => {
+export const getInitialComments = async (timeline:any, network:string ) => {
 	if(!timeline){
 		return;
 	}
@@ -80,41 +79,23 @@ export const getInitialComments = async (timeline:any, network:string, commentId
 	}
 	let currentTimeline: ITimeline | null = null;
 	for(const data of timelines){
-		const postType = getFirestoreProposalType(data.type) as ProposalType;
-		let res: any;
-		if(commentId){
-			res = (await getCommentsWithId({
-				commentId,
-				network,
-				pageSize: COMMENT_SIZE,
-				postId:data.index.toString(),
-				postType
-			})).data;
-			const isCommentExit = res.comments.some((comment: { id: string; }) => {
-				return comment.id === commentId;
-			});
-			comments[data.index] = [...comments[data.index], ...res.comments];
-			const timelinePayload = { ...data, firstCommentId: comments[data.index]?.[0]?.id || '' };
-			currentTimeline = timelinePayload;
-			if(isCommentExit){
-				break;
-			}
+		if(data.commentsCount === 0){
+			continue;
 		}
-		else{
-			const lastDoc = comments[data.index][comments[data.index].length-1]?.id;
-			res = (await getPostComments({
-				lastDocumentId: lastDoc,
-				network,
-				pageSize: COMMENT_SIZE,
-				postId: data.index.toString(),
-				postType
-			})).data;
-			comments[data.index] = [...comments[data.index], ...res.comments];
-			const timelinePayload = { ...data, firstCommentId: comments[data.index]?.[0]?.id || '' };
-			currentTimeline = timelinePayload;
-			if(Object.values(comments).flat().length >= COMMENT_SIZE) {
-				break;
-			}
+		const postType = getFirestoreProposalType(data.type) as ProposalType;
+		const lastDoc = comments[data.index][comments[data.index].length-1]?.id;
+		const res = (await getPostComments({
+			lastDocumentId: lastDoc,
+			network,
+			pageSize: COMMENT_SIZE,
+			postId: data.index.toString(),
+			postType
+		})).data;
+		comments[data.index] =res ? [...comments[data.index], ...res.comments] : comments[data.index];
+		const timelinePayload = { ...data, firstCommentId: comments[data.index]?.[0]?.id || '' };
+		currentTimeline = timelinePayload;
+		if(Object.values(comments).flat().length >= COMMENT_SIZE) {
+			break;
 		}
 	}
 	return {

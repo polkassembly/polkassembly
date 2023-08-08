@@ -120,7 +120,7 @@ export function getProposalTypeTitle(proposalType: ProposalType) {
 	case ProposalType.TREASURY_PROPOSALS:
 		return 'treasury proposal';
 	case ProposalType.TECH_COMMITTEE_PROPOSALS:
-		return 'techincal committee proposal';
+		return 'technical committee proposal';
 	case ProposalType.DEMOCRACY_PROPOSALS:
 		return 'democracy proposal';
 	case ProposalType.COUNCIL_MOTIONS:
@@ -209,6 +209,7 @@ export const gov1ProposalTypes = ['DemocracyProposal', 'TechCommitteeProposal', 
 export enum VoteType {
 	MOTION = 'Motion',
 	FELLOWSHIP = 'Fellowship',
+	ALLIANCE_MOTION = 'AllianceMotion',
 	REFERENDUM = 'Referendum',
 	REFERENDUM_V2 = 'ReferendumV2',
 	DEMOCRACY_PROPOSAL = 'DemocracyProposal'
@@ -231,6 +232,21 @@ export const tracksNo = [0, 1, 10, 11, 12, 13, 14, 15, 20, 21, 30, 31, 32, 33, 3
 
 export const trackPostStatuses = ['All', 'Confirmed', 'ConfirmStarted', 'Cancelled', 'Deciding', 'DecisionDepositPlaced', 'Killed', 'Submitted', 'Rejected', 'TimedOut'];
 export const customOpenGovStatuses = ['All', 'CustomStatusSubmitted', 'CustomStatusVoting', 'CustomStatusClosed','CustomStatusActive'];
+
+export const getVotingTypeFromProposalType = (proposalType: ProposalType) => {
+	switch (proposalType) {
+	case ProposalType.ALLIANCE_MOTION:
+		return VoteType.ALLIANCE_MOTION;
+	case ProposalType.REFERENDUMS:
+		return VoteType.REFERENDUM;
+	case ProposalType.FELLOWSHIP_REFERENDUMS:
+		return VoteType.FELLOWSHIP;
+	case ProposalType.OPEN_GOV:
+		return VoteType.REFERENDUM_V2;
+	default:
+		return VoteType.DEMOCRACY_PROPOSAL;
+	}
+};
 
 export const getStatusesFromCustomStatus = (customStatus: CustomStatus) => {
 	switch(customStatus) {

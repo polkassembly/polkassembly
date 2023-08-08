@@ -189,7 +189,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 		}
 
 		// get initial comments
-		const initialCommentsData = await getInitialComments(post.timeline, network);
+		const initialCommentsData = await getInitialComments(post.timeline, network );
 		post.comments = initialCommentsData?.comments;
 		post.currentTimeline = initialCommentsData?.currentTimeline;
 

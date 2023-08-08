@@ -94,10 +94,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
 	const [loading, setLoading] = useState(true);
 	const [currentTimeline, setCurrentTimeline] = useState<ITimeline | null>(initialCurrentTimeline || null);
-	const [allCommentsLength, setAllCommentsLength] = useState<number>(0);
 	const { network } = useNetworkContext();
 	const allComments = Object.values(comments)?.flat() || [];
 	const router = useRouter();
+	const allCommentsLength = timelines.reduce((a, b) => a + b.commentsCount, 0);
 
 	const url = window.location.href;
 	const commentId = url.split('#')[1];
@@ -194,12 +194,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				});
 				comments[obj?.index.toString()] = [];
 			});
-			let allCount = 0;
-			timeline.forEach((a) => {
-				allCount += Number(a.commentsCount);
-			});
 			setTimelines(timelines);
-			setAllCommentsLength(allCount);
 		}
 		if(commentId){
 			if(!currentTimeline){
@@ -211,16 +206,21 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			if(comment){
 				return;
 			}
-			for(const data of timelines){
-				const res = await getCommentsWithId(data.index.toString(), commentId, network, COMMENT_SIZE, data.type);
+			for(let i = 0; i < timelines.length; i++){
+				if(timelines[i].commentsCount === 0){
+					continue;
+				}
+				setCurrentTimeline(timelines[i]);
+				const res = await getCommentsWithId(timelines[i].index.toString(), commentId, network, COMMENT_SIZE, timelines[i].type);
 				const isCommentExit = res.comments.some((comment: { id: string; }) => {
 					return comment.id === commentId;
 				});
-				comments[data.index] = [...comments[data.index], ...res.comments];
-				const timelinePayload = { ...data, firstCommentId: comments[data.index]?.[0]?.id || '' };
-				setCurrentTimeline(timelinePayload);
+				comments[timelines[i].index] = [...comments[timelines[i].index], ...res.comments];
 				if(isCommentExit){
 					break;
+				}
+				if(comments[timelines[i].index].length < timelines[i].commentsCount){
+					i--;
 				}
 			}
 			setComments(comments);
@@ -231,19 +231,26 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	};
 
 	const getNextComments =async () => {
+		console.log(currentTimeline);
 		if(!currentTimeline){
 			return;
 		}
 		const commentsPayload = Object.assign({}, comments);
-		for(const data of timelines){
-			setCurrentTimeline(timelines[data.id]);
-			const timeline = timelines.find(a => a.index === data.index);
-			const lastDoc = commentsPayload[data.index][commentsPayload[data.index].length-1]?.id;
-			if(timeline && commentsPayload[data.index].length < timeline.commentsCount){
+		for(let i = 0; i < timelines.length; i++){
+			if(timelines[i].commentsCount === 0){
+				continue;
+			}
+			const timeline = timelines[i];
+			const lastDoc = commentsPayload[timelines[i].index][commentsPayload[timelines[i].index].length-1]?.id;
+			setCurrentTimeline(timeline);
+			if(timeline && commentsPayload[timelines[i].index].length < timeline.commentsCount){
 				const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, COMMENT_SIZE, timeline.type);
 				commentsPayload[timeline.index] = [...commentsPayload[timeline.index], ...res.comments];
 				if(res.comments.length === COMMENT_SIZE){
 					break;
+				}
+				if(commentsPayload[timelines[i].index].length < timeline.commentsCount){
+					i--;
 				}
 			}
 		}
@@ -277,19 +284,34 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		return commentsPayload[timeline.index]?.[0].id || '';
 	};
 
+	const handleCurrentCommentAndTimeline = (postId:string, comment:IComment) => {
+		const commentsPayload = {
+			...comments,
+			[postId]:[
+				...comments[postId],
+				comment
+			]
+		};
+		setComments(commentsPayload);
+		const timelinePayload = timelines.map((timeline) => (
+			timeline.index === postId ?
+				{ ...timeline,commentsCount:timeline.commentsCount+1 } :
+				timeline
+		));
+		setTimelines(timelinePayload);
+	};
+
 	useEffect(() => {
 		setTimeline();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
-
-	// infinity Scrolling
 
 	return (
 		<div className={className}>
 			{id ? <>
 				{isGrantClosed ?
 					<Alert message="Grant closed, no comments can be added or edited." type="info" showIcon /> :
-					<PostCommentForm className='mb-8' />
+					<PostCommentForm className='mb-8' setCurrentState={handleCurrentCommentAndTimeline}/>
 				}
 			</>
 				: <div className="mt-4 mb-8 bg-[#E6F4FF] rounded-[6px] shadow-md h-12 flex justify-center items-center gap-3">
@@ -304,7 +326,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					{allCommentsLength || 0}
 					<span className='ml-1'>Comments</span>
 				</span>
-				{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2'>
+				{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2 '>
 					<Tooltip color='#E5007A'
 						title={<div className='flex flex-col text-xs px-1'>
 							<span className='text-center font-medium'>Completely Against</span>
@@ -447,7 +469,7 @@ export default React.memo(styled(CommentsContainer)`
 	.ant-anchor-ink {
 		margin-left: 5px;
 	}
-	
+
 	.ant-anchor-link {
 		margin-left: 5px;
 	}

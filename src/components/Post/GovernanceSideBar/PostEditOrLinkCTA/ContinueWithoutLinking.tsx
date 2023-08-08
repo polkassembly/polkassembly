@@ -68,12 +68,13 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 				status: NotificationStatus.SUCCESS
 			});
 
-			const { content, proposer, title, topic, last_edited_at } = data;
+			const { content, proposer, title, topic, last_edited_at, summary } = data;
 			setPostData((prev) => ({
 				...prev,
 				content,
 				last_edited_at,
 				proposer,
+				summary,
 				tags: ((tags && Array.isArray(tags))? tags: []),
 				title,
 				topic

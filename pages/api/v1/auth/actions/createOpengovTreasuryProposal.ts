@@ -20,7 +20,9 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
 	const { content, title, postId, userId, proposerAddress, tags } = req.body;
-	if(!content || !title || !postId || !userId || !proposerAddress) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if(!content || !title || !proposerAddress) return res.status(400).json({ message: 'Missing parameters in request body' });
+
+	if(isNaN(Number(userId)) || isNaN(Number(postId)))  return res.status(400).json({ message: 'Invalid parameters in request body' });
 
 	const token = getTokenFromReq(req);
 	if(!token) return res.status(400).json({ message: 'Invalid token' });

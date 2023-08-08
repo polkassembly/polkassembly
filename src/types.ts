@@ -10,6 +10,10 @@ import { ProposalType } from './global/proposalType';
 import BN from 'bn.js';
 import dayjs from 'dayjs';
 
+declare global {
+  interface Window { GA_INITIALIZED: any; }
+}
+
 export interface UserDetailsContextType {
   id?: number | null;
   picture?: string | null;
@@ -46,17 +50,17 @@ export interface INetworkPreferences {
       verification_token?: string,
       verification_token_expires?: Date
       enabled?: boolean;
-      handle?:string;
+      handle?: string;
     }
   },
   triggerPreferences: {
     [index: string]: {
-      [index: string]:{
+      [index: string]: {
         enabled: boolean;
         name: string;
         post_types?: Array<string>,
         tracks?: Array<number>,
-        mention_types?:Array<string>,
+        mention_types?: Array<string>,
         sub_triggers?: Array<string>,
       }
     }

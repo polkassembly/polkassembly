@@ -68,7 +68,6 @@ const nextConfig = {
     styledComponents: true
   },
   webpack(config) {
-    config.infrastructureLogging = { debug: /PackFileCache/ };
     config.module.rules.push({
       test: /\.svg$/,
       use: ['@svgr/webpack']

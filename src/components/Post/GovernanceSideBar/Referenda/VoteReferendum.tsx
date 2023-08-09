@@ -743,7 +743,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									className='text-sm font-medium border-[#D2D8E0]'
 								/>
 
-								<ConvictionSelect className={`${className}`} />
+								{!['polymesh'].includes(network) && <ConvictionSelect className={`${className}`} />}
 
 								<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0]'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>

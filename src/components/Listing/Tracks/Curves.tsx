@@ -46,6 +46,11 @@ const Curves: FC<ICurvesProps> = (props) => {
 					className='h-full w-full'
 					data={data}
 					options={{
+						animation: {
+							duration: 0
+						},
+						clip: false,
+						maintainAspectRatio: false,
 						plugins:{
 							legend: {
 								display: false
@@ -77,9 +82,9 @@ const Curves: FC<ICurvesProps> = (props) => {
 								mode: 'index'
 							}
 						},
+						responsive: true,
 						scales: {
 							x: {
-								beginAtZero: false,
 								display: true,
 								grid: {
 									display: true,
@@ -91,7 +96,8 @@ const Curves: FC<ICurvesProps> = (props) => {
 									},
 									max: labelsLength,
 									stepSize: Math.round(labelsLength / (labelsLength/(60 * 24)))
-								} as any
+								} as any,
+								type: 'linear'
 							},
 							y: {
 								beginAtZero: false,

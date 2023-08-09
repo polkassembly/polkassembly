@@ -16,9 +16,10 @@ interface Props {
 	onChange?: (balance: string) => void;
 	isBalanceUpdated?: boolean;
 	setAvailableBalance?: (pre: string) => void;
+	classname?: string
 }
 
-const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance }: Props) => {
+const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance, classname }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const { network } = useContext(NetworkContext);
@@ -95,7 +96,7 @@ const Balance = ({ address, onChange, isBalanceUpdated, setAvailableBalance }: P
 	}, [address, api, apiReady, isReferendum, isBalanceUpdated]);
 
 	return (
-		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px]`}>
+		<div className={ `${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px] ${classname}`}>
       Available: <span className='text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
 		</div>
 	);

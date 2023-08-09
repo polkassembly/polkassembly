@@ -19,6 +19,7 @@ import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
 import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
+import { initGA, logPageView } from '../analytics';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,
@@ -56,6 +57,13 @@ export default function App({ Component, pageProps }: AppProps) {
 		if (!global?.window) return;
 		const networkStr = getNetwork();
 		setNetwork(networkStr);
+
+		if (!window.GA_INITIALIZED) {
+			initGA();
+			// @ts-ignore
+			window.GA_INITIALIZED = true;
+		}
+		logPageView();
 	}, []);
 
 	const SplashLoader = () => <div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>

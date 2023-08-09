@@ -45,7 +45,7 @@ function getSiderMenuItem(
 		icon,
 		key,
 		label,
-		type: key === 'tracksHeading' ? 'group' : ''
+		type: ['tracksHeading','pipsHeading'].includes(key as string) ? 'group' : ''
 	} as MenuItem;
 }
 
@@ -223,10 +223,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]);
 	}
 	if(network === 'polymesh'){
-		items = items.concat([
-			getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 uppercase text-base font-medium'>PIPs</span>, 'PIPs_group', null),
+		items = items.concat(
+			getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 uppercase text-base cursor-text font-medium'>PIPs</span>, 'pipsHeading', null),
 			...gov1Items.PIPsItems
-		]);
+		);
 		collapsedItems = collapsedItems.concat([
 			...gov1Items.PIPsItems
 		]);
@@ -362,7 +362,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
 
 	const handleMenuClick = (menuItem: any) => {
-		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
+		if(['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
 		router.push(menuItem.key);
 		setSidedrawer(false);
 	};

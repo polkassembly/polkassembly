@@ -30,7 +30,7 @@ import { getStatusBlock } from '~src/util/getStatusBlock';
 import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import CloseIcon from '~assets/icons/close.svg';
-import checkGov2Route from '~src/util/checkGov2Route';
+import getCurrGovType from '~src/util/getCurrGovType';
 import { ProposalType } from '~src/global/proposalType';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'),{
@@ -145,7 +145,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if(!window || !checkGov2Route(router.pathname, router.query)) return;
+		if(!window || !getCurrGovType(router.pathname, router.query)) return;
 		const trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
 
 		if (!created_at) return;

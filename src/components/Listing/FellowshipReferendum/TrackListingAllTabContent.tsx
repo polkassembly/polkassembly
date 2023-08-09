@@ -30,7 +30,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 
 	if (noPosts) return <div className={className}><PostEmptyState /></div>;
 
-	if(posts&& posts.length>0)
+	if(posts && posts.length>0)
 		return (
 			<>
 				<div className='sm:mx-3'>
@@ -59,6 +59,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 										index={index}
 										tally={post?.tally}
 										proposalType={post?.type}
+										trackNumber={post?.track_no}
 									/>
 								</Link>}
 							</div>

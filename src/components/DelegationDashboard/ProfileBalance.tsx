@@ -19,6 +19,7 @@ import { APPNAME } from '~src/global/appName';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { formatBalance } from '@polkadot/util';
 import Image from 'next/image';
+import { formatedBalance } from '~src/util/formatedBalance';
 
 interface Props{
   className?: string;
@@ -28,16 +29,6 @@ interface Props{
 const WalletConnectModal = dynamic(() => import('~src/ui-components/WalletConnectModal'), {
 	ssr: false
 });
-
-export const formatedBalance = (balance: string, unit: string) => {
-	const formated = formatBalance(balance, { forceUnit: unit, withUnit: false }).split('.');
-	if(Number(formated?.[0][0]) > 0){
-		return formated?.[1] ? `${formated[0]}.${formated[1].slice(0,1)}`: `${formated[0]}`;
-	}else{
-		return formated.join('.');
-	}
-
-};
 
 const ProfileBalances = ({ className, address }: Props ) => {
 
@@ -140,7 +131,6 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	};
 
 	useEffect(() => {
-
 		loginWallet && getAccounts(loginWallet);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps

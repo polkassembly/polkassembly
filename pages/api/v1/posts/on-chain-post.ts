@@ -313,7 +313,7 @@ const getAndSetNewData = async (params: IParams) => {
 	return newData;
 };
 
-export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>, postDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>, network: string, proposalType: string): Promise<any[]> {
+export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>, postDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>, network: string, postType: string, postIndex: number | string): Promise<any[]> {
 	const userIds = new Set<number>();
 	const commentsPromise = commentsSnapshot.docs.map(async (doc) => {
 		if (doc && doc.exists) {
@@ -339,6 +339,8 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				history: history,
 				id: data.id,
 				is_custom_username: false,
+				post_index: postIndex,
+				post_type: postType,
 				proposer: '',
 				replies: [] as any[],
 				sentiment:data.sentiment || 0,
@@ -372,6 +374,8 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 							created_at: created_at?.toDate? created_at.toDate(): created_at,
 							id: id,
 							is_custom_username: false,
+							post_index: postIndex,
+							post_type: postType,
 							proposer: '',
 							spam_users_count: 0,
 							updated_at: getUpdatedAt(data),
@@ -390,7 +394,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 					const endIndex = startIndex + chunkSize;
 					const slice = replyIds.slice(startIndex, endIndex);
 					if (slice.length > 0) {
-						const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+						const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', postType).where('content_id', 'in', slice).get();
 						reportsQuery.docs.map((doc) => {
 							if (doc && doc.exists) {
 								const data = doc.data();
@@ -484,7 +488,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			const endIndex = startIndex + chunkSize;
 			const slice = commentIds.slice(startIndex, endIndex);
 			if (slice.length > 0) {
-				const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+				const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', postType).where('content_id', 'in', slice).get();
 				reportsQuery.docs.map((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -873,9 +877,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		// Comments
 		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 			const commentPromises = post.timeline.map(async (timeline: any) => {
-				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String((timeline.type === 'Tip'? timeline.hash: timeline.index)));
+				const post_index = (timeline.type === 'Tip'? timeline.hash: timeline.index);
+				const type = getFirestoreProposalType(timeline.type) as ProposalType;
+				const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
 				const commentsSnapshot = await postDocRef.collection('comments').get();
-				const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+				const comments = await getComments(commentsSnapshot, postDocRef, network, type, post_index);
 				return comments;
 			});
 			const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
@@ -892,10 +898,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				const { id, type } = post.post_link;
 				const postDocRef = postsByTypeRef(network, type).doc(String(id));
 				const commentsSnapshot = await postDocRef.collection('comments').get();
-				post.comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+				post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
 			}
 			const commentsSnapshot = await postDocRef.collection('comments').get();
-			const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
+			const comments = await getComments(commentsSnapshot, postDocRef, network, (strProposalType.toString() === 'open_gov'? ProposalType.REFERENDUM_V2: strProposalType), (strProposalType === ProposalType.TIPS? strPostId: numPostId));
 			if (post.comments && Array.isArray(post.comments)) {
 				post.comments = post.comments.concat(comments);
 			} else {

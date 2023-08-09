@@ -46,8 +46,9 @@ import { useCurrentBlock } from '~src/hooks';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BN from 'bn.js';
+import { formatBalance } from '@polkadot/util';
+import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
@@ -66,7 +67,6 @@ const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasur
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
-import { formatBalance } from '@polkadot/util';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined

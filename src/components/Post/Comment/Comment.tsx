@@ -32,6 +32,8 @@ export interface IComment {
 	history?: ICommentHistory[];
 	spam_users_count?: number;
 	is_custom_username?: boolean;
+	post_index?: number;
+	post_type?: string;
 }
 
 interface ICommentProps {

@@ -13,8 +13,8 @@ import { inputToBn } from '../util/inputToBn';
 import Balance from '~src/components/Balance';
 import styled from 'styled-components';
 import { formatBalance } from '@polkadot/util';
-import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import HelperTooltip from './HelperTooltip';
+import { formatedBalance } from '~src/util/formatedBalance';
 
 const ZERO_BN = new BN(0);
 

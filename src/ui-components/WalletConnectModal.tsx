@@ -45,11 +45,12 @@ interface Props{
   localStorageAddressKeyName: string;
   onConfirm?: () => void;
   LinkAddressNeeded?: boolean;
+  usingMultisig?: boolean;
 }
 
 const ZERO_BN = new BN(0);
 
-const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWalletKeyName, localStorageAddressKeyName, onConfirm, LinkAddressNeeded }: Props) => {
+const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWalletKeyName, localStorageAddressKeyName, onConfirm, LinkAddressNeeded, usingMultisig = false }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
@@ -464,7 +465,14 @@ const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWa
 							['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET] &&
 								<WalletButton disabled={!apiReady} className={`${wallet === Wallet.POLYWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.POLYWALLET)} name="PolyWallet" icon={<WalletIcon which={Wallet.POLYWALLET} className='h-6 w-6'  />} />
 						}
-						{ canUsePolkasafe(network) && !showMultisig &&
+						{
+							(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
+                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
+						}
+					</>}
+				</div>
+				{usingMultisig && <div>
+					{ canUsePolkasafe(network) && !showMultisig && usingMultisig &&
 							<div className='w-[50%] flex flex-col m-auto mt-3 gap-3 mb-6'>
 								<Divider className='m-0'>OR</Divider>
 								<div className='w-full flex justify-center'>
@@ -478,21 +486,16 @@ const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWa
 										text={'Use a multisig'} />
 								</div>
 							</div>
-						}
+					}
 
-						{showMultisig && initiatorBalance.lte(totalDeposit) && multisig &&
+					{showMultisig && initiatorBalance.lte(totalDeposit) && multisig &&
 					<Alert
 						message={`The Free Balance in your selected account is less than the Minimum Deposit ${formatBnBalance(totalDeposit, { numberAfterComma: 3, withUnit: true }, network)} required to create a Transaction.`}
 						showIcon
 						className='mb-6'
 					/>
-						}
-						{
-							(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] &&
-                    <WalletButton disabled={!apiReady} className={`${wallet === Wallet.NOVAWALLET? 'border border-solid border-pink_primary h-[44px] w-[56px]': 'h-[44px] w-[56px]'}`} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />
-						}
-					</>}
-				</div>
+					}
+				</div>}
 
 				{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message={`For using ${LinkAddressNeeded ? 'Treasury proposal creation' : 'Delegation dashboard'}:`} description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mb-4' type='info' />}
 				{Object.keys(availableWallets || {}).length === 0 && !loading && <Alert
@@ -532,7 +535,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWa
 												withBalance={true}
 												onAccountChange={(address) => setAddress(address)}
 												onBalanceChange={handleOnBalanceChange}
-												className='text-lightBlue text-sm'
+												className='text-lightBlue text-sm mt-4'
 											/> : !wallet && Object.keys(availableWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 								</Form>}
 				{LinkAddressNeeded && !loading && accounts.length > 0 && <>

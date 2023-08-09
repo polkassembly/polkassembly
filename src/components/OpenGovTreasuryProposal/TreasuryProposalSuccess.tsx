@@ -13,7 +13,7 @@ import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
+import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import RedirectIcon from '~assets/icons/redirect.svg';
 import styled from 'styled-components';

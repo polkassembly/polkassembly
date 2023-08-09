@@ -113,7 +113,7 @@ const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount,
 					</span>
 				</div>
 			</div>}
-			<Alert showIcon type='warning' className='rounded-[4px] m-2 text-sm w-full' message={<span className='text-sm font-medium text-bodyBlue'>Place a decision deposit in {blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))} days to prevent your proposal from being timed out.</span>} description={<span className='text-xs text-pink_primary font-medium cursor-pointer' onClick={() => router.push(`https://${network}.polkassembly.io/referenda/${postId}`)}>Pay Decision Deposit</span>} />
+			<Alert showIcon type='warning' className='rounded-[4px] m-2 text-sm w-full' message={<span className='text-sm font-medium text-bodyBlue'>Place a decision deposit in {blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))} to prevent your proposal from being timed out.</span>} description={<span className='text-xs text-pink_primary font-medium cursor-pointer' onClick={() => router.push(`https://${network}.polkassembly.io/referenda/${postId}`)}>Pay Decision Deposit</span>} />
 		</div>
 
 	</Modal>;

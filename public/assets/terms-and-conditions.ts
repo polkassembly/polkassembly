@@ -3,14 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 export default function getTermsAndConditions(network: string) {
-	return `<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:32px;  background:#FFFFFF;color: #243A57">
-  <h1 class="-mt-2 mb-1">  Polkassembly End User Agreement</h1> 
+	return `<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57">
+  <h1 class="mt-[-40px] mb-1">  Polkassembly End User Agreement</h1> 
     Premiurly OÜ is a company registered in Estonia under company number 16162207 with its registered office at Tornimäe tn 7, Kesklinna linnaosa, 
     Tallinn,Harju maakond, 10145 (the "**Company**"). The Company operates Polkassembly (the "**Forum**") on https://${network}.polkassembly.io 
     (the "**Website**").
   </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:32px;  background:#FFFFFF;color: #243A57 ">
-    <h1 class="-mt-2 mb-1">  1. Understanding these terms</h1>    
+<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57 ">
+    <h1 class="mt-[-40px] mb-1">  1. Understanding these terms</h1>    
     1.  This end user agreement (the "**Terms**") describes how you may access and use the Forum and any services made available through the 
          Forum via the Website,any mobile applications made available by the Company and any other distribution channels made available by the 
          Company (the "**Services**"). By accessing the Forum, these Terms will apply to you and you agree to the Terms. You should therefore
@@ -29,7 +29,7 @@ export default function getTermsAndConditions(network: string) {
       3.  we only use your personal information in accordance with our privacy notice (available https://${network}.polkassembly.io/privacy).
 </div>
 <div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF;color: #243A57 ">
-   <h1 class="-mt-2 mb-1">  2. The Forum</h1>
+   <h1 class="mt-[-40px] mb-1">  2. The Forum</h1>
     1.  The Forum is made available free of charge. We do not guarantee that the Forum, or any content on it, will always be available or be 
          uninterrupted. Access to the Forum is permitted on a temporary basis. We may suspend, withdraw, discontinue or change all or any 
          part of the Forum without notice. We will not be liable to you if for any reason the Forum is unavailable at any time or for any period.
@@ -41,8 +41,8 @@ export default function getTermsAndConditions(network: string) {
     
 </div>
    
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF; color: #243A57">
-  <h1 class="-mt-2 mb-1">  3. Your account and password</h1>
+<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF; color: #243A57">
+  <h1 class="mt-[-40px] mb-1">  3. Your account and password</h1>
     1.  You will need to register an account with us on the Website in order to use the Services and gain access to the Forum ("**Account**"). 
         You can register via our official website (at https://${network}.polkassembly.io/signup). In order to register for an Account, you must be aged 18 
         or over. If you register an Account, you will be asked to provide certain information (such as your user name) and to create a password, as 
@@ -55,8 +55,8 @@ export default function getTermsAndConditions(network: string) {
         authority to bind such entity to these Terms.
 
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF;color: #243A57 ">
-   <h1 class="-mt-2 mb-1">  4. Acceptable use</h1>
+<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57 ">
+   <h1 class="mt-[-40px] mb-1">  4. Acceptable use</h1>
   General
   1.  You agree  1.not to use the Forum in any unlawful manner, for any unlawful purpose or in any manner inconsistent with these Terms; 
   2.  not to infringe our intellectual property rights or those of any third party in relation to your use of the Forum 
@@ -107,9 +107,9 @@ export default function getTermsAndConditions(network: string) {
 
 </div>
 
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF; color: #243A57">
+<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF; color: #243A57">
 
-   <h1 class="-mt-2 mb-1">  5. Intellectual property</h1>
+   <h1 class="mt-[-40px] mb-1">  5. Intellectual property</h1>
     1.  We grant to you a non-transferable, non-exclusive, revocable licence to use the Forum provided that you comply with these Terms and the
         documents referred to in it. We reserve all other rights.
     2.  We are the owner or licensee of all intellectual property rights in the Forum and its content (other than the User Generated Content), including 
@@ -130,8 +130,8 @@ export default function getTermsAndConditions(network: string) {
          partner with us. You also agree that we may remove metadata associated with your User Generated Content, and you irrevocable waive any 
          claims and assertions of moral rights or attribution with respect to your User Generated Content.
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF;color: #243A57 ">
-   <h1 class="-mt-2 mb-1">  6. Our liability</h1>
+<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57 ">
+   <h1 class="mt-[-40px] mb-1">  6. Our liability</h1>
     1.  Nothing in these Terms excludes or limits our liability for:
         1.  death or personal injury caused by our negligence;
         2.  fraud or fraudulent misrepresentation; and
@@ -162,9 +162,9 @@ export default function getTermsAndConditions(network: string) {
          business interruption, or loss of business opportunity.
 
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:32px;  background:#FFFFFF;color: #243A57">
+<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57">
 
-   <h1 class="-mt-2 mb-1">  7. Suspension and termination</h1>
+   <h1 class="mt-[-40px] mb-1">  7. Suspension and termination</h1>
     1.  Either you or we may terminate these Terms (and your access to Forum) at any time for any reason.
     2.  If you breach any of the terms of these Terms, we may immediately do any or all of the following (without limitation):
         1.  issue a warning to you;
@@ -180,14 +180,14 @@ export default function getTermsAndConditions(network: string) {
         2.  you must immediately cease all activities authorised by these Terms, including your use of any services provided through the Forum.
 </div>
 <div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF; color: #243A57">
-   <h1 class="mb-0">  8. Changes to these Terms</h1>
+   <h1 class="mt-[-40px] mb-1">  8. Changes to these Terms</h1>
         We may make changes to these terms from time to time (if, for example, there is a change in the law that means we need to change 
         these Terms).We will give you at least thirty days' advance notice of such changes. If you do not wish to continue using the Forum following 
         the changes, you can cancel your agreement to these Terms by cancelling your Account. Your continued use of the Forum following the 
         prior notification of the amended terms will be understood as your acceptance of the new terms.
 </div>
 <div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF;color: #243A57 ">
-   <h1 class="mb-0">  9. Other important information</h1>
+   <h1 class="mt-[-40px] mb-1">  9. Other important information</h1>
     1.  Each of the clauses of these Terms operates separately. If any court or relevant authority decides that any of them are unlawful or 
         unenforceable, the remaining clauses will remain in full force and effect.
     2.  If we fail to insist that you perform any of your obligations under these Terms, or if we do not enforce our rights against you, or if we delay in
@@ -198,8 +198,8 @@ export default function getTermsAndConditions(network: string) {
         [http://ec.europa.eu/consumers/odr/]. This link is provided as required by Regulation (EU) No 524/2013 of the European Parliament and of the 
         Council, for information purposes only. We are not obliged to participate in online dispute resolution.
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF;color: #243A57 ">
-   <h1 class="-mt-2 mb-1">  10. Governing law and jurisdiction</h1>
+<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57 ">
+   <h1 class="mt-[-40px] mb-1">  10. Governing law and jurisdiction</h1>
   If you are a business
   1.  These Terms are governed by Estonian law. This means that your access to and use of the Forum, and any dispute or claim arising out of or in 
       connection therewith will be governed by Estonian law.
@@ -218,14 +218,14 @@ export default function getTermsAndConditions(network: string) {
       mandatory provisions of local law.
 
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF; color: #243A57">
-   <h1 class="-mt-2 mb-1">  11. Contacting us</h1>
+<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF; color: #243A57">
+   <h1 class="mt-[-40px] mb-1">  11. Contacting us</h1>
      Should you have any reasons for a complaint, we will endeavour to resolve the issue and avoid any re-occurrence in the future.You can always 
      contact us by using the following details:        
      Address: Tornimäe tn 7, Kesklinna linnaosa, Tallinn, Harju maakond, 10145  
      Email address: contact@premiurly.in
   </div>
-  <div  style="border-radius:20px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:32px;  background:#FFFFFF; color: #243A57">
+  <div  style="border-radius:20px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF; color: #243A57">
       Thank you.
       Terms last updated 27th August 2020
   </div>

@@ -24,12 +24,13 @@ interface IPostCommentFormProps {
 	isUsedInSuccessModal?: boolean;
 	textBoxHeight?: number;
 	voteDecision? :string
+	setSuccessModalOpen?: (pre: boolean) => void;
 }
 
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className , isUsedInSuccessModal = false , textBoxHeight = 200 , voteDecision = null } = props;
+	const { className , isUsedInSuccessModal = false , textBoxHeight = 200 , voteDecision = null, setSuccessModalOpen = () => {return null; } } = props;
 	const { id, username } = useUserDetailsContext();
 	const { postData: { postIndex, postType }, setPostData } = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
@@ -90,6 +91,9 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			form.setFieldValue('content', '');
 			global.window.localStorage.removeItem(commentKey());
 			postIndex && createSubscription(postIndex);
+			if(isUsedInSuccessModal){
+				setSuccessModalOpen(false);
+			}
 			queueNotification({
 				header: 'Success!',
 				message: 'Comment created successfully.',

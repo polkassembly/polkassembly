@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Button, Modal, message } from 'antd';
 import CloseIcon from '~assets/icons/close.svg';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
@@ -19,6 +19,7 @@ import RedirectIcon from '~assets/icons/redirect.svg';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrackCard';
 
 interface Props{
   className?: string;
@@ -33,11 +34,30 @@ interface Props{
   postId: number;
 }
 
+const getDefaultTrackMetaData = () => {
+	return {
+		confirmPeriod: '',
+		decisionDeposit: '',
+		decisionPeriod: '',
+		description: '',
+		group: '',
+		maxDeciding: '',
+		minEnactmentPeriod: '',
+		preparePeriod: '',
+		trackId: 0
+	};
+};
+
 const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount, preimageHash, proposerAddress, beneficiaryAddress, preimageLength, selectedTrack, postId }: Props) => {
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
 	const router = useRouter();
+	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
+
+	useEffect(() => {
+		setTrackMetaData(getTrackData(network, selectedTrack));
+	}, [network, selectedTrack]);
 
 	const success = (message: string) => {
 		messageApi.open({
@@ -93,7 +113,7 @@ const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount,
 					</span>
 				</div>
 			</div>}
-			<Alert showIcon type='warning' className='rounded-[4px] m-2 text-sm w-full' message={<span className='text-sm font-medium text-bodyBlue'>Place a decision deposit in X days to prevent your proposal from being timed out.</span>} description={<span className='text-xs text-pink_primary font-medium cursor-pointer' onClick={() => router.push(`https://${network}.polkassembly.io/referenda/${postId}`)}>Pay Decision Deposit</span>} />
+			<Alert showIcon type='warning' className='rounded-[4px] m-2 text-sm w-full' message={<span className='text-sm font-medium text-bodyBlue'>Place a decision deposit in {blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))} days to prevent your proposal from being timed out.</span>} description={<span className='text-xs text-pink_primary font-medium cursor-pointer' onClick={() => router.push(`https://${network}.polkassembly.io/referenda/${postId}`)}>Pay Decision Deposit</span>} />
 		</div>
 
 	</Modal>;

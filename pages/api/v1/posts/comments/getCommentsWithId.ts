@@ -12,20 +12,14 @@ import { ITimelineComments } from './getCommentByPostId';
 import { MessageType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getCommentsWithId = async ({ postId, network, postType, pageSize, commentId }: {
 	postId: string, network: string, pageSize: number, postType: ProposalType, commentId: string
 }) => {
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(postId);
 		const sortingField = 'created_at';
-		let commentsSnapshot;
-		commentsSnapshot = await postRef.collection('comments').doc(commentId).get();
-		if (!commentsSnapshot.exists) {
-			commentsSnapshot = await postRef.collection('comments').orderBy(sortingField, 'asc').get();
-		}
-		else {
-			commentsSnapshot = await postRef.collection('comments').orderBy(sortingField, 'asc').limit(pageSize).get();
-		}
+		const commentsSnapshot = await postRef.collection('comments').orderBy(sortingField, 'asc').get();
 		const comments = await getComments(commentsSnapshot, postRef, network, postType, postId);
 		const count = (await postRef.collection('comments').get()).size;
 

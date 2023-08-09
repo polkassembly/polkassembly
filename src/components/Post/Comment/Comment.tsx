@@ -16,6 +16,7 @@ import EditableCommentContent from './EditableCommentContent';
 import Replies from './Replies';
 import { ICommentHistory } from '~src/types';
 import CommentHistoryModal from '~src/ui-components/CommentHistoryModal';
+import { ProfileDetailsResponse } from '~src/auth/types';
 
 export interface IComment {
 	user_id: number;
@@ -32,7 +33,7 @@ export interface IComment {
   history?: ICommentHistory[];
   spam_users_count?: number;
   is_custom_username?: boolean;
-  profile?:string;
+  profile?:ProfileDetailsResponse;
 	post_index?: number;
 	post_type?: string;
 }

@@ -200,12 +200,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			if(!currentTimeline){
 				return;
 			}
-			const comment = comments[currentTimeline.index].find(a => {
-				return a.id === commentId;
-			});
-			if(comment){
-				return;
-			}
 			for(let i = 0; i < timelines.length; i++){
 				if(timelines[i].commentsCount === 0){
 					continue;
@@ -219,9 +213,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				if(isCommentExit){
 					break;
 				}
-				if(comments[timelines[i].index].length < timelines[i].commentsCount){
-					i--;
-				}
+				console.log(comments);
 			}
 			setComments(comments);
 		}

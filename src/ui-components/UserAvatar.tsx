@@ -14,7 +14,7 @@ interface Props {
 	username: string | null
 	id: number | null
 	size?: AvatarSize;
-	profile?:string
+	profile?:ProfileDetailsResponse
 }
 
 const UserAvatar = ({ className, id, username, size, profile }: Props) => {
@@ -41,7 +41,7 @@ const UserAvatar = ({ className, id, username, size, profile }: Props) => {
 	}, [getUserDetails, profile]);
 
 	return (
-		(profile || userProfileData?.image) ? <Avatar className={className} src={profile || userProfileData?.image} size={size} />
+		(profile?.image || userProfileData?.image) ? <Avatar className={className} src={profile?.image || userProfileData?.image} size={size} />
 			: <Avatar className={`${className}`} style={{ backgroundColor: color }} size={size} shape='circle'>{username?.substring(0, 1).toUpperCase()}</Avatar>
 	);
 };

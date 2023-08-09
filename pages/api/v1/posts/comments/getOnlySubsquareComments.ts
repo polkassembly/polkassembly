@@ -15,7 +15,7 @@ export const getSubsquareCommentsFromFirebase = async ({ postId, network, postTy
 }) => {
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(postId);
-		const commentsSnapshot = await postRef.collection('comments').where('source','==' ,'subsquare').get();
+		const commentsSnapshot = await postRef.collection('comments').where('comment_source','==' ,'subsquare').get();
 		const commentId = commentsSnapshot.docs.map(doc => doc.id);
 		return {
 			data: commentId,

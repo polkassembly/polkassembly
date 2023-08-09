@@ -339,6 +339,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 
 			const comment = {
 				comment_reactions: comment_reactions,
+				comment_source: data.comment_source || 'polkassembly',
 				content: data.content,
 				created_at: data.created_at?.toDate ? data.created_at.toDate(): data.created_at,
 				history: history,
@@ -347,8 +348,8 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				post_index: postIndex,
 				post_type: postType,
 				profile: user?.profile || null,
-				proposer: '',
-				replies: [] as any[],
+				proposer: data.proposer || '',
+				replies: data.replies || [] as any[],
 				sentiment:data.sentiment || 0,
 				spam_users_count: 0,
 				updated_at: getUpdatedAt(data),
@@ -404,7 +405,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 						reportsQuery.docs.map((doc) => {
 							if (doc && doc.exists) {
 								const data = doc.data();
-								comment.replies = comment.replies.map((v) => {
+								comment.replies = comment.replies.map((v:any) => {
 									if (v && v.id == data.content_id) {
 										return {
 											...v,
@@ -420,7 +421,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			}
 			return {
 				...comment,
-				replies: comment.replies.map((reply) => {
+				replies: comment.replies.map((reply:any) => {
 					return {
 						...reply,
 						spam_users_count: checkReportThreshold(Number(reply?.spam_users_count))
@@ -895,10 +896,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const { data: commentIds } = await getSubsquareCommentsFromFirebase({ network, postId: postId as string, postType:proposalType as ProposalType });
 		let comments = await getSubSquareComments(proposalType as string, network, postId as string);
 		commentIds?.forEach(id => {
-			comments = comments.filter(comment => comment.id!== id);
+			comments = comments.filter(comment => comment.id !== id);
 		});
-
-		await updateComments(postId as string, network, proposalType as ProposalType, comments);
+		if(comments.length > 0){
+			await updateComments(postId as string, network, proposalType as ProposalType, comments);
+		}
 
 		// get initial comments
 		const initialCommentsData = await getInitialComments(post.timeline, network);

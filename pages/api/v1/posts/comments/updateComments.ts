@@ -15,7 +15,7 @@ export const updateComments = async (postId: string, network: string, postType: 
 		const postRef = postsByTypeRef(network, postType).doc(postId);
 		for(const comment of comments){
 			const commentRef = await postRef.collection('comments').doc(comment.id);
-			await commentRef.set({ ...comment, username:'' });
+			await commentRef.set({ ...comment });
 		}
 		return {
 			error: null,

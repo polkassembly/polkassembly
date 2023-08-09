@@ -23,7 +23,7 @@ export interface IComment {
   history?: ICommentHistory[];
   spam_users_count?: number;
   is_custom_username?: boolean;
-  profile?:string;
+  profile?: any;
 }
 
 export function getStatus(type: string) {
@@ -91,7 +91,7 @@ export const getInitialComments = async (timeline:any, network:string ) => {
 			postId: data.index.toString(),
 			postType
 		})).data;
-		comments[data.index] =res ? [...comments[data.index], ...res.comments] : comments[data.index];
+		comments[data.index] = res? [...comments[data.index], ...res.comments]: comments[data.index];
 		const timelinePayload = { ...data, firstCommentId: comments[data.index]?.[0]?.id || '' };
 		currentTimeline = timelinePayload;
 		if(Object.values(comments).flat().length >= COMMENT_SIZE) {

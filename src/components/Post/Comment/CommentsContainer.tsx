@@ -370,7 +370,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			<div className={'block xl:grid grid-cols-12'}>
 				{
 					!!allComments?.length && timelines.length >= 1 &&
-					<div className='hidden h-auto xl:block col-start-1 col-end-2 min-w-[100px] sticky top-[10%] ml-1'>
+					<div className='hidden h-min xl:block col-start-1 col-end-2 min-w-[100px] sticky top-[110px] ml-1 mb-[65px]'>
 						<Anchor targetOffset={targetOffset} className='h-full min-w-[140px]' onClick={handleTimelineClick}>
 							{timelines.map((timeline) => {
 								return (
@@ -387,14 +387,14 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											{comments[timeline.index]?.[0]?.id ? <AnchorLink
 												href={`#${comments[timeline.index]?.[0]?.id}`}
 												title={
-													<div className='flex flex-col text-lightBlue'>
+													<div className='flex flex-col text-lightBlue sticky top-10'>
 														<div className='text-xs mb-1'>{timeline.date.format('MMM Do')}</div>
 														<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{timeline.status}</div>
 														<div className='text-xs'>({timeline.commentsCount})</div>
 													</div>
 												}
 											/>:
-												<div className='flex flex-col text-lightBlue ml-5 cursor-pointer'>
+												<div className='flex flex-col text-lightBlue ml-5 cursor-pointer sticky top-10'>
 													<div className='text-xs mb-1'>{timeline.date.format('MMM Do')}</div>
 													<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{timeline.status}</div>
 													<div className='text-xs'>({timeline.commentsCount})</div>
@@ -402,7 +402,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 											}
 										</div>
 										:
-										<div key={timeline.id} className='flex flex-col ml-5 cursor-default text-lightBlue'>
+										<div key={timeline.id} className='flex flex-col ml-5 cursor-default text-lightBlue sticky top-10'>
 											<div className='text-xs mb-1'>{timeline.date.format('MMM Do')}</div>
 											<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{timeline.status}</div>
 											<div className='text-xs'>({timeline.commentsCount})</div>

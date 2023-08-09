@@ -3,13 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 export default function getTermsAndConditions(network: string) {
-	return `<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57">
+	return `<div class="max-w-full" style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57">
   <h1 class="mt-[-40px] mb-1">  Polkassembly End User Agreement</h1> 
     Premiurly OÜ is a company registered in Estonia under company number 16162207 with its registered office at Tornimäe tn 7, Kesklinna linnaosa, 
     Tallinn,Harju maakond, 10145 (the "**Company**"). The Company operates Polkassembly (the "**Forum**") on https://${network}.polkassembly.io 
     (the "**Website**").
   </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57 ">
+<div class="max-w-full" style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57 ">
     <h1 class="mt-[-40px] mb-1">  1. Understanding these terms</h1>    
     1.  This end user agreement (the "**Terms**") describes how you may access and use the Forum and any services made available through the 
          Forum via the Website,any mobile applications made available by the Company and any other distribution channels made available by the 
@@ -20,28 +20,28 @@ export default function getTermsAndConditions(network: string) {
         Where a defined term is used, it has the meaning given to it in the section of these Terms where it was defined (you can find these 
         meanings by looking at the sentence where the defined term is included in brackets and speech marks).
     3.  In this document, when we refer to "we", "us" or "our", we mean the Company; and when we refer to "you" or "your" we mean the 
-        person accessing or using the person accessing or using the Forum.
+         person accessing or using the person accessing or using the Forum.
     4.  Please note that:
-      1.  your use of the Website is governed by our website terms of use (available https://${network}.polkassembly.io/terms-and-conditions), 
-         in the case of any inconsistency between any provisions of those website terms of use and any of the clauses of this end user agreement, 
-         the clauses of this end user agreement shall prevail;
-      2.  the Website uses cookies, the use of which are governed by our cookies policy (available https://premiurly.in/policy/);
-      3.  we only use your personal information in accordance with our privacy notice (available https://${network}.polkassembly.io/privacy).
+        1.your use of the Website is governed by our website terms of use (available https://${network}.polkassembly.io/terms-and-conditions), 
+          in the case of any inconsistency between any provisions of those website terms of use and any of the clauses of this end user agreement, 
+          the clauses of this end user agreement shall prevail;
+        2.the Website uses cookies, the use of which are governed by our cookies policy (available https://premiurly.in/policy/);
+        3.we only use your personal information in accordance with our privacy notice (available https://${network}.polkassembly.io/privacy).
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF;color: #243A57 ">
+<div class="max-w-full" style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF;color: #243A57 ">
    <h1 class="mt-[-40px] mb-1">  2. The Forum</h1>
     1.  The Forum is made available free of charge. We do not guarantee that the Forum, or any content on it, will always be available or be 
          uninterrupted. Access to the Forum is permitted on a temporary basis. We may suspend, withdraw, discontinue or change all or any 
          part of the Forum without notice. We will not be liable to you if for any reason the Forum is unavailable at any time or for any period.
          We may update the Forum and/or change the content on it at any time.
     2.  You are responsible for making all arrangements necessary for you to have access to the Forum. You are also responsible for ensuring that all 
-        persons who access the Forum through your internet connection are aware of these Terms and that they comply with them.
+         persons who access the Forum through your internet connection are aware of these Terms and that they comply with them.
     3.  The Forum and the content on it are provided for general information purposes only. They are not intended to amount to advice on which 
          you should rely.
     
 </div>
    
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF; color: #243A57">
+<div class="max-w-full" style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF; color: #243A57">
   <h1 class="mt-[-40px] mb-1">  3. Your account and password</h1>
     1.  You will need to register an account with us on the Website in order to use the Services and gain access to the Forum ("**Account**"). 
         You can register via our official website (at https://${network}.polkassembly.io/signup). In order to register for an Account, you must be aged 18 
@@ -55,59 +55,59 @@ export default function getTermsAndConditions(network: string) {
         authority to bind such entity to these Terms.
 
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57 ">
+<div class="max-w-full" style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57 ">
    <h1 class="mt-[-40px] mb-1">  4. Acceptable use</h1>
-  General
-  1.  You agree  1.not to use the Forum in any unlawful manner, for any unlawful purpose or in any manner inconsistent with these Terms; 
-  2.  not to infringe our intellectual property rights or those of any third party in relation to your use of the Forum 
-      (to the extent that such use if not licensed under these Terms); 
-  3.  not to transmit any material that is defamatory, offensive or otherwise objectionable in relation to your use of the Forum; 4.not to use the 
-      Forum by automated means or otherwise for the purposes of scraping, extracting or otherwise obtaining any material from the Forum for use 
+   General
+   1.  You agree  1.not to use the Forum in any unlawful manner, for any unlawful purpose or in any manner inconsistent with these Terms; 
+   2.  not to infringe our intellectual property rights or those of any third party in relation to your use of the Forum 
+       (to the extent that such use if not licensed under these Terms); 
+   3.  not to transmit any material that is defamatory, offensive or otherwise objectionable in relation to your use of the Forum; 4.not to use the 
+       Forum by automated means or otherwise for the purposes of scraping, extracting or otherwise obtaining any material from the Forum for use 
        within a third party website or application; 5.not to collect or harvest any information or data from our systems or attempt to decipher any 
        transmission to or from the servers running the Website ;6.not to copy, or otherwise reproduce or re-sell any part of the Forum unless expressly 
        permitted to do so in these Terms;7.not to access, query or search the Forum with any automated system,other than through our published
        interfaces and pursuant to their applicable terms; and 8.not to create multiple accounts to evade punishment or avoid restrictions.
    User Generated Content
-   If it is the case that you supply/upload any content to the Forum – whether it be pictures, text, sound recordings or whatever – 
-   the content you supply ("**User Generated Content**") must comply with the following rules:
-    1.  it must not be obscene, abusive, offensive or racist and it must not promote or propose hatred or physical harm against anyone;
-    2.  it must not harass, bully, insult or intimidate another person;
-    3.  it must be true and honest so far as you know;
-    4.  it must not constitute pornography or be sexual or sexually suggestive involving minors;
-    5.  it must not be defamatory of anyone;
-    6.  it must not use the material or content or infringe the rights or privacy of anyone else; for example you should not use images of well-known 
-        characters, footage or music (unless it is your own);
-    7.  it must not contain someone else’s personal details or confidential information relating to other people;
-    8.  it must not promote discrimination, whether based on race, sex, religion, nationality, disability, sexual orientation or age
-    9.  it must not promote or condone terrorism, violence or illegal behaviour;
-    10. it must not be harmful to minors in any way;
-    11. it must not promote any illegal activity or otherwise be unlawful;
-    12. it must not impersonate any person, or misrepresent your identity or affiliation with any person; and
-    13. it must not give the impression that it emanates from or is endorsed by Premiurly, if this is not the case.
-  2.  We reserve the right to refuse to accept or refuse or cease to use any User Generated Content supplied by any person that we think 
-      contravenes these Terms or otherwise may create liability for us.3.We take no responsibility for, and we do not expressly or implicitly endorse, 
-      any User Generated Content. By submitting your User Generated Content, you represent and warrant that you have all rights, power and 
-      authority necessary to grant the rights to such User Generated Content as set out in these Terms. As you alone are responsible for your User 
-      Generated Content, you may expose yourself to liability if you post or share User Generated Content without all necessary rights.
-      4.We do not oversee, monitor or moderate any User Generated Content which is uploaded to the Forum. If you become aware of 
-      any User Generated Content that breaches clause 4.2 above, please use the report button or contact us on contact@premiurly.in,
-      providing details of: (i) the date on which it was posted and where it can be found on the Forum; (ii) the name and surname of the author or, 
-      if the author is a legal person, the author's business name; (iii) reasons why the content should be deleted; and (vi) copies of any 
-      communication with the author (if any).  
-   Viruses
-     1.  We do not guarantee that the Website will be totally secure or free from bugs or viruses. You are responsible for configuring your 
-         information technology, computer programmes and platform in order to access the Website and we recommend that you use your own virus
-         protection software.
-     2.  You must not misuse the Website by knowingly introducing viruses, trojans, worms, logic bombs or other material which is malicious or 
-         technologically harmful. You must not attempt to gain unauthorised access to the Website, the server on which the Website is stored or any 
-         server, computer or database connected to the Website. You must not attack the Website via a denial-of-service attack or a distributed 
-         denial-of service attack. By breaching this provision, you would commit criminal offences. We will report any such breach to the relevant 
-         law enforcement authorities and we will cooperate with those authorities by disclosing your identity to them. In the event of such a breach,
-         your right to use the Website will cease immediately.
+    If it is the case that you supply/upload any content to the Forum – whether it be pictures, text, sound recordings or whatever the content you 
+    supply ("**User Generated Content**") must comply with the following rules:
+     1.  it must not be obscene, abusive, offensive or racist and it must not promote or propose hatred or physical harm against anyone;
+     2.  it must not harass, bully, insult or intimidate another person;
+     3.  it must be true and honest so far as you know;
+     4.  it must not constitute pornography or be sexual or sexually suggestive involving minors;
+     5.  it must not be defamatory of anyone;
+     6.  it must not use the material or content or infringe the rights or privacy of anyone else; for example you should not use images of well-known 
+          characters, footage or music (unless it is your own);
+     7.  it must not contain someone else’s personal details or confidential information relating to other people;
+     8.  it must not promote discrimination, whether based on race, sex, religion, nationality, disability, sexual orientation or age
+     9.  it must not promote or condone terrorism, violence or illegal behaviour;
+     10. it must not be harmful to minors in any way;
+     11. it must not promote any illegal activity or otherwise be unlawful;
+     12. it must not impersonate any person, or misrepresent your identity or affiliation with any person; and
+     13. it must not give the impression that it emanates from or is endorsed by Premiurly, if this is not the case.
+         We reserve the right to refuse to accept or refuse or cease to use any User Generated Content supplied by any person that we think 
+         contravenes these Terms or otherwise may create liability for us.3.We take no responsibility for, and we do not expressly or implicitly endorse, 
+         any User Generated Content. By submitting your User Generated Content, you represent and warrant that you have all rights, power and 
+         authority necessary to grant the rights to such User Generated Content as set out in these Terms. As you alone are responsible for your User 
+         Generated Content, you may expose yourself to liability if you post or share User Generated Content without all necessary rights.
+         4.We do not oversee, monitor or moderate any User Generated Content which is uploaded to the Forum. If you become aware of 
+         any User Generated Content that breaches clause 4.2 above, please use the report button or contact us on contact@premiurly.in,
+         providing details of: (i) the date on which it was posted and where it can be found on the Forum; (ii) the name and surname of the author or, 
+         if the author is a legal person, the author's business name; (iii) reasons why the content should be deleted; and (vi) copies of any 
+         communication with the author (if any).  
+     Viruses
+      1.  We do not guarantee that the Website will be totally secure or free from bugs or viruses. You are responsible for configuring your 
+          information technology, computer programmes and platform in order to access the Website and we recommend that you use your own 
+          virus protection software.
+      2.  You must not misuse the Website by knowingly introducing viruses, trojans, worms, logic bombs or other material which is malicious or 
+          technologically harmful. You must not attempt to gain unauthorised access to the Website, the server on which the Website is stored or any 
+          server, computer or database connected to the Website. You must not attack the Website via a denial-of-service attack or a distributed 
+          denial-of service attack. By breaching this provision, you would commit criminal offences. We will report any such breach to the relevant 
+          law enforcement authorities and we will cooperate with those authorities by disclosing your identity to them. In the event of such a breach,
+          your right to use the Website will cease immediately.
 
 </div>
 
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF; color: #243A57">
+<div class="max-w-full" style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF; color: #243A57">
 
    <h1 class="mt-[-40px] mb-1">  5. Intellectual property</h1>
     1.  We grant to you a non-transferable, non-exclusive, revocable licence to use the Forum provided that you comply with these Terms and the
@@ -130,7 +130,7 @@ export default function getTermsAndConditions(network: string) {
          partner with us. You also agree that we may remove metadata associated with your User Generated Content, and you irrevocable waive any 
          claims and assertions of moral rights or attribution with respect to your User Generated Content.
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57 ">
+<div class="max-w-full" style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57 ">
    <h1 class="mt-[-40px] mb-1">  6. Our liability</h1>
     1.  Nothing in these Terms excludes or limits our liability for:
         1.  death or personal injury caused by our negligence;
@@ -152,7 +152,7 @@ export default function getTermsAndConditions(network: string) {
    If you are a consumer
         If you are acting for purposes that are wholly or mainly outside your trade, business, craft or profession then, save as set out in clause 6.1,
         the following sub-clauses apply.
-       1.If we fail to comply with these Terms, we are responsible for loss or damage you suffer that is a foreseeable result of our breach of these 
+        1.If we fail to comply with these Terms, we are responsible for loss or damage you suffer that is a foreseeable result of our breach of these 
          Terms or our negligence,but we are not responsible for any loss or damage that is not foreseeable. Loss or damage is foreseeable if it was an
          obvious consequence of our breach or if it was contemplated by you and us at the time that you accessed the Forum 2.  Our total liability to 
          you for any loss or damage arising out of or in connection with these Terms, whether in contract (including under any indemnity),
@@ -162,31 +162,31 @@ export default function getTermsAndConditions(network: string) {
          business interruption, or loss of business opportunity.
 
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57">
+<div class="max-w-full" style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57">
 
-   <h1 class="mt-[-40px] mb-1">  7. Suspension and termination</h1>
-    1.  Either you or we may terminate these Terms (and your access to Forum) at any time for any reason.
-    2.  If you breach any of the terms of these Terms, we may immediately do any or all of the following (without limitation):
-        1.  issue a warning to you;
-        2.  temporarily or permanently remove any User Generated Content uploaded by you to the Forum;
-        3.  temporarily or permanently withdraw your right to use the Forum;
-        4.  suspend or terminate your Account;
-        5.  issue legal proceedings against you for reimbursement of all costs resulting from the breach (including, but not limited to,
-            reasonable administrative and legal costs);
-        6.  take further legal action against you; and/or
-        7.  disclose such information to law enforcement authorities as we reasonably feel is necessary to do so.
-    3.  If we withdraw your right to use the Forum, then:
-        1.  all rights granted to you under these Terms shall cease; and
-        2.  you must immediately cease all activities authorised by these Terms, including your use of any services provided through the Forum.
+   <h1 class="mt-[-40px] mb-1">   7. Suspension and termination</h1>
+      1.  Either you or we may terminate these Terms (and your access to Forum) at any time for any reason.
+      2.  If you breach any of the terms of these Terms, we may immediately do any or all of the following (without limitation):
+           1.  issue a warning to you;
+           2.  temporarily or permanently remove any User Generated Content uploaded by you to the Forum;
+           3.  temporarily or permanently withdraw your right to use the Forum;
+           4.  suspend or terminate your Account;
+           5.  issue legal proceedings against you for reimbursement of all costs resulting from the breach (including, but not limited to,
+                reasonable administrative and legal costs);
+           6.  take further legal action against you; and/or
+           7.  disclose such information to law enforcement authorities as we reasonably feel is necessary to do so.
+       3. If we withdraw your right to use the Forum, then:
+           1.  all rights granted to you under these Terms shall cease; and
+          2.  you must immediately cease all activities authorised by these Terms, including your use of any services provided through the Forum.
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF; color: #243A57">
-   <h1 class="mt-[-40px] mb-1">  8. Changes to these Terms</h1>
+<div  class="max-w-full "style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF; color: #243A57">
+   <h1 class="mt-[-40px] mb-1">    8. Changes to these Terms</h1>
         We may make changes to these terms from time to time (if, for example, there is a change in the law that means we need to change 
         these Terms).We will give you at least thirty days' advance notice of such changes. If you do not wish to continue using the Forum following 
         the changes, you can cancel your agreement to these Terms by cancelling your Account. Your continued use of the Forum following the 
         prior notification of the amended terms will be understood as your acceptance of the new terms.
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF;color: #243A57 ">
+<div class="max-w-full" style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding: 32px;  background:#FFFFFF;color: #243A57 ">
    <h1 class="mt-[-40px] mb-1">  9. Other important information</h1>
     1.  Each of the clauses of these Terms operates separately. If any court or relevant authority decides that any of them are unlawful or 
         unenforceable, the remaining clauses will remain in full force and effect.
@@ -198,34 +198,34 @@ export default function getTermsAndConditions(network: string) {
         [http://ec.europa.eu/consumers/odr/]. This link is provided as required by Regulation (EU) No 524/2013 of the European Parliament and of the 
         Council, for information purposes only. We are not obliged to participate in online dispute resolution.
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57 ">
+<div class="max-w-full" style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF;color: #243A57 ">
    <h1 class="mt-[-40px] mb-1">  10. Governing law and jurisdiction</h1>
-  If you are a business
-  1.  These Terms are governed by Estonian law. This means that your access to and use of the Forum, and any dispute or claim arising out of or in 
+    If you are a business
+    1.  These Terms are governed by Estonian law. This means that your access to and use of the Forum, and any dispute or claim arising out of or in 
       connection therewith will be governed by Estonian law.
-  2.  The courts of Estonia will have non-exclusive jurisdiction over any disputes between us and you (including non-contractual disputes or 
+    2.  The courts of Estonia will have non-exclusive jurisdiction over any disputes between us and you (including non-contractual disputes or 
       claims).
-  If you are a consumer
-  1.  These Terms are governed by the laws of Estonia. This means that your access to and use of the Forum, and any dispute or claim arising out or
-      in connection therewith (including non-contractual disputes or claims), will be governed by Estonian law.
-  2.  You may bring any dispute which may arise under these Terms to – at your discretion - either the competent court of Estonia, or to the 
-      competent court of your country of habitual residence if this country of habitual residence is an EU Member State, which courts are – with the 
-      exclusion of any other court - competent to settle any of such a dispute. We shall bring any dispute which may arise under these Terms to the 
-      competent court of your country of habitual residence if this is in an EU Member State, or otherwise the competent court of Estonia.
-  3.  As a consumer, if you are resident in the European Union and we direct the Forum to (and/or pursue our commercial or professional 
-      activities in relation to the Forum in) the EU Member State in which you are resident, you will benefit from any mandatory provisions of the 
-      law of the country in which you are resident. Nothing in these Terms, including clause 10.3, affects your rights as a consumer to rely on such 
-      mandatory provisions of local law.
+    If you are a consumer
+    1. These Terms are governed by the laws of Estonia. This means that your access to and use of the Forum, and any dispute or claim arising out or
+       in connection therewith (including non-contractual disputes or claims), will be governed by Estonian law.
+    2. You may bring any dispute which may arise under these Terms to – at your discretion - either the competent court of Estonia, or to the 
+       competent court of your country of habitual residence if this country of habitual residence is an EU Member State, which courts are – with the 
+       exclusion of any other court - competent to settle any of such a dispute. We shall bring any dispute which may arise under these Terms to the 
+       competent court of your country of habitual residence if this is in an EU Member State, or otherwise the competent court of Estonia.
+    3. As a consumer, if you are resident in the European Union and we direct the Forum to (and/or pursue our commercial or professional 
+       activities in relation to the Forum in) the EU Member State in which you are resident, you will benefit from any mandatory provisions of the 
+       law of the country in which you are resident. Nothing in these Terms, including clause 10.3, affects your rights as a consumer to rely on such 
+       mandatory provisions of local law.
 
 </div>
-<div  style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF; color: #243A57">
-   <h1 class="mt-[-40px] mb-1">  11. Contacting us</h1>
+<div class="max-w-full" style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF; color: #243A57">
+   <h1 class="mt-[-40px] mb-1">   11. Contacting us</h1>
      Should you have any reasons for a complaint, we will endeavour to resolve the issue and avoid any re-occurrence in the future.You can always 
      contact us by using the following details:        
      Address: Tornimäe tn 7, Kesklinna linnaosa, Tallinn, Harju maakond, 10145  
      Email address: contact@premiurly.in
   </div>
-  <div  style="border-radius:20px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; padding:40px 32px;  background:#FFFFFF; color: #243A57">
+  <div class="max-w-full" style="border-radius:14px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 30px 0px; class="mb-0"  background:#FFFFFF; color: #243A57">
       Thank you.
       Terms last updated 27th August 2020
   </div>

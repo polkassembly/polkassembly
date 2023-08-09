@@ -230,12 +230,14 @@ const VoteInitiatedModal = ({
 								{votedAt}
 							</span>
 						</div>
+						{ multisig &&
 						<div className='flex h-[21px] gap-11 text-sm text-[#485F7D] font-normal'>
                             Vote Link:{' '}
 							<span className='font-medium text-bodyBlue'>
 								<a className='text-pink_primary' href='https://app.polkasafe.xyz/transactions' target='_blank' rel="noreferrer">Polkasafe</a>
 							</span>
 						</div>
+						}
 					</div>
 				</div>
 			</div>

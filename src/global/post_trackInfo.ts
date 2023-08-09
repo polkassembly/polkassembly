@@ -1634,6 +1634,138 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			}
 		}
 	},
+	moonbeam: {
+		[PostOrigin.ROOT] : {
+			'trackId': 0,
+			'description': 'Origin for General network-wide improvements',
+			'group': 'Main',
+			'name': 'root',
+			'maxDeciding': 5,
+			'decisionDeposit': '0x000000000000152d02c7e14af6800000',
+			'preparePeriod': 7200,
+			'decisionPeriod': 100800,
+			'confirmPeriod': 7200,
+			'minEnactmentPeriod': 7200,
+			'minApproval': {
+				'reciprocal': {
+					'factor': 999999999,
+					'xOffset': 999999999,
+					'yOffset': 0
+				}
+			},
+			'minSupport': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 5000000,
+					'ceil': 250000000
+				}
+			}
+		},
+		[PostOrigin.WHITELISTED_CALLER] : {
+			'trackId': 1,
+			'description': 'Origin able to dispatch a whitelisted call.',
+			'group': 'Whitelist',
+			'name': 'whitelisted_caller',
+			'maxDeciding': 100,
+			'decisionDeposit': '0x000000000000021e19e0c9bab2400000',
+			'preparePeriod': 50,
+			'decisionPeriod': 100800,
+			'confirmPeriod': 50,
+			'minEnactmentPeriod': 150,
+			'minApproval': {
+				'reciprocal': {
+					'factor': 999999999,
+					'xOffset': 999999999,
+					'yOffset': 0
+				}
+			},
+			'minSupport': {
+				'reciprocal': {
+					'factor': 60061,
+					'xOffset': 2994150,
+					'yOffset': -59882
+				}
+			}
+		},
+		[PostOrigin.GENERAL_ADMIN] : {
+			'trackId': 2,
+			'description': 'Origin for managing the registrar.',
+			'group': 'Governance',
+			'name': 'general_admin',
+			'maxDeciding': 10,
+			'decisionDeposit': '0x000000000000001b1ae4d6e2ef500000',
+			'preparePeriod': 300,
+			'decisionPeriod': 100800,
+			'confirmPeriod': 7200,
+			'minEnactmentPeriod': 7200,
+			'minApproval': {
+				'reciprocal': {
+					'factor': 999999999,
+					'xOffset': 999999999,
+					'yOffset': 0
+				}
+			},
+			'minSupport': {
+				'reciprocal': {
+					'factor': 222222224,
+					'xOffset': 333333335,
+					'yOffset': -166666668
+				}
+			}
+		},
+		[PostOrigin.REFERENDUM_CANCELLER] : {
+			'trackId': 3,
+			'description': 'Origin able to cancel referenda.',
+			'group': 'Governance',
+			'name': 'referendum_canceller',
+			'maxDeciding': 20,
+			'decisionDeposit': '0x000000000000021e19e0c9bab2400000',
+			'preparePeriod': 300,
+			'decisionPeriod': 100800,
+			'confirmPeriod': 900,
+			'minEnactmentPeriod': 50,
+			'minApproval': {
+				'reciprocal': {
+					'factor': 999999999,
+					'xOffset': 999999999,
+					'yOffset': 0
+				}
+			},
+			'minSupport': {
+				'reciprocal': {
+					'factor': 787400,
+					'xOffset': 1572327,
+					'yOffset': -786164
+				}
+			}
+		},
+		[PostOrigin.REFERENDUM_KILLER] : {
+			'trackId': 4,
+			'description': 'Origin able to kill referenda.',
+			'group': 'Governance',
+			'name': 'referendum_killer',
+			'maxDeciding': 100,
+			'decisionDeposit': '0x000000000000043c33c1937564800000',
+			'preparePeriod': 300,
+			'decisionPeriod': 100800,
+			'confirmPeriod': 900,
+			'minEnactmentPeriod': 50,
+			'minApproval': {
+				'reciprocal': {
+					'factor': 999999999,
+					'xOffset': 999999999,
+					'yOffset': 0
+				}
+			},
+			'minSupport': {
+				'reciprocal': {
+					'factor': 869501,
+					'xOffset': 8620680,
+					'yOffset': -862069
+				}
+			}
+		}
+	},
 	collectives: {
 		[PostOrigin.CANDIDATES] : {
 			'fellowshipOrigin': true,

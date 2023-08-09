@@ -36,7 +36,7 @@ const Listing: FC<IListingProps> = (props) => {
 
 			const postsWithVotesData = [];
 
-			for (const post of posts) {
+			for (const post of props.posts || []) {
 				const votesData =  await getReferendumVotes(network, post.post_id);
 				postsWithVotesData.push({ ...post, votesData });
 
@@ -48,6 +48,10 @@ const Listing: FC<IListingProps> = (props) => {
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, props.posts, proposalType]);
+
+	useEffect(() => {
+		setPosts(props?.posts || []);
+	},[props.posts]);
 
 	if (!posts || !posts.length) {
 		return (

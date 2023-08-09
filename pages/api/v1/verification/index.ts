@@ -15,7 +15,8 @@ interface IReq {
 
 export enum VerificationStatus {
 	ALREADY_VERIFIED = 'Already verified',
-	VERFICATION_EMAIL_SENT = 'Verification email sent'
+	VERFICATION_EMAIL_SENT = 'Verification email sent',
+	PLEASE_VERIFY_TWITTER = 'Please verify twitter'
 }
 
 export interface IVerificationResponse {
@@ -73,19 +74,21 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 			verified: false
 		});
 	} else if (type == 'twitter') {
-		const tokenVerificationRef = firestore.collection('email_verification_tokens').doc(account);
 
-		if ((await (tokenVerificationRef.get())).exists && (await (tokenVerificationRef.get())).data()?.verified) {
+		const twitterVerification = await firestore.collection('twitter_verification_tokens').doc(account).get();
+		const data = twitterVerification.data();
+
+		if (data?.verified) {
 			return res.status(200).json({ status: VerificationStatus.ALREADY_VERIFIED });
 		} else {
-			await tokenVerificationRef.set({
+			const twitterVerificationRef = firestore.collection('twitter_verification_tokens').doc(account);
+			await twitterVerificationRef.set({
 				created_at: new Date(),
-				token: verificationToken,
 				twitter: account,
 				verified: false
 			});
 
-			return res.status(200).json({ message: verificationToken });
+			return res.status(200).json({ message: VerificationStatus.PLEASE_VERIFY_TWITTER });
 		}
 	}
 };

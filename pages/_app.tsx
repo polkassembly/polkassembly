@@ -13,6 +13,7 @@ import AppLayout from 'src/components/AppLayout';
 import CMDK from 'src/components/CMDK';
 import { UserDetailsProvider } from 'src/context/UserDetailsContext';
 import { antdTheme } from 'styles/antdTheme';
+import { SessionProvider } from 'next-auth/react';
 
 import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
@@ -52,14 +53,14 @@ export default function App({ Component, pageProps }: AppProps) {
 	}, [router.isReady]);
 
 	useEffect(() => {
-		if(!global?.window) return;
+		if (!global?.window) return;
 		const networkStr = getNetwork();
 		setNetwork(networkStr);
 	}, []);
 
-	const SplashLoader = () => <div style={{ background:'#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
+	const SplashLoader = () => <div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
 		<Image
-			style={{ left:'calc(50vw - 16px)', position:'absolute', top:'calc(50vh - 16px)' }}
+			style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}
 			width={32}
 			height={32}
 			src='/favicon.ico'
@@ -73,14 +74,16 @@ export default function App({ Component, pageProps }: AppProps) {
 				<UserDetailsProvider>
 					<ApiContextProvider network={network}>
 						<NetworkContextProvider initialNetwork={network}>
-							<>
-								{ showSplashScreen && <SplashLoader /> }
-								<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-									<NextNProgress color="#E5007A" />
-									<CMDK />
-									<AppLayout Component={Component} pageProps={pageProps} />
-								</main>
-							</>
+							<SessionProvider session={pageProps.session}>
+								<>
+									{showSplashScreen && <SplashLoader />}
+									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+										<NextNProgress color="#E5007A" />
+										<CMDK />
+										<AppLayout Component={Component} pageProps={pageProps} />
+									</main>
+								</>
+							</SessionProvider>
 						</NetworkContextProvider>
 					</ApiContextProvider>
 				</UserDetailsProvider>

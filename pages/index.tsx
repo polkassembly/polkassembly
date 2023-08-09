@@ -43,10 +43,10 @@ interface IHomeProps {
 	network: string;
 }
 
-export const getServerSideProps:GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 	const network = getNetworkFromReqHeaders(req.headers);
-	if(isOpenGovSupported(network) && !req.headers.referer) {
+	if (isOpenGovSupported(network) && !req.headers.referer) {
 		return {
 			props: {},
 			redirect: {
@@ -69,7 +69,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		})
 	};
 
-	if(chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
+	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
@@ -116,7 +116,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 
 	if (network === 'collectives') {
 		for (const trackName of Object.keys(networkTrackInfo[network])) {
-			fetches [trackName as keyof typeof fetches] =  getLatestActivityOnChainPosts({
+			fetches[trackName as keyof typeof fetches] = getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
 				proposalType: ProposalType.FELLOWSHIP_REFERENDUMS,
@@ -140,7 +140,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 };
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
-	loading: () => <Skeleton active /> ,
+	loading: () => <Skeleton active />,
 	ssr: false
 });
 
@@ -149,37 +149,41 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 
 	useEffect(() => {
 		setNetwork(network);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	return (
 		<>
-			{chainProperties[network]?.gTag ? <><Script
-				src={`https://www.googletagmanager.com/gtag/js?id=${chainProperties[network].gTag}`}
-				strategy="afterInteractive" /><Script id="google-analytics" strategy="afterInteractive">
-				{`
+
+			{
+				chainProperties[network]?.gTag ? <><Script
+					src={`https://www.googletagmanager.com/gtag/js?id=${chainProperties[network].gTag}`}
+					strategy="afterInteractive" /><Script id="google-analytics" strategy="afterInteractive">
+						{`
 					window.dataLayer = window.dataLayer || [];
 					function gtag(){dataLayer.push(arguments);}
 					gtag('js', new Date());
 
 					gtag('config', ${chainProperties[network].gTag});
 				`}
-			</Script></> : null}
+					</Script></> : null
+			}
 
-			<SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network}/>
+			< SEOHead title="Home" desc="Democratizing governance for substrate blockchains" network={network} />
 			<main>
+
 				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
 				<div className="mt-6 mx-1">
 					{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}
 				</div>
-				{ network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES &&
+				{network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES &&
 					<div className="mt-8 mx-1">
 						<TreasuryOverview />
 					</div>
 				}
 				<div className="mt-8 mx-1">
 					{
-						network !== AllNetworks.COLLECTIVES?
+						network !== AllNetworks.COLLECTIVES ?
 							<LatestActivity latestPosts={latestPosts} />
 							: <Gov2LatestActivity gov2LatestPosts={{
 								allGov2Posts: latestPosts.all,

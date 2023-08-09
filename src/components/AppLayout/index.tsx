@@ -26,6 +26,7 @@ import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const { Content, Sider } = Layout;
 

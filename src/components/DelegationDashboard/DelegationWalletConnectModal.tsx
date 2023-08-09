@@ -143,7 +143,13 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 		await getAccounts(wallet);
 	};
 
-	const handleOnBalanceChange = (balanceStr: string) => {
+	const handleOnBalanceChange = async (balanceStr: string) => {
+		if(!api || !apiReady){
+			return;
+		}
+		if(multisig){
+			balanceStr = (await api.query.system.account(multisig)).data.free.toString();
+		}
 		const [balance, isValid] = inputToBn(balanceStr, network, false);
 		isValid ? setAvailableBalance(balance) : setAvailableBalance(ZERO_BN);
 	};
@@ -236,7 +242,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 							</div>
 				}
 
-				{showMultisig && initiatorBalance.lte(totalDeposit) &&
+				{showMultisig && initiatorBalance.lte(totalDeposit) && multisig &&
 					<Alert
 						message={`The Free Balance in your selected account is less than the Minimum Deposit ${formatBnBalance(totalDeposit, { numberAfterComma: 3, withUnit: true }, network)} required to create a Transaction.`}
 						showIcon
@@ -267,6 +273,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable }: Props) => {
 												walletAddress={multisig}
 												setWalletAddress={setMultisig}
 												containerClassName='gap-[20px]'
+												showMultisigBalance={true}
 												canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
 											/> :
 											<AccountSelectionForm

@@ -13,7 +13,7 @@ export default function usePolkasafe(address?:string)  {
 	const { network } = useNetworkContext();
 	const wallet = localStorage.getItem('selectedWallet') || localStorage.getItem('loginWallet') || ''; // if user is not login only then
 	const injectedWindow = window as Window & InjectedWindow;
-	const selectedWallet = injectedWindow.injectedWeb3[wallet];
+	const selectedWallet = injectedWindow?.injectedWeb3?.[wallet];
 	const connect = async () => {
 		const injected = selectedWallet && selectedWallet.enable && await selectedWallet.enable(APPNAME);
 		if(!injected){

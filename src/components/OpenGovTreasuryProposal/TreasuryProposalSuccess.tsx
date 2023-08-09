@@ -4,8 +4,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, Modal, message } from 'antd';
-import CloseIcon from '~assets/icons/close.svg';
-import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 import { useNetworkContext } from '~src/context';
@@ -15,11 +13,13 @@ import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
-import RedirectIcon from '~assets/icons/redirect.svg';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrackCard';
+import RedirectIcon from '~assets/icons/redirect.svg';
+import CloseIcon from '~assets/icons/close.svg';
+import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 
 interface Props{
   className?: string;

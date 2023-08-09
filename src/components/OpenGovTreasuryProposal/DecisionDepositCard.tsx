@@ -23,7 +23,7 @@ import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { WalletIcon } from '../Login/MetamaskLogin';
 import { chainProperties } from '~src/global/networkConstants';
-import { formatedBalance } from '../DelegationDashboard/ProfileBalance';
+import { formatedBalance } from '~src/util/formatedBalance';
 import { formatBalance } from '@polkadot/util';
 import CloseIcon from '~assets/icons/close.svg';
 import executeTx from '~src/util/executeTx';

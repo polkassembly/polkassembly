@@ -27,7 +27,7 @@ import { blake2AsHex } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
 import { LoadingOutlined } from '@ant-design/icons';
 import { chainProperties } from '~src/global/networkConstants';
-import { formatedBalance } from '../DelegationDashboard/ProfileBalance';
+import { formatedBalance } from '~src/util/formatedBalance';
 import { useCurrentBlock } from '~src/hooks';
 import { Proposal } from '@polkadot/types/interfaces';
 import { ApiPromise } from '@polkadot/api';

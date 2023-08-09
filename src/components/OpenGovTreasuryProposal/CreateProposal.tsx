@@ -10,7 +10,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import { BN_HUNDRED, formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
-import { formatedBalance } from '../DelegationDashboard/ProfileBalance';
+import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { LoadingOutlined } from '@ant-design/icons';

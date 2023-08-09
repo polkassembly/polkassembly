@@ -18,6 +18,10 @@ import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { ReactElement } from 'react-markdown/lib/react-markdown';
+import PostCommentForm from '~src/components/Post/PostCommentForm';
+import styled from 'styled-components';
+import QuoteRight from '~assets/icons/quote-right-icon.svg';
+import QuoteLeft from '~assets/icons/quote-left-icon.svg';
 
 interface Props {
     className?: string;
@@ -66,7 +70,7 @@ const VoteInitiatedModal = ({
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} delegate`}
+			className={`${poppins.variable} ${poppins.className} delegate w-[604px]`}
 			wrapClassName={className}
 			closeIcon={<CloseIcon />}
 			onCancel={() => setOpen(false)}
@@ -76,7 +80,7 @@ const VoteInitiatedModal = ({
 		>
 			<div className='flex justify-center items-center flex-col -mt-[132px]'>
 				{icon}
-				<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-4'>
+				<h2 className='text-[20px] font-semibold tracking-[0.0015em] mt-2'>
 					{title}
 				</h2>
 				<div className='flex flex-col justify-center items-center gap-[14px]'>
@@ -235,8 +239,41 @@ const VoteInitiatedModal = ({
 					</div>
 				</div>
 			</div>
+			<div className='h-[130px] mt-3 mb-3 p-2 bg-[#185cf60a] rounded-[10px] relative border-solid border-[1px] border-[#185cf680]'>
+				<QuoteRight className='absolute top-[-10px] left-[-10px]'/>
+				<QuoteLeft className='absolute left-[520px] top-[-10px]' />
+				<p className='text-lightBlue text-[14px] font-medium mt-2 ml-8'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
+				<PostCommentForm className='mt-[5px] h-[150px] ml-2' isUsedInSuccessModal={true} textBoxHeight={40} voteDecision={vote}/>
+				<div className='bg-[#185cf60a] h-[30px] w-[30px] absolute top-[120px] left-[0px] rounded-br-[50px] border-solid border-[1px] border-[#185cf680]'></div>
+			</div>
 		</Modal>
 	);
 };
 
-export default VoteInitiatedModal;
+export default styled(VoteInitiatedModal)`
+.mde-header-group{
+	display: none !important;
+}
+.mde-tabs{
+	display: none !important;
+}
+.mde-textarea-wrapper{
+	max-width:440px !important;
+}
+.mde-text{
+	padding: 10px !important;
+	height: 40px !important;
+	border-radius: 4px !important;
+}
+.ant-avatar{
+	display: none !important;
+}
+.comment-box{
+	padding: 0px !important;
+	background-color: #ffffff1a !important;
+	height:40px !important;
+}
+.anticon-info-circle{
+	display: none !important;
+}
+`;

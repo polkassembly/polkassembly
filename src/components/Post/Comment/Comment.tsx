@@ -34,6 +34,7 @@ export interface IComment {
 	is_custom_username?: boolean;
 	post_index?: number;
 	post_type?: string;
+	vote?:string | null;
 }
 
 interface ICommentProps {
@@ -44,7 +45,7 @@ interface ICommentProps {
 
 export const Comment: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
-	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history ,spam_users_count } = comment;
+	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history ,spam_users_count, vote = null } = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
@@ -69,7 +70,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 
 	// TODO: author address
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-
+	console.log('cmnt',comment);
 	return (
 		<div className={`${className} flex gap-x-4 mb-9 `}>
 			{/* Offset div to scroll to because scrollIntoView doesn't support offset */}
@@ -89,6 +90,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					sentiment={newSentiment}
 					commentSource={comment_source}
 					spam_users_count={spam_users_count}
+					vote={vote}
 				>
 					{
 						history && history.length > 0 &&

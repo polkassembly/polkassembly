@@ -21,12 +21,15 @@ import { NotificationStatus } from '~src/types';
 
 interface IPostCommentFormProps {
 	className?: string;
+	isUsedInSuccessModal?: boolean;
+	textBoxHeight?: number;
+	voteDecision? :string
 }
 
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className } = props;
+	const { className , isUsedInSuccessModal = false , textBoxHeight = 200 , voteDecision = null } = props;
 	const { id, username } = useUserDetailsContext();
 	const { postData: { postIndex, postType }, setPostData } = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
@@ -80,7 +83,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				status: NotificationStatus.ERROR
 			});
 		}
-
+		console.log('tt',postIndex);
 		if(data) {
 			setContent('');
 			form.resetFields();
@@ -113,7 +116,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					sentiment:isSentimentPost? sentiment : 0,
 					updated_at: new Date(),
 					user_id: id as any,
-					username: username || ''
+					username: username || '',
+					vote:voteDecision
 				}]
 			}));
 		}
@@ -154,14 +158,22 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 						{ required: "Please add the  '${name}'" }
 					}
 				>
-					<ContentForm  onChange = {(content : any) => onContentChange(content)} height={200} />
-					<Form.Item>
-						<div className='flex items-center justify-end mt-[-40px]'>
-							<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center my-0 ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>
-								<CheckOutlined /> Comment
-							</Button>
-						</div>
-					</Form.Item>
+					<div className={isUsedInSuccessModal ? 'flex justify-between items-center' : ''}>
+						<ContentForm  onChange = {(content : any) => onContentChange(content)} height={textBoxHeight} className={isUsedInSuccessModal ? 'flex-auto' : ''} />
+						<Form.Item>
+							<div className={ isUsedInSuccessModal ?'ml-2' :'flex items-center justify-end mt-[-40px]'}>
+								{
+									isUsedInSuccessModal ? <Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-none h-[40px] w-[67px] hover:bg-pink_secondary flex items-center justify-center my-0 ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>
+								Post
+									</Button>
+										:
+										<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center my-0 ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>
+											<CheckOutlined /> Comment
+										</Button>
+								}
+							</div>
+						</Form.Item>
+					</div>
 				</Form>
 			</div>
 			{openModal && <CommentSentimentModal

@@ -15,6 +15,10 @@ import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon, W
 import Link from 'next/link';
 import HelperTooltip from './HelperTooltip';
 import styled from 'styled-components';
+import { EVoteDecisionType } from '~src/types';
+import { DislikeFilled, LikeFilled } from '@ant-design/icons';
+import AbstainGray from '~assets/icons/abstainGray.svg';
+import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 
 const Styled = styled.div`
     padding:0;
@@ -65,10 +69,11 @@ interface ICreationLabelProps {
   cid?:string;
   spam_users_count?:number;
   truncateUsername?:boolean;
+  vote?:string | null;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource='polkassembly', cid ,spam_users_count = 0, truncateUsername } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource='polkassembly', cid ,spam_users_count = 0, truncateUsername , vote } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 
 	const items : MenuProps['items']=[
@@ -78,7 +83,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		sentiment === 4 ? { key:4,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Slightly For</div> }:null,
 		sentiment === 5 ? { key:5,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely For</div> }:null
 	];
-
+	console.log('v',vote);
 	return <div className={`${className} flex justify-between w-[100%]`} >
 		<div className='text-xs flex flex-col md:flex-row md:items-center'>
 			<div className={'flex min-[320px]:flex-row min-[320px]:items-center w-full min-[320px]:w-auto '}>
@@ -108,6 +113,37 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 				</>}
 				{created_at && <span className='flex items-center pl-5 mt-2 md:pl-0 md:mt-0'><ClockCircleOutlined className='mx-1' />{relativeCreatedAt}</span>}
+				{vote && <div  className='flex items-center justify-center'>
+					<Divider className='ml-1 mb-[-1px] hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+					{vote === EVoteDecisionType.AYE ? (
+						<p className='mb-[-1px]'>
+							<LikeFilled className='text-[green]' />{' '}
+							<span className='capitalize font-medium text-[green]'>
+							Voted {vote}
+							</span>
+						</p>
+					) : vote === EVoteDecisionType.NAY ? (
+						<div>
+							<DislikeFilled className='text-[red]' />{' '}
+							<span className='mb-[5px] capitalize font-medium text-[red]'>
+							Voted {vote}
+							</span>
+						</div>
+					) : vote === EVoteDecisionType.SPLIT ? (
+						<div className='mb-[-1px] flex align-center justify-center'>
+							<SplitYellow className='mr-1'/>{' '}
+							<span className='capitalize font-medium text-[#FECA7E]'>
+								Voted {vote}
+							</span>
+						</div>
+					) : vote === EVoteDecisionType.ABSTAIN ? (
+						<div className='flex align-center justify-center mb-[1px]'>
+							<AbstainGray className='mr-1' />{' '}
+							<span className='capitalize font-medium text-bodyBlue' >
+							Voted {vote}
+							</span>
+						</div>
+					) : null}</div>}
 				{children}
 			</div>
 		</div>

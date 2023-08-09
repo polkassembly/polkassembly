@@ -660,7 +660,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							};
 						}
 					}
-					const proposedCall = preimage?.proposedCall;
 
 					let subsquareTitle = '';
 					const res = await getSubSquareContentAndTitle(strProposalType,network,postId);
@@ -676,7 +675,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						parent_bounty_index: parentBountyIndex || null,
 						post_id: postId,
 						post_reactions,
-						proposedCall,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 						requestedAmount: preimage?.proposedCall?.args?.amount || preimage?.proposedCall?.args?.value || null,
 						status: status,

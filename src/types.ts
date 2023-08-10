@@ -8,6 +8,11 @@ import { Dispatch, SetStateAction } from 'react';
 import { network, tokenSymbol } from './global/networkConstants';
 import { ProposalType } from './global/proposalType';
 import BN from 'bn.js';
+import dayjs from 'dayjs';
+
+declare global {
+  interface Window { GA_INITIALIZED: any; }
+}
 
 export interface UserDetailsContextType {
   id?: number | null;
@@ -26,9 +31,17 @@ export interface UserDetailsContextType {
   loginWallet: Wallet | null;
   delegationDashboardAddress: string;
   loginAddress: string;
+  multisigAssociatedAddress?:string;
   networkPreferences: INetworkPreferences;
   primaryNetwork: string;
   is2FAEnabled?: boolean;
+}
+
+export interface IPeriod {
+	period: string;
+	periodCardVisible: boolean;
+	periodEndsAt: dayjs.Dayjs;
+	periodPercent: number;
 }
 
 export interface INetworkPreferences {
@@ -37,17 +50,17 @@ export interface INetworkPreferences {
       verification_token?: string,
       verification_token_expires?: Date
       enabled?: boolean;
-      handle?:string;
+      handle?: string;
     }
   },
   triggerPreferences: {
     [index: string]: {
-      [index: string]:{
+      [index: string]: {
         enabled: boolean;
         name: string;
         post_types?: Array<string>,
         tracks?: Array<number>,
-        mention_types?:Array<string>,
+        mention_types?: Array<string>,
         sub_triggers?: Array<string>,
       }
     }
@@ -186,6 +199,7 @@ export enum Wallet {
   WALLETCONNECT = 'walletconnect',
   NOVAWALLET = 'polkadot-js',
   POLYWALLET = 'polywallet',
+  POLKASAFE = 'polkasafe',
   OTHER = ''
 }
 
@@ -415,6 +429,7 @@ export interface IDelegate {
   active_delegation_count: number
   voted_proposals_count: number
   isNovaWalletDelegate?: boolean
+  dataSource: 'nova' | 'parity' | 'other'
 }
 
 export enum EVoteDecisionType {
@@ -458,4 +473,14 @@ export interface ILastVote {
 	time:  Date | string | null;
 	balance: BN | string;
 	conviction:  number;
+}
+
+export type VoteInfo = {
+	aye_amount: BN;
+	aye_without_conviction: BN;
+	isPassing: boolean | null;
+	nay_amount: BN;
+	nay_without_conviction: BN;
+	turnout: BN;
+	voteThreshold: string;
 }

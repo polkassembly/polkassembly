@@ -417,16 +417,16 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				</Drawer>
 				{
-					((['kusama', 'polkadot'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
+					((['moonbeam', 'moonriver'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
 						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
 							{/* Dummy Collapsed Sidebar for auto margins */}
-							<OpenGovHeaderBanner />
+							<OpenGovHeaderBanner network={'moonbeam'} />
 							<div className='flex flex-row'>
 								<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
 								<CustomContent Component={Component} pageProps={pageProps} />
 							</div>
 						</Layout>
-						: <Layout className={`min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] flex flex-row ${(network === 'polkadot' && router.asPath === '/opengov')? 'bg-[rgba(0,0,0,0.65)]': ''}`}>
+						: <Layout className={'min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] flex flex-row'}>
 							{/* Dummy Collapsed Sidebar for auto margins */}
 							<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
 							<CustomContent Component={Component} pageProps={pageProps} />

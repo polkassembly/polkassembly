@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { InjectedAccount } from '@polkadot/extension-inject/types';
-import { Button, Dropdown } from 'antd';
+import { Button, Dropdown, Tag } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { poppins } from 'pages/_app';
 import React, { useState } from 'react';
@@ -24,6 +24,7 @@ interface Props {
 	isDisabled?: boolean;
 	isSwitchButton?: boolean;
 	setSwitchModalOpen?: (pre: boolean)=> void;
+	isMultisig?:boolean
 }
 
 const AddressDropdown = ({
@@ -34,7 +35,8 @@ const AddressDropdown = ({
 	isDisabled,
 	onAccountChange,
 	isSwitchButton,
-	setSwitchModalOpen
+	setSwitchModalOpen,
+	isMultisig
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
 	const filteredAccounts = !filterAccounts
@@ -117,16 +119,16 @@ const AddressDropdown = ({
 			}}
 		>
 			<div className="flex justify-between items-center ">
-
+				{isMultisig && <Tag color="blue" className='absolute h-[18px] text-[8px] z-10 -ml-2 -mt-4 rounded-xl'>Multi</Tag>}
 				<Address
 					disableAddressClick={true}
 					extensionName={dropdownList[selectedAddress]}
 					address={defaultAddress || selectedAddress}
 					otherTextType={getOtherTextType(filteredAccounts.find(account => account.address === selectedAddress || account.address === defaultAddress))}
-					className='flex items-center flex-1'
+					className={`flex items-center flex-1 ${isMultisig ? 'ml-4':''}`}
 					otherTextClassName='ml-auto'
 				/>
-				<span className='mx-2'>
+				<span className='mx-2 mb-1'>
 					<DownIcon />
 				</span>
 			</div>

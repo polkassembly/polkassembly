@@ -49,11 +49,17 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 										onchainId={post.post_id}
 										status={post.status}
 										title={post.title}
-										// topic={post.topic.name}
+										topic={post?.topic?.name}
 										created_at={post.created_at}
 										tags={post?.tags}
 										requestedAmount={post?.requestedAmount}
 										spam_users_count={post?.spam_users_count}
+										tally={post?.tally}
+										timeline={post?.timeline || []}
+										statusHistory={post?.status_history || []}
+										index={index}
+										proposalType={post?.type}
+										trackNumber={post?.track_no}
 									/>
 								</Link>}
 							</div>

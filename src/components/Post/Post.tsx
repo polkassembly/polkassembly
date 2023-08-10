@@ -28,7 +28,6 @@ import SpamAlert from '~src/ui-components/SpamAlert';
 import { useNetworkContext } from '~src/context';
 import Link from 'next/link';
 import LinkCard from './LinkCard';
-import { ILastVote } from '~src/types';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
 
@@ -105,7 +104,6 @@ const Post: FC<IPostProps> = (props) => {
 	const [videoData, setVideoData] = useState<IDataVideoType[]>([]);
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
-	const [lastVote, setLastVote] = useState< ILastVote | undefined >(undefined);
 
 	useEffect(() => {
 		if(!post) return;
@@ -270,15 +268,13 @@ const Post: FC<IPostProps> = (props) => {
 					startTime={post.created_at}
 					post={post}
 					tally={post?.tally}
-					lastVote={lastVote}
-					setLastVote={setLastVote}
-					trackName={trackName}
+					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
 				/>
 				{/* decision deposite placed. */}
 
 				{
 					isOffchainPost &&
-					<>
+					<div className={'sticky top-[65px] mb-6 '}>
 						<Poll
 							proposalType={proposalType}
 							postId={post.post_id}
@@ -289,7 +285,7 @@ const Post: FC<IPostProps> = (props) => {
 							postId={proposalType === ProposalType.TIPS? post.hash: post.post_id}
 							canEdit={post.user_id === id}
 						/>
-					</>
+					</div>
 				}
 			</div>
 		);
@@ -465,7 +461,7 @@ const Post: FC<IPostProps> = (props) => {
 						}
 
 						{/* Post Content */}
-						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6'>
+						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6 '>
 							{isEditing &&
               <EditablePostContent toggleEdit={toggleEdit} />}
 

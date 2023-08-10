@@ -25,6 +25,8 @@ import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
+import { getVotesHistory } from '../votes/history';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -346,7 +348,8 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				spam_users_count: 0,
 				updated_at: getUpdatedAt(data),
 				user_id: data.user_id,
-				username: data.username
+				username: data.username,
+				votes: [] as any[]
 			};
 
 			const replyIds: string[] = [];
@@ -506,11 +509,23 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 		}
 	}
 
-	return comments.map((comment) => {
+	const commentsPromiseWithVote = comments.map(async (comment) => {
 		if (comment && userIdToUserMap[comment?.user_id]) {
 			comment.proposer = userIdToUserMap[comment.user_id].proposer || comment.proposer;
 			comment.username = userIdToUserMap[comment.user_id].username || comment.username;
 			comment.is_custom_username = userIdToUserMap[comment.user_id].is_custom_username;
+			const voteHistoryParams = {
+				listingLimit:1000,
+				network,
+				page:1,
+				proposalIndex: postIndex,
+				proposalType: postType,
+				voterAddress: getEncodedAddress(comment.proposer, network) || comment.proposer
+			};
+			const { data = null }  = await getVotesHistory(voteHistoryParams);
+			if(data && data.count>0){
+				comment.votes = data.votes;
+			}
 			if (comment.replies && Array.isArray(comment.replies) && comment.replies.length > 0) {
 				comment.replies = comment.replies.map((reply) => {
 					if (reply && userIdToUserMap[reply?.user_id]) {
@@ -527,6 +542,8 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			spam_users_count: checkReportThreshold(Number(comment?.spam_users_count))
 		};
 	});
+
+	return await Promise.all(commentsPromiseWithVote);
 }
 
 export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IApiResponse<IPostResponse>> {

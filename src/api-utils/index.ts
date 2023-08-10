@@ -6,7 +6,7 @@ import { IncomingHttpHeaders } from 'http';
 import type { NextApiRequest } from 'next';
 
 import { defaultNetwork } from '~src/global/defaultNetwork';
-import { network } from '~src/global/networkConstants';
+import { network as AllNetworks } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { customOpenGovStatuses, govTypes, offChainProposalTypes, ProposalType, proposalTypes, trackPostStatuses } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
@@ -22,7 +22,7 @@ export async function getNetworkDocRef(req: NextApiRequest, firestore: firebaseA
 		throw new Error(`The network of the name "${networkName}" is invalid.`);
 	}
 
-	if (!(Object.values(network).includes(networkName))) {
+	if (!(Object.values(AllNetworks).includes(networkName))) {
 		throw new Error(`The network of the name "${networkName}" does not exist.`);
 	}
 	const networkNameDocRef = firestore.collection('networks').doc(networkName);
@@ -90,7 +90,7 @@ export function getCount(snapshotArr: FirebaseFirestore.AggregateQuerySnapshot<{
 }
 
 export function isValidNetwork(networkName: string) {
-	return Object.values(network).includes(networkName);
+	return Object.values(AllNetworks).includes(networkName);
 }
 
 export function isGovTypeValid(govType: string) {
@@ -103,7 +103,7 @@ export function getNetworkFromReqHeaders(headers: IncomingHttpHeaders) {
 		network = headers.host.split('.')[0];
 	}
 
-	if(!Object.values(network).includes(network)) {
+	if(!Object.values(AllNetworks).includes(network)) {
 		if(network == 'test'){
 			network = 'kusama';
 		}

@@ -71,7 +71,8 @@ interface IGovernanceProps {
   statusHistory?: any[];
   index?: number;
   proposalType?: ProposalType | string;
-  votesData?: any
+  votesData?: any;
+  trackNumber?: number | null
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -98,6 +99,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		requestedAmount,
 		tally,
 		timeline,
+		trackNumber,
 		statusHistory = [],
 		index = 0,
 		proposalType,
@@ -145,10 +147,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if(!window || !getCurrGovType(router.pathname, router.query)) return;
+
+		if(!window || !getCurrGovType(router.pathname, router.query) || (trackNumber === null)) return;
 		const trackDetails = getQueryToTrack(router.pathname.split('/')[1], network);
 
-		if (!created_at) return;
+		if (!created_at || !trackDetails) return;
 
 		const prepare = getPeriodData(network, dayjs(created_at), trackDetails, 'preparePeriod');
 
@@ -243,7 +246,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</div>
 								</Tooltip>
 							</>}
-							{((proposalType === 'ReferendumV2' || proposalType === ProposalType.REFERENDUMS ) && (votesData?.data || tally)) && <>
+							{(votesData?.data || tally) && <>
 								<Divider type="vertical" className='max-sm:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<VotesProgressInListing index={index} proposalType={proposalType} votesData={votesData} onchainId={onchainId} status={status} tally={tally}/>
 							</>

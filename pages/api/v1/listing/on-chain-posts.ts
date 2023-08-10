@@ -60,6 +60,7 @@ export interface IPostListing {
 	tags?: string[] | [];
 	gov_type?: 'gov_1' | 'open_gov';
   timeline?: any;
+  track_no?: number | null;
 }
 
 export interface IPostsListingResponse {
@@ -216,7 +217,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals;
 			const subsquidPostsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory } = subsquidPost;
+				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber } = subsquidPost;
 
 				const isStatus = {
 					swap: false
@@ -298,6 +299,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								id: topic_id,
 								name: getTopicNameFromTopicId(topic_id)
 							} : topicFromType,
+							track_no: !isNaN(trackNumber) ? trackNumber : null,
 							type: type || subsquidProposalType,
 							user_id: data?.user_id || 1
 						};
@@ -326,6 +328,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					timeline: proposalTimeline,
 					title: subsquareTitle,
 					topic: topicFromType,
+					track_no: !isNaN(trackNumber) ? trackNumber : null,
 					type: type || subsquidProposalType,
 					user_id: 1
 				};
@@ -559,7 +562,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			else {
 
 				postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory } = subsquidPost;
+					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber } = subsquidPost;
 
 					const isStatus = {
 						swap: false
@@ -651,12 +654,12 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 									id: topic_id,
 									name: getTopicNameFromTopicId(topic_id)
 								} : topicFromType,
+								track_no: !isNaN(trackNumber) ? trackNumber : null,
 								type: type || subsquidProposalType,
 								user_id: data?.user_id || 1
 							};
 						}
 					}
-					const proposedCall = preimage?.proposedCall;
 
 					let subsquareTitle = '';
 					const res = await getSubSquareContentAndTitle(strProposalType,network,postId);
@@ -672,7 +675,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						parent_bounty_index: parentBountyIndex || null,
 						post_id: postId,
 						post_reactions,
-						proposedCall,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 						requestedAmount: preimage?.proposedCall?.args?.amount || preimage?.proposedCall?.args?.value || null,
 						status: status,
@@ -681,6 +683,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						timeline: proposalTimeline,
 						title: subsquareTitle,
 						topic: topicFromType,
+						track_no: !isNaN(trackNumber) ? trackNumber : null,
 						type: type || subsquidProposalType,
 						user_id: 1
 					};

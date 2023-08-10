@@ -61,23 +61,6 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
       proposer
     }
     index
-    group {
-      proposals(limit: 10, orderBy: createdAt_ASC) {
-       type
-        statusHistory(limit: 10, orderBy: timestamp_ASC) {
-          status
-          timestamp
-          block
-        }
-        index
-        createdAt
-        proposer
-        preimage {
-          proposer
-        }
-        hash
-      }
-    }
     end
     hash
     description

@@ -16,7 +16,7 @@ import copyToClipboard from 'src/util/copyToClipboard';
 import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
-import { usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { NetworkContext } from '~src/context/NetworkContext';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -33,6 +33,8 @@ import ReplyIcon from '~assets/icons/reply.svg';
 import { AgainstIcon ,SlightlyAgainstIcon,SlightlyForIcon,NeutralIcon,ForIcon,AgainstUnfilledIcon,SlightlyAgainstUnfilledIcon,NeutralUnfilledIcon,SlightlyForUnfilledIcon,ForUnfilledIcon } from '~src/ui-components/CustomIcons';
 
 import { poppins } from 'pages/_app';
+import getOnChainUsername from '~src/util/getOnChainUsername';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface IEditableCommentContentProps {
 	userId: number,
@@ -58,41 +60,56 @@ const editCommentKey = (commentId: string) => `comment:${commentId}:${global.win
 const replyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
-	const { network } = useContext(NetworkContext);
-
 	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment ,userName, is_custom_username, proposer } = props;
+
+	const { network } = useContext(NetworkContext);
+	const { id, username, picture } = useUserDetailsContext();
+	const { api, apiReady } = useApiContext();
+
+	const [replyForm] = Form.useForm();
+	const [form] = Form.useForm();
+
+	const currentContent=useRef<string>(content);
+
 	const { setPostData, postData: { postType , postIndex } } = usePostDataContext();
 	const { asPath } = useRouter();
 
 	const [isEditing, setIsEditing] = useState(false);
-	const { id, username, picture } = useUserDetailsContext();
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [errorReply, setErrorReply] = useState('');
 	const [loadingReply, setLoadingReply] = useState(false);
 
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [form] = Form.useForm();
+	const [isReplying, setIsReplying] = useState(false);
+
+	const [onChainUsername, setOnChainUsername] = useState<string>('');
 
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editCommentKey(commentId)) || '';
 		form.setFieldValue('content', localContent || content || ''); //initialValues is not working
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-	const [replyForm] = Form.useForm();
 
-	const currentContent=useRef<string>(content);
+	useEffect(() => {
+		(async () => {
+			if(!api || !apiReady || !proposer) return;
+			const onChainUsername = await getOnChainUsername(api, proposer, network === 'kilt');
+			setOnChainUsername(onChainUsername);
+		})();
+	}, [api, apiReady, network, proposer]);
 
-	const [isReplying, setIsReplying] = useState(false);
-
-	const toggleReply = () => {
+	const toggleReply = async () => {
 		let usernameContent = '';
-		if (!is_custom_username && proposer) {
-			usernameContent = `[@${proposer}](${global.window.location.origin}/address/${proposer})`;
+
+		if(!is_custom_username && onChainUsername && proposer) {
+			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
+		} else if (!is_custom_username && proposer && !onChainUsername) {
+			usernameContent = `[@${getEncodedAddress(proposer, network)}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
 		}
-		replyForm.setFieldValue('content', usernameContent);
+		replyForm.setFieldValue('content', `${usernameContent}&nbsp;`);
 		global.window.localStorage.setItem(replyKey(commentId), usernameContent);
 		setIsReplying(!isReplying);
 	};
@@ -289,6 +306,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			});
 		}
 	};
+
 	const items:MenuProps['items']=[
 		id === userId ? {
 			key:1,
@@ -320,6 +338,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		default: return 'Neutral';
 		}
 	};
+
 	return (
 		<>
 			<div className={className}>
@@ -410,7 +429,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									}
 									className='mt-4'
 								>
-									<ContentForm onChange={(content: string) => {
+									<ContentForm height={250} onChange={(content: string) => {
 										global.window.localStorage.setItem(replyKey(commentId), content);
 										return content.length ? content : null;
 									}} />

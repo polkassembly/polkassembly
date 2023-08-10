@@ -10,9 +10,11 @@ import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 export async function getUserIdWithAddress(address: string) : Promise<IApiResponse<number>> {
 	try{
+		address = getSubstrateAddress(address) || '';
 		const docSnapshot = await firestore_db.collection('addresses').doc(address).get();
 
 		if (!docSnapshot.exists) {

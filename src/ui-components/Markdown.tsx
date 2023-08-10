@@ -51,7 +51,7 @@ export default styled(Markdown)`
 		p, blockquote, ul, ol, dl, table {
 			line-height: 160%;
 			margin: 0 0 0.5rem 0;
-      color:#243A57 !important;
+      color: var(--bodyBlue) !important;
 		}
 
 		h1 {
@@ -156,7 +156,7 @@ export default styled(Markdown)`
 
 	&.mde-autocomplete-content {
 		margin-top: 4px !important;
-		color: #243A57;
+		color: var(--bodyBlue);
 		font-weight: 700;
 
 		mark {

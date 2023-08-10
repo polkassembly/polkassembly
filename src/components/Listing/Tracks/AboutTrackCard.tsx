@@ -161,6 +161,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								borderColor: '#5BC044',
 								borderWidth: 1,
 								data: approvalData,
+								label: 'Approval',
 								pointHitRadius: 10,
 								pointHoverRadius: 5,
 								pointRadius: 0,
@@ -171,6 +172,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								borderColor: '#E5007A',
 								borderWidth: 1,
 								data: supportData,
+								label: 'Support',
 								pointHitRadius: 10,
 								pointHoverRadius: 5,
 								pointRadius: 0,
@@ -189,8 +191,8 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	, [api, apiReady, network , track_number]);
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md rounded-xxl md:p-4`}>
-			<div className="flex justify-between px-4 xs:pt-1.5">
+		<section className={`${className} bg-white drop-shadow-md rounded-xxl md:p-4`}>
+			<article className="flex justify-between px-4 xs:pt-1.5">
 				<div className='flex items-center gap-x-2 xs:flex-wrap'>
 					<h2 className="text-xl mb-0 font-semibold leading-8 text-bodyBlue">
         About {trackName.split(/(?=[A-Z])/).join(' ')}
@@ -205,70 +207,70 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
     <DelegateModal trackNum={trackMetaData?.trackId} />}
 				</div>
-			</div>
+			</article>
 
 			<p className="mt-0 font-normal text-base leading-6 text-bodyBlue px-4">{trackMetaData?.description}</p>
 
-			<div className='md:flex md:justify-between'>
-				<div className="mt-1.5 text-xs w-full md:w-[70%] md:grid md:grid-cols-3 flex flex-wrap">
-					<div className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
+			<article className='md:flex md:justify-between'>
+				<section className="mt-1.5 text-xs w-full md:w-[70%] md:grid md:grid-cols-3 flex flex-wrap">
+					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className="flex flex-col">
-							<div className="font-medium text-sm text-lightBlue whitespace-pre">Max Deciding</div>
-							<div className="text-lg font-medium leading-7 text-bodyBlue my-1.5 whitespace-pre">{trackMetaData.maxDeciding}</div>
+							<span className="font-medium text-sm text-lightBlue whitespace-pre">Max Deciding</span>
+							<span className="text-lg font-medium leading-7 text-bodyBlue my-1.5 whitespace-pre">{trackMetaData.maxDeciding}</span>
 						</div>
-					</div>
+					</article>
 
-					<div className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
+					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className="flex flex-col">
-							<div className="font-medium text-sm text-lightBlue whitespace-pre">Confirm Period</div>
-							<div className="text-lg font-medium leading-7 text-bodyBlue my-1.5 whitespace-pre">{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}</div>
+							<span className="font-medium text-sm text-lightBlue whitespace-pre">Confirm Period</span>
+							<span className="text-lg font-medium leading-7 text-bodyBlue my-1.5 whitespace-pre">{blocksToRelevantTime(network, Number(trackMetaData.confirmPeriod))}</span>
 						</div>
-					</div>
+					</article>
 
-					<div className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
+					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className='flex flex-col'>
-							<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Min. Enactment Period</div>
-							<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-1.5'>{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}</div>
+							<span className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Min. Enactment Period</span>
+							<span className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-1.5'>{blocksToRelevantTime(network, Number(trackMetaData.minEnactmentPeriod))}</span>
 						</div>
-					</div>
+					</article>
 
-					<div className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
+					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className='flex flex-col'>
-							<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Period</div>
-							<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-1.5'>{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}</div>
+							<span className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Period</span>
+							<span className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-1.5'>{blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod))}</span>
 						</div>
-					</div>
+					</article>
 
-					<div className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
+					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className='flex flex-col'>
-							<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Deposit</div>
-							<div className='text-lg font-medium leading-7 text-bodyBlue my-1.5 whitespace-pre'>
+							<span className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Deposit</span>
+							<span className='text-lg font-medium leading-7 text-bodyBlue my-1.5 whitespace-pre'>
 								{trackMetaData.decisionDeposit &&
               formatUSDWithUnits(formatBnBalance(`${trackMetaData.decisionDeposit}`.startsWith('0x') ? new BN(`${trackMetaData.decisionDeposit}`.slice(2), 'hex') : trackMetaData.decisionDeposit, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)
 								}
-							</div>
+							</span>
 						</div>
-					</div>
+					</article>
 
-					<div className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
+					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className='flex flex-col'>
-							<div className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Prepare Period</div>
-							<div className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-1.5 whitespace-pre'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</div>
+							<span className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Prepare Period</span>
+							<span className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-1.5'>{blocksToRelevantTime(network, Number(trackMetaData.preparePeriod))}</span>
 						</div>
-					</div>
-				</div>
-				<div className='flex justify-center xs:mt-6 sm:mt-0 mr-5 mb-5 md:w-[30%]'>
+					</article>
+				</section>
+				<section className='flex justify-center xs:mt-6 sm:mt-0 mr-5 mb-5 md:w-[30%]'>
 					<Curves curvesLoading={curvesLoading} data={data} />
-				</div>
-			</div>
+				</section>
+			</article>
 
 			<Divider className='xs:block sm:hidden' />
 
-			<div className="md:hidden xs:flex justify-end pt-0 px-4 pb-4 md:p-4">
+			<article className="md:hidden xs:flex justify-end pt-0 px-4 pb-4 md:p-4">
 				{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
       <DelegateModal trackNum={trackMetaData?.trackId} />}
-			</div>
-		</div>
+			</article>
+		</section>
 
 	);
 };

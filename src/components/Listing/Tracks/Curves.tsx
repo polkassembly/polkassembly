@@ -58,7 +58,11 @@ const Curves: FC<ICurvesProps> = (props) => {
 							tooltip: {
 								callbacks: {
 									label(tooltipItem: any) {
-										const { dataIndex, parsed } = tooltipItem;
+										const { dataIndex, parsed, dataset } = tooltipItem;
+										// only display one item
+										if (['Approval'].includes(dataset.label)) {
+											return '';
+										}
 										const hs = parsed.x;
 										const approval = data.datasets[0].data[dataIndex];
 										const support = data.datasets[1].data[dataIndex];

@@ -354,7 +354,7 @@ color: var(--lightBlue) !important;
 	}
   }
   
-  .wave-effect {
+.wave-effect {
 	position: fixed;
 	bottom:32px;
   right:38px;
@@ -365,4 +365,13 @@ color: var(--lightBlue) !important;
 	background-color:#E5007A;
 	pointer-events: none;
 	animation: wave 1s linear infinite;
+}
+
+.tox-autocompleter {
+  border: 1px solid #e5e5e5 !important;
+  border-radius: 8px !important;
+
+  .tox-menu {
+    border-radius: 8px !important;
   }
+}

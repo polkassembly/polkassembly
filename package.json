@@ -97,6 +97,7 @@
     "react-twitter-embed": "^4.0.4",
     "rehype-raw": "^6.1.1",
     "remark-gfm": "^3.0.1",
+    "sharp": "^0.32.4",
     "showdown": "^2.1.0",
     "styled-components": "^5.3.6",
     "typescript": "4.9.4",

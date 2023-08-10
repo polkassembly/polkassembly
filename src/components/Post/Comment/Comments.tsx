@@ -5,7 +5,7 @@ import React, { FC } from 'react';
 
 import Comment, { IComment } from './Comment';
 
-interface ICommentsProps{
+interface ICommentsProps {
 	className?: string
 	disableEdit?: boolean
 	comments: IComment[]
@@ -13,9 +13,13 @@ interface ICommentsProps{
 
 const Comments: FC<ICommentsProps> = (props) => {
 	const { className, comments } = props;
+	const uniqueComments:Array<IComment> = Object.values(comments.reduce((acc: any, obj) => {
+		acc[obj.id] = obj;
+		return acc;
+	}, {}));
 	return (
 		<div className={className}>
-			{Array.from(new Set(comments.map(obj => JSON.stringify(obj)))).map(str => JSON.parse(str)).map((comment) =>
+			{uniqueComments.map((comment) =>
 				<Comment
 					disableEdit={props.disableEdit}
 					comment={comment}

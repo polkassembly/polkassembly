@@ -81,6 +81,22 @@ interface ISentimentsPercentage {
 
 const COMMENT_SIZE = 5;
 
+const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
+	const commentResponse:any = {};
+	for(const key in comments){
+		commentResponse[key] = comments[key].sort((a, b) => (dayjs(a.created_at).diff(dayjs(b.created_at))));
+	}
+	return commentResponse;
+};
+
+const getLastDocs = (comments: {[index:string]:Array<IComment>}) => {
+	const lastDocs:any = {};
+	for(const key in comments){
+		lastDocs[key] = comments[key]?.[comments[key].length-1]?.id || null;
+	}
+	return lastDocs;
+};
+
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
 	const { postData: { comments:initialComments, postType, timeline, created_at, currentTimeline:initialCurrentTimeline } } = usePostDataContext();
@@ -98,6 +114,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const allComments = Object.values(comments)?.flat() || [];
 	const router = useRouter();
 	const allCommentsLength = timelines.reduce((a, b) => a + b.commentsCount, 0);
+	const [lastDocs, setLastDocs] = useState<{[index:string]:number | null}>(getLastDocs(comments));
+	const [showMore, setShowMore] = useState<boolean>(true);
 
 	const url = window.location.href;
 	const commentId = url.split('#')[1];
@@ -213,17 +231,16 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				if(isCommentExit){
 					break;
 				}
-				console.log(comments);
 			}
-			setComments(comments);
+			setComments(getSortedComments(comments));
+			setLastDocs(getLastDocs(comments));
 		}
 		if(loading){
 			setLoading(false);
 		}
 	};
 
-	const getNextComments =async () => {
-		console.log(currentTimeline);
+	const getNextComments =async (size?:number) => {
 		if(!currentTimeline){
 			return;
 		}
@@ -233,11 +250,15 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				continue;
 			}
 			const timeline = timelines[i];
-			const lastDoc = commentsPayload[timelines[i].index][commentsPayload[timelines[i].index].length-1]?.id;
+			const lastDoc = lastDocs[timelines[i].index];
 			setCurrentTimeline(timeline);
 			if(timeline && commentsPayload[timelines[i].index].length < timeline.commentsCount){
-				const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, COMMENT_SIZE, timeline.type);
+				const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, size || COMMENT_SIZE, timeline.type);
 				commentsPayload[timeline.index] = [...commentsPayload[timeline.index], ...res.comments];
+				const resLastDocId = res.comments[res.comments.length-1]?.id || null;
+				if(resLastDocId){
+					setLastDocs((prev:{[index:string]:number | null}) => ({ ...prev, [timeline.index]: resLastDocId }));
+				}
 				if(res.comments.length === COMMENT_SIZE){
 					break;
 				}
@@ -246,7 +267,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				}
 			}
 		}
-		setComments(commentsPayload);
+		setComments(getSortedComments(commentsPayload));
 	};
 
 	const handleSingleTimelineClick =async (timeline:ITimeline) => {
@@ -271,7 +292,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				break;
 			}
 		}
-		setComments(commentsPayload);
+		setComments(getSortedComments(commentsPayload));
+		setLastDocs(getLastDocs(commentsPayload));
 		setCurrentTimeline(timeline);
 		return commentsPayload[timeline.index]?.[0].id || '';
 	};
@@ -284,13 +306,15 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				comment
 			]
 		};
-		setComments(commentsPayload);
+		setComments(getSortedComments(commentsPayload));
 		const timelinePayload = timelines.map((timeline) => (
 			timeline.index === postId ?
 				{ ...timeline,commentsCount:timeline.commentsCount+1 } :
 				timeline
 		));
 		setTimelines(timelinePayload);
+		setShowMore(allComments.length < allCommentsLength ? false : true);
+		router.push(`#${comment.id}`);
 	};
 
 	useEffect(() => {
@@ -419,12 +443,20 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								dataLength={allComments.length}
 								className='overflow-hidden'
 								next={getNextComments}
-								hasMore={allComments.length < allCommentsLength}
+								hasMore={showMore && allComments.length < allCommentsLength}
 								loader={<Loader/>}
 								endMessage={
-									<p style={{ textAlign: 'center' }}>
+									showMore ?
+										<p className='text-center'>
 										No more comments
-									</p>
+										</p> :
+										<div className='flex justify-center items-center'>
+											<span onClick={() => {
+												setShowMore(true);
+												getNextComments(1000);
+											}}
+											className='text-xs cursor-pointer text-pink_primary font-medium'>Show All Comments</span>
+										</div>
 								}>
 								<Comments disableEdit={isGrantClosed} comments={allComments} />
 							</InfiniteScroll>

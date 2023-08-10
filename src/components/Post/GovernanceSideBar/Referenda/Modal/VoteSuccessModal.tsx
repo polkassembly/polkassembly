@@ -22,6 +22,7 @@ import PostCommentForm from '~src/components/Post/PostCommentForm';
 import styled from 'styled-components';
 import QuoteRight from '~assets/icons/quote-right-icon.svg';
 import QuoteLeft from '~assets/icons/quote-left-icon.svg';
+import CommentBox from '~assets/icons/comment-box.svg';
 
 interface Props {
     className?: string;
@@ -241,17 +242,17 @@ const VoteInitiatedModal = ({
 					</div>
 				</div>
 			</div>
-			<div className='h-[130px] mt-3 mb-3 p-2 bg-[#185cf60a] rounded-[10px] relative border-solid border-[1px] border-[#185cf680]'>
+			<div className='h-[130px] relative '>
+				<CommentBox />
 				<QuoteRight className='absolute top-[-10px] left-[-10px]'/>
-				<QuoteLeft className='absolute left-[520px] top-[-10px]' />
-				<p className='text-lightBlue text-[14px] font-medium mt-2 ml-8'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
-				<PostCommentForm className='mt-[5px] h-[150px] ml-2' isUsedInSuccessModal={true} textBoxHeight={40} voteDecision={vote} setSuccessModalOpen={setOpen}/>
-				<div className='bg-[#185cf60a] h-[30px] w-[30px] absolute top-[120px] left-[0px] rounded-br-[50px] border-solid border-[1px] border-[#185cf680]'></div>
+				<QuoteLeft className='absolute right-[0px] w-[34px] top-[-10px]' />
+				<p className='text-lightBlue text-[14px] font-medium mt-[-120px] ml-10'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
+				<PostCommentForm className=' h-[150px] ml-8 mt-[-10px] w-[100%] max-[775px]:w-[95%]' isUsedInSuccessModal={true} textBoxHeight={40} voteDecision={vote} setSuccessModalOpen={setOpen}/>
 			</div>
 		</Modal>
 	);
 };
-
+//mt-3 mb-3 p-2 bg-[#185cf60a] rounded-[10px] relative border-solid border-[1px] border-[#185cf680]
 export default styled(VoteInitiatedModal)`
 .mde-header-group{
 	display: none !important;

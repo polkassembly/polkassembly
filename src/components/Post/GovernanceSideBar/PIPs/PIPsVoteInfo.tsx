@@ -10,6 +10,7 @@ import VoteProgress from '~src/ui-components/VoteProgress';
 import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
+import { Divider } from 'antd';
 
 interface Props{
   className?: string;
@@ -63,7 +64,7 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen }: Props) => {
 			className='vote-progress'
 			nayVotes={voteInfo?.naysAmount}
 		/>
-		<section className='flex text-lightBlue -mt-4 justify-between'>
+		<section className='flex text-lightBlue -mt-4 justify-between px-1.5'>
 			<article className='flex items-center gap-x-2'>
 				<div className='flex items-center gap-x-1'>
 					<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
@@ -88,7 +89,9 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen }: Props) => {
 				</div>
 			</article>
 		</section>
-		<button onClick={() => setOpen(true)} className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px] mt-2'>
+		<Divider style={{ border: '1px solid #e3e6eb' }} className='my-4'/>
+
+		<button onClick={() => setOpen(true)} className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px] -mt-1'>
 			<VotingHistoryIcon />
 			<span>Voting History</span>
 		</button>

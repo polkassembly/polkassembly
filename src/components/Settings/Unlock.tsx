@@ -31,7 +31,7 @@ const Unlock: FC<IUnlockProps> = (props) => {
 					: null
 			}
 			{
-				!metaMaskError && ['moonbase', 'moonriver'].includes(network)?
+				!metaMaskError && ['moonbase', 'moonriver', 'moonbeam'].includes(network)?
 					<>
 						<ReferendaUnlock
 							isBalanceUpdated={isBalanceUpdated}

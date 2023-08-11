@@ -47,6 +47,15 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
     createdAt
     updatedAt
     status
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+     
+    }
     preimage {
       method
       proposer
@@ -83,6 +92,14 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
     createdAt
     updatedAt
     status
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+    }
     preimage {
       method
       proposer
@@ -102,10 +119,19 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
     trackNumber
     group {
       proposals(limit: 10, orderBy: createdAt_ASC) {
+       type
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
         proposer
         preimage {
           proposer
         }
+        hash
       }
     }
     proposalArguments {
@@ -138,13 +164,30 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
     description
     type
     origin
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+    }
     trackNumber
     group {
       proposals(limit: 10, orderBy: createdAt_ASC) {
+        type
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
         proposer
         preimage {
           proposer
         }
+        hash
       }
     }
     proposalArguments {
@@ -495,6 +538,26 @@ query VotesWithLimit($index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit
 }
 `;
 
+export const GET_VOTES_WITH_LIMIT_IS_NULL_TRUE = `
+query VotesWithLimit($index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 100) {
+  votes(where: {type_eq: $type_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}, limit: $limit, offset: 0) {
+    decision
+    voter
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    lockPeriod
+  }
+}
+`;
+
 export const GET_VOTES_LISTING_BY_TYPE_AND_INDEX = `
 query VotesListingByTypeAndIndex($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes) {
   votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}}) {
@@ -518,8 +581,8 @@ query VotesListingByTypeAndIndex($orderBy: [VoteOrderByInput!] = timestamp_DESC,
 }
 `;
 
-export const GET_VOTES_LISTING_BY_TYPE_AND_INDEX_MOONBEAM = `
-query VotesListingByTypeAndIndexMoonbeam($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes) {
+export const GET_VOTES_LISTING_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE = `
+query VotesListingByTypeAndIndex_With_RemovedAtBlockIsNull_True($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes) {
   votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, removedAtBlock_isNull: true}) {
     totalCount
   }
@@ -563,8 +626,8 @@ query VotesListingForAddressByTypeAndIndex($orderBy: [VoteOrderByInput!] = times
   }
 }`;
 
-export const GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_MOONBEAM = `
-query VotesListingForAddressByTypeAndIndexMoonbeam($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "") {
+export const GET_VOTES_LISTING_FOR_ADDRESS_BY_TYPE_AND_INDEX_WITH_REMOVED_AT_BLOCK_ISNULL_TRUE = `
+query VotesListingForAddressByTypeAndIndex_With_RemovedAtBlockIsNull_True($orderBy: [VoteOrderByInput!] = timestamp_DESC, $index_eq: Int = 0, $type_eq: VoteType = Referendum, $limit: Int = 10, $offset: Int = 0, $decision_eq: VoteDecision = yes, $voter_eq: String = "") {
   votesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, decision_eq: $decision_eq, proposal: {index_eq: $index_eq}, voter_eq: $voter_eq, removedAtBlock_isNull: true}) {
     totalCount
   }

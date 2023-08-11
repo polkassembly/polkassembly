@@ -39,7 +39,7 @@ const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
 export const algolia_client = algoliasearch(ALGOLIA_APP_ID || '', ALGOLIA_SEARCH_API_KEY || '');
 
-export const allowedNetwork = ['KUSAMA', 'POLKADOT'];
+export const allowedNetwork = ['KUSAMA', 'POLKADOT', 'POLKADEX'];
 
 const AUTOCOMPLETE_INDEX_LIMIT = 5;
 
@@ -292,13 +292,13 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			hitsPerPage: AUTOCOMPLETE_INDEX_LIMIT,
 			highlightPreTag:'<mark>',
 			highlightPostTag:'</mark>',
-			page: 1,
+			page: 0,
 			restrictSearchableAttributes: ['title', 'parsed_content']
 		}).catch((error) => console.log('Posts autocomplete fetch error: ', error));
 
 		const userResults = await userIndex.search(queryStr, {
 			hitsPerPage: AUTOCOMPLETE_INDEX_LIMIT,
-			page: 1,
+			page: 0,
 			highlightPreTag:'<mark>',
 			highlightPostTag:'</mark>',
 			restrictSearchableAttributes: ['username', 'profile.bio', 'profile.title']

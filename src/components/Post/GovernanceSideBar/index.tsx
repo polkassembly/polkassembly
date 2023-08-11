@@ -37,7 +37,7 @@ import EditProposalStatus from './TreasuryProposals/EditProposalStatus';
 import VotersList from './Referenda/VotersList';
 import ReferendaV2Messages from './Referenda/ReferendaV2Messages';
 import blockToTime from '~src/util/blockToTime';
-import { makeLinearCurve, makeReciprocalCurve } from './Referenda/util';
+import { getTrackFunctions } from './Referenda/util';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
 import dayjs from 'dayjs';
@@ -56,13 +56,13 @@ import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
 import MoneyIcon from '~assets/icons/money-icon-gray.svg';
 import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
-import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
 import { formatBalance } from '@polkadot/util';
+import { formatedBalance } from '~src/util/formatedBalance';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -74,8 +74,6 @@ interface IGovernanceSidebarProps {
 	tally?: any;
 	post: IPostResponse;
 	toggleEdit?: () => void;
-	lastVote: ILastVote | undefined;
-	setLastVote: React.Dispatch<React.SetStateAction<ILastVote | undefined>>
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -113,33 +111,9 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 	return Math.min(gone / decisionPeriod, 1);
 }
 
-export function getTrackFunctions(trackInfo: any) {
-	let supportCalc: any = null;
-	let approvalCalc: any = null;
-	if (trackInfo) {
-		if (trackInfo.minApproval) {
-			if (trackInfo.minApproval.reciprocal) {
-				approvalCalc = makeReciprocalCurve(trackInfo.minApproval.reciprocal);
-			} else if (trackInfo.minApproval.linearDecreasing) {
-				approvalCalc = makeLinearCurve(trackInfo.minApproval.linearDecreasing);
-			}
-		}
-		if (trackInfo.minSupport) {
-			if (trackInfo.minSupport.reciprocal) {
-				supportCalc = makeReciprocalCurve(trackInfo.minSupport.reciprocal);
-			} else if (trackInfo.minSupport.linearDecreasing) {
-				supportCalc = makeLinearCurve(trackInfo.minSupport.linearDecreasing);
-			}
-		}
-	}
-	return {
-		approvalCalc,
-		supportCalc
-	};
-}
-
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, lastVote ,setLastVote } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit } = props;
+	const [lastVote, setLastVote] = useState< ILastVote>();
 
 	const { network } = useNetworkContext();
 	const currentBlock = useCurrentBlock();

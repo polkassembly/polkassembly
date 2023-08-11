@@ -18,6 +18,7 @@ import { ApiContextProvider } from '~src/context/ApiContext';
 import { ModalProvider } from '~src/context/ModalContext';
 import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
+import { initGA, logPageView } from '../analytics';
 
 export const poppins = Poppins({
 	// adjustFontFallback: false,
@@ -40,6 +41,7 @@ const workSans = Work_Sans({
 
 import 'antd/dist/reset.css';
 import '../styles/globals.css';
+import ErrorBoundary from '~src/ui-components/ErrorBoundary';
 
 export default function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
@@ -51,14 +53,21 @@ export default function App({ Component, pageProps }: AppProps) {
 	}, [router.isReady]);
 
 	useEffect(() => {
-		if(!global?.window) return;
+		if (!global?.window) return;
 		const networkStr = getNetwork();
 		setNetwork(networkStr);
+
+		if (!window.GA_INITIALIZED) {
+			initGA();
+			// @ts-ignore
+			window.GA_INITIALIZED = true;
+		}
+		logPageView();
 	}, []);
 
-	const SplashLoader = () => <div style={{ background:'#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
+	const SplashLoader = () => <div style={{ background: '#F5F5F5', minHeight: '100vh', minWidth: '100vw' }}>
 		<Image
-			style={{ left:'calc(50vw - 16px)', position:'absolute', top:'calc(50vh - 16px)' }}
+			style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}
 			width={32}
 			height={32}
 			src='/favicon.ico'
@@ -68,20 +77,22 @@ export default function App({ Component, pageProps }: AppProps) {
 
 	return <ConfigProvider theme={antdTheme}>
 		<ModalProvider>
-			<UserDetailsProvider>
-				<ApiContextProvider network={network}>
-					<NetworkContextProvider initialNetwork={network}>
-						<>
-							{ showSplashScreen && <SplashLoader /> }
-							<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-								<NextNProgress color="#E5007A" />
-								<CMDK />
-								<AppLayout Component={Component} pageProps={pageProps} />
-							</main>
-						</>
-					</NetworkContextProvider>
-				</ApiContextProvider>
-			</UserDetailsProvider>
+			<ErrorBoundary>
+				<UserDetailsProvider>
+					<ApiContextProvider network={network}>
+						<NetworkContextProvider initialNetwork={network}>
+							<>
+								{ showSplashScreen && <SplashLoader /> }
+								<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+									<NextNProgress color="#E5007A" />
+									<CMDK />
+									<AppLayout Component={Component} pageProps={pageProps} />
+								</main>
+							</>
+						</NetworkContextProvider>
+					</ApiContextProvider>
+				</UserDetailsProvider>
+			</ErrorBoundary>
 		</ModalProvider>
 	</ConfigProvider>;
 }

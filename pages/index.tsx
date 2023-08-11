@@ -18,7 +18,7 @@ import UpcomingEvents from '~src/components/Home/UpcomingEvents';
 import { useNetworkContext } from '~src/context';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { LATEST_POSTS_LIMIT } from '~src/global/listingLimit';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
+//import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import { IApiResponse, NetworkSocials } from '~src/types';
 
@@ -46,14 +46,14 @@ interface IHomeProps {
 export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 
 	const network = getNetworkFromReqHeaders(req.headers);
-	if(isOpenGovSupported(network) && !req.headers.referer) {
-		return {
-			props: {},
-			redirect: {
-				destination: '/opengov'
-			}
-		};
-	}
+	// if(isOpenGovSupported(network) && !req.headers.referer) {
+	// return {
+	// props: {},
+	// redirect: {
+	// destination: '/opengov'
+	//}
+	//};
+	// }
 
 	const networkSocialsData = await getNetworkSocials({ network });
 

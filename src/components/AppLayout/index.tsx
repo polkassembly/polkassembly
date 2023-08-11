@@ -156,6 +156,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		] : []
 	};
 
+	if(!isOpenGovSupported(network)){
+		gov1Items.treasuryItems.push(getSiderMenuItem('Bounties', '/bounties'),
+			getSiderMenuItem('Child Bounties', '/child_bounties'));
+	}
+
 	let items: MenuProps['items'] = [
 		...gov1Items.overviewItems
 	];
@@ -229,14 +234,21 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 
-	const gov2OverviewItems = [
-		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-white mt-1' />),
+	const gov2OverviewItems = isOpenGovSupported(network) ? [
+		getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white mt-1' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
 		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-2.5' />),
 		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1' />)
-	];
+	] :
+		[
+			getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white mt-1' />),
+			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
+			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
+			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
+			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-2.5' />)
+		] ;
 
 	if(['kusama', 'polkadot'].includes(network)){
 		gov2OverviewItems.splice(1, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className= 'mt-1.5'/> ));

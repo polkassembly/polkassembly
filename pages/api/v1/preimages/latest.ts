@@ -22,6 +22,7 @@ export interface IPreimageData {
     proposer: string;
     section: string;
     status: string;
+    message?: string;
 }
 
 interface IPrams{

@@ -378,32 +378,38 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 		try{
 			const proposal = constructProposal(api, preimage);
-			const params = proposal?.meta ? proposal?.meta.args
-				.filter(({ type }): boolean => type.toString() !== 'Origin')
-				.map(({ name }) => name.toString()) : [];
+			if(proposal){
+				const params = proposal?.meta ? proposal?.meta.args
+					.filter(({ type }): boolean => type.toString() !== 'Origin')
+					.map(({ name }) => name.toString()) : [];
 
-			const values = proposal?.args;
-
-			const preImageArguments = proposal?.args && params && params.map((name, index) => {
-				return {
-					name,
-					value: values?.[index]?.toString()
-				};
-			});
-			if(preImageArguments && proposal.section === 'Treasury' && proposal?.method === 'spend'){
-				const balance = new BN(preImageArguments[0].value || '0') || ZERO_BN;
-				setBeneficiaryAddress(preImageArguments[1].value || '');
-				setFundingAmount(balance);
-				onChangeLocalStorageSet({ beneficiaryAddress: preImageArguments[1].value || '', fundingAmount: balance.toString() }, Boolean(isPreimage));
-				setSteps({ percent: 100 ,step: 1 });
-				handleSelectTrack(balance);
-			}
-			else{
-				setPreimageLength(0);
-
+				const values = proposal?.args;
+				const preImageArguments = proposal?.args && params && params.map((name, index) => {
+					return {
+						name,
+						value: values?.[index]?.toString()
+					};
+				});
+				if(preImageArguments && proposal.section === 'treasury' && proposal?.method === 'spend'){
+					const balance = new BN(preImageArguments[0].value || '0') || ZERO_BN;
+					setBeneficiaryAddress(preImageArguments[1].value || '');
+					setFundingAmount(balance);
+					onChangeLocalStorageSet({ beneficiaryAddress: preImageArguments[1].value || '', fundingAmount: balance.toString() }, Boolean(isPreimage));
+					setSteps({ percent: 100 ,step: 1 });
+					handleSelectTrack(balance);
+				}
+				else{
+					setPreimageLength(0);
+					queueNotification({
+						header: 'Incorrect Preimage Added!',
+						message: 'Please enter a preimage for a treasury related track.',
+						status: NotificationStatus.ERROR
+					});
+				}}
+			else {
 				queueNotification({
-					header: 'Incorrect Preimage Added!',
-					message: 'Please enter a preimage for a treasury related track.',
+					header: 'Failed!',
+					message: `Incorrect preimage for ${network} network.`,
 					status: NotificationStatus.ERROR
 				});
 			}
@@ -421,7 +427,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		if(!api || !apiReady || !isHex(preimageHash, 256) || preimageHash?.length < 0) return;
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}`);
-		if(data){
+
+		if(data && !data?.message){
 			if(data.section === 'Treasury' && data.method === 'spend' && data.hash === preimageHash){
 				if(!data.proposedCall.args && !data?.proposedCall?.args?.beneficiary && !data?.proposedCall?.args?.amount){
 					console.log('fetching data from polkadotjs');
@@ -430,7 +437,6 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				else
 				{
 					console.log('fetching data from subsquid');
-
 					form.setFieldValue('preimage_length', data?.length);
 					setBeneficiaryAddress(data?.proposedCall?.args?.beneficiary || '');
 					const balance = new BN(data?.proposedCall?.args?.amount || '0') || ZERO_BN;
@@ -455,7 +461,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				});
 			}
 		}
-		else if(error){
+		else if(error || data?.message){
 			console.log('fetching data from polkadotjs');
 			getExistPreimageDataFromPolkadot(preimageHash, Boolean(isPreimage));
 		}

@@ -92,28 +92,59 @@ const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount,
 		<div className='flex justify-center items-center flex-col -mt-[132px]'>
 			<SuccessIcon/>
 			<label className='text-xl text-bodyBlue font-semibold'>Proposal created successfully for</label>
-			{fundingAmount && <span className='text-2xl font-semibold text-pink_primary mt-2'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span>}
-			{(proposerAddress && beneficiaryAddress && selectedTrack && preimageHash && preimageLength) && <div className='flex my-2'>
-				<div className='mt-[10px] flex flex-col text-sm text-lightBlue gap-1.5'>
-					<span className='flex'><span className='w-[172px]'>Proposer Address:</span><Address addressClassName='text-bodyBlue font-semibold text-sm'  address={proposerAddress} identiconSize={24}/></span>
-					<span className='flex'><span className='w-[172px]'>Beneficiary Address:</span><Address textClassName='text-bodyBlue font-medium text-sm' displayInline address={beneficiaryAddress} identiconSize={24}/></span>
-
-					<span className='flex'><span className='w-[172px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
-					<span className='flex'><span className='w-[172px]'>Funding Amount:</span><span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
-					<span className='flex items-center'><span className='w-[172px]'>Preimage Hash:</span>
-						<span className='text-bodyBlue  font-medium'>{preimageHash.slice(0,10)+'...'+ preimageHash.slice(55)}</span>
-					</span>
-					<span className='flex'><span className='w-[172px]'>Preimage Length:</span><span className='text-bodyBlue font-medium'>{preimageLength}</span></span>
-					<span className='flex items-center'><span className='w-[172px]'>Link to proposal:</span>
-						<Link href={`/referenda/${postId}`} className='text-pink_primary font-medium'><u>{`https://${network}.../${postId}`}</u></Link>
-						<span className='flex items-center cursor-pointer ml-1' onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/referenda/${postId}`) ;success('Preimage link copied to clipboard.');}}>
-							{contextHolder}
-							<RedirectIcon/>
+			{fundingAmount && <span className='text-2xl font-semibold text-pink_primary mt-2'>
+				{formatedBalance(fundingAmount.toString(), unit)} {unit}
+			</span>
+			}
+			{
+				(proposerAddress && beneficiaryAddress && selectedTrack && preimageHash && preimageLength) && <div className='flex my-2'>
+					<div className='mt-[10px] flex flex-col text-sm text-lightBlue gap-1.5'>
+						<span className='flex'><span className='w-[172px]'>Proposer Address:</span>
+							<Address addressClassName='text-bodyBlue font-semibold text-sm'  address={proposerAddress} identiconSize={18}/>
 						</span>
-					</span>
-				</div>
-			</div>}
-			<Alert showIcon type='warning' className='rounded-[4px] m-2 text-sm w-full' message={<span className='text-sm font-medium text-bodyBlue'>Place a decision deposit in {blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))} to prevent your proposal from being timed out.</span>} description={<span className='text-xs text-pink_primary font-medium cursor-pointer' onClick={() => router.push(`https://${network}.polkassembly.io/referenda/${postId}`)}>Pay Decision Deposit</span>} />
+						<span className='flex'>
+							<span className='w-[172px]'>Beneficiary Address:</span>
+							<Address textClassName='text-bodyBlue font-medium text-sm' displayInline address={beneficiaryAddress} identiconSize={18}/>
+						</span>
+
+						<span className='flex'>
+							<span className='w-[172px]'>Track:</span>
+							<span className='text-bodyBlue font-medium'>{selectedTrack}
+								<span className='text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span>
+							</span>
+						</span>
+						<span className='flex'><span className='w-[172px]'>Funding Amount:</span>
+							<span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span>
+						</span>
+						<span className='flex items-center'><span className='w-[172px]'>Preimage Hash:</span>
+							<span className='text-bodyBlue  font-medium'>{preimageHash.slice(0,10)+'...'+ preimageHash.slice(55)}</span>
+						</span>
+						<span className='flex'>
+							<span className='w-[172px]'>Preimage Length:</span>
+							<span className='text-bodyBlue font-medium'>{preimageLength}</span>
+						</span>
+						<span className='flex items-center'><span className='w-[172px]'>Link to proposal:</span>
+							<Link href={`/referenda/${postId}`} className='text-pink_primary font-medium'>
+								<u>{`https://${network}.../${postId}`}</u>
+							</Link>
+							<span className='flex items-center cursor-pointer ml-1'
+								onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/referenda/${postId}`) ;success('Preimage link copied to clipboard.');}}
+							>
+								{contextHolder}
+								<RedirectIcon/>
+							</span>
+						</span>
+					</div>
+				</div>}
+			<Alert
+				showIcon
+				type='warning'
+				className='rounded-[4px] m-2 text-sm w-full'
+				message={<span className='text-sm font-medium text-bodyBlue'>
+        Place a decision deposit in {Math.round(Number(blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))))} to prevent your proposal from being timed out.
+				</span>}
+				description={<span className='text-xs text-pink_primary font-medium cursor-pointer' onClick={() => router.push(`https://${network}.polkassembly.io/referenda/${postId}`)}>Pay Decision Deposit</span>}
+			/>
 		</div>
 
 	</Modal>;

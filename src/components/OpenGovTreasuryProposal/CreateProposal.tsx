@@ -209,7 +209,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			<div className='mt-4 text-sm font-normal text-lightBlue'>
 				<label className='font-medium'>Preimage Details:</label>
 				<div className='mt-[10px] flex flex-col gap-2'>
-					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address addressClassName='text-bodyBlue font-semibold text-sm' address={proposerAddress} identiconSize={24}/></span>
+					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address addressClassName='text-bodyBlue font-semibold text-sm' address={proposerAddress} identiconSize={18}/></span>
 					<span className='flex'><span className='w-[150px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
 					<span className='flex'><span className='w-[150px]'>Funding Amount:</span><span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
 					<span className='flex items-center'><span className='w-[150px]'>Preimage Hash:</span>

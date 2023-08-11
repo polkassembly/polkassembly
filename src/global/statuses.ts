@@ -25,7 +25,9 @@ export const referendumStatus = {
 export const gov2ReferendumStatus = {
 	CANCELLED: 'Cancelled',
 	CONFIRMED: 'Confirmed',
+	CONFIRM_ABORTED: 'ConfirmAborted',
 	CONFIRM_STARTED: 'ConfirmStarted',
+	CREATED: 'Created',
 	DECIDING: 'Deciding',
 	DECISION_DEPOSIT_PLACED: 'DecisionDepositPlaced',
 	EXECUTION_FAILED: 'ExecutionFailed',

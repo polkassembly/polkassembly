@@ -72,7 +72,7 @@ interface ICreationLabelProps {
   spam_users_count?:number;
   truncateUsername?:boolean;
   vote?:string | null;
-  votesArr?: [];
+  votesArr?: any;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
@@ -152,7 +152,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				{/* showing vote from subsquid */}
 				{
 					votesArr.length > 0 ?
-						<div className={votesArr.length > 1 ? 'flex items-center justify-center hover:underline hover:cursor-pointer max-[768px]:mb-[-10px] ml-1' :'flex items-center justify-center max-[768px]:mb-[-10px] ml-1' } onClick={() => { if(votesArr.length > 1) setShowVotesModal(!showVotesModal);}}>
+						<div className={votesArr.length > 1 ? 'flex items-center justify-center hover:cursor-pointer max-[768px]:mb-[-10px] ml-1' :'flex items-center justify-center max-[768px]:mb-[-10px] ml-1' } onClick={() => { if(votesArr.length > 1) setShowVotesModal(!showVotesModal);}}>
 							<Divider className='ml-1 mb-[-1px] hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 							{votesArr[0].decision == 'yes' ?
 								<p className='mb-[-1px]'>
@@ -198,7 +198,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								}
 							>
 								{
-									votesArr.length > 0 && votesArr.map((vote:any,idx) => {
+									votesArr.length > 0 && votesArr.map((vote:any,idx:any) => {
 										return(
 											<div key={idx} className='flex items-center'>
 												{vote.decision == 'yes' ?

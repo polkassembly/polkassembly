@@ -146,7 +146,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				id={id}
 			/>
 
-			<div className='comment-box bg-white p-[1rem]'>
+			<div className={isUsedInSuccessModal ? 'p-[1rem] w-[90%]' : 'comment-box bg-white p-[1rem]'}>
 				{error && <ErrorAlert errorMsg={error} className='mb-2' />}
 				<Form
 					form={form}
@@ -162,8 +162,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 						{ required: "Please add the  '${name}'" }
 					}
 				>
-					<div className={isUsedInSuccessModal ? 'flex justify-between items-center' : ''}>
-						<ContentForm  onChange = {(content : any) => onContentChange(content)} height={textBoxHeight} className={isUsedInSuccessModal ? 'flex-auto' : ''} />
+					<div className={isUsedInSuccessModal ? 'flex justify-between items-center w-[100%]' : ''}>
+						<ContentForm  onChange = {(content : any) => onContentChange(content)} height={textBoxHeight} className={isUsedInSuccessModal ? 'flex-auto w-[100%]' : ''} />
 						<Form.Item>
 							<div className={ isUsedInSuccessModal ?'ml-2' :'flex items-center justify-end mt-[-40px]'}>
 								{

@@ -22,6 +22,7 @@ import PostCommentForm from '~src/components/Post/PostCommentForm';
 import styled from 'styled-components';
 import QuoteRight from '~assets/icons/quote-right-icon.svg';
 import QuoteLeft from '~assets/icons/quote-left-icon.svg';
+//import { CommentBoxIcon } from 'src/ui-components/CustomIcons';
 import CommentBox from '~assets/icons/comment-box.svg';
 
 interface Props {
@@ -242,17 +243,16 @@ const VoteInitiatedModal = ({
 					</div>
 				</div>
 			</div>
-			<div className='h-[130px] relative '>
-				<CommentBox />
+			<div className='h-[130px] relative mt-4 '>
+				<CommentBox className='w-[100%]'  />
 				<QuoteRight className='absolute top-[-10px] left-[-10px]'/>
 				<QuoteLeft className='absolute right-[0px] w-[34px] top-[-10px]' />
-				<p className='text-lightBlue text-[14px] font-medium mt-[-120px] ml-10'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
-				<PostCommentForm className=' h-[150px] ml-8 mt-[-10px] w-[100%] max-[775px]:w-[95%]' isUsedInSuccessModal={true} textBoxHeight={40} voteDecision={vote} setSuccessModalOpen={setOpen}/>
+				<p className='text-lightBlue text-[14px] font-medium mt-[-140px] ml-10 mr-10'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
+				<PostCommentForm className=' h-[150px] ml-8 mt-[-10px] w-[100%]' isUsedInSuccessModal={true} textBoxHeight={40} voteDecision={vote} setSuccessModalOpen={setOpen}/>
 			</div>
 		</Modal>
 	);
 };
-//mt-3 mb-3 p-2 bg-[#185cf60a] rounded-[10px] relative border-solid border-[1px] border-[#185cf680]
 export default styled(VoteInitiatedModal)`
 .mde-header-group{
 	display: none !important;
@@ -260,23 +260,19 @@ export default styled(VoteInitiatedModal)`
 .mde-tabs{
 	display: none !important;
 }
-.mde-textarea-wrapper{
-	max-width:440px !important;
-}
 .mde-text{
 	padding: 10px !important;
 	height: 40px !important;
 	border-radius: 4px !important;
+	
 }
 .ant-avatar{
 	display: none !important;
 }
-.comment-box{
-	padding: 0px !important;
-	background-color: #ffffff1a !important;
-	height:40px !important;
-}
 .anticon-info-circle{
 	display: none !important;
+}
+.container{
+	max-width: 100% !important;
 }
 `;

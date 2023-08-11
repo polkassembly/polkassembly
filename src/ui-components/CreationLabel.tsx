@@ -3,8 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Divider, Dropdown, MenuProps, Tooltip } from 'antd';
-import React, { FC, ReactNode } from 'react';
+import { Divider, Dropdown, MenuProps, Modal, Tooltip } from 'antd';
+import React, { FC, ReactNode, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { poppins } from 'pages/_app';
 
@@ -19,6 +19,8 @@ import { EVoteDecisionType } from '~src/types';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import AbstainGray from '~assets/icons/abstainGray.svg';
 import SplitYellow from '~assets/icons/split-yellow-icon.svg';
+import CloseCross from '~assets/icons/close-cross-icon.svg';
+import dayjs from 'dayjs';
 
 const Styled = styled.div`
     padding:0;
@@ -70,11 +72,13 @@ interface ICreationLabelProps {
   spam_users_count?:number;
   truncateUsername?:boolean;
   vote?:string | null;
+  votesArr?: [];
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource='polkassembly', cid ,spam_users_count = 0, truncateUsername , vote } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource='polkassembly', cid ,spam_users_count = 0, truncateUsername , vote , votesArr = [] } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
+	const [showVotesModal,setShowVotesModal] = useState(false);
 
 	const items : MenuProps['items']=[
 		sentiment === 1 ? { key:1,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely Against</div> }:null,
@@ -83,7 +87,6 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		sentiment === 4 ? { key:4,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Slightly For</div> }:null,
 		sentiment === 5 ? { key:5,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely For</div> }:null
 	];
-	console.log('v',vote);
 	return <div className={`${className} flex justify-between w-[100%]`} >
 		<div className='text-xs flex flex-col md:flex-row md:items-center'>
 			<div className={'flex min-[320px]:flex-row min-[320px]:items-center w-full min-[320px]:w-auto '}>
@@ -113,6 +116,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 				</>}
 				{created_at && <span className='flex items-center pl-5 mt-2 md:pl-0 md:mt-0'><ClockCircleOutlined className='mx-1' />{relativeCreatedAt}</span>}
+				{/* showing vote from local state */}
 				{vote && <div  className='flex items-center justify-center'>
 					<Divider className='ml-1 mb-[-1px] hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 					{vote === EVoteDecisionType.AYE ? (
@@ -144,6 +148,108 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							</span>
 						</div>
 					) : null}</div>}
+
+				{/* showing vote from subsquid */}
+				{
+					votesArr.length > 0 ?
+						<div className={votesArr.length > 1 ? 'flex items-center justify-center hover:underline hover:cursor-pointer max-[768px]:mb-[-10px] ml-1' :'flex items-center justify-center max-[768px]:mb-[-10px] ml-1' } onClick={() => { if(votesArr.length > 1) setShowVotesModal(!showVotesModal);}}>
+							<Divider className='ml-1 mb-[-1px] hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+							{votesArr[0].decision == 'yes' ?
+								<p className='mb-[-1px]'>
+									<LikeFilled className='text-[green]' />{' '}
+									<span className='capitalize font-medium text-[green]'>
+							Voted Aye
+									</span>
+								</p> :
+								votesArr[0].decision == 'no' ?
+									<div>
+										<DislikeFilled className='text-[red]' />{' '}
+										<span className='mb-[5px] capitalize font-medium text-[red]'>
+							Voted Nay
+										</span>
+									</div> :
+									votesArr[0].decision == 'abstain' && !(votesArr[0].balance as any).abstain ?
+										<div className='mb-[-1px] flex align-center justify-center'>
+											<SplitYellow className='mr-1'/>{' '}
+											<span className='capitalize font-medium text-[#FECA7E]'>
+									Voted Split
+											</span>
+										</div> :
+										votesArr[0].decision == 'abstain' && (votesArr[0].balance as any).abstain ?
+											<div className='flex align-center justify-center mb-[1px]'>
+												<AbstainGray className='mr-1 mb-[-1px]' />{' '}
+												<span className='capitalize font-medium text-bodyBlue' >
+									Voted Abstain
+												</span>
+											</div> : null
+							}
+							{/* { votesArr.length > 1 && <p title={`${votesArr.length-1}+ votes available`}  className='mb-[-1px] ml-1' >{votesArr.length-1}+</p>} */}
+							<Modal
+								open={showVotesModal}
+								onCancel={() => setShowVotesModal(false)}
+								footer={false}
+								className={`w-[400px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px]`}
+								closeIcon={<CloseCross/>}
+								wrapClassName={className}
+								title={
+									<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex  items-center gap-2'>
+										<span className='text-bodyBlue font-semibold tracking-[0.0015em] ml-4 text-xl'>Votes</span>
+									</div>
+								}
+							>
+								{
+									votesArr.length > 0 && votesArr.map((vote:any,idx) => {
+										return(
+											<div key={idx} className='flex items-center'>
+												{vote.decision == 'yes' ?
+													<div className='mb-[-1px] w-[90%] flex justify-between '>
+														<div>
+															<LikeFilled className='text-[green]' />{' '}
+															<span className='capitalize font-medium text-[green]'>
+																Aye
+															</span>
+														</div>
+														<p>{dayjs(vote.createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
+													</div> :
+													vote.decision == 'no' ?
+														<div className='w-[90%] flex justify-between'>
+															<div className='mb-[-1px] '>
+																<DislikeFilled className='text-[red]' />{' '}
+																<span className='mb-[5px] capitalize font-medium text-[red]'>
+																	Nay
+																</span>
+															</div>
+															<p>{dayjs(vote.createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
+														</div> :
+														vote.decision == 'abstain' && !(vote.balance as any).abstain ?
+															<div className='w-[90%] mb-[-1px] flex justify-between '>
+																<div className='flex  mb-[-1px]'>
+																	<SplitYellow className='mr-1'/>{' '}
+																	<span className='capitalize font-medium text-[#FECA7E]'>
+																		Split
+																	</span>
+																</div>
+																<p>{dayjs(vote.createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
+															</div> :
+															vote.decision == 'abstain' && (vote.balance as any).abstain ?
+																<div className=' w-[90%] flex align-center justify-between mb-[1px]'>
+																	<div className='flex align-middle justify-center'>
+																		<AbstainGray className='mr-1' />{' '}
+																		<span className='capitalize font-medium text-bodyBlue' >
+																			Abstain
+																		</span>
+																	</div>
+																	<p>{dayjs(vote.createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</p>
+																</div> : null
+												}
+											</div>
+										);
+									})
+								}
+
+							</Modal>
+						</div>: null
+				}
 				{children}
 			</div>
 		</div>

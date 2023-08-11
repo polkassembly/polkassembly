@@ -35,6 +35,7 @@ export interface IComment {
 	post_index?: number;
 	post_type?: string;
 	vote?:string | null;
+	votes?:[];
 }
 
 interface ICommentProps {
@@ -91,6 +92,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					commentSource={comment_source}
 					spam_users_count={spam_users_count}
 					vote={vote}
+					votesArr={comment?.votes}
 				>
 					{
 						history && history.length > 0 &&

@@ -472,7 +472,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			}
 
 			{/* Next Burn */}
-			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
+			{!['moonbeam', 'moonbase', 'moonriver', 'polymesh'].includes(network) &&
 				<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 					<div className='lg:flex flex-col gap-x-0 w-full'>
 						<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>

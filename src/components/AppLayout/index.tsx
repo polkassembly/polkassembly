@@ -354,6 +354,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 
 	const handleLogout = async () => {
+		if(router.pathname.includes('/user/')) {
+			router.replace('/');
+		}
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);
 	};

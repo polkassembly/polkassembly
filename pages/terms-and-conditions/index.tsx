@@ -22,20 +22,25 @@ const Wrapper = styled.div`
   line-height:23px;
   color:#243A57;
   
+  
 `;
 const CustomHeading = styled.div`
   font-weight: 600;
   font-size:20px;
-  font-family: 'Poppins'
   
 `;
+const StyleParagraph = styled.p`
+  margin-left: 20px;
+`;
 
-const StyledParagraph = styled.div`
+const StyledParagraph = styled.p`
+  margin-left: 10px;
   font-style: italic;
-  font-weight: 400;
-  
+  font-weight:400;
 `;
-
+const StylParagraph = styled.p`
+ margin-left:10px;
+ `;
 const TermAndCondition = (props: any) => {
 	const { network } = props;
 	const { setNetwork } = useNetworkContext();
@@ -51,7 +56,7 @@ const TermAndCondition = (props: any) => {
 
 			<Wrapper>
 
-				<CustomHeading className="mb-4 text-black"> Polkassembly End User Agreement</CustomHeading>
+				<CustomHeading className="mb-4"> Polkassembly End User Agreement</CustomHeading>
 				<p>
         Premiurly OÜ is a company registered in Estonia under company number
         16162207 with its registered office at Tornimäe tn 7, Kesklinna
@@ -61,7 +66,7 @@ const TermAndCondition = (props: any) => {
 				</p>
 			</Wrapper>
 			<Wrapper>
-				<CustomHeading className="mb-4 text-black">1. Understanding these terms</CustomHeading>
+				<CustomHeading className="mb-4">1. Understanding these terms</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>
         1. This end user agreement (the **Terms**) describes how you may
@@ -98,7 +103,7 @@ const TermAndCondition = (props: any) => {
 				</StyledParagraph>
 			</Wrapper>
 			<Wrapper>
-				<CustomHeading className="mb-4 text-black">2. The Forum</CustomHeading>
+				<CustomHeading className="mb-4">2. The Forum</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>1. The Forum is made available free of charge. We do not guarantee that
         the Forum, or any content on it, will always be available or be uninterrupted. Access to the Forum is permitted on a temporary basis. We may suspend, withdraw, discontinue or change all or any part of the Forum without notice. We will not be liable to you if for any reason the
@@ -112,7 +117,7 @@ const TermAndCondition = (props: any) => {
 			</Wrapper>
 
 			<Wrapper>
-				<CustomHeading className="mb-4 text-black">3. Your account and password</CustomHeading>
+				<CustomHeading className="mb-4">3. Your account and password</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>
            1. You will need to register an account with us on the Website in order
@@ -136,10 +141,9 @@ const TermAndCondition = (props: any) => {
 				</StyledParagraph>
 			</Wrapper>
 			<Wrapper>
-				<CustomHeading className="mb-4 text-black">4. Acceptable use</CustomHeading>
-        General
-
-				<p className='mb-[2px]'>1. You agree 1.not to use the Forum in any unlawful manner, for
+				<CustomHeading className="mb-4">4. Acceptable use</CustomHeading>
+				<p className='font-medium'>General</p>
+				<StyleParagraph >1. You agree 1.not to use the Forum in any unlawful manner, for
         any unlawful purpose or in any manner inconsistent with these Terms; 2.
         not to infringe our intellectual property rights or those of any third
         party in relation to your use of the Forum (to the extent that such use
@@ -155,9 +159,9 @@ const TermAndCondition = (props: any) => {
         these Terms;7.not to access, query or search the Forum with any
         automated system,other than through our published interfaces and
         pursuant to their applicable terms; and 8.not to create multiple
-        accounts to evade punishment or avoid restrictions.</p>
+        accounts to evade punishment or avoid restrictions.</StyleParagraph>
 
-         User Generated Content
+				<p className='font-medium'>User Generated Content</p>
 				<StyledParagraph>
 					<p className='mb-[2px]'>If it is the case that you supply/upload any content to the
         Forum – whether it be pictures, text, sound recordings or whatever the
@@ -179,7 +183,7 @@ const TermAndCondition = (props: any) => {
         illegal activity or otherwise be unlawful;</p> <p className='mb-[2px]'>12. it must not impersonate
         any person, or misrepresent your identity or affiliation with any
         person; and </p> <p>13. it must not give the impression that it emanates from or
-        is endorsed by Premiurly, if this is not the case</p></StyledParagraph><p>2.We reserve the right
+        is endorsed by Premiurly, if this is not the case</p></StyledParagraph><StylParagraph>2.We reserve the right
         to refuse to accept or refuse or cease to use any User Generated Content
         supplied by any person that we think contravenes these Terms or
         otherwise may create liability for us.3.We take no responsibility for,
@@ -197,7 +201,7 @@ const TermAndCondition = (props: any) => {
         can be found on the Forum; (ii) the name and surname of the author or,
         if the author is a legal person, the authors business name; (iii)
         reasons why the content should be deleted; and (vi) copies of any
-        communication with the author (if any).</p>  Viruses<p className='mb-[2px]'>1. We do not guarantee
+        communication with the author (if any).</StylParagraph><p className='font-medium'>Viruses</p><StyleParagraph><p className='mb-[2px]'>1. We do not guarantee
         that the Website will be totally secure or free from bugs or viruses.
         You are responsible for configuring your information technology,
         computer programmes and platform in order to access the Website and we
@@ -212,11 +216,12 @@ const TermAndCondition = (props: any) => {
         offences. We will report any such breach to the relevant law enforcement
         authorities and we will cooperate with those authorities by disclosing
         your identity to them. In the event of such a breach, your right to use
-        the Website will cease immediately.</p>
+        the Website will cease immediately.</p></StyleParagraph>
+
 			</Wrapper>
 
 			<Wrapper>
-				<CustomHeading className="mb-4 text-black"> 5. Intellectual property</CustomHeading>
+				<CustomHeading className="mb-4"> 5. Intellectual property</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'> 1. We grant to you a non-transferable, non-exclusive, revocable licence
         to use the Forum provided that you comply with these Terms and the
@@ -254,7 +259,7 @@ const TermAndCondition = (props: any) => {
 				</StyledParagraph>
 			</Wrapper>
 			<Wrapper>
-				<CustomHeading className="mb-4 text-black"> 6. Our liability</CustomHeading>
+				<CustomHeading className="mb-4"> 6. Our liability</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>   1. Nothing in these Terms excludes or limits our liability for: </p>
 					<p className='mb-[2px]'>1. death or personal injury caused by our negligence; </p><p className='mb-[2px]'>2. fraud or fraudulent
@@ -282,7 +287,7 @@ const TermAndCondition = (props: any) => {
 				</StyledParagraph>
 			</Wrapper>
 			<Wrapper>
-				<CustomHeading className="mb-4 text-black"> 7. Suspension and termination</CustomHeading>
+				<CustomHeading className="mb-4"> 7. Suspension and termination</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>1. Either you or we may terminate these Terms (and your access to Forum)
         at any time for any reason.</p><p className='mb-[2px]'>2. If you breach any of the terms of these
@@ -294,7 +299,7 @@ const TermAndCondition = (props: any) => {
 				</StyledParagraph>
 			</Wrapper>
 			<Wrapper>
-				<CustomHeading className="mb-4 text-black"> 8. Changes to these Terms</CustomHeading>
+				<CustomHeading className="mb-4"> 8. Changes to these Terms</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'>
         We may make changes to these terms from time to time (if, for example,
@@ -308,7 +313,7 @@ const TermAndCondition = (props: any) => {
 				</StyledParagraph>
 			</Wrapper>
 			<Wrapper>
-				<CustomHeading className="mb-4 text-black"> 9. Other important information</CustomHeading>
+				<CustomHeading className="mb-4"> 9. Other important information</CustomHeading>
 				<StyledParagraph>
 					<p className='mb-[2px]'> 1. Each of the clauses of these Terms operates separately. If any court
         or relevant authority decides that any of them are unlawful or
@@ -329,7 +334,7 @@ const TermAndCondition = (props: any) => {
 				</StyledParagraph>
 			</Wrapper>
 			<Wrapper>
-				<CustomHeading className="mb-4 text-black"> 10. Governing law and jurisdiction</CustomHeading>
+				<CustomHeading className="mb-4"> 10. Governing law and jurisdiction</CustomHeading>
 				<StyledParagraph>
         If you are a business <p className='mb-[2px]'>These Terms are governed by Estonian law. This
         means that your access to and use of the Forum, and any dispute or claim
@@ -359,7 +364,7 @@ const TermAndCondition = (props: any) => {
 			</Wrapper>
 			<Wrapper>
 
-				<CustomHeading className="mb-4 text-black"> 11. Contacting us</CustomHeading>
+				<CustomHeading className="mb-4"> 11. Contacting us</CustomHeading>
 				<StyledParagraph>
 					<p> Should you have any reasons for a complaint, we will endeavour to
         resolve the issue and avoid any re-occurrence in the future.You can

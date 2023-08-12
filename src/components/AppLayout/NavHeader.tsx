@@ -71,7 +71,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 			}} />
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<Link href={ govType === EGovType.GOV1 ? '/' : 'opengov' } className='flex cursor-pointer '>
+					<Link href={ '/' } className='flex cursor-pointer '>
 						<PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' />
 					</Link>
 					<div className='flex items-center'>

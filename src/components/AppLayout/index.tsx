@@ -67,7 +67,7 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 		},
 		{
 			key: 'logout',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' onClick={handleLogout} href='/'>
+			label: <Link href='/' className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' onClick={handleLogout}>
 				<LogoutOutlined />
 				<span>Logout</span>
 			</Link>
@@ -354,6 +354,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 
 	const handleLogout = async () => {
+		if(router.pathname.includes('/user/')) {
+			router.replace('/');
+		}
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);
 	};

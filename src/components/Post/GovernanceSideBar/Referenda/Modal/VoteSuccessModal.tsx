@@ -247,7 +247,7 @@ const VoteInitiatedModal = ({
 				<CommentBox className='w-[100%]'  />
 				<QuoteRight className='absolute top-[-10px] left-[-10px]'/>
 				<QuoteLeft className='absolute right-[0px] w-[34px] top-[-10px]' />
-				<p className='text-lightBlue text-[14px] font-medium mt-[-140px] ml-10 mr-10'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
+				<p className='text-lightBlue text-[14px] font-medium mt-[-140px] ml-6 mr-6'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
 				<PostCommentForm className=' h-[150px] ml-8 mt-[-10px] w-[100%]' isUsedInSuccessModal={true} textBoxHeight={40} voteDecision={vote} setSuccessModalOpen={setOpen}/>
 			</div>
 		</Modal>

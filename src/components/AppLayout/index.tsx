@@ -67,10 +67,10 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 		},
 		{
 			key: 'logout',
-			label: <div className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' onClick={handleLogout}>
+			label: <Link href='/' className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' onClick={handleLogout}>
 				<LogoutOutlined />
 				<span>Logout</span>
-			</div>
+			</Link>
 		}
 	];
 

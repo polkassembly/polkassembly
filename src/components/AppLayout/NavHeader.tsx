@@ -5,26 +5,29 @@
 /* eslint-disable no-tabs */
 import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Button, Divider, Skeleton, Space } from 'antd';
+import { Button, Divider, Dropdown, Select, Skeleton, Space } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import NetworkDropdown from 'src/ui-components/NetworkDropdown';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 import { chainProperties } from '~src/global/networkConstants';
-
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import SearchBar from '~src/ui-components/SearchBar';
-
-import GovernanceSwitchButton from './GovernanceSwitchButton';
+import TownHall from '~assets/icons/TownHall.svg';
+import PolkaSafe from '~assets/icons/PolkaSafe.svg';
 import PaLogo from './PaLogo';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
+import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { logout } from '~src/services/auth.service';
+import { EGovType } from '~src/global/proposalType';
+import Address from '~src/ui-components/Address';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -43,14 +46,82 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 	const currentUser = useUserDetailsContext();
 	const router = useRouter();
 	const { pathname, query } = router;
-	const { username } = currentUser;
+	const { username,defaultAddress,web3signup } = currentUser;
 	const [open, setOpen] = useState(false);
 	const [openLogin,setLoginOpen]=useState<boolean>(false);
 	const [openSignup,setSignupOpen]=useState<boolean>(false);
-
+	const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
 	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute, network);
 	const isClicked = useRef(false);
+	const { setUserDetailsContextState } = useUserDetailsContext();
+	const handleLogout = async () => {
+		logout(setUserDetailsContextState);
+		router.replace(router.asPath);
+	};
+	useEffect(() => {
+		if(router.pathname==='/opengov'){
+			setSelectedGov(EGovType.OPEN_GOV);
+		}else{
+			setSelectedGov(EGovType.GOV1);
+		}
 
+	},[router]);
+	const menudropDownItems: ItemType[]= [
+		{
+			key: 'Townhall',
+			label: (
+				<a href="https://townhallgov.com/" target="_blank" rel="noreferrer">
+					<span className='flex justify-center items-center'>
+						<TownHall/>
+				TownHall
+					</span>
+				</a>
+			)
+		},
+		{
+			key: 'Polkasafe',
+			label: (<a href="https://polkasafe.xyz/" target="_blank" rel="noreferrer">
+				<span className='flex justify-center items-center'>
+					<PolkaSafe/>
+					Polkasafe
+				</span>
+			</a>
+			)
+		}
+	];
+	const dropdownMenuItems: ItemType[] = [
+		{
+			key: 'view profile',
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+				<UserOutlined />
+				<span>View Profile</span>
+			</Link>
+		},
+		{
+			key: 'settings',
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
+				<SettingOutlined />
+				<span>Settings</span>
+			</Link>
+		},
+		{
+			key: 'logout',
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'	onClick={handleLogout} href='/'>
+				<LogoutOutlined />
+				<span>Logout</span>
+			</Link>
+		}
+	];
+	const AuthDropdown = ({ children }: {children: ReactNode}) => (
+		<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
+			{children}
+		</Dropdown>
+	);
+	const MenuDropdown = ({ children }: {children: ReactNode}) => (
+		<Dropdown menu={{ items: menudropDownItems }} trigger={['click']}>
+			{children}
+		</Dropdown>
+	);
 	return (
 		<Header className={`${className} shadow-md z-[1001] sticky top-0 flex items-center bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
 			<MenuOutlined className='lg:hidden mr-5' onClick={() => {
@@ -58,24 +129,51 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 			}} />
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' /></Link>
+					<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='' /></Link>
+
 					<div className='flex items-center'>
-						<span className='bg-pink_primary h-5 md:h-10 w-[1.5px] ml-[2px] mr-[8px] md:mr-[10px]'></span>
-						<h2 className='m-0 p-0 text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
+						{/* <span className='bg-pink_primary h-5 md:h-10 w-[1.5px] ml-[2px] mr-[8px] md:mr-[80px]'></span> */}
+						{/* { <h2 className='m-0 p-0 text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{
 								isGov2Route? 'OpenGov': 'Gov1'
 							}
-						</h2>
+						</h2> } */}
 					</div>
+					<Select
+						value={selectedGov}
+						style={{
+							width: 'max-content'
+						}}
+						className='drop ml-16'
+						onChange={(e) => {
+							setSelectedGov(e);
+							if (e === 'open_gov') {
+								window.location.href = '/opengov';
+							} else if (e === 'gov1') {
+								window.location.href = '/';
+							}
+						}}
+						options={[
+							{
+								label: 'Gov1',
+								value: 'gov1'
+							},
+							{
+								label: 'OpenGov',
+								value: 'open_gov'
+							}
+						]}
+					/>
+
 				</div>
 
-				{
+				{/* {
 					isOpenGovSupported(network)?
 						<>
 							<GovernanceSwitchButton previousRoute={previousRoute} className='hidden lg:flex' />
 						</> :
 						<div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
-				}
+				} */}
 				<div className="flex items-center justify-between gap-x-2 md:gap-x-4">
 					<SearchBar/>
 
@@ -90,10 +188,42 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 								: null
 						}
 						{!username
-							&& <div className='flex items-center lg:gap-x-2'>
+							? <div className='flex items-center lg:gap-x-2'>
 								<Button className='w-[60px] h-[22px] lg:w-[74px] lg:h-[32px] bg-pink_primary rounded-[2px] md:rounded-[4px] text-white lg:text-sm lg:font-medium lg:leading-[21px] tracking-[0.00125em] flex items-center justify-center hover:text-white' onClick={() => {setSidedrawer(false); setLoginOpen(true);}}>Login</Button>
+
 							</div>
+
+							:<AuthDropdown>
+
+								<div className='flex items-center justify-between gap-x-2'>
+									{!web3signup ?<><span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' /></>
+										:<Address address = {defaultAddress || ''}/>}
+
+								</div>
+							</AuthDropdown>
+
 						}
+						<div>
+
+							<MenuDropdown>
+								<svg width="24" height="24" viewBox="0 0 24 24"  fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M17.7143 18.8571C17.7143 19.4883 18.226 20 18.8571 20C19.4883 20 20 19.4883 20 18.8571C20 18.226 19.4883 17.7143 18.8571 17.7143C18.226 17.7143 17.7143 18.226 17.7143 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+									<path d="M10.8571 18.8571C10.8571 19.4883 11.3688 20 12 20C12.6312 20 13.1429 19.4883 13.1429 18.8571C13.1429 18.226 12.6312 17.7143 12 17.7143C11.3688 17.7143 10.8571 18.226 10.8571 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+									<path d="M4 18.8571C4 19.4883 4.51167 20 5.14286 20C5.77404 20 6.28571 19.4883 6.28571 18.8571C6.28571 18.226 5.77404 17.7143 5.14286 17.7143C4.51167 17.7143 4 18.226 4 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+									<path d="M17.7143 12C17.7143 12.6312 18.226 13.1429 18.8571 13.1429C19.4883 13.1429 20 12.6312 20 12C20 11.3688 19.4883 10.8571 18.8571 10.8571C18.226 10.8571 17.7143 11.3688 17.7143 12Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+									<path d="M10.8571 12C10.8571 12.6312 11.3688 13.1429 12 13.1429C12.6312 13.1429 13.1429 12.6312 13.1429 12C13.1429 11.3688 12.6312 10.8571 12 10.8571C11.3688 10.8571 10.8571 11.3688 10.8571 12Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+									<path d="M4 12C4 12.6312 4.51167 13.1429 5.14286 13.1429C5.77404 13.1429 6.28571 12.6312 6.28571 12C6.28571 11.3688 5.77404 10.8571 5.14286 10.8571C4.51167 10.8571 4 11.3688 4 12Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+									<path d="M17.7143 5.14286C17.7143 5.77404 18.226 6.28571 18.8571 6.28571C19.4883 6.28571 20 5.77404 20 5.14286C20 4.51167 19.4883 4 18.8571 4C18.226 4 17.7143 4.51167 17.7143 5.14286Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+									<path d="M10.8571 5.14286C10.8571 5.77404 11.3688 6.28571 12 6.28571C12.6312 6.28571 13.1429 5.77404 13.1429 5.14286C13.1429 4.51167 12.6312 4 12 4C11.3688 4 10.8571 4.51167 10.8571 5.14286Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+									<path d="M4 5.14286C4 5.77404 4.51167 6.28571 5.14286 6.28571C5.77404 6.28571 6.28571 5.77404 6.28571 5.14286C6.28571 4.51167 5.77404 4 5.14286 4C4.51167 4 4 4.51167 4 5.14286Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+								</svg>
+
+								{/* <div className='flex items-center justify-between gap-x-2'>
+									<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
+								</div> */}
+							</MenuDropdown>
+						</div>
+
 					</Space>
 					{
 						open?
@@ -182,6 +312,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 };
 
 export default styled(NavHeader)`
+.drop .ant-select-selector {
+
+	box-sizing:none;
+	border:none !important;
+	box-shadow:none !important;
+}
 .padding-zero .ant-modal-content {
 	padding: 0 !important;
 }

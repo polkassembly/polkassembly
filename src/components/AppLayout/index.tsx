@@ -67,10 +67,10 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 		},
 		{
 			key: 'logout',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' onClick={(event) => handleLogout(event)} href='/'>
+			label: <div className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' onClick={handleLogout}>
 				<LogoutOutlined />
 				<span>Logout</span>
-			</Link>
+			</div>
 		}
 	];
 
@@ -353,8 +353,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		setSidedrawer(false);
 	};
 
-	const handleLogout = async (e:any) => {
-		e.preventDefault();
+	const handleLogout = async () => {
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);
 	};

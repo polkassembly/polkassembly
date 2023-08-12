@@ -9,7 +9,7 @@ import { Button, Form, Modal, Steps } from 'antd';
 import WriteProposal from './WriteProposal';
 import CreatePreimage from './CreatePreimage';
 import CreateProposal from './CreateProposal';
-import WalletConnectModal from '~src/ui-components/WalletConnectModal';
+import WalletConnectModal from '~src/ui-components/AddressConnectModal';
 import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
 import { HexString } from '@polkadot/util/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';

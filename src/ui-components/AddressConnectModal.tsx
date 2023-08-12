@@ -50,7 +50,7 @@ interface Props{
 
 const ZERO_BN = new BN(0);
 
-const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWalletKeyName, localStorageAddressKeyName, onConfirm, LinkAddressNeeded, usingMultisig = false }: Props) => {
+const AddressConnectModal = ({ className, open, setOpen, closable, localStorageWalletKeyName, localStorageAddressKeyName, onConfirm, LinkAddressNeeded, usingMultisig = false }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
@@ -293,6 +293,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWa
 			setAddress(accounts[0].address);
 			if(defaultWalletAddress) {
 				setAddress(accounts.filter((account) => account.address === defaultWalletAddress)[0].address);
+			}else{
+				setAddress(accounts[0].address);
 			}
 		}else{
 			const injectedWindow = window as Window & InjectedWindow;
@@ -346,6 +348,8 @@ const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWa
 				setAddress(accounts[0].address);
 				if(defaultWalletAddress) {
 					setAddress(accounts.filter((account) => (account.address) === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))[0].address);
+				}else{
+					setAddress(accounts[0].address);
 				}
 			}
 		}
@@ -377,8 +381,10 @@ const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWa
 		getWallet();
 		const wallet = localStorage.getItem('loginWallet') || '';
 		const address = localStorage.getItem('loginAddress');
+		const multisigAddress = localStorage.getItem('multisigDelegationAssociatedAddress');
+		if(loginWallet === wallet) return;
 		setWallet((loginWallet || wallet) as Wallet);
-		getAccounts((loginWallet || wallet) as Wallet, loginAddress || address);
+		getAccounts((loginWallet || wallet) as Wallet, !multisigAddress ? (loginAddress || address) : null);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[loginWallet]);
 
@@ -549,7 +555,7 @@ const WalletConnectModal = ({ className, open, setOpen, closable, localStorageWa
 	</Modal>;
 };
 
-export default styled(WalletConnectModal)`
+export default styled(AddressConnectModal)`
 .radius .ant-modal-content {
 border-radius: 4px !important;
 }`;

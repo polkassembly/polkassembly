@@ -37,7 +37,7 @@ const ActiveProposals = dynamic(() => import('./ActiveProposals'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
-const WalletConnectModal = dynamic(() => import('~src/ui-components/WalletConnectModal'), {
+const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
@@ -257,7 +257,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			/>
 		</div> : <Skeleton />}
 
-		{!openLoginModal && !openSignupModal && !loginWallet && <WalletConnectModal localStorageWalletKeyName='delegationWallet' localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} />}
+		{!openLoginModal && !openSignupModal && !loginWallet && <AddressConnectModal localStorageWalletKeyName='delegationWallet' localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} />}
 		<LoginPopup closable={false} setSignupOpen={setOpenSignupModal} modalOpen={openLoginModal} setModalOpen={setOpenLoginModal} isModal={true} isDelegation={true}/>
 		<SignupPopup closable={false} setLoginOpen={setOpenLoginModal} modalOpen={openSignupModal} setModalOpen={setOpenSignupModal} isModal={true} isDelegation={true} />
 

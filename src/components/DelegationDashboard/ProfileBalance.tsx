@@ -26,7 +26,7 @@ interface Props{
   address: string;
 }
 
-const WalletConnectModal = dynamic(() => import('~src/ui-components/WalletConnectModal'), {
+const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	ssr: false
 });
 
@@ -187,7 +187,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				setSwitchModalOpen={setOpenModal}
 				withoutInfo={true}
 			/>}</div>
-		<WalletConnectModal localStorageWalletKeyName='delegationWallet' usingMultisig localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} closable={true}/>
+		<AddressConnectModal localStorageWalletKeyName='delegationWallet' usingMultisig localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} closable={true}/>
 	</div>;
 };
 export default ProfileBalances;

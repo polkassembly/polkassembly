@@ -30,7 +30,7 @@ const CustomHeading = styled.div`
   
 `;
 const StyleParagraph = styled.p`
-  margin-left: 20px;
+  margin-left: 14px;
 `;
 
 const StyledParagraph = styled.p`

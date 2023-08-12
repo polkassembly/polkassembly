@@ -169,7 +169,7 @@ const TermAndCondition = (props: any) => {
         following rules:</p> <p className='mb-[2px]'>1. it must not be obscene, abusive, offensive or racist
         and it must not promote or propose hatred or physical harm against
         anyone;</p><p className='mb-[2px]'>2. it must not harass, bully, insult or intimidate another
-        person;</p> <p className='mb-[2px]'>3. it must be true and honest so far as you know;</p> <p className='mb-[2px]'>4. it must not
+        person;</p> <p className='mb-[2px]'>3. it must be true and honest so far as you know;</p><p className='mb-[2px]'>4. it must not
         constitute pornography or be sexual or sexually suggestive involving
         minors;</p> <p className='mb-[2px]'>5. it must not be defamatory of anyone;</p><p className='mb-[2px]'>6. it must not use the
         material or content or infringe the rights or privacy of anyone else;

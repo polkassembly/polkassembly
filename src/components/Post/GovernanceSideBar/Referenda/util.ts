@@ -44,3 +44,28 @@ export function makeLinearCurve(linearDecreasing: any) {
 		return BigNumber.max(calcValue, 0).toNumber();
 	};
 }
+
+export function getTrackFunctions(trackInfo: any) {
+	let supportCalc: any = null;
+	let approvalCalc: any = null;
+	if (trackInfo) {
+		if (trackInfo.minApproval) {
+			if (trackInfo.minApproval.reciprocal) {
+				approvalCalc = makeReciprocalCurve(trackInfo.minApproval.reciprocal);
+			} else if (trackInfo.minApproval.linearDecreasing) {
+				approvalCalc = makeLinearCurve(trackInfo.minApproval.linearDecreasing);
+			}
+		}
+		if (trackInfo.minSupport) {
+			if (trackInfo.minSupport.reciprocal) {
+				supportCalc = makeReciprocalCurve(trackInfo.minSupport.reciprocal);
+			} else if (trackInfo.minSupport.linearDecreasing) {
+				supportCalc = makeLinearCurve(trackInfo.minSupport.linearDecreasing);
+			}
+		}
+	}
+	return {
+		approvalCalc,
+		supportCalc
+	};
+}

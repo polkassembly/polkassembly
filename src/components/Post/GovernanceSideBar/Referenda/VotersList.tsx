@@ -43,9 +43,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME);
 	const [polymeshVotesData, setPolymeshVotesData] =  useState<{ayeVotes: any[], nayVotes: any[]}>({ ayeVotes: [], nayVotes: [] });
 
-	const fetchVotersList = () => {
+	const fetchVotersListForPolymesh = () => {
 		if(!api || !apiReady) return;
-		api.query.pips.proposalVotes.entries(referendumId).then((res) => {
+		const pipId = referendumId;
+		api.query.pips.proposalVotes.entries(pipId).then((res) => {
 			const voters: any[] = [];
 			res.forEach((v) => {
 				const vote = {
@@ -101,13 +102,17 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 	useEffect(() => {
 		if(network === 'polymesh'){
-			fetchVotersList();
+			fetchVotersListForPolymesh();
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[network, api, apiReady]);
 
 	useEffect(() => {
 		if(network  === 'polymesh'){
+			setLoadingStatus({
+				isLoading: true,
+				message: ''
+			});
 			if(sortBy === votesSortValues.BALANCE){
 				const sortedAyeVotes = polymeshVotesData.ayeVotes.sort((a,b) => Number(b.value.replaceAll(',', '')) - Number(a.value.replaceAll(',', '')));
 				const sortedNayVotes =  polymeshVotesData.nayVotes.sort((a,b) => Number(b.value.replaceAll(',', '')) - Number(a.value.replaceAll(',', '')));
@@ -128,7 +133,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				}
 				);
 			}
-
+			setLoadingStatus({
+				isLoading: false,
+				message: ''
+			});
 		}
 		else{
 			setLoadingStatus({
@@ -197,15 +205,14 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				},
 				no: {
 					count: polymeshVotesData?.nayVotes.length,
-					votes: polymeshVotesData?.nayVotes?.slice((currentPage -1)*LISTING_LIMIT, ((currentPage -1)*LISTING_LIMIT) + LISTING_LIMIT )
+					votes: polymeshVotesData?.nayVotes?.slice((page -1)*LISTING_LIMIT, ((page -1)*LISTING_LIMIT) + LISTING_LIMIT )
 				},
 				yes:{
 					count: polymeshVotesData?.ayeVotes.length,
-					votes: polymeshVotesData?.ayeVotes?.slice((currentPage -1)*LISTING_LIMIT, ((currentPage -1)*LISTING_LIMIT) + LISTING_LIMIT )
+					votes: polymeshVotesData?.ayeVotes?.slice((page -1)*LISTING_LIMIT, ((page -1)*LISTING_LIMIT) + LISTING_LIMIT )
 				}
 			}
 			);
-
 		}
 
 	};
@@ -245,7 +252,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						value={decision}
 						onChange={(value) => {
 							setDecision(String(value) as DecisionType);
-							setCurrentPage(1);
+							onChange(1, 10);
 						}}
 						options={decisionOptions}
 					/>

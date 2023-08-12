@@ -927,24 +927,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						<GovSidebarCard>
 							<PIPsVoteInfo setOpen={setOpen} proposalType={proposalType} className='mt-0' status={status} pipId={onchainId as number}/>
 						</GovSidebarCard>
-						{
-							(onchainId || onchainId === 0) &&
-								<Modal
-									closeIcon={false}
-									onCancel={() => {
-										setOpen(false);
-									}}
-									open={open}
-									footer={[]}
-									closable={false}
-								>
-									<VotersList
-										className={className}
-										referendumId={onchainId as number}
-										voteType={getVotingTypeFromProposalType(proposalType)}
-									/>
-								</Modal>
-						}
 					</>
 					}
 

@@ -4,7 +4,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import AddTags from '~src/ui-components/AddTags';
-import MarkdownEditor from '~src/ui-components/MarkdownEditor';
+import Markdown from '~src/ui-components/Markdown';
 import { ISteps } from '.';
 import { useNetworkContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -14,6 +14,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import _ from 'lodash';
 import styled from 'styled-components';
+import TextEditor from '~src/ui-components/TextEditor';
 
 interface Props{
   isDiscussionLinked: boolean | null;
@@ -215,16 +216,17 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 					</div>
 					<div className='mt-6'>
 						<label className='mb-0.5'>Description <span className='text-nay_red'>*</span></label>
-						<Form.Item name='content'>
-							<MarkdownEditor
-								disabled={isDiscussionLinked}
-								name='content' value={content}
+						{isDiscussionLinked ? <Markdown imgHidden className='post-content border-solid bg-[#f5f5f5] border-[#dddddd] border-[1px] py-2 px-3 rounded-[4px] ' md={`${content?.slice(0, 300)}...` || content} /> : <Form.Item name='content'>
+							<TextEditor
+								name='content'
+								value={content}
+								height={250}
 								onChange={(content: string) => {
 									setContent(content);
 									onChangeLocalStorageSet({ content: content }, isDiscussionLinked);
 									setSteps({ percent:title.length === 0 ? 83.33 : 100, step: 0 });
 								}}  />
-						</Form.Item>
+						</Form.Item>}
 					</div>
 				</div>}
 				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4'>

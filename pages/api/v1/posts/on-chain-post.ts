@@ -655,7 +655,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			bond: postData?.bond,
 			cid: postData?.cid,
 			code:postData?.code,
-			codec:postData?.codec,
+			codec: postData?.codec,
 			comments: [],
 			content: '',
 			created_at: postData?.createdAt,

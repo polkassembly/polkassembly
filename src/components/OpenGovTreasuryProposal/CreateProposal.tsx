@@ -44,9 +44,10 @@ interface Props{
   tags: string[];
   postId: number;
   setPostId: (pre: number) => void;
+  availableBalance: BN;
 }
 
-const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess, title, content, tags, setPostId }: Props) => {
+const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess, title, content, tags, setPostId, availableBalance }: Props) => {
 	const { network } = useNetworkContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -205,7 +206,8 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
 		<div className={`create-proposal ${className}`}>
-			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-bodyBlue text-sm rounded-[4px] mt-8 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>
+			{ (submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}showIcon message='Insufficient available balance.'/>}
+			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-bodyBlue text-sm rounded-[4px] mt-4 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>
 			<div className='mt-4 text-sm font-normal text-lightBlue'>
 				<div className='mt-4 flex flex-col gap-2'>
 					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-bodyBlue' address={proposerAddress} identiconSize={18} displayInline disableAddressClick/></span>
@@ -238,9 +240,9 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 				</div>}/>}
 			<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
 				<Button
-					disabled={txFee.eq(ZERO_BN) || loading }
-					onClick={() => handleSubmitTreasuryProposal() } className={`bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px] ${(txFee.eq(ZERO_BN) || loading) && 'opacity-50'}`}>
-         Create Proposal
+					disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite) }
+					onClick={() => handleSubmitTreasuryProposal() } className={`bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px] ${(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite) ) && 'opacity-50'}`}>
+                    Create Proposal
 				</Button>
 			</div>
 		</div>
@@ -248,7 +250,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 };
 export default styled(CreateProposal)`
 .ant-alert-with-description{
-padding-block: 15px !important;
+	padding-block: 15px !important;
 }
 .ant-alert-with-description .ant-alert-icon{
   font-size: 18px !important;

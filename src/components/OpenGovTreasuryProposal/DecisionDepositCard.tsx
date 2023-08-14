@@ -310,6 +310,6 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 
 export default styled(DecisionDepositCard)`
 .pay-decision-deposite .ant-modal-content{
-  padding: 16px 0px !important;
+	padding: 16px 0px !important;
 
 }`;

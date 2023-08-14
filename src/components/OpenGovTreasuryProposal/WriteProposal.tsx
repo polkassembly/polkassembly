@@ -238,5 +238,5 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 };
 export default styled(WriteProposal)`
 .icon-alert .ant-alert-icon{
-  margin-top: -40px !important;
+	margin-top: -40px !important;
 }`;

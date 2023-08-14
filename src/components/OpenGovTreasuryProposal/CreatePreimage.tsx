@@ -68,6 +68,8 @@ interface Props{
   form: FormInstance;
   preimageLength: number | null;
   setPreimageLength: (pre:number | null) => void;
+  availableBalance: BN;
+  setAvailableBalance: (pre: BN) => void;
 }
 
 interface IAdvancedDetails{
@@ -75,7 +77,7 @@ interface IAdvancedDetails{
   atBlockNo: BN | null
 }
 
-const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preimageLength, setPreimageLength, preimageHash, setPreimageHash, fundingAmount, setFundingAmount, selectedTrack, setSelectedTrack, proposerAddress, beneficiaryAddress, setBeneficiaryAddress, enactment, setEnactment, setPreimage, form }:Props) => {
+const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preimageLength, setPreimageLength, preimageHash, setPreimageHash, fundingAmount, setFundingAmount, selectedTrack, setSelectedTrack, proposerAddress, beneficiaryAddress, setBeneficiaryAddress, enactment, setEnactment, setPreimage, availableBalance, setAvailableBalance, form }:Props) => {
 
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
@@ -88,7 +90,6 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
-	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [isAutoSelectTrack, setIsAutoSelectTrack] = useState<boolean>(true);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
@@ -186,6 +187,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	},[]);
 
 	const onChangeLocalStorageSet = (changedKeyValueObj: any, isPreimage: boolean, preimageCreated?: boolean, preimageLinked?: boolean, isPreimageStateChange?: boolean) => {
+		setTxFee(ZERO_BN);
 		let data: any = localStorage.getItem('treasuryProposalData');
 		if(data){data = JSON.parse(data);}
 
@@ -705,10 +707,10 @@ export default styled(CreatePreimage)`
 	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 }
 .preimage .ant-form-item {
-  margin-bottom: 0px !important;
+	margin-bottom: 0px !important;
 }
 .enactment .ant-form-item .ant-form-item-control{
-flex-direction: row !important;
-gap:6px !important;
+	flex-direction: row !important;
+	gap:6px !important;
 }
 `;

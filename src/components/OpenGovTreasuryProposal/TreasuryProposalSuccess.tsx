@@ -96,7 +96,7 @@ const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount,
 						<span className='flex'>
 							<span className='w-[172px]'>Track:</span>
 							<span className='text-bodyBlue font-medium'>{selectedTrack}
-								<span className='text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span>
+								<span className='text-pink_primary ml-1'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span>
 							</span>
 						</span>
 						<span className='flex'><span className='w-[172px]'>Funding Amount:</span>
@@ -127,12 +127,12 @@ const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount,
 
 export default styled(TreasuryProposalSuccessPopup)`
 .ant-alert-with-description{
-padding-block: 12px !important;
+	padding-block: 12px !important;
 }
 .ant-alert-with-description .ant-alert-description{
-  margin-top:-10px ;
+	margin-top:-10px ;
 }
 .ant-alert-with-description .ant-alert-icon{
-  font-size: 18px !important;
-  margin-top: 4px;
+	font-size: 18px !important;
+	margin-top: 4px;
 }`;

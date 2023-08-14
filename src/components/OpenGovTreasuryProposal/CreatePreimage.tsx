@@ -152,7 +152,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		}
 	};
 
-	const handleSelectTrack = (fundingAmount:BN) => {
+	const handleSelectTrack = (fundingAmount:BN, isPreimage: boolean) => {
 		for(const i in maxSpendArr){
 			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
 			if(maxSpend.gte(fundingAmount)){
@@ -304,7 +304,6 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		}
 		api.setSigner(injected.signer);
 
-		setLoading(true);
 		const proposal = api.tx.treasury.spend(fundingAmount.toString(), beneficiaryAddress);
 		const preimage: any = getState(api, proposal);
 
@@ -327,6 +326,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			});
 			setLoading(false);
 		};
+
 		setLoading(true);
 		await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage?.notePreimageTx });
 
@@ -396,7 +396,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					setFundingAmount(balance);
 					onChangeLocalStorageSet({ beneficiaryAddress: preImageArguments[1].value || '', fundingAmount: balance.toString() }, Boolean(isPreimage));
 					setSteps({ percent: 100 ,step: 1 });
-					handleSelectTrack(balance);
+					handleSelectTrack(balance, isPreimage);
 				}
 				else{
 					setPreimageLength(0);
@@ -445,7 +445,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					form.setFieldValue('preimage_length', data.length);
 					onChangeLocalStorageSet({ beneficiaryAddress: data?.proposedCall?.args?.beneficiary || '', fundingAmount: balance.toString(), preimageLength: data?.length || '' }, Boolean(isPreimage));
 					//select track
-					handleSelectTrack(balance);
+					handleSelectTrack(balance, isPreimage);
 
 					setSteps({ percent: 100 ,step: 1 });
 
@@ -535,7 +535,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		setPreimageLinked(false);
 		setSteps({ percent: (beneficiaryAddress?.length > 0 && fundingAmount.gt(ZERO_BN)) ? 100 : 60, step: 1 });
 		if(!isAutoSelectTrack || !fundingAmount || fundingAmount.eq(ZERO_BN)) return;
-		handleSelectTrack(fundingAmount);
+		handleSelectTrack(fundingAmount, Boolean(isPreimage));
 	};
 
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>

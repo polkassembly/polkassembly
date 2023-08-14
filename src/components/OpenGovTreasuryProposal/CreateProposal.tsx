@@ -212,7 +212,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					<span className='flex'><span className='w-[150px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
 					<span className='flex'><span className='w-[150px]'>Funding Amount:</span><span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
 					<span className='flex items-center'><span className='w-[150px]'>Preimage Hash:</span>
-						<span className='text-bodyBlue  font-medium'>{preimageHash.slice(0,10)+'...'+ preimageHash.slice(55)}</span>
+						<span className='text-bodyBlue font-medium'>{preimageHash.slice(0,10)+'...'+ preimageHash.slice(55)}</span>
 						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(preimageHash) ;success('Preimage hash copied to clipboard');}}>
 							{contextHolder}
 							<CopyIcon/>
@@ -236,8 +236,11 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					<span className='flex justify-between text-sm text-lightBlue pr-[70px] font-semibold'><span className='w-[150px]'>Total</span><span className='text-bodyBlue'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span></span>
 				</div>}/>}
 			<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
-				<Button onClick={() => handleSubmitTreasuryProposal() } className='bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px]'>
-         Create Proposal
+				<Button
+					disabled={txFee.eq(ZERO_BN) || loading }
+					onClick={() => handleSubmitTreasuryProposal() } className={`bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px] ${(txFee.eq(ZERO_BN) || loading) && 'opacity-50'}`}
+				>
+                     Create Proposal
 				</Button>
 			</div>
 		</div>

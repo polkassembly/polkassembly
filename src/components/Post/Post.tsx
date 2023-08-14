@@ -401,6 +401,7 @@ const Post: FC<IPostProps> = (props) => {
 			content: post?.content,
 			created_at: post?.created_at || '',
 			curator: post?.curator || '',
+			currentTimeline: post.currentTimeline,
 			description: post?.description,
 			history: post?.history || [],
 			last_edited_at: post?.last_edited_at,

@@ -45,11 +45,11 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
 		if(isValid){
-			setInputValue && setInputValue(value || '0');
+			setInputValue?.(value || '0');
 			onChange(balance);
 		}else{
 			onChange(ZERO_BN);
-			setInputValue && setInputValue('0');
+			setInputValue?.('0');
 		}
 	};
 

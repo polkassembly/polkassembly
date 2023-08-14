@@ -342,3 +342,11 @@ a.command-palette-list-item svg {
 .track-popover .ant-collapse>.ant-collapse-item >.ant-collapse-header{
 color: var(--lightBlue) !important;
 }
+
+.tox-autocompleter {
+	border: 1px solid #e5e5e5 !important;
+	border-radius: 8px !important;
+	.tox-menu {
+		border-radius: 8px !important;
+	}
+}

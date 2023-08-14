@@ -37,10 +37,12 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 		return res.status(403).json({ message: `Post with id ${postId} already exists.` });
 	}
 
-	const last_comment_at = new Date();
+	const current_datetime = new Date();
+
+	const last_comment_at = current_datetime;
 	const newPost: Post = {
 		content,
-		created_at: new Date(),
+		created_at: current_datetime,
 		id: postId,
 		last_comment_at,
 		last_edited_at: last_comment_at,
@@ -53,11 +55,11 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 	};
 
 	await postDocRef.set(newPost).then(() => {
-		return res.status(200).json({ message: 'Treasury proposals successfully created, it will appear on polkassembly as soon as it is synced on chain.', post_id: postId });
+		return res.status(200).json({ message: messages.TREASURY_PROPOSAL_CREATION_SUCCESS, post_id: postId });
 	}).catch((error) => {
 		// The document probably doesn't exist.
 		console.error('Error saving post: ', error);
-		return res.status(500).json({ message: 'Error saving post' });
+		return res.status(500).json({ message: messages.TREASURY_PROPOSAL_CREATION_ERROR });
 	});
 };
 

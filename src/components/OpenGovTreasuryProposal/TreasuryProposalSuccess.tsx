@@ -13,10 +13,10 @@ import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { formatedBalance } from '~src/util/formatedBalance';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
 import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import CloseIcon from '~assets/icons/close.svg';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
+import Link from 'next/link';
 
 interface Props{
   className?: string;
@@ -49,7 +49,6 @@ const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount,
 
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
-	const router = useRouter();
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 
 	useEffect(() => {
@@ -66,13 +65,16 @@ const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount,
 	}, []);
 
 	return <Modal
-		zIndex={100000}
 		open={open}
 		className={`${poppins.variable} ${poppins.className} w-[550px] max-md:w-full`}
 		wrapClassName={className}
 		closeIcon={<CloseIcon/>}
 		onCancel={onCancel}
-		footer={<div className='flex items-center'><Button onClick={() => {router.push(`https://${network}.polkassembly.io/referenda/${postId}`);}} className='w-full bg-pink_primary text-white text-sm font-medium h-[40px] rounded-[4px]'>View Proposal</Button></div>}
+		footer={
+			<Link href={`https://${network}.polkassembly.io/referenda/${postId}`} className='flex items-center'>
+				<Button className='w-full bg-pink_primary text-white text-sm font-medium h-[40px] rounded-[4px]'>View Proposal</Button>
+			</Link>
+		}
 		maskClosable={false}
 	>
 		<div className='flex justify-center items-center flex-col -mt-[132px]'>
@@ -118,7 +120,10 @@ const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount,
 				message={<span className='text-sm font-medium text-bodyBlue'>
         Place a decision deposit in {blocksToRelevantTime(network, Number(trackMetaData.decisionPeriod + trackMetaData.preparePeriod))} to prevent your proposal from being timed out.
 				</span>}
-				description={<span className='text-xs text-pink_primary font-medium cursor-pointer' onClick={() => router.push(`https://${network}.polkassembly.io/referenda/${postId}`)}>Pay Decision Deposit</span>}
+				description={
+					<Link href={`https://${network}.polkassembly.io/referenda/${postId}`} className='text-xs text-pink_primary font-medium cursor-pointer'>
+						Pay Decision Deposit
+					</Link>}
 			/>
 		</div>
 

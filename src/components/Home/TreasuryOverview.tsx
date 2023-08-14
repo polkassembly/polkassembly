@@ -14,7 +14,6 @@ import { chainProperties } from 'src/global/networkConstants';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 import blockToDays from 'src/util/blockToDays';
 import blockToTime from 'src/util/blockToTime';
-import fetchTokenToUSDPrice from 'src/util/fetchTokenToUSDPrice';
 import formatBnBalance from 'src/util/formatBnBalance';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import styled from 'styled-components';
@@ -24,6 +23,7 @@ import CurrentPrice from '~assets/icons/currentprice.svg';
 import NextBurn from '~assets/icons/nextburn.svg';
 import SpendPeriod from '~assets/icons/spendperiod.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
+import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -31,37 +31,6 @@ interface ITreasuryOverviewProps{
 	inTreasuryProposals?: boolean
 	className?: string
 }
-export const GetCurrentTokenPrice = (network: string, setCurrentTokenPrice: (pre: {isLoading: boolean,value: string}) => void) => {
-	let cancel = false;
-	if(cancel) return;
-
-	setCurrentTokenPrice({
-		isLoading: true,
-		value: ''
-	});
-	fetchTokenToUSDPrice(network).then((formattedUSD) => {
-		if(formattedUSD === 'N/A') {
-			setCurrentTokenPrice({
-				isLoading: false,
-				value: formattedUSD
-			});
-			return;
-		}
-
-		setCurrentTokenPrice({
-			isLoading: false,
-			value: network =='cere' ? parseFloat(formattedUSD).toFixed(4) : parseFloat(formattedUSD).toFixed(2)
-		});
-	}).catch(() => {
-		setCurrentTokenPrice({
-			isLoading: false,
-			value: 'N/A'
-		});
-	});
-
-	return () => {cancel = true;};
-
-};
 
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals } = props;

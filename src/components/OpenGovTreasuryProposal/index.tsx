@@ -9,7 +9,7 @@ import { Button, Form, Modal, Steps } from 'antd';
 import WriteProposal from './WriteProposal';
 import CreatePreimage from './CreatePreimage';
 import CreateProposal from './CreateProposal';
-import WalletConnectModal from '~src/ui-components/AddressConnectModal';
+import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import TreasuryProposalSuccessPopup from './TreasuryProposalSuccess';
 import { HexString } from '@polkadot/util/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -126,7 +126,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			<CreatePropoosalIcon className='cursor-pointer ml-[-31px]' />
 			<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%] '>Create Treasury Proposal</p>
 		</div>
-		<WalletConnectModal localStorageWalletKeyName='treasuryProposalProposerWallet' LinkAddressNeeded closable localStorageAddressKeyName ='treasuryProposalProposerAddress' open={openAddressLinkedModal} setOpen={setOpenAddressLinkedModal} onConfirm={() => setOpenModal(true)} />
+		<AddressConnectModal localStorageWalletKeyName='treasuryProposalProposerWallet' linkAddressNeeded closable localStorageAddressKeyName ='treasuryProposalProposerAddress' open={openAddressLinkedModal} setOpen={setOpenAddressLinkedModal} onConfirm={() => setOpenModal(true)} />
 		<Modal
 			maskClosable={false}
 			open={closeConfirm}

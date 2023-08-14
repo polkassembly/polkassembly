@@ -19,7 +19,7 @@ const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 });
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const { hash } = query;
+	const { hash = '' } = query;
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const { data, error } = await getLatestPreimage({ hash: String(hash), network });

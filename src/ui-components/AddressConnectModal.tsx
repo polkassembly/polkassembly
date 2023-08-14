@@ -44,13 +44,13 @@ interface Props{
   localStorageWalletKeyName: string;
   localStorageAddressKeyName: string;
   onConfirm?: () => void;
-  LinkAddressNeeded?: boolean;
+  linkAddressNeeded?: boolean;
   usingMultisig?: boolean;
 }
 
 const ZERO_BN = new BN(0);
 
-const AddressConnectModal = ({ className, open, setOpen, closable, localStorageWalletKeyName, localStorageAddressKeyName, onConfirm, LinkAddressNeeded, usingMultisig = false }: Props) => {
+const AddressConnectModal = ({ className, open, setOpen, closable, localStorageWalletKeyName, localStorageAddressKeyName, onConfirm, linkAddressNeeded = false , usingMultisig = false }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
@@ -98,7 +98,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 		try{
 			const injectedWindow = window as Window & InjectedWindow;
 			const wallet = isWeb3Injected
-				? injectedWindow.injectedWeb3[chosenWallet]
+				? injectedWindow?.injectedWeb3?.[chosenWallet]
 				: null;
 
 			if (!wallet) return;
@@ -229,7 +229,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 
 	const handleSubmit = () => {
 		if(!address || !wallet || !accounts) return;
-		if (LinkAddressNeeded && isUnlinkedAddress){
+		if (linkAddressNeeded && isUnlinkedAddress){
 			handleAddressLink(address, wallet as Wallet);
 		}else{
 			setLoading(true);
@@ -300,7 +300,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 			const injectedWindow = window as Window & InjectedWindow;
 
 			const wallet = isWeb3Injected
-				? injectedWindow.injectedWeb3[chosenWallet]
+				? injectedWindow?.injectedWeb3?.[chosenWallet]
 				: null;
 
 			if (!wallet) {
@@ -432,7 +432,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 			onClick={handleSubmit}
 			disabled={accounts.length === 0 || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit))}
 			className='text-sm font-medium text-white bg-pink_primary h-[40px] w-[134px] mt-4 rounded-[4px] tracking-wide'>
-			{isUnlinkedAddress ? 'Link Address' : LinkAddressNeeded ? 'Next' : 'Confirm'}
+			{isUnlinkedAddress ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
 		</Button>
 		}
 		closable = {closable? true : false}
@@ -441,7 +441,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 	>
 		<Spin spinning={loading} indicator={<LoadingOutlined />}>
 			<div className='flex flex-col'>
-				{LinkAddressNeeded && accounts.length > 0 && isUnlinkedAddress && <div className='flex flex-col mt-6 mb-2 items-center justify-center px-4'>
+				{linkAddressNeeded && accounts.length > 0 && isUnlinkedAddress && <div className='flex flex-col mt-6 mb-2 items-center justify-center px-4'>
 					<ConnectAddressIcon/>
 					<span className='mt-6 text-bodyBlue text-sm text-center'>
 						Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community
@@ -501,10 +501,10 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 					}
 				</div>}
 
-				{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message={`For using ${LinkAddressNeeded ? 'Treasury proposal creation' : 'Delegation dashboard'}:`} description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mt-4' type='info' />}
+				{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0  && !loading && <Alert message={`For using ${linkAddressNeeded ? 'Treasury proposal creation' : 'Delegation dashboard'}:`} description={<ul className='mt-[-5px] text-sm'><li>Give access to Polkassembly on your selected wallet.</li><li>Add an address to the selected wallet.</li></ul>} showIcon className='mt-4' type='info' />}
 				{Object.keys(availableWallets || {}).length === 0 && !loading && <Alert
-					message={LinkAddressNeeded ? 'Please install a wallet and create an address to start creating a proposal.' : 'Wallet extension not detected.'}
-					description={`${LinkAddressNeeded ? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.': 'No web3 wallet was found with an active address.'}`}
+					message={linkAddressNeeded ? 'Please install a wallet and create an address to start creating a proposal.' : 'Wallet extension not detected.'}
+					description={`${linkAddressNeeded ? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.': 'No web3 wallet was found with an active address.'}`}
 					type='info' showIcon className='text-[#243A57] changeColor text-md'/>}
 
 				{
@@ -533,7 +533,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 												canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
 											/> :
 											<AccountSelectionForm
-												title={LinkAddressNeeded ? 'Select Proposer Address' :'Select an address'}
+												title={linkAddressNeeded ? 'Select Proposer Address' :'Select an address'}
 												accounts={accounts}
 												address={address}
 												withBalance={true}
@@ -542,7 +542,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 												className='text-lightBlue text-sm mt-4'
 											/> : !wallet && Object.keys(availableWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
 								</Form>}
-				{LinkAddressNeeded && !loading && accounts.length > 0 && <>
+				{linkAddressNeeded && !loading && accounts.length > 0 && <>
 					<Alert showIcon type='info' message={<span className='text-bodyBlue'>
           Link Address to your Polkassembly account to proceed with proposal creation
 					</span>}

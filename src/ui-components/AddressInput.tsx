@@ -52,11 +52,11 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 
 		if(validAddress || isValidMetaAddress) {
 			setIsValid(true);
-			checkValidAddress && checkValidAddress(true);
+			checkValidAddress?.(true);
 			onChange(address);
 		} else {
 			setIsValid(false);
-			checkValidAddress && checkValidAddress(false);
+			checkValidAddress?.(false);
 			onChange('');
 		}
 	};
@@ -66,16 +66,16 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 			if(address){
 				if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
 					setIsValid(true);
-					checkValidAddress && checkValidAddress(true);
+					checkValidAddress?.(true);
 					onChange(address);
 				}else{
 					setIsValid(false);
-					checkValidAddress && checkValidAddress(false);
+					checkValidAddress?.(false);
 				}
 			}
 			else{
 				setIsValid(false);
-				checkValidAddress && checkValidAddress(false);
+				checkValidAddress?.(false);
 			}
 			return;
 		}

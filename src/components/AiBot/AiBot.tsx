@@ -25,7 +25,7 @@ const  OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposa
 	ssr: false
 });
 
-const treasuryProposalAllowedNetwork = ['KUSAMA', 'POLKADOT'];
+const treasuryProposalCreationAllowedNetwork = ['KUSAMA', 'POLKADOT'];
 const grillChatAllowedNetwork = ['CERE', 'KILT', 'KUSAMA', 'MOONBEAM', 'POLKADOT'];
 
 interface IAiChatbotProps {
@@ -119,7 +119,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		}
 	];
 
-	if(treasuryProposalAllowedNetwork.includes(network.toUpperCase())){
+	if(treasuryProposalCreationAllowedNetwork.includes(network.toUpperCase())){
 		data.splice(0, 0, {
 			component: <OpenGovTreasuryProposal/>
 		});

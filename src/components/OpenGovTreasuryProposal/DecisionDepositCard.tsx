@@ -96,15 +96,15 @@ const DecisionDepositCard = ({ className, trackName }: Props) => {
 		if(chosenWallet === Wallet.METAMASK){
 			const accounts = await getMetamaskAccounts();
 			setAccounts(accounts);
-			setAddress(accounts[0].address);
+			setAddress(accounts?.[0]?.address || '');
 			if(defaultWalletAddress) {
-				setAddress(accounts.filter((account) => account.address === defaultWalletAddress)[0].address);
+				setAddress(accounts?.filter((account) => account?.address === defaultWalletAddress)?.[0]?.address || '');
 			}
 		}else{
 			const injectedWindow = window as Window & InjectedWindow;
 
 			const wallet = isWeb3Injected
-				? injectedWindow.injectedWeb3[chosenWallet]
+				? injectedWindow?.injectedWeb3?.[chosenWallet]
 				: null;
 
 			if (!wallet) {

@@ -7,7 +7,6 @@ import { ProfileOutlined } from '@ant-design/icons';
 import { Button, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
-import { IPreimagesListing } from 'pages/api/v1/listing/preimages';
 import React, { FC, useEffect, useState } from 'react';
 import ReactJson from 'react-json-view';
 import NameLabel from 'src/ui-components/NameLabel';
@@ -15,6 +14,7 @@ import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
 
 import { useNetworkContext } from '~src/context';
+import { IPreimagesListing } from '~src/types';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];

@@ -15,7 +15,6 @@ import Web3 from 'web3';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import styled from 'styled-components';
 import DownArrow from '~assets/icons/down-icon.svg';
-import { GetCurrentTokenPrice } from '../Home/TreasuryOverview';
 import { BN_HUNDRED, BN_MAX_INTEGER, BN_ONE, BN_THOUSAND, formatBalance, isHex } from '@polkadot/util';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
@@ -39,6 +38,7 @@ import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
+import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -126,9 +126,16 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 	const handleStateChange = (createPreimageForm: any) => {
 		setSteps({ percent: 20, step: 1 });
-		(createPreimageForm.preimageHash && createPreimageForm.preimageLength  && createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) &&  setSteps({ percent: 100, step: 1 });
-		(createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) && setSteps({ percent: 100, step: 1 });
-		createPreimageForm?.selectedTrack && setIsAutoSelectTrack(false);
+		if(createPreimageForm.preimageHash && createPreimageForm.preimageLength  && createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) {
+			setSteps({ percent: 100, step: 1 });
+		}
+		if(createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack)
+		{
+			setSteps({ percent: 100, step: 1 });
+		}
+		if(createPreimageForm?.selectedTrack) {
+			setIsAutoSelectTrack(false);
+		}
 
 		setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
 		const balance = isNaN(Number(createPreimageForm?.fundingAmount)) ? ZERO_BN : new BN(createPreimageForm?.fundingAmount) ;
@@ -174,8 +181,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			setSteps({ percent: 20, step: 1 });
 			const createPreimageForm = data?.createPreimageForm?.[!isPreimage ? 'withoutPreimageForm' : 'withPreimageForm'] ;
 			handleStateChange(createPreimageForm);
-			data.preimageCreated && setPreimageCreated(data.preimageCreated);
-			data.preimageLinked && setPreimageLinked(data.preimageLinked);
+			if(data.preimageCreated) setPreimageCreated(data.preimageCreated);
+			if(data.preimageLinked) setPreimageLinked(data.preimageLinked);
 		}
 		if(!network) return ;
 		formatBalance.setDefaults({
@@ -210,8 +217,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			handleStateChange(createPreimageKeysData || {});
 			setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
 			form.setFieldValue('at_block',currentBlock?.add(BN_THOUSAND) || BN_ONE  );
-			data.preimageCreated && setPreimageCreated(data.preimageCreated);
-			data.preimageLinked && setPreimageLinked(data.preimageLinked);
+			if(data.preimageCreated) setPreimageCreated(data.preimageCreated);
+			if(data.preimageLinked) setPreimageLinked(data.preimageLinked);
 			setIsAutoSelectTrack(true);
 			setOpenAdvanced(false);
 		}
@@ -239,7 +246,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		form.validateFields();
 		if(!beneficiaryAddress) return;
 		if(isPreimage || !proposerAddress || !beneficiaryAddress || !getEncodedAddress(beneficiaryAddress, network) ||
-		!api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN) || fundingAmount.eq(ZERO_BN))return;
+		!api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN) || fundingAmount.eq(ZERO_BN)) return;
 		if(!selectedTrack) return;
 		debounceGetPreimageTxFee();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -258,7 +265,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		notePreimageTx = api.tx.preimage.notePreimage(encodedProposal);
 
 		// we currently don't have a constant exposed, however match to Substrate
-		storageFee = ((api.consts.preimage?.baseDeposit || ZERO_BN) as unknown as BN).add(
+		storageFee = ((api?.consts?.preimage?.baseDeposit || ZERO_BN) as unknown as BN).add(
 			((api.consts.preimage?.byteDeposit || ZERO_BN) as unknown as BN).muln(preimageLength)
 		);
 
@@ -278,7 +285,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 		const injectedWindow = window as Window & InjectedWindow;
 		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[String(proposerWallet)]
+			? injectedWindow?.injectedWeb3?.[String(proposerWallet)]
 			: null;
 
 		if (!wallet) {
@@ -306,7 +313,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		}
 		api.setSigner(injected.signer);
 
-		const proposal = api.tx.treasury.spend(fundingAmount.toString(), beneficiaryAddress);
+		const proposal = api?.tx?.treasury?.spend(fundingAmount.toString(), beneficiaryAddress);
 		const preimage: any = getState(api, proposal);
 		setLoading(true);
 
@@ -339,13 +346,18 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 		if(!isPreimage){if(txFee.gte(availableBalance)) return;}
 		await form.validateFields();
-		isPreimage && onChangeLocalStorageSet({ preimageLinked: true }, Boolean(isPreimage), preimageCreated, true);
+		if(isPreimage) onChangeLocalStorageSet({ preimageLinked: true }, Boolean(isPreimage), preimageCreated, true);
 
 		if(!(isPreimage) ? preimageCreated : preimageLinked) {
 			setSteps({ percent: 100, step: 2 });
 		}
 		else{
-			!isPreimage ? await getPreimage() : (preimageLength !== 0 && beneficiaryAddress?.length > 0 && fundingAmount.gt(ZERO_BN)) && setSteps({ percent: 100, step: 2 }) ;
+			if(!isPreimage){
+				await getPreimage();
+			}
+			else if(preimageLength !== 0 && beneficiaryAddress?.length > 0 && fundingAmount.gt(ZERO_BN)) {
+				setSteps({ percent: 100, step: 2 });
+			}
 			setEnactment({ ...enactment, value: enactment.key === EEnactment.At_Block_No ? advancedDetails?.atBlockNo : advancedDetails?.afterNoOfBlocks  });
 		}
 	};
@@ -353,7 +365,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const getExistPreimageDataFromPolkadot = async(preimageHash: string, isPreimage: boolean) => {
 		if(!api || !apiReady) return;
 
-		const lengthObj = await api.query.preimage.statusFor(preimageHash);
+		const lengthObj = await api?.query?.preimage?.statusFor(preimageHash);
 
 		const length = JSON.parse(JSON.stringify(lengthObj))?.unrequested?.len || 0;
 		checkPreimageHash(length, preimageHash);
@@ -361,7 +373,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		form.setFieldValue('preimage_length', length);
 		onChangeLocalStorageSet({ preimageLength: length || '' }, Boolean(isPreimage));
 
-		const preimageRaw: any = await api.query.preimage.preimageFor([preimageHash, length ]);
+		const preimageRaw: any = await api?.query?.preimage?.preimageFor([preimageHash, length ]);
 		const preimage = preimageRaw.unwrapOr(null);
 
 		const constructProposal = function(

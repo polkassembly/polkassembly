@@ -30,8 +30,9 @@ interface IPrams{
   network: string;
 }
 export async function getLatestPreimage(params:IPrams ): Promise<IApiResponse<IPreimageData | MessageType>> {
+	const { hash , network } = params;
+
 	try {
-		const { hash , network } = params;
 		if(!network || !isValidNetwork(network)) {
 			throw apiErrorWithStatusCode('Invalid network in request header', 400);
 		}

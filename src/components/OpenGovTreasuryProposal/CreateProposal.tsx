@@ -143,7 +143,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 		const injectedWindow = window as Window & InjectedWindow;
 		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[String(proposerWallet)]
+			? injectedWindow?.injectedWeb3?.[String(proposerWallet)]
 			: null;
 
 		if (!wallet) {

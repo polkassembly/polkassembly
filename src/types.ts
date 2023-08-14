@@ -13,6 +13,14 @@ import dayjs from 'dayjs';
 declare global {
   interface Window { GA_INITIALIZED: any; }
 }
+export interface IPreimagesListing {
+  proposedCall?: any;
+}
+
+export interface IPreimagesListingResponse {
+    count: number;
+    preimages: IPreimagesListing[];
+}
 
 export interface UserDetailsContextType {
   id?: number | null;

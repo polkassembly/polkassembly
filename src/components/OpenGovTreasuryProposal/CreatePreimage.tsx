@@ -306,6 +306,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 		const proposal = api.tx.treasury.spend(fundingAmount.toString(), beneficiaryAddress);
 		const preimage: any = getState(api, proposal);
+		setLoading(true);
 
 		const onSuccess = () => {
 

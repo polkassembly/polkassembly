@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Modal, message } from 'antd';
+import { Alert, Button, Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 import { useNetworkContext } from '~src/context';
@@ -12,12 +12,9 @@ import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { formatedBalance } from '~src/util/formatedBalance';
-import copyToClipboard from '~src/util/copyToClipboard';
 import styled from 'styled-components';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrackCard';
-import RedirectIcon from '~assets/icons/redirect.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 
@@ -49,26 +46,15 @@ const getDefaultTrackMetaData = () => {
 };
 
 const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount, preimageHash, proposerAddress, beneficiaryAddress, preimageLength, selectedTrack, postId }: Props) => {
+
 	const { network } = useNetworkContext();
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
-	const [messageApi, contextHolder] = message.useMessage();
 	const router = useRouter();
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 
 	useEffect(() => {
 		setTrackMetaData(getTrackData(network, selectedTrack));
 	}, [network, selectedTrack]);
-
-	const success = (message: string) => {
-		messageApi.open({
-			content: message,
-			duration: 10,
-			type: 'success'
-		});
-	};
-	const copyLink = (address:string) => {
-		copyToClipboard(address);
-	};
 
 	useEffect(() => {
 		if(!network) return ;
@@ -122,17 +108,6 @@ const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount,
 						<span className='flex'>
 							<span className='w-[172px]'>Preimage Length:</span>
 							<span className='text-bodyBlue font-medium'>{preimageLength}</span>
-						</span>
-						<span className='flex items-center'><span className='w-[172px]'>Link to proposal:</span>
-							<Link href={`/referenda/${postId}`} className='text-pink_primary font-medium'>
-								<u>{`https://${network}.../${postId}`}</u>
-							</Link>
-							<span className='flex items-center cursor-pointer ml-1'
-								onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/referenda/${postId}`) ;success('Preimage link copied to clipboard.');}}
-							>
-								{contextHolder}
-								<RedirectIcon/>
-							</span>
 						</span>
 					</div>
 				</div>}

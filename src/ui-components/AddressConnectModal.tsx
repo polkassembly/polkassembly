@@ -381,12 +381,10 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 		getWallet();
 		const wallet = localStorage.getItem('loginWallet') || '';
 		const address = localStorage.getItem('loginAddress');
-		const multisigAddress = localStorage.getItem('multisigDelegationAssociatedAddress');
-		if(loginWallet === wallet) return;
 		setWallet((loginWallet || wallet) as Wallet);
-		getAccounts((loginWallet || wallet) as Wallet, !multisigAddress ? (loginAddress || address) : null);
+		getAccounts((loginWallet || wallet) as Wallet, loginAddress || address);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[loginWallet]);
+	},[loginWallet, loginAddress]);
 
 	const handleInitiatorBalance = useCallback(
 		async () => {

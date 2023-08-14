@@ -90,6 +90,7 @@ export const handleTokenChange = (token: string, currentUser: UserDetailsContext
 export const logout = (setUserDetailsContextState: UserDetailsContextType['setUserDetailsContextState']) => {
 	deleteLocalStorageToken();
 	localStorage.removeItem('delegationDashboardAddress');
+	localStorage.removeItem('multisigDelegationAssociatedAddress');
 	localStorage.removeItem('delegationWallet');
 	localStorage.removeItem('loginWallet');
 	localStorage.removeItem('loginAddress');

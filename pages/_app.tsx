@@ -21,7 +21,7 @@ import getNetwork from '~src/util/getNetwork';
 import { initGA, logPageView } from '../analytics';
 
 export const poppins = Poppins({
-	adjustFontFallback: false,
+	// adjustFontFallback: false,
 	display: 'swap',
 	style: ['italic', 'normal'],
 	subsets: ['latin'],

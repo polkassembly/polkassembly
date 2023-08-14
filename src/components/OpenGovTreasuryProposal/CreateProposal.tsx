@@ -208,8 +208,9 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-bodyBlue text-sm rounded-[4px] mt-8 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>
 			<div className='mt-4 text-sm font-normal text-lightBlue'>
 				<div className='mt-4 flex flex-col gap-2'>
-					<span className='flex'><span className='w-[150px]'>Beneficiary Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-bodyBlue' address={beneficiaryAddress} identiconSize={18} displayInline/></span>
-					<span className='flex'><span className='w-[150px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
+					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-bodyBlue' address={proposerAddress} identiconSize={18} displayInline disableAddressClick/></span>
+					<span className='flex'><span className='w-[150px]'>Beneficiary Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-bodyBlue' address={beneficiaryAddress} identiconSize={18} displayInline disableAddressClick/></span>
+					<span className='flex'><span className='w-[150px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary ml-1'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
 					<span className='flex'><span className='w-[150px]'>Funding Amount:</span><span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
 					<span className='flex items-center'><span className='w-[150px]'>Preimage Hash:</span>
 						<span className='text-bodyBlue  font-medium'>{preimageHash.slice(0,10)+'...'+ preimageHash.slice(55)}</span>

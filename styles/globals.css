@@ -346,7 +346,8 @@ color: var(--lightBlue) !important;
 .tox-autocompleter {
 	border: 1px solid #e5e5e5 !important;
 	border-radius: 8px !important;
-	.tox-menu {
-		border-radius: 8px !important;
-	}
+}
+
+.tox-autocompleter .tox-menu {
+	border-radius: 8px !important;
 }

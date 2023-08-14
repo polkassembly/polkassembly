@@ -435,8 +435,8 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 			{isUnlinkedAddress ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}
 		</Button>
 		}
-		closable = {closable? true : false}
-		onCancel={() => closable ? setOpen(false) : setOpen(true)}
+		closable = {Boolean(closable)}
+		onCancel={() => setOpen(Boolean(closable))}
 		closeIcon={<CloseIcon/>}
 	>
 		<Spin spinning={loading} indicator={<LoadingOutlined />}>

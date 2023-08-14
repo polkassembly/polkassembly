@@ -39,13 +39,12 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 
 	const current_datetime = new Date();
 
-	const last_comment_at = current_datetime;
 	const newPost: Post = {
 		content,
 		created_at: current_datetime,
 		id: postId,
-		last_comment_at,
-		last_edited_at: last_comment_at,
+		last_comment_at: current_datetime,
+		last_edited_at: current_datetime,
 		post_link: null,
 		proposer_address: proposerAddress,
 		tags: tags,

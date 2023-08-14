@@ -14,11 +14,13 @@ import styled from 'styled-components';
 import ReplyIcon from '~assets/icons/reply.svg';
 
 import { MessageType } from '~src/auth/types';
-import { usePostDataContext } from '~src/context';
+import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ReportButton from '../ActionsBar/ReportButton';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
+import getOnChainUsername from '~src/util/getOnChainUsername';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
 	userId: number;
@@ -36,14 +38,20 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply, proposer, is_custom_username }: Props) => {
-	const [isEditing, setIsEditing] = useState(false);
 	const { id , username ,picture } = useContext(UserDetailsContext);
-	const toggleEdit = () => setIsEditing(!isEditing);
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkContext();
+
 	const [form] = Form.useForm();
+	const [replyToreplyForm] = Form.useForm();
+
+	const [isEditing, setIsEditing] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [isReplying,setIsReplying] = useState(false);
-	const [replyToreplyForm] = Form.useForm();
+	const [onChainUsername, setOnChainUsername] = useState<string>('');
+
+	const toggleEdit = () => setIsEditing(!isEditing);
 
 	const { setPostData, postData: {
 		postType, postIndex
@@ -55,14 +63,26 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	}, [content, form, replyId]);
 
 	useEffect(() => {
+		(async () => {
+			if(!api || !apiReady || !proposer) return;
+			const onChainUsername = await getOnChainUsername(api, proposer, network === 'kilt');
+			setOnChainUsername(onChainUsername);
+		})();
+	}, [api, apiReady, network, proposer]);
+
+	useEffect(() => {
 		let usernameContent = '';
-		if (!is_custom_username && proposer) {
-			usernameContent = `[@${proposer}](${global.window.location.origin}/address/${proposer})`;
+
+		if(!is_custom_username && onChainUsername && proposer) {
+			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
+		} else if (!is_custom_username && !onChainUsername && proposer) {
+			usernameContent = `[@${getEncodedAddress(proposer, network)}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
 		}
-		replyToreplyForm.setFieldValue('content', usernameContent || '');
-	}, [is_custom_username, proposer, replyToreplyForm, userName]);
+
+		replyToreplyForm.setFieldValue('content', `${usernameContent}&nbsp;` || '');
+	}, [is_custom_username, network, onChainUsername, proposer, replyToreplyForm, userName]);
 
 	const handleCancel = () => {
 		toggleEdit();
@@ -319,7 +339,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 												{ required: "Please add the '${name}'" }
 											}
 										>
-											<ContentForm onChange={(content: string) => {
+											<ContentForm height={250} onChange={(content: string) => {
 												global.window.localStorage.setItem(newReplyKey(commentId), content);
 												return content.length ? content : null;
 											}}  />

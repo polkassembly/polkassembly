@@ -71,6 +71,7 @@ export interface IPostData {
     tags: string[] | [];
     spam_users_count?: number;
     history?: IPostHistory[];
+    statusHistory?: any[];
 }
 
 export interface IPostDataContext {

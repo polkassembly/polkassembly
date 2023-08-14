@@ -8,17 +8,10 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { GET_PREIMAGES_TABLE_QUERY } from '~src/queries';
-import { IApiResponse } from '~src/types';
+import { IApiResponse, IPreimagesListingResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
-
-export interface IPreimagesListing {}
-
-export interface IPreimagesListingResponse {
-    count: number;
-    preimages: IPreimagesListing[];
-}
 
 interface IGetPreimagesParams {
     network: string;

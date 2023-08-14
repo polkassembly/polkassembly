@@ -17,7 +17,7 @@ import Web3 from 'web3';
 import { LoadingStatusType, NotificationStatus } from 'src/types';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
-import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 export interface SecondProposalProps {

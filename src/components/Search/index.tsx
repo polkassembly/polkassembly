@@ -292,13 +292,13 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			hitsPerPage: AUTOCOMPLETE_INDEX_LIMIT,
 			highlightPreTag:'<mark>',
 			highlightPostTag:'</mark>',
-			page: 1,
+			page: 0,
 			restrictSearchableAttributes: ['title', 'parsed_content']
 		}).catch((error) => console.log('Posts autocomplete fetch error: ', error));
 
 		const userResults = await userIndex.search(queryStr, {
 			hitsPerPage: AUTOCOMPLETE_INDEX_LIMIT,
-			page: 1,
+			page: 0,
 			highlightPreTag:'<mark>',
 			highlightPostTag:'</mark>',
 			restrictSearchableAttributes: ['username', 'profile.bio', 'profile.title']

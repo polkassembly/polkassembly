@@ -30,7 +30,8 @@ export enum EAddressOtherTextType {
 	CONNECTED='Connected',
 	COUNCIL='Council',
 	COUNCIL_CONNECTED='Council (Connected)',
-	LINKED_ADDRESS= 'Linked'
+	LINKED_ADDRESS= 'Linked',
+  UNLINKED_ADDRESS = 'Address not linked'
 }
 
 interface Props {
@@ -268,9 +269,9 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 										</Space>
 										: null
 								}
-								<div className={`description text-xs ml-0.5 ${addressClassName}`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
+								<div className={`description ml-0.5 ${addressClassName} text-xs`}>{isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 							</div>
-						: <div className={`description text-xs ${addressClassName}`}>{kiltName ? t1 : isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
+						: <div className={`description ${addressClassName} text-xs`}>{kiltName ? t1 : isShortenAddressLength? shortenAddress(encoded_addr, shortenAddressLength): encoded_addr}</div>
 				}
 			</div>}
 			{
@@ -279,11 +280,11 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 						className={classNames('w-[6px] h-[6px] rounded-full', {
 							'bg-aye_green ': [EAddressOtherTextType.CONNECTED, EAddressOtherTextType.COUNCIL_CONNECTED].includes(otherTextType),
 							'bg-blue ': otherTextType === EAddressOtherTextType.COUNCIL,
-							'bg-nay_red': otherTextType === EAddressOtherTextType.LINKED_ADDRESS
+							'bg-nay_red': [EAddressOtherTextType.LINKED_ADDRESS, EAddressOtherTextType.UNLINKED_ADDRESS].includes(otherTextType)
 						})}
 					>
 					</span>
-					<span className='text-xs'>
+					<span className='text-xs text-lightBlue'>
 						{otherTextType}
 					</span>
 				</p>: null

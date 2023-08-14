@@ -925,7 +925,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					}
 					{[ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(proposalType) && <>
 						<GovSidebarCard>
-							<PIPsVoteInfo setOpen={setOpen} proposalType={proposalType} className='mt-0' status={status} pipId={onchainId as number}/>
+							<PIPsVoteInfo setOpen={setOpen} proposalType={proposalType} className='mt-0' status={status} pipId={onchainId as number} proposalType={proposalType} tally={tally}/>
 						</GovSidebarCard>
 					</>
 					}

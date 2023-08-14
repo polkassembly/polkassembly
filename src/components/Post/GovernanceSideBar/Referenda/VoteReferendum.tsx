@@ -220,8 +220,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				return;
 			}
 			//deposit balance
-			const depositBase = api.consts.multisig.depositBase.toString();
-			const depositFactor = api.consts.multisig.depositFactor.toString();
+			const depositBase = api.consts.multisig?.depositBase.toString();
+			const depositFactor = api.consts.multisig?.depositFactor.toString();
 			setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
 			//initiator balance
 			const initiatorBalance = await api.query.system.account(address);

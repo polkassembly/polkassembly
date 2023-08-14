@@ -18,10 +18,12 @@ interface Props{
   pipId: number;
   proposalType: ProposalType;
   setOpen: (pre: boolean) => void;
+  tally?: any;
 }
 const ZERO_BN = new BN(0);
 
-const PIPsVoteInfo = ({ className, status, pipId, setOpen }: Props) => {
+const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }: Props) => {
+	console.log(proposalType, tally)
 
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();

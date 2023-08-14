@@ -165,6 +165,7 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType, 
 	};
 
 	useEffect(() => {
+		if(network === 'polymesh') return;
 		if(proposalType === ProposalType.REFERENDUMS){
 			getReferendumVoteInfo();
 		}

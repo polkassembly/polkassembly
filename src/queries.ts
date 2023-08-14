@@ -471,7 +471,7 @@ export const GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE = `query PolymeshProposalBy
       ayes
       bareAyes
       nays
-      support
+      totalSeats
     }
   }
   votesConnection(orderBy: blockNumber_DESC, where:{proposal:{type_eq:$type_eq, index_eq:$index_eq}}) {

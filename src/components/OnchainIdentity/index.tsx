@@ -14,6 +14,8 @@ import TotalAmountBreakdown from './TotalAmountBreakdown';
 import CloseIcon from '~assets/icons/close-icon.svg';
 import OnChainIdentityIcon from '~assets/icons/onchain-identity.svg';
 import IdentityForm from './IdentityForm';
+import SocialVerification from './SocialVerification';
+// import VerificationSuccessScreen from './VerificationSuccessScreen';
 
 const ZERO_BN = new BN(0);
 
@@ -37,6 +39,7 @@ export interface ISocials{
 const OnChainIdentity = () => {
 
 	const [open, setOpen] = useState<boolean>(false);
+	const [title, setTitle] = useState<string>('On-chain identity');
 	const { network } = useContext(NetworkContext);
 	const { api, apiReady } = useContext(ApiContext);
 	const [loading, setLoading]= useState<boolean>(false);
@@ -46,6 +49,7 @@ const OnChainIdentity = () => {
 	const [address, setAddress] = useState<string>('5GBnMKKUHNbN2fqBY4NbwMMNNieJLYHjr3p9J5W9i1nxKk8e');
 	const [name, setName] = useState<IName>({ displayName: '', legalName: '' });
 	const [socials, setSocials] = useState<ISocials>({ email: '', riot: '', twitter: '', web: '' });
+	const [perSocialBondFee, setPerSocialBondFee] = useState<BN>(ZERO_BN);
 
 	useEffect(() => {
 		if(!network) return ;
@@ -55,17 +59,18 @@ const OnChainIdentity = () => {
 		});
 
 		if(!api || !apiReady) return;
-		// setLoading(true);
+		setLoading(true);
 
 		(async() => {
 
-			const tx = api.consts.identity.fieldDeposit;
+			const bondFee = api.consts.identity.fieldDeposit;
 
 			const registerarFee:any = await api.query.identity.registrars().then((e) => JSON.parse(e.toString()));
-
 			const bnRegisterarFee = new BN((registerarFee[registerarFee.length -1].fee) || ZERO_BN);
+			setTxFee({ ... txFee, bondFee: ZERO_BN, registerarFee: bnRegisterarFee });
+			setPerSocialBondFee(bondFee);
 			setLoading(false);
-			setTxFee({ ... txFee, bondFee: tx, registerarFee: bnRegisterarFee });
+
 		})();
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,6 +81,10 @@ const OnChainIdentity = () => {
 		setStep(1);
 	};
 
+	useEffect(() => {
+		step === 3 && setTitle('Socials Verification');
+	},[step]);
+
 	return<>
 		<Button onClick={() => setOpen(true)} className='text-pink_primary text-sm text-semibold border-pink_primary'>Set OnChainIdentity</Button>
 		<Modal
@@ -84,22 +93,38 @@ const OnChainIdentity = () => {
 			onCancel={handleCancel}
 			closeIcon={<CloseIcon/>}
 			className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
-			title={<span className='-mx-6 px-6 border-0 border-solid border-b-[1px] border-[#E1E6EB] pb-3 flex items-center gap-2 text-xl font-semibold'><OnChainIdentityIcon/><span>On-chain identity</span></span>}
+			title={<span className='-mx-6 px-6 border-0 border-solid border-b-[1px] border-[#E1E6EB] pb-3 flex items-center gap-2 text-xl font-semibold'><OnChainIdentityIcon/><span>{title}</span></span>}
 		>
 			<Spin spinning={loading} indicator={<LoadingOutlined/>}>
-				{step === 1 && <TotalAmountBreakdown txFee={txFee} changeStep={setStep}/>}
+				{step === 1 && <TotalAmountBreakdown txFee={txFee} perSocialBondFee={perSocialBondFee} changeStep={setStep}/>}
 				{step === 2 && <IdentityForm
-					className='mt-3'
-					txFee={txFee}
-					name={name}
-					onChangeName={setName}
-					socials={socials}
-					onChangeSocials={setSocials}
-					address={address}
-					setTxFee={setTxFee}
-					startLoading={setLoading}
-					onCancel={handleCancel}/>}
+					className= 'mt-3'
+					txFee= {txFee}
+					name= {name}
+					onChangeName= {setName}
+					socials= {socials}
+					onChangeSocials= {setSocials}
+					address= {address}
+					setTxFee= {setTxFee}
+					startLoading= {setLoading}
+					onCancel= {handleCancel}
+					perSocialBondFee= {perSocialBondFee}
+					changeStep= {setStep}
+					closeModal= {(open) => setOpen(!open)}
+				/>}
+				{step === 3 && <SocialVerification
+					socials= {socials}
+					address= {address}
+					startLoading= {setLoading}
+					onCancel= {handleCancel}
+					perSocialBondFee= {perSocialBondFee}
+					changeStep= {setStep}
+					closeModal= {(open) => setOpen(!open)}
+          />
+          }
+				{/* <VerificationSuccessScreen open={true} social='Twitter' socialHandle='@Kanishkadj' /> */}
 			</Spin>
+
 		</Modal>
 	</>
 	;

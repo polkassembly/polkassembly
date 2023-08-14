@@ -2,24 +2,25 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useContext, useState } from 'react';
-
+import BN from 'bn.js';
+import { formatedBalance } from '~src/util/formatedBalance';
+import { chainProperties } from '~src/global/networkConstants';
+import { NetworkContext } from '~src/context/NetworkContext';
+import { ITxFee } from '.';
+import { Button } from 'antd';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
 import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import IdentityIllustration from '~assets/icons/identity.svg';
-import { ITxFee } from '.';
-import { formatedBalance } from '../DelegationDashboard/ProfileBalance';
-import { chainProperties } from '~src/global/networkConstants';
-import { NetworkContext } from '~src/context/NetworkContext';
-import { Button } from 'antd';
 
 interface Props{
   className?: string;
   txFee: ITxFee;
   changeStep: (step: number) => void;
+  perSocialBondFee: BN;
 }
 
-const TotalAmountBreakdown = ({ className, txFee, changeStep }: Props) => {
-	const { bondFee, registerarFee } = txFee;
+const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee }: Props) => {
+	const { registerarFee } = txFee;
 	const { network } = useContext(NetworkContext);
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [amountBreakup, setAmountBreakup] = useState<boolean>(false);
@@ -38,16 +39,16 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep }: Props) => {
 				<span className='text-sm text-lightBlue'>Total Amount Required</span>
 				<div className='text-base text-bodyBlue font-semibold flex flex-col cursor-pointer'>
 					<span className='flex' onClick={() => setAmountBreakup(!amountBreakup)}>
-						{formatedBalance(bondFee.add(registerarFee).toString(), unit)} {unit}
-						{ amountBreakup ? <DownArrowIcon className='ml-2'/> : <UpArrowIcon className='ml-2'/> }
+						{formatedBalance(perSocialBondFee.add(registerarFee).toString(), unit)} {unit}
+						{ amountBreakup ? <DownArrowIcon className='ml-3'/> : <UpArrowIcon className='ml-3'/> }
 					</span>
 					<span className='text-xs text-lightBlue font-normal -mt-1'>View Amount Breakup</span>
 				</div>
 			</div>
-			{amountBreakup && <div className='flex gap-1 flex-col mt-3'>
+			{amountBreakup && <div className='flex gap-2 flex-col mt-3'>
 				<span className='flex justify-between text-sm'>
 					<span className='text-lightBlue'>Bond</span>
-					<span className='text-bodyBlue font-medium'>{formatedBalance(bondFee.toString(), unit)} {unit} per social field</span>
+					<span className='text-bodyBlue font-medium'>{formatedBalance(perSocialBondFee.toString(), unit)} {unit} per social field</span>
 				</span>
 				<span className='flex justify-between text-sm'>
 					<span className='text-lightBlue'>Registrar fees</span>

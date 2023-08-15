@@ -24,7 +24,7 @@ import MotionVoteInfo from './Motions/MotionVoteInfo';
 import VoteMotion from './Motions/VoteMotion';
 import ProposalDisplay from './Proposals';
 import FellowshipReferendumVoteInfo from './Referenda/FellowshipReferendumVoteInfo';
-import ReferendumV2VoteInfo from './Referenda/ReferendumV2VoteInfo';
+// import ReferendumV2VoteInfo from './Referenda/ReferendumV2VoteInfo';
 import ReferendumVoteInfo from './Referenda/ReferendumVoteInfo';
 import VoteReferendum from './Referenda/VoteReferendum';
 import VoteReferendumEth from './Referenda/VoteReferendumEth';
@@ -855,12 +855,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 												{
 													proposalType === ProposalType.OPEN_GOV &&
 													<div className={className}>
-														<ReferendumV2VoteInfo
+														{/* <ReferendumV2VoteInfo
 															setThresholdOpen={setThresholdOpen}
 															setOpen={setOpen}
 															referendumId={onchainId as number}
 															tally={tally}
-														/>
+														/> */}
 														<Modal
 															onCancel={() => {
 																setThresholdOpen(false);

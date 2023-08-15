@@ -628,9 +628,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 							proposer: data?.proposer,
 							status: data?.state?.name,
 							statusHistory: data?.onchainData?.timeline?.map((obj: any) => {
+								if (obj?.name === 'DecisionStarted') {
+									obj.name = 'Deciding';
+								}
 								return {
 									block: obj?.indexer?.blockHeight,
-									status: obj?.name,
+									status: obj.name,
 									timestamp: obj?.indexer?.blockTime
 								};
 							}),

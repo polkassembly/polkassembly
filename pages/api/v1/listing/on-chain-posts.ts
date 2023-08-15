@@ -32,24 +32,6 @@ export const fetchSubsquare = async (network: string, limit: number, page: numbe
 	}
 };
 
-export const fetchFellowshipSubsquare = async (network: string, limit: number, page: number, track: number) => {
-	try {
-		const res = await fetch(`https://${network}.subsquare.io/api/fellowship/tracks/${track}/referenda?page=${page}&page_size=${limit}`);
-		return await res.json();
-	} catch (error) {
-		return [];
-	}
-};
-
-export const fetchLatestFellowshipSubsquare = async (network: string) => {
-	try {
-		const res = await fetch(`https://${network}.subsquare.io/api/fellowship/referenda`);
-		return await res.json();
-	} catch (error) {
-		return [];
-	}
-};
-
 export const fetchLatestSubsquare = async (network: string) => {
 	try {
 		const res = await fetch(`https://${network}.subsquare.io/api/gov2/referendums`);

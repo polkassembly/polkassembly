@@ -19,9 +19,7 @@ export default function usePolkasafe(address?:string)  {
 			throw new Error('Internal Error');
 		}
 		const substrateAddress = getSubstrateAddress(address || '') || '';
-		client.network = network;
-		client.injector = injected;
-		client.address =  substrateAddress;
+		client.setPolkasafeClient(network, substrateAddress, injected);
 	};
 
 	return { client, connect };

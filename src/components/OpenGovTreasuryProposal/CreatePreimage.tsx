@@ -109,7 +109,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const trackArr: string[] = [];
 	const maxSpendArr: {track: string, maxSpend: number}[] = [];
 	const [gasFee, setGasFee] =  useState(ZERO_BN);
-	const baseDeposit = new BN(`${chainProperties[network]?.baseDeposit}` || 0);
+	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit}` || 0);
 
 	if(network){
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {

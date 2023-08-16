@@ -15,23 +15,24 @@ import HelperTooltip from './HelperTooltip';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props{
-	className?: string
-	label?: string
-	helpText?: string
-	onChange: (address: string) => void
-	placeholder?: string
+	className?: string;
+	label?: string;
+	helpText?: string;
+	onChange: (address: string) => void;
+	placeholder?: string;
 	size?: 'large' | 'small' | 'middle';
-  defaultAddress?: string;
+	defaultAddress?: string;
 	skipFormatCheck?: boolean;
-  inputClassName?: string;
-  identiconSize?: number;
-  iconClassName?: string;
-  checkValidAddress?: (pre: boolean) => void;
-disabled?: boolean;
-name?:string;
+	inputClassName?: string;
+	identiconSize?: number;
+	iconClassName?: string;
+	checkValidAddress?: (pre: boolean) => void;
+	disabled?: boolean;
+	name?: string;
+	setIsTyping?: (pre: boolean) => void;
 }
 
-const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName, identiconSize, iconClassName, checkValidAddress, disabled, name } : Props) => {
+const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName, identiconSize, iconClassName, checkValidAddress, disabled, name, setIsTyping } : Props) => {
 	const { network } = useContext(NetworkContext);
 
 	const [address, setAddress] = useState<string>(defaultAddress ? defaultAddress : '');
@@ -121,6 +122,8 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 					validateStatus={(address && !isValid) ? 'error' : 'success'}
 				>
 					<Input
+						onFocus={() => setIsTyping?.(true)}
+						onBlur={() => setIsTyping?.(false)}
 						value={address}
 						disabled={disabled}
 						name={name || 'address'}

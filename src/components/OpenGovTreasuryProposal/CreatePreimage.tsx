@@ -91,6 +91,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [isAutoSelectTrack, setIsAutoSelectTrack] = useState<boolean>(true);
+	const [isTyping, setIsTyping] = useState<boolean>(false);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
 		value: ''
@@ -224,8 +225,9 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		}
 
 	};
+
 	const getPreimageTxFee = () => {
-		if(!api || !apiReady) return;
+		if(!api || !apiReady || isTyping) return;
 
 		setLoading(true);
 		const tx = api.tx.treasury.spend(fundingAmount.toString(), beneficiaryAddress);
@@ -239,7 +241,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debounceGetPreimageTxFee = useCallback(_.debounce(getPreimageTxFee, 2000),[form, proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, selectedTrack, availableBalance]);
+	const debounceGetPreimageTxFee = useCallback(_.debounce(getPreimageTxFee, 2000),[form, proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, isTyping]);
 
 	useEffect(() => {
 		setShowAlert(false);
@@ -628,6 +630,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						inputClassName={' font-normal text-sm h-[40px]'}
 						skipFormatCheck={true}
 						checkValidAddress= {setValidBeneficiaryAddress}
+						setIsTyping={setIsTyping}
 					/>
 					{beneficiaryAddress ? !(getEncodedAddress(beneficiaryAddress, network) || Web3.utils.isAddress(beneficiaryAddress)) && <span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span> : null}
 
@@ -637,7 +640,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 							<label>Funding Amount <span><HelperTooltip text='Amount requested by the proposer.' className='ml-1'/></span></label>
 							<span className='text-xs text-bodyBlue'>Current Value: <span className='text-pink_primary'>{Math.floor(Number(inputAmountValue)*Number(currentTokenPrice.value) || 0)} USD</span></span>
 						</div>
-						<BalanceInput address={proposerAddress} placeholder='Add funding amount' setInputValue={(input: string) => {setInputAmountValue(input); onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage)); }} formItemName='funding_amount' onChange= { handleFundingAmountChange }/>
+						<BalanceInput setIsTyping={setIsTyping} address={proposerAddress} placeholder='Add funding amount' setInputValue={(input: string) => {setInputAmountValue(input); onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage)); }} formItemName='funding_amount' onChange= { handleFundingAmountChange }/>
 					</div>
 					<div className='mt-6'>
 						<label className='text-lightBlue text-sm'>Select Track <span><HelperTooltip text='Track selection is done based on the amount requested.' className='ml-1'/></span></label>

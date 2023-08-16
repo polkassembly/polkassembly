@@ -6,9 +6,7 @@ import { Form, Input } from 'antd';
 import BN from 'bn.js';
 import React, { useContext, useEffect } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
-
 import { NetworkContext } from '~src/context/NetworkContext';
-
 import { inputToBn } from '../util/inputToBn';
 import Balance from '~src/components/Balance';
 import styled from 'styled-components';
@@ -31,13 +29,13 @@ interface Props{
 	inputClassName?: string;
 	noRules?: boolean;
 	formItemName?: string;
-  size?: 'large' | 'small' | 'middle';
-  tooltipMessage?: string;
-  setInputValue? : (pre: string)=> void;
-
+	size?: 'large' | 'small' | 'middle';
+	tooltipMessage?: string;
+	setInputValue? : (pre: string)=> void;
+	setIsTyping?: (pre: boolean) => void;
 }
 
-const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance', tooltipMessage, setInputValue }: Props) => {
+const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance', tooltipMessage, setInputValue, setIsTyping }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -92,6 +90,8 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 			]}
 		>
 			<Input
+				onFocus={() => setIsTyping?.(true)}
+				onBlur={() => setIsTyping?.(false)}
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name={formItemName || 'balance'}
 				className={`w-full h-[39px] border-[1px] ${inputClassName} text-sm mt-0 suffixColor hover:border-pink_primary balance-input`}

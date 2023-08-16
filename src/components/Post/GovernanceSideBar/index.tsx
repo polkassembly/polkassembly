@@ -125,6 +125,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();
 	const { postData: { created_at, track_number, post_link, statusHistory } } = usePostDataContext();
+
 	const metaMaskError = useHandleMetaMask();
 
 	const [address, setAddress] = useState<string>('');

@@ -32,10 +32,10 @@ interface Props{
 	size?: 'large' | 'small' | 'middle';
 	tooltipMessage?: string;
 	setInputValue? : (pre: string)=> void;
-	setIsTyping?: (pre: boolean) => void;
+	onBlur?: () => void;
 }
 
-const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance', tooltipMessage, setInputValue, setIsTyping }: Props) => {
+const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance', tooltipMessage, setInputValue, onBlur }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -90,8 +90,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 			]}
 		>
 			<Input
-				onFocus={() => setIsTyping?.(true)}
-				onBlur={() => setIsTyping?.(false)}
+				onBlur={() => onBlur?.()}
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name={formItemName || 'balance'}
 				className={`w-full h-[39px] border-[1px] ${inputClassName} text-sm mt-0 suffixColor hover:border-pink_primary balance-input`}

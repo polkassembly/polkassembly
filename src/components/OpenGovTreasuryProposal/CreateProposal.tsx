@@ -64,7 +64,6 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	const [loading, setLoading] = useState<boolean>(false);
 	const { id: userId } = useUserDetailsContext();
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
-
 	const success = (message: string) => {
 		messageApi.open({
 			content: message,
@@ -117,7 +116,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			content,
 			postId,
 			postLink: discussionId ? {
-				id: discussionId ,
+				id: Number(discussionId),
 				type: ProposalType.DISCUSSIONS
 			}: null,
 			proposerAddress,

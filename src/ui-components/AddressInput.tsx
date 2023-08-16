@@ -29,10 +29,10 @@ interface Props{
 	checkValidAddress?: (pre: boolean) => void;
 	disabled?: boolean;
 	name?: string;
-	setIsTyping?: (pre: boolean) => void;
+	onBlur?: () => void;
 }
 
-const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName, identiconSize, iconClassName, checkValidAddress, disabled, name, setIsTyping } : Props) => {
+const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName, identiconSize, iconClassName, checkValidAddress, disabled, name, onBlur } : Props) => {
 	const { network } = useContext(NetworkContext);
 
 	const [address, setAddress] = useState<string>(defaultAddress ? defaultAddress : '');
@@ -122,8 +122,7 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 					validateStatus={(address && !isValid) ? 'error' : 'success'}
 				>
 					<Input
-						onFocus={() => setIsTyping?.(true)}
-						onBlur={() => setIsTyping?.(false)}
+						onBlur={() => onBlur?.()}
 						value={address}
 						disabled={disabled}
 						name={name || 'address'}

@@ -91,7 +91,6 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [isAutoSelectTrack, setIsAutoSelectTrack] = useState<boolean>(true);
-	const [isTyping, setIsTyping] = useState<boolean>(false);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
 		value: ''
@@ -125,18 +124,30 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 	maxSpendArr.sort((a,b) => a.maxSpend - b.maxSpend );
 
+	const getPreimageTxFee =async(isPreimageVal?: boolean, selectedTrackVal?: string, fundingAmountVal?: BN) => {
+		const txSelectedTrack = selectedTrackVal || selectedTrack;
+		const txBeneficiary = form.getFieldValue('address') || beneficiaryAddress;
+		const txFundingAmount = fundingAmountVal || fundingAmount;
+
+		if(!api || !apiReady || !txBeneficiary || !txSelectedTrack) return;
+		setShowAlert(false);
+		await form.validateFields();
+		if((isPreimageVal || isPreimage) || !proposerAddress || !txBeneficiary || !getEncodedAddress(txBeneficiary, network) || !txFundingAmount || txFundingAmount.lte(ZERO_BN) || txFundingAmount.eq(ZERO_BN)) return;
+
+		setLoading(true);
+		const tx = api.tx.treasury.spend(txFundingAmount.toString(), txBeneficiary);
+		const baseDeposite = new BN(network === 'kusama' ? 1330000000000 : (network === 'polkadot' ? 400000000000 : ZERO_BN));
+		(async () => {
+			const info = await tx.paymentInfo(proposerAddress);
+			const txFee:BN = new BN(info.partialFee) ;
+			setTxFee(txFee.add(baseDeposite));
+			setLoading(false);
+			setShowAlert(true);
+		})();
+	};
+
 	const handleStateChange = (createPreimageForm: any) => {
 		setSteps({ percent: 20, step: 1 });
-		if(createPreimageForm.preimageHash && createPreimageForm.preimageLength  && createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) {
-			setSteps({ percent: 100, step: 1 });
-		}
-		if(createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack)
-		{
-			setSteps({ percent: 100, step: 1 });
-		}
-		if(createPreimageForm?.selectedTrack) {
-			setIsAutoSelectTrack(false);
-		}
 
 		setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
 		const balance = isNaN(Number(createPreimageForm?.fundingAmount)) ? ZERO_BN : new BN(createPreimageForm?.fundingAmount) ;
@@ -154,6 +165,18 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		form.setFieldValue('funding_amount', createPreimageForm?.fundingAmount);
 		form.setFieldValue('address', createPreimageForm.beneficiaryAddress || '');
 		form.setFieldValue('at_block', currentBlock?.add(BN_THOUSAND) || BN_ONE  );
+
+		if(createPreimageForm.preimageHash && createPreimageForm.preimageLength  && createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) {
+			setSteps({ percent: 100, step: 1 });
+		}
+		if(createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack)
+		{
+			setSteps({ percent: 100, step: 1 });
+			getPreimageTxFee(createPreimageForm.isPreimage, createPreimageForm?.selectedTrack, balance );
+		}
+		if(createPreimageForm?.selectedTrack) {
+			setIsAutoSelectTrack(false);
+		}
 
 		if(createPreimageForm?.enactment) {
 			setOpenAdvanced(true);
@@ -225,34 +248,6 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		}
 
 	};
-
-	const getPreimageTxFee = () => {
-		if(!api || !apiReady || isTyping) return;
-
-		setLoading(true);
-		const tx = api.tx.treasury.spend(fundingAmount.toString(), beneficiaryAddress);
-
-		(async () => {
-			const info = await tx.paymentInfo(proposerAddress);
-			setTxFee(new BN(info.partialFee.toString() || 0));
-			setLoading(false);
-			setShowAlert(true);
-		})();
-	};
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debounceGetPreimageTxFee = useCallback(_.debounce(getPreimageTxFee, 2000),[form, proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, isTyping]);
-
-	useEffect(() => {
-		setShowAlert(false);
-		form.validateFields();
-		if(!beneficiaryAddress) return;
-		if(isPreimage || !proposerAddress || !beneficiaryAddress || !getEncodedAddress(beneficiaryAddress, network) ||
-		!api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN) || fundingAmount.eq(ZERO_BN)) return;
-		if(!selectedTrack) return;
-		debounceGetPreimageTxFee();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debounceGetPreimageTxFee]);
 
 	const getState = (api: ApiPromise, proposal: SubmittableExtrinsic<'promise'>): IPreimage => {
 		let preimageHash = EMPTY_HASH;
@@ -599,7 +594,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				</>
 				}
 				{ isPreimage === false && <>
-					{ (txFee.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}showIcon message='Insufficient available balance.'/>}
+					{ (txFee.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`} showIcon message='Insufficient available balance.'/>}
 					<div className='mt-6'>
 						<div className='flex justify-between items-center mt-6 text-lightBlue'>
                 Proposer Address<span>
@@ -630,7 +625,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						inputClassName={' font-normal text-sm h-[40px]'}
 						skipFormatCheck={true}
 						checkValidAddress= {setValidBeneficiaryAddress}
-						setIsTyping={setIsTyping}
+						onBlur={getPreimageTxFee}
 					/>
 					{beneficiaryAddress ? !(getEncodedAddress(beneficiaryAddress, network) || Web3.utils.isAddress(beneficiaryAddress)) && <span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span> : null}
 
@@ -640,7 +635,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 							<label>Funding Amount <span><HelperTooltip text='Amount requested by the proposer.' className='ml-1'/></span></label>
 							<span className='text-xs text-bodyBlue'>Current Value: <span className='text-pink_primary'>{Math.floor(Number(inputAmountValue)*Number(currentTokenPrice.value) || 0)} USD</span></span>
 						</div>
-						<BalanceInput setIsTyping={setIsTyping} address={proposerAddress} placeholder='Add funding amount' setInputValue={(input: string) => {setInputAmountValue(input); onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage)); }} formItemName='funding_amount' onChange= { handleFundingAmountChange }/>
+						<BalanceInput onBlur={getPreimageTxFee} address={proposerAddress} placeholder='Add funding amount' setInputValue={(input: string) => {setInputAmountValue(input); onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage)); }} formItemName='funding_amount' onChange= { handleFundingAmountChange }/>
 					</div>
 					<div className='mt-6'>
 						<label className='text-lightBlue text-sm'>Select Track <span><HelperTooltip text='Track selection is done based on the amount requested.' className='ml-1'/></span></label>
@@ -704,7 +699,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						</Radio>
 					</Radio.Group>
 				</div>}
-				{(showAlert && !isPreimage) && <Alert type='info' className='mt-6 rounded-[4px] text-bodyBlue' showIcon message={`Gas Fees of this ${formatedBalance(String(txFee.toString()), unit)} ${chainProperties[network]?.tokenSymbol} will be applied to create preimage.`}/>}
+				{(showAlert && !isPreimage) && !txFee.eq(ZERO_BN) && <Alert type='info' className='mt-6 rounded-[4px] text-bodyBlue' showIcon message={`Gas Fees of this ${formatedBalance(String(txFee.toString()), unit)} ${chainProperties[network]?.tokenSymbol} will be applied to create preimage.`} description={` ${network === 'kusama' ? 1.3 : network === 'polkadot' ? 40 : 0} ${unit} Base deposit is required to submit a preimage.`}/>}
 				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
 					<Button onClick={() => setSteps({ percent: 100, step: 0 }) } className='font-medium tracking-[0.05em] text-pink_primary border-pink_primary text-sm w-[155px] h-[38px] rounded-[4px]'>Back</Button>
 					<Button htmlType='submit'
@@ -727,5 +722,12 @@ export default styled(CreatePreimage)`
 .enactment .ant-form-item .ant-form-item-control{
 	flex-direction: row !important;
 	gap:6px !important;
+}
+.ant-alert-with-description{
+	padding-block: 15px !important;
+}
+.ant-alert-with-description .ant-alert-icon{
+  font-size: 18px !important;
+  margin-top: 4px;
 }
 `;

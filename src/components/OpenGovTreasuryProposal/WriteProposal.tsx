@@ -14,7 +14,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import _ from 'lodash';
 import styled from 'styled-components';
-import TextEditor from '~src/ui-components/TextEditor';
+import ContentForm from '../ContentForm';
 
 interface Props{
   isDiscussionLinked: boolean | null;
@@ -217,8 +217,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 					<div className='mt-6'>
 						<label className='mb-0.5'>Description <span className='text-nay_red'>*</span></label>
 						{isDiscussionLinked ? <Markdown imgHidden className='post-content border-solid bg-[#f5f5f5] border-[#dddddd] border-[1px] py-2 px-3 rounded-[4px] ' md={`${content?.slice(0, 300)}...` || content} /> : <Form.Item name='content'>
-							<TextEditor
-								name='content'
+							<ContentForm
 								value={content}
 								height={250}
 								onChange={(content: string) => {

@@ -187,7 +187,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 										className='flex items-center justify-center border-none outline-none rounded-[5px] bg-pink_primary text-white font-normal text-xs leading-[18px] tracking-[0.01em] gap-x-1 w-[57.65px] h-[29.95px] cursor-pointer px-20 py-5 whitespace-nowrap'
 										onClick={() => setVoteCalculationModalOpen(false)}
 									>
-										Ok!
+										Got It
 									</button>
 								</div>
 							</div>

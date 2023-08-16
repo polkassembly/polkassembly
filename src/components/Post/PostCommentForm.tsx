@@ -84,7 +84,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				status: NotificationStatus.ERROR
 			});
 		}
-		console.log('tt',postIndex);
 		if(data) {
 			setContent('');
 			form.resetFields();

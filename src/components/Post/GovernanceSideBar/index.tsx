@@ -62,6 +62,8 @@ import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
+import { ApiPromise } from '@polkadot/api';
+import BigNumber from 'bignumber.js';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active /> ,
@@ -443,10 +445,41 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
 								const currentSupport = currentSupportData[currentSupportData.length - 1];
 
+								let newAPI: ApiPromise = api;
+								let approval: BigNumber | null = null;
+								let support: BigNumber | null = null;
+
+								try {
+									const status = (statusHistory || [])?.find((v) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
+									if (status) {
+										const blockNumber = status.block;
+										if (blockNumber) {
+											const hash = await api.rpc.chain.getBlockHash(blockNumber - 1);
+											newAPI = await api.at(hash) as ApiPromise;
+										}
+									}
+									if (newAPI) {
+										const issuanceInfo = await newAPI.query.balances.totalIssuance();
+										const referendaInfo = await newAPI.query.referenda.referendumInfoFor(onchainId);
+										const issuanceData = issuanceInfo.toJSON() as any;
+										const referendaInfoData = referendaInfo.toJSON() as any;
+										if (referendaInfoData?.ongoing?.tally) {
+											const ayes = typeof referendaInfoData.ongoing.tally.ayes === 'string'? new BigNumber(referendaInfoData.ongoing.tally.ayes.slice(2), 16): new BigNumber(referendaInfoData.ongoing.tally.ayes);
+											const nays = typeof referendaInfoData.ongoing.tally.nays === 'string'? new BigNumber(referendaInfoData.ongoing.tally.nays.slice(2), 16): new BigNumber(referendaInfoData.ongoing.tally.nays);
+											const supportBigNumber = typeof referendaInfoData.ongoing.tally.support === 'string'? new BigNumber(referendaInfoData.ongoing.tally.support.slice(2), 16): new BigNumber(referendaInfoData.ongoing.tally.support);
+											const issuance = typeof issuanceData === 'string'? new BigNumber(issuanceData.slice(2), 16): new BigNumber(issuanceData);
+											support = supportBigNumber.div(issuance).multipliedBy(100);
+											approval = ayes.div(ayes.plus(nays)).multipliedBy(100);
+										}
+									}
+								} catch (error) {
+									// console.log(error);
+								}
+
 								setProgress({
-									approval: currentApproval?.y?.toFixed(1) as any,
+									approval: approval? approval.toFormat(2, BigNumber.ROUND_UP): currentApproval?.y?.toFixed(1) as any,
 									approvalThreshold: (approvalData.find((data) => data && data?.x >= currentApproval?.x)?.y as any) || 0,
-									support: currentSupport?.y?.toFixed(1) as any,
+									support: support? support.toFormat(2, BigNumber.ROUND_UP): currentSupport?.y?.toFixed(1) as any,
 									supportThreshold: (supportData.find((data) => data && data?.x >= currentSupport?.x)?.y as any) || 0
 								});
 							}
@@ -512,7 +545,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			};
 			getData();
 		}
-	}, [api, apiReady, created_at, network, onchainId, proposalType, track_number]);
+	}, [api, apiReady, created_at, network, onchainId, proposalType, statusHistory, track_number]);
 
 	useEffect(() => {
 		if (trackInfo) {

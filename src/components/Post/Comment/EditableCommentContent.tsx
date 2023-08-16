@@ -356,10 +356,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								{ required: "Please add the '${name}'" }
 							}
 						>
-							<ContentForm onChange={(content: string) => {
-								global.window.localStorage.setItem(editCommentKey(commentId), content);
-								return content.length ? content : null;
-							}} className='mb-0' />
+							<ContentForm
+								autofocus={true}
+								onChange={(content: string) => {
+									global.window.localStorage.setItem(editCommentKey(commentId), content);
+									return content.length ? content : null;
+								}}
+								className='mb-0'
+							/>
 							<div className='bg-gray-100 mb-[10px] p-2 rounded-e-md mt-[-25px] h-[70px] background'>
 								<div className='flex text-[12px] gap-[2px] text-[#334D6E]'>Sentiment:<h5 className='text-[12px] text-pink_primary'> {handleSentimentText()}</h5></div>
 								<div className='flex items-center text-transparent'>
@@ -429,10 +433,14 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 									}
 									className='mt-4'
 								>
-									<ContentForm height={250} onChange={(content: string) => {
-										global.window.localStorage.setItem(replyKey(commentId), content);
-										return content.length ? content : null;
-									}} />
+									<ContentForm
+										autofocus={true}
+										height={250}
+										onChange={(content: string) => {
+											global.window.localStorage.setItem(replyKey(commentId), content);
+											return content.length ? content : null;
+										}}
+									/>
 									<Form.Item>
 										<div className='flex items-center justify-end'>
 											<Button htmlType="button" disabled={ loadingReply } onClick={handleReplyCancel} className='mr-2 flex items-center'>

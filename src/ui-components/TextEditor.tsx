@@ -74,7 +74,7 @@ img {
 `;
 
 const TextEditor: FC<ITextEditorProps> = (props) => {
-	const { className, height, onChange, isDisabled, value, name, autofocus } = props;
+	const { className, height, onChange, isDisabled, value, name, autofocus = false } = props;
 
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);

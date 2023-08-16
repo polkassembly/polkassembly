@@ -23,7 +23,7 @@ import styled from 'styled-components';
 import QuoteRight from '~assets/icons/quote-right-icon.svg';
 import QuoteLeft from '~assets/icons/quote-left-icon.svg';
 //import { CommentBoxIcon } from 'src/ui-components/CustomIcons';
-import CommentBox from '~assets/icons/comment-box.svg';
+//import CommentBox from '~assets/icons/comment-box.svg';
 
 interface Props {
     className?: string;
@@ -243,12 +243,11 @@ const VoteInitiatedModal = ({
 					</div>
 				</div>
 			</div>
-			<div className='h-[130px] relative mt-4 '>
-				<CommentBox className='w-[100%]'  />
+			<div className='relative min-h-[120px] mt-[180px] bg-[#F6F8FF] rounded-[10px]'>
 				<QuoteRight className='absolute top-[-10px] left-[-10px]'/>
 				<QuoteLeft className='absolute right-[0px] w-[34px] top-[-10px]' />
-				<p className='text-lightBlue text-[14px] font-medium mt-[-140px] ml-6 mr-6'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
-				<PostCommentForm className=' h-[150px] ml-8 mt-[-10px] w-[100%]' isUsedInSuccessModal={true} textBoxHeight={40} voteDecision={vote} setSuccessModalOpen={setOpen}/>
+				<p className='text-lightBlue text-[14px] font-medium mt-[-150px] pt-2 mb-2 ml-12 mr-4'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
+				<PostCommentForm className='ml-8 mt-[-10px] w-[100%] mb-2' isUsedInSuccessModal={true} textBoxHeight={32} voteDecision={vote} setSuccessModalOpen={setOpen}/>
 			</div>
 		</Modal>
 	);
@@ -262,9 +261,8 @@ export default styled(VoteInitiatedModal)`
 }
 .mde-text{
 	padding: 10px !important;
-	height: 40px !important;
 	border-radius: 4px !important;
-	
+	min-height:40px;
 }
 .ant-avatar{
 	display: none !important;
@@ -274,5 +272,8 @@ export default styled(VoteInitiatedModal)`
 }
 .container{
 	max-width: 100% !important;
+}
+.ant-form-item-explain-error{
+	display: none !important;
 }
 `;

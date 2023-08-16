@@ -246,8 +246,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</div>
 								</Tooltip>
 							</>}
-							{console.log(votesData, tally)}
-							{(votesData?.data || tally) && (network !== 'polymesh') && <>
+							{(votesData?.data || tally) && <>
 								<Divider type="vertical" className='max-sm:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<VotesProgressInListing index={index} proposalType={proposalType} votesData={votesData} onchainId={onchainId} status={status} tally={tally}/>
 							</>

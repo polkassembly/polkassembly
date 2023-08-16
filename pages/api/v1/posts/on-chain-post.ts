@@ -70,6 +70,13 @@ export interface IReactions {
 	};
 }
 
+export interface IPIPsVoting {
+	balance: null | string;
+	voter: null | string;
+	decision: 'yes' | 'no';
+	identityId: string ;
+  }
+
 export interface IPostResponse {
 	post_reactions: IReactions;
 	timeline: any[];
@@ -90,6 +97,7 @@ export interface IPostResponse {
   gov_type?: 'gov_1' | 'open_gov' ;
   tags?: string[] | [];
   history?: IPostHistory[];
+  pips_voters?: IPIPsVoting[];
 }
 
 export type IReaction = '👍' | '👎';
@@ -680,6 +688,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			motion_method: proposalArguments?.method,
 			origin: postData?.origin,
 			payee: postData?.payee,
+			pips_voters: postData?.voting || [],
 			post_id: postData?.index,
 			post_reactions: getDefaultReactionObj(),
 			proposal_arguments: proposalArguments,

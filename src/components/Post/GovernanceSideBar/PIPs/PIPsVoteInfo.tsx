@@ -23,7 +23,6 @@ interface Props{
 const ZERO_BN = new BN(0);
 
 const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }: Props) => {
-	console.log(proposalType, tally)
 
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
@@ -50,7 +49,10 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 	};
 
 	useEffect(() => {
+		if([ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType)) return;
+
 		getVotes();
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[api, apiReady]);
 
@@ -61,35 +63,56 @@ const PIPsVoteInfo = ({ className, status, pipId, setOpen, proposalType, tally }
 				<StatusTag status={status} />
 			</div>
 		</div>
-		<VoteProgress
-			ayeVotes={voteInfo?.ayesAmount}
-			className='vote-progress'
-			nayVotes={voteInfo?.naysAmount}
-		/>
-		<section className='flex text-lightBlue -mt-4 justify-between px-1.5'>
-			<article className='flex items-center gap-x-2'>
+		{ [ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) ?
+			<VoteProgress
+				ayesNum={Number(tally?.ayes) || 0}
+				className='vote-progress'
+				naysNum={Number(tally?.nays) || 0}
+			/>
+			:<VoteProgress
+				ayeVotes={voteInfo?.ayesAmount}
+				className='vote-progress'
+				nayVotes={voteInfo?.naysAmount}
+			/>}
+		<section className='grid grid-cols-2 gap-x-7 gap-y-3 text-lightBlue -mt-4'>
+			<article className='flex items-center justify-between gap-x-2'>
 				<div className='flex items-center gap-x-1'>
 					<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-										Aye:
+								Ayes:
 					</span>
-					<span
-						className='text-lightBlue text-xs font-medium leading-[22px]'
+				</div>
+				<div
+					className='text-navBlue text-xs font-medium leading-[22px]'
+				>
+					{ [ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) ? tally?.ayes || 0 :formatUSDWithUnits(formatBnBalance(voteInfo?.ayesAmount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+				</div>
+			</article>
+			<article className='flex items-center justify-between gap-x-2'>
+				<div className='flex items-center gap-x-1'>
+					<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+					Nays:
+					</span>
+				</div>
+				<div
+					className='text-navBlue text-xs font-medium leading-[22px]'
+				>
+					{ [ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) ? tally?.nays || 0 : formatUSDWithUnits(formatBnBalance(voteInfo?.naysAmount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
+				</div>
+			</article>
+			{
+				[ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType) &&  <article className='flex items-center justify-between gap-x-2'>
+					<div className='flex items-center gap-x-1'>
+						<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
+					Total Seats
+						</span>
+					</div>
+					<div
+						className='text-navBlue text-xs font-medium leading-[22px]'
 					>
-						{formatUSDWithUnits(formatBnBalance(voteInfo?.ayesAmount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-					</span>
-				</div>
-
-			</article>
-			<article className='flex items-center text-lightBlue gap-x-2'>
-				<div className='flex items-center gap-x-1'>
-					<span className='font-medium text-xs leading-[18px] tracking-[0.01em]'>
-										Nay:
-					</span>
-					<span className='text-lightBlue text-xs font-medium leading-[22px]'>
-						{formatUSDWithUnits(formatBnBalance(voteInfo?.naysAmount, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)}
-					</span>
-				</div>
-			</article>
+						{tally?.totalSeats || 0}
+					</div>
+				</article>
+			}
 		</section>
 		<Divider style={{ border: '1px solid #e3e6eb' }} className='my-4'/>
 

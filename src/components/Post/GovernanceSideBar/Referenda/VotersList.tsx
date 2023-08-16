@@ -13,18 +13,21 @@ import formatBnBalance from 'src/util/formatBnBalance';
 
 import { useApiContext, useNetworkContext } from '~src/context';
 import { LISTING_LIMIT, VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
-import { VoteType } from '~src/global/proposalType';
+import { ProposalType, VoteType } from '~src/global/proposalType';
 import { votesSortOptions, votesSortValues } from '~src/global/sortOptions';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import classNames from 'classnames';
+import { IPIPsVoting } from 'pages/api/v1/posts/on-chain-post';
 
 interface IVotersListProps {
 	className?: string;
 	referendumId: number;
 	voteType: VoteType;
+	pipsVoters?: IPIPsVoting[];
+	proposalType?: ProposalType;
 }
 
 type DecisionType = 'yes' | 'no' | 'abstain';
@@ -34,7 +37,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const firstRef = useRef(true);
 	const { api, apiReady } = useApiContext();
 
-	const { className, referendumId, voteType } = props;
+	const { className, referendumId, voteType, pipsVoters, proposalType } = props;
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message:'Loading votes' });
 	const [currentPage, setCurrentPage] = useState<number>(1);
@@ -43,60 +46,54 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME);
 	const [polymeshVotesData, setPolymeshVotesData] =  useState<{ayeVotes: any[], nayVotes: any[]}>({ ayeVotes: [], nayVotes: [] });
 
-	const fetchVotersListForPolymesh = () => {
+	const getVoterFromPolkadot= async(identityId: string) => {
 		if(!api || !apiReady) return;
-		const pipId = referendumId;
-		api.query.pips.proposalVotes.entries(pipId).then((res) => {
-			const voters: any[] = [];
-			res.forEach((v) => {
-				const vote = {
-					address: '',
-					passed: false,
-					value: ''
-				};
-				let json = v[0].toHuman();
-				if (json && Array.isArray(json) && json.length >= 2 && typeof json?.[1] === 'string') {
-					vote.address = json?.[1];
-				}
-				json = v[1].toHuman();
-				if (json && Array.isArray(json) && json.length >= 2) {
-					if (typeof json?.[0] === 'boolean') {
-						vote.passed = json?.[0];
-					}
-					if (typeof json?.[1] === 'string') {
-						vote.value = json?.[1];
-					}
-				}
-				voters.push(vote);
-			});
-			const ayeVotes = voters.filter((vote) => vote.passed);
-			const nayVotes = voters.filter((vote) => !vote.passed);
-			setPolymeshVotesData({ ayeVotes, nayVotes });
-			setVotesRes({
-				abstain: {
-					count: 0,
-					votes: []
-				},
-				no: {
-					count: nayVotes.length,
-					votes: nayVotes?.slice(0, 10)
-				},
-				yes: {
-					count: ayeVotes.length,
-					votes: ayeVotes?.slice(0, 10)
-				}
-			});
-			setLoadingStatus({
-				isLoading: false,
-				message: ''
-			});
 
-		}).catch((err) => {
-			console.log('error', err);
-			setLoadingStatus({
-				isLoading: false,
-				message: ''
+		const didKeys = await api.query.identity.didKeys.keys(identityId);
+		if(didKeys.length > 0){
+			const didKey = didKeys[0];
+			const key = didKey.args[1].toJSON();
+			return key;
+		}
+	};
+
+	const fetchVotersListForPolymesh = async() => {
+		if(!api || !apiReady || !pipsVoters) return;
+
+		const votesWithoutVoter = pipsVoters.filter((vote) => !vote.voter);
+		const votesWithVoter = pipsVoters.filter((vote) => vote.voter);
+
+		const voterAddedArr = [];
+		for(const vote in votesWithoutVoter){
+			const voter = await getVoterFromPolkadot(votesWithoutVoter?.[vote]?.identityId);
+			voterAddedArr?.push({
+				...votesWithoutVoter?.[vote],
+				voter
 			});
+		}
+
+		const votes = [...voterAddedArr, ...votesWithVoter];
+
+		const ayeVotes = votes.filter((vote) => vote.decision === 'yes');
+		const nayVotes = votes.filter((vote) => vote.decision === 'no');
+		setPolymeshVotesData({ ayeVotes, nayVotes });
+		setVotesRes({
+			abstain: {
+				count: 0,
+				votes: []
+			},
+			no: {
+				count: nayVotes.length,
+				votes: nayVotes?.slice(0, 10)
+			},
+			yes: {
+				count: ayeVotes.length,
+				votes: ayeVotes?.slice(0, 10)
+			}
+		});
+		setLoadingStatus({
+			isLoading: false,
+			message: ''
 		});
 	};
 
@@ -109,13 +106,14 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 	useEffect(() => {
 		if(network  === 'polymesh'){
+
 			setLoadingStatus({
 				isLoading: true,
 				message: ''
 			});
 			if(sortBy === votesSortValues.BALANCE){
-				const sortedAyeVotes = polymeshVotesData.ayeVotes.sort((a,b) => Number(b.value.replaceAll(',', '')) - Number(a.value.replaceAll(',', '')));
-				const sortedNayVotes =  polymeshVotesData.nayVotes.sort((a,b) => Number(b.value.replaceAll(',', '')) - Number(a.value.replaceAll(',', '')));
+				const sortedAyeVotes = polymeshVotesData.ayeVotes.sort((a, b) => Number(b?.balance?.value || 0) - Number(a?.balance?.value || 0));
+				const sortedNayVotes =  polymeshVotesData.nayVotes.sort((a, b) => Number(b?.balance?.value || 0)- Number(a?.balance?.value || 0));
 
 				setVotesRes({
 					abstain: {
@@ -239,9 +237,9 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			<Spin className={className} spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
 				<div className="flex justify-between mb-6 bg-white z-10">
 					<h6 className='dashboard-heading'>Votes</h6>
-					<div>
+					{ ![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as ProposalType) && <div>
 						{sortByDropdown}
-					</div>
+					</div>}
 				</div>
 
 				<div className="w-full flex items-center justify-center mb-8">
@@ -264,7 +262,13 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						<div className={classNames('', {
 							'w-[100px]': network === AllNetworks.COLLECTIVES,
 							'w-[60px]': network !== AllNetworks.COLLECTIVES
-						})}><span className='hidden md:inline-block'>Amount</span><span className='inline-block md:hidden'>Amt.</span></div>
+						})}>
+							{
+								![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as ProposalType) && <>
+									<span className='hidden md:inline-block'>Amount</span>
+									<span className='inline-block md:hidden'>Amt.</span>
+								</>}
+						</div>
 						{
 							![AllNetworks.COLLECTIVES, AllNetworks.POLYMESH].includes(network) ?
 								<div className='w-[70px]'>Conviction</div>
@@ -282,14 +286,15 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											<Address isVoterAddress={true} textClassName='w-[75px]' isSubVisible={false} displayInline={true} isShortenAddressLength={false} address={voteData?.voter} />
 										</a>:
 										<div className='w-[110px] max-w-[110px] overflow-ellipsis'>
-											<Address isVoterAddress={true} textClassName='w-[75px]' isSubVisible={false} displayInline={true} isShortenAddressLength={false} address={voteData?.voter || voteData.address} />
-										</div>}
+											<Address isVoterAddress={true} textClassName='w-[75px]' isSubVisible={false} displayInline={true} isShortenAddressLength={false} address={voteData?.voter} />
+										</div>
+									}
 									{
-										network !== AllNetworks.COLLECTIVES?
+										![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as ProposalType) ? network !== AllNetworks.COLLECTIVES ?
 											<>
 												<div className='w-[80px] max-w-[80px] overflow-ellipsis'>
 													{
-														formatUSDWithUnits(formatBnBalance(voteData?.decision === 'abstain'? voteData?.balance?.abstain || 0 : voteData?.balance?.value || (voteData?.value?.replaceAll(',', '')) ||  0, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: true }, network), 1)
+														formatUSDWithUnits(formatBnBalance(voteData?.decision === 'abstain'? voteData?.balance?.abstain || 0 : voteData?.balance?.value || (voteData?.balance?.replaceAll(',', '')) ||  0, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: true }, network), 1)
 													}
 												</div>
 												{ network !== AllNetworks.POLYMESH && <div className='w-[50px] max-w-[50px] overflow-ellipsis'>{voteData.lockPeriod? `${voteData.lockPeriod}x${voteData?.isDelegated? '/d': ''}`: '0.1x'}</div>}
@@ -301,7 +306,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 														voteData?.decision === 'abstain'? voteData?.balance?.abstain || 0:voteData?.balance?.value || 0
 													}
 												</div>
-											</>
+											</> : null
 									}
 
 									{

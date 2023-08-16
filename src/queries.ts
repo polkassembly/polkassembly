@@ -459,8 +459,15 @@ export const GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE = `query PolymeshProposalBy
       description
       section
     }
-    voting(limit: 1) {
+    voting {
       decision
+      identityId
+      balance {
+        ... on StandardVoteBalance {
+          value
+        }
+      }
+      voter
     }
     statusHistory(limit: 10) {
       timestamp

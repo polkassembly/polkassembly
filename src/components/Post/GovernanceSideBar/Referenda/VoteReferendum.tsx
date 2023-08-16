@@ -57,12 +57,12 @@ interface Props {
 	lastVote: ILastVote | undefined;
 	setLastVote: (pre: ILastVote) => void;
 	proposalType: ProposalType;
-  address: string;
+	address: string;
 }
 export interface INetworkWalletErr{
-message: string;
- description: string;
- error: number
+	message: string;
+	description: string;
+	error: number
 }
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
@@ -428,83 +428,77 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setLoadingStatus({ isLoading: true, message: '' });
 
 		let voteTx = null;
+		if(proposalType === ProposalType.OPEN_GOV){
 
-		if(network === AllNetworks.POLYMESH){
-			voteTx = api.tx.pips.vote(referendumId, vote, lockedBalance);
-		}
-		else{
-			if(proposalType === ProposalType.OPEN_GOV){
+			if(vote === EVoteDecisionType.AYE ) {
 
-				if(vote === EVoteDecisionType.AYE ) {
+				voteTx = api.tx.convictionVoting.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } });
 
-					voteTx = api.tx.convictionVoting.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } });
+			}
+			else if(vote === EVoteDecisionType.NAY ) {
 
+				voteTx = api.tx.convictionVoting.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:false, conviction } } });
+
+			}
+
+			else if(vote === EVoteDecisionType.SPLIT) {
+				try {
+					await splitForm.validateFields();
+
+					// if form is valid
+					const  ayeVote = ayeVoteValue?.toString();
+					const  nayVote = nayVoteValue?.toString();
+					setVoteValues((prevState) => ({
+						...prevState,
+						ayeVoteValue:ayeVoteValue,
+						nayVoteValue:nayVoteValue
+					}));
+					voteTx = api.tx.convictionVoting.vote(referendumId, { Split: { aye:`${ayeVote}`,nay:`${nayVote}` } });
+				} catch (e) {
+					console.log(e);
 				}
-				else if(vote === EVoteDecisionType.NAY ) {
-
-					voteTx = api.tx.convictionVoting.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:false, conviction } } });
-
-				}
-
-				else if(vote === EVoteDecisionType.SPLIT) {
-					try {
-						await splitForm.validateFields();
-
-						// if form is valid
-						const  ayeVote = ayeVoteValue?.toString();
-						const  nayVote = nayVoteValue?.toString();
-						setVoteValues((prevState) => ({
-							...prevState,
-							ayeVoteValue:ayeVoteValue,
-							nayVoteValue:nayVoteValue
-						}));
-						voteTx = api.tx.convictionVoting.vote(referendumId, { Split: { aye:`${ayeVote}`,nay:`${nayVote}` } });
-					} catch (e) {
-						console.log(e);
-					}
-					finally{
-						setAyeVoteValue(ZERO_BN);
-						setNayVoteValue(ZERO_BN);
-					}
-				}
-
-				else if(vote === EVoteDecisionType.ABSTAIN && ayeVoteValue && nayVoteValue) {
-					try {
-						await abstainFrom.validateFields();
-						// if form is valid
-						const  abstainVote = abstainVoteValue?.toString();
-						const  ayeVote = ayeVoteValue?.toString();
-						const  nayVote = nayVoteValue?.toString();
-						setVoteValues((prevState) => ({
-							...prevState,
-							abstainVoteValue:abstainVoteValue,
-							ayeVoteValue:ayeVoteValue,
-							nayVoteValue:nayVoteValue
-						}));
-						voteTx = api.tx.convictionVoting.vote(referendumId, { SplitAbstain: {  abstain:`${abstainVote}`,aye:`${ayeVote}`, nay:`${nayVote}` } });
-					} catch (e) {
-						console.log(e);
-					}
-					finally{
-						setAbstainVoteValue(ZERO_BN);
-						setNayVoteValue(ZERO_BN);
-						setAyeVoteValue(ZERO_BN);
-					}
-				}
-			} else if(proposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
-				if(vote === EVoteDecisionType.AYE){
-					voteTx = api.tx.fellowshipCollective.vote(referendumId, true);
-				}else{
-					voteTx = api.tx.fellowshipCollective.vote(referendumId, false);
+				finally{
+					setAyeVoteValue(ZERO_BN);
+					setNayVoteValue(ZERO_BN);
 				}
 			}
+
+			else if(vote === EVoteDecisionType.ABSTAIN && ayeVoteValue && nayVoteValue) {
+				try {
+					await abstainFrom.validateFields();
+					// if form is valid
+					const  abstainVote = abstainVoteValue?.toString();
+					const  ayeVote = ayeVoteValue?.toString();
+					const  nayVote = nayVoteValue?.toString();
+					setVoteValues((prevState) => ({
+						...prevState,
+						abstainVoteValue:abstainVoteValue,
+						ayeVoteValue:ayeVoteValue,
+						nayVoteValue:nayVoteValue
+					}));
+					voteTx = api.tx.convictionVoting.vote(referendumId, { SplitAbstain: {  abstain:`${abstainVote}`,aye:`${ayeVote}`, nay:`${nayVote}` } });
+				} catch (e) {
+					console.log(e);
+				}
+				finally{
+					setAbstainVoteValue(ZERO_BN);
+					setNayVoteValue(ZERO_BN);
+					setAyeVoteValue(ZERO_BN);
+				}
+			}
+		} else if(proposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
+			if(vote === EVoteDecisionType.AYE){
+				voteTx = api.tx.fellowshipCollective.vote(referendumId, true);
+			}else{
+				voteTx = api.tx.fellowshipCollective.vote(referendumId, false);
+			}
+		}
+		else{
+			if(vote === EVoteDecisionType.AYE){
+				voteTx = api.tx.democracy.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } });
+			}
 			else{
-				if(vote === EVoteDecisionType.AYE){
-					voteTx = api.tx.democracy.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:true, conviction } } });
-				}
-				else{
-					voteTx = api.tx.democracy.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:false , conviction } } });
-				}
+				voteTx = api.tx.democracy.vote(referendumId, { Standard: { balance: lockedBalance, vote: { aye:false , conviction } } });
 			}
 		}
 
@@ -619,7 +613,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`w-[500px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[605px] rounded-[6px] alignment-close vote-referendum `}
+				className={`w-[550px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
 				title={
@@ -743,7 +737,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									className='text-sm font-medium border-[#D2D8E0]'
 								/>
 
-								{!['polymesh'].includes(network) && <ConvictionSelect className={`${className}`} />}
+								<ConvictionSelect className={`${className}`} />
 
 								<div className='flex justify-end mt-[-3px] pt-5 mr-[-24px] ml-[-24px] border-0 border-solid border-t-[1px] border-[#D2D8E0]'>
 									<Button className='w-[134px] h-[40px] rounded-[4px] text-[#E5007A] bg-[white] mr-[15px] font-semibold border-[#E5007A]' onClick={() => setShowModal(false)}>Cancel</Button>

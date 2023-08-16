@@ -7,7 +7,7 @@ import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Spin, Tooltip } from 'antd';
-import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
+import { IPIPsVoting, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
@@ -64,6 +64,7 @@ import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdo
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
 import PIPsVoteInfo from './PIPs/PIPsVoteInfo';
+import PIPsVote from './PIPs/PIPsVote';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -75,6 +76,8 @@ interface IGovernanceSidebarProps {
 	tally?: any;
 	post: IPostResponse;
 	toggleEdit?: () => void;
+	pipsVoters?: IPIPsVoting[];
+	hash: string;
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -113,7 +116,7 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, pipsVoters,  hash } = props;
 	const [lastVote, setLastVote] = useState< ILastVote>();
 
 	const { network } = useNetworkContext();
@@ -620,19 +623,19 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
 					</Tooltip>
 
-					<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=''>
+					{balance && <Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=''>
 						<span>
 							<MoneyIcon className='mr-1'/>
-							{formatedBalance(balance.toString(), unit)}{` ${unit}`}
+							{formatedBalance(balance?.toString(), unit)}{` ${unit}`}
 						</span>
-					</Tooltip>
+					</Tooltip>}
 
-					<Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
+					{conviction && <Tooltip placement="bottom"  title="Conviction"  color={'#E5007A'} className='ml-[-5px]'>
 						<span title='Conviction'>
 							<ConvictionIcon className='mr-1'/>
 							{conviction}x
 						</span>
-					</Tooltip>
+					</Tooltip>}
 				</div>
 			</div>
 		);
@@ -824,17 +827,27 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</GovSidebarCard>
 
 														}
-													</> : <GovSidebarCard className='overflow-y-hidden'>
+													</>
+													: <GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
-														<VoteReferendum
-															address={address}
-															lastVote={lastVote}
-															setLastVote={setLastVote}
-															onAccountChange={onAccountChange}
-															referendumId={onchainId  as number}
-															proposalType={proposalType}
-														/>
-
+														{['polymesh'].includes(network)
+															? <PIPsVote
+																address={address}
+																lastVote={lastVote}
+																setLastVote={setLastVote}
+																onAccountChange={onAccountChange}
+																referendumId={onchainId  as number}
+																proposalType={proposalType}
+																hash={hash}
+															/> : <VoteReferendum
+																address={address}
+																lastVote={lastVote}
+																setLastVote={setLastVote}
+																onAccountChange={onAccountChange}
+																referendumId={onchainId  as number}
+																proposalType={proposalType}
+															/>
+														}
 														{RenderLastVote}
 
 													</GovSidebarCard>}
@@ -905,8 +918,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								>
 									<VotersList
 										className={className}
+										pipsVoters={pipsVoters}
 										referendumId={onchainId as number}
 										voteType={getVotingTypeFromProposalType(proposalType)}
+										proposalType={proposalType}
 									/>
 								</Modal>
 							}
@@ -925,7 +940,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					}
 					{[ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(proposalType) && <>
 						<GovSidebarCard>
-							<PIPsVoteInfo setOpen={setOpen} proposalType={proposalType} className='mt-0' status={status} pipId={onchainId as number} proposalType={proposalType} tally={tally}/>
+							<PIPsVoteInfo setOpen={setOpen} proposalType={proposalType} className='mt-0' status={status} pipId={onchainId as number} tally={tally}/>
 						</GovSidebarCard>
 					</>
 					}

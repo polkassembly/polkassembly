@@ -21,9 +21,9 @@ export enum ProposalType {
 	GRANTS = 'grants',
 	ANNOUNCEMENT = 'announcement',
 	ALLIANCE_MOTION = 'alliance_motion',
-  TECHNICAL_PIPS = 'technical_PIPs',
-  UPGRADE_PIPS = 'upgrade_PIPs',
-  COMMUNITY_PIPS = 'community_PIPs'
+	TECHNICAL_PIPS = 'technical_PIPs',
+	UPGRADE_PIPS = 'upgrade_PIPs',
+	COMMUNITY_PIPS = 'community_PIPs'
 }
 export enum OffChainProposalType {
 	DISCUSSIONS = 'discussions',
@@ -51,9 +51,9 @@ export type TSubsquidProposalType =
 	| 'ChildBounty'
 	| 'ReferendumV2'
 	| 'FellowshipReferendum'
-  | 'TechnicalCommittee'
-  | 'Community'
-  | 'UpgradeCommittee';
+	| 'TechnicalCommittee'
+	| 'Community'
+	| 'UpgradeCommittee';
 
 export function getSubsquidProposalType(proposalType: Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>): TSubsquidProposalType | undefined{
 	switch(proposalType) {

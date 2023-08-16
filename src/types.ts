@@ -470,9 +470,9 @@ export interface IUserNotificationSettings {
 }
 export interface ILastVote {
 	decision: EVoteDecisionType | null
-	time:  Date | string | null;
-	balance: BN | string;
-	conviction:  number;
+	time: Date | string | null;
+	balance?: BN | string;
+	conviction?:  number;
 }
 
 export type VoteInfo = {

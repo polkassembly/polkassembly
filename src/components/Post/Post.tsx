@@ -268,6 +268,8 @@ const Post: FC<IPostProps> = (props) => {
 					post={post}
 					tally={post?.tally}
 					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
+					pipsVoters={post?.pips_voters || []}
+					hash={hash}
 				/>
 				{
 					isOffchainPost &&

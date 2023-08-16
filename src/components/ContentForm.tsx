@@ -36,7 +36,7 @@ const validateContent = (
 	};
 };
 
-const ContentForm = ({ className, height, onChange, value, autofocus = true }: Props): JSX.Element => {
+const ContentForm = ({ className, height, onChange, value, autofocus = false }: Props): JSX.Element => {
 	const [validationStatus, setValidation] = useState<ValidationResult>({
 		errorMsg: null,
 		validateStatus: 'success'

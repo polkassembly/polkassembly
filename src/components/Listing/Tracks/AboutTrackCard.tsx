@@ -94,7 +94,7 @@ export const blocksToRelevantTime = (network: string, blocks:number): string => 
 		text = 'days';
 	}
 
-	return `${blockSeconds/divisor} ${text}`;
+	return `${Math.round(blockSeconds/divisor)} ${text}`;
 };
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {

@@ -404,7 +404,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								<label  className='text-lightBlue flex items-center text-sm'>
                   Conviction
 									<span>
-										<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
+										<HelperTooltip className='ml-1' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
 									</span>
 								</label>
 

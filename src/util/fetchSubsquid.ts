@@ -25,8 +25,8 @@ export default async function fetchSubsquid({ query, variables, network } : Args
 	})
 		.then((res) => res.json())
 		.then((result) => result)
-		.catch(e => {
-			console.error('error in fetchSubsquid : ', e);
+		.catch(() => {
+			// console.error('error in fetchSubsquid : ', e);
 			throw apiErrorWithStatusCode(messages.SUBSQUID_FETCH_ERROR, 500);
 		});
 }

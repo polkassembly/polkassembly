@@ -24,10 +24,14 @@ interface Props{
   defaultAddress?: string;
 	skipFormatCheck?: boolean;
   inputClassName?: string;
-
+  identiconSize?: number;
+  iconClassName?: string;
+  checkValidAddress?: (pre: boolean) => void;
+disabled?: boolean;
+name?:string;
 }
 
-const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName } : Props) => {
+const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName, identiconSize, iconClassName, checkValidAddress, disabled, name } : Props) => {
 	const { network } = useContext(NetworkContext);
 
 	const [address, setAddress] = useState<string>(defaultAddress ? defaultAddress : '');
@@ -48,18 +52,30 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 
 		if(validAddress || isValidMetaAddress) {
 			setIsValid(true);
+			checkValidAddress?.(true);
 			onChange(address);
 		} else {
 			setIsValid(false);
+			checkValidAddress?.(false);
 			onChange('');
 		}
 	};
 
 	useEffect(() => {
 		if(skipFormatCheck) {
-			if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
-				setIsValid(true);
-				onChange(address);
+			if(address){
+				if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
+					setIsValid(true);
+					checkValidAddress?.(true);
+					onChange(address);
+				}else{
+					setIsValid(false);
+					checkValidAddress?.(false);
+				}
+			}
+			else{
+				setIsValid(false);
+				checkValidAddress?.(false);
 			}
 			return;
 		}
@@ -78,8 +94,8 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 	}, [address]);
 
 	return (
-		<div className={`${className} mb-2 mt-6`}>
-			{label && <label className=' flex items-center text-sm mb-[2px]'> {label} {helpText && <HelperTooltip className='ml-2' text={helpText}/> } </label>}
+		<div className={`${className} mt-6`}>
+			{label && <label className=' flex items-center text-sm mb-[2px]'> {label} {helpText && <HelperTooltip className='ml-1' text={helpText}/> } </label>}
 			<div className={`${className} flex items-center`}>
 
 				{
@@ -87,21 +103,27 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 					<>
 						{
 							address.startsWith('0x') ?
-								<EthIdenticon className='z-10 absolute left-[8px] flex justify-center items-center' size={26} address={address} />
+								<EthIdenticon className={`z-10 absolute flex justify-center items-center ${iconClassName ? iconClassName : 'left-[8px]' }`} size={identiconSize || 26} address={address} />
 								:
 								<Identicon
-									className='z-10 absolute left-[8px]'
+									className={`z-10 absolute ${iconClassName ? iconClassName : 'left-[8px]' }`}
 									value={address}
-									size={26}
+									size={identiconSize || 26}
 									theme={'polkadot'}
 								/>
 						}
 					</>
 				}
 
-				<Form.Item className='mb-0 w-full' validateStatus={address && !isValid ? 'error' : ''} >
+				<Form.Item
+					name={name || 'address'}
+					className='mb-0 w-full'
+					validateStatus={(address && !isValid) ? 'error' : 'success'}
+				>
 					<Input
 						value={address}
+						disabled={disabled}
+						name={name || 'address'}
 						className={`${!isValid ? 'px-[0.5em]' : 'pl-[46px]'} text-sm w-full h-[40px] border-[1px] rounded-[4px] ${inputClassName}`}
 						onChange={ (e) => {handleAddressChange(e.target.value); onChange(e.target.value);}}
 						placeholder={placeholder || 'Address'}

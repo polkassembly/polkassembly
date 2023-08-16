@@ -28,6 +28,30 @@ query ProposalsListingByType($limit: Int, $index_in: [Int!]) {
 }
 `;
 
+export const GET_LATEST_PREIMAGES = `
+query MyQuery($hash_eq: String = "") {
+  preimages(limit: 1, orderBy: createdAt_DESC, where: {status_eq: Noted, hash_eq: $hash_eq}) {
+    hash
+    deposit
+    createdAtBlock
+    length
+    method
+    proposedCall {
+      args
+      description
+      method
+      section
+    }
+    proposer
+    section
+    status
+    updatedAt
+    updatedAtBlock
+    createdAt
+  }
+}
+`;
+
 export const GET_PROPOSALS_LISTING_COUNT_BY_TYPE = `
 query ProposalsListingByType($type_in: [ProposalType!], $trackNumber_in: [Int!], $status_in: [ProposalStatus!]) {
   proposalsConnection(orderBy: id_ASC, where: {type_in: $type_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {

@@ -101,6 +101,8 @@ const messages = {
 	SUBSCRIPTION_REMOVE_SUCCESSFUL: 'You have been unsubscribed successfuly.',
 	SUBSCRIPTION_SUCCESSFUL: 'You successfully subscribed to new comments.',
 	SUCCESS: 'Success.',
+	TREASURY_PROPOSAL_CREATION_ERROR: 'Treasury proposals creation failed.',
+	TREASURY_PROPOSAL_CREATION_SUCCESS: 'Treasury proposals successfully created, it will appear on polkassembly as soon as it is synced on chain.',
 	TWO_FACTOR_AUTH_INVALID_AUTH_CODE: 'Invalid two factor authentication code.',
 	TWO_FACTOR_AUTH_INVALID_TOKEN: 'Invalid two factor authentication token.',
 	TWO_FACTOR_AUTH_NOT_INIT: 'Two factor authentication not initialised.',

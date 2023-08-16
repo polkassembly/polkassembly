@@ -226,6 +226,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 				/>}
 
 				{(steps.step === 2) && <CreateProposal
+					discussionLink={discussionLink}
 					availableBalance={availableBalance}
 					title={title}
 					content={content}

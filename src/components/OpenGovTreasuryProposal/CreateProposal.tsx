@@ -45,9 +45,14 @@ interface Props{
   postId: number;
   setPostId: (pre: number) => void;
   availableBalance: BN;
+  discussionLink: string | null;
 }
+const getDiscussionIdFromLink = (discussion: string) => {
+	const splitedArr = discussion?.split('/');
+	return splitedArr[splitedArr.length-1];
+};
 
-const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess, title, content, tags, setPostId, availableBalance }: Props) => {
+const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess, title, content, tags, setPostId, availableBalance, discussionLink }: Props) => {
 	const { network } = useNetworkContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -57,7 +62,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const { id: userId } = useUserDetailsContext();
-
+	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const success = (message: string) => {
 		messageApi.open({
 			content: message,
@@ -108,7 +113,8 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	const handleSaveTreasuryProposal = async(postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal',{
 			content,
-			postId ,
+			discussionId: discussionId || null,
+			postId,
 			proposerAddress,
 			tags,
 			title,

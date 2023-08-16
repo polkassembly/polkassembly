@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Modal, Spin } from 'antd';
-import { CheckCircleOutlined ,LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
@@ -89,7 +89,9 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 				<h6 className='text-bodyBlue font-medium text-xl leading-6 m-0 p-0'>Voting</h6>
 				<div className='flex items-center gap-x-2'>
 					{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && <PassingInfoTag status={status} isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}/>}
-					<button onClick={() => setVoteCalculationModalOpen(true)} className='border-none outline-none bg-transparent flex items-center cursor-pointer justify-center text-lg text-navBlue hover:text-pink_primary'><VoteCalculationIcon /></button>
+					<button onClick={() => setVoteCalculationModalOpen(true)} className='border-none outline-none bg-transparent flex items-center cursor-pointer justify-center text-lg text-navBlue hover:text-pink_primary'>
+						<InfoCircleOutlined style={{ color: '#90A0B7' }} />
+					</button>
 				</div>
 			</div>
 			<Spin spinning={ isLoading } indicator={<LoadingOutlined />}>
@@ -179,26 +181,31 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						}}
 						open={voteCalculationModalOpen}
 						footer={[
-							<div key='ok' className='flex items-center justify-center'>
-								<button
-									className='flex items-center justify-center border-none outline-none rounded-[5px] bg-pink_primary text-white font-normal text-xs leading-[18px] tracking-[0.01em] gap-x-1 w-[57.65px] h-[29.95px] cursor-pointer'
-									onClick={() => setVoteCalculationModalOpen(false)}
-								>
-									<CheckCircleOutlined />
-								Ok!
-								</button>
+							<div className='mt-4' style={{ borderTop: '1px solid #E1E6EB'}}>
+								<div key='ok' className='flex items-center justify-end mt-5'>
+									<button
+										className='flex items-center justify-center border-none outline-none rounded-[5px] bg-pink_primary text-white font-normal text-xs leading-[18px] tracking-[0.01em] gap-x-1 w-[57.65px] h-[29.95px] cursor-pointer px-20 py-5 whitespace-nowrap'
+										onClick={() => setVoteCalculationModalOpen(false)}
+									>
+										Got It
+									</button>
+								</div>
 							</div>
+							
 						]}
 						className='md:min-w-[584px]'
 						closeIcon={<CloseIcon />}
 						title={
-							<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>How are votes calculated</h2>
+							<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'><VoteCalculationIcon className="w-6 h-6 mr-3"/>How are votes calculated</h2>
 						}
 					>
 						<section className='flex flex-col gap-y-6'>
-							<p className='text-sidebarBlue font-normal text-xs leading-[18px] m-0 p-0 mt-1'>
-							Votes are calculated by multiplying the votes casted by a user with the conviction period.
-							</p>
+							<div className='mt-3' style={{ borderTop: '1px solid #E1E6EB'}}>
+								<p className='text-[#243A57] font-normal text-[13px] leading-[18px] m-0 p-0 mt-5'>
+									Votes are calculated by multiplying the votes casted by a user with the conviction period.
+								</p>
+							</div>
+
 							<p className='font-medium text-xs leading-[18px] text-sidebarBlue m-0 p-0'>For example:</p>
 							<article className='flex items-center justify-between md:gap-x-5 my-2'>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
@@ -262,12 +269,14 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 							</article>
 							<div className='flex flex-col gap-y-3'>
-								<p className='font-medium text-xs leading-[18px] text-sidebarBlue m-0 p-0'>Here,</p>
-								<article className='flex items-center justify-center'>
+								<div style={{ borderTop: '1px dashed #E1E6EB'}}>
+									<p className='font-medium text-xs leading-[18px] text-sidebarBlue m-0 p-0 mt-5'>Here,</p>
+								</div>
+								<article className='flex items-start justify-start'>
 									<VoteImage />
 								</article>
 							</div>
-							<p className='p-0 m-0 text-sidebarBlue font-normal text-xs leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount) into 4 (conviction) to get the final vote.</span></p>
+							<p className='p-0 m-0 text-[#243A57]  font-normal text-[13px] leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount) into 4 (conviction)</span> to get the final vote.</p>
 						</section>
 					</Modal>
 				</section>

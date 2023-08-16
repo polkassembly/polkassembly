@@ -108,6 +108,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 	const trackArr: string[] = [];
 	const maxSpendArr: {track: string, maxSpend: number}[] = [];
+	const [gasFee, setGasFee] =  useState(ZERO_BN);
 
 	if(network){
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
@@ -139,8 +140,9 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		const baseDeposite = new BN(network === 'kusama' ? 1330000000000 : (network === 'polkadot' ? 400000000000 : ZERO_BN));
 		(async () => {
 			const info = await tx.paymentInfo(proposerAddress);
-			const txFee:BN = new BN(info.partialFee) ;
-			setTxFee(txFee.add(baseDeposite));
+			const gasFee:BN = new BN(info.partialFee) ;
+			setGasFee(gasFee);
+			setTxFee(gasFee.add(baseDeposite));
 			setLoading(false);
 			setShowAlert(true);
 		})();
@@ -189,6 +191,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
 			if(maxSpend.gte(fundingAmount)){
 				setSelectedTrack(maxSpendArr[i].track);
+				getPreimageTxFee(isPreimage, maxSpendArr[i].track);
 				onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
 				break;
 			}
@@ -699,7 +702,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						</Radio>
 					</Radio.Group>
 				</div>}
-				{(showAlert && !isPreimage) && !txFee.eq(ZERO_BN) && <Alert type='info' className='mt-6 rounded-[4px] text-bodyBlue' showIcon message={`Gas Fees of this ${formatedBalance(String(txFee.toString()), unit)} ${chainProperties[network]?.tokenSymbol} will be applied to create preimage.`} description={` ${network === 'kusama' ? 1.3 : network === 'polkadot' ? 40 : 0} ${unit} Base deposit is required to submit a preimage.`}/>}
+				{(showAlert && !isPreimage) && !txFee.eq(ZERO_BN) && <Alert type='info' className='mt-6 rounded-[4px] text-bodyBlue' showIcon description={`Gas Fees of ${formatedBalance(String(gasFee.toString()), unit)} ${chainProperties[network]?.tokenSymbol} will be applied to create preimage.`}
+					message={` ${network === 'kusama' ? 1.3 : network === 'polkadot' ? 40 : 0} ${unit} Base deposit is required to create a preimage.`}/>}
 				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
 					<Button onClick={() => setSteps({ percent: 100, step: 0 }) } className='font-medium tracking-[0.05em] text-pink_primary border-pink_primary text-sm w-[155px] h-[38px] rounded-[4px]'>Back</Button>
 					<Button htmlType='submit'

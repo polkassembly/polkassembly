@@ -645,6 +645,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 							setSelectedTrack(track);
 							setIsAutoSelectTrack(false);
 							onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
+							getPreimageTxFee();
 							setSteps({ percent: 100, step: 1 });}}
 						selectedTrack={selectedTrack}
 						/>

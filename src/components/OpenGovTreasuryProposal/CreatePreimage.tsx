@@ -191,7 +191,6 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
 			if(maxSpend.gte(fundingAmount)){
 				setSelectedTrack(maxSpendArr[i].track);
-				getPreimageTxFee(isPreimage, maxSpendArr[i].track);
 				onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
 				break;
 			}
@@ -642,7 +641,13 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					</div>
 					<div className='mt-6'>
 						<label className='text-lightBlue text-sm'>Select Track <span><HelperTooltip text='Track selection is done based on the amount requested.' className='ml-1'/></span></label>
-						<SelectTracks tracksArr={trackArr} onTrackChange={(track) => {setSelectedTrack(track); setIsAutoSelectTrack(false); onChangeLocalStorageSet({ selectedTrack: track }, isPreimage); setSteps({ percent: 100, step: 1 });}} selectedTrack={selectedTrack}/>
+						<SelectTracks tracksArr={trackArr} onTrackChange={(track) => {
+							setSelectedTrack(track);
+							setIsAutoSelectTrack(false);
+							onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
+							setSteps({ percent: 100, step: 1 });}}
+						selectedTrack={selectedTrack}
+						/>
 					</div>
 				</>}
 				{ isPreimage !== null  && <div className='mt-6 flex gap-2 items-center cursor-pointer' onClick={() => setOpenAdvanced(!openAdvanced)}>

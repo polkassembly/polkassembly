@@ -13,7 +13,7 @@ import React, { memo, ReactNode, useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
-import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon } from 'src/ui-components/CustomIcons';
+import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon, RootIcon, UpgradeCommitteePIPsIcon, CommunityPIPsIcon } from 'src/ui-components/CustomIcons';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 
@@ -45,7 +45,7 @@ function getSiderMenuItem(
 		icon,
 		key,
 		label,
-		type: key === 'tracksHeading' ? 'group' : ''
+		type: ['tracksHeading','pipsHeading'].includes(key as string) ? 'group' : ''
 	} as MenuItem;
 }
 
@@ -66,14 +66,13 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 			</Link>
 		},
 		{
-			key: 'logout',
-			label: <Link href='/' className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
+			key: 'logout',	label: <Link href='/' className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
 				onClick={(e) => {
 					e.preventDefault();
 					e.stopPropagation();
 					handleLogout(username);
 				}}>
-				<LogoutOutlined />
+						<LogoutOutlined />
 				<span>Logout</span>
 			</Link>
 		}
@@ -150,29 +149,34 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
 			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-3' />)
 		],
-		democracyItems: chainProperties[network]?.subsquidUrl ? [
+		democracyItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh'  ) ? [
 			getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
 			getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='text-white' />)
 		] : [],
-		councilItems: chainProperties[network]?.subsquidUrl ? [
+		councilItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh' ) ? [
 			getSiderMenuItem('Motions', '/motions', <MotionsIcon className='text-white' />),
 			getSiderMenuItem('Members', '/council', <MembersIcon className='text-white' />)
 		] : [],
-		treasuryItems: chainProperties[network]?.subsquidUrl ? [
+		treasuryItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh' ) ? [
 			getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
 			getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
 			getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />),
 			getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
 		] : [],
-		techCommItems: chainProperties[network]?.subsquidUrl ? [
+		techCommItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh' ) ? [
 			getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
 		] : [],
-		allianceItems: chainProperties[network]?.subsquidUrl ? [
+		allianceItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh' ) ? [
 			getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-white' />),
 			getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='text-white' />),
 			getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-white' />),
 			getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='text-white' />)
-		] : []
+		] : [],
+		PIPsItems:(chainProperties[network]?.subsquidUrl && (network === 'polymesh')) ? [
+			getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='text-white mt-1.5'/>),
+			getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='text-white mt-1.5'/>),
+			getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='text-white mt-1.5'/>)
+		] :[]
 	};
 
 	if (isGrantsSupported(network)) {
@@ -190,7 +194,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		...gov1Items.overviewItems
 	];
 
-	if(chainProperties[network]?.subsquidUrl) {
+	if(chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
 		items = items.concat([
 			getSiderMenuItem('Democracy', 'democracy_group', null, [
 				...gov1Items.democracyItems
@@ -220,6 +224,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			...gov1Items.treasuryItems,
 			...gov1Items.councilItems,
 			...gov1Items.techCommItems
+		]);
+	}
+	if(network === 'polymesh'){
+		items = items.concat(
+			getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 uppercase text-base cursor-text font-medium'>PIPs</span>, 'pipsHeading', null),
+			...gov1Items.PIPsItems
+		);
+		collapsedItems = collapsedItems.concat([
+			...gov1Items.PIPsItems
 		]);
 	}
 
@@ -353,11 +366,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const isGov2Route: boolean = checkGov2Route(router.pathname, router.query, previousRoute, network);
 
 	const handleMenuClick = (menuItem: any) => {
-		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
+		if(['userMenu', 'tracksHeading', 'pipsHeading'].includes(menuItem.key)) return;
 		router.push(menuItem.key);
 		setSidedrawer(false);
 	};
-
+  
 	const handleLogout = async (username: string) => {
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);

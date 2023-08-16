@@ -8,7 +8,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
+import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -79,7 +79,13 @@ export interface IReactions {
 	};
 }
 
-export interface IPostResponse {
+export interface IPIPsVoting {
+	balance: null | string;
+	voter: null | string;
+	decision: 'yes' | 'no';
+	identityId: string ;
+  }
+  export interface IPostResponse {
 	post_reactions: IReactions;
 	timeline: any[];
 	comments: any[];
@@ -100,6 +106,7 @@ export interface IPostResponse {
   gov_type?: 'gov_1' | 'open_gov' ;
   tags?: string[] | [];
   history?: IPostHistory[];
+    pips_voters?: IPIPsVoting[];
 }
 
 export type IReaction = '👍' | '👎';
@@ -589,8 +596,14 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
 		}
-
-		let subsquidRes: any = {};
+    	else if(network === 'polymesh'){
+			postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
+			postVariables =  {
+				index_eq: numPostId,
+				type_eq: subsquidProposalType
+			};
+		}
+    let subsquidRes: any = {};
 		try {
 			subsquidRes = await fetchSubsquid({
 				network,
@@ -736,6 +749,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			origin: postData?.origin,
 			payee: postData?.payee,
 			post_id: postData?.index,
+      pips_voters: postData?.voting || [],
+
 			post_reactions: getDefaultReactionObj(),
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,

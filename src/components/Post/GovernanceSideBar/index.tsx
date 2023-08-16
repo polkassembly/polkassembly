@@ -7,7 +7,7 @@ import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Button, Form, Modal, Skeleton, Spin, Tooltip } from 'antd';
-import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
+import { IPostResponse, IPIPsVoting } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
 import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } from 'src/global/statuses';
@@ -42,13 +42,20 @@ import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
 import Curves from './Referenda/Curves';
 import PostEditOrLinkCTA from './PostEditOrLinkCTA';
+import CloseIcon from '~assets/icons/close.svg';
+import { PlusOutlined } from '@ant-design/icons';
+import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
+import AbstainGray from '~assets/icons/abstain-gray.svg';
 import { useCurrentBlock } from '~src/hooks';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import BN from 'bn.js';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
+import MoneyIcon from '~assets/icons/money-icon-gray.svg';
+import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
 import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
@@ -62,6 +69,11 @@ import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
+import { formatBalance } from '@polkadot/util';
+import { formatedBalance } from '~src/util/formatedBalance';
+import PIPsVoteInfo from './PIPs/PIPsVoteInfo';
+import PIPsVote from './PIPs/PIPsVote';
+
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active /> ,
@@ -79,7 +91,11 @@ interface IGovernanceSidebarProps {
 	post: IPostResponse;
 	toggleEdit?: () => void;
   trackName?: string;
+  pipsVoters?: IPIPsVoting[];
+	hash: string;
 }
+
+
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
 
@@ -657,8 +673,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							<PostEditOrLinkCTA />
 						</>
 					}
-					{/* decision deposite placed. */}
-					{(statusHistory && statusHistory?.filter((status: any) => status.status === gov2ReferendumStatus.DECISION_DEPOSIT_PLACED)?.length === 0) && (statusHistory?.filter((status: any) => status?.status === gov2ReferendumStatus.TIMEDOUT)?.length === 0) && trackName && <DecisionDepositCard trackName={String(trackName)} />}
+          	{(statusHistory && statusHistory?.filter((status: any) => status.status === gov2ReferendumStatus.DECISION_DEPOSIT_PLACED)?.length === 0) && (statusHistory?.filter((status: any) => status?.status === gov2ReferendumStatus.TIMEDOUT)?.length === 0) && trackName && <DecisionDepositCard trackName={String(trackName)} />}
 
 					{canEdit && graphicOpen && post_link && !(post.tags && Array.isArray(post.tags) && post.tags.length > 0) && <div className=' rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] pb-[36px] mb-8'>
 						<div className='flex justify-end py-[17px] px-[20px] items-center' onClick={ () => setGraphicOpen(false)}>
@@ -756,8 +771,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							startTime={startTime}
 						/>
 					}
-
-					{[ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS, ProposalType.REFERENDUMS].includes(proposalType) &&
+	{[ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS, ProposalType.REFERENDUMS, ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS ].includes(proposalType) &&
 						<>
 							{
 								proposalType === ProposalType.REFERENDUMS?
@@ -830,25 +844,35 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													</GovSidebarCard>
 
 														}
-													</> : <GovSidebarCard className='overflow-y-hidden'>
+													</>
+													: <GovSidebarCard className='overflow-y-hidden'>
 														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
-														<VoteReferendum
-															address={address}
-															lastVote={lastVote}
-															setLastVote={setLastVote}
-															onAccountChange={onAccountChange}
-															referendumId={onchainId  as number}
-															proposalType={proposalType}
-														/>
-
+														{['polymesh'].includes(network)
+															? <PIPsVote
+																address={address}
+																lastVote={lastVote}
+																setLastVote={setLastVote}
+																onAccountChange={onAccountChange}
+																referendumId={onchainId  as number}
+																proposalType={proposalType}
+																hash={hash}
+															/> : <VoteReferendum
+																address={address}
+																lastVote={lastVote}
+																setLastVote={setLastVote}
+																onAccountChange={onAccountChange}
+																referendumId={onchainId  as number}
+																proposalType={proposalType}
+															/>
+														}
 														{RenderLastVote}
 
 													</GovSidebarCard>}
 											</>
 										}
-										<ReferendaV2Messages
+										{![ ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS ].includes(proposalType) && <ReferendaV2Messages
 											progress={progress}
-										/>
+										/>}
 
 										{(onchainId || onchainId === 0) &&
 											<>
@@ -898,7 +922,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										}
 									</>
 							}
-
 							{
 								(onchainId || onchainId === 0) &&
 								<Modal
@@ -912,8 +935,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								>
 									<VotersList
 										className={className}
+										pipsVoters={pipsVoters}
 										referendumId={onchainId as number}
 										voteType={getVotingTypeFromProposalType(proposalType)}
+										proposalType={proposalType}
 									/>
 								</Modal>
 							}
@@ -929,6 +954,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								}
 							</div>
 						</>
+					}
+					{[ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(proposalType) && <>
+						<GovSidebarCard>
+							<PIPsVoteInfo setOpen={setOpen} proposalType={proposalType} className='mt-0' status={status} pipId={onchainId as number} tally={tally}/>
+						</GovSidebarCard>
+					</>
 					}
 
 					{proposalType === ProposalType.TIPS &&

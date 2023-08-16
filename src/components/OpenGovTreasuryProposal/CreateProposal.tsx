@@ -24,7 +24,6 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { ProposalType } from '~src/global/proposalType';
 
 const ZERO_BN = new BN(0);
 
@@ -114,11 +113,8 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	const handleSaveTreasuryProposal = async(postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal',{
 			content,
+			discussionId: discussionId || null,
 			postId,
-			postLink: discussionId ? {
-				id: Number(discussionId),
-				type: ProposalType.DISCUSSIONS
-			}: null,
 			proposerAddress,
 			tags,
 			title,

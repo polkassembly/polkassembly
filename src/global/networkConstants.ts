@@ -165,6 +165,7 @@ export const tokenSymbol = {
 
 export const chainProperties: types.ChainPropType = {
 	[network.POLKADOT]: {
+		baseDeposit: '400000000000',
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,
@@ -219,6 +220,7 @@ export const chainProperties: types.ChainPropType = {
 		]
 	},
 	[network.KUSAMA]: {
+		baseDeposit: '1330000000000',
 		blockTime: 6000,
 		category: 'kusama',
 		chainId: 0,

@@ -17,8 +17,6 @@ import { chainProperties } from '~src/global/networkConstants';
 
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import SearchBar from '~src/ui-components/SearchBar';
-
-//import GovernanceSwitchButton from './GovernanceSwitchButton';
 import PaLogo from './PaLogo';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
@@ -84,13 +82,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 					</div>
 				</div>
 
-				{
-					// isOpenGovSupported(network)?
-					// 	<div className='bg-red-300'>
-					// 		<GovernanceSwitchButton previousRoute={previousRoute} className='hidden lg:flex' />
-					// 	</div> :
-					// 	<div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
-				}
 				<div className="flex items-center justify-between gap-x-2 md:gap-x-4">
 					<SearchBar/>
 

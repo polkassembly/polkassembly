@@ -12,9 +12,6 @@ import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { Wallet } from 'src/types';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
-//import { EGovType } from '~src/global/proposalType';
-// import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
-
 interface Props{
 	network: string;
 	isModal?: boolean;

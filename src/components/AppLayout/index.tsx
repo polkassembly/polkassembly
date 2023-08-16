@@ -167,11 +167,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	if(chainProperties[network]?.subsquidUrl) {
 		items = items.concat([
-			getSiderMenuItem('Democracy', 'gov1democracy_group', <DemocracyProposalsIcon className='text-sidebarBlue' />, [
+			getSiderMenuItem('Democracy', 'gov1_democracy_group', <DemocracyProposalsIcon className='text-sidebarBlue' />, [
 				...gov1Items.democracyItems
 			]),
 
-			getSiderMenuItem('Treasury', 'gov1treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [
+			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [
 				...gov1Items.treasuryItems
 			]),
 			getSiderMenuItem('Council Motions', '/motions', <MotionsIcon className='text-white' />),

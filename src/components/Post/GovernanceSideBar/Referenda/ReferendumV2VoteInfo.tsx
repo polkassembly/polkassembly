@@ -195,12 +195,12 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						className='md:min-w-[584px]'
 						closeIcon={<CloseIcon />}
 						title={
-							<h2 className='text-[#243A57] tracking-[0.01em] text-xl leading-[30px]'><VoteCalculationIcon className="w-6 h-6 mr-3"/>How are votes calculated</h2>
+							<h2 className='text-bodyBlue tracking-[0.01em] text-xl leading-[30px]'><VoteCalculationIcon className="w-6 h-6 mr-3"/>How are votes calculated</h2>
 						}
 					>
 						<section className='flex flex-col gap-y-6'>
 							<div className='mt-3' style={{ borderTop: '1px solid #E1E6EB' }}>
-								<p className='text-[#243A57] font-normal text-[13px] leading-[18px] m-0 p-0 mt-5'>
+								<p className='text-bodyBlue font-normal text-[14px] leading-[18px] m-0 p-0 mt-5'>
 									Votes are calculated by multiplying the votes casted by a user with the conviction period.
 								</p>
 							</div>
@@ -301,7 +301,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 									</div>
 								</article>
 							</div>
-							<p className='p-0 m-0 text-[#243A57]  font-normal text-[13px] leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount) into 4 (conviction)</span> to get the final vote.</p>
+							<p className='p-0 m-0 text-bodyBlue  font-normal text-[14px] leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount) into 4 (conviction)</span> to get the final vote.</p>
 						</section>
 					</Modal>
 				</section>

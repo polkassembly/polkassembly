@@ -447,6 +447,7 @@ const MetamaskLogin: FC<Props> = ({
 														accounts={accounts}
 														address={address}
 														onAccountChange={onAccountChange}
+														linkAddressTextDisabled
 													/>
 												</div>
 												{isSignUp && <Alert showIcon className='mb-2' type='info' message={<>By Signing up you agree to the terms of the <Link href='/terms-and-conditions' className='text-pink_primary'>Polkassembly end user agreement</Link>.</>} />}

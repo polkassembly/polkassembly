@@ -6,7 +6,7 @@
 
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useState } from 'react';
-import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 
 import ReactionButton from './ReactionButton';
 

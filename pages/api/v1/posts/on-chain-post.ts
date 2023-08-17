@@ -32,6 +32,15 @@ export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
 };
 
+export const fetchSubsquare = async (network: string, id: string | number) => {
+	try {
+		const res = await fetch(`https://${network}.subsquare.io/api/gov2/referendums/${id}`);
+		return await res.json();
+	} catch (error) {
+		return [];
+	}
+};
+
 export const getTimeline = (proposals: any, isStatus?: {
 	swap: boolean;
 }) => {
@@ -86,6 +95,7 @@ export interface IPostResponse {
 		id: number;
 		name: string;
 	};
+  title?: string;
 	decision?: string;
 	last_edited_at?: string | Date;
 	[key: string]: any;
@@ -596,11 +606,64 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
 		}
-		const subsquidRes = await fetchSubsquid({
-			network,
-			query: postQuery,
-			variables: postVariables
-		});
+
+		let subsquidRes: any = {};
+		try {
+			subsquidRes = await fetchSubsquid({
+				network,
+				query: postQuery,
+				variables: postVariables
+			});
+		} catch (error) {
+			const data = await fetchSubsquare(network, strPostId);
+			if (data) {
+				subsquidRes['data'] = {
+					'proposals': [
+						{
+							createdAt: data?.createdAt,
+							curator: data?.proposer,
+							curatorDeposit: null,
+							deciding: data?.onchainData?.info?.deciding,
+							decisionDeposit: data?.onchainData?.info?.decisionDeposit,
+							delay: null,
+							deposit: data?.onchainData?.info?.deposit,
+							description: null,
+							enactmentAfterBlock: data?.onchainData?.info?.enactment?.after,
+							enactmentAtBlock: data?.onchainData?.info?.enactment?.at,
+							end: data?.onchainData?.enactment?.when,
+							endedAt: null,
+							endedAtBlock: null,
+							fee: null,
+							hash: data?.onchainData?.proposalHash,
+							index: data?.referendumIndex,
+							preimage: {
+								method: data?.onchainData?.proposal?.method,
+								proposedCall: data?.onchainData?.proposal?.call,
+								section: data?.onchainData?.proposal?.section
+							},
+							proposalArguments: null,
+							proposer: data?.proposer,
+							status: data?.state?.name,
+							statusHistory: data?.onchainData?.timeline?.map((obj: any) => {
+								if (obj?.name === 'DecisionStarted') {
+									obj.name = 'Deciding';
+								}
+								return {
+									block: obj?.indexer?.blockHeight,
+									status: obj.name,
+									timestamp: obj?.indexer?.blockTime
+								};
+							}),
+							submissionDeposit: data?.onchainData?.info?.submissionDeposit,
+							tally: data?.onchainData?.tally,
+							timeline: null,
+							trackNumber: data?.track,
+							type: 'ReferendumV2'
+						}
+					]
+				};
+			}
+		}
 
 		// Post
 		const subsquidData = subsquidRes?.data;

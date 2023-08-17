@@ -162,11 +162,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					}
 				>
 					<div className={isUsedInSuccessModal ? 'flex justify-between items-center w-[100%]' : ''}>
-						<ContentForm  onChange = {(content : any) => onContentChange(content)} height={textBoxHeight} className={isUsedInSuccessModal ? 'flex-auto w-[100%]' : ''} />
+						<ContentForm  onChange = {(content : any) => onContentChange(content)} height={textBoxHeight} className={isUsedInSuccessModal ? 'flex-auto w-[100%]' : ''} textAreaPlaceHolder={isUsedInSuccessModal ?'Please type your comment here':'Please type here...'} />
 						<Form.Item>
 							<div className={ isUsedInSuccessModal ?'ml-2' :'flex items-center justify-end mt-[-40px]'}>
 								{
-									isUsedInSuccessModal ? <Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-none h-[40px] w-[67px] hover:bg-pink_secondary flex items-center justify-center my-0 ${!content ? 'bg-pink_secondary  hover:bg-pink_secondary' : ''}`}>
+									isUsedInSuccessModal ? <Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-none h-[40px] w-[67px] hover:bg-pink_secondary flex items-center justify-center my-0 ${!content ? 'opacity-50' : ''}`}>
 								Post
 									</Button>
 										:

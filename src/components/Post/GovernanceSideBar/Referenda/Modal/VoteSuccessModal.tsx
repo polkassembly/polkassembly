@@ -268,22 +268,21 @@ export default styled(VoteInitiatedModal)`
 	display: none !important;
 }
 .mde-text{
-	height: 40px !important;
+	height: 50px !important;
 }
 .tox.tox-tinymce{
 border-radius : 4px !important;
-
+height: 50px !important;
 }
+
 .tox-sidebar{
 	display: none !important;
 }
-#tinymce.mce-content-body{
-	margin: 0 !important;
-	padding : 7px !important;
-}
 
-.mce-content-body p {
-	margin:0 !important;
+
+body p {
+	margin-top:-16px !important;
+	border: 1px solid red !important;
 }
 .ant-avatar{
 	display: none !important;

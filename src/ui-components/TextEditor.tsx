@@ -28,6 +28,7 @@ interface ITextEditorProps {
 	isDisabled?: boolean;
 	name: string;
 	autofocus?: boolean;
+	placeHolder?: string;
 }
 
 const gifSVGData = `<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512.000000 512.000000">
@@ -74,7 +75,7 @@ img {
 `;
 
 const TextEditor: FC<ITextEditorProps> = (props) => {
-	const { className, height, onChange, isDisabled, value, name, autofocus = false } = props;
+	const { className, height, onChange, isDisabled, value, name, autofocus = false , placeHolder = 'Please type here...' } = props;
 
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
@@ -182,7 +183,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							}) as any,
 							menubar: false,
 							paste_data_images: true,
-							placeholder: 'Please type here...',
+							placeholder: placeHolder,
 							plugins: [
 								'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
 								'searchreplace', 'visualblocks', 'fullscreen',

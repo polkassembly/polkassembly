@@ -21,7 +21,7 @@ import CapitalIcon from '~assets/icons/capital-small-icom.svg';
 import EmailIcon from '~assets/icons/email_icon.svg';
 import styled from 'styled-components';
 import { Divider } from 'antd';
-import DelegationListRow from './DaligationListRow';
+import DelegationListRow from './DelegationListRow';
 
 interface IVoterRow {
   index?: any;

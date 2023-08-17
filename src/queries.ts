@@ -25,8 +25,7 @@ query ProposalsListingByType($limit: Int, $index_in: [Int!]) {
     proposer
     index
   }
-}
-`;
+}`;
 
 export const GET_LATEST_PREIMAGES = `
 query MyQuery($hash_eq: String = "") {
@@ -106,15 +105,18 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
 `;
 
 export const GET_PROPOSALS_LISTING_BY_TYPE = `
-query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrderByInput!] = createdAtBlock_DESC, $limit: Int = 10, $offset: Int = 0, $index_in: [Int!], $hash_in: [String!], $trackNumber_in: [Int!], $status_in: [ProposalStatus!]) {
-  proposalsConnection(orderBy: id_ASC, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
-    totalCount
-  }
-  proposals(orderBy: $orderBy, limit: $limit, offset: $offset, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
-    proposer
-    curator
+query PolymeshPrposalsQuery($type_in: ProposalType, $limit: Int = 10, $offset: Int = 0,$orderBy: [ProposalOrderByInput!] = createdAtBlock_DESC,) {
+  proposals(orderBy: $orderBy, limit: $limit, offset: $offset, where: {type_eq: $type_in}) {
     createdAt
-    updatedAt
+    createdAtBlock
+    deposit
+    endedAtBlock
+    endedAt
+    hash
+    fee
+    description
+    proposer
+    index
     status
     statusHistory {
       id
@@ -122,51 +124,65 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
     tally {
       ayes
       nays
-      support
     }
-    preimage {
-      method
-      proposer
-      proposedCall {
-        args
-        description
-        method
-        section
-      }
-    }
-    index
-    end
-    hash
-    description
+    updatedAt
+    updatedAtBlock
     type
-    origin
-    trackNumber
-    group {
-      proposals(limit: 10, orderBy: createdAt_ASC) {
-       type
-        statusHistory(limit: 10, orderBy: timestamp_ASC) {
-          status
-          timestamp
-          block
-        }
-        index
-        createdAt
-        proposer
-        preimage {
-          proposer
-        }
-        hash
+  }
+  proposalsConnection(orderBy: id_ASC, where: {type_eq: $type_in}) {
+    totalCount
+  }
+}
+
+`;
+export const GET_PROPOSALS_LISTING_FOR_POLYMESH =`
+query PolymeshPrposalsQuery($type_in: ProposalType, $limit: Int = 10, $offset: Int = 0) {
+  proposals(orderBy: createdAt_DESC, limit: $limit, offset: $offset, where: {type_eq: $type_in}) {
+    createdAt
+    createdAtBlock
+    deposit
+    endedAtBlock
+    endedAt
+    hash
+    fee
+    description
+    proposer
+    index
+    status
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+    }
+    updatedAt
+    updatedAtBlock
+    type
+  }
+  proposalsConnection(orderBy: createdAtBlock_DESC, where: {type_eq: $type_in}) {
+    totalCount
+  }
+}
+`;
+
+export const GET_VOTES_FOR_POLYMESH = `query PolymeshVotesQuery($index_eq:Int, $type_eq:ProposalType) {
+  votes(where: {proposal: {index_eq: $index_eq, type_eq: $type_eq}}) {
+    decision
+    voter
+    timestamp
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
       }
     }
-    proposalArguments {
-      method
+    proposal {
       description
-    }
-    parentBountyIndex
-    statusHistory {
-      block
-      status
-      timestamp
     }
   }
 }
@@ -227,6 +243,36 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
     status
   }
 }`;
+
+export const GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query PolymeshPrposalsQuery($type_eq: ProposalType, $index_in: [Int!], $limit: Int = 10, $offset: Int = 0,$orderBy: [ProposalOrderByInput!] = createdAtBlock_DESC) {
+  proposals(orderBy: $orderBy, limit: $limit, offset: $offset, where: {type_eq: $type_eq, index_in: $index_in}) {
+    createdAt
+    createdAtBlock
+    deposit
+    endedAtBlock
+    endedAt
+    hash
+    fee
+    description
+    proposer
+    index
+    status
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+    }
+    updatedAt
+    updatedAtBlock
+    type
+  }
+  proposalsConnection(orderBy: id_ASC, where: {type_eq: $type_eq, index_in: $index_in}) {
+    totalCount
+  }
+}
+`;
 
 export const GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING = `
 query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal) {
@@ -403,6 +449,72 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
     }
   }
 }`;
+
+export const GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE = `query PolymeshProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType) {
+  proposals(limit: 1, where: {index_eq: $index_eq, hash_eq: $hash_eq, type_eq: $type_eq}) {
+    index
+    proposer
+    status
+    description
+    hash
+    type
+    threshold {
+      ... on MotionThreshold {
+        __typename
+        value
+      }
+      ... on ReferendumThreshold {
+        __typename
+        type
+      }
+    }
+    end
+    createdAt
+    updatedAt
+    delay
+    endedAt
+    deposit
+    bond
+    fee
+    proposalArguments {
+      method
+      args
+      description
+      section
+    }
+    voting {
+      decision
+      identityId
+      balance {
+        ... on StandardVoteBalance {
+          value
+        }
+      }
+      voter
+    }
+    statusHistory(limit: 10) {
+      timestamp
+      status
+      block
+    }
+    tally {
+      ayes
+      bareAyes
+      nays
+      totalSeats
+    }
+  }
+  votesConnection(orderBy: blockNumber_DESC, where:{proposal:{type_eq:$type_eq, index_eq:$index_eq}}) {
+    totalCount
+    edges {
+      node {
+        voter
+        decision
+      }
+    }
+  }
+}
+`;
 
 export const GET_CHILD_BOUNTIES_BY_PARENT_INDEX = `
 query ChildBountiesByParentIndex($parentBountyIndex_eq: Int = 11, $limit: Int, $offset: Int) {

@@ -9,7 +9,7 @@ import { poppins } from 'pages/_app';
 import { useEffect, useState } from 'react';
 import { useApiContext, useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
-import { ProposalType, getSubsquidProposalType } from '~src/global/proposalType';
+import { ProposalType, TSubsquidProposalType, getSubsquidProposalType } from '~src/global/proposalType';
 import { GET_TOTAL_VOTES_COUNT, GET_VOTES_WITH_LIMIT_IS_NULL_TRUE } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import formatBnBalance from '~src/util/formatBnBalance';
@@ -26,7 +26,7 @@ interface Props{
   votesData: any;
 }
 
-const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType, votesData }:Props) => {
+const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType, votesData }:Props) => {
 	const { network } = useNetworkContext();
 	const  { api, apiReady } = useApiContext();
 	const [tallyData, setTallyData] = useState({
@@ -44,8 +44,10 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType, 
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
 
-	const ayeVotesNumber = ( proposalType === getSubsquidProposalType(ProposalType.FELLOWSHIP_REFERENDUMS)) ? (ayes) : bnToIntBalance(tallyData.ayes || ZERO);
-	const totalVotesNumber = ( proposalType === getSubsquidProposalType(ProposalType.FELLOWSHIP_REFERENDUMS)) ? (ayes + nays) : bnToIntBalance(tallyData.ayes?.add(tallyData.nays|| ZERO) || ZERO);
+	const check = [getSubsquidProposalType(ProposalType.FELLOWSHIP_REFERENDUMS), ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as TSubsquidProposalType );
+
+	const ayeVotesNumber = ( check) ? (ayes) : bnToIntBalance(tallyData.ayes || ZERO);
+	const totalVotesNumber = ( check) ? (ayes + nays) : bnToIntBalance(tallyData.ayes?.add(tallyData.nays|| ZERO) || ZERO);
 	const ayePercent = ayeVotesNumber/totalVotesNumber*100;
 	const nayPercent = 100 - ayePercent;
 	const isAyeNaN = isNaN(ayePercent);
@@ -119,14 +121,25 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType, 
 		}
 	};
 
-	const getReferendumV2VoteInfo = () => {
+	const getReferendumV2VoteInfo = async() => {
 		if( !api || !apiReady || !status || !network ) return;
-		if(proposalType === getSubsquidProposalType(ProposalType.FELLOWSHIP_REFERENDUMS)){
+		if(check){
 			setLoading(false);
 			setFellowshipReferendumVotes({
 				ayes: Number(tally?.ayes),
 				nays: Number(tally?.nays)
 			});
+		}else if([ProposalType.COMMUNITY_PIPS].includes(proposalType as ProposalType)){
+			const pipId = onchainId;
+			const voteInfo:any = await api.query.pips.proposalResult(pipId).then((data) => data.toJSON());
+			if(voteInfo){
+
+				setTallyData({
+					ayes: new BN( voteInfo.ayesStake) || ZERO,
+					nays: new BN(voteInfo.naysStake) || ZERO
+				});
+			}
+			setLoading(false);
 		}
 
 		else{
@@ -165,11 +178,13 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType, 
 	};
 
 	useEffect(() => {
-		if(proposalType === ProposalType.REFERENDUMS){
+		if(proposalType === ProposalType.REFERENDUMS && network !== 'polymesh'){
 			getReferendumVoteInfo();
 		}
 		else{
-			getReferendumV2VoteInfo();
+			(async () => {
+				await getReferendumV2VoteInfo();
+			})();
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, votesData]);
@@ -178,8 +193,8 @@ const VotesProgressInListing = ({ tally, index, onchainId,status, proposalType, 
 		: <>
 			<div className='max-sm:hidden'>
 				<Tooltip color='#575255' overlayClassName='max-w-none' title={<div className={`flex flex-col whitespace-nowrap text-xs gap-1 p-1.5 ${poppins.className} ${poppins.variable}`}>
-					<span>Aye = {proposalType === getSubsquidProposalType(ProposalType.FELLOWSHIP_REFERENDUMS) ? ayes : formatUSDWithUnits(formatBnBalance(tallyData.ayes || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isAyeNaN ? 50 : ayePercent).toFixed(2)}%) </span>
-					<span>Nay = {proposalType === getSubsquidProposalType(ProposalType.FELLOWSHIP_REFERENDUMS) ? nays  : formatUSDWithUnits(formatBnBalance(tallyData.nays || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isNayNaN ? 50 : nayPercent).toFixed(2)}%) </span>
+					<span>Aye = {check ? ayes : formatUSDWithUnits(formatBnBalance(tallyData.ayes || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isAyeNaN ? 50 : ayePercent).toFixed(2)}%) </span>
+					<span>Nay = {check ? nays  : formatUSDWithUnits(formatBnBalance(tallyData.nays || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isNayNaN ? 50 : nayPercent).toFixed(2)}%) </span>
 				</div>}>
 					<div>
 						<Progress size={30} percent={50} success={{ percent: ((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={((index%2) === 0) ? '#fbfbfc' : 'white' } />

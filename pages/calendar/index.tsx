@@ -96,7 +96,10 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 	}, []);
 
 	useEffect(() => {
-		if(!api || !apiReady) return;
+		if(!api || !apiReady || ['polymesh'].includes(network)){
+			setCategoriesLoading(false);
+			return;
+		}
 
 		// TODO: use Promise.allSettled instead
 		(async () => {

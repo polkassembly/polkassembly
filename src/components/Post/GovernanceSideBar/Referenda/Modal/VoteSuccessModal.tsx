@@ -268,10 +268,22 @@ export default styled(VoteInitiatedModal)`
 	display: none !important;
 }
 .mde-text{
-	padding: 10px !important;
-	border-radius: 4px !important;
-	min-height:40px;
-	max-height: 40px;
+	height: 40px !important;
+}
+.tox.tox-tinymce{
+border-radius : 4px !important;
+
+}
+.tox-sidebar{
+	display: none !important;
+}
+#tinymce.mce-content-body{
+	margin: 0 !important;
+	padding : 7px !important;
+}
+
+.mce-content-body p {
+	margin:0 !important;
 }
 .ant-avatar{
 	display: none !important;
@@ -284,5 +296,11 @@ export default styled(VoteInitiatedModal)`
 }
 .ant-form-item-explain-error{
 	display: none !important;
+}
+ .tox-toolbar__primary{
+	display : none !important;
+}
+.tox-statusbar{
+	display : none !important;
 }
 `;

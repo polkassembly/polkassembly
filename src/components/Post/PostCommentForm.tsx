@@ -161,7 +161,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 						{ required: "Please add the  '${name}'" }
 					}
 				>
-					<div className={isUsedInSuccessModal ? 'flex justify-between items-center w-[100%]' : ''}>
+					<div className={isUsedInSuccessModal ? 'flex justify-between  w-[100%]' : ''}>
 						<ContentForm  onChange = {(content : any) => onContentChange(content)} height={textBoxHeight} className={isUsedInSuccessModal ? 'flex-auto w-[100%]' : ''} textAreaPlaceHolder={isUsedInSuccessModal ?'Please type your comment here':'Please type here...'} />
 						<Form.Item>
 							<div className={ isUsedInSuccessModal ?'ml-2' :'flex items-center justify-end mt-[-40px]'}>

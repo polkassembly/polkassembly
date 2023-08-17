@@ -243,13 +243,6 @@ const VoteInitiatedModal = ({
 					</div>
 				</div>
 			</div>
-			{/* <div className='relative min-h-[120px] mt-[30px]'>
-				<QuoteRight className='absolute top-[-10px] left-[-10px]'/>
-				<QuoteLeft className='absolute right-[0px] w-[34px] top-[-10px]' />
-				<CommentBox className='w-[100%] min-h-[150px] box' />
-				<p className='text-lightBlue text-[14px] font-medium mt-[-125px] pt-2 mb-2 ml-12 mr-4'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
-				<PostCommentForm className='ml-8 mt-[-10px] w-[100%] mb-2' isUsedInSuccessModal={true} textBoxHeight={32} voteDecision={vote} setSuccessModalOpen={setOpen}/>
-			</div> */}
 			<div className='h-[130px] relative mt-[30px] '>
 				<CommentBox />
 				<QuoteRight className='absolute top-[-10px] left-[-10px]'/>
@@ -272,7 +265,7 @@ export default styled(VoteInitiatedModal)`
 }
 .tox.tox-tinymce{
 border-radius : 4px !important;
-height: 50px !important;
+height: 60px !important;
 }
 
 .tox-sidebar{

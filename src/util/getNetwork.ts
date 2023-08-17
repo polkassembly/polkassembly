@@ -42,6 +42,9 @@ export default function getNetwork(): Network {
 	else if(network == 'moonriver-test'){
 		network = 'moonriver';
 	}
+	else if(network == 'moonbase-test'){
+		network = 'moonbase';
+	}
 
 	if (!possibleNetworks.includes(network)) {
 		network = defaultNetwork;

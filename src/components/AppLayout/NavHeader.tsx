@@ -97,7 +97,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 						}
 						{!username
 							&& <div className='flex items-center lg:gap-x-2'>
-								<Button className='w-[60px] h-[22px] lg:w-[74px] lg:h-[32px] bg-pink_primary rounded-[2px] md:rounded-[4px] text-white lg:text-sm lg:font-medium lg:leading-[21px] tracking-[0.00125em] flex items-center justify-center hover:text-white' onClick={() => {setSidedrawer(false); setLoginOpen(true);}}>Login</Button>
+								<Button className='w-[74px] h-[33px] bg-pink_primary rounded-[2px] md:rounded-[4px] text-white lg:text-sm lg:font-medium lg:leading-[21px] tracking-[0.00125em] flex items-center justify-center hover:text-white' onClick={() => {setSidedrawer(false); setLoginOpen(true);}}>Login</Button>
 							</div>
 						}
 					</Space>

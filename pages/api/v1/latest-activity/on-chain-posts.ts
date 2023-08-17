@@ -65,7 +65,9 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 		}
 		if(network === 'polymesh'){
 			query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
-		}let subsquidRes: any = {};
+		}
+
+		let subsquidRes: any = {};
 		try {
 			subsquidRes = await fetchSubsquid({
 				network,

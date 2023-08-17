@@ -106,7 +106,7 @@ const Status: any = {
 		</div>;
 	},
 	title: 'Status',
-	width: 100
+	width: 200
 };
 
 const CreatedAt: any = {

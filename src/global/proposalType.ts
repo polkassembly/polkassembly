@@ -21,9 +21,9 @@ export enum ProposalType {
 	GRANTS = 'grants',
 	ANNOUNCEMENT = 'announcement',
 	ALLIANCE_MOTION = 'alliance_motion',
-	TECHNICAL_PIPS = 'technical_PIPs',
-	UPGRADE_PIPS = 'upgrade_PIPs',
-	COMMUNITY_PIPS = 'community_PIPs'
+	TECHNICAL_PIPS = 'technical PIPs',
+	UPGRADE_PIPS = 'upgrade PIPs',
+	COMMUNITY_PIPS = 'community PIPs'
 }
 export enum OffChainProposalType {
 	DISCUSSIONS = 'discussions',
@@ -55,7 +55,7 @@ export type TSubsquidProposalType =
 	| 'Community'
 	| 'UpgradeCommittee';
 
-export function getSubsquidProposalType(proposalType: Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>): TSubsquidProposalType | undefined{
+export function getSubsquidProposalType(proposalType: Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>): TSubsquidProposalType{
 	switch(proposalType) {
 	case ProposalType.DEMOCRACY_PROPOSALS:
 		return 'DemocracyProposal';
@@ -120,11 +120,11 @@ export function getFirestoreProposalType(proposalType: string): string {
 	case 'Announcement':
 		return 'announcement';
 	case 'Community':
-		return 'community_PIPs';
+		return 'community PIPs';
 	case 'TechnicalCommittee':
-		return 'technical_PIPs';
+		return 'technical PIPs';
 	case 'UpgradeCommitte':
-		return 'upgrade_PIPs';
+		return 'upgrade PIPs';
 	}
 	return '';
 }
@@ -227,7 +227,7 @@ export function getProposalTypeFromSinglePostLink(link: string): ProposalType | 
 	}
 }
 
-export const proposalTypes = ['democracy_proposals', 'tech_committee_proposals', 'treasury_proposals', 'referendums', 'fellowship_referendums', 'council_motions', 'bounties', 'tips', 'child_bounties', 'open_gov', 'referendums_v2', 'alliance_motion', 'announcement','technical_PIPs','community_PIPs','upgrade_PIPs'];
+export const proposalTypes = ['democracy_proposals', 'tech_committee_proposals', 'treasury_proposals', 'referendums', 'fellowship_referendums', 'council_motions', 'bounties', 'tips', 'child_bounties', 'open_gov', 'referendums_v2', 'alliance_motion', 'announcement','technical PIPs','community PIPs','upgrade PIPs'];
 export const offChainProposalTypes = ['discussions', 'grants'];
 
 export const checkIsOnChainPost = (proposalType: string) => {

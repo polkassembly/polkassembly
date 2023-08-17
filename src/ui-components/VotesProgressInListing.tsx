@@ -44,10 +44,10 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
 
-	const check = [getSubsquidProposalType(ProposalType.FELLOWSHIP_REFERENDUMS), ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as TSubsquidProposalType );
+	const getVoteDataFromTally = [getSubsquidProposalType(ProposalType.FELLOWSHIP_REFERENDUMS), ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as TSubsquidProposalType );
 
-	const ayeVotesNumber = ( check) ? (ayes) : bnToIntBalance(tallyData.ayes || ZERO);
-	const totalVotesNumber = ( check) ? (ayes + nays) : bnToIntBalance(tallyData.ayes?.add(tallyData.nays|| ZERO) || ZERO);
+	const ayeVotesNumber = ( getVoteDataFromTally) ? (ayes) : bnToIntBalance(tallyData.ayes || ZERO);
+	const totalVotesNumber = ( getVoteDataFromTally) ? (ayes + nays) : bnToIntBalance(tallyData.ayes?.add(tallyData.nays|| ZERO) || ZERO);
 	const ayePercent = ayeVotesNumber/totalVotesNumber*100;
 	const nayPercent = 100 - ayePercent;
 	const isAyeNaN = isNaN(ayePercent);
@@ -123,7 +123,7 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 
 	const getReferendumV2VoteInfo = async() => {
 		if( !api || !apiReady || !status || !network ) return;
-		if(check){
+		if(getVoteDataFromTally){
 			setLoading(false);
 			setFellowshipReferendumVotes({
 				ayes: Number(tally?.ayes),
@@ -193,8 +193,8 @@ const VotesProgressInListing = ({ tally, index, onchainId, status, proposalType,
 		: <>
 			<div className='max-sm:hidden'>
 				<Tooltip color='#575255' overlayClassName='max-w-none' title={<div className={`flex flex-col whitespace-nowrap text-xs gap-1 p-1.5 ${poppins.className} ${poppins.variable}`}>
-					<span>Aye = {check ? ayes : formatUSDWithUnits(formatBnBalance(tallyData.ayes || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isAyeNaN ? 50 : ayePercent).toFixed(2)}%) </span>
-					<span>Nay = {check ? nays  : formatUSDWithUnits(formatBnBalance(tallyData.nays || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isNayNaN ? 50 : nayPercent).toFixed(2)}%) </span>
+					<span>Aye = {getVoteDataFromTally ? ayes : formatUSDWithUnits(formatBnBalance(tallyData.ayes || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isAyeNaN ? 50 : ayePercent).toFixed(2)}%) </span>
+					<span>Nay = {getVoteDataFromTally ? nays  : formatUSDWithUnits(formatBnBalance(tallyData.nays || '', { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)} ({(isNayNaN ? 50 : nayPercent).toFixed(2)}%) </span>
 				</div>}>
 					<div>
 						<Progress size={30} percent={50} success={{ percent: ((isAyeNaN? 50: ayePercent)/2) }} type="circle" className='progress-rotate mt-3' gapPosition='bottom' strokeWidth={16} trailColor={((index%2) === 0) ? '#fbfbfc' : 'white' } />

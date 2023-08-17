@@ -6,6 +6,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedWindow } from '@polkadot/extension-inject/types';
 import { Polkasafe } from 'polkasafe';
 import { APPNAME } from '~src/global/appName';
+import messages from '~src/util/messages';
 
 export default function usePolkasafe(address?:string)  {
 	const client = new Polkasafe();
@@ -16,7 +17,7 @@ export default function usePolkasafe(address?:string)  {
 		const selectedWallet = injectedWindow?.injectedWeb3?.[wallet];
 		const injected = selectedWallet && selectedWallet.enable && await selectedWallet.enable(APPNAME);
 		if(!injected){
-			throw new Error('Internal Error');
+			throw new Error(messages.WALLET_NOT_FOUND);
 		}
 		const substrateAddress = getSubstrateAddress(address || '') || '';
 		client.setPolkasafeClient(network, substrateAddress, injected);

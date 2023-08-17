@@ -351,3 +351,14 @@ color: var(--lightBlue) !important;
 .tox-autocompleter .tox-menu {
 	border-radius: 8px !important;
 }
+
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+  }

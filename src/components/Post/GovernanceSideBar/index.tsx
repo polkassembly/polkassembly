@@ -62,6 +62,7 @@ import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import CloseIcon from '~assets/icons/close.svg';
 import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
 import AbstainGray from '~assets/icons/abstain-gray.svg';
+import VoteDataModal from './Modal/VoteData';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	loading: () => <Skeleton active /> ,
@@ -901,7 +902,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 							{
 								(onchainId || onchainId === 0) &&
-								<Modal
+								<>
+									<VoteDataModal onchainId={onchainId} open={open} setOpen={setOpen} proposalType={proposalType}/>
+									{/* <Modal
 									closeIcon={false}
 									onCancel={() => {
 										setOpen(false);
@@ -915,7 +918,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										referendumId={onchainId as number}
 										voteType={getVotingTypeFromProposalType(proposalType)}
 									/>
-								</Modal>
+								</Modal> */}
+								</>
 							}
 
 							<div>

@@ -163,7 +163,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-
+	console.log('latest',latestPosts);
 	return (
 		<>
 			{chainProperties[network]?.gTag ? <><Script
@@ -191,8 +191,13 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				}
 				<div className="mt-8 mx-1">
 					{
-						network !== AllNetworks.COLLECTIVES?
-							<LatestActivity latestPosts={latestPosts} />
+						network !== AllNetworks.COLLECTIVES ?
+							isOpenGovSupported(network) ? <Gov2LatestActivity gov2LatestPosts={{
+								allGov2Posts: latestPosts.all,
+								discussionPosts: latestPosts.discussions,
+								...latestPosts
+							}} /> :
+								<LatestActivity latestPosts={latestPosts} />
 							: <Gov2LatestActivity gov2LatestPosts={{
 								allGov2Posts: latestPosts.all,
 								discussionPosts: latestPosts.discussions,

@@ -12,7 +12,8 @@ const messages = {
 	VALIDATION_USERNAME_MAXLENGTH_ERROR: 'Username cannot be larger than 30 characters.',
 	VALIDATION_USERNAME_MINLENGTH_ERROR: 'Username should be at least 3 characters long.',
 	VALIDATION_USERNAME_PATTERN_ERROR: 'Invalid character found, you can use letters, numbers and the following characters ._-',
-	VALIDATION_USERNAME_REQUIRED_ERROR: 'Username is mandatory.'
+	VALIDATION_USERNAME_REQUIRED_ERROR: 'Username is mandatory.',
+	WALLET_NOT_FOUND: 'Wallet not found'
 };
 
 export default messages;

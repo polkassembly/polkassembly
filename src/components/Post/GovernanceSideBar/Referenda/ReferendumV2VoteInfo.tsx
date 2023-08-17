@@ -200,7 +200,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					>
 						<section className='flex flex-col gap-y-6'>
 							<div className='mt-3' style={{ borderTop: '1px solid #E1E6EB' }}>
-								<p className='text-bodyBlue font-normal text-[14px] leading-[18px] m-0 p-0 mt-5'>
+								<p className='text-bodyBlue font-normal text-sm leading-[18px] m-0 p-0 mt-5'>
 									Votes are calculated by multiplying the votes casted by a user with the conviction period.
 								</p>
 							</div>
@@ -301,7 +301,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 									</div>
 								</article>
 							</div>
-							<p className='p-0 m-0 text-bodyBlue  font-normal text-[14px] leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount) into 4 (conviction)</span> to get the final vote.</p>
+							<p className='p-0 m-0 text-bodyBlue  font-normal text-sm leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount) into 4 (conviction)</span> to get the final vote.</p>
 						</section>
 					</Modal>
 				</section>

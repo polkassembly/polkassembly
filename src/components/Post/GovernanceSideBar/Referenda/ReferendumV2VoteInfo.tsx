@@ -13,7 +13,7 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import { useApiContext, useNetworkContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { CastVoteIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, ThresholdGraphIcon, VoteAmountIcon, VoteCalculationIcon,VotingHistoryIcon } from '~src/ui-components/CustomIcons';
+import { CastVoteIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, ThresholdGraphIcon, VoteAmountIcon, VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
 import CloseIcon from 'public/assets/icons/close.svg';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
@@ -184,7 +184,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							<div key='ok' className='mt-4' style={{ borderTop: '1px solid #E1E6EB' }}>
 								<div className='flex items-center justify-end mt-5'>
 									<button
-										className='flex items-center justify-center border-none outline-none rounded-[5px] bg-pink_primary text-white font-normal text-xs leading-[18px] tracking-[0.01em] gap-x-1 w-[57.65px] h-[29.95px] cursor-pointer px-20 py-5 whitespace-nowrap'
+										className='flex items-center justify-center border-none outline-none rounded-[5px] bg-pink_primary text-white font-normal text-xs leading-[18px] tracking-[0.01em] gap-x-1 w-[57.65px] h-[29.95px] cursor-pointer px-16 py-4 whitespace-nowrap'
 										onClick={() => setVoteCalculationModalOpen(false)}
 									>
 										Got It
@@ -195,26 +195,24 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						className='md:min-w-[584px]'
 						closeIcon={<CloseIcon />}
 						title={
-							<h2 className='text-bodyBlue tracking-[0.01em] text-xl leading-[30px]'><VoteCalculationIcon className="w-6 h-6 mr-3"/>How are votes calculated</h2>
+							<h2 className='text-bodyBlue tracking-[0.01em] text-xl leading-[30px]'><InfoCircleOutlined className="w-6 h-6 mr-2"/><b>How are votes calculated</b></h2>
 						}
 					>
 						<section className='flex flex-col gap-y-6'>
 							<div className='mt-3' style={{ borderTop: '1px solid #E1E6EB' }}>
-								<p className='text-bodyBlue font-normal text-sm leading-[18px] m-0 p-0 mt-5'>
+								<p className='text-sidebarBlue font-normal text-sm leading-[18px] m-0 p-0 mt-5'>
 									Votes are calculated by multiplying the votes casted by a user with the conviction period.
 								</p>
 							</div>
 
-							<p className='font-medium text-xs leading-[18px] text-sidebarBlue m-0 p-0'>For example:</p>
 							<article className='flex items-center justify-between md:gap-x-5 my-2'>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<CastVoteIcon className='text-4xl' />
 									<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] flex flex-col items-center'>
 										<span className='whitespace-nowrap flex items-center gap-x-1 flex-col md:flex-row'>
-											<span>User wants</span>
-											<span> to cast a</span>
+											<span>User wants to</span>
 										</span>
-										<span>vote</span>
+										<span>cast a vote</span>
 									</p>
 								</div>
 								<div className='flex items-center justify-center'>
@@ -269,11 +267,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							</article>
 							<div className='flex flex-col gap-y-3'>
 								<div style={{ borderTop: '1px dashed #E1E6EB' }}>
-									<p className='font-medium text-base leading-[18px] text-sidebarBlue m-0 p-0 mt-5'>Here,</p>
+									<p className='font-medium text-sm leading-[18px] text-sidebarBlue m-0 p-0 mt-5'>Here,</p>
 								</div>
 								<article className='flex items-start justify-start md:gap-x-19 my-2'>
 									<div className='flex flex-col items-center justify-center gap-y-15'>
-										<p className='m-0 p-0 text-base text-[#243A57] font-normal text-sidebarBlue leading-[15px] flex flex-col ml-5'>
+										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col ml-5'>
 											<b>Voter</b>
 											<div className="flex items-center justify-start">
 												<DefaultProfile style={{ borderRadius: '50%', height: '20px', width: '20px' }} />
@@ -282,26 +280,26 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center gap-y-3'>
-										<p className='m-0 p-0 text-base text-[#243A57] font-normal text-sidebarBlue leading-[15px] flex flex-col ml-14'>
+										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col ml-14'>
 											<b>Amount</b>
 											<span className="mt-2 text-sm item-start text-sidebarBlue">11.27 KSM</span>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center gap-y-3'>
-										<p className='m-0 p-0 text-base text-[#243A57] font-normal text-sidebarBlue leading-[15px] flex flex-col ml-14'>
+										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col ml-14'>
 											<b>Conviction</b>
 											<span className="mt-2 text-sm text-sidebarBlue">4x</span>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center gap-y-3'>
-										<p className='m-0 p-0 text-base text-[#243A57] font-normal text-sidebarBlue leading-[15px] flex flex-col ml-14'>
+										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col ml-14'>
 											<b>Vote</b>
 											<DislikeFilled className="mt-2 text-xl" style={{ color: '#F53C3C' }}/>
 										</p>
 									</div>
 								</article>
 							</div>
-							<p className='p-0 m-0 text-bodyBlue  font-normal text-sm leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount) into 4 (conviction)</span> to get the final vote.</p>
+							<p className='p-0 m-0 text-bodyBlue font-normal text-sm leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount)*4 (conviction)</span> to get the final vote.</p>
 						</section>
 					</Modal>
 				</section>

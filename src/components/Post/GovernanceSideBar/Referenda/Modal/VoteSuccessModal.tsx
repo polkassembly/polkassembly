@@ -260,7 +260,7 @@ export default styled(VoteInitiatedModal)`
 .mde-tabs{
 	display: none !important;
 }
-.mde-text{
+.mde-text{ 
 	height: 50px !important;
 }
 .tox.tox-tinymce{

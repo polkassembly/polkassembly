@@ -19,8 +19,9 @@ import messages from '~src/util/messages';
 import { ILatestActivityPostsListingResponse } from './on-chain-posts';
 import { firestore_db } from '~src/services/firebaseInit';
 import { chainProperties, network as AllNetworks } from '~src/global/networkConstants';
-import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
+import { fetchLatestSubsquare, getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
+
 interface IGetLatestActivityAllPostsParams {
 	listingLimit?: string | string[] | number;
 	network: string;
@@ -127,11 +128,39 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				};
 			}
 
-			const subsquidRes = await fetchSubsquid({
-				network,
-				query,
-				variables
-			});
+			let subsquidRes: any = {};
+			try {
+				subsquidRes = await fetchSubsquid({
+					network,
+					query,
+					variables
+				});
+			} catch (error) {
+				const data = await fetchLatestSubsquare(network);
+				if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
+					subsquidRes['data'] = {
+						'proposals': data.items.map((item: any) => {
+							return {
+								createdAt: item?.createdAt,
+								end: 0,
+								hash: item?.onchainData?.proposalHash,
+								index: item?.referendumIndex,
+								preimage: {
+									method: item?.onchainData?.proposal?.method,
+									section: item?.onchainData?.proposal?.section
+								},
+								proposer: item?.proposer,
+								status: item?.state?.name,
+								trackNumber: item?.track,
+								type: 'ReferendumV2'
+							};
+						}),
+						'proposalsConnection': {
+							totalCount: data.total
+						}
+					};
+				}
+			}
 
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals || [];

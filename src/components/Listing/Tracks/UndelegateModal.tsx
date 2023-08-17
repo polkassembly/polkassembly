@@ -156,6 +156,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			return;
 		}
 
+		setLoading(true);
 		// TODO: check .toNumber()
 		const delegateTxn = api.tx.convictionVoting.undelegate(trackNum);
 

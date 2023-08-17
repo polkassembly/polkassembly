@@ -289,10 +289,13 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								{ required: "Please add the '${name}'" }
 							}
 						>
-							<ContentForm onChange={(content: string) => {
-								global.window.localStorage.setItem(editReplyKey(replyId), content);
-								return content.length ? content : null;
-							}} />
+							<ContentForm
+								autofocus={true}
+								onChange={(content: string) => {
+									global.window.localStorage.setItem(editReplyKey(replyId), content);
+									return content.length ? content : null;
+								}}
+							/>
 							<Form.Item>
 								<div className='flex items-center justify-end'>
 									<Button htmlType="button" onClick={handleCancel} className='mr-2 flex items-center'>
@@ -341,10 +344,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 												{ required: "Please add the '${name}'" }
 											}
 										>
-											<ContentForm height={250} onChange={(content: string) => {
-												global.window.localStorage.setItem(newReplyKey(commentId), content);
-												return content.length ? content : null;
-											}}  />
+											<ContentForm
+												height={250}
+												autofocus={true}
+												onChange={(content: string) => {
+													global.window.localStorage.setItem(newReplyKey(commentId), content);
+													return content.length ? content : null;
+												}}
+											/>
 											<Form.Item>
 												<div className='flex items-center justify-end '>
 													<Button htmlType="button" onClick={() => handleReplyCancel()} className='mr-2 flex items-center'>

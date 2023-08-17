@@ -38,6 +38,7 @@ const initialUserDetailsContext : UserDetailsContextType = {
 	setWalletConnectProvider: (): void => {
 		throw new Error('setWalletConnectLogin function must be overridden');
 	},
+	statusHistory: [],
 	username: null,
 	walletConnectProvider: null,
 	web3signup: false

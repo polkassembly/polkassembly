@@ -67,7 +67,12 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 		},
 		{
 			key: 'logout',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' onClick={handleLogout} href='/'>
+			label: <Link href='/' className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
+				onClick={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					handleLogout(username);
+				}}>
 				<LogoutOutlined />
 				<span>Logout</span>
 			</Link>
@@ -95,9 +100,9 @@ const getUserDropDown = (handleLogout: any, img?: string | null, username?: stri
 };
 
 interface Props {
-	Component: NextComponentType<NextPageContext, any, any>;
-	pageProps: any;
-	className?: string;
+Component: NextComponentType<NextPageContext, any, any>;
+pageProps: any;
+className?: string;
 }
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
@@ -118,7 +123,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		return () => {
 			router.events.off('routeChangeStart', handleRouteChange);
 		};
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
 
 	useEffect(() => {
@@ -127,7 +132,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		if(authToken && isExpired(authToken)) {
 			logout(setUserDetailsContextState);
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router.asPath]);
 
 	useEffect(() => {
@@ -145,24 +150,24 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-white' />),
 			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='text-white mt-3' />)
 		],
-		democracyItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh'  ) ? [
+		democracyItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='text-white' />),
 			getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='text-white' />)
 		] : [],
-		councilItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh' ) ? [
+		councilItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Motions', '/motions', <MotionsIcon className='text-white' />),
 			getSiderMenuItem('Members', '/council', <MembersIcon className='text-white' />)
 		] : [],
-		treasuryItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh' ) ? [
+		treasuryItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='text-white' />),
 			getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='text-white' />),
 			getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5' />),
 			getSiderMenuItem('Tips', '/tips', <TipsIcon className='text-white' />)
 		] : [],
-		techCommItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh' ) ? [
+		techCommItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='text-white' />)
 		] : [],
-		allianceItems: (chainProperties[network]?.subsquidUrl && network !== 'polymesh' ) ? [
+		allianceItems: chainProperties[network]?.subsquidUrl ? [
 			getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='text-white' />),
 			getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='text-white' />),
 			getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='text-white' />),
@@ -334,9 +339,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov2Items.splice(-1, 0 , getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-sidebarBlue' />, [
 			...gov2TrackItems.treasuryItems
 		]));
-	}
-
-	const gov2CollapsedItems:MenuProps['items'] = [
+	}const gov2CollapsedItems:MenuProps['items'] = [
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='text-white' />, [
@@ -461,30 +464,30 @@ const CustomContent = memo(function CustomContent({ Component, pageProps } : Pro
 export default styled(AppLayout)`
 
 .ant-drawer .ant-drawer-mask{
-	position: fixed !important;
+position: fixed !important;
 }
 
 .ant-drawer .ant-drawer-content{
-	height: auto !important;
+height: auto !important;
 }
 
 .ant-drawer-content-wrapper, .ant-drawer-content{
-	max-width: 256px !important;
-	box-shadow: none !important;
-	min-width: 60px !important;
+max-width: 256px !important;
+box-shadow: none !important;
+min-width: 60px !important;
 }
 
 .ant-drawer-body{
-	text-transform: capitalize !important;
-	padding: 0 !important;
+text-transform: capitalize !important;
+padding: 0 !important;
 
-	ul{
-		margin-top: 0 !important;
-	}
+ul{
+  margin-top: 0 !important;
+}
 }
 
 .ant-menu-item .anticon, .ant-menu-item-icon{
-	font-size: 20px !important;
+font-size: 20px !important;
 }
 
 .ant-menu-item .delegation{
@@ -497,61 +500,61 @@ margin-top: -17px !important;
 
 
 .ant-menu-item-selected {
-	background: #fff !important;
+background: #fff !important;
 
-	.ant-menu-title-content {
-		color: var(--pink_primary) !important;
-	}
+.ant-menu-title-content {
+  color: var(--pink_primary) !important;
+}
 }
 
 .ant-menu-title-content:hover {
-	color: var(--pink_primary) !important;
+color: var(--pink_primary) !important;
 }
 
 .ant-menu-item::after {
-	border-right: none !important;
+border-right: none !important;
 }
 
 .ant-menu-title-content {
-	color: #485F7D !important;
-	font-weight: 500;
-	font-size: 14px;
-	line-height: 21px;
-	letter-spacing: 0.01em;
+color: #485F7D !important;
+font-weight: 500;
+font-size: 14px;
+line-height: 21px;
+letter-spacing: 0.01em;
 }
 
 .auth-sider-menu {
-	list-style: none !important;
+list-style: none !important;
 }
 
 .auth-sider-menu > li:first-child {
-  margin-bottom: 25px;
-  margin-top: 15px;
+margin-bottom: 25px;
+margin-top: 15px;
 }
 
 .ant-empty-image{
-	display: flex;
-	justify-content: center;
+display: flex;
+justify-content: center;
 }
 
 .sidebar .ant-menu-item-selected .anticon {
-	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 }
 
 .sidebar .ant-menu-item-selected .opacity {
-  background-color: var(--pink_primary) !important;
+background-color: var(--pink_primary) !important;
 }
 .ant-menu-inline-collapsed-noicon {
-	color: var(--lightBlue);
+color: var(--lightBlue);
 }
 
 .ant-menu-item-selected {
-	.ant-menu-inline-collapsed-noicon {
-		color: var(--pink_primary);
-	}
+.ant-menu-inline-collapsed-noicon {
+  color: var(--pink_primary);
+}
 }
 
 .ant-menu-sub {
-	background: #fff !important;
+background: #fff !important;
 }
 `;

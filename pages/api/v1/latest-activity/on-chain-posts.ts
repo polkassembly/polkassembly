@@ -14,7 +14,7 @@ import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
-import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
+import { fetchSubsquare, getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 
 export interface ILatestActivityPostsListingResponse {
@@ -64,15 +64,41 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 		if (network === 'collectives') {
 			query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES;
 		}
-
 		if(network === 'polymesh'){
 			query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
+		}let subsquidRes: any = {};
+		try {
+			subsquidRes = await fetchSubsquid({
+				network,
+				query,
+				variables: postsVariables
+			});
+		} catch (error) {
+			const data = await fetchSubsquare(network, 10, Number(1), Number(trackNo));
+			if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
+				subsquidRes['data'] = {
+					'proposals': data.items.map((item: any) => {
+						return {
+							createdAt: item?.createdAt,
+							end: 0,
+							hash: item?.onchainData?.proposalHash,
+							index: item?.referendumIndex,
+							preimage: {
+								method: item?.onchainData?.proposal?.method,
+								section: item?.onchainData?.proposal?.section
+							},
+							proposer: item?.proposer,
+							status: item?.state?.name,
+							trackNumber: item?.track,
+							type: 'ReferendumV2'
+						};
+					}),
+					'proposalsConnection': {
+						totalCount: data.total
+					}
+				};
+			}
 		}
-		const subsquidRes = await fetchSubsquid({
-			network,
-			query: query,
-			variables: postsVariables
-		});
 
 		const subsquidData = subsquidRes?.data;
 		const subsquidPosts: any[] = subsquidData?.proposals || [];

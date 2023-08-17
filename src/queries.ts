@@ -25,6 +25,29 @@ query ProposalsListingByType($limit: Int, $index_in: [Int!]) {
     proposer
     index
   }
+}`;
+
+export const GET_LATEST_PREIMAGES = `
+query MyQuery($hash_eq: String = "") {
+  preimages(limit: 1, orderBy: createdAt_DESC, where: {status_eq: Noted, hash_eq: $hash_eq}) {
+    hash
+    deposit
+    createdAtBlock
+    length
+    method
+    proposedCall {
+      args
+      description
+      method
+      section
+    }
+    proposer
+    section
+    status
+    updatedAt
+    updatedAtBlock
+    createdAt
+  }
 }
 `;
 

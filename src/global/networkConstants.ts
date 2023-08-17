@@ -165,6 +165,7 @@ export const tokenSymbol = {
 
 export const chainProperties: types.ChainPropType = {
 	[network.POLKADOT]: {
+		preImageBaseDeposit: '400000000000',
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,
@@ -219,6 +220,7 @@ export const chainProperties: types.ChainPropType = {
 		]
 	},
 	[network.KUSAMA]: {
+		preImageBaseDeposit: '1330000000000',
 		blockTime: 6000,
 		category: 'kusama',
 		chainId: 0,
@@ -919,9 +921,9 @@ export const chainProperties: types.ChainPropType = {
 		logo: polymeshLogo,
 		rpcEndpoint: 'wss://mainnet-rpc.polymesh.network',
 		ss58Format: 12,
-		subsquidUrl: 'https://squid.subsquid.io/polymesh-polkassembly/graphql',
 		tokenDecimals: 6,
 		tokenSymbol: tokenSymbol.POLYX,
+		subsquidUrl: 'https://squid.subsquid.io/polymesh-polkassembly/graphql',
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,

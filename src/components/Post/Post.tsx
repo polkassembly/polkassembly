@@ -179,9 +179,10 @@ const Post: FC<IPostProps> = (props) => {
 				}
 			});
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [post]);
 
-	const networkModified = network?.charAt(0)?.toUpperCase() + network?.slice(1);
+	const networkModified =  network?.charAt(0)?.toUpperCase() + network?.slice(1);
 	let postType:any = proposalType;
 
 	if(postType === ProposalType.REFERENDUM_V2){
@@ -258,6 +259,7 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
+
 				<GovernanceSideBar
 					toggleEdit={toggleEdit}
 					proposalType={proposalType}
@@ -267,10 +269,13 @@ const Post: FC<IPostProps> = (props) => {
 					startTime={post.created_at}
 					post={post}
 					tally={post?.tally}
+					trackName={trackName}
 					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
 					pipsVoters={post?.pips_voters || []}
 					hash={hash}
 				/>
+				{/* decision deposite placed. */}
+
 				{
 					isOffchainPost &&
 					<div className={'sticky top-[65px] mb-6 '}>
@@ -414,12 +419,13 @@ const Post: FC<IPostProps> = (props) => {
 			reward: post?.reward,
 			spam_users_count: post?.spam_users_count,
 			status: post?.status,
+			statusHistory: post?.statusHistory,
 			subscribers: post?.subscribers || [],
 			summary: post?.summary,
 			tags: post?.tags || [],
 			timeline: post?.timeline,
-			title: post?.title,
-			topic: post?.topic,
+			title: post?.title || '',
+			topic: post?.topic || '',
 			track_name: trackName,
 			track_number: post?.track_number,
 			username: post?.username

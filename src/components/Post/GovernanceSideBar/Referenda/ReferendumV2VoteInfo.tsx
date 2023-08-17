@@ -205,7 +205,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</p>
 							</div>
 
-							<article className='flex items-center justify-between md:gap-x-5 my-2'>
+							<article className='flex items-center justify-between md:gap-x-2 my-2'>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<CastVoteIcon className='text-4xl' />
 									<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] flex flex-col items-center'>

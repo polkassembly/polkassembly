@@ -65,6 +65,7 @@ export async function getLatestActivityOffChainPosts(params: IGetLatestActivityO
 					}
 					posts.push({
 						created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
+						isSpam: data?.isSpam,
 						post_id: data?.id,
 						proposer: '',
 						title: data?.title,

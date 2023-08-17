@@ -195,7 +195,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						className='md:min-w-[584px]'
 						closeIcon={<CloseIcon />}
 						title={
-							<h2 className='text-sidebarBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'><VoteCalculationIcon className="w-6 h-6 mr-3"/>How are votes calculated</h2>
+							<h2 className='text-[#243A57] tracking-[0.01em] text-xl leading-[30px]'><VoteCalculationIcon className="w-6 h-6 mr-3"/>How are votes calculated</h2>
 						}
 					>
 						<section className='flex flex-col gap-y-6'>
@@ -276,7 +276,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 										<p className='m-0 p-0 text-base text-[#243A57] font-normal text-sidebarBlue leading-[15px] flex flex-col ml-5'>
 											<b>Voter</b>
 											<div className="flex items-center justify-start">
-												<DefaultProfile style={{ borderRadius: '50%', height: '22px', width: '22px' }} />
+												<DefaultProfile style={{ borderRadius: '50%', height: '20px', width: '20px' }} />
 												<p className="mt-2 text-sm ml-2 text-sidebarBlue">DDUX..c..</p>
 											</div>
 										</p>

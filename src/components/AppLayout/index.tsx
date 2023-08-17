@@ -219,7 +219,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		...gov1Items.overviewItems
 	];
 
-	if(chainProperties[network]?.subsquidUrl) {
+	if(chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
 		collapsedItems = collapsedItems.concat([
 			...gov1Items.democracyItems,
 			...gov1Items.treasuryItems,
@@ -237,6 +237,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		]);
 	}
 
+	console.log(network);
 	if(network === AllNetworks.COLLECTIVES){
 		const fellowshipItems = [getSiderMenuItem('Members', '/fellowship', <MembersIcon className='text-white' />), getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='text-sidebarBlue' />)];
 		items = [...gov1Items.overviewItems, getSiderMenuItem('Alliance', 'alliance_group', null, [

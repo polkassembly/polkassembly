@@ -14,6 +14,7 @@ import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import { Tooltip } from 'antd';
 import Router from 'next/router';
 import getUsernameByAddress from '~src/util/getUsernameByAddress';
+import { noTitle } from '~src/global/noTitle';
 
 async function goToProfileByAddress (address: string) {
 	if(!address) return;
@@ -45,7 +46,7 @@ const Description: any = {
 	dataIndex: 'description',
 	fixed: 'left',
 	key: 'description',
-	render: (description: any) => <div className='truncate text-bodyBlue font-medium'>{description}</div>,
+	render: (description: any) => <div className='truncate text-bodyBlue font-medium'>{description || noTitle}</div>,
 	title: 'Description',
 	width: 320
 };

@@ -31,7 +31,7 @@ export enum EAddressOtherTextType {
 	COUNCIL='Council',
 	COUNCIL_CONNECTED='Council (Connected)',
 	LINKED_ADDRESS= 'Linked',
-  UNLINKED_ADDRESS = 'Address not linked'
+    UNLINKED_ADDRESS = 'Address not linked',
 }
 
 interface Props {

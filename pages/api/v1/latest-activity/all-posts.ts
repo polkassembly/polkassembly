@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isGovTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';

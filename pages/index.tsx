@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import 'dayjs-init';
-
 import { Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';

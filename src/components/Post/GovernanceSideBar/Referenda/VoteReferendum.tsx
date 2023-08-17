@@ -902,6 +902,5 @@ export default styled(VoteReferendum)`
 .vote-referendum .ant-segmented-item{
 	padding: 0px !important;
 }
-
 `;
 

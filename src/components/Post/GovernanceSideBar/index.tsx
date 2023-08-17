@@ -84,7 +84,6 @@ interface IGovernanceSidebarProps {
 	trackName?: string;
 	pipsVoters?: IPIPsVoting[];
 	hash: string;
-
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;

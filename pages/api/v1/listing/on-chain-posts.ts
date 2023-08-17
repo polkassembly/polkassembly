@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isCustomOpenGovStatusValid, isProposalTypeValid, isSortByValid, isTrackNoValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
@@ -59,15 +58,15 @@ export interface IPostListing {
 	parent_bounty_index?: number
 	method?: string;
 	status?: string;
-  status_history:{
+	status_history:{
     block:number;
     status: string;
-  }[];
+}[];
 	title: string;
-  tally?: {
+	tally?: {
     ayes: string;
     nays: string;
-  };
+};
 	topic: {
 		id: number;
 		name: string;
@@ -76,8 +75,8 @@ export interface IPostListing {
 	username?: string;
 	tags?: string[] | [];
 	gov_type?: 'gov_1' | 'open_gov';
-  timeline?: any;
-  track_no?: number | null;
+	timeline?: any;
+	track_no?: number | null;
 }
 
 export interface IPostsListingResponse {

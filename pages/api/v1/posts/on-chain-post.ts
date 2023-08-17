@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
@@ -103,11 +102,11 @@ export interface IPostResponse {
 	decision?: string;
 	last_edited_at?: string | Date;
 	[key: string]: any;
-  gov_type?: 'gov_1' | 'open_gov' ;
-  tags?: string[] | [];
-  history?: IPostHistory[];
-  pips_voters?: IPIPsVoting[];
-title?: string;
+	gov_type?: 'gov_1' | 'open_gov' ;
+	tags?: string[] | [];
+	history?: IPostHistory[];
+	pips_voters?: IPIPsVoting[];
+	title?: string;
 }
 
 export type IReaction = '👍' | '👎';

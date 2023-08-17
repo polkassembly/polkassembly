@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-
 import { Checkbox, MenuProps, Skeleton, Spin } from 'antd';
 import {  Badge, Button, Col, Divider, Dropdown, Row, Space } from 'antd';
 import { dayjs } from 'dayjs-init';

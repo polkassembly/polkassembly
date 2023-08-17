@@ -6,7 +6,7 @@ import { formatBalance } from '@polkadot/util';
 import { Progress, Skeleton, Tooltip } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApiContext, useNetworkContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 import { ProposalType, TSubsquidProposalType, getSubsquidProposalType } from '~src/global/proposalType';

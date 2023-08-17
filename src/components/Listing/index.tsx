@@ -6,7 +6,6 @@ import Link from 'next/link';
 import React, { FC, useEffect, useState } from 'react';
 import { poppins } from 'pages/_app';
 import { PostEmptyState } from 'src/ui-components/UIStates';
-
 import { getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
 import GovernanceCard from '../GovernanceCard';
 import getReferendumVotes from '~src/util/getReferendumVotes';

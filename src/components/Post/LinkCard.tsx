@@ -19,14 +19,14 @@ const LinkCard = ({ timeline, proposalType }: Props) => {
 				return (
 					proposalType === firestoreProposalType ?
 						<span key={index}
-							className='text-lg font-medium text-[#243A57] cursor-default max-md:text-sm'>
+							className='text-lg font-medium text-bodyBlue cursor-default max-md:text-sm'>
 							<span className=''>{item?.type === 'ReferendumV2' ? 'Open Gov Referendum' : item?.type?.split(/(?=[A-Z])/).join(' ')}</span>
-							<span className='text-[#243A57] mx-2'>#{item?.index}</span>
+							<span className='text-bodyBlue mx-2'>#{item?.index}</span>
 							<span className='mr-2'>{ index !== timeline.length - 1 && ' >> '}</span>
 						</span> :
 						<Link
 							key={index}
-							className='text-lg font-medium text-[#243A57] cursor-pointer max-md:text-sm'
+							className='text-lg font-medium text-bodyBlue cursor-pointer max-md:text-sm'
 							href={`/${getSinglePostLinkFromProposalType(firestoreProposalType as any)}/${item?.type === 'Tip' ? item?.hash : item?.index}`}>
 							<span  className=''>{item?.type === 'ReferendumV2' ? 'Open Gov Referendum' : item?.type?.split(/(?=[A-Z])/).join(' ')}</span>
 							<span className='text-pink_primary mx-2'>#{item?.index}</span>

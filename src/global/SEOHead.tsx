@@ -14,6 +14,8 @@ interface Props {
 const imageMapper:any= {
 	acala:{ large:'acala.png',
 		small:'acala-small.png' },
+	cere:{ large:'cere.png',
+		small:'cere-small.png' },
 	equilibrium:{ large:'equilibrium.png',
 		small:'equilibrium-small.png' },
 	frequency:{ large:'frequency.png',
@@ -30,6 +32,8 @@ const imageMapper:any= {
 		small:'moonriver-small.png' },
 	network:{ large:'network.png',
 		small:'network-small.png' },
+	pendulum:{ large:'pendulum.png',
+		small:'pendulum-small.png' },
 	picasso:{ large:'picasso.png',
 		small:'picasso-small.png' },
 	polkadex:{ large:'polkadex.png',

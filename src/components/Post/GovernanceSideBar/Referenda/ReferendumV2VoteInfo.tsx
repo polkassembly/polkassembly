@@ -181,10 +181,10 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						}}
 						open={voteCalculationModalOpen}
 						footer={[
-							<div key='ok' className='mt-4' style={{ borderTop: '1px solid #E1E6EB' }}>
-								<div className='flex items-center justify-end mt-5'>
+							<div key='ok' className='mt-4 -mx-6' style={{ borderTop: '1.5px solid #E1E6EB' }}>
+								<div className='flex items-center justify-end mt-5 px-6'>
 									<button
-										className='flex items-center justify-center border-none outline-none rounded-[5px] bg-pink_primary text-white font-normal text-xs leading-[18px] tracking-[0.01em] gap-x-1 w-[57.65px] h-[29.95px] cursor-pointer px-16 py-4 whitespace-nowrap'
+										className='flex items-center justify-center border-none outline-none rounded-[5px] bg-pink_primary text-white font-normal text-sm leading-[18px] tracking-[0.01em] gap-x-1 w-[57.65px] h-[29.95px] cursor-pointer px-16 py-4 whitespace-nowrap'
 										onClick={() => setVoteCalculationModalOpen(false)}
 									>
 										Got It
@@ -193,14 +193,14 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							</div>
 						]}
 						className='md:min-w-[584px]'
-						closeIcon={<CloseIcon />}
+						closeIcon={<CloseIcon className="mt-2"/>}
 						title={
-							<h2 className='text-bodyBlue tracking-[0.01em] text-xl leading-[30px]'><InfoCircleOutlined className="w-6 h-6 mr-2"/><b>How are votes calculated</b></h2>
+							<label className='text-bodyBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'><InfoCircleOutlined className="w-6 h-6 mr-2"/><span className='font-semibold'>How are votes calculated</span></label>
 						}
 					>
 						<section className='flex flex-col gap-y-6'>
-							<div className='mt-3' style={{ borderTop: '1px solid #E1E6EB' }}>
-								<p className='text-sidebarBlue font-normal text-sm leading-[18px] m-0 p-0 mt-5'>
+							<div className='mt-3 -mx-6' style={{ borderTop: '1px solid #E1E6EB' }}>
+								<p className='text-bodyBlue font-normal text-sm leading-[18px] m-0 p-0 mt-5 px-6'>
 									Votes are calculated by multiplying the votes casted by a user with the conviction period.
 								</p>
 							</div>
@@ -266,10 +266,10 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 							</article>
 							<div className='flex flex-col gap-y-3'>
-								<div style={{ borderTop: '1px dashed #E1E6EB' }}>
-									<p className='font-medium text-sm leading-[18px] text-sidebarBlue m-0 p-0 mt-5'>Here,</p>
+								<div className='-mx-6' style={{ borderTop: '1.5px dashed #D2D8E0' }}>
+									<p className='px-6 font-medium text-sm leading-[18px] text-sidebarBlue m-0 p-0 mt-5'>Here,</p>
 								</div>
-								<article className='flex items-start justify-start md:gap-x-19 my-2'>
+								<article className='flex items-start justify-start md:gap-x-19 my-2' style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}>
 									<div className='flex flex-col items-center justify-center gap-y-15'>
 										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col ml-5'>
 											<b>Voter</b>

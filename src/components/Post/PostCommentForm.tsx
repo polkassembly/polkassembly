@@ -19,10 +19,11 @@ import ContentForm from '../ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { IComment } from './Comment/Comment';
+import { getSubsquidProposalType } from '~src/global/proposalType';
 
 interface IPostCommentFormProps {
 	className?: string;
-	setCurrentState?:(postId: string, comment: IComment) => void;
+	setCurrentState?:(postId: string, type:string, comment: IComment) => void;
 }
 
 const commentKey = () => `comment:${global.window.location.href}`;
@@ -30,7 +31,7 @@ const commentKey = () => `comment:${global.window.location.href}`;
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className, setCurrentState } = props;
 	const { id, username, picture } = useUserDetailsContext();
-	const { postData: { postIndex, postType }, setPostData } = usePostDataContext();
+	const { postData: { postIndex, postType } } = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
@@ -83,33 +84,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			});
 		}
 
-		const handleAddComments = (commentsWithTimeline:{[index:string]:Array<IComment>}) => {
-			const comments= Object.assign({}, commentsWithTimeline);
-			comments[postIndex] = [...comments[postIndex], {
-				comment_reactions: {
-					'👍': {
-						count: 0,
-						usernames: []
-					},
-					'👎': {
-						count: 0,
-						usernames: []
-					}
-				},
-				content,
-				created_at: new Date(),
-				history: [],
-				id: data?.id || '',
-				profile: { image: picture } || { image: null },
-				replies: [],
-				sentiment:isSentimentPost? sentiment : 0,
-				updated_at: new Date(),
-				user_id: id as any,
-				username: username || ''
-			}];
-			return comments;
-		};
-
 		if(data) {
 			setContent('');
 			form.resetFields();
@@ -121,10 +95,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				message: 'Comment created successfully.',
 				status: NotificationStatus.SUCCESS
 			});
-			setPostData((prev) => ({
-				...prev,
-				comments: handleAddComments(prev.comments)
-			}));
 			const comment=  {
 				comment_reactions: {
 					'👍': {
@@ -147,7 +117,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				user_id: id as any,
 				username: username || ''
 			};
-			setCurrentState && setCurrentState(postIndex.toString(), comment);
+			setCurrentState && setCurrentState(postIndex.toString(), getSubsquidProposalType(postType as any), comment);
 		}
 		setLoading(false);
 		setIsComment(false);

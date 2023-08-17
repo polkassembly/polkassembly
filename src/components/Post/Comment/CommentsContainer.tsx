@@ -210,30 +210,58 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					status: getStatus(obj?.type),
 					type:obj?.type
 				});
-				comments[obj?.index.toString()] = [];
+				comments[`${obj?.index.toString()}_${obj?.type}`] = [];
 			});
 			setTimelines(timelines);
 		}
+		if(!currentTimeline){
+			return;
+		}
 		if(commentId){
-			if(!currentTimeline){
-				return;
-			}
 			for(let i = 0; i < timelines.length; i++){
 				if(timelines[i].commentsCount === 0){
 					continue;
 				}
 				setCurrentTimeline(timelines[i]);
+				const key = `${timelines[i].index}_${timelines[i].type}`;
 				const res = await getCommentsWithId(timelines[i].index.toString(), commentId, network, COMMENT_SIZE, timelines[i].type);
 				const isCommentExit = res.comments.some((comment: { id: string; }) => {
 					return comment.id === commentId;
 				});
-				comments[timelines[i].index] = [...comments[timelines[i].index], ...res.comments];
+				comments[key] = [...comments[key], ...res.comments];
 				if(isCommentExit){
 					break;
 				}
 			}
 			setComments(getSortedComments(comments));
 			setLastDocs(getLastDocs(comments));
+		}
+		else{
+			const commentsPayload = Object.assign({}, comments);
+			for(let i = 0; i < timelines.length; i++){
+				if(timelines[i].commentsCount === 0){
+					continue;
+				}
+				const timeline = timelines[i];
+				const key = `${timelines[i].index}_${timelines[i].type}`;
+				const lastDoc = lastDocs[key];
+				setCurrentTimeline(timeline);
+				if(timeline && commentsPayload[key].length < timeline.commentsCount){
+					const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, COMMENT_SIZE, timeline.type);
+					commentsPayload[key] = [...commentsPayload[key], ...res.comments];
+					const resLastDocId = res.comments[res.comments.length-1]?.id || null;
+					if(resLastDocId){
+						setLastDocs((prev:{[index:string]:number | null}) => ({ ...prev, [timeline.index]: resLastDocId }));
+					}
+					if(res.comments.length === COMMENT_SIZE){
+						break;
+					}
+					if(commentsPayload[key].length < timeline.commentsCount){
+						i--;
+					}
+				}
+			}
+			setComments(getSortedComments(commentsPayload));
 		}
 		if(loading){
 			setLoading(false);
@@ -250,19 +278,20 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				continue;
 			}
 			const timeline = timelines[i];
-			const lastDoc = lastDocs[timelines[i].index];
+			const key = `${timeline.index}_${timeline.type}`;
+			const lastDoc = lastDocs[key];
 			setCurrentTimeline(timeline);
-			if(timeline && commentsPayload[timelines[i].index].length < timeline.commentsCount){
+			if(timeline && commentsPayload[key].length < timeline.commentsCount){
 				const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, size || COMMENT_SIZE, timeline.type);
-				commentsPayload[timeline.index] = [...commentsPayload[timeline.index], ...res.comments];
+				commentsPayload[key] = [...commentsPayload[key], ...res.comments];
 				const resLastDocId = res.comments[res.comments.length-1]?.id || null;
 				if(resLastDocId){
-					setLastDocs((prev:{[index:string]:number | null}) => ({ ...prev, [timeline.index]: resLastDocId }));
+					setLastDocs((prev:{[index:string]:number | null}) => ({ ...prev, [key]: resLastDocId }));
 				}
 				if(res.comments.length === COMMENT_SIZE){
 					break;
 				}
-				if(commentsPayload[timelines[i].index].length < timeline.commentsCount){
+				if(commentsPayload[key].length < timeline.commentsCount){
 					i--;
 				}
 			}
@@ -280,29 +309,32 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				break;
 			}
 			if(currentTimeline.id <= data.id && data.id !== timeline.id){
-				if(commentsPayload[currentTimeline.index].length < currentTimeline.commentsCount){
-					const lastDoc = commentsPayload[currentTimeline.index][commentsPayload[data.index].length-1]?.id;
+				const key = `${currentTimeline.index}_${currentTimeline.type}`;
+				if(commentsPayload[key].length < currentTimeline.commentsCount){
+					const lastDoc = commentsPayload[key][commentsPayload[`${data.index}_${data.type}`].length-1]?.id;
 					const res:any = await getPaginatedComments(currentTimeline.index.toString(), lastDoc, network, Infinity, currentTimeline.type);
-					commentsPayload[currentTimeline.index] = [...commentsPayload[currentTimeline.index], ...res.comments];
+					commentsPayload[key] = [...commentsPayload[key], ...res.comments];
 				}
 			}
 			if(data.id === timeline.id){
+				const key = `${data.index}_${data.type}`;
 				const res:any = await getPaginatedComments(data.index.toString(), undefined, network, COMMENT_SIZE, data.type);
-				commentsPayload[data.index] = [...commentsPayload[data.index], ...res.comments];
+				commentsPayload[key] = [...commentsPayload[key], ...res.comments];
 				break;
 			}
 		}
 		setComments(getSortedComments(commentsPayload));
 		setLastDocs(getLastDocs(commentsPayload));
 		setCurrentTimeline(timeline);
-		return commentsPayload[timeline.index]?.[0].id || '';
+		return commentsPayload[`${timeline.index}_${timeline.type}`]?.[0].id || '';
 	};
 
-	const handleCurrentCommentAndTimeline = (postId:string, comment:IComment) => {
+	const handleCurrentCommentAndTimeline = (postId:string, type:string, comment:IComment) => {
+		const key = `${postId}_${type}`;
 		const commentsPayload = {
 			...comments,
-			[postId]:[
-				...comments[postId],
+			[key]:[
+				...comments[key],
 				comment
 			]
 		};
@@ -400,7 +432,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								return (
 									timeline.commentsCount > 0 ?
 										<div key={id} onClick={() => {
-											if(!comments[timeline.index]?.[0]?.id){
+											if(!comments[`${timeline.index}_${timeline.type}`]?.[0]?.id){
 												setLoading(true);
 												handleSingleTimelineClick(timeline).then((firstCommentId) => {
 													setLoading(false);
@@ -408,8 +440,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 												});
 											}
 										}} className='m-0 p-0 border-none [&>.ant-card-body]:p-0'>
-											{comments[timeline.index]?.[0]?.id ? <AnchorLink
-												href={`#${comments[timeline.index]?.[0]?.id}`}
+											{comments[`${timeline.index}_${timeline.type}`]?.[0]?.id ? <AnchorLink
+												href={`#${comments[`${timeline.index}_${timeline.type}`]?.[0]?.id}`}
 												title={
 													<div className='flex flex-col text-lightBlue sticky top-10'>
 														<div className='text-xs mb-1'>{timeline.date.format('MMM Do')}</div>

@@ -27,8 +27,9 @@ import { getSubsquareCommentsFromFirebase } from './comments/getOnlySubsquareCom
 import { getSubSquareComments } from './comments/subsquare-comments';
 import { updateComments } from './comments/updateComments';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
-import { getInitialComments } from './comments/getInitialComments';
 import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
+import dayjs from 'dayjs';
+import { getStatus } from './comments/getInitialComments';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -904,9 +905,20 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		}
 
 		// get initial comments
-		const initialCommentsData = await getInitialComments(post.timeline, network);
-		post.comments = initialCommentsData?.comments;
-		post.currentTimeline = initialCommentsData?.currentTimeline;
+		// const initialCommentsData = await getInitialComments(post.timeline, network);
+		// post.comments = initialCommentsData?.comments;
+		const currentTimelineObj = post.timeline?.[0] || null;
+		if(currentTimelineObj){
+			post.currentTimeline = {
+				commentsCount: currentTimelineObj.commentsCount,
+				date: dayjs(currentTimelineObj?.created_at),
+				firstCommentId: '',
+				id: 1,
+				index: currentTimelineObj?.index.toString(),
+				status: getStatus(currentTimelineObj?.type),
+				type:currentTimelineObj?.type
+			};
+		}
 
 		// Post Reactions
 		const postReactionsQuerySnapshot = await postDocRef.collection('post_reactions').get();

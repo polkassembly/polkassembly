@@ -957,6 +957,18 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				const timelines:Array<any> = await Promise.allSettled(commentPromises);
 				post.timeline = timelines.map(timeline => timeline.value);
 			}
+			const currentTimelineObj = post.timeline?.[0] || null;
+			if(currentTimelineObj){
+				post.currentTimeline = {
+					commentsCount: currentTimelineObj.commentsCount,
+					date: dayjs(currentTimelineObj?.created_at),
+					firstCommentId: '',
+					id: 1,
+					index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash,
+					status: getStatus(currentTimelineObj?.type),
+					type: currentTimelineObj?.type
+				};
+			}
 		}
 		else{
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
@@ -1003,22 +1015,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		});
 		if(comments.length > 0){
 			await updateComments(postId as string, network, proposalType as ProposalType, comments);
-		}
-
-		// get initial comments
-		// const initialCommentsData = await getInitialComments(post.timeline, network);
-		// post.comments = initialCommentsData?.comments;
-		const currentTimelineObj = post.timeline?.[0] || null;
-		if(currentTimelineObj){
-			post.currentTimeline = {
-				commentsCount: currentTimelineObj.commentsCount,
-				date: dayjs(currentTimelineObj?.created_at),
-				firstCommentId: '',
-				id: 1,
-				index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash,
-				status: getStatus(currentTimelineObj?.type),
-				type: currentTimelineObj?.type
-			};
 		}
 
 		// Post Reactions

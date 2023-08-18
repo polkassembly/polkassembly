@@ -152,11 +152,11 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		setSteps({ percent: 20, step: 1 });
 
 		setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
-		const BnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
+		const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
 		const [balance, isValid] = inputToBn(`${isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount}`, network, false);
 		if(isValid){
 			if(createPreimageForm.isPreimage) {
-				setFundingAmount(BnBalance);
+				setFundingAmount(bnBalance);
 			}else{
 				setFundingAmount(balance);
 			}
@@ -183,7 +183,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		if(createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack)
 		{
 			setSteps({ percent: 100, step: 1 });
-			getPreimageTxFee(createPreimageForm.isPreimage, createPreimageForm?.selectedTrack, balance );
+			getPreimageTxFee(createPreimageForm.isPreimage, createPreimageForm?.selectedTrack, createPreimageForm.isPreimage ? bnBalance : balance );
 		}
 		if(createPreimageForm?.selectedTrack) {
 			setIsAutoSelectTrack(false);

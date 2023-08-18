@@ -23,6 +23,7 @@ const messages = {
 	ADDRESS_UNLINK_NOT_ALLOWED: 'You cannot unlink default address from your account.',
 	ADDRESS_USER_NOT_MATCHING: 'You are not allowed to link this address',
 	API_FETCH_ERROR: 'Something went wrong while fetching data. Please try again later.',
+	BLACKLISTED_CONTENT_ERROR: 'Your post contains blacklisted or invalid content. Please remove it and try again.',
 	CONTENT_REPORT_SUCCESSFUL: 'Content reported successfully',
 	CREATE_POST_STARTED: 'Post creation started. Please sign the message with your account to create post',
 	CREDENTIALS_CHANGE_SUCCESSFUL: 'Username and password added successfully',

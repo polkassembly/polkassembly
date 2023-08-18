@@ -17,6 +17,7 @@ import { CastVoteIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, Th
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
 import CloseIcon from 'public/assets/icons/close.svg';
 import DefaultProfile from '~assets/icons/dashboard-profile.svg';
+import { poppins } from 'pages/_app';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
@@ -195,7 +196,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						className='md:min-w-[584px]'
 						closeIcon={<CloseIcon className="mt-2"/>}
 						title={
-							<label className='text-bodyBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'><InfoCircleOutlined className="w-6 h-6 mr-2"/><span className='font-semibold'>How are votes calculated</span></label>
+							<label className={`${poppins.variable} ${poppins.className} text-bodyBlue tracking-[0.01em] text-xl leading-[30px] font-semibold`}><InfoCircleOutlined className="w-6 h-6 mr-2"/><span className='font-semibold'>How are votes calculated</span></label>
 						}
 					>
 						<section className='flex flex-col gap-y-6'>
@@ -208,7 +209,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							<article className='flex items-center justify-between md:gap-x-2 my-2'>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<CastVoteIcon className='text-4xl' />
-									<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] flex flex-col items-center'>
+									<p className='m-0 p-0 text-[12px] font-normal text-bodyBlue leading-[15px] flex flex-col items-center'>
 										<span className='whitespace-nowrap flex items-center gap-x-1 flex-col md:flex-row'>
 											<span>User wants to</span>
 										</span>
@@ -220,11 +221,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<VoteAmountIcon className='text-4xl' />
-									<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] hidden md:flex flex-col items-center'>
+									<p className='m-0 p-0 text-[12px] font-normal text-bodyBlue leading-[15px] hidden md:flex flex-col items-center'>
 										<span className='whitespace-nowrap'>Chooses vote amount</span>
 										<span>and type (Aye/Nay)</span>
 									</p>
-									<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] flex md:hidden flex-col items-center'>
+									<p className='m-0 p-0 text-[12px] font-normal text-bodyBlue leading-[15px] flex md:hidden flex-col items-center'>
 										<span className='whitespace-nowrap'>
 										Chooses vote
 										</span>
@@ -239,7 +240,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<ConvictionPeriodIcon className='text-4xl' />
-									<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] flex flex-col items-center'>
+									<p className='m-0 p-0 text-[12px] font-normal text-bodyBlue leading-[15px] flex flex-col items-center'>
 										<span className='whitespace-nowrap flex items-center gap-x-1 flex-col md:flex-row'>
 											<span>Sets a</span>
 											<a className='text-pink_primary underline' href="https://wiki.polkadot.network/docs/learn-opengov#voluntary-locking" target='_blank' rel="noreferrer">conviction</a>
@@ -252,11 +253,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<LikeDislikeIcon className='text-4xl' />
-									<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] hidden md:flex flex-col items-center'>
+									<p className='m-0 p-0 text-[12px] font-normal text-bodyBlue leading-[15px] hidden md:flex flex-col items-center'>
 										<span className='whitespace-nowrap'>User casts their</span>
 										<span>vote</span>
 									</p>
-									<p className='m-0 p-0 text-[10px] font-normal text-sidebarBlue leading-[15px] flex md:hidden flex-col items-center'>
+									<p className='m-0 p-0 text-[12px] font-normal text-sidebarBlue leading-[15px] flex md:hidden flex-col items-center'>
 										<span className='whitespace-nowrap'>
 										User
 										</span>
@@ -266,33 +267,33 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 							</article>
 							<div className='flex flex-col gap-y-3'>
-								<div className='-mx-6' style={{ borderTop: '1.5px dashed #D2D8E0' }}>
-									<p className='px-6 font-medium text-sm leading-[18px] text-sidebarBlue m-0 p-0 mt-5'>Here,</p>
+								<div style={{ borderTop: '1.5px dashed #D2D8E0' }}>
+									<p className='font-medium text-sm leading-[18px] text-sidebarBlue m-0 p-0 mt-5'>Here,</p>
 								</div>
-								<article className='flex items-start justify-start md:gap-x-19 my-2' style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}>
+								<article className='flex items-start justify-start my-2 p-3 space-x-[44px] rounded-lg' style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}>
 									<div className='flex flex-col items-center justify-center gap-y-15'>
-										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col ml-5'>
+										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col'>
 											<b>Voter</b>
 											<div className="flex items-center justify-start">
 												<DefaultProfile style={{ borderRadius: '50%', height: '20px', width: '20px' }} />
-												<p className="mt-2 text-sm ml-2 text-sidebarBlue">DDUX..c..</p>
+												<p className="mt-2 text-xs ml-2 text-sidebarBlue">DDUX..c..</p>
 											</div>
 										</p>
 									</div>
-									<div className='flex flex-col items-center justify-center gap-y-3'>
-										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col ml-14'>
+									<div className='flex flex-col items-center justify-center gap-y-3 ml-[44px]'>
+										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col'>
 											<b>Amount</b>
-											<span className="mt-2 text-sm item-start text-sidebarBlue">11.27 KSM</span>
+											<span className="mt-2 text-xs item-start text-sidebarBlue">11.27 KSM</span>
 										</p>
 									</div>
-									<div className='flex flex-col items-center justify-center gap-y-3'>
-										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col ml-14'>
+									<div className='flex flex-col items-center justify-center gap-y-3 ml-[44px]'>
+										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col'>
 											<b>Conviction</b>
-											<span className="mt-2 text-sm text-sidebarBlue">4x</span>
+											<span className="mt-2 text-xs text-sidebarBlue">4x</span>
 										</p>
 									</div>
-									<div className='flex flex-col items-center justify-center gap-y-3'>
-										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col ml-14'>
+									<div className='flex flex-col items-center justify-center gap-y-3 ml-[44px]'>
+										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col'>
 											<b>Vote</b>
 											<DislikeFilled className="mt-2 text-xl" style={{ color: '#F53C3C' }}/>
 										</p>

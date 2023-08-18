@@ -133,12 +133,12 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 		if(!api || !apiReady || !txBeneficiary || !txSelectedTrack) return;
 		setShowAlert(false);
-		form.validateFields();
 		if((isPreimageVal || isPreimage) || !proposerAddress || !txBeneficiary || !getEncodedAddress(txBeneficiary, network) || !txFundingAmount || txFundingAmount.lte(ZERO_BN) || txFundingAmount.eq(ZERO_BN)) return;
 
 		setLoading(true);
 		const tx = api.tx.treasury.spend(txFundingAmount.toString(), txBeneficiary);
 		(async () => {
+			await form.validateFields();
 			const info = await tx.paymentInfo(proposerAddress);
 			const gasFee:BN = new BN(info.partialFee) ;
 			setGasFee(gasFee);

@@ -185,7 +185,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							<div key='ok' className='mt-4 -mx-6' style={{ borderTop: '1.5px solid #E1E6EB' }}>
 								<div className='flex items-center justify-end mt-5 px-6'>
 									<button
-										className='flex items-center justify-center border-none outline-none rounded-[5px] bg-pink_primary text-white font-normal text-sm leading-[18px] tracking-[0.01em] gap-x-1 w-[57.65px] h-[29.95px] cursor-pointer px-16 py-4 whitespace-nowrap'
+										className='border-none rounded-[4px] bg-pink_primary text-white font-medium text-sm flex w-[134px] h-[40px] py-[4px] px-[16px] flex-col justify-center items-center gap-10 flex-shrink-0'
 										onClick={() => setVoteCalculationModalOpen(false)}
 									>
 										Got It

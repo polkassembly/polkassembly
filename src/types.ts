@@ -119,6 +119,7 @@ export type ChainPropType = {
 };
 
 export interface ChainProps {
+  'preImageBaseDeposit'?: string;
   'blockTime': number;
   'logo'?: any;
   'ss58Format': number;

@@ -58,6 +58,7 @@ const messages = {
 	INCORRECT_PASSWORD: 'Your password is incorrect.',
 	INTERNAL: 'Something went wrong. Please try again later.',
 	INVALID_ADDRESS: 'Invalid address provided.',
+	INVALID_DISCUSSION_ID: 'Invalid discussion id' ,
 	INVALID_EMAIL: 'Please enter a valid email.',
 	INVALID_EMAIL_UNDO_TOKEN: 'Invalid email change undo token.',
 	INVALID_EMAIL_VERIFICATION_TOKEN: 'Invalid email verification token.',

@@ -25,9 +25,10 @@ interface Props {
 	isSwitchButton?: boolean,
 	setSwitchModalOpen?: (pre: boolean) => void;
 	withoutInfo?: boolean;
+	linkAddressTextDisabled?: boolean;
 }
 
-const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isBalanceUpdated, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo }: Props) => {
+const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withBalance = false, onBalanceChange, className, isBalanceUpdated, isDisabled, inputClassName, isSwitchButton, setSwitchModalOpen, withoutInfo, linkAddressTextDisabled=false }: Props) => {
 
 	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
 	useEffect(() => {
@@ -46,6 +47,7 @@ const AccountSelectionForm = ({ accounts, address, onAccountChange, title, withB
 				}
 			</div>
 			<AddressDropdown
+				linkAddressTextDisabled ={linkAddressTextDisabled}
 				isDisabled={isDisabled}
 				accounts={accounts}
 				defaultAddress={address}

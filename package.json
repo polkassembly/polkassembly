@@ -78,7 +78,7 @@
     "nextjs-progressbar": "^0.0.16",
     "node-fetch": "^3.3.0",
     "otpauth": "^9.1.2",
-    "polkasafe": "^1.1.12",
+    "polkasafe": "^1.1.15",
     "query-string": "^8.1.0",
     "react": "18.2.0",
     "react-big-calendar": "^1.6.8",

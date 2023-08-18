@@ -19,7 +19,7 @@ import messages from '~src/util/messages';
 import { ILatestActivityPostsListingResponse } from './on-chain-posts';
 import { firestore_db } from '~src/services/firebaseInit';
 import { chainProperties, network as AllNetworks } from '~src/global/networkConstants';
-import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
+import { fetchLatestSubsquare, getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 interface IGetLatestActivityAllPostsParams {
 	listingLimit?: string | string[] | number;
@@ -63,6 +63,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				status: any;
 				track_number: any;
 				type: any;
+				isSpam?: boolean;
 		}[] = [];
 
 		let onChainPostsCount = 0;
@@ -108,23 +109,52 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					const data = postDoc?.data();
 					return {
 						...singlePost,
+						isSpam: data?.isSpam || false,
 						title: data?.title || title
 					};
 				}
 				return singlePost;
 
 			});
-			onChainPosts =await Promise.all(posts);
+			onChainPosts = await Promise.all(posts);
 			onChainPostsCount = Number(subsquidData?.proposalsConnection?.totalCount || 0);
 		}
 
 		if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
 
-			const subsquidRes = await fetchSubsquid({
-				network,
-				query: GET_PROPOSALS_LISTING_BY_TYPE,
-				variables
-			});
+			let subsquidRes: any = {};
+			try {
+				subsquidRes = await fetchSubsquid({
+					network,
+					query: GET_PROPOSALS_LISTING_BY_TYPE,
+					variables: variables
+				});
+			} catch (error) {
+				const data = await fetchLatestSubsquare(network);
+				if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
+					subsquidRes['data'] = {
+						'proposals': data.items.map((item: any) => {
+							return {
+								createdAt: item?.createdAt,
+								end: 0,
+								hash: item?.onchainData?.proposalHash,
+								index: item?.referendumIndex,
+								preimage: {
+									method: item?.onchainData?.proposal?.method,
+									section: item?.onchainData?.proposal?.section
+								},
+								proposer: item?.proposer,
+								status: item?.state?.name,
+								trackNumber: item?.track,
+								type: 'ReferendumV2'
+							};
+						}),
+						'proposalsConnection': {
+							totalCount: data.total
+						}
+					};
+				}
+			}
 
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals || [];
@@ -262,6 +292,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					}
 					offChainPosts.push({
 						created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
+						isSpam: data?.isSpam || false,
 						post_id: data?.id,
 						proposer: '',
 						title: data?.title,

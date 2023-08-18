@@ -30,6 +30,7 @@ import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
+import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -179,9 +180,10 @@ const Post: FC<IPostProps> = (props) => {
 				}
 			});
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [post]);
 
-	const networkModified = network?.charAt(0)?.toUpperCase() + network?.slice(1);
+	const networkModified =  network?.charAt(0)?.toUpperCase() + network?.slice(1);
 	let postType:any = proposalType;
 
 	if(postType === ProposalType.REFERENDUM_V2){
@@ -258,6 +260,7 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
+
 				<GovernanceSideBar
 					toggleEdit={toggleEdit}
 					proposalType={proposalType}
@@ -268,7 +271,10 @@ const Post: FC<IPostProps> = (props) => {
 					post={post}
 					tally={post?.tally}
 					className={`${!isOffchainPost && 'sticky top-[65px] mb-6 overflow-y-auto max-h-[calc(100vh-65px)] no-scrollbar'}`}
+					trackName={trackName}
 				/>
+				{/* decision deposite placed. */}
+
 				{
 					isOffchainPost &&
 					<div className={'sticky top-[65px] mb-6 '}>
@@ -400,6 +406,7 @@ const Post: FC<IPostProps> = (props) => {
 			content: post?.content,
 			created_at: post?.created_at || '',
 			curator: post?.curator || '',
+			currentTimeline: post.currentTimeline,
 			description: post?.description,
 			history: post?.history || [],
 			last_edited_at: post?.last_edited_at,
@@ -412,12 +419,13 @@ const Post: FC<IPostProps> = (props) => {
 			reward: post?.reward,
 			spam_users_count: post?.spam_users_count,
 			status: post?.status,
+			statusHistory: post?.statusHistory,
 			subscribers: post?.subscribers || [],
 			summary: post?.summary,
 			tags: post?.tags || [],
 			timeline: post?.timeline,
-			title: post?.title,
-			topic: post?.topic,
+			title: post?.title || '',
+			topic: post?.topic || '',
 			track_name: trackName,
 			track_number: post?.track_number,
 			username: post?.username
@@ -479,6 +487,7 @@ const Post: FC<IPostProps> = (props) => {
 
 					{!isEditing ? <Sidebar className='hidden xl:block' />: null}
 				</div>
+				<ScrollToTopButton/>
 
 				<SidebarRight
 					open={sidebarOpen}

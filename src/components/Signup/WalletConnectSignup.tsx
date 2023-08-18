@@ -279,6 +279,7 @@ const WalletConnectSignup = ({ className, setMethod,isModal,setSignupOpen }: Pro
 								accounts={accounts}
 								address={address}
 								onAccountChange={onAccountChange}
+								linkAddressTextDisabled
 							/>
 						</div>
 

@@ -370,7 +370,9 @@ const Web3Signup: FC<Props> = ({
 												title='Choose linked account'
 												accounts={accounts}
 												address={address}
-												onAccountChange={onAccountChange} />
+												onAccountChange={onAccountChange}
+												linkAddressTextDisabled
+											/>
 										)}
 									</div>
 									<div className="flex justify-center items-center">

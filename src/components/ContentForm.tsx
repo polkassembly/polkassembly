@@ -12,7 +12,6 @@ interface Props {
 	onChange?: (content: string) => void | string | null
 	value?: string
 	autofocus?: boolean;
-	textAreaPlaceHolder?: string;
 }
 
 type ValidationStatus = Parameters<typeof Form.Item>[0]['validateStatus'];
@@ -37,7 +36,7 @@ const validateContent = (
 	};
 };
 
-const ContentForm = ({ className, height, onChange, value, autofocus = false , textAreaPlaceHolder }: Props): JSX.Element => {
+const ContentForm = ({ className, height, onChange, value, autofocus = false }: Props): JSX.Element => {
 	const [validationStatus, setValidation] = useState<ValidationResult>({
 		errorMsg: null,
 		validateStatus: 'success'
@@ -62,7 +61,6 @@ const ContentForm = ({ className, height, onChange, value, autofocus = false , t
 					height={height}
 					onChange={onChangeWrapper}
 					autofocus={autofocus}
-					placeHolder={textAreaPlaceHolder}
 				/>
 			</Form.Item>
 		</div>

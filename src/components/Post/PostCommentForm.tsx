@@ -18,11 +18,11 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
+import { Input } from 'antd';
 
 interface IPostCommentFormProps {
 	className?: string;
 	isUsedInSuccessModal?: boolean;
-	textBoxHeight?: number;
 	voteDecision? :string
 	setSuccessModalOpen?: (pre: boolean) => void;
 }
@@ -30,7 +30,7 @@ interface IPostCommentFormProps {
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className , isUsedInSuccessModal = false , textBoxHeight = 200 , voteDecision = null, setSuccessModalOpen = () => {return null; } } = props;
+	const { className , isUsedInSuccessModal = false ,  voteDecision = null, setSuccessModalOpen = () => {return null; } } = props;
 	const { id, username } = useUserDetailsContext();
 	const { postData: { postIndex, postType }, setPostData } = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
@@ -57,6 +57,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const handleModalOpen=async() => {
 		await form.validateFields();
 		const content = form.getFieldValue('content');
+		console.log('value in save', content);
 		if(!content) return;
 		setModalOpen(true);
 	};
@@ -145,7 +146,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				id={id}
 			/>
 
-			<div className={isUsedInSuccessModal ? 'p-[1rem] w-[90%]' : 'comment-box bg-white p-[1rem]'}>
+			<div className={isUsedInSuccessModal ? 'p-[1rem] w-[95%]' : 'comment-box bg-white p-[1rem]'}>
 				{error && <ErrorAlert errorMsg={error} className='mb-2' />}
 				<Form
 					form={form}
@@ -161,8 +162,21 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 						{ required: "Please add the  '${name}'" }
 					}
 				>
-					<div className={isUsedInSuccessModal ? 'flex justify-between  w-[100%]' : ''}>
-						<ContentForm  onChange = {(content : any) => onContentChange(content)} height={textBoxHeight} className={isUsedInSuccessModal ? 'flex-auto w-[100%]' : ''} textAreaPlaceHolder={isUsedInSuccessModal ?'Please type your comment here':'Please type here...'} />
+					<div className={isUsedInSuccessModal ? 'flex justify-between items-center  w-[100%]' : ''}>
+						{
+							isUsedInSuccessModal && <Form.Item name='content' className='w-full'>
+								<Input
+									name='content'
+									className={'w-full h-[40px] border-[1px]  text-sm mt-0 suffixColor hover:border-pink_primary flex-1'}
+									onChange = {(e) => onContentChange(e.target.value)}
+									placeholder={'Type your comment here'}
+								/>
+							</Form.Item>
+
+						}
+						{
+							!isUsedInSuccessModal && <ContentForm  onChange = {(content : any) => onContentChange(content)} height={200}/>
+						}
 						<Form.Item>
 							<div className={ isUsedInSuccessModal ?'ml-2' :'flex items-center justify-end mt-[-40px]'}>
 								{

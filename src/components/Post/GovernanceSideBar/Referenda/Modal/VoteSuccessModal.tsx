@@ -23,7 +23,7 @@ import styled from 'styled-components';
 import QuoteRight from '~assets/icons/quote-right-icon.svg';
 import QuoteLeft from '~assets/icons/quote-left-icon.svg';
 //import { CommentBoxIcon } from 'src/ui-components/CustomIcons';
-import CommentBox from '~assets/icons/comment-box-2.svg';
+//import CommentBox from '~assets/icons/comment-box-2.svg';
 
 interface Props {
     className?: string;
@@ -243,12 +243,11 @@ const VoteInitiatedModal = ({
 					</div>
 				</div>
 			</div>
-			<div className='h-[130px] relative mt-[30px] '>
-				<CommentBox />
-				<QuoteRight className='absolute top-[-10px] left-[-10px]'/>
-				<QuoteLeft className='absolute right-[0px] w-[34px] top-[-10px]' />
-				<p className='text-lightBlue text-[14px] font-medium mt-[-127px] ml-6 mr-4 pt-2 mb-[-8px]'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
-				<PostCommentForm className=' h-[150px] ml-8 mt-[-10px] w-[100%]' isUsedInSuccessModal={true} textBoxHeight={40} voteDecision={vote} setSuccessModalOpen={setOpen}/>
+			<div className='relative mt-[180px] bg-[#185cf60a] rounded-[10px]'>
+				<QuoteRight className='absolute top-[-10px] w-[34px] h-[25px] left-[-10px]'/>
+				<QuoteLeft className='absolute right-[0px] w-[34px] h-[25px] top-[-10px]' />
+				<p className='text-lightBlue text-[14px] font-medium mt-[-127px] ml-6 mr-4 pt-4 mb-[-8px]'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
+				<PostCommentForm className='ml-4 mt-[-10px] w-[100%]' isUsedInSuccessModal={true} voteDecision={vote} setSuccessModalOpen={setOpen}/>
 			</div>
 		</Modal>
 	);
@@ -265,7 +264,7 @@ export default styled(VoteInitiatedModal)`
 }
 .tox.tox-tinymce{
 border-radius : 4px !important;
-height: 60px !important;
+height: 40px !important;
 }
 
 .tox-sidebar{
@@ -273,10 +272,7 @@ height: 60px !important;
 }
 
 
-body p {
-	margin-top:-16px !important;
-	border: 1px solid red !important;
-}
+
 .ant-avatar{
 	display: none !important;
 }
@@ -289,10 +285,5 @@ body p {
 .ant-form-item-explain-error{
 	display: none !important;
 }
- .tox-toolbar__primary{
-	display : none !important;
-}
-.tox-statusbar{
-	display : none !important;
-}
+
 `;

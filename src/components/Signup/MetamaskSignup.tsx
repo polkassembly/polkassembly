@@ -260,6 +260,7 @@ const MetamaskSignup: FC<Props> = ({
 												accounts={accounts}
 												address={address}
 												onAccountChange={onAccountChange}
+												linkAddressTextDisabled
 											/>
 										</div>
 										<div className="flex justify-center items-center">

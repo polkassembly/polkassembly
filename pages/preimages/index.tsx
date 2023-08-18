@@ -6,13 +6,14 @@ import { Pagination, Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { getPreimages, IPreimagesListingResponse } from 'pages/api/v1/listing/preimages';
+import { getPreimages } from 'pages/api/v1/listing/preimages';
 import React, { FC, useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import SEOHead from '~src/global/SEOHead';
+import { IPreimagesListingResponse } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 

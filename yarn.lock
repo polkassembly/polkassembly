@@ -9733,10 +9733,10 @@ pnglib@0.0.1:
   resolved "https://registry.yarnpkg.com/pnglib/-/pnglib-0.0.1.tgz#f9ab6f9c688f4a9d579ad8be28878a716e30c096"
   integrity sha512-95ChzOoYLOPIyVmL+Y6X+abKGXUJlvOVLkB1QQkyXl7Uczc6FElUy/x01NS7r2GX6GRezloO/ecCX9h4U9KadA==
 
-polkasafe@^1.1.12:
-  version "1.1.12"
-  resolved "https://registry.yarnpkg.com/polkasafe/-/polkasafe-1.1.12.tgz#744b23743f998bcc95a21787644b71a64f648cc6"
-  integrity sha512-r9UFkDuv897YnfWKOMK+kJo2Yrk0kYgWxj2OrTdmjL8ao8prL9Ru9aKiYxXgooRsoYpdxH9j6KZV5LQzdPY5EA==
+polkasafe@^1.1.15:
+  version "1.1.15"
+  resolved "https://registry.yarnpkg.com/polkasafe/-/polkasafe-1.1.15.tgz#0469fc24b96f5ed86d4111fc991b7091d14ff3c5"
+  integrity sha512-WFFd32VXWDS/3+eU7b/FfUXSTLnvgzPThIQGtEVQWN0NARCIkiTq0gUf50N+CzpiCg6nY8QaYwiS3YOecWMNVg==
   dependencies:
     "@polkadot/api" "^10.6.1"
     "@polkadot/api-augment" "^10.7.3"
@@ -10630,6 +10630,13 @@ react-helmet@^6.1.0:
     prop-types "^15.7.2"
     react-fast-compare "^3.1.1"
     react-side-effect "^2.1.0"
+
+react-infinite-scroll-component@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/react-infinite-scroll-component/-/react-infinite-scroll-component-6.1.0.tgz#7e511e7aa0f728ac3e51f64a38a6079ac522407f"
+  integrity sha512-SQu5nCqy8DxQWpnUVLx7V7b7LcA37aM7tvoWjTLZp1dk6EJibM5/4EJKzOnl07/BsM1Y40sKLuqjCwwH/xV0TQ==
+  dependencies:
+    throttle-debounce "^2.1.0"
 
 react-is@^16.12.0, react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
@@ -11903,6 +11910,11 @@ thenify-all@^1.0.0:
   integrity sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==
   dependencies:
     any-promise "^1.0.0"
+
+throttle-debounce@^2.1.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-2.3.0.tgz#fd31865e66502071e411817e241465b3e9c372e2"
+  integrity sha512-H7oLPV0P7+jgvrk+6mwwwBDmxTaxnu9HMXmloNLXwnNO0ZxZ31Orah2n8lU1eMPvsaowP2CX+USCgyovXfdOFQ==
 
 throttle-debounce@^5.0.0:
   version "5.0.0"

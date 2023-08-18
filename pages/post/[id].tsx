@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { GetServerSideProps } from 'next';
-import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import { getOffChainPost } from 'pages/api/v1/posts/off-chain-post';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
@@ -27,9 +26,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		postId: id,
 		proposalType: OffChainProposalType.DISCUSSIONS
 	});
-	const comments = await getSubSquareComments(OffChainProposalType.DISCUSSIONS, network, id);
-	const post = data && { ...data, comments: [...data.comments, ...comments] };
-	return { props: { error, network, post } };
+	return { props: { error, network, post: data } };
 };
 
 interface IDiscussionPostProps {

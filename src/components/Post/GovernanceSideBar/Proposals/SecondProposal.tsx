@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { LoadingStatusType,NotificationStatus } from '../../../../types';
 import { NetworkContext } from '~src/context/NetworkContext';
-import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useUserDetailsContext } from '~src/context';
 import executeTx from '~src/util/executeTx';
 

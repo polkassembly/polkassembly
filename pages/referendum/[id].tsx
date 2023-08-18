@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
-import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect, useState } from 'react';
 import Post from 'src/components/Post/Post';
@@ -28,9 +27,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 		postId: id,
 		proposalType
 	});
-	const comments = await getSubSquareComments(proposalType, network, id);
-	const post = data && { ...data, comments: [...data.comments, ...comments] };
-	return { props: { error, network, post ,status } };
+	return { props: { error, network, post: data, status } };
 };
 
 interface IReferendumPostProps {

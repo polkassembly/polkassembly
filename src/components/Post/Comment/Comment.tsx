@@ -27,11 +27,12 @@ export interface IComment {
 	comment_reactions: IReactions;
 	username: string;
 	proposer?: string;
-	sentiment?: number;
-	comment_source?: 'polkassembly' | 'subsquare';
-	history?: ICommentHistory[];
-	spam_users_count?: number;
-	is_custom_username?: boolean;
+  sentiment?: number;
+  comment_source?: 'polkassembly' | 'subsquare';
+  history?: ICommentHistory[];
+  spam_users_count?: number;
+  is_custom_username?: boolean;
+  profile?:any;
 	post_index?: number;
 	post_type?: string;
 	vote?:string | null;
@@ -46,7 +47,7 @@ interface ICommentProps {
 
 export const Comment: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
-	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history ,spam_users_count, vote = null } = comment;
+	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history ,spam_users_count, profile vote = null } = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
@@ -63,7 +64,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 
 	if (!user_id || !content) return (<div className={`${className} mb-5`}>
 		<Avatar className='bg-gray-300' size="large" icon={<UserOutlined />} />
-
 		<div className='comment-content'>
 			Comment not available
 		</div>
@@ -81,6 +81,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 				username={comment.username}
 				size='large'
 				id={user_id}
+				profile={profile}
 			/>
 			<div className='w-full overflow-hidden'>
 				<CreationLabel

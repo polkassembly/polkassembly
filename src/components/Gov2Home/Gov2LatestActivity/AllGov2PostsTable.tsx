@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
+import { Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
 import React, { FC } from 'react';
@@ -15,6 +16,7 @@ import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 
 import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
+import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 
 const columns: ColumnsType<IPostsRowData> = [
 	{
@@ -78,8 +80,23 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Status',
 		dataIndex: 'status',
 		key: 'status',
-		render: (status) => {
-			if(status) return <StatusTag status={status} />;
+		render: (status: any, obj: any) => {
+			if(status || obj.spam_users_count) return <div className='flex items-center gap-x-2'>
+				{
+					status?
+						<StatusTag status={status} />
+						: null
+				}
+				{
+					obj.spam_users_count ?
+						<div className='flex items-center justify-center'>
+							<Tooltip color="#E5007A" title="This post could be a spam.">
+								<WarningMessageIcon className='text-lg text-[#FFA012]' />
+							</Tooltip>
+						</div>
+						: null
+				}
+			</div>;
 		},
 		width: 160
 	}
@@ -130,7 +147,8 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					status: post.status || '-',
 					sub_title: subTitle,
 					track: Number(post.track_number),
-					type: post.type
+					type: post.type,
+					spam_users_count: post.spam_users_count || 0
 				};
 
 				tableData.push(tableDataObj);

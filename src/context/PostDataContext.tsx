@@ -7,6 +7,7 @@ import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import { createContext, FC, PropsWithChildren, useState } from 'react';
 
 import { IComment } from '~src/components/Post/Comment/Comment';
+import { ITimeline } from '~src/components/Post/Comment/CommentsContainer';
 import { ProposalType } from '~src/global/proposalType';
 import { IOptionPoll, IPoll, IPostHistory } from '~src/types';
 
@@ -14,15 +15,25 @@ export interface IPostDataContextProviderProps extends PropsWithChildren {
 	initialPostData: IPostData;
 }
 
+export interface ITimelineData {
+    commentsCount: number;
+    index: number;
+    type: string;
+    statuses:any[] | any;
+    hash:any;
+    [index:string]:any
+}
+
 export interface IPostData {
     postIndex: number | string;
     postType: ProposalType;
-    timeline?: any[];
+    timeline?: ITimelineData[];
     title: string;
     cid?:string;
     content: string;
     summary?: string;
     created_at: string | Date;
+    currentTimeline?:ITimeline;
     last_edited_at?: string | Date;
     proposer: string;
     curator: string;
@@ -36,7 +47,7 @@ export interface IPostData {
     requested?: string | number | BN;
     reward?: string | number | BN;
     post_reactions?: IReactions;
-    comments: IComment[];
+    comments: {[index:string]:Array<IComment>};
     polls?: IPoll[];
     optionPolls?: IOptionPoll[];
     post_link?: {

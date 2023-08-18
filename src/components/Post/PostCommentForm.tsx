@@ -19,20 +19,23 @@ import ContentForm from '../ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { Input } from 'antd';
+import { IComment } from './Comment/Comment';
+import { getSubsquidProposalType } from '~src/global/proposalType';
 
 interface IPostCommentFormProps {
 	className?: string;
 	isUsedInSuccessModal?: boolean;
 	voteDecision? :string
 	setSuccessModalOpen?: (pre: boolean) => void;
+  setCurrentState?:(postId: string, type:string, comment: IComment) => void;
 }
 
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className , isUsedInSuccessModal = false ,  voteDecision = null, setSuccessModalOpen = () => {return null; } } = props;
-	const { id, username } = useUserDetailsContext();
-	const { postData: { postIndex, postType }, setPostData } = usePostDataContext();
+	const { className , isUsedInSuccessModal = false ,  voteDecision = null, setSuccessModalOpen = () => {return null; },setCurrentState } = props;
+	const { id, username, picture } = useUserDetailsContext();
+	const { postData: { postIndex, postType } } = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
@@ -99,31 +102,30 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				message: 'Comment created successfully.',
 				status: NotificationStatus.SUCCESS
 			});
-			setPostData((prev) => ({
-				...prev,
-				comments: [...(prev?.comments? prev.comments: []), {
-					comment_reactions: {
-						'👍': {
-							count: 0,
-							usernames: []
-						},
-						'👎': {
-							count: 0,
-							usernames: []
-						}
+			const comment=  {
+				comment_reactions: {
+					'👍': {
+						count: 0,
+						usernames: []
 					},
-					content,
-					created_at: new Date(),
-					history: [],
-					id: data.id,
-					replies: [],
-					sentiment:isSentimentPost? sentiment : 0,
-					updated_at: new Date(),
-					user_id: id as any,
-					username: username || '',
-					vote:voteDecision
-				}]
-			}));
+					'👎': {
+						count: 0,
+						usernames: []
+					}
+				},
+				content,
+				created_at: new Date(),
+				history: [],
+				id: data?.id || '',
+				profile: picture || '',
+				replies: [],
+				sentiment:isSentimentPost? sentiment : 0,
+				updated_at: new Date(),
+				user_id: id as any,
+				username: username || '',
+        vote:voteDecision
+			};
+			setCurrentState && setCurrentState(postIndex.toString(), getSubsquidProposalType(postType as any), comment);
 		}
 		setLoading(false);
 		setIsComment(false);

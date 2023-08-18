@@ -76,6 +76,7 @@ interface ICreationLabelProps {
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
+
 	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource='polkassembly', cid ,spam_users_count = 0, truncateUsername , vote , votesArr = [] } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal,setShowVotesModal] = useState(false);

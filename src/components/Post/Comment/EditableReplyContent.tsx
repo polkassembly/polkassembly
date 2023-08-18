@@ -18,7 +18,6 @@ import { useApiContext, useNetworkContext, usePostDataContext } from '~src/conte
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ReportButton from '../ActionsBar/ReportButton';
-import { IComment } from './Comment';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -127,9 +126,9 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			global.window.localStorage.removeItem(editReplyKey(replyId));
 			form.setFieldValue('content', '');
 			setPostData((prev) => {
-				let comments: IComment[] = [];
-				if (prev?.comments && Array.isArray(prev.comments)) {
-					comments = prev.comments.map((comment) => {
+				const comments:any = Object.assign({}, prev.comments);
+				if (prev?.comments?.[postIndex]) {
+					comments[postIndex] = prev.comments[postIndex].map((comment) => {
 						if (comment.id === commentId) {
 							if (comment?.replies && Array.isArray(comment.replies)) {
 								comment.replies = comment.replies.map((reply) => {
@@ -189,9 +188,9 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 				setError('');
 				global.window.localStorage.removeItem(newReplyKey(commentId));
 				setPostData((prev) => {
-					let comments: IComment[] = [];
-					if (prev?.comments && Array.isArray(prev.comments)) {
-						comments = prev.comments.map((comment) => {
+					const comments:any = Object.assign({}, prev.comments);
+					if (prev?.comments?.[postIndex]) {
+						comments[postIndex] = prev.comments[postIndex].map((comment) => {
 							if (comment.id === commentId) {
 								if (comment?.replies && Array.isArray(comment.replies)) {
 									comment.replies = [...comment.replies,{
@@ -247,9 +246,9 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 
 		if (data) {
 			setPostData((prev) => {
-				let comments: IComment[] = [];
-				if (prev?.comments && Array.isArray(prev.comments)) {
-					comments = prev.comments.map((comment) => {
+				const comments:any = Object.assign({}, prev.comments);
+				if (prev?.comments?.[postIndex]) {
+					comments[postIndex] = prev.comments[postIndex].map((comment) => {
 						if (comment.id === commentId) {
 							comment.replies = comment?.replies?.filter((reply) => (reply.id !== replyId)) || [];
 						}
@@ -323,12 +322,11 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								{id === userId && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>}
 								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} postId={postIndex} commentId={commentId} type='reply' replyId={replyId} />}
 
-								{id? (reply.reply_source === 'subsquare'? (
-									<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
-										<Button disabled={true} className='text-pink_primary flex items-center border-none shadow-none text-xs disabled-reply'>
-											<ReplyIcon className='mr-1'/> Reply
-										</Button>
-									</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
+								{id? (reply.reply_source === 'subsquare'?(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
+									<Button className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${reply.reply_source ? 'disabled-reply' : ''}` }>
+										<ReplyIcon className='mr-1'/> Reply
+									</Button>
+								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
 									: null
 								}
 							</div>

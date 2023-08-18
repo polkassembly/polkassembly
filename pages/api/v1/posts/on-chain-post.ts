@@ -992,6 +992,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					post.comments = comments;
 				}
 			}
+			post.comments_count = post.comments.length;
 		}
 
 		// Update subsquare comments

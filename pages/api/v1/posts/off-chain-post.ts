@@ -223,6 +223,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 					post.comments = comments;
 				}
 			}
+			post.comments_count = post.comments.length;
 		}
 
 		await getContentSummary(post, network, isExternalApiCall);

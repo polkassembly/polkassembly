@@ -14,6 +14,7 @@ import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { CommentReply } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
+import isContentBlacklisted from '~src/util/isContentBlacklisted';
 
 export interface IAddCommentReplyResponse {
 	id: string;
@@ -27,6 +28,8 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 
 	const { userId, commentId, content, postId, postType } = req.body;
 	if(!userId || !commentId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+
+	if(typeof content !== 'string' || isContentBlacklisted(content)) return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
 
 	const strProposalType = String(postType);
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The post type of the name "${postType}" does not exist.` });

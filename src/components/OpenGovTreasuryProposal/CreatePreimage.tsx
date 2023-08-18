@@ -126,19 +126,19 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 	maxSpendArr.sort((a,b) => a.maxSpend - b.maxSpend );
 
-	const getPreimageTxFee =async(isPreimageVal?: boolean, selectedTrackVal?: string, fundingAmountVal?: BN) => {
+	const getPreimageTxFee = (isPreimageVal?: boolean, selectedTrackVal?: string, fundingAmountVal?: BN) => {
 		const txSelectedTrack = selectedTrackVal || selectedTrack;
 		const txBeneficiary = form.getFieldValue('address') || beneficiaryAddress;
 		const txFundingAmount = fundingAmountVal || fundingAmount;
 
 		if(!api || !apiReady || !txBeneficiary || !txSelectedTrack) return;
 		setShowAlert(false);
-		await form.validateFields();
 		if((isPreimageVal || isPreimage) || !proposerAddress || !txBeneficiary || !getEncodedAddress(txBeneficiary, network) || !txFundingAmount || txFundingAmount.lte(ZERO_BN) || txFundingAmount.eq(ZERO_BN)) return;
 
 		setLoading(true);
 		const tx = api.tx.treasury.spend(txFundingAmount.toString(), txBeneficiary);
 		(async () => {
+			await form.validateFields();
 			const info = await tx.paymentInfo(proposerAddress);
 			const gasFee:BN = new BN(info.partialFee) ;
 			setGasFee(gasFee);
@@ -152,14 +152,23 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		setSteps({ percent: 20, step: 1 });
 
 		setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
-		const balance = isNaN(Number(createPreimageForm?.fundingAmount)) ? ZERO_BN : new BN(createPreimageForm?.fundingAmount) ;
+		const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
+		const [balance, isValid] = inputToBn(`${isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount}`, network, false);
+		if(isValid){
+			if(createPreimageForm.isPreimage) {
+				setFundingAmount(bnBalance);
+			}else{
+				setFundingAmount(balance);
+			}
+		}else{
+			setFundingAmount(ZERO_BN);
+		}
 		setInputAmountValue(createPreimageForm?.fundingAmount);
 		setPreimageHash(createPreimageForm?.preimageHash || '') ;
 		setPreimageLength(createPreimageForm?.preimageLength || null);
 		setBeneficiaryAddress(createPreimageForm?.beneficiaryAddress || '');
 		setEnactment(createPreimageForm?.enactment || { key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 		setBeneficiaryAddress(createPreimageForm.beneficiaryAddress || '');
-		setFundingAmount(balance);
 		setSelectedTrack(createPreimageForm?.selectedTrack || '');
 
 		form.setFieldValue('preimage_hash', createPreimageForm?.preimageHash || '');
@@ -174,7 +183,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		if(createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack)
 		{
 			setSteps({ percent: 100, step: 1 });
-			getPreimageTxFee(createPreimageForm.isPreimage, createPreimageForm?.selectedTrack, balance );
+			getPreimageTxFee(createPreimageForm.isPreimage, createPreimageForm?.selectedTrack, createPreimageForm.isPreimage ? bnBalance : balance );
 		}
 		if(createPreimageForm?.selectedTrack) {
 			setIsAutoSelectTrack(false);
@@ -315,7 +324,6 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		const proposal = api?.tx?.treasury?.spend(fundingAmount.toString(), beneficiaryAddress);
 		const preimage: any = getState(api, proposal);
 		setLoading(true);
-
 		const onSuccess = () => {
 
 			setPreimage(preimage);
@@ -343,7 +351,9 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 	const handleSubmit = async() => {
 
-		if(!isPreimage){if(txFee.gte(availableBalance)) return;}
+		if(!isPreimage){
+			if(txFee.gte(availableBalance)) return;
+		}
 		await form.validateFields();
 		if(isPreimage) onChangeLocalStorageSet({ preimageLinked: true }, Boolean(isPreimage), preimageCreated, true);
 

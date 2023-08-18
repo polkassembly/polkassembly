@@ -159,9 +159,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			setError('');
 			global.window.localStorage.removeItem(editCommentKey(commentId));
 			setPostData((prev) => {
-				let comments: IComment[] = [];
-				if (prev?.comments && Array.isArray(prev.comments)) {
-					comments = prev.comments.map((comment) => {
+				const comments:any = Object.assign({}, prev.comments);
+				if (prev?.comments?.[postIndex]) {
+					comments[postIndex] = prev.comments[postIndex].map((comment) => {
 						const newComment = comment;
 						if (comment.id === commentId) {
 							newComment.history = [{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 }, ...(newComment?.history || []) ],
@@ -222,9 +222,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				setErrorReply('');
 				global.window.localStorage.removeItem(replyKey(commentId));
 				setPostData((prev) => {
-					let comments: IComment[] = [];
-					if (prev?.comments && Array.isArray(prev.comments)) {
-						comments = prev.comments.map((comment) => {
+					const comments:any = Object.assign({}, prev.comments);
+					if (prev?.comments?.[postIndex]) {
+						comments[postIndex] = prev.comments[postIndex].map((comment) => {
 							if (comment.id === commentId) {
 								if (comment?.replies && Array.isArray(comment.replies)) {
 									comment.replies.push({
@@ -290,9 +290,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 		if(data) {
 			setPostData((prev) => {
-				let comments: IComment[] = [];
-				if (prev?.comments && Array.isArray(prev.comments)) {
-					comments = prev.comments.filter((comment) => comment.id !== commentId);
+				const comments:any = Object.assign({}, prev.comments);
+				if (prev?.comments?.[postIndex]) {
+					comments[postIndex]  = prev.comments[postIndex].filter((comment) => comment.id !== commentId);
 				}
 				return {
 					...prev,

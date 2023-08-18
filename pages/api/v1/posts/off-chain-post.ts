@@ -19,6 +19,8 @@ import messages from '~src/util/messages';
 import { getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
+import dayjs from 'dayjs';
+import { getStatus } from './comments/getInitialComments';
 
 interface IGetOffChainPostParams {
 	network: string;
@@ -187,6 +189,18 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 				});
 				const timelines:Array<any>  = await Promise.allSettled(commentPromises);
 				post.timeline = timelines.map(timeline => timeline.value);
+			}
+			const currentTimelineObj = post.timeline?.[0] || null;
+			if(currentTimelineObj){
+				post.currentTimeline = {
+					commentsCount: currentTimelineObj.commentsCount,
+					date: dayjs(currentTimelineObj?.created_at),
+					firstCommentId: '',
+					id: 1,
+					index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash,
+					status: getStatus(currentTimelineObj?.type),
+					type: currentTimelineObj?.type
+				};
 			}
 		}
 		else{

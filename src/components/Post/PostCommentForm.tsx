@@ -167,7 +167,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 							isUsedInSuccessModal && <Form.Item name='content' className='w-full'>
 								<Input
 									name='content'
-									className={'w-full h-[40px] border-[1px]  text-sm mt-0 suffixColor hover:border-pink_primary flex-1'}
+									className={'w-full h-[40px] border-[1px] rounded-[4px] text-sm mt-0 suffixColor hover:border-pink_primary flex-1'}
 									onChange = {(e) => onContentChange(e.target.value)}
 									placeholder={'Type your comment here'}
 								/>

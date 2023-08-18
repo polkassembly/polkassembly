@@ -23,7 +23,7 @@ import styled from 'styled-components';
 import QuoteRight from '~assets/icons/quote-right-icon.svg';
 import QuoteLeft from '~assets/icons/quote-left-icon.svg';
 //import { CommentBoxIcon } from 'src/ui-components/CustomIcons';
-//import CommentBox from '~assets/icons/comment-box-2.svg';
+import Corner from '~assets/icons/chatbox-corner.svg';
 
 interface Props {
     className?: string;
@@ -243,11 +243,12 @@ const VoteInitiatedModal = ({
 					</div>
 				</div>
 			</div>
-			<div className='relative mt-[180px] bg-[#185cf60a] rounded-[10px]'>
+			<div className='relative mt-[50px] bg-[#eff3fe] rounded-[15px] z-100000 border border-solid border-[#a3befc] h-auto'>
 				<QuoteRight className='absolute top-[-10px] w-[34px] h-[25px] left-[-10px]'/>
 				<QuoteLeft className='absolute right-[0px] w-[34px] h-[25px] top-[-10px]' />
-				<p className='text-lightBlue text-[14px] font-medium mt-[-127px] ml-6 mr-4 pt-4 mb-[-8px]'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
-				<PostCommentForm className='ml-4 mt-[-10px] w-[100%]' isUsedInSuccessModal={true} voteDecision={vote} setSuccessModalOpen={setOpen}/>
+				<Corner className='absolute bottom-[-16px] left-[-7px]' />
+				<p className='text-lightBlue text-[14px] font-medium ml-6 mr-4 mb-[5px] pt-4'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
+				<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} voteDecision={vote} setSuccessModalOpen={setOpen}/>
 			</div>
 		</Modal>
 	);

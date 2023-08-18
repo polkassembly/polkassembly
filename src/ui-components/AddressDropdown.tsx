@@ -81,7 +81,7 @@ const AddressDropdown = ({
 				<Address
 					disableAddressClick={true}
 					className='flex items-center'
-					otherTextType={getOtherTextType(account)}
+					otherTextType={ getOtherTextType(account)}
 					otherTextClassName='ml-auto'
 					extensionName={account.name}
 					address={account.address}

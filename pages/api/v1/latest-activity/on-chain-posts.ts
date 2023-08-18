@@ -140,6 +140,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 						created_at: createdAt,
 						description,
 						hash,
+						isSpam: data?.isSpam || false,
 						method: method || preimage?.method,
 						origin,
 						post_id: postId,

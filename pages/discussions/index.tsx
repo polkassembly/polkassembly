@@ -15,7 +15,7 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { OffChainProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
-import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { ErrorState } from '~src/ui-components/UIStates';
 import DiscussionsIcon from '~assets/icons/discussions-icon.svg';
 import dynamic from 'next/dynamic';

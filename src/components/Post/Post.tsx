@@ -30,6 +30,7 @@ import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
+import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -405,6 +406,7 @@ const Post: FC<IPostProps> = (props) => {
 			content: post?.content,
 			created_at: post?.created_at || '',
 			curator: post?.curator || '',
+			currentTimeline: post.currentTimeline,
 			description: post?.description,
 			history: post?.history || [],
 			last_edited_at: post?.last_edited_at,
@@ -485,6 +487,7 @@ const Post: FC<IPostProps> = (props) => {
 
 					{!isEditing ? <Sidebar className='hidden xl:block' />: null}
 				</div>
+				<ScrollToTopButton/>
 
 				<SidebarRight
 					open={sidebarOpen}

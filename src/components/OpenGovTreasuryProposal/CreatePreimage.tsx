@@ -152,9 +152,14 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		setSteps({ percent: 20, step: 1 });
 
 		setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
-		const [balance, isValid] = inputToBn(`${isNaN(Number(createPreimageForm?.fundingAmount)) ? ZERO_BN : createPreimageForm?.fundingAmount}`, network, false);
+		const BnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
+		const [balance, isValid] = inputToBn(`${isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount}`, network, false);
 		if(isValid){
-			setFundingAmount(balance);
+			if(createPreimageForm.isPreimage) {
+				setFundingAmount(BnBalance);
+			}else{
+				setFundingAmount(balance);
+			}
 		}else{
 			setFundingAmount(ZERO_BN);
 		}
@@ -201,6 +206,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		}
 	};
 
+	console.log(fundingAmount.toString());
 	useEffect(() => {
 		form.setFieldValue('at_block', currentBlock?.add(BN_THOUSAND) || BN_ONE  );
 		let data: any = localStorage.getItem('treasuryProposalData');

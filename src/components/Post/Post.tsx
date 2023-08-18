@@ -267,7 +267,7 @@ const Post: FC<IPostProps> = (props) => {
 					startTime={post.created_at}
 					post={post}
 					tally={post?.tally}
-					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
+					className={`${!isOffchainPost && 'sticky top-[65px] mb-6 overflow-y-auto max-h-[calc(100vh-65px)] no-scrollbar'}`}
 				/>
 				{
 					isOffchainPost &&

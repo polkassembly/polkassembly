@@ -75,8 +75,9 @@ export interface IPostListing {
 	username?: string;
 	tags?: string[] | [];
 	gov_type?: 'gov_1' | 'open_gov';
-	timeline?: any;
-	track_no?: number | null;
+  timeline?: any;
+  track_no?: number | null;
+	isSpam?: boolean;
 }
 
 export interface IPostsListingResponse {
@@ -192,6 +193,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							created_at: created_at?.toDate ? created_at?.toDate() : created_at,
 							gov_type: docData?.gov_type,
+							isSpam: docData?.isSpam || false,
 							post_id: docData.id,
 							post_reactions,
 							proposer: getProposerAddressFromFirestorePostData(docData, network),
@@ -304,6 +306,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							end,
 							gov_type: data.gov_type,
 							hash,
+							isSpam: data?.isSpam || false,
 							method: preimage?.method,
 							parent_bounty_index: parentBountyIndex || null,
 							post_id: postId,
@@ -505,6 +508,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 									created_at: createdAt,
 									gov_type: data.gov_type,
 									hash,
+									isSpam: data?.isSpam || false,
 									post_id: postId,
 									post_reactions,
 									proposer: proposer,
@@ -576,6 +580,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 									end,
 									gov_type: data.gov_type,
 									hash,
+									isSpam: data?.isSpam || false,
 									post_id: postId,
 									post_reactions,
 									proposer: proposer,
@@ -688,6 +693,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								end,
 								gov_type: data.gov_type,
 								hash,
+								isSpam: data?.isSpam || false,
 								method: preimage?.method,
 								parent_bounty_index: parentBountyIndex || null,
 								post_id: postId,
@@ -829,9 +835,14 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 	}
 
 	return posts.map((post) => {
-		if (post) {
+		// marked as spam in the db by the team directly
+		if(post?.isSpam) {
+			const threshold = process.env.REPORTS_THRESHOLD || 50;
+			post.spam_users_count = Number(threshold);
+		} else {
 			post.spam_users_count = checkReportThreshold(post.spam_users_count);
 		}
+
 		return post;
 	});
 };

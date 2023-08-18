@@ -49,6 +49,15 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 						<div className='mt-3 lg:mt-1'>
 							<h1 className='text-bodyBlue font-medium text-sm flex'>
 								{title}
+								{
+									spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
+										<div className='hidden lg:flex items-center justify-center ml-5'>
+											<Tooltip color="#E5007A" title="This post could be a spam.">
+												<WarningMessageIcon className='text-xl text-[#FFA012]' />
+											</Tooltip>
+										</div>
+										: null
+								}
 							</h1>
 						</div>
 					</div>
@@ -115,6 +124,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					</>}</div>
 				</Modal>
 			</div>
+
 			<div className={`${ownPost && 'border-l-pink_primary border-l-4'} border-2 border-solid border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200 xs:p-2 md:p-4 min-h-[150px] h-auto xs:flex sm:hidden ${className}`}>
 				<div className="sm:hidden xs:flex flex-col flex-1 xs:mt-1">
 					{
@@ -126,7 +136,6 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					<div className='max-xs-hidden m-2.5 text-bodyBlue font-medium text-sm'>
 						#{post_id} {title}
 						<div className='flex justify-between items-center'>
-
 							{
 								spam_users_count && typeof spam_users_count === 'number' && spam_users_count > 0?
 									<div className='flex lg:hidden items-center justify-center'>

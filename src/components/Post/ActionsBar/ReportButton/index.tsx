@@ -14,6 +14,7 @@ import cleanError from 'src/util/cleanError';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IComment } from '../../Comment/Comment';
 
 interface IReportButtonProps {
 	type: string;
@@ -74,6 +75,54 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 		}
 
 		if(reportData) {
+
+			const handleSpamComments = (commentsWithTimeline:any, commentId:string) => {
+				const commentsPayload = Object.assign({}, commentsWithTimeline);
+				for(const key in commentsWithTimeline){
+					commentsPayload[key] = commentsWithTimeline[key].map((comment:IComment) => {
+						if (comment.id === commentId) {
+							return {
+								...comment,
+								spam_users_count: reportData.spam_users_count
+							};
+						} else {
+							return {
+								...comment
+							};
+						}
+					});
+				}
+				return commentsPayload;
+			};
+			const handleSpamReply = (commentsWithTimeline:any, commentId:string) => {
+				const commentsPayload = Object.assign({}, commentsWithTimeline);
+				for(const key in commentsWithTimeline){
+					commentsPayload[key] = commentsWithTimeline[key].map((comment:IComment) => {
+						if (comment?.id === commentId) {
+							return {
+								...comment,
+								replies: (comment?.replies || []).map((reply:any) => {
+									if (reply?.id === replyId) {
+										return {
+											...reply,
+											spam_users_count: reportData.spam_users_count
+										};
+									} else {
+										return {
+											...reply
+										};
+									}
+								})
+							};
+						} else {
+							return {
+								...comment
+							};
+						}
+					});
+				}
+				return commentsPayload;
+			};
 			queueNotification({
 				header: 'Success!',
 				message: reportData.message,
@@ -88,45 +137,12 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				} else if (type === 'comment') {
 					return {
 						...prev,
-						comments: (prev?.comments || []).map((comment) => {
-							if (comment.id === commentId) {
-								return {
-									...comment,
-									spam_users_count: reportData.spam_users_count
-								};
-							} else {
-								return {
-									...comment
-								};
-							}
-						})
+						comments: handleSpamComments(prev.comments, commentId || '')
 					};
 				} else {
 					return {
 						...prev,
-						comments: (prev?.comments || []).map((comment) => {
-							if (comment?.id === commentId) {
-								return {
-									...comment,
-									replies: (comment?.replies || []).map((reply) => {
-										if (reply?.id === replyId) {
-											return {
-												...reply,
-												spam_users_count: reportData.spam_users_count
-											};
-										} else {
-											return {
-												...reply
-											};
-										}
-									})
-								};
-							} else {
-								return {
-									...comment
-								};
-							}
-						})
+						comments: handleSpamReply(prev.comments, commentId || '')
 					};
 				}
 			});

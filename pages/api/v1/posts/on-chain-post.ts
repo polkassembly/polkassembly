@@ -22,8 +22,13 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
+import { getSubsquareCommentsFromFirebase } from './comments/getOnlySubsquareComments';
+import { getSubSquareComments } from './comments/subsquare-comments';
+import { updateComments } from './comments/updateComments';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
+import dayjs from 'dayjs';
+import { getStatus } from './comments/getInitialComments';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -88,7 +93,8 @@ export interface IPIPsVoting {
 export interface IPostResponse {
 	post_reactions: IReactions;
 	timeline: any[];
-	comments: any[];
+	comments: any;
+	currentTimeline?:any;
 	content: string;
 	end?: number;
 	delay?: number;
@@ -338,6 +344,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
 			const commentsReactionsSnapshot = await commentDocRef.collection('comment_reactions').get();
 			const comment_reactions = getReactions(commentsReactionsSnapshot);
+			const user = (await firestore_db.collection('users').doc(String(data.user_id)).get()).data();
 
 			if (typeof data.user_id === 'number') {
 				userIds.add(data.user_id);
@@ -350,6 +357,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 
 			const comment = {
 				comment_reactions: comment_reactions,
+				comment_source: data.comment_source || 'polkassembly',
 				content: data.content,
 				created_at: data.created_at?.toDate ? data.created_at.toDate(): data.created_at,
 				history: history,
@@ -357,8 +365,9 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				is_custom_username: false,
 				post_index: postIndex,
 				post_type: postType,
-				proposer: '',
-				replies: [] as any[],
+				profile: user?.profile || null,
+				proposer: data.proposer || '',
+				replies: data.replies || [] as any[],
 				sentiment:data.sentiment || 0,
 				spam_users_count: 0,
 				updated_at: getUpdatedAt(data),
@@ -414,7 +423,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 						reportsQuery.docs.map((doc) => {
 							if (doc && doc.exists) {
 								const data = doc.data();
-								comment.replies = comment.replies.map((v) => {
+								comment.replies = comment.replies.map((v:any) => {
 									if (v && v.id == data.content_id) {
 										return {
 											...v,
@@ -430,7 +439,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			}
 			return {
 				...comment,
-				replies: comment.replies.map((reply) => {
+				replies: comment.replies.map((reply:any) => {
 					return {
 						...reply,
 						spam_users_count: checkReportThreshold(Number(reply?.spam_users_count))
@@ -951,39 +960,41 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}
 		}
 
-		// Comments
+		// Comments;
 		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 			const commentPromises = post.timeline.map(async (timeline: any) => {
-				const post_index = (timeline.type === 'Tip'? timeline.hash: timeline.index);
-				const type = getFirestoreProposalType(timeline.type) as ProposalType;
-				const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
-				const commentsSnapshot = await postDocRef.collection('comments').get();
-				const comments = await getComments(commentsSnapshot, postDocRef, network, type, post_index);
-				return comments;
+				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+				const commentsCount = (await postDocRef.collection('comments').count().get()).data().count;
+				return { ...timeline, commentsCount };
 			});
-			const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
-			commentPromiseSettledResults.forEach((result) => {
-				if (result && result.status === 'fulfilled' && result.value && Array.isArray(result.value)) {
-					if (!post.comments || !Array.isArray(post.comments)) {
-						post.comments = [];
-					}
-					post.comments = post.comments.concat(result.value);
-				}
-			});
-		} else {
-			if (post.post_link) {
-				const { id, type } = post.post_link;
-				const postDocRef = postsByTypeRef(network, type).doc(String(id));
-				const commentsSnapshot = await postDocRef.collection('comments').get();
-				post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
-			}
-			const commentsSnapshot = await postDocRef.collection('comments').get();
-			const comments = await getComments(commentsSnapshot, postDocRef, network, (strProposalType.toString() === 'open_gov'? ProposalType.REFERENDUM_V2: strProposalType), (strProposalType === ProposalType.TIPS? strPostId: numPostId));
-			if (post.comments && Array.isArray(post.comments)) {
-				post.comments = post.comments.concat(comments);
-			} else {
-				post.comments = comments;
-			}
+			const timelines:Array<any> = await Promise.allSettled(commentPromises);
+			post.timeline = timelines.map(timeline => timeline.value);
+		}
+
+		// Update subsquare comments
+		const { data: commentIds } = await getSubsquareCommentsFromFirebase({ network, postId: postId as string, postType:proposalType as ProposalType });
+		let comments = await getSubSquareComments(proposalType as string, network, postId as string);
+		commentIds?.forEach(id => {
+			comments = comments.filter(comment => comment.id !== id);
+		});
+		if(comments.length > 0){
+			await updateComments(postId as string, network, proposalType as ProposalType, comments);
+		}
+
+		// get initial comments
+		// const initialCommentsData = await getInitialComments(post.timeline, network);
+		// post.comments = initialCommentsData?.comments;
+		const currentTimelineObj = post.timeline?.[0] || null;
+		if(currentTimelineObj){
+			post.currentTimeline = {
+				commentsCount: currentTimelineObj.commentsCount,
+				date: dayjs(currentTimelineObj?.created_at),
+				firstCommentId: '',
+				id: 1,
+				index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash,
+				status: getStatus(currentTimelineObj?.type),
+				type: currentTimelineObj?.type
+			};
 		}
 
 		// Post Reactions

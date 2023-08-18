@@ -63,6 +63,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				status: any;
 				track_number: any;
 				type: any;
+				isSpam?: boolean;
 		}[] = [];
 
 		let onChainPostsCount = 0;
@@ -108,13 +109,14 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					const data = postDoc?.data();
 					return {
 						...singlePost,
+						isSpam: data?.isSpam || false,
 						title: data?.title || title
 					};
 				}
 				return singlePost;
 
 			});
-			onChainPosts =await Promise.all(posts);
+			onChainPosts = await Promise.all(posts);
 			onChainPostsCount = Number(subsquidData?.proposalsConnection?.totalCount || 0);
 		}
 
@@ -297,6 +299,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					}
 					offChainPosts.push({
 						created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
+						isSpam: data?.isSpam || false,
 						post_id: data?.id,
 						proposer: '',
 						title: data?.title,

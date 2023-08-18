@@ -273,7 +273,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								<article className='flex items-start justify-start space-x-[44px] rounded-lg max-w-[480px] mt-[12px] p-3' style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}>
 									<div className='flex flex-col items-center justify-center'>
 										<p className='mt-[2px] m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
-											<p className="leading-[13px] font-semibold">Voter</p>
+											<p className="leading-[12px] font-semibold">Voter</p>
 											<div className="leading-[24px] flex items-center justify-start">
 												<DefaultProfile style={{ height: '20px', width: '20px' }} />
 												<p className="mt-2 text-xs ml-2 text-sidebarBlue">DDUX..c..</p>
@@ -282,13 +282,13 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 									</div>
 									<div className='flex flex-col items-center justify-center '>
 										<p className='m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
-											<p className="leading-[20px] font-semibold">Amount</p>
+											<p className="leading-[21px] font-semibold">Amount</p>
 											<span className="leading-[24px] text-xs item-start text-sidebarBlue">11.27 KSM</span>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center '>
 										<p className='m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
-											<p className="leading-[20px] font-semibold">Conviction</p>
+											<p className="leading-[21px] font-semibold">Conviction</p>
 											<span className="leading-[24px] text-xs text-sidebarBlue">4x</span>
 										</p>
 									</div>

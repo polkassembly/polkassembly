@@ -201,7 +201,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					>
 						<section className='flex flex-col gap-y-6'>
 							<div className='mt-3 -mx-6' style={{ borderTop: '1px solid #E1E6EB' }}>
-								<p className='text-bodyBlue font-normal text-sm leading-[18px] m-0 p-0 mt-5 px-6'>
+								<p className='text-bodyBlue font-medium text-sm leading-[18px] m-0 p-0 mt-5 px-6'>
 									Votes are calculated by multiplying the votes casted by a user with the conviction period.
 								</p>
 							</div>
@@ -270,37 +270,37 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								<div style={{ borderTop: '1.5px dashed #D2D8E0' }}>
 									<p className='font-medium text-sm leading-[18px] text-sidebarBlue m-0 p-0 mt-5'>Here,</p>
 								</div>
-								<article className='flex items-start justify-start p-3 space-x-[44px] rounded-lg max-w-[480px]' style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}>
-									<div className='flex flex-col items-center justify-center gap-y-15'>
-										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col'>
-											<p className="leading-[24px] font-semibold">Voter</p>
+								<article className='flex items-start justify-start space-x-[44px] rounded-lg max-w-[480px]' style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}>
+									<div className='flex flex-col items-center justify-center'>
+										<p className='m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
+											<p className="leading-[21px] font-semibold">Voter</p>
 											<div className="leading-[24px] flex items-center justify-start">
-												<DefaultProfile style={{ borderRadius: '50%', height: '20px', width: '20px' }} />
+												<DefaultProfile style={{ height: '20px', width: '20px' }} />
 												<p className="mt-2 text-xs ml-2 text-sidebarBlue">DDUX..c..</p>
 											</div>
 										</p>
 									</div>
-									<div className='flex flex-col items-center justify-center gap-y-3 ml-[44px]'>
-										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col'>
+									<div className='flex flex-col items-center justify-center '>
+										<p className='m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
 											<p className="leading-[24px] font-semibold">Amount</p>
-											<span className="leading-[24px] mt-2 text-xs item-start text-sidebarBlue">11.27 KSM</span>
+											<span className="leading-[24px] text-xs item-start text-sidebarBlue">11.27 KSM</span>
 										</p>
 									</div>
-									<div className='flex flex-col items-center justify-center gap-y-3 ml-[44px]'>
-										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col'>
+									<div className='flex flex-col items-center justify-center '>
+										<p className='m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
 											<p className="leading-[24px] font-semibold">Conviction</p>
-											<span className="leading-[24px] mt-2 text-xs text-sidebarBlue">4x</span>
+											<span className="leading-[24px] text-xs text-sidebarBlue">4x</span>
 										</p>
 									</div>
-									<div className='flex flex-col items-center justify-center gap-y-3 ml-[44px]'>
-										<p className='m-0 p-0 text-sm text-bodyBlue font-normal leading-[15px] flex flex-col'>
-											<p className="leading-[24px] font-semibold">Vote</p>
-											<DislikeFilled className="leading-[24px] mt-2 text-xl" style={{ color: '#F53C3C' }}/>
+									<div className='flex flex-col items-center justify-center '>
+										<p className='m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
+											<p className="leading-[25px] font-semibold">Vote</p>
+											<DislikeFilled className="leading-[24px] text-xl" style={{ color: '#F53C3C' }}/>
 										</p>
 									</div>
 								</article>
 							</div>
-							<p className='p-0 m-0 text-bodyBlue font-normal text-sm leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount)*4 (conviction)</span> to get the final vote.</p>
+							<p className='p-0 m-0 text-sidebarBlue font-medium text-sm leading-[18px]'>The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount)*4 (conviction)</span> to get the final vote.</p>
 						</section>
 					</Modal>
 				</section>

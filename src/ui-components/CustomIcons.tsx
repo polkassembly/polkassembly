@@ -435,7 +435,6 @@ export const WebIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={WebSVG} {...props} />
 );
 
-
 export const CopyIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={CopySVG} {...props} />
 );

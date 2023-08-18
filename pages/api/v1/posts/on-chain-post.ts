@@ -976,9 +976,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				date: dayjs(currentTimelineObj?.created_at),
 				firstCommentId: '',
 				id: 1,
-				index: currentTimelineObj?.index.toString(),
+				index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash,
 				status: getStatus(currentTimelineObj?.type),
-				type:currentTimelineObj?.type
+				type: currentTimelineObj?.type
 			};
 		}
 

@@ -16,16 +16,16 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
+import { getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
-import { getInitialComments } from './comments/getInitialComments';
 
 interface IGetOffChainPostParams {
 	network: string;
 	postId?: string | string[] | number;
 	proposalType: OffChainProposalType | string | string[];
 	isExternalApiCall?: boolean;
+	noComments?:boolean
 }
 
 export const getUpdatedAt = (data: any) => {
@@ -42,7 +42,7 @@ export const getUpdatedAt = (data: any) => {
 
 export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<IApiResponse<IPostResponse>> {
 	try {
-		const { network, postId, proposalType, isExternalApiCall } = params;
+		const { network, postId, proposalType, isExternalApiCall, noComments= true } = params;
 		if (postId === undefined || postId === null) {
 			throw apiErrorWithStatusCode('Please send postId', 400);
 		}
@@ -178,20 +178,53 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 		post.timeline = [...timeline, ...(post.timeline? post.timeline: [])];
 
 		// Comments
-		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
-			const commentPromises = post.timeline.map(async (timeline: any) => {
-				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
-				const commentsCount = (await postDocRef.collection('comments').get()).size;
-				return { ...timeline, commentsCount };
-			});
-			const timelines:Array<any>  = await Promise.allSettled(commentPromises);
-			post.timeline = timelines.map(timeline => timeline.value);
+		if(noComments){
+			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+				const commentPromises = post.timeline.map(async (timeline: any) => {
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					const commentsCount = (await postDocRef.collection('comments').get()).size;
+					return { ...timeline, commentsCount };
+				});
+				const timelines:Array<any>  = await Promise.allSettled(commentPromises);
+				post.timeline = timelines.map(timeline => timeline.value);
+			}
 		}
-
-		// get initial comments
-		const initialCommentsData = await getInitialComments(post.timeline, network );
-		post.comments = initialCommentsData?.comments;
-		post.currentTimeline = initialCommentsData?.currentTimeline;
+		else{
+			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+				const commentPromises = post.timeline.map(async (timeline: any) => {
+					const type = getFirestoreProposalType(timeline.type) as ProposalType;
+					const index = timeline.type === 'Tips'? timeline.hash: timeline.index;
+					const postDocRef = postsByTypeRef(network, type).doc(String(index));
+					const commentsSnapshot = await postDocRef.collection('comments').get();
+					const comments = await getComments(commentsSnapshot, postDocRef, network, type, index);
+					return comments;
+				});
+				const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
+				commentPromiseSettledResults.forEach((result) => {
+					if (result && result.status === 'fulfilled' && result.value && Array.isArray(result.value)) {
+						if (!post.comments || !Array.isArray(post.comments)) {
+							post.comments = [];
+						}
+						post.comments = post.comments.concat(result.value);
+					}
+				});
+			} else {
+				if (post.post_link) {
+					const { id, type } = post.post_link;
+					const postDocRef = postsByTypeRef(network, type).doc(String(id));
+					const commentsSnapshot = await postDocRef.collection('comments').get();
+					post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
+				}
+				const commentsSnapshot = await postDocRef.collection('comments').get();
+				const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType, Number(postId));
+				if (post.comments && Array.isArray(post.comments)) {
+					post.comments = post.comments.concat(comments);
+				} else {
+					post.comments = comments;
+				}
+			}
+			post.comments_count = post.comments.length;
+		}
 
 		await getContentSummary(post, network, isExternalApiCall);
 		return {
@@ -218,6 +251,7 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	const { data, error, status } = await getOffChainPost({
 		isExternalApiCall: true,
 		network,
+		noComments:false,
 		postId,
 		proposalType
 	});

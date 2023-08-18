@@ -15,6 +15,7 @@ import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IPostTag, Post } from '~src/types';
+import isContentBlacklisted from '~src/util/isContentBlacklisted';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
@@ -24,6 +25,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	const { content, proposalType, title, topicId, userId ,gov_type,tags } = req.body;
 	if(!content || !title || !topicId || !userId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
+
+	if(typeof content !== 'string' || typeof title !== 'string' || isContentBlacklisted(title) || isContentBlacklisted(content)) {
+		return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
+	}
 
 	if(tags && !Array.isArray(tags)) return  res.status(400).json({ message: 'Invalid tags parameter' });
 

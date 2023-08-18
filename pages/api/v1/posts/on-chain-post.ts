@@ -116,6 +116,7 @@ interface IGetOnChainPostParams {
 	voterAddress?: string | string[];
 	proposalType: string | string[];
 	isExternalApiCall?: boolean;
+	noComments?: boolean;
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -550,7 +551,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 
 export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IApiResponse<IPostResponse>> {
 	try {
-		const { network, postId, voterAddress, proposalType, isExternalApiCall } = params;
+		const { network, postId, voterAddress, proposalType, isExternalApiCall, noComments = true } = params;
 		const netDocRef = networkDocRef(network);
 
 		const numPostId = Number(postId);
@@ -945,15 +946,65 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			}
 		}
 
-		// Comments;
-		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
-			const commentPromises = post.timeline.map(async (timeline: any) => {
-				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
-				const commentsCount = (await postDocRef.collection('comments').count().get()).data().count;
-				return { ...timeline, commentsCount };
-			});
-			const timelines:Array<any> = await Promise.allSettled(commentPromises);
-			post.timeline = timelines.map(timeline => timeline.value);
+		// Comments
+		if(noComments){
+			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+				const commentPromises = post.timeline.map(async (timeline: any) => {
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					const commentsCount = (await postDocRef.collection('comments').count().get()).data().count;
+					return { ...timeline, commentsCount };
+				});
+				const timelines:Array<any> = await Promise.allSettled(commentPromises);
+				post.timeline = timelines.map(timeline => timeline.value);
+			}
+			const currentTimelineObj = post.timeline?.[0] || null;
+			if(currentTimelineObj){
+				post.currentTimeline = {
+					commentsCount: currentTimelineObj.commentsCount,
+					date: dayjs(currentTimelineObj?.created_at),
+					firstCommentId: '',
+					id: 1,
+					index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash,
+					status: getStatus(currentTimelineObj?.type),
+					type: currentTimelineObj?.type
+				};
+			}
+		}
+		else{
+			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+				const commentPromises = post.timeline.map(async (timeline: any) => {
+					const post_index = (timeline.type === 'Tip'? timeline.hash: timeline.index);
+					const type = getFirestoreProposalType(timeline.type) as ProposalType;
+					const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
+					const commentsSnapshot = await postDocRef.collection('comments').get();
+					const comments = await getComments(commentsSnapshot, postDocRef, network, type, post_index);
+					return comments;
+				});
+				const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
+				commentPromiseSettledResults.forEach((result) => {
+					if (result && result.status === 'fulfilled' && result.value && Array.isArray(result.value)) {
+						if (!post.comments || !Array.isArray(post.comments)) {
+							post.comments = [];
+						}
+						post.comments = post.comments.concat(result.value);
+					}
+				});
+			} else {
+				if (post.post_link) {
+					const { id, type } = post.post_link;
+					const postDocRef = postsByTypeRef(network, type).doc(String(id));
+					const commentsSnapshot = await postDocRef.collection('comments').get();
+					post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
+				}
+				const commentsSnapshot = await postDocRef.collection('comments').get();
+				const comments = await getComments(commentsSnapshot, postDocRef, network, (strProposalType.toString() === 'open_gov'? ProposalType.REFERENDUM_V2: strProposalType), (strProposalType === ProposalType.TIPS? strPostId: numPostId));
+				if (post.comments && Array.isArray(post.comments)) {
+					post.comments = post.comments.concat(comments);
+				} else {
+					post.comments = comments;
+				}
+			}
+			post.comments_count = post.comments.length;
 		}
 
 		// Update subsquare comments
@@ -964,22 +1015,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		});
 		if(comments.length > 0){
 			await updateComments(postId as string, network, proposalType as ProposalType, comments);
-		}
-
-		// get initial comments
-		// const initialCommentsData = await getInitialComments(post.timeline, network);
-		// post.comments = initialCommentsData?.comments;
-		const currentTimelineObj = post.timeline?.[0] || null;
-		if(currentTimelineObj){
-			post.currentTimeline = {
-				commentsCount: currentTimelineObj.commentsCount,
-				date: dayjs(currentTimelineObj?.created_at),
-				firstCommentId: '',
-				id: 1,
-				index: currentTimelineObj?.index.toString(),
-				status: getStatus(currentTimelineObj?.type),
-				type:currentTimelineObj?.type
-			};
 		}
 
 		// Post Reactions
@@ -1051,6 +1086,7 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	const { data, error, status } = await getOnChainPost({
 		isExternalApiCall: true,
 		network,
+		noComments:false,
 		postId,
 		proposalType,
 		voterAddress

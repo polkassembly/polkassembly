@@ -21,7 +21,7 @@ import { ErrorState } from '~src/ui-components/UIStates';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
-	if (!trackStatus) {
+	if (!trackStatus && !filterBy) {
 		return {
 			props: {},
 			redirect: {
@@ -39,7 +39,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const proposalType = ProposalType.OPEN_GOV;
 
 	const fetches = ['CustomStatusSubmitted', 'CustomStatusVoting', 'CustomStatusClosed', 'All'].reduce((prev: any, status) => {
-		const strTrackStatus = String(trackStatus);
+		const strTrackStatus = trackStatus ? String(trackStatus) : 'all';
+
 		if (status.toLowerCase().includes(strTrackStatus)) {
 			prev[strTrackStatus] = getOnChainPosts({
 				filterBy:filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy))))? JSON.parse(decodeURIComponent(String(filterBy))): [],

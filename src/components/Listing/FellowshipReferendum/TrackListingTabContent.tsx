@@ -52,6 +52,12 @@ const TrackListingTabContent: FC<ITrackListingTabContentProps> = (props) => {
 									created_at={post.created_at}
 									tags={post?.tags}
 									spam_users_count={post?.spam_users_count}
+									tally={post?.tally}
+									timeline={post?.timeline || []}
+									statusHistory={post?.status_history || []}
+									index={index}
+									proposalType={post?.type}
+									trackNumber={post?.track_no}
 								/>
 							</Link>}
 						</div>

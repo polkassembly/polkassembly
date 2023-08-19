@@ -95,6 +95,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin for spending (any amount of) funds.',
 			'group': 'Treasury',
 			'name': 'treasurer',
+			'maxSpend': 333333,
 			'maxDeciding': 10,
 			'decisionDeposit': 33333333333000,
 			'preparePeriod': 1200,
@@ -277,6 +278,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin able to spend up to 1 KSM from the treasury at once.',
 			'group': 'Treasury',
 			'name': 'small_tipper',
+			'maxSpend': 1,
 			'maxDeciding': 200,
 			'decisionDeposit': 33333333333,
 			'preparePeriod': 10,
@@ -303,6 +305,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin able to spend up to 5 KSM from the treasury at once.',
 			'group': 'Treasury',
 			'name': 'big_tipper',
+			'maxSpend': 5,
 			'maxDeciding': 100,
 			'decisionDeposit': 333333333330,
 			'preparePeriod': 100,
@@ -329,6 +332,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin able to spend up to 333 KSM from the treasury at once.',
 			'group': 'Treasury',
 			'name': 'small_spender',
+			'maxSpend': 333,
 			'maxDeciding': 50,
 			'decisionDeposit': 3333333333300,
 			'preparePeriod': 2400,
@@ -355,6 +359,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin able to spend up to 3,333 KSM from the treasury at once.',
 			'group': 'Treasury',
 			'name': 'medium_spender',
+			'maxSpend': 3333,
 			'maxDeciding': 50,
 			'decisionDeposit': 6666666666600,
 			'preparePeriod': 2400,
@@ -381,6 +386,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin able to spend up to 33,333 KSM from the treasury at once.',
 			'group': 'Treasury',
 			'name': 'big_spender',
+			'maxSpend': 33333,
 			'maxDeciding': 50,
 			'decisionDeposit': 13333333333200,
 			'preparePeriod': 2400,
@@ -747,6 +753,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin for spending (any amount of) funds until the upper limit of  10,000,000 DOT',
 			'group': 'Treasury',
 			'name': 'treasurer',
+			'maxSpend': 10000000,
 			'maxDeciding': 10,
 			'decisionDeposit': 10000000000000,
 			'preparePeriod': 1200,
@@ -929,6 +936,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin able to spend up to 250 DOT from the treasury at once',
 			'group': 'Treasury',
 			'name': 'small_tipper',
+			'maxSpend': 250,
 			'maxDeciding': 200,
 			'decisionDeposit': 10000000000,
 			'preparePeriod': 10,
@@ -955,6 +963,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin able to spend up to 1000 DOT from the treasury at once',
 			'group': 'Treasury',
 			'name': 'big_tipper',
+			'maxSpend': 1000,
 			'maxDeciding': 100,
 			'decisionDeposit': 100000000000,
 			'preparePeriod': 100,
@@ -981,6 +990,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin able to spend up to 10,000 DOT from the treasury at once',
 			'group': 'Treasury',
 			'name': 'small_spender',
+			'maxSpend': 10000,
 			'maxDeciding': 50,
 			'decisionDeposit': 1000000000000,
 			'preparePeriod': 2400,
@@ -1007,6 +1017,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin able to spend up to 100,000 DOT from the treasury at once',
 			'group': 'Treasury',
 			'name': 'medium_spender',
+			'maxSpend': 100000,
 			'maxDeciding': 50,
 			'decisionDeposit': 2000000000000,
 			'preparePeriod': 2400,
@@ -1033,6 +1044,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin able to spend up to 1,000,000 DOT from the treasury at once',
 			'group': 'Treasury',
 			'name': 'big_spender',
+			'maxSpend': 1000000,
 			'maxDeciding': 50,
 			'decisionDeposit': 4000000000000,
 			'preparePeriod': 2400,
@@ -1139,6 +1151,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin for spending (any amount of) funds.',
 			'group': 'Treasury',
 			'name': 'treasurer',
+			'maxSpend': -1,
 			'maxDeciding': 10,
 			'decisionDeposit': '0x000000000000000000470de4df820000',
 			'preparePeriod': 3600,
@@ -1503,6 +1516,138 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		}
 	},
 	moonriver: {
+		[PostOrigin.ROOT] : {
+			'trackId': 0,
+			'description': 'Origin for General network-wide improvements',
+			'group': 'Main',
+			'name': 'root',
+			'maxDeciding': 5,
+			'decisionDeposit': '0x000000000000152d02c7e14af6800000',
+			'preparePeriod': 7200,
+			'decisionPeriod': 100800,
+			'confirmPeriod': 7200,
+			'minEnactmentPeriod': 7200,
+			'minApproval': {
+				'reciprocal': {
+					'factor': 999999999,
+					'xOffset': 999999999,
+					'yOffset': 0
+				}
+			},
+			'minSupport': {
+				'linearDecreasing': {
+					'length': 1000000000,
+					'floor': 5000000,
+					'ceil': 250000000
+				}
+			}
+		},
+		[PostOrigin.WHITELISTED_CALLER] : {
+			'trackId': 1,
+			'description': 'Origin able to dispatch a whitelisted call.',
+			'group': 'Whitelist',
+			'name': 'whitelisted_caller',
+			'maxDeciding': 100,
+			'decisionDeposit': '0x000000000000021e19e0c9bab2400000',
+			'preparePeriod': 50,
+			'decisionPeriod': 100800,
+			'confirmPeriod': 50,
+			'minEnactmentPeriod': 150,
+			'minApproval': {
+				'reciprocal': {
+					'factor': 999999999,
+					'xOffset': 999999999,
+					'yOffset': 0
+				}
+			},
+			'minSupport': {
+				'reciprocal': {
+					'factor': 60061,
+					'xOffset': 2994150,
+					'yOffset': -59882
+				}
+			}
+		},
+		[PostOrigin.GENERAL_ADMIN] : {
+			'trackId': 2,
+			'description': 'Origin for managing the registrar.',
+			'group': 'Governance',
+			'name': 'general_admin',
+			'maxDeciding': 10,
+			'decisionDeposit': '0x000000000000001b1ae4d6e2ef500000',
+			'preparePeriod': 300,
+			'decisionPeriod': 100800,
+			'confirmPeriod': 7200,
+			'minEnactmentPeriod': 7200,
+			'minApproval': {
+				'reciprocal': {
+					'factor': 999999999,
+					'xOffset': 999999999,
+					'yOffset': 0
+				}
+			},
+			'minSupport': {
+				'reciprocal': {
+					'factor': 222222224,
+					'xOffset': 333333335,
+					'yOffset': -166666668
+				}
+			}
+		},
+		[PostOrigin.REFERENDUM_CANCELLER] : {
+			'trackId': 3,
+			'description': 'Origin able to cancel referenda.',
+			'group': 'Governance',
+			'name': 'referendum_canceller',
+			'maxDeciding': 20,
+			'decisionDeposit': '0x000000000000021e19e0c9bab2400000',
+			'preparePeriod': 300,
+			'decisionPeriod': 100800,
+			'confirmPeriod': 900,
+			'minEnactmentPeriod': 50,
+			'minApproval': {
+				'reciprocal': {
+					'factor': 999999999,
+					'xOffset': 999999999,
+					'yOffset': 0
+				}
+			},
+			'minSupport': {
+				'reciprocal': {
+					'factor': 787400,
+					'xOffset': 1572327,
+					'yOffset': -786164
+				}
+			}
+		},
+		[PostOrigin.REFERENDUM_KILLER] : {
+			'trackId': 4,
+			'description': 'Origin able to kill referenda.',
+			'group': 'Governance',
+			'name': 'referendum_killer',
+			'maxDeciding': 100,
+			'decisionDeposit': '0x000000000000043c33c1937564800000',
+			'preparePeriod': 300,
+			'decisionPeriod': 100800,
+			'confirmPeriod': 900,
+			'minEnactmentPeriod': 50,
+			'minApproval': {
+				'reciprocal': {
+					'factor': 999999999,
+					'xOffset': 999999999,
+					'yOffset': 0
+				}
+			},
+			'minSupport': {
+				'reciprocal': {
+					'factor': 869501,
+					'xOffset': 8620680,
+					'yOffset': -862069
+				}
+			}
+		}
+	},
+	moonbeam: {
 		[PostOrigin.ROOT] : {
 			'trackId': 0,
 			'description': 'Origin for General network-wide improvements',

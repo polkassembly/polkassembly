@@ -6,7 +6,7 @@ import { ClockCircleOutlined,LoadingOutlined } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Form, Modal, Spin, Tooltip } from 'antd';
+import { Button, Form, Modal, Skeleton, Spin, Tooltip } from 'antd';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -14,11 +14,9 @@ import { gov2ReferendumStatus, motionStatus, proposalStatus, referendumStatus } 
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
-
 import { useApiContext, useNetworkContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { ProposalType, getSubsquidProposalType, getVotingTypeFromProposalType } from '~src/global/proposalType';
 import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
-
 import ExtensionNotDetected from '../../ExtensionNotDetected';
 import { tipStatus } from '../Tabs/PostOnChainInfo';
 import BountyChildBounties from './Bounty/BountyChildBounties';
@@ -37,32 +35,40 @@ import EditProposalStatus from './TreasuryProposals/EditProposalStatus';
 import VotersList from './Referenda/VotersList';
 import ReferendaV2Messages from './Referenda/ReferendaV2Messages';
 import blockToTime from '~src/util/blockToTime';
-import { makeLinearCurve, makeReciprocalCurve } from './Referenda/util';
+import { getTrackFunctions } from './Referenda/util';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
 import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
 import Curves from './Referenda/Curves';
 import PostEditOrLinkCTA from './PostEditOrLinkCTA';
-import CloseIcon from '~assets/icons/close.svg';
-import { PlusOutlined } from '@ant-design/icons';
-import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
-import AbstainGray from '~assets/icons/abstain-gray.svg';
 import { useCurrentBlock } from '~src/hooks';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import BN from 'bn.js';
+import { formatBalance } from '@polkadot/util';
+import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import MoneyIcon from '~assets/icons/money-icon-gray.svg';
-import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
-import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import { EVoteDecisionType, ILastVote, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdown';
-import { formatBalance } from '@polkadot/util';
+import dynamic from 'next/dynamic';
+import { PlusOutlined } from '@ant-design/icons';
+import MoneyIcon from '~assets/icons/money-icon-gray.svg';
+import ConvictionIcon from '~assets/icons/conviction-icon-gray.svg';
+import SplitYellow from '~assets/icons/split-yellow-icon.svg';
+import CloseIcon from '~assets/icons/close.svg';
+import GraphicIcon from '~assets/icons/add-tags-graphic.svg';
+import AbstainGray from '~assets/icons/abstain-gray.svg';
+import { ApiPromise } from '@polkadot/api';
+import BigNumber from 'bignumber.js';
+
+const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
+	loading: () => <Skeleton active /> ,
+	ssr: false
+});
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined
@@ -74,6 +80,7 @@ interface IGovernanceSidebarProps {
 	tally?: any;
 	post: IPostResponse;
 	toggleEdit?: () => void;
+  trackName?: string;
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -111,40 +118,15 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 	return Math.min(gone / decisionPeriod, 1);
 }
 
-export function getTrackFunctions(trackInfo: any) {
-	let supportCalc: any = null;
-	let approvalCalc: any = null;
-	if (trackInfo) {
-		if (trackInfo.minApproval) {
-			if (trackInfo.minApproval.reciprocal) {
-				approvalCalc = makeReciprocalCurve(trackInfo.minApproval.reciprocal);
-			} else if (trackInfo.minApproval.linearDecreasing) {
-				approvalCalc = makeLinearCurve(trackInfo.minApproval.linearDecreasing);
-			}
-		}
-		if (trackInfo.minSupport) {
-			if (trackInfo.minSupport.reciprocal) {
-				supportCalc = makeReciprocalCurve(trackInfo.minSupport.reciprocal);
-			} else if (trackInfo.minSupport.linearDecreasing) {
-				supportCalc = makeLinearCurve(trackInfo.minSupport.linearDecreasing);
-			}
-		}
-	}
-	return {
-		approvalCalc,
-		supportCalc
-	};
-}
-
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, trackName } = props;
 	const [lastVote, setLastVote] = useState< ILastVote>();
 
 	const { network } = useNetworkContext();
 	const currentBlock = useCurrentBlock();
 	const { api, apiReady } = useApiContext();
 	const { loginAddress, defaultAddress, walletConnectProvider } = useUserDetailsContext();
-	const { postData: { created_at, track_number, post_link } } = usePostDataContext();
+	const { postData: { created_at, track_number, post_link, statusHistory } } = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
 
 	const [address, setAddress] = useState<string>('');
@@ -463,10 +445,41 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
 								const currentSupport = currentSupportData[currentSupportData.length - 1];
 
+								let newAPI: ApiPromise = api;
+								let approval: BigNumber | null = null;
+								let support: BigNumber | null = null;
+
+								try {
+									const status = (statusHistory || [])?.find((v) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
+									if (status) {
+										const blockNumber = status.block;
+										if (blockNumber) {
+											const hash = await api.rpc.chain.getBlockHash(blockNumber - 1);
+											newAPI = await api.at(hash) as ApiPromise;
+										}
+									}
+									if (newAPI) {
+										const issuanceInfo = await newAPI.query.balances.totalIssuance();
+										const referendaInfo = await newAPI.query.referenda.referendumInfoFor(onchainId);
+										const issuanceData = issuanceInfo.toJSON() as any;
+										const referendaInfoData = referendaInfo.toJSON() as any;
+										if (referendaInfoData?.ongoing?.tally) {
+											const ayes = typeof referendaInfoData.ongoing.tally.ayes === 'string'? new BigNumber(referendaInfoData.ongoing.tally.ayes.slice(2), 16): new BigNumber(referendaInfoData.ongoing.tally.ayes);
+											const nays = typeof referendaInfoData.ongoing.tally.nays === 'string'? new BigNumber(referendaInfoData.ongoing.tally.nays.slice(2), 16): new BigNumber(referendaInfoData.ongoing.tally.nays);
+											const supportBigNumber = typeof referendaInfoData.ongoing.tally.support === 'string'? new BigNumber(referendaInfoData.ongoing.tally.support.slice(2), 16): new BigNumber(referendaInfoData.ongoing.tally.support);
+											const issuance = typeof issuanceData === 'string'? new BigNumber(issuanceData.slice(2), 16): new BigNumber(issuanceData);
+											support = supportBigNumber.div(issuance).multipliedBy(100);
+											approval = ayes.div(ayes.plus(nays)).multipliedBy(100);
+										}
+									}
+								} catch (error) {
+									// console.log(error);
+								}
+
 								setProgress({
-									approval: currentApproval?.y?.toFixed(1) as any,
+									approval: approval? approval.toFormat(2, BigNumber.ROUND_UP): currentApproval?.y?.toFixed(1) as any,
 									approvalThreshold: (approvalData.find((data) => data && data?.x >= currentApproval?.x)?.y as any) || 0,
-									support: currentSupport?.y?.toFixed(1) as any,
+									support: support? support.toFormat(2, BigNumber.ROUND_UP): currentSupport?.y?.toFixed(1) as any,
 									supportThreshold: (supportData.find((data) => data && data?.x >= currentSupport?.x)?.y as any) || 0
 								});
 							}
@@ -532,7 +545,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			};
 			getData();
 		}
-	}, [api, apiReady, created_at, network, onchainId, proposalType, track_number]);
+	}, [api, apiReady, created_at, network, onchainId, proposalType, statusHistory, track_number]);
 
 	useEffect(() => {
 		if (trackInfo) {
@@ -677,6 +690,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							<PostEditOrLinkCTA />
 						</>
 					}
+					{/* decision deposite placed. */}
+					{(statusHistory && statusHistory?.filter((status: any) => status.status === gov2ReferendumStatus.DECISION_DEPOSIT_PLACED)?.length === 0) && (statusHistory?.filter((status: any) => status?.status === gov2ReferendumStatus.TIMEDOUT)?.length === 0) && trackName && <DecisionDepositCard trackName={String(trackName)} />}
 
 					{canEdit && graphicOpen && post_link && !(post.tags && Array.isArray(post.tags) && post.tags.length > 0) && <div className=' rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] pb-[36px] mb-8'>
 						<div className='flex justify-end py-[17px] px-[20px] items-center' onClick={ () => setGraphicOpen(false)}>

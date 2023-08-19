@@ -28,7 +28,7 @@ import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
-// import OpenGovHeaderBanner from './OpenGovHeaderBanner';
+import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import PaLogo from './PaLogo';
 
 const { Content, Sider } = Layout;
@@ -358,9 +358,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		setSidedrawer(false);
 	};
 
-	const handleLogout = async () => {
+	const handleLogout = async (username: string) => {
 		logout(setUserDetailsContextState);
 		router.replace(router.asPath);
+		if(!router.query?.username) return;
+		if(router.query?.username.includes(username)) {
+			router.replace('/');
+		}
 	};
 
 	const userDropdown = getUserDropDown(handleLogout, picture, username!);
@@ -388,7 +392,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						setSidedrawer(true);
 						setTimeout(() => {
 							setSidedrawerHover(true);
-						}, 200)}}
+						}, 200);}}
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' , zIndex:1001 }}
 					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed'}
 				>

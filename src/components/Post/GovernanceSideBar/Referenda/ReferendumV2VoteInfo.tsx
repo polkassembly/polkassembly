@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Modal, Spin } from 'antd';
+import { Button, Modal, Spin } from 'antd';
 import { LoadingOutlined, InfoCircleOutlined, DislikeFilled } from '@ant-design/icons';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
@@ -90,9 +90,9 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 				<h6 className='text-bodyBlue font-medium text-xl leading-6 m-0 p-0'>Voting</h6>
 				<div className='flex items-center gap-x-2'>
 					{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && <PassingInfoTag status={status} isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}/>}
-					<button onClick={() => setVoteCalculationModalOpen(true)} className='border-none outline-none bg-transparent flex items-center cursor-pointer justify-center text-lg text-navBlue hover:text-pink_primary'>
+					<Button onClick={() => setVoteCalculationModalOpen(true)} className='border-none outline-none bg-transparent flex items-center cursor-pointer justify-center text-lg text-navBlue hover:text-pink_primary'>
 						<InfoCircleOutlined style={{ color: '#90A0B7' }} />
-					</button>
+					</Button>
 				</div>
 			</div>
 			<Spin spinning={ isLoading } indicator={<LoadingOutlined />}>
@@ -158,7 +158,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					}
 				</section>
 				<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] mt-[18px] pt-[18px] pb-[14px]'>
-					<button
+					<Button
 						className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
 						onClick={() => {
 							setOpen(true);
@@ -166,8 +166,8 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					>
 						<VotingHistoryIcon />
 						<span>Voting History</span>
-					</button>
-					<button
+					</Button>
+					<Button
 						className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
 						onClick={() => {
 							setThresholdOpen(true);
@@ -175,7 +175,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					>
 						<ThresholdGraphIcon />
 						<span>Threshold Data</span>
-					</button>
+					</Button>
 					<Modal
 						onCancel={() => {
 							setVoteCalculationModalOpen(false);
@@ -184,12 +184,12 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						footer={[
 							<div key='ok' className='mt-4 -mx-6' style={{ borderTop: '1.5px solid #E1E6EB' }}>
 								<div className='flex items-center justify-end mt-5 px-6'>
-									<button
+									<Button
 										className='border-none rounded-[4px] bg-pink_primary text-white font-medium text-sm flex w-[134px] h-[40px] py-[4px] px-[16px] flex-col justify-center items-center gap-10 flex-shrink-0'
 										onClick={() => setVoteCalculationModalOpen(false)}
 									>
 										Got It
-									</button>
+									</Button>
 								</div>
 							</div>
 						]}
@@ -266,11 +266,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 									</p>
 								</div>
 							</article>
-							<div className='flex flex-col justify-between'>
+							<div className='flex flex-col'>
 								<div style={{ borderTop: '1.5px dashed #D2D8E0' }}>
 									<p className='font-medium text-sm leading-[18px] text-sidebarBlue m-0 p-0 mt-5'>Here,</p>
 								</div>
-								<article className='flex items-start justify-start space-x-[44px] rounded-lg max-w-[480px] mt-[12px] p-3' style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}>
+								<article className='flex justify-between items-start space-x-[44px] rounded-lg max-w-[400px] mt-[12px] p-3' style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}>
 									<div className='flex flex-col items-center justify-center'>
 										<p className='mt-[2px] m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
 											<p className="leading-[12px] font-semibold">Voter</p>

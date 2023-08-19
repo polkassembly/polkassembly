@@ -37,11 +37,12 @@ const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 interface Props {
 	className?: string
 	sidedrawer: boolean
+	sidedrawerHover: boolean
   previousRoute?: string;
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedrawerHover } : Props) => {
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
 	const router = useRouter();
@@ -63,6 +64,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 			setSelectedGov(EGovType.OPEN_GOV);
 		}else{
 			setSelectedGov(EGovType.GOV1);
+
 		}
 
 	},[router]);
@@ -89,6 +91,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 			)
 		}
 	];
+	// const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
@@ -123,13 +126,14 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 		</Dropdown>
 	);
 	return (
-		<Header className={`${className} shadow-md z-[1001] sticky top-0 flex items-center bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
+		<Header className={`${className}  shadow-md ${sidedrawer?'z-1':'z-[1001]'}  sticky top-0 flex items-center  bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
+
 			<MenuOutlined className='lg:hidden mr-5' onClick={() => {
 				setSidedrawer(!sidedrawer);
 			}} />
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='' /></Link>
+					<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='' sidedrawer={false}/></Link>
 
 					<div className='flex items-center'>
 						{/* <span className='bg-pink_primary h-5 md:h-10 w-[1.5px] ml-[2px] mr-[8px] md:mr-[80px]'></span> */}
@@ -144,7 +148,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 						style={{
 							width: 'max-content'
 						}}
-						className='drop ml-16'
+						className={`drop ${sidedrawerHover?'ml-48':'ml-16'} `}
 						onChange={(e) => {
 							setSelectedGov(e);
 							if (e === 'open_gov') {
@@ -196,14 +200,13 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 							:<AuthDropdown>
 
 								<div className='flex items-center justify-between gap-x-2'>
-									{!web3signup ?<><span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' /></>
+									{!web3signup ?  <><span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' /> </>
 										:<Address address = {defaultAddress || ''}/>}
 
 								</div>
 							</AuthDropdown>
-
 						}
-						<div>
+						<div className='mr-0 lg:mr-10'>
 
 							<MenuDropdown>
 								<svg width="24" height="24" viewBox="0 0 24 24"  fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -307,13 +310,14 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 				<SignupPopup setLoginOpen={setLoginOpen} modalOpen={openSignup} setModalOpen={setSignupOpen} isModal={true} />
 				<LoginPopup setSignupOpen={setSignupOpen} modalOpen={openLogin} setModalOpen={setLoginOpen} isModal={true} />
 			</nav>
+
 		</Header>
 	);
 };
 
 export default styled(NavHeader)`
 .drop .ant-select-selector {
-
+    
 	box-sizing:none;
 	border:none !important;
 	box-shadow:none !important;

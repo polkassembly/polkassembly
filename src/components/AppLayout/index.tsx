@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+// import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
@@ -29,6 +29,7 @@ import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 // import OpenGovHeaderBanner from './OpenGovHeaderBanner';
+import PaLogo from './PaLogo';
 
 const { Content, Sider } = Layout;
 
@@ -49,49 +50,50 @@ function getSiderMenuItem(
 	} as MenuItem;
 }
 
-// const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
-// const dropdownMenuItems: ItemType[] = [
-// {
-// key: 'view profile',
-// label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
-// <UserOutlined />
-// <span>View Profile</span>
-// /Link>
-// },
-// {
-// key: 'settings',
-// label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
-// <SettingOutlined />
-// <span>Settings</span>
-// </Link>
-// },
-// {
-// key: 'logout',
-// label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' onClick={handleLogout} href='/'>
-// <LogoutOutlined />
-// <span>Logout</span>
-// </Link>
-// }
-// ];
+const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
+	// const dropdownMenuItems: ItemType[] = [
+	//{
+	//key: 'view profile',
+	//label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+	//<UserOutlined />
+	//<span>View Profile</span>
+	//</Link>
+	//},
+	//{
+	//key: 'settings',
+	//label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
+	//<SettingOutlined />
+	//<span>Settings</span>
+	///Link>
+	//},
+	//{
+	//key: 'logout',
+	//label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' onClick={handleLogout} href='/'>
+	//<LogoutOutlined />
+	//<span>Logout</span>
+	//</Link>
+	//}
+	//];
 
-// const AuthDropdown = ({ children }: {children: ReactNode}) => (
-//<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
-//{children}
-//</Dropdown>
-// );
-//return getSiderMenuItem(
-//<AuthDropdown>
-//<div className='flex items-center justify-between gap-x-2'>
-//<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
-//</div>
-//</AuthDropdown>,
-//'userMenu',
-//<AuthDropdown>
-//{img ? <Avatar className='-ml-2.5 mr-2' size={40} src={img} /> :
-//<Avatar className='-ml-2.5 mr-2' size={40} icon={<UserOutlined />} />
-// }
-// </AuthDropdown>);
-// };
+	// const AuthDropdown = ({ children }: {children: ReactNode}) => (
+	//<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
+	//{children}
+	//</Dropdown>
+	// );
+
+	// return getSiderMenuItem(
+	//<AuthDropdown>
+	//<div className='flex items-center justify-between gap-x-2'>
+	//<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
+	//</div>
+	//</AuthDropdown>,
+	//'userMenu',
+	// <AuthDropdown>
+	//{img ? <Avatar className='-ml-2.5 mr-2' size={40} src={img} /> :
+	//<Avatar className='-ml-2.5 mr-2' size={40} icon={<UserOutlined />} />
+	//}
+	// </AuthDropdown>);
+};
 
 interface Props {
 	Component: NextComponentType<NextPageContext, any, any>;
@@ -103,6 +105,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkContext();
 	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
+	const [sidedrawerHover, setSidedrawerHover] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 
@@ -181,6 +184,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let items: MenuProps['items'] = [
+		getSiderMenuItem('', '', <div className='svgLogo flex w-full items-center justify-center h-[80px] max-h-[60px]' style={{ borderBottom:'1px solid #D2D8E0' }}> <PaLogo className='' sidedrawer={sidedrawer} /></div>),
 		...gov1Items.overviewItems
 	];
 
@@ -274,6 +278,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let gov2OverviewItems = [
+		sidedrawer && getSiderMenuItem('', '', <div className='svgLogo flex w-full items-center justify-center h-[66px] max-h-[60px]' style={{ borderBottom:'1px solid  #D2D8E0' }}> <PaLogo className='h-full' sidedrawer={sidedrawer} /></div>),
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-white mt-1' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
@@ -283,7 +288,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	];
 
 	if(['kusama', 'polkadot'].includes(network)){
-		gov2OverviewItems.splice(1, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className= 'mt-1.5'/> ));
+		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className= 'mt-1.5'/> ));
 	}
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(2, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='text-white' />));
@@ -297,6 +302,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	const gov2Items:MenuProps['items'] = [
+
 		...gov2OverviewItems,
 		// Tracks Heading
 		getSiderMenuItem(<span className='text-lightBlue hover:text-navBlue ml-2 uppercase text-base font-medium'>Tracks</span>, 'tracksHeading', null),
@@ -352,12 +358,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		setSidedrawer(false);
 	};
 
-	// const handleLogout = async () => {
-	//logout(setUserDetailsContextState);
-	//router.replace(router.asPath);
-	// };
+	const handleLogout = async () => {
+		logout(setUserDetailsContextState);
+		router.replace(router.asPath);
+	};
 
-	// const userDropdown = getUserDropDown(handleLogout, picture, username!);
+	const userDropdown = getUserDropDown(handleLogout, picture, username!);
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
@@ -365,29 +371,39 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	}
 
-	// if(username) {
-	//sidebarItems = [userDropdown, ...sidebarItems];
-	// }
+	if(username) {
+		sidebarItems = [userDropdown, ...sidebarItems];
+	}
 
 	return (
 		<Layout className={className}>
-			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} previousRoute={previousRoute} />
+			<NavHeader sidedrawer={sidedrawer} sidedrawerHover={sidedrawerHover} setSidedrawer={setSidedrawer} previousRoute={previousRoute}  />
 			<Layout hasSider>
-				<Sider
+				<Sider 
 					trigger={null}
 					collapsible={false}
 					collapsed={true}
-					onMouseOver={() => setSidedrawer(true)}
-					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
-					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed z-40'}
+					onMouseOver={() =>{
+
+						setSidedrawer(true);
+						setTimeout(() => {
+							setSidedrawerHover(true);
+						}, 200)}}
+					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' , zIndex:1001 }}
+					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed'}
 				>
+					<div className='flex w-full items-center justify-center h-[60px] max-h-[60px]' style={{ borderBottom:'1px solid #D2D8E0', borderRight:'1px solid #D2D8E0' }}>
+
+						<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='' sidedrawer={false}/></Link>
+					</div>
+
 					<Menu
 						theme="light"
 						mode="inline"
 						selectedKeys={[router.pathname]}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username?'auth-sider-menu':''} mt-[60px]`}
+						className={`${username?'auth-sider-menu':''} mt-[15px]`}
 					/>
 				</Sider>
 				<Drawer
@@ -401,7 +417,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						height: '100vh',
 						left: 0,
 						position: 'fixed',
-						top: '60px'
+						top: 0
 					}}
 				>
 					<Menu
@@ -411,26 +427,29 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group']}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username?'auth-sider-menu':''} mt-[60px]`}
-						onMouseLeave={() => setSidedrawer(false)}
+						className={`${username?'auth-sider-menu':''} mt-[60px] logo-border`}
+						onMouseLeave={() => {setSidedrawer(false);
+							setTimeout(() => {
+								setSidedrawerHover(false);
+							}, 0);} 
+						}
 					/>
 				</Drawer>
 				{
-					// (([''].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
-					// <Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
-					// {/* Dummy Collapsed Sidebar for auto margins */}
-					// <OpenGovHeaderBanner />
-					// <div className='flex flex-row'>
-					// <div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
-					// <CustomContent Component={Component} pageProps={pageProps} />
-					// </div>
-					// </Layout>
-					// :
-					<Layout className={'min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] flex flex-row '}>
-						{/* Dummy Collapsed Sidebar for auto margins */}
-						<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
-						<CustomContent Component={Component} pageProps={pageProps} />
-					</Layout>
+					((['moonbeam', 'moonriver'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
+						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
+							{/* Dummy Collapsed Sidebar for auto margins */}
+							{/* <OpenGovHeaderBanner network={'moonbeam'} /> */}
+							<div className='flex flex-row'>
+								<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
+								<CustomContent Component={Component} pageProps={pageProps} />
+							</div>
+						</Layout>
+						: <Layout className={'min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] flex flex-row'}>
+							{/* Dummy Collapsed Sidebar for auto margins */}
+							<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
+							<CustomContent Component={Component} pageProps={pageProps} />
+						</Layout>
 				}
 			</Layout>
 			<Footer />
@@ -445,9 +464,24 @@ const CustomContent = memo(function CustomContent({ Component, pageProps } : Pro
 });
 
 export default styled(AppLayout)`
+.svgLogo svg{
+	height:60%;
+}
+.logo-border li:nth-child(1){
+	height:59px;
+    margin-left:-40px;
+	padding:0
+}
+.logo-border li:nth-child(1):hover{
+	background:transparent !important;
+}
+#rc-menu-uuid-75314-4-{
+	border-bottom:1px solid gray;
+}
 
 .ant-drawer .ant-drawer-mask{
 	position: fixed !important;
+	top:60px
 }
 
 .ant-drawer .ant-drawer-content{
@@ -511,7 +545,7 @@ margin-top: -17px !important;
 }
 
 .auth-sider-menu > li:first-child {
-  margin-bottom: 25px;
+//   margin-bottom: 25px;
   margin-top: 15px;
 }
 

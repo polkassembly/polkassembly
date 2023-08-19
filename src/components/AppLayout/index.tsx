@@ -4,12 +4,12 @@
 
 /* eslint-disable sort-keys */
 // import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps } from 'antd';
+import {  Drawer,  Layout, Menu, MenuProps } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { memo, ReactNode, useEffect, useState } from 'react';
+import React, { memo,  useEffect, useState } from 'react';
 import { isExpired } from 'react-jwt';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
@@ -28,7 +28,7 @@ import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import OpenGovHeaderBanner from './OpenGovHeaderBanner';
+// import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import PaLogo from './PaLogo';
 
 const { Content, Sider } = Layout;
@@ -50,7 +50,8 @@ function getSiderMenuItem(
 	} as MenuItem;
 }
 
-const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getUserDropDown = (_handleLogout: any, img?: string | null, username?: string): MenuItem => {
 	// const dropdownMenuItems: ItemType[] = [
 	//{
 	//key: 'view profile',
@@ -278,7 +279,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let gov2OverviewItems = [
-		sidedrawer && getSiderMenuItem('', '', <div className='svgLogo flex w-full items-center justify-center h-[66px] max-h-[60px]' style={{ borderBottom:'1px solid  #D2D8E0' }}> <PaLogo className='h-full' sidedrawer={sidedrawer} /></div>),
+		getSiderMenuItem('', '', <div className='svgLogo flex w-full items-center justify-center h-[66px] max-h-[60px]' style={{ borderBottom:'1px solid  #D2D8E0' }}> {sidedrawer && <PaLogo className='h-full' sidedrawer={sidedrawer} />}</div>),
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-white mt-1' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
@@ -383,11 +384,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		<Layout className={className}>
 			<NavHeader sidedrawer={sidedrawer} sidedrawerHover={sidedrawerHover} setSidedrawer={setSidedrawer} previousRoute={previousRoute}  />
 			<Layout hasSider>
-				<Sider 
+				<Sider
 					trigger={null}
 					collapsible={false}
 					collapsed={true}
-					onMouseOver={() =>{
+					onMouseOver={() => {
 
 						setSidedrawer(true);
 						setTimeout(() => {
@@ -435,7 +436,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onMouseLeave={() => {setSidedrawer(false);
 							setTimeout(() => {
 								setSidedrawerHover(false);
-							}, 0);} 
+							}, 0);}
 						}
 					/>
 				</Drawer>
@@ -561,6 +562,9 @@ margin-top: -17px !important;
 .sidebar .ant-menu-item-selected .anticon {
 	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 }
+//  .ant-menu-item:first-child{
+// margin: -15px !important;
+// }
 
 .sidebar .ant-menu-item-selected .opacity {
   background-color: var(--pink_primary) !important;

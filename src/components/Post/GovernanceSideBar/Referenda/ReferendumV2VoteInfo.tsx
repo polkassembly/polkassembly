@@ -266,7 +266,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 									</p>
 								</div>
 							</article>
-							<div className='flex flex-col gap-y-3'>
+							<div className='flex flex-col justify-between'>
 								<div style={{ borderTop: '1.5px dashed #D2D8E0' }}>
 									<p className='font-medium text-sm leading-[18px] text-sidebarBlue m-0 p-0 mt-5'>Here,</p>
 								</div>

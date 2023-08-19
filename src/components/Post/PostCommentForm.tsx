@@ -27,7 +27,7 @@ interface IPostCommentFormProps {
 	isUsedInSuccessModal?: boolean;
 	voteDecision? :string
 	setSuccessModalOpen?: (pre: boolean) => void;
-  setCurrentState?:(postId: string, type:string, comment: IComment) => void;
+setCurrentState?:(postId: string, type:string, comment: IComment) => void;
 }
 
 const commentKey = () => `comment:${global.window.location.href}`;
@@ -44,6 +44,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [isComment,setIsComment]=useState(false);
 	const [sentiment,setSentiment]=useState<number>(3);
 	const [isSentimentPost,setIsSentimentPost]=useState(false);
+	const [textBoxHeight,setTextBoxHeight] = useState(40);
 
 	const onContentChange = (content: string) => {
 		setContent(content);
@@ -79,6 +80,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			sentiment:isSentimentPost?sentiment:0,
 			userId: id
 		});
+		console.log('data',data);
 
 		if(error || !data) {
 			setError(error || 'No data returned from the saving comment query');
@@ -123,7 +125,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				updated_at: new Date(),
 				user_id: id as any,
 				username: username || '',
-        vote:voteDecision
+				vote:voteDecision
 			};
 			setCurrentState && setCurrentState(postIndex.toString(), getSubsquidProposalType(postType as any), comment);
 		}
@@ -132,6 +134,29 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		setIsSentimentPost(false);
 		setSentiment(3);
 	};
+
+	function adjustHeightByString(inputString:any) {
+		const increment = 50;
+		const heightIncrement = 15;
+
+		let currentHeight = 40;
+
+		const updateHeight = () => {
+			currentHeight += heightIncrement;
+			setTextBoxHeight(currentHeight);
+		};
+
+		if (inputString.length > increment) {
+			const stringLengthMultiple = Math.floor(inputString.length / increment);
+			currentHeight = 40 + stringLengthMultiple * heightIncrement;
+		}
+
+		if (inputString.length % increment === 0) {
+			updateHeight();
+		}
+		console.log(currentHeight);
+		return currentHeight;
+	}
 	useEffect(() => {
 		isComment && handleSave();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -169,8 +194,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 							isUsedInSuccessModal && <Form.Item name='content' className='w-full'>
 								<Input
 									name='content'
-									className={'w-full h-[40px] border-[1px] rounded-[4px] text-sm mt-0 suffixColor hover:border-pink_primary flex-1'}
-									onChange = {(e) => onContentChange(e.target.value)}
+									className={`w-full h-[${textBoxHeight}px] border-[1px] rounded-[4px] text-sm mt-0 suffixColor hover:border-pink_primary flex-1`}
+									onChange = {(e) => {onContentChange(e.target.value);adjustHeightByString(e.target.value);}}
 									placeholder={'Type your comment here'}
 								/>
 							</Form.Item>

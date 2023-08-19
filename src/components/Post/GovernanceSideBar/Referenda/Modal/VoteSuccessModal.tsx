@@ -8,7 +8,7 @@ import CloseIcon from '~assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
-import { useNetworkContext } from '~src/context';
+import { useCommentsContext, useNetworkContext } from '~src/context';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
@@ -59,6 +59,7 @@ const VoteInitiatedModal = ({
 	icon
 }: Props) => {
 	const { network } = useNetworkContext();
+	const { setComments } = useCommentsContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	useEffect(() => {
 		if (!network) return;
@@ -248,7 +249,7 @@ const VoteInitiatedModal = ({
 				<QuoteLeft className='absolute right-[0px] w-[34px] h-[25px] top-[-10px]' />
 				<Corner className='absolute bottom-[-16px] left-[-7px]' />
 				<p className='text-lightBlue text-[14px] font-medium ml-6 mr-4 mb-[5px] pt-4'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
-				<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} voteDecision={vote} setSuccessModalOpen={setOpen}/>
+				<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} setCurrentState={setComments} voteDecision={vote} setSuccessModalOpen={setOpen}/>
 			</div>
 		</Modal>
 	);

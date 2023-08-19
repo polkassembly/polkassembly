@@ -7,7 +7,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { useNetworkContext, usePostDataContext } from '~src/context';
+import { useNetworkContext, usePostDataContext ,useCommentsContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 
 import PostCommentForm from '../PostCommentForm';
@@ -31,6 +31,7 @@ import Loader from '~src/ui-components/Loader';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRouter } from 'next/router';
 import { getCommentsWithId } from './utils/getPostCommentsWithId';
+//import { CommentsContextProvider } from '~src/context/CommentsContextContext';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -99,13 +100,13 @@ const getLastDocs = (comments: {[index:string]:Array<IComment>}) => {
 
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
-	const { postData: { comments:initialComments, postType, timeline, created_at, currentTimeline:initialCurrentTimeline } } = usePostDataContext();
+	const { postData: { postType, timeline, created_at, currentTimeline:initialCurrentTimeline } } = usePostDataContext();
 	const targetOffset = 10;
 	const [timelines, setTimelines] = useState<ITimeline[]>([]);
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [filteredSentiment, setFilteredSentiment] = useState<IFilteredSentiment>({ active: false, sentiment: 0 });
-	const [comments, setComments] = useState<{[index:string]:Array<IComment>}>(initialComments);
+	const { comments, setComments } =  useCommentsContext();//useState<{[index:string]:Array<IComment>}>(useCommentsContext);
 	const [showOverallSentiment, setShowOverallSentiment] = useState<boolean>(true);
 	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
 	const [loading, setLoading] = useState(true);
@@ -125,7 +126,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			return;
 		}
 	};
-
+// 	const { comments } = useCommentsContext();
+// console.log('com ',comments);
 	const handleSetFilteredComments = (sentiment: ESentiments | 0) => {
 		setFilteredSentiment((pre) => pre.sentiment === sentiment && pre.active === true ? { ...pre, active: false } : { active: true, sentiment: sentiment });
 	};

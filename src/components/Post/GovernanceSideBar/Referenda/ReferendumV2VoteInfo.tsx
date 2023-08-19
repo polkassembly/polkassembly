@@ -90,9 +90,9 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 				<h6 className='text-bodyBlue font-medium text-xl leading-6 m-0 p-0'>Voting</h6>
 				<div className='flex items-center gap-x-2'>
 					{['Executed', 'Confirmed', 'Approved', 'TimedOut', 'Cancelled', 'Rejected'].includes(status) && <PassingInfoTag status={status} isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}/>}
-					<span onClick={() => setVoteCalculationModalOpen(true)} className='border-none outline-none bg-transparent flex items-center cursor-pointer justify-center text-lg text-navBlue hover:text-pink_primary'>
+					<button onClick={() => setVoteCalculationModalOpen(true)} className='border-none outline-none bg-transparent flex items-center cursor-pointer justify-center text-lg text-navBlue hover:text-pink_primary'>
 						<InfoCircleOutlined style={{ color: '#90A0B7' }} />
-					</span>
+					</button>
 				</div>
 			</div>
 			<Spin spinning={ isLoading } indicator={<LoadingOutlined />}>
@@ -158,7 +158,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					}
 				</section>
 				<section className='flex items-center gap-x-4 border-0 border-t-[0.75px] border-solid border-[#D2D8E0] mt-[18px] pt-[18px] pb-[14px]'>
-					<Button
+					<button
 						className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
 						onClick={() => {
 							setOpen(true);
@@ -166,8 +166,8 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					>
 						<VotingHistoryIcon />
 						<span>Voting History</span>
-					</Button>
-					<Button
+					</button>
+					<button
 						className='bg-transparent p-0 m-0 border-none outline-none cursor-pointer flex items-center gap-x-1 text-pink_primary font-medium text-xs leading-[22px]'
 						onClick={() => {
 							setThresholdOpen(true);
@@ -175,7 +175,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 					>
 						<ThresholdGraphIcon />
 						<span>Threshold Data</span>
-					</Button>
+					</button>
 					<Modal
 						onCancel={() => {
 							setVoteCalculationModalOpen(false);
@@ -185,7 +185,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							<div key='ok' className='mt-4 -mx-6' style={{ borderTop: '1.5px solid #E1E6EB' }}>
 								<div className='flex items-center justify-end mt-5 px-6'>
 									<Button
-										className='border-none rounded-[4px] bg-pink_primary text-white font-medium text-sm flex w-[134px] h-[40px] py-[4px] px-[16px] flex-col justify-center items-center gap-10 flex-shrink-0'
+										className='border-none rounded-[4px] bg-pink_primary text-white font-medium text-sm flex w-[134px] h-[40px] py-1 px-4 flex-col justify-center items-center gap-10 flex-shrink-0'
 										onClick={() => setVoteCalculationModalOpen(false)}
 									>
 										Got It
@@ -193,7 +193,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 							</div>
 						]}
-						className={`${poppins.variable} ${poppins.className} md:min-w-[584px]`}
+						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full`}
 						closeIcon={<CloseIcon className="mt-2"/>}
 						title={
 							<label className={`${poppins.variable} ${poppins.className} text-bodyBlue tracking-[0.01em] text-xl leading-[30px] font-semibold`}><InfoCircleOutlined className="w-6 h-6 mr-2"/><span className='font-semibold'>How are votes calculated</span></label>
@@ -209,7 +209,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							<article className='flex items-center justify-between md:gap-x-2 my-2'>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<CastVoteIcon className='text-4xl' />
-									<p className='m-0 p-0 text-[12px] font-normal text-bodyBlue leading-[15px] flex flex-col items-center'>
+									<p className='m-0 p-0 text-xs font-normal text-bodyBlue leading-4 flex flex-col items-center'>
 										<span className='whitespace-nowrap flex items-center gap-x-1 flex-col md:flex-row'>
 											<span>User wants to</span>
 										</span>
@@ -221,11 +221,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<VoteAmountIcon className='text-4xl' />
-									<p className='m-0 p-0 text-[12px] font-normal text-bodyBlue leading-[15px] hidden md:flex flex-col items-center'>
+									<p className='m-0 p-0 text-xs font-normal text-bodyBlue leading-4 hidden md:flex flex-col items-center'>
 										<span className='whitespace-nowrap'>Chooses vote amount</span>
 										<span>and type (Aye/Nay)</span>
 									</p>
-									<p className='m-0 p-0 text-[12px] font-normal text-bodyBlue leading-[15px] flex md:hidden flex-col items-center'>
+									<p className='m-0 p-0 text-xs font-normal text-bodyBlue leading-4 flex md:hidden flex-col items-center'>
 										<span className='whitespace-nowrap'>
 										Chooses vote
 										</span>
@@ -240,7 +240,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<ConvictionPeriodIcon className='text-4xl' />
-									<p className='m-0 p-0 text-[12px] font-normal text-bodyBlue leading-[15px] flex flex-col items-center'>
+									<p className='m-0 p-0 text-xs font-normal text-bodyBlue leading-4 flex flex-col items-center'>
 										<span className='whitespace-nowrap flex items-center gap-x-1 flex-col md:flex-row'>
 											<span>Sets a</span>
 											<a className='text-pink_primary underline' href="https://wiki.polkadot.network/docs/learn-opengov#voluntary-locking" target='_blank' rel="noreferrer">conviction</a>
@@ -253,11 +253,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 								<div className='flex flex-col items-center justify-center gap-y-3'>
 									<LikeDislikeIcon className='text-4xl' />
-									<p className='m-0 p-0 text-[12px] font-normal text-bodyBlue leading-[15px] hidden md:flex flex-col items-center'>
+									<p className='m-0 p-0 text-xs font-normal text-bodyBlue leading-4 hidden md:flex flex-col items-center'>
 										<span className='whitespace-nowrap'>User casts their</span>
 										<span>vote</span>
 									</p>
-									<p className='m-0 p-0 text-[12px] font-normal text-sidebarBlue leading-[15px] flex md:hidden flex-col items-center'>
+									<p className='m-0 p-0 text-xs font-normal text-sidebarBlue leading-4 flex md:hidden flex-col items-center'>
 										<span className='whitespace-nowrap'>
 										User
 										</span>
@@ -268,34 +268,34 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							</article>
 							<div className='flex flex-col'>
 								<div style={{ borderTop: '1.5px dashed #D2D8E0' }}>
-									<p className='font-medium text-sm leading-[18px] text-sidebarBlue m-0 p-0 mt-5'>Here,</p>
+									<p className='font-medium text-sm leading-[18px] text-bodyBlue m-0 p-0 mt-5'>Here,</p>
 								</div>
-								<article className='flex justify-between items-start space-x-[44px] rounded-lg max-w-[400px] mt-[12px] p-3' style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}>
+								<article className='flex justify-between items-start rounded-lg max-w-[400px] mt-[12px] p-3' style={{ backgroundColor: 'rgba(216, 185, 202, 0.19);', boxShadow: '0px 4px 19px 0px rgba(216, 185, 202, 0.19)' }}>
 									<div className='flex flex-col items-center justify-center'>
 										<p className='mt-[2px] m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
-											<p className="leading-[12px] font-semibold">Voter</p>
-											<div className="leading-[24px] flex items-center justify-start">
+											<p className="leading-3 font-semibold">Voter</p>
+											<div className="leading-6 flex items-center justify-start">
 												<DefaultProfile style={{ height: '20px', width: '20px' }} />
-												<p className="mt-2 text-xs ml-2 text-sidebarBlue">DDUX..c..</p>
+												<p className="mt-2 text-xs ml-2 text-navBlue">DDUX..c..</p>
 											</div>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center '>
 										<p className='m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
-											<p className="leading-[21px] font-semibold">Amount</p>
-											<span className="leading-[24px] text-xs item-start text-sidebarBlue">11.27 KSM</span>
+											<p className="leading-5 font-semibold">Amount</p>
+											<span className="leading-6 text-xs item-start text-navBlue">11.27 KSM</span>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center '>
 										<p className='m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
-											<p className="leading-[21px] font-semibold">Conviction</p>
-											<span className="leading-[24px] text-xs text-sidebarBlue">4x</span>
+											<p className="leading-5 font-semibold">Conviction</p>
+											<span className="leading-6 text-xs text-navBlue">4x</span>
 										</p>
 									</div>
 									<div className='flex flex-col items-center justify-center '>
 										<p className='m-0 p-0 text-sm text-bodyBlue font-normal flex flex-col'>
-											<p className="leading-[21px] font-semibold">Vote</p>
-											<DislikeFilled className="leading-[24px] text-xl" style={{ color: '#F53C3C' }}/>
+											<p className="leading-5 font-semibold">Vote</p>
+											<DislikeFilled className="leading-6 text-xl" style={{ color: '#F53C3C' }}/>
 										</p>
 									</div>
 								</article>

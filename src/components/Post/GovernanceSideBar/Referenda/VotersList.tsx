@@ -39,7 +39,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [decision, setDecision] = useState<DecisionType>();
 	const [votesRes, setVotesRes] = useState<IVotesResponse>();
-	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME);
+	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME_DESC);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -104,7 +104,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const sortByDropdown = (
 		<Dropdown
 			menu={{
-				defaultSelectedKeys: [votesSortValues.TIME],
+				defaultSelectedKeys: [votesSortValues.TIME_DESC],
 				items: [...votesSortOptions],
 				onClick: handleSortByClick,
 				selectable: true

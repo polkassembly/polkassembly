@@ -7,18 +7,17 @@ import {
 	LeftOutlined,
 	LikeFilled,
 	MinusCircleFilled,
-	RightOutlined,
-	SwapOutlined
+	RightOutlined
 } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Dropdown, Pagination, PaginationProps, Segmented, Spin } from 'antd';
+import { Pagination, PaginationProps, Segmented, Spin } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
 import { useNetworkContext } from '~src/context';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { VoteType } from '~src/global/proposalType';
-import { votesSortOptions, votesSortValues } from '~src/global/sortOptions';
+import { votesSortValues } from '~src/global/sortOptions';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { network as AllNetworks } from '~src/global/networkConstants';
@@ -53,7 +52,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [decision, setDecision] = useState<DecisionType>();
 	const [votesRes, setVotesRes] = useState<IVotesResponse>();
-	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME);
+	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME_DESC);
+	const [balanceIsAsc, setBalanceIsAsc] = useState<boolean>(false);
+	const [votingIsAsc, setVotingIsAsc] = useState<boolean>(false);
+	const [convictionIsAsc, setConvictionIsAsc] = useState<boolean>(false);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -97,16 +99,16 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const decisionOptions = [
 		{
 			label: (
-				<div className='flex items-center justify-center'>
-					<LikeFilled className='mr-1.5' /> <span>Ayes</span>
+				<div className='flex items-center justify-center gap-1'>
+					<LikeFilled /> <span>Ayes</span>
 				</div>
 			),
 			value: 'yes'
 		},
 		{
 			label: (
-				<div className='flex items-center justify-center'>
-					<DislikeFilled className='mr-1.5' /> <span>Nays</span>
+				<div className='flex items-center justify-center gap-1'>
+					<DislikeFilled /> <span>Nays</span>
 				</div>
 			),
 			value: 'no'
@@ -116,8 +118,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	if (voteType === VoteType.REFERENDUM_V2) {
 		decisionOptions.push({
 			label: (
-				<div className='flex items-center justify-center'>
-					<MinusCircleFilled className='mr-1.5' /> <span>Abstain</span>
+				<div className='flex items-center justify-center gap-1'>
+					<MinusCircleFilled /> <span>Abstain</span>
 				</div>
 			),
 			value: 'abstain'
@@ -130,23 +132,6 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const handleSortByClick = ({ key }: {key: string}) => {
 		setSortBy(key);
 	};
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const sortByDropdown = (
-		<Dropdown
-			menu={{
-				defaultSelectedKeys: [votesSortValues.TIME],
-				items: [...votesSortOptions],
-				onClick: handleSortByClick,
-				selectable: true
-			}}
-			trigger={['click']}
-		>
-			<div className='dropdown-div flex items-center cursor-pointer hover:text-pink_primary py-1 px-2 rounded'>
-				<span className='mr-2'>Sort By</span>
-				<SwapOutlined rotate={90} style={{ fontSize: '14px' }} />
-			</div>
-		</Dropdown>
-	);
 	return (
 		<>
 			<Spin
@@ -154,11 +139,6 @@ const VotersList: FC<IVotersListProps> = (props) => {
 				spinning={loadingStatus.isLoading}
 				indicator={<LoadingOutlined />}
 			>
-				{/* <div className='flex justify-between mb-6 bg-white z-10'>
-					<h6 className='dashboard-heading'>Votes</h6>
-					<div>{sortByDropdown}</div>
-				</div> */}
-
 				<div className='w-full flex items-center justify-center mb-8'>
 					<StyledSegmented
 						block
@@ -173,35 +153,59 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					/>
 				</div>
 
-				<div className='flex flex-col text-xs xl:text-sm xl:max-h-screen px-0 text-sidebarBlue'>
-					<div className='flex text-xs items-center gap-10 font-semibold mb-2 px-2'>
-						<div className='basis-36 text-lightBlue text-sm font-medium'>
+				<div className='flex flex-col text-xs px-0 text-sidebarBlue overflow-x-auto'>
+					<div className='flex text-xs items-center font-semibold mb-2 px-2 w-[552px]'>
+						<div className='w-[220px] text-lightBlue text-sm font-medium'>
               Voter
 						</div>
 						<div
-							className='basis-20 ml-1 flex items-center gap-1 text-lightBlue'
-							onClick={() => handleSortByClick({ key: votesSortValues.BALANCE })}
+							className='w-[110px] flex items-center gap-1 text-lightBlue'
+							onClick={() => {
+								handleSortByClick({
+									key: balanceIsAsc
+										? votesSortValues.BALANCE_ASC
+										: votesSortValues.BALANCE_DESC
+								});
+								setBalanceIsAsc(!balanceIsAsc);
+							}}
 						>
-              Amount <ExpandIcon />
+              Amount <ExpandIcon className={balanceIsAsc ? 'rotate-180':''}/>
 						</div>
 						{network !== AllNetworks.COLLECTIVES ? (
 							<div
-								className='basis-20 ml-1 flex items-center gap-1 text-lightBlue'
-								onClick={() =>
-									handleSortByClick({ key: votesSortValues.CONVICTION })
-								}
+								className='w-[120px] flex items-center gap-1 text-lightBlue'
+								onClick={() => {
+									handleSortByClick({
+										key: convictionIsAsc
+											? votesSortValues.CONVICTION_ASC
+											: votesSortValues.CONVICTION_DESC
+									});
+									setConvictionIsAsc(!convictionIsAsc);
+								}}
 							>
-                Conviction <ExpandIcon />
+                Conviction <ExpandIcon className={convictionIsAsc ? 'rotate-180':''} />
 							</div>
 						) : null}
-						<div className='basis-10 flex items-center gap-1 text-lightBlue'>
-              Capital <ExpandIcon />
+						<div className='w-[110px] flex items-center gap-1 text-lightBlue' onClick={() => {
+							handleSortByClick({
+								key: votingIsAsc
+									? votesSortValues.VOTING_POWER_ASC
+									: votesSortValues.VOTING_POWER_DESC
+							});
+							setVotingIsAsc(!votingIsAsc);
+						}}>
+              Voting Power <ExpandIcon className={ votingIsAsc ? 'rotate-180':''} />
 						</div>
 					</div>
 
 					{votesRes && decision && !!votesRes[decision]?.votes?.length ? (
 						votesRes[decision]?.votes.map((voteData: any, index: number) => (
 							<VoterRow
+								className={`${index % 2 == 0 ? 'bg-[#FBFBFC]' : 'bg-white'} ${
+									index === votesRes[decision]?.votes.length - 1
+										? 'border-b'
+										: ''
+								}`}
 								key={index}
 								voteType={voteType}
 								voteData={voteData}
@@ -213,7 +217,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					)}
 				</div>
 
-				<div className='flex justify-center pt-6 bg-white z-10'>
+				<div className='flex justify-between items-center pt-6 bg-white z-10'>
+					<p className='text-xs text-[#96A4B6] m-0'>
+            d: Delegation s: Split sa: Split Abstain
+					</p>
 					<Pagination
 						size='small'
 						defaultCurrent={1}
@@ -227,7 +234,9 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						nextIcon={
 							<div
 								className={`ml-1 ${
-									currentPage > Math.floor((votesRes && decision ? votesRes[decision]?.count || 0 : 0) / VOTES_LISTING_LIMIT)
+									currentPage >
+                  Math.floor( (votesRes && decision ? votesRes[decision]?.count || 0 : 0) / VOTES_LISTING_LIMIT
+                  )
 										? 'text-grey_secondary'
 										: ''
 								}`}

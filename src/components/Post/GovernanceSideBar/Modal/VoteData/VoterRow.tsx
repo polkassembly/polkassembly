@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import React, { FC, useState } from 'react';
 import Address from 'src/ui-components/Address';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -22,8 +21,10 @@ import EmailIcon from '~assets/icons/email_icon.svg';
 import styled from 'styled-components';
 import { Divider } from 'antd';
 import DelegationListRow from './DelegationListRow';
+import dayjs from 'dayjs';
 
 interface IVoterRow {
+  className?:string;
   index?: any;
   voteType: VoteType;
   voteData?: any;
@@ -44,22 +45,43 @@ const StyledCollapse = styled(Collapse)`
     padding: 0px 8px !important;
     padding-bottom: 16px !important;
   }
+  .ant-collapse-expand-icon{
+	padding:0px !important;
+	margin-left: -16px !important;
+  }
+  @media (max-width: 768px){
+    &.ant-collapse-large >.ant-collapse-item >.ant-collapse-header{
+        padding: 16px 8px !important;
+    }
+}
 `;
 
-const VoterRow: FC<IVoterRow> = ({ voteType, voteData }) => {
+const getDelegatedDetails = (votes:[any]) => {
+	let allVotes = 0;
+	let votingPower = 0;
+	votes.forEach((vote) => {
+		allVotes+=Number(vote.balance.value);
+		votingPower += Number(vote.votingPower);
+	});
+	return [allVotes, votingPower, votes.length];
+};
+
+const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className }) => {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkContext();
+	const [delegatedVotes, delegatedVotingPower, delegators] = getDelegatedDetails(voteData.delegatedVotes);
+
 	const Title = () => (
-		<>
-			<div className='flex items-center w-full gap-14'>
+		<div className='m-0 p-0'>
+			<div className='flex items-center w-full m-0'>
 				{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
 					<a
 						href={`https://${network}.moonscan.io/tx/${voteData?.txnHash}`}
-						className='overflow-ellipsis flex-[2]'
+						className='overflow-ellipsis w-[210px]'
 					>
 						<Address
 							isVoterAddress={true}
-							textClassName='w-[75px]'
+							textClassName='w-[100px]'
 							isSubVisible={false}
 							displayInline={true}
 							isShortenAddressLength={false}
@@ -67,10 +89,9 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData }) => {
 						/>
 					</a>
 				) : (
-					<div className='overflow-ellipsis flex-[2]'>
+					<div className='overflow-ellipsis w-[210px]' onClick={(e) => e.stopPropagation()}>
 						<Address
-							isVoterAddress={true}
-							textClassName='w-[75px]'
+							textClassName='overflow-ellipsis w-[200px] '
 							isSubVisible={false}
 							displayInline={true}
 							isShortenAddressLength={false}
@@ -81,7 +102,7 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData }) => {
 
 				{network !== AllNetworks.COLLECTIVES ? (
 					<>
-						<div className='overflow-ellipsis flex-1'>
+						<div className='overflow-ellipsis w-[105px]'>
 							{formatUSDWithUnits(
 								formatBnBalance(
 									voteData?.decision === 'abstain'
@@ -97,43 +118,47 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData }) => {
 								1
 							)}
 						</div>
-						<div className='overflow-ellipsis flex-1'>
+						<div className='overflow-ellipsis w-[115px]'>
 							{voteData.lockPeriod
-								? `${voteData.lockPeriod}x${voteData?.isDelegated ? '/d' : ''}`
+								? `${voteData.lockPeriod}x${voteData?.delegatedVotes.length>0 ? '/d' : ''}`
 								: '0.1x'}
 						</div>
 					</>
 				) : (
-					<div className='overflow-ellipsis flex-1'>
+					<div className='overflow-ellipsis w-[120px]'>
 						{voteData?.decision === 'abstain'
 							? voteData?.balance?.abstain || 0
 							: voteData?.balance?.value || 0}
 					</div>
 				)}
 
-				{voteData.decision === 'yes' ? (
-					<div className='flex items-center text-aye_green text-md flex-1'>
-						<LikeFilled className='mr-2' />
-					</div>
-				) : voteData.decision === 'no' ? (
-					<div className='flex items-center text-nay_red text-md flex-1'>
-						<DislikeFilled className='mr-2' />
-					</div>
-				) : (
-					<div className='flex items-center justify-center flex-1'>
-						<span className='rounded-full bg-grey_primary mr-2'></span>
+				{voteData.totalVotingPower && (
+					<div className='overflow-ellipsis w-[50px]'>
+						{formatUSDWithUnits(
+							formatBnBalance(
+								voteData.totalVotingPower,
+								{
+									numberAfterComma: 1,
+									withThousandDelimitor: false,
+									withUnit: false
+								},
+								network
+							),
+							1
+						)}
+						{}
 					</div>
 				)}
 			</div>
-		</>
+		</div>
 	);
-	return (
+	return  voteData.delegatedVotes.length > 0 ? (
 		<StyledCollapse
 			className={`${
 				active
 					? 'border-pink_primary border-t-2'
 					: 'border-[#D2D8E0] border-t-[1px]'
-			} border-0 bg-white rounded-none`}
+			} border-0 rounded-none gap-[0px] w-[550px] ${className}`}
 			size='large'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
@@ -142,70 +167,138 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData }) => {
 			}}
 		>
 			<StyledCollapse.Panel
-				className={`rounded-none p-0 ${active ? 'border-b-[1px]' : ''}`}
+				className={`rounded-none p-0 ${active ? 'border-x-0 border-y-0 border-b-2 border-solid  border-pink_primary' : ''} gap-[0px] text-bodyBlue`}
 				key={1}
 				header={<Title />}
 			>
 				<div className='flex flex-col gap-4'>
-					<div className='border-dashed border-[#D2D8E0] border-y-2 border-x-0 flex gap-4 p-2 py-4 items-center'>
-						<span className='text-pink_primary underline flex gap-1 items-center'>
-							<CalenderIcon /> 17/ 07/ 2023 16:32
+					<div className='border-dashed border-[#D2D8E0] border-y-2 border-x-0 flex gap-[34px] py-4 items-center'>
+						<span className='text-[#96A4B6] flex gap-1 items-center'>
+							<CalenderIcon /> {dayjs(voteData.createdAt.toDate?.()).format('MMMM D, YYYY h:mm A').toString()}
 						</span>
 						<span className='flex gap-1 items-center text-lightBlue text-xs font-medium'>
-							<PowerIcon />
-              Voting Power <span className='text-[#96A4B6]'>5%</span>
+							<PowerIcon /> Voting Power <span className='text-[#96A4B6]'>{formatUSDWithUnits(
+								formatBnBalance(
+									voteData?.decision === 'abstain'
+										? voteData?.balance?.abstain || 0
+										: voteData?.balance?.value || 0,
+									{
+										numberAfterComma: 1,
+										withThousandDelimitor: false,
+										withUnit: true
+									},
+									network
+								),
+								1
+							)}</span>
 						</span>
 					</div>
-					<div className='px-2'>
+					<div>
 						<p className='text-sm text-bodyBlue font-medium mb-4'>
-              Delegation Details
+							Vote Breakdown
 						</p>
 						<div className='flex justify-between'>
 							<div className='w-[200px] flex flex-col gap-1'>
 								<div className='text-lightBlue text-xs font-medium'>
-                  Self Votes
+									Self Votes
 								</div>
 								<div className='flex justify-between'>
 									<span className='text-[#576D8B] flex items-center gap-1 text-xs'>
 										<VoterIcon /> votes
 									</span>
-									<span className='text-xs text-bodyBlue'>150 DOT</span>
+									<span className='text-xs text-bodyBlue'>
+										{formatUSDWithUnits(
+											formatBnBalance(
+												voteData?.decision === 'abstain'
+													? voteData?.balance?.abstain || 0
+													: voteData?.balance?.value || 0,
+												{
+													numberAfterComma: 1,
+													withThousandDelimitor: false,
+													withUnit: true
+												},
+												network
+											),
+											1
+										)}
+									</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='text-[#576D8B] flex items-center gap-1 text-xs'>
 										<ConvictionIcon /> Conviction
 									</span>
-									<span className='text-xs text-bodyBlue'>1x</span>
+									<span className='text-xs text-bodyBlue'>{voteData.lockPeriod
+										? `${voteData.lockPeriod}x${voteData?.delegatedVotes.length>0 ? '/d' : ''}`
+										: '0.1x'}</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='text-[#576D8B] flex items-center gap-1 text-xs'>
-										<CapitalIcon /> Capital
+										<CapitalIcon /> Vote Power
 									</span>
-									<span className='text-xs text-bodyBlue'>150 DOT</span>
+									<span className='text-xs text-bodyBlue'>
+										{formatUSDWithUnits(
+											formatBnBalance(
+												voteData.selfVotingPower || 0,
+												{
+													numberAfterComma: 1,
+													withThousandDelimitor: false,
+													withUnit: true
+												},
+												network
+											),
+											1
+										)}
+									</span>
 								</div>
 							</div>
 							<div className='border-dashed border-[#D2D8E0] border-l-2 border-y-0 border-r-0'></div>
 							<div className='w-[200px] flex flex-col gap-1'>
 								<div className='text-lightBlue text-xs font-medium'>
-                  Delegation Votes
+									Delegation Votes
 								</div>
 								<div className='flex justify-between'>
 									<span className='text-[#576D8B] flex items-center gap-1 text-xs'>
 										<VoterIcon /> votes
 									</span>
-									<span className='text-xs text-bodyBlue'>150 DOT</span>
+									<span className='text-xs text-bodyBlue'>
+										{formatUSDWithUnits(
+											formatBnBalance(
+												delegatedVotes.toString(),
+												{
+													numberAfterComma: 1,
+													withThousandDelimitor: false,
+													withUnit: true
+												},
+												network
+											),
+											1
+										)}
+									</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='text-[#576D8B] flex items-center gap-1 text-xs'>
 										<EmailIcon /> Delegators
 									</span>
-									<span className='text-xs text-bodyBlue'>1x</span>
+									<span className='text-xs text-bodyBlue'>{delegators}</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='text-[#576D8B] flex items-center gap-1 text-xs'>
 										<CapitalIcon /> Capital
 									</span>
-									<span className='text-xs text-bodyBlue'>150 DOT</span>
+									<span className='text-xs text-bodyBlue'>
+										{formatUSDWithUnits(
+											formatBnBalance(
+												delegatedVotingPower.toString(),
+												{
+													numberAfterComma: 1,
+													withThousandDelimitor: false,
+													withUnit: true
+												},
+												network
+											),
+											1
+										)}
+									</span>
 								</div>
 							</div>
 						</div>
@@ -214,37 +307,36 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData }) => {
 						dashed
 						className='m-0 mt-2 border-[#D2D8E0] border-[2px] border-x-0 border-b-0'
 					/>
-					<div className='px-2'>
+					<div>
 						<p className='text-sm text-bodyBlue font-medium mb-4'>
-              Delegation list
+							Delegation list
 						</p>
-						<div className='flex text-xs items-center gap-10 font-semibold mb-2'>
-							<div className='basis-36 text-lightBlue text-sm font-medium'>
-                Delegators
+						<div className='flex text-xs items-center font-semibold mb-2'>
+							<div className='w-[200px] text-lightBlue text-sm font-medium'>
+								Delegators
 							</div>
-							<div className='basis-28 ml-2 flex items-center gap-1 text-lightBlue'>
-                Amount
+							<div className='w-[110px] flex items-center gap-1 text-lightBlue'>
+								Amount
 							</div>
 							{network !== AllNetworks.COLLECTIVES ? (
-								<div className='basis-24 ml-1 flex items-center gap-1 text-lightBlue'>
-                  Conviction{' '}
+								<div className='w-[110px] ml-1 flex items-center gap-1 text-lightBlue'>
+									Conviction{' '}
 								</div>
 							) : null}
-							<div className='basis-10 flex items-center gap-1 text-lightBlue'>
-                Votes
+							<div className='w-[100px] flex items-center gap-1 text-lightBlue'>
+								Voting Power
 							</div>
 						</div>
 						<div className='pr-2 max-h-20 overflow-y-auto flex flex-col gap-1'>
-							<DelegationListRow voteType={voteType} voteData={voteData} />
-							<DelegationListRow voteType={voteType} voteData={voteData} />
-							<DelegationListRow voteType={voteType} voteData={voteData} />
-							<DelegationListRow voteType={voteType} voteData={voteData} />
+							{voteData.delegatedVotes.map((data:any, i:number) => <DelegationListRow key={i} voteType={voteType} voteData={data} />)}
 						</div>
 					</div>
 				</div>
 			</StyledCollapse.Panel>
 		</StyledCollapse>
-	);
+	): <div className={`w-[552px] px-[10px] py-4 border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] text-sm text-bodyBlue ${className}`}>
+		<Title/>
+	</div>;
 };
 
-export default VoterRow;
+export default React.memo(VoterRow);

@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import React, { FC } from 'react';
 import Address from 'src/ui-components/Address';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -19,15 +18,15 @@ interface IDelegationListRow {
 const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 	const { network } = useNetworkContext();
 	return (
-		<div className='flex items-center justify-between'>
+		<div className='flex items-center text-xs'>
 			{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
 				<a
 					href={`https://${network}.moonscan.io/tx/${voteData.txnHash}`}
-					className='w-[110px] max-w-[110px] overflow-ellipsis'
+					className='w-[200px] overflow-ellipsis'
 				>
 					<Address
 						isVoterAddress={true}
-						textClassName='w-[75px]'
+						textClassName='w-[100px]'
 						isSubVisible={false}
 						displayInline={true}
 						isShortenAddressLength={false}
@@ -35,10 +34,9 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 					/>
 				</a>
 			) : (
-				<div className='w-[110px] max-w-[110px] overflow-ellipsis'>
+				<div className='w-[200px] overflow-ellipsis'>
 					<Address
-						isVoterAddress={true}
-						textClassName='w-[75px]'
+						textClassName='w-[100px]'
 						isSubVisible={false}
 						displayInline={true}
 						isShortenAddressLength={false}
@@ -49,7 +47,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 
 			{network !== AllNetworks.COLLECTIVES ? (
 				<>
-					<div className='w-[80px] max-w-[80px] overflow-ellipsis'>
+					<div className='w-[115px] overflow-ellipsis'>
 						{formatUSDWithUnits(
 							formatBnBalance(
 								voteData?.decision === 'abstain'
@@ -65,7 +63,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 							1
 						)}
 					</div>
-					<div className='w-[50px] max-w-[50px] overflow-ellipsis'>
+					<div className='w-[110px] overflow-ellipsis'>
 						{voteData.lockPeriod
 							? `${voteData.lockPeriod}x${voteData?.isDelegated ? '/d' : ''}`
 							: '0.1x'}
@@ -73,7 +71,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 				</>
 			) : (
 				<>
-					<div className='w-[80px] max-w-[80px] overflow-ellipsis'>
+					<div className='w-[120px] overflow-ellipsis'>
 						{voteData?.decision === 'abstain'
 							? voteData?.balance?.abstain || 0
 							: voteData?.balance?.value || 0}
@@ -81,17 +79,21 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 				</>
 			)}
 
-			{voteData.decision === 'yes' ? (
-				<div className='flex items-center text-aye_green text-md w-[20px] max-w-[20px]'>
-					<LikeFilled className='mr-2' />
-				</div>
-			) : voteData.decision === 'no' ? (
-				<div className='flex items-center text-nay_red text-md w-[20px] max-w-[20px]'>
-					<DislikeFilled className='mr-2' />
-				</div>
-			) : (
-				<div className='flex items-center justify-center w-[20px] h-[20px]'>
-					<span className='w-[8px] h-[8px] rounded-full bg-grey_primary mr-2'></span>
+			{voteData.votingPower && (
+				<div className='overflow-ellipsis w-[50px]'>
+					{formatUSDWithUnits(
+						formatBnBalance(
+							voteData.votingPower,
+							{
+								numberAfterComma: 1,
+								withThousandDelimitor: false,
+								withUnit: false
+							},
+							network
+						),
+						1
+					)}
+					{}
 				</div>
 			)}
 		</div>

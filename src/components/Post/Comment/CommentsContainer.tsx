@@ -7,7 +7,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { useNetworkContext, usePostDataContext } from '~src/context';
+import { useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 
 import PostCommentForm from '../PostCommentForm';
@@ -99,17 +99,22 @@ const getLastDocs = (comments: {[index:string]:Array<IComment>}) => {
 
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
-	const { postData: { comments:initialComments, postType, timeline, created_at, currentTimeline:initialCurrentTimeline } } = usePostDataContext();
+	const { postData: { postType, timeline, created_at } } = usePostDataContext();
 	const targetOffset = 10;
-	const [timelines, setTimelines] = useState<ITimeline[]>([]);
+	const {
+		comments,
+		currentTimeline,
+		setComments,
+		setCurrentTimeline,
+		setTimelines,
+		timelines
+	} = useCommentDataContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [filteredSentiment, setFilteredSentiment] = useState<IFilteredSentiment>({ active: false, sentiment: 0 });
-	const [comments, setComments] = useState<{[index:string]:Array<IComment>}>(initialComments);
 	const [showOverallSentiment, setShowOverallSentiment] = useState<boolean>(true);
 	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
 	const [loading, setLoading] = useState(true);
-	const [currentTimeline, setCurrentTimeline] = useState<ITimeline | null>(initialCurrentTimeline || null);
 	const { network } = useNetworkContext();
 	const allComments = Object.values(comments)?.flat() || [];
 	const router = useRouter();

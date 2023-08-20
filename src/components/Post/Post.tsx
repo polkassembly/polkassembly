@@ -31,6 +31,7 @@ import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
+import CommentsDataContextProvider from '~src/context/CommentDataContext';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -430,7 +431,11 @@ const Post: FC<IPostProps> = (props) => {
 			track_number: post?.track_number,
 			username: post?.username
 		}}>
-			<>
+			<CommentsDataContextProvider initialCommentsData={{
+				comments:post?.comments,
+				currentTimeline:post.currentTimeline,
+				timelines:[]
+			}}>
 				<SpamAlert />
 				{
 					!isEditing && Boolean(post.timeline?.length) && proposalType !==  ProposalType.CHILD_BOUNTIES &&
@@ -495,7 +500,7 @@ const Post: FC<IPostProps> = (props) => {
 				>
 					{ proposerAddress && <OtherProposals proposerAddress={proposerAddress} currPostOnchainID={Number(onchainId)} closeSidebar={() => setSidebarOpen(false)} /> }
 				</SidebarRight>
-			</>
+			</CommentsDataContextProvider>
 		</PostDataContextProvider>
 	);
 };

@@ -93,11 +93,11 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 		);
 	};
 
-	const Timeline = (isMobile:boolean) => {
+	const Timeline = () => {
 		return(
 			<section>
 				{
-					statuses.sort(sortfunc).map(({ block, status, timestamp }, index) => {
+					statuses.sort(sortfunc).map(({ block, status, timestamp }) => {
 						const blockDate = dayjs(timestamp);
 						let color;
 						if(status === 'DecisionDepositePlaced'){
@@ -154,7 +154,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 				</span>
 			</div>
 			<div className={`${isCollapsed ? 'hidden' : ''} mt-3`}>
-				{Timeline(false)}
+				{Timeline()}
 			</div>
 			<div className="flex md:hidden flex-1 overflow-x-scroll scroll-hidden cursor-ew-resize">
 				{TimelineItems(true)}

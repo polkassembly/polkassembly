@@ -140,15 +140,18 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			return;
 		}
 
-		if (wallet === Wallet.METAMASK) {
-			try {
-				await addEthereumChain({
-					ethereum,
-					network
-				});
-			} catch (error) {
-				return;
-			}
+		try {
+			await addEthereumChain({
+				ethereum,
+				network
+			});
+		} catch (error) {
+			queueNotification({
+				header: 'Network change!',
+				message: `Error when changing wallet network to ${network}, Please try to change the network manually`,
+				status: NotificationStatus.ERROR
+			});
+			return;
 		}
 
 		const addresses = await ethereum.request({ method: 'eth_requestAccounts' });

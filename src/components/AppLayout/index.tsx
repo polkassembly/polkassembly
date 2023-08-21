@@ -406,7 +406,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						theme="light"
 						mode="inline"
 						selectedKeys={[router.pathname]}
-						items={sidebarItems.filter((item) => item.label)}
+						items={sidebarItems.filter((item) => item ?.label)}
 						onClick={handleMenuClick}
 						className={`${username?'auth-sider-menu':''} mt-[15px]`}
 					/>

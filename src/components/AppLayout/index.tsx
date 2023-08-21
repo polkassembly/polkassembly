@@ -51,50 +51,49 @@ function getSiderMenuItem(
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getUserDropDown = (_handleLogout: any, img?: string | null, username?: string): MenuItem => {
-	// const dropdownMenuItems: ItemType[] = [
-	//{
-	//key: 'view profile',
-	//label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
-	//<UserOutlined />
-	//<span>View Profile</span>
-	//</Link>
-	//},
-	//{
-	//key: 'settings',
-	//label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
-	//<SettingOutlined />
-	//<span>Settings</span>
-	///Link>
-	//},
-	//{
-	//key: 'logout',
-	//label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' onClick={handleLogout} href='/'>
-	//<LogoutOutlined />
-	//<span>Logout</span>
-	//</Link>
-	//}
-	//];
+// const getUserDropDown = (_handleLogout: any, img?: string | null, username?: string): MenuItem => {
+// const dropdownMenuItems: ItemType[] = [
+//{
+//key: 'view profile',
+//label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+//<UserOutlined />
+//<span>View Profile</span>
+//</Link>
+//},
+//{
+//key: 'settings',
+//label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
+//<SettingOutlined />
+//<span>Settings</span>
+///Link>
+//},
+//{
+//key: 'logout',
+//label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' onClick={handleLogout} href='/'>
+//<LogoutOutlined />
+//<span>Logout</span>
+//</Link>
+//}
+//];
 
-	// const AuthDropdown = ({ children }: {children: ReactNode}) => (
-	//<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
-	//{children}
-	//</Dropdown>
-	// );
+// const AuthDropdown = ({ children }: {children: ReactNode}) => (
+//<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
+//{children}
+//</Dropdown>
+// );
 
-	// return getSiderMenuItem(
-	//<AuthDropdown>
-	//<div className='flex items-center justify-between gap-x-2'>
-	//<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
-	//</div>
-	//</AuthDropdown>,
-	//'userMenu',
-	// <AuthDropdown>
-	//{img ? <Avatar className='-ml-2.5 mr-2' size={40} src={img} /> :
-	//<Avatar className='-ml-2.5 mr-2' size={40} icon={<UserOutlined />} />
-	//}
-	// </AuthDropdown>);
-};
+// return getSiderMenuItem(
+//<AuthDropdown>
+//<div className='flex items-center justify-between gap-x-2'>
+//<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
+//</div>
+//</AuthDropdown>,
+//'userMenu',
+// <AuthDropdown>
+//{img ? <Avatar className='-ml-2.5 mr-2' size={40} src={img} /> :
+//<Avatar className='-ml-2.5 mr-2' size={40} icon={<UserOutlined />} />
+//}
+// </AuthDropdown>);
 
 interface Props {
 	Component: NextComponentType<NextPageContext, any, any>;
@@ -104,7 +103,7 @@ interface Props {
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkContext();
-	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
+	const { setUserDetailsContextState, username } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const [sidedrawerHover, setSidedrawerHover] = useState<boolean>(false);
 	const router = useRouter();
@@ -359,16 +358,16 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		setSidedrawer(false);
 	};
 
-	const handleLogout = async (username: string) => {
-		logout(setUserDetailsContextState);
-		router.replace(router.asPath);
-		if(!router.query?.username) return;
-		if(router.query?.username.includes(username)) {
-			router.replace('/');
-		}
-	};
+	// const handleLogout = async (username: string) => {
+	//logout(setUserDetailsContextState);
+	//router.replace(router.asPath);
+	//if(!router.query?.username) return;
+	//if(router.query?.username.includes(username)) {
+	//router.replace('/');
+	//}
+	// };
 
-	const userDropdown = getUserDropDown(handleLogout, picture, username!);
+	// const userDropdown = getUserDropDown(handleLogout, picture, username!);
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
@@ -376,9 +375,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	}
 
-	if(username) {
-		sidebarItems = [userDropdown, ...sidebarItems];
-	}
+	// if(username) {
+	//sidebarItems = [userDropdown, ...sidebarItems];
+	// }
 	return (
 		<Layout className={className}>
 			<NavHeader sidedrawer={sidedrawer} sidedrawerHover={sidedrawerHover} setSidedrawer={setSidedrawer} previousRoute={previousRoute}  />

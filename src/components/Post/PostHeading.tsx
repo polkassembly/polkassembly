@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -59,7 +59,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						: <>{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {newTitle}</>
 				}
 			</h2>
-			<div className='mb-8'>
+			<div className='mb-3'>
 				<>
 					<CreationLabel
 						className='md'
@@ -68,6 +68,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						username={username}
 						topic={topic && topic?.name}
 						cid={cid}
+						isRow={false}
 					>
 						{ history && history?.length > 0 &&
 							<div className='cursor-pointer mt-2 md:mt-0' onClick={() => setOpenModal(true)}>
@@ -84,15 +85,18 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								<PostSummary className='hidden md:flex' />
 								: null
 						}
+						{
+							summary?
+								<>
+									<Divider className={'ml-1 mt-2 xs:inline-block md:hidden'} type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+									<PostSummary className='flex mt-2 md:hidden' />
+								</>
+								: null
+						}
 					</CreationLabel>
-					{
-						summary?
-							<PostSummary className='block mt-2 pl-7 md:hidden' />
-							: null
-					}
 				</>
 			</div>
-			{tags && tags.length>0 &&<div className='flex mt-6 gap-[8px] flex-wrap'>
+			{tags && tags.length>0 &&<div className='flex mt-3.5 gap-[8px] flex-wrap'>
 				{tags?.map((tag,index ) => (<div onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''),tag)} className='rounded-full px-[16px] py-[4px] border-navBlue border-solid border-[1px] text-navBlue text-xs traking-2 cursor-pointer hover:border-pink_primary hover:text-pink_primary' key={index} >{tag}</div>))}
 			</div> }
 			{history  && history.length > 0 && <PostHistoryModal open={openModal} setOpen={setOpenModal} history={[{ content: content, created_at: last_edited_at || '', title: title },...history]} username={username} defaultAddress={proposer} />}

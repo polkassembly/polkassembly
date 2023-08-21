@@ -28,6 +28,7 @@ interface IVoterRow {
   index?: any;
   voteType: VoteType;
   voteData?: any;
+  isReferendum2?:boolean
 }
 
 const StyledCollapse = styled(Collapse)`
@@ -66,7 +67,7 @@ const getDelegatedDetails = (votes:[any]) => {
 	return [allVotes, votingPower, votes.length];
 };
 
-const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className }) => {
+const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className, isReferendum2 }) => {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkContext();
 	const [delegatedVotes, delegatedVotingPower, delegators] = getDelegatedDetails(voteData?.delegatedVotes || []);
@@ -77,7 +78,7 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className }) => {
 				{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
 					<a
 						href={`https://${network}.moonscan.io/tx/${voteData?.txnHash}`}
-						className='overflow-ellipsis w-[210px]'
+						className={`overflow-ellipsis ${isReferendum2 ? 'w-[210px]' : 'w-[250px]'}`}
 					>
 						<Address
 							isVoterAddress={true}
@@ -89,7 +90,7 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className }) => {
 						/>
 					</a>
 				) : (
-					<div className='overflow-ellipsis w-[210px]' onClick={(e) => e.stopPropagation()}>
+					<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[210px]' : 'w-[245px]'}`} onClick={(e) => e.stopPropagation()}>
 						<Address
 							textClassName='overflow-ellipsis w-[200px] '
 							isSubVisible={false}
@@ -102,7 +103,7 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className }) => {
 
 				{network !== AllNetworks.COLLECTIVES ? (
 					<>
-						<div className='overflow-ellipsis w-[105px]'>
+						<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[105px]' : 'w-[150px]'}`}>
 							{formatUSDWithUnits(
 								formatBnBalance(
 									voteData?.decision === 'abstain'
@@ -118,14 +119,14 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className }) => {
 								1
 							)}
 						</div>
-						<div className='overflow-ellipsis w-[115px]'>
+						<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[115px]' : 'w-[135px]'}`}>
 							{voteData.lockPeriod
 								? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length>0 ? '/d' : ''}`
 								: '0.1x'}
 						</div>
 					</>
 				) : (
-					<div className='overflow-ellipsis w-[120px]'>
+					<div className={`overflow-ellipsis ${isReferendum2 ? 'w-[120px]' : 'w-[135px]'}`}>
 						{voteData?.decision === 'abstain'
 							? voteData?.balance?.abstain || 0
 							: voteData?.balance?.value || 0}

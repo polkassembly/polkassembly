@@ -14,9 +14,9 @@ import { Pagination, PaginationProps, Segmented, Spin } from 'antd';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
-import { useNetworkContext } from '~src/context';
+import { useNetworkContext, usePostDataContext } from '~src/context';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
-import { VoteType } from '~src/global/proposalType';
+import { ProposalType, VoteType } from '~src/global/proposalType';
 import { votesSortValues } from '~src/global/sortOptions';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -42,7 +42,8 @@ type DecisionType = 'yes' | 'no' | 'abstain';
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkContext();
 	const firstRef = useRef(true);
-
+	const { postData:{ postType } }= usePostDataContext();
+	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
 	const { className, referendumId, voteType } = props;
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({
@@ -155,11 +156,11 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 				<div className='flex flex-col text-xs px-0 text-sidebarBlue overflow-x-auto'>
 					<div className='flex text-xs items-center font-semibold mb-2 px-2 w-[552px]'>
-						<div className='w-[220px] text-lightBlue text-sm font-medium'>
-              Voter
+						<div className={`${isReferendum2 ? 'w-[220px]' : 'w-[250px]'} text-lightBlue text-sm font-medium`}>
+							Voter
 						</div>
 						<div
-							className='w-[110px] flex items-center gap-1 text-lightBlue'
+							className={`${isReferendum2 ? 'w-[110px]' : 'w-[140px]'} flex items-center gap-1 text-lightBlue`}
 							onClick={() => {
 								handleSortByClick({
 									key: balanceIsAsc
@@ -169,11 +170,11 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								setBalanceIsAsc(!balanceIsAsc);
 							}}
 						>
-              Amount <ExpandIcon className={balanceIsAsc ? 'rotate-180':''}/>
+							Amount <ExpandIcon className={balanceIsAsc ? 'rotate-180':''}/>
 						</div>
 						{network !== AllNetworks.COLLECTIVES ? (
 							<div
-								className='w-[120px] flex items-center gap-1 text-lightBlue'
+								className={`${isReferendum2 ? 'w-[120px]' : 'w-[150px]'} flex items-center gap-1 text-lightBlue`}
 								onClick={() => {
 									handleSortByClick({
 										key: convictionIsAsc
@@ -183,19 +184,21 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									setConvictionIsAsc(!convictionIsAsc);
 								}}
 							>
-                Conviction <ExpandIcon className={convictionIsAsc ? 'rotate-180':''} />
+								Conviction <ExpandIcon className={convictionIsAsc ? 'rotate-180':''} />
 							</div>
 						) : null}
-						<div className='w-[110px] flex items-center gap-1 text-lightBlue' onClick={() => {
-							handleSortByClick({
-								key: votingIsAsc
-									? votesSortValues.VOTING_POWER_ASC
-									: votesSortValues.VOTING_POWER_DESC
-							});
-							setVotingIsAsc(!votingIsAsc);
-						}}>
-              Voting Power <ExpandIcon className={ votingIsAsc ? 'rotate-180':''} />
-						</div>
+						{ isReferendum2 &&
+							<div className='w-[110px] flex items-center gap-1 text-lightBlue' onClick={() => {
+								handleSortByClick({
+									key: votingIsAsc
+										? votesSortValues.VOTING_POWER_ASC
+										: votesSortValues.VOTING_POWER_DESC
+								});
+								setVotingIsAsc(!votingIsAsc);
+							}}>
+								Voting Power <ExpandIcon className={ votingIsAsc ? 'rotate-180':''} />
+							</div>
+						}
 					</div>
 
 					{votesRes && decision && !!votesRes[decision]?.votes?.length ? (
@@ -210,6 +213,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								voteType={voteType}
 								voteData={voteData}
 								index={index}
+								isReferendum2={isReferendum2}
 							/>
 						))
 					) : (

@@ -10,7 +10,9 @@ import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { useNetworkContext } from '~src/context';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { getBlockLink } from '~src/util/subscanCheck';
-import { ExportOutlined, PlusSquareOutlined, UpOutlined } from '@ant-design/icons';
+import { ExportOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
+import { DemocracyReferendaIcon, DemocracyReferendaGreyIcon } from '~src/ui-components/CustomIcons';
+import { usePostDataContext } from '~src/context';
 
 interface BlockStatus {
 	block: number;
@@ -35,6 +37,10 @@ function sortfunc(a: BlockStatus, b: BlockStatus) {
 const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const { timeline } = props;
+	const { postData: { postType } } = usePostDataContext();
+	const PostType = postType.replace(/(^|_)([a-z])/g, (_, __, c) => c.toUpperCase()).replace(/s$/, '');
+	let activeColor;
+	PostType === timeline.type ? activeColor = '#E5007A' : activeColor = '#485F7D';
 	const { network } = useNetworkContext();
 	if (!timeline) return null;
 	const { statuses, type } = timeline;
@@ -97,8 +103,9 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 		return(
 			<section>
 				{
-					statuses.sort(sortfunc).map(({ block, status, timestamp }) => {
+					statuses.sort(sortfunc).map(({ block, status, timestamp }, index) => {
 						const blockDate = dayjs(timestamp);
+						console.log(`${block} + ${status} + ${timestamp} + ${index}`);
 						let color;
 						if(status === 'DecisionDepositePlaced'){
 							status = 'Decision deposite placed';
@@ -112,11 +119,11 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 						}
 
 						return (
-							<div key={status} className={'border-t border-black-300'} style={{ borderTop: '1px solid #D2D8E0' }}>
-								<div className={'w-[680px]'}>
+							<div key={status} className={'border-t border-black-300'} style={index === 0 ? { borderTop: 'none' } : { borderTop: '1px solid #D2D8E0' }}>
+								<div className={'w-[660px]'}>
 									<article className="py-[8px]">
-										<div className="ml-[24px] flex items-center">
-											<div className="flex items-center space-x-[12px]"> {/* Add flex-grow here */}
+										<div className="flex items-center">
+											<div className="flex items-center space-x-[12px]">
 												<p className="text-xs text-sidebarBlue mb-0">
 													{blockDate.format("Do MMM 'YY, h:mm a")}
 												</p>
@@ -141,19 +148,24 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	};
 
 	return (
-		<section className='flex my-12 mx-7'>
-			<div className={`min-h-${minHeight} flex -mb-[2px] bg-pink_primary w-[2px] relative -ml-2`}>
+		<section className='flex my-16 mx-7'>
+			<div className={`min-h-${minHeight} -mb-[2px] mt-[5px] w-[2px] relative -ml-2`} style={{ backgroundColor: activeColor }}>
 				<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? timeline.hash: timeline.index}`}>
-					<p className='font-medium text-base leading-6 text-pink_primary whitespace-nowrap px-2 h-[33px] flex items-center justify-center absolute -left-[15px] -top-7'>
-						<PlusSquareOutlined className="mr-3"/>
+					<p className='-mt-[40px] -ml-[14px] font-normal text-base leading-6 whitespace-nowrap px-2 h-[33px] -left-[15px] -top-7' style={{ color: activeColor }}>
+						{PostType===timeline.type ? <DemocracyReferendaIcon className="mr-3" style={{ color: activeColor }}/> : <DemocracyReferendaGreyIcon className="mr-3" style={{ color: activeColor }}/>}
 						<span className='font-semibold text-base'>{getStatus(String(type))}</span>
 					</p>
+					<p style={{ marginLeft: '664px', marginTop: '-44px' }}>
+						{isCollapsed ? (
+							<DownOutlined onClick={toggleCollapse} />
+						) : (
+							<UpOutlined onClick={toggleCollapse} />
+						)}
+					</p>
+					<span className={`${isCollapsed ? 'hidden' : ''} -mb-[5px] rounded-full absolute -bottom-1 -left-1 w-[10px] h-[10px]` } style={{ backgroundColor: activeColor }}></span>
 				</Link>
-				<span className="flex justify-end mb-[200]px ml-[665px] -mt-[33px]">
-					<UpOutlined onClick={toggleCollapse}/>
-				</span>
 			</div>
-			<div className={`${isCollapsed ? 'hidden' : ''} mt-3`}>
+			<div className={`${isCollapsed ? 'hidden' : ''} mt-3 ml-[24px]`}>
 				{Timeline()}
 			</div>
 			<div className="flex md:hidden flex-1 overflow-x-scroll scroll-hidden cursor-ew-resize">

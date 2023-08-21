@@ -79,6 +79,8 @@ import FilterUnfilledSVG from '~assets/icons/filter-unfilled.svg';
 import SearchSVG from '~assets/icons/search.svg';
 import CheckedSVG from '~assets/icons/checked.svg';
 import CheckedOutlinedSVG from '~assets/icons/check-outline.svg';
+import DemocracyReferenda from '~assets/icons/Democracy-Referenda.svg';
+import DemocracyReferendaGrey from '~assets/icons/Democracy-Referenda-grey.svg';
 import TrendingSVG from '~assets/icons/trending.svg';
 import RootTrackSVG from '~assets/delegation-tracks/root.svg';
 import FellowshipAdminSVG from '~assets/delegation-tracks/fellowship-admin.svg';
@@ -372,6 +374,12 @@ export const SearchIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 export const CheckOutlineIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={CheckedOutlinedSVG} {...props} />
+);
+export const DemocracyReferendaIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DemocracyReferenda} {...props} />
+);
+export const DemocracyReferendaGreyIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={DemocracyReferendaGrey} {...props} />
 );
 export const CheckedIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={CheckedSVG} {...props} />

@@ -79,7 +79,7 @@ interface ISentimentsPercentage {
 	slightlyFor: ESentiments | 0;
 }
 
-const COMMENT_SIZE = 5;
+const COMMENT_SIZE = 50;
 
 const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
 	const commentResponse:any = {};

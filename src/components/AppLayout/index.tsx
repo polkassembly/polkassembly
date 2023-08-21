@@ -346,7 +346,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if(!['moonbeam', 'moonbase', 'moonriver'].includes(network)){
-		gov2CollapsedItems.splice(-1, 0 , getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-white' />, [
+		gov2CollapsedItems.splice(-1, 0, getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='text-white' />, [
 			...gov2TrackItems.treasuryItems
 		]));
 	}
@@ -379,7 +379,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if(username) {
 		sidebarItems = [userDropdown, ...sidebarItems];
 	}
-
 	return (
 		<Layout className={className}>
 			<NavHeader sidedrawer={sidedrawer} sidedrawerHover={sidedrawerHover} setSidedrawer={setSidedrawer} previousRoute={previousRoute}  />
@@ -393,7 +392,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						setSidedrawer(true);
 						setTimeout(() => {
 							setSidedrawerHover(true);
-						}, 200);}}
+						}, 200);
+					}}
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' , zIndex:1001 }}
 					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed'}
 				>
@@ -406,7 +406,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						theme="light"
 						mode="inline"
 						selectedKeys={[router.pathname]}
-						items={sidebarItems}
+						items={sidebarItems.filter((item) => item.label)}
 						onClick={handleMenuClick}
 						className={`${username?'auth-sider-menu':''} mt-[15px]`}
 					/>
@@ -425,6 +425,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						top: 0
 					}}
 				>
+
 					<Menu
 						theme="light"
 						mode="inline"
@@ -433,8 +434,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						items={sidebarItems}
 						onClick={handleMenuClick}
 						className={`${username?'auth-sider-menu':''} mt-[60px] logo-border`}
-						onMouseLeave={() => {setSidedrawer(false);
+						onMouseLeave={() => {
 							setTimeout(() => {
+								setSidedrawer(false);
 								setSidedrawerHover(false);
 							}, 0);}
 						}
@@ -477,6 +479,8 @@ export default styled(AppLayout)`
     margin-left:-40px;
 	padding:0
 }
+
+
 .logo-border li:nth-child(1):hover{
 	background:transparent !important;
 }

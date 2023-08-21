@@ -59,7 +59,7 @@ const StyledCollapse = styled(Collapse)`
 const getDelegatedDetails = (votes:[any]) => {
 	let allVotes = 0;
 	let votingPower = 0;
-	votes.forEach((vote) => {
+	votes?.forEach((vote) => {
 		allVotes+=Number(vote.balance.value);
 		votingPower += Number(vote.votingPower);
 	});
@@ -69,7 +69,7 @@ const getDelegatedDetails = (votes:[any]) => {
 const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className }) => {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkContext();
-	const [delegatedVotes, delegatedVotingPower, delegators] = getDelegatedDetails(voteData.delegatedVotes);
+	const [delegatedVotes, delegatedVotingPower, delegators] = getDelegatedDetails(voteData?.delegatedVotes || []);
 
 	const Title = () => (
 		<div className='m-0 p-0'>
@@ -120,7 +120,7 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className }) => {
 						</div>
 						<div className='overflow-ellipsis w-[115px]'>
 							{voteData.lockPeriod
-								? `${voteData.lockPeriod}x${voteData?.delegatedVotes.length>0 ? '/d' : ''}`
+								? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length>0 ? '/d' : ''}`
 								: '0.1x'}
 						</div>
 					</>
@@ -152,7 +152,7 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className }) => {
 			</div>
 		</div>
 	);
-	return  voteData.delegatedVotes.length > 0 ? (
+	return  voteData?.delegatedVotes?.length > 0 ? (
 		<StyledCollapse
 			className={`${
 				active
@@ -228,7 +228,7 @@ const VoterRow: FC<IVoterRow> = ({ voteType, voteData, className }) => {
 										<ConvictionIcon /> Conviction
 									</span>
 									<span className='text-xs text-bodyBlue'>{voteData.lockPeriod
-										? `${voteData.lockPeriod}x${voteData?.delegatedVotes.length>0 ? '/d' : ''}`
+										? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length>0 ? '/d' : ''}`
 										: '0.1x'}</span>
 								</div>
 								<div className='flex justify-between'>

@@ -206,11 +206,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					date: dayjs(obj?.created_at),
 					firstCommentId: '',
 					id: timelines.length + 1,
-					index: obj?.index.toString(),
+					index: obj?.index?.toString(),
 					status: getStatus(obj?.type),
 					type:obj?.type
 				});
-				comments[`${obj?.index.toString()}_${obj?.type}`] = [];
+				comments[`${obj?.index?.toString()}_${obj?.type}`] = [];
 			});
 			setTimelines(timelines);
 		}

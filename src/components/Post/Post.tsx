@@ -30,6 +30,7 @@ import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
+import StickyBox from 'react-sticky-box';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -258,17 +259,19 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
-				<GovernanceSideBar
-					toggleEdit={toggleEdit}
-					proposalType={proposalType}
-					onchainId={onchainId}
-					status={postStatus}
-					canEdit={canEdit}
-					startTime={post.created_at}
-					post={post}
-					tally={post?.tally}
-					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
-				/>
+				<StickyBox offsetTop={20} offsetBottom={50}>
+					<GovernanceSideBar
+						toggleEdit={toggleEdit}
+						proposalType={proposalType}
+						onchainId={onchainId}
+						status={postStatus}
+						canEdit={canEdit}
+						startTime={post.created_at}
+						post={post}
+						tally={post?.tally}
+						className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
+					/>
+				</StickyBox>
 				{
 					isOffchainPost &&
 					<div className={'sticky top-[65px] mb-6 '}>

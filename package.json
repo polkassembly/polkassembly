@@ -75,6 +75,7 @@
     "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
     "next": "^13.3.1",
+    "next-theme": "^0.1.5",
     "nextjs-progressbar": "^0.0.16",
     "node-fetch": "^3.3.0",
     "otpauth": "^9.1.2",

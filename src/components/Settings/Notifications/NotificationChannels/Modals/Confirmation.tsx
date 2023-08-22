@@ -55,7 +55,7 @@ const DisabledConfirmation = ({
 				</Button>
 			]}
 		>
-			<p className='text-[16px] font-medium m-0 my-6 leading-[21px] text-[#243A57]'>
+			<p className='text-[16px] font-medium m-0 my-6 leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
 				{`Are you sure you want to disable Polkassembly bot from your ${channel} channel chat?`}
 			</p>
 			<StyledAlert

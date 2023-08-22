@@ -29,7 +29,7 @@ const StatusTag = ({ className, content, status, colorInverted, type }: Props) =
 	}
 
 	return (
-		<div className={`${className} ${status} ${colorInverted && 'bg-white inverted'} text-xs rounded-full  px-3 py-1 whitespace-nowrap h-min`}>
+		<div className={`${className} ${status} ${colorInverted && 'bg-white dark:bg-section-dark-overlay inverted'} text-xs rounded-full  px-3 py-1 whitespace-nowrap h-min`}>
 			{content?.split(/(?=[A-Z])/).join(' ')}
 		</div>
 	);

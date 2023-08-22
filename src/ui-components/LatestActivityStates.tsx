@@ -84,7 +84,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 				tableData.map((rowData,index) => (
 					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 h-auto min-h-[140px] ${poppins.variable} ${poppins.className}`} onClick={() => onClick(rowData)}>
 						{/* Meta Data Row */}
-						<div className="flex items-center justify-between text-bodyBlue m-2.5">
+						<div className="flex items-center justify-between text-blue-light-high dark:text-blue-dark-high m-2.5">
 							<div className="max-xs-hidden">
 								#{rowData.tip_id ? rowData.tip_id : rowData.post_id} {rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
 							</div>
@@ -94,7 +94,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 						<div className='flex mt-2'>
 							<span>
 								{
-									!rowData.proposer ? <span className='username mx-2 text-bodyBlue font-semibold'> { rowData.username } </span> :
+									!rowData.proposer ? <span className='username mx-2 text-blue-light-high dark:text-blue-dark-high font-semibold'> { rowData.username } </span> :
 										<Address
 											address={rowData.proposer}
 											className='text-sm mx-2'
@@ -126,10 +126,10 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 				tableData.map((rowData,index) => (
 					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 h-auto min-h-[140px] ${poppins.variable} ${poppins.className}`} onClick={() => onClick(rowData)}>
 						{/* Meta Data Row */}
-						<div className="flex items-center justify-between text-bodyBlue m-2.5">
+						<div className="flex items-center justify-between text-blue-light-high dark:text-blue-dark-high m-2.5">
 							<div className="max-xs-hidden">
 								#{rowData.post_id} {rowData.title.length > 50 ? rowData.title.substring(0, 50) + '...' : rowData.title}
-								{rowData.sub_title && <div className='text-sm text-bodyBlue'>{rowData.sub_title}
+								{rowData.sub_title && <div className='text-sm text-blue-light-high dark:text-blue-dark-high'>{rowData.sub_title}
 								</div>}
 							</div>
 						</div>
@@ -137,7 +137,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 						<div className='flex mt-2'>
 							<span>
 								{
-									!rowData.proposer ? <span className='username mx-2 text-bodyBlue font-semibold'> { rowData.username } </span> :
+									!rowData.proposer ? <span className='username mx-2 text-blue-light-high dark:text-blue-dark-high font-semibold'> { rowData.username } </span> :
 										<Address
 											address={rowData.proposer}
 											className='text-sm mx-2'

@@ -71,7 +71,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 		copyToClipboard(address);
 	};
 
-	return ((username?.length > 0 || username.length > 0)? <div className={`flex justify-between shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white rounded-[14px] ${className}`}>
+	return ((username?.length > 0 || username.length > 0)? <div className={`flex justify-between shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] bg-white dark:bg-section-dark-overlay rounded-[14px] ${className}`}>
 		<div className='flex justify-center gap-[34px] '>
 			<ImageComponent
 				src={image}
@@ -79,10 +79,10 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 				className='bg-transparent flex items-center justify-center w-[105px] h-[105px] '
 				iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
 			/>
-			<div className='text-bodyBlue'>
-				<span className='text-bodyBlue font-semibold mb-4 tracking-wide text-lg'>{username || userName}</span >
+			<div className='text-blue-light-high dark:text-blue-dark-high'>
+				<span className='text-blue-light-high dark:text-blue-dark-high font-semibold mb-4 tracking-wide text-lg'>{username || userName}</span >
 				{address && address.length > 0  && <div className='flex gap-2 items-center'>
-					<Address address={address} displayInline className='text-sm text-bodyBlue' identiconSize={34} />
+					<Address address={address} displayInline className='text-sm text-blue-light-high dark:text-blue-dark-high' identiconSize={34} />
 					<span className='flex items-center cursor-pointer' onClick={(e) => {isSearch && e.preventDefault(); copyLink(address || addresses[0]) ;success();}}>
 						{contextHolder}
 						<CopyIcon/>
@@ -93,11 +93,11 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					? <h2 className={`text-sm font-normal text-[#576D8BCC] mt-2 ${username === userProfile.username && 'cursor-pointer'}`} onClick={() => setOpenEditModal(true)}>
 						{username === userProfile.username ? 'Click here to add bio' : 'No Bio' }
 					</h2>
-					: <h2  onClick={() => setOpenEditModal(true)} className={`text-sm mt-2 text-bodyBlue tracking-[0.01em] cursor-pointer font-normal ${username === userProfile.username && 'cursor-pointer'}`}>{bio}</h2>
+					: <h2  onClick={() => setOpenEditModal(true)} className={`text-sm mt-2 text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] cursor-pointer font-normal ${username === userProfile.username && 'cursor-pointer'}`}>{bio}</h2>
 				}
 
 				<div
-					className={`flex flex-wrap items-center text-xl text-bodyBlue gap-x-5 md:gap-x-3 mt-[10px] ${isSearch && 'mt-0'}`}
+					className={`flex flex-wrap items-center text-xl text-blue-light-high dark:text-blue-dark-high gap-x-5 md:gap-x-3 mt-[10px] ${isSearch && 'mt-0'}`}
 				>
 					{
 						socialLinks?.map((social: any, index: number) => {

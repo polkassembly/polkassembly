@@ -56,7 +56,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 									{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
 								</div>
 							</div>
-							<span className='text-[#243A57] text-sm font-medium mt-2'>{titleString}</span>
+							<span className='text-blue-light-high dark:text-blue-dark-high text-sm font-medium mt-2'>{titleString}</span>
 							<Markdown imgHidden={true} md={post?.content?.slice(0, 250) + ' .....'} className='text-[#8696a9] text-sm font-normal my-2 tracking-[0.01em] expand-content'/>
 							<div className='my-2 flex flex-shrink-0 gap-1 flex-wrap max-sm:mt-2'>
 								<div className='flex gap-2 items-center text-xs text-lightBlue max-sm:hidden'>
@@ -73,10 +73,10 @@ const ResultPosts = ({ className, postsData, isSuperSearch, postsPage, setPostsP
 								</div>
 								{post?.tags && post?.tags.length > 0 && <div className='flex gap-1 items-center' >
 									{ post?.tags?.slice(0,2).map((tag: string, index: number) =>
-										(<div key={index} className='rounded-[50px] px-[14px] py-1 border-[#D2D8E0] bg-white border-solid border-[1px] font-medium text-lightBlue text-[10px]' >
+										(<div key={index} className='rounded-[50px] px-[14px] py-1 border-[#D2D8E0] bg-white dark:bg-section-dark-overlay border-solid border-[1px] font-medium text-lightBlue text-[10px]' >
 											{tag}
 										</div>))}
-									{post?.tags.length > 2 && <span className='text-[10px] font-medium text-[#243A57] px-2 py-1 bg-[#e7e9ee] rounded-[50px]'>+{post?.tags.length-2}</span> }
+									{post?.tags.length > 2 && <span className='text-[10px] font-medium text-blue-light-high dark:text-blue-dark-high px-2 py-1 bg-[#e7e9ee] rounded-[50px]'>+{post?.tags.length-2}</span> }
 									<Divider style={{ border: '1px solid var(--lightBlue)' }} type="vertical"/>
 								</div>
 								}

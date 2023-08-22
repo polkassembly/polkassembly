@@ -41,7 +41,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 							: <PostLinkingIcon />
 					}
 				</div>
-				<span className='text-bodyBlue text-sm mt-4 text-center'>Please add contextual information for voters to make an informed decision.</span>
+				<span className='text-blue-light-high dark:text-blue-dark-high text-sm mt-4 text-center'>Please add contextual information for voters to make an informed decision.</span>
 				<button
 					className='border-none outline-none flex items-center justify-center gap-x-2 text-lg leading-[27px] w-full mt-5 text-white bg-pink_primary rounded-[4px] py-1 px-9 h-[40px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] cursor-pointer'
 					onClick={() => {
@@ -90,7 +90,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 							+ Link Existing Discussion Post
 						</button>
 						<button
-							className='md:min-w-[314px] h-[40px] outline-none rounded-[4px] border border-solid border-pink_primary py-1 px-4 bg-white text-pink_primary cursor-pointer font-medium text-sm leading-[21px] tracking-[0.0125em]'
+							className='md:min-w-[314px] h-[40px] outline-none rounded-[4px] border border-solid border-pink_primary py-1 px-4 bg-white dark:bg-section-dark-overlay text-pink_primary cursor-pointer font-medium text-sm leading-[21px] tracking-[0.0125em]'
 							onClick={() => {
 								setOpen(false);
 								setEditModalOpen(true);

@@ -76,7 +76,7 @@ const Disable2FA: FC<{className?: string}> = ({ className }) => {
 						key="disable"
 						onClick={handleSubmit}
 						disabled={loading}
-						className='rounded-lg font-semibold text-md leading-7 text-pink_primary py-5 outline-none border-solid border-pink_primary px-7 inline-flex items-center justify-center bg-white'
+						className='rounded-lg font-semibold text-md leading-7 text-pink_primary py-5 outline-none border-solid border-pink_primary px-7 inline-flex items-center justify-center bg-white dark:bg-section-dark-overlay'
 					>
            Disable
 					</Button>,
@@ -106,7 +106,7 @@ const Disable2FA: FC<{className?: string}> = ({ className }) => {
 			<Button
 				onClick={() => setShowModal(true)}
 				htmlType="submit"
-				className='w-full bg-[#F6F7F9] text-[#243A57] text-left h-full p-[16px] border-[#D2D8E0]'
+				className='w-full bg-[#F6F7F9] text-blue-light-high dark:text-blue-dark-high text-left h-full p-[16px] border-[#D2D8E0]'
 			>
 				<span className='flex align-center text-[16px] font-medium'>Disable Two Factor Authentication <KeyboardDownIcon/></span>
 				<span className='block text-[14px]'>Disabling two-factor authentication may compromise the security of your account.</span>

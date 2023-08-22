@@ -296,7 +296,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 		<Checkbox.Group className='flex flex-col h-[200px] overflow-y-scroll' onChange={onChange} value={checkedList} >
 			{trackArr?.filter(( item ) => item?.trackId !== trackNum)?.map((track, index) => (
 				<div
-					className={`${poppins.variable} ${poppins.className} text-sm tracking-[0.01em] text-bodyBlue flex gap-[13px] p-[8px]`}
+					className={`${poppins.variable} ${poppins.className} text-sm tracking-[0.01em] text-blue-light-high dark:text-blue-dark-high flex gap-[13px] p-[8px]`}
 					key={index}
 				>
 					<Checkbox className='text-pink_primary' value={track?.name}/>
@@ -319,7 +319,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full` }
 				wrapClassName={className}
 				title={
-					<div className='flex items-center text-bodyBlue text-[20px] font-semibold mb-6'>
+					<div className='flex items-center text-blue-light-high dark:text-blue-dark-high text-[20px] font-semibold mb-6'>
 						<DelegateProfileIcon className='mr-2'/>Delegate
 					</div>
 				}
@@ -440,7 +440,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							</div>
 							<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
 								<div className='flex gap-[10px] items-center justify-center text-lightBlue text-sm'> <LockIcon/><span>Locking period</span></div>
-								<div className='text-bodyBlue font-medium text-sm flex justify-center items-center' >
+								<div className='text-blue-light-high dark:text-blue-dark-high font-medium text-sm flex justify-center items-center' >
 									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enactment period`}
 								</div>
 							</div>

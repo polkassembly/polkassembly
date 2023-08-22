@@ -102,7 +102,7 @@ const AddNetworkModal = ({
 					</Button>
 				]}
 			>
-				<p className='font-medium text-[#243A57] text-[16px]'>
+				<p className='font-medium text-blue-light-high dark:text-blue-dark-high text-[16px]'>
 					{showSureModal
 						? 'Pre-existing settings will be changed for the following networks:'
 						: 'Please select network(s) for which you want to replicate settings:'}
@@ -130,7 +130,7 @@ const AddNetworkModal = ({
 											/>
 											<span
 												className={
-													'items-center justify-center ml-[10px] mr-[12px] font-semibold text-[#243A57] text-sm leading-[18px] tracking-[0.02em] '
+													'items-center justify-center ml-[10px] mr-[12px] font-semibold text-blue-light-high dark:text-blue-dark-high text-sm leading-[18px] tracking-[0.02em] '
 												}
 											>
 												<span className='inline-block capitalize max-w-[100px] overflow-hidden text-ellipsis m-0'>
@@ -191,7 +191,7 @@ const AddNetworkModal = ({
 														className={`items-center text-navBlue rounded-[34px] px-[12px] py-[8px] ${
 															selected
 																? 'border-solid border bg-[#FEF2F8] border-[#E5007A]'
-																: 'bg-white border-[#fff]'
+																: 'bg-white dark:bg-section-dark-overlay border-[#fff]'
 														} cursor-pointer hover:bg-[#FEF2F8] max-w-[200px] pb-[5px]`}
 													>
 														<Image
@@ -205,7 +205,7 @@ const AddNetworkModal = ({
 														/>
 														<span
 															className={
-																'items-center justify-center ml-[10px] mr-[12px] font-normal text-[#243A57] text-sm leading-[21px] tracking-[0.02em]'
+																'items-center justify-center ml-[10px] mr-[12px] font-normal text-blue-light-high dark:text-blue-dark-high text-sm leading-[21px] tracking-[0.02em]'
 															}
 														>
 															<span className='inline-block capitalize max-w-[100px] overflow-hidden text-ellipsis m-0'>

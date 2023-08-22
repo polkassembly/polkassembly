@@ -600,9 +600,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		const unit =`${chainProperties[network]?.tokenSymbol}`;
 		return (
 			<Spin spinning={ isLastVoteLoading } indicator={<LoadingOutlined />}>
-				<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
+				<p className='font-medium text-[12px] leading-6 text-blue-light-high dark:text-blue-dark-high mb-[5px]'>Last Vote:</p>
 
-				<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+				<div className='flex justify-between text-blue-light-high dark:text-blue-dark-high text-[12px] font-normal leading-6 mb-[-5px]'>
 					<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='max-w-[100px] max-[345px]:w-auto'>
 						<span className='h-[25px]'>
 							{decision == 'yes' ?
@@ -620,7 +620,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										decision == 'abstain' && (balance as any).abstain ?
 											<p className='flex justify-center align-middle'>
 												<AbstainGray className='mr-1 mb-[-8px]'/>
-												<span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span>
+												<span className='capitalize font-medium  text-blue-light-high dark:text-blue-dark-high'>{'Abstain'}</span>
 											</p> : null
 							}
 						</span>
@@ -648,10 +648,10 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const LastVoteInfoLocalState :FC<ILastVote> = ({ balance, conviction, decision }) => {
 		return (
 			<div>
-				<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-				<div className='flex justify-between text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+				<p className='font-medium text-[12px] leading-6 text-blue-light-high dark:text-blue-dark-high mb-[5px]'>Last Vote:</p>
+				<div className='flex justify-between text-blue-light-high dark:text-blue-dark-high text-[12px] font-normal leading-6 mb-[-5px]'>
 					<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className=''>
-						<span className='h-[25px]'>{decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-[#243A57]'>{'Abstain'}</span></p>: null }</span>
+						<span className='h-[25px]'>{decision === EVoteDecisionType.AYE ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :decision === EVoteDecisionType.NAY ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : decision === EVoteDecisionType.SPLIT  ? <p><SplitYellow className='mb-[-2px]'/> <span className='capitalize font-medium text-[#FFBF60]'>{'Split'}</span></p>  : decision === EVoteDecisionType.ABSTAIN  ? <p className='flex justify-center align-middle'><AbstainGray className='mr-1 mb-[-8px]'/> <span className='capitalize font-medium  text-blue-light-high dark:text-blue-dark-high'>{'Abstain'}</span></p>: null }</span>
 					</Tooltip>
 					<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=''>
 						<span className=''><ClockCircleOutlined className='mr-1' />{dayjs().format('Do MMM \'YY')}</span>
@@ -693,7 +693,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					{/* decision deposite placed. */}
 					{(statusHistory && statusHistory?.filter((status: any) => status.status === gov2ReferendumStatus.DECISION_DEPOSIT_PLACED)?.length === 0) && (statusHistory?.filter((status: any) => status?.status === gov2ReferendumStatus.TIMEDOUT)?.length === 0) && trackName && <DecisionDepositCard trackName={String(trackName)} />}
 
-					{canEdit && graphicOpen && post_link && !(post.tags && Array.isArray(post.tags) && post.tags.length > 0) && <div className=' rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] pb-[36px] mb-8'>
+					{canEdit && graphicOpen && post_link && !(post.tags && Array.isArray(post.tags) && post.tags.length > 0) && <div className=' rounded-[14px] bg-white dark:bg-section-dark-overlay shadow-[0px_6px_18px_rgba(0,0,0,0.06)] pb-[36px] mb-8'>
 						<div className='flex justify-end py-[17px] px-[20px] items-center' onClick={ () => setGraphicOpen(false)}>
 							<CloseIcon/>
 						</div>
@@ -805,7 +805,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
+														<h6 className="text-blue-light-high dark:text-blue-dark-high font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendumEth
 															referendumId={onchainId as number}
 															onAccountChange={onAccountChange}
@@ -816,7 +816,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														}
 													</> :
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
+														<h6 className="text-blue-light-high dark:text-blue-dark-high font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -852,7 +852,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														{(!metaMaskError || walletConnectProvider?.wc.connected) &&
 
 													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
+														<h6 className="text-blue-light-high dark:text-blue-dark-high font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendumEthV2
 															referendumId={onchainId as number}
 															onAccountChange={onAccountChange}
@@ -864,7 +864,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 														}
 													</> : <GovSidebarCard className='overflow-y-hidden'>
-														<h6 className="text-bodyBlue font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
+														<h6 className="text-blue-light-high dark:text-blue-dark-high font-medium text-xl mx-0.5 mb-6 leading-6">Cast your Vote!</h6>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -903,7 +903,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															className='md:min-w-[700px]'
 															closeIcon={<CloseIcon />}
 															title={
-																<h2 className='text-bodyBlue tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
+																<h2 className='text-blue-light-high dark:text-blue-dark-high tracking-[0.01em] text-xl leading-[30px] font-semibold'>Threshold Curves</h2>
 															}
 														>
 															<div className='mt-5'>

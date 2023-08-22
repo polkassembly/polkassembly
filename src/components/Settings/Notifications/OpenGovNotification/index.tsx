@@ -151,7 +151,7 @@ export default function OpenGovNotification({
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className='bg-white dark:bg-section-dark-overlay'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -162,7 +162,7 @@ export default function OpenGovNotification({
 				header={
 					<div className='flex items-center gap-[6px] channel-header'>
 						<OverallPostsNotification />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
+						<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
 							OpenGov Notifications
 						</h3>
 						{!!active && (

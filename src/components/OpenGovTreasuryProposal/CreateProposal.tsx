@@ -212,25 +212,25 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
 		<div className={`create-proposal ${className}`}>
-			{ (submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}showIcon message='Insufficient available balance.'/>}
-			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-bodyBlue text-sm rounded-[4px] mt-4 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>
+			{ (submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-blue-light-high dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}showIcon message='Insufficient available balance.'/>}
+			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-blue-light-high dark:text-blue-dark-high text-sm rounded-[4px] mt-4 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>
 			<div className='mt-4 text-sm font-normal text-lightBlue'>
 				<div className='mt-4 flex flex-col gap-2'>
-					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-bodyBlue' address={proposerAddress} identiconSize={18} displayInline disableAddressClick/></span>
-					<span className='flex'><span className='w-[150px]'>Beneficiary Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-bodyBlue' address={beneficiaryAddress} identiconSize={18} displayInline disableAddressClick/></span>
-					<span className='flex'><span className='w-[150px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary ml-1'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
-					<span className='flex'><span className='w-[150px]'>Funding Amount:</span><span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
+					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-blue-light-high dark:text-blue-dark-high' address={proposerAddress} identiconSize={18} displayInline disableAddressClick/></span>
+					<span className='flex'><span className='w-[150px]'>Beneficiary Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-blue-light-high dark:text-blue-dark-high' address={beneficiaryAddress} identiconSize={18} displayInline disableAddressClick/></span>
+					<span className='flex'><span className='w-[150px]'>Track:</span><span className='text-blue-light-high dark:text-blue-dark-high font-medium'>{selectedTrack} <span className='text-pink_primary ml-1'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
+					<span className='flex'><span className='w-[150px]'>Funding Amount:</span><span className='text-blue-light-high dark:text-blue-dark-high font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
 					<span className='flex items-center'><span className='w-[150px]'>Preimage Hash:</span>
-						<span className='text-bodyBlue  font-medium'>{preimageHash.slice(0,10)+'...'+ preimageHash.slice(55)}</span>
+						<span className='text-blue-light-high dark:text-blue-dark-high  font-medium'>{preimageHash.slice(0,10)+'...'+ preimageHash.slice(55)}</span>
 						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(preimageHash) ;success('Preimage hash copied to clipboard');}}>
 							{contextHolder}
 							<CopyIcon/>
 						</span>
 					</span>
-					<span className='flex'><span className='w-[150px]'>Preimage Length:</span><span className='text-bodyBlue font-medium'>{preimageLength}</span></span>
+					<span className='flex'><span className='w-[150px]'>Preimage Length:</span><span className='text-blue-light-high dark:text-blue-dark-high font-medium'>{preimageLength}</span></span>
 					<span className='flex items-center'>
 						<span className='w-[150px]'>Preimage Link:</span>
-						<a target='_blank' rel='noreferrer' href={`/preimages/${preimageHash}`} className='text-bodyBlue font-medium'>{`https://${network}.polkassembly.io/preimages/${preimageHash.slice(0,5)}...`}</a>
+						<a target='_blank' rel='noreferrer' href={`/preimages/${preimageHash}`} className='text-blue-light-high dark:text-blue-dark-high font-medium'>{`https://${network}.polkassembly.io/preimages/${preimageHash.slice(0,5)}...`}</a>
 						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/preimages/${preimageHash}`) ;success('Preimage link copied to clipboard.');}}>
 							{contextHolder}
 							<CopyIcon/>
@@ -238,11 +238,11 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					</span>
 				</div>
 			</div>
-			{showAlert && <Alert className='mt-6 text-bodyBlue rounded-[4px]' showIcon type='info' message={<span className='text-sm text-bodyBlue'>An amount of <span className='font-semibold'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span> will be required to submit proposal.</span>}
+			{showAlert && <Alert className='mt-6 text-blue-light-high dark:text-blue-dark-high rounded-[4px]' showIcon type='info' message={<span className='text-sm text-blue-light-high dark:text-blue-dark-high'>An amount of <span className='font-semibold'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span> will be required to submit proposal.</span>}
 				description={<div className='mt-[10px] flex flex-col gap-1'>
-					<span className='flex justify-between text-xs text-lightBlue pr-[70px] font-normal'><span className='w-[150px]'>Deposit amount</span><span className='text-bodyBlue font-medium'>{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}</span></span>
-					<span className='flex justify-between text-xs text-lightBlue pr-[70px] font-normal'><span className='w-[150px]'>Gas fees</span><span className='text-bodyBlue font-medium'>{formatedBalance(String(txFee.toString()), unit)} {unit}</span></span>
-					<span className='flex justify-between text-sm text-lightBlue pr-[70px] font-semibold'><span className='w-[150px]'>Total</span><span className='text-bodyBlue'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span></span>
+					<span className='flex justify-between text-xs text-lightBlue pr-[70px] font-normal'><span className='w-[150px]'>Deposit amount</span><span className='text-blue-light-high dark:text-blue-dark-high font-medium'>{formatedBalance(String(submitionDeposite.toString()), unit)} {unit}</span></span>
+					<span className='flex justify-between text-xs text-lightBlue pr-[70px] font-normal'><span className='w-[150px]'>Gas fees</span><span className='text-blue-light-high dark:text-blue-dark-high font-medium'>{formatedBalance(String(txFee.toString()), unit)} {unit}</span></span>
+					<span className='flex justify-between text-sm text-lightBlue pr-[70px] font-semibold'><span className='w-[150px]'>Total</span><span className='text-blue-light-high dark:text-blue-dark-high'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span></span>
 				</div>}/>}
 			<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
 				<Button

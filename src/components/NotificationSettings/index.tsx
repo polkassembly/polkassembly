@@ -83,7 +83,7 @@ const NotificationSettings = () => {
 		setLoading(false);
 	};
 	return (
-		<Form onFinish={() => updatePreference()} className='w-full bg-white shadow-md p-8 rounded-md flex flex-col gap-y-8'>
+		<Form onFinish={() => updatePreference()} className='w-full bg-white dark:bg-section-dark-overlay shadow-md p-8 rounded-md flex flex-col gap-y-8'>
 			<header>
 				<h3
 					className='font-medium text-lg tracking-wide text-sidebarBlue'

@@ -389,7 +389,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						<>
 							<Markdown md={content} className='py-2 px-2 md:px-4 bg-comment_bg rounded-b-md text-sm' />
 
-							<div className='flex items-center flex-row bg-white flex-wrap gap-[1px]'>
+							<div className='flex items-center flex-row bg-white dark:bg-section-dark-overlay flex-wrap gap-[1px]'>
 								<CommentReactionBar
 									className='reactions mr-0'
 									commentId={commentId}

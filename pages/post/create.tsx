@@ -12,7 +12,7 @@ import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 
 const CreatePost = dynamic(() => import('~src/components/Post/CreatePost'), {
-	loading: () => <div className="flex flex-col mt-6 bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+	loading: () => <div className="flex flex-col mt-6 bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-md w-full shadow-md mb-4">
 		<Skeleton.Input active />
 		<Skeleton.Input className='mt-8' active />
 		<Skeleton className='mt-8' active />

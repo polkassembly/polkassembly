@@ -140,7 +140,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				id={id}
 			/>
 
-			<div className='comment-box bg-white p-[1rem]'>
+			<div className='comment-box bg-white dark:bg-section-dark-overlay p-[1rem]'>
 				{error && <ErrorAlert errorMsg={error} className='mb-2' />}
 				<Form
 					form={form}

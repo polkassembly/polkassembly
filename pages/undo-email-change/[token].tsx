@@ -67,7 +67,7 @@ const UndoEmailChange = ({ network }: { network: string }) => {
 		<>
 			<SEOHead title="Undo Email Change" network={network}/>
 			<Row justify='center' align='middle' className='h-full -mt-16'>
-				{ error ? <article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
+				{ error ? <article className="bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
 					<h2 className='flex flex-col gap-y-2 items-center text-xl font-medium'>
 						<WarningOutlined />
 						<FilteredError text={error}/>

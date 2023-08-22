@@ -75,7 +75,7 @@ const ResetPassword = ({ network, token, userId } : Props): JSX.Element => {
 		<>
 			<SEOHead title="Reset Password" network={network}/>
 			<Row justify='center' align='middle' className='h-full -mt-16'>
-				{ <article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
+				{ <article className="bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
 					{
 						token && userId ? <>
 							<h3 className='text-2xl font-semibold text-[#1E232C]'>Set new password</h3>

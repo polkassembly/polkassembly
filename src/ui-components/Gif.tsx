@@ -74,7 +74,7 @@ const Gif: FC<IGifProps> = (props) => {
 										});
 									}}
 									type="card"
-									className='ant-tabs-tab-bg-white text-bodyBlue font-medium'
+									className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-blue-light-high dark:text-blue-dark-high font-medium'
 									items={
 										[
 											{

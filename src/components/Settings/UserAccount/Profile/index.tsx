@@ -21,7 +21,7 @@ const Row = ({ label, data, handleEdit }: { label: string, data: string, handleE
 	<div className='flex justify-between items-baseline'>
 		<div>
 			<label className='text-[#485F7D] text-[14px]' htmlFor={label}>{label}</label>
-			<p className='font-medium text-[#243A57]'>{
+			<p className='font-medium text-blue-light-high dark:text-blue-dark-high'>{
 				label === 'Password' ?
 					<div className='flex gap-1 mt-2'>
 						{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((id) => <PasswordDotIcon key={id} />)}
@@ -48,7 +48,7 @@ export default function ProfileSettings() {
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className='bg-white dark:bg-section-dark-overlay'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
@@ -58,7 +58,7 @@ export default function ProfileSettings() {
 				header={
 					<div className='flex items-center gap-[6px] channel-header'>
 						<ProfileIcon />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
+						<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
 							Profile Settings
 						</h3>
 					</div>

@@ -23,7 +23,7 @@ const Footer = ({ className } : { className?:string }) => {
 	const [floatButtonOpen , setFloatButtonOpen] = useState(false);
 
 	return (
-		<footer aria-label="Site Footer" className={`${className} bg-white max-[650px]:rounded-[14px] `}>
+		<footer aria-label="Site Footer" className={`${className} bg-white dark:bg-section-dark-overlay max-[650px]:rounded-[14px] `}>
 			<div className="mx-auto max-w-screen-xl px-4 pt-8  sm:px-6 lg:pl-8 lg:pr-2">
 				<div className="flex flex-col md:flex-row ">
 					{/* Logo and Network Link */}
@@ -61,7 +61,7 @@ const Footer = ({ className } : { className?:string }) => {
 					{/* Terms Links */}
 					<div className="mt-8 md:mt-0 mx-auto md:mx-0 md:ml-auto flex flex-col md:flex-row justify-center md:justify-end">
 						<div className="md:ml-10 lg:ml-14 text-center sm:text-left">
-							<p className="text-lg font-bold text-bodyBlue mb-[-5px] max-[650px]:mt-[-15px] ">Help Center</p>
+							<p className="text-lg font-bold text-blue-light-high dark:text-blue-dark-high mb-[-5px] max-[650px]:mt-[-15px] ">Help Center</p>
 
 							<nav aria-label="Footer About Nav" className="mt-4 md:mt-3">
 								<div className="space-y-2 text-sm text-lightBlue font-normal">
@@ -94,7 +94,7 @@ const Footer = ({ className } : { className?:string }) => {
 						</div>
 
 						<div className="mt-8 md:mt-0 md:ml-10 lg:ml-14 text-center sm:text-left text-lightBlue font-normal">
-							<p className="text-lg font-bold text-bodyBlue mb-[-5px] max-[650px]:mt-[-15px] ">Our Services</p>
+							<p className="text-lg font-bold text-blue-light-high dark:text-blue-dark-high mb-[-5px] max-[650px]:mt-[-15px] ">Our Services</p>
 
 							<nav aria-label="Footer Services Nav" className="mt-4 md:mt-3">
 								<div className="space-y-2 text-sm">

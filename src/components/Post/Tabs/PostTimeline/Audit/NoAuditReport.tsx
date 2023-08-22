@@ -11,7 +11,7 @@ const NoAuditReport = () => {
 			<div className='mt-[75px]'>
 				<NoDataFound />
 			</div>
-			<p className='m-0 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#243A57]'>
+			<p className='m-0 text-sm font-medium leading-[21px] tracking-[0.01em] text-blue-light-high dark:text-blue-dark-high'>
                 No audit reports available
 			</p>
 		</div>

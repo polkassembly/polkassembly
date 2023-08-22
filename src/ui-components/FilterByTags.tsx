@@ -133,7 +133,7 @@ const FilterByTags=({ className, isSearch = false, setSelectedTags, disabled, cl
 
 		{searchInput.length === 0 && tags.length === 0 && filteredTags.length === 0
 			? <div className='flex-col'>
-				{isSearch && <div className={`text-[10px] text-[#243A57] font-normal mt-1 ${poppins.variable} ${poppins.className}`}>Suggestion :</div>}
+				{isSearch && <div className={`text-[10px] text-blue-light-high dark:text-blue-dark-high font-normal mt-1 ${poppins.variable} ${poppins.className}`}>Suggestion :</div>}
 
 				{ trendingTags.slice(0,5).map((tag, index) => <div key={index} onClick={() => handleSetTags(tag?.name)} className={`flex gap-2 text-xs items-center py-1 cursor-pointer ${poppins.className} ${poppins.variable}`}>
 					<TrendingIcon/>
@@ -144,7 +144,7 @@ const FilterByTags=({ className, isSearch = false, setSelectedTags, disabled, cl
 			</div>
 			: <Checkbox.Group className={`flex flex-col mt-1.5 tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll  ${poppins.className} ${poppins.variable}`} value={tags}>
 				{displayTags.map((item, index) => <Checkbox onClick={() => handleExits(item) ? handleRemoveTag(item) : handleSetTags(item) }
-					className={`text-xs font-normal ml-0 ${tags.includes(item) ? 'text-[#243A57]' : 'text-[#667589]'} ${index !== 0 ? 'py-1.5' : 'pb-1.5'}`}
+					className={`text-xs font-normal ml-0 ${tags.includes(item) ? 'text-blue-light-high dark:text-blue-dark-high' : 'text-[#667589]'} ${index !== 0 ? 'py-1.5' : 'pb-1.5'}`}
 					key={index} value={item}>
 					<div className='mt-[2px]'>{item}</div>
 				</Checkbox>)}

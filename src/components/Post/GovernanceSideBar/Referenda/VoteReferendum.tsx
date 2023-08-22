@@ -73,18 +73,18 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 			const days = blockToDays(num, network);
 			if (days && !isNaN(Number(days))) {
 				return [
-					<Select.Option className={`text-bodyBlue ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+					<Select.Option className={`text-blue-light-high dark:text-blue-dark-high ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
 					...CONVICTIONS.map(([value, lock]) =>
-						<Select.Option className={`text-bodyBlue ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
+						<Select.Option className={`text-blue-light-high dark:text-blue-dark-high ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
 					)
 				];
 			}
 		}
 	}
 	return [
-		<Select.Option className={`text-bodyBlue ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
+		<Select.Option className={`text-blue-light-high dark:text-blue-dark-high ${poppins.variable}`} key={0} value={0}>{'0.1x voting balance, no lockup period'}</Select.Option>,
 		...CONVICTIONS.map(([value, lock]) =>
-			<Select.Option className={`text-bodyBlue ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
+			<Select.Option className={`text-blue-light-high dark:text-blue-dark-high ${poppins.variable}`} key={value} value={value}>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
 		)
 	];
 };
@@ -623,14 +623,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							<ArrowLeft onClick={() => {setShowMultisig(false); setMultisig('');}} className='cursor-pointer absolute left-[24px] mt-1'/>
 							<div className='flex gap-[8px] items-center'>
 								<PolkasafeIcon className='ml-14'/>
-								<span className='text-bodyBlue font-semibold tracking-[0.0015em] text-xl'>Cast Vote with Polkasafe Multisig</span>
+								<span className='text-blue-light-high dark:text-blue-dark-high font-semibold tracking-[0.0015em] text-xl'>Cast Vote with Polkasafe Multisig</span>
 							</div>
 
 						</div>
 						:
 						<div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.5px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center gap-2'>
 							<CastVoteIcon className='ml-6'/>
-							<span className='text-bodyBlue font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
+							<span className='text-blue-light-high dark:text-blue-dark-high font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
 						</div>
 				}
 			><>
@@ -657,7 +657,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								<Divider className='m-0'>OR</Divider>
 								<div className='w-full flex justify-center'>
 									<WalletButton
-										className='text-sm text-bodyBlue font-semibold !border-[#D2D8E0]'
+										className='text-sm text-blue-light-high dark:text-blue-dark-high font-semibold !border-[#D2D8E0]'
 										onClick={() => {
 											setShowMultisig(!showMultisig);
 										}}
@@ -713,7 +713,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							<h3 className='inner-headings mt-[24px] mb-[2px]'>Choose your vote</h3>
 							<Segmented
 								block
-								className={`${className} mb-6 border-solid border-[1px] bg-white border-[#D2D8E0] rounded-[4px] w-full`}
+								className={`${className} mb-6 border-solid border-[1px] bg-white dark:bg-section-dark-overlay border-[#D2D8E0] rounded-[4px] w-full`}
 								size="large"
 								value={vote}
 								onChange={(value) => {

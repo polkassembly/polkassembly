@@ -257,7 +257,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			>
 				<Tabs
 					type="card"
-					className='ant-tabs-tab-bg-white text-sidebarBlue font-medium mt-4'
+					className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue font-medium mt-4'
 					items={[
 						{
 							children: (

@@ -209,8 +209,8 @@ const DashboardTrackListing = ({ className }: Props) => {
 		>
 		</Table>}
 
-		{status === ETrackDelegationStatus.Delegated && delegatedCount === 0 && <div className='h-[550px] bg-white flex pt-[56px] items-center flex-col text-[258px] rounded-b-[14px]'>
-			<div className='text-[#243A57] mt-5 text-center'>
+		{status === ETrackDelegationStatus.Delegated && delegatedCount === 0 && <div className='h-[550px] bg-white dark:bg-section-dark-overlay flex pt-[56px] items-center flex-col text-[258px] rounded-b-[14px]'>
+			<div className='text-blue-light-high dark:text-blue-dark-high mt-5 text-center'>
 				<DelegateDelegationIcon />
 				<h4 className='text-base font-medium tracking-[0.005em] mt-0'>No Delegated Tracks</h4>
 				<div className='text-sm tracking-[0.01em] font-normal mt-1 flex justify-center items-center max-md:flex-col'>
@@ -225,9 +225,9 @@ const DashboardTrackListing = ({ className }: Props) => {
 			</div>
 		</div>}
 
-		{status === ETrackDelegationStatus.Undelegated && undelegatedCount === 0 && <div className='h-[550px] pt-[56px] bg-white flex items-center text-[258px] flex-col rounded-b-[14px]'>
+		{status === ETrackDelegationStatus.Undelegated && undelegatedCount === 0 && <div className='h-[550px] pt-[56px] bg-white dark:bg-section-dark-overlay flex items-center text-[258px] flex-col rounded-b-[14px]'>
 			<UnDelegatedIcon/>
-			<div className='text-[#243A57] mt-5 text-center'>
+			<div className='text-blue-light-high dark:text-blue-dark-high mt-5 text-center'>
 				<h4 className='text-base font-medium tracking-[0.005em] mt-0'>No Undelegated Tracks</h4>
 				<div className='text-sm tracking-[0.01em] font-normal mt-1 flex justify-center items-center max-md:flex-col'>
           All tracks have been delegated. Undelegate a track to view here
@@ -235,9 +235,9 @@ const DashboardTrackListing = ({ className }: Props) => {
 			</div>
 		</div>}
 
-		{status === ETrackDelegationStatus.Received_Delegation && receivedDelegationCount === 0 && <div className='h-[550px] pt-[56px] bg-white flex items-center text-[258px] flex-col rounded-b-[14px]'>
+		{status === ETrackDelegationStatus.Received_Delegation && receivedDelegationCount === 0 && <div className='h-[550px] pt-[56px] bg-white dark:bg-section-dark-overlay flex items-center text-[258px] flex-col rounded-b-[14px]'>
 			<ReceivedDelegationIcon/>
-			<div className='text-[#243A57] mt-5 text-center'>
+			<div className='text-blue-light-high dark:text-blue-dark-high mt-5 text-center'>
 				<h4 className='text-base font-medium tracking-[0.005em] mt-0'>No Delegation Received</h4>
 				<div className='text-sm tracking-[0.01em] font-normal mt-1 flex justify-center items-center max-md:flex-col'>
           You have not received delegations for any of the tracks

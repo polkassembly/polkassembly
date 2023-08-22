@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps } from 'antd';
+import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, MenuTheme } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -16,7 +16,7 @@ import { getLocalStorageToken, logout } from 'src/services/auth.service';
 import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon } from 'src/ui-components/CustomIcons';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
-
+import useTheme from 'next-theme';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -106,6 +106,7 @@ interface Props {
 }
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
+	const { theme } =useTheme();
 	const { network } = useNetworkContext();
 	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
@@ -380,7 +381,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	return (
-		<Layout className={className}>
+		//@ts-ignore
+		<Layout className={className} dark={theme}>
 			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} previousRoute={previousRoute} />
 			<Layout hasSider>
 				<Sider
@@ -389,15 +391,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					collapsed={true}
 					onMouseOver={() => setSidedrawer(true)}
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
-					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed z-40'}
+					className={'hidden overflow-y-hidden sidebar bg-white dark:bg-section-dark-overlay lg:block bottom-0 left-0 h-screen fixed z-40'}
 				>
 					<Menu
-						theme="light"
+						theme={theme as MenuTheme}
 						mode="inline"
 						selectedKeys={[router.pathname]}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username?'auth-sider-menu':''} mt-[60px]`}
+						className={`${username?'auth-sider-menu':''} mt-[60px] bg-white dark:bg-section-dark-overlay`}
 					/>
 				</Sider>
 				<Drawer
@@ -413,6 +415,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						position: 'fixed',
 						top: '60px'
 					}}
+					className='bg-white dark:bg-section-dark-overlay'
 				>
 					<Menu
 						theme="light"
@@ -421,13 +424,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group']}
 						items={sidebarItems}
 						onClick={handleMenuClick}
-						className={`${username?'auth-sider-menu':''} mt-[60px]`}
+						className={`${username?'auth-sider-menu':''} mt-[60px] bg-white dark:bg-section-dark-overlay`}
 						onMouseLeave={() => setSidedrawer(false)}
 					/>
 				</Drawer>
 				{
 					((['moonbeam', 'moonriver'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
-						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
+						<Layout className='min-h-[calc(100vh - 10rem)] bg-section-light-background dark:bg-section-dark-background'>
 							{/* Dummy Collapsed Sidebar for auto margins */}
 							<OpenGovHeaderBanner network={'moonbeam'} />
 							<div className='flex flex-row'>
@@ -435,7 +438,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								<CustomContent Component={Component} pageProps={pageProps} />
 							</div>
 						</Layout>
-						: <Layout className={'min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] flex flex-row'}>
+						: <Layout className={'min-h-[calc(100vh - 10rem)] bg-section-light-background dark:bg-section-dark-background flex flex-row'}>
 							{/* Dummy Collapsed Sidebar for auto margins */}
 							<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
 							<CustomContent Component={Component} pageProps={pageProps} />
@@ -492,7 +495,7 @@ margin-top: -17px !important;
 
 
 .ant-menu-item-selected {
-	background: #fff !important;
+	background: ${(props:any) => props.light ? 'none' : '#fff'} !important; 
 
 	.ant-menu-title-content {
 		color: var(--pink_primary) !important;

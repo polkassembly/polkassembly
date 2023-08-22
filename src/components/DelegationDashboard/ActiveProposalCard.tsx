@@ -140,7 +140,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 		<div className={'border-[#D2D8E0] border-solid border-[1px] rounded-t-[6px] hover:border-[#E5007A] rounded-[6px]'}>
 			<div className='px-6 py-6 border-[1px] flex justify-between max-sm:gap-2 max-sm:items-start max-sm:flex-col hover:border-pink_primary'>
 				<div className='flex flex-col '>
-					<h2 className='text-sm text-medium text-[#243A57]'>{mainTitle}</h2>
+					<h2 className='text-sm text-medium text-blue-light-high dark:text-blue-dark-high'>{mainTitle}</h2>
 					<div className='mt-[5px] flex items-center gap-1 text-xs font-normal text-[#485F7D] max-lg:flex-col max-lg:items-start max-lg:gap-2'>
 						{ <div className='flex items-center gap-1'>By:
 							<span>
@@ -160,7 +160,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 							</>}</div>
 						{proposal?.status !== 'Submitted' &&<div className='flex justify-center items-center gap-2'>
 							<Divider type="vertical" style={{ border: '1px solid #485F7D', marginLeft: '4px', marginRight: '4px' }}/>
-							<div className={`flex items-center ${!remainingTime.includes('d') ? 'text-[#EB0F36]' :'text-[#243A57]'}`}>
+							<div className={`flex items-center ${!remainingTime.includes('d') ? 'text-[#EB0F36]' :'text-blue-light-high dark:text-blue-dark-high'}`}>
 								<ClockCircleOutlined className='mr-1' />
 								{remainingTime}
            Remaining
@@ -168,7 +168,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 						</div>}
 					</div>
 				</div>
-				<Button className={`flex justify-center mt-2 gap-2 border-none bg-white shadow-none ${status.includes(ETrackDelegationStatus.Delegated) && 'opacity-50'}`} disabled={status.includes(ETrackDelegationStatus.Delegated)}>
+				<Button className={`flex justify-center mt-2 gap-2 border-none bg-white dark:bg-section-dark-overlay shadow-none ${status.includes(ETrackDelegationStatus.Delegated) && 'opacity-50'}`} disabled={status.includes(ETrackDelegationStatus.Delegated)}>
 					<VoteIcon/><span className='text-pink_primary text-sm font-medium'>Cast Vote</span>
 				</Button>
 			</div>
@@ -182,10 +182,10 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 						<span className='flex justify-center items-center -ml-1'>
 							{isAye && <AyeIcon/>} {isNay && <NayIcon/>}</span>
 						<div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
-              Balance:<span className='text-[#243A57] font-medium'>{formatBalance(balance.toString(), { forceUnit: unit })}</span>
+              Balance:<span className='text-blue-light-high dark:text-blue-dark-high font-medium'>{formatBalance(balance.toString(), { forceUnit: unit })}</span>
 						</div>
 						<div className='text-xs tracking-[0.01em] text-[#243A5799] flex gap-1 items-center justify-center'>
-                Conviction:<span className='text-[#243A57] font-medium'>
+                Conviction:<span className='text-blue-light-high dark:text-blue-dark-high font-medium'>
 								{isAye ? votingData?.yes?.votes[0]?.lockPeriod : votingData?.no?.votes[0]?.lockPeriod}x</span>
 						</div>
 					</div> :<div className='text-[#485F7D] font-medium text-xs ml-1 flex items-center'>Abstain</div> }

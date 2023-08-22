@@ -24,7 +24,7 @@ import { trackEvent } from 'analytics';
 import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
-	loading: () => <div className="flex flex-col mt-6 bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+	loading: () => <div className="flex flex-col mt-6 bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-md w-full shadow-md mb-4">
 		<Skeleton className='mt-8' active />
 	</div>,
 	ssr: false
@@ -146,13 +146,13 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 	}, [isDelegation]);
 
 	return (
-		<Container className={`bg-white shadow-md rounded-md flex flex-col ${className} `}>
+		<Container className={`bg-white dark:bg-section-dark-overlay shadow-md rounded-md flex flex-col ${className} `}>
 			<div className='flex items-center justify-start px-8 pt-4 pb-2'>
 				<LoginLogo className='mr-3' />
-				<span className="text-[20px] font-semibold text-bodyBlue">Login</span>
+				<span className="text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high">Login</span>
 			</div>
 			<Divider style={{ background: '#D2D8E0', flexGrow: 1 }} className='mt-1 px-0' />
-			{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-bodyBlue changeColor' />}
+			{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-blue-light-high dark:text-blue-dark-high changeColor' />}
 
 			{walletError && <Alert message={walletError} type="error" />}
 			{authResponse.isTFAEnabled ?
@@ -239,7 +239,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					{error && <FilteredError text={error} />}
 
 					<div className='flex justify-center items-center gap-x-2 mt-2 mb-5 font-semibold'>
-						<label className='text-md text-bodyBlue'>Don&apos;t have an account?</label>
+						<label className='text-md text-blue-light-high dark:text-blue-dark-high'>Don&apos;t have an account?</label>
 						<div onClick={handleClick} className='text-md text-pink_primary cursor-pointer'> Sign Up </div>
 					</div>
 				</AuthForm>}

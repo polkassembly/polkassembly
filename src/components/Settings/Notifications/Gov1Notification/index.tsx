@@ -144,7 +144,7 @@ export default function Gov1Notification({
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className='bg-white dark:bg-section-dark-overlay'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -155,7 +155,7 @@ export default function Gov1Notification({
 				header={
 					<div className='flex items-center gap-[6px] channel-header'>
 						<OverallPostsNotification />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
+						<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
 							Gov 1 Notifications
 						</h3>
 						{!!active && (

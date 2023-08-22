@@ -367,7 +367,7 @@ const MetamaskLogin: FC<Props> = ({
 	};
 
 	return (
-		<article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6">
+		<article className="bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col gap-y-6">
 			<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-4">
 				<span>Login</span>
 				<p className='flex gap-x-2 items-center justify-center'>

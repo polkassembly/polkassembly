@@ -211,7 +211,7 @@ const VoteMotion = ({
 
 	const VotingForm = () =>
 		<GovSidebarCard>
-			<h3 className='text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-6'>Cast your Vote!</h3>
+			<h3 className='text-blue-light-high dark:text-blue-dark-high font-semibold text-xl leading-6 tracking-[0.0015em] mb-6'>Cast your Vote!</h3>
 			<Button
 				className='bg-pink_primary hover:bg-pink_secondary text-lg my-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[95%] mx-auto'
 				onClick={openModal}
@@ -225,7 +225,7 @@ const VoteMotion = ({
 				footer={null}
 			>
 				<Spin spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
-					<h4 className='text-[#243A57] font-semibold text-xl leading-6 tracking-[0.0015em] mb-7'>Cast Your Vote</h4>
+					<h4 className='text-blue-light-high dark:text-blue-dark-high font-semibold text-xl leading-6 tracking-[0.0015em] mb-7'>Cast Your Vote</h4>
 
 					<AccountSelectionForm
 						title='Vote with Account'
@@ -246,8 +246,8 @@ const VoteMotion = ({
 			</Modal>
 			{ voteCount ?
 				<div>
-					<p className='font-medium text-[12px] leading-6 text-[#243A57] mb-[5px]'>Last Vote:</p>
-					<div className='flex text-[#243A57] text-[12px] font-normal leading-6 mb-[-5px]'>
+					<p className='font-medium text-[12px] leading-6 text-blue-light-high dark:text-blue-dark-high mb-[5px]'>Last Vote:</p>
+					<div className='flex text-blue-light-high dark:text-blue-dark-high text-[12px] font-normal leading-6 mb-[-5px]'>
 						<Tooltip placement="bottom"  title="Decision"  color={'#E5007A'} className='w-[20%] max-[345px]:w-auto'>
 							<span className='h-[25px]'>{vote.decision == 'yes' ? <p><AyeGreen /> <span className='capitalize font-medium text-[#2ED47A]'>{'Aye'}</span></p> :vote.decision == 'no' ?  <div><DislikeIcon className='text-[#F53C3C]'/> <span className='mb-[5px] capitalize font-medium text-[#F53C3C]'>{'Nay'}</span></div> : null}</span>
 						</Tooltip>

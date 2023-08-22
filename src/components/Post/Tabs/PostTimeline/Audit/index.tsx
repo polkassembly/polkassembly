@@ -86,7 +86,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 								>
 									<CautionSVG />
 								</span>
-								<p className='m-0 font-normal text-sm leading-[21px] text-[#243A57]'>
+								<p className='m-0 font-normal text-sm leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
 							The reports provided here does not represent Polkassembly&apos;s views and we do not endorse them.
 								</p>
 							</div>
@@ -100,14 +100,14 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 								className={`${selectedType === 'reports' ? 'bg-pink-50' : 'bg-transparent'} rounded-full flex items-center px-4 py-[7px]`}>
 								<div className='flex items-center'>
 									<PdfIcon className="bg-cover bg-no-repeat bg-center" />
-									<span className="text-[#243A57] pl-1"><span className='hidden md:inline-block'>Reports</span>{' '}({pdfCount})</span>
+									<span className="text-blue-light-high dark:text-blue-dark-high pl-1"><span className='hidden md:inline-block'>Reports</span>{' '}({pdfCount})</span>
 								</div>
 							</Radio>}
 							{videoData.length !== 0 && <Radio value="videos"
 								className={`${selectedType ==='videos' ? 'bg-pink-50' : 'bg-transparent'} rounded-full flex items-center px-4 py-[7px]`}>
 								<div className='flex items-center'>
 									<YouTubeIcon className="bg-cover bg-no-repeat bg-center" />
-									<span className="text-[#243A57] pl-1"><span className='hidden md:inline-block'>Videos</span> {' '} ({videoData.length})</span>
+									<span className="text-blue-light-high dark:text-blue-dark-high pl-1"><span className='hidden md:inline-block'>Videos</span> {' '} ({videoData.length})</span>
 								</div>
 							</Radio>}
 						</Radio.Group>

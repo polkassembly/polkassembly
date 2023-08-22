@@ -50,9 +50,9 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		<div className={className} >
 			<div className="flex justify-between items-center">
 				{status && <StatusTag className='mb-3' status={status}/>}
-				{ requestedAmt && <h5 className='text-sm text-bodyBlue font-medium'>Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}</h5>}
+				{ requestedAmt && <h5 className='text-sm text-blue-light-high dark:text-blue-dark-high font-medium'>Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}</h5>}
 			</div>
-			<h2 className='text-lg text-bodyBlue font-medium mb-3 leading-7'>
+			<h2 className='text-lg text-blue-light-high dark:text-blue-dark-high font-medium mb-3 leading-7'>
 				{
 					newTitle === noTitle?
 						`${(getProposalTypeTitle(proposalType) || '')?.split(' ')?.map((v) => v === 'referendumV2'? 'Referenda': v.charAt(0).toUpperCase() + v.slice(1)).join(' ')} #${onchainId}`

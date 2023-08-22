@@ -24,7 +24,7 @@ import { canUsePolkasafe } from '~src/util/canUsePolkasafe';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
-	loading: () => <div className="flex flex-col mt-6 bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+	loading: () => <div className="flex flex-col mt-6 bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-md w-full shadow-md mb-4">
 		<Skeleton className='mt-8' active />
 	</div>,
 	ssr: false
@@ -138,7 +138,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 	}, [isDelegation]);
 
 	return (
-		<Container className={`bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className}`}>
+		<Container className={`bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col gap-y-6 ${className}`}>
 			<div className='grid grid-cols-2'>
 				<div onClick={() => {
 					setIsPassword(false);
@@ -157,7 +157,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				{isPassword ? 'Set Password' : 'Sign Up'}
 			</h3>
 
-			{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-[#243A57] changeColor' />}
+			{defaultWallets.length === 0 && isDelegation && <Alert message='Wallet extension not detected.' description='No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.' type='info' showIcon className='text-blue-light-high dark:text-blue-dark-high changeColor' />}
 			{walletError && <Alert message={walletError} type="error" />}
 			<AuthForm
 				onSubmit={handleSubmitForm}
@@ -309,7 +309,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 				</div>
 				{error && <FilteredError text={error} />}
 				<div className='flex justify-center items-center gap-x-2 font-semibold'>
-					<label className='text-md text-[#243A57]'>Already have an account?</label>
+					<label className='text-md text-blue-light-high dark:text-blue-dark-high'>Already have an account?</label>
 					<div onClick={() => handleClick()} className='text-pink_primary text-md cursor-pointer'>Login</div>
 				</div>
 			</AuthForm>

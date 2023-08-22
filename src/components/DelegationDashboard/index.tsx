@@ -67,10 +67,10 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		<div className='h-[90px] wallet-info-board rounded-b-[20px] flex gap mt-[-25px] max-lg:w-[99.3vw] max-lg:absolute max-lg:left-0 max-lg:top-[80px]'>
 			<ProfileBalances address={userDetails.delegationDashboardAddress}/>
 		</div>
-		<h2 className=' text-[#243A57] mb-6 md:mb-5 mt-5 text-[24px] font-semibold max-lg:pt-[60px]'>Delegation dashboard</h2>
+		<h2 className=' text-blue-light-high dark:text-blue-dark-high mb-6 md:mb-5 mt-5 text-[24px] font-semibold max-lg:pt-[60px]'>Delegation dashboard</h2>
 		<DelegationProfile address={userDetails?.delegationDashboardAddress} username={userDetails?.username || ''} className='py-[24px] px-[34px]'/>
 		<div >
-			{userDetails?.delegationDashboardAddress.length> 0 ? <DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]' address={String(userDetails.delegationDashboardAddress)}/> : <Skeleton/>}
+			{userDetails?.delegationDashboardAddress.length> 0 ? <DashboardTrackListing className='mt-8 bg-white dark:bg-section-dark-overlay shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]' address={String(userDetails.delegationDashboardAddress)}/> : <Skeleton/>}
 		</div>
 		{!openLoginModal && !openSignupModal && !userDetails.loginWallet && <AddressConnectModal localStorageWalletKeyName='delegationWallet' localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} />}
 		<LoginPopup closable={false} setSignupOpen={setOpenSignupModal} modalOpen={openLoginModal} setModalOpen={setOpenLoginModal} isModal={true} isDelegation={true}/>

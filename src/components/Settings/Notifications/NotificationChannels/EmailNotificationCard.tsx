@@ -21,7 +21,7 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 
 	return (
 		<div className='flex flex-col mb-2'>
-			<h3 className='flex gap-2 items-center text-base text-[#243A57] font-medium m-0 gap-1'>
+			<h3 className='flex gap-2 items-center text-base text-blue-light-high dark:text-blue-dark-high font-medium m-0 gap-1'>
 				<span>
 					<MailFilled /> Email Notifications{' '}
 					{!verified && <span className='text-[10px] px-[4px] py-[2px] bg-[red] border-[#5A46FF] border-2 text-[#FFFFFF] rounded-tr-lg rounded-bl-lg'>  {verifiedEmail ? 'Not Verified' : 'Not Added'}</span>}
@@ -41,7 +41,7 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 				}
 			</h3>
 			<div className='ml-5'>
-				<h3 className='m-0 text-[#243A57] text-[14px]'>{verifiedEmail ? verifiedEmail: 'Please add your email on account page.'}</h3>
+				<h3 className='m-0 text-blue-light-high dark:text-blue-dark-high text-[14px]'>{verifiedEmail ? verifiedEmail: 'Please add your email on account page.'}</h3>
 			</div>
 			<DisabledConfirmation
 				open={showModal}

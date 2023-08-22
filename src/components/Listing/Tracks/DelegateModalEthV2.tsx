@@ -293,7 +293,7 @@ const DelegateModalEthV2 = ({ trackNum } : { trackNum:number }) => {
 		<>
 			<button
 				type="button"
-				className="flex items-center ml-auto px-5 py-1 border border-pink_primary text-pink_primary bg-white hover:text-white font-medium text-xs leading-tight uppercase rounded hover:bg-pink_secondary hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+				className="flex items-center ml-auto px-5 py-1 border border-pink_primary text-pink_primary bg-white dark:bg-section-dark-overlay hover:text-white font-medium text-xs leading-tight uppercase rounded hover:bg-pink_secondary hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
 				onClick={() => setShowModal(true)}
 			>
 				<PlusOutlined />

@@ -352,17 +352,17 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 		<BackToListingView postCategory={membersType as EMembersType} />
 
 		<div className="flex flex-col md:flex-row mb-4 mt-6">
-			<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-6 rounded-md w-full shadow-md mb-4 md:mb-0 md:mr-4">
+			<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white dark:bg-section-dark-overlay p-6 rounded-md w-full shadow-md mb-4 md:mb-0 md:mr-4">
 				<Markdown md={profileDetails?.bio || noDescription} />
 			</p>
 			<SetOnChainIdentityButton />
 		</div>
 
-		<div className='bg-white drop-shadow-md rounded-md w-full p-3 lg:p-6'>
+		<div className='bg-white dark:bg-section-dark-overlay drop-shadow-md rounded-md w-full p-3 lg:p-6'>
 			<h2 className='dashboard-heading mb-4'>{profileDetails?.title || 'Untitled'}</h2>
 			<Tabs
 				type="card"
-				className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+				className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue font-medium'
 				items={tabItems}
 			/>
 		</div>
@@ -371,7 +371,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 };
 
 export default styled(Profile)`
-.ant-tabs-tab-bg-white .ant-tabs-tab:not(.ant-tabs-tab-active) {
+.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab:not(.ant-tabs-tab-active) {
 	background-color: white;
 	border-top-color: white;
 	border-left-color: white;
@@ -379,14 +379,14 @@ export default styled(Profile)`
 	border-bottom-color: #E1E6EB;
 }
 
-.ant-tabs-tab-bg-white .ant-tabs-tab-active{
+.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab-active{
 	border-top-color: #E1E6EB;
 	border-left-color: #E1E6EB;
 	border-right-color: #E1E6EB;
 	border-radius: 6px 6px 0 0 !important;
 }
 
-.ant-tabs-tab-bg-white .ant-tabs-nav:before{
+.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-nav:before{
 	border-bottom: 1px solid #E1E6EB;
 }
 `;

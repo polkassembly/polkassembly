@@ -57,7 +57,7 @@ const Parachains = ({ className, network }: Props) => {
 		<>
 			<SEOHead title='Parachains' network={network}/>
 			<div className={className}>
-				<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Polkadot and Kusama ecosystem and directory</h1>
+				<h1 className='text-blue-light-high dark:text-blue-dark-high font-semibold text-2xl leading-9 mx-2'>Polkadot and Kusama ecosystem and directory</h1>
 
 				<Row gutter={[{ lg:16 }, 16]} className='mb-4 md:mb-6'>
 					<Col span={24} lg={{ span:12 }}>
@@ -68,11 +68,11 @@ const Parachains = ({ className, network }: Props) => {
 					</Col>
 				</Row>
 
-				<div className={`${className} bg-white drop-shadow-md p-2 lg:p-6 rounded-xxl h-[650px]`}>
-					<h2 className='text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 sm:mt-0'>Projects</h2>
+				<div className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md p-2 lg:p-6 rounded-xxl h-[650px]`}>
+					<h2 className='text-blue-light-high dark:text-blue-dark-high text-xl font-medium leading-8 mb-6 mt-6 sm:mt-0'>Projects</h2>
 					<Tabs
 						type="card"
-						className='ant-tabs-tab-bg-white text-bodyBlue font-medium'
+						className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-blue-light-high dark:text-blue-dark-high font-medium'
 						items={tabItems}
 					/>
 				</div>
@@ -126,7 +126,7 @@ export default styled(Parachains)`
 		font-weight: 500;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-tab:not(.ant-tabs-tab-active) {
+	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab:not(.ant-tabs-tab-active) {
 		background-color: white;
 		border-top-color: white;
 		border-left-color: white;
@@ -134,14 +134,14 @@ export default styled(Parachains)`
 		border-bottom-color: #E1E6EB;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-tab-active{
+	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab-active{
 		border-top-color: #E1E6EB;
 		border-left-color: #E1E6EB;
 		border-right-color: #E1E6EB;
 		border-radius: 6px 6px 0 0 !important;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-nav:before{
+	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-nav:before{
 		border-bottom: 1px solid #E1E6EB;
 	}
 `;

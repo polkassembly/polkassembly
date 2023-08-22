@@ -120,7 +120,7 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 	};
 
 	return <div className={className}>
-		<div className='ml-[-37px] flex justify-center text-[35px] items-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+		<div className='ml-[-37px] flex justify-center text-[35px] items-center align-middle text-lightBlue hover:text-blue-light-high dark:text-blue-dark-high hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 			onClick={ handleClick }
 		>
 			<CreatePropoosalIcon className='cursor-pointer ml-[-31px]' />
@@ -135,11 +135,11 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals`}
 			wrapClassName={className}
 			closable={false}
-			title={<div className='text-lg font-semibold text-bodyBlue items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0]'>
+			title={<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0]'>
         Exit Treasury Proposal Creation
 			</div>}>
 			<div className='px-6 mt-6'>
-				<span className='text-bodyBlue text-sm'>Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process? </span>
+				<span className='text-blue-light-high dark:text-blue-dark-high text-sm'>Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process? </span>
 				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
 					<Button onClick={handleClose} className='font-medium tracking-[0.05em] text-pink_primary border-pink_primary text-sm w-[145px] h-[38px] rounded-[4px]'>Yes, Exit</Button>
 					<Button onClick={() => {setCloseConfirm(false); setOpenModal(true);}} className={'bg-pink_primary text-white font-medium tracking-[0.05em] text-sm h-[40px] rounded-[4px] w-[200px]'}>No, Continue Editing</Button>
@@ -166,13 +166,13 @@ const OpenGovTreasuryProposal = ({ className }: Props) => {
 			className={`${poppins.className} ${poppins.variable} w-[600px] opengov-proposals`}
 			wrapClassName={className}
 			closeIcon={<CloseIcon/>}
-			title={<div className='text-lg font-semibold flex text-bodyBlue items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0]'>
+			title={<div className='text-lg font-semibold flex text-blue-light-high dark:text-blue-dark-high items-center gap-2 border-0 border-b-[1px] px-6 pb-4 border-solid border-[#D2D8E0]'>
 				<CreateProposalIcon/>Create Treasury Proposal
 			</div>}
 		>
 			<div className='px-6 mt-6'>
 				<Steps
-					className='font-medium text-bodyBlue'
+					className='font-medium text-blue-light-high dark:text-blue-dark-high'
 					percent={steps.percent}
 					current={steps.step}
 					size='default'

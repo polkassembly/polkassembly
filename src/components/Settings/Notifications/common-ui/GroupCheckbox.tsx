@@ -41,7 +41,7 @@ export default function GroupCheckbox({
 	return (
 		<div className={classname}>
 			{!!title && (
-				<div className='flex items-center gap-[8px] mb-[16px] text-[#243A57]'>
+				<div className='flex items-center gap-[8px] mb-[16px] text-blue-light-high dark:text-blue-dark-high'>
 					{title && Icon ? (
 						<Icon />
 					) : (
@@ -58,7 +58,7 @@ export default function GroupCheckbox({
 					/>
 				</div>
 			)}
-			<div className='flex flex-col gap-[19px] text-[#243A57]'>
+			<div className='flex flex-col gap-[19px] text-blue-light-high dark:text-blue-dark-high'>
 				{categoryOptions.map((item: any) => (
 					<Row key={item.value} style={{ display: 'block' }}>
 						<Col>
@@ -67,7 +67,7 @@ export default function GroupCheckbox({
 								name={item.value}
 								onChange={(e) => handleChange(e, item.value)}
 								checked={item.selected}
-								className='text-[#243A57]'
+								className='text-blue-light-high dark:text-blue-dark-high'
 							>
 								{item.label}
 							</Checkbox>

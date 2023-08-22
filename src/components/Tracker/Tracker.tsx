@@ -53,7 +53,7 @@ const Tracker: FC<ITrackerProps> = ({ className, network }) => {
 
 				{/* Intro and Create Post Button */}
 				<div className="flex flex-col md:flex-row">
-					<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+					<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-md w-full shadow-md mb-4">
 						This is a place to keep track of on chain posts.
 					</p>
 				</div>

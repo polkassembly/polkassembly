@@ -68,7 +68,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className='bg-white dark:bg-section-dark-overlay'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
@@ -78,7 +78,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 				header={
 					<div className='flex items-center gap-[6px] channel-header'>
 						<DeleteIcon />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
+						<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
 						Delete Account
 						</h3>
 					</div>
@@ -86,7 +86,7 @@ const Delete: FC<{className?: string}> = ({ className }) => {
 				key='1'
 			>
 				<Form className={className} form={form} onFinish={handleSubmit}>
-					<p className='text-[#243A57] text-[14px]'>Please note that this action is irreversible and all the data associated with your account will be permanently deleted.</p>
+					<p className='text-blue-light-high dark:text-blue-dark-high text-[14px]'>Please note that this action is irreversible and all the data associated with your account will be permanently deleted.</p>
 					<Modal
 						closable={false}
 						title={Title}

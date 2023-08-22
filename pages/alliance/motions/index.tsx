@@ -65,13 +65,13 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 			<SEOHead title="Alliance Motion" network={network}/>
 			<h1 className="dashboard-heading mb-4 md:mb-6">Alliance Motions</h1>
 			<div className="flex flex-col md:flex-row">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-md w-full shadow-md mb-4">
           This is the place to discuss on-chain motions. On-chain posts are
           automatically generated as soon as they are created on the chain. Only
           the proposer is able to edit them.
 				</p>
 			</div>
-			<div className="shadow-md bg-white p-3 md:p-8 rounded-md">
+			<div className="shadow-md bg-white dark:bg-section-dark-overlay p-3 md:p-8 rounded-md">
 				<div className="flex items-center justify-between">
 					<h1 className="dashboard-heading">{count} Motions</h1>
 				</div>

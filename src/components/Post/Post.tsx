@@ -325,7 +325,7 @@ const Post: FC<IPostProps> = (props) => {
 				key: 'audit',
 				label:<div className='flex gap-2 items-center justify-center audit'>
           Audit
-					{(totalAuditCount + totalVideoCount) > 0 && <span className='bg-[#d6d8da] card-bg text-xs font-medium rounded-full px-1.5 text-bodyBlue py-0.5'>{totalAuditCount + totalVideoCount}</span>
+					{(totalAuditCount + totalVideoCount) > 0 && <span className='bg-[#d6d8da] card-bg text-xs font-medium rounded-full px-1.5 text-blue-light-high dark:text-blue-dark-high py-0.5'>{totalAuditCount + totalVideoCount}</span>
 					}          </div>
 			});
 		}
@@ -439,13 +439,13 @@ const Post: FC<IPostProps> = (props) => {
 				{
 					proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) &&
 						<Link href={`/bounty/${post.parent_bounty_index}`}>
-							<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
+							<div className='bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
 								This is a child bounty of <span className='text-pink_primary'>Bounty #{post.parent_bounty_index}</span>
 							</div>
 						</Link>
 				}
 				{ post && proposalType ===  ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
-					<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md  mb-6 dashboard-heading flex items-center gap-x-2 w-full'>
+					<div className='bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 md:p-6 rounded-md  mb-6 dashboard-heading flex items-center gap-x-2 w-full'>
 						<span>The child bounty payout is ready to be claimed</span>
 						<ClaimPayoutModal
 							parentBountyId={post?.parentBountyId}
@@ -458,7 +458,7 @@ const Post: FC<IPostProps> = (props) => {
 					<div className='xl:col-span-8'>
 						{
 							proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) &&
-						<div className='bg-white drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
+						<div className='bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 md:p-6 rounded-md w-full mb-6 dashboard-heading'>
 							This grant will be closed in <span className='text-pink_primary'>{
 								formatDuration(duration)
 							}</span>
@@ -466,7 +466,7 @@ const Post: FC<IPostProps> = (props) => {
 						}
 
 						{/* Post Content */}
-						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6 '>
+						<div className='bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6 '>
 							{isEditing &&
               <EditablePostContent toggleEdit={toggleEdit} />}
 
@@ -476,7 +476,7 @@ const Post: FC<IPostProps> = (props) => {
 								/>
 								<Tabs
 									type="card"
-									className='ant-tabs-tab-bg-white text-bodyBlue font-medium'
+									className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-blue-light-high dark:text-blue-dark-high font-medium'
 									items={tabItems}
 								/>
 

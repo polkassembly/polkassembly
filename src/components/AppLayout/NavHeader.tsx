@@ -52,7 +52,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 	const isClicked = useRef(false);
 
 	return (
-		<Header className={`${className} shadow-md z-[1001] sticky top-0 flex items-center bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
+		<Header className={`${className} shadow-md z-[1001] sticky top-0 flex items-center bg-white dark:bg-section-dark-overlay h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
 			<MenuOutlined className='lg:hidden mr-5' onClick={() => {
 				setSidedrawer(!sidedrawer);
 			}} />
@@ -61,7 +61,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 					<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' /></Link>
 					<div className='flex items-center'>
 						<span className='bg-pink_primary h-5 md:h-10 w-[1.5px] ml-[2px] mr-[8px] md:mr-[10px]'></span>
-						<h2 className='m-0 p-0 text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
+						<h2 className='m-0 p-0 text-blue-light-high dark:text-blue-dark-high text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{
 								isGov2Route? 'OpenGov': 'Gov1'
 							}
@@ -119,7 +119,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 										onClick={() => {
 											isClicked.current = true;
 										}}
-										className='p-4 bg-white'
+										className='p-4 bg-white dark:bg-section-dark-overlay'
 									>
 										<div className='flex flex-col'>
 											<SearchBar  />
@@ -139,7 +139,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 															setOpen(false);
 															router.push('/signup');
 														}}
-														className='rounded-[6px] bg-white flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize h-10'
+														className='rounded-[6px] bg-white dark:bg-section-dark-overlay flex items-center justify-center border border-solid border-pink_primary px-4 py-[4px] text-pink_primary font-medium text-sm leading-[21px] tracking-[0.0125em] capitalize h-10'
 													>
 														Sign Up
 													</button>

@@ -30,10 +30,10 @@ const OnchainCreationLabel = ({ address, username, truncateUsername }:Props ) =>
 										displayInline={true}
 										truncateUsername={truncateUsername}
 										isSubVisible={false}
-										textClassName='text-bodyBlue font-semibold'
+										textClassName='text-blue-light-high dark:text-blue-dark-high font-semibold'
 									/>
 									: <span
-										className='max-w-[150px] text-ellipsis overflow-hidden text-bodyBlue font-semibold'
+										className='max-w-[150px] text-ellipsis overflow-hidden text-blue-light-high dark:text-blue-dark-high font-semibold'
 									>
 										<Link href={`/user/${username}`}>{username}</Link>
 									</span>

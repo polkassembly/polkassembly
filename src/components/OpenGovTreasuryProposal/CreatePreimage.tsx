@@ -570,8 +570,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					setIsPreimage(e.target.value);
 					onChangeLocalStorageSet({ isPreimage: e.target.value }, e.target.value, preimageCreated, preimageLinked, true);
 					setSteps({ percent: 20, step: 1 });}} size='small' className='mt-1.5' value={isPreimage}>
-					<Radio value={true} className='text-bodyBlue text-sm font-normal'>Yes</Radio>
-					<Radio value={false} className='text-bodyBlue text-sm font-normal'>No</Radio>
+					<Radio value={true} className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>Yes</Radio>
+					<Radio value={false} className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>No</Radio>
 				</Radio.Group>
 			</div>
 			<Form
@@ -606,7 +606,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				</>
 				}
 				{ isPreimage === false && <>
-					{ (txFee.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`} showIcon message='Insufficient available balance.'/>}
+					{ (txFee.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-blue-light-high dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`} showIcon message='Insufficient available balance.'/>}
 					<div className='mt-6'>
 						<div className='flex justify-between items-center mt-6 text-lightBlue'>
                 Proposer Address<span>
@@ -645,7 +645,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					<div  className='mt-6 -mb-6'>
 						<div className='flex justify-between items-center text-lightBlue text-sm mb-[2px]'>
 							<label>Funding Amount <span><HelperTooltip text='Amount requested by the proposer.' className='ml-1'/></span></label>
-							<span className='text-xs text-bodyBlue'>Current Value: <span className='text-pink_primary'>{Math.floor(Number(inputAmountValue)*Number(currentTokenPrice.value) || 0)} USD</span></span>
+							<span className='text-xs text-blue-light-high dark:text-blue-dark-high'>Current Value: <span className='text-pink_primary'>{Math.floor(Number(inputAmountValue)*Number(currentTokenPrice.value) || 0)} USD</span></span>
 						</div>
 						<BalanceInput onBlur={getPreimageTxFee} address={proposerAddress} placeholder='Add funding amount' setInputValue={(input: string) => {setInputAmountValue(input); onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage)); }} formItemName='funding_amount' onChange= { handleFundingAmountChange }/>
 					</div>
@@ -674,7 +674,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 							setEnactment({ ...enactment, key: e.target.value });
 							onChangeLocalStorageSet({ enactment: { key: e.target.value, value: form.getFieldValue(e.target.value === EEnactment.At_Block_No ? 'at_block': 'after_blocks').toString() } }, Boolean(isPreimage));
 						}}>
-						<Radio value={EEnactment.At_Block_No} className='text-bodyBlue text-sm font-normal'>
+						<Radio value={EEnactment.At_Block_No} className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>
 							<div className='flex items-center gap-2 h-[40px]'><span className='w-[150px]'>At Block no.<HelperTooltip className='ml-1' text='Allows you to choose a custom block number for enactment.'/></span>
 								<span>
 									{enactment.key === EEnactment.At_Block_No && <Form.Item name='at_block'
@@ -696,7 +696,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 								</span>
 							</div>
 						</Radio>
-						<Radio value={EEnactment.After_No_Of_Blocks} className='text-bodyBlue text-sm font-normal'>
+						<Radio value={EEnactment.After_No_Of_Blocks} className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>
 							<div className='flex items-center gap-2 h-[30px]'><span className='w-[150px]'>After no. of Blocks<HelperTooltip text='Allows you to choose a custom delay in terms of blocks for enactment.' className='ml-1'/></span>
 								<span>{enactment.key === EEnactment.After_No_Of_Blocks && <Form.Item name='after_blocks'
 									rules={[
@@ -718,7 +718,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						</Radio>
 					</Radio.Group>
 				</div>}
-				{(showAlert && !isPreimage) && !txFee.eq(ZERO_BN) && <Alert type='info' className='mt-6 rounded-[4px] text-bodyBlue' showIcon description={`Gas Fees of ${formatedBalance(String(gasFee.toString()), unit)} ${unit} will be applied to create preimage.`}
+				{(showAlert && !isPreimage) && !txFee.eq(ZERO_BN) && <Alert type='info' className='mt-6 rounded-[4px] text-blue-light-high dark:text-blue-dark-high' showIcon description={`Gas Fees of ${formatedBalance(String(gasFee.toString()), unit)} ${unit} will be applied to create preimage.`}
 					message={`${formatedBalance(String(baseDeposit.toString()), unit)} ${unit} Base deposit is required to create a preimage.`}/>}
 				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
 					<Button onClick={() => setSteps({ percent: 100, step: 0 }) } className='font-medium tracking-[0.05em] text-pink_primary border-pink_primary text-sm w-[155px] h-[38px] rounded-[4px]'>Back</Button>

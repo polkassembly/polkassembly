@@ -226,7 +226,7 @@ const Details: FC<IDetailsProps> = (props) => {
 					</div>
 					<div className='flex gap-2 text-xl items-center justify-center'>
 						<h2 title={newUsername} className='font-semibold text-xl text-white truncate max-w-[200px] mt-[18px]'>{newUsername}</h2>
-						{isGood  && onChainIdentity.judgements.length > 0 && <CheckCircleFilled style={ { color:'green' } } className='rounded-[50%] bg-white h-[20px] border-solid border-[#910365] mt-[7px]' />}
+						{isGood  && onChainIdentity.judgements.length > 0 && <CheckCircleFilled style={ { color:'green' } } className='rounded-[50%] bg-white dark:bg-section-dark-overlay h-[20px] border-solid border-[#910365] mt-[7px]' />}
 					</div>
 					<div
 						className='flex items-center text-xl text-navBlue gap-x-5 md:gap-x-3 mt-'
@@ -279,10 +279,10 @@ const Details: FC<IDetailsProps> = (props) => {
 					}
 				</div>
 			</article>
-			<div className='md:hidden flex-1 bg-white rounded-[4px] px-4'>
+			<div className='md:hidden flex-1 bg-white dark:bg-section-dark-overlay rounded-[4px] px-4'>
 				<Tabs
 					type="card"
-					className='ant-tabs-tab-bg-white text-sidebarBlue font-medium my-4'
+					className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue font-medium my-4'
 					items={[
 						{
 							children: (

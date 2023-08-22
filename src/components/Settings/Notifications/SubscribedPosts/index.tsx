@@ -88,7 +88,7 @@ export default function SubscribedPosts({
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className='bg-white dark:bg-section-dark-overlay'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -99,7 +99,7 @@ export default function SubscribedPosts({
 				header={
 					<div className='flex items-center gap-[6px] channel-header'>
 						<SubscribedPostsNotification />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
+						<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0'>
 							Subscribed Posts <span className='hidden md:inline'>(Others proposals)</span>
 						</h3>
 						{!!active && (

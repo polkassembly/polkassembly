@@ -72,7 +72,7 @@ const Cards = function ({
 	const title = grantPopupContent();
 
 	return (
-		<div className={`${className} bg-white rounded shadow-md mb-6 p-3 border border-gray-200 cursor-pointer`}>
+		<div className={`${className} bg-white dark:bg-section-dark-overlay rounded shadow-md mb-6 p-3 border border-gray-200 cursor-pointer`}>
 			<div className='parachain-card-header'>
 				<div>
 					<Image src={logoURL} height={34} width={34} alt={`${name} Logo`} />

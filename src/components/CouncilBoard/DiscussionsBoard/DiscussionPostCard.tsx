@@ -50,7 +50,7 @@ const DiscussionPostCard = ({ className, id, title, username, commentsCount, cre
 	}, [id]);
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-3 lg:p-6 rounded-md`}>
+		<div className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 lg:p-6 rounded-md`}>
 			<h3 className='text-sidebarBlue'>{title || noTitle}</h3>
 			{ loading && <p>loading...</p>}
 			{

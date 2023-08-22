@@ -19,6 +19,10 @@ import { ModalProvider } from '~src/context/ModalContext';
 import { NetworkContextProvider } from '~src/context/NetworkContext';
 import getNetwork from '~src/util/getNetwork';
 import { initGA, logPageView } from '../analytics';
+import 'antd/dist/reset.css';
+import '../styles/globals.css';
+import ErrorBoundary from '~src/ui-components/ErrorBoundary';
+import { ThemeProvider } from 'next-theme';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,
@@ -38,10 +42,6 @@ const workSans = Work_Sans({
 	display: 'swap',
 	subsets: ['latin']
 });
-
-import 'antd/dist/reset.css';
-import '../styles/globals.css';
-import ErrorBoundary from '~src/ui-components/ErrorBoundary';
 
 export default function App({ Component, pageProps }: AppProps) {
 	const router = useRouter();
@@ -76,23 +76,25 @@ export default function App({ Component, pageProps }: AppProps) {
 	</div>;
 
 	return <ConfigProvider theme={antdTheme}>
-		<ModalProvider>
-			<ErrorBoundary>
-				<UserDetailsProvider>
-					<ApiContextProvider network={network}>
-						<NetworkContextProvider initialNetwork={network}>
-							<>
-								{ showSplashScreen && <SplashLoader /> }
-								<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-									<NextNProgress color="#E5007A" />
-									<CMDK />
-									<AppLayout Component={Component} pageProps={pageProps} />
-								</main>
-							</>
-						</NetworkContextProvider>
-					</ApiContextProvider>
-				</UserDetailsProvider>
-			</ErrorBoundary>
-		</ModalProvider>
+		<ThemeProvider attribute='class'>
+			<ModalProvider>
+				<ErrorBoundary>
+					<UserDetailsProvider>
+						<ApiContextProvider network={network}>
+							<NetworkContextProvider initialNetwork={network}>
+								<>
+									{ showSplashScreen && <SplashLoader /> }
+									<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+										<NextNProgress color="#E5007A" />
+										<CMDK />
+										<AppLayout Component={Component} pageProps={pageProps} />
+									</main>
+								</>
+							</NetworkContextProvider>
+						</ApiContextProvider>
+					</UserDetailsProvider>
+				</ErrorBoundary>
+			</ModalProvider>
+		</ThemeProvider>
 	</ConfigProvider>;
 }

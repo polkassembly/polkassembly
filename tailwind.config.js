@@ -4,6 +4,7 @@
 
 /* eslint-disable sort-keys */
 module.exports = {
+	darkMode: 'class',
 	important: true,
 	content: [
 		'./pages/**/*.{js,ts,jsx,tsx}',
@@ -16,7 +17,7 @@ module.exports = {
 			},
 			colors: {
 				navBlue: 'var(--navBlue)',
-				blue: 'var(--blue)',
+				// blue: 'var(--blue)',
 				sidebarBlue: 'var(--sidebarBlue)',
 				bodyBlue: 'var(--bodyBlue)',
 				lightBlue: 'var(--lightBlue)',
@@ -40,7 +41,55 @@ module.exports = {
 				red_secondary: 'var(--red_secondary)',
 				aye_green: 'var(--aye_green)',
 				nay_red: 'var(--nay_red)',
-				comment_bg: 'var(--comment_bg)'
+				comment_bg: 'var(--comment_bg)',
+				blue:{
+					light:{
+						disabled:'#96A4B6',
+						helper:'#576D8B',
+						medium:'#485F7D',
+						high:'#243A57'
+					},
+					dark:{
+						helper:'#FF60B5',
+						medium:'#909090',
+						high:'#FFFFFF'
+					}
+				},
+				red:{
+					light:{
+						text:'#A8071A',
+						medium:'#E91C26',
+						high:'#CF1322'
+					},
+					dark:{
+						text:'#A8071A',
+						medium:'#E91C26',
+						high:'#CF1322'
+					}
+				},
+				icon:{
+					light:{
+						active:'#243A57',
+						inactive:'#485F7D',
+						disabled:'#96A4B6'
+					},
+					dark:{
+						active:'#FF0088',
+						inactive:'#595959'
+					}
+				},
+				section:{
+					light:{
+						container:'#D2D8E0',
+						background:'#F5F6F8',
+						overlay:'#0000004D'
+					},
+					dark:{
+						container:'#3B444F',
+						background:'#1C1D1F',
+						overlay:'#0D0D0D'
+					}
+				}
 			},
 			screens: {
 				'xs': '320px'

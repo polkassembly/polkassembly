@@ -117,7 +117,7 @@ export default function Proposals({
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className='bg-white dark:bg-section-dark-overlay'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -128,7 +128,7 @@ export default function Proposals({
 				header={
 					<div className='flex items-center gap-[6px] channel-header'>
 						<ChatActive />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
+						<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0'>
 							My Proposals
 						</h3>
 						{!!active && (

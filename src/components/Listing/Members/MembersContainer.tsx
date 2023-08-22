@@ -58,7 +58,7 @@ const MembersContainer = ({ className } : { className?:string }) => {
 	if(members.length || runnersUp.length){
 		return (
 			<>
-				<div className={`${className} shadow-md bg-white p-3 md:p-8 rounded-md`}>
+				<div className={`${className} shadow-md bg-white dark:bg-section-dark-overlay p-3 md:p-8 rounded-md`}>
 					<div className='flex items-center justify-between'>
 						<h1 className='dashboard-heading'>Members</h1>
 					</div>
@@ -66,7 +66,7 @@ const MembersContainer = ({ className } : { className?:string }) => {
 					<MembersListing className='mt-6' data={members} prime={prime} />
 				</div>
 
-				<div className={`${className} shadow-md bg-white p-3 md:p-8 rounded-md`}>
+				<div className={`${className} shadow-md bg-white dark:bg-section-dark-overlay p-3 md:p-8 rounded-md`}>
 					<div className='flex items-center justify-between'>
 						<h1 className='dashboard-heading'>Runners up</h1>
 					</div>

@@ -60,13 +60,13 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 	});
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-0 lg:p-6 rounded-xxl`}>
+		<div className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md p-0 lg:p-6 rounded-xxl`}>
 			<div className="flex justify-between items-center pr-4 pl-1">
-				<h2 className='text-bodyBlue text-xl font-medium leading-8 mb-6 mt-6 lg:mt-0 mx-3.5 lg:mx-0'>Latest Activity</h2>
-				{currentTab !== 'all' && <Link className='text-bodyBlue font-medium hover:text-pink_primary px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
+				<h2 className='text-blue-light-high dark:text-blue-dark-high text-xl font-medium leading-8 mb-6 mt-6 lg:mt-0 mx-3.5 lg:mx-0'>Latest Activity</h2>
+				{currentTab !== 'all' && <Link className='text-blue-light-high dark:text-blue-dark-high font-medium hover:text-pink_primary px-2 rounded-lg' href={`/${currentTab}`}>View all</Link>}
 			</div>
 			<Tabs
-				className='ant-tabs-tab-bg-white text-bodyBlue text-sm md:px-2 font-medium'
+				className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-blue-light-high dark:text-blue-dark-high text-sm md:px-2 font-medium'
 				type="card"
 				items={tabItems}
 				onChange={(key) => setCurrentTab(key)}
@@ -110,7 +110,7 @@ export default styled(LatestActivity)`
 		cursor: pointer !important;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-tab:not(.ant-tabs-tab-active) {
+	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab:not(.ant-tabs-tab-active) {
 		background-color: white;
 		border-top-color: white;
 		border-left-color: white;
@@ -118,14 +118,14 @@ export default styled(LatestActivity)`
 		border-bottom-color: #E1E6EB;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-tab-active{
+	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab-active{
 		border-top-color: #E1E6EB;
 		border-left-color: #E1E6EB;
 		border-right-color: #E1E6EB;
 		border-radius: 6px 6px 0 0 !important;
 	}
 
-	.ant-tabs-tab-bg-white .ant-tabs-nav:before{
+	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-nav:before{
 		border-bottom: 1px solid #E1E6EB;
 	}
 `;

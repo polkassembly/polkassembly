@@ -321,7 +321,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	return (
 		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col xs:gap-6 sm:gap-8 xl:gap-4 xl:flex`}>
 			{/* Available */}
-			<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
+			<div className="sm:my-0 flex flex-1 bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 				<div className='lg:flex flex-col flex-1 gap-x-0 w-full'>
 					<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>
 						<Available className='lg:hidden' />
@@ -342,7 +342,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									<div className="flex justify-between font-medium">
 										{
 											available.value ?
-												<span className='text-lg text-bodyBlue font-medium'>
+												<span className='text-lg text-blue-light-high dark:text-blue-dark-high font-medium'>
 													{available.value}
 													{' '}
 													<span className='text-lightBlue text-sm'>
@@ -354,7 +354,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									</div>
 								</div>
 								{!['polymesh', 'polymesh-test'].includes(network) && <>
-									<div className='flex flex-col justify-center text-bodyBlue font-medium gap-y-3'>
+									<div className='flex flex-col justify-center text-blue-light-high dark:text-blue-dark-high font-medium gap-y-3'>
 										<Divider
 											style={{
 												background: '#D2D8E0'
@@ -382,7 +382,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 			{/* CurrentPrice */}
 			{network !== 'moonbase' &&
-				<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
+				<div className="sm:my-0 flex flex-1 bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 					<div className='lg:flex flex-col gap-x-0 w-full'>
 						<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>
 							<CurrentPrice className='lg:hidden' />
@@ -402,12 +402,12 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										<div className="font-medium text-lg">
 											{currentTokenPrice.value === 'N/A' ? <span>N/A</span> : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value))
 												?
-												<><span className='text-lightBlue'>$ </span><span className='text-bodyBlue'>{currentTokenPrice.value}</span></>
+												<><span className='text-lightBlue'>$ </span><span className='text-blue-light-high dark:text-blue-dark-high'>{currentTokenPrice.value}</span></>
 												: null
 											}
 										</div>
 									</div>
-									<div className="flex flex-col justify-center overflow-hidden text-bodyBlue font-medium gap-y-3">
+									<div className="flex flex-col justify-center overflow-hidden text-blue-light-high dark:text-blue-dark-high font-medium gap-y-3">
 										<Divider
 											style={{
 												background: '#D2D8E0'
@@ -445,7 +445,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 			{/* Next Burn */}
 			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
-				<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
+				<div className="sm:my-0 flex flex-1 bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 					<div className='lg:flex flex-col gap-x-0 w-full'>
 						<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>
 							<NextBurn className='lg:hidden' />
@@ -464,7 +464,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											/>
 										</div>
 
-										<div className="text-bodyBlue flex justify-between font-medium text-lg">
+										<div className="text-blue-light-high dark:text-blue-dark-high flex justify-between font-medium text-lg">
 											{
 												nextBurn.value ? (
 													<span>
@@ -503,7 +503,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			{/* Spend Period */}
 			{!['polymesh', 'polymesh-test'].includes(network) && <>
 				{!inTreasuryProposals &&
-				<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
+				<div className="sm:my-0 flex flex-1 bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 					<div className='lg:flex flex-col gap-x-0 w-full'>
 						<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>
 							<SpendPeriod className='lg:hidden' />
@@ -523,7 +523,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											/>
 										</div>
 
-										<div className="text-bodyBlue flex whitespace-pre font-medium items-baseline mt-1 sm:mt-0">
+										<div className="text-blue-light-high dark:text-blue-dark-high flex whitespace-pre font-medium items-baseline mt-1 sm:mt-0">
 											{spendPeriod.value?.total
 												? <>
 													{

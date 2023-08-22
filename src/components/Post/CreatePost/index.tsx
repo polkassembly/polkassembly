@@ -138,7 +138,7 @@ const CreatePost = ({ className, proposalType } : Props) => {
 		<div className={className}>
 			<BackToListingView postCategory={proposalType === ProposalType.DISCUSSIONS? PostCategory.DISCUSSION: PostCategory.GRANT} />
 
-			<div className="flex flex-col mt-6 bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+			<div className="flex flex-col mt-6 bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-md w-full shadow-md mb-4">
 				<h2 className="dashboard-heading mb-8">New Post</h2>
 				{error && <ErrorAlert errorMsg={error} className='mb-4' />}
 

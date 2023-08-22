@@ -30,7 +30,7 @@ const FellowshipMembers = (props: { network: string }) => {
 
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-md w-full shadow-md mb-4">
 					Fellowship is a mostly self-governing expert body with a primary goal of representing the humans who embody and contain the technical knowledge base of the Polkadot network and protocol.
 				</p>
 			</div>

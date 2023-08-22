@@ -64,7 +64,7 @@ const ChangeEmail = ({
 	return (
 		<Modal
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
+				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high'>
 					<h3 className='ml-[24px] mb-0 flex items-center gap-2 text-base md:text-md'>
 						<ChangeEmailIcon /> Change your email
 					</h3>

@@ -77,11 +77,11 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, delegationDashboardAddress, api, apiReady]);
 
-	return <div className=  {`${className} rounded-[14px] bg-white py-6 px-[37px] mt-[22px]`}>
+	return <div className=  {`${className} rounded-[14px] bg-white dark:bg-section-dark-overlay py-6 px-[37px] mt-[22px]`}>
 		<div onClick={() => setExpandProposals(!expandProposals) } className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
 			<div  className='flex jutify-center items-center gap-2'>
 				<DelegatedIcon className='mr-[4px]'/>
-				<span className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57]'>
+				<span className='text-[24px] font-semibold tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>
           Delegate
 				</span>
 			</div>
@@ -89,8 +89,8 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 		</div>
 
 		{expandProposals && <div className='mt-[24px]'>
-			{disabled && <Alert className='text-sm font-normal text-[#243A57]' showIcon message='You have already delegated for this track.'/>}
-			<h4 className={`text-sm font-normal text-[#243A57] mb-4 mt-4 ${disabled && 'opacity-50'}`}>
+			{disabled && <Alert className='text-sm font-normal text-blue-light-high dark:text-blue-dark-high' showIcon message='You have already delegated for this track.'/>}
+			<h4 className={`text-sm font-normal text-blue-light-high dark:text-blue-dark-high mb-4 mt-4 ${disabled && 'opacity-50'}`}>
         Enter an address or Select from the list below to delegate your voting power
 			</h4>
 
@@ -114,13 +114,13 @@ const Delegate = ( { className, trackDetails, disabled }: Props ) => {
 							// onClick={() => { setSelectedWallet('nova-wallet');filterByWallet('nova-wallet');}}
 						>
 							<NovaWalletIcon/>
-							<span className='text-sm text-[#243A57]'>Nova Wallet Delegates</span>
+							<span className='text-sm text-blue-light-high dark:text-blue-dark-high'>Nova Wallet Delegates</span>
 						</div>
 						<div className='py-1 flex items-center gap-[11px] cursor-pointer'
 							//  onClick={() => { setSelectedWallet('others');filterByWallet('others');}}
 						>
 							<ProfileIcon/>
-							<span className='text-sm text-[#243A57]'>Others</span>
+							<span className='text-sm text-blue-light-high dark:text-blue-dark-high'>Others</span>
 						</div>
 					</>}>
 					<DelegateMenuIcon/>

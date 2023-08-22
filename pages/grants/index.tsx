@@ -95,7 +95,7 @@ const Grants: FC<IGrantsProps> = (props) => {
 
 			{/* Intro and Create Post Button */}
 			<div className="flex flex-col md:flex-row mt-8">
-				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+				<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-md w-full shadow-md mb-4">
                     This is the place to discuss grants for {network}. Anyone can start a new grants discussion.
 					{' '}<a className='text-pink_primary' href='https://github.com/moonbeam-foundation/grants/blob/main/interim/interim_grant_proposal.md' target='_blank' rel="noreferrer" >Guidelines of the Interim Grants Program.</a>
 				</p>

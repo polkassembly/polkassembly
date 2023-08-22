@@ -60,7 +60,7 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 
 	return (
 		<div className={`${className} overflow-x-auto`}>
-			<Segmented className='text-navBlue borderRadius flex gap-4 rounded-xl bg-white text-xs' options={topicOptions} onChange={onTopicChange} value={topicIdToTopictext(topicId)}/>
+			<Segmented className='text-navBlue borderRadius flex gap-4 rounded-xl bg-white dark:bg-section-dark-overlay text-xs' options={topicOptions} onChange={onTopicChange} value={topicIdToTopictext(topicId)}/>
 		</div>
 	);
 };

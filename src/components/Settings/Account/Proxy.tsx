@@ -134,7 +134,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 		<Modal
 			closable={false}
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
+				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high'>
 					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue'>
 					Link Proxy address
 					</span>
@@ -164,7 +164,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 							<Button
 								key="cancel"
 								onClick={dismissModal}
-								className='bg-white text-pink_primary outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
+								className='bg-white dark:bg-section-dark-overlay text-pink_primary outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
 							>
 						Cancel
 							</Button>

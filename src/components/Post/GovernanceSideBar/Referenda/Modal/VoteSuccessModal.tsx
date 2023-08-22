@@ -85,7 +85,7 @@ const VoteInitiatedModal = ({
 						{` ${unit}`}
 					</div>
 					{vote === EVoteDecisionType.SPLIT && (
-						<div className=' flex flex-wrap justify-center font-normal text-sm text-bodyBlue'>
+						<div className=' flex flex-wrap justify-center font-normal text-sm text-blue-light-high dark:text-blue-dark-high'>
 							{' '}
 							<span className='mr-3'>
 								<span className='font-semibold'> Aye: </span>
@@ -114,7 +114,7 @@ const VoteInitiatedModal = ({
 						</div>
 					)}
 					{vote === EVoteDecisionType.ABSTAIN && (
-						<div className='flex flex-wrap justify-center font-normal text-sm text-bodyBlue'>
+						<div className='flex flex-wrap justify-center font-normal text-sm text-blue-light-high dark:text-blue-dark-high'>
 							{' '}
 							<span className='mr-3'>
 								<span className='font-semibold'> Abstain:</span>{' '}
@@ -186,28 +186,28 @@ const VoteInitiatedModal = ({
 							{vote === EVoteDecisionType.AYE ? (
 								<p>
 									<LikeFilled className='text-[green]' />{' '}
-									<span className='capitalize font-medium text-bodyBlue'>
+									<span className='capitalize font-medium text-blue-light-high dark:text-blue-dark-high'>
 										{vote}
 									</span>
 								</p>
 							) : vote === EVoteDecisionType.NAY ? (
 								<div>
 									<DislikeFilled className='text-[red]' />{' '}
-									<span className='mb-[5px] capitalize font-medium text-bodyBlue'>
+									<span className='mb-[5px] capitalize font-medium text-blue-light-high dark:text-blue-dark-high'>
 										{vote}
 									</span>
 								</div>
 							) : vote === EVoteDecisionType.SPLIT ? (
 								<p>
 									<SplitYellow />{' '}
-									<span className='capitalize font-medium text-bodyBlue'>
+									<span className='capitalize font-medium text-blue-light-high dark:text-blue-dark-high'>
 										{vote}
 									</span>
 								</p>
 							) : vote === EVoteDecisionType.ABSTAIN ? (
 								<p className='flex align-middle'>
 									<AbstainGray className='mr-1' />{' '}
-									<span className='capitalize font-medium text-bodyBlue'>
+									<span className='capitalize font-medium text-blue-light-high dark:text-blue-dark-high'>
 										{vote}
 									</span>
 								</p>
@@ -216,20 +216,20 @@ const VoteInitiatedModal = ({
 						<div className='flex gap-[30px] text-sm text-[#485F7D] font-normal'>
 							{' '}
                             Conviction:
-							<span className='text-bodyBlue font-medium'>
+							<span className='text-blue-light-high dark:text-blue-dark-high font-medium'>
 								{conviction}x
 							</span>{' '}
 						</div>
 						<div className='flex h-[21px] gap-[14px] text-sm text-[#485F7D] font-normal'>
                             Time of Vote :{' '}
-							<span className='font-medium text-bodyBlue'>
+							<span className='font-medium text-blue-light-high dark:text-blue-dark-high'>
 								{votedAt}
 							</span>
 						</div>
 						{ multisig &&
 						<div className='flex h-[21px] gap-11 text-sm text-[#485F7D] font-normal'>
                             Vote Link:{' '}
-							<span className='font-medium text-bodyBlue'>
+							<span className='font-medium text-blue-light-high dark:text-blue-dark-high'>
 								<a className='text-pink_primary' href='https://app.polkasafe.xyz/transactions' target='_blank' rel="noreferrer">Polkasafe</a>
 							</span>
 						</div>

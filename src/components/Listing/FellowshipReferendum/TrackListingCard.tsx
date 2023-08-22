@@ -81,7 +81,7 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 	};
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md rounded-xxl sm:py-8 px-0 xs:py-4`}>
+		<div className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md rounded-xxl sm:py-8 px-0 xs:py-4`}>
 			<div className='sm:hidden xs:flex xs:items-center xs:justify-end xs:mb-0 xs:px-4 xs:pt-2'>
 				<FilterByTags className='sm:hidden xs:mr-1 xs:mt-1 xs:mb-2'/>
 			</div>
@@ -93,7 +93,7 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 				onChange={(v) => {
 					setTrackName(v);
 				}}
-				className='ant-tabs-tab-bg-white text-bodyBlue font-medium'
+				className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-blue-light-high dark:text-blue-dark-high font-medium'
 			/>
 			{
 				((posts?.[activeTab]?.data?.count || 0) > 0 && (posts as any)[activeTab].data.count > LISTING_LIMIT) &&

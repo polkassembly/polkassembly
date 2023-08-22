@@ -267,7 +267,7 @@ export default function Notifications({ network }: { network: string }) {
 	return loading ? (
 		<Loader />
 	) : (
-		<div className='flex flex-col gap-[24px] text-[#243A57]'>
+		<div className='flex flex-col gap-[24px] text-blue-light-high dark:text-blue-dark-high'>
 			<NotificationChannels handleEnableDisabled={handleEnableDisabled} handleReset={handleReset}/>
 			<Parachain
 				primaryNetwork={primaryNetwork}

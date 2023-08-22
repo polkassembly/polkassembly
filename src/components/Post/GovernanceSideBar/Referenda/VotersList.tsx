@@ -119,7 +119,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	return (
 		<>
 			<Spin className={className} spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
-				<div className="flex justify-between mb-6 bg-white z-10">
+				<div className="flex justify-between mb-6 bg-white dark:bg-section-dark-overlay z-10">
 					<h6 className='dashboard-heading'>Votes</h6>
 					<div>
 						{sortByDropdown}
@@ -207,7 +207,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					}
 				</div>
 
-				<div className="flex justify-center pt-6 bg-white z-10">
+				<div className="flex justify-center pt-6 bg-white dark:bg-section-dark-overlay z-10">
 					<Pagination
 						size="small"
 						defaultCurrent={1}

@@ -39,12 +39,12 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 
 	return (
 		<div className={className}>
-			<div className="bg-white drop-shadow-md p-3 lg:p-6 rounded-xxl">
+			<div className="bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 lg:p-6 rounded-xxl">
 				<div className='parachain-card-header'>
 					<Image src={network=='polkadot' ? polkadotLogo : kusamaLogo} alt="Chain Logo" />
 					<span className='network-name'>{network}</span>
 				</div>
-				<div className='parachain-card-meta text-bodyBlue opacity-90'>
+				<div className='parachain-card-meta text-blue-light-high dark:text-blue-dark-high opacity-90'>
 					{network == 'polkadot' ? '11%' : '31%' } of Total Supply Locked<span className='hidden-sm'> in Parachains and Crowdloans</span>
 				</div>
 				<Divider className='my-3' />
@@ -53,7 +53,7 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 					<div className='metric-container'>
 						<div className='metric-line flex items-center'>
 							<Image className='h-[14px] w-auto md:h-auto' src={auctionIcon} alt="Auction Icon" />
-							<span className='metric-num ml-[7px] font-medium text-xs md:text-base text-bodyBlue'>{metrics.auction}</span>
+							<span className='metric-num ml-[7px] font-medium text-xs md:text-base text-blue-light-high dark:text-blue-dark-high'>{metrics.auction}</span>
 						</div>
 						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue'>Auction</div>
 					</div>
@@ -62,7 +62,7 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 					<div className='metric-container'>
 						<div className='metric-line flex items-center'>
 							<Image className='h-[14px] w-auto md:h-auto' src={crowdloansIcon} alt="Crowdloans Icon" />
-							<span className='metric-num ml-[7px] font-medium text-xs md:text-sm text-bodyBlue'>{metrics.crowdloans}</span>
+							<span className='metric-num ml-[7px] font-medium text-xs md:text-sm text-blue-light-high dark:text-blue-dark-high'>{metrics.crowdloans}</span>
 						</div>
 						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue'>Crowdloans</div>
 					</div>
@@ -71,7 +71,7 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 					<div className='metric-container'>
 						<div className='metric-line flex items-center'>
 							<Image className='h-[14px] w-auto md:h-auto' src={chainIcon} alt="Parachains Icon" />
-							<span className='metric-num ml-[7px] font-medium text-xs md:text-sm text-bodyBlue'>{metrics.parachains}</span>
+							<span className='metric-num ml-[7px] font-medium text-xs md:text-sm text-blue-light-high dark:text-blue-dark-high'>{metrics.parachains}</span>
 						</div>
 						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue'>Parachains</div>
 					</div>
@@ -80,7 +80,7 @@ const ParachainInfoCard = ({ className, network, projects }: Props) => {
 					<div className='metric-container'>
 						<div className='metric-line flex items-center'>
 							<Image className='h-[14px] w-auto md:h-auto' src={projectsIcon} alt="Parachains Icon" />
-							<span className='metric-num ml-[7px] font-medium text-xs md:text-sm text-bodyBlue'>{metrics.projects}</span>
+							<span className='metric-num ml-[7px] font-medium text-xs md:text-sm text-blue-light-high dark:text-blue-dark-high'>{metrics.projects}</span>
 						</div>
 						<div className='metric-name mt-[8px] text-xs md:text-sm text-lightBlue'>Projects</div>
 					</div>

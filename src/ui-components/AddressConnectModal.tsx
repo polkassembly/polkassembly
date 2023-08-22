@@ -418,7 +418,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 		className = {`${poppins.className} ${poppins.variable} radius`}
 		open = {open}
 		title = {
-			<div className='text-center text-[20px] font-semibold text-[#243A57]'>
+			<div className='text-center text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high'>
 				{showMultisig && <ArrowLeft
 					className='cursor-pointer absolute left-[24px] mt-1'
 					onClick={() => {
@@ -443,7 +443,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 			<div className='flex flex-col'>
 				{linkAddressNeeded && accounts.length > 0 && isUnlinkedAddress && <div className='flex flex-col mt-6 mb-2 items-center justify-center px-4'>
 					<ConnectAddressIcon/>
-					<span className='mt-6 text-bodyBlue text-sm text-center'>
+					<span className='mt-6 text-blue-light-high dark:text-blue-dark-high text-sm text-center'>
 						Linking an address allows you to create proposals, edit their descriptions, add tags as well as submit updates regarding the proposal to the rest of the community
 					</span>
 				</div>
@@ -481,7 +481,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 								<Divider className='m-0'>OR</Divider>
 								<div className='w-full flex justify-center'>
 									<WalletButton
-										className='text-sm text-bodyBlue font-semibold border-[#D2D8E0]'
+										className='text-sm text-blue-light-high dark:text-blue-dark-high font-semibold border-[#D2D8E0]'
 										onClick={() => {
 											setShowMultisig(!showMultisig);
 										}}
@@ -505,7 +505,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 				{Object.keys(availableWallets || {}).length === 0 && !loading && <Alert
 					message={linkAddressNeeded ? 'Please install a wallet and create an address to start creating a proposal.' : 'Wallet extension not detected.'}
 					description={`${linkAddressNeeded ? 'No web 3 account integration could be found. To be able to use this feature, visit this page on a computer with polkadot-js extension.': 'No web3 wallet was found with an active address.'}`}
-					type='info' showIcon className='text-[#243A57] changeColor text-md'/>}
+					type='info' showIcon className='text-blue-light-high dark:text-blue-dark-high changeColor text-md'/>}
 
 				{
 					!extensionOpen &&

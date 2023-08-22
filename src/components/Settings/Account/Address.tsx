@@ -399,7 +399,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 		<Modal
 			closable={false}
 			title={
-				<div className='mr-[-24px] ml-[-24px] text-[#243A57]'>
+				<div className='mr-[-24px] ml-[-24px] text-blue-light-high dark:text-blue-dark-high'>
 					<span className='ml-[24px] mb-0 font-medium text-lg tracking-wide text-sidebarBlue'>
 					Link Address
 					</span>
@@ -439,7 +439,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 							<Button
 								key="cancel"
 								onClick={dismissModal}
-								className='bg-white text-pink_primary outline-none border border-pink_primary border-solid rounded-[4px] py-3 px-7 font-medium flex items-center justify-center tracking-wide text-sm'
+								className='bg-white dark:bg-section-dark-overlay text-pink_primary outline-none border border-pink_primary border-solid rounded-[4px] py-3 px-7 font-medium flex items-center justify-center tracking-wide text-sm'
 							>
 								Cancel
 							</Button>
@@ -458,7 +458,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 						</div>
 						: noExtension
 							? <div className='max-w-[600px]'><ExtensionNotDetected /></div>
-							: <section className='flex flex-col gap-y-8 text-bodyBlue'>
+							: <section className='flex flex-col gap-y-8 text-blue-light-high dark:text-blue-dark-high'>
 								{currentUser?.addresses && currentUser?.addresses?.length > 0 &&  addressList({
 									accounts: currentUser?.addresses?.sort().map((address): InjectedAccount => ({
 										address: address

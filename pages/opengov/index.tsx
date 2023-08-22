@@ -104,7 +104,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 	return (
 		<>
 			<SEOHead title='OpenGov' network={network}/>
-			<h1 className='text-bodyBlue font-semibold text-2xl leading-9 mx-2'>Overview</h1>
+			<h1 className='text-blue-light-high dark:text-blue-dark-high font-semibold text-2xl leading-9 mx-2'>Overview</h1>
 			<div className="mt-6 mx-1">
 				{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData?.data} showGov2Links />}
 			</div>

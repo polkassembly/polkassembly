@@ -300,7 +300,7 @@ const TreasuryProposalFormButton = ({
 	return (
 		loadingStatus.isLoading
 			? <Spin indicator={<LoadingOutlined />} >
-				<div className='font-medium text-sm leading-[27px] px-[19x] py-6 rounded-[4px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-pink_primary border-none outline-none h-[75px] min-w-[226px] cursor-not-allowed bg-white flex items-center justify-center'>
+				<div className='font-medium text-sm leading-[27px] px-[19x] py-6 rounded-[4px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] text-pink_primary border-none outline-none h-[75px] min-w-[226px] cursor-not-allowed bg-white dark:bg-section-dark-overlay flex items-center justify-center'>
 					{loadingStatus.message}
 				</div>
 			</Spin>:

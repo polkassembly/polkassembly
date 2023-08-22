@@ -41,11 +41,11 @@ const Delegation = ( props : { network: string } ) => {
 		<SEOHead title='Delegation Dashboard' network={props.network} />
 		<div className='hidden sm:block'><DelegationDashboard/></div>
 		<div className='sm:hidden w-full'>
-			<h1 className='text-bodyBlue text-center text-2xl font-semibold'>Delegation Dashboard</h1>
+			<h1 className='text-blue-light-high dark:text-blue-dark-high text-center text-2xl font-semibold'>Delegation Dashboard</h1>
 			<div className='flex flex-col justify-center items-center mt-12'>
 				<DelegationDashboardEmptyState />
-				<p className='text-center text-bodyBlue text-base mt-6'>Please visit Delegation Dashboard from your Dekstop computer</p>
-				<button className='mt-5 px-3.5 py-1.5 rounded-full text-bodyBlue bg-transparent border border-[#D2D8E0] border-solid flex justify-center items-center' onClick={() => {handleCopylink();}}>Copy Page Link <CopyContentIcon className='ml-1'/></button>
+				<p className='text-center text-blue-light-high dark:text-blue-dark-high text-base mt-6'>Please visit Delegation Dashboard from your Dekstop computer</p>
+				<button className='mt-5 px-3.5 py-1.5 rounded-full text-blue-light-high dark:text-blue-dark-high bg-transparent border border-[#D2D8E0] border-solid flex justify-center items-center' onClick={() => {handleCopylink();}}>Copy Page Link <CopyContentIcon className='ml-1'/></button>
 			</div>
 		</div>
 	</>;

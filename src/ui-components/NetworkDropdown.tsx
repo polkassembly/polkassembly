@@ -105,7 +105,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				return (
 					<Card className='max-w-[356px] max-h-[52vh] overflow-y-auto'>
 						<>
-							<div className='text-bodyBlue font-medium'>Polkadot &amp; Parachains</div>
+							<div className='text-blue-light-high dark:text-blue-dark-high font-medium'>Polkadot &amp; Parachains</div>
 							<Row className="mt-2">
 								{
 									polkadotChains.map(optionObj => (
@@ -114,7 +114,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								}
 							</Row>
 
-							<div className='text-bodyBlue font-medium mt-4'>Kusama &amp; Parachains</div>
+							<div className='text-blue-light-high dark:text-blue-dark-high font-medium mt-4'>Kusama &amp; Parachains</div>
 							<Row className="mt-2">
 								{
 									kusamaChains.map(optionObj => (
@@ -123,7 +123,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								}
 							</Row>
 
-							<div className='text-bodyBlue font-medium mt-4'>Solo Chains</div>
+							<div className='text-blue-light-high dark:text-blue-dark-high font-medium mt-4'>Solo Chains</div>
 							<Row className="mt-2">
 								{
 									soloChains.map(optionObj => (
@@ -132,7 +132,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								}
 							</Row>
 
-							<div className='text-bodyBlue font-medium mt-4'>Test Chains</div>
+							<div className='text-blue-light-high dark:text-blue-dark-high font-medium mt-4'>Test Chains</div>
 							<Row className="mt-2">
 								{
 									testChains.map(optionObj => (
@@ -164,7 +164,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 								src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
 								alt='Logo'
 							/>
-							<span className='font-semibold text-xs leading-[18px] tracking-[0.02em] text-[#243A57] capitalize'>
+							<span className='font-semibold text-xs leading-[18px] tracking-[0.02em] text-blue-light-high dark:text-blue-dark-high capitalize'>
 								{
 									network
 								}
@@ -174,7 +174,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 							<ArrowDownIcon />
 						</span>
 					</a>
-					: <a className='flex items-center justify-between text-bodyBlue hover:text-pink_primary lg:min-w-[133px] lg:h-8 lg:border-solid lg:border lg:border-[#D2D8E0] lg:rounded-[26px] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px]' onClick={e => {
+					: <a className='flex items-center justify-between text-blue-light-high dark:text-blue-dark-high hover:text-pink_primary lg:min-w-[133px] lg:h-8 lg:border-solid lg:border lg:border-[#D2D8E0] lg:rounded-[26px] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px]' onClick={e => {
 						e.preventDefault();
 						setSidedrawer(false);
 					}}
@@ -184,7 +184,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 							src={chainProperties[network]?.logo ? chainProperties[network]?.logo : chainLogo}
 							alt='Logo'
 						/>
-						<span className='hidden lg:flex lg:items-center lg:justify-center lg:ml-[9.25px] lg:mr-[13.35px] font-semibold text-[#243A57] text-xs leading-[18px] tracking-[0.02em] capitalize'>
+						<span className='hidden lg:flex lg:items-center lg:justify-center lg:ml-[9.25px] lg:mr-[13.35px] font-semibold text-blue-light-high dark:text-blue-dark-high text-xs leading-[18px] tracking-[0.02em] capitalize'>
 							{
 								network
 							}

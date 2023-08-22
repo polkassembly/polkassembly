@@ -29,14 +29,14 @@ const ActiveProposals = ( { className, posts, trackDetails, status, delegatedTo 
 	const count = posts.length;
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
 
-	return <div className=  {`${className} rounded-[14px] bg-white py-[24px] px-[37px] mt-[22px]`}>
+	return <div className=  {`${className} rounded-[14px] bg-white dark:bg-section-dark-overlay py-[24px] px-[37px] mt-[22px]`}>
 		<div onClick={() =>  setExpandProposals(!expandProposals)}  className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex items-center justify-between cursor-pointer'>
 			<div className='flex jutify-center items-center gap-2'>
 				<ActiveProposalsIcon className='mr-[4px]'/>
-				<span className='text-[24px] font-semibold tracking-[0.0015em] text-[#243A57]'>
+				<span className='text-[24px] font-semibold tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>
           Active Proposals
 				</span>
-				<span className='h-[34px] py-[6px] px-3 bg-[#D2D8E04D] rounded-[26px] text-[#243A57] flex justify-center items-center font-semibold'>
+				<span className='h-[34px] py-[6px] px-3 bg-[#D2D8E04D] rounded-[26px] text-blue-light-high dark:text-blue-dark-high flex justify-center items-center font-semibold'>
 					{count < 10 && count !==0 && 0}{count}
 				</span>
 			</div>

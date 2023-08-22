@@ -122,7 +122,7 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 					<Button
 						key="cancel"
 						onClick={dismissModal}
-						className='rounded-lg font-semibold text-md leading-7 text-pink_primary py-5 outline-none border-solid border-pink_primary px-7 inline-flex items-center justify-center bg-white'
+						className='rounded-lg font-semibold text-md leading-7 text-pink_primary py-5 outline-none border-solid border-pink_primary px-7 inline-flex items-center justify-center bg-white dark:bg-section-dark-overlay'
 						disabled={loading}
 					>
 						Cancel
@@ -213,7 +213,7 @@ const Enable2FA: FC<{className?: string}> = ({ className }) => {
 			<Button
 				onClick={handleModalOpen}
 				htmlType="submit"
-				className='w-full bg-[#F6F7F9] text-[#243A57] text-left h-full p-[16px] border-[#D2D8E0]'
+				className='w-full bg-[#F6F7F9] text-blue-light-high dark:text-blue-dark-high text-left h-full p-[16px] border-[#D2D8E0]'
 			>
 				<span className='flex align-center text-[16px] font-medium '>Enable Two Factor Authentication <KeyboardDownIcon/></span>
 				<span className='block text-[14px]'>Enhance account security with two factor authentication. Verify your identity with an extra step for added protection. </span>

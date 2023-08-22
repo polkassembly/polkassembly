@@ -356,7 +356,7 @@ const UpcomingEvents = ({ className }:Props) => {
 				itemLayout="horizontal"
 				dataSource={calendarEvents.sort((a,b) => (a?.end_time?.getTime() || a?.start_time?.getTime())- (b?.end_time?.getTime() || b?.start_time?.getTime()))}
 				renderItem={item => {
-					return (<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-[#243A57]`}>
+					return (<List.Item className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-blue-light-high dark:text-blue-dark-high`}>
 						<a {...(item.url ? { href: item.url } : {})} target='_blank' rel='noreferrer' className={`${item.url ? 'cursor-pointer' : 'cursor-default'} text-sidebarBlue`}>
 							<div className='text-xs mb-1 flex items-center text-lightBlue'>
 								{dayjs(item.end_time).format('MMM D, YYYY')}
@@ -364,7 +364,7 @@ const UpcomingEvents = ({ className }:Props) => {
 								{dayjs(item.end_time).format('h:mm a')}
 							</div>
 
-							<div className="text-sm text-bodyBlue">
+							<div className="text-sm text-blue-light-high dark:text-blue-dark-high">
 								{item.content}
 							</div>
 						</a>
@@ -379,9 +379,9 @@ const UpcomingEvents = ({ className }:Props) => {
 	}
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-4 lg:p-6 rounded-xxl h-[520px] lg:h-[550px]`}>
+		<div className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md p-4 lg:p-6 rounded-xxl h-[520px] lg:h-[550px]`}>
 			<div className="flex items-center justify-between mb-5">
-				<h2 className='text-bodyBlue text-xl font-medium leading-8 sm:mx-3 xs:mx-1 sm:my-0 xs:my-2'>Upcoming Events</h2>
+				<h2 className='text-blue-light-high dark:text-blue-dark-high text-xl font-medium leading-8 sm:mx-3 xs:mx-1 sm:my-0 xs:my-2'>Upcoming Events</h2>
 				<CalendarFilled className='cursor-pointer inline-block lg:hidden' onClick={() => setShowCalendar(!showCalendar)} />
 			</div>
 

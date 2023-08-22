@@ -21,7 +21,7 @@ const FilteredTags = () => {
 	}, [router]);
 
 	return tags.length > 0 ? <div className='flex flex-wrap items-center xs:px-1 sm:px-2 sm:pb-4'>
-		<span className='rounded-xl text-bodyBlue font-medium text-sm' >Filters: &nbsp;</span>
+		<span className='rounded-xl text-blue-light-high dark:text-blue-dark-high font-medium text-sm' >Filters: &nbsp;</span>
 		{tags.map((tag, index) => (
 			<div className='rounded-xl text-lightBlue text-sm font-normal xs:flex xs:flex-wrap' key= {index}>
 				{tag.charAt(0).toUpperCase()+tag.slice(1)} {tags.length === index+1 ? null :','}

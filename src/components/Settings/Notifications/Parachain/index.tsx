@@ -78,7 +78,7 @@ export default function Parachain({
 
 	return (
 		<Collapse
-			className='bg-white'
+			className='bg-white dark:bg-section-dark-overlay'
 			size='large'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
@@ -91,7 +91,7 @@ export default function Parachain({
 					<div className='flex justify-between gap-[8px] items-center'>
 						<div className='flex items-center gap-[6px] channel-header'>
 							<ParachainNotification />
-							<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0'>
+							<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0'>
 								Parachains
 							</h3>
 						</div>

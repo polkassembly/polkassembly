@@ -70,7 +70,7 @@ const VerifyEmail = ({ network }: { network: string }) => {
 			<SEOHead title="Verify Email" network={network}/>
 			<Row justify='center' align='middle' className='h-full -mt-16'>
 				{ error
-					? <article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
+					? <article className="bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col gap-y-6 md:min-w-[500px]">
 						<h2 className='flex flex-col gap-y-2 items-center text-xl font-medium'>
 							<WarningOutlined />
 							{/* TODO: Check error message from BE when email already verified */}

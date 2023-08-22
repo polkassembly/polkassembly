@@ -32,11 +32,11 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 	};
 
 	return (
-		<div className='flex items-start text-[#243A57] gap-2 w-full justify-between'>
-			<div className='flex items-start text-[#243A57] gap-2'>
+		<div className='flex items-start text-blue-light-high dark:text-blue-dark-high gap-2 w-full justify-between'>
+			<div className='flex items-start text-blue-light-high dark:text-blue-dark-high gap-2'>
 				<div className={'relative mt-[2px] [&>svg]:mt-0'}>{Icon}</div>
 				<div>
-					<h3 className='flex text-base font-medium m-0 gap-2 text-[#243A57]'>
+					<h3 className='flex text-base font-medium m-0 gap-2 text-blue-light-high dark:text-blue-dark-high'>
 						{title} Notifications {!description && (
 							<div>
 								<span className='text-[10px] px-[4px] py-[2px] bg-[#407BFF] border-[#5A46FF] border-2 text-[#FFFFFF] rounded-tr-lg rounded-bl-lg'>Coming Soon</span>

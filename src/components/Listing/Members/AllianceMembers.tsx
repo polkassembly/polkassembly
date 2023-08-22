@@ -43,7 +43,7 @@ const AllianceMembers = ({ className } : { className?:string }) => {
 
 	return (
 		<>
-			<div className={`${className} shadow-md bg-white p-3 md:p-8 rounded-md`}>
+			<div className={`${className} shadow-md bg-white dark:bg-section-dark-overlay p-3 md:p-8 rounded-md`}>
 				<div className='flex items-center justify-between'>
 					<h1 className='dashboard-heading'>Fellow</h1>
 				</div>
@@ -51,7 +51,7 @@ const AllianceMembers = ({ className } : { className?:string }) => {
 				<MembersListing className='mt-6' data={fellow} prime={''} />
 			</div>
 
-			<div className={`${className} shadow-md bg-white p-3 md:p-8 rounded-md`}>
+			<div className={`${className} shadow-md bg-white dark:bg-section-dark-overlay p-3 md:p-8 rounded-md`}>
 				<div className='flex items-center justify-between'>
 					<h1 className='dashboard-heading'>Ally</h1>
 				</div>
@@ -59,7 +59,7 @@ const AllianceMembers = ({ className } : { className?:string }) => {
 				<MembersListing className='mt-6' data={ally} prime={''} />
 			</div>
 
-			<div className={`${className} shadow-md bg-white p-3 md:p-8 rounded-md`}>
+			<div className={`${className} shadow-md bg-white dark:bg-section-dark-overlay p-3 md:p-8 rounded-md`}>
 				<div className='flex items-center justify-between'>
 					<h1 className='dashboard-heading'>Retiring</h1>
 				</div>

@@ -156,8 +156,8 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 			<div className='my-8 flex flex-col write-proposal'>
 				<label className='text-lightBlue text-sm'>Have you initiated a discussion post for your proposal already? </label>
 				<Radio.Group disabled={loading} onChange={(e) => handleIsDiscussionLinkedChange(e.target.value)} size='small' className='mt-1.5' value={isDiscussionLinked}>
-					<Radio value={true} className='text-bodyBlue text-sm font-normal'>Yes</Radio>
-					<Radio value={false} className='text-bodyBlue text-sm font-normal'>No</Radio>
+					<Radio value={true} className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>Yes</Radio>
+					<Radio value={false} className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>No</Radio>
 				</Radio.Group>
 			</div>
 			<Form
@@ -187,7 +187,7 @@ const WriteProposal = ({ setSteps, setIsDiscussionLinked, isDiscussionLinked, di
 					</Form.Item>
 				</>}
 				{ isDiscussionLinked === false && <Alert type='info' className='icon-alert' showIcon message={
-					<span className='text-sm font-medium text-bodyBlue'>
+					<span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>
           Discussion posts allows the community to deliberate and recommend improvements. A Discussion should be created before creating a proposal.
 						<a className='text-pink_primary text-xs ml-1' target='_blank' rel="noreferrer" href={'/post/create'}>
               Create Discussion Post

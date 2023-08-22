@@ -119,9 +119,9 @@ const AddTags=({ tags, setTags, className, disabled, onChange }:Props) => {
 							value={inputValue}
 							onChange={handleInputChange}
 							onPressEnter={handleInputConfirm}
-							className={`text-[#90A0B7]  rounded-xl bg-white text-xs text-normal px-[16px] py-[4px] mr-2 flex items-center ${charLimitReached && 'border-red-500'}`}
+							className={`text-[#90A0B7]  rounded-xl bg-white dark:bg-section-dark-overlay text-xs text-normal px-[16px] py-[4px] mr-2 flex items-center ${charLimitReached && 'border-red-500'}`}
 						/>  :
-						(tags.length <5 && !disabled) && <Tag onClick={showInput} className='rounded-xl bg-white border-pink_primary py-[4px] px-[16px] cursor-pointer text-pink_primary text-xs flex items-center' >
+						(tags.length <5 && !disabled) && <Tag onClick={showInput} className='rounded-xl bg-white dark:bg-section-dark-overlay border-pink_primary py-[4px] px-[16px] cursor-pointer text-pink_primary text-xs flex items-center' >
 							<PlusOutlined className='mr-1'/>
           Add new tag
 						</Tag>}
@@ -129,7 +129,7 @@ const AddTags=({ tags, setTags, className, disabled, onChange }:Props) => {
 						{tags.map((tag,index) => (
 							<Tag
 								key={index}
-								className={`text-[#90A0B7] border-[#90A0B7] rounded-xl bg-white text-normal text-xs py-[4px] px-[16px] tracking-wide mt-1 ${disabled ? 'bg-[#F5F5F5]' : 'hover:border-pink_primary'}`}
+								className={`text-[#90A0B7] border-[#90A0B7] rounded-xl bg-white dark:bg-section-dark-overlay text-normal text-xs py-[4px] px-[16px] tracking-wide mt-1 ${disabled ? 'bg-[#F5F5F5]' : 'hover:border-pink_primary'}`}
 								closable={!disabled}
 								onClose={(e) => {e.preventDefault();handleClose(tag);}}>{tag}</Tag>))}
 					</div>

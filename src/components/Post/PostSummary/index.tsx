@@ -32,9 +32,9 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 			<Divider className='hidden md:block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 			<button
 				onClick={() => setOpen(true)}
-				className='flex items-center gap-x-1 justify-center cursor-pointer text-lightBlue bg-white text-xs leading-[18px] p-[1.5px] font-medium outline-none ai-btn-border'
+				className='flex items-center gap-x-1 justify-center cursor-pointer text-lightBlue bg-white dark:bg-section-dark-overlay text-xs leading-[18px] p-[1.5px] font-medium outline-none ai-btn-border'
 			>
-				<p className='bg-white m-0 flex items-center justify-center px-2 py-1 rounded-[5px]'>
+				<p className='bg-white dark:bg-section-dark-overlay m-0 flex items-center justify-center px-2 py-1 rounded-[5px]'>
 					<span className='flex items-center justify-center text-lightBlue text-lg'>
 						<AiStarIcon />
 					</span>
@@ -54,13 +54,13 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 							<span className='flex items-center justify-center text-lightBlue text-2xl'>
 								<AiStarIcon />
 							</span>
-							<span className='text-bodyBlue text-lg md:text-xl font-semibold leading-7 md:leading-6 tracking-[0.03px]'>
+							<span className='text-blue-light-high dark:text-blue-dark-high text-lg md:text-xl font-semibold leading-7 md:leading-6 tracking-[0.03px]'>
 								AI Summary
 							</span>
 						</h3>
 						<div className='flex items-center gap-x-1 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.20)] pl-[6px] pr-[8px] py-1 md:pl-[10px] md:py-[6px] md:pr-3'>
 							<OpenAiIcon className='text-base md:text-2xl' />
-							<p className='m-0 text-bodyBlue text-[10px] md:text-xs leading-normal tracking-[0.24px] font-semibold'>
+							<p className='m-0 text-blue-light-high dark:text-blue-dark-high text-[10px] md:text-xs leading-normal tracking-[0.24px] font-semibold'>
 								Powered by OpenAI
 							</p>
 						</div>
@@ -73,7 +73,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 			>
 				<Divider className='m-0 p-0 bg-[#e1e6eb]' />
 				<div className='p-4 px-5 md:p-6'>
-					<Markdown className='md text-bodyBlue font-normal text-sm leading-[26px] tracking-[0.14px]' md={sanitizeSummary(summary || '')} />
+					<Markdown className='md text-blue-light-high dark:text-blue-dark-high font-normal text-sm leading-[26px] tracking-[0.14px]' md={sanitizeSummary(summary || '')} />
 				</div>
 			</Modal>
 		</section>

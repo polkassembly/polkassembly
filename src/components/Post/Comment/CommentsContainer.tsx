@@ -364,13 +364,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			</>
 				: <div className="mt-4 mb-8 bg-[#E6F4FF] rounded-[6px] shadow-md h-12 flex justify-center items-center gap-3">
 					<Image src="/assets/icons/alert-login.svg" width={20} height={20} alt={''} />
-					<div className="text-sm font-medium text-bodyBlue">
+					<div className="text-sm font-medium text-blue-light-high dark:text-blue-dark-high">
 						Please <span className="cursor-pointer text-pink_primary" onClick={() => { setOpenLoginModal(true); }}>Log In</span> to comment
 					</div>
 				</div>
 			}
 			<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1'>
-				<span className='text-lg font-medium text-bodyBlue'>
+				<span className='text-lg font-medium text-blue-light-high dark:text-blue-dark-high'>
 					{allCommentsLength || 0}
 					<span className='ml-1'>Comments</span>
 				</span>
@@ -380,7 +380,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<span className='text-center font-medium'>Completely Against</span>
 							<span className='text-center pt-1'>Select to filter</span>
 						</div>} >
-						<div onClick={() => { handleSetFilteredComments(ESentiments.Against); getFilteredComments(ESentiments.Against); }} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Against) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`} >
+						<div onClick={() => { handleSetFilteredComments(ESentiments.Against); getFilteredComments(ESentiments.Against); }} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Against) && 'bg-[#FEF2F8] text-blue-light-high dark:text-blue-dark-high text-pink_primary'}`} >
 							{checkActive(ESentiments.Against) ? <AgainstIcon /> : <UnfilterAgainstIcon />}
 							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.against}%</span>
 						</div>
@@ -389,7 +389,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						<span className='text-center font-medium'>Slightly Against</span>
 						<span className='text-center pt-1'>Select to filter</span>
 					</div>}>
-						<div onClick={() => { handleSetFilteredComments(ESentiments.SlightlyAgainst); getFilteredComments(ESentiments.SlightlyAgainst); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyAgainst) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
+						<div onClick={() => { handleSetFilteredComments(ESentiments.SlightlyAgainst); getFilteredComments(ESentiments.SlightlyAgainst); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyAgainst) && 'bg-[#FEF2F8] text-blue-light-high dark:text-blue-dark-high text-pink_primary'}`}>
 							{checkActive(ESentiments.SlightlyAgainst) ? <SlightlyAgainstIcon /> : <UnfilterSlightlyAgainstIcon />}
 							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyAgainst}%</span>
 						</div>
@@ -398,7 +398,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						<span className='text-center font-medium'>Neutral </span>
 						<span className='text-center pt-1'>Select to filter</span>
 					</div>}>
-						<div onClick={() => { handleSetFilteredComments(ESentiments.Neutral); getFilteredComments(ESentiments.Neutral); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Neutral) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
+						<div onClick={() => { handleSetFilteredComments(ESentiments.Neutral); getFilteredComments(ESentiments.Neutral); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Neutral) && 'bg-[#FEF2F8] text-blue-light-high dark:text-blue-dark-high text-pink_primary'}`}>
 							{checkActive(ESentiments.Neutral) ? <NeutralIcon className='text-[20px] font-medium' /> : <UnfilterNeutralIcon />}
 							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.neutral}%</span>
 						</div>
@@ -407,7 +407,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						<span className='text-center font-medium'>Slightly For</span>
 						<span className='text-center pt-1'>Select to filter</span>
 					</div>}>
-						<div onClick={() => { handleSetFilteredComments(ESentiments.SlightlyFor); getFilteredComments(ESentiments.SlightlyFor); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyFor) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
+						<div onClick={() => { handleSetFilteredComments(ESentiments.SlightlyFor); getFilteredComments(ESentiments.SlightlyFor); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyFor) && 'bg-[#FEF2F8] text-blue-light-high dark:text-blue-dark-high text-pink_primary'}`}>
 							{checkActive(ESentiments.SlightlyFor) ? <SlightlyForIcon /> : <UnfilterSlightlyForIcon />}
 							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyFor}%</span>
 						</div>
@@ -416,7 +416,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						<span className='text-center font-medium'>Completely For</span>
 						<span className='text-center pt-1'> Select to filter</span>
 					</div>}>
-						<div onClick={() => { handleSetFilteredComments(ESentiments.For); getFilteredComments(ESentiments.For); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.For) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
+						<div onClick={() => { handleSetFilteredComments(ESentiments.For); getFilteredComments(ESentiments.For); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.For) && 'bg-[#FEF2F8] text-blue-light-high dark:text-blue-dark-high text-pink_primary'}`}>
 							{checkActive(ESentiments.For) ? <ForIcon /> : <UnfilterForIcon />}
 							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.for}%</span>
 						</div>

@@ -11,7 +11,7 @@ interface Props {
 
 const Card = ({ className, children }:Props ) => {
 	return (
-		<div className={`${className} bg-white py-[2rem] px-[2rem] md:px-[3rem] drop-shadow-md rounded-md mb-[1rem] text-sm`}>{children}</div>
+		<div className={`${className} bg-white dark:bg-section-dark-overlay py-[2rem] px-[2rem] md:px-[3rem] drop-shadow-md rounded-md mb-[1rem] text-sm`}>{children}</div>
 	);
 };
 

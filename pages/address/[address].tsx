@@ -144,7 +144,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 	return (
 		<>
 			<SEOHead title='User Profile' network={network}/>
-			<section className={`my-0 pb-5 md:pb-0 md:bg-white md:shadow-md rounded-[4px] flex h-full min-h-[calc(100vh-150px)] ${className}`}>
+			<section className={`my-0 pb-5 md:pb-0 md:bg-white dark:bg-section-dark-overlay md:shadow-md rounded-[4px] flex h-full min-h-[calc(100vh-150px)] ${className}`}>
 				<Details userPosts={userPosts.data} userProfile={userProfile} />
 				<article className='hidden md:flex flex-1 py-6 px-10 flex-col w-[calc(100%-330px)]'>
 					<div className='flex items-start justify-between'>
@@ -175,7 +175,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 						className='fullHeight'
 					>
 						<Tabs
-							className='ant-tabs-tab-bg-white text-sidebarBlue font-medium'
+							className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-sidebarBlue font-medium'
 							type="card"
 							items={tabItems as any}
 						/>

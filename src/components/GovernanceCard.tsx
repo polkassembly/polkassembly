@@ -168,7 +168,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-2.5">
 					<div className="flex justify-between items-center">
 						<div className="flex flex-grow">
-							<span className='font-medium text-center flex-none sm:w-[120px] text-bodyBlue'>#{isTip? tip_index: onchainId}</span>
+							<span className='font-medium text-center flex-none sm:w-[120px] text-blue-light-high dark:text-blue-dark-high'>#{isTip? tip_index: onchainId}</span>
 							<OnchainCreationLabel address={address} username={username} />
 						</div>
 						<div className="flex justify-end items-center">
@@ -177,10 +177,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 					<div className="flex justify-between items-center mt-1">
 						<div className="flex flex-grow ml-[120px]">
-							<h1 className='text-bodyBlue text-sm mt-0.5 flex overflow-hidden lg:max-w-none'>
-								<span className='break-all text-bodyBlue font-medium text-sm'>{ mainTitle }</span>
+							<h1 className='text-blue-light-high dark:text-blue-dark-high text-sm mt-0.5 flex overflow-hidden lg:max-w-none'>
+								<span className='break-all text-blue-light-high dark:text-blue-dark-high font-medium text-sm'>{ mainTitle }</span>
 							</h1>
-							<h2 className='text-bodyBlue font-medium text-sm'>{subTitle}</h2>
+							<h2 className='text-blue-light-high dark:text-blue-dark-high font-medium text-sm'>{subTitle}</h2>
 						</div>
 						{
 							requestedAmount &&
@@ -193,7 +193,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						}
 					</div>
-					<div className="font-medium text-bodyBlue text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center sm:mb-1 sm:mt-0 sm:ml-[120px]">
+					<div className="font-medium text-blue-light-high dark:text-blue-dark-high text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center sm:mb-1 sm:mt-0 sm:ml-[120px]">
 						<div className='flex items-center gap-x-2 lg:h-[32px]'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
 								<LikeOutlined style={{ color: '#485F7D' }} />
@@ -220,7 +220,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-1 border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
 										{tag}
 									</div>))}
-								{tags.length>2 && <span className='text-bodyBlue' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+								{tags.length>2 && <span className='text-blue-light-high dark:text-blue-dark-high' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
                 +{tags.length-2}
 								</span>}
 							</>}
@@ -307,11 +307,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								: null
 						}
 					</div>
-					<div className='max-xs-hidden my-3 mx-1 text-bodyBlue font-medium text-sm'>
+					<div className='max-xs-hidden my-3 mx-1 text-blue-light-high dark:text-blue-dark-high font-medium text-sm'>
 						#{isTip? tip_index: onchainId} {mainTitle} {subTitle}
 					</div>
 
-					<div className="font-medium text-bodyBlue text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center pl-1 gap-3">
+					<div className="font-medium text-blue-light-high dark:text-blue-dark-high text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center pl-1 gap-3">
 						<div className="sm:hidden xs:flex xs:justify-start items-center h-[30px] flex-shrink-0">
 							<OnchainCreationLabel address={address} truncateUsername username={username} />
 							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
@@ -343,7 +343,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										(<div key={index} className='text-lightBlue rounded-xl px-[14px] py-1 border-[#D2D8E0] border-solid border-[1px] font-medium text-[10px]' >
 											{tag}
 										</div>))}
-									{tags.length>2 && <span className='text-bodyBlue' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
+									{tags.length>2 && <span className='text-blue-light-high dark:text-blue-dark-high' style={{ background:'#D2D8E080' , borderRadius:'20px', padding:'4px 8px' }} onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsModal(true);}}>
                 +{tags.length-2}
 									</span>}</div>
 							</div>}
@@ -359,7 +359,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				closeIcon={<CloseIcon/>}
 				className={`${poppins.variable} ${poppins.className} max-w-full shrink-0  max-sm:w-[100%] h-[120px]`}
 				title={<>
-					<label className='text-lg tracking-wide font-medium text-bodyBlue mb-2'>
+					<label className='text-lg tracking-wide font-medium text-blue-light-high dark:text-blue-dark-high mb-2'>
 						<TagsIcon className='mr-2' />
 							Tags
 					</label>

@@ -58,7 +58,7 @@ const About: FC<IAboutProps> = (props) => {
 		<div className={className}>
 			<TitleBio bio={bio} title={title} bioClassName='text-sidebarBlue mt-0' titleClassName='text-sidebarBlue mt-0' />
 			<Divider className='m-0 mt-4' />
-			<Collapse className='bg-white m-0 p-0 border-none outline-none shadow-none content-border' expandIconPosition='right'>
+			<Collapse className='bg-white dark:bg-section-dark-overlay m-0 p-0 border-none outline-none shadow-none content-border' expandIconPosition='right'>
 				<Collapse.Panel
 					className='m-0 p-0 border-none outline-none shadow-none'
 					header={

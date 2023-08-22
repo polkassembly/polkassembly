@@ -14,7 +14,7 @@ interface IFallbackProps {
 
 const Fallback: FC<IFallbackProps> = (props) => {
 	return (
-		<section className='absolute inset-0 z-[9999999] bg-[#F5F6F8] flex flex-col items-center justify-center h-screen w-screen'>
+		<section className='absolute inset-0 z-[9999999] flex flex-col items-center justify-center h-screen w-screen bg-section-light-background dark:bg-section-dark-background'>
 			<Result
 				icon={
 					<div className='w-1/2 h-auto mx-auto max-w-[900px]'>

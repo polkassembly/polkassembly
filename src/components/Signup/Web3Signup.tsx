@@ -279,16 +279,16 @@ const Web3Signup: FC<Props> = ({
 	return (
 		<><div className='flex items-center'>
 			<LoginLogo className='ml-6 mr-2' />
-			<h3 className="text-[20px] font-semibold text-[#243A57] mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Sign Up'}</h3>
+			<h3 className="text-[20px] font-semibold text-blue-light-high dark:text-blue-dark-high mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Sign Up'}</h3>
 		</div><hr className='text-[#D2D8E0]'/>
-		<article className="bg-white shadow-md rounded-md p-8 flex flex-col ">
+		<article className="bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col ">
 			<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-1 justify-center">
 				{/* <span>Sign Up</span> */}
 				{!withPolkasafe &&<p className='flex gap-x-2 items-center justify-start p-0 m-0'>
 					<span className='mt-2'>
 						<WalletIcon which={chosenWallet} />
 					</span>
-					<span className='text-[#243A57] text-lg sm:text-xl'>
+					<span className='text-blue-light-high dark:text-blue-dark-high text-lg sm:text-xl'>
 						{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
 					</span>
 				</p>}
@@ -305,7 +305,7 @@ const Web3Signup: FC<Props> = ({
 			</h3>
 			{fetchAccounts ?
 				<div className='flex flex-col justify-center items-center'>
-					<p className='text-base text-[#243A57]'>
+					<p className='text-base text-blue-light-high dark:text-blue-dark-high'>
 						{withPolkasafe ? 'To fetch your Multisig details, please select a wallet extension' :'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 					</p>
 					<div className='flex'>
@@ -411,7 +411,7 @@ const Web3Signup: FC<Props> = ({
 					</>
 				)}
 			<div className="flex justify-center items-center gap-x-2 font-semibold mt-6">
-				<label className="text-md text-[#243A57]">
+				<label className="text-md text-blue-light-high dark:text-blue-dark-high">
 						Already have an account?
 				</label>
 				<div onClick={() => handleClick()} className='text-pink_primary text-md'>Login</div>

@@ -388,16 +388,16 @@ const Web3Login: FC<Props> = ({
 		<>
 			<div className='flex items-center'>
 				<LoginLogo className='ml-6 mr-2' />
-				<h3 className="text-xl font-semibold text-bodyBlue mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Login'}</h3>
+				<h3 className="text-xl font-semibold text-blue-light-high dark:text-blue-dark-high mt-3">{withPolkasafe ? <PolkasafeWithIcon/> : 'Login'}</h3>
 			</div>
 			<hr className='text-[#D2D8E0] ' />
-			<article className="bg-white shadow-md rounded-md p-8 flex flex-col gap-y-3">
+			<article className="bg-white dark:bg-section-dark-overlay shadow-md rounded-md p-8 flex flex-col gap-y-3">
 				<h3 className="text-2xl font-semibold text-[#1E232C] flex flex-col gap-y-2">
 					{!withPolkasafe &&<p className='flex gap-x-2 items-center justify-start p-0 m-0'>
 						<span className='mt-2'>
 							<WalletIcon which={chosenWallet} />
 						</span>
-						<span className='text-bodyBlue text-lg sm:text-xl'>
+						<span className='text-blue-light-high dark:text-blue-dark-high text-lg sm:text-xl'>
 							{chosenWallet.charAt(0).toUpperCase() + chosenWallet.slice(1).replace('-', '.')}
 						</span>
 					</p>}
@@ -413,7 +413,7 @@ const Web3Login: FC<Props> = ({
 				</h3>
 				{fetchAccounts ?
 					<div className='flex flex-col justify-center items-center'>
-						<p className='text-base text-bodyBlue'>
+						<p className='text-base text-blue-light-high dark:text-blue-dark-high'>
 							{withPolkasafe ? 'To fetch your Multisig details, please select a wallet extension' :'For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.'}
 						</p>
 						<div className='flex'>
@@ -531,7 +531,7 @@ const Web3Login: FC<Props> = ({
 						</>
 					)}
 				<div className="flex justify-center items-center pb-5 font-medium mt-6">
-					<label className="text-lg text-bodyBlue">
+					<label className="text-lg text-blue-light-high dark:text-blue-dark-high">
 						Don&apos;t have an account?
 					</label>
 					<div onClick={handleClick} className='text-lg text-pink_primary cursor-pointer'>&nbsp; Sign Up </div>

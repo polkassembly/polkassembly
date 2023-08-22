@@ -102,7 +102,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 					votesHistory.length > 0?
 						<div>
 							<Table dataSource={votesHistory} columns={columns} pagination={false} />
-							<div className='flex justify-end mt-6 bg-white z-10'>
+							<div className='flex justify-end mt-6 bg-white dark:bg-section-dark-overlay z-10'>
 								<Pagination
 									size="small"
 									defaultCurrent={1}

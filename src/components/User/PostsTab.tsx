@@ -28,13 +28,13 @@ const PostsTab: FC<IPostsTabProps> = (props) => {
 		};
 	});
 	return (
-		<div className={`${className} bg-white h-full`}>
+		<div className={`${className} bg-white dark:bg-section-dark-overlay h-full`}>
 			{
 				Array.isArray(posts)?
 					<PostTab posts={posts} />
 					: (
 						<Tabs
-							className='ant-tabs-tab-bg-white text-navBlue font-normal text-sm borderRemove'
+							className='ant-tabs-tab-bg-white dark:bg-section-dark-overlay text-navBlue font-normal text-sm borderRemove'
 							tabPosition='left'
 							type="card"
 							items={tabItems as any}

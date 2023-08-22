@@ -49,7 +49,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 				<div className='text-pink_primary text-sm flex justify-start cursor-pointer -mt-2' onClick={() => handleExpand(index, EExpandType.Expanded)}>
 					<span className='text-xs'>See Details</span></div>
 			</div>
-				: <div className={`py-3 px-3 bg-white rounded-[4px] mt-1 border-solid border-[0.5px] border-[#D2D8E0] ml-3 max-sm:w-full max-sm:ml-0 ${item?.expanded && 'active-timeline'}`}>
+				: <div className={`py-3 px-3 bg-white dark:bg-section-dark-overlay rounded-[4px] mt-1 border-solid border-[0.5px] border-[#D2D8E0] ml-3 max-sm:w-full max-sm:ml-0 ${item?.expanded && 'active-timeline'}`}>
 					<div className='flex items-center max-sm:flex-col max-sm:justify-start max-sm:gap-2  max-sm:items-start'>
 						<div className='flex items-center max-sm:justify-start'>
 							<span className='mr-1 text-xs text-[#90A0B7]'>By:</span>
@@ -69,7 +69,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 					<div className='text-[#334D6E] text-[16px] mt-1 font-medium'>
 						{historyData[index+1] ?  item?.title ? <div>{diffChars( historyData[index+1]?.title, item?.title)?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : title : title}
 					</div>
-					<div className={`mt-1 text-[#243A57] text-sm font-normal tracking-[0.01em] ${!item?.expandedContent && item?.content.length > 100 && 'truncate-content'} leading-6 pr-2`}>
+					<div className={`mt-1 text-blue-light-high dark:text-blue-dark-high text-sm font-normal tracking-[0.01em] ${!item?.expandedContent && item?.content.length > 100 && 'truncate-content'} leading-6 pr-2`}>
 						{/* {historyData[index+1] ? <div>{difference?.map((text, idx) => <span key={idx} className={`${text?.removed && 'bg-[#fff3b3]'} ${text?.added && 'bg-[#fff3b3]'}`}>{text.value}</span>)}</div> : item?.content} */}
 						<Markdown className='text-sm' md={item?.content}/>
 					</div>

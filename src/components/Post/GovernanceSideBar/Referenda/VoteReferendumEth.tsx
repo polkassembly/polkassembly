@@ -428,7 +428,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				closeIcon={<CloseCross/>}
 				title={ <div className='h-[65px] -mt-5 border-0 border-solid border-b-[1.2px] border-[#D2D8E0] mr-[-24px] ml-[-24px] rounded-t-[6px] flex items-center justify-center gap-2'>
 					<CastVoteIcon className='mt-1'/>
-					<span className='text-[#243A57] font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
+					<span className='text-blue-light-high dark:text-blue-dark-high font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
 				</div>}
 			>
 				<>
@@ -462,7 +462,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						<h3 className='inner-headings mt-6 mb-[2px]'>Choose your vote</h3>
 						<Segmented
 							block
-							className={'mb-6 border-solid border-[1px] bg-white hover:bg-white border-[#D2D8E0] rounded-[4px] w-full'}
+							className={'mb-6 border-solid border-[1px] bg-white dark:bg-section-dark-overlay hover:bg-white dark:bg-section-dark-overlay border-[#D2D8E0] rounded-[4px] w-full'}
 							size="large"
 							value={vote}
 							onChange={(value) => {

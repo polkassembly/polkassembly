@@ -140,9 +140,9 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 	if (!fellowshipReferendumPostOrigins.includes(trackName)) {
 		return (
-			<div className={`${className} bg-white drop-shadow-md rounded-xxl p-4 md:p-8`}>
-				<h2 className="text-xl font-semibold leading-8 text-bodyBlue">Member Referenda</h2>
-				<p className="mt-5 text-sm text-bodyBlue font-normal">
+			<div className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md rounded-xxl p-4 md:p-8`}>
+				<h2 className="text-xl font-semibold leading-8 text-blue-light-high dark:text-blue-dark-high">Member Referenda</h2>
+				<p className="mt-5 text-sm text-blue-light-high dark:text-blue-dark-high font-normal">
                     Aggregation of data across all membership referenda
 				</p>
 			</div>
@@ -150,49 +150,49 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	}
 
 	return (
-		<section className={`${className} bg-white drop-shadow-md rounded-xxl md:p-4`}>
+		<section className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md rounded-xxl md:p-4`}>
 			<article className="flex justify-between px-4 xs:py-3 md:py-0">
-				<h2 className="text-xl mb-0 font-semibold leading-8 text-bodyBlue">
+				<h2 className="text-xl mb-0 font-semibold leading-8 text-blue-light-high dark:text-blue-dark-high">
 						About {trackName.split(/(?=[A-Z])/).join(' ')}
 				</h2>
 
 				<h2 className="text-sm text-pink_primary">{trackMetaData?.group}</h2>
 			</article>
 
-			<p className="xs:mt-0.5 md:mt-0 font-normal text-base leading-6 text-bodyBlue px-4">{trackMetaData?.description}</p>
+			<p className="xs:mt-0.5 md:mt-0 font-normal text-base leading-6 text-blue-light-high dark:text-blue-dark-high px-4">{trackMetaData?.description}</p>
 
 			<article className='md:flex md:justify-between'>
 				<section className="mt-6 text-xs w-full md:w-[70%] md:grid md:grid-cols-3 flex flex-wrap">
 					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className="flex flex-col">
 							<span className="font-medium text-sm text-lightBlue whitespace-pre">Max Deciding</span>
-							<span className="text-lg font-medium leading-7 text-bodyBlue my-1.5 whitespace-pre">{trackMetaData.maxDeciding}</span>
+							<span className="text-lg font-medium leading-7 text-blue-light-high dark:text-blue-dark-high my-1.5 whitespace-pre">{trackMetaData.maxDeciding}</span>
 						</div>
 					</article>
 
 					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className="flex flex-col">
 							<span className="font-medium text-sm text-lightBlue whitespace-pre">Confirm Period</span>
-							<span className="text-lg font-medium leading-7 text-bodyBlue my-1.5 whitespace-pre">{blocksToRelevantTime(Number(trackMetaData.confirmPeriod))}</span>
+							<span className="text-lg font-medium leading-7 text-blue-light-high dark:text-blue-dark-high my-1.5 whitespace-pre">{blocksToRelevantTime(Number(trackMetaData.confirmPeriod))}</span>
 						</div>
 					</article>
 					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className='flex flex-col'>
 							<span className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Min. Enactment Period</span>
-							<span className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-1.5'>{blocksToRelevantTime(Number(trackMetaData.minEnactmentPeriod))}</span>
+							<span className='whitespace-pre text-lg font-medium leading-7 text-blue-light-high dark:text-blue-dark-high my-1.5'>{blocksToRelevantTime(Number(trackMetaData.minEnactmentPeriod))}</span>
 						</div>
 					</article>
 
 					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className='flex flex-col'>
 							<span className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Period</span>
-							<span className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-1.5'>{blocksToRelevantTime(Number(trackMetaData.minEnactmentPeriod))}</span>
+							<span className='whitespace-pre text-lg font-medium leading-7 text-blue-light-high dark:text-blue-dark-high my-1.5'>{blocksToRelevantTime(Number(trackMetaData.minEnactmentPeriod))}</span>
 						</div>
 					</article>
 					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className='flex flex-col'>
 							<span className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Decision Deposit</span>
-							<span className='text-lg font-medium leading-7 text-bodyBlue my-1.5 whitespace-pre'>
+							<span className='text-lg font-medium leading-7 text-blue-light-high dark:text-blue-dark-high my-1.5 whitespace-pre'>
 								{trackMetaData.decisionDeposit &&
               formatUSDWithUnits(formatBnBalance(`${trackMetaData.decisionDeposit}`.startsWith('0x') ? new BN(`${trackMetaData.decisionDeposit}`.slice(2), 'hex') : trackMetaData.decisionDeposit, { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network), 1)
 								}
@@ -202,7 +202,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className='flex flex-col'>
 							<span className='font-medium leading-5 text-sm text-lightBlue whitespace-pre'>Prepare Period</span>
-							<span className='whitespace-pre text-lg font-medium leading-7 text-bodyBlue my-1.5'>{blocksToRelevantTime(Number(trackMetaData.preparePeriod))}</span>
+							<span className='whitespace-pre text-lg font-medium leading-7 text-blue-light-high dark:text-blue-dark-high my-1.5'>{blocksToRelevantTime(Number(trackMetaData.preparePeriod))}</span>
 						</div>
 					</article>
 				</section>

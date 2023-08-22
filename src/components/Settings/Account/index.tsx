@@ -62,7 +62,7 @@ const Account: FC<Props> = ({ className }) => {
 	return (
 		<Collapse
 			size='large'
-			className='bg-white'
+			className='bg-white dark:bg-section-dark-overlay'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive || false);
@@ -73,8 +73,8 @@ const Account: FC<Props> = ({ className }) => {
 				header={
 					<div className='flex items-center gap-[6px] channel-header'>
 						<AccountIcon />
-						<h3 className='font-semibold text-[16px] text-[#243A57] md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
-						Account Settings {active && <span className='text-[#243A57] text-sm font-normal'>Update your account settings here</span>}
+						<h3 className='font-semibold text-[16px] text-blue-light-high dark:text-blue-dark-high md:text-[18px] tracking-wide leading-[21px] mb-0 mt-[2px]'>
+						Account Settings {active && <span className='text-blue-light-high dark:text-blue-dark-high text-sm font-normal'>Update your account settings here</span>}
 						</h3>
 					</div>
 				}

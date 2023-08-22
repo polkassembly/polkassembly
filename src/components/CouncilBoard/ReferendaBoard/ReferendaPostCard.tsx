@@ -57,7 +57,7 @@ const ReferendaPostCard = ({ className, createdAt, postStatus, referendumId, tit
 		null;
 
 	return (
-		<div className={`${className} bg-white drop-shadow-md p-3 lg:p-6 rounded-md`}>
+		<div className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md p-3 lg:p-6 rounded-md`}>
 			<div className="font-medium text-sm mb-[9px]">
 				{post && post.decision &&
 				<>

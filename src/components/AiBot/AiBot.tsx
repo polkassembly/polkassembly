@@ -87,7 +87,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	const data = [
 
 		{
-			component: <div className='ml-[-37px] text-xl flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+			component: <div className='ml-[-37px] text-xl flex justify-center align-middle text-lightBlue hover:text-blue-light-high dark:text-blue-dark-high hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 				onClick={() =>  id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true)}
 			>
 				<CreateDiscussionIcon className='cursor-pointer ml-[-53px] mt-[5px]' />
@@ -95,7 +95,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 			</div>
 		},
 		// {
-		// component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+		// component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-blue-light-high dark:text-blue-dark-high hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 		// onClick={() => {
 		// if (!grillChat)
 		// (window as any).DocsBotAI.toggle();
@@ -110,7 +110,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 			component: <a href='https://polkassembly.hellonext.co/'
 				target='_blank'
 				rel='noreferrer'
-				className='text-lightBlue hover:text-bodyBlue ml-[-34px]'>
+				className='text-lightBlue hover:text-blue-light-high dark:text-blue-dark-high ml-[-34px]'>
 				<div className='flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px]  rounded-[8px] cursor-pointer'>
 					<CautionIcon className='cursor-pointer ml-[-105px] mt-[5px]' />
 					<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>Report An Issue</p>
@@ -128,7 +128,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	if(grillChatAllowedNetwork.includes(network.toUpperCase())){
 
 		data.splice(data.length - 1, 0, {
-			component: <div className='ml-[-34px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+			component: <div className='ml-[-34px] flex justify-center align-middle text-lightBlue hover:text-blue-light-high dark:text-blue-dark-high hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 				onClick={() => {
 					if (!isAIChatBotOpen) setGrillChat(!grillChat);
 				}}
@@ -197,7 +197,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					bordered
 					dataSource={data}
 					className={`${className}
-					${floatButtonOpen ? 'opacity-100 translate-y-0 transition-all duration-500 delay-200 w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_15px_35px_-20px_rgba(178,59,123,1)]' : 'opacity-0 -translate-y-2 transition-all duration-500 w-[311px] max-h-[384px] bg-white max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]'}
+					${floatButtonOpen ? 'opacity-100 translate-y-0 transition-all duration-500 delay-200 w-[311px] max-h-[384px] bg-white dark:bg-section-dark-overlay max-[350px]:right-[5px] rounded-3xl shadow-[0_15px_35px_-20px_rgba(178,59,123,1)]' : 'opacity-0 -translate-y-2 transition-all duration-500 w-[311px] max-h-[384px] bg-white dark:bg-section-dark-overlay max-[350px]:right-[5px] rounded-3xl shadow-[0_30px_40px_-20px_rgba(178,59,123,0.5)]'}
 					${floatButtonOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
 
 					renderItem={(item) => (

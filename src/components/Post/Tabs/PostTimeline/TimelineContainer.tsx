@@ -151,8 +151,8 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 		<section className='flex my-16 mx-7'>
 			<div className={`min-h-${minHeight} -mb-[2px] mt-[5px] w-[2px] relative -ml-2`} style={{ backgroundColor: activeColor }}>
 				<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? timeline.hash: timeline.index}`}>
-					<p className='-mt-[40px] -ml-[14px] font-normal text-base leading-6 whitespace-nowrap px-2 h-[33px] -left-[15px] -top-7' style={{ color: activeColor }}>
-						{PostType===timeline.type ? <DemocracyReferendaIcon className="mr-3" style={{ color: activeColor }}/> : <DemocracyReferendaGreyIcon className="mr-3" style={{ color: activeColor }}/>}
+					<p className='-mt-[40px] -ml-[1px] font-normal text-base leading-6 whitespace-nowrap h-[33px] -left-[5px] -top-7' style={{ color: activeColor, fontWeight: '500' }}>
+						{PostType===timeline.type ? <DemocracyReferendaIcon className="-ml-[6px] mr-3" style={{ color: activeColor }}/> : <DemocracyReferendaGreyIcon className="-ml-[6px] mr-3" style={{ color: activeColor }}/>}
 						<span className='font-semibold text-base'>{getStatus(String(type))}</span>
 					</p>
 					<p style={{ marginLeft: '664px', marginTop: '-44px' }}>

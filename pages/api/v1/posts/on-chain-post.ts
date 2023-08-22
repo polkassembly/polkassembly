@@ -948,6 +948,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		// Comments
 		if(noComments){
+			const sentiments:any = {};
+			const sentimentsKey = ['againstCount', 'slightlyAgainstCount', 'neutralCount', 'slightlyForCount', 'forCount'];
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {
 					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
@@ -969,6 +971,19 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					type: currentTimelineObj?.type
 				};
 			}
+			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+				let timeline: any= null;
+				for (timeline of post.timeline){
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					for(let i = 0; i < sentimentsKey.length; i++){
+						const key = sentimentsKey[i];
+						sentiments[key]= sentiments[key] ?
+							sentiments[key] + (await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count :
+							(await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count;
+					}
+				}
+			}
+			post.overallSentiments = sentiments;
 		}
 		else{
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {

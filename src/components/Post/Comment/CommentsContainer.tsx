@@ -67,10 +67,7 @@ export interface ITimeline {
 	index: string;
 	type: string;
 }
-interface IFilteredSentiment {
-	sentiment: ESentiments | 0;
-	active: boolean;
-}
+
 interface ISentimentsPercentage {
 	against: ESentiments | 0;
 	for: ESentiments | 0;
@@ -89,17 +86,17 @@ const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
 	return commentResponse;
 };
 
-const getLastDocs = (comments: {[index:string]:Array<IComment>}) => {
+const getLastDocs = (comments: {[index:string]:Array<IComment>}, makeNull?:boolean) => {
 	const lastDocs:any = {};
 	for(const key in comments){
-		lastDocs[key] = comments[key]?.[comments[key].length-1]?.id || null;
+		lastDocs[key] = makeNull ? null :comments[key]?.[comments[key].length-1]?.id || null;
 	}
 	return lastDocs;
 };
-
+const sentimentsKey = ['againstCount', 'slightlyAgainstCount', 'neutralCount', 'slightlyForCount', 'forCount'];
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
-	const { postData: { postType, timeline, created_at } } = usePostDataContext();
+	const { postData: { postType, timeline, created_at, overallSentiments } } = usePostDataContext();
 	const targetOffset = 10;
 	const {
 		comments,
@@ -111,7 +108,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	} = useCommentDataContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
-	const [filteredSentiment, setFilteredSentiment] = useState<IFilteredSentiment>({ active: false, sentiment: 0 });
 	const [showOverallSentiment, setShowOverallSentiment] = useState<boolean>(true);
 	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
 	const [loading, setLoading] = useState(true);
@@ -121,9 +117,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const allCommentsLength = timelines.reduce((a, b) => a + b.commentsCount, 0);
 	const [lastDocs, setLastDocs] = useState<{[index:string]:number | null}>(getLastDocs(comments));
 	const [showMore, setShowMore] = useState<boolean>(true);
+	const [filterSentiments, setFilterSentiments] = useState<number>(0);
 
 	const url = window.location.href;
 	const commentId = url.split('#')[1];
+
 	const handleTimelineClick = (e: React.MouseEvent<HTMLElement>, link: { title: React.ReactNode; href: string; }) => {
 		if (link.href === '#') {
 			e.preventDefault();
@@ -131,37 +129,14 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 	};
 
-	const handleSetFilteredComments = (sentiment: ESentiments | 0) => {
-		setFilteredSentiment((pre) => pre.sentiment === sentiment && pre.active === true ? { ...pre, active: false } : { active: true, sentiment: sentiment });
-	};
-
 	const getOverallSentimentPercentage = () => {
-		let againstCount = 0;
-		let slightlyAgainstCount = 0;
-		let neutralCount = 0;
-		let slightlyForCount = 0;
-		let forCount = 0;
+		console.log(overallSentiments);
+		const againstCount = overallSentiments?.againstCount || 0;
+		const slightlyAgainstCount = overallSentiments?.slightlyAgainstCount || 0;
+		const neutralCount = overallSentiments?.neutralCount || 0;
+		const slightlyForCount = overallSentiments?.slightlyForCount || 0;
+		const forCount = overallSentiments?.forCount || 0;
 
-		for (let item = 0; item < allComments.length; item++) {
-			switch (allComments[item]?.sentiment) {
-			case ESentiments.Against:
-				againstCount += 1;
-				break;
-			case ESentiments.SlightlyAgainst:
-				slightlyAgainstCount += 1;
-				break;
-			case ESentiments.Neutral:
-				neutralCount += 1;
-				break;
-			case ESentiments.SlightlyFor:
-				slightlyForCount += 1;
-				break;
-			case ESentiments.For:
-				forCount += 1;
-				break;
-
-			}
-		}
 		const totalCount = againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount;
 
 		setSentimentsPercentage({
@@ -177,19 +152,47 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	};
 
-	const getFilteredComments = (sentiment: number) => {
-		if (filteredSentiment.sentiment === sentiment && filteredSentiment.active) { setComments(comments); }
-		else {
-			const commentsPayload = Object.assign({}, comments);
-			for(const index in commentsPayload){
-				commentsPayload[index] =commentsPayload[index].filter((comment) => comment?.sentiment === sentiment);
-			}
-			setComments(commentsPayload);
+	const getFilteredComments = async (sentiment: number) => {
+		if (!timeline || timeline.length < 0) {
+			return;
 		}
+		sentiment = filterSentiments === sentiment? 0: sentiment;
+		setFilterSentiments(sentiment);
+		const commentsPayload:{[index:string]:IComment[]} = {};
+		timeline.forEach((obj) => {
+			commentsPayload[`${obj?.index.toString()}_${obj?.type}`] = [];
+		});
+		setLoading(true);
+		getLastDocs(comments, true);
+		for(let i = 0; i < timelines.length; i++){
+			if(timelines[i].commentsCount === 0){
+				continue;
+			}
+			const timeline = timelines[i];
+			const key = `${timelines[i].index}_${timelines[i].type}`;
+			const lastDoc = lastDocs[key];
+			setCurrentTimeline(timeline);
+			if(timeline && commentsPayload[key].length < timeline.commentsCount){
+				const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, COMMENT_SIZE, timeline.type, sentiment);
+				commentsPayload[key] = [...commentsPayload[key], ...res.comments];
+				const resLastDocId = res.comments[res.comments.length-1]?.id || null;
+				if(resLastDocId){
+					setLastDocs((prev:{[index:string]:number | null}) => ({ ...prev, [timeline.index]: resLastDocId }));
+				}
+				if(res.comments.length === COMMENT_SIZE){
+					break;
+				}
+				if(commentsPayload[key].length < res.count){
+					i--;
+				}
+			}
+		}
+		setComments(getSortedComments(commentsPayload));
+		setLoading(false);
 	};
 
 	const checkActive = (sentiment: ESentiments) => {
-		return filteredSentiment.active && filteredSentiment.sentiment === sentiment;
+		return filterSentiments === sentiment;
 	};
 
 	useEffect(() => {
@@ -287,7 +290,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			const lastDoc = lastDocs[key];
 			setCurrentTimeline(timeline);
 			if(timeline && commentsPayload[key].length < timeline.commentsCount){
-				const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, size || COMMENT_SIZE, timeline.type);
+				const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, size || COMMENT_SIZE, timeline.type, filterSentiments);
 				commentsPayload[key] = [...commentsPayload[key], ...res.comments];
 				const resLastDocId = res.comments[res.comments.length-1]?.id || null;
 				if(resLastDocId){
@@ -296,7 +299,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				if(res.comments.length === COMMENT_SIZE){
 					break;
 				}
-				if(commentsPayload[key].length < timeline.commentsCount){
+				if(commentsPayload[key].length < res.count){
 					i--;
 				}
 			}
@@ -306,9 +309,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	const handleSingleTimelineClick =async (timeline:ITimeline) => {
 		const commentsPayload = Object.assign({}, comments);
-		if(!currentTimeline || commentsPayload[timeline.index]?.[0] ){
+		if(!currentTimeline){
 			return;
 		}
+		setFilterSentiments(0);
 		for(const data of timelines){
 			if(data.id > timeline.id){
 				break;
@@ -359,6 +363,13 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
+	const handleHasMore = () => {
+		if(filterSentiments && overallSentiments){
+			return allComments.length < overallSentiments?.[sentimentsKey[filterSentiments-1]] || false;
+		}
+		return showMore && allComments.length < allCommentsLength;
+	};
+
 	return (
 		<div className={className}>
 			{id ? <>
@@ -385,7 +396,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							<span className='text-center font-medium'>Completely Against</span>
 							<span className='text-center pt-1'>Select to filter</span>
 						</div>} >
-						<div onClick={() => { handleSetFilteredComments(ESentiments.Against); getFilteredComments(ESentiments.Against); }} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Against) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`} >
+						<div onClick={() => { getFilteredComments(ESentiments.Against); }} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Against) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`} >
 							{checkActive(ESentiments.Against) ? <AgainstIcon /> : <UnfilterAgainstIcon />}
 							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.against}%</span>
 						</div>
@@ -394,7 +405,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						<span className='text-center font-medium'>Slightly Against</span>
 						<span className='text-center pt-1'>Select to filter</span>
 					</div>}>
-						<div onClick={() => { handleSetFilteredComments(ESentiments.SlightlyAgainst); getFilteredComments(ESentiments.SlightlyAgainst); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyAgainst) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
+						<div onClick={() => { getFilteredComments(ESentiments.SlightlyAgainst); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyAgainst) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
 							{checkActive(ESentiments.SlightlyAgainst) ? <SlightlyAgainstIcon /> : <UnfilterSlightlyAgainstIcon />}
 							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyAgainst}%</span>
 						</div>
@@ -403,7 +414,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						<span className='text-center font-medium'>Neutral </span>
 						<span className='text-center pt-1'>Select to filter</span>
 					</div>}>
-						<div onClick={() => { handleSetFilteredComments(ESentiments.Neutral); getFilteredComments(ESentiments.Neutral); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Neutral) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
+						<div onClick={() => { getFilteredComments(ESentiments.Neutral); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Neutral) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
 							{checkActive(ESentiments.Neutral) ? <NeutralIcon className='text-[20px] font-medium' /> : <UnfilterNeutralIcon />}
 							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.neutral}%</span>
 						</div>
@@ -412,7 +423,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						<span className='text-center font-medium'>Slightly For</span>
 						<span className='text-center pt-1'>Select to filter</span>
 					</div>}>
-						<div onClick={() => { handleSetFilteredComments(ESentiments.SlightlyFor); getFilteredComments(ESentiments.SlightlyFor); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyFor) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
+						<div onClick={() => { getFilteredComments(ESentiments.SlightlyFor); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyFor) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
 							{checkActive(ESentiments.SlightlyFor) ? <SlightlyForIcon /> : <UnfilterSlightlyForIcon />}
 							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyFor}%</span>
 						</div>
@@ -421,7 +432,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						<span className='text-center font-medium'>Completely For</span>
 						<span className='text-center pt-1'> Select to filter</span>
 					</div>}>
-						<div onClick={() => { handleSetFilteredComments(ESentiments.For); getFilteredComments(ESentiments.For); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.For) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
+						<div onClick={() => { getFilteredComments(ESentiments.For); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.For) && 'bg-[#FEF2F8] text-bodyBlue text-pink_primary'}`}>
 							{checkActive(ESentiments.For) ? <ForIcon /> : <UnfilterForIcon />}
 							<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.for}%</span>
 						</div>
@@ -480,7 +491,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								dataLength={allComments.length}
 								className='overflow-hidden'
 								next={getNextComments}
-								hasMore={showMore && allComments.length < allCommentsLength}
+								hasMore={handleHasMore()}
 								loader={<Loader/>}
 								endMessage={
 									showMore ?

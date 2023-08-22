@@ -11,7 +11,8 @@ export const getPaginatedComments = async (
 	lastDocumentId: any,
 	network: string,
 	pageSize: number,
-	postType: string
+	postType: string,
+	sentiment?:number
 ) => {
 	try{
 		const { data, error } = await nextApiClientFetch<any>('api/v1/posts/comments/getCommentByPostId',{
@@ -19,7 +20,8 @@ export const getPaginatedComments = async (
 			network,
 			pageSize,
 			postId,
-			postType:getFirestoreProposalType(postType)
+			postType:getFirestoreProposalType(postType),
+			sentiment
 		});
 		if(data){
 			return data || [];

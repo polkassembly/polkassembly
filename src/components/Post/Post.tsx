@@ -411,6 +411,7 @@ const Post: FC<IPostProps> = (props) => {
 			description: post?.description,
 			history: post?.history || [],
 			last_edited_at: post?.last_edited_at,
+			overallSentiments: post?.overallSentiments,
 			postIndex: proposalType === ProposalType.TIPS? post.hash: post.post_id ,
 			postType: proposalType,
 			post_link: post?.post_link,

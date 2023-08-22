@@ -10,8 +10,10 @@ import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { useNetworkContext } from '~src/context';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { getBlockLink } from '~src/util/subscanCheck';
-import { ExportOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
-import { DemocracyReferendaIcon, DemocracyReferendaGreyIcon } from '~src/ui-components/CustomIcons';
+import { UpOutlined, DownOutlined } from '@ant-design/icons';
+import DemocracyReferendaIcon from '~assets/icons/Democracy-Referenda.svg';
+import DemocracyReferendaGreyIcon from '~assets/icons/Democracy-Referenda-grey.svg';
+import ExportOutlined from '~assets/icons/learn-more-icon.svg';
 import { usePostDataContext } from '~src/context';
 
 interface BlockStatus {
@@ -127,7 +129,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 													{blockDate.format("Do MMM 'YY, h:mm a")}
 												</p>
 												<a className="font-medium" href={`${url}${block}`} target="_blank" rel="noreferrer">
-													<ExportOutlined style={{ color: '#e5007a' }}/>
+													<ExportOutlined className='-mb-[2px]' style={{ color: '#e5007a' }}/>
 												</a>
 											</div>
 											<div className="text-right ml-auto">
@@ -148,11 +150,11 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 
 	return (
 		<section className='flex my-16 mx-7'>
-			<div className={`min-h-${minHeight} -mb-[2px] mt-[5px] w-[2px] relative -ml-2`} style={{ backgroundColor: activeColor }}>
+			<div className={`min-h-${minHeight} -mb-[2px] mt-[16px] w-[2px] relative -ml-2`} style={{ backgroundColor: activeColor }}>
 				<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? timeline.hash: timeline.index}`}>
-					<p className='-mt-[40px] -ml-[1px] font-normal text-base leading-6 whitespace-nowrap h-[33px] -left-[5px] -top-7' style={{ color: activeColor, fontWeight: '500' }}>
-						{PostType===timeline.type ? <DemocracyReferendaIcon className="-ml-[6px] mr-3" style={{ color: activeColor }}/> : <DemocracyReferendaGreyIcon className="-ml-[6px] mr-3" style={{ color: activeColor }}/>}
-						<span className='font-semibold text-base'>{getStatus(String(type))}</span>
+					<p className='flex flex-row gap-1 w-[250px] -mt-[40px] -ml-[1px] font-normal text-base leading-6 whitespace-nowrap h-[33px] -left-[5px] -top-7' style={{ color: activeColor, fontWeight: '500' }}>
+						{PostType===timeline.type ? <DemocracyReferendaIcon className="-ml-[6px] mr-3 mt-2"/> : <DemocracyReferendaGreyIcon className="-ml-[6px] mr-3 mt-2"/>}
+						<span className='mt-2 font-semibold text-base'>{getStatus(String(type))}</span>
 					</p>
 					<p style={{ marginLeft: '664px', marginTop: '-44px' }}>
 						{isCollapsed ? (

@@ -105,7 +105,6 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 				{
 					statuses.sort(sortfunc).map(({ block, status, timestamp }, index) => {
 						const blockDate = dayjs(timestamp);
-						console.log(`${block} + ${status} + ${timestamp} + ${index}`);
 						let color;
 						if(status === 'DecisionDepositePlaced'){
 							status = 'Decision deposite placed';

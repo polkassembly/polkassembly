@@ -25,6 +25,7 @@ interface Props {
 	isSwitchButton?: boolean;
 	setSwitchModalOpen?: (pre: boolean)=> void;
 	isMultisig?:boolean
+	linkAddressTextDisabled?: boolean
 }
 
 const AddressDropdown = ({
@@ -36,7 +37,8 @@ const AddressDropdown = ({
 	onAccountChange,
 	isSwitchButton,
 	setSwitchModalOpen,
-	isMultisig
+	isMultisig,
+	linkAddressTextDisabled=false
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
 	const filteredAccounts = !filterAccounts
@@ -52,6 +54,7 @@ const AddressDropdown = ({
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 
 	const getOtherTextType = (account?: InjectedTypeWithCouncilBoolean) => {
+		if(linkAddressTextDisabled) return;
 		const account_substrate_address = getSubstrateAddress(account?.address || '');
 		const isConnected = account_substrate_address?.toLowerCase() === (substrate_address || '').toLowerCase();
 		if (account?.isCouncil) {
@@ -59,10 +62,15 @@ const AddressDropdown = ({
 				return EAddressOtherTextType.COUNCIL_CONNECTED;
 			}
 			return EAddressOtherTextType.COUNCIL;
-		} else if (isConnected) {
-			return EAddressOtherTextType.CONNECTED;
-		} else if (substrate_addresses.includes(account_substrate_address)) {
+		} else if (isConnected && substrate_addresses.includes(account_substrate_address)) {
 			return EAddressOtherTextType.LINKED_ADDRESS;
+		}else if(isConnected && !substrate_addresses.includes(account_substrate_address)){
+			return EAddressOtherTextType.CONNECTED;
+		}
+		else if (substrate_addresses.includes(account_substrate_address)) {
+			return EAddressOtherTextType.LINKED_ADDRESS;
+		}else{
+			return EAddressOtherTextType.UNLINKED_ADDRESS;
 		}
 	};
 
@@ -73,7 +81,7 @@ const AddressDropdown = ({
 				<Address
 					disableAddressClick={true}
 					className='flex items-center'
-					otherTextType={getOtherTextType(account)}
+					otherTextType={ getOtherTextType(account)}
 					otherTextClassName='ml-auto'
 					extensionName={account.name}
 					address={account.address}

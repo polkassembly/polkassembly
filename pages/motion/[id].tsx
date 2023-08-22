@@ -3,20 +3,17 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
-import { getSubSquareComments } from 'pages/api/v1/posts/comments/subsquare-comments';
 import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useEffect } from 'react';
 import Post from 'src/components/Post/Post';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState, LoadingState } from 'src/ui-components/UIStates';
-
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useNetworkContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
-
 import { useRouter } from 'next/router';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 import EmptyIcon from '~assets/icons/empty-state-image.svg';
@@ -34,9 +31,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req, query }) => {
 		postId: id,
 		proposalType
 	});
-	const comments = await getSubSquareComments(proposalType, network, id);
-	const post = data && { ...data, comments: [...data.comments, ...comments] };
-	return { props: { error, network, post ,status } };
+	return { props: { error, network, post:data ,status } };
 };
 interface IMotionPostProps {
 	post: IPostResponse;

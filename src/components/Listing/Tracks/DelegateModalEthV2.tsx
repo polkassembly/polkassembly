@@ -349,6 +349,7 @@ const DelegateModalEthV2 = ({ trackNum } : { trackNum:number }) => {
 								/>
 
 								<AddressInput
+									defaultAddress={target}
 									label={'Target Address'}
 									placeholder='Target Account Address'
 									className='mt-4 mb-7'

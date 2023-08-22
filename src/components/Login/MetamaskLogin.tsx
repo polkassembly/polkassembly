@@ -262,6 +262,7 @@ const MetamaskLogin: FC<Props> = ({
 									localStorage.setItem('delegationWallet', Wallet.METAMASK);
 									localStorage.setItem('delegationDashboardAddress', address);
 									localStorage.setItem('loginWallet', Wallet.METAMASK);
+									localStorage.setItem('loginAddress', address);
 									handleTokenChange(confirmData.token,currentUser);
 									if(isModal){
 										setLoginOpen && setLoginOpen(false);
@@ -290,6 +291,7 @@ const MetamaskLogin: FC<Props> = ({
 					localStorage.setItem('delegationWallet', Wallet.METAMASK);
 					localStorage.setItem('delegationDashboardAddress', address);
 					localStorage.setItem('loginWallet', Wallet.METAMASK);
+					localStorage.setItem('loginAddress', address);
 
 					handleTokenChange(addressLoginData.token, currentUser);
 					if(isModal){
@@ -345,6 +347,7 @@ const MetamaskLogin: FC<Props> = ({
 			localStorage.setItem('delegationWallet', Wallet.METAMASK);
 			localStorage.setItem('delegationDashboardAddress', address);
 			localStorage.setItem('loginWallet', Wallet.METAMASK);
+			localStorage.setItem('loginAddress', address);
 
 			handleTokenChange(data.token, currentUser);
 			if(isModal){
@@ -444,6 +447,7 @@ const MetamaskLogin: FC<Props> = ({
 														accounts={accounts}
 														address={address}
 														onAccountChange={onAccountChange}
+														linkAddressTextDisabled
 													/>
 												</div>
 												{isSignUp && <Alert showIcon className='mb-2' type='info' message={<>By Signing up you agree to the terms of the <Link href='/terms-and-conditions' className='text-pink_primary'>Polkassembly end user agreement</Link>.</>} />}

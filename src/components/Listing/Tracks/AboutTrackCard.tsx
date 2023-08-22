@@ -94,7 +94,7 @@ export const blocksToRelevantTime = (network: string, blocks:number): string => 
 		text = 'days';
 	}
 
-	return `${blockSeconds/divisor} ${text}`;
+	return `${Math.round(blockSeconds/divisor)} ${text}`;
 };
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
@@ -192,8 +192,8 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 	return (
 		<section className={`${className} bg-white drop-shadow-md rounded-xxl md:p-4`}>
-			<article className="flex justify-between px-4 xs:pt-1.5">
-				<div className='flex items-center gap-x-2 xs:flex-wrap'>
+			<article className="flex justify-between px-4 xs:py-2 md:py-0">
+				<div className='flex items-center gap-x-2 xs:flex-wrap xs:mt-2 md:mt-0'>
 					<h2 className="text-xl mb-0 font-semibold leading-8 text-bodyBlue">
         About {trackName.split(/(?=[A-Z])/).join(' ')}
 					</h2>
@@ -209,10 +209,10 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				</div>
 			</article>
 
-			<p className="mt-0 font-normal text-base leading-6 text-bodyBlue px-4">{trackMetaData?.description}</p>
+			<p className="xs:mt-2 md:mt-0 font-normal text-base leading-6 text-bodyBlue px-4">{trackMetaData?.description}</p>
 
 			<article className='md:flex md:justify-between'>
-				<section className="mt-1.5 text-xs w-full md:w-[70%] md:grid md:grid-cols-3 flex flex-wrap">
+				<section className="mt-6 text-xs w-full md:w-[70%] md:grid md:grid-cols-3 flex flex-wrap">
 					<article className="xs:w-1/2 sm:w-1/2 lg:w-auto px-4">
 						<div className="flex flex-col">
 							<span className="font-medium text-sm text-lightBlue whitespace-pre">Max Deciding</span>

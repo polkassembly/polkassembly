@@ -259,7 +259,7 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
-				<StickyBox offsetTop={20} offsetBottom={50}>
+				<StickyBox offsetTop={20} offsetBottom={50} className="mb-6">
 					<GovernanceSideBar
 						toggleEdit={toggleEdit}
 						proposalType={proposalType}
@@ -269,7 +269,7 @@ const Post: FC<IPostProps> = (props) => {
 						startTime={post.created_at}
 						post={post}
 						tally={post?.tally}
-						className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
+						className={`${!isOffchainPost}`}
 					/>
 				</StickyBox>
 				{

@@ -29,7 +29,6 @@ const PostTimeline: FC<IPostTimelineProps> = (props) => {
 					: <PostEmptyState />
 			}
 		</div>
-		
 	);
 };
 

@@ -6,7 +6,7 @@ import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState, useRef } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
@@ -105,6 +105,24 @@ const Post: FC<IPostProps> = (props) => {
 	const [videoData, setVideoData] = useState<IDataVideoType[]>([]);
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
+
+	const governanceSidebarRef = useRef<HTMLDivElement | null>(null);
+	useEffect(() => {
+		const handleScroll = () => {
+			if (governanceSidebarRef.current) {
+				// Set the scrollTop property of the GovernanceSideBar to match the page scroll position
+				governanceSidebarRef.current.scrollTop = window.scrollY;
+			}
+		};
+
+		// Listen to the scroll event on the window
+		window.addEventListener('scroll', handleScroll);
+
+		return () => {
+		// Clean up the event listener when the component unmounts
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, []); // Only run this effect once, similar to componentDidMount
 
 	useEffect(() => {
 		if(!post) return;
@@ -260,19 +278,23 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
-
-				<GovernanceSideBar
-					toggleEdit={toggleEdit}
-					proposalType={proposalType}
-					onchainId={onchainId}
-					status={postStatus}
-					canEdit={canEdit}
-					startTime={post.created_at}
-					post={post}
-					tally={post?.tally}
+				<div
+					ref={governanceSidebarRef}
 					className={`${!isOffchainPost && 'sticky top-[65px] mb-6 overflow-y-auto max-h-[calc(100vh-65px)] no-scrollbar'}`}
-					trackName={trackName}
-				/>
+				>
+					<GovernanceSideBar
+						toggleEdit={toggleEdit}
+						proposalType={proposalType}
+						onchainId={onchainId}
+						status={postStatus}
+						canEdit={canEdit}
+						startTime={post.created_at}
+						post={post}
+						tally={post?.tally}
+						// className={`${!isOffchainPost && 'sticky top-[65px] mb-6 overflow-y-auto max-h-[calc(100vh-65px)] no-scrollbar'}`}
+						trackName={trackName}
+					/>
+				</div>
 				{/* decision deposite placed. */}
 
 				{

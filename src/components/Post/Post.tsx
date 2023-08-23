@@ -111,10 +111,9 @@ const Post: FC<IPostProps> = (props) => {
 	useEffect(() => {
 		const handleScroll = () => {
 			if (sidebarRef.current) {
-				const sidebarElement = sidebarRef.current as HTMLElement; // Type assertion
+				const sidebarElement = sidebarRef.current as HTMLElement;
 				const sidebarRect = sidebarElement.getBoundingClientRect();
-				const isSidebarAtTop = sidebarRect.top <= 65; // Adjust the top offset as needed
-
+				const isSidebarAtTop = sidebarRect.top <= 65;
 				setIsSticky(isSidebarAtTop);
 			}
 		};

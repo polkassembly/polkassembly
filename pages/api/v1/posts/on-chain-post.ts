@@ -29,7 +29,7 @@ import { updateComments } from './comments/updateComments';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import dayjs from 'dayjs';
-import { getStatus } from './comments/getInitialComments';
+import { getStatus } from './comments/getStatus';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);

@@ -110,20 +110,16 @@ const Post: FC<IPostProps> = (props) => {
 	useEffect(() => {
 		const handleScroll = () => {
 			if (governanceSidebarRef.current) {
-				// Set the scrollTop property of the GovernanceSideBar to match the page scroll position
 				governanceSidebarRef.current.scrollTop = window.scrollY;
 			}
 		};
 
-		// Listen to the scroll event on the window
 		window.addEventListener('scroll', handleScroll);
 
 		return () => {
-		// Clean up the event listener when the component unmounts
 			window.removeEventListener('scroll', handleScroll);
 		};
-	}, []); // Only run this effect once, similar to componentDidMount
-
+	}, []); 
 	useEffect(() => {
 		if(!post) return;
 

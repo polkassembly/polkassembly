@@ -4,7 +4,6 @@
 
 import { dayjs } from 'dayjs-init';
 import Link from 'next/link';
-import StatusTag from 'src/ui-components/StatusTag';
 import React, { useState } from 'react';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { useNetworkContext } from '~src/context';
@@ -49,57 +48,12 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 
 	if (statuses.length === 0) return null;
 	const minHeight = statuses.length * 50;
-	const StatusDiv = ({ status } : { status: string }) => {
-		return (
-			<div className='flex items-center absolute -top-3.5 justify-center'>
-				<StatusTag colorInverted={false} status={status} type={type} />
-			</div>
-		);
-	};
 
 	const toggleCollapse = () => {
 		setIsCollapsed(!isCollapsed);
 	};
 
 	const url = getBlockLink(network);
-
-	const TimelineItems = (isMobile:boolean) => {
-
-		return (
-			<section className={`flex-1 flex ${isMobile? 'flex-col items-start gap-y-20 py-20': 'items-center'}`}>
-				{
-					statuses.sort(sortfunc).map(({ block, status, timestamp }, index) => {
-						const blockDate = dayjs(timestamp);
-						return (
-							<div key={status} className={`flex flex-1 w-full items-center ${!isMobile? (index === 0? 'max-w-[250px]': 'max-w-[225px]'): 'max-w-[250px]'}`}>
-								<div className={`flex-1 h-[1px] bg-navBlue ${!isMobile? (index === 0? 'min-w-[50px]': 'min-w-[25px]'): 'min-w-[12.5px]'}`}></div>
-								<article className='flex flex-col items-center gap-y-2 font-normal text-sidebarBlue px-[14px] pb-4 pt-8 rounded-lg border border-solid border-navBlue relative bg-comment_bg w-[200px]'>
-									<StatusDiv status={status} />
-									{
-										block?
-											<p className='flex items-center gap-x-1 m-0'>
-												Block:
-												<a className='text-pink_primary font-medium' href={`${url}${block}`} target='_blank' rel="noreferrer">
-											#{`${block} `}
-												</a>
-											</p>
-											: null
-									}
-									{
-										timestamp && blockDate ?
-											(
-												<p className='flex items-center m-0'>{blockDate.format('Do MMM \'YY, h:mm a')}</p>
-											)
-											: null
-									}
-								</article>
-							</div>
-						);
-					})
-				}
-			</section>
-		);
-	};
 
 	const Timeline = () => {
 		return(
@@ -121,18 +75,18 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 
 						return (
 							<div key={status} className={'border-t border-black-300'} style={index === 0 ? { borderTop: 'none' } : { borderTop: '1px solid #D2D8E0' }}>
-								<div className={'w-[660px]'}>
+								<div className='content-container'>
 									<article className="py-[8px]">
 										<div className="flex items-center">
 											<div className="flex items-center space-x-[12px]">
-												<p className="text-xs text-sidebarBlue mb-0">
+												<p className="text-xs text-sidebarBlue whitespace-nowrap mb-0">
 													{blockDate.format("Do MMM 'YY, h:mm a")}
 												</p>
 												<a className="font-medium" href={`${url}${block}`} target="_blank" rel="noreferrer">
 													<ExportOutlined className='-mb-[2px]' style={{ color: '#e5007a' }}/>
 												</a>
 											</div>
-											<div className="text-right ml-auto">
+											<div className="text-right export-link">
 												<p style={{ backgroundColor: color }} className={'text-white my-1 px-[15px] text-xs py-[5px] rounded-[50px] items-center'}>
 													{status}
 												</p>
@@ -149,14 +103,14 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	};
 
 	return (
-		<section className='flex my-16 mx-7'>
+		<section className='flex my-16 timeline-container'>
 			<div className={`min-h-${minHeight} -mb-[2px] mt-[16px] w-[2px] relative -ml-2`} style={{ backgroundColor: activeColor }}>
 				<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? timeline.hash: timeline.index}`}>
 					<p className='flex flex-row gap-1 w-[250px] -mt-[40px] font-normal text-base leading-6 whitespace-nowrap h-[33px] -left-[5px] -top-7' style={{ color: activeColor, fontWeight: '500', marginLeft: '-4px' }}>
 						{PostType===timeline.type ? <DemocracyReferendaGreyIcon className="-ml-[6px] mr-3 mt-2"/> : <DemocracyReferendaIcon className="-ml-[6px] mr-3 mt-2"/>}
 						<span className='mt-2 font-semibold text-base'>{getStatus(String(type))}</span>
 					</p>
-					<p style={{ backgroundColor: activeColor, marginLeft: '664px', marginTop: '-44px' }}>
+					<p className='timeline-dropdown' style={{ backgroundColor: activeColor, marginTop: '-44px' }}>
 						{isCollapsed ? (
 							<DownOutlined onClick={toggleCollapse} />
 						) : (
@@ -168,9 +122,6 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 			</div>
 			<div className={`${isCollapsed ? 'hidden' : ''} mt-3 ml-[24px]`}>
 				{Timeline()}
-			</div>
-			<div className="flex md:hidden flex-1 overflow-x-scroll scroll-hidden cursor-ew-resize">
-				{TimelineItems(true)}
 			</div>
 		</section>
 	);

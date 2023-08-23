@@ -375,3 +375,38 @@ color: var(--lightBlue) !important;
     border-radius: 8px !important;
   }
 }
+
+.content-container {
+  width: 660px;
+}
+
+.export-link{
+  margin-left: auto;
+}
+
+.timeline-container {
+  margin: 0 28px;
+}
+
+.timeline-dropdown {
+  margin-left: 664px;;
+}
+
+@media (max-width: 600px) {
+  .content-container {
+    width: 213px;
+  }
+
+  .export-link {
+    margin-left: 47px;
+    margin-right: auto;
+  }
+
+  .timeline-container {
+    margin: 0;
+  }
+
+  .timeline-dropdown {
+    margin-left: 300px;
+  }
+}

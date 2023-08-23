@@ -351,3 +351,9 @@ color: var(--lightBlue) !important;
 .tox-autocompleter .tox-menu {
 	border-radius: 8px !important;
 }
+
+.sticky-sidebar {
+  position: sticky;
+  top: 65px; 
+  z-index: 1; 
+}

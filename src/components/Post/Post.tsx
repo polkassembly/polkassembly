@@ -6,7 +6,7 @@ import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState, useRef } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
@@ -30,7 +30,6 @@ import Link from 'next/link';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
-import StickyBox from 'react-sticky-box';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
@@ -106,6 +105,24 @@ const Post: FC<IPostProps> = (props) => {
 	const [videoData, setVideoData] = useState<IDataVideoType[]>([]);
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
+	const sidebarRef = useRef(null);
+	const [isSticky, setIsSticky] = useState(false);
+
+	useEffect(() => {
+		const handleScroll = () => {
+			if (sidebarRef.current) {
+				const sidebarElement = sidebarRef.current as HTMLElement; // Type assertion
+				const sidebarRect = sidebarElement.getBoundingClientRect();
+				const isSidebarAtTop = sidebarRect.top <= 65; // Adjust the top offset as needed
+
+				setIsSticky(isSidebarAtTop);
+			}
+		};
+		window.addEventListener('scroll', handleScroll);
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, []);
 
 	useEffect(() => {
 		if(!post) return;
@@ -261,20 +278,22 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
-				<StickyBox offsetTop={20} offsetBottom={50} className="mb-6">
+				<div
+					ref={sidebarRef}
+					className={`${
+						isSticky ? 'sticky-sidebar' : ''
+					} mb-6`}
+				>
 					<GovernanceSideBar
 						toggleEdit={toggleEdit}
 						proposalType={proposalType}
-						onchainId={onchainId}
-						status={postStatus}
-						canEdit={canEdit}
 						startTime={post.created_at}
 						post={post}
 						tally={post?.tally}
 						className={`${!isOffchainPost}`}
 						trackName={trackName}
 					/>
-				</StickyBox>
+				</div>
 				{
 					isOffchainPost &&
 					<div className={'sticky top-[65px] mb-6 '}>

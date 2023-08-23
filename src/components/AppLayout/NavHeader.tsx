@@ -41,7 +41,16 @@ interface Props {
   previousRoute?: string;
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
-
+const customStyle = {
+	fontFamily: '__Poppins_ed4ad5',
+	fontSize: '14px',
+	fontWeight: 500,
+	lineHeight: '21px',
+	// eslint-disable-next-line sort-keys
+	fontStyle:'normal',
+	// eslint-disable-next-line sort-keys
+	letterSpacing: '0.175px'
+};
 const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedrawerHover } : Props) => {
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
@@ -68,24 +77,25 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 		}
 
 	},[router]);
+
 	const menudropDownItems: ItemType[]= [
 		{
 			key: 'Townhall',
-			label: (
-				<a href="https://townhallgov.com/" target="_blank" rel="noreferrer">
-					<span className='flex justify-center items-center'>
-						<TownHall/>
-				TownHall
-					</span>
-				</a>
+			label: (<a  href="https://townhallgov.com/" target="_blank" rel="noreferrer" style={customStyle}>
+
+				<span className='flex justify-center items-center '>
+					<TownHall />
+					<div className='ml-2'> TownHall </div>
+				</span>
+			</a>
 			)
 		},
 		{
 			key: 'Polkasafe',
-			label: (<a href="https://polkasafe.xyz/" target="_blank" rel="noreferrer">
+			label: (<a href="https://polkasafe.xyz/" target="_blank" rel="noreferrer" style={customStyle}>
 				<span className='flex justify-center items-center'>
 					<PolkaSafe/>
-					Polkasafe
+					<span className='ml-2'>Polkasafe</span>
 				</span>
 			</a>
 			)
@@ -186,6 +196,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 							<BellOutlined />
 						</Link> */}
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
+
 						{
 							['kusama', 'polkadot'].includes(network)?
 								<RPCDropdown />
@@ -200,13 +211,17 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 							:<AuthDropdown>
 
 								<div className='flex items-center justify-between gap-x-2'>
-									{!web3signup ?  <><span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' /> </>
-										:<Address address = {defaultAddress || ''}/>}
+
+									{!web3signup ?  <><span className='truncate w-[85%] normal-case'>{username || ''}</span>
+										<DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
+									</>
+										:<Address address = {defaultAddress || ''}/>
+									}
 
 								</div>
 							</AuthDropdown>
 						}
-						<div className='mr-0 lg:mr-10'>
+						<div className='mr-0 lg:mr-10 '>
 
 							<MenuDropdown>
 								<svg width="24" height="24" viewBox="0 0 24 24"  fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -316,6 +331,9 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 };
 
 export default styled(NavHeader)`
+svg:hover {
+	cursor: pointer;
+  }
 .drop .ant-select-selector {
     
 	box-sizing:none;
@@ -325,6 +343,7 @@ export default styled(NavHeader)`
 .padding-zero .ant-modal-content {
 	padding: 0 !important;
 }
+
 .gsc-control-cse {
 	background: transparent !important;
 	border: none !important;

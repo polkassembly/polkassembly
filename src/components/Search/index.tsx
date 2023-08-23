@@ -614,7 +614,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			{finalSearchInput.length === 0 && justStart && <div className='h-[360px] flex justify-center items-center flex-col font-medium text-sm text-bodyBlue'>
 				<StartSearchIcon/>
 				<span className='mt-8 tracking-[0.01em] text-center'>Welcome to the all new & supercharged search!</span>
-				<div className='text-xs font-medium mt-2 tracking-[0.01em] flex gap-1 items-center'>powered by<PaLogo className='w-[99px] h-[30px]'/></div>
+				<div className='text-xs font-medium mt-2 tracking-[0.01em] flex gap-1 items-center'>powered by<PaLogo className='w-[99px] h-[30px]' sidedrawer={false}/></div>
 			</div>}
 		</div>
 	</Modal>;

@@ -82,14 +82,12 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						}
 						{
 							summary?
-								<PostSummary className='hidden md:flex' />
-								: null
-						}
-						{
-							summary?
 								<>
-									<Divider className={'ml-1 mt-2 xs:inline-block md:hidden'} type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
-									<PostSummary className='flex mt-2 md:hidden' />
+									<Divider
+										className='ml-1 xs:mt-2 md:mt-0 xs:inline-block md:hidden'
+										type="vertical"
+										style={{ borderLeft: '1px solid #485F7D' }} />
+									<PostSummary className='flex xs:mt-2 md:mt-0' />
 								</>
 								: null
 						}

@@ -108,7 +108,6 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					<Divider className={`ml-1 md:inline-block ${!isRow ? 'hidden' : 'inline-block'}`} type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 				</>}
 				{created_at && <span className={`flex items-center md:pl-0 mr-1 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0'}`}><ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>}
-				{/* <Divider className={'ml-1 mt-2 xs:inline-block md:hidden'} type="vertical" style={{ borderLeft: '1px solid #485F7D' }} /> */}
 				{children}
 			</div>
 		</div>

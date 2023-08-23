@@ -43,6 +43,7 @@ export interface UserDetailsContextType {
   networkPreferences: INetworkPreferences;
   primaryNetwork: string;
   is2FAEnabled?: boolean;
+  roles?: Role[];
 }
 
 export interface IPeriod {
@@ -80,6 +81,7 @@ export enum Role {
   PROPOSAL_BOT = 'proposal_bot',
   USER = 'user',
   EVENT_BOT = 'event_bot',
+  MODERATOR = 'moderator',
 }
 
 export enum NotificationStatus {

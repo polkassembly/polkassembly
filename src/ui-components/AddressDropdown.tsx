@@ -26,6 +26,7 @@ interface Props {
 	setSwitchModalOpen?: (pre: boolean)=> void;
 	isMultisig?:boolean
 	linkAddressTextDisabled?: boolean
+	addressTextClassName?: string;
 }
 
 const AddressDropdown = ({
@@ -38,7 +39,8 @@ const AddressDropdown = ({
 	isSwitchButton,
 	setSwitchModalOpen,
 	isMultisig,
-	linkAddressTextDisabled=false
+	linkAddressTextDisabled=false,
+	addressTextClassName
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
 	const filteredAccounts = !filterAccounts
@@ -80,9 +82,10 @@ const AddressDropdown = ({
 			label: (
 				<Address
 					disableAddressClick={true}
-					className='flex items-center'
+					className={`flex items-center ${poppins.className} ${poppins.className}`}
 					otherTextType={ getOtherTextType(account)}
 					otherTextClassName='ml-auto'
+					addressClassName='text-lightBlue'
 					extensionName={account.name}
 					address={account.address}
 				/>
@@ -99,7 +102,7 @@ const AddressDropdown = ({
 		key: 1,
 		label: (
 			<div className='flex items-center justify-center mt-2'>
-				<Button onClick={() => setSwitchModalOpen(true)} className={`w-full h-[40px] rounded-[8px] text-sm text-[#fff] bg-pink_primary font-medium flex justify-center items-center ${poppins.variable} ${poppins.className}`}>Switch Wallet</Button>
+				<Button onClick={() => setSwitchModalOpen(true)} className={`w-full h-[40px] rounded-[8px] text-sm text-[#fff] bg-pink_primary font-medium flex justify-center items-center tracking-wide ${poppins.variable} ${poppins.className}`}>Switch Wallet</Button>
 			</div>
 		)
 	});
@@ -124,6 +127,7 @@ const AddressDropdown = ({
 			<div className="flex justify-between items-center ">
 				{isMultisig && <Tag color="blue" className='absolute h-[18px] text-[8px] z-10 -ml-2 -mt-4 rounded-xl'>Multi</Tag>}
 				<Address
+					textClassName={addressTextClassName}
 					disableAddressClick={true}
 					extensionName={dropdownList[selectedAddress]}
 					address={defaultAddress || selectedAddress}

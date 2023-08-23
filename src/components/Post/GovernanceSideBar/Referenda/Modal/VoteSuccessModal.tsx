@@ -161,6 +161,7 @@ const VoteInitiatedModal = ({
                             With address:{' '}
 							<span className='font-medium'>
 								<Address
+									truncateUsername={false}
 									address={address}
 									className='address'
 									displayInline={true}
@@ -173,6 +174,7 @@ const VoteInitiatedModal = ({
 								With Multisig:{' '}
 								<span className='font-medium'>
 									<Address
+										truncateUsername={false}
 										address={multisig}
 										className='address'
 										displayInline={true}

@@ -88,11 +88,11 @@ const TreasuryProposalSuccessPopup= ({ className, open, onCancel, fundingAmount,
 				(proposerAddress && beneficiaryAddress && selectedTrack && preimageHash && preimageLength) && <div className='flex my-2'>
 					<div className='mt-[10px] flex flex-col text-sm text-lightBlue gap-1.5'>
 						<span className='flex'><span className='w-[172px]'>Proposer Address:</span>
-							<Address disableAddressClick addressClassName='text-bodyBlue font-semibold text-sm'  address={proposerAddress} identiconSize={18}/>
+							<Address disableAddressClick addressClassName='text-bodyBlue font-semibold text-sm'  address={proposerAddress} truncateUsername={false} identiconSize={18}/>
 						</span>
 						<span className='flex'>
 							<span className='w-[172px]'>Beneficiary Address:</span>
-							<Address disableAddressClick textClassName='text-bodyBlue font-medium text-sm' displayInline address={beneficiaryAddress} identiconSize={18}/>
+							<Address disableAddressClick textClassName='text-bodyBlue font-medium text-sm' displayInline address={beneficiaryAddress} truncateUsername={false} identiconSize={18}/>
 						</span>
 
 						<span className='flex'>

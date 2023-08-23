@@ -199,7 +199,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				className={`${poppins.variable} ${poppins.className} padding w-[600px] ` }
 				wrapClassName={className}
 				title={
-					<div className='flex items-center text-[#243A57] text-[20px] font-semibold mb-6 '>
+					<div className='flex items-center text-bodyBlue text-[20px] font-semibold mb-6 border-0 border-b-[1px] px-6 pb-4 -mx-6 border-solid border-[#D2D8E0]'>
 						<UndelegateProfileIcon className='mr-2'/>Undelegate
 					</div>
 				}
@@ -209,17 +209,15 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				confirmLoading={loading}
 				onCancel={() => setOpen(false)}
 				footer={
-					<div className='flex items-center justify-end mt-6'>
-						{
-							[
-								<Button key="back" disabled={loading} className='h-[40px] w-[134px]' onClick={() => setOpen(false)}>
+					<div className='flex items-center justify-end -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-1'>
+
+						<Button key="back" disabled={loading} className='h-[40px] w-[134px] rounded-[4px] border-pink_primary text-pink_primary' onClick={() => setOpen(false)}>
 										Cancel
-								</Button>,
-								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] '  disabled={loading} onClick={ handleSubmit }>
+						</Button>
+						<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary border-pink_primary text-white hover:bg-pink_secondary h-[40px] rounded-[4px]'  disabled={loading} onClick={ handleSubmit }>
 										Undelegate
-								</Button>
-							]
-						}
+						</Button>
+
 					</div>
 				}
 			>
@@ -233,28 +231,28 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 						>
 
 							<div className='mt-4'>
-								<label className='text-sm text-[#485F7D] mb-1'>Your Address</label>
+								<label className='text-sm text-lightBlue mb-1'>Your Address</label>
 								<div className='text-[#7c899b] px-0 rounded-[6px] py-[px] h-[40px] cursor-not-allowed'>
-									<Address address={defaultAddress} identiconSize={36} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
+									<Address truncateUsername={false} textClassName='text-lightBlue font-medium' address={defaultAddress} identiconSize={32} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
 								</div>
 							</div>
 
-							<div className='mt-6'>
-								<label className='text-sm text-[#485F7D] mb-1'>Delegated to</label>
-								<div className='text-[#243A57] px-0 rounded-[6px] py-[px] h-[40px] cursor-not-allowed'>
-									<Address address={defaultTarget} identiconSize={36} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
+							<div className='mt-4'>
+								<label className='text-sm text-lightBlue mb-1'>Delegated to</label>
+								<div className='text-bodyBlue px-0 rounded-[6px] py-[px] h-[40px] cursor-not-allowed'>
+									<Address truncateUsername={false} textClassName='text-lightBlue font-medium' address={defaultTarget} identiconSize={32} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
 								</div>
 							</div>
 
-							<div className='mt-6'>
-								<label className='text-sm text-[#485F7D] mb-2'>Balance</label>
+							<div className='mt-4'>
+								<label className='text-sm text-lightBlue mb-2'>Balance</label>
 								<div className='text-[#7c899b] px-0 rounded-[6px] py-[px] h-[40px] cursor-not-allowed'>
 									{`${formatedBalance(balance.toString(), unit)} ${unit}`}
 								</div>
 							</div>
 
-							<div className='mb-[2px] mt-2 border-solid border-white'>
-								<label  className='text-[#485F7D] flex items-center text-sm'>Conviction<span>
+							<div className='mb-[2px]  border-solid border-white'>
+								<label  className='text-lightBlue flex items-center text-sm'>Conviction<span>
 									<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
 								</span></label>
 
@@ -264,8 +262,8 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enactment period`}
 								</div>
 							</div>
-							<div className='mt-6 flex justify-start items-center gap-2 mb-6'>
-								<label className='text-[#485F7D] text-sm tracking-[0.0025em] mb-[2px]'>Track:</label>
+							<div className='mt-6 flex justify-start items-center gap-2 mb-4'>
+								<label className='text-lightBlue text-sm tracking-[0.0025em] mb-[2px]'>Track:</label>
 								<span className='text-[#7c899b] text-sm tracking-medium'>{trackName} #{trackNum}</span>
 							</div>
 						</Form>

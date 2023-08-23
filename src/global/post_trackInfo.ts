@@ -43,7 +43,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			'description': 'Origin able to spend up to 33,333 KSM from the treasury at once.',
 			'group': 'Treasury',
 			'name': 'big_spender',
-			'maxSpend': 33333333,
+			'maxSpend': 33333,
 			'maxDeciding': 50,
 			'decisionDeposit': 13333333333200,
 			'preparePeriod': 2400,

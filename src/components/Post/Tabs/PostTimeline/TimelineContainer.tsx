@@ -12,6 +12,18 @@ import { getBlockLink } from '~src/util/subscanCheck';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import DemocracyReferendaIcon from '~assets/icons/Democracy-Referenda.svg';
 import DemocracyReferendaGreyIcon from '~assets/icons/Democracy-Referenda-grey.svg';
+import TreasuryProposalGreyIcon from '~assets/icons/treasury-proposals-icon-grey.svg';
+import TreasuryProposalIcon from '~assets/icons/treasury-proposals-icon.svg';
+import DiscussionIcon from '~assets/icons/discussion-icon-selected.svg';
+import DiscussionIconGrey from '~assets/icons/discussion-icon-unselected.svg';
+import MotionIconGrey from '~assets/icons/motions-icon-unselected.svg';
+import MotionIcon from '~assets/icons/motions-icon-selected.svg';
+import TechCommProposalIcon from '~assets/sidebar/tech-comm-proposals-icon-selected.svg';
+import TechCommProposalIconGrey from '~assets/sidebar/tech-comm-proposals-icon-unselected.svg';
+import DemocracyProposalIconGrey from '~assets/sidebar/democracy-proposal-icon-unselected.svg';
+import DemocracyProposalIcon from '~assets/sidebar/democracy-proposal-icon-selected.svg';
+import ChildBountyIcon from '~assets/sidebar/treasury-child-bounties-icon-selected.svg';
+import ChildBountyIconGrey from '~assets/sidebar/treasury-child-bounties-icon-unselected.svg';
 import ExportOutlined from '~assets/icons/learn-more-icon.svg';
 import { usePostDataContext } from '~src/context';
 
@@ -53,6 +65,36 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 		setIsCollapsed(!isCollapsed);
 	};
 
+	let displayIconActive;
+	let displayIconUnactive;
+	if(getStatus(String(type)) == 'Referendum'){
+		displayIconActive = <DemocracyReferendaIcon className="-ml-[6px] mr-3 mt-2"/>;
+		displayIconUnactive = <DemocracyReferendaGreyIcon className="-ml-[6px] mr-3 mt-2" />;
+	}
+	else if(getStatus(String(type)) == 'Treasury Proposal'){
+		displayIconActive = <TreasuryProposalIcon className="-ml-[6px] mr-3 mt-2"/>;
+		displayIconUnactive = <TreasuryProposalGreyIcon className="-ml-[6px] mr-3 mt-2" />;
+	}
+	else if(getStatus(String(type)) == 'Motion'){
+		displayIconActive = <MotionIcon className="-ml-[6px] mr-3 mt-2"/>;
+		displayIconUnactive = <MotionIconGrey className="-ml-[6px] mr-3 mt-2" />;
+	}
+	else if(getStatus(String(type)) == 'Tech Committee Proposal'){
+		displayIconActive = <TechCommProposalIcon className="-ml-[6px] mr-3 mt-2"/>;
+		displayIconUnactive = <TechCommProposalIconGrey className="-ml-[6px] mr-3 mt-2" />;
+	}
+	else if(getStatus(String(type)) == 'Democracy Proposal'){
+		displayIconActive = <DemocracyProposalIcon className="-ml-[6px] mr-3 mt-2"/>;
+		displayIconUnactive = <DemocracyProposalIconGrey className="-ml-[6px] mr-3 mt-2" />;
+	}
+	else if(getStatus(String(type)) == 'Child Bounty'){
+		displayIconActive = <ChildBountyIcon className="-ml-[6px] mr-3 mt-2"/>;
+		displayIconUnactive = <ChildBountyIconGrey className="-ml-[6px] mr-3 mt-2" />;
+	}
+	else {
+		displayIconActive = <DiscussionIcon className="-ml-[6px] mr-3 mt-2"/>;
+		displayIconUnactive = <DiscussionIconGrey className="-ml-[6px] mr-3 mt-2" />;
+	}
 	const url = getBlockLink(network);
 
 	const Timeline = () => {
@@ -103,12 +145,12 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	};
 
 	return (
-		<section className='flex my-16 timeline-container'>
-			<div className={`min-h-${minHeight} -mb-[2px] mt-[16px] w-[2px] relative -ml-2`} style={{ backgroundColor: activeColor }}>
+		<section className='flex my-12 timeline-container'>
+			<div className={`${isCollapsed ? 'min-h-[40px]' : `min-h-${minHeight}`} -mb-[2px] mt-[16px] w-[2px] relative -ml-2`} style={{ backgroundColor: activeColor }}>
 				<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? timeline.hash: timeline.index}`}>
 					<p className='flex flex-row gap-1 w-[250px] -mt-[40px] font-normal text-base leading-6 whitespace-nowrap h-[33px] -left-[5px] -top-7' style={{ color: activeColor, fontWeight: '500', marginLeft: '-4px' }}>
-						{PostType===timeline.type ? <DemocracyReferendaGreyIcon className="-ml-[6px] mr-3 mt-2"/> : <DemocracyReferendaIcon className="-ml-[6px] mr-3 mt-2"/>}
-						<span className='mt-2 font-semibold text-base'>{getStatus(String(type))}</span>
+						{PostType===timeline.type ? displayIconUnactive  : displayIconActive}
+						<span className='mt-2 font-medium text-base'>{getStatus(String(type))}</span>
 					</p>
 					<p className='timeline-dropdown' style={{ backgroundColor: activeColor, marginTop: '-44px' }}>
 						{isCollapsed ? (

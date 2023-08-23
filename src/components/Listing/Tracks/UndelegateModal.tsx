@@ -245,7 +245,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							</div>
 
 							<div className='mt-4'>
-								<label className='text-sm text-lightBlue mb-2'>Balance</label>
+								<label className='text-sm text-lightBlue mb-2'>Balance </label>
 								<div className='text-[#7c899b] px-0 rounded-[6px] py-[px] h-[40px] cursor-not-allowed'>
 									{`${formatedBalance(balance.toString(), unit)} ${unit}`}
 								</div>

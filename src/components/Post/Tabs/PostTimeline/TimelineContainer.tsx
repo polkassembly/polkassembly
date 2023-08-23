@@ -42,7 +42,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	const { postData: { postType } } = usePostDataContext();
 	const PostType = postType.replace(/(^|_)([a-z])/g, (_, __, c) => c.toUpperCase()).replace(/s$/, '');
 	let activeColor;
-	PostType === timeline.type ? activeColor = '#E5007A' : activeColor = '#485F7D';
+	PostType === timeline.type ?  activeColor = '#485F7D' : activeColor = '#E5007A';
 	const { network } = useNetworkContext();
 	if (!timeline) return null;
 	const { statuses, type } = timeline;
@@ -152,11 +152,11 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 		<section className='flex my-16 mx-7'>
 			<div className={`min-h-${minHeight} -mb-[2px] mt-[16px] w-[2px] relative -ml-2`} style={{ backgroundColor: activeColor }}>
 				<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? timeline.hash: timeline.index}`}>
-					<p className='flex flex-row gap-1 w-[250px] -mt-[40px] -ml-[1px] font-normal text-base leading-6 whitespace-nowrap h-[33px] -left-[5px] -top-7' style={{ color: activeColor, fontWeight: '500' }}>
-						{PostType===timeline.type ? <DemocracyReferendaIcon className="-ml-[6px] mr-3 mt-2"/> : <DemocracyReferendaGreyIcon className="-ml-[6px] mr-3 mt-2"/>}
+					<p className='flex flex-row gap-1 w-[250px] -mt-[40px] font-normal text-base leading-6 whitespace-nowrap h-[33px] -left-[5px] -top-7' style={{ color: activeColor, fontWeight: '500', marginLeft: '-4px' }}>
+						{PostType===timeline.type ? <DemocracyReferendaGreyIcon className="-ml-[6px] mr-3 mt-2"/> : <DemocracyReferendaIcon className="-ml-[6px] mr-3 mt-2"/>}
 						<span className='mt-2 font-semibold text-base'>{getStatus(String(type))}</span>
 					</p>
-					<p style={{ marginLeft: '664px', marginTop: '-44px' }}>
+					<p style={{ backgroundColor: activeColor, marginLeft: '664px', marginTop: '-44px' }}>
 						{isCollapsed ? (
 							<DownOutlined onClick={toggleCollapse} />
 						) : (

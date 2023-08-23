@@ -39,7 +39,7 @@ const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
 export const algolia_client = algoliasearch(ALGOLIA_APP_ID || '', ALGOLIA_SEARCH_API_KEY || '');
 
-export const allowedNetwork = ['KUSAMA', 'POLKADOT', 'POLKADEX'];
+export const allowedNetwork = ['KUSAMA', 'POLKADOT', 'POLKADEX','CERE'];
 
 const AUTOCOMPLETE_INDEX_LIMIT = 5;
 
@@ -483,7 +483,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 					/>
 				</section>
 			}
-			<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2 flex-wrap' }`}>
+			<div className={`mt-[18px] flex justify-between max-md:flex-col max-md:gap-2 radio-btn ${isSuperSearch && 'max-lg:flex-col max-lg:gap-2' }`}>
 				<Radio.Group disabled={finalSearchInput.length === 0 && justStart} onChange={(e: RadioChangeEvent) => {setFilterBy(e.target.value); setPostsPage(1); setPeoplePage({ ...peoplePage, page: 1 });}} value={filterBy} className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-sm:flex-wrap`}>
 					<Radio value={finalSearchInput.length > 0 && EFilterBy.Referenda} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.Referenda && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue md:px-2' : 'text-[#667589]'} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}>Referenda {finalSearchInput.length > 0 && `(${onchainPostResults?.total || 0})`}</Radio>
 					<Radio value={EFilterBy.People} className={`text-xs font-medium py-1.5 rounded-[24px] ${filterBy === EFilterBy.People && finalSearchInput.length > 0 ? 'bg-[#FEF2F8] text-bodyBlue md:px-2' : 'text-[#667589]'} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}>People {finalSearchInput.length > 0 && `(${peoplePage.totalPeople || 0})`}</Radio>
@@ -519,13 +519,14 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 									</Checkbox> )}
 								</Checkbox.Group>
 							</Collapse.Panel>
-							<Collapse.Panel key={2} header='OpenGov' className='cursor-pointer'>
-								<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedOpengovTracks(list)} value={selectedOpengovTracks} >
-									{openGovTracks && openGovTracks?.map((track) => <Checkbox key={track?.name} value={track?.trackId} className={`text-xs font-normal py-1.5 ml-0 ${selectedOpengovTracks.includes(track?.name) ? 'text-bodyBlue' : 'text-[#667589]'}`}>
-										<div className='mt-[2px] capitalize'>{track?.name?.split('_')?.join(' ')}</div>
-									</Checkbox> )}
-								</Checkbox.Group>
-							</Collapse.Panel>
+							{
+								isOpenGovSupported(network) && <Collapse.Panel key={2} header='OpenGov' className='cursor-pointer'>
+									<Checkbox.Group className={`checkboxStyle flex flex-col tracking-[0.01em] justify-start max-h-[200px] overflow-y-scroll ${poppins.className} ${poppins.variable}`} onChange={(list) => setSelectedOpengovTracks(list)} value={selectedOpengovTracks} >
+										{openGovTracks && openGovTracks?.map((track) => <Checkbox key={track?.name} value={track?.trackId} className={`text-xs font-normal py-1.5 ml-0 ${selectedOpengovTracks.includes(track?.name) ? 'text-bodyBlue' : 'text-[#667589]'}`}>
+											<div className='mt-[2px] capitalize'>{track?.name?.split('_')?.join(' ')}</div>
+										</Checkbox> )}
+									</Checkbox.Group>
+								</Collapse.Panel>}
 						</Collapse>
 
 					} placement="bottomLeft">
@@ -550,7 +551,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				</div>}
 			</div>
 
-			{filterBy !== EFilterBy.People && isFilter && <div className='mt-3 flex flex-wrap justify-between text-xs font-medium text-bodyBlue '>
+			{filterBy !== EFilterBy.People && isFilter && <div className='mt-3 flex flex-wrap justify-between text-xs font-medium text-bodyBlue max-xs:flex-wrap'>
 				<div className='flex gap-1 max-sm:mb-2 max-sm:flex-wrap'>
 					{isSuperSearch && selectedNetworks.length > 0 && <div className='py-1 px-2 bg-[#FEF2F8] flex gap-1 rounded-[4px]'>
 						<span className='text-pink_primary'>Network:</span>

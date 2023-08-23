@@ -85,6 +85,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			unit: chainProperties[network].tokenSymbol
 		});
 
+		if(defaultTarget){
+			form.setFieldValue('targetAddress', defaultTarget);
+		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

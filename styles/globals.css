@@ -351,6 +351,3 @@ color: var(--lightBlue) !important;
 .tox-autocompleter .tox-menu {
 	border-radius: 8px !important;
 }
-.ant-collapse>.ant-collapse-item >.ant-collapse-header{
-  border-radius: 0 0 4px 4px !important;
-}

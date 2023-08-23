@@ -16,7 +16,7 @@ import copyToClipboard from 'src/util/copyToClipboard';
 import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
-import { useApiContext, usePostDataContext, useUserDetailsContext } from '~src/context';
+import { useApiContext, useCommentDataContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { NetworkContext } from '~src/context/NetworkContext';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -61,6 +61,7 @@ const replyKey = (commentId: string) => `reply:${commentId}:${global.window.loca
 
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment ,userName, is_custom_username, proposer } = props;
+	const { comments, setComments } = useCommentDataContext();
 
 	const { network } = useContext(NetworkContext);
 	const { id, username, picture } = useUserDetailsContext();
@@ -71,7 +72,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	const currentContent=useRef<string>(content);
 
-	const { setPostData, postData: { postType , postIndex } } = usePostDataContext();
+	const { postData: { postType , postIndex } } = usePostDataContext();
 	const { asPath } = useRouter();
 
 	const [isEditing, setIsEditing] = useState(false);
@@ -158,27 +159,31 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		if (data) {
 			setError('');
 			global.window.localStorage.removeItem(editCommentKey(commentId));
-			setPostData((prev) => {
-				const comments:any = Object.assign({}, prev.comments);
-				if (prev?.comments?.[postIndex]) {
-					comments[postIndex] = prev.comments[postIndex].map((comment) => {
-						const newComment = comment;
-						if (comment.id === commentId) {
-							newComment.history = [{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 }, ...(newComment?.history || []) ],
-							newComment.content = newContent;
-							newComment.updated_at = new Date();
-							newComment.sentiment = sentiment || 0;
-						}
-						return {
-							...newComment
-
-						};
-					});
+			const keys = Object.keys(comments);
+			setComments((prev) => {
+				const comments:any = Object.assign({}, prev);
+				for(const key of keys ){
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev?.[key]?.map((comment:IComment) => {
+							const newComment = comment;
+							if (comment.id === commentId) {
+								newComment.history = [{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 }, ...(newComment?.history || []) ],
+								newComment.content = newContent;
+								newComment.updated_at = new Date();
+								newComment.sentiment = sentiment || 0;
+								flag = true;
+							}
+							return {
+								...newComment
+							};
+						});
+					}
+					if(flag){
+						break;
+					}
 				}
-				return {
-					...prev,
-					comments: comments
-				};
+				return comments;
 			});
 			form.setFieldValue('content', currentContent.current);
 			queueNotification({
@@ -221,32 +226,37 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			if(data) {
 				setErrorReply('');
 				global.window.localStorage.removeItem(replyKey(commentId));
-				setPostData((prev) => {
-					const comments:any = Object.assign({}, prev.comments);
-					if (prev?.comments?.[postIndex]) {
-						comments[postIndex] = prev.comments[postIndex].map((comment) => {
-							if (comment.id === commentId) {
-								if (comment?.replies && Array.isArray(comment.replies)) {
-									comment.replies.push({
-										content: replyContent,
-										created_at: new Date(),
-										id: data.id,
-										updated_at: new Date(),
-										user_id: id,
-										user_profile_img: picture || '',
-										username: username
-									});
+				const keys = Object.keys(comments);
+				setComments((prev) => {
+					const comments:any = Object.assign({}, prev);
+					for(const key of keys ){
+						let flag = false;
+						if (prev?.[key]) {
+							comments[key] = prev[key].map((comment) => {
+								if (comment.id === commentId) {
+									if (comment?.replies && Array.isArray(comment.replies)) {
+										comment.replies.push({
+											content: replyContent,
+											created_at: new Date(),
+											id: data.id,
+											updated_at: new Date(),
+											user_id: id,
+											user_profile_img: picture || '',
+											username: username
+										});
+									}
+									flag = true;
 								}
-							}
-							return {
-								...comment
-							};
-						});
+								return {
+									...comment
+								};
+							});
+						}
+						if(flag){
+							break;
+						}
 					}
-					return {
-						...prev,
-						comments: comments
-					};
+					return comments;
 				});
 				replyForm.setFieldValue('content', '');
 				queueNotification({
@@ -289,15 +299,15 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		}
 
 		if(data) {
-			setPostData((prev) => {
-				const comments:any = Object.assign({}, prev.comments);
-				if (prev?.comments?.[postIndex]) {
-					comments[postIndex]  = prev.comments[postIndex].filter((comment) => comment.id !== commentId);
+			const keys = Object.keys(comments);
+			setComments((prev) => {
+				const comments:any = Object.assign({}, prev);
+				for(const key of keys ){
+					if (prev?.[key]) {
+						comments[key]  = prev[key].filter((comment) => comment.id !== commentId);
+					}
 				}
-				return {
-					...prev,
-					comments: comments
-				};
+				return comments;
 			});
 			queueNotification({
 				header: 'Success!',

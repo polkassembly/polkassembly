@@ -10,7 +10,7 @@ import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
 import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IApiResponse, IPostHistory } from '~src/types';
+import { ESentiments, IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -29,7 +29,7 @@ import { updateComments } from './comments/updateComments';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import dayjs from 'dayjs';
-import { getStatus } from './comments/getInitialComments';
+import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -948,6 +948,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		// Comments
 		if(noComments){
+			const sentiments:any = {};
+			const sentimentsKey:Array<ESentiments> = [ESentiments.Against, ESentiments.SlightlyAgainst, ESentiments.Neutral, ESentiments.SlightlyFor, ESentiments.For];
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {
 					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
@@ -969,6 +971,19 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					type: currentTimelineObj?.type
 				};
 			}
+			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+				let timeline: any= null;
+				for (timeline of post.timeline){
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					for(let i = 0; i < sentimentsKey.length; i++){
+						const key = sentimentsKey[i];
+						sentiments[key]= sentiments[key] ?
+							sentiments[key] + (await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count :
+							(await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count;
+					}
+				}
+			}
+			post.overallSentiments = sentiments;
 		}
 		else{
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {

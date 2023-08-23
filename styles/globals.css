@@ -392,6 +392,25 @@ color: var(--lightBlue) !important;
   margin-left: 664px;;
 }
 
+@media (min-width: 600px) and (max-width: 800px) {
+  .content-container {
+    width: 213px;
+  }
+
+  .export-link {
+    margin-left: 335px;
+    margin-right: auto;
+  }
+
+  .timeline-container {
+    margin: 0;
+  }
+
+  .timeline-dropdown {
+    margin-left: 578px;
+  }
+}
+
 @media (max-width: 600px) {
   .content-container {
     width: 213px;

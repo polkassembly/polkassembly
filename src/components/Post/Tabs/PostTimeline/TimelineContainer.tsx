@@ -9,7 +9,6 @@ import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { useNetworkContext } from '~src/context';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { getBlockLink } from '~src/util/subscanCheck';
-import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import DemocracyReferendaIcon from '~assets/icons/Democracy-Referenda.svg';
 import DemocracyReferendaGreyIcon from '~assets/icons/Democracy-Referenda-grey.svg';
 import TreasuryProposalGreyIcon from '~assets/icons/treasury-proposals-icon-grey.svg';
@@ -26,6 +25,8 @@ import ChildBountyIcon from '~assets/sidebar/treasury-child-bounties-icon-select
 import ChildBountyIconGrey from '~assets/sidebar/treasury-child-bounties-icon-unselected.svg';
 import ExportOutlined from '~assets/icons/learn-more-icon.svg';
 import { usePostDataContext } from '~src/context';
+import DownArrow from '~assets/icons/down-icon.svg';
+import UpArrow from '~assets/icons/up-arrow.svg';
 
 interface BlockStatus {
 	block: number;
@@ -121,7 +122,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 									<article className="py-[8px]">
 										<div className="flex items-center">
 											<div className="flex items-center space-x-[12px]">
-												<p className="text-xs text-sidebarBlue whitespace-nowrap mb-0">
+												<p className="text-xs text-sidebarBlue font-normal whitespace-nowrap mb-0">
 													{blockDate.format("Do MMM 'YY, h:mm a")}
 												</p>
 												<a className="font-medium" href={`${url}${block}`} target="_blank" rel="noreferrer">
@@ -154,9 +155,9 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 					</p>
 					<p className='timeline-dropdown' style={{ backgroundColor: activeColor, marginTop: '-44px' }}>
 						{isCollapsed ? (
-							<DownOutlined onClick={toggleCollapse} />
+							<DownArrow onClick={toggleCollapse} />
 						) : (
-							<UpOutlined onClick={toggleCollapse} />
+							<UpArrow onClick={toggleCollapse} />
 						)}
 					</p>
 					<span className={`${isCollapsed ? 'hidden' : ''} -mb-[5px] rounded-full absolute -bottom-1 -left-1 w-[10px] h-[10px]` } style={{ backgroundColor: activeColor }}></span>

@@ -93,10 +93,12 @@ const getLastDocs = (comments: {[index:string]:Array<IComment>}, makeNull?:boole
 	}
 	return lastDocs;
 };
-const sentimentsKey = ['againstCount', 'slightlyAgainstCount', 'neutralCount', 'slightlyForCount', 'forCount'];
+
+const sentimentsKey:Array<ESentiments> = [ESentiments.Against, ESentiments.SlightlyAgainst, ESentiments.Neutral, ESentiments.SlightlyFor, ESentiments.For];
+
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
-	const { postData: { postType, timeline, created_at, overallSentiments } } = usePostDataContext();
+	const { postData: { postType, timeline, created_at } } = usePostDataContext();
 	const targetOffset = 10;
 	const {
 		comments,
@@ -104,7 +106,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		setComments,
 		setCurrentTimeline,
 		setTimelines,
-		timelines
+		timelines,
+		overallSentiments
 	} = useCommentDataContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
@@ -117,7 +120,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const allCommentsLength = timelines.reduce((a, b) => a + b.commentsCount, 0);
 	const [lastDocs, setLastDocs] = useState<{[index:string]:number | null}>(getLastDocs(comments));
 	const [showMore, setShowMore] = useState<boolean>(true);
-	const [filterSentiments, setFilterSentiments] = useState<number>(0);
+	const [filterSentiments, setFilterSentiments] = useState<ESentiments|null>(null);
 
 	const url = window.location.href;
 	const commentId = url.split('#')[1];
@@ -130,11 +133,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	};
 
 	const getOverallSentimentPercentage = () => {
-		const againstCount = overallSentiments?.againstCount || 0;
-		const slightlyAgainstCount = overallSentiments?.slightlyAgainstCount || 0;
-		const neutralCount = overallSentiments?.neutralCount || 0;
-		const slightlyForCount = overallSentiments?.slightlyForCount || 0;
-		const forCount = overallSentiments?.forCount || 0;
+		const againstCount = overallSentiments?.[ESentiments.Against] || 0;
+		const slightlyAgainstCount = overallSentiments?.[ESentiments.SlightlyAgainst] || 0;
+		const neutralCount = overallSentiments?.[ESentiments.Neutral] || 0;
+		const slightlyForCount = overallSentiments?.[ESentiments.SlightlyFor] || 0;
+		const forCount = overallSentiments?.[ESentiments.For] || 0;
 
 		const totalCount = againstCount + slightlyAgainstCount + neutralCount + slightlyForCount + forCount;
 
@@ -156,27 +159,28 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			return;
 		}
 		sentiment = filterSentiments === sentiment? 0: sentiment;
-		setFilterSentiments(sentiment);
+		setFilterSentiments(sentiment == 0 ? null : sentiment);
 		const commentsPayload:{[index:string]:IComment[]} = {};
 		timeline.forEach((obj) => {
 			commentsPayload[`${obj?.index.toString()}_${obj?.type}`] = [];
 		});
 		setLoading(true);
-		getLastDocs(comments, true);
+		const emptyLastDoc = getLastDocs(comments, true);
 		for(let i = 0; i < timelines.length; i++){
 			if(timelines[i].commentsCount === 0){
 				continue;
 			}
 			const timeline = timelines[i];
 			const key = `${timelines[i].index}_${timelines[i].type}`;
-			const lastDoc = lastDocs[key];
+			const lastDoc = emptyLastDoc[key];
 			setCurrentTimeline(timeline);
 			if(timeline && commentsPayload[key].length < timeline.commentsCount){
 				const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, COMMENT_SIZE, timeline.type, sentiment);
 				commentsPayload[key] = [...commentsPayload[key], ...res.comments];
 				const resLastDocId = res.comments[res.comments.length-1]?.id || null;
 				if(resLastDocId){
-					setLastDocs((prev:{[index:string]:number | null}) => ({ ...prev, [timeline.index]: resLastDocId }));
+					setLastDocs((prev:{[index:string]:number | null}) => ({ ...prev, [key]: resLastDocId }));
+					emptyLastDoc[key] = resLastDocId;
 				}
 				if(res.comments.length === COMMENT_SIZE){
 					break;
@@ -258,7 +262,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					commentsPayload[key] = [...commentsPayload[key], ...res.comments];
 					const resLastDocId = res.comments[res.comments.length-1]?.id || null;
 					if(resLastDocId){
-						setLastDocs((prev:{[index:string]:number | null}) => ({ ...prev, [timeline.index]: resLastDocId }));
+						setLastDocs((prev:{[index:string]:number | null}) => ({ ...prev, [key]: resLastDocId }));
 					}
 					if(res.comments.length === COMMENT_SIZE){
 						break;
@@ -279,6 +283,9 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		if(!currentTimeline){
 			return;
 		}
+		if(size){
+			setFilterSentiments(null);
+		}
 		const commentsPayload = Object.assign({}, comments);
 		for(let i = 0; i < timelines.length; i++){
 			if(timelines[i].commentsCount === 0){
@@ -286,14 +293,15 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			}
 			const timeline = timelines[i];
 			const key = `${timeline.index}_${timeline.type}`;
-			const lastDoc = lastDocs[key];
+			const lastDoc = size? getLastDocs(comments, true) : lastDocs;
 			setCurrentTimeline(timeline);
 			if(timeline && commentsPayload[key].length < timeline.commentsCount){
-				const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc, network, size || COMMENT_SIZE, timeline.type, filterSentiments);
+				const res:any = await getPaginatedComments(timeline.index.toString(), lastDoc?.[key] || null, network, size || COMMENT_SIZE, timeline.type, size ? 0 : filterSentiments || 0);
 				commentsPayload[key] = [...commentsPayload[key], ...res.comments];
 				const resLastDocId = res.comments[res.comments.length-1]?.id || null;
 				if(resLastDocId){
 					setLastDocs((prev:{[index:string]:number | null}) => ({ ...prev, [key]: resLastDocId }));
+					lastDoc[key]= resLastDocId;
 				}
 				if(res.comments.length === COMMENT_SIZE){
 					break;
@@ -311,7 +319,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		if(!currentTimeline){
 			return;
 		}
-		setFilterSentiments(0);
+		setFilterSentiments(null);
 		for(const data of timelines){
 			if(data.id > timeline.id){
 				break;

@@ -20,7 +20,7 @@ import { getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExis
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import dayjs from 'dayjs';
-import { getStatus } from './comments/getStatus';
+import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 
 interface IGetOffChainPostParams {
 	network: string;

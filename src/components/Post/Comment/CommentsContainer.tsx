@@ -130,7 +130,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	};
 
 	const getOverallSentimentPercentage = () => {
-		console.log(overallSentiments);
 		const againstCount = overallSentiments?.againstCount || 0;
 		const slightlyAgainstCount = overallSentiments?.slightlyAgainstCount || 0;
 		const neutralCount = overallSentiments?.neutralCount || 0;

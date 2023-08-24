@@ -220,9 +220,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 										</div>
 
 									</div>:	<div className={'flex items-center justify-between gap-x-2'} >
-
-										<UserDropdown address={defaultAddress}/>
-
+										<UserDropdown address={defaultAddress || ''}/>
 									</div>
 								}
 

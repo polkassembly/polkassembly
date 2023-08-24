@@ -18,16 +18,18 @@ import styled from 'styled-components';
 import { chainProperties } from '~src/global/networkConstants';
 import SearchBar from '~src/ui-components/SearchBar';
 import TownHall from '~assets/icons/TownHall.svg';
+import Mail from '~assets/icons/mail.svg';
+import Arrow from '~assets/icons/arrow.svg';
 import PolkaSafe from '~assets/icons/PolkaSafe.svg';
 import PaLogo from './PaLogo';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
-import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { logout } from '~src/services/auth.service';
 import { EGovType } from '~src/global/proposalType';
-import Address from '~src/ui-components/Address';
+import UserDropdown from '../../ui-components/UserDropdown';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -209,16 +211,21 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 							</div>
 
 							:<AuthDropdown>
+								{
+									!web3signup ?	<div className={'flex items-center justify-between gap-x-2 bg-[#f6f7f9] rounded-3xl px-2'} style={{ border:'1px solid #d7dce3' }}>
+										<Mail/>
+										<div className='flex items-center justify-between gap-x-1'>
+											<span className='truncate w-[85%] normal-case'>{username || ''}</span>
+											<Arrow/>
+										</div>
 
-								<div className='flex items-center justify-between gap-x-2'>
+									</div>:	<div className={'flex items-center justify-between gap-x-2'} >
 
-									{!web3signup ?  <><span className='truncate w-[85%] normal-case'>{username || ''}</span>
-										<DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
-									</>
-										:<Address address = {defaultAddress || ''}/>
-									}
+										<UserDropdown address={defaultAddress}/>
 
-								</div>
+									</div>
+								}
+
 							</AuthDropdown>
 						}
 						<div className='mr-0 lg:mr-10 '>
@@ -236,9 +243,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 									<path d="M4 5.14286C4 5.77404 4.51167 6.28571 5.14286 6.28571C5.77404 6.28571 6.28571 5.77404 6.28571 5.14286C6.28571 4.51167 5.77404 4 5.14286 4C4.51167 4 4 4.51167 4 5.14286Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
 								</svg>
 
-								{/* <div className='flex items-center justify-between gap-x-2'>
-									<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
-								</div> */}
 							</MenuDropdown>
 						</div>
 

@@ -154,7 +154,7 @@ export function getProposalTypeTitle(proposalType: ProposalType) {
 	case ProposalType.TECHNICAL_PIPS:
 		return 'technical committee';
 	case ProposalType.UPGRADE_PIPS:
-		return 'technical committee';
+		return 'upgrade committee';
 	case ProposalType.COMMUNITY_PIPS:
 		return 'community';
 	}

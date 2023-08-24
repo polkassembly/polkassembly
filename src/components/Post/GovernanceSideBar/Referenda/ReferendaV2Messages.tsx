@@ -134,12 +134,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							<Button>3</Button>
 						</div>
 						<div className='mt-[20px]'>
-							<Progress className='m-0 p-0 flex items-center' percent={prepare.periodPercent} strokeColor='#E5007A'  trailColor='#FEF2F8' size="small" />
+							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={prepare.periodPercent} strokeColor='#E5007A'  trailColor='#FEF2F8' size="small" />
 						</div>
 						<p className='p-0 m-0 flex items-center justify-between mt-3.5 leading-[22px]'>
 							<>
 								<span className='text-bodyBlue text-sm font-normal'>Prepare Period</span>
-								<span className='text-lightBlue text-xs'>{prepare.period}</span>
+								<span className='text-lightBlue text-xs'>{periodStartAt(prepare.period, prepare.periodPercent)}/{prepare.period}</span>
 							</>
 						</p>
 					</GovSidebarCard>
@@ -155,19 +155,19 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							<Button>3</Button>
 						</div>
 						<div className='mt-[30px]'>
-							<Progress className='m-0 p-0 flex items-center rounded-lg' percent={decision.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
+							<Progress className='m-0 p-0 flex items-center rounded-lg' showInfo={false} percent={decision.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
 						</div>
 						<p className='p-0 m-0 flex items-center justify-between mt-3.5 leading-[22px]'>
 							<span className='text-bodyBlue text-sm font-normal'>Decision Period</span>
-							<span className='text-lightBlue text-xs'>{decision.period}</span>
+							<span className='text-lightBlue text-xs'>{periodStartAt(decision.period, decision.periodPercent)}/{decision.period}</span>
 						</p>
 						<div className='mt-[20px]'>
-							<Progress className='m-0 p-0 flex items-center' percent={confirm.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
+							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={confirm.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
 						</div>
 						<p className='p-0 m-0 flex items-center justify-between mt-3.5 leading-[22px]'>
 							<>
 								<span className='text-bodyBlue text-sm font-normal'>Confirmation Period</span>
-								<span className='text-lightBlue text-xs'>{confirm.period}</span>
+								<span className='text-lightBlue text-xs'>{periodStartAt(confirm.period, confirm.periodPercent)}/{confirm.period}</span>
 							</>
 						</p>
 					</GovSidebarCard>
@@ -186,9 +186,9 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 										<Button>3</Button>
 									</div>
 									<div className='mt-[20px]'>
-										<Progress className='m-0 p-0 flex items-center' percent={minEnactment.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
+										<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={minEnactment.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
 									</div>
-									<p className='p-0 m-0 flex items-center justify-between mt-2 leading-[22px]'>
+									<p className='p-0 m-0 flex items-center justify-between mt-3.5 leading-[22px]'>
 										<span className='text-bodyBlue text-sm font-normal'>Enactment Period</span>
 										<span className='text-lightBlue text-xs'>{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}</span>
 									</p>

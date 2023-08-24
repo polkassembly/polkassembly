@@ -44,7 +44,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 			{content && <Markdown className='post-content' md={content} />}
 
 			{/* Actions Bar */}
-			<div id='actions-bar' className={`flex flex-col md:items-center mt-9 ${canEdit && 'flex-col'} md:flex-row mb-8`}>
+			<div id='actions-bar' className={`flex md:items-center mt-2 ${canEdit && 'flex-col'} flex-wrap mb-8`}>
 				<div className='flex items-center'>
 					<PostReactionBar
 						className='reactions'

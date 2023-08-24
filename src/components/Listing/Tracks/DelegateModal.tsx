@@ -75,7 +75,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 	const multisigDelegationAssociatedAddress = localStorage.getItem('multisigDelegationAssociatedAddress') || '';
 	const { client, connect } = usePolkasafe(multisigDelegationAssociatedAddress);
-	const isTargetAddressSame = (delegationDashboardAddress === target || delegationDashboardAddress === getEncodedAddress(target, network));
+	const isTargetAddressSame = (delegationDashboardAddress && target) ?  (delegationDashboardAddress === target || delegationDashboardAddress === getEncodedAddress(target, network)) : false;
 
 	useEffect(() => {
 
@@ -92,7 +92,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	}, []);
 
 	const handleSubstrateAddressChangeAlert = (target: string) => {
-		target && (getEncodedAddress(target, network) || Web3.utils.isAddress(target)) && target !== getEncodedAddress(target, network) && setAddressAlert(true);
+		if(!target) return;
+		(getEncodedAddress(target, network) || Web3.utils.isAddress(target)) && target !== getEncodedAddress(target, network) && setAddressAlert(true);
 		setTimeout(() => { setAddressAlert(false);},5000);
 	};
 
@@ -208,6 +209,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 		const txArr = checkedArr?.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
 		const delegateTxn = api.tx.utility.batchAll(txArr);
+
 		if(isMultisig){
 			const delegationByMultisig = async (tx:any) => {
 				try{
@@ -324,11 +326,15 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 						<Button key="back" disabled={loading} className='h-[40px] w-[134px] rounded-[4px]' onClick={() => setOpen?.(false)}>
 										Cancel
 						</Button>
-						<Button htmlType='submit' key="submit" className={`w-[134px] bg-pink_primary rounded-[4px] border-pink_primary text-white hover:bg-pink_secondary h-[40px] ${!(form.getFieldValue('targetAddress') && delegationDashboardAddress && bnBalance.gt(ZERO_BN) && !isNaN(conviction) && !isTargetAddressSame && !loading) && 'opacity-50'}`} disabled={
-							!(form.getFieldValue('targetAddress') && delegationDashboardAddress && bnBalance.gt(ZERO_BN) && !isNaN(conviction) && !isTargetAddressSame && !loading)
-						} onClick={async () => {
-							await handleSubmit();
-						}}>
+						<Button
+							htmlType='submit'
+							key="submit"
+							className={`w-[134px] bg-pink_primary rounded-[4px] border-pink_primary text-white hover:bg-pink_secondary h-[40px] ${!(form.getFieldValue('targetAddress') && delegationDashboardAddress && bnBalance.gt(ZERO_BN) && !isNaN(conviction) && !isTargetAddressSame && !loading && !txFee.lte(ZERO_BN)) && 'opacity-50'}`}
+							disabled={
+								!(form.getFieldValue('targetAddress') && delegationDashboardAddress && bnBalance.gt(ZERO_BN) && !isNaN(conviction) && !isTargetAddressSame && !loading && !txFee.lte(ZERO_BN))
+							} onClick={async () => {
+								await handleSubmit();
+							}}>
 										Delegate
 						</Button>
 					</div>

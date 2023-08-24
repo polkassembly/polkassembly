@@ -33,7 +33,7 @@ interface Props {
     ayeVoteValue?: BN;
     nayVoteValue?: BN;
     abstainVoteValue?: BN;
-	icon:ReactElement;
+		icon:ReactElement;
 }
 
 const VoteInitiatedModal = ({
@@ -157,7 +157,7 @@ const VoteInitiatedModal = ({
 						</div>
 					)}
 					<div className='flex-col flex items-start justify-center gap-[10px]'>
-						<div className='flex gap-3 text-sm text-[#485F7D] font-normal'>
+						<div className='flex gap-3 text-sm text-lightBlue font-normal'>
                             With address:{' '}
 							<span className='font-medium'>
 								<Address
@@ -170,7 +170,7 @@ const VoteInitiatedModal = ({
 						</div>
 
 						{multisig &&
-							<div className='flex gap-[17px] text-sm text-[#485F7D] font-normal'>
+							<div className='flex gap-[17px] text-sm text-lightBlue font-normal'>
 								With Multisig:{' '}
 								<span className='font-medium'>
 									<Address
@@ -183,7 +183,7 @@ const VoteInitiatedModal = ({
 							</div>
 						}
 
-						<div className='flex h-[21px] gap-[70px] text-sm text-[#485F7D] font-normal'>
+						<div className='flex h-[21px] gap-[70px] text-sm text-lightBlue font-normal'>
                             Vote :
 							{vote === EVoteDecisionType.AYE ? (
 								<p>
@@ -215,21 +215,21 @@ const VoteInitiatedModal = ({
 								</p>
 							) : null}
 						</div>
-						<div className='flex gap-[30px] text-sm text-[#485F7D] font-normal'>
+						<div className='flex gap-[30px] text-sm text-lightBlue font-normal'>
 							{' '}
                             Conviction:
 							<span className='text-bodyBlue font-medium'>
 								{conviction}x
 							</span>{' '}
 						</div>
-						<div className='flex h-[21px] gap-[14px] text-sm text-[#485F7D] font-normal'>
+						<div className='flex h-[21px] gap-[14px] text-sm text-lightBlue font-normal'>
                             Time of Vote :{' '}
 							<span className='font-medium text-bodyBlue'>
 								{votedAt}
 							</span>
 						</div>
 						{ multisig &&
-						<div className='flex h-[21px] gap-11 text-sm text-[#485F7D] font-normal'>
+						<div className='flex h-[21px] gap-11 text-sm text-lightBlue font-normal'>
                             Vote Link:{' '}
 							<span className='font-medium text-bodyBlue'>
 								<a className='text-pink_primary' href='https://app.polkasafe.xyz/transactions' target='_blank' rel="noreferrer">Polkasafe</a>

@@ -107,17 +107,17 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 
 	if(chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH){
 		const onChainFetches = {
-			community_PIPs: getLatestActivityOnChainPosts({
+			community_pips: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
 				proposalType: ProposalType.COMMUNITY_PIPS
 			}),
-			technical_PIPs: getLatestActivityOnChainPosts({
+			technical_pips: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
 				proposalType: ProposalType.TECHNICAL_PIPS
 			}),
-			upgrade_PIPs: getLatestActivityOnChainPosts({
+			upgrade_pips: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
 				network,
 				proposalType: ProposalType.UPGRADE_PIPS

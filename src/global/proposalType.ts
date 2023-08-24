@@ -21,9 +21,9 @@ export enum ProposalType {
 	GRANTS = 'grants',
 	ANNOUNCEMENT = 'announcement',
 	ALLIANCE_MOTION = 'alliance_motion',
-	TECHNICAL_PIPS = 'technical PIPs',
-	UPGRADE_PIPS = 'upgrade PIPs',
-	COMMUNITY_PIPS = 'community PIPs'
+	TECHNICAL_PIPS = 'technical_pips',
+	UPGRADE_PIPS = 'upgrade_pips',
+	COMMUNITY_PIPS = 'community_pips'
 }
 export enum OffChainProposalType {
 	DISCUSSIONS = 'discussions',
@@ -120,11 +120,11 @@ export function getFirestoreProposalType(proposalType: string): string {
 	case 'Announcement':
 		return 'announcement';
 	case 'Community':
-		return 'community PIPs';
+		return 'community_pips';
 	case 'TechnicalCommittee':
-		return 'technical PIPs';
+		return 'technical_pips';
 	case 'UpgradeCommitte':
-		return 'upgrade PIPs';
+		return 'upgrade_pips';
 	}
 	return '';
 }
@@ -227,7 +227,7 @@ export function getProposalTypeFromSinglePostLink(link: string): ProposalType | 
 	}
 }
 
-export const proposalTypes = ['democracy_proposals', 'tech_committee_proposals', 'treasury_proposals', 'referendums', 'fellowship_referendums', 'council_motions', 'bounties', 'tips', 'child_bounties', 'open_gov', 'referendums_v2', 'alliance_motion', 'announcement','technical PIPs','community PIPs','upgrade PIPs'];
+export const proposalTypes = ['democracy_proposals', 'tech_committee_proposals', 'treasury_proposals', 'referendums', 'fellowship_referendums', 'council_motions', 'bounties', 'tips', 'child_bounties', 'open_gov', 'referendums_v2', 'alliance_motion', 'announcement','technical_pips','community_pips','upgrade_pips'];
 export const offChainProposalTypes = ['discussions', 'grants'];
 
 export const checkIsOnChainPost = (proposalType: string) => {

@@ -15,7 +15,7 @@ import getDefaultUserAddressFromId from '~src/auth/utils/getDefaultUserAddressFr
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { getFirestoreProposalType, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
-import { GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PROPOSAL_BY_INDEX_AND_TYPE_V2 } from '~src/queries';
+import { GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE, GET_PROPOSAL_BY_INDEX_AND_TYPE_V2 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IPostHistory, IPostTag, Post } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -76,12 +76,15 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	if(postDoc.exists && !isNaN(post?.user_id)) {
 		if(![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)){
 			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
-			const postQuery = proposalType === ProposalType.ALLIANCE_MOTION ?
+			let postQuery = proposalType === ProposalType.ALLIANCE_MOTION ?
 				GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE :
 				proposalType === ProposalType.ANNOUNCEMENT ?
 					GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE :
 					GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
+			if(network === 'polymesh'){
+				postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
+			}
 			let variables: any = {
 				index_eq: Number(postId),
 				type_eq: subsquidProposalType
@@ -100,6 +103,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				variables
 			});
 
+			console.log(postRes);
+			console.Console;
 			const post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
 			if(!post) return res.status(500).json({ message: 'Something went wrong.' });
 			if(!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });
@@ -134,11 +139,15 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		proposer_address = defaultUserAddress?.address || '';
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
-		const postQuery = proposalType === ProposalType.ALLIANCE_MOTION ?
+		let postQuery = proposalType === ProposalType.ALLIANCE_MOTION ?
 			GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE :
 			proposalType === ProposalType.ANNOUNCEMENT ?
 				GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE :
 				GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
+
+		if(network === 'polymesh'){
+			postQuery =  GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
+		}
 
 		let variables: any = {
 			index_eq: Number(postId),

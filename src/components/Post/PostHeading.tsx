@@ -47,7 +47,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	};
 	const newTitle = title || description || noTitle;
 	return (
-		<div className={className} >
+		<div className={`${className} bg-white xs:p-4 xl:p-0`} >
 			<div className="flex justify-between items-center">
 				{status && <StatusTag className='mb-3' status={status}/>}
 				{ requestedAmt && <h5 className='text-sm text-bodyBlue font-medium'>Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}</h5>}
@@ -59,7 +59,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						: <>{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {newTitle}</>
 				}
 			</h2>
-			<div className='mb-3'>
+			<div className='xl:mb-3 xs:mb-0'>
 				<>
 					<CreationLabel
 						className='md'
@@ -94,7 +94,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					</CreationLabel>
 				</>
 			</div>
-			{tags && tags.length>0 &&<div className='flex mt-3.5 gap-[8px] flex-wrap'>
+			{tags && tags.length>0 &&<div className='flex mt-2 gap-[8px] flex-wrap'>
 				{tags?.map((tag,index ) => (<div onClick={() => handleTagClick(onTagClickFilter(proposalType, track_name || ''),tag)} className='rounded-full px-[16px] py-[4px] border-navBlue border-solid border-[1px] text-navBlue text-xs traking-2 cursor-pointer hover:border-pink_primary hover:text-pink_primary' key={index} >{tag}</div>))}
 			</div> }
 			{history  && history.length > 0 && <PostHistoryModal open={openModal} setOpen={setOpenModal} history={[{ content: content, created_at: last_edited_at || '', title: title },...history]} username={username} defaultAddress={proposer} />}

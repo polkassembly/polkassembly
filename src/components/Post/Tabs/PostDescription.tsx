@@ -40,11 +40,11 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
 
 	return (
-		<div className={`${className} mt-4`}>
-			{content && <Markdown className='post-content' md={content} />}
+		<div className={`${className} xs:mt-0 xl:mt-4`}>
+			{content && <Markdown className='post-content bg-white xs:p-4 xl:p-0' md={content} />}
 
 			{/* Actions Bar */}
-			<div id='actions-bar' className={`flex md:items-center mt-2 ${canEdit && 'flex-col'} flex-wrap mb-8`}>
+			<div id='actions-bar' className={`flex md:items-center mt-0 xl:mt-2 ${canEdit && 'flex-col'} flex-wrap mb-8 bg-white xl:bg-none`}>
 				<div className='flex items-center'>
 					<PostReactionBar
 						className='reactions'

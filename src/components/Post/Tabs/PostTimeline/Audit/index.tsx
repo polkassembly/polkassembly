@@ -73,7 +73,7 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 		setSelectedType(selectedValue);
 	},[auditData,videoData]);
 	return (
-		<div className='min-h-[400px]'>
+		<div className='min-h-[400px] bg-white xl:bg-transparent'>
 			{
 				<>
 					{

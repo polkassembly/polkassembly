@@ -472,13 +472,13 @@ const Post: FC<IPostProps> = (props) => {
 						}
 
 						{/* Post Content */}
-						<div className='bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6 '>
+						<div className='xl:bg-white drop-shadow-md p-3 md:p-4 lg:p-6 rounded-xxl w-full mb-6 '>
 							{isEditing &&
               <EditablePostContent toggleEdit={toggleEdit} />}
 
 							{!isEditing && <>
 								<PostHeading
-									className='mb-5'
+									className='xl:mb-5 xs:mb-0'
 								/>
 								<Tabs
 									type="card"
@@ -510,6 +510,9 @@ export default styled(Post)`
 .ant-tabs-card >.ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn .audit .card-bg{
   background-color: var(--pink_primary) !important;
   color: white !important;
-
+}
+.ant-tabs-nav{
+	  margin: 0px !important;
+	  background: white !important;
 }
 `;

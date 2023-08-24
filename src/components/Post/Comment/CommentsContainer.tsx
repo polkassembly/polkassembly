@@ -378,7 +378,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	};
 
 	return (
-		<div className={className}>
+		<div className={`${className} xs:bg-white xs:rounded-xxl xs:p-4 xl:p-0 xs:-mt-12 xl:mt-0 xl:bg-transparent xl:rounded-none`}>
 			{id ? <>
 				{isGrantClosed ?
 					<Alert message="Grant closed, no comments can be added or edited." type="info" showIcon /> :

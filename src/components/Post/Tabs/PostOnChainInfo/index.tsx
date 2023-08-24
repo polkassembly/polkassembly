@@ -128,7 +128,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 
 	return (
 		<>
-			<div className={`${className} mt-4`}>
+			<div className={`${className} xs:mt-0 p-4 xl:p-0 bg-white xl:bg-transparent xl:mt-4`}>
 				<OnchainInfoWrapper>
 					{
 						proposer?

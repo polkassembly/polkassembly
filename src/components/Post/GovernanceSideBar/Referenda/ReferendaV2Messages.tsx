@@ -21,7 +21,9 @@ interface IReferendaV2Messages {
 	progress: IProgress;
 }
 
-interface IButtonProps extends PropsWithChildren {}
+interface IButtonProps extends PropsWithChildren {
+	className?: string;
+}
 
 export const getDefaultPeriod = () => {
 	return {
@@ -67,9 +69,9 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const isTreasuryProposalPresent = checkProposalPresent(timeline || [], 'TreasuryProposal');
 
 	const Button: FC<IButtonProps> = (props) => {
-		const { children } = props;
+		const { children, className } = props;
 		return (
-			<button onClick={() => setOpen(true)} className='cursor-pointer flex items-center justify-center border-none outline-none bg-[#FEF2F8] w-[30px] h-[30px] rounded-full text-base font-normal leading-[24px] tracking-[0.01em] text-lightBlue'>
+			<button onClick={() => setOpen(true)} className={`cursor-pointer flex items-center justify-center border-none outline-none bg-[#FEF2F8] w-[30px] h-[30px] rounded-full text-base font-normal leading-[24px] tracking-[0.01em] text-lightBlue ${className}`}>
 				{children}
 			</button>
 		);
@@ -181,7 +183,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								? <GovSidebarCard>
 									<div className='flex items-center justify-between'>
 										<h3 className='m-0 mr-[69px] text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
-										<Button>3</Button>
+										<Button className="bg-pink_primary text-white">3</Button>
 										<p className="my-0 -mx-[40px]">of</p>
 										<Button>3</Button>
 									</div>

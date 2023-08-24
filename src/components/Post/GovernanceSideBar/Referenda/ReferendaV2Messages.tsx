@@ -115,6 +115,11 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
 
+	const periodStartAt = (period: any, periodPercent: any) => {
+		const startTime = Math.round((parseInt(period) * periodPercent) / 100);
+		return startTime;
+	};
+
 	const isDisbursalPeriodCardVisible = isTreasuryProposal? (requested? (isTreasuryProposalPresent? (awardedStatusBlock? false: true): false): false): false;
 
 	return (
@@ -123,8 +128,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				(!decidingStatusBlock) && !isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='m-0 text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
+							<h3 className='m-0 mr-[69px] text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
 							<Button>1</Button>
+							<p className="my-0 -mx-[40px]">of</p>
+							<Button>3</Button>
 						</div>
 						<div className='mt-[20px]'>
 							<Progress className='m-0 p-0 flex items-center' percent={prepare.periodPercent} strokeColor='#E5007A'  trailColor='#FEF2F8' size="small" />
@@ -142,8 +149,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				(decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='m-0 text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
+							<h3 className='m-0 mr-[69px] text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
 							<Button>2</Button>
+							<p className="my-0 -mx-[40px]">of</p>
+							<Button>3</Button>
 						</div>
 						<div className='mt-[30px]'>
 							<Progress className='m-0 p-0 flex items-center rounded-lg' percent={decision.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
@@ -171,7 +180,9 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							(isDisbursalPeriodCardVisible || minEnactment.periodCardVisible)
 								? <GovSidebarCard>
 									<div className='flex items-center justify-between'>
-										<h3 className='m-0 text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
+										<h3 className='m-0 mr-[69px] text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
+										<Button>3</Button>
+										<p className="my-0 -mx-[40px]">of</p>
 										<Button>3</Button>
 									</div>
 									<div className='mt-[20px]'>
@@ -179,7 +190,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									</div>
 									<p className='p-0 m-0 flex items-center justify-between mt-2 leading-[22px]'>
 										<span className='text-bodyBlue text-sm font-normal'>Enactment Period</span>
-										<span className='text-lightBlue text-xs'>{minEnactment.period}</span>
+										<span className='text-lightBlue text-xs'>{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}</span>
 									</p>
 									{
 										isDisbursalPeriodCardVisible && (

@@ -281,6 +281,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 		form.setFieldValue('balance', '');
 		setTarget('');
 		setBnBalance(ZERO_BN);
+		setTarget('');
 		setConviction(0);
 		setCheckedList([]);
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
@@ -461,7 +462,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							</div>
 						</Form>
 
-						{showAlert && <Alert showIcon type='info' className='mb-4 ' message={`An approximate fees of ${formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction`}/>}
+						{showAlert && <Alert showIcon type='info' className='mb-4 rounded-[4px]' message={`An approximate fees of ${formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction`}/>}
 
 					</div>
 				</Spin>

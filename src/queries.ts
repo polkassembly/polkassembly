@@ -469,6 +469,7 @@ export const GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE = `query PolymeshProposalBy
     proposer
     status
     description
+    identity
     hash
     type
     threshold {
@@ -495,7 +496,7 @@ export const GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE = `query PolymeshProposalBy
       description
       section
     }
-    voting {
+    voting (where: {removedAtBlock_isNull: true}){
       decision
       identityId
       balance {

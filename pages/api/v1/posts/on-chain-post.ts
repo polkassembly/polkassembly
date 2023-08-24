@@ -753,6 +753,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
 			history,
+			identity: postData?.identity || null,
 			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
@@ -1059,8 +1060,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.content = remark.replace(/\n/g, '<br/>');
 			} else {
 				const proposer = post.proposer;
+				const identity  = post?.identity;
 				if (proposer) {
 					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					if(network === AllNetworks.POLYMESH){
+						post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose DID (${identity}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					}
 				} else {
 					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 				}

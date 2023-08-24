@@ -103,8 +103,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				variables
 			});
 
-			console.log(postRes);
-			console.Console;
 			const post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
 			if(!post) return res.status(500).json({ message: 'Something went wrong.' });
 			if(!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Something went wrong.' });

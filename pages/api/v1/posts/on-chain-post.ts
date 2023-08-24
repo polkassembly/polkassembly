@@ -1064,7 +1064,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				if (proposer) {
 					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 					if(network === AllNetworks.POLYMESH){
-						post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose DID (${identity}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+						post.content = `This is a pip whose DID (${identity}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 					}
 				} else {
 					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;

@@ -3,12 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
+import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { ESentiments, IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -84,6 +83,13 @@ export interface IReactions {
 	};
 }
 
+export interface IPIPsVoting {
+	balance: null | string;
+	voter: null | string;
+	decision: 'yes' | 'no';
+	identityId: string ;
+  }
+
 export interface IPostResponse {
 	post_reactions: IReactions;
 	timeline: any[];
@@ -99,13 +105,14 @@ export interface IPostResponse {
 		id: number;
 		name: string;
 	};
-  title?: string;
 	decision?: string;
 	last_edited_at?: string | Date;
 	[key: string]: any;
-  gov_type?: 'gov_1' | 'open_gov' ;
-  tags?: string[] | [];
-  history?: IPostHistory[];
+	gov_type?: 'gov_1' | 'open_gov' ;
+	tags?: string[] | [];
+	history?: IPostHistory[];
+	pips_voters?: IPIPsVoting[];
+	title?: string;
 }
 
 export type IReaction = '👍' | '👎';
@@ -599,6 +606,13 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
 		}
+		else if(network === 'polymesh'){
+			postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
+			postVariables =  {
+				index_eq: numPostId,
+				type_eq: subsquidProposalType
+			};
+		}
 
 		let subsquidRes: any = {};
 		try {
@@ -739,12 +753,14 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
 			history,
+			identity: postData?.identity || null,
 			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
 			motion_method: proposalArguments?.method,
 			origin: postData?.origin,
 			payee: postData?.payee,
+			pips_voters: postData?.voting || [],
 			post_id: postData?.index,
 			post_reactions: getDefaultReactionObj(),
 			proposal_arguments: proposalArguments,
@@ -1044,8 +1060,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.content = remark.replace(/\n/g, '<br/>');
 			} else {
 				const proposer = post.proposer;
+				const identity  = post?.identity;
 				if (proposer) {
 					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					if(network === AllNetworks.POLYMESH){
+						post.content = `This is a pip whose DID (${identity}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					}
 				} else {
 					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 				}

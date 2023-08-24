@@ -4,7 +4,7 @@
 
 import { ColumnsType } from 'antd/es/table';
 
-import { ProposalType } from '~src/global/proposalType';
+import { ProposalType, getFirestoreProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import NameLabel from '~src/ui-components/NameLabel';
 import StatusTag from '~src/ui-components/StatusTag';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
@@ -14,6 +14,7 @@ import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import { Tooltip } from 'antd';
 import Router from 'next/router';
 import getUsernameByAddress from '~src/util/getUsernameByAddress';
+import { noTitle } from '~src/global/noTitle';
 
 async function goToProfileByAddress (address: string) {
 	if(!address) return;
@@ -41,6 +42,15 @@ const Title: any = {
 	width: 420
 };
 
+const Description: any = {
+	dataIndex: 'description',
+	fixed: 'left',
+	key: 'description',
+	render: (description: any) => <div className='truncate text-bodyBlue font-medium'>{description || noTitle}</div>,
+	title: 'Description',
+	width: 320
+};
+
 const Creator: any = {
 	dataIndex: 'username',
 	key: 'creator',
@@ -57,6 +67,20 @@ const Creator: any = {
 		};
 	},
 	render: (username: any, { proposer }: { proposer: any }) => <div className='truncate'><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={true} /></div>,
+	title: 'Creator'
+};
+const Proposer: any = {
+	dataIndex: 'proposer',
+	key: 'creator',
+	onCell: (record: any) => {
+		return {
+			onClick: async (e: any) => {
+				e.stopPropagation();
+				await goToProfileByAddress(record.proposer || '');
+			}
+		};
+	},
+	render: (username: any, { proposer }: { proposer: any }) => <div className='truncate'><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} /></div>,
 	title: 'Creator'
 };
 
@@ -95,6 +119,14 @@ const CreatedAt: any = {
 		);
 	},
 	title: 'Created'
+};
+
+const PIPsType = {
+	dataIndex: 'type',
+	key: 'Type',
+	render: (type: any) => <span className='capitalize'>{getProposalTypeTitle(getFirestoreProposalType(type) as ProposalType)}</span>,
+	title: 'Type',
+	width: 200
 };
 
 const columns: ColumnsType<IPostsRowData> = [
@@ -204,6 +236,16 @@ const offChainColumns: ColumnsType<IPostsRowData> = [
 	CreatedAt
 ];
 
+const PIPsColumns = [
+	Index,
+	Description,
+	Proposer,
+	CreatedAt,
+	PIPsType,
+	Status
+
+];
+
 export function getColumns(key: 'all' | ProposalType): ColumnsType<IPostsRowData> {
 	if (key === 'all') {
 		return allColumns;
@@ -213,6 +255,8 @@ export function getColumns(key: 'all' | ProposalType): ColumnsType<IPostsRowData
 		return columns;
 	} else if ([ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(key)) {
 		return offChainColumns;
+	}else if([ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(key)){
+		return PIPsColumns;
 	}
 	return [];
 }

@@ -23,13 +23,12 @@ interface Props{
   onAbstainValueChange?:(pre: BN)=>void;
   handleSubmit:()=> void;
   disabled: boolean;
-  onCancel:(pre: boolean) => void;
   conviction:number;
   setConviction:(pre:number)=> void;
   convictionOpts: ReactNode;
 }
 
-const VotingForm = ({ form, formName, handleSubmit, disabled, onBalanceChange, onAyeValueChange, onNayValueChange, onAbstainValueChange, onCancel, convictionOpts, conviction, setConviction, convictionClassName }: Props) => {
+const VotingForm = ({ form, formName, handleSubmit, disabled, onBalanceChange, onAyeValueChange, onNayValueChange, onAbstainValueChange, convictionOpts, conviction, setConviction, convictionClassName }: Props) => {
 
 	const ConvictionSelect = ({ className }: { className?:string }) =>
 
@@ -88,7 +87,6 @@ const VotingForm = ({ form, formName, handleSubmit, disabled, onBalanceChange, o
 		</>
 		}
 		<div className='flex justify-end mt-[-1px] pt-5 -mr-6 -ml-6 border-0 border-solid border-t-[1px] border-[#D2D8E0]'>
-			<Button className='w-[134px] h-[40px] rounded-[4px] text-pink_primary bg-[white] mr-[15px] font-semibold border-pink_primary' onClick={() => onCancel(false)}>Cancel</Button>
 			<Button className={`w-[134px] h-[40px] rounded-[4px] text-[white] bg-pink_primary mr-[24px] font-semibold border-0 ${disabled && 'opacity-50'}`} htmlType='submit' disabled={disabled}>Confirm</Button>
 		</div>
 	</Form>;

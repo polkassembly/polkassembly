@@ -12,8 +12,8 @@ interface Props{
   loginAddress:string;
 }
 
-const getAccounts = async ({ chosenWallet, network, loginAddress }: Props): Promise<{accounts:InjectedAccountWithMeta[], account: string, isTalismanEthereum: boolean} | undefined> => {
-	let isTalismanEthereum = false;
+const getMetamaskAccounts = async ({ chosenWallet, network, loginAddress }: Props): Promise<{accounts:InjectedAccountWithMeta[], account: string, isTalismanEthereum: boolean} | undefined> => {
+	let isTalismanEthereum = true;
 
 	const ethereum = chosenWallet === Wallet.TALISMAN? (window as any).talismanEth : (window as any).ethereum;
 
@@ -35,8 +35,8 @@ const getAccounts = async ({ chosenWallet, network, loginAddress }: Props): Prom
 	if (addresses.length === 0) {
 		return;
 	}
-	if(!(chosenWallet === Wallet.TALISMAN && addresses.filter((address: string) => address.slice(0,2) === '0x').length === 0)){
-		isTalismanEthereum = true;
+	if((chosenWallet === Wallet.TALISMAN && addresses.filter((address: string) => address.slice(0,2) === '0x').length === 0)){
+		isTalismanEthereum = false;
 	}
 
 	const accounts = addresses.map((address: string): InjectedAccountWithMeta => {
@@ -61,7 +61,6 @@ const getAccounts = async ({ chosenWallet, network, loginAddress }: Props): Prom
 			accounts.unshift(account);
 		}
 	}
-
 	return{
 		account: accounts[0].address,
 		accounts,
@@ -69,4 +68,4 @@ const getAccounts = async ({ chosenWallet, network, loginAddress }: Props): Prom
 	};
 };
 
-export default getAccounts;
+export default getMetamaskAccounts;

@@ -125,9 +125,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (loginWallet) {
 			setWallet(loginWallet);
 			(async() => {
+				setLoadingStatus({ isLoading: true, message: 'Getting accounts' });
 				const accountsData = await getAccountsFromWallet({ api, chosenWallet: loginWallet, loginAddress, network });
 				setAccounts(accountsData?.accounts || []);
 				onAccountChange(accountsData?.account || '');
+				setLoadingStatus({ isLoading: false, message: 'Getting accounts' });
 			})();
 		} else {
 			if(!window) return;
@@ -209,7 +211,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				balance = new BN(multisigBalance);
 			}
 			setAvailableBalance(balance);
-			// onBalanceChange();
 		}
 		catch(err){
 			console.log(err);
@@ -499,7 +500,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					handleModalReset();
 				}}
 				footer={false}
-				className={`w-[600px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
+				className={`w-[550px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
 				title={
@@ -619,7 +620,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}
-										onCancel={() => { setShowModal(false); handleModalReset(); }}
 									/>
 							}
 
@@ -635,7 +635,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										disabled={!wallet || (ayeVoteValue.lte(ZERO_BN) || nayVoteValue.lte(ZERO_BN)) || (showMultisig && !multisig) || isBalanceErr}
 										conviction={conviction} setConviction={setConviction}
 										convictionOpts={convictionOpts}
-										onCancel={() => { setShowModal(false); handleModalReset(); }}
 									/>
 							}
 
@@ -654,7 +653,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}
-										onCancel={() => { setShowModal(false); handleModalReset(); }}
 									/>
 							}
 

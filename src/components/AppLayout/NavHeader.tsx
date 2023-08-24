@@ -212,7 +212,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 
 							:<AuthDropdown>
 								{
-									!web3signup ?	<div className={'flex items-center justify-between gap-x-2 bg-[#f6f7f9] rounded-3xl px-2'} style={{ border:'1px solid #d7dce3' }}>
+									!web3signup ?	<div className={'flex items-center justify-between gap-x-2 bg-[#f6f7f9] rounded-3xl px-3'} style={{ border:'1px solid #d7dce3' }}>
 										<Mail/>
 										<div className='flex items-center justify-between gap-x-1'>
 											<span className='truncate w-[85%] normal-case'>{username || ''}</span>

@@ -291,9 +291,7 @@ const Address = ({ address, className, displayInline, disableIdenticon, extensio
 					</span>
 				</p>: null
 			}
-			{/* <div className='flex justify-center items-center'><svg xmlns="http://www.w3.org/2000/svg" width="0" height="25" viewBox="0 0 20 21" fill="none">
-				<path d="M6.76693 8.2418L10.0003 11.4751L13.2336 8.2418C13.5586 7.9168 14.0836 7.9168 14.4086 8.2418C14.7336 8.5668 14.7336 9.0918 14.4086 9.4168L10.5836 13.2418C10.2586 13.5668 9.73359 13.5668 9.40859 13.2418L5.58359 9.4168C5.25859 9.0918 5.25859 8.5668 5.58359 8.2418C5.90859 7.92513 6.44193 7.9168 6.76693 8.2418Z" fill="#485F7D"/>
-			</svg></div> */}
+
 		</div>
 	);
 };
@@ -307,16 +305,12 @@ export default styled(Address)`
 		display: inline-block;
 		color: nav_blue !important;
 	}
-
-	.identicon {
+.identicon {
 		margin-right: 0.25rem;
 		
 	}
-	.identicon svg {
-		width:20px;
-		font-size:15px;
-		
-	}
+	
+	
 
 	.identityName {
 		filter: grayscale(100%);

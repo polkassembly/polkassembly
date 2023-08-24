@@ -118,7 +118,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	}, [api, apiReady, network]);
 
 	const periodStartAt = (period: string, periodPercent: number) => {
-		const startTime = Math.round((parseInt(period) * periodPercent) / 100);
+		let startTime = Math.round((parseInt(period) * periodPercent) / 100);
+		if(startTime < 0){
+			startTime = 0;
+		}
 		return startTime;
 	};
 
@@ -131,9 +134,11 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
 							<h3 className='m-0 mr-[69px] text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
-							<Button>1</Button>
-							<p className="my-0 -mx-[40px]">of</p>
-							<Button>3</Button>
+							<div className="flex w-[100px] gap-1">
+								<Button className="bg-pink_primary text-white">1</Button>
+								<p className="my-1">of</p>
+								<Button>3</Button>
+							</div>
 						</div>
 						<div className='mt-[20px]'>
 							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={prepare.periodPercent} strokeColor='#E5007A'  trailColor='#FEF2F8' size="small" />
@@ -152,9 +157,11 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
 							<h3 className='m-0 mr-[69px] text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
-							<Button>2</Button>
-							<p className="my-0 -mx-[40px]">of</p>
-							<Button>3</Button>
+							<div className="flex w-[100px] gap-1">
+								<Button className="bg-pink_primary text-white">2</Button>
+								<p className="my-1">of</p>
+								<Button>3</Button>
+							</div>
 						</div>
 						<div className='mt-[30px]'>
 							<Progress className='m-0 p-0 flex items-center rounded-lg' showInfo={false} percent={decision.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
@@ -183,9 +190,11 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								? <GovSidebarCard>
 									<div className='flex items-center justify-between'>
 										<h3 className='m-0 mr-[69px] text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
-										<Button className="bg-pink_primary text-white">3</Button>
-										<p className="my-0 -mx-[40px]">of</p>
-										<Button>3</Button>
+										<div className="flex w-[100px] gap-1">
+											<Button className="bg-pink_primary text-white">3</Button>
+											<p className="my-1">of</p>
+											<Button>3</Button>
+										</div>
 									</div>
 									<div className='mt-[20px]'>
 										<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={minEnactment.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />

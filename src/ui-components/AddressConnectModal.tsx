@@ -541,13 +541,8 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 												onBalanceChange={handleOnBalanceChange}
 												className='text-lightBlue text-sm mt-4'
 											/> : !wallet && Object.keys(availableWallets || {}).length !== 0 ?  <Alert type='info' showIcon message='Please select a wallet.' />: null}
-								</Form>}
-				{linkAddressNeeded && !loading && accounts.length > 0 && <>
-					<Alert showIcon type='info' message={<span className='text-bodyBlue'>
-          Link Address to your Polkassembly account to proceed with proposal creation
-					</span>}
-					className='mt-4 text-sm text-bodyBlue rounded-md'/>
-				</>}
+								</Form>
+				}
 			</div>
 		</Spin>
 	</Modal>;

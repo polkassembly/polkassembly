@@ -447,6 +447,30 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 
 								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
 								const currentSupport = currentSupportData[currentSupportData.length - 1];
+
+								const currentApprovalDataLength = currentApprovalData.length;
+								const lastCurrentApproval = currentApprovalData[currentApprovalDataLength - 1];
+								for (let i = currentApprovalDataLength; i < approvalData.length; i++) {
+									const approval = approvalData[i];
+									if (lastCurrentApproval.x < approval.x && dayjs().diff(proposalCreatedAt.add(approval.x, 'minute')) > 0) {
+										currentApprovalData.push({
+											...lastCurrentApproval,
+											x: approval.x
+										});
+									}
+								}
+								const currentSupportDataLength = currentSupportData.length;
+								const lastCurrentSupport = currentSupportData[currentSupportDataLength - 1];
+								for (let i = currentSupportDataLength; i < supportData.length; i++) {
+									const support = supportData[i];
+									if (lastCurrentSupport.x < support.x && dayjs().diff(proposalCreatedAt.add(support.x, 'minute')) > 0) {
+										currentSupportData.push({
+											...lastCurrentSupport,
+											x: support.x
+										});
+									}
+								}
+
 								let newAPI: ApiPromise = api;
 								let approval: BigNumber | null = null;
 								let support: BigNumber | null = null;

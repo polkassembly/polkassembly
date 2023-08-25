@@ -3,14 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isCustomOpenGovStatusValid, isProposalTypeValid, isSortByValid, isTrackNoValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
-import { GET_ALLIANCE_ANNOUNCEMENTS, GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES, GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES } from '~src/queries';
+import { GET_ALLIANCE_ANNOUNCEMENTS, GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES, GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES, GET_PROPOSALS_LISTING_FOR_POLYMESH, GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -40,7 +39,6 @@ export const fetchLatestSubsquare = async (network: string) => {
 		return [];
 	}
 };
-
 export interface IPostListing {
 	user_id?: string | number;
 	comments_count: number;
@@ -60,15 +58,15 @@ export interface IPostListing {
 	parent_bounty_index?: number
 	method?: string;
 	status?: string;
-  status_history:{
+	status_history:{
     block:number;
     status: string;
-  }[];
+}[];
 	title: string;
-  tally?: {
+	tally?: {
     ayes: string;
     nays: string;
-  };
+};
 	topic: {
 		id: number;
 		name: string;
@@ -227,10 +225,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				offset: numListingLimit * (numPage - 1),
 				type_eq: subsquidProposalType
 			};
+			let query =  GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
+			if(network === 'polymesh'){
+				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
+			}
 
 			const subsquidRes = await fetchSubsquid({
 				network,
-				query: GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
+				query,
 				variables: postsVariables
 			});
 
@@ -422,7 +424,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			else {
 				query = GET_PROPOSALS_LISTING_BY_TYPE;
 			}
+			if(network === AllNetworks.POLYMESH){
 
+				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
+			}
 			let subsquidRes: any = {};
 			try {
 				subsquidRes = await fetchSubsquid({
@@ -632,7 +637,6 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					}else{
 						proposalTimeline= getTimeline(group?.proposals || [], isStatus) || [];
 					}
-
 					let otherPostProposer = '';
 					const method = splitterAndCapitalizer(subsquidPost?.callData?.method || '', '_');
 					if (group?.proposals?.length) {

@@ -18,7 +18,7 @@ import styled from 'styled-components';
 import { MessageType } from '~src/auth/types';
 import { useApiContext, useCommentDataContext, usePostDataContext, useUserDetailsContext } from '~src/context';
 import { NetworkContext } from '~src/context/NetworkContext';
-import { ProposalType } from '~src/global/proposalType';
+import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import CommentReactionBar from '../ActionsBar/Reactionbar/CommentReactionBar';
@@ -61,10 +61,10 @@ const replyKey = (commentId: string) => `reply:${commentId}:${global.window.loca
 
 const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment ,userName, is_custom_username, proposer } = props;
-	const { comments, setComments } = useCommentDataContext();
+	const { comments, setComments, setTimelines } = useCommentDataContext();
 
 	const { network } = useContext(NetworkContext);
-	const { id, username, picture } = useUserDetailsContext();
+	const { id, username, picture, loginAddress } = useUserDetailsContext();
 	const { api, apiReady } = useApiContext();
 
 	const [replyForm] = Form.useForm();
@@ -89,7 +89,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editCommentKey(commentId)) || '';
 		form.setFieldValue('content', localContent || content || ''); //initialValues is not working
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
@@ -239,6 +239,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 											content: replyContent,
 											created_at: new Date(),
 											id: data.id,
+											proposer: loginAddress,
 											updated_at: new Date(),
 											user_id: id,
 											user_profile_img: picture || '',
@@ -301,13 +302,26 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		if(data) {
 			const keys = Object.keys(comments);
 			setComments((prev) => {
-				const comments:any = Object.assign({}, prev);
+				const comments: any = Object.assign({}, prev);
 				for(const key of keys ){
 					if (prev?.[key]) {
 						comments[key]  = prev[key].filter((comment) => comment.id !== commentId);
 					}
 				}
 				return comments;
+			});
+			setTimelines((prev) => {
+				return [...prev.map((timeline) => {
+					if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
+						return {
+							...timeline,
+							commentsCount: (timeline.commentsCount > 0? timeline.commentsCount - 1: 0)
+						};
+					}
+					return {
+						...timeline
+					};
+				})];
 			});
 			queueNotification({
 				header: 'Success!',

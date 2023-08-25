@@ -923,7 +923,7 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 12,
 		tokenDecimals: 6,
 		tokenSymbol: tokenSymbol.POLYX,
-		subsquidUrl: '',
+		subsquidUrl: 'https://squid.subsquid.io/polymesh-polkassembly/graphql',
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,

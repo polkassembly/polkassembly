@@ -23,6 +23,8 @@ interface IReportButtonProps {
 	replyId?: string;
 	className?: string;
 	proposalType: ProposalType;
+	isDeleteModal?: boolean;
+	onDelete?: () => void;
 }
 
 const reasons = [
@@ -33,7 +35,7 @@ const reasons = [
 ];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , onDelete } = props;
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
@@ -153,17 +155,26 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 
 		setLoading(false);
 	};
-
+	const handleDelete = async () => {
+		setLoading(true);
+		onDelete && onDelete();
+	};
 	return (
 		<>
 			<Button className={`border-none ${ className } text-pink_primary flex items-center  shadow-none px-1.5 md:px-2`} onClick={() => setShowModal(true)}>
-				<FlagOutlined /><span className='ml-1'>Report</span>
+				<FlagOutlined /><span className='ml-1'>
+					{
+						isDeleteModal ? 'Delete' : 'Report'
+					}
+				</span>
 			</Button>
 
 			<Modal
-				title="Report Post"
+				title={isDeleteModal ? 'Delete' : 'Report'}
 				open={showModal}
-				onOk={handleReport}
+				onOk={
+					isDeleteModal ? handleDelete : handleReport
+				}
 				confirmLoading={loading}
 				onCancel={() => setShowModal(false)}
 				zIndex={1067}
@@ -171,15 +182,21 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 					<Button key="back" disabled={loading} onClick={() => setShowModal(false)}>
             Cancel
 					</Button>,
-					<Button htmlType='submit' key="submit" className='bg-pink_primary hover:bg-pink_secondary text-white' disabled={loading} onClick={handleReport}>
-            Report
+					<Button htmlType='submit' key="submit" className='bg-pink_primary hover:bg-pink_secondary text-white' disabled={loading} onClick={
+						isDeleteModal ? handleDelete : handleReport
+					}>
+						{
+							isDeleteModal ? 'Delete' : 'Report'
+						}
 					</Button>
 				]}
 			>
 				<Form
 					form={form}
 					name="report-post-form"
-					onFinish={handleReport}
+					onFinish={
+						isDeleteModal ? handleDelete : handleReport
+					}
 					layout="vertical"
 					disabled={formDisabled}
 					validateMessages={

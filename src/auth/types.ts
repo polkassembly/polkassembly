@@ -134,12 +134,12 @@ export interface User {
 	primary_network?: string;
 	notification_preferences?: IUserNotificationSettings;
 	two_factor_auth?: IUser2FADetails;
-	roles: Role;
+	roles?: Role[];
 }
 
-export  interface Roles {
+export interface Roles {
 	allowedRoles: Role[];
-	currentRole: Role.PROPOSAL_BOT | Role.USER | Role.EVENT_BOT
+	currentRole: Role.PROPOSAL_BOT | Role.USER | Role.EVENT_BOT | Role.MODERATOR;
 }
 
 export interface JWTPayloadType {

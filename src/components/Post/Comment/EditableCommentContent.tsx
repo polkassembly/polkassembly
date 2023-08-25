@@ -64,7 +64,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { comments, setComments, setTimelines } = useCommentDataContext();
 
 	const { network } = useContext(NetworkContext);
-	const { id, username, picture } = useUserDetailsContext();
+	const { id, username, picture , allowed_roles } = useUserDetailsContext();
 	const { api, apiReady } = useApiContext();
 
 	const [replyForm] = Form.useForm();
@@ -85,7 +85,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [isReplying, setIsReplying] = useState(false);
 
 	const [onChainUsername, setOnChainUsername] = useState<string>('');
-
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editCommentKey(commentId)) || '';
 		form.setFieldValue('content', localContent || content || ''); //initialValues is not working
@@ -345,10 +344,16 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			key:3,
 			label: <ReportButton proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}  type='comment' commentId={commentId} postId={postIndex}/>
 		}:null,
-		id===userId ? {
+		id===userId && !allowed_roles?.includes('moderator') ? {
 			key:4,
 			label:<div className={`flex items-center shadow-none text-[10px] text-slate-400 leading-4 ml-[-1.8px] ${poppins.variable} ${poppins.className} border-none` } onClick={() => {deleteComment();}}><DeleteIcon className='mr-1' />Delete</div>
-		}:null
+		}:
+			id===userId || allowed_roles?.includes('moderator') ?
+				{
+					key: 4,
+					label: <ReportButton isDeleteModal={true} proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `} type='comment' onDelete={deleteComment} commentId={commentId} postId={postIndex}/>
+				}
+				:null
 	];
 
 	const handleSentimentText=() => {

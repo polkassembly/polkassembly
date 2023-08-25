@@ -106,7 +106,6 @@ class AuthService {
 			id: newUserId,
 			password: password,
 			profile: PROFILE_DETAILS_DEFAULTS,
-			roles: Role.MODERATOR,
 			salt: salt,
 			username: username,
 			web3_signup: web3signup
@@ -847,7 +846,7 @@ class AuthService {
 		return { email: user.email, updatedToken: await this.getSignedToken(user) };
 	}
 
-	public async getSignedToken ({ email, email_verified, id, username, web3_signup, two_factor_auth, login_address, login_wallet }: User & { login_address?: string; login_wallet?: Wallet; }): Promise<string> {
+	public async getSignedToken ({ email, email_verified, id, username, web3_signup, two_factor_auth, login_address, login_wallet , roles }: User & { login_address?: string; login_wallet?: Wallet; }): Promise<string> {
 		if (!privateKey) {
 			const key = process.env.NODE_ENV === 'test' ? process.env.JWT_PRIVATE_KEY_TEST : process.env.JWT_PRIVATE_KEY?.replace(/\\n/gm, '\n');
 			throw apiErrorWithStatusCode(`${key} not set. Aborting.`, 403);
@@ -860,7 +859,6 @@ class AuthService {
 
 		let default_address = null;
 		let addresses: string[] = [];
-
 		try {
 			const user_addresses = await getAddressesFromUserId(id);
 			addresses = user_addresses.map((a) => a.address);
@@ -868,10 +866,8 @@ class AuthService {
 		} catch {
 			console.log('Error getting addresses for user', id);
 		}
-
-		const allowedRoles: Role[] = [Role.USER];
+		const allowedRoles: Role[] = [Role.USER].concat(roles || []);
 		let currentRole: Role = Role.USER;
-
 		// if our user is the proposal bot, give additional role.
 		if (id === Number(process.env.PROPOSAL_BOT_USER_ID)) {
 			allowedRoles.push(Role.PROPOSAL_BOT);

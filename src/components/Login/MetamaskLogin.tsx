@@ -27,6 +27,7 @@ import TalismanIcon from '~assets/wallet/talisman-icon.svg';
 import MetamaskIcon from '~assets/wallet/metamask-icon.svg';
 import PolyWalletIcon from '~assets/wallet/poly-wallet.svg';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
+import WalletConnectIcon from '~assets/wallet/walletConnect-icon.svg';
 import { ChallengeMessage, IAuthResponse, TokenType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -72,6 +73,8 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 		return <MetamaskIcon className={`h-8 w-8 ${className}`} />;
 	case Wallet.POLKASAFE:
 		return <PolkasafeIcon className={`h-8 w-6 ${className}`} />;
+	case Wallet.WALLETCONNECT:
+		return <WalletConnectIcon className={`h-8 w-8 ${className}`} />;
 	default:
 		return null;
 	}

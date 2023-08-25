@@ -54,9 +54,11 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />
 						: null
 				}
-
-				<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.WALLETCONNECT)} name="Wallet Connect" icon={<WalletIcon which={Wallet.WALLETCONNECT} className='h-6 w-6' />} />
-
+				{
+					['moonbase', 'moonbeam', 'moonriver'].includes(network)?
+						<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.WALLETCONNECT)} name="Wallet Connect" icon={<WalletIcon which={Wallet.WALLETCONNECT} className='h-6 w-6' />} />
+						: null
+				}
 				{
 					(window as any).walletExtension?.isNovaWallet &&
 					<WalletButton disabled={disabled} onClick={(event) => handleWalletClick((event as any), Wallet.NOVAWALLET)} name="Nova Wallet" icon={<WalletIcon which={Wallet.NOVAWALLET} className='h-6 w-6' />} />

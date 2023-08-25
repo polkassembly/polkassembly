@@ -38,7 +38,7 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply, proposer, is_custom_username }: Props) => {
-	const { id, username, picture, loginAddress: userLoginAddress } = useContext(UserDetailsContext);
+	const { id, username, picture, loginAddress } = useContext(UserDetailsContext);
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const { comments, setComments } = useCommentDataContext();
@@ -53,7 +53,6 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	const [onChainUsername, setOnChainUsername] = useState<string>('');
 
 	const toggleEdit = () => setIsEditing(!isEditing);
-	const [loginAddress, setLoginAddress] = useState<string>('');
 
 	const { postData: {
 		postType, postIndex
@@ -62,9 +61,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editReplyKey(replyId)) || '';
 		form.setFieldValue('content', localContent || content || '');
-		const loginAddress = global.window.localStorage.getItem('loginAddress');
-		setLoginAddress(loginAddress || '');
-	}, [content, form, replyId, userLoginAddress]);
+	}, [content, form, replyId]);
 
 	useEffect(() => {
 		(async () => {

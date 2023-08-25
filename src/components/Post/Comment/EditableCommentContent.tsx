@@ -64,7 +64,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { comments, setComments, setTimelines } = useCommentDataContext();
 
 	const { network } = useContext(NetworkContext);
-	const { id, username, picture, loginAddress: userLoginAddress } = useUserDetailsContext();
+	const { id, username, picture, loginAddress } = useUserDetailsContext();
 	const { api, apiReady } = useApiContext();
 
 	const [replyForm] = Form.useForm();
@@ -85,15 +85,12 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [isReplying, setIsReplying] = useState(false);
 
 	const [onChainUsername, setOnChainUsername] = useState<string>('');
-	const [loginAddress, setLoginAddress] = useState<string>('');
 
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editCommentKey(commentId)) || '';
 		form.setFieldValue('content', localContent || content || ''); //initialValues is not working
-		const loginAddress = global.window.localStorage.getItem('loginAddress');
-		setLoginAddress(loginAddress || '');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userLoginAddress]);
+	}, []);
 
 	useEffect(() => {
 		(async () => {

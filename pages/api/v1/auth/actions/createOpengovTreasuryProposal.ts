@@ -43,6 +43,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 
 	const newPost: Post = {
 		content,
+		createdOnPolkassembly: true,
 		created_at: current_datetime,
 		id: postId,
 		last_comment_at: current_datetime,

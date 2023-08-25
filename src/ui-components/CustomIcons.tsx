@@ -97,6 +97,8 @@ import BigTipperSVG from '~assets/delegation-tracks/big-tipper.svg';
 import SmallSpenderSVG from '~assets/delegation-tracks/small-spender.svg';
 import DelegationSVG from '~assets/sidebar/delegation-icon.svg';
 import Dislike from '~assets/icons/dislike.svg';
+import UpgradeCommitteePIPsSVG from '~assets/icons/upgrade-community-pips.svg';
+import CommunityPIPsSVG from '~assets/icons/community-pips.svg';
 import CopySVG from '~assets/icons/content-copy.svg';
 import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
 
@@ -436,4 +438,10 @@ export const CopyIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 export const CreatePropoosalIcon  = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={CreatePropoosalSVG} {...props} />
+);
+export const UpgradeCommitteePIPsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={UpgradeCommitteePIPsSVG} {...props} />
+);
+export const CommunityPIPsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={CommunityPIPsSVG} {...props} />
 );

@@ -273,6 +273,8 @@ const Post: FC<IPostProps> = (props) => {
 					tally={post?.tally}
 					trackName={trackName}
 					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
+					pipsVoters={post?.pips_voters || []}
+					hash={hash}
 				/>
 				{/* decision deposite placed. */}
 

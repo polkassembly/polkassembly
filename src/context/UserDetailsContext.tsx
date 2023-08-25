@@ -78,7 +78,7 @@ try {
 		initialUserDetailsContext.allowed_roles = roles.allowedRoles;
 		initialUserDetailsContext.web3signup = web3signup || false;
 		initialUserDetailsContext.is2FAEnabled = is2FAEnabled;
-		initialUserDetailsContext.loginAddress = login_address || '';
+		initialUserDetailsContext.loginAddress = login_address || window?.localStorage?.getItem('loginAddress') || '';
 		initialUserDetailsContext.loginWallet = login_wallet || null;
 	}
 } catch {

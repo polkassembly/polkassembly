@@ -19,7 +19,7 @@ export const getCommentsWithId = async ({ postId, network, postType, pageSize, c
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(postId);
 		const sortingField = 'created_at';
-		const commentsSnapshot = await postRef.collection('comments').orderBy(sortingField, 'asc').get();
+		const commentsSnapshot = await postRef.collection('comments').orderBy(sortingField, 'desc').get();
 		const comments = await getComments(commentsSnapshot, postRef, network, postType, postId);
 		const count = (await postRef.collection('comments').get()).size;
 

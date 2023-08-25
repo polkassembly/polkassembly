@@ -38,7 +38,7 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply, proposer, is_custom_username }: Props) => {
-	const { id , username ,picture } = useContext(UserDetailsContext);
+	const { id, username, picture, loginAddress } = useContext(UserDetailsContext);
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const { comments, setComments } = useCommentDataContext();
@@ -60,7 +60,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editReplyKey(replyId)) || '';
-		form.setFieldValue('content', localContent || content || ''); //
+		form.setFieldValue('content', localContent || content || '');
 	}, [content, form, replyId]);
 
 	useEffect(() => {
@@ -206,6 +206,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 											content: replyContent,
 											created_at: new Date(),
 											id:data.id,
+											proposer: loginAddress,
 											updated_at: new Date(),
 											user_id: id,
 											user_profile_img: picture || '',

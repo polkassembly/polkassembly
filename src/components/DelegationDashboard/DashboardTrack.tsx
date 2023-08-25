@@ -248,7 +248,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 		{status.length > 0 ? <div>
 			<ActiveProposals posts={posts} trackDetails={trackDetails} status={status} delegatedTo = {status.includes(ETrackDelegationStatus.Delegated) ?  rowData.filter((row ) => row.delegatedTo !== address )[0].delegatedTo : null} />
-		</div> : <Skeleton className='mt-6'/>}
+		</div> : <Skeleton className='mt-6 h-[200px]'/>}
 
 		{ status.length > 0  ? <div>
 			<Delegate
@@ -285,6 +285,4 @@ export default styled(DashboardTrackListing)`
   font-weight: 600px;
   line-height: 21px;
 }
-
-
 `;

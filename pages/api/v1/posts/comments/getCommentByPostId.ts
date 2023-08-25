@@ -13,27 +13,87 @@ import { MessageType } from '~src/auth/types';
 import { IComment } from '~src/components/Post/Comment/Comment';
 
 export interface ITimelineComments {
-	comments: Array<IComment>;
-	count: number;
+  comments: Array<IComment>;
+  count: number;
 }
 
-export const getPostComments = async ({ postId, network, postType, pageSize, lastDocumentId }: {
-	postId: string, network: string, postType: ProposalType, pageSize: number,
-	lastDocumentId: string
+export const getPostComments = async ({
+	postId,
+	network,
+	postType,
+	pageSize,
+	lastDocumentId,
+	sentiment
+}: {
+  postId: string;
+  network: string;
+  postType: ProposalType;
+  pageSize: number;
+  lastDocumentId: string;
+  sentiment: number;
 }) => {
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(postId);
 		const sortingField = 'created_at';
 		let commentsSnapshot;
 		if (lastDocumentId) {
-			const lastDocument = await postRef.collection('comments').doc(lastDocumentId).get();
-			commentsSnapshot = await postRef.collection('comments').orderBy(sortingField, 'asc').startAfter(lastDocument).limit(pageSize).get();
+			if (sentiment) {
+				const lastDocument = await postRef
+					.collection('comments')
+					.doc(lastDocumentId)
+					.get();
+				commentsSnapshot = await postRef
+					.collection('comments')
+					.where('sentiment', '==', Number(sentiment))
+					.orderBy(sortingField, 'desc')
+					.startAfter(lastDocument)
+					.limit(pageSize)
+					.get();
+			} else {
+				const lastDocument = await postRef
+					.collection('comments')
+					.doc(lastDocumentId)
+					.get();
+				commentsSnapshot = await postRef
+					.collection('comments')
+					.orderBy(sortingField, 'desc')
+					.startAfter(lastDocument)
+					.limit(pageSize)
+					.get();
+			}
+		} else {
+			if (sentiment) {
+				commentsSnapshot = await postRef
+					.collection('comments')
+					.where('sentiment', '==', Number(sentiment))
+					.orderBy(sortingField, 'desc')
+					.limit(pageSize)
+					.get();
+			} else {
+				commentsSnapshot = await postRef
+					.collection('comments')
+					.orderBy(sortingField, 'desc')
+					.limit(pageSize)
+					.get();
+			}
 		}
-		else {
-			commentsSnapshot = await postRef.collection('comments').orderBy(sortingField, 'asc').limit(pageSize).get();
-		}
-		const comments = await getComments(commentsSnapshot, postRef, network, postType, postId) as Array<IComment>;
-		const count = (await postRef.collection('comments').get()).size;
+		const comments = (await getComments(
+			commentsSnapshot,
+			postRef,
+			network,
+			postType,
+			postId
+		)) as Array<IComment>;
+
+		const count = sentiment
+			? (
+				await postRef
+					.collection('comments')
+					.where('sentiment', '==', Number(sentiment))
+					.count()
+					.get()
+			).data().count
+			: (await postRef.collection('comments').count().get()).data().count;
 		return {
 			data: { comments, count },
 			error: null,
@@ -48,18 +108,29 @@ export const getPostComments = async ({ postId, network, postType, pageSize, las
 	}
 };
 
-const handler: NextApiHandler<ITimelineComments | { error: MessageType | string }> = async (req, res) => {
-	const { postId, postType, lastDocumentId, pageSize } = req.body;
-	if(!postId || !postType) return res.status(400).json({ error: 'Missing parameters in request body' });
+const handler: NextApiHandler<
+  ITimelineComments | {error: MessageType | string}
+> = async (req, res) => {
+	const { postId, postType, lastDocumentId, pageSize, sentiment } = req.body;
+	if (!postId || !postType)
+		return res.status(400).json({ error: 'Missing parameters in request body' });
+
+	if (
+		(sentiment && isNaN(sentiment)) ||
+    (Number(sentiment) > 5 && Number(sentiment) < 0)
+	)
+		return res.status(400).json({ error: messages.INVALID_REQUEST_BODY });
 
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });
+	if (!network || !isValidNetwork(network))
+		res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });
 	const { data, error, status } = await getPostComments({
 		lastDocumentId: lastDocumentId,
 		network,
 		pageSize: Number(pageSize),
 		postId: postId.toString(),
-		postType
+		postType,
+		sentiment
 	});
 
 	if (error || !data) {

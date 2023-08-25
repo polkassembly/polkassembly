@@ -33,6 +33,14 @@ const getLabel = (key: 'all' | ProposalType): string => {
 		return 'Proposals';
 	} else if (key === ProposalType.TREASURY_PROPOSALS) {
 		return 'Treasury Proposals';
+	}else if(key === ProposalType.TECHNICAL_PIPS){
+		return 'Technical';
+	}
+	else if(key === ProposalType.UPGRADE_PIPS){
+		return 'Upgrade';
+	}
+	else if(key === ProposalType.COMMUNITY_PIPS){
+		return 'Community';
 	}
 	return capitalize(key);
 };

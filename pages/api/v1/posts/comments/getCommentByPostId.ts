@@ -45,7 +45,7 @@ export const getPostComments = async ({
 				commentsSnapshot = await postRef
 					.collection('comments')
 					.where('sentiment', '==', Number(sentiment))
-					.orderBy(sortingField, 'asc')
+					.orderBy(sortingField, 'desc')
 					.startAfter(lastDocument)
 					.limit(pageSize)
 					.get();
@@ -56,7 +56,7 @@ export const getPostComments = async ({
 					.get();
 				commentsSnapshot = await postRef
 					.collection('comments')
-					.orderBy(sortingField, 'asc')
+					.orderBy(sortingField, 'desc')
 					.startAfter(lastDocument)
 					.limit(pageSize)
 					.get();
@@ -66,13 +66,13 @@ export const getPostComments = async ({
 				commentsSnapshot = await postRef
 					.collection('comments')
 					.where('sentiment', '==', Number(sentiment))
-					.orderBy(sortingField, 'asc')
+					.orderBy(sortingField, 'desc')
 					.limit(pageSize)
 					.get();
 			} else {
 				commentsSnapshot = await postRef
 					.collection('comments')
-					.orderBy(sortingField, 'asc')
+					.orderBy(sortingField, 'desc')
 					.limit(pageSize)
 					.get();
 			}

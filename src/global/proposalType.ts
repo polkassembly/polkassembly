@@ -89,6 +89,17 @@ export function getSubsquidProposalType(proposalType: Exclude<ProposalType, Prop
 		return 'UpgradeCommittee';
 	}
 }
+
+export function getSubsquidLikeProposalType(proposalType: ProposalType): string {
+	if (proposalType === ProposalType.DISCUSSIONS) {
+		return 'Discussions';
+	} else if (proposalType === ProposalType.GRANTS) {
+		return 'Grants';
+	}
+	const postType = getSubsquidProposalType(proposalType);
+	return postType || '';
+}
+
 export function getFirestoreProposalType(proposalType: string): string {
 	switch(proposalType) {
 	case 'DemocracyProposal':

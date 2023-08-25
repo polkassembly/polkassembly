@@ -239,6 +239,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 											content: replyContent,
 											created_at: new Date(),
 											id: data.id,
+											proposer,
 											updated_at: new Date(),
 											user_id: id,
 											user_profile_img: picture || '',

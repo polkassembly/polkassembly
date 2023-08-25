@@ -274,8 +274,8 @@ const Post: FC<IPostProps> = (props) => {
 						tally={post?.tally}
 						trackName={trackName}
 						className={`${!isOffchainPost }`}
-            pipsVoters={post?.pips_voters || []}
-					  hash={hash}
+						pipsVoters={post?.pips_voters || []}
+						hash={hash}
 					/>
 				</StickyBox>
 				{/* decision deposite placed. */}

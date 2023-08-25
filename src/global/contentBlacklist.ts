@@ -4,7 +4,9 @@
 
 const contentBlacklist: string[] = [
 	'emergenceresearch',
-	'emergenresearch'
+	'emergenresearch',
+	'reportsanddata',
+	'scamfighter'
 ];
 
 export default contentBlacklist;

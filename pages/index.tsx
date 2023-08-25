@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import 'dayjs-init';
-
 import { Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
@@ -69,7 +68,7 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		})
 	};
 
-	if(chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES) {
+	if(chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && network !== AllNetworks.POLYMESH) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
@@ -106,6 +105,27 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		fetches = { ...fetches, ...onChainFetches };
 	}
 
+	if(chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH){
+		const onChainFetches = {
+			community_pips: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.COMMUNITY_PIPS
+			}),
+			technical_pips: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.TECHNICAL_PIPS
+			}),
+			upgrade_pips: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.UPGRADE_PIPS
+			})
+		};
+
+		fetches = { ...fetches, ...onChainFetches };
+	}
 	if (isGrantsSupported(network)) {
 		(fetches as any)['grants'] = getLatestActivityOffChainPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
@@ -151,7 +171,6 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-
 	return (
 		<>
 			{chainProperties[network]?.gTag ? <><Script

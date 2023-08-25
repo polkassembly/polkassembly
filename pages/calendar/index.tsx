@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-
 import { Checkbox, MenuProps, Skeleton, Spin } from 'antd';
 import {  Badge, Button, Col, Divider, Dropdown, Row, Space } from 'antd';
 import { dayjs } from 'dayjs-init';
@@ -96,7 +95,10 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 	}, []);
 
 	useEffect(() => {
-		if(!api || !apiReady) return;
+		if(!api || !apiReady || ['polymesh'].includes(network)){
+			setCategoriesLoading(false);
+			return;
+		}
 
 		// TODO: use Promise.allSettled instead
 		(async () => {

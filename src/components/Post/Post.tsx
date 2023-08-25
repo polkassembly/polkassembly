@@ -273,6 +273,8 @@ const Post: FC<IPostProps> = (props) => {
 					tally={post?.tally}
 					trackName={trackName}
 					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
+					pipsVoters={post?.pips_voters || []}
+					hash={hash}
 				/>
 				{/* decision deposite placed. */}
 
@@ -478,7 +480,7 @@ const Post: FC<IPostProps> = (props) => {
 
 							{!isEditing && <>
 								<PostHeading
-									className='mb-8'
+									className='mb-5'
 								/>
 								<Tabs
 									type="card"

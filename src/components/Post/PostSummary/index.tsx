@@ -28,7 +28,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 	const { postData: { summary } } = usePostDataContext();
 	const [open, setOpen] = useState(false);
 	return (
-		<section className={classNames(className, 'flex items-center')}>
+		<section className={classNames(className, 'flex justify-center items-center')}>
 			<Divider className='hidden md:block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 			<button
 				onClick={() => setOpen(true)}
@@ -44,7 +44,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				</p>
 			</button>
 			<Modal
-				className={classNames(className, 'pl-0 pb-0 ml-0 md:ml-auto h-[calc(100vh-250px)] md:min-w-[604px]')}
+				className={classNames(className, 'pl-0 pb-0 ml-0 ml-4 md:ml-auto h-[calc(100vh-250px)] md:min-w-[604px]')}
 				open={open}
 				onCancel={() => setOpen(false)}
 				closable={false}

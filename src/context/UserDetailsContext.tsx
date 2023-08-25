@@ -9,7 +9,7 @@ import { decodeToken } from 'react-jwt';
 import { JWTPayloadType } from '~src/auth/types';
 
 import { getLocalStorageToken } from '../services/auth.service';
-import { UserDetailsContextType } from '../types';
+import { UserDetailsContextType, Wallet } from '../types';
 
 const initialUserDetailsContext : UserDetailsContextType = {
 	addresses: [],
@@ -78,8 +78,8 @@ try {
 		initialUserDetailsContext.allowed_roles = roles.allowedRoles;
 		initialUserDetailsContext.web3signup = web3signup || false;
 		initialUserDetailsContext.is2FAEnabled = is2FAEnabled;
-		initialUserDetailsContext.loginAddress = login_address || '';
-		initialUserDetailsContext.loginWallet = login_wallet || null;
+		initialUserDetailsContext.loginAddress = login_address || window?.localStorage?.getItem('loginAddress') || '';
+		initialUserDetailsContext.loginWallet = login_wallet || (window?.localStorage?.getItem('loginWallet') as Wallet || null);
 	}
 } catch {
 	//do nothing, the user will be authenticated as soon as there's a new call to the server.

@@ -649,9 +649,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						</span>
 					</Tooltip>
 
-					<Tooltip placement="bottom"  title="Vote Date"  color={'#E5007A'} className=' max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
+					<Tooltip placement="bottom"  title="Vote Date" color={'#E5007A'} className='max-[345px]:w-auto'><span className=''><ClockCircleOutlined className='mr-1' />{dayjs(createdAt, 'YYYY-MM-DD').format('Do MMM\'YY')}</span></Tooltip>
 
-					<Tooltip placement="bottom"  title="Amount"  color={'#E5007A'}className=' max-[345px]:w-auto'>
+					<Tooltip placement="bottom"  title="Amount" color={'#E5007A'} className='max-[345px]:w-auto'>
 						<span>
 							<MoneyIcon className='mr-1'/>
 							{formatedBalance(balance, unit)}{` ${unit}`}

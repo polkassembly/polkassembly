@@ -356,6 +356,8 @@ export interface Post {
   history?: IPostHistory[];
   subscribers?: number[];
   summary?: string;
+  createdOnPolkassembly?: boolean,
+
 }
 export interface IPostTag {
   name: string;

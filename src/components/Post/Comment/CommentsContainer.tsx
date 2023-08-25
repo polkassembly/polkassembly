@@ -81,7 +81,7 @@ const COMMENT_SIZE = 50;
 const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
 	const commentResponse:any = {};
 	for(const key in comments){
-		commentResponse[key] = comments[key].sort((a, b) => (dayjs(b.created_at).diff(dayjs(a.created_at))));
+		commentResponse[key] = comments[key].sort((a, b) => (dayjs(a.created_at).diff(dayjs(b.created_at))));
 	}
 	return commentResponse;
 };

@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { ITimelineComments } from 'pages/api/v1/posts/comments/getCommentsByTimeline';
 import { ITimelineData } from '~src/context/PostDataContext';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -11,13 +12,13 @@ export const getAllCommentsByTimeline = async (
 	network: string
 ) => {
 	try {
-		const { data, error } = await nextApiClientFetch<any>('api/v1/posts/comments/getCommentsByTimeline', {
+		const { data, error } = await nextApiClientFetch<ITimelineComments>('api/v1/posts/comments/getCommentsByTimeline', {
 			network,
 			postTimeline
 		});
 
 		if (data) {
-			return data || null;
+			return data;
 		}
 		if (error) {
 			return null;

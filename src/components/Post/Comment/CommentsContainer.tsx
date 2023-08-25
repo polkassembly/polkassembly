@@ -103,6 +103,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const router = useRouter();
 	let allComments = Object.values(comments)?.flat() || [];
 	const allCommentsLength = timelines.reduce((a, b) => a + b.commentsCount, 0);
+
 	if(filterSentiments){
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
 	}
@@ -149,15 +150,17 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [comments]);
 
-	const setTimeline = async () => {
+	const addCommentDataToTimeline = async () => {
 		if(!timeline){
 			setLoading(false);
 			return;
 		}
 		const timelines:ITimeline[] = [];
 		const comments:{[index:string]:IComment[]} ={};
+		let haveComments: number = 0;
 		if (timeline && timeline.length > 0) {
 			timeline.forEach((obj) => {
+				haveComments +=obj.commentsCount;
 				timelines.push({
 					commentsCount: obj.commentsCount,
 					date: dayjs(obj?.created_at),
@@ -170,6 +173,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				comments[`${obj?.index?.toString()}_${obj?.type}`] = [];
 			});
 			setTimelines(timelines);
+		}
+		if(!haveComments){
+			setLoading(false);
+			return;
 		}
 		const commentResponse = await getAllCommentsByTimeline(timeline, network);
 
@@ -207,7 +214,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		if(!timeline || timeline.length == 0){
 			return;
 		}
-		setTimeline();
+		addCommentDataToTimeline();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[timeline]);
 

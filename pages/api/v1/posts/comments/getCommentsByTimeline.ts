@@ -14,7 +14,9 @@ import { IComment } from '~src/components/Post/Comment/Comment';
 import { ITimelineData } from '~src/context/PostDataContext';
 
 export interface ITimelineComments {
-  comments: Array<IComment>;
+  comments: {
+	[index:string]: Array<IComment>
+  };
 }
 
 export const getCommentsByTimeline = async ({
@@ -25,20 +27,20 @@ export const getCommentsByTimeline = async ({
   postTimeline: ITimelineData;
 }) => {
 	try {
-		const comments: any = {};
+		const allTimelineComments:any = {};
 		const commentPromises = postTimeline.map(async (timeline: any) => {
 			const post_index = timeline.type === 'Tip' ? timeline.hash : timeline.index;
 			const type = getFirestoreProposalType(timeline.type) as ProposalType;
 			const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
 			const commentsSnapshot = await postDocRef.collection('comments').get();
-			const comments = await getComments(
+			const timelineComments = await getComments(
 				commentsSnapshot,
 				postDocRef,
 				network,
 				type,
 				post_index
 			);
-			return comments;
+			return timelineComments;
 		});
 
 		const commentPromiseSettledResults = await Promise.allSettled(
@@ -47,17 +49,17 @@ export const getCommentsByTimeline = async ({
 		commentPromiseSettledResults.forEach((result, index) => {
 			if (
 				result &&
-        result.status === 'fulfilled' &&
-        result.value &&
-        Array.isArray(result.value)
+				result.status === 'fulfilled' &&
+				result.value &&
+				Array.isArray(result.value)
 			) {
 				const key = `${postTimeline[index].index}_${postTimeline[index].type}`;
-				comments[key] = result.value;
+				allTimelineComments[key] = result.value;
 			}
 		});
 
 		return {
-			data: { comments },
+			data: { comments: allTimelineComments } as ITimelineComments,
 			error: null,
 			status: 200
 		};
@@ -71,19 +73,25 @@ export const getCommentsByTimeline = async ({
 };
 
 const handler: NextApiHandler<
-  ITimelineComments | {error: MessageType | string}
+  ITimelineComments | MessageType
 > = async (req, res) => {
+
 	const { postTimeline } = req.body;
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network))
-		res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });
+
+	if(!postTimeline){
+		return res.status(400).json({ message: messages.NETWORK_VALIDATION_ERROR });
+	}
+	if (!network || !isValidNetwork(network)){
+		return res.status(400).json({ message: messages.NETWORK_VALIDATION_ERROR });
+	}
 	const { data, error, status } = await getCommentsByTimeline({
 		network,
 		postTimeline
 	});
 
 	if (error || !data) {
-		res.status(status).json({ error: error || messages.API_FETCH_ERROR });
+		res.status(status).json({ message: error || messages.API_FETCH_ERROR });
 	} else {
 		res.status(status).json(data);
 	}

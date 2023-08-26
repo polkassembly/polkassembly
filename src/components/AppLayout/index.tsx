@@ -28,8 +28,8 @@ import GovernanceSwitchButton from './GovernanceSwitchButton';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
-// import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import PaLogo from './PaLogo';
+import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 
 const { Content, Sider } = Layout;
 
@@ -48,51 +48,6 @@ function getSiderMenuItem(
 		type: key === 'tracksHeading' ? 'group' : ''
 	} as MenuItem;
 }
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// const getUserDropDown = (_handleLogout: any, img?: string | null, username?: string): MenuItem => {
-// const dropdownMenuItems: ItemType[] = [
-//{
-//key: 'view profile',
-//label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
-//<UserOutlined />
-//<span>View Profile</span>
-//</Link>
-//},
-//{
-//key: 'settings',
-//label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
-//<SettingOutlined />
-//<span>Settings</span>
-///Link>
-//},
-//{
-//key: 'logout',
-//label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' onClick={handleLogout} href='/'>
-//<LogoutOutlined />
-//<span>Logout</span>
-//</Link>
-//}
-//];
-
-// const AuthDropdown = ({ children }: {children: ReactNode}) => (
-//<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
-//{children}
-//</Dropdown>
-// );
-
-// return getSiderMenuItem(
-//<AuthDropdown>
-//<div className='flex items-center justify-between gap-x-2'>
-//<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
-//</div>
-//</AuthDropdown>,
-//'userMenu',
-// <AuthDropdown>
-//{img ? <Avatar className='-ml-2.5 mr-2' size={40} src={img} /> :
-//<Avatar className='-ml-2.5 mr-2' size={40} icon={<UserOutlined />} />
-//}
-// </AuthDropdown>);
 
 interface Props {
 	Component: NextComponentType<NextPageContext, any, any>;
@@ -183,7 +138,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let items: MenuProps['items'] = [
-		getSiderMenuItem('', '', <div className='svgLogo flex w-full items-center justify-center h-[80px] max-h-[60px]' style={{ borderBottom:'1px solid #D2D8E0' }}> <PaLogo className='' sidedrawer={sidedrawer} /></div>),
+		getSiderMenuItem('', '', <div className='svgLogo flex w-full items-center justify-center h-[80px] max-h-[60px] border-bottom'> <PaLogo className='' sidedrawer={sidedrawer} /></div>),
 		...gov1Items.overviewItems
 	];
 
@@ -277,7 +232,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	let gov2OverviewItems = [
-		getSiderMenuItem('', '', <div className='svgLogo flex w-full items-center justify-center h-[66px] max-h-[60px]' style={{ borderBottom:'1px solid  #D2D8E0' }}> {sidedrawer && <PaLogo className='h-full' sidedrawer={sidedrawer} />}</div>),
+		getSiderMenuItem('', '', <div className='svgLogo flex w-full items-center justify-center h-[66px] max-h-[60px] border-bottom'> {sidedrawer && <PaLogo className='h-full' sidedrawer={sidedrawer} />}</div>),
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='text-white mt-1' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),
@@ -357,26 +312,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		setSidedrawer(false);
 	};
 
-	// const handleLogout = async (username: string) => {
-	//logout(setUserDetailsContextState);
-	//router.replace(router.asPath);
-	//if(!router.query?.username) return;
-	//if(router.query?.username.includes(username)) {
-	//router.replace('/');
-	//}
-	// };
-
-	// const userDropdown = getUserDropDown(handleLogout, picture, username!);
-
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
 	if(isGov2Route) {
 		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	}
 
-	// if(username) {
-	//sidebarItems = [userDropdown, ...sidebarItems];
-	// }
 	return (
 		<Layout className={className}>
 			<NavHeader sidedrawer={sidedrawer} sidedrawerHover={sidedrawerHover} setSidedrawer={setSidedrawer} previousRoute={previousRoute}  />
@@ -386,7 +327,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					collapsible={false}
 					collapsed={true}
 					onMouseOver={() => {
-
 						setSidedrawer(true);
 						setTimeout(() => {
 							setSidedrawerHover(true);
@@ -395,7 +335,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' , zIndex:1001 }}
 					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed'}
 				>
-					<div className='flex w-full items-center justify-center h-[60px] max-h-[60px]' style={{ borderBottom:'1px solid #D2D8E0', borderRight:'1px solid #D2D8E0' }}>
+					<div className='flex w-full items-center justify-center h-[60px] max-h-[60px] border-bottom border-right'>
 
 						<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='' sidedrawer={false}/></Link>
 					</div>
@@ -444,7 +384,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					((['moonbeam', 'moonriver'].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath)))?
 						<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8]'>
 							{/* Dummy Collapsed Sidebar for auto margins */}
-							{/* <OpenGovHeaderBanner network={'moonbeam'} /> */}
+							<OpenGovHeaderBanner network={'moonbeam'} />
 							<div className='flex flex-row'>
 								<div className="hidden lg:block bottom-0 left-0 w-[80px] -z-50"></div>
 								<CustomContent Component={Component} pageProps={pageProps} />
@@ -472,12 +412,14 @@ export default styled(AppLayout)`
 .svgLogo svg{
 	height:60%;
 }
-.logo-border li:nth-child(1){
-	height:59px;
-    margin-left:-40px;
-	padding:0
-}
 
+.border-bottom {
+	border-bottom: 1px solid #D2D8E0 ;
+
+  }
+  .border-right {
+	border-right:1px solid #D2D8E0;
+  }
 
 .logo-border li:nth-child(1):hover{
 	background:transparent !important;

@@ -43,16 +43,7 @@ interface Props {
   previousRoute?: string;
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
-const customStyle = {
-	fontFamily: '__Poppins_ed4ad5',
-	fontSize: '14px',
-	fontWeight: 500,
-	lineHeight: '21px',
-	// eslint-disable-next-line sort-keys
-	fontStyle:'normal',
-	// eslint-disable-next-line sort-keys
-	letterSpacing: '0.175px'
-};
+
 const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedrawerHover } : Props) => {
 	const { network } = useNetworkContext();
 	const currentUser = useUserDetailsContext();
@@ -82,19 +73,22 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 
 	const menudropDownItems: ItemType[]= [
 		{
+			className:'logo-class',
 			key: 'Townhall',
-			label: (<a  href="https://townhallgov.com/" target="_blank" rel="noreferrer" style={customStyle}>
+			label: (
+				<a  href="https://townhallgov.com/" target="_blank" rel="noreferrer" className='custom-link' >
 
-				<span className='flex justify-center items-center '>
-					<TownHall />
-					<div className='ml-2'> TownHall </div>
-				</span>
-			</a>
+					<span className='flex justify-center items-center '>
+						<TownHall />
+						<div className='ml-2 '> TownHall </div>
+					</span>
+				</a>
 			)
 		},
 		{
+			className:'logo-class',
 			key: 'Polkasafe',
-			label: (<a href="https://polkasafe.xyz/" target="_blank" rel="noreferrer" style={customStyle}>
+			label: (<a href="https://polkasafe.xyz/" target="_blank" rel="noreferrer" className='custom-link'>
 				<span className='flex justify-center items-center'>
 					<PolkaSafe/>
 					<span className='ml-2'>Polkasafe</span>
@@ -103,7 +97,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 			)
 		}
 	];
-	// const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
+
 	const dropdownMenuItems: ItemType[] = [
 		{
 			key: 'view profile',
@@ -132,10 +126,13 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 			{children}
 		</Dropdown>
 	);
+
 	const MenuDropdown = ({ children }: {children: ReactNode}) => (
+
 		<Dropdown menu={{ items: menudropDownItems }} trigger={['click']}>
 			{children}
 		</Dropdown>
+
 	);
 	return (
 		<Header className={`${className}  shadow-md ${sidedrawer?'z-1':'z-[1001]'}  sticky top-0 flex items-center  bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
@@ -148,19 +145,15 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 					<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='' sidedrawer={false}/></Link>
 
 					<div className='flex items-center'>
-						{/* <span className='bg-pink_primary h-5 md:h-10 w-[1.5px] ml-[2px] mr-[8px] md:mr-[80px]'></span> */}
-						{/* { <h2 className='m-0 p-0 text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
-							{
-								isGov2Route? 'OpenGov': 'Gov1'
-							}
-						</h2> } */}
+
 					</div>
 					<Select
 						value={selectedGov}
 						style={{
 							width: 'max-content'
+
 						}}
-						className={`drop ${sidedrawerHover?'ml-48':'ml-16'} `}
+						className={`drop ${sidedrawerHover?'ml-48':'ml-16' } `}
 						onChange={(e) => {
 							setSelectedGov(e);
 							if (e === 'open_gov') {
@@ -183,20 +176,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 
 				</div>
 
-				{/* {
-					isOpenGovSupported(network)?
-						<>
-							<GovernanceSwitchButton previousRoute={previousRoute} className='hidden lg:flex' />
-						</> :
-						<div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
-				} */}
 				<div className="flex items-center justify-between gap-x-2 md:gap-x-4">
 					<SearchBar/>
 
 					<Space className='hidden md:flex items-center justify-between gap-x-2 md:gap-x-4'>
-						{/* <Link className='text-navBlue hidden hover:text-pink_primary text-lg items-center' href='/notification-settings'>
-							<BellOutlined />
-						</Link> */}
+
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
 						{
@@ -212,7 +196,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 
 							:<AuthDropdown>
 								{
-									!web3signup ?	<div className={'flex items-center justify-between gap-x-2 bg-[#f6f7f9] rounded-3xl px-3'} style={{ border:'1px solid #d7dce3' }}>
+									!web3signup ?	<div className="flex items-center justify-between gap-x-2 bg-[#f6f7f9] rounded-3xl px-3 border-1px-solid-#d7dce3  ">
+
 										<Mail/>
 										<div className='flex items-center justify-between gap-x-1'>
 											<span className='truncate w-[85%] normal-case'>{username || ''}</span>
@@ -226,10 +211,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 
 							</AuthDropdown>
 						}
-						<div className='mr-0 lg:mr-10 '>
+						<div className='mr-0 lg:mr-10 bg-[#FEF2F8] h-[24px] rounded-[6px]'>
 
 							<MenuDropdown>
-								<svg width="24" height="24" viewBox="0 0 24 24"  fill="none" xmlns="http://www.w3.org/2000/svg">
+								<svg width="24" height="100%" viewBox="0 0 24 24"  fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path d="M17.7143 18.8571C17.7143 19.4883 18.226 20 18.8571 20C19.4883 20 20 19.4883 20 18.8571C20 18.226 19.4883 17.7143 18.8571 17.7143C18.226 17.7143 17.7143 18.226 17.7143 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 									<path d="M10.8571 18.8571C10.8571 19.4883 11.3688 20 12 20C12.6312 20 13.1429 19.4883 13.1429 18.8571C13.1429 18.226 12.6312 17.7143 12 17.7143C11.3688 17.7143 10.8571 18.226 10.8571 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
 									<path d="M4 18.8571C4 19.4883 4.51167 20 5.14286 20C5.77404 20 6.28571 19.4883 6.28571 18.8571C6.28571 18.226 5.77404 17.7143 5.14286 17.7143C4.51167 17.7143 4 18.226 4 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -333,6 +318,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute,sidedra
 };
 
 export default styled(NavHeader)`
+
 svg:hover {
 	cursor: pointer;
   }

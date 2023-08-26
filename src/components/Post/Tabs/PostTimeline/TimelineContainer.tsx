@@ -41,7 +41,7 @@ interface ITimelineContainerProps {
 		hash: string;
 		statuses: BlockStatus[];
 		type?: string;
-	}
+	};
 }
 
 function sortfunc(a: BlockStatus, b: BlockStatus) {
@@ -160,9 +160,9 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 							<UpArrow onClick={toggleCollapse} />
 						)}
 					</p>
-					<span className={`${isCollapsed ? 'hidden' : ''} -mb-[5px] rounded-full absolute -bottom-1 -left-1 w-[10px] h-[10px]` } style={{ backgroundColor: activeColor }}></span>
 				</Link>
 			</div>
+			<span className={'-mb-[5px] ml-[60px] rounded-full absolute -bottom-1 -left-1 w-[10px] h-[10px]' } style={{ backgroundColor: activeColor }}></span>
 			<div className={`${isCollapsed ? 'hidden' : ''} mt-3 ml-[24px]`}>
 				{Timeline()}
 			</div>

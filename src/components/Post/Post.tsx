@@ -31,7 +31,7 @@ import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
-import StickyBox from '../Stickytop';
+import StickyBox from '~src/util/Stickytop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {

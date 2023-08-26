@@ -282,51 +282,100 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	};
 
 	const deleteComment = async () => {
-		const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteComment', {
-			commentId,
-			postId: ((comment.post_index || comment.post_index === 0)? comment.post_index: props.postId),
-			postType: comment.post_type || props.proposalType
-		});
-		console.log('data', data);
-		if (deleteCommentError || !data) {
-			console.error('Error deleting comment: ', deleteCommentError);
-			queueNotification({
-				header: 'Error!',
-				message: deleteCommentError || 'There was an error in deleting your comment.',
-				status: NotificationStatus.ERROR
+		if (allowed_roles?.includes('moderator')) {
+			// Call the different API for moderators
+			console.log('helloooooo');
+			const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentByMod', {
+				commentId,
+				postId: ((comment.post_index || comment.post_index === 0) ? comment.post_index : props.postId),
+				postType: comment.post_type || props.proposalType
 			});
+			console.log('data', data);
+			if (deleteCommentError || !data) {
+				console.error('Error deleting comment: ', deleteCommentError);
+				queueNotification({
+					header: 'Error!',
+					message: deleteCommentError || 'There was an error in deleting your comment.',
+					status: NotificationStatus.ERROR
+				});
+			}
+			if(data) {
+				const keys = Object.keys(comments);
+				setComments((prev) => {
+					const comments: any = Object.assign({}, prev);
+					for(const key of keys ){
+						if (prev?.[key]) {
+							comments[key]  = prev[key].filter((comment) => comment.id !== commentId);
+						}
+					}
+					return comments;
+				});
+				setTimelines((prev) => {
+					return [...prev.map((timeline) => {
+						if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
+							return {
+								...timeline,
+								commentsCount: (timeline.commentsCount > 0? timeline.commentsCount - 1: 0)
+							};
+						}
+						return {
+							...timeline
+						};
+					})];
+				});
+				queueNotification({
+					header: 'Success!',
+					message: 'Your comment was deleted.',
+					status: NotificationStatus.SUCCESS
+				});
+			}
+		}
+		else{
+			const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteComment', {
+				commentId,
+				postId: ((comment.post_index || comment.post_index === 0) ? comment.post_index : props.postId),
+				postType: comment.post_type || props.proposalType
+			});
+			if (deleteCommentError || !data) {
+				console.error('Error deleting comment: ', deleteCommentError);
+				queueNotification({
+					header: 'Error!',
+					message: deleteCommentError || 'There was an error in deleting your comment.',
+					status: NotificationStatus.ERROR
+				});
+			}
+			if(data) {
+				const keys = Object.keys(comments);
+				setComments((prev) => {
+					const comments: any = Object.assign({}, prev);
+					for(const key of keys ){
+						if (prev?.[key]) {
+							comments[key]  = prev[key].filter((comment) => comment.id !== commentId);
+						}
+					}
+					return comments;
+				});
+				setTimelines((prev) => {
+					return [...prev.map((timeline) => {
+						if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
+							return {
+								...timeline,
+								commentsCount: (timeline.commentsCount > 0? timeline.commentsCount - 1: 0)
+							};
+						}
+						return {
+							...timeline
+						};
+					})];
+				});
+				queueNotification({
+					header: 'Success!',
+					message: 'Your comment was deleted.',
+					status: NotificationStatus.SUCCESS
+				});
+			}
 		}
 
-		if(data) {
-			const keys = Object.keys(comments);
-			setComments((prev) => {
-				const comments: any = Object.assign({}, prev);
-				for(const key of keys ){
-					if (prev?.[key]) {
-						comments[key]  = prev[key].filter((comment) => comment.id !== commentId);
-					}
-				}
-				return comments;
-			});
-			setTimelines((prev) => {
-				return [...prev.map((timeline) => {
-					if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
-						return {
-							...timeline,
-							commentsCount: (timeline.commentsCount > 0? timeline.commentsCount - 1: 0)
-						};
-					}
-					return {
-						...timeline
-					};
-				})];
-			});
-			queueNotification({
-				header: 'Success!',
-				message: 'Your comment was deleted.',
-				status: NotificationStatus.SUCCESS
-			});
-		}
 	};
 
 	const items:MenuProps['items']=[

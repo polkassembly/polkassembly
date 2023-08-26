@@ -24,7 +24,9 @@ interface IReportButtonProps {
 	className?: string;
 	proposalType: ProposalType;
 	isDeleteModal?: boolean;
-	onDelete?: () => void;
+	onDeleteReply?: () => void;
+	onDeleteComment?: () => void;
+	isReply?: boolean;
 }
 
 const reasons = [
@@ -35,7 +37,7 @@ const reasons = [
 ];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , onDelete } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , isReply, onDeleteReply, onDeleteComment } = props;
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
@@ -157,7 +159,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	};
 	const handleDelete = async () => {
 		setLoading(true);
-		onDelete && onDelete();
+		isReply ? onDeleteReply && onDeleteReply() : onDeleteComment && onDeleteComment();
 	};
 	return (
 		<>

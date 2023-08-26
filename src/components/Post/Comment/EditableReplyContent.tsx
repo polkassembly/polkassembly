@@ -38,7 +38,7 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply, proposer, is_custom_username }: Props) => {
-	const { id, username, picture, loginAddress } = useContext(UserDetailsContext);
+	const { id, username, picture, loginAddress , allowed_roles } = useContext(UserDetailsContext);
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const { comments, setComments } = useCommentDataContext();
@@ -238,54 +238,83 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		}
 	};
 
+	const removeReplyContent = async() => {
+		const keys = Object.keys(comments);
+		setComments((prev:any) => {
+			const comments:any = Object.assign({}, prev);
+			for(const key of keys ){
+				let flag = false;
+				if (prev?.[key]) {
+					comments[key] = prev[key].map((comment:any) => {
+						if (comment.id === commentId) {
+							comment.replies = comment?.replies?.filter((reply:any) => (reply.id !== replyId)) || [];
+							flag = true;
+						}
+						return {
+							...comment
+						};
+					});
+				}
+				if(flag){
+					break;
+				}
+			}
+			return comments;
+		});
+		queueNotification({
+			header: 'Success!',
+			message: 'Your reply was deleted.',
+			status: NotificationStatus.SUCCESS
+		});
+	};
+
 	const deleteReply = async () => {
 		setLoading(true);
-		const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentReply', {
-			commentId,
-			postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
-			postType: reply.post_type || postType,
-			replyId
-		});
+		if (allowed_roles?.includes('moderator')) {
+			const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteContentByMod', {
+				commentId,
+				postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
+				postType: reply.post_type || postType,
+				replyId
+			});
 
-		if (deleteReplyError || !data) {
-			console.error('Error deleting reply: ', deleteReplyError);
-			queueNotification({
-				header: 'Error!',
-				message: deleteReplyError || 'Error in deleting reply',
-				status: NotificationStatus.ERROR
-			});
-		}
+			if (deleteReplyError || !data) {
+				console.error('Error deleting reply: ', deleteReplyError);
+				queueNotification({
+					header: 'Error!',
+					message: deleteReplyError || 'Error in deleting reply',
+					status: NotificationStatus.ERROR
+				});
+			}
 
-		if (data) {
-			const keys = Object.keys(comments);
-			setComments((prev:any) => {
-				const comments:any = Object.assign({}, prev);
-				for(const key of keys ){
-					let flag = false;
-					if (prev?.[key]) {
-						comments[key] = prev[key].map((comment:any) => {
-							if (comment.id === commentId) {
-								comment.replies = comment?.replies?.filter((reply:any) => (reply.id !== replyId)) || [];
-								flag = true;
-							}
-							return {
-								...comment
-							};
-						});
-					}
-					if(flag){
-						break;
-					}
-				}
-				return comments;
-			});
-			queueNotification({
-				header: 'Success!',
-				message: 'Your reply was deleted.',
-				status: NotificationStatus.SUCCESS
-			});
+			if (data) {
+				removeReplyContent();
+			}
+			setLoading(false);
 		}
-		setLoading(false);
+		else{
+			const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentReply', {
+				commentId,
+				postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
+				postType: reply.post_type || postType,
+				replyId,
+				userId: id
+			});
+
+			if (deleteReplyError || !data) {
+				console.error('Error deleting reply: ', deleteReplyError);
+				queueNotification({
+					header: 'Error!',
+					message: deleteReplyError || 'Error in deleting reply',
+					status: NotificationStatus.ERROR
+				});
+			}
+
+			if (data) {
+				removeReplyContent();
+			}
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -336,7 +365,13 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 										}
 									</Button>
 								}
-								{id === userId && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>}
+								{
+									id === userId ? <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>
+										:
+										allowed_roles?.includes('moderator') ? <ReportButton isDeleteModal={true} proposalType={postType} className={'flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent '} type='comment' isReply={true} onDeleteReply={deleteReply} commentId={commentId} postId={postIndex}/>
+											: null
+
+								}
 								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} postId={postIndex} commentId={commentId} type='reply' replyId={replyId} />}
 
 								{id? (reply.reply_source === 'subsquare'?(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>

@@ -282,16 +282,45 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		});
 	};
 
+	const removeCommentContent = () => {
+		const keys = Object.keys(comments);
+		setComments((prev) => {
+			const comments: any = Object.assign({}, prev);
+			for(const key of keys ){
+				if (prev?.[key]) {
+					comments[key]  = prev[key].filter((comment) => comment.id !== commentId);
+				}
+			}
+			return comments;
+		});
+		setTimelines((prev) => {
+			return [...prev.map((timeline) => {
+				if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
+					return {
+						...timeline,
+						commentsCount: (timeline.commentsCount > 0? timeline.commentsCount - 1: 0)
+					};
+				}
+				return {
+					...timeline
+				};
+			})];
+		});
+		queueNotification({
+			header: 'Success!',
+			message: 'Your comment was deleted.',
+			status: NotificationStatus.SUCCESS
+		});
+	};
+
 	const deleteComment = async () => {
 		if (allowed_roles?.includes('moderator')) {
 			// Call the different API for moderators
-			console.log('helloooooo');
-			const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentByMod', {
+			const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteContentByMod', {
 				commentId,
 				postId: ((comment.post_index || comment.post_index === 0) ? comment.post_index : props.postId),
 				postType: comment.post_type || props.proposalType
 			});
-			console.log('data', data);
 			if (deleteCommentError || !data) {
 				console.error('Error deleting comment: ', deleteCommentError);
 				queueNotification({
@@ -300,35 +329,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					status: NotificationStatus.ERROR
 				});
 			}
-			if(data) {
-				const keys = Object.keys(comments);
-				setComments((prev) => {
-					const comments: any = Object.assign({}, prev);
-					for(const key of keys ){
-						if (prev?.[key]) {
-							comments[key]  = prev[key].filter((comment) => comment.id !== commentId);
-						}
-					}
-					return comments;
-				});
-				setTimelines((prev) => {
-					return [...prev.map((timeline) => {
-						if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
-							return {
-								...timeline,
-								commentsCount: (timeline.commentsCount > 0? timeline.commentsCount - 1: 0)
-							};
-						}
-						return {
-							...timeline
-						};
-					})];
-				});
-				queueNotification({
-					header: 'Success!',
-					message: 'Your comment was deleted.',
-					status: NotificationStatus.SUCCESS
-				});
+			if (data){
+				removeCommentContent();
 			}
 		}
 		else{
@@ -345,35 +347,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					status: NotificationStatus.ERROR
 				});
 			}
-			if(data) {
-				const keys = Object.keys(comments);
-				setComments((prev) => {
-					const comments: any = Object.assign({}, prev);
-					for(const key of keys ){
-						if (prev?.[key]) {
-							comments[key]  = prev[key].filter((comment) => comment.id !== commentId);
-						}
-					}
-					return comments;
-				});
-				setTimelines((prev) => {
-					return [...prev.map((timeline) => {
-						if (timeline.index === `${postIndex}` && timeline.type === getSubsquidLikeProposalType(postType)) {
-							return {
-								...timeline,
-								commentsCount: (timeline.commentsCount > 0? timeline.commentsCount - 1: 0)
-							};
-						}
-						return {
-							...timeline
-						};
-					})];
-				});
-				queueNotification({
-					header: 'Success!',
-					message: 'Your comment was deleted.',
-					status: NotificationStatus.SUCCESS
-				});
+			if (data){
+				removeCommentContent();
 			}
 		}
 
@@ -401,7 +376,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			allowed_roles?.includes('moderator') ?
 				{
 					key: 4,
-					label: <ReportButton isDeleteModal={true} proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `} type='comment' onDelete={deleteComment} commentId={commentId} postId={postIndex}/>
+					label: <ReportButton isDeleteModal={true} proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `} type='comment' onDeleteComment={deleteComment} isReply={false} commentId={commentId} postId={postIndex}/>
 				}
 				:null
 	];

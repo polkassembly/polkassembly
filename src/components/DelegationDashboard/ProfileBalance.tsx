@@ -175,8 +175,9 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				</div>
 			</div>
 		</div>
-		<div className='w-[250px] mr-6 -mt-6'>
+		<div className='w-[275px] mr-6 -mt-6'>
 			{ accounts.length > 0 && <AccountSelectionForm
+				addressTextClassName='text-white'
 				accounts={accounts}
 				address={delegationDashboardAddress}
 				withBalance={false}

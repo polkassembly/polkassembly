@@ -158,10 +158,10 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 					{isCollapsed ? (
 						<div className="flex w-[200px] gap-3 arrow-container">
 							<p className='bg-[#5BC044] text-white my-1 text-center px-[15px] w-[100px] text-xs py-[5px] rounded-[50px] items-center status-update'>{timeline?.statuses[statuses.length - 1].status}</p>
-							<DownArrow onClick={toggleCollapse} className="mt-[7px]"/>
+							<DownArrow onClick={toggleCollapse} className="mt-[12px]"/>
 						</div>
 					) : (
-						<UpArrow onClick={toggleCollapse} />
+						<UpArrow onClick={toggleCollapse} className="mt-[7px]"/>
 					)}
 				</p>
 			</div>

@@ -400,6 +400,10 @@ color: var(--lightBlue) !important;
   margin-left: 60px;
 }
 
+.arrow-container{
+  margin-left: -107px;
+}
+
 @media (min-width: 600px) and (max-width: 800px) {
   .content-container {
     width: 213px;
@@ -439,5 +443,13 @@ color: var(--lightBlue) !important;
 
   .round-icon{
     margin-left: 28px;
+  }
+
+  .arrow-container{
+    margin-left: 8px;
+  }
+
+  .status-update{
+    display:none;
   }
 }

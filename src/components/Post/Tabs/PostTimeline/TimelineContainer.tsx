@@ -153,14 +153,17 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 						{PostType===timeline.type ? displayIconUnactive  : displayIconActive}
 						<span className='mt-2 font-medium text-base'>{getStatus(String(type))}</span>
 					</p>
-					<p className='timeline-dropdown' style={{ backgroundColor: activeColor, marginTop: '-44px' }}>
-						{isCollapsed ? (
-							<DownArrow onClick={toggleCollapse} />
-						) : (
-							<UpArrow onClick={toggleCollapse} />
-						)}
-					</p>
 				</Link>
+				<p className='timeline-dropdown' style={{ backgroundColor: activeColor, marginTop: '-44px' }}>
+					{isCollapsed ? (
+						<div className="flex w-[200px] gap-3 arrow-container">
+							<p className='bg-[#5BC044] text-white my-1 text-center px-[15px] w-[100px] text-xs py-[5px] rounded-[50px] items-center status-update'>{timeline?.statuses[statuses.length - 1].status}</p>
+							<DownArrow onClick={toggleCollapse} className="mt-[7px]"/>
+						</div>
+					) : (
+						<UpArrow onClick={toggleCollapse} />
+					)}
+				</p>
 			</div>
 			<span className={'-mb-[5px] round-icon rounded-full absolute -bottom-1 -left-1 w-[10px] h-[10px]' } style={{ backgroundColor: activeColor }}></span>
 			<div className={`${isCollapsed ? 'hidden' : ''} mt-3 ml-[24px]`}>

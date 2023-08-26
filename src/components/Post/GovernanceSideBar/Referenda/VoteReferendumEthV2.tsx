@@ -63,7 +63,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [availableWallets, setAvailableWallets] = useState<any>({});
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
 	const [isTalismanEthereum, setIsTalismanEthereum] = useState<boolean>(true);
-	const [voteValues, setVoteValues] = useState({ abstainVoteValue:ZERO_BN,ayeVoteValue:ZERO_BN , nayVoteValue:ZERO_BN ,totalVoteValue:ZERO_BN });
+	const [voteValues, setVoteValues] = useState({ abstainVoteValue: ZERO_BN,ayeVoteValue: ZERO_BN, nayVoteValue: ZERO_BN ,totalVoteValue: ZERO_BN });
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
@@ -161,6 +161,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		abstainFrom.setFieldValue('ayeVote', '');
 		abstainFrom.setFieldValue('nayVote','');
 		abstainFrom.setFieldValue('abstainVote', '');
+		setLoadingStatus({ isLoading: false, message: '' });
 	};
 
 	const connect = async () => {
@@ -238,6 +239,56 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		});
 	};
 
+	const handleLastVoteSave = (vote:EVoteDecisionType, totalVoteValue:BN) => {
+		console.log(vote);
+		switch(vote){
+		case EVoteDecisionType.AYE:
+			setLastVote({
+				balance: totalVoteValue,
+				conviction: conviction,
+				decision: vote,
+				time: new Date()
+			});
+			break;
+		case EVoteDecisionType.NAY:
+			setLastVote({
+				balance: totalVoteValue,
+				conviction: conviction,
+				decision: vote,
+				time: new Date()
+			});
+			break;
+		case EVoteDecisionType.SPLIT:
+			setVoteValues((prevState) => ({
+				...prevState,
+				ayeVoteValue:ayeVoteValue,
+				nayVoteValue:nayVoteValue
+			}));
+			setLastVote({
+				balance: totalVoteValue,
+				conviction: conviction,
+				decision: vote,
+				time: new Date()
+			});
+			break;
+		case EVoteDecisionType.ABSTAIN:
+			setVoteValues((prevState) => ({
+				...prevState,
+				abstainVoteValue:abstainVoteValue,
+				ayeVoteValue:ayeVoteValue,
+				nayVoteValue:nayVoteValue
+			}));
+			setLastVote({
+				balance: totalVoteValue,
+				conviction: conviction,
+				decision: vote,
+				time: new Date()
+			});
+			break;
+
+		}
+	};
+
 	const handleSubmit = async () => {
 		if(!isTalismanEthereum ){
 			console.error('Please use Ethereum account via Talisman wallet.');
@@ -271,7 +322,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			});
 			return;
 		}
-
 		setLoadingStatus({ isLoading: true, message: 'Waiting for confirmation' });
 
 		const voteContract = new web3.eth.Contract(abi, contractAddress);
@@ -279,168 +329,66 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		// estimate gas.
 		//https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
+		let tx;
 		if(vote === EVoteDecisionType.AYE){
-			voteContract.methods
-				.voteYes(
-					referendumId,
-					lockedBalance.toString(),
-					conviction
-				)
-				.send({
-					from: address,
-					to: contractAddress
-				})
-				.then(() => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-				})
-				.catch((error: any) => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					console.error('ERROR:', error);
-					queueNotification({
-						header: 'Failed!',
-						message: error.message,
-						status: NotificationStatus.ERROR
-					});
-				});
+			tx = voteContract.methods.voteYes(
+				referendumId,
+				lockedBalance.toString(),
+				conviction
+			);
 		}
 		else if (vote === EVoteDecisionType.NAY){
-			voteContract.methods
+			tx =  voteContract.methods
 				.voteNo(
 					referendumId,
 					lockedBalance.toString(),
 					conviction
-				)
-				.send({
-					from: address,
-					to: contractAddress
-				})
-				.then(() => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-				})
-				.catch((error: any) => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					console.error('ERROR:', error);
-					queueNotification({
-						header: 'Failed!',
-						message: error.message,
-						status: NotificationStatus.ERROR
-					});
-				});
+				);
 		}
 
 		else if (vote === EVoteDecisionType.SPLIT){
-			setVoteValues((prevState) => ({
-				...prevState,
-				ayeVoteValue:ayeVoteValue,
-				nayVoteValue:nayVoteValue
-			}));
-			voteContract.methods
+			tx = voteContract.methods
 				.voteSplit(
 					referendumId,
 					ayeVoteValue?.toString(),
 					nayVoteValue?.toString()
-				)
-				.send({
-					from: address,
-					to: contractAddress
-				})
-				.then(() => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-				})
-				.catch((error: any) => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					console.error('ERROR:', error);
-					queueNotification({
-						header: 'Failed!',
-						message: error.message,
-						status: NotificationStatus.ERROR
-					});
-				});
+				);
 		}
 
 		else if (vote === EVoteDecisionType.ABSTAIN){
-			setVoteValues((prevState) => ({
-				...prevState,
-				abstainVoteValue:abstainVoteValue,
-				ayeVoteValue:ayeVoteValue,
-				nayVoteValue:nayVoteValue
-			}));
-			voteContract.methods
+			tx = voteContract.methods
 				.voteSplitAbstain(
 					referendumId,
 					ayeVoteValue?.toString(),
 					nayVoteValue?.toString(),
 					abstainVoteValue?.toString()
-				)
-				.send({
-					from: address,
-					to: contractAddress
-				})
-				.then(() => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					setLastVote({
-						balance: totalVoteValue,
-						conviction: conviction,
-						decision: vote,
-						time: new Date()
-					});
-					setShowModal(false);
-					setSuccessModal(true);
-					queueNotification({
-						header: 'Success!',
-						message: `Vote on referendum #${referendumId} successful.`,
-						status: NotificationStatus.SUCCESS
-					});
-				})
-				.catch((error: any) => {
-					setLoadingStatus({ isLoading: false, message: '' });
-					console.error('ERROR:', error);
-					queueNotification({
-						header: 'Failed!',
-						message: error.message,
-						status: NotificationStatus.ERROR
-					});
-				});
+				);
 		}
+
+		tx.send({
+			from: address,
+			to: contractAddress
+		}).on('transactionHash', (hash: string) => {setLoadingStatus({ isLoading: true, message: `Transaction hash ${hash.slice(0,10)}...` }); console.log('transactionHash',hash);})
+			.then(() => {
+				setLoadingStatus({ isLoading: false, message: 'Transaction is in progress!' });
+				handleLastVoteSave(vote, totalVoteValue);
+				setShowModal(false);
+				setSuccessModal(true);
+				queueNotification({
+					header: 'Success!',
+					message: `Vote on referendum #${referendumId} successful.`,
+					status: NotificationStatus.SUCCESS
+				});
+			})
+			.catch((error: any) => {
+				setLoadingStatus({ isLoading: false, message: 'Transaction failed!' });
+				console.error('ERROR:', error);
+				queueNotification({
+					header: 'Failed!',
+					message: error.message,
+					status: NotificationStatus.ERROR
+				});
+			});
 
 	};
 
@@ -528,12 +476,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					<span className='text-bodyBlue font-semibold tracking-[0.0015em] text-xl'>Cast Your Vote</span>
 				</div>}
 			> <>
-					<Spin spinning={loadingStatus.isLoading || isAccountLoading} indicator={<LoadingOutlined />}>
+					<Spin spinning={loadingStatus.isLoading || isAccountLoading} indicator={<LoadingOutlined />} tip={loadingStatus.message}>
 						<div className='text-sm font-normal flex items-center justify-center text-light mt-3'>Select a wallet</div>
 
 						<div className='flex items-center gap-x-5 mt-1 mb-[24px] justify-center'>
-							{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-							{isMetamaskWallet && <WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />}
+							{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  disabled={!apiReady || !api} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+							{isMetamaskWallet && <WalletButton className={`${wallet === Wallet.METAMASK? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`}  disabled={!apiReady || !api} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />}
 						</div>
 						{!isTalismanEthereum && <Alert message='Please use Ethereum account via Talisman wallet.' type='info' className='mb-2 -mt-2' showIcon/>}
 
@@ -567,7 +515,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								handleModalReset();
 							}}
 							options={decisionOptions}
-							disabled={ !apiReady}
+							disabled={ !apiReady || !api}
 						/>
 						{
 							vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN &&
@@ -577,7 +525,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								onBalanceChange={(balance:BN) => setLockedBalance(balance)}
 								convictionClassName={className}
 								handleSubmit={async () => await handleSubmit()}
-								disabled={!wallet || !lockedBalance || isBalanceErr}
+								disabled={!wallet || !lockedBalance || isBalanceErr || lockedBalance.lte(ZERO_BN)}
 								conviction={conviction}
 								setConviction={setConviction}
 								convictionOpts={convictionOpts}

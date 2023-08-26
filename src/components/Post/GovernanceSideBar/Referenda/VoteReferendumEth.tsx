@@ -114,6 +114,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const handleModalReset = () => {
 		setLockedBalance(ZERO_BN);
 		ayeNayForm.setFieldValue('balance', '');
+		setLoadingStatus({ isLoading: false, message: '' });
 	};
 
 	useEffect(() => {
@@ -286,7 +287,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				to: contractAddress
 			})
 			.then(() => {
-				setLoadingStatus({ isLoading: false, message: '' });
+				setLoadingStatus({ isLoading: false, message: 'Transaction is in progress' });
 				setLastVote({
 					balance: lockedBalance,
 					conviction: conviction,
@@ -295,6 +296,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				});
 				setShowModal(false);
 				setSuccessModal(true);
+				handleModalReset();
 				queueNotification({
 					header: 'Success!',
 					message: `Vote on referendum #${referendumId} successful.`,
@@ -302,7 +304,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				});
 			})
 			.catch((error: any) => {
-				setLoadingStatus({ isLoading: false, message: '' });
+				setLoadingStatus({ isLoading: false, message: 'Transaction failed!' });
 				console.error('ERROR:', error);
 				queueNotification({
 					header: 'Failed!',
@@ -372,12 +374,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				</div>}
 			>
 				<>
-					<Spin spinning={loadingStatus.isLoading || isAccountLoading} indicator={<LoadingOutlined />}>
+					<Spin spinning={loadingStatus.isLoading || isAccountLoading} indicator={<LoadingOutlined />} tip={loadingStatus.message}>
 
 						<div className='text-sm font-normal flex items-center justify-center text-lightBlue mt-3'>Select a wallet</div>
 						<div className='flex items-center gap-x-5 mt-1 mb-[24px] justify-center'>
-							{ availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
-							{ isMetamaskWallet && <WalletButton className={`${wallet === Wallet.METAMASK ? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />}
+							{ availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`} disabled={!apiReady || !api} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
+							{ isMetamaskWallet && <WalletButton className={`${wallet === Wallet.METAMASK ? 'border border-solid border-pink_primary  w-[64px] h-[48px]': 'w-[64px] h-[48px]'}`} disabled={!apiReady || !api} onClick={(event) => handleWalletClick((event as any), Wallet.METAMASK)} name="MetaMask" icon={<WalletIcon which={Wallet.METAMASK} className='h-6 w-6' />} />}
 						</div>
 
 						{!isTalismanEthereum && <Alert message='Please use Ethereum account via Talisman wallet.' type='info'/>}
@@ -411,7 +413,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								handleModalReset();
 							}}
 							options={decisionOptions}
-							disabled={!apiReady}
+							disabled={!apiReady || !api}
 						/>
 						<VotingForm
 							form={ayeNayForm}
@@ -419,7 +421,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							onBalanceChange={(balance:BN) => setLockedBalance(balance)}
 							convictionClassName={className}
 							handleSubmit={async () => await handleSubmit(vote === EVoteDecisionType.AYE)}
-							disabled={!wallet || !lockedBalance || isBalanceErr}
+							disabled={!wallet || !lockedBalance || isBalanceErr || lockedBalance.lte(ZERO_BN)}
 							conviction={conviction}
 							setConviction={setConviction}
 							convictionOpts={convictionOpts}

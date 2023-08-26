@@ -121,7 +121,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	useEffect(() => {
 		getWallet();
-		if(!api) return;
+		if(!api || !apiReady) return;
 		if (loginWallet) {
 			setWallet(loginWallet);
 			(async() => {
@@ -187,7 +187,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	},[availableBalance, lockedBalance, nayVoteValue, ayeVoteValue, abstainVoteValue]);
 
 	useEffect(() => {
-		if(!address || !wallet || !api) return;
+		if(!address || !wallet || !api || !apiReady) return;
 		(async() => {
 			const accountsData = await getAccountsFromWallet({ api, chosenAddress: address, chosenWallet: wallet, loginAddress, network });
 			setAccounts(accountsData?.accounts || []);
@@ -224,7 +224,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		event.preventDefault();
 		setWallet(wallet);
 		setMultisig('');
-		if(!api) return;
+		if(!api || !apiReady) return;
 		(async() => {
 			const accountsData = await getAccountsFromWallet({ api, chosenWallet: wallet, loginAddress, network });
 			setAccounts(accountsData?.accounts || []);
@@ -295,6 +295,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		abstainFrom.setFieldValue('ayeVote', '');
 		abstainFrom.setFieldValue('nayVote','');
 		abstainFrom.setFieldValue('abstainVote', '');
+		setLoadingStatus({ isLoading: false, message: '' });
 	};
 
 	const handleOnVoteChange = (value:any) => {
@@ -351,14 +352,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				try {
 					await splitForm.validateFields();
 					// if form is valid
-					const  ayeVote = ayeVoteValue?.toString();
-					const  nayVote = nayVoteValue?.toString();
 					setVoteValues((prevState) => ({
 						...prevState,
 						ayeVoteValue:ayeVoteValue,
 						nayVoteValue:nayVoteValue
 					}));
-					voteTx = api.tx.convictionVoting.vote(referendumId, { Split: { aye:`${ayeVote}`,nay:`${nayVote}` } });
+					voteTx = api.tx.convictionVoting.vote(referendumId, { Split: { aye:`${ayeVoteValue?.toString()}`,nay:`${nayVoteValue?.toString()}` } });
 				}catch (e) {
 					console.log(e);
 				}
@@ -367,17 +366,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			else if(vote === EVoteDecisionType.ABSTAIN && ayeVoteValue && nayVoteValue) {
 				try {
 					await abstainFrom.validateFields();
-					// if form is valid
-					const  abstainVote = abstainVoteValue?.toString();
-					const  ayeVote = ayeVoteValue?.toString();
-					const  nayVote = nayVoteValue?.toString();
 					setVoteValues((prevState) => ({
 						...prevState,
 						abstainVoteValue:abstainVoteValue,
 						ayeVoteValue:ayeVoteValue,
 						nayVoteValue:nayVoteValue
 					}));
-					voteTx = api.tx.convictionVoting.vote(referendumId, { SplitAbstain: {  abstain:`${abstainVote}`,aye:`${ayeVote}`, nay:`${nayVote}` } });
+					voteTx = api.tx.convictionVoting.vote(referendumId, { SplitAbstain: {  abstain:`${abstainVoteValue?.toString()}`,aye:`${ ayeVoteValue?.toString()}`, nay:`${ nayVoteValue?.toString()}` } });
 				} catch (e) {
 					console.log(e);
 				}
@@ -459,6 +454,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			onFailed,
 			onSuccess,
 			params: network === 'equilibrium' ? { nonce: -1 } : {},
+			setStatus:(status: string) => setLoadingStatus({ isLoading: true, message: status }),
 			tx: voteTx
 		});
 
@@ -616,7 +612,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										onBalanceChange={(balance:BN) => setLockedBalance(balance)}
 										convictionClassName={className}
 										handleSubmit={handleSubmit}
-										disabled={!wallet || !lockedBalance || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit)) || isBalanceErr}
+										disabled={!wallet || !lockedBalance || lockedBalance.lte(ZERO_BN) || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit)) || isBalanceErr}
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}

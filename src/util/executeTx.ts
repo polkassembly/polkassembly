@@ -15,29 +15,36 @@ interface Props{
   onSuccess:() => Promise<void> | void;
   onFailed: (errorMessageFallback: string) => Promise<void> | void;
   onBroadcast?: () => void;
+	setStatus?: (pre:string) => void;
 }
-const executeTx = async({ api, network, tx, address, params= {}, errorMessageFallback, onSuccess, onFailed, onBroadcast }: Props) => {
+const executeTx = async({ api, network, tx, address, params= {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Props) => {
 	if(!api || !tx)return;
 
 	tx.signAndSend(address, params,  async({ status, events, txHash }: any) => {
 		if (status.isInvalid) {
 			console.log('Transaction invalid');
+			setStatus?.('Transaction invalid');
 		} else if (status.isReady) {
 			console.log('Transaction is ready');
+			setStatus?.('Transaction is ready');
 		} else if (status.isBroadcast) {
 			console.log('Transaction has been broadcasted');
+			setStatus?.('Transaction has been broadcasted');
 			onBroadcast && onBroadcast?.();
 		} else if (status.isInBlock) {
 			console.log('Transaction is in block');
+			setStatus?.('Transaction is in block');
 		} else if (status.isFinalized) {
 			console.log(`Transaction has been included in blockHash ${status.asFinalized.toHex()}`);
 			console.log(`tx: https://${network}.subscan.io/extrinsic/${txHash}`);
 
 			for (const { event } of events) {
 				if (event.method === 'ExtrinsicSuccess') {
+					setStatus?.('Transaction Success');
 					await onSuccess();
 
 				} else if (event.method === 'ExtrinsicFailed') {
+					setStatus?.('Transaction failed');
 					console.log('Transaction failed');
 					const errorModule = (event.data as any)?.dispatchError?.asModule;
 					if(!errorModule) {

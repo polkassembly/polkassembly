@@ -30,7 +30,6 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import Gov2LatestActivity from '~src/components/Gov2Home/Gov2LatestActivity';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import Script from 'next/script';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 export type ILatestActivityPosts = {
 	[key in ProposalType]?: IApiResponse<ILatestActivityPostsListingResponse>;
@@ -173,8 +172,6 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
-	const substrateAddr = getSubstrateAddress('12VdXW8h24ZTJDCvphRxWgms54wmgUr6kKzmL1rLhPRjMwQY');
-	console.log('addr : ', substrateAddr);
 	return (
 		<>
 			{chainProperties[network]?.gTag ? <><Script

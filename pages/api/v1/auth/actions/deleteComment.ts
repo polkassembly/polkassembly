@@ -26,7 +26,6 @@ interface IDeleteComment {
 export async function deleteComment(params: IDeleteComment): Promise<IApiResponse<MessageType>> {
 	try{
 		const { commentId, postId, postType, network, user , replyId } = params;
-		console.log('postId', postId);
 		const postRef = postsByTypeRef(network, postType)
 			.doc(String(postId));
 		const last_comment_at = new Date();

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { FlagOutlined } from '@ant-design/icons';
+import { FlagOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button,Form,Input,Modal, Select } from 'antd';
 import { IReportContentResponse } from 'pages/api/v1/auth/actions/reportContent';
 import React, { FC, useState } from 'react';
@@ -163,18 +163,20 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	};
 	return (
 		<>
-			<Button className={`border-none ${ className } text-pink_primary flex items-center  shadow-none px-1.5 md:px-2`} onClick={() => setShowModal(true)}>
-				{
-					isDeleteModal ?
-						<DeleteIcon /> : <FlagOutlined />
-				}
-				<span className='ml-1'>
-					{
-						isDeleteModal ? 'Delete' : 'Report'
-					}
-				</span>
-			</Button>
-
+			{
+				isReply ? <Button className='text-pink_primary inline-block flex items-center border-none shadow-none text-xs' onClick={() => setShowModal(true)}><DeleteOutlined />Delete</Button> :
+					<Button className={`border-none ${ className } text-pink_primary flex items-center shadow-none px-1.5 md:px-2`} onClick={() => setShowModal(true)}>
+						{
+							isDeleteModal ?
+								<DeleteIcon /> : <FlagOutlined />
+						}
+						<span className='ml-1'>
+							{
+								isDeleteModal ? 'Delete' : 'Report'
+							}
+						</span>
+					</Button>
+			}
 			<Modal
 				title={isDeleteModal ? 'Delete' : 'Report'}
 				open={showModal}

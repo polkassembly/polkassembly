@@ -121,8 +121,8 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 								<div className='content-container'>
 									<article className="py-[8px]">
 										<div className="flex items-center">
-											<div className="flex items-center space-x-[12px]">
-												<p className="text-xs text-sidebarBlue font-normal whitespace-nowrap mb-0">
+											<div className="flex items-center">
+												<p className="text-xs text-sidebarBlue font-normal whitespace-nowrap mb-0 info-container">
 													{blockDate.format("Do MMM 'YY, h:mm a")}
 												</p>
 												<a className="font-medium" href={`${url}${block}`} target="_blank" rel="noreferrer">
@@ -162,7 +162,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 					</p>
 				</Link>
 			</div>
-			<span className={'-mb-[5px] ml-[60px] rounded-full absolute -bottom-1 -left-1 w-[10px] h-[10px]' } style={{ backgroundColor: activeColor }}></span>
+			<span className={'-mb-[5px] round-icon rounded-full absolute -bottom-1 -left-1 w-[10px] h-[10px]' } style={{ backgroundColor: activeColor }}></span>
 			<div className={`${isCollapsed ? 'hidden' : ''} mt-3 ml-[24px]`}>
 				{Timeline()}
 			</div>

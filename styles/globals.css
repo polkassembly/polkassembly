@@ -392,6 +392,14 @@ color: var(--lightBlue) !important;
   margin-left: 664px;;
 }
 
+.info-container{
+  min-width: 140px;
+}
+
+.round-icon{
+  margin-left: 60px;
+}
+
 @media (min-width: 600px) and (max-width: 800px) {
   .content-container {
     width: 213px;
@@ -427,5 +435,9 @@ color: var(--lightBlue) !important;
 
   .timeline-dropdown {
     margin-left: 300px;
+  }
+
+  .round-icon{
+    margin-left: 28px;
   }
 }

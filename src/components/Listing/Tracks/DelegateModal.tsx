@@ -303,11 +303,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 	return (
 		<>
-			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm bg-pink_primary flex gap-0 items-center justify-center p-5 rounded-md text-white'>
-				<DelegateProfileWhiteIcon className='mr-2'/>
-				<span >Delegate</span>
-			</Button>}
-
+			{
+				!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm bg-pink_primary flex gap-0 items-center justify-center p-5 rounded-md text-white'>
+					<DelegateProfileWhiteIcon className='mr-2'/>
+					<span >Delegate</span>
+				</Button>
+			}
 			<Modal
 				maskClosable={false}
 				closeIcon={<CloseIcon/>}
@@ -330,9 +331,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 						<Button
 							htmlType='submit'
 							key="submit"
-							className={`w-[134px] bg-pink_primary rounded-[4px] border-pink_primary text-white hover:bg-pink_secondary h-[40px] ${!(form.getFieldValue('targetAddress') && delegationDashboardAddress && bnBalance.gt(ZERO_BN) && !isNaN(conviction) && !isTargetAddressSame && !loading && !txFee.lte(ZERO_BN)) && 'opacity-50'}`}
+							className={`w-[134px] bg-pink_primary rounded-[4px] border-pink_primary text-white hover:bg-pink_secondary h-[40px]
+							${(!form.getFieldValue('targetAddress') || !delegationDashboardAddress || bnBalance.lte(ZERO_BN) || isNaN(conviction) || isTargetAddressSame || loading || txFee.lte(ZERO_BN) || availableBalance.lte(txFee.add(bnBalance))) && 'opacity-50'}`}
 							disabled={
-								!(form.getFieldValue('targetAddress') && delegationDashboardAddress && bnBalance.gt(ZERO_BN) && !isNaN(conviction) && !isTargetAddressSame && !loading && !txFee.lte(ZERO_BN))
+								(!form.getFieldValue('targetAddress') || !delegationDashboardAddress || bnBalance.lte(ZERO_BN) || isNaN(conviction) || isTargetAddressSame || loading || txFee.lte(ZERO_BN) || availableBalance.lte(txFee.add(bnBalance)))
 							} onClick={async () => {
 								await handleSubmit();
 							}}>

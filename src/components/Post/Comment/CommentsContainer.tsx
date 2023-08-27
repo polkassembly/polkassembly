@@ -314,14 +314,14 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 													<div className='flex flex-col text-lightBlue sticky top-10'>
 														<div className='text-xs mb-1'>{timeline.date.format('MMM Do')}</div>
 														<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{timeline.status}</div>
-														<div className='text-xs'>({timeline.commentsCount})</div>
+														<div className='text-xs'>({comments?.[`${timeline.index}_${timeline.type}`]?.length || 0})</div>
 													</div>
 												}
 											/>:
 												<div className='flex flex-col text-lightBlue ml-5 cursor-pointer sticky top-10'>
 													<div className='text-xs mb-1'>{timeline.date.format('MMM Do')}</div>
 													<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{timeline.status}</div>
-													<div className='text-xs'>({timeline.commentsCount})</div>
+													<div className='text-xs'>({comments?.[`${timeline.index}_${timeline.type}`]?.length || 0})</div>
 												</div>
 											}
 										</div>
@@ -329,7 +329,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 										<div key={timeline.id} className='flex flex-col ml-5 cursor-default text-lightBlue sticky top-10'>
 											<div className='text-xs mb-1'>{timeline.date.format('MMM Do')}</div>
 											<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{timeline.status}</div>
-											<div className='text-xs'>({timeline.commentsCount})</div>
+											<div className='text-xs'>({comments?.[`${timeline.index}_${timeline.type}`]?.length || 0})</div>
 										</div>
 								);
 							})}

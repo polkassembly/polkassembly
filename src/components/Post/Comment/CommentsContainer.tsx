@@ -8,7 +8,7 @@ import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
-import { ProposalType } from '~src/global/proposalType';
+import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 
 import PostCommentForm from '../PostCommentForm';
 import Comments from './Comments';
@@ -84,14 +84,15 @@ const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
 
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
-	const { postData: { postType, timeline, created_at } } = usePostDataContext();
+	const { postData: { postIndex, postType, timeline, created_at } } = usePostDataContext();
 	const targetOffset = 10;
 	const {
 		comments,
 		setComments,
 		setTimelines,
 		timelines,
-		overallSentiments
+		overallSentiments,
+		subsquareComments
 	} = useCommentDataContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
@@ -174,16 +175,27 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			});
 			setTimelines(timelines);
 		}
+		const key =`${postIndex}_${getSubsquidLikeProposalType(postType)}`;
 		if(!haveComments){
+			if(subsquareComments && subsquareComments.length>0){
+				comments[key] = subsquareComments;
+				setComments(comments);
+			}
 			setLoading(false);
 			return;
 		}
 		const commentResponse = await getAllCommentsByTimeline(timeline, network);
 
 		if(!commentResponse || Object.keys(commentResponse).length==0){
+			if(subsquareComments && subsquareComments.length>0 && comments[key]){
+				comments[key] = subsquareComments;
+			}
 			setComments(comments);
 		}
 		else{
+			if(subsquareComments && subsquareComments.length > 0 && commentResponse.comments[key]){
+				commentResponse.comments[key] = [...commentResponse.comments[key], ...subsquareComments];
+			}
 			setComments(getSortedComments(commentResponse.comments));
 		}
 		if(loading){
@@ -235,7 +247,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			}
 			<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1'>
 				<span className='text-lg font-medium text-bodyBlue'>
-					{allCommentsLength || 0}
+					{subsquareComments && subsquareComments.length > 0 ? subsquareComments.length + allCommentsLength: allCommentsLength || 0}
 					<span className='ml-1'>Comments</span>
 				</span>
 				{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2 '>

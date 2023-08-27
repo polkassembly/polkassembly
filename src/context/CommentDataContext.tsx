@@ -11,6 +11,7 @@ export interface ICommentsDataContextProviderProps extends PropsWithChildren {
 export interface ICommentsData {
     timelines: Array<ITimeline>;
     comments:{[index:string]:Array<IComment>};
+	subsquareComments?:Array<IComment>,
     currentTimeline:ITimeline | null;
 	overallSentiments:{
         [index:string]: number;
@@ -28,7 +29,8 @@ export interface ICommentsDataContext {
     setCurrentTimeline:React.Dispatch<React.SetStateAction<ITimeline | null>>;
 	overallSentiments:{
         [index:string]: number;
-    }
+    };
+	subsquareComments?:Array<IComment>
 }
 
 export const CommentsDataContext: React.Context<ICommentsDataContext> = createContext(
@@ -49,6 +51,7 @@ const CommentsDataContextProvider: FC<ICommentsDataContextProviderProps> = (prop
 			setComments,
 			setCurrentTimeline,
 			setTimelines,
+			subsquareComments: initialCommentsData.subsquareComments || [],
 			timelines
 		}}>
 			{children}

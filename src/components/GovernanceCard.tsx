@@ -326,7 +326,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<Progress percent={decision.periodPercent || 0} strokeColor='#407AFC' trailColor='#D4E0FC' strokeWidth={5} />
 								</div>
 							</div>}
-							{ (votesData?.data || tally) && <div className='flex items-center'>
+							{ (votesData?.data || tally) && (network !== 'polymesh') && <div className='flex items-center'>
 								<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #90A0B7' }} />
 								<div>
 									<VotesProgressInListing index={index} proposalType={proposalType} votesData={votesData} onchainId={onchainId} status={status} tally={tally}/>

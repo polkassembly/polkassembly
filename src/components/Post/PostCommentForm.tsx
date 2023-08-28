@@ -20,7 +20,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { Input } from 'antd';
 import { IComment } from './Comment/Comment';
-import { getSubsquidProposalType } from '~src/global/proposalType';
+import { getSubsquidLikeProposalType } from '~src/global/proposalType';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -125,7 +125,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				username: username || '',
         vote:voteDecision
 			};
-			setCurrentState && setCurrentState(postIndex.toString(), getSubsquidProposalType(postType as any), comment);
+			setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
 		}
 		setLoading(false);
 		setIsComment(false);

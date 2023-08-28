@@ -31,6 +31,7 @@ import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
+import CommentsDataContextProvider from '~src/context/CommentDataContext';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -272,6 +273,8 @@ const Post: FC<IPostProps> = (props) => {
 					tally={post?.tally}
 					trackName={trackName}
 					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
+					pipsVoters={post?.pips_voters || []}
+					hash={hash}
 				/>
 				{/* decision deposite placed. */}
 
@@ -430,7 +433,12 @@ const Post: FC<IPostProps> = (props) => {
 			track_number: post?.track_number,
 			username: post?.username
 		}}>
-			<>
+			<CommentsDataContextProvider initialCommentsData={{
+				comments:post?.comments,
+				currentTimeline:post.currentTimeline,
+				overallSentiments: post?.overallSentiments,
+				timelines:[]
+			}}>
 				<SpamAlert />
 				{
 					!isEditing && Boolean(post.timeline?.length) && proposalType !==  ProposalType.CHILD_BOUNTIES &&
@@ -472,7 +480,7 @@ const Post: FC<IPostProps> = (props) => {
 
 							{!isEditing && <>
 								<PostHeading
-									className='mb-8'
+									className='mb-5'
 								/>
 								<Tabs
 									type="card"
@@ -495,7 +503,7 @@ const Post: FC<IPostProps> = (props) => {
 				>
 					{ proposerAddress && <OtherProposals proposerAddress={proposerAddress} currPostOnchainID={Number(onchainId)} closeSidebar={() => setSidebarOpen(false)} /> }
 				</SidebarRight>
-			</>
+			</CommentsDataContextProvider>
 		</PostDataContextProvider>
 	);
 };

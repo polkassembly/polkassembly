@@ -37,6 +37,7 @@ export interface IComment {
 	post_type?: string;
 	vote?:string | null;
 	votes?:[];
+	isRow?:boolean;
 }
 
 interface ICommentProps {
@@ -47,7 +48,7 @@ interface ICommentProps {
 
 export const Comment: FC<ICommentProps> = (props) => {
 	const { className, comment } = props;
-	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history ,spam_users_count, profile vote = null } = comment;
+	const { user_id, content, created_at, id, replies, updated_at ,sentiment,comment_source='polkassembly', history ,spam_users_count, profile, vote = null } = comment;
 	const { asPath } = useRouter();
 	const commentScrollRef = useRef<HTMLDivElement>(null);
 	const [newSentiment,setNewSentiment]=useState<number>(sentiment||0);
@@ -94,6 +95,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					spam_users_count={spam_users_count}
 					vote={vote}
 					votesArr={comment?.votes}
+					isRow={true}
 				>
 					{
 						history && history.length > 0 &&

@@ -124,18 +124,18 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			{delegate?.bio.length > 100  && <span onClick={() => setOpenReadMore(true)} className='text-[#1B61FF] text-xs flex justify-center items-center mt-1 leading-3 cursor-pointer'>Read more</span>}
 		</div>
 		<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] '>
-			<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-[#243A57]'>
+			<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-bodyBlue'>
 				<div className='flex gap-1 items-end justify-center'>
 					{formatedBalance(balance, unit)}
-					<span className='text-sm font-normal text-[#243A57]'>{unit}</span>
+					<span className='text-sm font-normal text-bodyBlue'>{unit}</span>
 				</div>
 				<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>
 			</div>
-			<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-[#243A57] text-[20px] font-semibold'>
+			<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-bodyBlue text-[20px] font-semibold'>
 				{delegate?.voted_proposals_count}
 				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal'>Voted proposals </span><span className='text-xs font-normal text-[#576D8B]'>(Past 30 days)</span>
 			</div>
-			<div className='pt-4 flex items-center flex-col w-[33%] text-[#243A57] text-[20px] font-semibold'>
+			<div className='pt-4 flex items-center flex-col w-[33%] text-bodyBlue text-[20px] font-semibold'>
 				{delegate?.active_delegation_count}
 				<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal text-center'>Received Delegation</span>
 			</div>
@@ -181,18 +181,18 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</p>
 				</div>
 				<div className='border-solid flex min-h-[92px] justify-between border-0 border-t-[1px]  border-[#D2D8E0] '>
-					<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-[#243A57]'>
+					<div className='pt-4 flex items-center flex-col w-[33%] text-[20px] font-semibold text-bodyBlue'>
 						<div className='flex gap-1 items-end justify-center'>
 							{formatedBalance(balance, unit)}
-							<span className='text-sm font-normal text-[#243A57]'>{unit}</span>
+							<span className='text-sm font-normal text-bodyBlue'>{unit}</span>
 						</div>
 						<div className='text-xs font-normal mt-[4px] text-[#576D8B]'>Voting power</div>
 					</div>
-					<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-[#243A57] text-[20px] font-semibold'>
+					<div className='pt-4 flex items-center flex-col border-solid w-[33%] border-0 border-x-[1px] border-[#D2D8E0] text-bodyBlue text-[20px] font-semibold'>
 						{delegate?.voted_proposals_count}
 						<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal'>Voted proposals </span><span className='text-xs font-normal text-[#576D8B]'>(Past 30 days)</span>
 					</div>
-					<div className='pt-4 flex items-center flex-col w-[33%] text-[#243A57] text-[20px] font-semibold'>
+					<div className='pt-4 flex items-center flex-col w-[33%] text-bodyBlue text-[20px] font-semibold'>
 						{delegate?.active_delegation_count}
 						<span className='text-[#576D8B] mb-[2px] mt-1 text-xs font-normal text-center'>Received Delegation</span>
 					</div>

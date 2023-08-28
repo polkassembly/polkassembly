@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import ReplyIcon from '~assets/icons/reply.svg';
 
 import { MessageType } from '~src/auth/types';
-import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
+import { useApiContext, useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ReportButton from '../ActionsBar/ReportButton';
@@ -38,9 +38,10 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply, proposer, is_custom_username }: Props) => {
-	const { id , username ,picture } = useContext(UserDetailsContext);
+	const { id, username, picture, loginAddress } = useContext(UserDetailsContext);
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
+	const { comments, setComments } = useCommentDataContext();
 
 	const [form] = Form.useForm();
 	const [replyToreplyForm] = Form.useForm();
@@ -53,13 +54,13 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 
 	const toggleEdit = () => setIsEditing(!isEditing);
 
-	const { setPostData, postData: {
+	const { postData: {
 		postType, postIndex
 	} } = usePostDataContext();
 
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editReplyKey(replyId)) || '';
-		form.setFieldValue('content', localContent || content || ''); //
+		form.setFieldValue('content', localContent || content || '');
 	}, [content, form, replyId]);
 
 	useEffect(() => {
@@ -125,32 +126,37 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			setError('');
 			global.window.localStorage.removeItem(editReplyKey(replyId));
 			form.setFieldValue('content', '');
-			setPostData((prev) => {
-				const comments:any = Object.assign({}, prev.comments);
-				if (prev?.comments?.[postIndex]) {
-					comments[postIndex] = prev.comments[postIndex].map((comment) => {
-						if (comment.id === commentId) {
-							if (comment?.replies && Array.isArray(comment.replies)) {
-								comment.replies = comment.replies.map((reply) => {
-									if (reply.id === replyId) {
-										reply.content = newContent;
-										reply.updated_at = new Date();
-									}
-									return {
-										...reply
-									};
-								});
+			const keys = Object.keys(comments);
+			setComments((prev:any) => {
+				const comments:any = Object.assign({}, prev);
+				for(const key of keys ){
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev[key].map((comment:any) => {
+							if (comment.id === commentId) {
+								if (comment?.replies && Array.isArray(comment.replies)) {
+									comment.replies = comment.replies.map((reply:any) => {
+										if (reply.id === replyId) {
+											reply.content = newContent;
+											reply.updated_at = new Date();
+										}
+										return {
+											...reply
+										};
+									});
+								}
+								flag = true;
 							}
-						}
-						return {
-							...comment
-						};
-					});
+							return {
+								...comment
+							};
+						});
+					}
+					if(flag){
+						break;
+					}
 				}
-				return {
-					...prev,
-					comments: comments
-				};
+				return comments;
 			});
 			queueNotification({
 				header: 'Success!',
@@ -187,32 +193,38 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			if(data) {
 				setError('');
 				global.window.localStorage.removeItem(newReplyKey(commentId));
-				setPostData((prev) => {
-					const comments:any = Object.assign({}, prev.comments);
-					if (prev?.comments?.[postIndex]) {
-						comments[postIndex] = prev.comments[postIndex].map((comment) => {
-							if (comment.id === commentId) {
-								if (comment?.replies && Array.isArray(comment.replies)) {
-									comment.replies = [...comment.replies,{
-										content: replyContent,
-										created_at: new Date(),
-										id:data.id,
-										updated_at: new Date(),
-										user_id: id,
-										user_profile_img: picture || '',
-										username: username
-									}];
+				const keys = Object.keys(comments);
+				setComments((prev:any) => {
+					const comments:any = Object.assign({}, prev);
+					for(const key of keys ){
+						let flag = false;
+						if (prev?.[key]) {
+							comments[key] = prev[key].map((comment:any) => {
+								if (comment.id === commentId) {
+									if (comment?.replies && Array.isArray(comment.replies)) {
+										comment.replies = [...comment.replies,{
+											content: replyContent,
+											created_at: new Date(),
+											id:data.id,
+											proposer: loginAddress,
+											updated_at: new Date(),
+											user_id: id,
+											user_profile_img: picture || '',
+											username: username
+										}];
+									}
+									flag = true;
 								}
-							}
-							return {
-								...comment
-							};
-						});
+								return {
+									...comment
+								};
+							});
+						}
+						if(flag){
+							break;
+						}
 					}
-					return {
-						...prev,
-						comments: comments
-					};
+					return comments;
 				});
 				replyToreplyForm.resetFields();
 				setIsReplying(false);
@@ -245,22 +257,27 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		}
 
 		if (data) {
-			setPostData((prev) => {
-				const comments:any = Object.assign({}, prev.comments);
-				if (prev?.comments?.[postIndex]) {
-					comments[postIndex] = prev.comments[postIndex].map((comment) => {
-						if (comment.id === commentId) {
-							comment.replies = comment?.replies?.filter((reply) => (reply.id !== replyId)) || [];
-						}
-						return {
-							...comment
-						};
-					});
+			const keys = Object.keys(comments);
+			setComments((prev:any) => {
+				const comments:any = Object.assign({}, prev);
+				for(const key of keys ){
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev[key].map((comment:any) => {
+							if (comment.id === commentId) {
+								comment.replies = comment?.replies?.filter((reply:any) => (reply.id !== replyId)) || [];
+								flag = true;
+							}
+							return {
+								...comment
+							};
+						});
+					}
+					if(flag){
+						break;
+					}
 				}
-				return {
-					...prev,
-					comments: comments
-				};
+				return comments;
 			});
 			queueNotification({
 				header: 'Success!',

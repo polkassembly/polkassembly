@@ -73,11 +73,11 @@ interface ICreationLabelProps {
   truncateUsername?:boolean;
   vote?:string | null;
   votesArr?: any;
+  isRow?:boolean;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
-
-	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource='polkassembly', cid ,spam_users_count = 0, truncateUsername , vote , votesArr = [] } = props;
+	const { className, children, created_at, text, username, defaultAddress, topic, sentiment, commentSource= 'polkassembly', cid ,spam_users_count = 0, truncateUsername , vote , votesArr = [] , isRow } = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal,setShowVotesModal] = useState(false);
 
@@ -89,10 +89,9 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		sentiment === 5 ? { key:5,label:<div className={`${poppins.variable} ${poppins.className} text-[10px] leading-4 bg-pink-100 font-light pl-1 pr-1 tracking-wide`}>Completely For</div> }:null
 	];
 	return <div className={`${className} flex justify-between w-[100%]`} >
-		<div className='text-xs flex flex-col md:flex-row md:items-center'>
+		<div className={`text-xs flex ${isRow ? 'flex-row' : 'flex-col'} md:flex-row md:items-center`}>
 			<div className={'flex min-[320px]:flex-row min-[320px]:items-center w-full min-[320px]:w-auto '}>
 				<div className={'flex items-center '}>
-					<span className='mr-2 text-lightBlue'>By:</span>
 					<NameLabel
 						defaultAddress={defaultAddress}
 						username={username}
@@ -102,7 +101,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 					/>
 					{text}&nbsp;
 					{topic &&
-			<div className='flex sm:-mt-0.5'> <span className='text-lightBlue mr-2 mt-1'>in</span> <TopicTag topic={topic} className={topic} /></div>
+			<div className='flex sm:-mt-0.5'> <span className='text-lightBlue mr-2 mt-0.5'>in</span> <TopicTag topic={topic} className={topic} /></div>
 					}
 					{cid ?
 						<>
@@ -114,7 +113,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 			<div className='flex items-center text-lightBlue'>
 				{(topic || text || created_at) && <>
 				&nbsp;
-					<Divider className='ml-1 hidden md:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+					<Divider className={`ml-1 md:inline-block ${!isRow ? 'hidden' : 'inline-block'}`} type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
 				</>}
 				{created_at && <span className='flex items-center pl-5 mt-2 md:pl-0 md:mt-0'><ClockCircleOutlined className='mx-1' />{relativeCreatedAt}</span>}
 				{/* showing vote from local state */}
@@ -251,6 +250,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							</Modal>
 						</div>: null
 				}
+
+				{/* {created_at && <span className={`flex items-center md:pl-0 mr-1 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0'}`}><ClockCircleOutlined className='mr-1' />{relativeCreatedAt}</span>} */}
 				{children}
 			</div>
 		</div>

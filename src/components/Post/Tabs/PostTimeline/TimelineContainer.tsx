@@ -68,33 +68,35 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 
 	let displayIconActive;
 	let displayIconUnactive;
-	if(getStatus(String(type)) == 'Referendum'){
+	switch (getStatus(String(type))) {
+	case 'Referendum':
 		displayIconActive = <DemocracyReferendaIcon className="-ml-[6px] mr-3 mt-2"/>;
 		displayIconUnactive = <DemocracyReferendaGreyIcon className="-ml-[6px] mr-3 mt-2" />;
-	}
-	else if(getStatus(String(type)) == 'Treasury Proposal'){
+		break;
+	case 'Treasury Proposal':
 		displayIconActive = <TreasuryProposalIcon className="-ml-[6px] mr-3 mt-2"/>;
 		displayIconUnactive = <TreasuryProposalGreyIcon className="-ml-[6px] mr-3 mt-2" />;
-	}
-	else if(getStatus(String(type)) == 'Motion'){
+		break;
+	case 'Motion':
 		displayIconActive = <MotionIcon className="-ml-[6px] mr-3 mt-2"/>;
 		displayIconUnactive = <MotionIconGrey className="-ml-[6px] mr-3 mt-2" />;
-	}
-	else if(getStatus(String(type)) == 'Tech Committee Proposal'){
+		break;
+	case 'Tech Committee Proposal':
 		displayIconActive = <TechCommProposalIcon className="-ml-[6px] mr-3 mt-2"/>;
 		displayIconUnactive = <TechCommProposalIconGrey className="-ml-[6px] mr-3 mt-2" />;
-	}
-	else if(getStatus(String(type)) == 'Democracy Proposal'){
+		break;
+	case 'Democracy Proposal':
 		displayIconActive = <DemocracyProposalIcon className="-ml-[6px] mr-3 mt-2"/>;
 		displayIconUnactive = <DemocracyProposalIconGrey className="-ml-[6px] mr-3 mt-2" />;
-	}
-	else if(getStatus(String(type)) == 'Child Bounty'){
+		break;
+	case 'Child Bounty':
 		displayIconActive = <ChildBountyIcon className="-ml-[6px] mr-3 mt-2"/>;
 		displayIconUnactive = <ChildBountyIconGrey className="-ml-[6px] mr-3 mt-2" />;
-	}
-	else {
+		break;
+	default:
 		displayIconActive = <DiscussionIcon className="-ml-[6px] mr-3 mt-2"/>;
 		displayIconUnactive = <DiscussionIconGrey className="-ml-[6px] mr-3 mt-2" />;
+		break;
 	}
 	const url = getBlockLink(network);
 

@@ -16,7 +16,7 @@ const PostTimeline: FC<IPostTimelineProps> = (props) => {
 	const { className } = props;
 	const { postData: { timeline } } = usePostDataContext();
 	return (
-		<div className={`${className} ml-[36px]`}>
+		<div className={`${className} ml-9`}>
 			{
 				timeline && Array.isArray(timeline) && timeline.length > 0 ?timeline?.map((obj: any, index) => {
 					return (

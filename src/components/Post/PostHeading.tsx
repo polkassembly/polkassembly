@@ -40,7 +40,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2? requested: reward;
 
 	const handleTagClick=(pathname:string,filterBy:string) => {
-		if(pathname !== '') (
+		if(pathname) (
 			router.replace({ pathname:`/${pathname}`,query:{
 				filterBy:encodeURIComponent(JSON.stringify([filterBy]))
 			} }));

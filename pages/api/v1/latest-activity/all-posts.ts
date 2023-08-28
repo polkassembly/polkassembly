@@ -64,6 +64,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				track_number: any;
 				type: any;
 				isSpam?: boolean;
+				isSpamReportInvalid?: boolean;
 		}[] = [];
 
 		let onChainPostsCount = 0;
@@ -110,6 +111,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					return {
 						...singlePost,
 						isSpam: data?.isSpam || false,
+						isSpamReportInvalid: data?.isSpamReportInvalid || false,
 						title: data?.title || title
 					};
 				}
@@ -228,6 +230,9 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					}
 					return {
 						...onChainPost,
+						isSpam: data?.isSpam || false,
+						isSpamReportInvalid: data?.isSpamReportInvalid || false,
+						spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						title: data?.title || subsquareTitle || null
 					};
 				}
@@ -300,8 +305,10 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					offChainPosts.push({
 						created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
 						isSpam: data?.isSpam || false,
+						isSpamReportInvalid: data?.isSpamReportInvalid || false,
 						post_id: data?.id,
 						proposer: '',
+						spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						title: data?.title,
 						topic: topic? topic: isTopicIdValid(topic_id)? {
 							id: topic_id,
@@ -367,6 +374,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			count:  onChainPostsCount + offChainPostsCount,
 			posts: deDupedAllPosts.slice(0, numListingLimit)
 		};
+
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,

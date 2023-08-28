@@ -16,7 +16,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
 
-import { getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
+import { checkReportThreshold, getComments, getReactions, getSpamUsersCount, IPostResponse, isDataExist, updatePostTimeline } from './on-chain-post';
 import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-posts';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import dayjs from 'dayjs';
@@ -94,6 +94,8 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
 			gov_type: gov_type,
 			history,
+			isSpam: data?.isSpam,
+			isSpamReportInvalid: data?.isSpamReportInvalid,
 			last_edited_at: getUpdatedAt(data),
 			post_id: data?.id,
 			post_link: null,
@@ -114,6 +116,18 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			username: data?.username
 
 		};
+
+		// spam users count
+		if(post?.isSpam) {
+			const threshold = process.env.REPORTS_THRESHOLD || 50;
+			post.spam_users_count = Number(threshold);
+		} else {
+			post.spam_users_count = checkReportThreshold(post.spam_users_count);
+		}
+
+		if(post?.isSpamReportInvalid) {
+			post.spam_users_count = 0;
+		}
 
 		if (post && (post.user_id || post.user_id === 0)) {
 			let { user_id } = post;

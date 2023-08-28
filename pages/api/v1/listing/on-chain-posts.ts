@@ -78,6 +78,8 @@ export interface IPostListing {
   timeline?: any;
   track_no?: number | null;
 	isSpam?: boolean;
+	isSpamReportInvalid?: boolean;
+	spam_users_count?: number;
 }
 
 export interface IPostsListingResponse {
@@ -194,9 +196,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							created_at: created_at?.toDate ? created_at?.toDate() : created_at,
 							gov_type: docData?.gov_type,
 							isSpam: docData?.isSpam || false,
+							isSpamReportInvalid: docData?.isSpamReportInvalid || false,
 							post_id: docData.id,
 							post_reactions,
 							proposer: getProposerAddressFromFirestorePostData(docData, network),
+							spam_users_count: docData?.isSpam && !docData?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : docData?.isSpamReportInvalid ? 0 : docData?.spam_users_count || 0,
 							tags: docData?.tags || [],
 							title: docData?.title || subsquareTitle || null,
 							topic: topic ? topic : isTopicIdValid(topic_id) ? {
@@ -307,11 +311,13 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							gov_type: data.gov_type,
 							hash,
 							isSpam: data?.isSpam || false,
+							isSpamReportInvalid: data?.isSpamReportInvalid || false,
 							method: preimage?.method,
 							parent_bounty_index: parentBountyIndex || null,
 							post_id: postId,
 							post_reactions,
 							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
+							spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 							status,
 							status_history: statusHistory,
 							tags: data?.tags || [],
@@ -509,9 +515,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 									gov_type: data.gov_type,
 									hash,
 									isSpam: data?.isSpam || false,
+									isSpamReportInvalid: data?.isSpamReportInvalid || false,
 									post_id: postId,
 									post_reactions,
 									proposer: proposer,
+									spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 									status,
 									tags: data?.tags || [],
 									title: data?.title || subsquareTitle,
@@ -581,9 +589,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 									gov_type: data.gov_type,
 									hash,
 									isSpam: data?.isSpam || false,
+									isSpamReportInvalid: data?.isSpamReportInvalid || false,
 									post_id: postId,
 									post_reactions,
 									proposer: proposer,
+									spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 									status,
 									tags: data?.tags || [],
 									title: data?.title || subsquareTitle || title,
@@ -694,12 +704,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								gov_type: data.gov_type,
 								hash,
 								isSpam: data?.isSpam || false,
+								isSpamReportInvalid: data?.isSpamReportInvalid || false,
 								method: preimage?.method,
 								parent_bounty_index: parentBountyIndex || null,
 								post_id: postId,
 								post_reactions,
 								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 								requestedAmount: preimage?.proposedCall?.args?.amount || preimage?.proposedCall?.args?.value || null,
+								spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 								status,
 								status_history: statusHistory,
 								tags: data?.tags || [],
@@ -804,7 +816,7 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 						if (posts[index] && (proposalType || data.proposal_type === getFirestoreProposalType(posts[index].type))) {
 							posts[index] = {
 								...posts[index],
-								spam_users_count: Number(posts[index].spam_users_count || 0) + 1
+								spam_users_count: posts[index]?.isSpam ? Number(process.env.REPORTS_THRESHOLD || 50) : posts[index]?.isSpamReportInvalid ? 0 : posts[index]?.spam_users_count || 0
 							};
 						}
 					}
@@ -841,6 +853,10 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 			post.spam_users_count = Number(threshold);
 		} else {
 			post.spam_users_count = checkReportThreshold(post.spam_users_count);
+		}
+
+		if(post?.isSpamReportInvalid) {
+			post.spam_users_count = 0;
 		}
 
 		return post;

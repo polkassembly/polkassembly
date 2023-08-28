@@ -66,8 +66,10 @@ export async function getLatestActivityOffChainPosts(params: IGetLatestActivityO
 					posts.push({
 						created_at: data?.created_at?.toDate? data?.created_at?.toDate(): data?.created_at,
 						isSpam: data?.isSpam || false,
+						isSpamReportInvalid: data?.isSpamReportInvalid || false,
 						post_id: data?.id,
 						proposer: '',
+						spam_users_count: data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 						title: data?.title,
 						topic: topic? topic: isTopicIdValid(topic_id)? {
 							id: topic_id,

@@ -99,9 +99,11 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 						created_at: created_at?.toDate? created_at?.toDate(): created_at,
 						gov_type:docData?.gov_type ,
 						isSpam: docData?.isSpam || false,
+						isSpamReportInvalid: docData?.isSpamReportInvalid || false,
 						post_id: docData.id,
 						post_reactions,
 						proposer: getProposerAddressFromFirestorePostData(docData, network),
+						spam_users_count: docData?.isSpam && !docData?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : docData?.isSpamReportInvalid ? 0 : docData?.spam_users_count || 0,
 						tags:docData?.tags || [],
 						title:  docData?.title || null,
 						topic: topic? topic: isTopicIdValid(topic_id)? {

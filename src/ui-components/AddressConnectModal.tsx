@@ -73,6 +73,7 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 	const substrate_address = getSubstrateAddress(loginAddress);
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
+	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 
 	const getAddressType = (account?: InjectedTypeWithCouncilBoolean) => {
 		const account_substrate_address = getSubstrateAddress(account?.address || '');
@@ -516,6 +517,8 @@ const AddressConnectModal = ({ className, open, setOpen, closable, localStorageW
 									{accounts.length > 0?
 										showMultisig ?
 											<MultisigAccountSelectionForm
+												multisigBalance={multisigBalance}
+												setMultisigBalance={setMultisigBalance}
 												title='Select Address'
 												accounts={accounts}
 												address={address}

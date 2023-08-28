@@ -34,7 +34,9 @@ import Image from 'next/image';
 import WalletButtons from './WalletButtons';
 import MultisigAccountSelectionForm from '~src/ui-components/MultisigAccountSelectionForm';
 import TFALoginForm from './TFALoginForm';
+import BN from 'bn.js';
 
+const ZERO_BN = new BN(0);
 interface Props {
   chosenWallet: Wallet;
   setDisplayWeb2: () => void;
@@ -81,6 +83,7 @@ const Web3Login: FC<Props> = ({
 	const [fetchAccounts, setFetchAccounts] = useState(true);
 	const [isSignUp, setIsSignUp] = useState(false);
 	const [authResponse, setAuthResponse] = useState<IAuthResponse>(initAuthResponse);
+	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 
 	const handleClick=() => {
 		if(isModal && setSignupOpen && setLoginOpen){
@@ -473,6 +476,8 @@ const Web3Login: FC<Props> = ({
 											<div className='flex justify-center items-center my-5'>
 												{withPolkasafe ? (
 													<MultisigAccountSelectionForm
+														multisigBalance={multisigBalance}
+														setMultisigBalance={setMultisigBalance}
 														title="Choose linked account"
 														accounts={accounts}
 														address={address}

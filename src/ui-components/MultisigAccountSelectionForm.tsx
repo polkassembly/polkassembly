@@ -23,6 +23,7 @@ const Container = styled.div`
     gap: 30px;
 `;
 
+const ZERO_BN = new BN(0);
 interface Props {
 	accounts: InjectedAccount[];
 	address: string;
@@ -41,8 +42,8 @@ interface Props {
 	containerClassName?: string;
 	canMakeTransaction?: boolean;
 	showMultisigBalance?:boolean
-	multisigBalance: BN;
-	setMultisigBalance:(pre: BN) => void;
+	multisigBalance?: BN;
+	setMultisigBalance?:(pre: BN) => void;
 }
 
 const MultisigAccountSelectionForm = ({
@@ -83,7 +84,7 @@ const MultisigAccountSelectionForm = ({
 		}
 		const initiatorBalance = await api.query.system.account(address);
 		const balance = new BN(initiatorBalance.data.free.toString());
-		setMultisigBalance(balance);
+		setMultisigBalance?.(balance);
 	};
 	const handleChange = (address: string) => {
 		setWalletAddress(address);
@@ -145,7 +146,7 @@ const MultisigAccountSelectionForm = ({
 								)}
 								{showMultisigBalance && walletAddress && (
 									<div className={`${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px]`}>
-										Available: <span className='text-pink_primary'>{formatBnBalance(multisigBalance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+										Available: <span className='text-pink_primary'>{formatBnBalance(multisigBalance || ZERO_BN, { numberAfterComma: 2, withUnit: true }, network)}</span>
 									</div>
 								)}
 							</>

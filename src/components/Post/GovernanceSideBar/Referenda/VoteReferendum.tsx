@@ -117,7 +117,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [totalDeposit, setTotalDeposit] = useState<BN>(new BN(0));
-	const [initiatorBalance, setInitiatorBalance] = useState<BN>(new BN(0));
+	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
+	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 
 	useEffect(() => {
 		getWallet();
@@ -170,16 +171,16 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const handleBalanceErr = useCallback(() => {
 		switch (vote){
 		case EVoteDecisionType.AYE:
-			setIsBalanceErr(availableBalance?.lte(lockedBalance));
+			setIsBalanceErr((showMultisig ? multisigBalance : availableBalance)?.lte(lockedBalance));
 			break;
 		case EVoteDecisionType.NAY:
-			setIsBalanceErr(availableBalance?.lte(lockedBalance));
+			setIsBalanceErr((showMultisig ? multisigBalance : availableBalance)?.lte(lockedBalance));
 			break;
 		case EVoteDecisionType.SPLIT:
-			setIsBalanceErr(availableBalance?.lte(nayVoteValue.add(ayeVoteValue)));
+			setIsBalanceErr((showMultisig ? multisigBalance : availableBalance)?.lte(nayVoteValue.add(ayeVoteValue)));
 			break;
 		case EVoteDecisionType.ABSTAIN:
-			setIsBalanceErr(availableBalance?.lte((nayVoteValue.add(ayeVoteValue)).add(abstainVoteValue)));
+			setIsBalanceErr((showMultisig ? multisigBalance : availableBalance)?.lte((nayVoteValue.add(ayeVoteValue)).add(abstainVoteValue)));
 			break;
 		}
 
@@ -203,12 +204,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			return;
 		}
 		let balance = ZERO_BN;
-
 		try{
 			balance = new BN(balanceStr);
 			if(multisig){
 				const multisigBalance = (await api.query.system.account(multisig)).data.free.toString();
-				balance = new BN(multisigBalance);
+				const multisigBalanceBn = new BN(multisigBalance);
+				setMultisigBalance(multisigBalanceBn);
 			}
 			setAvailableBalance(balance);
 		}
@@ -305,7 +306,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setVote(value as EVoteDecisionType);
 		handleModalReset();
 	};
-
 	const handleSubmit = async () => {
 
 		if (!referendumId && referendumId !== 0) {
@@ -519,7 +519,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />} tip={loadingStatus.message}>
 						<>
 							<div className='mb-6'>
-								<div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>
+								<div className='text-sm font-normal flex items-center justify-center text-lightBlue mt-3'>Select a wallet</div>
 								<div className='flex items-center gap-x-5 mt-1 justify-center'>
 									{availableWallets[Wallet.POLKADOT] && <WalletButton className={`${wallet === Wallet.POLKADOT? ' w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.POLKADOT)} name="Polkadot" icon={<WalletIcon which={Wallet.POLKADOT} className='h-6 w-6'  />} />}
 									{availableWallets[Wallet.TALISMAN] && <WalletButton className={`${wallet === Wallet.TALISMAN? 'w-[64px] h-[48px] hover:border-pink_primary border border-solid border-pink_primary': 'w-[64px] h-[48px]'}`} disabled={!apiReady} onClick={(event) => handleWalletClick((event as any), Wallet.TALISMAN)} name="Talisman" icon={<WalletIcon which={Wallet.TALISMAN} className='h-6 w-6'  />} />}
@@ -557,7 +557,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									className='mb-6'
 								/>
 							}
-							{(!showMultisig && isBalanceErr && !loadingStatus.isLoading && wallet) && <Alert type='info' message='Insufficient balance' showIcon className='mb-4 rounded-[4px]'/>}
+							{((showMultisig || initiatorBalance.gte(totalDeposit)) || isBalanceErr && !loadingStatus.isLoading && wallet) && (((ayeVoteValue.add(nayVoteValue)).add(abstainVoteValue)).add(lockedBalance)).gte(showMultisig ? multisigBalance : availableBalance) && <Alert type='info' message='Insufficient balance' showIcon className='mb-4 rounded-[4px]'/>}
 							{walletErr.error === 1 && !loadingStatus.isLoading && <Alert message={walletErr.message} description={walletErr.description} showIcon/>}
 							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 							{
@@ -570,12 +570,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											withBalance
 											onAccountChange={onAccountChange}
 											onBalanceChange={handleOnBalanceChange}
-											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
+											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue`}
 											walletAddress={multisig}
 											setWalletAddress={setMultisig}
-											containerClassName='gap-[20px]'
+											containerClassName='gap-5'
 											showMultisigBalance={true}
 											canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
+											multisigBalance={multisigBalance}
+											setMultisigBalance={setMultisigBalance}
 										/> :
 										<AccountSelectionForm
 											title='Vote with Account'
@@ -584,7 +586,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											withBalance
 											onAccountChange={onAccountChange}
 											onBalanceChange={handleOnBalanceChange}
-											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-[#485F7D]`}
+											className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue`}
 											inputClassName='rounded-[4px] px-3 py-1'
 											withoutInfo={true}
 										/>
@@ -612,7 +614,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										onBalanceChange={(balance:BN) => setLockedBalance(balance)}
 										convictionClassName={className}
 										handleSubmit={handleSubmit}
-										disabled={!wallet || !lockedBalance || lockedBalance.lte(ZERO_BN) || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit)) || isBalanceErr}
+										disabled={!wallet || !lockedBalance || lockedBalance.lte(ZERO_BN) || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit)) || isBalanceErr || (showMultisig && multisigBalance.lte(lockedBalance))}
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}
@@ -628,7 +630,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										onAyeValueChange={(balance:BN) => setAyeVoteValue(balance)}
 										onNayValueChange={(balance:BN) => setNayVoteValue(balance)}
 										convictionClassName={className} handleSubmit={handleSubmit}
-										disabled={!wallet || (ayeVoteValue.lte(ZERO_BN) || nayVoteValue.lte(ZERO_BN)) || (showMultisig && !multisig) || isBalanceErr}
+										disabled={!wallet || (ayeVoteValue.lte(ZERO_BN) || nayVoteValue.lte(ZERO_BN)) || (showMultisig && !multisig) || (showMultisig && initiatorBalance.lte(totalDeposit)) || isBalanceErr || (showMultisig && multisigBalance.lte(((ayeVoteValue.add(nayVoteValue)).add(abstainVoteValue)).add(lockedBalance)))}
 										conviction={conviction} setConviction={setConviction}
 										convictionOpts={convictionOpts}
 									/>
@@ -645,7 +647,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										onAbstainValueChange={(balance:BN) => setAbstainVoteValue(balance)}
 										convictionClassName={className}
 										handleSubmit={handleSubmit}
-										disabled={!wallet || (ayeVoteValue.lte(ZERO_BN) || nayVoteValue.lte(ZERO_BN) || abstainVoteValue.lte(ZERO_BN)) || (showMultisig && !multisig) || isBalanceErr}
+										disabled={!wallet || (ayeVoteValue.lte(ZERO_BN) || nayVoteValue.lte(ZERO_BN) || abstainVoteValue.lte(ZERO_BN)) || (showMultisig && !multisig)  || (showMultisig && initiatorBalance.lte(totalDeposit)) || isBalanceErr ||  (showMultisig && multisigBalance.lte(((ayeVoteValue.add(nayVoteValue)).add(abstainVoteValue)).add(lockedBalance)))}
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}

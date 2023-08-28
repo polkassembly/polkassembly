@@ -17,8 +17,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { commentId, postId, postType , replyId= '' } = req.body;
-	if(!commentId || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { commentId= '', postId, postType , replyId= '', reason = '' } = req.body;
+	console.log(commentId, postId, postType, replyId, reason);
+	if(isNaN(postId) || !postType || !reason) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
 	if(!token) return res.status(400).json({ message: 'Invalid token' });

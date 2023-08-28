@@ -15,6 +15,7 @@ import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IComment } from '../../Comment/Comment';
+import { deleteContentByMod } from '~src/util/deleteContentByMod';
 
 interface IReportButtonProps {
 	type: string;
@@ -27,6 +28,7 @@ interface IReportButtonProps {
 	onDeleteReply?: () => void;
 	onDeleteComment?: () => void;
 	isReply?: boolean;
+	allowed_roles?: string[];
 }
 
 const reasons = [
@@ -37,7 +39,7 @@ const reasons = [
 ];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , isReply, onDeleteReply, onDeleteComment } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , isReply, onDeleteReply, onDeleteComment , allowed_roles } = props;
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
@@ -157,9 +159,18 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 
 		setLoading(false);
 	};
+
 	const handleDelete = async () => {
 		setLoading(true);
-		isReply ? onDeleteReply && onDeleteReply() : onDeleteComment && onDeleteComment();
+		await form.validateFields();
+		const validationErrors = form.getFieldError('reason');
+		if(validationErrors.length > 0) return;
+		setFormDisabled(true);
+		const reason = form.getFieldValue('comments');
+		console.log('reason', reason , typeof reason);
+		allowed_roles?.includes('moderator')?
+			deleteContentByMod(postId, proposalType, reason, commentId, replyId, onDeleteComment, onDeleteReply) :
+			null;
 	};
 	return (
 		<>

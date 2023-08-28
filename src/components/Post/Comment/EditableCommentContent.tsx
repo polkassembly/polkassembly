@@ -308,32 +308,13 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		});
 		queueNotification({
 			header: 'Success!',
-			message: 'Your comment was deleted.',
+			message: `${allowed_roles?.includes('moderator')? 'The' : 'Your'} comment was deleted.`,
 			status: NotificationStatus.SUCCESS
 		});
 	};
 
 	const deleteComment = async () => {
-		if (allowed_roles?.includes('moderator')) {
-			// Call the different API for moderators
-			const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteContentByMod', {
-				commentId,
-				postId: ((comment.post_index || comment.post_index === 0) ? comment.post_index : props.postId),
-				postType: comment.post_type || props.proposalType
-			});
-			if (deleteCommentError || !data) {
-				console.error('Error deleting comment: ', deleteCommentError);
-				queueNotification({
-					header: 'Error!',
-					message: deleteCommentError || 'There was an error in deleting your comment.',
-					status: NotificationStatus.ERROR
-				});
-			}
-			if (data){
-				removeCommentContent();
-			}
-		}
-		else{
+		if (!allowed_roles?.includes('moderator')) {
 			const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteComment', {
 				commentId,
 				postId: ((comment.post_index || comment.post_index === 0) ? comment.post_index : props.postId),
@@ -351,7 +332,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				removeCommentContent();
 			}
 		}
-
+		else{
+			removeCommentContent();
+		}
 	};
 
 	const items:MenuProps['items']=[
@@ -376,7 +359,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			allowed_roles?.includes('moderator') ?
 				{
 					key: 4,
-					label: <ReportButton isDeleteModal={true} proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `} type='comment' onDeleteComment={deleteComment} isReply={false} commentId={commentId} postId={postIndex}/>
+					label: <ReportButton isDeleteModal={true} proposalType={postType} className={`flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent ${poppins.variable} ${poppins.className} `} type='comment' allowed_roles={allowed_roles} onDeleteComment={deleteComment} isReply={false} commentId={commentId} postId={postIndex}/>
 				}
 				:null
 	];

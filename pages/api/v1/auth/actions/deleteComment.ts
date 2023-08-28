@@ -21,6 +21,7 @@ interface IDeleteComment {
 	network: string;
 	user: User;
 	replyId?: number;
+	reason?: string;
 }
 
 export async function deleteComment(params: IDeleteComment): Promise<IApiResponse<MessageType>> {
@@ -35,7 +36,7 @@ export async function deleteComment(params: IDeleteComment): Promise<IApiRespons
 			.doc(String(commentId));
 
 		const commentDoc = await commentRef.get();
-		if(replyId){
+		if(postId && replyId && commentId){
 			const replyRef = postRef
 				.collection('comments')
 				.doc(String(commentId))
@@ -59,7 +60,7 @@ export async function deleteComment(params: IDeleteComment): Promise<IApiRespons
 				status: 200
 			};
 		}
-		else{
+		else if(postId && commentId && !replyId){
 			if(!commentDoc.exists) throw apiErrorWithStatusCode('Comment not found', 404);
 			if(commentDoc.data()?.user_id !== user.id && !user?.roles?.includes(Role.MODERATOR)) throw apiErrorWithStatusCode('Unauthorised', 403);
 			await commentRef.delete().then(() => {
@@ -71,6 +72,16 @@ export async function deleteComment(params: IDeleteComment): Promise<IApiRespons
 			return {
 				data: {
 					message: 'Comment saved.'
+				},
+				error: null,
+				status: 200
+			};
+		}
+		else{
+			await postRef.delete();
+			return {
+				data: {
+					message: 'Post saved.'
 				},
 				error: null,
 				status: 200

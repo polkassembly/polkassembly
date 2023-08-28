@@ -133,19 +133,19 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				(!decidingStatusBlock) && !isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='m-0 mr-[69px] text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
+							<h3 className='m-0 mr-[69px] text-bodyBlue font-semibold text-xl whitespace-nowrap leading-6 tracking-[0.0015em]'>Prepare Period</h3>
 							<div className="flex w-[100px] gap-1">
-								<Button className="bg-pink_primary text-white">1</Button>
-								<p className="my-1">of</p>
-								<Button>3</Button>
+								<p className="flex whitespace-nowrap justify-between m-0 ml-[37px]" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '12px', height: '24px', width: '52px' }}>
+									<Button className="bg-pink_primary text-xs h-[23.885px] w-[23px] text-white">1</Button> of 3
+								</p>
 							</div>
 						</div>
 						<div className='mt-[20px]'>
 							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={prepare.periodPercent} strokeColor='#E5007A'  trailColor='#FEF2F8' size="small" />
 						</div>
-						<p className='p-0 m-0 flex items-center justify-between mt-3.5 leading-[22px]'>
+						<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
 							<>
-								<span className='text-bodyBlue text-sm font-normal'>Prepare Period</span>
+								<span className='text-bodyBlue text-sm text-bodyblue font-normal'>Prepare Period</span>
 								<span className='text-lightBlue text-xs'>{periodStartAt(prepare.period, prepare.periodPercent)}/{prepare.period}</span>
 							</>
 						</p>
@@ -156,26 +156,26 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				(decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='m-0 mr-[69px] text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
+							<h3 className='m-0 mr-[69px] whitespace-nowrap text-bodyBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
 							<div className="flex w-[100px] gap-1">
-								<Button className="bg-pink_primary text-white">2</Button>
-								<p className="my-1">of</p>
-								<Button>3</Button>
+								<p className="flex whitespace-nowrap justify-between m-0 ml-[37px]" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '12px', height: '24px', width: '52px' }}>
+									<Button className="bg-pink_primary text-xs h-[23.885px] w-[23px] text-white">2</Button> of 3
+								</p>
 							</div>
 						</div>
 						<div className='mt-[30px]'>
 							<Progress className='m-0 p-0 flex items-center rounded-lg' showInfo={false} percent={decision.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
 						</div>
-						<p className='p-0 m-0 flex items-center justify-between mt-3.5 leading-[22px]'>
-							<span className='text-bodyBlue text-sm font-normal'>Decision Period</span>
+						<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
+							<span className='text-bodyBlue text-sm font-normal text-bodyblue'>Decision Period</span>
 							<span className='text-lightBlue text-xs'>{periodStartAt(decision.period, decision.periodPercent)}/{decision.period}</span>
 						</p>
 						<div className='mt-[20px]'>
 							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={confirm.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
 						</div>
-						<p className='p-0 m-0 flex items-center justify-between mt-3.5 leading-[22px]'>
+						<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
 							<>
-								<span className='text-bodyBlue text-sm font-normal'>Confirmation Period</span>
+								<span className='text-bodyBlue text-sm text-bodyblue font-normal'>Confirmation Period</span>
 								<span className='text-lightBlue text-xs'>{periodStartAt(confirm.period, confirm.periodPercent)}/{confirm.period}</span>
 							</>
 						</p>
@@ -189,18 +189,18 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							(isDisbursalPeriodCardVisible || minEnactment.periodCardVisible)
 								? <GovSidebarCard>
 									<div className='flex items-center justify-between'>
-										<h3 className='m-0 mr-[69px] text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
+										<h3 className='m-0 mr-[69px] whitespace-nowrap text-bodyBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
 										<div className="flex w-[100px] gap-1">
-											<Button className="bg-pink_primary text-white">3</Button>
-											<p className="my-1">of</p>
-											<Button>3</Button>
+											<p className="flex whitespace-nowrap justify-between m-0 ml-[37px]" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '12px', height: '24px', width: '52px' }}>
+												<Button className="bg-pink_primary text-xs h-[23.885px] w-[23px] text-white">3</Button> of 3
+											</p>
 										</div>
 									</div>
 									<div className='mt-[20px]'>
 										<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={minEnactment.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
 									</div>
-									<p className='p-0 m-0 flex items-center justify-between mt-3.5 leading-[22px]'>
-										<span className='text-bodyBlue text-sm font-normal'>Enactment Period</span>
+									<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
+										<span className='text-bodyBlue text-sm text-bodyblue font-normal'>Enactment Period</span>
 										<span className='text-lightBlue text-xs'>{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}</span>
 									</p>
 									{

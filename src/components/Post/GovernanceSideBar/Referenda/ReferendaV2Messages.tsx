@@ -135,8 +135,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						<div className='flex items-center justify-between'>
 							<h3 className='m-0 mr-[69px] text-bodyBlue font-semibold text-xl whitespace-nowrap leading-6 tracking-[0.0015em]'>Prepare Period</h3>
 							<div className="flex w-[100px] gap-1">
-								<p className="flex whitespace-nowrap justify-between m-0 ml-[37px]" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '12px', height: '24px', width: '52px' }}>
-									<Button className="bg-pink_primary text-xs h-[23.885px] w-[23px] text-white">1</Button> of 3
+								<p className="flex whitespace-nowrap justify-between m-0 ml-[37px] text-bodyBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '12px', height: '24px', width: '52px' }}>
+									<Button className="bg-pink_primary text-xs h-[23.885px] w-[23px] px-3 text-white -mt-0.5 mr-0.5">1</Button> of 3
 								</p>
 							</div>
 						</div>
@@ -158,8 +158,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						<div className='flex items-center justify-between'>
 							<h3 className='m-0 mr-[69px] whitespace-nowrap text-bodyBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
 							<div className="flex w-[100px] gap-1">
-								<p className="flex whitespace-nowrap justify-between m-0 ml-[37px]" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '12px', height: '24px', width: '52px' }}>
-									<Button className="bg-pink_primary text-xs h-[23.885px] w-[23px] text-white">2</Button> of 3
+								<p className="flex whitespace-nowrap justify-between m-0 ml-[37px] text-bodyBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '12px', height: '24px', width: '52px' }}>
+									<Button className="bg-pink_primary text-xs h-[23.885px] w-[23px] px-3 text-white -mt-0.5 mr-0.5">2</Button> of 3
 								</p>
 							</div>
 						</div>
@@ -191,8 +191,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									<div className='flex items-center justify-between'>
 										<h3 className='m-0 mr-[69px] whitespace-nowrap text-bodyBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
 										<div className="flex w-[100px] gap-1">
-											<p className="flex whitespace-nowrap justify-between m-0 ml-[37px]" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '12px', height: '24px', width: '52px' }}>
-												<Button className="bg-pink_primary text-xs h-[23.885px] w-[23px] text-white">3</Button> of 3
+											<p className="flex whitespace-nowrap justify-between m-0 ml-[37px] text-bodyBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '12px', height: '24px', width: '52px' }}>
+												<Button className="bg-pink_primary text-xs h-[23.885px] w-[23px] px-3 text-white -mt-0.5 mr-0.5">3</Button> of 3
 											</p>
 										</div>
 									</div>

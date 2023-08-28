@@ -123,7 +123,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 				updated_at: new Date(),
 				user_id: id as any,
 				username: username || '',
-        vote:voteDecision
+				vote:voteDecision
 			};
 			setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
 		}

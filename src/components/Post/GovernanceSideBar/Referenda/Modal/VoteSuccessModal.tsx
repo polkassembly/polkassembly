@@ -22,8 +22,12 @@ import PostCommentForm from '~src/components/Post/PostCommentForm';
 import styled from 'styled-components';
 import QuoteRight from '~assets/icons/quote-right-icon.svg';
 import QuoteLeft from '~assets/icons/quote-left-icon.svg';
-//import { CommentBoxIcon } from 'src/ui-components/CustomIcons';
+// import Emoji from '~assets/icons/emoji-1.svg';
+// import Vector from '~assets/icons/vector.png';
+// import { CommentBoxIcon } from 'src/ui-components/CustomIcons';
 import Corner from '~assets/icons/chatbox-corner.svg';
+// import Image from 'next/image';
+// import LeftQuote from '~assets/icons/';
 
 interface Props {
     className?: string;
@@ -245,6 +249,7 @@ const VoteInitiatedModal = ({
 					</div>
 				</div>
 			</div>
+
 			<div className='relative mt-[50px] bg-[#eff3fe] rounded-[15px] z-100000 border border-solid border-[#a3befc] h-auto'>
 				<QuoteRight className='absolute top-[-10px] w-[34px] h-[25px] left-[-10px]'/>
 				<QuoteLeft className='absolute right-[0px] w-[34px] h-[25px] top-[-10px]' />

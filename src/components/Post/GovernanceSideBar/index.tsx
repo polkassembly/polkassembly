@@ -166,7 +166,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		gov2ReferendumStatus.SUBMITTED,
 		gov2ReferendumStatus.DECIDING,
 		gov2ReferendumStatus.CONFIRM_STARTED,
-		gov2ReferendumStatus.DECISION_DEPOSIT_PLACED
+		gov2ReferendumStatus.DECISION_DEPOSIT_PLACED,
+		gov2ReferendumStatus.CONFIRM_ABORTED,
 	].includes(post.status);
 
 	const unit =`${chainProperties[network]?.tokenSymbol}`;

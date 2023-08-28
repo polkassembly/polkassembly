@@ -3,14 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
+import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IApiResponse, IPostHistory } from '~src/types';
+import { ESentiments, IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -23,11 +22,25 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
+import { getSubsquareCommentsFromFirebase } from './comments/getOnlySubsquareComments';
+import { getSubSquareComments } from './comments/subsquare-comments';
+import { updateComments } from './comments/updateComments';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
+import dayjs from 'dayjs';
+import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
+};
+
+export const fetchSubsquare = async (network: string, id: string | number) => {
+	try {
+		const res = await fetch(`https://${network}.subsquare.io/api/gov2/referendums/${id}`);
+		return await res.json();
+	} catch (error) {
+		return [];
+	}
 };
 
 export const getTimeline = (proposals: any, isStatus?: {
@@ -70,10 +83,18 @@ export interface IReactions {
 	};
 }
 
+export interface IPIPsVoting {
+	balance: null | string;
+	voter: null | string;
+	decision: 'yes' | 'no';
+	identityId: string ;
+  }
+
 export interface IPostResponse {
 	post_reactions: IReactions;
 	timeline: any[];
-	comments: any[];
+	comments: any;
+	currentTimeline?:any;
 	content: string;
 	end?: number;
 	delay?: number;
@@ -84,13 +105,14 @@ export interface IPostResponse {
 		id: number;
 		name: string;
 	};
-  title?: string;
 	decision?: string;
 	last_edited_at?: string | Date;
 	[key: string]: any;
-  gov_type?: 'gov_1' | 'open_gov' ;
-  tags?: string[] | [];
-  history?: IPostHistory[];
+	gov_type?: 'gov_1' | 'open_gov' ;
+	tags?: string[] | [];
+	history?: IPostHistory[];
+	pips_voters?: IPIPsVoting[];
+	title?: string;
 }
 
 export type IReaction = '👍' | '👎';
@@ -101,6 +123,7 @@ interface IGetOnChainPostParams {
 	voterAddress?: string | string[];
 	proposalType: string | string[];
 	isExternalApiCall?: boolean;
+	noComments?: boolean;
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -313,7 +336,7 @@ const getAndSetNewData = async (params: IParams) => {
 	return newData;
 };
 
-export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>, postDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>, network: string, proposalType: string): Promise<any[]> {
+export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>, postDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>, network: string, postType: string, postIndex: number | string): Promise<any[]> {
 	const userIds = new Set<number>();
 	const commentsPromise = commentsSnapshot.docs.map(async (doc) => {
 		if (doc && doc.exists) {
@@ -322,6 +345,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
 			const commentsReactionsSnapshot = await commentDocRef.collection('comment_reactions').get();
 			const comment_reactions = getReactions(commentsReactionsSnapshot);
+			const user = (await firestore_db.collection('users').doc(String(data.user_id)).get()).data();
 
 			if (typeof data.user_id === 'number') {
 				userIds.add(data.user_id);
@@ -334,13 +358,17 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 
 			const comment = {
 				comment_reactions: comment_reactions,
+				comment_source: data.comment_source || 'polkassembly',
 				content: data.content,
 				created_at: data.created_at?.toDate ? data.created_at.toDate(): data.created_at,
 				history: history,
 				id: data.id,
 				is_custom_username: false,
-				proposer: '',
-				replies: [] as any[],
+				post_index: postIndex,
+				post_type: postType,
+				profile: user?.profile || null,
+				proposer: data.proposer || '',
+				replies: data.replies || [] as any[],
 				sentiment:data.sentiment || 0,
 				spam_users_count: 0,
 				updated_at: getUpdatedAt(data),
@@ -372,6 +400,8 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 							created_at: created_at?.toDate? created_at.toDate(): created_at,
 							id: id,
 							is_custom_username: false,
+							post_index: postIndex,
+							post_type: postType,
 							proposer: '',
 							spam_users_count: 0,
 							updated_at: getUpdatedAt(data),
@@ -390,11 +420,11 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 					const endIndex = startIndex + chunkSize;
 					const slice = replyIds.slice(startIndex, endIndex);
 					if (slice.length > 0) {
-						const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+						const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'reply').where('proposal_type', '==', postType).where('content_id', 'in', slice).get();
 						reportsQuery.docs.map((doc) => {
 							if (doc && doc.exists) {
 								const data = doc.data();
-								comment.replies = comment.replies.map((v) => {
+								comment.replies = comment.replies.map((v:any) => {
 									if (v && v.id == data.content_id) {
 										return {
 											...v,
@@ -410,7 +440,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			}
 			return {
 				...comment,
-				replies: comment.replies.map((reply) => {
+				replies: comment.replies.map((reply:any) => {
 					return {
 						...reply,
 						spam_users_count: checkReportThreshold(Number(reply?.spam_users_count))
@@ -484,7 +514,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			const endIndex = startIndex + chunkSize;
 			const slice = commentIds.slice(startIndex, endIndex);
 			if (slice.length > 0) {
-				const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', proposalType).where('content_id', 'in', slice).get();
+				const reportsQuery = await networkDocRef(network).collection('reports').where('type', '==', 'comment').where('proposal_type', '==', postType).where('content_id', 'in', slice).get();
 				reportsQuery.docs.map((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -528,7 +558,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 
 export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IApiResponse<IPostResponse>> {
 	try {
-		const { network, postId, voterAddress, proposalType, isExternalApiCall } = params;
+		const { network, postId, voterAddress, proposalType, isExternalApiCall, noComments = true } = params;
 		const netDocRef = networkDocRef(network);
 
 		const numPostId = Number(postId);
@@ -576,11 +606,71 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
 		}
-		const subsquidRes = await fetchSubsquid({
-			network,
-			query: postQuery,
-			variables: postVariables
-		});
+		else if(network === 'polymesh'){
+			postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
+			postVariables =  {
+				index_eq: numPostId,
+				type_eq: subsquidProposalType
+			};
+		}
+
+		let subsquidRes: any = {};
+		try {
+			subsquidRes = await fetchSubsquid({
+				network,
+				query: postQuery,
+				variables: postVariables
+			});
+		} catch (error) {
+			const data = await fetchSubsquare(network, strPostId);
+			if (data) {
+				subsquidRes['data'] = {
+					'proposals': [
+						{
+							createdAt: data?.createdAt,
+							curator: data?.proposer,
+							curatorDeposit: null,
+							deciding: data?.onchainData?.info?.deciding,
+							decisionDeposit: data?.onchainData?.info?.decisionDeposit,
+							delay: null,
+							deposit: data?.onchainData?.info?.deposit,
+							description: null,
+							enactmentAfterBlock: data?.onchainData?.info?.enactment?.after,
+							enactmentAtBlock: data?.onchainData?.info?.enactment?.at,
+							end: data?.onchainData?.enactment?.when,
+							endedAt: null,
+							endedAtBlock: null,
+							fee: null,
+							hash: data?.onchainData?.proposalHash,
+							index: data?.referendumIndex,
+							preimage: {
+								method: data?.onchainData?.proposal?.method,
+								proposedCall: data?.onchainData?.proposal?.call,
+								section: data?.onchainData?.proposal?.section
+							},
+							proposalArguments: null,
+							proposer: data?.proposer,
+							status: data?.state?.name,
+							statusHistory: data?.onchainData?.timeline?.map((obj: any) => {
+								if (obj?.name === 'DecisionStarted') {
+									obj.name = 'Deciding';
+								}
+								return {
+									block: obj?.indexer?.blockHeight,
+									status: obj.name,
+									timestamp: obj?.indexer?.blockTime
+								};
+							}),
+							submissionDeposit: data?.onchainData?.info?.submissionDeposit,
+							tally: data?.onchainData?.tally,
+							timeline: null,
+							trackNumber: data?.track,
+							type: 'ReferendumV2'
+						}
+					]
+				};
+			}
+		}
 
 		// Post
 		const subsquidData = subsquidRes?.data;
@@ -663,12 +753,14 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
 			history,
+			identity: postData?.identity || null,
 			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
 			motion_method: proposalArguments?.method,
 			origin: postData?.origin,
 			payee: postData?.payee,
+			pips_voters: postData?.voting || [],
 			post_id: postData?.index,
 			post_reactions: getDefaultReactionObj(),
 			proposal_arguments: proposalArguments,
@@ -871,36 +963,89 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		}
 
 		// Comments
-		if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
-			const commentPromises = post.timeline.map(async (timeline: any) => {
-				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String((timeline.type === 'Tip'? timeline.hash: timeline.index)));
-				const commentsSnapshot = await postDocRef.collection('comments').get();
-				const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
-				return comments;
-			});
-			const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
-			commentPromiseSettledResults.forEach((result) => {
-				if (result && result.status === 'fulfilled' && result.value && Array.isArray(result.value)) {
-					if (!post.comments || !Array.isArray(post.comments)) {
-						post.comments = [];
+		if(noComments){
+			const sentiments:any = {};
+			const sentimentsKey:Array<ESentiments> = [ESentiments.Against, ESentiments.SlightlyAgainst, ESentiments.Neutral, ESentiments.SlightlyFor, ESentiments.For];
+			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+				const commentPromises = post.timeline.map(async (timeline: any) => {
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					const commentsCount = (await postDocRef.collection('comments').count().get()).data().count;
+					return { ...timeline, commentsCount };
+				});
+				const timelines:Array<any> = await Promise.allSettled(commentPromises);
+				post.timeline = timelines.map(timeline => timeline.value);
+			}
+			const currentTimelineObj = post.timeline?.[0] || null;
+			if(currentTimelineObj){
+				post.currentTimeline = {
+					commentsCount: currentTimelineObj.commentsCount,
+					date: dayjs(currentTimelineObj?.created_at),
+					firstCommentId: '',
+					id: 1,
+					index: currentTimelineObj?.index?.toString() || currentTimelineObj?.hash,
+					status: getStatus(currentTimelineObj?.type),
+					type: currentTimelineObj?.type
+				};
+			}
+			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+				let timeline: any= null;
+				for (timeline of post.timeline){
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					for(let i = 0; i < sentimentsKey.length; i++){
+						const key = sentimentsKey[i];
+						sentiments[key]= sentiments[key] ?
+							sentiments[key] + (await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count :
+							(await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count;
 					}
-					post.comments = post.comments.concat(result.value);
 				}
-			});
-		} else {
-			if (post.post_link) {
-				const { id, type } = post.post_link;
-				const postDocRef = postsByTypeRef(network, type).doc(String(id));
-				const commentsSnapshot = await postDocRef.collection('comments').get();
-				post.comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
 			}
-			const commentsSnapshot = await postDocRef.collection('comments').get();
-			const comments = await getComments(commentsSnapshot, postDocRef, network, strProposalType);
-			if (post.comments && Array.isArray(post.comments)) {
-				post.comments = post.comments.concat(comments);
+			post.overallSentiments = sentiments;
+		}
+		else{
+			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+				const commentPromises = post.timeline.map(async (timeline: any) => {
+					const post_index = (timeline.type === 'Tip'? timeline.hash: timeline.index);
+					const type = getFirestoreProposalType(timeline.type) as ProposalType;
+					const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
+					const commentsSnapshot = await postDocRef.collection('comments').get();
+					const comments = await getComments(commentsSnapshot, postDocRef, network, type, post_index);
+					return comments;
+				});
+				const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
+				commentPromiseSettledResults.forEach((result) => {
+					if (result && result.status === 'fulfilled' && result.value && Array.isArray(result.value)) {
+						if (!post.comments || !Array.isArray(post.comments)) {
+							post.comments = [];
+						}
+						post.comments = post.comments.concat(result.value);
+					}
+				});
 			} else {
-				post.comments = comments;
+				if (post.post_link) {
+					const { id, type } = post.post_link;
+					const postDocRef = postsByTypeRef(network, type).doc(String(id));
+					const commentsSnapshot = await postDocRef.collection('comments').get();
+					post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
+				}
+				const commentsSnapshot = await postDocRef.collection('comments').get();
+				const comments = await getComments(commentsSnapshot, postDocRef, network, (strProposalType.toString() === 'open_gov'? ProposalType.REFERENDUM_V2: strProposalType), (strProposalType === ProposalType.TIPS? strPostId: numPostId));
+				if (post.comments && Array.isArray(post.comments)) {
+					post.comments = post.comments.concat(comments);
+				} else {
+					post.comments = comments;
+				}
 			}
+			post.comments_count = post.comments.length;
+		}
+
+		// Update subsquare comments
+		const { data: commentIds } = await getSubsquareCommentsFromFirebase({ network, postId: postId as string, postType:proposalType as ProposalType });
+		let comments = await getSubSquareComments(proposalType as string, network, postId as string);
+		commentIds?.forEach(id => {
+			comments = comments.filter(comment => comment.id !== id);
+		});
+		if(comments.length > 0){
+			await updateComments(postId as string, network, proposalType as ProposalType, comments);
 		}
 
 		// Post Reactions
@@ -915,8 +1060,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.content = remark.replace(/\n/g, '<br/>');
 			} else {
 				const proposer = post.proposer;
+				const identity  = post?.identity;
 				if (proposer) {
 					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					if(network === AllNetworks.POLYMESH){
+						post.content = `This is a pip whose DID (${identity}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					}
 				} else {
 					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 				}
@@ -972,6 +1121,7 @@ const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, r
 	const { data, error, status } = await getOnChainPost({
 		isExternalApiCall: true,
 		network,
+		noComments:false,
 		postId,
 		proposalType,
 		voterAddress

@@ -419,6 +419,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 									accounts={accounts}
 									address={address}
 									onAccountChange={onAccountChange}
+									linkAddressTextDisabled
 								/>
 							</div>
 							<div className={'mainButtonContainer'}>

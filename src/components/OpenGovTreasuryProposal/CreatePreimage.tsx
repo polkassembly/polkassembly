@@ -5,7 +5,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import { EEnactment, IEnactment, IPreimage, ISteps } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import Address from '~src/ui-components/Address';
 import BN from 'bn.js';
 import dynamic from 'next/dynamic';
 import SelectTracks from './SelectTracks';
@@ -16,8 +15,7 @@ import Web3 from 'web3';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import styled from 'styled-components';
 import DownArrow from '~assets/icons/down-icon.svg';
-import { GetCurrentTokenPrice } from '../Home/TreasuryOverview';
-import { BN_HUNDRED, BN_ONE, BN_THOUSAND, formatBalance, isHex } from '@polkadot/util';
+import { BN_HUNDRED, BN_MAX_INTEGER, BN_ONE, BN_THOUSAND, formatBalance, isHex } from '@polkadot/util';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { APPNAME } from '~src/global/appName';
@@ -28,7 +26,7 @@ import { blake2AsHex } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
 import { LoadingOutlined } from '@ant-design/icons';
 import { chainProperties } from '~src/global/networkConstants';
-import { formatedBalance } from '../DelegationDashboard/ProfileBalance';
+import { formatedBalance } from '~src/util/formatedBalance';
 import { useCurrentBlock } from '~src/hooks';
 import { Proposal } from '@polkadot/types/interfaces';
 import { ApiPromise } from '@polkadot/api';
@@ -40,6 +38,7 @@ import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
+import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -69,6 +68,8 @@ interface Props{
   form: FormInstance;
   preimageLength: number | null;
   setPreimageLength: (pre:number | null) => void;
+  availableBalance: BN;
+  setAvailableBalance: (pre: BN) => void;
 }
 
 interface IAdvancedDetails{
@@ -76,7 +77,7 @@ interface IAdvancedDetails{
   atBlockNo: BN | null
 }
 
-const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preimageLength, setPreimageLength, preimageHash, setPreimageHash, fundingAmount, setFundingAmount, selectedTrack, setSelectedTrack, proposerAddress, beneficiaryAddress, setBeneficiaryAddress, enactment, setEnactment, setPreimage, form }:Props) => {
+const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preimageLength, setPreimageLength, preimageHash, setPreimageHash, fundingAmount, setFundingAmount, selectedTrack, setSelectedTrack, proposerAddress, beneficiaryAddress, setBeneficiaryAddress, enactment, setEnactment, setPreimage, availableBalance, setAvailableBalance, form }:Props) => {
 
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
@@ -89,7 +90,6 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
-	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [isAutoSelectTrack, setIsAutoSelectTrack] = useState<boolean>(true);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
@@ -108,33 +108,67 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 	const trackArr: string[] = [];
 	const maxSpendArr: {track: string, maxSpend: number}[] = [];
+	const [gasFee, setGasFee] =  useState(ZERO_BN);
+	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit}` || 0);
 
 	if(network){
 		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
 			if(value.group === 'Treasury'){
 				trackArr.push(key);
-				maxSpendArr.push({ maxSpend: value?.maxSpend, track: key });
+				if(value?.maxSpend === -1){
+					maxSpendArr.push({ maxSpend: Number(BN_MAX_INTEGER.toString()), track: key });
+				}else{
+					maxSpendArr.push({ maxSpend: value?.maxSpend, track: key });
+				}
 			}
 		});
 	}
 
 	maxSpendArr.sort((a,b) => a.maxSpend - b.maxSpend );
 
+	const getPreimageTxFee = (isPreimageVal?: boolean, selectedTrackVal?: string, fundingAmountVal?: BN) => {
+		const txSelectedTrack = selectedTrackVal || selectedTrack;
+		const txBeneficiary = form.getFieldValue('address') || beneficiaryAddress;
+		const txFundingAmount = fundingAmountVal || fundingAmount;
+
+		if(!api || !apiReady || !txBeneficiary || !txSelectedTrack) return;
+		setShowAlert(false);
+		if((isPreimageVal || isPreimage) || !proposerAddress || !txBeneficiary || !getEncodedAddress(txBeneficiary, network) || !txFundingAmount || txFundingAmount.lte(ZERO_BN) || txFundingAmount.eq(ZERO_BN)) return;
+
+		setLoading(true);
+		const tx = api.tx.treasury.spend(txFundingAmount.toString(), txBeneficiary);
+		(async () => {
+			await form.validateFields();
+			const info = await tx.paymentInfo(proposerAddress);
+			const gasFee:BN = new BN(info.partialFee) ;
+			setGasFee(gasFee);
+			setTxFee(gasFee.add(baseDeposit));
+			setLoading(false);
+			setShowAlert(true);
+		})();
+	};
+
 	const handleStateChange = (createPreimageForm: any) => {
 		setSteps({ percent: 20, step: 1 });
-		(createPreimageForm.preimageHash && createPreimageForm.preimageLength  && createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) &&  setSteps({ percent: 100, step: 1 });
-		(createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) && setSteps({ percent: 100, step: 1 });
-		createPreimageForm?.selectedTrack && setIsAutoSelectTrack(false);
 
 		setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
-		const balance = new BN(createPreimageForm?.fundingAmount) ;
+		const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
+		const [balance, isValid] = inputToBn(`${isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount}`, network, false);
+		if(isValid){
+			if(createPreimageForm.isPreimage) {
+				setFundingAmount(bnBalance);
+			}else{
+				setFundingAmount(balance);
+			}
+		}else{
+			setFundingAmount(ZERO_BN);
+		}
 		setInputAmountValue(createPreimageForm?.fundingAmount);
 		setPreimageHash(createPreimageForm?.preimageHash || '') ;
 		setPreimageLength(createPreimageForm?.preimageLength || null);
 		setBeneficiaryAddress(createPreimageForm?.beneficiaryAddress || '');
 		setEnactment(createPreimageForm?.enactment || { key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 		setBeneficiaryAddress(createPreimageForm.beneficiaryAddress || '');
-		setFundingAmount(balance);
 		setSelectedTrack(createPreimageForm?.selectedTrack || '');
 
 		form.setFieldValue('preimage_hash', createPreimageForm?.preimageHash || '');
@@ -143,9 +177,32 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		form.setFieldValue('address', createPreimageForm.beneficiaryAddress || '');
 		form.setFieldValue('at_block', currentBlock?.add(BN_THOUSAND) || BN_ONE  );
 
+		if(createPreimageForm.preimageHash && createPreimageForm.preimageLength  && createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack) {
+			setSteps({ percent: 100, step: 1 });
+		}
+		if(createPreimageForm.beneficiaryAddress && createPreimageForm?.fundingAmount && createPreimageForm?.selectedTrack)
+		{
+			setSteps({ percent: 100, step: 1 });
+			getPreimageTxFee(createPreimageForm.isPreimage, createPreimageForm?.selectedTrack, createPreimageForm.isPreimage ? bnBalance : balance );
+		}
+		if(createPreimageForm?.selectedTrack) {
+			setIsAutoSelectTrack(false);
+		}
+
 		if(createPreimageForm?.enactment) {
 			setOpenAdvanced(true);
 			form.setFieldValue(createPreimageForm?.enactment?.key === EEnactment.At_Block_No ? 'at_block' : 'after_blocks', createPreimageForm?.enactment?.value || null );
+		}
+	};
+
+	const handleSelectTrack = (fundingAmount:BN, isPreimage: boolean) => {
+		for(const i in maxSpendArr){
+			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
+			if(maxSpend.gte(fundingAmount)){
+				setSelectedTrack(maxSpendArr[i].track);
+				onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
+				break;
+			}
 		}
 	};
 
@@ -159,8 +216,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			setSteps({ percent: 20, step: 1 });
 			const createPreimageForm = data?.createPreimageForm?.[!isPreimage ? 'withoutPreimageForm' : 'withPreimageForm'] ;
 			handleStateChange(createPreimageForm);
-			data.preimageCreated && setPreimageCreated(data.preimageCreated);
-			data.preimageLinked && setPreimageLinked(data.preimageLinked);
+			if(data.preimageCreated) setPreimageCreated(data.preimageCreated);
+			if(data.preimageLinked) setPreimageLinked(data.preimageLinked);
 		}
 		if(!network) return ;
 		formatBalance.setDefaults({
@@ -171,7 +228,8 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[]);
 
-	const onChangeLocalStorageSet = (obj: any, isPreimage: boolean, preimageCreated?: boolean, preimageLinked?: boolean, isPreimageStateChange?: boolean) => {
+	const onChangeLocalStorageSet = (changedKeyValueObj: any, isPreimage: boolean, preimageCreated?: boolean, preimageLinked?: boolean, isPreimageStateChange?: boolean) => {
+		setTxFee(ZERO_BN);
 		let data: any = localStorage.getItem('treasuryProposalData');
 		if(data){data = JSON.parse(data);}
 
@@ -182,7 +240,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			...data,
 			createPreimageForm: {
 				...createPreimageFormData,
-				[createPreimageFormKey]: { ...createPreimageKeysData, ...obj }
+				[createPreimageFormKey]: { ...createPreimageKeysData, ...changedKeyValueObj }
 			},
 			isPreimage: isPreimage,
 			preimageCreated: Boolean(preimageCreated),
@@ -194,40 +252,13 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			handleStateChange(createPreimageKeysData || {});
 			setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
 			form.setFieldValue('at_block',currentBlock?.add(BN_THOUSAND) || BN_ONE  );
-			data.preimageCreated && setPreimageCreated(data.preimageCreated);
-			data.preimageLinked && setPreimageLinked(data.preimageLinked);
+			if(data.preimageCreated) setPreimageCreated(data.preimageCreated);
+			if(data.preimageLinked) setPreimageLinked(data.preimageLinked);
 			setIsAutoSelectTrack(true);
 			setOpenAdvanced(false);
 		}
 
 	};
-	const getPreimageTxFee = () => {
-		if(!api || !apiReady) return;
-
-		setLoading(true);
-		const tx = api.tx.treasury.spend(fundingAmount.toString(), beneficiaryAddress);
-
-		(async () => {
-			const info = await tx.paymentInfo(proposerAddress);
-			setTxFee(new BN(info.partialFee.toString() || 0));
-			setLoading(false);
-			setShowAlert(true);
-		})();
-	};
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debounceTxFn = useCallback(_.debounce(getPreimageTxFee, 2000),[form, proposerAddress, beneficiaryAddress, fundingAmount, api, apiReady, network, selectedTrack, availableBalance]);
-
-	useEffect(() => {
-		setShowAlert(false);
-		form.validateFields();
-
-		if(isPreimage || !proposerAddress || !beneficiaryAddress || !getEncodedAddress(beneficiaryAddress, network) ||
-		!api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN) || fundingAmount.eq(ZERO_BN))return;
-		if(!selectedTrack) return;
-		debounceTxFn();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debounceTxFn]);
 
 	const getState = (api: ApiPromise, proposal: SubmittableExtrinsic<'promise'>): IPreimage => {
 		let preimageHash = EMPTY_HASH;
@@ -242,7 +273,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		notePreimageTx = api.tx.preimage.notePreimage(encodedProposal);
 
 		// we currently don't have a constant exposed, however match to Substrate
-		storageFee = ((api.consts.preimage?.baseDeposit || ZERO_BN) as unknown as BN).add(
+		storageFee = ((api?.consts?.preimage?.baseDeposit || ZERO_BN) as unknown as BN).add(
 			((api.consts.preimage?.byteDeposit || ZERO_BN) as unknown as BN).muln(preimageLength)
 		);
 
@@ -262,7 +293,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 		const injectedWindow = window as Window & InjectedWindow;
 		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[String(proposerWallet)]
+			? injectedWindow?.injectedWeb3?.[String(proposerWallet)]
 			: null;
 
 		if (!wallet) {
@@ -290,63 +321,52 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		}
 		api.setSigner(injected.signer);
 
+		const proposal = api?.tx?.treasury?.spend(fundingAmount.toString(), beneficiaryAddress);
+		const preimage: any = getState(api, proposal);
 		setLoading(true);
-		try {
+		const onSuccess = () => {
 
-			const proposal = api.tx.treasury.spend(fundingAmount.toString(), beneficiaryAddress);
-			const preimage: any = getState(api, proposal);
+			setPreimage(preimage);
+			setPreimageHash(preimage.preimageHash);
+			setPreimageLength(preimage.preimageLength);
+			setPreimageCreated(true);
+			onChangeLocalStorageSet({ preimageCreated: true,  preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength }, Boolean(isPreimage), true);
+			setLoading(false);
+			setSteps({ percent: 100, step: 2 });
+		};
 
-			const onSuccess = () => {
-				queueNotification({
-					header: 'Success!',
-					message: `Preimage #${proposal.hash} successful.`,
-					status: NotificationStatus.SUCCESS
-				});
-				setPreimage(preimage);
-				setPreimageHash(preimage.preimageHash);
-				setPreimageLength(preimage.preimageLength);
-				setPreimageCreated(true);
-				onChangeLocalStorageSet({ preimageCreated: true,  preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength }, Boolean(isPreimage), true);
-				setLoading(false);
-				setSteps({ percent: 100, step: 2 });
-			};
-
-			const onFailed = () => {
-				queueNotification({
-					header: 'failed!',
-					message: 'Transaction failed!',
-					status: NotificationStatus.ERROR
-				});
-				setLoading(false);
-			};
-			setLoading(true);
-
-			await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage?.notePreimageTx });
-		}
-		catch(error){
-			console.log(':( transaction failed');
-			console.error('ERROR:', error);
+		const onFailed = () => {
 			queueNotification({
-				header: 'Failed!',
-				message: error.message,
+				header: 'failed!',
+				message: 'Transaction failed!',
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
+		};
 
-		}
+		setLoading(true);
+		await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage?.notePreimageTx });
+
 	};
 
 	const handleSubmit = async() => {
 
-		if(!isPreimage){if(txFee.gte(availableBalance)) return;}
+		if(!isPreimage){
+			if(txFee.gte(availableBalance)) return;
+		}
 		await form.validateFields();
-		isPreimage && onChangeLocalStorageSet({ preimageLinked: true }, Boolean(isPreimage), preimageCreated, true);
+		if(isPreimage) onChangeLocalStorageSet({ preimageLinked: true }, Boolean(isPreimage), preimageCreated, true);
 
 		if(!(isPreimage) ? preimageCreated : preimageLinked) {
 			setSteps({ percent: 100, step: 2 });
 		}
 		else{
-			!isPreimage ? await getPreimage() : (preimageLength !== 0 && beneficiaryAddress?.length > 0 && fundingAmount.gt(ZERO_BN)) && setSteps({ percent: 100, step: 2 }) ;
+			if(!isPreimage){
+				await getPreimage();
+			}
+			else if(preimageLength !== 0 && beneficiaryAddress?.length > 0 && fundingAmount.gt(ZERO_BN)) {
+				setSteps({ percent: 100, step: 2 });
+			}
 			setEnactment({ ...enactment, value: enactment.key === EEnactment.At_Block_No ? advancedDetails?.atBlockNo : advancedDetails?.afterNoOfBlocks  });
 		}
 	};
@@ -354,7 +374,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 	const getExistPreimageDataFromPolkadot = async(preimageHash: string, isPreimage: boolean) => {
 		if(!api || !apiReady) return;
 
-		const lengthObj = await api.query.preimage.statusFor(preimageHash);
+		const lengthObj = await api?.query?.preimage?.statusFor(preimageHash);
 
 		const length = JSON.parse(JSON.stringify(lengthObj))?.unrequested?.len || 0;
 		checkPreimageHash(length, preimageHash);
@@ -362,7 +382,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		form.setFieldValue('preimage_length', length);
 		onChangeLocalStorageSet({ preimageLength: length || '' }, Boolean(isPreimage));
 
-		const preimageRaw: any = await api.query.preimage.preimageFor([preimageHash, length ]);
+		const preimageRaw: any = await api?.query?.preimage?.preimageFor([preimageHash, length ]);
 		const preimage = preimageRaw.unwrapOr(null);
 
 		const constructProposal = function(
@@ -382,37 +402,40 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 
 		try{
 			const proposal = constructProposal(api, preimage);
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { meta, method, section } = api.registry.findMetaCall(
-				proposal?.callIndex as any
-			);
-			const params = proposal?.meta ? proposal?.meta.args
-				.filter(({ type }): boolean => type.toString() !== 'Origin')
-				.map(({ name }) => name.toString()) : [];
+			if(proposal){
+				const params = proposal?.meta ? proposal?.meta.args
+					.filter(({ type }): boolean => type.toString() !== 'Origin')
+					.map(({ name }) => name.toString()) : [];
 
-			const values = proposal?.args;
-
-			const preImageArguments = proposal?.args && params && params.map((name, index) => {
-				return {
-					name,
-					value: values?.[index]?.toString()
-				};
-			});
-			if(preImageArguments){
-				const balance = new BN(preImageArguments[0].value || '0') || ZERO_BN;
-				setBeneficiaryAddress(preImageArguments[1].value || '');
-				setFundingAmount(balance);
-				onChangeLocalStorageSet({ beneficiaryAddress: preImageArguments[1].value || '', fundingAmount: balance.toString() }, Boolean(isPreimage));
-				setSteps({ percent: 100 ,step: 1 });
-				for(const i in maxSpendArr){
-					const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
-					if(maxSpend.gte(balance)){
-						setSelectedTrack(maxSpendArr[i].track);
-						onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
-						break;
-					}
+				const values = proposal?.args;
+				const preImageArguments = proposal?.args && params && params.map((name, index) => {
+					return {
+						name,
+						value: values?.[index]?.toString()
+					};
+				});
+				if(preImageArguments && proposal.section === 'treasury' && proposal?.method === 'spend'){
+					const balance = new BN(preImageArguments[0].value || '0') || ZERO_BN;
+					setBeneficiaryAddress(preImageArguments[1].value || '');
+					setFundingAmount(balance);
+					onChangeLocalStorageSet({ beneficiaryAddress: preImageArguments[1].value || '', fundingAmount: balance.toString() }, Boolean(isPreimage));
+					setSteps({ percent: 100 ,step: 1 });
+					handleSelectTrack(balance, isPreimage);
 				}
-
+				else{
+					setPreimageLength(0);
+					queueNotification({
+						header: 'Incorrect Preimage Added!',
+						message: 'Please enter a preimage for a treasury related track.',
+						status: NotificationStatus.ERROR
+					});
+				}}
+			else {
+				queueNotification({
+					header: 'Failed!',
+					message: `Incorrect preimage for ${network} network.`,
+					status: NotificationStatus.ERROR
+				});
 			}
 		}catch(error){
 			queueNotification({
@@ -422,18 +445,22 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 			});
 		}
 	};
-
 	const existPreimageData = async(preimageHash: string, isPreimage: boolean) => {
 		setPreimageLength(0);
 		form.setFieldValue('preimage_length', 0);
 		if(!api || !apiReady || !isHex(preimageHash, 256) || preimageHash?.length < 0) return;
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}`);
-		if(data){
-			if(data.hash === preimageHash){
+
+		if(data && !data?.message){
+			if(data.section === 'Treasury' && data.method === 'spend' && data.hash === preimageHash){
 				if(!data.proposedCall.args && !data?.proposedCall?.args?.beneficiary && !data?.proposedCall?.args?.amount){
+					console.log('fetching data from polkadotjs');
 					getExistPreimageDataFromPolkadot(preimageHash, Boolean(isPreimage));
-				}else{
+				}
+				else
+				{
+					console.log('fetching data from subsquid');
 					form.setFieldValue('preimage_length', data?.length);
 					setBeneficiaryAddress(data?.proposedCall?.args?.beneficiary || '');
 					const balance = new BN(data?.proposedCall?.args?.amount || '0') || ZERO_BN;
@@ -441,18 +468,25 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 					setPreimageLength(data.length);
 					form.setFieldValue('preimage_length', data.length);
 					onChangeLocalStorageSet({ beneficiaryAddress: data?.proposedCall?.args?.beneficiary || '', fundingAmount: balance.toString(), preimageLength: data?.length || '' }, Boolean(isPreimage));
+					//select track
+					handleSelectTrack(balance, isPreimage);
+
 					setSteps({ percent: 100 ,step: 1 });
-					for(const i in maxSpendArr){
-						const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
-						if(maxSpend.gte(balance)){
-							setSelectedTrack(maxSpendArr[i].track);
-							onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
-							break;
-						}
-					}
-				}}
+
+				}
+			}else {
+				setPreimageLength(0);
+				form.setFieldValue('preimage_length', 0);
+
+				queueNotification({
+					header: 'Incorrect Preimage Added!',
+					message: 'Please enter a preimage for a treasury related track.',
+					status: NotificationStatus.ERROR
+				});
+			}
 		}
-		else if(error){
+		else if(error || data?.message){
+			console.log('fetching data from polkadotjs');
 			getExistPreimageDataFromPolkadot(preimageHash, Boolean(isPreimage));
 		}
 		setLoading(false);
@@ -500,7 +534,9 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		setPreimageLinked(false);
 		!isPreimage && onChangeLocalStorageSet({ beneficiaryAddress: beneficiaryAddress }, Boolean(isPreimage));
 		setSteps({ percent:(fundingAmount.gt(ZERO_BN) && address?.length > 0 )? 100: 60, step: 1 });
-		address.length > 0 && (getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
+		if(address.length > 0){
+			(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
+		}
 		setTimeout(() => { setAddressAlert(false);}, 5000);
 	};
 	const handleOnAvailableBalanceChange = (balanceStr: string) => {
@@ -523,15 +559,9 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 		setPreimageLinked(false);
 		setSteps({ percent: (beneficiaryAddress?.length > 0 && fundingAmount.gt(ZERO_BN)) ? 100 : 60, step: 1 });
 		if(!isAutoSelectTrack || !fundingAmount || fundingAmount.eq(ZERO_BN)) return;
-		for(const i in maxSpendArr){
-			const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
-			if(maxSpend.gte(fundingAmount)){
-				setSelectedTrack(maxSpendArr[i].track);
-				onChangeLocalStorageSet({ selectedTrack: maxSpendArr[i].track }, Boolean(isPreimage));
-				break;
-			}
-		}
+		handleSelectTrack(fundingAmount, Boolean(isPreimage));
 	};
+
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
 		<div className={`${className} create-preimage`}>
 			<div className='my-8 flex flex-col'>
@@ -548,7 +578,7 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				form={form}
 				disabled={loading}
 				onFinish={handleSubmit}
-				initialValues={{ address: beneficiaryAddress, after_blocks: String(advancedDetails.afterNoOfBlocks?.toString()), at_block: String(advancedDetails.atBlockNo?.toString()), preimage_hash: preimageHash, preimage_length: preimageLength || 0 }}
+				initialValues={{ address: beneficiaryAddress, after_blocks: String(advancedDetails.afterNoOfBlocks?.toString()), at_block: String(advancedDetails.atBlockNo?.toString()), preimage_hash: preimageHash, preimage_length: preimageLength || 0, proposer_address: proposerAddress }}
 				validateMessages= {
 					{ required: "Please add the '${name}' " }
 				}>
@@ -576,21 +606,24 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 				</>
 				}
 				{ isPreimage === false && <>
-					{ (txFee.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}showIcon message='Insufficient available balance.'/>}
+					{ (txFee.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`} showIcon message='Insufficient available balance.'/>}
 					<div className='mt-6'>
 						<div className='flex justify-between items-center mt-6 text-lightBlue'>
                 Proposer Address<span>
 								<Balance address={proposerAddress} onChange={handleOnAvailableBalanceChange}/>
 							</span>
 						</div>
-						<div className=' px-2 rounded-[4px] h-[45px] cursor-not-allowed border-solid border-[1px] bg-[#F6F7F9] border-[#D2D8E0] flex items-center'>
-							<Address
-								address={proposerAddress}
-								identiconSize={30}
-								disableAddressClick
-								addressClassName='text-sm text-bodyBlue text-semibold'
-								textClassName='text-bodyBlue font-medium' />
-						</div>
+						<AddressInput
+							name='proposer_address'
+							defaultAddress={proposerAddress}
+							onChange={() => setLoading(false)}
+							inputClassName={' font-normal text-sm h-[40px]'}
+							className='text-lightBlue text-sm font-normal -mt-6'
+							disabled
+							size='large'
+							identiconSize={30}
+						/>
+
 					</div>
 					<AddressInput
 						defaultAddress={beneficiaryAddress}
@@ -601,21 +634,31 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						helpText='The amount requested in the proposal will be received in this address.'
 						size='large'
 						identiconSize={30}
-						inputClassName={' font-normal text-sm h-[40px]'}
+						inputClassName={'font-normal text-sm h-[40px]'}
 						skipFormatCheck={true}
 						checkValidAddress= {setValidBeneficiaryAddress}
+						onBlur={getPreimageTxFee}
 					/>
+					{beneficiaryAddress ? !(getEncodedAddress(beneficiaryAddress, network) || Web3.utils.isAddress(beneficiaryAddress)) && <span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span> : null}
+
 					{addressAlert && <Alert className='mb mt-2' showIcon message='The substrate address has been changed to Kusama address.'/> }
 					<div  className='mt-6 -mb-6'>
 						<div className='flex justify-between items-center text-lightBlue text-sm mb-[2px]'>
 							<label>Funding Amount <span><HelperTooltip text='Amount requested by the proposer.' className='ml-1'/></span></label>
-							<span className='text-xs text-bodyBlue'>Current Value: <span className='text-pink_primary'>{Number(inputAmountValue)*Number(currentTokenPrice.value) || 0} USD</span></span>
+							<span className='text-xs text-bodyBlue'>Current Value: <span className='text-pink_primary'>{Math.floor(Number(inputAmountValue)*Number(currentTokenPrice.value) || 0)} USD</span></span>
 						</div>
-						<BalanceInput address={proposerAddress} placeholder='Add funding amount' setInputValue={(input: string) => {setInputAmountValue(input); onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage)); }} formItemName='funding_amount' onChange= { handleFundingAmountChange }/>
+						<BalanceInput onBlur={getPreimageTxFee} address={proposerAddress} placeholder='Add funding amount' setInputValue={(input: string) => {setInputAmountValue(input); onChangeLocalStorageSet({ fundingAmount: input }, Boolean(isPreimage)); }} formItemName='funding_amount' onChange= { handleFundingAmountChange }/>
 					</div>
 					<div className='mt-6'>
 						<label className='text-lightBlue text-sm'>Select Track <span><HelperTooltip text='Track selection is done based on the amount requested.' className='ml-1'/></span></label>
-						<SelectTracks tracksArr={trackArr} onTrackChange={(track) => {setSelectedTrack(track); setIsAutoSelectTrack(false); onChangeLocalStorageSet({ selectedTrack: track }, isPreimage); setSteps({ percent: 100, step: 1 });}} selectedTrack={selectedTrack}/>
+						<SelectTracks tracksArr={trackArr} onTrackChange={(track) => {
+							setSelectedTrack(track);
+							setIsAutoSelectTrack(false);
+							onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
+							getPreimageTxFee();
+							setSteps({ percent: 100, step: 1 });}}
+						selectedTrack={selectedTrack}
+						/>
 					</div>
 				</>}
 				{ isPreimage !== null  && <div className='mt-6 flex gap-2 items-center cursor-pointer' onClick={() => setOpenAdvanced(!openAdvanced)}>
@@ -675,12 +718,13 @@ const CreatePreimage = ({ className, isPreimage, setIsPreimage, setSteps, preima
 						</Radio>
 					</Radio.Group>
 				</div>}
-				{(showAlert && !isPreimage) && <Alert type='info' className='mt-6 rounded-[4px] text-bodyBlue' showIcon message={`Gas Fees of this ${formatedBalance(String(txFee.toString()), unit)} ${chainProperties[network]?.tokenSymbol} will be applied to create preimage.`}/>}
+				{(showAlert && !isPreimage) && !txFee.eq(ZERO_BN) && <Alert type='info' className='mt-6 rounded-[4px] text-bodyBlue' showIcon description={`Gas Fees of ${formatedBalance(String(gasFee.toString()), unit)} ${unit} will be applied to create preimage.`}
+					message={`${formatedBalance(String(baseDeposit.toString()), unit)} ${unit} Base deposit is required to create a preimage.`}/>}
 				<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
 					<Button onClick={() => setSteps({ percent: 100, step: 0 }) } className='font-medium tracking-[0.05em] text-pink_primary border-pink_primary text-sm w-[155px] h-[38px] rounded-[4px]'>Back</Button>
 					<Button htmlType='submit'
-						className={`bg-pink_primary text-white font-medium text-center tracking-[0.05em] text-sm w-[165px] h-[40px] rounded-[4px] ${((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack && !txFee.gte(availableBalance)) : (preimageHash?.length === 0 || invalidPreimageHash() )) && 'opacity-50' }`}
-						disabled={((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack && !txFee.gte(availableBalance)) : (preimageHash?.length === 0 || invalidPreimageHash() ))}>
+						className={`bg-pink_primary text-white font-medium text-center tracking-[0.05em] text-sm w-[165px] h-[40px] rounded-[4px] ${((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack && !txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && !loading) : (preimageHash?.length === 0 || invalidPreimageHash() )) && 'opacity-50' }`}
+						disabled={((isPreimage !== null && !isPreimage) ? !((beneficiaryAddress && validBeneficiaryAddress) && fundingAmount && selectedTrack && !txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && !loading) : (preimageHash?.length === 0 || invalidPreimageHash() ))}>
 						{isPreimage ? (preimageLinked ? 'Next' :  'Link Preimage') : (preimageCreated ? 'Next' : 'Create Preimage')}
 					</Button>
 				</div>
@@ -693,10 +737,17 @@ export default styled(CreatePreimage)`
 	filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 }
 .preimage .ant-form-item {
-  margin-bottom: 0px !important;
+	margin-bottom: 0px !important;
 }
 .enactment .ant-form-item .ant-form-item-control{
-flex-direction: row !important;
-gap:6px !important;
+	flex-direction: row !important;
+	gap:6px !important;
+}
+.ant-alert-with-description{
+	padding-block: 15px !important;
+}
+.ant-alert-with-description .ant-alert-icon{
+  font-size: 18px !important;
+  margin-top: 4px;
 }
 `;

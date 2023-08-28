@@ -4,9 +4,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
-import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
-import LockBalanceIcon from '~assets/icons/lock-balance.svg';
-import RightTickIcon from '~assets/icons/right-tick.svg';
 import { Divider } from 'antd';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
@@ -19,25 +16,19 @@ import { APPNAME } from '~src/global/appName';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { formatBalance } from '@polkadot/util';
 import Image from 'next/image';
+import { formatedBalance } from '~src/util/formatedBalance';
+import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
+import LockBalanceIcon from '~assets/icons/lock-balance.svg';
+import RightTickIcon from '~assets/icons/right-tick.svg';
 
 interface Props{
   className?: string;
   address: string;
 }
 
-const WalletConnectModal = dynamic(() => import('~src/ui-components/WalletConnectModal'), {
+const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	ssr: false
 });
-
-export const formatedBalance = (balance: string, unit: string) => {
-	const formated = formatBalance(balance, { forceUnit: unit, withUnit: false }).split('.');
-	if(Number(formated?.[0][0]) > 0){
-		return formated?.[1] ? `${formated[0]}.${formated[1].slice(0,1)}`: `${formated[0]}`;
-	}else{
-		return formated.join('.');
-	}
-
-};
 
 const ProfileBalances = ({ className, address }: Props ) => {
 
@@ -49,8 +40,6 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	const unit =`${chainProperties[network]?.tokenSymbol}`;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [loading, setLoading] = useState<boolean>(false);
 	const { loginWallet, setUserDetailsContextState, delegationDashboardAddress } = useUserDetailsContext();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
@@ -124,7 +113,6 @@ const ProfileBalances = ({ className, address }: Props ) => {
 			}
 
 			if(loginWallet){
-				setLoading(true);
 				localStorage.setItem('delegationWallet', loginWallet);
 				localStorage.setItem('delegationDashboardAddress', address || delegationDashboardAddress);
 				setUserDetailsContextState((prev) => {
@@ -132,7 +120,6 @@ const ProfileBalances = ({ className, address }: Props ) => {
 						delegationDashboardAddress: address || delegationDashboardAddress
 					};
 				});
-				setLoading(false);
 			}
 			setAddress(address);
 		}
@@ -140,7 +127,6 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	};
 
 	useEffect(() => {
-
 		loginWallet && getAccounts(loginWallet);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,7 +135,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 	return <div className={'flex justify-between items-center w-full pl-[70px] max-md:pl-4 '}>
 		<div className={`${className} flex py-[17px] items-center  h-full gap-1 max-md:px-[10px]`}>
 			<div className='h-[71px] flex flex-col justify-start py-2 gap-1 '>
-				<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
+				<div className='text-2xl font-semibold text-white tracking-[0.0015em] gap-1'>
 					{formatedBalance(balance, unit)}
 					<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
 				<div className='flex items-center justify-start gap-2 ml-[1px]'>
@@ -166,7 +152,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 			<Divider  type= 'vertical' style={{ borderLeft: '1px solid #D2D8E0',height:'100%' }} />
 			<div className='flex gap-4 py-2 justify-start max-md:gap-2'>
 				<div className='h-[71px] flex flex-col py-2 gap-1'>
-					<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
+					<div className='text-2xl font-semibold text-white tracking-[0.0015em] gap-1'>
 						{formatedBalance(transferableBalance, unit)}
 						<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
 					<div className='flex items-center justify-start gap-2 ml-1'>
@@ -177,7 +163,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 					</div>
 				</div>
 				<div className='h-[71px] flex flex-col justify-start py-2 gap-1'>
-					<div className='text-[24px] font-semibold text-white tracking-[0.0015em] gap-1'>
+					<div className='text-2xl font-semibold text-white tracking-[0.0015em] gap-1'>
 						{formatedBalance(lockBalance, unit)}
 						<span className='text-sm font-medium text-white tracking-[0.015em] ml-1'>{unit}</span></div>
 					<div className='flex items-center justify-start gap-2 ml-1'>
@@ -189,8 +175,9 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				</div>
 			</div>
 		</div>
-		<div className='w-[250px] mr-6 -mt-6'>
+		<div className='w-[275px] mr-6 -mt-6'>
 			{ accounts.length > 0 && <AccountSelectionForm
+				addressTextClassName='text-white'
 				accounts={accounts}
 				address={delegationDashboardAddress}
 				withBalance={false}
@@ -201,7 +188,7 @@ const ProfileBalances = ({ className, address }: Props ) => {
 				setSwitchModalOpen={setOpenModal}
 				withoutInfo={true}
 			/>}</div>
-		<WalletConnectModal walletKey='delegationWallet' addressKey='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} closable={true}/>
+		<AddressConnectModal localStorageWalletKeyName='delegationWallet' usingMultisig localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} closable={true}/>
 	</div>;
 };
 export default ProfileBalances;

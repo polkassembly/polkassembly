@@ -15,22 +15,24 @@ import HelperTooltip from './HelperTooltip';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props{
-	className?: string
-	label?: string
-	helpText?: string
-	onChange: (address: string) => void
-	placeholder?: string
+	className?: string;
+	label?: string;
+	helpText?: string;
+	onChange: (address: string) => void;
+	placeholder?: string;
 	size?: 'large' | 'small' | 'middle';
-  defaultAddress?: string;
+	defaultAddress?: string;
 	skipFormatCheck?: boolean;
-  inputClassName?: string;
-  identiconSize?: number;
-  iconClassName?: string;
-  checkValidAddress?: (pre: boolean) => void;
-
+	inputClassName?: string;
+	identiconSize?: number;
+	iconClassName?: string;
+	checkValidAddress?: (pre: boolean) => void;
+	disabled?: boolean;
+	name?: string;
+	onBlur?: () => void;
 }
 
-const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName, identiconSize, iconClassName, checkValidAddress } : Props) => {
+const AddressInput = ({ className, helpText, label, placeholder, size, onChange, defaultAddress, skipFormatCheck, inputClassName, identiconSize, iconClassName, checkValidAddress, disabled, name, onBlur } : Props) => {
 	const { network } = useContext(NetworkContext);
 
 	const [address, setAddress] = useState<string>(defaultAddress ? defaultAddress : '');
@@ -51,24 +53,30 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 
 		if(validAddress || isValidMetaAddress) {
 			setIsValid(true);
-			checkValidAddress && checkValidAddress(true);
+			checkValidAddress?.(true);
 			onChange(address);
 		} else {
 			setIsValid(false);
-			checkValidAddress && checkValidAddress(false);
+			checkValidAddress?.(false);
 			onChange('');
 		}
 	};
 
 	useEffect(() => {
 		if(skipFormatCheck) {
-			if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
-				setIsValid(true);
-				checkValidAddress && checkValidAddress(true);
-				onChange(address);
-			}else{
+			if(address){
+				if(getEncodedAddress(address, network) || Web3.utils.isAddress(address)){
+					setIsValid(true);
+					checkValidAddress?.(true);
+					onChange(address);
+				}else{
+					setIsValid(false);
+					checkValidAddress?.(false);
+				}
+			}
+			else{
 				setIsValid(false);
-				checkValidAddress && checkValidAddress(false);
+				checkValidAddress?.(false);
 			}
 			return;
 		}
@@ -87,7 +95,7 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 	}, [address]);
 
 	return (
-		<div className={`${className} mb-2 mt-6`}>
+		<div className={`${className} mt-6`}>
 			{label && <label className=' flex items-center text-sm mb-[2px]'> {label} {helpText && <HelperTooltip className='ml-1' text={helpText}/> } </label>}
 			<div className={`${className} flex items-center`}>
 
@@ -108,10 +116,16 @@ const AddressInput = ({ className, helpText, label, placeholder, size, onChange,
 					</>
 				}
 
-				<Form.Item name='address' className='mb-0 w-full' validateStatus={(address && !isValid) ? 'error' : 'success'}>
+				<Form.Item
+					name={name || 'address'}
+					className='mb-0 w-full'
+					validateStatus={(address && !isValid) ? 'error' : 'success'}
+				>
 					<Input
+						onBlur={() => onBlur?.()}
 						value={address}
-						name='address'
+						disabled={disabled}
+						name={name || 'address'}
 						className={`${!isValid ? 'px-[0.5em]' : 'pl-[46px]'} text-sm w-full h-[40px] border-[1px] rounded-[4px] ${inputClassName}`}
 						onChange={ (e) => {handleAddressChange(e.target.value); onChange(e.target.value);}}
 						placeholder={placeholder || 'Address'}

@@ -130,7 +130,7 @@ const AddTags=({ tags, setTags, className, disabled, onChange }:Props) => {
 							<Tag
 								key={index}
 								className={`text-[#90A0B7] border-[#90A0B7] rounded-xl bg-white text-normal text-xs py-[4px] px-[16px] tracking-wide mt-1 ${disabled ? 'bg-[#F5F5F5]' : 'hover:border-pink_primary'}`}
-								closable={disabled ? false : true}
+								closable={!disabled}
 								onClose={(e) => {e.preventDefault();handleClose(tag);}}>{tag}</Tag>))}
 					</div>
 				</div>

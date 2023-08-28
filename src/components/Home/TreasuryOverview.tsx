@@ -14,7 +14,6 @@ import { chainProperties } from 'src/global/networkConstants';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 import blockToDays from 'src/util/blockToDays';
 import blockToTime from 'src/util/blockToTime';
-import fetchTokenToUSDPrice from 'src/util/fetchTokenToUSDPrice';
 import formatBnBalance from 'src/util/formatBnBalance';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import styled from 'styled-components';
@@ -24,6 +23,7 @@ import CurrentPrice from '~assets/icons/currentprice.svg';
 import NextBurn from '~assets/icons/nextburn.svg';
 import SpendPeriod from '~assets/icons/spendperiod.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
+import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -31,37 +31,6 @@ interface ITreasuryOverviewProps{
 	inTreasuryProposals?: boolean
 	className?: string
 }
-export const GetCurrentTokenPrice = (network: string, setCurrentTokenPrice: (pre: {isLoading: boolean,value: string}) => void) => {
-	let cancel = false;
-	if(cancel) return;
-
-	setCurrentTokenPrice({
-		isLoading: true,
-		value: ''
-	});
-	fetchTokenToUSDPrice(network).then((formattedUSD) => {
-		if(formattedUSD === 'N/A') {
-			setCurrentTokenPrice({
-				isLoading: false,
-				value: formattedUSD
-			});
-			return;
-		}
-
-		setCurrentTokenPrice({
-			isLoading: false,
-			value: network =='cere' ? parseFloat(formattedUSD).toFixed(4) : parseFloat(formattedUSD).toFixed(2)
-		});
-	}).catch(() => {
-		setCurrentTokenPrice({
-			isLoading: false,
-			value: 'N/A'
-		});
-	});
-
-	return () => {cancel = true;};
-
-};
 
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals } = props;
@@ -177,7 +146,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			'modl',
 			api.consts.treasury && api.consts.treasury.palletId
 				? api.consts.treasury.palletId.toU8a(true)
-				: 'py/trsry',
+				: `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
 			EMPTY_U8A_32
 		);
 		api.derive.balances
@@ -197,17 +166,17 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					})
 					.finally(() => {
 						// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+						let valueUSD = '';
+						let value = '';
 						{
-							const burn =
+							try{const burn =
 							treasuryBalance.freeBalance.gt(BN_ZERO) &&
 								!api.consts.treasury.burn.isZero()
 								? api.consts.treasury.burn
 									.mul(treasuryBalance.freeBalance)
 									.div(BN_MILLION)
 								: BN_ZERO;
-
-							let valueUSD = '';
-							let value = '';
 
 							if(burn) {
 								// replace spaces returned in string by format function
@@ -233,7 +202,9 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									network
 								));
 							}
-
+							}catch(error){
+								console.log(error);
+							}
 							setNextBurn({
 								isLoading: false,
 								value,
@@ -350,7 +321,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	}, [currentTokenPrice, network]);
 
 	return (
-		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col xs:gap-6 sm:gap-8 xl:flex`}>
+		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-cols-2 grid-flow-col xs:gap-6 sm:gap-8 xl:gap-4 xl:flex`}>
 			{/* Available */}
 			<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 				<div className='lg:flex flex-col flex-1 gap-x-0 w-full'>
@@ -388,8 +359,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									<div className='flex flex-col justify-center text-bodyBlue font-medium gap-y-3'>
 										<Divider
 											style={{
-												background: '#D2D8E0',
-												width: '100%'
+												background: '#D2D8E0'
 											}}
 											className='m-0 p-0' />
 										<span className='flex flex-col justify-center text-lightBlue text-xs font-medium'>
@@ -439,7 +409,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											}
 										</div>
 									</div>
-									<div className="flex flex-col justify-center text-bodyBlue font-medium gap-y-3">
+									<div className="flex flex-col justify-center overflow-hidden text-bodyBlue font-medium gap-y-3">
 										<Divider
 											style={{
 												background: '#D2D8E0'
@@ -476,7 +446,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			}
 
 			{/* Next Burn */}
-			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
+			{!['moonbeam', 'moonbase', 'moonriver', 'polymesh'].includes(network) &&
 				<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 					<div className='lg:flex flex-col gap-x-0 w-full'>
 						<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>

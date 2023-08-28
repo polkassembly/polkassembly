@@ -10,7 +10,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from '~src/context';
 import { BN_HUNDRED, formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
-import { formatedBalance } from '../DelegationDashboard/ProfileBalance';
+import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import CopyIcon from '~assets/icons/content-copy.svg';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -44,9 +44,15 @@ interface Props{
   tags: string[];
   postId: number;
   setPostId: (pre: number) => void;
+  availableBalance: BN;
+  discussionLink: string | null;
 }
+const getDiscussionIdFromLink = (discussion: string) => {
+	const splitedArr = discussion?.split('/');
+	return splitedArr[splitedArr.length-1];
+};
 
-const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess, title, content, tags, setPostId }: Props) => {
+const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress, selectedTrack, preimageHash, preimageLength, enactment, beneficiaryAddress, setOpenModal, setOpenSuccess, title, content, tags, setPostId, availableBalance, discussionLink }: Props) => {
 	const { network } = useNetworkContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -56,7 +62,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const { id: userId } = useUserDetailsContext();
-
+	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const success = (message: string) => {
 		messageApi.open({
 			content: message,
@@ -81,12 +87,12 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 	useEffect(() => {
 		setShowAlert(false);
-		setLoading(true);
 		const obj = localStorage.getItem('treasuryProposalData');
 		obj && localStorage.setItem('treasuryProposalData', JSON.stringify({ ...JSON.parse(obj), step: 2 }));
 
-		if(!proposerAddress || !api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN) || fundingAmount.eq(ZERO_BN)) return;
+		if(!proposerAddress || !api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN)) return;
 		if(selectedTrack.length === 0 ) return;
+		setLoading(true);
 
 		const origin: any = { Origins: selectedTrack };
 		setLoading(true);
@@ -107,23 +113,27 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 	const handleSaveTreasuryProposal = async(postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal',{
 			content,
-			postId ,
+			discussionId: discussionId || null,
+			postId,
 			proposerAddress,
 			tags,
 			title,
 			userId
 		});
 
-		if(data && data?.post_id){
+		if(data && !isNaN(Number(data?.post_id)) && data.post_id !== undefined){
 			setPostId(data?.post_id);
 			setOpenSuccess(true);
+			console.log(postId, 'postId');
+			localStorage.removeItem('treasuryProposalProposerAddress');
+			localStorage.removeItem('treasuryProposalProposerWallet');
+			localStorage.removeItem('treasuryProposalData');
 			setOpenModal(false);
-			setLoading(false);
 		}
 		else if(apiError || !data?.post_id) {
 			queueNotification({
 				header: 'Error',
-				message: 'There was an error creating your treasury proposal.',
+				message: apiError,
 				status: NotificationStatus.ERROR
 			});
 			console.error(apiError);
@@ -133,12 +143,13 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 	const handleSubmitTreasuryProposal = async() => {
 		if(!api || !apiReady) return;
+		const post_id =  Number(await api.query.referenda.referendumCount());
 		const origin: any = { Origins: selectedTrack };
 		const proposerWallet = localStorage.getItem('treasuryProposalProposerWallet') || '';
 
 		const injectedWindow = window as Window & InjectedWindow;
 		const wallet = isWeb3Injected
-			? injectedWindow.injectedWeb3[String(proposerWallet)]
+			? injectedWindow?.injectedWeb3?.[String(proposerWallet)]
 			: null;
 
 		if (!wallet) {
@@ -168,17 +179,9 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 
 		setLoading(true);
 		try {
-			setLoading(true);
 			const proposal = api.tx.referenda.submit(origin ,{ Lookup: { hash: preimageHash, len: String(preimageLength) } }, enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value }: { After: enactment.value }): { After: BN_HUNDRED });
 
 			const onSuccess = async() => {
-				queueNotification({
-					header: 'Success!',
-					message: `Proposal #${proposal.hash} successful.`,
-					status: NotificationStatus.SUCCESS
-				});
-				setLoading(false);
-				const post_id =  Number(await api.query.referenda.referendumCount()) - 1;
 				await handleSaveTreasuryProposal(post_id);
 				setLoading(false);
 			};
@@ -189,10 +192,11 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					message: 'Transaction failed!',
 					status: NotificationStatus.ERROR
 				});
+
 				setLoading(false);
 			};
+			setLoading(true);
 			await executeTx({ address: proposerAddress, api, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: proposal });
-
 		}
 		catch(error){
 			setLoading(false);
@@ -205,14 +209,16 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 			});
 		}
 	};
+
 	return <Spin spinning={loading} indicator={<LoadingOutlined/>}>
 		<div className={`create-proposal ${className}`}>
-			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-bodyBlue text-sm rounded-[4px] mt-8 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>
+			{ (submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN)) && <Alert type='info' className={`mt-6 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}showIcon message='Insufficient available balance.'/>}
+			<Alert message={`Preimage ${isPreimage ? 'linked' : 'created'} successfully`} className={`text-bodyBlue text-sm rounded-[4px] mt-4 ${poppins.variable} ${poppins.className}`} type='success' showIcon/>
 			<div className='mt-4 text-sm font-normal text-lightBlue'>
-				<label className='font-medium'>Preimage Details:</label>
-				<div className='mt-[10px] flex flex-col gap-2'>
-					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address addressClassName='text-bodyBlue font-semibold text-sm' address={proposerAddress} identiconSize={24}/></span>
-					<span className='flex'><span className='w-[150px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
+				<div className='mt-4 flex flex-col gap-2'>
+					<span className='flex'><span className='w-[150px]'>Proposer Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-bodyBlue' address={proposerAddress} identiconSize={18} displayInline disableAddressClick/></span>
+					<span className='flex'><span className='w-[150px]'>Beneficiary Address:</span><Address textClassName='font-medium text-sm' addressClassName='text-bodyBlue' address={beneficiaryAddress} identiconSize={18} displayInline disableAddressClick/></span>
+					<span className='flex'><span className='w-[150px]'>Track:</span><span className='text-bodyBlue font-medium'>{selectedTrack} <span className='text-pink_primary ml-1'>#{networkTrackInfo[network][selectedTrack]?.trackId || 0}</span></span></span>
 					<span className='flex'><span className='w-[150px]'>Funding Amount:</span><span className='text-bodyBlue font-medium'>{formatedBalance(fundingAmount.toString(), unit)} {unit}</span></span>
 					<span className='flex items-center'><span className='w-[150px]'>Preimage Hash:</span>
 						<span className='text-bodyBlue  font-medium'>{preimageHash.slice(0,10)+'...'+ preimageHash.slice(55)}</span>
@@ -224,7 +230,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					<span className='flex'><span className='w-[150px]'>Preimage Length:</span><span className='text-bodyBlue font-medium'>{preimageLength}</span></span>
 					<span className='flex items-center'>
 						<span className='w-[150px]'>Preimage Link:</span>
-						<a target='_blank' rel='noreferrer' href={`https://${network}.polkassembly.io/preimages/${preimageHash}`} className='text-bodyBlue font-medium'>{`https://${network}.polkassembly.io/preimages/${preimageHash.slice(0,5)}...`}</a>
+						<a target='_blank' rel='noreferrer' href={`/preimages/${preimageHash}`} className='text-bodyBlue font-medium'>{`https://${network}.polkassembly.io/preimages/${preimageHash.slice(0,5)}...`}</a>
 						<span className='flex items-center cursor-pointer' onClick={(e) => {e.preventDefault(); copyLink(`https://${network}.polkassembly.io/preimages/${preimageHash}`) ;success('Preimage link copied to clipboard.');}}>
 							{contextHolder}
 							<CopyIcon/>
@@ -239,8 +245,10 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 					<span className='flex justify-between text-sm text-lightBlue pr-[70px] font-semibold'><span className='w-[150px]'>Total</span><span className='text-bodyBlue'>{formatedBalance(String(txFee.add(submitionDeposite).toString()), unit)} {unit}</span></span>
 				</div>}/>}
 			<div className='flex justify-end mt-6 -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-4'>
-				<Button onClick={() => handleSubmitTreasuryProposal() } className='bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px]'>
-         Create Proposal
+				<Button
+					disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite) }
+					onClick={() => handleSubmitTreasuryProposal() } className={`bg-pink_primary text-white font-medium tracking-[0.05em] text-sm w-[155px] h-[40px] rounded-[4px] ${(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite) ) && 'opacity-50'}`}>
+                    Create Proposal
 				</Button>
 			</div>
 		</div>
@@ -248,7 +256,7 @@ const CreateProposal = ({ className, isPreimage, fundingAmount, proposerAddress,
 };
 export default styled(CreateProposal)`
 .ant-alert-with-description{
-padding-block: 15px !important;
+	padding-block: 15px !important;
 }
 .ant-alert-with-description .ant-alert-icon{
   font-size: 18px !important;

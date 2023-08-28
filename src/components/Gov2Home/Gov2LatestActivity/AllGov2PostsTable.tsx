@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
+import { Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
 import React, { FC } from 'react';
@@ -15,6 +16,7 @@ import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 
 import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
+import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 
 const columns: ColumnsType<IPostsRowData> = [
 	{
@@ -47,7 +49,7 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Posted By',
 		dataIndex: 'username',
 		key: 'postedBy',
-		render: (username, { proposer }) => <div className='truncate' ><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw]' defaultAddress={proposer} username={username} disableIdenticon={false} /></div>,
+		render: (username, { proposer }) => <div className='truncate' ><NameLabel textClassName='max-w-[9vw] 2xl:max-w-[12vw] text-bodyBlue font-semibold' defaultAddress={proposer} username={username} disableIdenticon={false} /></div>,
 		width: 200
 	},
 	{
@@ -78,8 +80,23 @@ const columns: ColumnsType<IPostsRowData> = [
 		title: 'Status',
 		dataIndex: 'status',
 		key: 'status',
-		render: (status) => {
-			if(status) return <StatusTag status={status} />;
+		render: (status: any, obj: any) => {
+			if(status || obj.spam_users_count) return <div className='flex items-center gap-x-2'>
+				{
+					status?
+						<StatusTag status={status} />
+						: null
+				}
+				{
+					obj.spam_users_count ?
+						<div className='flex items-center justify-center'>
+							<Tooltip color="#E5007A" title="This post could be a spam.">
+								<WarningMessageIcon className='text-lg text-[#FFA012]' />
+							</Tooltip>
+						</div>
+						: null
+				}
+			</div>;
 		},
 		width: 160
 	}
@@ -130,7 +147,8 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 					status: post.status || '-',
 					sub_title: subTitle,
 					track: Number(post.track_number),
-					type: post.type
+					type: post.type,
+					spam_users_count: post.spam_users_count || 0
 				};
 
 				tableData.push(tableDataObj);
@@ -139,14 +157,14 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 
 		return (
 			<>
-				<div className='hidden lg:block'>
+				<div className='hidden md:block p-0'>
 					<PopulatedLatestActivity columns={columns} tableData={tableData}
 						// modify the tableData to add the onClick event
 						onClick={(rowData) => gotoPost(rowData)}
 					/>
 				</div>
 
-				<div className="block lg:hidden h-[520px] overflow-y-auto px-0">
+				<div className="block md:hidden h-[520px] overflow-y-auto px-0">
 					<Gov2PopulatedLatestActivityCard tableData={tableData}
 						onClick={(rowData) => gotoPost(rowData)}
 					/>

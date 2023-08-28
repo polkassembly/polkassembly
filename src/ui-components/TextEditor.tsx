@@ -64,19 +64,17 @@ body {
 	font-size: 14px;
 	line-height: 1.5;
 }
-
 th, td {
 	border: 1px solid #243A57;
 	padding: 0.5rem;
 }
-
 img {
 	max-width: 100%;
 }
 `;
 
 const TextEditor: FC<ITextEditorProps> = (props) => {
-	const { className, height, onChange, isDisabled, value, name, autofocus } = props;
+	const { className, height, onChange, isDisabled, value, name, autofocus = false } = props;
 
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
@@ -146,7 +144,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							height: height || 400,
 							icons: 'thin',
 							images_file_types: 'jpg,png,jpeg,gif,svg',
-							images_upload_handler: ((blobInfo: any, resolve: any, reject: any, progress: any) => {
+							images_upload_handler: ((blobInfo: any, success: any, failure: any, progress: any) => {
 								const xhr = new XMLHttpRequest();
 								xhr.withCredentials = false;
 								xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
@@ -157,26 +155,26 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 
 								xhr.onload = () => {
 									if (xhr.status === 403) {
-										reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
+										failure({ message: 'HTTP Error: ' + xhr.status, remove: true });
 										return;
 									}
 
 									if (xhr.status < 200 || xhr.status >= 300) {
-										reject('HTTP Error: ' + xhr.status);
+										failure('HTTP Error: ' + xhr.status);
 										return;
 									}
 
 									const json = JSON.parse(xhr.responseText);
 
 									if (!json || typeof json?.data?.display_url != 'string') {
-										reject('Invalid JSON: ' + xhr.responseText);
+										failure('Invalid JSON: ' + xhr.responseText);
 										return;
 									}
 
-									resolve(json?.data?.display_url);
+									success(json?.data?.display_url);
 								};
 								xhr.onerror = () => {
-									reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+									failure('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
 								};
 								const formData = new FormData();
 								formData.append('image', blobInfo.blob(), `${blobInfo.filename()}`);
@@ -315,16 +313,13 @@ export default styled(TextEditor)`
 	.tox-tinymce {
 		border-radius: 1rem;
 	}
-
 	.tox-editor-header {
 		opacity: 0.3;
 		box-shadow: none !important;
 		transition: opacity 0.2s ease-in-out !important;
-
 		&.focused {
 			opacity: 1 !important;
 		}
-
 		.tox-tbtn {
 			scale: 0.85;
 		}

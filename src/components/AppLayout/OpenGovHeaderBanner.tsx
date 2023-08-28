@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import dayjs from 'dayjs';
 import Image from 'next/image';
-import React from 'react';
+import React, { FC } from 'react';
 
 const futureDate = dayjs('2023-06-15 17:35:30');
 
@@ -21,7 +21,12 @@ export function getTime() {
 	return [days, hours, minutes, seconds];
 }
 
-const OpenGovHeaderBanner = () => {
+interface IOpenGovHeaderBannerProps {
+	network: string;
+}
+
+const OpenGovHeaderBanner: FC<IOpenGovHeaderBannerProps> = (props) => {
+	const { network } = props;
 	return (
 		<section
 			className='opengov_banner rounded-b-[20px] flex flex-col items-center justify-center gap-x-2 py-[10px] px-4 md:py-6 md:px-9 lg:flex-row lg:ml-[80px]'
@@ -30,7 +35,7 @@ const OpenGovHeaderBanner = () => {
 				className='m-0 p-0 text-white flex items-center gap-x-2 font-medium font-poppins text-sm md:text-[24px] leading-[21px] md:leading-[36px]'
 			>
 				<Image alt='party image' src='/assets/confetti.png' width={30} height={30} />
-				<span>OpenGov is now LIVE on Polkadot</span>
+				<span>OpenGov is now LIVE on {network?.charAt(0).toUpperCase() + network?.slice(1)}</span>
 			</h2>
 		</section>
 	);

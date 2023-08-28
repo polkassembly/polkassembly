@@ -42,7 +42,7 @@ export default styled(SelectTracks)`
   font-size: 14px;
 }
 .ant-select .ant-select-selection-placeholder{
-font-weight: 400;
- color:#7c899b;
+  font-weight: 400;
+  color:#7c899b;
 }
 `;

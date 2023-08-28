@@ -6,15 +6,13 @@ import { Form, Input } from 'antd';
 import BN from 'bn.js';
 import React, { useContext, useEffect } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
-
 import { NetworkContext } from '~src/context/NetworkContext';
-
 import { inputToBn } from '../util/inputToBn';
 import Balance from '~src/components/Balance';
 import styled from 'styled-components';
 import { formatBalance } from '@polkadot/util';
-import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import HelperTooltip from './HelperTooltip';
+import { formatedBalance } from '~src/util/formatedBalance';
 
 const ZERO_BN = new BN(0);
 
@@ -31,13 +29,13 @@ interface Props{
 	inputClassName?: string;
 	noRules?: boolean;
 	formItemName?: string;
-  size?: 'large' | 'small' | 'middle';
-  tooltipMessage?: string;
-  setInputValue? : (pre: string)=> void;
-
+	size?: 'large' | 'small' | 'middle';
+	tooltipMessage?: string;
+	setInputValue? : (pre: string)=> void;
+	onBlur?: () => void;
 }
 
-const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance', tooltipMessage, setInputValue }: Props) => {
+const BalanceInput = ({ className, label = '', onChange, placeholder = '', size, address, withBalance = false , onAccountBalanceChange, balance, inputClassName, noRules, formItemName = 'balance', tooltipMessage, setInputValue, onBlur }: Props) => {
 
 	const { network } = useContext(NetworkContext);
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -45,11 +43,11 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
 		if(isValid){
-			setInputValue && setInputValue(value || '0');
+			setInputValue?.(value || '0');
 			onChange(balance);
 		}else{
 			onChange(ZERO_BN);
-			setInputValue && setInputValue('0');
+			setInputValue?.('0');
 		}
 	};
 
@@ -92,6 +90,7 @@ const BalanceInput = ({ className, label = '', onChange, placeholder = '', size,
 			]}
 		>
 			<Input
+				onBlur={() => onBlur?.()}
 				addonAfter={chainProperties[network]?.tokenSymbol}
 				name={formItemName || 'balance'}
 				className={`w-full h-[39px] border-[1px] ${inputClassName} text-sm mt-0 suffixColor hover:border-pink_primary balance-input`}

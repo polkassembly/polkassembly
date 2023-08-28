@@ -17,7 +17,7 @@ interface Props {
   className?: string;
 }
 
-const WalletConnectModal = dynamic(() => import('~src/ui-components/WalletConnectModal'), {
+const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	loading: () => <Skeleton.Avatar active />,
 	ssr: false
 });
@@ -72,7 +72,7 @@ const DelegationDashboardHome = ({ className } : Props) => {
 		<div >
 			{userDetails?.delegationDashboardAddress.length> 0 ? <DashboardTrackListing className='mt-8 bg-white shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px]' address={String(userDetails.delegationDashboardAddress)}/> : <Skeleton/>}
 		</div>
-		{!openLoginModal && !openSignupModal && !userDetails.loginWallet && <WalletConnectModal walletKey='delegationWallet' addressKey='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} />}
+		{!openLoginModal && !openSignupModal && !userDetails.loginWallet && <AddressConnectModal localStorageWalletKeyName='delegationWallet' localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} />}
 		<LoginPopup closable={false} setSignupOpen={setOpenSignupModal} modalOpen={openLoginModal} setModalOpen={setOpenLoginModal} isModal={true} isDelegation={true}/>
 		<SignupPopup closable={false} setLoginOpen={setOpenLoginModal} modalOpen={openSignupModal} setModalOpen={setOpenSignupModal} isModal={true} isDelegation={true} />
 	</div>;

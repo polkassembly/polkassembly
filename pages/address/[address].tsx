@@ -30,6 +30,7 @@ interface IUserProfileProps {
 		error: string | null;
 	}
 	network: string;
+	error?: string;
 	className?: string;
 }
 
@@ -49,7 +50,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	if (error || !data || isNaN(Number(data))) {
 		return {
 			props: {
-				error: error
+				error: error,
+				network
 			}
 		};
 	}
@@ -99,7 +101,8 @@ const EmptyState = styled.div`
 	}
 `;
 
-const UserProfile: FC<IUserProfileProps> = ({ userPosts, network, userProfile, className }) => {
+const UserProfile: FC<IUserProfileProps> = (props) => {
+	const { userPosts, network, userProfile, className, error } = props;
 	const { setNetwork } = useNetworkContext();
 	const [selectedGov, setSelectedGov] = useState(EGovType.GOV1);
 
@@ -108,7 +111,7 @@ const UserProfile: FC<IUserProfileProps> = ({ userPosts, network, userProfile, c
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	if(userPosts.error === 'UserId is invalid'){
+	if(userPosts?.error === 'UserId is invalid' || error){
 		return (
 			<EmptyState>
 				<ErrorAlert
@@ -118,14 +121,14 @@ const UserProfile: FC<IUserProfileProps> = ({ userPosts, network, userProfile, c
 			</EmptyState>
 		);
 	}
-	if (userPosts.error || userProfile.error) {
+	if (userPosts?.error || userProfile?.error) {
 		return (
 			<ErrorAlert
-				errorMsg={userPosts.error || userProfile.error || ''}
+				errorMsg={userPosts?.error || userProfile?.error || ''}
 			/>
 		);
 	}
-	const tabItems = Object.entries(userPosts.data?.[selectedGov]).map(([key, value]) => {
+	const tabItems = Object.entries(userPosts?.data?.[selectedGov]).map(([key, value]) => {
 		if (!value) return null;
 		let count = 0;
 		if (Array.isArray(value)) {

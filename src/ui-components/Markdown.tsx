@@ -17,7 +17,7 @@ interface Props {
 }
 
 const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false }: Props) => {
-	const sanitisedMd = md.replace(/\\n/g, '\n');
+	const sanitisedMd = md?.replace(/\\n/g, '\n');
 
 	return <ReactMarkdown
 		className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'}`}
@@ -51,7 +51,7 @@ export default styled(Markdown)`
 		p, blockquote, ul, ol, dl, table {
 			line-height: 160%;
 			margin: 0 0 0.5rem 0;
-      color:var(--bodyBlue) !important;
+      color: var(--bodyBlue) !important;
 		}
 
 		h1 {
@@ -114,7 +114,6 @@ export default styled(Markdown)`
 
 		pre {
 			background-color: grey_light;
-			padding: 1.6rem;
 			overflow: auto;
 			border-radius: 0.3rem;
 		}
@@ -123,12 +122,11 @@ export default styled(Markdown)`
 			font-size: 12px;
 			margin: 0;
 			border-radius: 3px;
-			color: #c7254e;
 			white-space: pre-wrap;
 			&::before, &::after {
 				letter-spacing: -0.2em;
 			}
-			margin-bottom: -6px; //offset for horizontal scrollbar
+
 			padding-left: 4px;
 			padding-right: 4px;
 			background-color: #fbfbfd;
@@ -158,7 +156,7 @@ export default styled(Markdown)`
 
 	&.mde-autocomplete-content {
 		margin-top: 4px !important;
-		color: #243A57;
+		color: var(--bodyBlue);
 		font-weight: 700;
 
 		mark {

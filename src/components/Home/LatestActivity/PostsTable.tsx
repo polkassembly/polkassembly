@@ -29,6 +29,7 @@ export interface IPostsRowData {
 	}
 	tip_id?: number;
 	spam_users_count?: number;
+  description?: string;
 }
 
 interface IPostsTableProps {
@@ -64,6 +65,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 		const id = isTip? hash: post_id;
 		const tableDataObj: IPostsRowData = {
 			created_at: created_at,
+			description: post?.description || '',
 			hash: isTip? hash?.substring(0,4): hash,
 			key: id,
 			post_id: id,
@@ -78,11 +80,10 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 		};
 
 		tableData.push(tableDataObj);
-		// }
 	});
 
 	return(<>
-		<div className='hidden lg:block'>
+		<div className='hidden md:block'>
 			<PopulatedLatestActivity
 				columns={columns}
 				tableData={tableData}
@@ -98,7 +99,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 			/>
 		</div>
 
-		<div className="block lg:hidden h-[520px] overflow-y-auto px-0">
+		<div className="block md:hidden h-[520px] overflow-y-auto px-0">
 			<PopulatedLatestActivityCard
 				tableData={tableData}
 				onClick={(rowData) => {

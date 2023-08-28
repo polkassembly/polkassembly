@@ -19,8 +19,12 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, title, postId, userId, proposerAddress, tags } = req.body;
-	if(!content || !title || !postId || !userId || !proposerAddress) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { content, title, postId, userId, proposerAddress, tags, discussionId } = req.body;
+	if(!content || !title || !proposerAddress) return res.status(400).json({ message: 'Missing parameters in request body' });
+
+	if(isNaN(Number(userId)) || isNaN(Number(postId)))  return res.status(400).json({ message: 'Invalid parameters in request body' });
+
+	if(discussionId && isNaN(discussionId)) return res.status(400).json({ message: messages.INVALID_DISCUSSION_ID });
 
 	const token = getTokenFromReq(req);
 	if(!token) return res.status(400).json({ message: 'Invalid token' });
@@ -35,14 +39,19 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 		return res.status(403).json({ message: `Post with id ${postId} already exists.` });
 	}
 
-	const last_comment_at = new Date();
+	const current_datetime = new Date();
+
 	const newPost: Post = {
 		content,
-		created_at: new Date(),
+		createdOnPolkassembly: true,
+		created_at: current_datetime,
 		id: postId,
-		last_comment_at,
-		last_edited_at: last_comment_at,
-		post_link: null,
+		last_comment_at: current_datetime,
+		last_edited_at: current_datetime,
+		post_link: discussionId ? {
+			id: Number(discussionId),
+			type: ProposalType.DISCUSSIONS
+		} : null,
 		proposer_address: proposerAddress,
 		tags: tags,
 		title,
@@ -51,11 +60,11 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 	};
 
 	await postDocRef.set(newPost).then(() => {
-		return res.status(200).json({ message: 'Treasury proposals successfully created, it will appear on polkassembly as soon as it is synced on chain.', post_id: postId });
+		return res.status(200).json({ message: messages.TREASURY_PROPOSAL_CREATION_SUCCESS, post_id: postId });
 	}).catch((error) => {
 		// The document probably doesn't exist.
 		console.error('Error saving post: ', error);
-		return res.status(500).json({ message: 'Error saving post' });
+		return res.status(500).json({ message: messages.TREASURY_PROPOSAL_CREATION_ERROR });
 	});
 };
 

@@ -21,6 +21,7 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
+import { checkIsAddressMultisig } from './utils/checkIsAddressMultisig';
 
 interface Props{
   className?: string;
@@ -36,7 +37,7 @@ const ActiveProposals = dynamic(() => import('./ActiveProposals'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
-const WalletConnectModal = dynamic(() => import('~src/ui-components/WalletConnectModal'), {
+const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	loading: () => <Skeleton active /> ,
 	ssr: false
 });
@@ -88,6 +89,13 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
+	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
+	useEffect(() => {
+		setIsSelectedAddressMultisig(false);
+		if(address){
+			checkIsAddressMultisig(address).then((isMulti) => setIsSelectedAddressMultisig(isMulti));
+		}
+	},[address]);
 
 	useEffect(() => {
 		if(!window) return;
@@ -240,7 +248,7 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 
 		{status.length > 0 ? <div>
 			<ActiveProposals posts={posts} trackDetails={trackDetails} status={status} delegatedTo = {status.includes(ETrackDelegationStatus.Delegated) ?  rowData.filter((row ) => row.delegatedTo !== address )[0].delegatedTo : null} />
-		</div> : <Skeleton className='mt-6'/>}
+		</div> : <Skeleton className='mt-6 h-[200px]'/>}
 
 		{ status.length > 0  ? <div>
 			<Delegate
@@ -249,19 +257,20 @@ const DashboardTrackListing = ( { className, posts, trackDetails }: Props ) => {
 			/>
 		</div> : <Skeleton />}
 
-		{!openLoginModal && !openSignupModal && !loginWallet && <WalletConnectModal walletKey='delegationWallet' addressKey='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} />}
+		{!openLoginModal && !openSignupModal && !loginWallet && <AddressConnectModal localStorageWalletKeyName='delegationWallet' localStorageAddressKeyName='delegationDashboardAddress' open={openModal} setOpen={setOpenModal} />}
 		<LoginPopup closable={false} setSignupOpen={setOpenSignupModal} modalOpen={openLoginModal} setModalOpen={setOpenLoginModal} isModal={true} isDelegation={true}/>
 		<SignupPopup closable={false} setLoginOpen={setOpenLoginModal} modalOpen={openSignupModal} setModalOpen={setOpenSignupModal} isModal={true} isDelegation={true} />
 
-		{rowData.filter((row ) => row.delegatedTo !== address ).length > 0 && <UndelegateModal
+		{rowData?.filter((row ) => row.delegatedTo !== address ).length > 0 && <UndelegateModal
 			balance={new BN(rowData.filter((row ) => row.delegatedTo !== address )[0]?.balance)}
 			open={openUndelegateModal}
 			setOpen={setOpenUndelegateModal}
 			defaultTarget={rowData.filter((row ) => row.delegatedTo !== address )[0]?.delegatedTo}
 			trackNum={trackDetails?.trackId}
 			conviction={rowData.filter((row ) => row.delegatedTo !== address )[0]?.lockPeriod}
+			isMultisig={isSelectedAddressMultisig}
 		/>}
-		<DelegateModal open={openDelegateModal} setOpen={setOpenDelegateModal} trackNum={trackDetails?.trackId} />
+		<DelegateModal open={openDelegateModal} setOpen={setOpenDelegateModal} trackNum={trackDetails?.trackId} isMultisig={isSelectedAddressMultisig}/>
 	</div>;
 };
 
@@ -276,6 +285,4 @@ export default styled(DashboardTrackListing)`
   font-weight: 600px;
   line-height: 21px;
 }
-
-
 `;

@@ -48,7 +48,7 @@ const PostContentForm = ({ className, toggleEdit } : Props) => {
 		setLoading(true);
 		const { data , error: editError } = await nextApiClientFetch<IEditPostResponse>('api/v1/auth/actions/editPost', {
 			content,
-			postId: postIndex || cid,
+			postId: (postIndex || postIndex === 0? postIndex: cid),
 			proposalType,
 			tags,
 			timeline,

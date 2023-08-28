@@ -2,17 +2,15 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, FloatButton, List } from 'antd';
+import { Button, FloatButton, List, Skeleton } from 'antd';
 import ChatFloatingModal from '../ChatBot/ChatFloatingModal';
 import { FC, useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import Script from 'next/script';
+// import Script from 'next/script';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useNetworkContext } from '~src/context';
-import { network as globalNework } from '~src/global/networkConstants';
-
 // import AIbotIcon from '~assets/icons/ai-bot-icon.svg';
 import CautionIcon from '~assets/icons/caution-icon.svg';
 import CreateDiscussionIcon from '~assets/icons/create-icon.svg';
@@ -23,8 +21,12 @@ import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import dynamic from 'next/dynamic';
 
 const  OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'),{
+	loading: () => <Skeleton.Button className='w-[100%]' active />,
 	ssr: false
 });
+
+const treasuryProposalCreationAllowedNetwork = ['KUSAMA', 'POLKADOT'];
+const grillChatAllowedNetwork = ['CERE', 'KILT', 'KUSAMA', 'MOONBEAM', 'POLKADOT'];
 
 interface IAiChatbotProps {
 	floatButtonOpen: boolean;
@@ -36,26 +38,39 @@ interface IAiChatbotProps {
 
 const AiBot: FC<IAiChatbotProps> = (props) => {
 
-	const { floatButtonOpen, setFloatButtonOpen, isAIChatBotOpen, setIsAIChatBotOpen, className } = props;
+	const { floatButtonOpen, setFloatButtonOpen, isAIChatBotOpen, className } = props;
 	const [grillChat, setGrillChat] = useState(false);
 	const router = useRouter();
 	const { id } = useContext(UserDetailsContext);
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
 	const { network } = useNetworkContext();
 
-	useEffect(() => {
-		if (!isAIChatBotOpen) return;
+	// useEffect(() => {
+	// if (!isAIChatBotOpen) return;
 
-		const docsBotElement = ((window as any).DocsBotAI.el.shadowRoot?.lastChild) as HTMLElement;
-		docsBotElement.style.position = 'fixed';
-		docsBotElement.style.right = '1em';
-		docsBotElement.style.bottom = '80px';
-	}, [isAIChatBotOpen, floatButtonOpen]);
+	// const docsBotElement = ((window as any).DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
+	// docsBotElement.style.position = 'fixed';
+	// docsBotElement.style.right = '1em';
+	// docsBotElement.style.bottom = '80px';
+	// }, [isAIChatBotOpen, floatButtonOpen]);
+
+	// useEffect(() => {
+	// check for the presence of a dom element inside a setInterval until it is found
+	// const interval = setInterval(() => {
+	// const docsBotElement = ((window as any)?.DocsBotAI?.el?.shadowRoot?.lastChild) as HTMLElement;
+	// if (!docsBotElement) return;
+
+	// clearInterval(interval);
+	// docsBotElement.style.display = 'none';
+	// }, 600);
+
+	// return () => clearInterval(interval);
+	// }, []);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
-			if ((window as any).DocsBotAI.isChatbotOpen) {
-				(window as any).DocsBotAI.close();
+			if ((window as any).DocsBotAI?.isChatbotOpen) {
+				(window as any).DocsBotAI?.close();
 			}
 			setFloatButtonOpen(false);
 			setGrillChat(false);
@@ -69,61 +84,10 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const data = network === globalNework.CERE || network === globalNework.KILT || network === globalNework.KUSAMA || network === globalNework.MOONBEAM || network === globalNework.POLKADOT ?
-		[
-			{
-				component: <OpenGovTreasuryProposal/>
-			},
-			{
-				component: <div className='ml-[-37px] text-xl flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
-					onClick={() =>  id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true)}
-				>
-					<CreateDiscussionIcon className='cursor-pointer ml-[-53px] mt-[5px]' />
-					<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>
-                    Create Discussion Post
-					</p>
-				</div>
-			},
-			// {
-			// component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
-			// onClick={() => {
-			// if (!grillChat)
-			// (window as any).DocsBotAI.toggle();
-			// setIsAIChatBotOpen(!isAIChatBotOpen);
-			// }}
-			// >
-			// <AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
-			// <p className='ml-4 mt-2.5 mb-3  font-medium text-sm leading-5 tracking-[1.25%]'>AI Bot</p>
-			// </div>
-			// },
-			{
-				component: <div className='ml-[-34px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
-					onClick={() => {
-						if (!isAIChatBotOpen) setGrillChat(!grillChat);
-					}}
-				>
-					<GrillChatIcon className='cursor-pointer ml-[-149px] mt-[5px]' />
-					<p className='ml-4 mt-2.5 mb-3  font-medium text-sm leading-5 tracking-[1.25%]'>Grill Chat</p>
-				</div>
-			},
-			{
-				component: <a href='https://polkassembly.hellonext.co/'
-					target='_blank'
-					rel='noreferrer'
-					className='text-lightBlue hover:text-bodyBlue ml-[-34px]'>
-					<div className='flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px]  rounded-[8px] cursor-pointer'>
-						<CautionIcon className='cursor-pointer ml-[-105px] mt-[5px]' />
-						<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>Report An Issue</p>
-					</div>
-				</a>
-			}
-		]
-		:
-		[{
-			component: <OpenGovTreasuryProposal/>
-		},
+	const data = [
+
 		{
-			component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+			component: <div className='ml-[-37px] text-xl flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
 				onClick={() =>  id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true)}
 			>
 				<CreateDiscussionIcon className='cursor-pointer ml-[-53px] mt-[5px]' />
@@ -139,32 +103,51 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		// }}
 		// >
 		// <AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
-		// <p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>AI Bot</p>
+		// <p className='ml-4 mt-2.5 mb-3  font-medium text-sm leading-5 tracking-[1.25%]'>AI Bot</p>
 		// </div>
 		// },
 		{
 			component: <a href='https://polkassembly.hellonext.co/'
 				target='_blank'
 				rel='noreferrer'
-				className='text-lightBlue hover:text-bodyBlue ml-[-37px]'>
+				className='text-lightBlue hover:text-bodyBlue ml-[-34px]'>
 				<div className='flex justify-center align-middle hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px]  rounded-[8px] cursor-pointer'>
 					<CautionIcon className='cursor-pointer ml-[-105px] mt-[5px]' />
 					<p className='ml-4 mt-2.5 mb-3 font-medium text-sm leading-5 tracking-[1.25%]'>Report An Issue</p>
 				</div>
 			</a>
 		}
-		];
+	];
 
+	if(treasuryProposalCreationAllowedNetwork.includes(network.toUpperCase())){
+		data.splice(0, 0, {
+			component: <OpenGovTreasuryProposal/>
+		});
+	}
+
+	if(grillChatAllowedNetwork.includes(network.toUpperCase())){
+
+		data.splice(data.length - 1, 0, {
+			component: <div className='ml-[-34px] flex justify-center align-middle text-lightBlue hover:text-bodyBlue hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
+				onClick={() => {
+					if (!isAIChatBotOpen) setGrillChat(!grillChat);
+				}}
+			>
+				<GrillChatIcon className='cursor-pointer ml-[-149px] mt-[5px]' />
+				<p className='ml-4 mt-2.5 mb-3  font-medium text-sm leading-5 tracking-[1.25%]'>Grill Chat</p>
+			</div>
+		} );
+	}
 	return (
 		<>
 			{/* Script for AI Bot */}
-			<Script id='ai-bot-script'>
+			{/* <Script id='ai-bot-script'>
 				{'window.DocsBotAI=window.DocsBotAI||{ },DocsBotAI.init=function(c){return new Promise(function(e,o){var t=document.createElement("Script");t.type="text/javascript",t.async=!0,t.src="https://widget.docsbot.ai/chat.js";var n=document.getElementsByTagName("Script")[0];n.parentNode.insertBefore(t,n),t.addEventListener("load",function(){window.DocsBotAI.mount({ id: c.id, supportCallback: c.supportCallback, identify: c.identify });var t;t=function(n){return new Promise(function(e){if(document.querySelector(n))return e(document.querySelector(n));var o=new MutationObserver(function(t){document.querySelector(n) && (e(document.querySelector(n)), o.disconnect())});o.observe(document.body,{childList:!0,subtree:!0})})},t&&t("#docsbotai-root").then(e).catch(o)}),t.addEventListener("error",function(t){o(t.message)})})};'}
 			</Script>
 
 			<Script id='ai-bot-init'>
 				{'DocsBotAI.init({id: "X6zGLB8jx6moWVb6L5S9/D7XT9ksDuTZCvdf99KSW"});'}
-			</Script>
+			</Script> */}
 
 			<FloatButton.Group
 				trigger='click'
@@ -185,9 +168,9 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					<Button
 						type='text'
 						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
-						onClick={() => { setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 500);
-							(window as any).DocsBotAI.close();
-							setIsAIChatBotOpen(false);
+						onClick={() => { setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
+							// (window as any).DocsBotAI.close();
+							// setIsAIChatBotOpen(false);
 							setGrillChat(false);
 						}
 						}>

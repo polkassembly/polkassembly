@@ -41,10 +41,14 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 }))`
 	
 	max-width: min-content;
+	background: #666;
+	color: #fff;
 
 	&.inverted {
 		color: #666;
+		background: transparent;
 	}
+
 	&.${gov2ReferendumStatus.DECIDING},
 	&.${gov2ReferendumStatus.DECISION_DEPOSIT_PLACED},
 	&.${bountyStatus.ACTIVE},
@@ -60,9 +64,11 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 		}
 	}
 
+	&.${gov2ReferendumStatus.CREATED},
 	&.${gov2ReferendumStatus.SUBMITTED},
 	&.${gov2ReferendumStatus.CONFIRM_STARTED},
 	&.${referendumStatus.STARTED},
+	&.${referendumStatus.SCHEDULED},
 	&.${proposalStatus.PROPOSED},
 	&.${motionStatus.PROPOSED},
 	&.${bountyStatus.PROPOSED},
@@ -81,13 +87,15 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 	&.${gov2ReferendumStatus.TIMEDOUT},
 	&.${proposalStatus.CLEARED},
 	&.${referendumStatus.CANCELLED},
+	&.${referendumStatus.EXPIRED},
 	&.${referendumStatus.VETOED},
 	&.${motionStatus.DISAPPROVED},
 	&.${tipStatus.RETRACTED},
 	&.${bountyStatus.CANCELED},
 	&.${bountyStatus.REJECTED},
 	&.${gov2ReferendumStatus.EXECUTION_FAILED},
-	&.${childBountyStatus.CANCELED} {
+	&.${childBountyStatus.CANCELED},
+	&.${gov2ReferendumStatus.CONFIRM_ABORTED} {
 		color: #fff;
 		border:2px solid #FF0000 !important;
 		background: #FF0000 !important;
@@ -126,6 +134,7 @@ export default styled(StatusTag).attrs(( { status }: Props) => ({
 			color: #5BC044;
 		}
 	}
+
 	&.${childBountyStatus.CLAIMED},
 	&.prime, &.Prime {
 		color: #fff;

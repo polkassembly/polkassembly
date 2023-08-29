@@ -117,7 +117,6 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
 	const periodStartAt = (period: string, periodPercent: number) => {
-		console.log(period, periodPercent);
 		let startTime = Math.round((parseInt(period) * periodPercent) / 100);
 		if(startTime < 0){
 			startTime = 0;
@@ -125,7 +124,6 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		if(startTime > parseInt(period)){
 			startTime = parseInt(period);
 		}
-		console.log(startTime);
 		return startTime;
 	};
 

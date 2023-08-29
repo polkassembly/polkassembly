@@ -27,6 +27,7 @@ import ExportOutlined from '~assets/icons/learn-more-icon.svg';
 import { usePostDataContext } from '~src/context';
 import DownArrow from '~assets/icons/down-icon.svg';
 import UpArrow from '~assets/icons/up-arrow.svg';
+import styled from 'styled-components';
 
 interface BlockStatus {
 	block: number;
@@ -174,4 +175,82 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 		</section>
 	);
 };
-export default TimelineContainer;
+export default React.memo(styled(TimelineContainer)`
+	.content-container {
+		width: 660px;
+	}
+	
+	.export-link{
+		margin-left: auto;
+	}
+	
+	.timeline-container {
+		margin: 0 32px;
+	}
+	
+	.timeline-dropdown {
+		margin-left: 664px;;
+	}
+	
+	.info-container{
+		min-width: 140px;
+	}
+	
+	.round-icon{
+		margin-left: 60px;
+	}
+	
+	.arrow-container{
+		margin-left: -107px;
+	}
+	
+	@media (min-width: 600px) and (max-width: 800px) {
+		.content-container {
+		width: 213px;
+		}
+	
+		.export-link {
+		margin-left: 335px;
+		margin-right: auto;
+		}
+	
+		.timeline-container {
+		margin: 0;
+		}
+	
+		.timeline-dropdown {
+		margin-left: 578px;
+		}
+	}
+	
+	@media (max-width: 600px) {
+		.content-container {
+		width: 213px;
+		}
+	
+		.export-link {
+		margin-left: 47px;
+		margin-right: auto;
+		}
+	
+		.timeline-container {
+		margin: 0;
+		}
+	
+		.timeline-dropdown {
+		margin-left: 300px;
+		}
+	
+		.round-icon{
+		margin-left: 28px;
+		}
+	
+		.arrow-container{
+		margin-left: 8px;
+		}
+	
+		.status-update{
+		display:none;
+		}
+	}
+`);

@@ -1,20 +1,21 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+// Inspired by https://github.com/codecks-io/react-sticky-box/blob/master/packages/react-sticky-box/src/index.tsx
 
 import { ComponentProps, useEffect, useState } from 'react';
 
 const getScrollParent = (node: HTMLElement) => {
 	let parent: HTMLElement | null = node;
 	while ((parent = parent.parentElement)) {
-		const overflowYVal = getComputedStyle(parent, null).getPropertyValue(
+		const overflowForY = getComputedStyle(parent, null).getPropertyValue(
 			'overflow-y'
 		);
 		if (parent === document.body) return window;
 		if (
-			overflowYVal === 'auto' ||
-            overflowYVal === 'scroll' ||
-            overflowYVal === 'overlay'
+			overflowForY === 'auto' ||
+            overflowForY === 'scroll' ||
+            overflowForY === 'overlay'
 		) {
 			return parent;
 		}
@@ -24,22 +25,6 @@ const getScrollParent = (node: HTMLElement) => {
 
 const isOffsetElement = (el: HTMLElement): boolean =>
 	el.firstChild ? (el.firstChild as HTMLElement).offsetParent === el : true;
-
-const offsetTill = (node: HTMLElement, target: HTMLElement) => {
-	let current = node;
-	let offset = 0;
-	// If target is not an offsetParent itself, subtract its offsetTop and set correct target
-	if (!isOffsetElement(target)) {
-		offset += node.offsetTop - target.offsetTop;
-		target = node.offsetParent as HTMLElement;
-		offset += -node.offsetTop;
-	}
-	do {
-		offset += current.offsetTop;
-		current = current.offsetParent as HTMLElement;
-	} while (current && current !== target);
-	return offset;
-};
 
 const getParentNode = (node: HTMLElement) => {
 	let currentParent = node.parentElement;
@@ -58,7 +43,6 @@ if (typeof CSS !== 'undefined' && CSS.supports) {
 		stickyProp = '-webkit-sticky';
 }
 
-// Inspired by https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
 let passiveArg: false | { passive: true } = false;
 try {
 	const opts = Object.defineProperty({}, 'passive', {
@@ -73,6 +57,22 @@ try {
 } catch (e) {
 	console.log(e);
 }
+
+const offsetLimit = (node: HTMLElement, target: HTMLElement) => {
+	let current = node;
+	let offset = 0;
+	// If target is not an offsetParent itself, subtract its offsetTop and set correct target
+	if (!isOffsetElement(target)) {
+		offset += node.offsetTop - target.offsetTop;
+		target = node.offsetParent as HTMLElement;
+		offset += -node.offsetTop;
+	}
+	do {
+		offset += current.offsetTop;
+		current = current.offsetParent as HTMLElement;
+	} while (current && current !== target);
+	return offset;
+};
 
 type UnsubList = (() => void)[];
 type MeasureFn<T extends object> = (opts: {
@@ -96,20 +96,20 @@ const getDimensions = <T extends object>(opts: {
 			top: 0,
 			width: window.innerWidth
 		});
-		const mResult = measure(getRect());
+		const resultM = measure(getRect());
 		const handler = () => {
-			Object.assign(mResult, measure(getRect()));
+			Object.assign(resultM, measure(getRect()));
 			onChange();
 		};
 		window.addEventListener('resize', handler, passiveArg);
 		unsubs.push(() => window.removeEventListener('resize', handler));
-		return mResult;
+		return resultM;
 	} else {
-		const mResult = measure((el as HTMLElement).getBoundingClientRect());
+		const resultM = measure((el as HTMLElement).getBoundingClientRect());
 		const handler: ResizeObserverCallback = () => {
 			// note the e[0].contentRect is different from `getBoundingClientRect`
 			Object.assign(
-				mResult,
+				resultM,
 				measure((el as HTMLElement).getBoundingClientRect())
 			);
 			onChange();
@@ -117,18 +117,18 @@ const getDimensions = <T extends object>(opts: {
 		const ro = new ResizeObserver(handler);
 		ro.observe(el as HTMLElement);
 		unsubs.push(() => ro.disconnect());
-		return mResult;
+		return resultM;
 	}
 };
 
-const getVerticalPadding = (node: HTMLElement) => {
-	const computedParentStyle = getComputedStyle(node, null);
+const VerticalPadding = (node: HTMLElement) => {
+	const calculatedParentStyle = getComputedStyle(node, null);
 	const parentPaddingTop = parseInt(
-		computedParentStyle.getPropertyValue('padding-top'),
+		calculatedParentStyle.getPropertyValue('padding-top'),
 		10
 	);
 	const parentPaddingBottom = parseInt(
-		computedParentStyle.getPropertyValue('padding-bottom'),
+		calculatedParentStyle.getPropertyValue('padding-bottom'),
 		10
 	);
 	return { bottom: parentPaddingBottom, top: parentPaddingTop };
@@ -149,10 +149,10 @@ const setup = (
 	opts: Required<StickyBoxConfig>
 ) => {
 	const { bottom, offsetBottom, offsetTop } = opts;
-	const scrollPane = getScrollParent(node);
+	const scrollPanel = getScrollParent(node);
 
 	let isScheduled = false;
-	const scheduleOnLayout = () => {
+	const layoutSchedule = () => {
 		if (!isScheduled) {
 			requestAnimationFrame(() => {
 				const nextMode = onLayout();
@@ -164,16 +164,16 @@ const setup = (
 	};
 
 	let latestScrollY =
-        scrollPane === window ? window.scrollY : (scrollPane as HTMLElement).scrollTop;
+        scrollPanel === window ? window.scrollY : (scrollPanel as HTMLElement).scrollTop;
 
-	const isBoxTooLow = (scrollY: number) => {
-		const { offsetTop: scrollPaneOffset, height: viewPortHeight } =
+	const isContainerBoxLow = (scrollY: number) => {
+		const { offsetTop: offsetScrollPane, height: viewPortHeight } =
             scrollPaneDims;
 		const { naturalTop } = parentDims;
 		const { height: nodeHeight } = nodeDims;
 
 		if (
-			scrollY + scrollPaneOffset + viewPortHeight >=
+			scrollY + offsetScrollPane + viewPortHeight >=
             naturalTop + nodeHeight + relativeOffset + offsetBottom
 		) {
 			return true;
@@ -187,7 +187,7 @@ const setup = (
 		if (nodeHeight + offsetTop + offsetBottom <= viewPortHeight) {
 			return MODES.small;
 		} else {
-			if (isBoxTooLow(latestScrollY)) {
+			if (isContainerBoxLow(latestScrollY)) {
 				return MODES.stickyBottom;
 			} else {
 				return MODES.relative;
@@ -196,40 +196,105 @@ const setup = (
 	};
 
 	const scrollPaneIsOffsetEl =
-        scrollPane !== window && isOffsetElement(scrollPane as HTMLElement);
+        scrollPanel !== window && isOffsetElement(scrollPanel as HTMLElement);
 	const scrollPaneDims = getDimensions({
-		el: scrollPane,
+		el: scrollPanel,
 		measure: ({ height, top }) => ({
 			height,
 			offsetTop: scrollPaneIsOffsetEl ? top : 0
 		}),
-		onChange: scheduleOnLayout,
+		onChange: layoutSchedule,
 		unsubs
 	});
 
 	const parentNode = getParentNode(node);
 	const parentPaddings =
-        parentNode === window ? { bottom: 0, top: 0 } : getVerticalPadding(parentNode as HTMLElement);
+        parentNode === window ? { bottom: 0, top: 0 } : VerticalPadding(parentNode as HTMLElement);
 	const parentDims = getDimensions({
 		el: parentNode,
 		measure: ({ height }) => ({
 			height: height - parentPaddings.top - parentPaddings.bottom,
 			naturalTop:
-                parentNode === window ? 0 : offsetTill(parentNode as HTMLElement, scrollPane as HTMLElement) + parentPaddings.top + scrollPaneDims.offsetTop
+                parentNode === window ? 0 : offsetLimit(parentNode as HTMLElement, scrollPanel as HTMLElement) + parentPaddings.top + scrollPaneDims.offsetTop
 		}),
-		onChange: scheduleOnLayout,
+		onChange: layoutSchedule,
 		unsubs
 	});
 
 	const nodeDims = getDimensions({
 		el: node,
 		measure: ({ height }) => ({ height }),
-		onChange: scheduleOnLayout,
+		onChange: layoutSchedule,
 		unsubs
 	});
 
 	let relativeOffset = 0;
 	let mode = onLayout();
+
+	const onScroll = (scrollY: number) => {
+		if (scrollY === latestScrollY) return;
+		const scrollDelta = scrollY - latestScrollY;
+		latestScrollY = scrollY;
+		if (mode === MODES.small) return;
+
+		const { offsetTop: offsetScrollPane, height: viewPortHeight } =
+            scrollPaneDims;
+		const { naturalTop, height: parentHeight } = parentDims;
+		const { height: nodeHeight } = nodeDims;
+
+		if (scrollDelta > 0) {
+			// scroll down
+			if (mode === MODES.stickyTop) {
+				if (scrollY + offsetScrollPane + offsetTop > naturalTop) {
+					const topOffset = Math.max(
+						0,
+						offsetScrollPane + latestScrollY - naturalTop + offsetTop
+					);
+					if (
+						scrollY + offsetScrollPane + viewPortHeight <=
+                        naturalTop + nodeHeight + topOffset + offsetBottom
+					) {
+						changeMode(MODES.relative);
+					} else {
+						changeMode(MODES.stickyBottom);
+					}
+				}
+			} else if (mode === MODES.relative) {
+				if (isContainerBoxLow(scrollY)) changeMode(MODES.stickyBottom);
+			}
+		} else {
+			// scroll up
+			if (mode === MODES.stickyBottom) {
+				if (
+					offsetScrollPane + scrollY + viewPortHeight <
+                    naturalTop + parentHeight + offsetBottom
+				) {
+					const bottomOffset = Math.max(
+						0,
+						offsetScrollPane +
+                        latestScrollY +
+                        viewPortHeight -
+                        (naturalTop + nodeHeight + offsetBottom)
+					);
+					if (
+						offsetScrollPane + scrollY + offsetTop >=
+                        naturalTop + bottomOffset
+					) {
+						changeMode(MODES.relative);
+					} else {
+						changeMode(MODES.stickyTop);
+					}
+				}
+			} else if (mode === MODES.relative) {
+				if (
+					offsetScrollPane + scrollY + offsetTop <
+                    naturalTop + relativeOffset
+				) {
+					changeMode(MODES.stickyTop);
+				}
+			}
+		}
+	};
 
 	const changeMode = (newMode: StickyMode) => {
 		const prevMode = mode;
@@ -245,14 +310,14 @@ const setup = (
 			return;
 		}
 
-		const { height: viewPortHeight, offsetTop: scrollPaneOffset } =
+		const { height: viewPortHeight, offsetTop: offsetScrollPane } =
             scrollPaneDims;
 		const { height: parentHeight, naturalTop } = parentDims;
 		const { height: nodeHeight } = nodeDims;
 		if (newMode === MODES.relative) {
 			node.style.position = 'relative';
 			relativeOffset =
-                prevMode === MODES.stickyTop ? Math.max( 0, scrollPaneOffset + latestScrollY - naturalTop + offsetTop) : Math.max( 0, scrollPaneOffset + latestScrollY + viewPortHeight - (naturalTop + nodeHeight + offsetBottom));
+                prevMode === MODES.stickyTop ? Math.max( 0, offsetScrollPane + latestScrollY - naturalTop + offsetTop) : Math.max( 0, offsetScrollPane + latestScrollY + viewPortHeight - (naturalTop + nodeHeight + offsetBottom));
 			if (bottom) {
 				const nextBottom = Math.max(
 					0,
@@ -282,81 +347,19 @@ const setup = (
 	};
 	changeMode(mode);
 
-	const onScroll = (scrollY: number) => {
-		if (scrollY === latestScrollY) return;
-		const scrollDelta = scrollY - latestScrollY;
-		latestScrollY = scrollY;
-		if (mode === MODES.small) return;
-
-		const { offsetTop: scrollPaneOffset, height: viewPortHeight } =
-            scrollPaneDims;
-		const { naturalTop, height: parentHeight } = parentDims;
-		const { height: nodeHeight } = nodeDims;
-
-		if (scrollDelta > 0) {
-			// scroll down
-			if (mode === MODES.stickyTop) {
-				if (scrollY + scrollPaneOffset + offsetTop > naturalTop) {
-					const topOffset = Math.max(
-						0,
-						scrollPaneOffset + latestScrollY - naturalTop + offsetTop
-					);
-					if (
-						scrollY + scrollPaneOffset + viewPortHeight <=
-                        naturalTop + nodeHeight + topOffset + offsetBottom
-					) {
-						changeMode(MODES.relative);
-					} else {
-						changeMode(MODES.stickyBottom);
-					}
-				}
-			} else if (mode === MODES.relative) {
-				if (isBoxTooLow(scrollY)) changeMode(MODES.stickyBottom);
-			}
-		} else {
-			// scroll up
-			if (mode === MODES.stickyBottom) {
-				if (
-					scrollPaneOffset + scrollY + viewPortHeight <
-                    naturalTop + parentHeight + offsetBottom
-				) {
-					const bottomOffset = Math.max(
-						0,
-						scrollPaneOffset +
-                        latestScrollY +
-                        viewPortHeight -
-                        (naturalTop + nodeHeight + offsetBottom)
-					);
-					if (
-						scrollPaneOffset + scrollY + offsetTop >=
-                        naturalTop + bottomOffset
-					) {
-						changeMode(MODES.relative);
-					} else {
-						changeMode(MODES.stickyTop);
-					}
-				}
-			} else if (mode === MODES.relative) {
-				if (
-					scrollPaneOffset + scrollY + offsetTop <
-                    naturalTop + relativeOffset
-				) {
-					changeMode(MODES.stickyTop);
-				}
-			}
-		}
-	};
-
 	const handleScroll =
-        scrollPane === window ? () => onScroll(window.scrollY) : () => onScroll((scrollPane as HTMLElement).scrollTop);
+        scrollPanel === window ? () => onScroll(window.scrollY) : () => onScroll((scrollPanel as HTMLElement).scrollTop);
 
-	scrollPane.addEventListener('scroll', handleScroll, passiveArg);
-	scrollPane.addEventListener('mousewheel', handleScroll, passiveArg);
+	scrollPanel.addEventListener('scroll', handleScroll, passiveArg);
+	scrollPanel.addEventListener('mousewheel', handleScroll, passiveArg);
 	unsubs.push(
-		() => scrollPane.removeEventListener('scroll', handleScroll),
-		() => scrollPane.removeEventListener('mousewheel', handleScroll)
+		() => scrollPanel.removeEventListener('scroll', handleScroll),
+		() => scrollPanel.removeEventListener('mousewheel', handleScroll)
 	);
 };
+
+export type StickyBoxCompProps = StickyBoxConfig &
+    Pick<ComponentProps<'div'>, 'children' | 'className' | 'style'>;
 
 export type StickyBoxConfig = {
     offsetTop?: number;
@@ -383,9 +386,6 @@ export const useStickyBox = ({
 
 	return setNode;
 };
-
-export type StickyBoxCompProps = StickyBoxConfig &
-    Pick<ComponentProps<'div'>, 'children' | 'className' | 'style'>;
 
 const StickyBox = (props: StickyBoxCompProps) => {
 	const { offsetTop, offsetBottom, bottom, children, className, style } = props;

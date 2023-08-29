@@ -51,7 +51,7 @@ function sortfunc(a: BlockStatus, b: BlockStatus) {
 
 const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	const [isCollapsed, setIsCollapsed] = useState(false);
-	const { timeline } = props;
+	const { timeline, className } = props;
 	const { postData: { postType } } = usePostDataContext();
 	const PostType = postType.replace(/(^|_)([a-z])/g, (_, __, c) => c.toUpperCase()).replace(/s$/, '');
 	let activeColor;
@@ -69,7 +69,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 
 	let displayIconActive;
 	let displayIconUnactive;
-	switch (getStatus(String(type))) {
+	switch (getStatus(type as string)) {
 	case 'Referendum':
 		displayIconActive = <DemocracyReferendaIcon className="-ml-[6px] mr-3 mt-2"/>;
 		displayIconUnactive = <DemocracyReferendaGreyIcon className="-ml-[6px] mr-3 mt-2" />;
@@ -103,7 +103,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 
 	const Timeline = () => {
 		return(
-			<section>
+			<section className={className}>
 				{
 					statuses.sort(sortfunc).map(({ block, status, timestamp }, index) => {
 						const blockDate = dayjs(timestamp);
@@ -149,33 +149,35 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	};
 
 	return (
-		<section className='flex my-12 timeline-container'>
-			<div className={`${isCollapsed ? 'min-h-[40px]' : `min-h-${minHeight}`} -mb-[2px] mt-[16px] w-[2px] relative -ml-2`} style={{ backgroundColor: activeColor }}>
-				<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? timeline.hash: timeline.index}`}>
-					<p className='flex flex-row gap-1 w-[250px] -mt-[40px] font-normal text-base leading-6 whitespace-nowrap h-[33px] -left-[5px] -top-7' style={{ color: activeColor, fontWeight: '500', marginLeft: '-4px' }}>
-						{PostType===timeline.type ? displayIconUnactive  : displayIconActive}
-						<span className='mt-2 font-medium text-base'>{getStatus(String(type))}</span>
+		<section className={`${className}`}>
+			<div className="flex my-12 timeline-container">
+				<div className={`${isCollapsed ? 'min-h-[40px]' : `min-h-${minHeight}`} -mb-[2px] mt-[16px] w-[2px] relative -ml-2`} style={{ backgroundColor: activeColor }}>
+					<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip'? timeline.hash: timeline.index}`}>
+						<p className='flex flex-row gap-1 w-[250px] -mt-[40px] font-normal text-base leading-6 whitespace-nowrap h-[33px] -left-[5px] -top-7' style={{ color: activeColor, fontWeight: '500', marginLeft: '-4px' }}>
+							{PostType===timeline.type ? displayIconUnactive  : displayIconActive}
+							<span className='mt-2 font-medium text-base'>{getStatus(type as string)}</span>
+						</p>
+					</Link>
+					<p className='timeline-dropdown' style={{ backgroundColor: activeColor, marginTop: '-44px' }}>
+						{isCollapsed ? (
+							<div className="flex w-[200px] gap-3 arrow-container">
+								<p className='bg-[#5BC044] text-white my-1 text-center px-[15px] w-[100px] text-xs py-[5px] rounded-[50px] items-center status-update'>{timeline?.statuses[statuses.length - 1].status}</p>
+								<DownArrow onClick={toggleCollapse} className="mt-[12px]"/>
+							</div>
+						) : (
+							<UpArrow onClick={toggleCollapse} className="mt-[7px]"/>
+						)}
 					</p>
-				</Link>
-				<p className='timeline-dropdown' style={{ backgroundColor: activeColor, marginTop: '-44px' }}>
-					{isCollapsed ? (
-						<div className="flex w-[200px] gap-3 arrow-container">
-							<p className='bg-[#5BC044] text-white my-1 text-center px-[15px] w-[100px] text-xs py-[5px] rounded-[50px] items-center status-update'>{timeline?.statuses[statuses.length - 1].status}</p>
-							<DownArrow onClick={toggleCollapse} className="mt-[12px]"/>
-						</div>
-					) : (
-						<UpArrow onClick={toggleCollapse} className="mt-[7px]"/>
-					)}
-				</p>
-			</div>
-			<span className={'-mb-[5px] round-icon rounded-full absolute -bottom-1 -left-1 w-[10px] h-[10px]' } style={{ backgroundColor: activeColor }}></span>
-			<div className={`${isCollapsed ? 'hidden' : ''} mt-3 ml-[24px]`}>
-				{Timeline()}
+				</div>
+				<span className={'-mb-[5px] round-icon rounded-full absolute -bottom-1 -left-1 w-[10px] h-[10px]' } style={{ backgroundColor: activeColor }}></span>
+				<div className={`${isCollapsed ? 'hidden' : ''} mt-3 ml-[24px]`}>
+					{Timeline()}
+				</div>
 			</div>
 		</section>
 	);
 };
-export default React.memo(styled(TimelineContainer)`
+export default (styled(TimelineContainer)`
 	.content-container {
 		width: 660px;
 	}

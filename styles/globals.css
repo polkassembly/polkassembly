@@ -375,7 +375,7 @@ color: var(--lightBlue) !important;
     border-radius: 8px !important;
   }
 }
-
+/* 
 .content-container {
   width: 660px;
 }
@@ -452,4 +452,4 @@ color: var(--lightBlue) !important;
   .status-update{
     display:none;
   }
-}
+} */

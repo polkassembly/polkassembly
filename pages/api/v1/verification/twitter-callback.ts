@@ -41,7 +41,6 @@ const oauthConsumer = new oauth.OAuth(
 
 const handler: NextApiHandler< any> = async (req, res) => {
   const { oauth_verifier: oauthVerifier, oauthRequestToken, oauthRequestTokenSecret } = req.query;
-  console.log('/twitter/callback', { oauthRequestToken, oauthRequestTokenSecret, oauthVerifier });
 
   const network = String(req.headers['x-network']);
   if(!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
@@ -50,10 +49,6 @@ const handler: NextApiHandler< any> = async (req, res) => {
 
   const { user_id: userId /*, screen_name */ } = results;
   const user = await oauthGetUserById(userId, { oauthAccessToken, oauthAccessTokenSecret });
-
-  if(!oauthVerifier)
-
-  console.log('user succesfully logged in with twitter', user?.screen_name);
 
   const twitterVerification = await firestore.collection('twitter_verification_tokens').doc( user.screen_name || '').get();
 		const data = twitterVerification.data();

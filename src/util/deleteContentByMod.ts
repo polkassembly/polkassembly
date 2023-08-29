@@ -8,16 +8,14 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from './nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
 
-export async function deleteContentByMod(postId:number|string|undefined, proposalType:ProposalType, reason:string, commentId?:string, replyId?:string, onDeleteComment?:()=>void , onDeleteReply?:()=>void)   {
-	console.log('function ke andar',postId,proposalType,commentId,replyId,reason);
+export async function deleteContentByMod(postId:number|string|undefined, proposalType:ProposalType, reason:string, commentId?:string, replyId?:string, onDeleteComment?:()=>void , onDeleteReply?:()=>void, onDeletePost?:()=>void)   {
 	const { data: deleteData , error: deleteError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteContentByMod', {
 		commentId,
-		postId,
+		postId : Number(postId),
 		postType: proposalType,
 		reason,
 		replyId
 	});
-	console.log('hellloooooo',deleteData);
 	if (deleteError || !deleteData) {
 		console.error('Error deleting content: ', deleteError);
 		queueNotification({
@@ -26,11 +24,14 @@ export async function deleteContentByMod(postId:number|string|undefined, proposa
 			status: NotificationStatus.ERROR
 		});
 	}
+
+	if(deleteData && commentId && replyId){
+		onDeleteReply?.();
+	}
 	if(deleteData && commentId && !replyId){
-		console.log('comment delete');
 		onDeleteComment?.();
 	}
-	else if(deleteData && replyId && commentId){
-		onDeleteReply?.();
+	if(deleteData && !commentId && !replyId && postId){
+		onDeletePost?.();
 	}
 }

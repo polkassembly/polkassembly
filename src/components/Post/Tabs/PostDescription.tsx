@@ -15,6 +15,9 @@ import PostReactionBar from '../ActionsBar/Reactionbar/PostReactionBar';
 import ReportButton from '../ActionsBar/ReportButton';
 import ShareButton from '../ActionsBar/ShareButton';
 import SubscriptionButton from '../ActionsBar/SubscriptionButton/SubscriptionButton';
+import { useRouter } from 'next/router';
+import { NotificationStatus } from '~src/types';
+import queueNotification from '~src/ui-components/QueueNotification';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => <div>
@@ -25,6 +28,7 @@ const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), 
 });
 
 interface IPostDescriptionProps {
+	allowed_roles?: string[] | null;
 	className?: string;
 	canEdit: boolean | '' | undefined;
 	id: number | null | undefined;
@@ -36,9 +40,20 @@ interface IPostDescriptionProps {
 }
 
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
-	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp } = props;
+	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp , allowed_roles } = props;
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
-
+	const router = useRouter();
+	//write a function which redirects to the proposalType page
+	const deletePost = () => {
+		queueNotification({
+			header: 'Success!',
+			message: 'The post was deleted successfully',
+			status: NotificationStatus.SUCCESS
+		});
+		setTimeout(() => {
+			router.push(`/${postType}`);
+		}, 1000);
+	};
 	return (
 		<div className={`${className} mt-4`}>
 			{content && <Markdown className='post-content' md={content} />}
@@ -58,6 +73,11 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					{canEdit && !isEditing && <CreateOptionPoll proposalType={postType} postId={postIndex} />}
 					{TrackerButtonComp}
 					<ShareButton title={title} />
+					{
+						allowed_roles && allowed_roles.includes('moderator')?
+							<ReportButton proposalType={postType} allowed_roles={allowed_roles} onDeletePost={deletePost} isDeleteModal={true} type='post' postId={`${postIndex}`} /> :
+							null
+					}
 				</div>
 			</div>
 

@@ -308,7 +308,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		});
 		queueNotification({
 			header: 'Success!',
-			message: `${allowed_roles?.includes('moderator')? 'The' : 'Your'} comment was deleted.`,
+			message: `${allowed_roles?.includes('moderator') && userId! == id? 'The' : 'Your'} comment was deleted.`,
 			status: NotificationStatus.SUCCESS
 		});
 	};

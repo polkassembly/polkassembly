@@ -25,8 +25,9 @@ interface IReportButtonProps {
 	className?: string;
 	proposalType: ProposalType;
 	isDeleteModal?: boolean;
-	onDeleteReply?: () => void;
-	onDeleteComment?: () => void;
+	onDeleteReply?: () => Promise<void>;
+	onDeleteComment?: () => Promise<void>;
+	onDeletePost?: () => void;
 	isReply?: boolean;
 	allowed_roles?: string[];
 }
@@ -39,7 +40,7 @@ const reasons = [
 ];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , isReply, onDeleteReply, onDeleteComment , allowed_roles } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , isReply, onDeleteReply, onDeleteComment , onDeletePost, allowed_roles } = props;
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
@@ -159,7 +160,6 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 
 		setLoading(false);
 	};
-
 	const handleDelete = async () => {
 		setLoading(true);
 		await form.validateFields();
@@ -167,10 +167,9 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 		if(validationErrors.length > 0) return;
 		setFormDisabled(true);
 		const reason = form.getFieldValue('comments');
-		console.log('reason', reason , typeof reason);
-		allowed_roles?.includes('moderator')?
-			deleteContentByMod(postId, proposalType, reason, commentId, replyId, onDeleteComment, onDeleteReply) :
-			null;
+		if(allowed_roles?.includes('moderator')) {
+			await deleteContentByMod(postId, proposalType, reason, commentId, replyId, onDeleteComment, onDeleteReply, onDeletePost);
+		}
 	};
 	return (
 		<>

@@ -263,36 +263,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		});
 		queueNotification({
 			header: 'Success!',
-			message: 'Your reply was deleted.',
+			message: `${allowed_roles?.includes('moderator')? 'The' : 'Your'} reply was deleted.`,
 			status: NotificationStatus.SUCCESS
 		});
 	};
 
 	const deleteReply = async () => {
 		setLoading(true);
-		if (allowed_roles?.includes('moderator')) {
-			const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteContentByMod', {
-				commentId,
-				postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
-				postType: reply.post_type || postType,
-				replyId
-			});
-
-			if (deleteReplyError || !data) {
-				console.error('Error deleting reply: ', deleteReplyError);
-				queueNotification({
-					header: 'Error!',
-					message: deleteReplyError || 'Error in deleting reply',
-					status: NotificationStatus.ERROR
-				});
-			}
-
-			if (data) {
-				removeReplyContent();
-			}
-			setLoading(false);
-		}
-		else{
+		if (!allowed_roles?.includes('moderator')) {
 			const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentReply', {
 				commentId,
 				postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
@@ -309,12 +287,15 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 					status: NotificationStatus.ERROR
 				});
 			}
-
 			if (data) {
 				removeReplyContent();
 			}
 			setLoading(false);
 		}
+		else{
+			removeReplyContent();
+		}
+		setLoading(false);
 	};
 
 	return (
@@ -368,7 +349,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								{
 									id === userId ? <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>
 										:
-										allowed_roles?.includes('moderator') ? <ReportButton isDeleteModal={true} proposalType={postType} className={'flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent '} type='comment' isReply={true} onDeleteReply={deleteReply} commentId={commentId} postId={postIndex}/>
+										allowed_roles?.includes('moderator') ? <ReportButton isDeleteModal={true} proposalType={postType} className={'flex items-center shadow-none text-slate-400 text-[10px] leading-4 ml-[-7px] h-[17.5px] w-[100%] rounded-none hover:bg-transparent '} type='comment' isReply={true} onDeleteReply={deleteReply} commentId={commentId} allowed_roles={allowed_roles} replyId={replyId} postId={postIndex}/>
 											: null
 
 								}

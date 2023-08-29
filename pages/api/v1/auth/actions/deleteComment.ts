@@ -30,63 +30,67 @@ export async function deleteComment(params: IDeleteComment): Promise<IApiRespons
 		const postRef = postsByTypeRef(network, postType)
 			.doc(String(postId));
 		const last_comment_at = new Date();
-
-		const commentRef = postRef
-			.collection('comments')
-			.doc(String(commentId));
-
-		const commentDoc = await commentRef.get();
-		if(postId && replyId && commentId){
-			const replyRef = postRef
+		if(commentId || replyId){
+			const commentRef = postRef
 				.collection('comments')
-				.doc(String(commentId))
-				.collection('replies')
-				.doc(String(replyId));
+				.doc(String(commentId));
 
-			const replyDoc = await replyRef.get();
-			if(!replyDoc.exists) throw apiErrorWithStatusCode('Reply not found', 404);
-			if(replyDoc.data()?.user_id !== user.id && !user?.roles?.includes(Role.MODERATOR)) throw apiErrorWithStatusCode('Unauthorised', 403);
-			await replyRef.delete().then(() => {
-				postRef.update({
-					last_comment_at
-				});
+			const commentDoc = await commentRef.get();
+			if(postId && replyId && commentId){
+				const replyRef = postRef
+					.collection('comments')
+					.doc(String(commentId))
+					.collection('replies')
+					.doc(String(replyId));
+
+				const replyDoc = await replyRef.get();
+				if(!replyDoc.exists) throw apiErrorWithStatusCode('Reply not found', 404);
+				if(replyDoc.data()?.user_id !== user.id && !user?.roles?.includes(Role.MODERATOR)) throw apiErrorWithStatusCode('Unauthorised', 403);
+				await replyRef.delete().then(() => {
+					postRef.update({
+						last_comment_at
+					});
+				}
+				);
+				return {
+					data: {
+						message: 'Reply saved.'
+					},
+					error: null,
+					status: 200
+				};
 			}
-			);
-			return {
-				data: {
-					message: 'Reply saved.'
-				},
-				error: null,
-				status: 200
-			};
-		}
-		else if(postId && commentId && !replyId){
-			if(!commentDoc.exists) throw apiErrorWithStatusCode('Comment not found', 404);
-			if(commentDoc.data()?.user_id !== user.id && !user?.roles?.includes(Role.MODERATOR)) throw apiErrorWithStatusCode('Unauthorised', 403);
-			await commentRef.delete().then(() => {
-				postRef.update({
-					last_comment_at
-				});
+			if(postId && commentId && !replyId){
+				if(!commentDoc.exists) throw apiErrorWithStatusCode('Comment not found', 404);
+				if(commentDoc.data()?.user_id !== user.id && !user?.roles?.includes(Role.MODERATOR)) throw apiErrorWithStatusCode('Unauthorised', 403);
+				await commentRef.delete().then(() => {
+					postRef.update({
+						last_comment_at
+					});
+				}
+				);
+				return {
+					data: {
+						message: 'Comment saved.'
+					},
+					error: null,
+					status: 200
+				};
 			}
-			);
-			return {
-				data: {
-					message: 'Comment saved.'
-				},
-				error: null,
-				status: 200
-			};
 		}
-		else{
-			await postRef.delete();
-			return {
-				data: {
-					message: 'Post saved.'
-				},
-				error: null,
-				status: 200
-			};
+		await postRef.delete().then(() => {
+			postRef.update({
+				last_comment_at
+			});
 		}
+		);
+		return {
+			data: {
+				message: 'Post saved.'
+			},
+			error: null,
+			status: 200
+		};
 	}
 	catch (error) {
 		return {

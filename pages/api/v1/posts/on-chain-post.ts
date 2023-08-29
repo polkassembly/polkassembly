@@ -968,7 +968,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			const sentimentsKey:Array<ESentiments> = [ESentiments.Against, ESentiments.SlightlyAgainst, ESentiments.Neutral, ESentiments.SlightlyFor, ESentiments.For];
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {
-					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip'? timeline.hash: timeline.index));
 					const commentsCount = (await postDocRef.collection('comments').count().get()).data().count;
 					return { ...timeline, commentsCount };
 				});
@@ -990,7 +990,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				let timeline: any= null;
 				for (timeline of post.timeline){
-					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip'? timeline.hash: timeline.index));
 					for(let i = 0; i < sentimentsKey.length; i++){
 						const key = sentimentsKey[i];
 						sentiments[key]= sentiments[key] ?

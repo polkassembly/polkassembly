@@ -26,7 +26,7 @@ const oauthConsumer = new oauth.OAuth(
 	TWITTER_CONSUMER_API_KEY,
 	TWITTER_CONSUMER_API_SECRET_KEY,
 	'1.0A',
-	'https://api.polkassembly.io/twitter-callback',
+	'https://api.polkassembly.io/verification/twitter-callback',
 	'HMAC-SHA1'
 );
 

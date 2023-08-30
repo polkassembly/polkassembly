@@ -6,7 +6,7 @@ import { Skeleton, Tabs } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 
@@ -109,7 +109,7 @@ const Post: FC<IPostProps> = (props) => {
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
 
-	const handleCanEdit = async () => {
+	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
 
 		if(isOffchainPost) {
@@ -146,13 +146,12 @@ const Post: FC<IPostProps> = (props) => {
 				setCanEdit(true);
 			}
 		})();
-	};
+	},[addresses, id, isEditing, isOffchainPost, loginAddress, post, proposalType]);
 
 	useEffect(() => {
 		if(!post) return;
 		handleCanEdit();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [post]);
+	}, [handleCanEdit, post]);
 
 	useEffect(() => {
 		if (proposalType !== ProposalType.GRANTS || dayjs(post.created_at).isBefore(dayjs().subtract(6, 'days'))) return;

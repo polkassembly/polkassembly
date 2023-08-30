@@ -11,20 +11,10 @@ export const checkIsProposer = async (address: string, currentUserAddresses:Arra
 	const { data: addressDetail } = await getOnChainAddressDetails(address, network);
 	const signatories = addressDetail?.account?.multisig?.multi_account_member;
 	if(signatories){
-		const convertToNestedObject = (array:Array<{address:string}>) => {
-			const result:any = {};
-
-			for (const item of array) {
-				result[getSubstrateAddress(item.address)||item.address] = '1';
-			}
-
-			return result;
-		};
-
-		const allSignatories = convertToNestedObject(signatories);
+		const allSignatories = signatories.map((user:{address:string}) => user.address);
 		for(const userAddress of currentUserAddresses){
 			const address = getSubstrateAddress(userAddress) || userAddress;
-			if(allSignatories[address]){
+			if(allSignatories.includes(address)){
 				return true;
 			}
 		}

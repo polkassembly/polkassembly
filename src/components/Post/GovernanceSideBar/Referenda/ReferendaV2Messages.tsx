@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Modal, Progress } from 'antd';
 import BN from 'bn.js';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
 import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Tracks/AboutTrackCard';
 import { useApiContext, useNetworkContext, usePostDataContext } from '~src/context';
@@ -12,42 +12,17 @@ import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import CloseIcon from 'public/assets/icons/close.svg';
 import { getBlockLink } from '~src/util/subscanCheck';
 import { IProgress } from './Curves';
+import { IPeriod } from '~src/types';
+import { getPeriodData } from '~src/util/getPeriodData';
+import { getStatusBlock } from '~src/util/getStatusBlock';
 
 interface IReferendaV2Messages {
     className?: string;
 	progress: IProgress;
 }
 
-interface IButtonProps extends PropsWithChildren {}
-
-export const getPeriodData = (network: string, date: Dayjs, trackData: any, fieldKey: string) => {
-	const period = blocksToRelevantTime(network, Number(trackData[fieldKey]));
-	let periodEndsAt = date.clone();
-	let periodPercent = 0;
-	if (period) {
-		if (period.includes('hrs')) {
-			periodEndsAt = periodEndsAt.add(Number(period.split(' ')[0]), 'hour');
-		} else if (period.includes('days')) {
-			periodEndsAt = periodEndsAt.add(Number(period.split(' ')[0]), 'day');
-		} else if (period.includes('min')) {
-			periodEndsAt = periodEndsAt.add(Number(period.split(' ')[0]), 'minute');
-		}
-		periodPercent = Math.round(dayjs().diff(date, 'minute') / periodEndsAt.diff(date, 'minute') * 100);
-	}
-	const periodCardVisible = periodEndsAt.diff(dayjs(), 'second') > 0;
-	return {
-		period,
-		periodCardVisible,
-		periodEndsAt,
-		periodPercent
-	};
-};
-
-export interface IPeriod {
-	period: string;
-	periodCardVisible: boolean;
-	periodEndsAt: dayjs.Dayjs;
-	periodPercent: number;
+interface IButtonProps extends PropsWithChildren {
+	className?: string;
 }
 
 export const getDefaultPeriod = () => {
@@ -57,26 +32,6 @@ export const getDefaultPeriod = () => {
 		periodEndsAt: dayjs(),
 		periodPercent: 0
 	};
-};
-
-export const getStatusBlock = (timeline: any[], type: string[], status: string) => {
-	let deciding: any;
-	if (timeline && Array.isArray(timeline)) {
-		timeline.some((v) => {
-			if (v && type.includes(v.type)  && v.statuses && Array.isArray(v.statuses)) {
-				let isFind = false;
-				v.statuses.some((v: any) => {
-					if (v && v.status === status) {
-						isFind = true;
-						deciding = v;
-					}
-				});
-				return isFind;
-			}
-			return false;
-		});
-	}
-	return deciding;
 };
 
 export const checkProposalPresent = (timeline: any[], type: string) => {
@@ -114,9 +69,9 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const isTreasuryProposalPresent = checkProposalPresent(timeline || [], 'TreasuryProposal');
 
 	const Button: FC<IButtonProps> = (props) => {
-		const { children } = props;
+		const { children, className } = props;
 		return (
-			<button onClick={() => setOpen(true)} className='cursor-pointer flex items-center justify-center border-none outline-none bg-[#FEF2F8] w-[30px] h-[30px] rounded-full text-base font-normal leading-[24px] tracking-[0.01em] text-lightBlue'>
+			<button onClick={() => setOpen(true)} className={`cursor-pointer flex items-center justify-center border-none outline-none bg-[#FEF2F8] w-[30px] h-[30px] rounded-full text-base font-normal leading-[24px] tracking-[0.01em] text-lightBlue ${className}`}>
 				{children}
 			</button>
 		);
@@ -161,6 +116,16 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
+	const periodStartAt = (period: string, periodPercent: number) => {
+		let startTime = Math.round((parseInt(period) * periodPercent) / 100);
+		if(startTime < 0){
+			startTime = 0;
+		}
+		if(startTime > parseInt(period)){
+			startTime = parseInt(period);
+		}
+		return startTime;
+	};
 
 	const isDisbursalPeriodCardVisible = isTreasuryProposal? (requested? (isTreasuryProposalPresent? (awardedStatusBlock? false: true): false): false): false;
 
@@ -170,16 +135,21 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				(!decidingStatusBlock) && !isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='m-0 text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Prepare Period</h3>
-							<Button>1</Button>
+							<h3 className='m-0 mr-[69px] text-bodyBlue font-semibold text-xl whitespace-nowrap leading-6 tracking-[0.0015em]'>Prepare Period</h3>
+							<div className="flex w-13 h-[33px] gap-1">
+								<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
+									<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] -ml-[3px] text-white">1</Button>
+									<span className="ml-[1px] pt-[3px]">of 3</span>
+								</p>
+							</div>
 						</div>
 						<div className='mt-[20px]'>
-							<Progress className='m-0 p-0 flex items-center' percent={prepare.periodPercent} strokeColor='#E5007A'  trailColor='#FEF2F8' size="small" />
+							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={prepare.periodPercent} strokeColor='#E5007A'  trailColor='#FEF2F8' size="small" />
 						</div>
-						<p className='p-0 m-0 flex items-center justify-between mt-3.5 leading-[22px]'>
+						<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
 							<>
-								<span className='text-bodyBlue text-sm font-normal'>Prepare Period</span>
-								<span className='text-lightBlue text-xs'>{prepare.period}</span>
+								<span className='text-bodyBlue text-sm text-bodyblue font-normal'>Prepare Period</span>
+								<span className='text-lightBlue text-xs'>{periodStartAt(prepare.period, prepare.periodPercent)}/{prepare.period}</span>
 							</>
 						</p>
 					</GovSidebarCard>
@@ -189,23 +159,28 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				(decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed && (
 					<GovSidebarCard>
 						<div className='flex items-center justify-between'>
-							<h3 className='m-0 text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
-							<Button>2</Button>
+							<h3 className='m-0 mr-[69px] justify-center whitespace-nowrap text-bodyBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Voting has Started</h3>
+							<div className="flex w-13 h-[33px] gap-1">
+								<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
+									<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] -ml-[3px] text-white">2</Button>
+									<span className="ml-[1px] pt-[3px]">of 3</span>
+								</p>
+							</div>
 						</div>
 						<div className='mt-[30px]'>
-							<Progress className='m-0 p-0 flex items-center rounded-lg' percent={decision.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
+							<Progress className='m-0 p-0 flex items-center rounded-lg' showInfo={false} percent={decision.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
 						</div>
-						<p className='p-0 m-0 flex items-center justify-between mt-3.5 leading-[22px]'>
-							<span className='text-bodyBlue text-sm font-normal'>Decision Period</span>
-							<span className='text-lightBlue text-xs'>{decision.period}</span>
+						<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
+							<span className='text-bodyBlue text-sm font-normal text-bodyblue'>Decision Period</span>
+							<span className='text-lightBlue text-xs'>{periodStartAt(decision.period, decision.periodPercent)}/{decision.period}</span>
 						</p>
 						<div className='mt-[20px]'>
-							<Progress className='m-0 p-0 flex items-center' percent={confirm.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
+							<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={confirm.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
 						</div>
-						<p className='p-0 m-0 flex items-center justify-between mt-3.5 leading-[22px]'>
+						<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
 							<>
-								<span className='text-bodyBlue text-sm font-normal'>Confirmation Period</span>
-								<span className='text-lightBlue text-xs'>{confirm.period}</span>
+								<span className='text-bodyBlue text-sm text-bodyblue font-normal'>Confirmation Period</span>
+								<span className='text-lightBlue text-xs'>{periodStartAt(confirm.period, confirm.periodPercent)}/{confirm.period}</span>
 							</>
 						</p>
 					</GovSidebarCard>
@@ -218,15 +193,20 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							(isDisbursalPeriodCardVisible || minEnactment.periodCardVisible)
 								? <GovSidebarCard>
 									<div className='flex items-center justify-between'>
-										<h3 className='m-0 text-bodyBlue font-medium text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
-										<Button>3</Button>
+										<h3 className='m-0 mr-[69px] whitespace-nowrap text-bodyBlue font-semibold text-xl leading-6 tracking-[0.0015em]'>Proposal Passed</h3>
+										<div className="flex w-13 h-[33px] gap-1">
+											<p className="flex whitespace-nowrap justify-between m-0 pr-2 mt-[1px] pt-[1px] text-lightBlue" style={{ background: 'rgba(210, 216, 224, 0.19)', borderRadius: '15px' }}>
+												<Button className="bg-pink_primary text-center text-xs h-[23px] w-[23px] -ml-[3px] text-white">3</Button>
+												<span className="ml-[1px] pt-[3px]">of 3</span>
+											</p>
+										</div>
 									</div>
 									<div className='mt-[20px]'>
-										<Progress className='m-0 p-0 flex items-center' percent={minEnactment.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
+										<Progress className='m-0 p-0 flex items-center' showInfo={false} percent={minEnactment.periodPercent} strokeColor='#E5007A' trailColor='#FEF2F8' size="small" />
 									</div>
-									<p className='p-0 m-0 flex items-center justify-between mt-2 leading-[22px]'>
-										<span className='text-bodyBlue text-sm font-normal'>Enactment Period</span>
-										<span className='text-lightBlue text-xs'>{minEnactment.period}</span>
+									<p className='p-0 m-0 flex items-center justify-between mt-5 leading-[22px]'>
+										<span className='text-bodyBlue text-sm text-bodyblue font-normal'>Enactment Period</span>
+										<span className='text-lightBlue text-xs'>{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}</span>
 									</p>
 									{
 										isDisbursalPeriodCardVisible && (

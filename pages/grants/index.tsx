@@ -17,7 +17,7 @@ import { OffChainProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { ErrorState } from '~src/ui-components/UIStates';
-import ReferendaLoginPrompts from '~src/ui-components/RefendaLoginPrompts';
+import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { useRouter } from 'next/router';
 
 interface IGrantsProps {

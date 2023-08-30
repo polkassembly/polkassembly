@@ -7,6 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { ProposalType } from '~src/global/proposalType';
 import { getProfileWithAddress } from '../../auth/data/profileWithAddress';
+import fetchWithTimeout from '~src/api-utils/timeoutFetch';
 
 const urlMapper: any = {
 	[ProposalType.BOUNTIES]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/bounties/${id}/comments`,
@@ -113,7 +114,7 @@ const convertDataToComment = async (data: any[], network: string | string[] | un
 export const getSubSquareComments = async (proposalType: string, network: string | string[] | undefined, id: string | string[] | undefined) => {
 	try {
 		const url = urlMapper[proposalType]?.(id, network);
-		const data = await (await fetch(url)).json();
+		const data = await (await fetchWithTimeout(url, { timeout: 5000 })).json();
 		const comments = await convertDataToComment(data.items, network);
 		return comments;
 	} catch (error) {

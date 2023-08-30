@@ -165,6 +165,7 @@ export const tokenSymbol = {
 
 export const chainProperties: types.ChainPropType = {
 	[network.POLKADOT]: {
+		preImageBaseDeposit: '400000000000',
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,
@@ -209,12 +210,17 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://polkadot.public.curie.radiumblock.co/ws'
 			},
 			{
+				label: 'via LuckyFriday',
+				key: 'wss://rpc-polkadot.luckyfriday.io'
+			},
+			{
 				label: 'light client (experimental)',
 				key: 'light://substrate-connect/polkadot'
 			}
 		]
 	},
 	[network.KUSAMA]: {
+		preImageBaseDeposit: '1330000000000',
 		blockTime: 6000,
 		category: 'kusama',
 		chainId: 0,
@@ -253,6 +259,10 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via RadiumBlock',
 				key: 'wss://kusama.public.curie.radiumblock.co/ws'
+			},
+			{
+				label: 'via LuckyFriday',
+				key: 'wss://rpc-kusama.luckyfriday.io'
 			},
 			{
 				label: 'light client (experimental)',
@@ -913,7 +923,7 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 12,
 		tokenDecimals: 6,
 		tokenSymbol: tokenSymbol.POLYX,
-		subsquidUrl: '',
+		subsquidUrl: 'https://squid.subsquid.io/polymesh-polkassembly/graphql',
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,

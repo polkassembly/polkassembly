@@ -57,12 +57,12 @@ interface Props {
 	lastVote: ILastVote | undefined;
 	setLastVote: (pre: ILastVote) => void;
 	proposalType: ProposalType;
-  address: string;
+	address: string;
 }
 export interface INetworkWalletErr{
-message: string;
- description: string;
- error: number
+	message: string;
+	description: string;
+	error: number
 }
 
 export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], proposalType: ProposalType, api: ApiPromise | undefined, apiReady: boolean, network: string) => {
@@ -220,8 +220,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				return;
 			}
 			//deposit balance
-			const depositBase = api.consts.multisig.depositBase.toString();
-			const depositFactor = api.consts.multisig.depositFactor.toString();
+			const depositBase = api.consts.multisig?.depositBase.toString();
+			const depositFactor = api.consts.multisig?.depositFactor.toString();
 			setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
 			//initiator balance
 			const initiatorBalance = await api.query.system.account(address);
@@ -245,17 +245,23 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [availableWallets, network]);
 
-	const handleOnBalanceChange = (balanceStr: string) => {
+	const handleOnBalanceChange = async (balanceStr: string) => {
+		if(!api || !apiReady){
+			return;
+		}
 		let balance = ZERO_BN;
 
 		try{
 			balance = new BN(balanceStr);
+			if(multisig){
+				const multisigBalance = (await api.query.system.account(multisig)).data.free.toString();
+				balance = new BN(multisigBalance);
+			}
+			setAvailableBalance(balance);
 		}
 		catch(err){
 			console.log(err);
 		}
-
-		setAvailableBalance(balance);
 	};
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
 		localStorage.setItem('selectedWallet', wallet);
@@ -264,6 +270,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		onAccountChange('');
 		event.preventDefault();
 		setWallet(wallet);
+		setMultisig('');
 		await getAccounts(wallet);
 		setLoadingStatus({ ...loadingStatus, isLoading: false });
 	};
@@ -374,6 +381,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 		</Form.Item>;
 
+	const handleOnVoteChange = (value:any) => {
+		setVote(value as EVoteDecisionType);
+		ayeNayForm.setFieldValue('balance', '');
+		splitForm.setFieldValue('nayVote','');
+		splitForm.setFieldValue('ayeVote','');
+		abstainFrom.setFieldValue('abstainVote', '');
+		abstainFrom.setFieldValue('ayeVote', '');
+		abstainFrom.setFieldValue('nayVote', '');
+		onBalanceChange(ZERO_BN);
+	};
+
 	const handleSubmit = async () => {
 
 		if (!referendumId && referendumId !== 0) {
@@ -407,10 +425,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			return;
 		}
 
-		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
+		setLoadingStatus({ isLoading: true, message: '' });
 
 		let voteTx = null;
-
 		if(proposalType === ProposalType.OPEN_GOV){
 
 			if(vote === EVoteDecisionType.AYE ) {
@@ -489,6 +506,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			const voteReferendumByMultisig = async (tx:any) => {
 				try{
 					await connect();
+					setLoadingStatus({ isLoading: true, message: 'Creating a multisig transaction' });
 					const { error } = await client.customTransactionAsMulti(multisig, tx);
 					if(error){
 						throw new Error(error.error);
@@ -512,6 +530,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					setLoadingStatus({ isLoading: false, message: '' });
 				}
 			};
+			setLoadingStatus({ isLoading: true, message: 'Please login to polkasafe' });
 			await voteReferendumByMultisig(voteTx);
 			return;
 		}
@@ -547,7 +566,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			api,
 			errorMessageFallback: 'Transaction failed.',
 			network,
-			onBroadcast:() => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
 			onFailed,
 			onSuccess,
 			params: network === 'equilibrium' ? { nonce: -1 } : {},
@@ -595,7 +613,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				open={showModal}
 				onCancel={() => setShowModal(false)}
 				footer={false}
-				className={`w-[600px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
+				className={`w-[550px] ${poppins.variable} ${poppins.className} max-md:w-full max-h-[675px] rounded-[6px] alignment-close vote-referendum `}
 				closeIcon={<CloseCross/>}
 				wrapClassName={className}
 				title={
@@ -615,7 +633,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						</div>
 				}
 			><>
-					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />}>
+					<Spin spinning={loadingStatus.isLoading } indicator={<LoadingOutlined />} tip={loadingStatus.message}>
 						<>
 							<div className='mb-6'>
 								<div className='text-sm font-normal flex items-center justify-center text-[#485F7D] mt-3'>Select a wallet</div>
@@ -649,7 +667,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							</div>
 								}
 							</div>
-							{showMultisig && initiatorBalance.lte(totalDeposit) &&
+							{showMultisig && initiatorBalance.lte(totalDeposit) && multisig &&
 								<Alert
 									message={`The Free Balance in your selected account is less than the Minimum Deposit ${formatBnBalance(totalDeposit, { numberAfterComma: 3, withUnit: true }, network)} required to create a Transaction.`}
 									showIcon
@@ -673,6 +691,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											walletAddress={multisig}
 											setWalletAddress={setMultisig}
 											containerClassName='gap-[20px]'
+											showMultisigBalance={true}
+											canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
 										/> :
 										<AccountSelectionForm
 											title='Vote with Account'
@@ -696,14 +716,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								size="large"
 								value={vote}
 								onChange={(value) => {
-									setVote(value as EVoteDecisionType);
-									ayeNayForm.setFieldValue('balance', ZERO_BN);
-									splitForm.setFieldValue('nayVote',ZERO_BN);
-									splitForm.setFieldValue('ayeVote',ZERO_BN);
-									abstainFrom.setFieldValue('abstainVote', ZERO_BN);
-									abstainFrom.setFieldValue('ayeVote', ZERO_BN);
-									abstainFrom.setFieldValue('nayVote', ZERO_BN);
-									onBalanceChange(ZERO_BN);
+									handleOnVoteChange(value);
 								}}
 								options={decisionOptions}
 								disabled={!api || !apiReady}
@@ -889,6 +902,5 @@ export default styled(VoteReferendum)`
 .vote-referendum .ant-segmented-item{
 	padding: 0px !important;
 }
-
 `;
 

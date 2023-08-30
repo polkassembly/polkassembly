@@ -31,6 +31,9 @@ import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
 import { checkIsProposer } from './utils/checkIsProposer';
+import ScrollToTopButton from '~src/ui-components/ScrollToTop';
+import StickyBox from '~src/util/Stickytop';
+import CommentsDataContextProvider from '~src/context/CommentDataContext';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active /> ,
@@ -188,9 +191,10 @@ const Post: FC<IPostProps> = (props) => {
 				}
 			});
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [post]);
 
-	const networkModified = network?.charAt(0)?.toUpperCase() + network?.slice(1);
+	const networkModified =  network?.charAt(0)?.toUpperCase() + network?.slice(1);
 	let postType:any = proposalType;
 
 	if(postType === ProposalType.REFERENDUM_V2){
@@ -267,17 +271,24 @@ const Post: FC<IPostProps> = (props) => {
 	const Sidebar = ({ className } : {className?:string}) => {
 		return (
 			<div className={`${className} flex flex-col w-full xl:col-span-4`}>
-				<GovernanceSideBar
-					toggleEdit={toggleEdit}
-					proposalType={proposalType}
-					onchainId={onchainId}
-					status={postStatus}
-					canEdit={canEdit}
-					startTime={post.created_at}
-					post={post}
-					tally={post?.tally}
-					className={`${!isOffchainPost && 'sticky top-[65px] mb-6'}`}
-				/>
+				<StickyBox offsetTop={65} offsetBottom={65} className="mb-6">
+					<GovernanceSideBar
+						toggleEdit={toggleEdit}
+						proposalType={proposalType}
+						onchainId={onchainId}
+						status={postStatus}
+						canEdit={canEdit}
+						startTime={post.created_at}
+						post={post}
+						tally={post?.tally}
+						trackName={trackName}
+						className={`${!isOffchainPost }`}
+						pipsVoters={post?.pips_voters || []}
+						hash={hash}
+					/>
+				</StickyBox>
+				{/* decision deposite placed. */}
+
 				{
 					isOffchainPost &&
 					<div className={'sticky top-[65px] mb-6 '}>
@@ -409,6 +420,7 @@ const Post: FC<IPostProps> = (props) => {
 			content: post?.content,
 			created_at: post?.created_at || '',
 			curator: post?.curator || '',
+			currentTimeline: post.currentTimeline,
 			description: post?.description,
 			history: post?.history || [],
 			last_edited_at: post?.last_edited_at,
@@ -421,17 +433,23 @@ const Post: FC<IPostProps> = (props) => {
 			reward: post?.reward,
 			spam_users_count: post?.spam_users_count,
 			status: post?.status,
+			statusHistory: post?.statusHistory,
 			subscribers: post?.subscribers || [],
 			summary: post?.summary,
 			tags: post?.tags || [],
 			timeline: post?.timeline,
-			title: post?.title,
-			topic: post?.topic,
+			title: post?.title || '',
+			topic: post?.topic || '',
 			track_name: trackName,
 			track_number: post?.track_number,
 			username: post?.username
 		}}>
-			<>
+			<CommentsDataContextProvider initialCommentsData={{
+				comments:post?.comments,
+				currentTimeline:post.currentTimeline,
+				overallSentiments: post?.overallSentiments,
+				timelines:[]
+			}}>
 				<SpamAlert />
 				{
 					!isEditing && Boolean(post.timeline?.length) && proposalType !==  ProposalType.CHILD_BOUNTIES &&
@@ -473,7 +491,7 @@ const Post: FC<IPostProps> = (props) => {
 
 							{!isEditing && <>
 								<PostHeading
-									className='mb-8'
+									className='mb-5'
 								/>
 								<Tabs
 									type="card"
@@ -488,6 +506,7 @@ const Post: FC<IPostProps> = (props) => {
 
 					{!isEditing ? <Sidebar className='hidden xl:block' />: null}
 				</div>
+				<ScrollToTopButton/>
 
 				<SidebarRight
 					open={sidebarOpen}
@@ -495,7 +514,7 @@ const Post: FC<IPostProps> = (props) => {
 				>
 					{ proposerAddress && <OtherProposals proposerAddress={proposerAddress} currPostOnchainID={Number(onchainId)} closeSidebar={() => setSidebarOpen(false)} /> }
 				</SidebarRight>
-			</>
+			</CommentsDataContextProvider>
 		</PostDataContextProvider>
 	);
 };

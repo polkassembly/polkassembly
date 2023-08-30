@@ -14,7 +14,6 @@ import { chainProperties } from 'src/global/networkConstants';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 import blockToDays from 'src/util/blockToDays';
 import blockToTime from 'src/util/blockToTime';
-import fetchTokenToUSDPrice from 'src/util/fetchTokenToUSDPrice';
 import formatBnBalance from 'src/util/formatBnBalance';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import styled from 'styled-components';
@@ -24,6 +23,7 @@ import CurrentPrice from '~assets/icons/currentprice.svg';
 import NextBurn from '~assets/icons/nextburn.svg';
 import SpendPeriod from '~assets/icons/spendperiod.svg';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
+import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -146,7 +146,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			'modl',
 			api.consts.treasury && api.consts.treasury.palletId
 				? api.consts.treasury.palletId.toU8a(true)
-				: 'py/trsry',
+				: `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
 			EMPTY_U8A_32
 		);
 		api.derive.balances
@@ -166,17 +166,17 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					})
 					.finally(() => {
 						// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+						let valueUSD = '';
+						let value = '';
 						{
-							const burn =
+							try{const burn =
 							treasuryBalance.freeBalance.gt(BN_ZERO) &&
 								!api.consts.treasury.burn.isZero()
 								? api.consts.treasury.burn
 									.mul(treasuryBalance.freeBalance)
 									.div(BN_MILLION)
 								: BN_ZERO;
-
-							let valueUSD = '';
-							let value = '';
 
 							if(burn) {
 								// replace spaces returned in string by format function
@@ -202,7 +202,9 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									network
 								));
 							}
-
+							}catch(error){
+								console.log(error);
+							}
 							setNextBurn({
 								isLoading: false,
 								value,
@@ -255,34 +257,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 	// fetch current price of the token
 	useEffect(() => {
-		let cancel = false;
-		if(cancel) return;
-
-		setCurrentTokenPrice({
-			isLoading: true,
-			value: ''
-		});
-		fetchTokenToUSDPrice(network).then((formattedUSD) => {
-			if(formattedUSD === 'N/A') {
-				setCurrentTokenPrice({
-					isLoading: false,
-					value: formattedUSD
-				});
-				return;
-			}
-
-			setCurrentTokenPrice({
-				isLoading: false,
-				value: network =='cere' ? parseFloat(formattedUSD).toFixed(4) : parseFloat(formattedUSD).toFixed(2)
-			});
-		}).catch(() => {
-			setCurrentTokenPrice({
-				isLoading: false,
-				value: 'N/A'
-			});
-		});
-
-		return () => {cancel = true;};
+		if(!network ) return;
+		GetCurrentTokenPrice( network ,setCurrentTokenPrice);
 	}, [network]);
 
 	// fetch a week ago price of the token and calc priceWeeklyChange
@@ -470,7 +446,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			}
 
 			{/* Next Burn */}
-			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) &&
+			{!['moonbeam', 'moonbase', 'moonriver', 'polymesh'].includes(network) &&
 				<div className="sm:my-0 flex flex-1 bg-white drop-shadow-md p-3 lg:px-6 lg:py-3 rounded-xxl w-full">
 					<div className='lg:flex flex-col gap-x-0 w-full'>
 						<div className='flex justify-center items-center lg:hidden w-full mb-1.5'>

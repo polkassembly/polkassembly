@@ -16,6 +16,8 @@ import ContinueWithoutLinking from './ContinueWithoutLinking';
 import ContinueWithLinking from './ContinueWithLinking';
 import LinkingAndEditing from './LinkingAndEditing';
 import { checkIsOnChainPost } from '~src/global/proposalType';
+import { poppins } from 'pages/_app';
+import CloseIcon from '~assets/icons/close-icon.svg';
 
 interface IPostEditOrLinkCTA {
 	className?: string;
@@ -39,8 +41,9 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 							: <PostLinkingIcon />
 					}
 				</div>
+				<span className='text-bodyBlue text-sm mt-4 text-center'>Please add contextual information for voters to make an informed decision.</span>
 				<button
-					className='border-none outline-none flex items-center justify-center gap-x-2 font-medium text-lg leading-[27px] w-full mt-5 text-white bg-pink_primary rounded-[4px] py-1 px-9 shadow-[0px_6px_18px_rgba(0,0,0,0.06)] cursor-pointer'
+					className='border-none outline-none flex items-center justify-center gap-x-2 text-lg leading-[27px] w-full mt-5 text-white bg-pink_primary rounded-[4px] py-1 px-9 h-[40px] shadow-[0px_6px_18px_rgba(0,0,0,0.06)] cursor-pointer'
 					onClick={() => {
 						if (isEditCTA) {
 							setOpen(true);
@@ -53,7 +56,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 						isEditCTA?
 							<>
 								<EditIcon />
-								<span>Edit Proposal Details</span>
+								<span className='text-base'>Edit Proposal Details</span>
 							</>
 							: <>
 								<LinkOutlined />
@@ -61,22 +64,24 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 							</>
 					}
 				</button>
+
 			</div>
 			<Modal
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={[]}
-				className='md:min-w-[674px]'
+				className={`${poppins.className} ${poppins.variable}`}
+				closeIcon={<CloseIcon/>}
 			>
 				<section className='flex flex-col items-center justify-center p-3'>
 					<PostEditLinkingIcon />
-					<article className='text-sidebarBlue flex flex-col items-center mt-[28px] mb-[35px] text-xl leading-[30px] tracking-[0.01em]'>
-						<h3 className='font-medium m-0 p-0'>Welcome Text</h3>
-						<p className='m-0 p-0'>Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals.</p>
+					<article className='text-sidebarBlue flex flex-col items-center mt-[28px] mb-[35px] text-center text-xl leading-[30px] tracking-[0.01em]'>
+						<h3 className='font-medium m-0 p-0 text-lg'>Welcome Text</h3>
+						<p className='m-0 text-base mt-2'>Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals.</p>
 					</article>
 					<article className='flex flex-col gap-y-4 items-center'>
 						<button
-							className='md:min-w-[314px] outline-none rounded-[4px] border border-solid border-pink_primary py-1 px-4 bg-pink_primary text-white cursor-pointer font-medium text-sm leading-[21px] tracking-[0.0125em]'
+							className='md:min-w-[314px] h-[40px] outline-none rounded-[4px] border border-solid border-pink_primary py-1 px-4 bg-pink_primary text-white cursor-pointer font-medium text-sm leading-[21px] tracking-[0.0125em]'
 							onClick={() => {
 								setOpen(false);
 								setLinkingModalOpen(true);
@@ -85,7 +90,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = () => {
 							+ Link Existing Discussion Post
 						</button>
 						<button
-							className='md:min-w-[314px] outline-none rounded-[4px] border border-solid border-pink_primary py-1 px-4 bg-white text-pink_primary cursor-pointer font-medium text-sm leading-[21px] tracking-[0.0125em]'
+							className='md:min-w-[314px] h-[40px] outline-none rounded-[4px] border border-solid border-pink_primary py-1 px-4 bg-white text-pink_primary cursor-pointer font-medium text-sm leading-[21px] tracking-[0.0125em]'
 							onClick={() => {
 								setOpen(false);
 								setEditModalOpen(true);

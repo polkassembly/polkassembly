@@ -13,32 +13,30 @@ import AddressInput from 'src/ui-components/AddressInput';
 import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-
 import { NetworkContext } from '~src/context/NetworkContext';
-import LockIcon from '~assets/icons/lock.svg';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useUserDetailsContext } from '~src/context';
-
-import DelegateProfileIcon from '~assets/icons/delegation-listing.svg';
 import CloseIcon from '~assets/icons/close.svg';
-import ErrorAlert from '~src/ui-components/ErrorAlert';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import DelegationSuccessPopup from './DelegationSuccessPopup';
-import Address from '~src/ui-components/Address';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import CrossIcon from '~assets/sidebar/delegation-close.svg';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { useRouter } from 'next/router';
 import Web3 from 'web3';
 import Balance from '~src/components/Balance';
-import { formatedBalance } from '~src/components/DelegationDashboard/ProfileBalance';
 import executeTx from '~src/util/executeTx';
+import { formatedBalance } from '~src/util/formatedBalance';
 import usePolkasafe from '~src/hooks/usePolkasafe';
+
+import CrossIcon from '~assets/sidebar/delegation-close.svg';
+import DelegateProfileWhiteIcon from '~assets/icons/delegation-listing.svg';
+import DelegateProfileGreyIcon from '~assets/icons/delegate-title.svg';
+import LockIcon from '~assets/icons/lock.svg';
 
 const ZERO_BN = new BN(0);
 
@@ -61,7 +59,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
 	const [conviction, setConviction] = useState<number>(0);
 	const [lock ,setLockValue] = useState<number>(0);
-	const [errorArr, setErrorArr] = useState<string[]>([]);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [checkedList, setCheckedList] = useState<CheckboxValueType[]>([]);
 	const [indeterminate, setIndeterminate] = useState(false);
@@ -75,12 +72,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	const [checkedTrack, setCheckedTrack] = useState<any>();
 	const router = useRouter();
 	const [checkedTrackArr, setCheckedTrackArr] = useState<string[]>([]);
-	const [targetErr, setTargetErr] = useState<string>('');
-	const [balanceErr, setBalanceErr] = useState<string>('');
-	const [validationOn, setValidationOn] = useState<boolean>(false);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 	const multisigDelegationAssociatedAddress = localStorage.getItem('multisigDelegationAssociatedAddress') || '';
 	const { client, connect } = usePolkasafe(multisigDelegationAssociatedAddress);
+	const isTargetAddressSame = (delegationDashboardAddress && target) ?  (delegationDashboardAddress === target || delegationDashboardAddress === getEncodedAddress(target, network)) : false;
+
 	useEffect(() => {
 
 		if(!network) return ;
@@ -89,13 +85,17 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			unit: chainProperties[network].tokenSymbol
 		});
 
+		if(defaultTarget){
+			form.setFieldValue('targetAddress', defaultTarget);
+		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	useEffect(() => {
-		target && (getEncodedAddress(target, network) || Web3.utils.isAddress(target)) && target !== getEncodedAddress(target, network) && setAddressAlert(true);
+	const handleSubstrateAddressChangeAlert = (target: string) => {
+		if(!target) return;
+		(getEncodedAddress(target, network) || Web3.utils.isAddress(target)) && target !== getEncodedAddress(target, network) && setAddressAlert(true);
 		setTimeout(() => { setAddressAlert(false);},5000);
-	}, [network, target]);
+	};
 
 	const handleClose = (removedTag: string) => {
 		const newList = checkedList.filter((list) => list !== removedTag);
@@ -104,19 +104,24 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 		setCheckAll( newList.length === trackArr.length);
 	};
 
-	useEffect(() => {
-		validationOn && validateForm();
+	const getTxFee = (checkedTracksList?:CheckboxValueType[], convictionVal?: number) => {
+		if(!checkedTracksList){
+			checkedTracksList = checkedList;
+		}
+		if(!convictionVal){
+			convictionVal = conviction || 0;
+		}
 
-		if(!delegationDashboardAddress || !target || !getEncodedAddress(target, network) || isNaN(conviction) ||
-		!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.eq(ZERO_BN)) return;
-		if(!checkedTrack && !checkedList) return;
-		if(!checkedTrack && checkedList.length === 0) return;
+		const delegateTo = form.getFieldValue('targetAddress');
+		if(!api || !apiReady || !delegateTo) return;
+		if(!delegationDashboardAddress || !delegateTo || !getEncodedAddress(delegateTo, network) || isNaN(convictionVal) || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.eq(ZERO_BN) || isTargetAddressSame) return;
+		if(!checkedTrack && !checkedTracksList) return;
 
 		setLoading(true);
-		const checkedArr = checkedTrack && checkedTrack.name && checkedList.filter((item) => item === checkedTrack?.name).length === 0 ? [checkedTrack?.name, ...checkedList]: [...checkedList];
+		const checkedArr = checkedTrack && checkedTrack.name && checkedTracksList.filter((item) => item === checkedTrack?.name).length === 0 ? [checkedTrack?.name, ...checkedTracksList]: [...checkedTracksList];
 
 		setCheckedTrackArr(checkedArr);
-		const txArr =  checkedArr?.map((trackName) =>  api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
+		const txArr =  checkedArr?.map((trackName) =>  api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, delegateTo, Number(convictionVal), bnBalance.toString()));
 		const delegateTxn = api.tx.utility.batchAll(txArr);
 
 		(async () => {
@@ -125,13 +130,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			setLoading(false);
 			setShowAlert(true);
 		})();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [delegationDashboardAddress, api, apiReady, bnBalance, checkedList, conviction, network, target, checkedTrack, validationOn]);
+	};
 
 	const getData = async() => {
 		if (!api || !apiReady ) return;
-
 		setLoading(true);
+		form.setFieldValue('dashboardAddress', delegationDashboardAddress);
 
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${delegationDashboardAddress}`);
 		if(data){
@@ -161,52 +165,19 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 	const onChange = (list: CheckboxValueType[]) => {
 		setCheckedList(list);
+		getTxFee(list);
 		setIndeterminate(!!list.length && list.length < trackArr.length);
 		setCheckAll( list.length === trackArr.length);
 	};
 
 	const onCheckAllChange = (e: CheckboxChangeEvent) => {
-		setCheckedList(e.target.checked ? trackArr.map((track) => track?.name) : []);
+		const list = e.target.checked ? trackArr.map((track) => track?.name) : [];
+		setCheckedList(list);
+		getTxFee(list);
 		setIndeterminate(false);
 		setCheckAll(e.target.checked);
 	};
 
-	const validateForm = ():boolean => {
-		const errors = [];
-		setTargetErr('');
-		setBalanceErr('');
-
-		if(!target || !getEncodedAddress(target, network)) {
-			setTargetErr('Please provide a valid target address.');
-			errors.push('');
-		}
-
-		if(delegationDashboardAddress === target || delegationDashboardAddress === getEncodedAddress(target, network)) {
-			setTargetErr('You can not delegate to the same address. Please provide a different target address.');
-			errors.push('');
-		}
-		if(bnBalance.lte(ZERO_BN)) {
-			setBalanceErr('Please provide a valid balance.');
-			errors.push('');
-		}
-
-		if(bnBalance.eq(ZERO_BN)){
-			setBalanceErr('Balance must be greater than 0.');
-			errors.push('');
-		}
-
-		if(availableBalance.lt(bnBalance)) {
-			setBalanceErr('Insufficient balance.');
-			errors.push('');
-		}
-
-		if(availableBalance.lte(txFee)) {
-			errors.push('Available balance is not sufficient for transaction fee');
-		}
-
-		setErrorArr(errors);
-		return errors.length === 0;
-	};
 	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
@@ -229,22 +200,16 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 	const handleSubmit = async () => {
 
-		if(!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.eq(ZERO_BN)) return;
-		if(!checkedTrack && !checkedList) return;
-		if(!checkedTrack && checkedList.length === 0) return;
+		if(!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.eq(ZERO_BN) || !target) return;
+		if(!checkedTrack && !checkedList || !getEncodedAddress(target, network)) return;
 		setLoading(true);
 
-		const targetAddr = getEncodedAddress(target, network);
-
-		if(!validateForm() || !targetAddr){
-			setLoading(false);
-			return;
-		}
 		const checkedArr = checkedTrack && checkedTrack.name && checkedList.filter((item) => item === checkedTrack?.name).length === 0 ? [checkedTrack?.name, ...checkedList]: [...checkedList];
 		setCheckedTrackArr(checkedArr);
 
 		const txArr = checkedArr?.map((trackName) => api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString()));
 		const delegateTxn = api.tx.utility.batchAll(txArr);
+
 		if(isMultisig){
 			const delegationByMultisig = async (tx:any) => {
 				try{
@@ -287,10 +252,40 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 		setAvailableBalance(balance);
 	};
+
 	useEffect(() => {
 		open && getData();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open]);
+
+	const handleOnchangeConviction = (value: number) => {
+		let conviction = 0;
+		let lockValue = 0;
+		if(value === 1){
+			conviction = 0;
+		}
+		else if(value === 2){
+			conviction = 1;
+			lockValue = 1;
+		}else{
+			conviction = value-1;
+			lockValue= 2**(value - 2);
+		}
+		setConviction(conviction);
+		setLockValue(lockValue);
+		getTxFee(checkedList, conviction);
+	};
+
+	const handleCloseModal = () => {
+		form.setFieldValue('targetAddress', '');
+		form.setFieldValue('balance', '');
+		setTarget('');
+		setBnBalance(ZERO_BN);
+		setTarget('');
+		setConviction(0);
+		setCheckedList([]);
+		setOpen ? setOpen?.(false) : setDefaultOpen(false);
+	};
 
 	const content = (<div className='flex flex-col'>
 		<Checkbox.Group className='flex flex-col h-[200px] overflow-y-scroll' onChange={onChange} value={checkedList} >
@@ -308,170 +303,174 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 	return (
 		<>
-			{!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm bg-pink_primary flex gap-0 items-center justify-center p-5 rounded-md text-white'>
-				<DelegateProfileIcon className='mr-2'/>
-				<span >Delegate</span>
-			</Button>}
-
+			{
+				!open && !setOpen && <Button onClick={() => {network === 'kusama'? router.push('/delegation') : setDefaultOpen(true);}} className='border-pink_primary font-medium text-sm bg-pink_primary flex gap-0 items-center justify-center p-5 rounded-md text-white'>
+					<DelegateProfileWhiteIcon className='mr-2'/>
+					<span >Delegate</span>
+				</Button>
+			}
 			<Modal
 				maskClosable={false}
 				closeIcon={<CloseIcon/>}
 				className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full` }
 				wrapClassName={className}
 				title={
-					<div className='flex items-center text-bodyBlue text-[20px] font-semibold mb-6'>
-						<DelegateProfileIcon className='mr-2'/>Delegate
+					<div className='flex items-center text-bodyBlue text-[20px] font-semibold mb-6 border-0 border-b-[1px] px-6 pb-4 -mx-6 border-solid border-[#D2D8E0]'>
+						<DelegateProfileGreyIcon className='mr-2'/>Delegate
 					</div>
 				}
 				open={open ? open : defaultOpen}
 				onOk={handleSubmit}
 				confirmLoading={loading}
-				onCancel={() => setOpen ? setOpen?.(false) : setDefaultOpen(false)}
+				onCancel={handleCloseModal}
 				footer={
-					<div className='flex items-center justify-end'>
-						{
-							[
-								<Button key="back" disabled={loading} className='h-[40px] w-[134px]' onClick={() => setOpen?.(false)}>
+					<div className='flex items-center justify-end -mx-6 border-0 border-solid border-t-[1px] border-[#D2D8E0] px-6 pt-4 gap-1'>
+						<Button key="back" disabled={loading} className='h-[40px] w-[134px] rounded-[4px]' onClick={() => setOpen?.(false)}>
 										Cancel
-								</Button>,
-								<Button htmlType='submit' key="submit" className='w-[134px] bg-pink_primary text-white hover:bg-pink_secondary h-[40px] ' disabled={loading} onClick={async () => {
-									await handleSubmit();
-									setValidationOn(true);
-								}}>
+						</Button>
+						<Button
+							htmlType='submit'
+							key="submit"
+							className={`w-[134px] bg-pink_primary rounded-[4px] border-pink_primary text-white hover:bg-pink_secondary h-[40px]
+							${(!form.getFieldValue('targetAddress') || !delegationDashboardAddress || bnBalance.lte(ZERO_BN) || isNaN(conviction) || isTargetAddressSame || loading || txFee.lte(ZERO_BN) || availableBalance.lte(txFee.add(bnBalance))) && 'opacity-50'}`}
+							disabled={
+								(!form.getFieldValue('targetAddress') || !delegationDashboardAddress || bnBalance.lte(ZERO_BN) || isNaN(conviction) || isTargetAddressSame || loading || txFee.lte(ZERO_BN) || availableBalance.lte(txFee.add(bnBalance)))
+							} onClick={async () => {
+								await handleSubmit();
+							}}>
 										Delegate
-								</Button>
-							]
-						}
+						</Button>
 					</div>
 				}
 			>
 
 				<Spin spinning={loading} indicator={<LoadingOutlined />}>
 					<div className='flex flex-col'>
-						{
-							errorArr.length > 0 && errorArr.map(errorMsg => errorMsg.length > 0 && <ErrorAlert className='mb-6' key={errorMsg} errorMsg={errorMsg} />)
-						}
-
 						<Form
 							form={form}
 							disabled={loading}
+							initialValues={{ dashboardAddress: delegationDashboardAddress }}
 						>
-							<div className=''>
-								<label className='text-sm text-lightBlue mb-[2px]'>Your Address</label>
-								<div className='px-[6px] py-[6px] border-solid rounded-[4px] border-[1px] cursor-not-allowed h-[40px] bg-[#f6f7f9] border-[#D2D8E0] text-[#7c899b] text-sm font-normal'>
-									<Address address={delegationDashboardAddress} identiconSize={26} disableAddressClick addressClassName='text-[#7c899b] text-sm' displayInline />
+							<div className='flex flex-col'>
+								{availableBalance.lte(bnBalance) && txFee.gt(ZERO_BN) && <Alert className='mb-4 rounded-[4px]' showIcon message='Insufficient balance'/> }
+								<div className=''>
+									<label className='text-sm text-lightBlue mb-[2px]'>Your Address</label>
+									<AddressInput
+										name='dashboardAddress'
+										defaultAddress={delegationDashboardAddress}
+										onChange={() => setLoading(false)}
+										inputClassName={' font-normal text-sm h-[40px] text-lightBlue'}
+										className='text-bodyBlue text-sm font-normal -mt-6'
+										disabled
+										size='large'
+										identiconSize={30}
+									/>
 								</div>
-							</div>
-							<AddressInput
-								defaultAddress={defaultTarget}
-								label={'Delegate to'}
-								placeholder='Delegate Account Address'
-								className='text-lightBlue text-sm font-normal'
-								onChange={(address) => setTarget(address)}
-								size='large'
-								skipFormatCheck={true}
-								inputClassName={`text-[#7c899b] font-normal text-sm ${targetErr.length > 0 && 'border-red-500'}`}
-							/>
-							{/* errors */}
+								<AddressInput
+									onBlur={getTxFee}
+									name='targetAddress'
+									defaultAddress={defaultTarget}
+									label={'Beneficiary Address'}
+									placeholder='Add beneficiary address'
+									className='text-lightBlue text-sm font-normal'
+									onChange={(address) => {
+										setTarget(address);
+										handleSubstrateAddressChangeAlert(address);
+									}}
+									helpText='The amount requested in the proposal will be received in this address.'
+									size='large'
+									identiconSize={30}
+									inputClassName={' font-normal text-sm h-[40px]'}
+									skipFormatCheck={true}
+								/>
+								{target ? (!(getEncodedAddress(target, network) || Web3.utils.isAddress(target)) || isTargetAddressSame) && <span className='text-sm text-[#ff4d4f]'>{isTargetAddressSame ? 'You can not delegate to the same address. Please provide a different target address' : 'Invalid address' }</span> : null}
 
-							{targetErr.length > 0 && <div className='-mt-1 text-sm text-red-500'>{targetErr}</div>}
-							{addressAlert && <Alert className='mb mt-2' showIcon message='The substrate address has been changed to Kusama address.'/> }
+								{addressAlert && <Alert className='mb mt-2 rounded-[4px]' showIcon message='The substrate address has been changed to Kusama address.'/> }
 
-							<div className='flex justify-between items-center mt-6 cursor-pointer text-lightBlue' >
-                Balance<span onClick={() => {
-									setBnBalance(availableBalance);
-									form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));
-								}}>
-									<Balance address={delegationDashboardAddress} onChange={handleOnBalanceChange}/>
-								</span>
-							</div>
-
-							<BalanceInput
-								placeholder={'Enter balance'}
-								className='text-lightBlue text-sm font-normal'
-								address={delegationDashboardAddress}
-								onAccountBalanceChange={handleOnBalanceChange}
-								onChange={(balance) => setBnBalance(balance)}
-								balance={ bnBalance }
-								size='middle'
-								inputClassName={`text-[#7c899b] text-sm ${balanceErr.length > 0 && 'border-red-500'}`}
-								noRules={true}
-							/>
-							{/* errors */}
-							{balanceErr.length > 0 && <div className='-mt-5 text-sm text-red-500'>{balanceErr}</div>}
-
-							<div className='mb-2 border-solid border-white mt-4'>
-								<label  className='text-lightBlue flex items-center text-sm'>
-                  Conviction
-									<span>
-										<HelperTooltip className='ml-2' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
+								<div className='flex justify-between items-center mt-6 cursor-pointer text-lightBlue' >
+                Balance
+									<span onClick={() => {
+										setBnBalance(availableBalance);
+										form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));
+									}}>
+										<Balance address={delegationDashboardAddress} onChange={handleOnBalanceChange}/>
 									</span>
-								</label>
-
-								<div className='px-[2px] mt-4'>
-									<Slider
-										tooltip={{ open: false }}
-										className='text-[12px] mt-[9px]'
-										trackStyle={{ backgroundColor:'#FF49AA' }}
-										onChange={(value:number) => {
-											if(value === 1){
-												setConviction(0);
-											}
-											else if(value === 2){
-												setConviction(1);
-												setLockValue(1);
-											}else{
-												setConviction(Number(value-1));
-												setLockValue(Number(2**(value - 2)));
-											}} }
-										step={7}
-										marks={{
-											1:{ label:<div>0.1x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
-											2:{ label:<div>1x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
-											3:{ label:<div>2x</div> , style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
-											4:{ label:<div>3x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
-											5:{ label:<div>4x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
-											6:{ label:<div>5x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
-											7:{ label:<div>6x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px',marginTop:'16px' } }  }}
-										min={1}
-										max={7}
-										defaultValue={1}
-									/></div>
-							</div>
-							<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
-								<div className='flex gap-[10px] items-center justify-center text-lightBlue text-sm'> <LockIcon/><span>Locking period</span></div>
-								<div className='text-bodyBlue font-medium text-sm flex justify-center items-center' >
-									{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enactment period`}
 								</div>
-							</div>
-							<div className='mt-6 mb-2 flex justify-between items-center'>
-								<span className='text-sm text-lightBlue'>Selected track(s)</span>
-								<Popover
-									content={content}
-									placement='topLeft'>
-									<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Select available tracks</Checkbox>
-								</Popover>
-							</div>
-							{ <div className='flex flex-wrap gap-2 mt-0 mb-6 ' >
-								{checkedTrack && <div key={checkedTrack?.trackId} className='text-sm text-[#7c899b] py-2 px-3 border-[1px] border-solid border-[#D2D8E0] rounded-[20px] flex justify-center gap-2 items-center'>
-									{checkedTrack?.name}
-								</div>}
-								{checkedList.length> 0 && checkedList.filter((item) => item !== checkedTrack?.name).map((list, index) => (
-									<div key={index} className='text-sm text-[#7c899b] py-2 px-3 border-[1px] border-solid border-[#D2D8E0] rounded-[20px] flex justify-center gap-2 items-center'>
-										{list}
-										<span onClick={() => handleClose(String(list))} className='flex justify-center items-center'><CrossIcon/></span>
+
+								<BalanceInput
+									onBlur={getTxFee}
+									placeholder={'Enter balance'}
+									className='text-lightBlue text-sm font-normal'
+									address={delegationDashboardAddress}
+									onAccountBalanceChange={handleOnBalanceChange}
+									onChange={(balance) => setBnBalance(balance)}
+									size='middle'
+									inputClassName='text-[#7c899b] text-sm'
+								/>
+								<div className='mb-2 border-solid border-white mt-4'>
+									<label  className='text-lightBlue flex items-center text-sm'>
+                  Conviction
+										<span>
+											<HelperTooltip className='ml-1' text='You can multiply your votes by locking your tokens for longer periods of time.'/>
+										</span>
+									</label>
+
+									<div className='px-[2px] mt-4'>
+										<Slider
+											tooltip={{ open: false }}
+											className='text-sm mt-[9px]'
+											trackStyle={{ backgroundColor:'#FF49AA' }}
+											onChange={ handleOnchangeConviction }
+											step={7}
+											marks={{
+												1:{ label:<div>0.1x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
+												2:{ label:<div>1x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
+												3:{ label:<div>2x</div> , style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
+												4:{ label:<div>3x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
+												5:{ label:<div>4x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
+												6:{ label:<div>5x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px', marginTop:'16px' } },
+												7:{ label:<div>6x</div>, style: { color: 'var(--bodyBlue)', fontSize:'12px',marginTop:'16px' } }
+											}}
+											min={1}
+											max={7}
+											defaultValue={1}
+										/></div>
+								</div>
+								<div className='bg-[#F6F7F9] py-[13px] px-[17px] rounded-md flex items-center justify-between track-[0.0025em] mt-4'>
+									<div className='flex gap-[10px] items-center justify-center text-lightBlue text-sm'> <LockIcon/><span>Locking period</span></div>
+									<div className='text-bodyBlue font-medium text-sm flex justify-center items-center' >
+										{conviction === 0 ? '0.1x voting balance, no lockup period' :`${conviction}x voting balance, locked for ${lock} enactment period`}
 									</div>
-								))}
-							</div>}
+								</div>
+								<div className='mt-6 mb-2 flex justify-between items-center'>
+									<span className='text-sm text-lightBlue'>Selected track(s)</span>
+									<Popover
+										content={content}
+										placement='topLeft'>
+										<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>Select available tracks</Checkbox>
+									</Popover>
+								</div>
+								{ <div className='flex flex-wrap gap-2 mt-0 mb-6 ' >
+									{checkedTrack && <div key={checkedTrack?.trackId} className='text-sm text-[#7c899b] py-2 px-3 border-[1px] border-solid border-[#D2D8E0] rounded-[20px] flex justify-center gap-2 items-center'>
+										{checkedTrack?.name}
+									</div>}
+									{checkedList.length> 0 && checkedList.filter((item) => item !== checkedTrack?.name).map((list, index) => (
+										<div key={index} className='text-sm text-[#7c899b] py-2 px-3 border-[1px] border-solid border-[#D2D8E0] rounded-[20px] flex justify-center gap-2 items-center'>
+											{list}
+											<span onClick={() => handleClose(String(list))} className='flex justify-center items-center'><CrossIcon/></span>
+										</div>
+									))}
+								</div>}
+							</div>
 						</Form>
 
-						{showAlert && <Alert showIcon type='info' className='mb-4 ' message={`An approximate fees of ${formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction`}/>}
+						{showAlert && <Alert showIcon type='info' className='mb-4 rounded-[4px]' message={`An approximate fees of ${formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction`}/>}
 
 					</div>
 				</Spin>
 
 			</Modal>
-			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedTrackArr} address={target} isMultisig={isMultisig} isDelegate={true} balance={bnBalance} trackNum= {trackNum} conviction={conviction} title={isMultisig? 'Delegation with Polkasafe initiated':''}/>
+			<DelegationSuccessPopup open={openSuccessPopup} setOpen={setOpenSuccessPopup} tracks={checkedTrackArr} address={target} isMultisig={isMultisig} isDelegate={true} balance={bnBalance} trackNum= {trackNum} conviction={conviction} title={isMultisig? 'Delegation with Polkasafe initiated': ' Delegated'}/>
 		</>
 	);
 };

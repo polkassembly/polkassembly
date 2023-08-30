@@ -60,6 +60,12 @@ const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (pr
 										tags={post?.tags}
 										requestedAmount={post?.requestedAmount}
 										spam_users_count={post.spam_users_count}
+										tally={post?.tally}
+										timeline={post?.timeline || []}
+										statusHistory={post?.status_history || []}
+										index={index}
+										proposalType={post?.type}
+										trackNumber={post?.track_no}
 									/>
 								</Link>}
 							</div>

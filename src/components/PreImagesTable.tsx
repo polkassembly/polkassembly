@@ -6,14 +6,15 @@
 import { ProfileOutlined } from '@ant-design/icons';
 import { Button, Modal, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { IPreimagesListing } from 'pages/api/v1/listing/preimages';
-import React, { FC, useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { FC, useEffect, useState } from 'react';
 import ReactJson from 'react-json-view';
 import NameLabel from 'src/ui-components/NameLabel';
 import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
 
 import { useNetworkContext } from '~src/context';
+import { IPreimagesListing } from '~src/types';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
@@ -21,9 +22,15 @@ interface IPreImagesTableProps {
 
 const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	const { network } = useNetworkContext();
-
+	const router = useRouter();
 	const { preimages } = props;
 	const [modalArgs, setModalArgs] = useState<any>(null);
+
+	useEffect(() => {
+		if(!router?.query?.hash) return;
+		setModalArgs(preimages?.[0]?.proposedCall.args);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[router]);
 
 	const columns: ColumnsType<any> = [
 		{

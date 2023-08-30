@@ -14,12 +14,13 @@ import styled from 'styled-components';
 import ReplyIcon from '~assets/icons/reply.svg';
 
 import { MessageType } from '~src/auth/types';
-import { usePostDataContext } from '~src/context';
+import { useApiContext, useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 import ReportButton from '../ActionsBar/ReportButton';
-import { IComment } from './Comment';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
+import getOnChainUsername from '~src/util/getOnChainUsername';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
 	userId: number;
@@ -37,33 +38,52 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply, proposer, is_custom_username }: Props) => {
-	const [isEditing, setIsEditing] = useState(false);
-	const { id , username ,picture } = useContext(UserDetailsContext);
-	const toggleEdit = () => setIsEditing(!isEditing);
+	const { id, username, picture, loginAddress } = useContext(UserDetailsContext);
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkContext();
+	const { comments, setComments } = useCommentDataContext();
+
 	const [form] = Form.useForm();
+	const [replyToreplyForm] = Form.useForm();
+
+	const [isEditing, setIsEditing] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [isReplying,setIsReplying] = useState(false);
-	const [replyToreplyForm] = Form.useForm();
+	const [onChainUsername, setOnChainUsername] = useState<string>('');
 
-	const { setPostData, postData: {
+	const toggleEdit = () => setIsEditing(!isEditing);
+
+	const { postData: {
 		postType, postIndex
 	} } = usePostDataContext();
 
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editReplyKey(replyId)) || '';
-		form.setFieldValue('content', localContent || content || ''); //
+		form.setFieldValue('content', localContent || content || '');
 	}, [content, form, replyId]);
 
 	useEffect(() => {
+		(async () => {
+			if(!api || !apiReady || !proposer) return;
+			const onChainUsername = await getOnChainUsername(api, proposer, network === 'kilt');
+			setOnChainUsername(onChainUsername);
+		})();
+	}, [api, apiReady, network, proposer]);
+
+	useEffect(() => {
 		let usernameContent = '';
-		if (!is_custom_username && proposer) {
-			usernameContent = `[@${proposer}](${global.window.location.origin}/address/${proposer})`;
+
+		if(!is_custom_username && onChainUsername && proposer) {
+			usernameContent = `[@${onChainUsername}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
+		} else if (!is_custom_username && !onChainUsername && proposer) {
+			usernameContent = `[@${getEncodedAddress(proposer, network)}](${global.window.location.origin}/address/${getEncodedAddress(proposer, network)})`;
 		} else {
 			usernameContent = `[@${userName}](${global.window.location.origin}/user/${userName})`;
 		}
-		replyToreplyForm.setFieldValue('content', usernameContent || '');
-	}, [is_custom_username, proposer, replyToreplyForm, userName]);
+
+		replyToreplyForm.setFieldValue('content', `${usernameContent}&nbsp;` || '');
+	}, [is_custom_username, network, onChainUsername, proposer, replyToreplyForm, userName]);
 
 	const handleCancel = () => {
 		toggleEdit();
@@ -86,8 +106,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		const { data, error: editReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/editCommentReply', {
 			commentId,
 			content: newContent,
-			postId: postIndex,
-			postType: postType,
+			postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
+			postType: reply.post_type || postType,
 			replyId,
 			userId: id
 		});
@@ -106,32 +126,37 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			setError('');
 			global.window.localStorage.removeItem(editReplyKey(replyId));
 			form.setFieldValue('content', '');
-			setPostData((prev) => {
-				let comments: IComment[] = [];
-				if (prev?.comments && Array.isArray(prev.comments)) {
-					comments = prev.comments.map((comment) => {
-						if (comment.id === commentId) {
-							if (comment?.replies && Array.isArray(comment.replies)) {
-								comment.replies = comment.replies.map((reply) => {
-									if (reply.id === replyId) {
-										reply.content = newContent;
-										reply.updated_at = new Date();
-									}
-									return {
-										...reply
-									};
-								});
+			const keys = Object.keys(comments);
+			setComments((prev:any) => {
+				const comments:any = Object.assign({}, prev);
+				for(const key of keys ){
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev[key].map((comment:any) => {
+							if (comment.id === commentId) {
+								if (comment?.replies && Array.isArray(comment.replies)) {
+									comment.replies = comment.replies.map((reply:any) => {
+										if (reply.id === replyId) {
+											reply.content = newContent;
+											reply.updated_at = new Date();
+										}
+										return {
+											...reply
+										};
+									});
+								}
+								flag = true;
 							}
-						}
-						return {
-							...comment
-						};
-					});
+							return {
+								...comment
+							};
+						});
+					}
+					if(flag){
+						break;
+					}
 				}
-				return {
-					...prev,
-					comments: comments
-				};
+				return comments;
 			});
 			queueNotification({
 				header: 'Success!',
@@ -168,32 +193,38 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			if(data) {
 				setError('');
 				global.window.localStorage.removeItem(newReplyKey(commentId));
-				setPostData((prev) => {
-					let comments: IComment[] = [];
-					if (prev?.comments && Array.isArray(prev.comments)) {
-						comments = prev.comments.map((comment) => {
-							if (comment.id === commentId) {
-								if (comment?.replies && Array.isArray(comment.replies)) {
-									comment.replies = [...comment.replies,{
-										content: replyContent,
-										created_at: new Date(),
-										id:data.id,
-										updated_at: new Date(),
-										user_id: id,
-										user_profile_img: picture || '',
-										username: username
-									}];
+				const keys = Object.keys(comments);
+				setComments((prev:any) => {
+					const comments:any = Object.assign({}, prev);
+					for(const key of keys ){
+						let flag = false;
+						if (prev?.[key]) {
+							comments[key] = prev[key].map((comment:any) => {
+								if (comment.id === commentId) {
+									if (comment?.replies && Array.isArray(comment.replies)) {
+										comment.replies = [...comment.replies,{
+											content: replyContent,
+											created_at: new Date(),
+											id:data.id,
+											proposer: loginAddress,
+											updated_at: new Date(),
+											user_id: id,
+											user_profile_img: picture || '',
+											username: username
+										}];
+									}
+									flag = true;
 								}
-							}
-							return {
-								...comment
-							};
-						});
+								return {
+									...comment
+								};
+							});
+						}
+						if(flag){
+							break;
+						}
 					}
-					return {
-						...prev,
-						comments: comments
-					};
+					return comments;
 				});
 				replyToreplyForm.resetFields();
 				setIsReplying(false);
@@ -211,8 +242,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		setLoading(true);
 		const { data, error: deleteReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteCommentReply', {
 			commentId,
-			postId: postIndex,
-			postType: postType,
+			postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
+			postType: reply.post_type || postType,
 			replyId
 		});
 
@@ -226,22 +257,27 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		}
 
 		if (data) {
-			setPostData((prev) => {
-				let comments: IComment[] = [];
-				if (prev?.comments && Array.isArray(prev.comments)) {
-					comments = prev.comments.map((comment) => {
-						if (comment.id === commentId) {
-							comment.replies = comment?.replies?.filter((reply) => (reply.id !== replyId)) || [];
-						}
-						return {
-							...comment
-						};
-					});
+			const keys = Object.keys(comments);
+			setComments((prev:any) => {
+				const comments:any = Object.assign({}, prev);
+				for(const key of keys ){
+					let flag = false;
+					if (prev?.[key]) {
+						comments[key] = prev[key].map((comment:any) => {
+							if (comment.id === commentId) {
+								comment.replies = comment?.replies?.filter((reply:any) => (reply.id !== replyId)) || [];
+								flag = true;
+							}
+							return {
+								...comment
+							};
+						});
+					}
+					if(flag){
+						break;
+					}
 				}
-				return {
-					...prev,
-					comments: comments
-				};
+				return comments;
 			});
 			queueNotification({
 				header: 'Success!',
@@ -269,10 +305,13 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								{ required: "Please add the '${name}'" }
 							}
 						>
-							<ContentForm onChange={(content: string) => {
-								global.window.localStorage.setItem(editReplyKey(replyId), content);
-								return content.length ? content : null;
-							}} />
+							<ContentForm
+								autofocus={true}
+								onChange={(content: string) => {
+									global.window.localStorage.setItem(editReplyKey(replyId), content);
+									return content.length ? content : null;
+								}}
+							/>
 							<Form.Item>
 								<div className='flex items-center justify-end'>
 									<Button htmlType="button" onClick={handleCancel} className='mr-2 flex items-center'>
@@ -300,12 +339,11 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 								{id === userId && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={deleteReply}><DeleteOutlined />Delete</Button>}
 								{id && !isEditing && <ReportButton className='text-xs' proposalType={postType} postId={postIndex} commentId={commentId} type='reply' replyId={replyId} />}
 
-								{id? (reply.reply_source === 'subsquare'? (
-									<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
-										<Button disabled={true} className='text-pink_primary flex items-center border-none shadow-none text-xs disabled-reply'>
-											<ReplyIcon className='mr-1'/> Reply
-										</Button>
-									</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
+								{id? (reply.reply_source === 'subsquare'?(<Tooltip title='Reply are disabled for imported comments.' color='#E5007A'>
+									<Button className={`text-pink_primary flex items-center justify-start shadow-none text-xs border-none mt-[-2px] pl-1 pr-1 ${reply.reply_source ? 'disabled-reply' : ''}` }>
+										<ReplyIcon className='mr-1'/> Reply
+									</Button>
+								</Tooltip>): !isReplying && <Button className={'text-pink_primary flex items-center border-none shadow-none text-xs'} onClick={() => setIsReplying(!isReplying)}><ReplyIcon className='mr-1'/>Reply</Button>)
 									: null
 								}
 							</div>
@@ -321,10 +359,14 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 												{ required: "Please add the '${name}'" }
 											}
 										>
-											<ContentForm onChange={(content: string) => {
-												global.window.localStorage.setItem(newReplyKey(commentId), content);
-												return content.length ? content : null;
-											}}  />
+											<ContentForm
+												height={250}
+												autofocus={true}
+												onChange={(content: string) => {
+													global.window.localStorage.setItem(newReplyKey(commentId), content);
+													return content.length ? content : null;
+												}}
+											/>
 											<Form.Item>
 												<div className='flex items-center justify-end '>
 													<Button htmlType="button" onClick={() => handleReplyCancel()} className='mr-2 flex items-center'>

@@ -14,9 +14,10 @@ interface Props {
 	username: string | null
 	id: number | null
 	size?: AvatarSize;
+	profile?:ProfileDetailsResponse
 }
 
-const UserAvatar = ({ className, id, username, size }: Props) => {
+const UserAvatar = ({ className, id, username, size, profile }: Props) => {
 	const [userProfileData, setUserProfileData] = useState<ProfileDetailsResponse | null>(null);
 	const getRandomColorClass = () => {
 		const colors = ['#E97451', '#FC80A5', '#C9A0DC', '#FCD667', '#FF4466','#A0E6FF','#DA8A67'];
@@ -34,13 +35,15 @@ const UserAvatar = ({ className, id, username, size }: Props) => {
 	}, [id]);
 
 	useEffect(() => {
-		getUserDetails();
-	}, [getUserDetails]);
+		if(profile === undefined){
+			getUserDetails();
+		}
+	}, [getUserDetails, profile]);
 
 	return (
-		userProfileData?.image ? <Avatar className={className} src={userProfileData?.image} size={size} />
+		(profile?.image || userProfileData?.image) ? <Avatar className={className} src={profile?.image || userProfileData?.image} size={size} />
 			: <Avatar className={`${className}`} style={{ backgroundColor: color }} size={size} shape='circle'>{username?.substring(0, 1).toUpperCase()}</Avatar>
 	);
 };
 
-export default UserAvatar;
+export default React.memo(UserAvatar);

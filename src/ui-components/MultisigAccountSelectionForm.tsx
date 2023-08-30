@@ -5,15 +5,17 @@
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import React, { useState, useEffect } from 'react';
 import Balance from 'src/components/Balance';
-
+import { poppins } from 'pages/_app';
 import AddressDropdown from './AddressDropdown';
 import HelperTooltip from './HelperTooltip';
 import { Polkasafe } from 'polkasafe';
-import { useNetworkContext } from '~src/context';
+import { useApiContext, useNetworkContext } from '~src/context';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Loader from '~src/ui-components/Loader';
 import styled from 'styled-components';
 import { Alert } from 'antd';
+import { BN } from '@polkadot/util';
+import formatBnBalance from '~src/util/formatBnBalance';
 
 const Container = styled.div`
     display: flex;
@@ -22,21 +24,23 @@ const Container = styled.div`
 `;
 
 interface Props {
-    accounts: InjectedAccount[];
-    address: string;
-    onAccountChange: (address: string) => void;
-    title?: string;
-    withBalance?: boolean;
-    onBalanceChange?: (balance: string) => void;
-    className?: string;
-    isDisabled?: boolean;
-    inputClassName?: string;
-    isSwitchButton?: boolean;
-    setSwitchModalOpen?: (pre: boolean) => void;
-    withoutInfo?: boolean;
-    walletAddress?:any;
-    setWalletAddress?:any;
-	containerClassName?:string
+	accounts: InjectedAccount[];
+	address: string;
+	onAccountChange: (address: string) => void;
+	title?: string;
+	withBalance?: boolean;
+	onBalanceChange?: (balance: string) => void;
+	className?: string;
+	isDisabled?: boolean;
+	inputClassName?: string;
+	isSwitchButton?: boolean;
+	setSwitchModalOpen?: (pre: boolean) => void;
+	withoutInfo?: boolean;
+	walletAddress?: any;
+	setWalletAddress?: any;
+	containerClassName?: string;
+	canMakeTransaction?: boolean;
+	showMultisigBalance?:boolean
 }
 
 const MultisigAccountSelectionForm = ({
@@ -54,11 +58,15 @@ const MultisigAccountSelectionForm = ({
 	withoutInfo,
 	walletAddress,
 	setWalletAddress,
-	containerClassName
+	containerClassName,
+	canMakeTransaction,
+	showMultisigBalance = false
 }: Props) => {
 	const [multisig, setMultisig] = useState<any>(null);
+	const { api, apiReady } = useApiContext();
 	const client = new Polkasafe();
 	const { network } = useNetworkContext();
+	const [multisigBalance, setMultisigBalance] = useState<BN>(new BN(0));
 	const [loader, setLoader] = useState<boolean>(false);
 	const handleGetMultisig = async (address: string, network: string) => {
 		setLoader(true);
@@ -66,31 +74,47 @@ const MultisigAccountSelectionForm = ({
 		setMultisig(data);
 		setLoader(false);
 	};
-	const handleChange = (address:string) => {
-		setWalletAddress(address);
+	const handleMultisigBalance = async (address: string) => {
+		if (!api || !apiReady) {
+			return;
+		}
+		const initiatorBalance = await api.query.system.account(address);
+		setMultisigBalance(new BN(initiatorBalance.data.free.toString()));
 	};
+	const handleChange = (address: string) => {
+		setWalletAddress(address);
+		handleMultisigBalance(address);
+	};
+
 	useEffect(() => {
 		const substrateAddress = getSubstrateAddress(address);
 		if (substrateAddress) handleGetMultisig(substrateAddress, network);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, network]);
+
 	useEffect(() => {
 		if (multisig && multisig.length > 0) {
 			setWalletAddress(multisig[0].address);
+			handleMultisigBalance(multisig[0].address);
+			return;
 		}
+		setWalletAddress('');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [multisig, setWalletAddress]);
 
 	return (
 		<Container style={{ width: '100%' }} className={containerClassName}>
 			<article className={`w-full flex flex-col ${className}`}>
-				{title && (
-					<div className="flex items-center mb-[2px] gap-2">
-						<h3 className="text-sm mb-0 font-normal">{title}</h3>
-						{!withoutInfo && (
-							<HelperTooltip text="You can choose an account from the extension." />
-						)}
-					</div>
-				)}
+
+				<div className="flex items-center mb-[2px] gap-2">
+					{title && (
+						<>
+							<h3 className="text-sm mb-0 font-normal">{title}</h3>
+							{!withoutInfo && <HelperTooltip text="You can choose an account from the extension." />}
+							{address && withBalance && <Balance address={address} onChange={onBalanceChange} classname={!canMakeTransaction ? 'text-nay_red [&>span]:text-nay_red': 'opacity-50'}/>}
+						</>
+					)}
+				</div>
 				<AddressDropdown
 					isDisabled={isDisabled}
 					accounts={accounts}
@@ -100,25 +124,29 @@ const MultisigAccountSelectionForm = ({
 					isSwitchButton={isSwitchButton}
 					setSwitchModalOpen={setSwitchModalOpen}
 				/>
-				{address && withBalance && (
-					<Balance address={address} onChange={onBalanceChange} />
-				)}
 			</article>
 
 			{loader ? (
 				<Loader />
 			) : multisig && multisig.length > 0 ? (
 				<article className={`w-full flex flex-col ${className}`}>
-					{title && (
-						<div className="flex items-center mb-[2px] gap-2">
-							<h3 className="text-sm mb-0 font-normal">
-                                Choose linked multisig account
-							</h3>
-							{!withoutInfo && (
-								<HelperTooltip text="You can choose an multisig account that are linked from the selected address." />
-							)}
-						</div>
-					)}
+					<div className="flex items-center mb-[2px] gap-2">
+						{title && (
+							<>
+								<h3 className="text-sm mb-0 font-normal">
+									Choose linked multisig account
+								</h3>
+								{!withoutInfo && (
+									<HelperTooltip text="You can choose an multisig account that are linked from the selected address." />
+								)}
+								{showMultisigBalance && walletAddress && (
+									<div className={`${poppins.className} ${poppins.variable} text-xs ml-auto text-[#576D8B] tracking-[0.0025em] font-normal mr-[2px]`}>
+										Available: <span className='text-pink_primary'>{formatBnBalance(multisigBalance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+									</div>
+								)}
+							</>
+						)}
+					</div>
 					<AddressDropdown
 						isDisabled={isDisabled}
 						accounts={multisig}
@@ -130,8 +158,9 @@ const MultisigAccountSelectionForm = ({
 					/>
 				</article>
 			) : (
-				<MultisigNotFound/>
-			)}
+				<MultisigNotFound />
+			)
+			}
 		</Container>
 	);
 };
@@ -146,7 +175,7 @@ const MultisigNotFound = () => <Alert
 	}
 	description={
 		<div className='max-w-md'>
-            Please integrate a multisig account or change your address. To create a multisig account, please visit <a className='text-pink_primary' href='https://polkasafe.xyz/' target='_blank' rel="noreferrer">Polkasafe</a> to create or manage your multisig account.
+			Please integrate a multisig account or change your address. To create a multisig account, please visit <a className='text-pink_primary' href='https://polkasafe.xyz/' target='_blank' rel="noreferrer">Polkasafe</a> to create or manage your multisig account.
 		</div>
 	}
 	type="info"

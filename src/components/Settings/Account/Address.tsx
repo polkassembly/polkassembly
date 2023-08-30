@@ -4,7 +4,7 @@
 import { CheckOutlined, LinkOutlined } from '@ant-design/icons';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Button, Divider, Modal, Tooltip } from 'antd';
+import { Button, Divider, Modal, Spin, Tooltip } from 'antd';
 import React, { FC, useState } from 'react';
 import ExtensionNotDetected from 'src/components/ExtensionNotDetected';
 import { useApiContext, useNetworkContext, useUserDetailsContext } from 'src/context';
@@ -14,13 +14,13 @@ import AddressComponent from 'src/ui-components/Address';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
-
 import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
 import getAllAccounts, { initResponse } from '~src/util/getAllAccounts';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
+import { poppins } from 'pages/_app';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
 	open?: boolean;
@@ -49,6 +49,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 
 	const [accountsInfo, setAccountsInfo] = useState(initResponse);
 	const { accounts, accountsMap, noExtension, signersMap } = accountsInfo;
+	const [loading, setLoading] = useState<boolean>(false);
 
 	interface AccountsDetails {
 		accounts: InjectedAccount[];
@@ -56,10 +57,15 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 	}
 
 	const handleDefault = async (address: InjectedAccount['address']) => {
+		setLoading(true);
 		let substrate_address;
 		if(!address.startsWith('0x')) {
 			substrate_address = getSubstrateAddress(address);
-			if(!substrate_address) return console.error('Invalid address');
+			if(!substrate_address){
+				setLoading(false);
+				console.error('Invalid address');
+				return;
+			}
 		}else {
 			substrate_address = address;
 		}
@@ -72,6 +78,8 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 				message: cleanError(error),
 				status: NotificationStatus.ERROR
 			});
+			setLoading(false);
+			dismissModal && dismissModal();
 		}
 
 		if (data?.message) {
@@ -81,17 +89,25 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 				status: NotificationStatus.SUCCESS
 			});
 			handleTokenChange(data.token, currentUser);
+			setLoading(false);
+			dismissModal && dismissModal();
 		}
 	};
 
 	const handleLink = async (address: InjectedAccount['address'], wallet: Wallet) => {
+		setLoading(true);
 		const signRaw = !address.startsWith('0x') && signersMap[accountsMap[address]].signRaw;
 		if (!address.startsWith('0x') && !signRaw) return console.error('Signer not available');
 
 		let substrate_address: string | null;
 		if(!address.startsWith('0x')) {
 			substrate_address = getSubstrateAddress(address);
-			if(!substrate_address) return console.error('Invalid address');
+			if(!substrate_address){
+				console.error('Invalid address');
+				setLoading(false);
+				dismissModal && dismissModal();
+				return;
+			}
 		}else {
 			substrate_address = address;
 		}
@@ -103,6 +119,8 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 				message: cleanError(error || 'Something went wrong'),
 				status: NotificationStatus.ERROR
 			});
+			setLoading(false);
+			dismissModal && dismissModal();
 			return;
 		}
 
@@ -137,6 +155,8 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 						message: cleanError(confirmError),
 						status: NotificationStatus.ERROR
 					});
+					setLoading(false);
+					dismissModal && dismissModal();
 				}
 
 				if (confirmData?.token) {
@@ -146,6 +166,8 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 						message: confirmData.message || '',
 						status: NotificationStatus.SUCCESS
 					});
+					setLoading(false);
+					dismissModal && dismissModal();
 				}
 			});
 		}else {
@@ -170,6 +192,8 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 						message: cleanError(confirmError),
 						status: NotificationStatus.ERROR
 					});
+					setLoading(false);
+					dismissModal && dismissModal();
 				}
 
 				if (confirmData?.token) {
@@ -179,12 +203,15 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 						message: confirmData.message || '',
 						status: NotificationStatus.SUCCESS
 					});
+					setLoading(false);
+					dismissModal && dismissModal();
 				}
 			}
 		}
 	};
 
 	const handleUnlink = async (address: InjectedAccount['address']) => {
+		setLoading(true);
 		let substrate_address;
 		if(!address.startsWith('0x')) {
 			substrate_address = getSubstrateAddress(address);
@@ -202,6 +229,8 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 				message: cleanError(error),
 				status: NotificationStatus.ERROR
 			});
+			setLoading(false);
+			dismissModal && dismissModal();
 		}
 		if (data?.token) {
 			handleTokenChange(data.token, currentUser);
@@ -210,6 +239,8 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 				message: data.message || '',
 				status: NotificationStatus.SUCCESS
 			});
+			setLoading(false);
+			dismissModal && dismissModal();
 		}
 	};
 
@@ -376,7 +407,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 				</div>
 			}
 			open={open}
-			className='mb-8 md:min-w-[600px]'
+			className={`mb-8 md:min-w-[600px] ${poppins.variable} ${poppins.className}`}
 			footer={
 				<div className='flex items-center justify-end'>
 					{
@@ -385,7 +416,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 								<Button
 									key='got-it'
 									icon={<CheckOutlined />}
-									className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
+									className='bg-pink_primary text-white outline-none border border-pink_primary border-solid rounded-[4px] py-4 px-7 font-medium flex items-center justify-center tracking-wide text-sm'
 									onClick={() => {
 										getAllAccounts({
 											api,
@@ -408,7 +439,7 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 							<Button
 								key="cancel"
 								onClick={dismissModal}
-								className='bg-white text-pink_primary outline-none border border-pink_primary border-solid rounded-md py-3 px-7 font-medium text-lg leading-none flex items-center justify-center'
+								className='bg-white text-pink_primary outline-none border border-pink_primary border-solid rounded-[4px] py-3 px-7 font-medium flex items-center justify-center tracking-wide text-sm'
 							>
 								Cancel
 							</Button>
@@ -417,32 +448,34 @@ const Address: FC<Props> = ({ dismissModal ,open }) => {
 				</div>
 			}
 		>
-			{
-				fetchAccountsInfo?
-					<div className='max-w-[600px]'>
-						<p>
+			<Spin spinning={loading} indicator={<LoadingOutlined />}>
+				{
+					fetchAccountsInfo?
+						<div className='max-w-[600px]'>
+							<p>
 							For fetching your addresses, Polkassembly needs access to your wallet extensions. Please authorize this transaction.
-						</p>
-					</div>
-					: noExtension
-						? <div className='max-w-[600px]'><ExtensionNotDetected /></div>
-						: <section className='flex flex-col gap-y-8'>
-							{currentUser?.addresses && currentUser?.addresses?.length > 0 &&  addressList({
-								accounts: currentUser?.addresses?.sort().map((address): InjectedAccount => ({
-									address: address
-								// meta: { source: '' }
-								})) || [],
-								title: 'Linked addresses'
-							})}
-							{accounts.length && addressList({
-								accounts,
-								title: 'Available addresses'
-							})}
-						</section>
-			}
-			<div className='mr-[-24px] ml-[-24px]'>
-				<Divider className='my-4 mt-0' />
-			</div>
+							</p>
+						</div>
+						: noExtension
+							? <div className='max-w-[600px]'><ExtensionNotDetected /></div>
+							: <section className='flex flex-col gap-y-8 text-bodyBlue'>
+								{currentUser?.addresses && currentUser?.addresses?.length > 0 &&  addressList({
+									accounts: currentUser?.addresses?.sort().map((address): InjectedAccount => ({
+										address: address
+										// meta: { source: '' }
+									})) || [],
+									title: 'Linked addresses'
+								})}
+								{accounts.length && addressList({
+									accounts,
+									title: 'Available addresses'
+								})}
+							</section>
+				}
+				<div className='mr-[-24px] ml-[-24px]'>
+					<Divider className='my-4 mt-0' />
+				</div>
+			</Spin>
 		</Modal>
 	);
 };

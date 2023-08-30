@@ -50,7 +50,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 		setUserDetailsContextState((prev: UserDetailsContextType) => {
 			return {
 				...prev,
-				govType
+				// govType
 			};
 		});
 	};

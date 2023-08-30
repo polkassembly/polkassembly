@@ -239,7 +239,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 
-	   const govOverviewItems = isOpenGovSupported(network) ? [
+	    const govOverviewItems = isOpenGovSupported(network) ? [
 		getSiderMenuItem('Overview', '/', <OverviewIcon className='text-white mt-1' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='text-white mt-1.5' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='text-white' />),

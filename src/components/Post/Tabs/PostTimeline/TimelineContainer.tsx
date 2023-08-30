@@ -133,7 +133,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 												</a>
 											</div>
 											<div className="text-right export-link">
-												<p style={{ backgroundColor: color }} className={'text-white my-1 px-[15px] text-xs py-[5px] rounded-[50px] items-center'}>
+												<p style={{ backgroundColor: color }} className={'text-ellipsis overflow-hidden text-white max-w-[86px] md:max-w-full my-1 px-[15px] text-xs py-[5px] rounded-[50px] items-center'}>
 													{status}
 												</p>
 											</div>

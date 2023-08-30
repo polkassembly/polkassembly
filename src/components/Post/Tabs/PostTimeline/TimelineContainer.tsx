@@ -110,9 +110,12 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 						let color;
 						if(status === 'DecisionDepositePlaced'){
 							status = 'Decision deposite placed';
-							color = 'FF67000';
+							color = '#FF67000';
 						}
-						else if(status === 'Executed' || status === 'Submitted'){
+						else if(status === 'Deciding'){
+							color = '#FF67000';
+						}
+						else if(status === 'Executed' || status === 'Submitted' || status === 'Confirmed'){
 							color = '#5BC044';
 						}
 						else{

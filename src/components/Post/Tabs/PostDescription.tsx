@@ -86,7 +86,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 			}
 		}
 		const listingPageText = path.replace(/-|_/g, ' ');
-		const url = trackName? trackName.split(/(?=[A-Z])/).join(' ') : listingPageText;
+		const url = trackName? trackName.split(/(?=[A-Z])/).join('-').toLowerCase() : listingPageText;
 		router.push(`/${url}`);
 	};
 	const deletePost = () => {

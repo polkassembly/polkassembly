@@ -397,6 +397,7 @@ const Post: FC<IPostProps> = (props) => {
 				TrackerButtonComp={TrackerButtonComp}
 				Sidebar={() => <Sidebar />}
 				allowed_roles={allowed_roles}
+				trackName={trackName}
 			/>,
 			key: 'description',
 			label: 'Description'

@@ -18,6 +18,7 @@ import SubscriptionButton from '../ActionsBar/SubscriptionButton/SubscriptionBut
 import { useRouter } from 'next/router';
 import { NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
+import { ProposalType } from '~src/global/proposalType';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => <div>
@@ -34,25 +35,67 @@ interface IPostDescriptionProps {
 	id: number | null | undefined;
 	isEditing: boolean;
 	isOnchainPost: boolean;
+	trackName?: string;
 	toggleEdit: () => void
 	TrackerButtonComp: JSX.Element
 	Sidebar: ({ className }: {className?: string | undefined;}) => JSX.Element
 }
 
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
-	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp , allowed_roles } = props;
+	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp , allowed_roles, trackName } = props;
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
 	const router = useRouter();
 	//write a function which redirects to the proposalType page
+	const deletePostFromUrl = (proposalType: ProposalType, trackName?: string) => {
+		let path: string = '';
+		if(trackName) {
+			path = `${trackName.split(/(?=[A-Z])/).join('-').toLowerCase()}`;
+		}
+		if(proposalType){
+			switch (proposalType){
+			case ProposalType.DISCUSSIONS:
+				path = 'discussions';
+				break;
+			case ProposalType.BOUNTIES:
+				path = 'bounties';
+				break;
+			case ProposalType.CHILD_BOUNTIES:
+				path = 'child_bounties';
+				break;
+			case ProposalType.TIPS:
+				path = 'tips';
+				break;
+			case ProposalType.GRANTS:
+				path = 'grants';
+				break;
+			case ProposalType.TREASURY_PROPOSALS:
+				path = 'treasury-proposals';
+				break;
+			case ProposalType.TECH_COMMITTEE_PROPOSALS:
+				path = 'tech-comm-proposals';
+				break;
+			case ProposalType.REFERENDUMS:
+				path = 'referenda';
+				break;
+			case ProposalType.DEMOCRACY_PROPOSALS:
+				path = 'proposals';
+				break;
+			case ProposalType.COUNCIL_MOTIONS:
+				path = 'motions';
+				break;
+			}
+		}
+		const listingPageText = path.replace(/-|_/g, ' ');
+		const url = trackName? trackName.split(/(?=[A-Z])/).join(' ') : listingPageText;
+		router.push(`/${url}`);
+	};
 	const deletePost = () => {
 		queueNotification({
 			header: 'Success!',
 			message: 'The post was deleted successfully',
 			status: NotificationStatus.SUCCESS
 		});
-		setTimeout(() => {
-			router.push(`/${postType}`);
-		}, 1000);
+		deletePostFromUrl(postType, trackName);
 	};
 	return (
 		<div className={`${className} mt-4`}>

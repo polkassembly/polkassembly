@@ -78,12 +78,7 @@ export async function deleteComment(params: IDeleteComment): Promise<IApiRespons
 				};
 			}
 		}
-		await postRef.delete().then(() => {
-			postRef.update({
-				last_comment_at
-			});
-		}
-		);
+		await postRef.delete();
 		return {
 			data: {
 				message: 'Post saved.'

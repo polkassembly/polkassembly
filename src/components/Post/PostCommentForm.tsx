@@ -21,13 +21,14 @@ import { NotificationStatus } from '~src/types';
 import { Input } from 'antd';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
+import EmojiIcon from '~assets/icons/chatbox-icons/emoji-1.svg';
 
 interface IPostCommentFormProps {
 	className?: string;
 	isUsedInSuccessModal?: boolean;
 	voteDecision? :string
 	setSuccessModalOpen?: (pre: boolean) => void;
-  setCurrentState?:(postId: string, type:string, comment: IComment) => void;
+setCurrentState?:(postId: string, type:string, comment: IComment) => void;
 }
 
 const commentKey = () => `comment:${global.window.location.href}`;
@@ -44,6 +45,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [isComment,setIsComment]=useState(false);
 	const [sentiment,setSentiment]=useState<number>(3);
 	const [isSentimentPost,setIsSentimentPost]=useState(false);
+	const [textBoxHeight,setTextBoxHeight] = useState(40);
 
 	const onContentChange = (content: string) => {
 		setContent(content);
@@ -79,6 +81,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			sentiment:isSentimentPost?sentiment:0,
 			userId: id
 		});
+		console.log('data',data);
 
 		if(error || !data) {
 			setError(error || 'No data returned from the saving comment query');
@@ -132,6 +135,29 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		setIsSentimentPost(false);
 		setSentiment(3);
 	};
+
+	function adjustHeightByString(inputString:any) {
+		const increment = 50;
+		const heightIncrement = 15;
+
+		let currentHeight = 40;
+
+		const updateHeight = () => {
+			currentHeight += heightIncrement;
+			setTextBoxHeight(currentHeight);
+		};
+
+		if (inputString.length > increment) {
+			const stringLengthMultiple = Math.floor(inputString.length / increment);
+			currentHeight = 40 + stringLengthMultiple * heightIncrement;
+		}
+
+		if (inputString.length % increment === 0) {
+			updateHeight();
+		}
+		console.log(currentHeight);
+		return currentHeight;
+	}
 	useEffect(() => {
 		isComment && handleSave();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -164,13 +190,13 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 						{ required: "Please add the  '${name}'" }
 					}
 				>
-					<div className={isUsedInSuccessModal ? 'flex justify-between items-center  w-[100%]' : ''}>
+					<div className={isUsedInSuccessModal ? 'flex justify-between items-center w-[522px] -ml-[30px]' : ''}>
 						{
 							isUsedInSuccessModal && <Form.Item name='content' className='w-full'>
 								<Input
 									name='content'
-									className={'w-full h-[40px] border-[1px] rounded-[4px] text-sm mt-0 suffixColor hover:border-pink_primary flex-1'}
-									onChange = {(e) => onContentChange(e.target.value)}
+									className={`w-full h-[${textBoxHeight}px] border-[1px] rounded-[4px] text-sm mt-0 suffixColor hover:border-pink_primary flex-1`}
+									onChange = {(e) => {onContentChange(e.target.value);adjustHeightByString(e.target.value);}}
 									placeholder={'Type your comment here'}
 								/>
 							</Form.Item>
@@ -182,9 +208,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 						<Form.Item>
 							<div className={ isUsedInSuccessModal ?'ml-2' :'flex items-center justify-end mt-[-40px]'}>
 								{
-									isUsedInSuccessModal ? <Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-none h-[40px] w-[67px] hover:bg-pink_secondary flex items-center justify-center my-0 ${!content ? 'opacity-50' : ''}`}>
-								Post
-									</Button>
+									isUsedInSuccessModal ?
+										<div className="flex">
+											<Button className="w-10 h-10 mr-[10px] pt-2 pl-[9px]" disabled={!content} htmlType="submit"><EmojiIcon /></Button>
+											<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-none h-[40px] w-[67px] hover:bg-pink_secondary flex items-center justify-center my-0 ${!content ? 'opacity-50' : ''}`}>Post</Button>
+										</div>
 										:
 										<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center my-0 ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>
 											<CheckOutlined /> Comment

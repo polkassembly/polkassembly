@@ -8,7 +8,7 @@ import CloseIcon from '~assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
-import { useNetworkContext } from '~src/context';
+import { useCommentsContext, useNetworkContext } from '~src/context';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
@@ -20,14 +20,15 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { ReactElement } from 'react-markdown/lib/react-markdown';
 import PostCommentForm from '~src/components/Post/PostCommentForm';
 import styled from 'styled-components';
-import QuoteRight from '~assets/icons/quote-right-icon.svg';
-import QuoteLeft from '~assets/icons/quote-left-icon.svg';
-// import Emoji from '~assets/icons/emoji-1.svg';
-// import Vector from '~assets/icons/vector.png';
+// import QuoteRight from '~assets/icons/quote-right-icon.svg';
+// import QuoteLeft from '~assets/icons/quote-left-icon.svg';
+import Vector from '~assets/icons/vector.svg';
+// import OuterVector from '~assets/icons/chatbox-icons/vector.svg'
 // import { CommentBoxIcon } from 'src/ui-components/CustomIcons';
-import Corner from '~assets/icons/chatbox-corner.svg';
-// import Image from 'next/image';
-// import LeftQuote from '~assets/icons/';
+// import Corner from '~assets/icons/chatbox-corner.svg';
+import LeftQuote from '~assets/icons/chatbox-icons/icon-left-quote.svg';
+import RightQuote from '~assets/icons/chatbox-icons/icon-right-quote.svg';
+// import CurveCorner from '~assets/icons/chatbox-icons/curved-corner.svg';
 
 interface Props {
     className?: string;
@@ -63,6 +64,7 @@ const VoteInitiatedModal = ({
 	icon
 }: Props) => {
 	const { network } = useNetworkContext();
+	const { setComments } = useCommentsContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	useEffect(() => {
 		if (!network) return;
@@ -249,14 +251,31 @@ const VoteInitiatedModal = ({
 					</div>
 				</div>
 			</div>
+			<div className='mt-3'>
+				<div>
+					<div className="vector">
+						<Vector className="-ml-[15px] text-2xl"/>
+					</div>
+					{/* <Image preview={false} width={45} height={45} className='rounded-full object-cover' src={VectorIcon} alt='room logo' /> */}
+					<LeftQuote className="quote quote--left top-[336px] left-[18px]"/>
+					<p className="-mt-[155px] ml-[60px]">
+						Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support
+						this in a comment?
+					</p>
+					<div className="form-group ml-4">
+						<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} setCurrentState={setComments} voteDecision={vote} setSuccessModalOpen={setOpen}/>
+					</div>
+					<RightQuote className="quote quote--right top-[336px] right-[18px]"/>
+				</div>
+			</div>
 
-			<div className='relative mt-[50px] bg-[#eff3fe] rounded-[15px] z-100000 border border-solid border-[#a3befc] h-auto'>
+			{/* <div className='relative mt-[50px] bg-[#eff3fe] rounded-[15px] z-100000 border border-solid border-[#a3befc] h-auto'>
 				<QuoteRight className='absolute top-[-10px] w-[34px] h-[25px] left-[-10px]'/>
 				<QuoteLeft className='absolute right-[0px] w-[34px] h-[25px] top-[-10px]' />
-				<Corner className='absolute bottom-[-16px] left-[-7px]' />
+				<CurveCorner className='absolute bottom-[-16px] left-[-7px]' />
 				<p className='text-lightBlue text-[14px] font-medium ml-6 mr-4 mb-[5px] pt-4'>Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support this in a comment?</p>
-				<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} voteDecision={vote} setSuccessModalOpen={setOpen}/>
-			</div>
+				<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} setCurrentState={setComments} voteDecision={vote} setSuccessModalOpen={setOpen}/>
+			</div> */}
 		</Modal>
 	);
 };

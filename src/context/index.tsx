@@ -3,13 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { useContext } from 'react';
-
 import { ApiContext } from './ApiContext';
 import { ModalContext } from './ModalContext';
 import { NetworkContext } from './NetworkContext';
 import { PostDataContext } from './PostDataContext';
 import { UserDetailsContext } from './UserDetailsContext';
 import { CommentsDataContext } from './CommentDataContext';
+import { CommentsContext } from './CommentsContext';
 
 const useModalContext = () => {
 	return useContext(ModalContext);
@@ -34,4 +34,9 @@ function usePostDataContext() {
 function useCommentDataContext(){
 	return  useContext(CommentsDataContext);
 }
-export { useModalContext, useUserDetailsContext, useApiContext, useNetworkContext, usePostDataContext, useCommentDataContext };
+
+function useCommentsContext() {
+	return useContext(CommentsContext);
+}
+
+export { useModalContext, useUserDetailsContext, useApiContext, useNetworkContext, usePostDataContext , useCommentsContext, useCommentDataContext };

@@ -8,23 +8,22 @@ import Image from 'next/image';
 import { Button, Divider, Skeleton, Space } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import NetworkDropdown from 'src/ui-components/NetworkDropdown';
-import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
 import { chainProperties } from '~src/global/networkConstants';
 
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import SearchBar from '~src/ui-components/SearchBar';
-
-import GovernanceSwitchButton from './GovernanceSwitchButton';
 import PaLogo from './PaLogo';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
+
+import { EGovType, UserDetailsContextType } from '~src/types';
+import Link from 'next/link';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -38,18 +37,30 @@ interface Props {
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	const { network } = useNetworkContext();
-	const currentUser = useUserDetailsContext();
+	const { govType, username, setUserDetailsContextState } = useUserDetailsContext();
 	const router = useRouter();
-	const { pathname, query } = router;
-	const { username } = currentUser;
 	const [open, setOpen] = useState(false);
 	const [openLogin,setLoginOpen]=useState<boolean>(false);
 	const [openSignup,setSignupOpen]=useState<boolean>(false);
-
-	const isGov2Route: boolean = checkGov2Route(pathname, query, previousRoute, network);
 	const isClicked = useRef(false);
+
+	const setGovTypeToContext = (govType: EGovType) => {
+		setUserDetailsContextState((prev: UserDetailsContextType) => {
+			return {
+				...prev,
+				govType
+			};
+		});
+	};
+
+	useEffect(() => {
+		if(network && !isOpenGovSupported(network)){
+			setGovTypeToContext(EGovType.GOV1);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[network]);
 
 	return (
 		<Header className={`${className} shadow-md z-[1001] sticky top-0 flex items-center bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
@@ -58,24 +69,19 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, previousRoute } : Pro
 			}} />
 			<nav className='w-full flex items-center justify-between h-[60px] max-h-[60px]'>
 				<div className='flex items-center'>
-					<Link className='flex' href={isGov2Route ? '/opengov' : '/'}><PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' /></Link>
+					<Link href={ '/' } className='flex cursor-pointer '>
+						<PaLogo className='w-[99px] h-[32px] md:w-[116px] md:h-[39px]' />
+					</Link>
 					<div className='flex items-center'>
 						<span className='bg-pink_primary h-5 md:h-10 w-[1.5px] ml-[2px] mr-[8px] md:mr-[10px]'></span>
 						<h2 className='m-0 p-0 text-[#243A57] text-xs lg:text-sm font-medium lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em]'>
 							{
-								isGov2Route? 'OpenGov': 'Gov1'
+								govType === EGovType.OPEN_GOV ? 'OpenGov': 'Gov1'
 							}
 						</h2>
 					</div>
 				</div>
 
-				{
-					isOpenGovSupported(network)?
-						<>
-							<GovernanceSwitchButton previousRoute={previousRoute} className='hidden lg:flex' />
-						</> :
-						<div className='hidden lg:flex min-w-[120px] mr-6 lg:mr-5 xl:mr-0'></div>
-				}
 				<div className="flex items-center justify-between gap-x-2 md:gap-x-4">
 					<SearchBar/>
 

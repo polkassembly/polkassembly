@@ -12,8 +12,6 @@ import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { Wallet } from 'src/types';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
-// import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
-
 interface Props{
 	network: string;
 	isModal?: boolean;
@@ -49,7 +47,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const currentUser = useUserDetailsContext();
+	const { id } = useUserDetailsContext();
 	const router = useRouter();
 	const [displayWeb, setDisplayWeb] = useState(2);
 	const [chosenWallet, setChosenWallet] = useState<Wallet |null>(null);
@@ -75,11 +73,11 @@ const Login = ({ network, setLoginOpen, setSignupOpen, isModal, isDelegation }:P
 	};
 
 	useEffect(() => {
-		if (currentUser?.id && !isModal) {
+		if (id && !isModal) {
 			router.push('/');
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[currentUser?.id, router]);
+	},[id, router]);
 	return (
 		<>
 			<SEOHead title="Login" network={network}/>

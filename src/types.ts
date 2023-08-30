@@ -29,6 +29,7 @@ export interface UserDetailsContextType {
   email?: string | null;
   email_verified?: boolean | null;
   addresses?: string[] | null;
+  govType: EGovType;
   allowed_roles?: string[] | null;
   defaultAddress?: string | null;
   setUserDetailsContextState: Dispatch<SetStateAction<UserDetailsContextType>>;
@@ -251,6 +252,10 @@ export interface TrackProps {
   [index: string]: any;
 }
 
+export enum EGovType {
+	OPEN_GOV = 'open_gov',
+	GOV1 = 'gov1'
+}
 export interface NetworkSocials {
   homepage: string,
   twitter: string,

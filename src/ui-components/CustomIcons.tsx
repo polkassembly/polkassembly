@@ -101,6 +101,7 @@ import UpgradeCommitteePIPsSVG from '~assets/icons/upgrade-community-pips.svg';
 import CommunityPIPsSVG from '~assets/icons/community-pips.svg';
 import CopySVG from '~assets/icons/content-copy.svg';
 import CreatePropoosalSVG from '~assets/icons/create-proposal-filled.svg';
+import Comments from '~assets/icons/chat-icon.svg';
 
 export const DislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={Dislike} {...props} />
@@ -284,6 +285,10 @@ export const PostEditIcon = (props: Partial<CustomIconComponentProps>) => (
 
 export const PostLinkingIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={PostLinkingSVG} {...props} />
+);
+
+export const CommentsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={Comments} {...props} />
 );
 
 export const WarningMessageIcon = (props: Partial<CustomIconComponentProps>) => (

@@ -18,7 +18,7 @@ import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import TopicTag from '~src/ui-components/TopicTag';
 import BN from 'bn.js';
 import { chainProperties } from 'src/global/networkConstants';
-import NewChatIcon from '~assets/icons/chat-icon.svg';
+import { CommentsIcon } from '~src/ui-components/CustomIcons';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 import { useNetworkContext } from '~src/context';
@@ -164,7 +164,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	return (
 		<>
-			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 sm:p-3 min-h-[120px] sm:flex xs:hidden`}>
+			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200 sm:p-3 min-h-[120px] sm:flex xs:hidden`}>
 				<div className="sm:flex flex-col sm:justify-between flex-1 sm:mt-2.5">
 					<div className="flex justify-between items-center">
 						<div className="flex flex-grow">
@@ -186,9 +186,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							requestedAmount &&
 							<div className='flex justify-center items-center'>
 								{requestedAmount > 100 ?
-									<span className='text-lightBlue text-sm font-medium sm:mr-[2.63rem] whitespace-pre'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue dark:text-blue-dark-high text-sm font-medium sm:mr-[2.63rem] whitespace-pre'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 									:
-									<span className='text-lightBlue text-sm font-medium sm:mr-[2.65rem] whitespace-pre'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue dark:text-blue-dark-high text-sm font-medium sm:mr-[2.65rem] whitespace-pre'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 								}
 							</div>
 						}
@@ -196,20 +196,18 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<div className="font-medium text-blue-light-high dark:text-blue-dark-high text-xs sm:flex xs:hidden flex-col lg:flex-row items-start lg:items-center sm:mb-1 sm:mt-0 sm:ml-[120px]">
 						<div className='flex items-center gap-x-2 lg:h-[32px]'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
-								<LikeOutlined style={{ color: '#485F7D' }} />
-								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
+								<LikeOutlined className='text-lightBlue dark:text-blue-dark-medium' />
+								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5 mr-0.5'>
-								<DislikeOutlined style={{ color: '#485F7D' }} />
-								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
+								<DislikeOutlined className='text-lightBlue dark:text-blue-dark-medium' />
+								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>
 							{
 								isCommentsVisible?
 									<>
-										<div className='xs:hidden text-lightBlue sm:flex items-center'>
-											<NewChatIcon style={{
-												color: '#485F7D'
-											}} className='mr-1 text-lightBlue' /> {commentsCount}
+										<div className='xs:hidden text-lightBlue dark:text-blue-dark-medium sm:flex items-center'>
+											<CommentsIcon className='mr-1 text-lightBlue dark:text-blue-dark-medium' /> {commentsCount}
 										</div>
 									</>
 									: null
@@ -225,21 +223,21 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								</span>}
 							</>}
 
-							<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+							<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 							{
 								cid ?
 									<>
 										<Link href={`https://ipfs.io/ipfs/${cid}`} target="_blank"> <PaperClipOutlined /> IPFS</Link>
-										<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+										<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 									</> : null
 							}
 							{relativeCreatedAt && <>
-								<div className='flex text-lightBlue items-center sm:mt-0'>
-									<ClockCircleOutlined className='mr-1' /> <span className='whitespace-nowrap'>{relativeCreatedAt}</span>
+								<div className='flex text-lightBlue dark:text-blue-dark-medium items-center sm:mt-0'>
+									<ClockCircleOutlined className='mr-1 dark:border-blue-dark-medium' /> <span className='whitespace-nowrap'>{relativeCreatedAt}</span>
 								</div>
 							</>}
 							{(decision && (decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed) && <>
-								<Divider type="vertical" className='max-sm:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
+								<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-[#90A0B7] dark:border-blue-dark-medium' />
 								<Tooltip overlayClassName='max-w-none' title={<div className={`p-1.5 ${poppins.className} ${poppins.variable} whitespace-nowrap flex items-center text-xs`}>{ `Deciding ends in ${remainingTime} ${(decidingBlock !== 0) ? `#${decidingBlock}` :''}`}</div>} color='#575255'>
 									<div className='min-w-[30px] mt-2'>
 										<Progress strokeWidth={5} percent={decision.periodPercent || 0} strokeColor='#407AFC' trailColor='#D4E0FC'/>
@@ -247,14 +245,14 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								</Tooltip>
 							</>}
 							{(votesData?.data || tally) && <>
-								<Divider type="vertical" className='max-sm:hidden' style={{ borderLeft: '1px solid #90A0B7' }} />
+								<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-[#90A0B7] dark:border-blue-dark-medium' />
 								<VotesProgressInListing index={index} proposalType={proposalType} votesData={votesData} onchainId={onchainId} status={status} tally={tally}/>
 							</>
 							}
 							{
 								topic?
 									<div className='flex items-center sm:-mt-1'>
-										<Divider type="vertical" className='sm:mt-1' style={{ borderLeft: '1px solid #485F7D' }} />
+										<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 										<TopicTag className='sm:mt-0 sm:mx-1' topic={topic} />
 									</div>
 									: null
@@ -262,9 +260,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 
 						{!!end && !!currentBlock &&
-							<div className="flex text-lightBlue items-center">
-								<Divider className='hidden lg:inline-block' type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
-								<ClockCircleOutlined className='mr-1' />
+							<div className="flex text-lightBlue dark:text-blue-dark-medium items-center">
+								<Divider className='hidden lg:inline-block border-l-1 border-lightBlue dark:border-blue-dark-medium' type="vertical" />
+								<ClockCircleOutlined className='mr-1 dark:border-blue-dark-medium' />
 								{
 									end > currentBlock
 										? <span><BlockCountdown endBlock={end}/> remaining</span>
@@ -276,7 +274,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 				</div>
 			</div>
-			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-grey_light hover:border-pink_primary hover:shadow-xl transition-all duration-200  xs:px-2 xs:py-2 md:pb-6 min-h-[147px] xs:flex h-auto sm:hidden`}>
+			<div className={`${className} ${ownProposal && 'border-l-pink_primary border-l-4'} border-2 border-solid border-[#DCDFE350] hover:border-pink_primary hover:shadow-xl transition-all duration-200  xs:px-2 xs:py-2 md:pb-6 min-h-[147px] xs:flex h-auto sm:hidden`}>
 				<div className="sm:hidden xs:flex flex-col flex-1 xs:mt-1">
 					<div className="xs:flex sm:hidden justify-between sm:my-0">
 						{
@@ -289,9 +287,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							requestedAmount &&
 							<div className='xs:mr-5 sm:m-0'>
 								{requestedAmount > 100 ?
-									<span className='text-lightBlue text-sm font-medium'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue dark:text-blue-dark-high text-sm font-medium'>{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}</span>
 									:
-									<span className='text-lightBlue text-sm font-medium'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
+									<span className='text-lightBlue dark:text-blue-dark-high text-sm font-medium'>{requestedAmount} {chainProperties[network]?.tokenSymbol}</span>
 								}
 							</div>
 						}
@@ -314,14 +312,14 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<div className="font-medium text-blue-light-high dark:text-blue-dark-high text-xs sm:hidden xs:flex flex-col lg:flex-row lg:items-center pl-1 gap-3">
 						<div className="sm:hidden xs:flex xs:justify-start items-center h-[30px] flex-shrink-0">
 							<OnchainCreationLabel address={address} truncateUsername username={username} />
-							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #485F7D' }} />
+							<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 							{relativeCreatedAt && <>
-								<div className='flex text-lightBlue mt-0 items-center'>
-									<ClockCircleOutlined className='mr-1' /> <span> {relativeCreatedAt}</span>
+								<div className='flex text-lightBlue dark:text-blue-dark-medium mt-0 items-center'>
+									<ClockCircleOutlined className='mr-1 dark:border-blue-dark-medium' /> <span> {relativeCreatedAt}</span>
 								</div>
 							</>}
 							{(decision  && (decidingStatusBlock && !confirmedStatusBlock) && !isProposalFailed) && <div className='flex items-center'>
-								<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5' style={{ borderLeft: '1px solid #90A0B7' }} />
+								<Divider type="vertical" className='max-lg:hidden xs:inline-block xs:mt-0.5 border-l-1 border-[#90A0B7] dark:border-blue-dark-medium' />
 								<div className='min-w-[30px] mt-2'>
 									<Progress percent={decision.periodPercent || 0} strokeColor='#407AFC' trailColor='#D4E0FC' strokeWidth={5} />
 								</div>

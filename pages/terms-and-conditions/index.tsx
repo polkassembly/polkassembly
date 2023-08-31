@@ -75,7 +75,7 @@ const TermAndCondition = (props: any) => {
         Company and any other distribution channels made available by the
         Company (the **Services**). By accessing the Forum, these Terms will
         apply to you and you agree to the Terms. You should therefore read the
-        terms carefully before using the forum.</p> 
+        terms carefully before using the forum.</p>
 					<p className='mb-[2px]'>2. When certain words and
         phrases are used in these Terms, they have specific meanings (these are
         known as **defined terms**). You can identify these defined terms
@@ -87,7 +87,7 @@ const TermAndCondition = (props: any) => {
 					<p className='mb-[2px]'>3. In this document, when we
         refer to we, us or our, we mean the Company; and when we refer to
         you or your we mean the person accessing or using the person
-        accessing or using the Forum.</p> 
+        accessing or using the Forum.</p>
 					<p className='mb-[2px]'>4. Please note that:</p>
 					<p className='mb-[2px]'>1.your use of the
         Website is governed by our website terms of use (available https://$

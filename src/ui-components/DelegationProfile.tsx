@@ -82,8 +82,8 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 			<div className='text-blue-light-high dark:text-blue-dark-high'>
 				<span className='text-blue-light-high dark:text-blue-dark-high font-semibold mb-4 tracking-wide text-lg'>{username || userName}</span >
 				{address && address.length > 0  && <div className='flex gap-2 items-center'>
-					<Address address={address} displayInline className='text-sm text-blue-light-high dark:text-blue-dark-high' identiconSize={34} />
-					<span className='flex items-center cursor-pointer' onClick={(e) => {isSearch && e.preventDefault(); copyLink(address || addresses[0]) ;success();}}>
+					<Address address={address} displayInline className='text-sm text-blue-light-high dark:text-blue-dark-high' truncateUsername={false} identiconSize={34} />
+					<span className='flex items-center cursor-pointer ml-2' onClick={(e) => {isSearch && e.preventDefault(); copyLink(address || addresses[0]) ;success();}}>
 						{contextHolder}
 						<CopyIcon/>
 					</span>
@@ -125,8 +125,8 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 				<MessengerIcon/>
 			</Tooltip>
 			<span>
-				{username === userProfile.username && <Button onClick={() => setOpenEditModal(true)} className='text-[#E5007A] border-[1px] border-solid border-[#E5007A] h-[40px] w-[87px] max-lg:w-auto font-medium'>
-					<EditIcon className='text-[#E5007A] text-[14px] tracking-wide ' />
+				{username === userProfile.username && <Button onClick={() => setOpenEditModal(true)} className='text-pink_primary border-[1px] border-solid border-pink_primary h-[40px] w-[87px] max-lg:w-auto font-medium'>
+					<EditIcon className='text-pink_primary text-[14px] tracking-wide ' />
 					<span className='max-md:hidden'>
 					Edit
 					</span>

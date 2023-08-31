@@ -146,7 +146,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			'modl',
 			api.consts.treasury && api.consts.treasury.palletId
 				? api.consts.treasury.palletId.toU8a(true)
-				: 'py/trsry',
+				: `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
 			EMPTY_U8A_32
 		);
 		api.derive.balances
@@ -166,17 +166,17 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					})
 					.finally(() => {
 						// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+						let valueUSD = '';
+						let value = '';
 						{
-							const burn =
+							try{const burn =
 							treasuryBalance.freeBalance.gt(BN_ZERO) &&
 								!api.consts.treasury.burn.isZero()
 								? api.consts.treasury.burn
 									.mul(treasuryBalance.freeBalance)
 									.div(BN_MILLION)
 								: BN_ZERO;
-
-							let valueUSD = '';
-							let value = '';
 
 							if(burn) {
 								// replace spaces returned in string by format function
@@ -202,7 +202,9 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									network
 								));
 							}
-
+							}catch(error){
+								console.log(error);
+							}
 							setNextBurn({
 								isLoading: false,
 								value,

@@ -80,8 +80,9 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 					vote === EVoteDecisionType.ABSTAIN &&  <div className='flex flex-wrap justify-center font-normal text-sm text-blue-light-high dark:text-blue-dark-high'> <span className='mr-3'><span className='font-semibold'> Abstain:</span> <span className='font-normal'>{abstainVoteValue ? formatedBalance(abstainVoteValue.toString(), unit) : 0}{` ${unit}`}</span></span> <span className='mr-3'> <span className='font-semibold'>Aye:</span> <span className='font-normal'> {ayeVoteValue ? formatedBalance(ayeVoteValue.toString(), unit) : 0}{` ${unit}`}</span></span> <span className='mr-3'><span className='font-semibold'>Nay:</span> <span className='font-normal'>{nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit)  : 0}{` ${unit}`}</span></span></div>
 				}
 				<div className='flex-col flex items-start justify-center gap-[10px]'>
-					{address && <div className='flex gap-3 text-sm text-[#485F7D] font-normal'>{isVote ? 'With' : 'To'} address:<span className='font-medium'>
+					{address && <div className='flex gap-3 text-sm text-bodyBlue font-normal'>{isVote ? 'With' : 'To'} {isMultisig ? ' multisig': 'address'}:<span className='font-medium'>
 						<Address address={address}
+							truncateUsername={false}
 							className='address'
 							displayInline={true}/>
 					</span>
@@ -100,7 +101,9 @@ const DelegationSuccessPopup = ({ className, open, setOpen, tracks, address, isD
 						Time of Vote : <span className='font-medium text-blue-light-high dark:text-blue-dark-high'>{votedAt}</span>
 					</div>
 					}
-				</div></div>}
+				</div>
+			</div>
+			}
 		</div>
 
 	</Modal>;

@@ -3,14 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { networkDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getProposalTypeTitle, getSubsquidProposalType, ProposalType, VoteType } from '~src/global/proposalType';
-import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE } from '~src/queries';
+import { GET_PROPOSAL_BY_INDEX_AND_TYPE, GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE, GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE, GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IApiResponse, IPostHistory } from '~src/types';
+import { ESentiments, IApiResponse, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -29,7 +28,7 @@ import { updateComments } from './comments/updateComments';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import dayjs from 'dayjs';
-import { getStatus } from './comments/getInitialComments';
+import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -84,6 +83,13 @@ export interface IReactions {
 	};
 }
 
+export interface IPIPsVoting {
+	balance: null | string;
+	voter: null | string;
+	decision: 'yes' | 'no';
+	identityId: string ;
+  }
+
 export interface IPostResponse {
 	post_reactions: IReactions;
 	timeline: any[];
@@ -99,13 +105,14 @@ export interface IPostResponse {
 		id: number;
 		name: string;
 	};
-  title?: string;
 	decision?: string;
 	last_edited_at?: string | Date;
 	[key: string]: any;
-  gov_type?: 'gov_1' | 'open_gov' ;
-  tags?: string[] | [];
-  history?: IPostHistory[];
+	gov_type?: 'gov_1' | 'open_gov' ;
+	tags?: string[] | [];
+	history?: IPostHistory[];
+	pips_voters?: IPIPsVoting[];
+	title?: string;
 }
 
 export type IReaction = '👍' | '👎';
@@ -599,6 +606,13 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
 		}
+		else if(network === 'polymesh'){
+			postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
+			postVariables =  {
+				index_eq: numPostId,
+				type_eq: subsquidProposalType
+			};
+		}
 
 		let subsquidRes: any = {};
 		try {
@@ -739,12 +753,14 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			fee: postData?.fee,
 			hash: postData?.hash || preimage?.hash,
 			history,
+			identity: postData?.identity || null,
 			last_edited_at: undefined,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
 			motion_method: proposalArguments?.method,
 			origin: postData?.origin,
 			payee: postData?.payee,
+			pips_voters: postData?.voting || [],
 			post_id: postData?.index,
 			post_reactions: getDefaultReactionObj(),
 			proposal_arguments: proposalArguments,
@@ -948,9 +964,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		// Comments
 		if(noComments){
+			const sentiments:any = {};
+			const sentimentsKey:Array<ESentiments> = [ESentiments.Against, ESentiments.SlightlyAgainst, ESentiments.Neutral, ESentiments.SlightlyFor, ESentiments.For];
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {
-					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip'? timeline.hash: timeline.index));
 					const commentsCount = (await postDocRef.collection('comments').count().get()).data().count;
 					return { ...timeline, commentsCount };
 				});
@@ -969,6 +987,19 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 					type: currentTimelineObj?.type
 				};
 			}
+			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
+				let timeline: any= null;
+				for (timeline of post.timeline){
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip'? timeline.hash: timeline.index));
+					for(let i = 0; i < sentimentsKey.length; i++){
+						const key = sentimentsKey[i];
+						sentiments[key]= sentiments[key] ?
+							sentiments[key] + (await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count :
+							(await postDocRef.collection('comments').where('sentiment', '==', i+1).count().get()).data().count;
+					}
+				}
+			}
+			post.overallSentiments = sentiments;
 		}
 		else{
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
@@ -1029,8 +1060,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 				post.content = remark.replace(/\n/g, '<br/>');
 			} else {
 				const proposer = post.proposer;
+				const identity  = post?.identity;
 				if (proposer) {
 					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${proposer}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					if(network === AllNetworks.POLYMESH){
+						post.content = `This is a pip whose DID (${identity}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					}
 				} else {
 					post.content = `This is a ${getProposalTypeTitle(proposalType as ProposalType)}. Only the proposer can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 				}

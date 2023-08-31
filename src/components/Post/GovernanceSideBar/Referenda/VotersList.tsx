@@ -11,20 +11,23 @@ import { LoadingStatusType } from 'src/types';
 import Address from 'src/ui-components/Address';
 import formatBnBalance from 'src/util/formatBnBalance';
 
-import { useNetworkContext } from '~src/context';
-import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
-import { VoteType } from '~src/global/proposalType';
+import { useApiContext, useNetworkContext } from '~src/context';
+import { LISTING_LIMIT, VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
+import { ProposalType, VoteType } from '~src/global/proposalType';
 import { votesSortOptions, votesSortValues } from '~src/global/sortOptions';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import classNames from 'classnames';
+import { IPIPsVoting } from 'pages/api/v1/posts/on-chain-post';
 
 interface IVotersListProps {
 	className?: string;
 	referendumId: number;
 	voteType: VoteType;
+	pipsVoters?: IPIPsVoting[];
+	proposalType?: ProposalType;
 }
 
 type DecisionType = 'yes' | 'no' | 'abstain';
@@ -32,49 +35,143 @@ type DecisionType = 'yes' | 'no' | 'abstain';
 const VotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkContext();
 	const firstRef = useRef(true);
+	const { api, apiReady } = useApiContext();
 
-	const { className, referendumId, voteType } = props;
+	const { className, referendumId, voteType, pipsVoters, proposalType } = props;
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message:'Loading votes' });
 	const [currentPage, setCurrentPage] = useState<number>(1);
-	const [decision, setDecision] = useState<DecisionType>();
+	const [decision, setDecision] = useState<DecisionType>('yes');
 	const [votesRes, setVotesRes] = useState<IVotesResponse>();
 	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME);
+	const [polymeshVotesData, setPolymeshVotesData] =  useState<{ayeVotes: any[], nayVotes: any[]}>({ ayeVotes: [], nayVotes: [] });
+
+	const getVoterFromPolkadot= async(identityId: string) => {
+		if(!api || !apiReady) return;
+
+		const didKeys = await api.query.identity.didKeys.keys(identityId);
+		if(didKeys.length > 0){
+			const didKey = didKeys[0];
+			const key = didKey.args[1].toJSON();
+			return key;
+		}
+	};
+
+	const fetchVotersListForPolymesh = async() => {
+		if(!api || !apiReady || !pipsVoters) return;
+
+		const votesWithoutVoter = pipsVoters.filter((vote) => !vote.voter);
+		const votesWithVoter = pipsVoters.filter((vote) => vote.voter);
+
+		const voterAddedArr = [];
+		for(const vote in votesWithoutVoter){
+			const voter = await getVoterFromPolkadot(votesWithoutVoter?.[vote]?.identityId);
+			voterAddedArr?.push({
+				...votesWithoutVoter?.[vote],
+				voter
+			});
+		}
+
+		const votes = [...voterAddedArr, ...votesWithVoter];
+
+		const ayeVotes = votes.filter((vote) => vote.decision === 'yes');
+		const nayVotes = votes.filter((vote) => vote.decision === 'no');
+		setPolymeshVotesData({ ayeVotes, nayVotes });
+		setVotesRes({
+			abstain: {
+				count: 0,
+				votes: []
+			},
+			no: {
+				count: nayVotes.length,
+				votes: nayVotes?.slice(0, 10)
+			},
+			yes: {
+				count: ayeVotes.length,
+				votes: ayeVotes?.slice(0, 10)
+			}
+		});
+		setLoadingStatus({
+			isLoading: false,
+			message: ''
+		});
+	};
 
 	useEffect(() => {
-		setLoadingStatus({
-			isLoading: true,
-			message: 'Loading votes'
-		});
-		nextApiClientFetch<IVotesResponse>(`api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`)
-			.then((res) => {
-				if (res.error) {
-					console.log(res.error);
-				} else {
-					const votesRes = res.data;
-					setVotesRes(votesRes);
-					if (votesRes && firstRef.current) {
-						firstRef.current = false;
-						let decision: DecisionType = 'yes';
-						if (votesRes.yes.count > 0) {
-							decision = 'yes';
-						} else if (votesRes.no.count > 0) {
-							decision = 'no';
-						} else if (votesRes.abstain.count > 0) {
-							decision = 'abstain';
-						}
-						setDecision(decision);
+		if(network === 'polymesh'){
+			fetchVotersListForPolymesh();
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[network, api, apiReady]);
+
+	useEffect(() => {
+		if(network  === 'polymesh'){
+
+			setLoadingStatus({
+				isLoading: true,
+				message: ''
+			});
+			if(sortBy === votesSortValues.BALANCE){
+				const sortedAyeVotes = polymeshVotesData.ayeVotes.sort((a, b) => Number(b?.balance?.value || 0) - Number(a?.balance?.value || 0));
+				const sortedNayVotes =  polymeshVotesData.nayVotes.sort((a, b) => Number(b?.balance?.value || 0)- Number(a?.balance?.value || 0));
+
+				setVotesRes({
+					abstain: {
+						count: 0,
+						votes: []
+					},
+					no: {
+						count: polymeshVotesData?.nayVotes.length,
+						votes: sortedNayVotes?.slice((currentPage -1)*LISTING_LIMIT, ((currentPage -1)*LISTING_LIMIT) + LISTING_LIMIT )
+					},
+					yes:{
+						count: polymeshVotesData?.ayeVotes.length,
+						votes: sortedAyeVotes?.slice((currentPage -1)*LISTING_LIMIT, ((currentPage -1)*LISTING_LIMIT) + LISTING_LIMIT )
 					}
 				}
-			})
-			.catch((err) => {
-				console.log(err);
-			}).finally(() => {
-				setLoadingStatus({
-					isLoading: false,
-					message: ''
-				});
+				);
+			}
+			setLoadingStatus({
+				isLoading: false,
+				message: ''
 			});
+		}
+		else{
+			setLoadingStatus({
+				isLoading: true,
+				message: 'Loading votes'
+			});
+			nextApiClientFetch<IVotesResponse>(`api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`)
+				.then((res) => {
+					if (res.error) {
+						console.log(res.error);
+					} else {
+						const votesRes = res.data;
+						setVotesRes(votesRes);
+						if (votesRes && firstRef.current) {
+							firstRef.current = false;
+							let decision: DecisionType = 'yes';
+							if (votesRes.yes.count > 0) {
+								decision = 'yes';
+							} else if (votesRes.no.count > 0) {
+								decision = 'no';
+							} else if (votesRes.abstain.count > 0) {
+								decision = 'abstain';
+							}
+							setDecision(decision);
+						}
+					}
+				})
+				.catch((err) => {
+					console.log(err);
+				}).finally(() => {
+					setLoadingStatus({
+						isLoading: false,
+						message: ''
+					});
+				});
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [referendumId, currentPage, voteType, sortBy]);
 
 	const decisionOptions = [
@@ -97,6 +194,25 @@ const VotersList: FC<IVotersListProps> = (props) => {
 
 	const onChange: PaginationProps['onChange'] = page => {
 		setCurrentPage(page);
+		if(network  === 'polymesh'){
+
+			setVotesRes({
+				abstain: {
+					count: 0,
+					votes: []
+				},
+				no: {
+					count: polymeshVotesData?.nayVotes.length,
+					votes: polymeshVotesData?.nayVotes?.slice((page -1)*LISTING_LIMIT, ((page -1)*LISTING_LIMIT) + LISTING_LIMIT )
+				},
+				yes:{
+					count: polymeshVotesData?.ayeVotes.length,
+					votes: polymeshVotesData?.ayeVotes?.slice((page -1)*LISTING_LIMIT, ((page -1)*LISTING_LIMIT) + LISTING_LIMIT )
+				}
+			}
+			);
+		}
+
 	};
 	const handleSortByClick = ({ key }: { key:string }) => {
 		setSortBy(key);
@@ -105,7 +221,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		<Dropdown
 			menu={{
 				defaultSelectedKeys: [votesSortValues.TIME],
-				items: [...votesSortOptions],
+				items: [...(network === AllNetworks.POLYMESH ? votesSortOptions.slice(1,2): votesSortOptions )],
 				onClick: handleSortByClick,
 				selectable: true
 			}}
@@ -121,9 +237,9 @@ const VotersList: FC<IVotersListProps> = (props) => {
 			<Spin className={className} spinning={loadingStatus.isLoading} indicator={<LoadingOutlined />}>
 				<div className="flex justify-between mb-6 bg-white dark:bg-section-dark-overlay z-10">
 					<h6 className='dashboard-heading'>Votes</h6>
-					<div>
+					{ ![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as ProposalType) && <div>
 						{sortByDropdown}
-					</div>
+					</div>}
 				</div>
 
 				<div className="w-full flex items-center justify-center mb-8">
@@ -134,7 +250,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						value={decision}
 						onChange={(value) => {
 							setDecision(String(value) as DecisionType);
-							setCurrentPage(1);
+							onChange(1, 10);
 						}}
 						options={decisionOptions}
 					/>
@@ -146,9 +262,15 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						<div className={classNames('', {
 							'w-[100px]': network === AllNetworks.COLLECTIVES,
 							'w-[60px]': network !== AllNetworks.COLLECTIVES
-						})}><span className='hidden md:inline-block'>Amount</span><span className='inline-block md:hidden'>Amt.</span></div>
+						})}>
+							{
+								![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as ProposalType) && <>
+									<span className='hidden md:inline-block'>Amount</span>
+									<span className='inline-block md:hidden'>Amt.</span>
+								</>}
+						</div>
 						{
-							network !== AllNetworks.COLLECTIVES?
+							![AllNetworks.COLLECTIVES, AllNetworks.POLYMESH].includes(network) ?
 								<div className='w-[70px]'>Conviction</div>
 								: null
 						}
@@ -165,17 +287,17 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										</a>:
 										<div className='w-[110px] max-w-[110px] overflow-ellipsis'>
 											<Address isVoterAddress={true} textClassName='w-[75px]' isSubVisible={false} displayInline={true} isShortenAddressLength={false} address={voteData?.voter} />
-										</div>}
-
+										</div>
+									}
 									{
-										network !== AllNetworks.COLLECTIVES?
+										![ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType as ProposalType) ? network !== AllNetworks.COLLECTIVES ?
 											<>
 												<div className='w-[80px] max-w-[80px] overflow-ellipsis'>
 													{
-														formatUSDWithUnits(formatBnBalance(voteData?.decision === 'abstain'? voteData?.balance?.abstain || 0:voteData?.balance?.value || 0, { numberAfterComma: 1, withThousandDelimitor: false,withUnit: true }, network), 1)
+														formatUSDWithUnits(formatBnBalance(voteData?.decision === 'abstain'? voteData?.balance?.abstain || 0 : voteData?.balance?.value || (voteData?.balance?.replaceAll(',', '')) ||  0, { numberAfterComma: 1, withThousandDelimitor: false, withUnit: true }, network), 1)
 													}
 												</div>
-												<div className='w-[50px] max-w-[50px] overflow-ellipsis'>{voteData.lockPeriod? `${voteData.lockPeriod}x${voteData?.isDelegated? '/d': ''}`: '0.1x'}</div>
+												{ network !== AllNetworks.POLYMESH && <div className='w-[50px] max-w-[50px] overflow-ellipsis'>{voteData.lockPeriod? `${voteData.lockPeriod}x${voteData?.isDelegated? '/d': ''}`: '0.1x'}</div>}
 
 											</>
 											: <>
@@ -184,15 +306,15 @@ const VotersList: FC<IVotersListProps> = (props) => {
 														voteData?.decision === 'abstain'? voteData?.balance?.abstain || 0:voteData?.balance?.value || 0
 													}
 												</div>
-											</>
+											</> : null
 									}
 
 									{
-										voteData.decision === 'yes' ?
+										(voteData.decision === 'yes' || voteData.passed) ?
 											<div className='flex items-center text-aye_green text-md w-[20px] max-w-[20px]'>
 												<LikeFilled className='mr-2' />
 											</div>
-											: voteData.decision === 'no' ?
+											: (voteData.decision === 'no' || !voteData.passed) ?
 												<div className='flex items-center text-nay_red text-md w-[20px] max-w-[20px]'>
 													<DislikeFilled className='mr-2' />
 												</div>

@@ -33,7 +33,7 @@ const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts
 					<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${post.post_id}`}>
 						<OffChainCard
 							post_id={post.post_id}
-							className={`${(index+1)%2!==0 && 'bg-[#FBFBFC]'}`}
+							className={`${(index+1)%2!==0 && 'bg-[#FBFBFC] dark:bg-black'}`}
 							postReactionCount={post?.post_reactions}
 							address={post?.proposer || ''}
 							commentsCount={post.comments_count || 0}

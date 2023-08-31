@@ -6,6 +6,7 @@ import Link from 'next/link';
 import React, { FC, useEffect, useState } from 'react';
 import { poppins } from 'pages/_app';
 import { PostEmptyState } from 'src/ui-components/UIStates';
+
 import { getSinglePostLinkFromProposalType, ProposalType } from '~src/global/proposalType';
 import GovernanceCard from '../GovernanceCard';
 import getReferendumVotes from '~src/util/getReferendumVotes';
@@ -28,6 +29,7 @@ const Listing: FC<IListingProps> = (props) => {
 
 	useEffect(() => {
 		if(!network || !props.posts || !props.posts.length || proposalType != ProposalType.REFERENDUMS) return;
+
 		(async () => {
 			// function to await for ms milliseconds
 			const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -88,7 +90,7 @@ const Listing: FC<IListingProps> = (props) => {
 						{
 							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${id}`}>
 								<GovernanceCard
-									className={`${(index+1)%2!==0 && 'bg-[#FBFBFC]'} ${poppins.variable} ${poppins.className}`}
+									className={`${(index+1)%2!==0 && 'bg-[#FBFBFC] dark:bg-black'} ${poppins.variable} ${poppins.className}`}
 									cid={cid}
 									postReactionCount={post_reactions}
 									address={proposer || curator}

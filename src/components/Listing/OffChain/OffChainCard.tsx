@@ -65,20 +65,20 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 
 						<div className='flex items-center gap-x-2'>
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
-								<LikeOutlined style={{ color: '#485F7D' }} />
-								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👍'])}</span>
+								<LikeOutlined className='text-lightBlue dark:text-blue-dark-medium' />
+								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👍'])}</span>
 							</div>
 
 							<div className='xs:hidden sm:flex items-center justify-center gap-x-1.5'>
-								<DislikeOutlined style={{ color: '#485F7D' }} />
-								<span className='text-lightBlue'>{getFormattedLike(postReactionCount['👎'])}</span>
+								<DislikeOutlined className='text-lightBlue dark:text-blue-dark-medium' />
+								<span className='text-lightBlue dark:text-blue-dark-medium'>{getFormattedLike(postReactionCount['👎'])}</span>
 							</div>
 
 							<div className='xs:hidden sm:flex items-center'>
-								<NewChatIcon className='mr-1' style={{ color: '#485F7D' }} />
-								<span className=' text-lightBlue'>{commentsCount}</span>
+								<NewChatIcon className='mr-1 text-lightBlue dark:text-blue-dark-medium' />
+								<span className=' text-lightBlue dark:text-blue-dark-medium'>{commentsCount}</span>
 							</div>
-							<Divider type="vertical" style={{ borderLeft: '1px solid #485F7D' }} />
+							<Divider type="vertical" className='border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 
 							{tags && tags.length>0 && <>{ tags?.slice(0,2).map((tag,index) =>
 								(<div key={index} style={{ fontSize: '10px' }} className='text-lightBlue rounded-xl px-[14px] py-[4px] border-[#D2D8E0] border-solid border-[1px] font-medium' >
@@ -88,16 +88,16 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
                 +{tags.length-2}
 							</span>}
 							</>}
-							{tags && tags.length>0 && <Divider type="vertical" className='max-sm:hidden' style={{ borderLeft: '1px solid #485F7D' }} />}
+							{tags && tags.length>0 && <Divider type="vertical" className='max-sm:hidden border-l-1 border-lightBlue dark:border-blue-dark-medium' />}
 							{relativeCreatedAt && <>
-								<div className='hidden text-lightBlue sm:flex items-center'>
-									<ClockCircleOutlined className='mr-1' /> {relativeCreatedAt}
+								<div className='hidden text-lightBlue dark:text-blue-dark-medium sm:flex items-center'>
+									<ClockCircleOutlined className='mr-1 dark:border-blue-dark-medium' /> {relativeCreatedAt}
 								</div>
 							</>}
 							{
 								topic?
 									<div className='flex items-center sm:-mt-1'>
-										<Divider type="vertical" className='max-sm:hidden sm:mt-1' style={{ borderLeft: '1px solid #485F7D' }} />
+										<Divider type="vertical" className='max-sm:hidden sm:mt-1 border-l-1 border-lightBlue dark:border-blue-dark-medium' />
 										<TopicTag className='sm:mt-0 sm:mx-2' topic={topic} />
 									</div>
 									: null

@@ -76,14 +76,14 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 };
 
 export default styled(LatestActivity)`
-	th {
+	th dark:bg-blue-dark-high{
 		color: #485F7D !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 	}
 
-	th.ant-table-cell {
+	th.ant-table-cell dark:bg-blue-dark-high{
 		color: #485F7D !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
@@ -97,13 +97,13 @@ export default styled(LatestActivity)`
 		line-height: 21px !important;
 	}
 
-	.ant-table-row{
+	.ant-table-row dark:bg-blue-dark-high{
 		color: #243A57 !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
 	}
 
-	tr{
+	tr dark:bg-blue-dark-high {
 		color: #243A57 !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
@@ -128,4 +128,5 @@ export default styled(LatestActivity)`
 	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-nav:before{
 		border-bottom: 1px solid #E1E6EB;
 	}
+
 `;

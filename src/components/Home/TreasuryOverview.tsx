@@ -333,12 +333,12 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							<>
 								<div className='mb-4'>
 									<div className="flex items-center my-1">
-										<span className="mr-2 text-xs leading-5 text-lightBlue font-medium p-0">
+										<span className="mr-2 text-xs leading-5 text-lightBlue dark:text-blue-dark-medium font-medium p-0">
 									Available
 										</span>
 										<HelperTooltip
 											text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
-											className='text-xs leading-5 text-lightBlue font-medium'
+											className='text-xs leading-5 text-lightBlue dark:text-blue-dark-medium font-medium'
 										/>
 									</div>
 									<div className="flex justify-between font-medium">
@@ -347,7 +347,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 												<span className='text-lg text-blue-light-high dark:text-blue-dark-high font-medium'>
 													{available.value}
 													{' '}
-													<span className='text-lightBlue text-sm'>
+													<span className='text-lightBlue text-sm dark:text-blue-dark-high'>
 														{chainProperties[network]?.tokenSymbol}
 													</span>
 												</span>
@@ -362,7 +362,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 												background: '#D2D8E0'
 											}}
 											className='m-0 p-0' />
-										<span className='flex flex-col justify-center text-lightBlue text-xs font-medium'>
+										<span className='flex flex-col justify-center text-lightBlue dark:text-blue-dark-high text-xs font-medium'>
 											{
 												available.valueUSD
 													? `~ $${available.valueUSD}`
@@ -394,17 +394,17 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								<>
 									<div className='mb-4'>
 										<div className="flex items-center my-1">
-											<span className='hidden mr-2 text-xs leading-5 text-lightBlue font-medium md:flex'>
+											<span className='hidden mr-2 text-xs leading-5 text-lightBlue dark:text-blue-dark-medium font-medium md:flex'>
 							Current Price of {chainProperties[network]?.tokenSymbol}
 											</span>
-											<span className='flex md:hidden text-xs text-lightBlue font-medium'>
+											<span className='flex md:hidden text-xs text-lightBlue dark:text-blue-dark-medium font-medium'>
 							Price {chainProperties[network]?.tokenSymbol}
 											</span>
 										</div>
 										<div className="font-medium text-lg">
 											{currentTokenPrice.value === 'N/A' ? <span>N/A</span> : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value))
 												?
-												<><span className='text-lightBlue'>$ </span><span className='text-blue-light-high dark:text-blue-dark-high'>{currentTokenPrice.value}</span></>
+												<><span className='text-lightBlue dark:text-blue-dark-high'>$ </span><span className='text-blue-light-high dark:text-blue-dark-high'>{currentTokenPrice.value}</span></>
 												: null
 											}
 										</div>
@@ -415,7 +415,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 												background: '#D2D8E0'
 											}}
 											className='m-0 p-0' />
-										<div className='flex text-xs text-lightBlue md:whitespace-pre items-center'>
+										<div className='flex text-xs text-lightBlue dark:text-blue-dark-high md:whitespace-pre items-center'>
 											{priceWeeklyChange.value === 'N/A' ? 'N/A' : priceWeeklyChange.value ?
 												<>
 													<span className="mr-1 sm:mr-2">
@@ -457,12 +457,13 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								<>
 									<div className='mb-4'>
 										<div className="text-lightBlue text-xs flex items-center my-1">
-											<span className="mr-2 text-xs leading-5 text-lightBlue font-medium">
+											<span className="mr-2 text-xs leading-5 text-lightBlue dark:text-blue-dark-medium font-medium">
 										Next Burn
 											</span>
 
 											<HelperTooltip
 												text='If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.'
+												className='dark:text-blue-dark-medium'
 											/>
 										</div>
 
@@ -470,7 +471,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											{
 												nextBurn.value ? (
 													<span>
-														{nextBurn.value} <span className='text-lightBlue text-sm'>{chainProperties[network]?.tokenSymbol}</span>
+														{nextBurn.value} <span className='text-lightBlue dark:text-blue-dark-high text-sm'>{chainProperties[network]?.tokenSymbol}</span>
 													</span>
 												) : null
 											}
@@ -482,7 +483,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 												background: '#D2D8E0'
 											}}
 											className='m-0 p-0' />
-										<span className='mr-2 text-lightBlue w-full text-xs font-medium'>
+										<span className='mr-2 text-lightBlue dark:text-blue-dark-high w-full text-xs font-medium'>
 											{
 												nextBurn.valueUSD
 													? `~ $${nextBurn.valueUSD}`
@@ -515,13 +516,13 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								<>
 									<div className='mb-5 sm:mb-4'>
 										<div className="flex items-center my-1">
-											<span className='mr-2 text-xs mt-1 lg:mt-0 leading-5 text-lightBlue font-medium'>
+											<span className='mr-2 text-xs mt-1 lg:mt-0 leading-5 text-lightBlue dark:text-blue-dark-medium font-medium'>
 										Spend Period
 											</span>
 
 											<HelperTooltip
 												text='Funds held in the treasury can be spent by making a spending proposal that, if approved by the Council, will enter a spend period before distribution, it is subject to governance, with the current default set to 24 days.'
-												className='text-xs leading-5 text-lightBlue font-medium'
+												className='text-xs leading-5 text-lightBlue font-medium dark:text-blue-dark-medium'
 											/>
 										</div>
 
@@ -532,23 +533,23 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 														spendPeriod.value?.days?
 															<>
 																<span className='text-base sm:text-lg'>{spendPeriod.value.days}&nbsp;</span>
-																<span className='text-lightBlue text-xs'>days&nbsp;</span>
+																<span className='text-lightBlue text-xs dark:text-blue-dark-medium'>days&nbsp;</span>
 															</>
 															: null
 													}
 													<>
 														<span className='text-base sm:text-lg'>{spendPeriod.value.hours}&nbsp;</span>
-														<span className='text-lightBlue text-xs'>hrs&nbsp;</span>
+														<span className='text-lightBlue text-xs dark:text-blue-dark-medium'>hrs&nbsp;</span>
 													</>
 													{
 														!spendPeriod.value?.days?
 															<>
 																<span className='text-base sm:text-lg'>{spendPeriod.value.minutes}&nbsp;</span>
-																<span className='text-lightBlue text-xs'>mins&nbsp;</span>
+																<span className='text-lightBlue text-xs dark:text-blue-dark-medium'>mins&nbsp;</span>
 															</>
 															: null
 													}
-													<span className="text-lightBlue text-[10px] sm:text-xs">/ {spendPeriod.value.total} days </span>
+													<span className="text-lightBlue text-[10px] sm:text-xs dark:text-blue-dark-medium">/ {spendPeriod.value.total} days </span>
 												</>
 												: 'N/A'
 											}

@@ -65,13 +65,17 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		toggleEmojiMenu();
 		setSentiment(currentSentiment);
 	};
-	const EmojiOption = ({ icon, currentSentiment }) => (
+	const EmojiOption = ({ icon, currentSentiment, clickable = true }) => (
 		<Button
 			className="text-xl w-10 h-10 pr-[10px] text-center cursor pointer hover:bg-baby_pink"
-			onClick={() => { handleEmojiClick(icon, currentSentiment); }}>
+			onClick={clickable ? () => { handleEmojiClick(icon, currentSentiment); } : null}>
 			{icon}
 		</Button>
 	);
+
+	const sentimentsIcons = {
+		[ESentiment.Neutral]:  <NeutralIcon style={{ border: 'none' }}/>
+	}
 
 	const onContentChange = (content: string) => {
 		setContent(content);
@@ -256,7 +260,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 													</div>
 												)}
 												<Button className="w-10 h-10 mr-[10px] pt-[7px] pl-[8px]  hover:bg-baby_pink" onClick={toggleEmojiMenu} disabled={!content}>
-													{selectedIcon ? selectedIcon : <EmojiIcon className="mt-[2px] ml-[2px]"/>}
+													{selectedIcon ? selectedIcon : <EmojiOption icon={sentimentsIcons[sentiment]} currentSentiment={3} clickable={false}/> }
 													{/* <EmojiIcon /> */}
 												</Button>
 												<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-none h-[40px] w-[67px] hover:bg-pink_secondary flex items-center justify-center my-0 ${!content ? 'opacity-50' : ''}`}>Post</Button>

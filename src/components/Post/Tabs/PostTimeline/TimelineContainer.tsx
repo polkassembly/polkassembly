@@ -224,26 +224,101 @@ export default (styled(TimelineContainer)`
 		margin-right: -16px;
 	}
 	
-	@media (min-width: 600px) and (max-width: 800px) {
+	@media (min-width: 1100px) and (max-width: 1280px) {
 		.content-container {
-		width: 213px;
+		width: 800px;
+		}
+	
+		.timeline-container {
+		margin: 0 5px;
+		}
+	
+		.timeline-dropdown {
+		margin-left: 800px;
+		}
+
+		.round-icon{
+			margin-left: 34px;
+		}
+	}
+	
+	@media (min-width: 925px) and (max-width: 1024px) {
+		.content-container {
+		width: 725px;
 		}
 	
 		.export-link {
-		margin-left: 335px;
-		margin-right: auto;
+		margin-right: 10px;
 		}
 	
+		.timeline-container {
+		margin: 0 70px;
+		}
+	
+		.timeline-dropdown {
+		margin-left: 720px;
+		}
+
+		.round-icon{
+			margin-left: 98px;
+		}
+	}
+
+	@media (min-width: 700px) and (max-width: 800px) {
+		.content-container {
+		width: 550px;
+		}
+
 		.timeline-container {
 		margin: 0;
 		}
 	
 		.timeline-dropdown {
-		margin-left: 578px;
+		margin-left: 560px;
+		}
+
+		.round-icon{
+			margin-left: 28px;
+		}
+	}
+
+	@media (min-width: 600px) and (max-width: 700px) {
+		.content-container {
+		width: 478px;
+		}
+
+		.timeline-container {
+		margin: 0;
+		}
+	
+		.timeline-dropdown {
+		margin-left: 485px;
+		}
+
+		.round-icon{
+			margin-left: 28px;
+		}
+	}
+
+	@media (min-width: 500px) and (max-width: 600px) {
+		.content-container {
+		width: 410px;
+		}
+
+		.timeline-container {
+		margin: 0;
+		}
+	
+		.timeline-dropdown {
+		margin-left: 420px;
+		}
+
+		.round-icon{
+			margin-left: 28px;
 		}
 	}
 	
-	@media (max-width: 600px) and (min-width:400px){
+	@media (max-width: 500px) and (min-width:400px){
 		.content-container {
 		width: 293px;
 		}

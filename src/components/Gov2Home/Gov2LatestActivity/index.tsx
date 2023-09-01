@@ -17,10 +17,10 @@ import { ProposalType } from '~src/global/proposalType';
 import AllGov2PostsTable from './AllGov2PostsTable';
 import TrackPostsTable from './TrackPostsTable';
 
-const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string, gov2LatestPosts: any }) => {
+const Gov2LatestActivity = ({ className, gov2LatestPosts, theme }: { className?:string, gov2LatestPosts: any , theme?:string }) => {
 	const [currentTab, setCurrentTab] = useState('all');
 	const { network } = useContext(NetworkContext);
-
+	console.log(theme);
 	const tabItems = [
 		{
 			children: (
@@ -95,15 +95,16 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?:string,
 
 export default React.memo(styled(Gov2LatestActivity)`
 	th {
-		color: #485F7D !important;
+		/* color: #485F7D !important; */
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 		white-space: nowrap;
+		color: ${props => props.theme=='dark' ? 'red' : '#243A57'} !important;
 	}
 
 	th.ant-table-cell {
-		color: #485F7D !important;
+		color: ${props => props.theme=='dark' ? 'red' : '#243A57'} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -111,7 +112,7 @@ export default React.memo(styled(Gov2LatestActivity)`
 	}
 
 	.ant-table-thead > tr > th {
-		color: #485F7D !important;
+		color: ${props => props.theme=='dark' ? 'red' : '#243A57'} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -119,13 +120,13 @@ export default React.memo(styled(Gov2LatestActivity)`
 	}
 
 	.ant-table-row{
-		color: #243A57 !important;
+		color: ${props => props.theme=='dark' ? 'red' : '#243A57'} !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
 	}
 
 	tr{
-		color: #243A57 !important;
+		color: ${props => props.theme=='dark' ? 'red' : '#243A57'} !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
 		cursor: pointer !important;

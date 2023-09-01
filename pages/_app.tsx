@@ -22,7 +22,7 @@ import { initGA, logPageView } from '../analytics';
 import 'antd/dist/reset.css';
 import '../styles/globals.css';
 import ErrorBoundary from '~src/ui-components/ErrorBoundary';
-import { ThemeProvider } from 'next-theme';
+import { ThemeProvider } from 'next-themes';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,

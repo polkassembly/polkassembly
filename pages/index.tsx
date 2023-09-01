@@ -21,7 +21,7 @@ import { LATEST_POSTS_LIMIT } from '~src/global/listingLimit';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import { IApiResponse, NetworkSocials } from '~src/types';
-
+import { useTheme } from 'next-themes';
 import { getLatestActivityAllPosts } from './api/v1/latest-activity/all-posts';
 import { getLatestActivityOffChainPosts } from './api/v1/latest-activity/off-chain-posts';
 import { getLatestActivityOnChainPosts, ILatestActivityPostsListingResponse } from './api/v1/latest-activity/on-chain-posts';
@@ -146,12 +146,12 @@ const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOver
 
 const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	const { setNetwork } = useNetworkContext();
-
+	const { resolvedTheme: theme } = useTheme();
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-
+	console.log(theme);
 	return (
 		<>
 			{chainProperties[network]?.gTag ? <><Script
@@ -185,7 +185,9 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 								allGov2Posts: latestPosts.all,
 								discussionPosts: latestPosts.discussions,
 								...latestPosts
-							}} />
+							}}
+							theme={theme}
+							/>
 					}
 				</div>
 

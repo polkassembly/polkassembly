@@ -7,14 +7,7 @@ import { DeriveAccountFlags, DeriveAccountRegistration } from '@polkadot/api-der
 import { Tooltip } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
-import EmailIcon from '~assets/icons/email-icon.svg';
-import LegalIcon from '~assets/icons/legal-icon.svg';
-import JudgementIcon from '~assets/icons/judgement-icon.svg';
-import TwitterIcon from '~assets/icons/twitter-icon.svg';
-import WebIcon from '~assets/icons/web-icon.svg';
-import RiotIcon from '~assets/icons/riot-icon.svg';
-import ShareScreenIcon from '~assets/icons/screen-share-icon.svg';
-import PgpIcon from '~assets/icons/pgp-icon.svg';
+import { EmailIcon, JudgementIcon, LegalIcon, PgpIcon, RiotIcon, ShareScreenIcon, TwitterIcon, WebIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string,
@@ -58,11 +51,11 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 
 	const displayJudgements = JSON.stringify(judgements?.map(([,jud]) => jud.toString()));
 	const popupContent =
-	<StyledPopup>
+	<StyledPopup className='dark:bg-section-dark-overlay'>
 		{identity?.legal &&
 		<li className='flex items-center'>
 			<span className='desc text-blue-light-high dark:text-blue-dark-high font-medium flex items-center text-sm'>
-				<LegalIcon className='mr-1.5'/>legal:
+				<LegalIcon className='mr-1.5 text-lightBlue dark:text-blue-dark-medium'/>legal:
 			</span>
 			<span className='text-xs text-blue-light-high dark:text-blue-dark-high font-normal truncate pt-0.5'>{identity.legal}</span>
 		</li>
@@ -70,38 +63,38 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 		{identity?.email &&
 		<li className='flex items-center'>
 			<span className='desc text-blue-light-high dark:text-blue-dark-high font-medium flex items-center text-sm'>
-				<EmailIcon className='mr-2'/>Email:
+				<EmailIcon className='mr-2 text-lightBlue dark:text-blue-dark-medium'/>Email:
 			</span>
 			<span className='text-xs text-blue-light-high dark:text-blue-dark-high font-normal truncate pt-0.5'>{identity.email}</span>
 		</li>
 		}
 		{(identity?.judgements?.length || 0) > 0 &&
 		<li className='flex items-center'>
-			<span className='desc flex items-center text-sm text-blue-light-high dark:text-blue-dark-high font-medium'><JudgementIcon className='mr-1.5'/>Judgements:</span>
+			<span className='desc flex items-center text-sm text-blue-light-high dark:text-blue-dark-high font-medium'><JudgementIcon className='mr-1.5 text-lightBlue dark:text-blue-dark-medium'/>Judgements:</span>
 			<span className='text-xs truncate text-blue-light-high dark:text-blue-dark-high'>{displayJudgements}</span>
 		</li>
 		}
 		{identity?.pgp &&
 		<li className='flex items-center'>
-			<span className='desc flex items-center text-sm text-blue-light-high dark:text-blue-dark-high font-medium'><PgpIcon className='mr-1'/>pgp:</span>
+			<span className='desc flex items-center text-sm text-blue-light-high dark:text-blue-dark-high font-medium'><PgpIcon className='mr-1 text-lightBlue dark:text-blue-dark-medium'/>pgp:</span>
 			<span className='text-xs text-bodyblue truncate font-normal'>{identity.pgp}</span>
 		</li>
 		}
 		{identity?.riot &&
 		<li className='flex items-center'>
-			<span className='desc flex items-center text-sm text-blue-light-high dark:text-blue-dark-high font-medium'><RiotIcon className='mr-1.5' />riot: </span>
+			<span className='desc flex items-center text-sm text-blue-light-high dark:text-blue-dark-high font-medium'><RiotIcon className='mr-1.5 text-lightBlue dark:text-blue-dark-medium' />riot: </span>
 			<span className='text-xs text-blue-light-high dark:text-blue-dark-high truncate font-normal'>{identity.riot}</span>
 		</li>
 		}
 		{identity?.twitter &&
 		<li className='flex items-center'>
-			<span className='desc text-blue-light-high dark:text-blue-dark-high font-medium flex text-sm'><TwitterIcon className='mr-1.5 mt-1'/>Twitter: </span>
+			<span className='desc text-blue-light-high dark:text-blue-dark-high font-medium flex text-sm'><TwitterIcon className='mr-1.5 mt-1 text-lightBlue dark:text-blue-dark-medium'/>Twitter: </span>
 			<span className='text-xs font-normal truncate text-blue-light-high dark:text-blue-dark-high'>{identity.twitter}</span>
 		</li>
 		}
 		{identity?.web &&
 		<li className='flex items-center'>
-			<span className='desc text-blue-light-high dark:text-blue-dark-high font-medium flex text-sm'><WebIcon className='mr-1.5 mt-1 -ml-0.5' />Web: </span>
+			<span className='desc text-blue-light-high dark:text-blue-dark-high font-medium flex text-sm'><WebIcon className='mr-1.5 mt-1 -ml-0.5 text-lightBlue dark:text-blue-dark-medium' />Web: </span>
 			<span className='text-xs text-blue-light-high dark:text-blue-dark-high truncate font-normal pt-0.5'>{identity.web}</span>
 		</li>
 		}
@@ -125,7 +118,7 @@ const IdentityBadge = ({ className, address, identity, flags, web3Name }: Props)
 	</StyledPopup>;
 
 	return <div className={className}>
-		<Tooltip color='#fff' title={popupContent}>
+		<Tooltip title={popupContent}>
 			{infoElem}
 		</Tooltip>
 	</div>;

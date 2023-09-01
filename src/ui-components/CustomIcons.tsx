@@ -21,6 +21,11 @@ import IdentitySVG from '~assets/icons/identity.svg';
 import ProfileSVG from '~assets/icons/profile.svg';
 import EmailSVG from '~assets/icons/email.svg';
 import RiotSVG from '~assets/icons/riot.svg';
+import LegalSVG from '~assets/icons/legal-icon.svg';
+import JudgementSVG from '~assets/icons/judgement-icon.svg';
+import WebSVG from '~assets/icons/web-icon.svg';
+import ShareScreenSVG from '~assets/icons/screen-share-icon.svg';
+import PgpSVG from '~assets/icons/pgp-icon.svg';
 import SignalTowerSVG from '~assets/icons/signal-tower.svg';
 import EditSVG from '~assets/icons/edit.svg';
 import SyncSVG from '~assets/icons/sync.svg';
@@ -201,6 +206,26 @@ export const TelegramIcon = (props: Partial<CustomIconComponentProps>) => (
 
 export const TwitterIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={TwitterSVG} {...props} />
+);
+
+export const WebIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={WebSVG} {...props} />
+);
+
+export const PgpIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={PgpSVG} {...props} />
+);
+
+export const ShareScreenIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={ShareScreenSVG} {...props} />
+);
+
+export const LegalIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={LegalSVG} {...props} />
+);
+
+export const JudgementIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon component={JudgementSVG} {...props} />
 );
 
 export const WalletIcon = (props: Partial<CustomIconComponentProps>) => (

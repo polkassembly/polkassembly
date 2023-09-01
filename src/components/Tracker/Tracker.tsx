@@ -49,11 +49,11 @@ const Tracker: FC<ITrackerProps> = ({ className, network }) => {
 		<>
 			<SEOHead title='Tracker' network={network} />
 			<div className={className}>
-				<h1 className='dashboard-heading mb-4 md:mb-6'> Tracker</h1>
+				<h1 className='text-bodyBlue font-medium text-lg leading-7 tracking-wide dark:text-blue-dark-high mb-4 md:mb-6'> Tracker</h1>
 
 				{/* Intro and Create Post Button */}
 				<div className="flex flex-col md:flex-row">
-					<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white dark:bg-section-dark-overlay p-4 md:p-8 rounded-md w-full shadow-md mb-4">
+					<p className="text-sidebarBlue text-sm md:text-base font-medium bg-white dark:bg-section-dark-overlay p-4 rounded-md w-full shadow-md mb-4 dark:text-blue-dark-high">
 						This is a place to keep track of on chain posts.
 					</p>
 				</div>

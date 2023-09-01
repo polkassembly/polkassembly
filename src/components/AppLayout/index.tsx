@@ -16,7 +16,7 @@ import { getLocalStorageToken, logout } from 'src/services/auth.service';
 import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TipsIcon, TreasuryGroupIcon, TreasuryProposalsIcon, ChildBountiesIcon, TechComProposalIcon , DelegatedIcon } from 'src/ui-components/CustomIcons';
 import checkGov2Route from 'src/util/checkGov2Route';
 import styled from 'styled-components';
-import useTheme from 'next-theme';
+import { useTheme } from 'next-themes';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -107,6 +107,8 @@ interface Props {
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { theme } =useTheme();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	console.log(theme);
 	const { network } = useNetworkContext();
 	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);

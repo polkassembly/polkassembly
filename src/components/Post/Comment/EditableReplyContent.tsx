@@ -246,7 +246,8 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			commentId,
 			postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
 			postType: reply.post_type || postType,
-			replyId
+			replyId,
+			trackNumber: track_number
 		});
 
 		if (deleteReplyError || !data) {

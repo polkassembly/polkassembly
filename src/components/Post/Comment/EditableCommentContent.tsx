@@ -289,7 +289,8 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		const { data, error: deleteCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/deleteComment', {
 			commentId,
 			postId: ((comment.post_index || comment.post_index === 0)? comment.post_index: props.postId),
-			postType: comment.post_type || props.proposalType
+			postType: comment.post_type || props.proposalType,
+			trackNumber: track_number
 		});
 
 		if (deleteCommentError || !data) {

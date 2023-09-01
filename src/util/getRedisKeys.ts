@@ -30,7 +30,6 @@ export function generateKey({
 	voterAddress,
 	keyType
 }: KeyArgs): string {
-	console.log({ network, subsquidProposalType, proposalType, trackId, trackStatus, page, sortBy, filterBy });
 	return [
 		network,
 		govType,

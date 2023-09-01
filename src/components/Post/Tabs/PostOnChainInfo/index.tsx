@@ -82,7 +82,6 @@ interface IPostOnChainInfoProps {
 	className?: string;
 	onChainInfo?: IOnChainInfo;
 	proposalType: ProposalType;
-	handleOpenSidebar: (address: string) => void;
 }
 export const tipStatus = {
 	CLOSED: 'Closed',

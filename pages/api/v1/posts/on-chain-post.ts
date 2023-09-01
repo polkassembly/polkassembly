@@ -29,6 +29,8 @@ import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import dayjs from 'dayjs';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
+import { generateKey } from '~src/util/getRedisKeys';
+import { redisGet, redisSet } from '~src/auth/redis';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -559,7 +561,6 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IApiResponse<IPostResponse>> {
 	try {
 		const { network, postId, voterAddress, proposalType, isExternalApiCall, noComments = true } = params;
-		const netDocRef = networkDocRef(network);
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
@@ -578,6 +579,20 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const topicFromType = getTopicFromType(proposalType as ProposalType);
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+
+		if(proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall){
+			const redisKey = generateKey({ network, govType: 'OpenGov', subsquidProposalType, keyType: 'postId', postId: postId, voterAddress: voterAddress });
+			const redisData = await redisGet(redisKey);
+			if(redisData){
+				return {
+					data: JSON.parse(redisData),
+					error: null,
+					status: 200
+				};
+			}
+		}
+
+		const netDocRef = networkDocRef(network);
 
 		let postVariables: any = proposalType === ProposalType.ANNOUNCEMENT ? {
 			cid: postId,
@@ -1076,6 +1091,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			post.title = splitterAndCapitalizer(postData?.callData?.method || '', '_') || postData?.cid;
 		}
 		await getContentSummary(post, network, isExternalApiCall);
+		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall){
+			await redisSet(generateKey({ network, govType: 'OpenGov', subsquidProposalType, keyType: 'postId', postId: postId, voterAddress: voterAddress }), JSON.stringify(post));
+		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,

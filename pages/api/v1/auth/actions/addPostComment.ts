@@ -10,10 +10,11 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
-import { ProposalType } from '~src/global/proposalType';
+import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import { PostComment } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
+import { deleteKeys } from '~src/auth/redis';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -27,10 +28,6 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 
 	const { userId, content, postId, postType, sentiment, trackNumber = null } = req.body;
 	if(!userId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
-
-	trackNumber = !isNaN(trackNumber) ? Number(trackNumber) : null;
-
-	// TODO: do really important stuff with trackNumber
 
 	if(typeof content !== 'string' || isContentBlacklisted(content)) return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
 
@@ -62,6 +59,20 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		user_profile_img: user?.profile?.image || '',
 		username: user.username
 	};
+
+	const subsquidProposalType  = getSubsquidLikeProposalType(postType);
+
+	if (!isNaN(trackNumber)){
+		// delete referendum v2 redis cache
+		if(postType == ProposalType.REFERENDUM_V2){
+			const trackListingKey = `${network}_${subsquidProposalType}_trackId_${Number(trackNumber)}_*`;
+			await deleteKeys(trackListingKey);
+		}
+
+	}else if(postType == ProposalType.DISCUSSIONS){
+		const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+		await deleteKeys(discussionListingKey);
+	}
 
 	await newCommentRef.set(newComment).then(() => {
 		postRef.update({

@@ -9,15 +9,17 @@ import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { FC, useEffect } from 'react';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
+import { redisGet, redisSet } from '~src/auth/redis';
 import TrackListing from '~src/components/Listing/Tracks/TrackListing';
 import { useNetworkContext } from '~src/context';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { ProposalType } from '~src/global/proposalType';
+import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
 import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
+import { generateKey } from '~src/util/getRedisKeys';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
@@ -37,6 +39,18 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const { trackId } = networkTrackInfo[network][PostOrigin.LEASE_ADMIN];
 	const proposalType = ProposalType.OPEN_GOV;
+
+	const subsquidProposalType = getSubsquidProposalType(proposalType);
+
+	const redisKey = generateKey({ network, subsquidProposalType, keyType: 'trackId', trackId, trackStatus, page, sortBy, filterBy });
+
+	const redisData = await redisGet(redisKey);
+	if (redisData){
+		const props = JSON.parse(redisData);
+		if(props.data){
+			return { props };
+		}
+	}
 
 	const fetches = ['CustomStatusSubmitted', 'CustomStatusVoting', 'CustomStatusClosed', 'All'].reduce((prev: any, status) => {
 		const strTrackStatus = trackStatus ? String(trackStatus) : 'all';
@@ -82,6 +96,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	Object.keys(fetches).forEach((key, index) => {
 		(props.posts as any)[key] = results[index];
 	});
+
+	await redisSet(redisKey, JSON.stringify(props));
 
 	return { props };
 };

@@ -118,6 +118,10 @@ const Post: FC<IPostProps> = (props) => {
 			return;
 		}
 
+		console.log('post', post);
+		console.log('post_id', post_id);
+		console.log('proposer', proposer);
+
 		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
 		const network = getNetwork();
 		if(network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23){
@@ -436,7 +440,7 @@ const Post: FC<IPostProps> = (props) => {
 			username: post?.username
 		}}>
 			<CommentsDataContextProvider initialCommentsData={{
-				comments:post?.comments,
+				comments: {},
 				currentTimeline:post.currentTimeline,
 				overallSentiments: post?.overallSentiments,
 				timelines:[]

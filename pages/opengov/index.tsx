@@ -23,6 +23,7 @@ import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import styled from 'styled-components';
+import { redisGet, redisSet } from '~src/auth/redis';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active /> ,
@@ -36,10 +37,18 @@ interface Props {
 	error: string;
 }
 
-export const getServerSideProps:GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const LATEST_POSTS_LIMIT = 8;
 
 	const network = getNetworkFromReqHeaders(req.headers);
+
+	const redisData = await redisGet(`${network}_latestActivity_OpenGov`);
+	if (redisData){
+		const props = JSON.parse(redisData);
+		if(props.data){
+			return { props };
+		}
+	}
 	const networkSocialsData = await getNetworkSocials({ network });
 
 	if(!networkTrackInfo[network]) {
@@ -79,12 +88,14 @@ export const getServerSideProps:GetServerSideProps = async ({ req }) => {
 		(gov2LatestPosts as any)[trackName as keyof typeof gov2LatestPosts] = responseArr[Object.keys(fetches).indexOf(trackName as keyof typeof fetches)];
 	}
 
-	const props:Props = {
+	const props: Props = {
 		error: '',
 		gov2LatestPosts,
 		network,
 		networkSocialsData
 	};
+
+	await redisSet(`${network}_latestActivity_OpenGov`,JSON.stringify(props));
 
 	return { props };
 };

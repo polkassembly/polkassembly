@@ -7,9 +7,11 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
+import { deleteKeys } from '~src/auth/redis';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
+import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
@@ -17,7 +19,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, postId, reaction, postType } = req.body;
+	const { userId, postId, reaction, postType, trackNumber = null } = req.body;
 	if(!userId || isNaN(postId) || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
@@ -56,6 +58,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			user_id: user.id,
 			username: user.username
 		};
+	}
+
+	const subsquidProposalType  = getSubsquidLikeProposalType(postType);
+
+	if (!isNaN(trackNumber)){
+		// delete referendum v2 redis cache
+		if(postType == ProposalType.REFERENDUM_V2){
+			const trackListingKey = `${network}_${subsquidProposalType}_trackId_${trackNumber}_*`;
+			await deleteKeys(trackListingKey);
+		}
+
+	}else if(postType == ProposalType.DISCUSSIONS){
+		const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+		await deleteKeys(discussionListingKey);
 	}
 
 	await reactionsCollRef.doc(reactionDoc.id).set(reactionData, { merge: true }).then(() => {

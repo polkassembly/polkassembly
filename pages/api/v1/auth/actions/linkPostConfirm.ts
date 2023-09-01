@@ -20,6 +20,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { isDataExist } from '../../posts/on-chain-post';
+import { deleteKeys, redisDel } from '~src/auth/redis';
 
 interface IUpdatePostLinkInGroupParams {
 	currPostData: any;
@@ -61,6 +62,27 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 		throw apiErrorWithStatusCode(`The Post with id: "${postId}" and type: "${postType}" is not found.`, 400);
 	}
 	const post = subsquidData.proposals[0];
+
+	if(currPostType == ProposalType.REFERENDUM_V2){
+		const latestActivitykey = `${network}_latestActivity_OpenGov`;
+		const trackListingKey = `${network}_${subsquidProposalType}_trackId_${post.trackNumber}_*`;
+		const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${currPostId}`;
+
+		await redisDel(latestActivitykey);
+		await deleteKeys(trackListingKey);
+		await redisDel(referendumDetailsKey);
+	}
+
+	if(currPostType == ProposalType.DISCUSSIONS){
+		const latestActivitykey = `${network}_latestActivity_OpenGov`;
+		const referendumDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
+		const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+
+		await redisDel(latestActivitykey);
+		await redisDel(referendumDetailsKey);
+		await deleteKeys(discussionListingKey);
+	}
+
 	const preimage = post?.preimage;
 	if(!post || (!post?.proposer && !preimage?.proposer)) {
 		throw apiErrorWithStatusCode('Proposer address is not present in subsquid response.', 400);
@@ -327,7 +349,6 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (r
 				user
 			};
 		}
-
 		const data = await updatePostLinkInGroup(params);
 		return res.status(200).json(data);
 	} catch (error) {

@@ -27,6 +27,7 @@ import SadIcon from '~assets/icons/sentiments-icons/sad.svg';
 import NeutralIcon from '~assets/icons/sentiments-icons/neutral.svg';
 import SmileIcon from '~assets/icons/sentiments-icons/smile.svg';
 import SmileDizzyIcon from '~assets/icons/sentiments-icons/smile-dizzy.svg';
+import { ESentiment } from '~src/types';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -58,17 +59,18 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const toggleEmojiMenu = () => {
 		setShowEmojiMenu(!showEmojiMenu);
 	};
-	const handleEmojiClick = (icon:any) => {
+	const handleEmojiClick = (icon:any, currentSentiment:any) => {
 		setContent((prevContent) => prevContent + icon);
 		setSelectedIcon(icon);
 		toggleEmojiMenu();
+		setSentiment(currentSentiment);
 	};
-	const EmojiOption = ({ icon }) => (
-		<span
-			className="text-xl w-10 h-10 text-center pt-[5px] cursor pointer hover:bg-baby_pink"
-			onClick={() => { handleEmojiClick(icon); }}>
+	const EmojiOption = ({ icon, currentSentiment }) => (
+		<Button
+			className="text-xl w-10 h-10 pr-[10px] text-center cursor pointer hover:bg-baby_pink"
+			onClick={() => { handleEmojiClick(icon, currentSentiment); }}>
 			{icon}
-		</span>
+		</Button>
 	);
 
 	const onContentChange = (content: string) => {
@@ -88,6 +90,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		const content = form.getFieldValue('content');
 		console.log('value in save', content);
 		if(!content) return;
+		if(isUsedInSuccessModal){
+			setIsSentimentPost(true);
+			handleSave();
+			return;
+		}
 		setModalOpen(true);
 	};
 
@@ -189,6 +196,10 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 
 	if (!id) return <div>You must log in to comment.</div>;
 
+	// if(vote === 'Aye'){
+	// 	<
+	// }
+
 	return (
 		<div className={className}>
 			<UserAvatar
@@ -236,12 +247,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 										<div className='relative'>
 											<div className="flex">
 												{showEmojiMenu && (
-													<div className="absolute top-[-55px] right-[77px] w-[200px] h-[50px] pt-[7px] p-2 flex space-x-1" style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}>
-														<EmojiOption icon={<SadDizzyIcon style={{ border: 'none' }} />} />
-														<EmojiOption icon={<SadIcon style={{ border: 'none' }}/>} />
-														<EmojiOption icon={<NeutralIcon style={{ border: 'none' }}/>} />
-														<EmojiOption icon={<SmileIcon style={{ border: 'none' }}/>} />
-														<EmojiOption icon={<SmileDizzyIcon style={{ border: 'none' }}/>} />
+													<div className="absolute top-[-55px] right-[77px] w-[234px] h-[50px] pt-[7px] p-2 flex space-x-1" style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}>
+														<EmojiOption icon={<SadDizzyIcon style={{ border: 'none' }} />} currentSentiment={1}/>
+														<EmojiOption icon={<SadIcon style={{ border: 'none' }}/>} currentSentiment={2} />
+														<EmojiOption icon={<NeutralIcon style={{ border: 'none' }}/>} currentSentiment={3} />
+														<EmojiOption icon={<SmileIcon style={{ border: 'none' }}/>} currentSentiment={4} />
+														<EmojiOption icon={<SmileDizzyIcon style={{ border: 'none' }}/>} currentSentiment={5} />
 													</div>
 												)}
 												<Button className="w-10 h-10 mr-[10px] pt-[7px] pl-[8px]  hover:bg-baby_pink" onClick={toggleEmojiMenu} disabled={!content}>

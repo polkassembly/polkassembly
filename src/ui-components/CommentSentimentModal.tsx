@@ -7,14 +7,7 @@ import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CheckOutlined } from '@ant-design/icons';
 import CloseIcon from 'public/assets/icons/sentiment-close.svg';
-
-enum ESentiment {
-  Against = 1,
-  SlightlyAgainst =2,
-  Neutral = 3,
-  SlightlyFor = 4,
-  For = 5
-}
+import { ESentiment } from '~src/types';
 
 interface Props{
   setIsComment: (pre: boolean)=>void;

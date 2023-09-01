@@ -72,7 +72,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	const currentContent=useRef<string>(content);
 
-	const { postData: { postType , postIndex } } = usePostDataContext();
+	const { postData: { postType , postIndex, track_number } } = usePostDataContext();
 	const { asPath } = useRouter();
 
 	const [isEditing, setIsEditing] = useState(false);
@@ -143,6 +143,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			postId: ((comment.post_index || comment.post_index === 0)? comment.post_index: props.postId),
 			postType: comment.post_type || props.proposalType,
 			sentiment:sentiment,
+			trackNumber: track_number,
 			userId: id
 		});
 
@@ -210,6 +211,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				content: replyContent,
 				postId: props.postId,
 				postType: props.proposalType,
+				trackNumber: track_number,
 				userId: id
 			});
 

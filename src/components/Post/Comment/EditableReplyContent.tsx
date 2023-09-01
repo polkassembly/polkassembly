@@ -55,7 +55,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	const toggleEdit = () => setIsEditing(!isEditing);
 
 	const { postData: {
-		postType, postIndex
+		postType, postIndex, track_number
 	} } = usePostDataContext();
 
 	useEffect(() => {
@@ -109,6 +109,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 			postId: ((reply.post_index || reply.post_index === 0)? reply.post_index: postIndex),
 			postType: reply.post_type || postType,
 			replyId,
+			trackNumber: track_number,
 			userId: id
 		});
 
@@ -179,6 +180,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 				content: replyContent,
 				postId: postIndex,
 				postType: postType,
+				trackNumber: track_number,
 				userId: id
 			});
 			if (error || !data) {

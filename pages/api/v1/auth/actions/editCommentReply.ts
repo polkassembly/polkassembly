@@ -19,8 +19,12 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType, replyId } = req.body;
+	const { userId, commentId, content, postId, postType, replyId, trackNumber } = req.body;
 	if(!userId || !commentId || !content || isNaN(postId) || !postType || !replyId) return res.status(400).json({ message: 'Missing parameters in request body' });
+
+	trackNumber = !isNaN(trackNumber) ? Number(trackNumber) : null;
+
+	// TODO: do really important stuff with trackNumber
 
 	const strProposalType = String(postType);
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType)) return res.status(400).json({ message: `The post type of the name "${postType}" does not exist.` });

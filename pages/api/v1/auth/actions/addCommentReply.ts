@@ -26,8 +26,12 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 	const network = String(req.headers['x-network']);
 	if(!network) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType } = req.body;
+	const { userId, commentId, content, postId, postType, trackNumber = null } = req.body;
 	if(!userId || !commentId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
+
+	trackNumber = !isNaN(trackNumber) ? Number(trackNumber) : null;
+
+	// TODO: do really important stuff with trackNumber
 
 	if(typeof content !== 'string' || isContentBlacklisted(content)) return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
 

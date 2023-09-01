@@ -21,6 +21,7 @@ interface ILatestActivityProps {
 		all?: IApiResponse<ILatestActivityPostsListingResponse>;
 	} & ILatestActivityPosts;
 	className?: string
+	theme?: string
 }
 type TCapitalizeFn = (str: string, lower?: boolean) => string;
 const capitalize: TCapitalizeFn = (str, lower = false) =>
@@ -37,7 +38,7 @@ const getLabel = (key: 'all' | ProposalType): string => {
 	return capitalize(key);
 };
 
-const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) => {
+const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts, theme }) => {
 
 	const [currentTab, setCurrentTab] = useState('all');
 	const tabItems = (
@@ -58,7 +59,7 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 			label: <CountBadgePill label={label} count={value?.data?.count} />
 		};
 	});
-
+	console.log('theemeee', theme);
 	return (
 		<div className={`${className} bg-white dark:bg-section-dark-overlay drop-shadow-md p-0 lg:p-6 rounded-xxl`}>
 			<div className="flex justify-between items-center pr-4 pl-1">
@@ -76,38 +77,49 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 };
 
 export default styled(LatestActivity)`
-	th dark:bg-blue-dark-high{
-		color: #485F7D !important;
+	th {
+		color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 	}
 
-	th.ant-table-cell dark:bg-blue-dark-high{
-		color: #485F7D !important;
+	th.ant-table-cell {
+		color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 	}
 
 	.ant-table-thead > tr > th {
-		color: #485F7D !important;
+		color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 	}
 
-	.ant-table-row dark:bg-blue-dark-high{
-		color: #243A57 !important;
+	.ant-table-row {
+		color: ${props => props.theme=='dark' ? 'white' : '#243A57'} !important;
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
 	}
 
-	tr dark:bg-blue-dark-high {
-		color: #243A57 !important;
+	.ant-table-row:hover > td{
+		background-color: ${props => props.theme=='dark' ? '#595959' : ''} !important;
+	}
+	tr {
+		color: ${props => props.theme=='dark' ? 'white' : '#243A57'} !important;
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
 		cursor: pointer !important;
+	}
+	.ant-table-wrapper .ant-table-cell-fix-left, .ant-table-wrapper .ant-table-cell-fix-right{
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
 	}
 
 	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab:not(.ant-tabs-tab-active) {
@@ -127,6 +139,18 @@ export default styled(LatestActivity)`
 
 	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-nav:before{
 		border-bottom: 1px solid #E1E6EB;
+	}
+	.ant-table-wrapper .ant-table-tbody >tr >th, .ant-table-wrapper .ant-table-tbody >tr >td{
+		border-bottom: ${props => props.theme=='dark' ? '1px solid #272C31' : '1px solid #E1E6EB'} !important;
+	}
+	.ant-table-wrapper .ant-table-thead >tr>th, .ant-table-wrapper .ant-table-thead >tr>td{
+		border-bottom: ${props => props.theme=='dark' ? '1px solid #272C31' : '1px solid #E1E6EB'} !important;
+	}
+	.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab{
+		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
+	}
+	.ant-tabs-top >.ant-tabs-nav::before, .ant-tabs-bottom >.ant-tabs-nav::before, .ant-tabs-top >div>.ant-tabs-nav::before, .ant-tabs-bottom >div>.ant-tabs-nav::before{
+		border: ${props => props.theme=='dark' ? 'none' : ''} !important;
 	}
 
 `;

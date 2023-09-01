@@ -8,17 +8,19 @@ import styled from 'styled-components';
 interface Props {
 	children: ReactNode
 	className?: string
+	theme?: string
 }
 
-const OnchainInfoWrapper = ({ children, className }: Props) => {
-
+const OnchainInfoWrapper = ({ children, className, theme }: Props) => {
+	console.log(theme);
 	return (
 		<div className={className}>{children}</div>
 	);
 };
 
 export default styled(OnchainInfoWrapper)`
-	background-color: white;
+    //if resolvedTheme is dark, then use black, else use white
+	background-color: ${props => props.theme === 'dark' ? 'black' : 'white'};
 	font-size: sm;
 	overflow-wrap: break-word;
 	margin-bottom: 1rem;

@@ -51,7 +51,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 			<Dropdown
 				trigger={['click']}
 				menu={{ defaultSelectedKeys: [(wsProvider? wsProvider: (network? chainProperties?.[network]?.rpcEndpoint: ''))], items: rpcEndpoints, onClick: handleEndpointChange, selectable: true }}
-				className={className}
+				className={`${className} 'dark:bg-section-dark-overlay dark:text-white'}`}
 			>
 				{
 					isSmallScreen?

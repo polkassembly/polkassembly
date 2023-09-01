@@ -106,9 +106,10 @@ interface Props {
 }
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
-	const { theme } =useTheme();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	console.log(theme);
+	const [mounted, setMounted] = useState(false);
+	const { resolvedTheme } = useTheme();
+	console.log('theme', resolvedTheme);
+	useEffect(() => setMounted(true),[]);
 	const { network } = useNetworkContext();
 	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
@@ -144,6 +145,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			window.location.reload();
 		});
 	}, []);
+
+	if (!mounted) return null;
 
 	const gov1Items: {[x:string]: ItemType[]} = {
 		overviewItems: [
@@ -384,7 +387,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	return (
 		//@ts-ignore
-		<Layout className={className} dark={theme}>
+		<Layout className={className} dark={resolvedTheme}>
 			<NavHeader sidedrawer={sidedrawer} setSidedrawer={setSidedrawer} previousRoute={previousRoute} />
 			<Layout hasSider>
 				<Sider
@@ -396,7 +399,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					className={'hidden overflow-y-hidden sidebar bg-white dark:bg-section-dark-overlay lg:block bottom-0 left-0 h-screen fixed z-40'}
 				>
 					<Menu
-						theme={theme as MenuTheme}
+						theme={resolvedTheme as MenuTheme}
 						mode="inline"
 						selectedKeys={[router.pathname]}
 						items={sidebarItems}

@@ -100,11 +100,13 @@ export default React.memo(styled(Gov2LatestActivity)`
 		font-size: 14px !important;
 		line-height: 21px !important;
 		white-space: nowrap;
-		color: ${props => props.theme=='dark' ? 'red' : '#243A57'} !important;
+		color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 	}
 
 	th.ant-table-cell {
-		color: ${props => props.theme=='dark' ? 'red' : '#243A57'} !important;
+		color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -112,7 +114,8 @@ export default React.memo(styled(Gov2LatestActivity)`
 	}
 
 	.ant-table-thead > tr > th {
-		color: ${props => props.theme=='dark' ? 'red' : '#243A57'} !important;
+		color: ${props => props.theme=='dark' ? '#909090' : '#485F7D'} !important;
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -120,19 +123,25 @@ export default React.memo(styled(Gov2LatestActivity)`
 	}
 
 	.ant-table-row{
-		color: ${props => props.theme=='dark' ? 'red' : '#243A57'} !important;
+		color: ${props => props.theme=='dark' ? 'white' : '#243A57'} !important;
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
 	}
-
+	.ant-table-row:hover > td{
+		background-color: ${props => props.theme=='dark' ? '#595959' : ''} !important;
+	}
 	tr{
-		color: ${props => props.theme=='dark' ? 'red' : '#243A57'} !important;
+		color: ${props => props.theme=='dark' ? 'white' : '#243A57'} !important;
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : ''} !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
 		cursor: pointer !important;
 		white-space: nowrap;
 	}
-
+	.ant-table-wrapper .ant-table-cell-fix-left, .ant-table-wrapper .ant-table-cell-fix-right{
+		background-color: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
+	}
 	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab:not(.ant-tabs-tab-active) {
 		background-color: white;
 		border-top-color: white;
@@ -150,5 +159,17 @@ export default React.memo(styled(Gov2LatestActivity)`
 
 	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-nav:before{
 		border-bottom: 1px solid #E1E6EB;
+	}
+	.ant-table-wrapper .ant-table-tbody >tr >th, .ant-table-wrapper .ant-table-tbody >tr >td{
+		border-bottom: ${props => props.theme=='dark' ? '1px solid #272C31' : '1px solid #E1E6EB'} !important;
+	}
+	.ant-table-wrapper .ant-table-thead >tr>th, .ant-table-wrapper .ant-table-thead >tr>td{
+		border-bottom: ${props => props.theme=='dark' ? '1px solid #272C31' : '1px solid #E1E6EB'} !important;
+	}
+	.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab, .ant-tabs-card >div>.ant-tabs-nav .ant-tabs-tab{
+		border: ${props => props.theme=='dark' ? '1px solid #29323C' : ''} !important;
+	}
+	.ant-tabs-top >.ant-tabs-nav::before, .ant-tabs-bottom >.ant-tabs-nav::before, .ant-tabs-top >div>.ant-tabs-nav::before, .ant-tabs-bottom >div>.ant-tabs-nav::before{
+		border: ${props => props.theme=='dark' ? 'none' : ''} !important;
 	}
 `);

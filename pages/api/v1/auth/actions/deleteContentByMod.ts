@@ -9,7 +9,7 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
-import { deleteComment } from './deleteComment';
+import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
@@ -27,20 +27,33 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const user = await authServiceInstance.GetUser(token);
 	if(!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { data, error, status } = await deleteComment({
-		commentId,
-		network,
-		postId,
-		postType,
-		replyId,
-		user
-	});
-
-	if(error || !data) {
-		res.status(status).json({ message: error || messages.API_FETCH_ERROR });
+	let ref = postsByTypeRef(network, postType)
+		.doc(String(postId));
+	if(postId && commentId && replyId){
+		ref = ref
+			.collection('comments')
+			.doc(String(commentId))
+			.collection('replies')
+			.doc(String(replyId));
+		await ref.update({
+			isDelete: true
+		});
+		return res.status(200).json({ message: 'Reply deleted.' });
 	}
-	else {
-		res.status(status).json(data);
+	if(postId && commentId && !replyId){
+		ref = ref
+			.collection('comments')
+			.doc(String(commentId));
+		await ref.update({
+			isDelete: true
+		});
+		return res.status(200).json({ message: 'Comment deleted.' });
+	}
+	if(postId && !commentId && !replyId){
+		await ref.update({
+			isDelete: true
+		});
+		return res.status(200).json({ message: 'Post deleted.' });
 	}
 }
 

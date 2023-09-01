@@ -82,7 +82,7 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 		<div>
 			{
 				tableData.map((rowData,index) => (
-					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 h-auto min-h-[140px] ${poppins.variable} ${poppins.className}`} onClick={() => onClick(rowData)}>
+					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC] dark:bg-black' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 h-auto min-h-[140px] ${poppins.variable} ${poppins.className}`} onClick={() => onClick(rowData)}>
 						{/* Meta Data Row */}
 						<div className="flex items-center justify-between text-blue-light-high dark:text-blue-dark-high m-2.5">
 							<div className="max-xs-hidden">
@@ -103,8 +103,8 @@ export const PopulatedLatestActivityCard: FC<IPopulatedLatestActivityCardProps> 
 										/>
 								}
 							</span>
-							<Divider type="vertical" className='mt-1 font-normal text-xs' style={{ borderLeft: '1px solid #485F7D' }} />
-							<span className='text-lightBlue mx-1.5 font-normal text-xs'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
+							<Divider type="vertical" className='mt-1 font-normal text-xs border-l-1 border-lightBlue dark:border-blue-dark-medium' />
+							<span className='text-lightBlue dark:text-blue-dark-medium mx-1.5 font-normal text-xs'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
 						</div>
 						{
 							rowData.status !== '-' &&
@@ -124,7 +124,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 		<div>
 			{
 				tableData.map((rowData,index) => (
-					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC]' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 h-auto min-h-[140px] ${poppins.variable} ${poppins.className}`} onClick={() => onClick(rowData)}>
+					<div key={rowData.key} className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC] dark:bg-black' : ''} border-2 border-[#DCDFE350] border-solid hover:border-pink_primary hover:shadow-xl transition-all duration-200 h-auto min-h-[140px] ${poppins.variable} ${poppins.className}`} onClick={() => onClick(rowData)}>
 						{/* Meta Data Row */}
 						<div className="flex items-center justify-between text-blue-light-high dark:text-blue-dark-high m-2.5">
 							<div className="max-xs-hidden">
@@ -146,8 +146,8 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 										/>
 								}
 							</span>
-							<Divider type="vertical" className='mt-1 font-normal text-xs' style={{ borderLeft: '1px solid #485F7D' }} />
-							<span className='text-lightBlue mx-1.5 font-normal text-xs'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
+							<Divider type="vertical" className='mt-1 font-normal text-xs border-l-1 border-lightBlue dark:border-blue-dark-medium' />
+							<span className='text-lightBlue dark:text-blue-dark-medium mx-1.5 font-normal text-xs'>{rowData.created_at ? dayjs(rowData.created_at).isAfter(dayjs().subtract(1, 'w')) ? dayjs(rowData.created_at).startOf('day').fromNow() : dayjs(rowData.created_at).format('Do MMM \'YY') : null}</span>
 						</div>
 						{
 							rowData.status !== '-' &&

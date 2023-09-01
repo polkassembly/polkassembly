@@ -436,7 +436,7 @@ const Post: FC<IPostProps> = (props) => {
 			username: post?.username
 		}}>
 			<CommentsDataContextProvider initialCommentsData={{
-				comments:post?.comments,
+				comments: {},
 				currentTimeline:post.currentTimeline,
 				overallSentiments: post?.overallSentiments,
 				timelines:[]

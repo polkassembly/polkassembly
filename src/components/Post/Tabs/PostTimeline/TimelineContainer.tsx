@@ -130,9 +130,6 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 												</a>
 											</div>
 											<div className="text-right export-link">
-												{/* <p style={{ backgroundColor: color }} className={'text-white my-1 px-[15px] text-xs py-[5px] rounded-[50px] items-center'}>
-													{status}
-												</p> */}
 												<StatusDiv status={status} />
 											</div>
 										</div>
@@ -173,7 +170,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 					<p className='timeline-dropdown' style={{ backgroundColor: activeColor, marginTop: '-44px' }}>
 						{isCollapsed ? (
 							<div className="flex w-[200px] gap-3 arrow-container">
-								<p className=' text-white my-1 text-center px-[15px] w-[100px] text-xs py-[5px] rounded-[50px] items-center status-update' style={{ backgroundColor: color }}>
+								<p className=' text-white text-ellipsis overflow-hidden my-1 text-center px-[15px] w-[100px] text-xs py-[5px] rounded-[50px] items-center status-update' style={{ backgroundColor: color }}>
 									{timeline?.statuses[statuses.length - 1].status}
 								</p>
 								<DownArrow onClick={toggleCollapse} className="mt-[12px]"/>
@@ -379,7 +376,7 @@ export default (styled(TimelineContainer)`
 		}
 
 		.arrow-container{
-			margin-left: 8px;
+			margin-left: -105px;
 		}
 
 		.timeline-dropdown {

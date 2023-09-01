@@ -22,6 +22,11 @@ import { Input } from 'antd';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
 import EmojiIcon from '~assets/icons/chatbox-icons/emoji-1.svg';
+import SadDizzyIcon from '~assets/icons/sentiments-icons/sad-dizzy.svg';
+import SadIcon from '~assets/icons/sentiments-icons/sad.svg';
+import NeutralIcon from '~assets/icons/sentiments-icons/neutral.svg';
+import SmileIcon from '~assets/icons/sentiments-icons/smile.svg';
+import SmileDizzyIcon from '~assets/icons/sentiments-icons/smile-dizzy.svg';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -46,6 +51,25 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [sentiment,setSentiment]=useState<number>(3);
 	const [isSentimentPost,setIsSentimentPost]=useState(false);
 	const [textBoxHeight,setTextBoxHeight] = useState(40);
+	const [showEmojiMenu, setShowEmojiMenu] = useState(false);
+	const [selectedIcon, setSelectedIcon] = useState(null);
+	// const [content, setContent] = useState('');
+	// const [loading, setLoading] = useState(false);
+	const toggleEmojiMenu = () => {
+		setShowEmojiMenu(!showEmojiMenu);
+	};
+	const handleEmojiClick = (icon:any) => {
+		setContent((prevContent) => prevContent + icon);
+		setSelectedIcon(icon);
+		toggleEmojiMenu();
+	};
+	const EmojiOption = ({ icon }) => (
+		<span
+			className="text-xl w-10 h-10 text-center pt-[5px] cursor pointer hover:bg-baby_pink"
+			onClick={() => { handleEmojiClick(icon); }}>
+			{icon}
+		</span>
+	);
 
 	const onContentChange = (content: string) => {
 		setContent(content);
@@ -209,9 +233,23 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 							<div className={ isUsedInSuccessModal ?'ml-2' :'flex items-center justify-end mt-[-40px]'}>
 								{
 									isUsedInSuccessModal ?
-										<div className="flex">
-											<Button className="w-10 h-10 mr-[10px] pt-2 pl-[9px]" disabled={!content} htmlType="submit"><EmojiIcon /></Button>
-											<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-none h-[40px] w-[67px] hover:bg-pink_secondary flex items-center justify-center my-0 ${!content ? 'opacity-50' : ''}`}>Post</Button>
+										<div className='relative'>
+											<div className="flex">
+												{showEmojiMenu && (
+													<div className="absolute top-[-55px] right-[77px] w-[200px] h-[50px] pt-[7px] p-2 flex space-x-1" style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}>
+														<EmojiOption icon={<SadDizzyIcon style={{ border: 'none' }} />} />
+														<EmojiOption icon={<SadIcon style={{ border: 'none' }}/>} />
+														<EmojiOption icon={<NeutralIcon style={{ border: 'none' }}/>} />
+														<EmojiOption icon={<SmileIcon style={{ border: 'none' }}/>} />
+														<EmojiOption icon={<SmileDizzyIcon style={{ border: 'none' }}/>} />
+													</div>
+												)}
+												<Button className="w-10 h-10 mr-[10px] pt-[7px] pl-[8px]  hover:bg-baby_pink" onClick={toggleEmojiMenu} disabled={!content}>
+													{selectedIcon ? selectedIcon : <EmojiIcon className="mt-[2px] ml-[2px]"/>}
+													{/* <EmojiIcon /> */}
+												</Button>
+												<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-none h-[40px] w-[67px] hover:bg-pink_secondary flex items-center justify-center my-0 ${!content ? 'opacity-50' : ''}`}>Post</Button>
+											</div>
 										</div>
 										:
 										<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-white hover:bg-pink_secondary flex items-center my-0 ${!content ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>

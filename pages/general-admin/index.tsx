@@ -42,16 +42,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const subsquidProposalType = getSubsquidProposalType(proposalType);
 
-	const redisKey = generateKey({ network, subsquidProposalType, keyType: 'trackId', trackId, trackStatus, page, sortBy, filterBy });
-	const redisData = await redisGet(redisKey);
+	const redisKey = generateKey({ filterBy, keyType: 'trackId', network, page, sortBy, subsquidProposalType, trackId, trackStatus });
 
-	if (redisData){
-		const props = JSON.parse(redisData);
-		if(props.data){
-			return { props };
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		const redisData = await redisGet(redisKey);
+		if (redisData){
+			const props = JSON.parse(redisData);
+			if(!props.error){
+				return { props };
+			}
 		}
 	}
-
 	const fetches = ['CustomStatusSubmitted', 'CustomStatusVoting', 'CustomStatusClosed', 'All'].reduce((prev: any, status) => {
 		const strTrackStatus = trackStatus ? String(trackStatus) : 'all';
 		if (status.toLowerCase().includes(strTrackStatus)) {
@@ -97,7 +98,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		(props.posts as any)[key] = results[index];
 	});
 
-	await redisSet(redisKey, JSON.stringify(props));
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		await redisSet(redisKey, JSON.stringify(props));
+	}
 
 	return { props };
 };

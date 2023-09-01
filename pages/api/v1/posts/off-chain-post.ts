@@ -56,8 +56,8 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 			throw apiErrorWithStatusCode(`The off chain proposal type "${proposalType}" is invalid.`, 400);
 		}
 
-		if(proposalType === ProposalType.DISCUSSIONS && !isExternalApiCall){
-			const redisKey = generateKey({ network, proposalType: ProposalType.DISCUSSIONS, keyType: 'postId', postId: postId });
+		if(proposalType === ProposalType.DISCUSSIONS && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+			const redisKey = generateKey({ keyType: 'postId', network, postId: postId, proposalType: ProposalType.DISCUSSIONS });
 			const redisData = await redisGet(redisKey);
 			if(redisData){
 				return {
@@ -255,8 +255,8 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 		}
 
 		await getContentSummary(post, network, isExternalApiCall);
-		if (proposalType === ProposalType.DISCUSSIONS && !isExternalApiCall){
-			await redisSet(generateKey({ network, proposalType: ProposalType.DISCUSSIONS, keyType: 'postId', postId: postId }), JSON.stringify(post));
+		if (proposalType === ProposalType.DISCUSSIONS && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+			await redisSet(generateKey({ keyType: 'postId', network, postId: postId, proposalType: ProposalType.DISCUSSIONS }), JSON.stringify(post));
 		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),

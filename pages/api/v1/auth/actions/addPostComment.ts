@@ -62,16 +62,18 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 
 	const subsquidProposalType  = getSubsquidLikeProposalType(postType);
 
-	if (!isNaN(trackNumber)){
-		// delete referendum v2 redis cache
-		if(postType == ProposalType.REFERENDUM_V2){
-			const trackListingKey = `${network}_${subsquidProposalType}_trackId_${Number(trackNumber)}_*`;
-			await deleteKeys(trackListingKey);
-		}
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		if (!isNaN(trackNumber)){
+			// delete referendum v2 redis cache
+			if(postType == ProposalType.REFERENDUM_V2){
+				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${Number(trackNumber)}_*`;
+				await deleteKeys(trackListingKey);
+			}
 
-	}else if(postType == ProposalType.DISCUSSIONS){
-		const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
-		await deleteKeys(discussionListingKey);
+		}else if(postType == ProposalType.DISCUSSIONS){
+			const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+			await deleteKeys(discussionListingKey);
+		}
 	}
 
 	await newCommentRef.set(newComment).then(() => {

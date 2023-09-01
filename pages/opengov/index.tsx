@@ -42,11 +42,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 	const network = getNetworkFromReqHeaders(req.headers);
 
-	const redisData = await redisGet(`${network}_latestActivity_OpenGov`);
-	if (redisData){
-		const props = JSON.parse(redisData);
-		if(props.data){
-			return { props };
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		const redisData = await redisGet(`${network}_latestActivity_OpenGov`);
+		if (redisData){
+			const props = JSON.parse(redisData);
+			if(!props.error){
+				return { props };
+			}
 		}
 	}
 	const networkSocialsData = await getNetworkSocials({ network });
@@ -95,7 +97,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		networkSocialsData
 	};
 
-	await redisSet(`${network}_latestActivity_OpenGov`,JSON.stringify(props));
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		await redisSet(`${network}_latestActivity_OpenGov`,JSON.stringify(props));
+	}
 
 	return { props };
 };

@@ -139,14 +139,16 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			isAuthor = true;
 		}
 
-		if(proposalType == ProposalType.DISCUSSIONS){
-			const latestActivitykey = `${network}_latestActivity_OpenGov`;
-			const referendumDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
-			const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+		if(process.env.IS_CACHING_ALLOWED == '1'){
+			if(proposalType == ProposalType.DISCUSSIONS){
+				const latestActivitykey = `${network}_latestActivity_OpenGov`;
+				const referendumDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
+				const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
 
-			await redisDel(latestActivitykey);
-			await redisDel(referendumDetailsKey);
-			await deleteKeys(discussionListingKey);
+				await redisDel(latestActivitykey);
+				await redisDel(referendumDetailsKey);
+				await deleteKeys(discussionListingKey);
+			}
 		}
 
 		if(!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
@@ -208,14 +210,16 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 
 		if(!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-		if(proposalType == ProposalType.REFERENDUM_V2){
-			const latestActivitykey = `${network}_latestActivity_OpenGov`;
-			const trackListingKey = `${network}_${subsquidProposalType}_trackId_${postRes.data?.proposals?.[0].trackNumber}_*`;
-			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
+		if(process.env.IS_CACHING_ALLOWED == '1'){
+			if(proposalType == ProposalType.REFERENDUM_V2){
+				const latestActivitykey = `${network}_latestActivity_OpenGov`;
+				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${postRes.data?.proposals?.[0].trackNumber}_*`;
+				const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
 
-			await redisDel(latestActivitykey);
-			await deleteKeys(trackListingKey);
-			await redisDel(referendumDetailsKey);
+				await redisDel(latestActivitykey);
+				await deleteKeys(trackListingKey);
+				await redisDel(referendumDetailsKey);
+			}
 		}
 	}
 

@@ -580,8 +580,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
 
-		if(proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall){
-			const redisKey = generateKey({ network, govType: 'OpenGov', subsquidProposalType, keyType: 'postId', postId: postId, voterAddress: voterAddress });
+		if(proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress });
 			const redisData = await redisGet(redisKey);
 			if(redisData){
 				return {
@@ -1091,8 +1091,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			post.title = splitterAndCapitalizer(postData?.callData?.method || '', '_') || postData?.cid;
 		}
 		await getContentSummary(post, network, isExternalApiCall);
-		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall){
-			await redisSet(generateKey({ network, govType: 'OpenGov', subsquidProposalType, keyType: 'postId', postId: postId, voterAddress: voterAddress }), JSON.stringify(post));
+		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+			await redisSet(generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress }), JSON.stringify(post));
 		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),

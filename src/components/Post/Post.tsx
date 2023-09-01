@@ -118,10 +118,6 @@ const Post: FC<IPostProps> = (props) => {
 			return;
 		}
 
-		console.log('post', post);
-		console.log('post_id', post_id);
-		console.log('proposer', proposer);
-
 		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
 		const network = getNetwork();
 		if(network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23){

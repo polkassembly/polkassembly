@@ -41,14 +41,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const network = getNetworkFromReqHeaders(req.headers);
 
-	const redisKey = generateKey({ network: network, proposalType: ProposalType.DISCUSSIONS, keyType: 'page', page: page, sortBy: sortBy, filterBy: filterBy });
+	const redisKey = generateKey({ filterBy: filterBy, keyType: 'page', network: network, page: page, proposalType: ProposalType.DISCUSSIONS, sortBy: sortBy });
 
-	const redisData = await redisGet(redisKey);
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		const redisData = await redisGet(redisKey);
 
-	if (redisData){
-		const props = JSON.parse(redisData);
-		if(props.data){
-			return { props };
+		if (redisData){
+			const props = JSON.parse(redisData);
+			if(!props.error){
+				return { props };
+			}
 		}
 	}
 
@@ -63,7 +65,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const props = { data, error, network };
 
-	await redisSet(redisKey, JSON.stringify(props));
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		await redisSet(redisKey, JSON.stringify(props));
+	}
 
 	return { props };
 };

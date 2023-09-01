@@ -63,24 +63,26 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 	}
 	const post = subsquidData.proposals[0];
 
-	if(currPostType == ProposalType.REFERENDUM_V2){
-		const latestActivitykey = `${network}_latestActivity_OpenGov`;
-		const trackListingKey = `${network}_${subsquidProposalType}_trackId_${post.trackNumber}_*`;
-		const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${currPostId}`;
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		if(currPostType == ProposalType.REFERENDUM_V2){
+			const latestActivitykey = `${network}_latestActivity_OpenGov`;
+			const trackListingKey = `${network}_${subsquidProposalType}_trackId_${post.trackNumber}_*`;
+			const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${currPostId}`;
 
-		await redisDel(latestActivitykey);
-		await deleteKeys(trackListingKey);
-		await redisDel(referendumDetailsKey);
-	}
+			await redisDel(latestActivitykey);
+			await deleteKeys(trackListingKey);
+			await redisDel(referendumDetailsKey);
+		}
 
-	if(currPostType == ProposalType.DISCUSSIONS){
-		const latestActivitykey = `${network}_latestActivity_OpenGov`;
-		const referendumDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
-		const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+		if(currPostType == ProposalType.DISCUSSIONS){
+			const latestActivitykey = `${network}_latestActivity_OpenGov`;
+			const referendumDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
+			const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
 
-		await redisDel(latestActivitykey);
-		await redisDel(referendumDetailsKey);
-		await deleteKeys(discussionListingKey);
+			await redisDel(latestActivitykey);
+			await redisDel(referendumDetailsKey);
+			await deleteKeys(discussionListingKey);
+		}
 	}
 
 	const preimage = post?.preimage;

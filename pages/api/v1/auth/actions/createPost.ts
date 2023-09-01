@@ -82,11 +82,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 		});
 	}
 
-	const discussionDetail = `${network}_${ProposalType.DISCUSSIONS}_postId_${newID}`;
-	const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+	if(process.env.IS_CACHING_ALLOWED == '1'){
+		const discussionDetail = `${network}_${ProposalType.DISCUSSIONS}_postId_${newID}`;
+		const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
 
-	await redisDel(discussionDetail);
-	await deleteKeys(discussionListingKey);
+		await redisDel(discussionDetail);
+		await deleteKeys(discussionListingKey);
+	}
 
 	await postDocRef.set(newPost).then(() => {
 		res.status(200).json({ message: 'Post saved.', post_id: newID });

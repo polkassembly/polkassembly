@@ -126,11 +126,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (loginWallet) {
 			setWallet(loginWallet);
 			(async() => {
-				setLoadingStatus({ isLoading: true, message: 'Getting accounts' });
+				setLoadingStatus({ isLoading: true, message: 'Awaiting accounts' });
 				const accountsData = await getAccountsFromWallet({ api, chosenWallet: loginWallet, loginAddress, network });
 				setAccounts(accountsData?.accounts || []);
 				onAccountChange(accountsData?.account || '');
-				setLoadingStatus({ isLoading: false, message: 'Getting accounts' });
+				setLoadingStatus({ isLoading: false, message: 'Awaiting accounts' });
 			})();
 		} else {
 			if(!window) return;
@@ -401,6 +401,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						message: `Your vote on Referendum #${referendumId} will be successful once approved by other signatories.`,
 						status: NotificationStatus.SUCCESS
 					});
+					setLoadingStatus({ isLoading: false, message: '' });
 				}catch(error){
 					console.log(':( transaction failed');
 					console.error('ERROR:', error);
@@ -409,8 +410,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						message: error.message,
 						status: NotificationStatus.ERROR
 					});
-				}finally{
-					setLoadingStatus({ isLoading: false, message: '' });
 				}
 			};
 			setLoadingStatus({ isLoading: true, message: 'Please login to polkasafe' });
@@ -434,7 +433,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			setShowModal(false);
 			setSuccessModal(true);
 			handleModalReset();
-
+			setLoadingStatus({ isLoading: false, message: '' });
 		};
 		const onFailed = (message: string) => {
 			setLoadingStatus({ isLoading: false, message: '' });
@@ -487,7 +486,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				className='bg-pink_primary hover:bg-pink_secondary text-lg mb-3 text-white border-pink_primary hover:border-pink_primary rounded-lg flex items-center justify-center p-7 w-[100%]'
 				onClick={() => setShowModal(true)}
 			>
-				{lastVote === null || lastVote === undefined  ? 'Cast Vote Now' : 'Cast Vote Again' }
+				{!lastVote ? 'Cast Vote Now' : 'Cast Vote Again' }
 			</Button>
 			<Modal
 				open={showModal}
@@ -557,7 +556,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									className='mb-6'
 								/>
 							}
-							{((showMultisig || initiatorBalance.gte(totalDeposit)) || isBalanceErr && !loadingStatus.isLoading && wallet) && (((ayeVoteValue.add(nayVoteValue)).add(abstainVoteValue)).add(lockedBalance)).gte(showMultisig ? multisigBalance : availableBalance) && <Alert type='info' message='Insufficient balance' showIcon className='mb-4 rounded-[4px]'/>}
+							{
+								((showMultisig || initiatorBalance.gte(totalDeposit)) && !multisig) || (isBalanceErr && !loadingStatus.isLoading && wallet) && (((ayeVoteValue.add(nayVoteValue)).add(abstainVoteValue)).add(lockedBalance)).gte(showMultisig ? multisigBalance : availableBalance) && <Alert type='info' message='Insufficient balance' showIcon className='mb-4 rounded-[4px]'/>}
 							{walletErr.error === 1 && !loadingStatus.isLoading && <Alert message={walletErr.message} description={walletErr.description} showIcon/>}
 							{accounts.length === 0  && wallet && !loadingStatus.isLoading && <Alert message='No addresses found in the address selection tab.' showIcon type='info' />}
 							{
@@ -659,7 +659,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					</Spin>
 				</>
 			</Modal>
-			<VoteInitiatedModal title={multisig ? 'Voting with Polkasafe Multisig initiated':'Voting' }  vote={vote} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} multisig={multisig ? multisig : ''} conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} icon={multisig ? <MultisigSuccessIcon/>: <SuccessIcon/>}/>
+			<VoteInitiatedModal title={multisig ? 'Voting with Polkasafe Multisig initiated':'Voted successfully' }  vote={vote} balance={voteValues.totalVoteValue} open={successModal} setOpen={setSuccessModal}  address={address} multisig={multisig ? multisig : ''} conviction={conviction}  votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} ayeVoteValue={voteValues.ayeVoteValue} nayVoteValue={voteValues.nayVoteValue} abstainVoteValue={voteValues.abstainVoteValue} icon={multisig ? <MultisigSuccessIcon/>: <SuccessIcon/>}/>
 		</div>
 	</>;
 

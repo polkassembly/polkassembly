@@ -442,7 +442,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 					</Spin>
 				</>
 			</Modal>
-			<VoteInitiatedModal title={'Voting' }  vote={vote} balance={ZERO_BN } open={successModal} setOpen={setSuccessModal}  address={address} votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} icon={<SuccessIcon/>}/>
+			<VoteInitiatedModal title='Voted successfully'  vote={vote} balance={ZERO_BN } open={successModal} setOpen={setSuccessModal}  address={address} votedAt={ dayjs().format('HH:mm, Do MMMM YYYY')} icon={<SuccessIcon/>}/>
 		</div>
 	</>;
 

@@ -97,14 +97,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const handleDefaultWallet=async(wallet:Wallet) => {
 		setWallet(wallet);
-		setLoadingStatus({ isLoading: true, message: 'Getting accounts' });
+		setLoadingStatus({ isLoading: true, message: 'Awaiting accounts' });
 		const accountsData = await getMetamaskAccounts({ chosenWallet: wallet, loginAddress, network });
 		if(accountsData){
 			setAccounts(accountsData?.accounts || []);
 			onAccountChange(accountsData?.account || '');
 			setAddress(accountsData.account);
 			setIsTalismanEthereum(accountsData?.isTalismanEthereum);
-			setLoadingStatus({ isLoading: false, message: 'Getting accounts' });
+			setLoadingStatus({ isLoading: false, message: 'Awaiting accounts' });
 		}
 		if (walletConnectProvider) {
 			await getWalletConnectAccounts();
@@ -268,7 +268,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			return;
 		}
 
-		setLoadingStatus({ isLoading: true, message: 'Waiting for confirmation' });
+		setLoadingStatus({ isLoading: true, message: 'Awaiting block confirmation' });
 
 		const voteContract = new web3.eth.Contract(abi, contractAddress);
 

@@ -269,7 +269,7 @@ export default (styled(TimelineContainer)`
 		}
 	
 		.status-update{
-		display:none;
+			margin-left: -110px;
 		}
 	}
 	@media (max-width: 400px){

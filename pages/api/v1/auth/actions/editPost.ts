@@ -9,6 +9,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
+import { deleteKeys, redisDel } from '~src/auth/redis';
 import { MessageType } from '~src/auth/types';
 import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
 import getDefaultUserAddressFromId from '~src/auth/utils/getDefaultUserAddressFromId';
@@ -123,9 +124,31 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					isAuthor = true;
 				}
 			}
+
+			if(proposalType == ProposalType.REFERENDUM_V2){
+				const latestActivitykey = `${network}_latestActivity_OpenGov`;
+				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${postRes.data?.proposals?.[0].trackNumber}_*`;
+				const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
+
+				await redisDel(latestActivitykey);
+				await deleteKeys(trackListingKey);
+				await redisDel(referendumDetailsKey);
+			}
 		}
 		else if(post?.user_id === user.id){
 			isAuthor = true;
+		}
+
+		if(process.env.IS_CACHING_ALLOWED == '1'){
+			if(proposalType == ProposalType.DISCUSSIONS){
+				const latestActivitykey = `${network}_latestActivity_OpenGov`;
+				const referendumDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
+				const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+
+				await redisDel(latestActivitykey);
+				await redisDel(referendumDetailsKey);
+				await deleteKeys(discussionListingKey);
+			}
 		}
 
 		if(!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
@@ -186,6 +209,18 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		created_at = dayjs(post.createdAt).toDate();
 
 		if(!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });
+
+		if(process.env.IS_CACHING_ALLOWED == '1'){
+			if(proposalType == ProposalType.REFERENDUM_V2){
+				const latestActivitykey = `${network}_latestActivity_OpenGov`;
+				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${postRes.data?.proposals?.[0].trackNumber}_*`;
+				const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
+
+				await redisDel(latestActivitykey);
+				await deleteKeys(trackListingKey);
+				await redisDel(referendumDetailsKey);
+			}
+		}
 	}
 
 	const newHistory: IPostHistory = {

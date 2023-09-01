@@ -3,13 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
-import oauth from 'oauth';
 import { promisify } from 'util';
 import { isValidNetwork } from '~src/api-utils';
+import { MessageType } from '~src/auth/types';
 import firebaseAdmin from '~src/services/firebaseInit';
-
-const TWITTER_CONSUMER_API_KEY = process.env.TWITTER_CONSUMER_API_KEY || '';
-const TWITTER_CONSUMER_API_SECRET_KEY = process.env.TWITTER_CONSUMER_API_SECRET_KEY || '';
+import { IApiResponse } from '~src/types';
+import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import getOauthConsumer from '~src/util/getOauthConsumer';
 
 const firestore = firebaseAdmin.firestore();
 
@@ -20,26 +20,26 @@ export enum VerificationStatus {
 	NOT_VERIFIED = 'Not verified',
 }
 
-const oauthConsumer = new oauth.OAuth(
-	'https://twitter.com/oauth/request_token',
-	'https://twitter.com/oauth/access_token',
-	TWITTER_CONSUMER_API_KEY,
-	TWITTER_CONSUMER_API_SECRET_KEY,
-	'1.0A',
-	'https://api.polkassembly.io/api/v1/verification/twitter-callback',
-	'HMAC-SHA1'
-);
+interface Props{
+	oauthVerifier: string,
+	oauthRequestToken: string,
+	oauthRequestTokenSecret: string,
+	network: string;
+}
 
 async function oauthGetUserById(
-	userId: string | number,{ oauthAccessToken, oauthAccessTokenSecret }:{ oauthAccessToken?: any; oauthAccessTokenSecret?: any } = {})
+	userId: string | number, network:string, { oauthAccessToken, oauthAccessTokenSecret }:{ oauthAccessToken?: any; oauthAccessTokenSecret?: any } = {})
 {
+	const oauthConsumer =  getOauthConsumer(network);
+
 	return promisify(oauthConsumer.get.bind(oauthConsumer))(
 		`https://api.twitter.com/1.1/users/show.json?user_id=${userId}`,
 		oauthAccessToken,
 		oauthAccessTokenSecret
 	).then((body: any) => JSON.parse(body));
 }
-async function getOAuthAccessTokenWith({
+
+async function getOAuthAccessTokenWith( network: string, {
 	oauthRequestToken,
 	oauthRequestTokenSecret,
 	oauthVerifier
@@ -48,6 +48,9 @@ async function getOAuthAccessTokenWith({
 	oauthRequestTokenSecret?: any;
 	oauthVerifier?: any;
 } = {}): Promise<any> {
+
+	const oauthConsumer =  getOauthConsumer(network);
+
 	return new Promise((resolve, reject) => {
 		oauthConsumer.getOAuthAccessToken(
 			oauthRequestToken,
@@ -60,6 +63,41 @@ async function getOAuthAccessTokenWith({
 	});
 }
 
+export const getTwitterCallback = async({ network, oauthVerifier, oauthRequestToken, oauthRequestTokenSecret }: Props ): Promise<IApiResponse<string | MessageType>> => {
+	try{
+		const { oauthAccessToken, oauthAccessTokenSecret, results } =
+ await getOAuthAccessTokenWith(network,{ oauthRequestToken, oauthRequestTokenSecret, oauthVerifier });
+
+		const { user_id: userId /*, screen_name */ } = results;
+		const user = await oauthGetUserById(userId, network,
+			{
+				oauthAccessToken,
+				oauthAccessTokenSecret
+			});
+
+		const twitterVerificationRef = firestore.collection('twitter_verification_tokens').doc(user?.screen_name);
+		if(! twitterVerificationRef) throw apiErrorWithStatusCode('Wrong verification token found', 400);
+
+		await twitterVerificationRef.set({
+			...twitterVerificationRef,
+			screen_name: user?.screen_name || '',
+			verified: true
+		});
+
+		return {
+			data: '/',
+			error: null,
+			status: 200
+		};
+	}catch(error){
+		return {
+			data: null,
+			error: 'Wrong verification token found!',
+			status: 400
+		};
+	}
+};
+
 const handler: NextApiHandler<any> = async (req, res) => {
 	const {
 		oauth_verifier: oauthVerifier,
@@ -70,32 +108,17 @@ const handler: NextApiHandler<any> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { oauthAccessToken, oauthAccessTokenSecret, results } =
-	await getOAuthAccessTokenWith({
-		oauthRequestToken,
-		oauthRequestTokenSecret,
-		oauthVerifier
+	if(!oauthVerifier || !oauthRequestToken || !oauthRequestTokenSecret)  return res.status(400).json({ message: 'Invalid params in req body' });
+
+	const { data, error } = await getTwitterCallback({
+		network,
+		oauthRequestToken: String(oauthRequestToken),
+		oauthRequestTokenSecret: String(oauthRequestTokenSecret),
+		oauthVerifier: String(oauthVerifier)
 	});
-
-	const { user_id: userId /*, screen_name */ } = results;
-	const user = await oauthGetUserById(userId, {
-		oauthAccessToken,
-		oauthAccessTokenSecret
-	});
-
-	const twitterVerification = await firestore.collection('twitter_verification_tokens').doc(user.screen_name || '').get();
-	const data = twitterVerification.data();
-
-	if (data?.verified) {
-		return res.status(200).json({ status: VerificationStatus.ALREADY_VERIFIED });
-	} else {
-		const twitterVerificationRef = firestore.collection('twitter_verification_tokens').doc(user.screen_name || '');
-		await twitterVerificationRef.set({
-			...twitterVerificationRef,
-			screen_name: user?.screen_name || '',
-			verified: true
-		});
+	if(error){
+		return res.status(400).send({ message: error });
 	}
-	return res.redirect(`https://${network}/polkassembly.io`);
+	return res.redirect(data as string);
 };
 export default handler;

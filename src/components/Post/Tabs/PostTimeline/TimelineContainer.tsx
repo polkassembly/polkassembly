@@ -347,7 +347,7 @@ export default (styled(TimelineContainer)`
 			margin-left: -110px;
 		}
 	}
-	@media (max-width: 400px){
+	@media (max-width: 400px) and (min-width:360px){
 		.content-container {
 			width: 248px;
 		}
@@ -362,6 +362,28 @@ export default (styled(TimelineContainer)`
 
 		.arrow-container{
 			margin-left: 8px;
+		}
+	}
+
+	@media (max-width: 360px) and (min-width:320px){
+		.content-container {
+			width: 248px;
+		}
+
+		.timeline-container {
+			margin: 0 -27px;
+		}
+
+		.round-icon {
+			margin-left: 2px;
+		}
+
+		.arrow-container{
+			margin-left: 8px;
+		}
+
+		.timeline-dropdown {
+			margin-left: 256px;
 		}
 	}
 `);

@@ -5,26 +5,31 @@
 /* eslint-disable no-tabs */
 import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Button, Divider, Skeleton, Space } from 'antd';
+import { Button, Divider, Skeleton, Space,Dropdown } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, {ReactNode, useEffect, useRef, useState } from 'react';
 import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import NetworkDropdown from 'src/ui-components/NetworkDropdown';
 import styled from 'styled-components';
+import PolkaSafe from '~assets/icons/PolkaSafe.svg';
+import Mail from '~assets/icons/mail.svg';
 import { chainProperties } from '~src/global/networkConstants';
-
+import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import SearchBar from '~src/ui-components/SearchBar';
 import PaLogo from './PaLogo';
+import Arrow from '~assets/icons/arrow.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
-
+import TownHall from '~assets/icons/TownHall.svg';
 import { EGovType, UserDetailsContextType } from '~src/types';
 import Link from 'next/link';
-
+import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { logout } from '~src/services/auth.service';
+import UserDropdown from '../../ui-components/UserDropdown';
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -39,13 +44,19 @@ interface Props {
 
 const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 	const { network } = useNetworkContext();
+	const currentUser = useUserDetailsContext();
 	const { govType, username, setUserDetailsContextState } = useUserDetailsContext();
 	const router = useRouter();
+	const { defaultAddress,web3signup } = currentUser;
 	const [open, setOpen] = useState(false);
 	const [openLogin,setLoginOpen]=useState<boolean>(false);
 	const [openSignup,setSignupOpen]=useState<boolean>(false);
 	const isClicked = useRef(false);
-
+    
+	const handleLogout = async () => {
+		logout(setUserDetailsContextState);
+		router.replace(router.asPath);
+	};
 	const setGovTypeToContext = (govType: EGovType) => {
 		setUserDetailsContextState((prev: UserDetailsContextType) => {
 			return {
@@ -61,7 +72,71 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[network]);
+	const menudropDownItems: ItemType[]= [
+		{
+			className:'logo-class',
+			key: 'Townhall',
+			label: (
+				<a  href="https://townhallgov.com/" target="_blank" rel="noreferrer" className='custom-link' >
 
+					<span className='flex justify-center items-center '>
+						<TownHall />
+						<div className='ml-2 '> TownHall </div>
+					</span>
+				</a>
+			)
+		},
+		{
+			className:'logo-class',
+			key: 'Polkasafe',
+			label: (<a href="https://polkasafe.xyz/" target="_blank" rel="noreferrer" className='custom-link'>
+				<span className='flex justify-center items-center'>
+					<PolkaSafe/>
+					<span className='ml-2'>Polkasafe</span>
+				</span>
+			</a>
+			)
+		}
+	];
+
+	
+
+	const dropdownMenuItems: ItemType[] = [
+		{
+			key: 'view profile',
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+				<UserOutlined />
+				<span>View Profile</span>
+			</Link>
+		},
+		{
+			key: 'settings',
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
+				<SettingOutlined />
+				<span>Settings</span>
+			</Link>
+		},
+		{
+			key: 'logout',
+			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'	onClick={handleLogout} href='/'>
+				<LogoutOutlined />
+				<span>Logout</span>
+			</Link>
+		}
+	];
+	const AuthDropdown = ({ children }: {children: ReactNode}) => (
+		<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
+			{children}
+		</Dropdown>
+	);
+
+	const MenuDropdown = ({ children }: {children: ReactNode}) => (
+
+		<Dropdown menu={{ items: menudropDownItems }} trigger={['click']}>
+			{children}
+		</Dropdown>
+
+	);
 	return (
 		<Header className={`${className} shadow-md z-[1001] sticky top-0 flex items-center bg-white h-[60px] max-h-[60px] px-6 leading-normal border-solid border-t-0 border-r-0 border-b-2 border-l-0 border-pink_primary`}>
 			<MenuOutlined className='lg:hidden mr-5' onClick={() => {
@@ -96,10 +171,47 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 								: null
 						}
 						{!username
-							&& <div className='flex items-center lg:gap-x-2'>
-								<Button className='w-[74px] h-[33px] bg-pink_primary rounded-[2px] md:rounded-[4px] text-white lg:text-sm lg:font-medium lg:leading-[21px] tracking-[0.00125em] flex items-center justify-center hover:text-white' onClick={() => {setSidedrawer(false); setLoginOpen(true);}}>Login</Button>
+							? <div className='flex items-center lg:gap-x-2'>
+								<Button className='w-[60px] h-[22px] lg:w-[74px] lg:h-[32px] bg-pink_primary rounded-[2px] md:rounded-[4px] text-white lg:text-sm lg:font-medium lg:leading-[21px] tracking-[0.00125em] flex items-center justify-center hover:text-white' onClick={() => {setSidedrawer(false); setLoginOpen(true);}}>Login</Button>
+
 							</div>
-						}
+
+							:<AuthDropdown>
+								{
+									!web3signup ?	<div className="flex items-center justify-between gap-x-2 bg-[#f6f7f9] rounded-3xl px-3 border-1px-solid-#d7dce3  ">
+
+										<Mail/>
+										<div className='flex items-center justify-between gap-x-1'>
+											<span className='truncate w-[85%] normal-case'>{username || ''}</span>
+											<Arrow/>
+										</div>
+
+									</div>:	<div className={'flex items-center justify-between gap-x-2'} >
+										<UserDropdown address={defaultAddress || ''}/>
+									</div>
+								}
+
+							</AuthDropdown>
+}
+					
+					<div className='mr-0 lg:mr-10 bg-[#FEF2F8] h-[24px] rounded-[6px]'>
+
+						<MenuDropdown>
+							<svg width="24" height="100%" viewBox="0 0 24 24"  fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M17.7143 18.8571C17.7143 19.4883 18.226 20 18.8571 20C19.4883 20 20 19.4883 20 18.8571C20 18.226 19.4883 17.7143 18.8571 17.7143C18.226 17.7143 17.7143 18.226 17.7143 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+								<path d="M10.8571 18.8571C10.8571 19.4883 11.3688 20 12 20C12.6312 20 13.1429 19.4883 13.1429 18.8571C13.1429 18.226 12.6312 17.7143 12 17.7143C11.3688 17.7143 10.8571 18.226 10.8571 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+								<path d="M4 18.8571C4 19.4883 4.51167 20 5.14286 20C5.77404 20 6.28571 19.4883 6.28571 18.8571C6.28571 18.226 5.77404 17.7143 5.14286 17.7143C4.51167 17.7143 4 18.226 4 18.8571Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+								<path d="M17.7143 12C17.7143 12.6312 18.226 13.1429 18.8571 13.1429C19.4883 13.1429 20 12.6312 20 12C20 11.3688 19.4883 10.8571 18.8571 10.8571C18.226 10.8571 17.7143 11.3688 17.7143 12Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+								<path d="M10.8571 12C10.8571 12.6312 11.3688 13.1429 12 13.1429C12.6312 13.1429 13.1429 12.6312 13.1429 12C13.1429 11.3688 12.6312 10.8571 12 10.8571C11.3688 10.8571 10.8571 11.3688 10.8571 12Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+								<path d="M4 12C4 12.6312 4.51167 13.1429 5.14286 13.1429C5.77404 13.1429 6.28571 12.6312 6.28571 12C6.28571 11.3688 5.77404 10.8571 5.14286 10.8571C4.51167 10.8571 4 11.3688 4 12Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+								<path d="M17.7143 5.14286C17.7143 5.77404 18.226 6.28571 18.8571 6.28571C19.4883 6.28571 20 5.77404 20 5.14286C20 4.51167 19.4883 4 18.8571 4C18.226 4 17.7143 4.51167 17.7143 5.14286Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+								<path d="M10.8571 5.14286C10.8571 5.77404 11.3688 6.28571 12 6.28571C12.6312 6.28571 13.1429 5.77404 13.1429 5.14286C13.1429 4.51167 12.6312 4 12 4C11.3688 4 10.8571 4.51167 10.8571 5.14286Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+								<path d="M4 5.14286C4 5.77404 4.51167 6.28571 5.14286 6.28571C5.77404 6.28571 6.28571 5.77404 6.28571 5.14286C6.28571 4.51167 5.77404 4 5.14286 4C4.51167 4 4 4.51167 4 5.14286Z" stroke="#E5007A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+							</svg>
+
+						</MenuDropdown>
+						</div>
+						
 					</Space>
 					{
 						open?
@@ -188,6 +300,16 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer } : Props) => {
 };
 
 export default styled(NavHeader)`
+svg:hover {
+	cursor: pointer;
+  }
+.drop .ant-select-selector {
+    
+	box-sizing:none;
+	border:none !important;
+	box-shadow:none !important;
+}
+
 .padding-zero .ant-modal-content {
 	padding: 0 !important;
 }

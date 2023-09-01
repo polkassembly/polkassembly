@@ -15,6 +15,8 @@ import { useNetworkContext, useUserDetailsContext } from 'src/context';
 import { getLocalStorageToken, logout } from 'src/services/auth.service';
 import { AuctionAdminIcon, BountiesIcon, CalendarIcon, DemocracyProposalsIcon, DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, MembersIcon, MotionsIcon, NewsIcon, OverviewIcon, ParachainsIcon, PreimagesIcon, ReferendaIcon, RootIcon, StakingAdminIcon, TreasuryGroupIcon, TechComProposalIcon , DelegatedIcon } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
+import Arrow from '~assets/icons/arrow.svg';
+import Mail from '~assets/icons/mail.svg';
 
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
@@ -27,6 +29,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import UserDropdown from '~src/ui-components/UserDropdown';
 
 const { Content, Sider } = Layout;
 
@@ -47,55 +50,65 @@ function getSiderMenuItem(
 	} as MenuItem;
 }
 
-const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
-	const dropdownMenuItems: ItemType[] = [
-		{
-			key: 'view profile',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
-				<UserOutlined />
-				<span>View Profile</span>
-			</Link>
-		},
-		{
-			key: 'settings',
-			label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
-				<SettingOutlined />
-				<span>Settings</span>
-			</Link>
-		},
-		{
-			key: 'logout',
-			label: <Link href='/' className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
-				onClick={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					handleLogout(username);
-				}}>
-				<LogoutOutlined />
-				<span>Logout</span>
-			</Link>
-		}
-	];
+// const { setUserDetailsContextState, username, picture ,defaultAddress} = useUserDetailsContext();
+// const getUserDropDown = (handleLogout: any, img?: string | null, username?: string): MenuItem => {
+	
 
-	const AuthDropdown = ({ children }: {children: ReactNode}) => (
+	const AuthDropdown = ({ children }: {children: ReactNode}) => {
+		const { govType, username,web3signup, setUserDetailsContextState } = useUserDetailsContext();
+		const router = useRouter()
+		const handleLogout = async () => {
+			logout(setUserDetailsContextState);
+			router.replace(router.asPath);
+		};
+		const dropdownMenuItems: ItemType[] = [
+			{
+				key: 'view profile',
+				label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href={`/user/${username}`}>
+					<UserOutlined />
+					<span>View Profile</span>
+				</Link>
+			},
+			{
+				key: 'settings',
+				label: <Link className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2' href='/settings?tab=account'>
+					<SettingOutlined />
+					<span>Settings</span>
+				</Link>
+			},
+			{
+				key: 'logout',
+				label: <Link href='/' className='text-navBlue hover:text-pink_primary font-medium flex items-center gap-x-2'
+					onClick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						handleLogout();
+					}}>
+					<LogoutOutlined />
+					<span>Logout</span>
+				</Link>
+			}
+		];
+		return(
 		<Dropdown menu={{ items: dropdownMenuItems }} trigger={['click']}>
 			{children}
 		</Dropdown>
-	);
+	);}
+	
 
-	return getSiderMenuItem(
-		<AuthDropdown>
-			<div className='flex items-center justify-between gap-x-2'>
-				<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
-			</div>
-		</AuthDropdown>,
-		'userMenu',
-		<AuthDropdown>
-			{img ? <Avatar className='-ml-2.5 mr-2' size={40} src={img} /> :
-				<Avatar className='-ml-2.5 mr-2' size={40} icon={<UserOutlined />} />
-			}
-		</AuthDropdown>);
-};
+// 	return getSiderMenuItem(
+// 		<AuthDropdown>
+// 			<div className='flex items-center justify-between gap-x-2'>
+// 				<span className='truncate w-[85%] normal-case'>{username || ''}</span> <DownOutlined className='text-navBlue hover:text-pink_primary text-base' />
+// 			</div>
+// 		</AuthDropdown>,
+// 		'userMenu',
+// 		<AuthDropdown>
+// 			{img ? <Avatar className='-ml-2.5 mr-2' size={40} src={img} /> :
+// 				<Avatar className='-ml-2.5 mr-2' size={40} icon={<UserOutlined />} />
+// 			}
+// 		</AuthDropdown>);
+// };
 
 interface Props {
 	Component: NextComponentType<NextPageContext, any, any>;
@@ -105,10 +118,12 @@ interface Props {
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkContext();
-	const { setUserDetailsContextState, username, picture } = useUserDetailsContext();
+	const { setUserDetailsContextState, username, picture ,defaultAddress,web3signup} = useUserDetailsContext();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
-	const [previousRoute, setPreviousRoute] = useState(router.asPath);
+	const [previousRoute, setPreviousRoute] = useState(router.asPath);;
+
+	
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -262,6 +277,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	const gov2Items:MenuProps['items'] = isOpenGovSupported(network) ? [
+		// getSiderMenuItem('', 'userdropwon', <AuthDropdown><UserDropdown address={defaultAddress || ""}/></AuthDropdown> ),
 		...govOverviewItems,
 
 		// Tracks Heading
@@ -316,26 +332,28 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	const handleMenuClick = (menuItem: any) => {
 		if(['userMenu', 'tracksHeading'].includes(menuItem.key)) return;
-		router.push(menuItem.key);
-		setSidedrawer(false);
-	};
-
-	const handleLogout = async (username: string) => {
-		logout(setUserDetailsContextState);
-		router.replace(router.asPath);
-		if(!router.query?.username) return;
-		if(router.query?.username.includes(username)) {
-			router.replace('/');
+		if(menuItem.key!=="userdropwon"){
+			router.push(menuItem.key);
+			setSidedrawer(false);
 		}
 	};
 
-	const userDropdown = getUserDropDown(handleLogout, picture, username!);
+	// const handleLogout = async (username: string) => {
+	// 	logout(setUserDetailsContextState);
+	// 	router.replace(router.asPath);
+	// 	if(!router.query?.username) return;
+	// 	if(router.query?.username.includes(username)) {
+	// 		router.replace('/');
+	// 	}
+	// };
+
+	// const userDropdown = getUserDropDown(handleLogout, picture, username!);
 
 	let sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 
-	if(username) {
-		sidebarItems = [userDropdown, ...sidebarItems];
-	}
+	// if(username) {
+	// 	sidebarItems = [userDropdown, ...sidebarItems];
+	// }
 
 	return (
 		<Layout className={className}>
@@ -349,6 +367,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
 					className={'hidden overflow-y-hidden sidebar bg-white lg:block bottom-0 left-0 h-screen fixed z-40'}
 				>
+
 					<Menu
 						theme="light"
 						mode="inline"
@@ -372,6 +391,24 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						top: '60px'
 					}}
 				>
+					{username && sidedrawer && 		<div className='px-4 mt-5 sm:hidden block'>
+	<AuthDropdown>
+
+						{
+							!web3signup ?	<div className="flex items-center  gap-x-3  px-3 border-1px-solid-#d7dce3  ">
+
+							<Mail/>
+							<div className='flex items-center  gap-x-1'>
+								<span className='truncate w-[85%] normal-case'>{username || ''}</span>
+								<Arrow />
+							</div>
+							
+							</div> :
+							<div>
+
+						<UserDropdown address={defaultAddress || ""} isSimpleDropdown={true} />
+						</div>}
+						</AuthDropdown></div>}
 					<Menu
 						theme="light"
 						mode="inline"
@@ -477,10 +514,7 @@ margin-top: -17px !important;
 	list-style: none !important;
 }
 
-.auth-sider-menu > li:first-child {
-  margin-bottom: 25px;
-  margin-top: 15px;
-}
+
 
 .ant-empty-image{
 	display: flex;

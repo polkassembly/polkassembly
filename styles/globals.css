@@ -351,3 +351,27 @@ color: var(--lightBlue) !important;
 .tox-autocompleter .tox-menu {
 	border-radius: 8px !important;
 }
+.custom-link  {
+  font-family: '__Poppins_ed4ad5' !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 21px !important;
+  font-style: normal !important;
+  letter-spacing: 0.175px !important;
+  border-radius: 6px 6px 0px 0px;
+  background: linear-gradient(0deg,  0%, #FEF2F8 100%), #FFF;
+  
+}
+
+ .logo-border li:nth-child(1){
+     height:59px;
+       margin-left:-40px;
+     padding:0
+   }
+.logo-class:hover{
+background-color: #FEF2F8 !important;
+}
+.logo-class:hover a{
+
+color: #000 !important;
+}

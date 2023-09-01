@@ -23,7 +23,6 @@ export enum VerificationStatus {
 interface Props{
 	oauthVerifier: string,
 	oauthRequestToken: string,
-	oauthRequestTokenSecret: string,
 	network: string;
 }
 
@@ -63,10 +62,23 @@ async function getOAuthAccessTokenWith( network: string, {
 	});
 }
 
-export const getTwitterCallback = async({ network, oauthVerifier, oauthRequestToken, oauthRequestTokenSecret }: Props ): Promise<IApiResponse<string | MessageType>> => {
+export const getTwitterCallback = async({ network, oauthVerifier, oauthRequestToken }: Props ): Promise<IApiResponse<string | MessageType>> => {
 	try{
+		const tokenVerification = await firestore.collection('twitter_verification_tokens').where('oauth_request_token', '==', oauthRequestToken).limit(1).get();
+
+		const data = tokenVerification.docs[0].data();
+		if (tokenVerification.empty) {
+			return {
+				data: null,
+				error: 'Wrong verification token found!',
+				status: 400
+			};
+		}
+
+		const oauthRequestTokenSecret = data?.oauth_requestToken_secret;
+
 		const { oauthAccessToken, oauthAccessTokenSecret, results } =
- await getOAuthAccessTokenWith(network,{ oauthRequestToken, oauthRequestTokenSecret, oauthVerifier });
+		await getOAuthAccessTokenWith(network,{ oauthRequestToken, oauthRequestTokenSecret, oauthVerifier });
 
 		const { user_id: userId /*, screen_name */ } = results;
 		const user = await oauthGetUserById(userId, network,
@@ -113,7 +125,6 @@ const handler: NextApiHandler<any> = async (req, res) => {
 	const { data, error } = await getTwitterCallback({
 		network,
 		oauthRequestToken: String(oauthRequestToken),
-		oauthRequestTokenSecret: String(oauthRequestTokenSecret),
 		oauthVerifier: String(oauthVerifier)
 	});
 	if(error){

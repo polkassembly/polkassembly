@@ -16,11 +16,10 @@ import Loader from '~src/ui-components/Loader';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
-	const { oauth_verifier: oauthVerifier, oauthRequestToken, oauthRequestTokenSecret } = query;
+	const { oauth_verifier: oauthVerifier, oauth_token:oauthRequestToken } = query;
 	const { data, error } = await getTwitterCallback({
 		network,
 		oauthRequestToken: String(oauthRequestToken),
-		oauthRequestTokenSecret: String(oauthRequestTokenSecret),
 		oauthVerifier: String(oauthVerifier)
 	});
 

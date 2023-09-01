@@ -146,12 +146,13 @@ const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOver
 
 const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 	const { setNetwork } = useNetworkContext();
-	const { resolvedTheme: theme } = useTheme();
+	const { resolvedTheme } = useTheme();
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-	console.log(theme);
+
+	console.log('theme', resolvedTheme);
 	return (
 		<>
 			{chainProperties[network]?.gTag ? <><Script
@@ -180,13 +181,13 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				<div className="mt-8 mx-1">
 					{
 						network !== AllNetworks.COLLECTIVES?
-							<LatestActivity latestPosts={latestPosts} />
+							<LatestActivity latestPosts={latestPosts} theme={resolvedTheme} />
 							: <Gov2LatestActivity gov2LatestPosts={{
 								allGov2Posts: latestPosts.all,
 								discussionPosts: latestPosts.discussions,
 								...latestPosts
 							}}
-							theme={theme}
+							theme={resolvedTheme}
 							/>
 					}
 				</div>

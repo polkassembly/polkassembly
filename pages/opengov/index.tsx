@@ -14,7 +14,7 @@ import Gov2LatestActivity from 'src/components/Gov2Home/Gov2LatestActivity';
 import AboutNetwork from 'src/components/Home/AboutNetwork';
 import News from 'src/components/Home/News';
 import UpcomingEvents from 'src/components/Home/UpcomingEvents';
-
+import { useTheme } from 'next-themes';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useNetworkContext } from '~src/context';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -93,7 +93,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 	const { setNetwork } = useNetworkContext();
 	// const [isAIChatBotOpen, setIsAIChatBotOpen] = useState(false);
 	// const [floatButtonOpen , setFloatButtonOpen] = useState(false);
-
+	const { resolvedTheme } = useTheme();
 	useEffect(() => {
 		setNetwork(network);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -114,7 +114,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData } : Prop
 			</div>
 
 			<div className="mt-8 mx-1">
-				<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
+				<Gov2LatestActivity theme={resolvedTheme} gov2LatestPosts={gov2LatestPosts} />
 			</div>
 
 			<div className="mt-8 mx-1 flex flex-col xl:flex-row items-center justify-between gap-4">

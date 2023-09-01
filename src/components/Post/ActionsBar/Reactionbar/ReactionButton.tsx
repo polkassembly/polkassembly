@@ -40,7 +40,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	setDislikeModalOpen,
 	importedReactions = false
 }) => {
-	const { postData: { postIndex, postType } } = usePostDataContext();
+	const { postData: { postIndex, postType, track_number } } = usePostDataContext();
 	const { id, username } = useContext(UserDetailsContext);
 
 	const usernames = reactions?.[reaction as IReaction].usernames;
@@ -75,6 +75,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 				postId: postIndex,
 				postType,
 				reaction,
+				trackNumber: track_number,
 				userId: id
 			});
 

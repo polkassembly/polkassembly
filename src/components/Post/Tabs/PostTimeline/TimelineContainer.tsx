@@ -28,6 +28,7 @@ import { usePostDataContext } from '~src/context';
 import DownArrow from '~assets/icons/down-icon.svg';
 import UpArrow from '~assets/icons/up-arrow.svg';
 import styled from 'styled-components';
+import StatusTag from '~src/ui-components/StatusTag';
 
 interface BlockStatus {
 	block: number;
@@ -101,27 +102,20 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 	}
 	const url = getBlockLink(network);
 
+	const StatusDiv = ({ status } : { status: string }) => {
+		return (
+			<div className='text-white my-1 px-[15px] text-xs py-[5px] rounded-[50px] items-center status-tag'>
+				<StatusTag className="text-ellipsis overflow-hidden text-white max-w-[86px] md:max-w-full" colorInverted={false} status={status} type={type} />
+			</div>
+		);
+	};
+
 	const Timeline = () => {
 		return(
 			<section className={className}>
 				{
 					statuses.sort(sortfunc).map(({ block, status, timestamp }, index) => {
 						const blockDate = dayjs(timestamp);
-						let color;
-						if(status === 'DecisionDepositePlaced'){
-							status = 'Decision deposite placed';
-							color = '#FF67000';
-						}
-						else if(status === 'Deciding'){
-							color = '#FF67000';
-						}
-						else if(status === 'Executed' || status === 'Submitted' || status === 'Confirmed'){
-							color = '#5BC044';
-						}
-						else{
-							color = '#407AFC';
-						}
-
 						return (
 							<div key={status} className={'border-t border-black-300'} style={index === 0 ? { borderTop: 'none' } : { borderTop: '1px solid #D2D8E0' }}>
 								<div className='content-container'>
@@ -136,9 +130,10 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 												</a>
 											</div>
 											<div className="text-right export-link">
-												<p style={{ backgroundColor: color }} className={'text-white my-1 px-[15px] text-xs py-[5px] rounded-[50px] items-center'}>
+												{/* <p style={{ backgroundColor: color }} className={'text-white my-1 px-[15px] text-xs py-[5px] rounded-[50px] items-center'}>
 													{status}
-												</p>
+												</p> */}
+												<StatusDiv status={status} />
 											</div>
 										</div>
 									</article>
@@ -150,6 +145,20 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 			</section>
 		);
 	};
+	let color;
+	const status = timeline?.statuses[statuses.length - 1].status;
+	if(status === 'DecisionDepositePlaced' || status === 'Deciding' || status === 'Active' || status === 'Extended' || status === 'closing'){
+		color = '#FF67000';
+	}
+	else if(status === 'Executed' || status === 'Passed' || status === 'Approved' || status === 'Claimed' || status === 'Awarded' || status === 'Closed' || status === 'Confirmed' || status === 'Tabled'){
+		color = '#5BC044';
+	}
+	else if(status === 'Proposed' || status === 'Opened' || status === 'Submitted' || status === 'Added'){
+		color = '#5BC044';
+	}
+	else{
+		color = '#FF0000';
+	}
 
 	return (
 		<section className={`${className}`}>
@@ -164,7 +173,9 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 					<p className='timeline-dropdown' style={{ backgroundColor: activeColor, marginTop: '-44px' }}>
 						{isCollapsed ? (
 							<div className="flex w-[200px] gap-3 arrow-container">
-								<p className='bg-[#5BC044] text-white my-1 text-center px-[15px] w-[100px] text-xs py-[5px] rounded-[50px] items-center status-update'>{timeline?.statuses[statuses.length - 1].status}</p>
+								<p className=' text-white my-1 text-center px-[15px] w-[100px] text-xs py-[5px] rounded-[50px] items-center status-update' style={{ backgroundColor: color }}>
+									{timeline?.statuses[statuses.length - 1].status}
+								</p>
 								<DownArrow onClick={toggleCollapse} className="mt-[12px]"/>
 							</div>
 						) : (
@@ -208,6 +219,10 @@ export default (styled(TimelineContainer)`
 	.arrow-container{
 		margin-left: -107px;
 	}
+
+	.status-tag{
+		margin-right: -16px;
+	}
 	
 	@media (min-width: 600px) and (max-width: 800px) {
 		.content-container {
@@ -228,18 +243,17 @@ export default (styled(TimelineContainer)`
 		}
 	}
 	
-	@media (max-width: 600px) {
+	@media (max-width: 600px) and (min-width:400px){
 		.content-container {
-		width: 213px;
+		width: 293px;
 		}
-	
+
 		.export-link {
-		margin-left: 47px;
-		margin-right: auto;
+			margin-right: -2px
 		}
-	
+
 		.timeline-container {
-		margin: 0;
+			margin: 0;
 		}
 	
 		.timeline-dropdown {
@@ -256,6 +270,23 @@ export default (styled(TimelineContainer)`
 	
 		.status-update{
 		display:none;
+		}
+	}
+	@media (max-width: 400px){
+		.content-container {
+			width: 248px;
+		}
+
+		.timeline-container {
+			margin: 0 5px;
+		}
+
+		.round-icon {
+			margin-left: 33px;
+		}
+
+		.arrow-container{
+			margin-left: 8px;
 		}
 	}
 `);

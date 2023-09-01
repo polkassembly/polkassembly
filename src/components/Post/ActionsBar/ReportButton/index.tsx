@@ -29,6 +29,7 @@ interface IReportButtonProps {
 	onDeleteComment?: () => Promise<void>;
 	onDeletePost?: () => void;
 	isReply?: boolean;
+	isPost?: boolean;
 	allowed_roles?: string[];
 }
 
@@ -40,7 +41,7 @@ const reasons = [
 ];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , isReply, onDeleteReply, onDeleteComment , onDeletePost, allowed_roles } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal , isReply, isPost, onDeleteReply, onDeleteComment , onDeletePost, allowed_roles } = props;
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
@@ -183,7 +184,8 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	return (
 		<>
 			{
-				isReply ? <Button className='text-pink_primary inline-block flex items-center border-none shadow-none text-xs' onClick={() => setShowModal(true)}><DeleteOutlined />Delete</Button> :
+				isReply || isPost ? <Button className={isPost ? 'inline-block flex items-center border-none shadow-none text-pink_primary' : 'text-xs text-pink_primary inline-block flex items-center border-none shadow-none'} onClick={() => setShowModal(true)}>
+					<DeleteOutlined />Delete</Button> :
 					<Button className={`border-none ${ className } text-pink_primary flex items-center shadow-none px-1.5 md:px-2`} onClick={() => setShowModal(true)}>
 						{
 							isDeleteModal ?

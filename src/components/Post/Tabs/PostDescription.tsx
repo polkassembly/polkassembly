@@ -118,7 +118,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					<ShareButton title={title} />
 					{
 						allowed_roles && allowed_roles.includes('moderator')?
-							<ReportButton proposalType={postType} allowed_roles={allowed_roles} onDeletePost={deletePost} isDeleteModal={true} type='post' postId={`${postIndex}`} /> :
+							<ReportButton proposalType={postType} allowed_roles={allowed_roles} isPost={true} onDeletePost={deletePost} isDeleteModal={true} type='post' postId={`${postIndex}`} /> :
 							null
 					}
 				</div>

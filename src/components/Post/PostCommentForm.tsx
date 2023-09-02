@@ -21,7 +21,7 @@ import { NotificationStatus } from '~src/types';
 import { Input } from 'antd';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
-import EmojiIcon from '~assets/icons/chatbox-icons/emoji-1.svg';
+// import EmojiIcon from '~assets/icons/chatbox-icons/emoji-1.svg';
 import SadDizzyIcon from '~assets/icons/sentiments-icons/sad-dizzy.svg';
 import SadIcon from '~assets/icons/sentiments-icons/sad.svg';
 import NeutralIcon from '~assets/icons/sentiments-icons/neutral.svg';
@@ -35,6 +35,13 @@ interface IPostCommentFormProps {
 	voteDecision? :string
 	setSuccessModalOpen?: (pre: boolean) => void;
 setCurrentState?:(postId: string, type:string, comment: IComment) => void;
+}
+
+interface IEmojiOption {
+	icon: any;
+	currentSentiment: number;
+	clickable?:boolean;
+	disabled?:boolean;
 }
 
 const commentKey = () => `comment:${global.window.location.href}`;
@@ -54,28 +61,30 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [textBoxHeight,setTextBoxHeight] = useState(40);
 	const [showEmojiMenu, setShowEmojiMenu] = useState(false);
 	const [selectedIcon, setSelectedIcon] = useState(null);
-	// const [content, setContent] = useState('');
-	// const [loading, setLoading] = useState(false);
-	const toggleEmojiMenu = () => {
-		setShowEmojiMenu(!showEmojiMenu);
-	};
+
 	const handleEmojiClick = (icon:any, currentSentiment:any) => {
 		setContent((prevContent) => prevContent + icon);
 		setSelectedIcon(icon);
-		toggleEmojiMenu();
+		setShowEmojiMenu(!showEmojiMenu);
 		setSentiment(currentSentiment);
 	};
-	const EmojiOption = ({ icon, currentSentiment, clickable = true }) => (
+
+	const EmojiOption = ({ icon, currentSentiment = 3, clickable = true, disabled }: IEmojiOption) => (
 		<Button
-			className="text-xl w-10 h-10 pr-[10px] text-center cursor pointer hover:bg-baby_pink"
-			onClick={clickable ? () => { handleEmojiClick(icon, currentSentiment); } : null}>
+			disabled={Boolean(disabled)}
+			className="text-2xl w-10 h-10 border-solid hover:bg-baby_pink"
+			onClick={() => { clickable && handleEmojiClick(icon, currentSentiment); }}>
 			{icon}
 		</Button>
 	);
 
-	const sentimentsIcons = {
-		[ESentiment.Neutral]:  <NeutralIcon style={{ border: 'none' }}/>
-	}
+	const sentimentsIcons:any = {
+		[ESentiment.Against]:  <SadDizzyIcon style={{ border: 'none' }} />,
+		[ESentiment.SlightlyAgainst]:  <SadIcon style={{ border: 'none' }}/>,
+		[ESentiment.Neutral]:  <NeutralIcon style={{ border: 'none' }}/>,
+		[ESentiment.SlightlyFor]:  <SmileIcon style={{ border: 'none' }}/>,
+		[ESentiment.For]:  <SmileDizzyIcon style={{ border: 'none' }}/>
+	};
 
 	const onContentChange = (content: string) => {
 		setContent(content);
@@ -200,10 +209,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 
 	if (!id) return <div>You must log in to comment.</div>;
 
-	// if(vote === 'Aye'){
-	// 	<
-	// }
-
 	return (
 		<div className={className}>
 			<UserAvatar
@@ -254,15 +259,15 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 													<div className="absolute top-[-55px] right-[77px] w-[234px] h-[50px] pt-[7px] p-2 flex space-x-1" style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}>
 														<EmojiOption icon={<SadDizzyIcon style={{ border: 'none' }} />} currentSentiment={1}/>
 														<EmojiOption icon={<SadIcon style={{ border: 'none' }}/>} currentSentiment={2} />
-														<EmojiOption icon={<NeutralIcon style={{ border: 'none' }}/>} currentSentiment={3} />
+														<EmojiOption icon={<NeutralIcon style={{ alignItems: 'center', border: 'none', display: 'flex', justifyContent: 'center' }}/>} currentSentiment={3} />
 														<EmojiOption icon={<SmileIcon style={{ border: 'none' }}/>} currentSentiment={4} />
 														<EmojiOption icon={<SmileDizzyIcon style={{ border: 'none' }}/>} currentSentiment={5} />
 													</div>
 												)}
-												<Button className="w-10 h-10 mr-[10px] pt-[7px] pl-[8px]  hover:bg-baby_pink" onClick={toggleEmojiMenu} disabled={!content}>
-													{selectedIcon ? selectedIcon : <EmojiOption icon={sentimentsIcons[sentiment]} currentSentiment={3} clickable={false}/> }
-													{/* <EmojiIcon /> */}
-												</Button>
+												{/* <EmojiOption icon={sentimentsIcons[sentiment]} currentSentiment={3} clickable={false}/> */}
+												<div className="w-10 h-10 mr-[7px] border-solid" onClick={() => setShowEmojiMenu(!showEmojiMenu) }>
+													{ selectedIcon || <EmojiOption disabled={!content} icon={sentimentsIcons[sentiment]} currentSentiment={3} clickable={false}/> }
+												</div>
 												<Button disabled={!content} loading={loading} htmlType="submit" className={`bg-pink_primary text-white border-none h-[40px] w-[67px] hover:bg-pink_secondary flex items-center justify-center my-0 ${!content ? 'opacity-50' : ''}`}>Post</Button>
 											</div>
 										</div>

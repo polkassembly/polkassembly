@@ -28,7 +28,6 @@
     "@polkadot/util": "^12.3.2",
     "@polkadot/util-crypto": "^12.3.2",
     "@sendgrid/mail": "^7.7.0",
-    "@sentry/nextjs": "^7.49.0",
     "@subsocial/grill-widget": "^0.0.8",
     "@substrate/connect": "^0.7.30",
     "@tinymce/tinymce-react": "^4.3.0",
@@ -109,7 +108,6 @@
     "web3": "~1.6.1"
   },
   "devDependencies": {
-    "@sentry/cli": "^2.18.1",
     "@svgr/webpack": "^6.5.1",
     "@types/cookie": "^0.5.1",
     "@types/diff": "^5.0.3",

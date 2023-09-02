@@ -29,6 +29,7 @@ import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
 import { getAllCommentsByTimeline } from './utils/getAllCommentsByTimeline';
+import { useTheme } from 'next-themes';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -86,6 +87,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
 	const { postData: { postType, timeline, created_at } } = usePostDataContext();
 	const targetOffset = 10;
+	const { resolvedTheme } = useTheme();
 	const {
 		comments,
 		setComments,
@@ -336,6 +338,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>}
 					{
 						<RefendaLoginPrompts
+							theme={resolvedTheme}
 							modalOpen={openLoginModal}
 							setModalOpen={setOpenLoginModal}
 							image="/assets/post-comment.png"

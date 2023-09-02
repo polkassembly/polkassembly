@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Button } from 'antd';
+import { useTheme } from 'next-themes';
 import React, { FC, useState } from 'react';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 
@@ -13,7 +14,7 @@ interface ILoginToVoteOrEndorseProps {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const LoginToVoteOrEndorse: FC<ILoginToVoteOrEndorseProps> = (props) => {
 	const [modalOpen,setModalOpen]=useState<boolean>(false);
-
+	const { resolvedTheme } = useTheme();
 	return (
 		<div>
 			<Button
@@ -25,6 +26,7 @@ const LoginToVoteOrEndorse: FC<ILoginToVoteOrEndorseProps> = (props) => {
 				Cast Vote
 			</Button>
 			<ReferendaLoginPrompts
+				theme={resolvedTheme}
 				modalOpen={modalOpen}
 				setModalOpen={setModalOpen}
 				image="/assets/referenda-vote.png"

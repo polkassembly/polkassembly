@@ -18,12 +18,13 @@ interface Props {
     modalOpen:boolean;
     setModalOpen:( pre:boolean)=>void;
     className?:string;
+	theme?:string;
 }
 
-const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen, className }:Props ) => {
+const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen, className, theme }:Props ) => {
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
-
+	console.log(theme);
 	const handleClick=(path:String) => {
 		if(path === 'login'){
 			setLoginOpen(true);
@@ -36,7 +37,7 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 	return <div>
 		<Modal
 			open={modalOpen}
-			className={`${poppins.variable} ${poppins.className} max-w-full shrink-0 w-[570px] max-sm:w-[100%] text`}
+			className={`${poppins.variable} ${poppins.className} dark:bg-section-dark-overlay max-w-full shrink-0 w-[570px] max-sm:w-[100%] text`}
 			onCancel={() => setModalOpen(false)}
 			closeIcon={<CloseIcon/>}
 			centered
@@ -52,8 +53,8 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 						onClick={() => handleClick('signup')}>Signup</Button>
 				</div>}>
 			<div className="flex flex-col items-center p-1"><Image width={280} height={221}  src={`${image}`} alt=""/>
-				<h5 className="text-xl leading-24 traking-normal mt-8 font-semibold max-sm:text-base text-center">{title}</h5>
-				<h5 className="text-sm tracking-normal font-medium leading-21 font-poppins max-sm:text-xs text-center">{subtitle}</h5></div>
+				<h5 className="text-xl leading-24 traking-normal dark:text-blue-dark-high mt-8 font-semibold max-sm:text-base text-center">{title}</h5>
+				<h5 className="text-sm tracking-normal font-medium leading-21 dark:text-blue-dark-high font-poppins max-sm:text-xs text-center">{subtitle}</h5></div>
 		</Modal>
 		<SignupPopup setLoginOpen={setLoginOpen} modalOpen={openSignup} setModalOpen={setSignupOpen} isModal={true} />
 		<LoginPopup setSignupOpen={setSignupOpen} modalOpen={openLogin} setModalOpen={setLoginOpen} isModal={true} />
@@ -63,5 +64,8 @@ export default styled(ReferendaLoginPrompts)`
 .text .ant-modal-content{
   color: var(--bodyBlue)  !important;
   border-radius: 4px !important;
+  background: ${props => props.theme=='dark' ? '#0D0D0D' : 'white'} !important;
 }
+
+
 `;

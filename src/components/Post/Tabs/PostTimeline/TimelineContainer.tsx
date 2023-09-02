@@ -142,21 +142,6 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 			</section>
 		);
 	};
-	let color;
-	const status = timeline?.statuses[statuses.length - 1].status;
-	if(status === 'DecisionDepositePlaced' || status === 'Deciding' || status === 'Active' || status === 'Extended' || status === 'closing'){
-		color = '#FF67000';
-	}
-	else if(status === 'Executed' || status === 'Passed' || status === 'Approved' || status === 'Claimed' || status === 'Awarded' || status === 'Closed' || status === 'Confirmed' || status === 'Tabled'){
-		color = '#5BC044';
-	}
-	else if(status === 'Proposed' || status === 'Opened' || status === 'Submitted' || status === 'Added'){
-		color = '#5BC044';
-	}
-	else{
-		color = '#FF0000';
-	}
-
 	return (
 		<section className={`${className}`}>
 			<div className="flex my-12 timeline-container">
@@ -170,8 +155,8 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 					<p className='timeline-dropdown' style={{ backgroundColor: activeColor, marginTop: '-44px' }}>
 						{isCollapsed ? (
 							<div className="flex w-[200px] gap-3 arrow-container">
-								<p className=' text-white text-ellipsis overflow-hidden my-1 text-center px-[15px] w-[100px] text-xs py-[5px] rounded-[50px] items-center status-update' style={{ backgroundColor: color }}>
-									{timeline?.statuses[statuses.length - 1].status}
+								<p className='status-update -mt-[5px]'>
+									<StatusDiv status={timeline?.statuses[statuses.length - 1].status} />
 								</p>
 								<DownArrow onClick={toggleCollapse} className="mt-[12px]"/>
 							</div>

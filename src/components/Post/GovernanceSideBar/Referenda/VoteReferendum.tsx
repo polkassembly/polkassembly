@@ -130,7 +130,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				const accountsData = await getAccountsFromWallet({ api, chosenWallet: loginWallet, loginAddress, network });
 				setAccounts(accountsData?.accounts || []);
 				onAccountChange(accountsData?.account || '');
-				setLoadingStatus({ isLoading: false, message: 'Awaiting accounts' });
+				setLoadingStatus({ isLoading: false, message: '' });
 			})();
 		} else {
 			if(!window) return;
@@ -392,6 +392,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					setLoadingStatus({ isLoading: true, message: 'Creating a multisig transaction' });
 					const { error } = await client.customTransactionAsMulti(multisig, tx);
 					if(error){
+						setLoadingStatus({ isLoading: false, message: '' });
 						throw new Error(error.error);
 					}
 					setShowModal(false);

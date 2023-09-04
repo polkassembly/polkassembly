@@ -245,10 +245,10 @@ const VoteInitiatedModal = ({
 					</div>
 				</div>
 			</div>
-			<div className='mt-3'>
+			<div className='mt-3 w-full'>
 				<div>
-					<div className="vector">
-						<Vector className="-ml-[15px] text-2xl"/>
+					<div className="vector min-w-[250px]">
+						<Vector className="-ml-[15px] text-2xl min-w-[250px]"/>
 					</div>
 					<span className="quote quote--left w-[48px] h-[40px] justify-center text-center pt-[10px] top-[327px] left-[6px]" style={{ background: 'conic-gradient(#ffffff 0deg 90deg, #f6f8ff 90deg 180deg, #ffffff 180deg 270deg, #ffffff 270deg 360deg)' }}>
 						<LeftQuote/>

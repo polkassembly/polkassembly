@@ -28,7 +28,6 @@ import { updateComments } from './comments/updateComments';
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { containsBinaryData, convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import dayjs from 'dayjs';
-// import { getStatus } from './comments/getInitialComments';
 import { getVotesHistory } from '../votes/history';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 

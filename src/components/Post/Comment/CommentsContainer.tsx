@@ -7,7 +7,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { useCommentDataContext, useNetworkContext, usePostDataContext, useCommentsContext } from '~src/context';
+import { useCommentDataContext, useNetworkContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 
 import PostCommentForm from '../PostCommentForm';
@@ -66,10 +66,12 @@ export interface ITimeline {
 	type: string;
 }
 
-interface IFilteredSentiment {
-	sentiment: ESentiments | 0;
-	active: boolean;
-}
+// interface IFilteredSentiment {
+// eslint-disable-next-line no-tabs
+// 	sentiment: ESentiments | 0;
+// eslint-disable-next-line no-tabs
+// 	active: boolean;
+// }
 
 interface ISentimentsPercentage {
 	against: ESentiments | 0;
@@ -89,7 +91,7 @@ const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
 
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
-	const { postData: { postType, timeline, created_at, currentTimeline:initialCurrentTimeline } } = usePostDataContext();
+	const { postData: { postType, timeline, created_at } } = usePostDataContext();
 	const targetOffset = 10;
 	const {
 		comments,
@@ -100,7 +102,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	} = useCommentDataContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
-	const [filteredSentiment, setFilteredSentiment] = useState<IFilteredSentiment>({ active: false, sentiment: 0 });
+	// const [filteredSentiment, setFilteredSentiment] = useState<IFilteredSentiment>({ active: false, sentiment: 0 });
 	// const { comments, setComments } =  useCommentsContext();//useState<{[index:string]:Array<IComment>}>(useCommentsContext);
 	const [showOverallSentiment, setShowOverallSentiment] = useState<boolean>(true);
 	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
@@ -121,10 +123,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			return;
 		}
 	};
-	const handleSetFilteredComments = (sentiment: ESentiments | 0) => {
-		setFilteredSentiment((pre) => pre.sentiment === sentiment && pre.active === true ? { ...pre, active: false } : { active: true, sentiment: sentiment });
-	};
-	console.log(handleSetFilteredComments);
+	// const handleSetFilteredComments = (sentiment: ESentiments | 0) => {
+	// eslint-disable-next-line no-tabs
+	// 	setFilteredSentiment((pre) => pre.sentiment === sentiment && pre.active === true ? { ...pre, active: false } : { active: true, sentiment: sentiment });
+	// };
+	// console.log(handleSetFilteredComments);
 
 	const getOverallSentimentPercentage = () => {
 		const againstCount = overallSentiments?.[ESentiments.Against] || 0;

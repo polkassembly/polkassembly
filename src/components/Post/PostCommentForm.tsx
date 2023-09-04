@@ -19,11 +19,11 @@ import { NotificationStatus } from '~src/types';
 import { Input } from 'antd';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
-import SadDizzyIcon from '~assets/icons/sentiments-icons/sad-dizzy.svg';
-import SadIcon from '~assets/icons/sentiments-icons/sad.svg';
-import NeutralIcon from '~assets/icons/sentiments-icons/neutral.svg';
-import SmileIcon from '~assets/icons/sentiments-icons/smile.svg';
-import SmileDizzyIcon from '~assets/icons/sentiments-icons/smile-dizzy.svg';
+import SadDizzyIcon from '~assets/overall-sentiment/pink-against.svg';
+import SadIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
+import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
+import SmileIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
+import SmileDizzyIcon from '~assets/overall-sentiment/pink-for.svg';
 import { ESentiment } from '~src/types';
 
 interface IPostCommentFormProps {
@@ -77,7 +77,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 
 	const EmojiOption = ({ icon, currentSentiment = 3, clickable = true, disabled }: IEmojiOption) => (
 		<Button
-			disabled={Boolean(disabled)}
+			disabled={disabled}
 			className="text-2xl w-10 h-10 p-0 pt-1 mb-[4px] border-solid hover:bg-baby_pink"
 			onClick={() => { clickable && handleEmojiClick(icon, currentSentiment); }}>
 			{icon}
@@ -107,7 +107,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const handleModalOpen=async() => {
 		await form.validateFields();
 		const content = form.getFieldValue('content');
-		console.log('value in save', content);
 		if(!content) return;
 		if(isUsedInSuccessModal){
 			setIsSentimentPost(true);
@@ -262,11 +261,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 											<div className="flex">
 												{showEmojiMenu && (
 													<div className="absolute top-[-55px] right-[77px] w-[234px] h-[50px] pt-[7px] p-2 flex space-x-1 pb-12 -mt-1" style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}>
-														<EmojiOption icon={<SadDizzyIcon style={{ border: 'none' }} />} currentSentiment={1}/>
-														<EmojiOption icon={<SadIcon style={{ border: 'none' }}/>} currentSentiment={2} />
-														<EmojiOption icon={<NeutralIcon style={{ border: 'none' }}/>} currentSentiment={3} />
-														<EmojiOption icon={<SmileIcon style={{ border: 'none' }}/>} currentSentiment={4} />
-														<EmojiOption icon={<SmileDizzyIcon style={{ border: 'none' }}/>} currentSentiment={5} />
+														<EmojiOption icon={<SadDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }} />} currentSentiment={1}/>
+														<EmojiOption icon={<SadIcon style={{ border: 'none', transform: 'scale(1.2)' }}/>} currentSentiment={2} />
+														<EmojiOption icon={<NeutralIcon style={{ border: 'none', transform: 'scale(1.2)' }}/>} currentSentiment={3} />
+														<EmojiOption icon={<SmileIcon style={{ border: 'none', transform: 'scale(1.2)' }}/>} currentSentiment={4} />
+														<EmojiOption icon={<SmileDizzyIcon style={{ border: 'none', transform: 'scale(1.2)' }}/>} currentSentiment={5} />
 													</div>
 												)}
 												{!selectedIcon && (

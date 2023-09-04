@@ -439,7 +439,6 @@ export const CopyIcon = (props: Partial<CustomIconComponentProps>) => (
 export const CreatePropoosalIcon  = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={CreatePropoosalSVG} {...props} />
 );
-
 export const UpgradeCommitteePIPsIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon component={UpgradeCommitteePIPsSVG} {...props} />
 );

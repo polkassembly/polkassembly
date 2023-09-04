@@ -20,7 +20,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { ReactElement } from 'react-markdown/lib/react-markdown';
 import PostCommentForm from '~src/components/Post/PostCommentForm';
 import styled from 'styled-components';
-import Vector from '~assets/icons/vector.svg';
+import BackgroundImage from '~assets/icons/vector.svg';
 import LeftQuote from '~assets/icons/chatbox-icons/icon-left-quote.svg';
 import RightQuote from '~assets/icons/chatbox-icons/icon-right-quote.svg';
 import { IComment } from '~src/components/Post/Comment/Comment';
@@ -92,7 +92,7 @@ const VoteInitiatedModal = ({
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} delegate w-[604px]`}
+			className={`${poppins.variable} ${poppins.className} delegate w-150`}
 			wrapClassName={className}
 			closeIcon={<CloseIcon />}
 			onCancel={() => setOpen(false)}
@@ -266,23 +266,21 @@ const VoteInitiatedModal = ({
 				</div>
 			</div>
 			<div className='mt-3 w-full'>
-				<div>
-					<div className="vector min-w-[250px]">
-						<Vector className="-ml-[15px] text-2xl min-w-[250px]"/>
-					</div>
-					<span className="quote quote--left w-[48px] h-[40px] justify-center text-center pt-[10px] top-[327px] left-[6px]" style={{ background: 'conic-gradient(#ffffff 0deg 90deg, #f6f8ff 90deg 180deg, #ffffff 180deg 270deg, #ffffff 270deg 360deg)' }}>
-						<LeftQuote/>
-					</span>
-					<p className="-mt-[155px] text-center">
-						Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind share your reason for this vote ?
-					</p>
-					<div className="form-group ml-4">
-						<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} setCurrentState={handleCurrentCommentAndTimeline} voteDecision={vote} setSuccessModalOpen={setOpen}/>
-					</div>
-					<span className="quote quote--right top-[325px] right-[3px] h-[40px] w-[48px] text-center pt-[10px]" style={{ background: 'conic-gradient(#ffffff 0deg 180deg, #f6f8ff 180deg 270deg, #ffffff 270deg 360deg)' }}>
-						<RightQuote/>
-					</span>
+				<div className="vector min-w-[250px]">
+					<BackgroundImage className="-ml-[15px] text-2xl min-w-[250px]"/>
 				</div>
+				<span className="quote quote--left w-[48px] h-[40px] justify-center text-center pt-[10px] top-[327px] left-[6px]" style={{ background: 'conic-gradient(#ffffff 0deg 90deg, #f6f8ff 90deg 180deg, #ffffff 180deg 270deg, #ffffff 270deg 360deg)' }}>
+					<LeftQuote/>
+				</span>
+				<p className="-mt-[155px] text-center">
+					Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing your reason for this vote ?
+				</p>
+				<div className="form-group ml-4">
+					<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} setCurrentState={handleCurrentCommentAndTimeline} voteDecision={vote} setSuccessModalOpen={setOpen}/>
+				</div>
+				<span className="quote quote--right top-[325px] right-[3px] h-[40px] w-[48px] text-center pt-[10px]" style={{ background: 'conic-gradient(#ffffff 0deg 180deg, #f6f8ff 180deg 270deg, #ffffff 270deg 360deg)' }}>
+					<RightQuote/>
+				</span>
 			</div>
 		</Modal>
 	);

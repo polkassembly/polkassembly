@@ -72,7 +72,6 @@ export const Comment: FC<ICommentProps> = (props) => {
 
 	// TODO: author address
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	//console.log('cmnt',comment);
 	return (
 		<div className={`${className} flex gap-x-4 mb-9 `}>
 			{/* Offset div to scroll to because scrollIntoView doesn't support offset */}

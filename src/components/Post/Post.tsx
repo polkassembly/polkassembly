@@ -404,7 +404,6 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
-	console.log('comment',post?.comments);
 	return (
 		<PostDataContextProvider initialPostData={{
 			cid: post?.cid || '',

@@ -66,13 +66,6 @@ export interface ITimeline {
 	type: string;
 }
 
-// interface IFilteredSentiment {
-// eslint-disable-next-line no-tabs
-// 	sentiment: ESentiments | 0;
-// eslint-disable-next-line no-tabs
-// 	active: boolean;
-// }
-
 interface ISentimentsPercentage {
 	against: ESentiments | 0;
 	for: ESentiments | 0;
@@ -102,8 +95,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	} = useCommentDataContext();
 	const isGrantClosed: boolean = Boolean(postType === ProposalType.GRANTS && created_at && dayjs(created_at).isBefore(dayjs().subtract(6, 'days')));
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
-	// const [filteredSentiment, setFilteredSentiment] = useState<IFilteredSentiment>({ active: false, sentiment: 0 });
-	// const { comments, setComments } =  useCommentsContext();//useState<{[index:string]:Array<IComment>}>(useCommentsContext);
 	const [showOverallSentiment, setShowOverallSentiment] = useState<boolean>(true);
 	const [sentimentsPercentage, setSentimentsPercentage] = useState<ISentimentsPercentage>({ against: 0, for: 0, neutral: 0, slightlyAgainst: 0, slightlyFor: 0 });
 	const [loading, setLoading] = useState(true);
@@ -122,11 +113,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			return;
 		}
 	};
-	// const handleSetFilteredComments = (sentiment: ESentiments | 0) => {
-	// eslint-disable-next-line no-tabs
-	// 	setFilteredSentiment((pre) => pre.sentiment === sentiment && pre.active === true ? { ...pre, active: false } : { active: true, sentiment: sentiment });
-	// };
-	// console.log(handleSetFilteredComments);
 
 	const getOverallSentimentPercentage = () => {
 		const againstCount = overallSentiments?.[ESentiments.Against] || 0;
@@ -231,6 +217,44 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[timeline]);
 
+	const sentimentsData = [
+		{
+			iconActive: <AgainstIcon />,
+			iconInactive: <UnfilterAgainstIcon />,
+			percentage: sentimentsPercentage?.against,
+			sentiment: ESentiments.Against,
+			title: 'Completely Against'
+		},
+		{
+			iconActive: <SlightlyAgainstIcon />,
+			iconInactive: <UnfilterSlightlyAgainstIcon />,
+			percentage: sentimentsPercentage?.slightlyAgainst,
+			sentiment: ESentiments.SlightlyAgainst,
+			title: 'Slightly Against'
+		},
+		{
+			iconActive: <NeutralIcon className='text-[20px] font-medium' />,
+			iconInactive: <UnfilterNeutralIcon />,
+			percentage: sentimentsPercentage?.neutral,
+			sentiment: ESentiments.Neutral,
+			title: 'Neutral'
+		},
+		{
+			iconActive: <SlightlyForIcon />,
+			iconInactive: <UnfilterSlightlyForIcon />,
+			percentage: sentimentsPercentage?.slightlyFor,
+			sentiment: ESentiments.SlightlyFor,
+			title: 'Slightly For'
+		},
+		{
+			iconActive: <ForIcon />,
+			iconInactive: <UnfilterForIcon />,
+			percentage: sentimentsPercentage?.for,
+			sentiment: ESentiments.For,
+			title: 'Completely For'
+		}
+	];
+
 	return (
 		<div className={className}>
 			{id ? <>
@@ -247,14 +271,14 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				</div>
 			}
 			{
-				!!allComments?.length && timelines.length >= 1 &&
+				Boolean(allComments?.length) && timelines.length >= 1 &&
 				<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1'>
 					<span className='text-lg font-medium text-bodyBlue'>
 						{allComments.length || 0}
 						<span className='ml-1'>Comments</span>
 					</span>
 					{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2 '>
-						<Tooltip color='#E5007A'
+						{/* <Tooltip color='#E5007A'
 							title={<div className='flex flex-col text-xs px-1'>
 								<span className='text-center font-medium'>Completely Against</span>
 								<span className='text-center pt-1'>Select to filter</span>
@@ -299,7 +323,25 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								{checkActive(ESentiments.For) ? <ForIcon /> : <UnfilterForIcon />}
 								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.for}%</span>
 							</div>
-						</Tooltip>
+						</Tooltip> */}
+						{sentimentsData.map((data) => (
+							<Tooltip
+								key={data.sentiment}
+								color='#E5007A'
+								title={<div className='flex flex-col text-xs px-1'>
+									<span className='text-center font-medium'>{data.title}</span>
+									<span className='text-center pt-1'>Select to filter</span>
+								</div>}
+							>
+								<div
+									onClick={() => { getFilteredComments(data.sentiment); }}
+									className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''}`}
+								>
+									{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
+									<span className={'flex justify-center font-medium'}>{data.percentage}%</span>
+								</div>
+							</Tooltip>
+						))}
 					</div>}
 				</div>
 			}

@@ -7,7 +7,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
-import { deleteKeys } from '~src/auth/redis';
+import { deleteKeys, redisDel } from '~src/auth/redis';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
@@ -49,11 +49,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			if(postType == ProposalType.REFERENDUM_V2){
 				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${trackNumber}_*`;
 				await deleteKeys(trackListingKey);
+				const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
+				await redisDel(referendumDetailsKey);
 			}
 
 		}else if(postType == ProposalType.DISCUSSIONS){
 			const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
 			await deleteKeys(discussionListingKey);
+			const referendumDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
+			await redisDel(referendumDetailsKey);
 		}
 	}
 

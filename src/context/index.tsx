@@ -9,7 +9,6 @@ import { NetworkContext } from './NetworkContext';
 import { PostDataContext } from './PostDataContext';
 import { UserDetailsContext } from './UserDetailsContext';
 import { CommentsDataContext } from './CommentDataContext';
-import { CommentsContext } from './CommentsContext';
 
 const useModalContext = () => {
 	return useContext(ModalContext);
@@ -35,8 +34,4 @@ function useCommentDataContext(){
 	return  useContext(CommentsDataContext);
 }
 
-function useCommentsContext() {
-	return useContext(CommentsContext);
-}
-
-export { useModalContext, useUserDetailsContext, useApiContext, useNetworkContext, usePostDataContext , useCommentsContext, useCommentDataContext };
+export { useModalContext, useUserDetailsContext, useApiContext, useNetworkContext, usePostDataContext , useCommentDataContext };

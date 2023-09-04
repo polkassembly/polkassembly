@@ -8,7 +8,7 @@ import CloseIcon from '~assets/icons/close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
-import { useCommentsContext, useNetworkContext } from '~src/context';
+import { useCommentDataContext, useNetworkContext } from '~src/context';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
@@ -23,6 +23,8 @@ import styled from 'styled-components';
 import Vector from '~assets/icons/vector.svg';
 import LeftQuote from '~assets/icons/chatbox-icons/icon-left-quote.svg';
 import RightQuote from '~assets/icons/chatbox-icons/icon-right-quote.svg';
+import { IComment } from '~src/components/Post/Comment/Comment';
+import { getSortedComments } from '~src/components/Post/Comment/CommentsContainer';
 
 interface Props {
     className?: string;
@@ -58,7 +60,7 @@ const VoteInitiatedModal = ({
 	icon
 }: Props) => {
 	const { network } = useNetworkContext();
-	const { setComments } = useCommentsContext();
+	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	useEffect(() => {
 		if (!network) return;
@@ -68,6 +70,24 @@ const VoteInitiatedModal = ({
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const handleCurrentCommentAndTimeline = (postId:string, type:string, comment:IComment) => {
+		const key = `${postId}_${type}`;
+		const commentsPayload = {
+			...comments,
+			[key]:[
+				...comments[key],
+				comment
+			]
+		};
+		setComments(getSortedComments(commentsPayload));
+		const timelinePayload = timelines.map((timeline) => (
+			timeline.index === postId ?
+				{ ...timeline,commentsCount:timeline.commentsCount+1 } :
+				timeline
+		));
+		setTimelines(timelinePayload);
+	};
 
 	return (
 		<Modal
@@ -257,7 +277,7 @@ const VoteInitiatedModal = ({
 						Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind share your reason for this vote ?
 					</p>
 					<div className="form-group ml-4">
-						<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} setCurrentState={setComments} voteDecision={vote} setSuccessModalOpen={setOpen}/>
+						<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} setCurrentState={handleCurrentCommentAndTimeline} voteDecision={vote} setSuccessModalOpen={setOpen}/>
 					</div>
 					<span className="quote quote--right top-[325px] right-[3px] h-[40px] w-[48px] text-center pt-[10px]" style={{ background: 'conic-gradient(#ffffff 0deg 180deg, #f6f8ff 180deg 270deg, #ffffff 270deg 360deg)' }}>
 						<RightQuote/>

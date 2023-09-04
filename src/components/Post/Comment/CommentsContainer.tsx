@@ -81,7 +81,7 @@ interface ISentimentsPercentage {
 	slightlyFor: ESentiments | 0;
 }
 
-const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
+export const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
 	const commentResponse:any = {};
 	for(const key in comments){
 		commentResponse[key] = comments[key].sort((a, b) => (dayjs(a.created_at).diff(dayjs(b.created_at))));

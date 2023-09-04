@@ -31,7 +31,7 @@ interface IPostCommentFormProps {
 	isUsedInSuccessModal?: boolean;
 	voteDecision? :string
 	setSuccessModalOpen?: (pre: boolean) => void;
-setCurrentState?:(postId: string, type:string, comment: IComment) => void;
+	setCurrentState?:(postId: string, type:string, comment: IComment) => void;
 }
 
 interface IEmojiOption {
@@ -44,7 +44,7 @@ interface IEmojiOption {
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className , isUsedInSuccessModal = false ,  voteDecision = null, setSuccessModalOpen = () => {return null; },setCurrentState } = props;
+	const { className , isUsedInSuccessModal = false ,  voteDecision = null,setCurrentState } = props;
 	const { id, username, picture } = useUserDetailsContext();
 	const { postData: { postIndex, postType, track_number } } = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
@@ -108,6 +108,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		await form.validateFields();
 		const content = form.getFieldValue('content');
 		if(!content) return;
+
+		// To directly post the comment without openning the slider modal
 		if(isUsedInSuccessModal){
 			setIsSentimentPost(true);
 			handleSave();
@@ -146,9 +148,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			form.setFieldValue('content', '');
 			global.window.localStorage.removeItem(commentKey());
 			postIndex && createSubscription(postIndex);
-			if(isUsedInSuccessModal){
-				setSuccessModalOpen(false);
-			}
 			queueNotification({
 				header: 'Success!',
 				message: 'Comment created successfully.',
@@ -203,7 +202,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		if (inputString.length % increment === 0) {
 			updateHeight();
 		}
-		console.log(currentHeight);
 		return currentHeight;
 	}
 	useEffect(() => {

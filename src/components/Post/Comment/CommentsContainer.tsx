@@ -278,52 +278,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						<span className='ml-1'>Comments</span>
 					</span>
 					{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2 '>
-						{/* <Tooltip color='#E5007A'
-							title={<div className='flex flex-col text-xs px-1'>
-								<span className='text-center font-medium'>Completely Against</span>
-								<span className='text-center pt-1'>Select to filter</span>
-							</div>} >
-							<div onClick={() => { getFilteredComments(ESentiments.Against); }} className={`p-1 flex gap-1 cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Against) && 'bg-[#FEF2F8] text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''}`} >
-								{checkActive(ESentiments.Against) ? <AgainstIcon /> : <UnfilterAgainstIcon />}
-								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.against}%</span>
-							</div>
-						</Tooltip>
-						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-							<span className='text-center font-medium'>Slightly Against</span>
-							<span className='text-center pt-1'>Select to filter</span>
-						</div>}>
-							<div onClick={() => { getFilteredComments(ESentiments.SlightlyAgainst); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyAgainst) && 'bg-[#FEF2F8] text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''}`}>
-								{checkActive(ESentiments.SlightlyAgainst) ? <SlightlyAgainstIcon /> : <UnfilterSlightlyAgainstIcon />}
-								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyAgainst}%</span>
-							</div>
-						</Tooltip>
-						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-							<span className='text-center font-medium'>Neutral </span>
-							<span className='text-center pt-1'>Select to filter</span>
-						</div>}>
-							<div onClick={() => { getFilteredComments(ESentiments.Neutral); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.Neutral) && 'bg-[#FEF2F8] text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''}`}>
-								{checkActive(ESentiments.Neutral) ? <NeutralIcon className='text-[20px] font-medium' /> : <UnfilterNeutralIcon />}
-								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.neutral}%</span>
-							</div>
-						</Tooltip>
-						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-							<span className='text-center font-medium'>Slightly For</span>
-							<span className='text-center pt-1'>Select to filter</span>
-						</div>}>
-							<div onClick={() => { getFilteredComments(ESentiments.SlightlyFor); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.SlightlyFor) && 'bg-[#FEF2F8] text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''}`}>
-								{checkActive(ESentiments.SlightlyFor) ? <SlightlyForIcon /> : <UnfilterSlightlyForIcon />}
-								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.slightlyFor}%</span>
-							</div>
-						</Tooltip>
-						<Tooltip color='#E5007A' title={<div className='flex flex-col text-xs px-1'>
-							<span className='text-center font-medium'>Completely For</span>
-							<span className='text-center pt-1'> Select to filter</span>
-						</div>}>
-							<div onClick={() => { getFilteredComments(ESentiments.For); }} className={`p-[3.17px] flex gap-[3.46px] cursor-pointer text-xs items-center hover:bg-[#FEF2F8] rounded-[4px] ${checkActive(ESentiments.For) && 'bg-[#FEF2F8] text-pink_primary'} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50':''}`}>
-								{checkActive(ESentiments.For) ? <ForIcon /> : <UnfilterForIcon />}
-								<span className={'flex justify-center font-medium'}>{sentimentsPercentage?.for}%</span>
-							</div>
-						</Tooltip> */}
 						{sentimentsData.map((data) => (
 							<Tooltip
 								key={data.sentiment}

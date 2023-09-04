@@ -92,7 +92,7 @@ const VoteInitiatedModal = ({
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} delegate w-150`}
+			className={`${poppins.variable} ${poppins.className} delegate w-[604px]`}
 			wrapClassName={className}
 			closeIcon={<CloseIcon />}
 			onCancel={() => setOpen(false)}

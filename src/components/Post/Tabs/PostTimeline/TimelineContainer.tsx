@@ -110,7 +110,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 		);
 	};
 
-	const Timeline = () => {
+	const Timeline = (type) => {
 		return(
 			<section className={className}>
 				{
@@ -125,9 +125,11 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 												<p className="text-xs text-sidebarBlue font-normal whitespace-nowrap mb-0 info-container">
 													{blockDate.format("Do MMM 'YY, h:mm a")}
 												</p>
-												<a className="font-medium" href={`${url}${block}`} target="_blank" rel="noreferrer">
-													<ExportOutlined className='-mb-[2px]' style={{ color: '#e5007a' }}/>
-												</a>
+												{type !== 'Discussions' && (
+													<a className="font-medium" href={`${url}${block}`} target="_blank" rel="noreferrer">
+														<ExportOutlined className='-mb-[2px]' style={{ color: '#e5007a' }} />
+													</a>
+												)}
 											</div>
 											<div className="text-right export-link">
 												<StatusDiv status={status} />
@@ -167,7 +169,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 				</div>
 				<span className={'-mb-[5px] round-icon rounded-full absolute -bottom-1 -left-1 w-[10px] h-[10px]' } style={{ backgroundColor: activeColor }}></span>
 				<div className={`${isCollapsed ? 'hidden' : ''} mt-3 ml-[24px]`}>
-					{Timeline()}
+					{Timeline(timeline.type)}
 				</div>
 			</div>
 		</section>

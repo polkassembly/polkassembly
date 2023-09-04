@@ -61,10 +61,13 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	useEffect(() => {
 		if (voteDecision === 'aye') {
 			setSentiment(5);
+			setIsSentimentPost(true);
 		} else if (voteDecision === 'nye') {
 			setSentiment(1);
+			setIsSentimentPost(true);
 		} else {
 			setSentiment(3);
+			setIsSentimentPost(true);
 		}
 	}, [voteDecision]);
 
@@ -73,6 +76,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		setSelectedIcon(icon);
 		setShowEmojiMenu(!showEmojiMenu);
 		setSentiment(currentSentiment);
+		setIsSentimentPost(true);
 	};
 
 	const EmojiOption = ({ icon, currentSentiment = 3, clickable = true, disabled }: IEmojiOption) => (

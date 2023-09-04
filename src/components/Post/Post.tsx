@@ -400,6 +400,7 @@ const Post: FC<IPostProps> = (props) => {
 				Sidebar={() => <Sidebar />}
 				allowed_roles={allowed_roles}
 				trackName={trackName}
+				isOffchainPost={isOffchainPost}
 			/>,
 			key: 'description',
 			label: 'Description'

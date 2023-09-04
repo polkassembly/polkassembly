@@ -36,13 +36,14 @@ interface IPostDescriptionProps {
 	isEditing: boolean;
 	isOnchainPost: boolean;
 	trackName?: string;
+	isOffchainPost?: boolean;
 	toggleEdit: () => void
 	TrackerButtonComp: JSX.Element
 	Sidebar: ({ className }: {className?: string | undefined;}) => JSX.Element
 }
 
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
-	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp , allowed_roles, trackName } = props;
+	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp , allowed_roles, trackName , isOffchainPost } = props;
 	const { postData: { content, postType, postIndex, title, post_reactions } } = usePostDataContext();
 	const router = useRouter();
 	//write a function which redirects to the proposalType page
@@ -117,7 +118,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					{TrackerButtonComp}
 					<ShareButton title={title} />
 					{
-						allowed_roles && allowed_roles.includes('moderator')?
+						allowed_roles && allowed_roles.includes('moderator') && isOffchainPost?
 							<ReportButton proposalType={postType} allowed_roles={allowed_roles} isPost={true} onDeletePost={deletePost} isDeleteModal={true} type='post' postId={`${postIndex}`} /> :
 							null
 					}

@@ -4,7 +4,7 @@
 
 import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Form, Tooltip } from 'antd';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { UserDetailsContext } from 'src/context/UserDetailsContext';
 import { NotificationStatus } from 'src/types';
@@ -21,6 +21,8 @@ import ReportButton from '../ActionsBar/ReportButton';
 import { IAddCommentReplyResponse } from 'pages/api/v1/auth/actions/addCommentReply';
 import getOnChainUsername from '~src/util/getOnChainUsername';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { checkIsProposer } from '../utils/checkIsProposer';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 interface Props {
 	userId: number;
@@ -38,7 +40,7 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ userId, className, commentId, content, replyId , userName, reply, proposer, is_custom_username }: Props) => {
-	const { id, username, picture, loginAddress } = useContext(UserDetailsContext);
+	const { id, username, picture, loginAddress, addresses } = useContext(UserDetailsContext);
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkContext();
 	const { comments, setComments } = useCommentDataContext();
@@ -51,6 +53,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 	const [error, setError] = useState('');
 	const [isReplying,setIsReplying] = useState(false);
 	const [onChainUsername, setOnChainUsername] = useState<string>('');
+	const [isEditable, setIsEditable] = useState(false);
 
 	const toggleEdit = () => setIsEditing(!isEditing);
 
@@ -94,6 +97,23 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		global.window.localStorage.removeItem(newReplyKey(commentId));
 		setIsReplying(!isReplying);
 	};
+
+	const canEditComment = useCallback(async () => {
+		if(id === userId){
+			return setIsEditable(true);
+		}
+		if(!proposer){
+			return setIsEditable(false);
+		}
+		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
+		if(!isProposer){
+			isProposer = await checkIsProposer(getSubstrateAddress(proposer) || proposer, [...addresses || loginAddress ] );
+			if(isProposer){
+				return setIsEditable(true);
+			}
+		}
+		return setIsEditable(false);
+	}, [addresses, id, loginAddress, proposer, userId]);
 
 	const handleSave = async () => {
 		await form.validateFields();
@@ -291,6 +311,10 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 		setLoading(false);
 	};
 
+	useEffect(() => {
+		canEditComment();
+	}, [canEditComment]);
+
 	return (
 		<>
 			<div className={className}>
@@ -330,7 +354,7 @@ const EditableReplyContent = ({ userId, className, commentId, content, replyId ,
 						<>
 							<Markdown className='py-2 px-2 md:px-4 bg-blue-grey rounded-b-md text-sm' md={content} />
 							<div className='flex items-center flex-wrap'>
-								{id === userId &&
+								{isEditable &&
 									<Button className={'text-pink_primary flex items-center border-none shadow-none'} disabled={loading} onClick={toggleEdit}>
 										{
 											loading

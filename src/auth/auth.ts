@@ -111,7 +111,6 @@ class AuthService {
 			web3_signup: web3signup
 		};
 		const newUserRef = firebaseAdmin.firestore().collection('users').doc(userId);
-		console.log('newUserRef', newUserRef);
 		await newUserRef.set(newUser).catch(err => {
 			console.log('error in createUser', err);
 			throw apiErrorWithStatusCode(messages.ERROR_CREATING_USER, 500);

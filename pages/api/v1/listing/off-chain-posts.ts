@@ -98,7 +98,7 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: created_at?.toDate? created_at?.toDate(): created_at,
 						gov_type:docData?.gov_type ,
-						isDelete: docData?.isDelete || false,
+						isDeleted: docData?.isDeleted || false,
 						isSpam: docData?.isSpam || false,
 						post_id: docData.id,
 						post_reactions,

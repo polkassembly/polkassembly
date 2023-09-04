@@ -35,26 +35,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			.doc(String(commentId))
 			.collection('replies')
 			.doc(String(replyId));
-		await ref.update({
-			isDelete: true
-		});
-		return res.status(200).json({ message: 'Reply deleted.' });
 	}
 	if(postId && commentId && !replyId){
 		ref = ref
 			.collection('comments')
 			.doc(String(commentId));
-		await ref.update({
-			isDelete: true
-		});
-		return res.status(200).json({ message: 'Comment deleted.' });
 	}
-	if(postId && !commentId && !replyId){
-		await ref.update({
-			isDelete: true
-		});
-		return res.status(200).json({ message: 'Post deleted.' });
-	}
+	await ref.update({
+		isDeleted: true
+	});
+	return res.status(200).json({ message: 'Content deleted.' });
 }
 
 export default withErrorHandling(handler);

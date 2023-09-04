@@ -365,7 +365,7 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				created_at: data.created_at?.toDate ? data.created_at.toDate(): data.created_at,
 				history: history,
 				id: data.id,
-				isDelete: data.isDelete || false,
+				isDeleted: data?.isDeleted || false,
 				is_custom_username: false,
 				post_index: postIndex,
 				post_type: postType,

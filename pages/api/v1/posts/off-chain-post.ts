@@ -21,6 +21,8 @@ import { getProposerAddressFromFirestorePostData } from '../listing/on-chain-pos
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import dayjs from 'dayjs';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
+import { redisGet, redisSet } from '~src/auth/redis';
+import { generateKey } from '~src/util/getRedisKeys';
 
 interface IGetOffChainPostParams {
 	network: string;
@@ -52,6 +54,18 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 		const strProposalType = String(proposalType);
 		if (!isFirestoreProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(`The off chain proposal type "${proposalType}" is invalid.`, 400);
+		}
+
+		if(proposalType === ProposalType.DISCUSSIONS && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+			const redisKey = generateKey({ keyType: 'postId', network, postId: postId, proposalType: ProposalType.DISCUSSIONS });
+			const redisData = await redisGet(redisKey);
+			if(redisData){
+				return {
+					data: JSON.parse(redisData),
+					error: null,
+					status: 200
+				};
+			}
 		}
 
 		const postDocRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
@@ -241,6 +255,9 @@ export async function getOffChainPost(params: IGetOffChainPostParams) : Promise<
 		}
 
 		await getContentSummary(post, network, isExternalApiCall);
+		if (proposalType === ProposalType.DISCUSSIONS && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+			await redisSet(generateKey({ keyType: 'postId', network, postId: postId, proposalType: ProposalType.DISCUSSIONS }), JSON.stringify(post));
+		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,

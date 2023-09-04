@@ -32,6 +32,8 @@ import { getVotesHistory } from '../votes/history';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
+import { generateKey } from '~src/util/getRedisKeys';
+import { redisGet, redisSet } from '~src/auth/redis';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -577,7 +579,6 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IApiResponse<IPostResponse>> {
 	try {
 		const { network, postId, voterAddress, proposalType, isExternalApiCall, noComments = true } = params;
-		const netDocRef = networkDocRef(network);
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
@@ -596,6 +597,20 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 		const topicFromType = getTopicFromType(proposalType as ProposalType);
 
 		const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+
+		if(proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress });
+			const redisData = await redisGet(redisKey);
+			if(redisData){
+				return {
+					data: JSON.parse(redisData),
+					error: null,
+					status: 200
+				};
+			}
+		}
+
+		const netDocRef = networkDocRef(network);
 
 		let postVariables: any = proposalType === ProposalType.ANNOUNCEMENT ? {
 			cid: postId,
@@ -986,7 +1001,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			const sentimentsKey:Array<ESentiments> = [ESentiments.Against, ESentiments.SlightlyAgainst, ESentiments.Neutral, ESentiments.SlightlyFor, ESentiments.For];
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				const commentPromises = post.timeline.map(async (timeline: any) => {
-					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip'? timeline.hash: timeline.index));
 					const commentsCount = (await postDocRef.collection('comments').count().get()).data().count;
 					return { ...timeline, commentsCount };
 				});
@@ -1008,7 +1023,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			if (post.timeline && Array.isArray(post.timeline) && post.timeline.length > 0) {
 				let timeline: any= null;
 				for (timeline of post.timeline){
-					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tips'? timeline.hash: timeline.index));
+					const postDocRef = postsByTypeRef(network, getFirestoreProposalType(timeline.type) as ProposalType).doc(String(timeline.type === 'Tip'? timeline.hash: timeline.index));
 					for(let i = 0; i < sentimentsKey.length; i++){
 						const key = sentimentsKey[i];
 						sentiments[key]= sentiments[key] ?
@@ -1094,6 +1109,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams) : Promise<IA
 			post.title = splitterAndCapitalizer(postData?.callData?.method || '', '_') || postData?.cid;
 		}
 		await getContentSummary(post, network, isExternalApiCall);
+		if (proposalType === ProposalType.REFERENDUM_V2 && !isExternalApiCall && process.env.IS_CACHING_ALLOWED == '1'){
+			await redisSet(generateKey({ govType: 'OpenGov', keyType: 'postId', network, postId: postId, subsquidProposalType, voterAddress: voterAddress }), JSON.stringify(post));
+		}
 		return {
 			data: JSON.parse(JSON.stringify(post)),
 			error: null,

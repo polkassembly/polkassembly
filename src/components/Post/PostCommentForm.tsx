@@ -46,7 +46,7 @@ const commentKey = () => `comment:${global.window.location.href}`;
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className , isUsedInSuccessModal = false ,  voteDecision = null, setSuccessModalOpen = () => {return null; },setCurrentState } = props;
 	const { id, username, picture } = useUserDetailsContext();
-	const { postData: { postIndex, postType } } = usePostDataContext();
+	const { postData: { postIndex, postType, track_number } } = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
 	const [form] = Form.useForm();
 	const [error, setError] = useState('');
@@ -129,6 +129,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			postId: postIndex,
 			postType: postType,
 			sentiment:isSentimentPost?sentiment:0,
+			trackNumber: track_number,
 			userId: id
 		});
 

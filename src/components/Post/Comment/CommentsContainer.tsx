@@ -77,7 +77,7 @@ interface ISentimentsPercentage {
 const getSortedComments = (comments: {[index:string]:Array<IComment>}) => {
 	const commentResponse:any = {};
 	for(const key in comments){
-		commentResponse[key] = comments[key].sort((a, b) => (dayjs(a.created_at).diff(dayjs(b.created_at))));
+		commentResponse[key] = comments[key].filter(comment => comment.isDelete?false:true).sort((a, b) => (dayjs(a.created_at).diff(dayjs(b.created_at))));
 	}
 	return commentResponse;
 };
@@ -102,7 +102,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [filterSentiments, setFilterSentiments] = useState<ESentiments|null>(null);
 	const router = useRouter();
 	let allComments = Object.values(comments)?.flat() || [];
-	const allCommentsLength = timelines.reduce((a, b) => a + b.commentsCount, 0);
+	// const allCommentsLength = timelines.reduce((a, b) => a + b.commentsCount, 0);
 
 	if(filterSentiments){
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
@@ -235,7 +235,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			}
 			<div className='mb-5 flex justify-between items-center tooltip-design max-sm:flex-col max-sm:items-start max-sm:gap-1'>
 				<span className='text-lg font-medium text-bodyBlue'>
-					{allCommentsLength || 0}
+					{allComments?.length}
 					<span className='ml-1'>Comments</span>
 				</span>
 				{showOverallSentiment && <div className='flex gap-2 max-sm:gap-[2px] max-sm:-ml-2 '>
@@ -302,7 +302,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 													<div className='flex flex-col text-lightBlue sticky top-10'>
 														<div className='text-xs mb-1'>{timeline.date.format('MMM Do')}</div>
 														<div className='mb-1 font-medium break-words whitespace-pre-wrap'>{timeline.status}</div>
-														<div className='text-xs'>({timeline.commentsCount})</div>
+														<div className='text-xs'>({comments[`${timeline.index}_${timeline.type}`]?.length || 0})</div>
 													</div>
 												}
 											/>:

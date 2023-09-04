@@ -35,6 +35,7 @@ export interface IComment {
   profile?:any;
 	post_index?: number;
 	post_type?: string;
+	isDelete?: boolean;
 }
 
 interface ICommentProps {

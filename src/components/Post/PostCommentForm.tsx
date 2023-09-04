@@ -9,19 +9,16 @@ import React, { FC, useEffect, useState } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
-
 import { ChangeResponseType } from '~src/auth/types';
 import { usePostDataContext, useUserDetailsContext } from '~src/context';
 import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-
 import ContentForm from '../ContentForm';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { Input } from 'antd';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
-// import EmojiIcon from '~assets/icons/chatbox-icons/emoji-1.svg';
 import SadDizzyIcon from '~assets/icons/sentiments-icons/sad-dizzy.svg';
 import SadIcon from '~assets/icons/sentiments-icons/sad.svg';
 import NeutralIcon from '~assets/icons/sentiments-icons/neutral.svg';
@@ -61,6 +58,15 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [textBoxHeight,setTextBoxHeight] = useState(40);
 	const [showEmojiMenu, setShowEmojiMenu] = useState(false);
 	const [selectedIcon, setSelectedIcon] = useState(null);
+	useEffect(() => {
+		if (voteDecision === 'aye') {
+			setSentiment(5);
+		} else if (voteDecision === 'nye') {
+			setSentiment(1);
+		} else {
+			setSentiment(3);
+		}
+	}, [voteDecision]);
 
 	const handleEmojiClick = (icon:any, currentSentiment:any) => {
 		setContent((prevContent) => prevContent + icon);
@@ -72,7 +78,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const EmojiOption = ({ icon, currentSentiment = 3, clickable = true, disabled }: IEmojiOption) => (
 		<Button
 			disabled={Boolean(disabled)}
-			className="text-2xl w-10 h-10 p-0 pt-1 border-solid hover:bg-baby_pink"
+			className="text-2xl w-10 h-10 p-0 pt-1 mb-[4px] border-solid hover:bg-baby_pink"
 			onClick={() => { clickable && handleEmojiClick(icon, currentSentiment); }}>
 			{icon}
 		</Button>
@@ -254,7 +260,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 										<div className='relative'>
 											<div className="flex">
 												{showEmojiMenu && (
-													<div className="absolute top-[-55px] right-[77px] w-[234px] h-[50px] pt-[7px] p-2 flex space-x-1" style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}>
+													<div className="absolute top-[-55px] right-[77px] w-[234px] h-[50px] pt-[7px] p-2 flex space-x-1 pb-12 -mt-1" style={{ background: '#FFF', border: '0.5px solid #D2D8E0', borderRadius: '6px', boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}>
 														<EmojiOption icon={<SadDizzyIcon style={{ border: 'none' }} />} currentSentiment={1}/>
 														<EmojiOption icon={<SadIcon style={{ border: 'none' }}/>} currentSentiment={2} />
 														<EmojiOption icon={<NeutralIcon style={{ border: 'none' }}/>} currentSentiment={3} />

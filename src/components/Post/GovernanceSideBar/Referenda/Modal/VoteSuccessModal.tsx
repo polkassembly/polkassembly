@@ -253,9 +253,8 @@ const VoteInitiatedModal = ({
 					<span className="quote quote--left w-[48px] h-[40px] justify-center text-center pt-[10px] top-[327px] left-[6px]" style={{ background: 'conic-gradient(#ffffff 0deg 90deg, #f6f8ff 90deg 180deg, #ffffff 180deg 270deg, #ffffff 270deg 360deg)' }}>
 						<LeftQuote/>
 					</span>
-					<p className="-mt-[155px] ml-[60px]">
-						Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind sharing why you support
-						this in a comment?
+					<p className="-mt-[155px] text-center">
+						Your <span className='capitalize text-pink_primary '>&apos;{ vote }&apos;</span> vote is in! Mind share your reason for this vote ?
 					</p>
 					<div className="form-group ml-4">
 						<PostCommentForm className='ml-4 mt-[-10px] mb-[-10px] w-[100%]' isUsedInSuccessModal={true} setCurrentState={setComments} voteDecision={vote} setSuccessModalOpen={setOpen}/>

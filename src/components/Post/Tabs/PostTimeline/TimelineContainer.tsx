@@ -203,6 +203,10 @@ export default (styled(TimelineContainer)`
 	.status-tag{
 		margin-right: -16px;
 	}
+
+	.arrow-container {
+		margin-left: -105px;
+	}
 	
 	@media (min-width: 1100px) and (max-width: 1280px) {
 		.content-container {
@@ -321,6 +325,10 @@ export default (styled(TimelineContainer)`
 	
 		.status-update{
 			margin-left: -110px;
+		}
+
+		.arrow-container {
+			margin-left: 6px;
 		}
 	}
 	@media (max-width: 400px) and (min-width:360px){

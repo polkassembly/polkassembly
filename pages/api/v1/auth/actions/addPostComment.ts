@@ -14,7 +14,7 @@ import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalT
 import { PostComment } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
-import { deleteKeys, redisDel } from '~src/auth/redis';
+import { deleteKeys } from '~src/auth/redis';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -67,17 +67,12 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 			// delete referendum v2 redis cache
 			if(postType == ProposalType.REFERENDUM_V2){
 				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${Number(trackNumber)}_*`;
-				const referendumDetailsKey = `${network}_OpenGov_${subsquidProposalType}_postId_${postId}`;
 				await deleteKeys(trackListingKey);
-				await redisDel(referendumDetailsKey);
 			}
 
 		}else if(postType == ProposalType.DISCUSSIONS){
 			const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
 			await deleteKeys(discussionListingKey);
-			const referendumDetailsKey = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
-			await redisDel(referendumDetailsKey);
-
 		}
 	}
 

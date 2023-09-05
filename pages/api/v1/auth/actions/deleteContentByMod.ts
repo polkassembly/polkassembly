@@ -10,6 +10,18 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
+import { ProposalType } from '~src/global/proposalType';
+import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
+
+interface Args {
+	userId: string;
+	commentId?: string;
+	postId: string;
+	replyId?: string;
+	network: string;
+	reason?: string;
+	postType: ProposalType;
+}
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
@@ -44,7 +56,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	await ref.update({
 		isDeleted: true
 	});
+	const args:Args = {
+		commentId,
+		network,
+		postId,
+		postType,
+		userId: String(user.id)
+	};
+	const triggerName = 'contentDeletedByMod';
+	fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
+		body: JSON.stringify({
+			args,
+			trigger: triggerName
+		}),
+		headers: firebaseFunctionsHeader(network),
+		method: 'POST'
+	});
 	return res.status(200).json({ message: 'Content deleted.' });
+
 }
 
 export default withErrorHandling(handler);

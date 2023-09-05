@@ -36,7 +36,7 @@ export const getCommentsByTimeline = async ({
 			const post_index = timeline.type === 'Tip' ? timeline.hash : timeline.index;
 			const type = getFirestoreProposalType(timeline.type) as ProposalType;
 			const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
-			const commentsSnapshot = await postDocRef.collection('comments').get();
+			const commentsSnapshot = await postDocRef.collection('comments').where('isDeleted','!=','true').get();
 			const timelineComments = await getComments(
 				commentsSnapshot,
 				postDocRef,

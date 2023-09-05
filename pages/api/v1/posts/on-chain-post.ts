@@ -365,7 +365,6 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 				created_at: data.created_at?.toDate ? data.created_at.toDate(): data.created_at,
 				history: history,
 				id: data.id,
-				isDeleted: data?.isDeleted || false,
 				is_custom_username: false,
 				post_index: postIndex,
 				post_type: postType,
@@ -380,12 +379,12 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 			};
 
 			const replyIds: string[] = [];
-			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').get();
+			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').where('isDeleted','!=',true).get();
 			repliesSnapshot.docs.forEach((doc) => {
 				if (doc && doc.exists) {
 					const data = doc.data();
 					if (data) {
-						const { created_at, id, username, comment_id, content, user_id, isDeleted } = data;
+						const { created_at, id, username, comment_id, content, user_id } = data;
 						if (id) {
 							replyIds.push(id);
 						}
@@ -402,7 +401,6 @@ export async function getComments(commentsSnapshot: FirebaseFirestore.QuerySnaps
 							content,
 							created_at: created_at?.toDate? created_at.toDate(): created_at,
 							id: id,
-							isDelete: isDeleted || false,
 							is_custom_username: false,
 							post_index: postIndex,
 							post_type: postType,

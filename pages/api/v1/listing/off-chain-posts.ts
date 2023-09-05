@@ -63,19 +63,21 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 		const postsSnapshotArr = (filterBy && filterBy.length > 0)
 			? await offChainCollRef
 				.where('tags','array-contains-any',filterBy)
+				.where('isDeleted','!=',true)
 				.orderBy(orderedField, order)
 				.limit(Number(listingLimit) || LISTING_LIMIT)
 				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
 				.get()
 			:await offChainCollRef
+				.where('isDeleted','!=',true)
 				.orderBy(orderedField, order)
 				.limit(Number(listingLimit) || LISTING_LIMIT)
 				.offset((Number(page) - 1) * Number(listingLimit || LISTING_LIMIT))
 				.get();
 
 		const count = (filterBy && filterBy.length > 0)
-			?(await offChainCollRef.where('tags','array-contains-any',filterBy).count().get()).data().count
-			: (await offChainCollRef.count().get()).data().count;
+			?(await offChainCollRef.where('tags','array-contains-any',filterBy).where('isDeleted','!=',true).count().get()).data().count
+			: (await offChainCollRef.where('isDeleted','!=',true).count().get()).data().count;
 
 		const postsPromise = postsSnapshotArr.docs.map(async (doc) => {
 			if (doc && doc.exists) {
@@ -98,7 +100,6 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams) : Promis
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: created_at?.toDate? created_at?.toDate(): created_at,
 						gov_type:docData?.gov_type ,
-						isDeleted: docData?.isDeleted || false,
 						isSpam: docData?.isSpam || false,
 						post_id: docData.id,
 						post_reactions,

@@ -16,17 +16,16 @@ interface Props{
 const Replies = ({ className, commentId, repliesArr }: Props) => {
 	const [showReplies, setShowReplies] = useState<boolean>(true);
 	const toggleShowReplies = () => setShowReplies(!showReplies);
-	const filteredReplies = repliesArr.filter((reply) => reply.isDelete !== true || reply.isDelete === undefined);
 	return (
 		<div className={className}>
-			{filteredReplies.length > 0 ?
+			{repliesArr.length > 0 ?
 				!showReplies ?
-					<div className='text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center' onClick={toggleShowReplies}>{filteredReplies.length} replies <DownOutlined className='ml-1' /></div>
+					<div className='text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center' onClick={toggleShowReplies}>{repliesArr.length} replies <DownOutlined className='ml-1' /></div>
 					:
 					<div className='text-sidebarBlue font-medium text-sm border-none cursor-pointer flex items-center' onClick={toggleShowReplies}>Hide replies <UpOutlined className='ml-1' /></div>
 				: null
 			}
-			{showReplies && filteredReplies.map((reply: any) => {
+			{showReplies && repliesArr.map((reply: any) => {
 				return(
 					<div key={reply.id}>
 						<Reply

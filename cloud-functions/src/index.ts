@@ -1,9 +1,12 @@
 import algoliasearch from 'algoliasearch';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import cors = require('cors');
 import fetchSubsquid from './utils/fetchSubsquid';
 import { htmlOrMarkdownToText } from './utils/htmlOrMarkdownToText';
 import dayjs from 'dayjs';
+import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
+import { TypeRegistry } from '@polkadot/types';
 
 admin.initializeApp();
 const logger = functions.logger;
@@ -13,6 +16,8 @@ const GET_PROPOSAL_TRACKS = `query MyQuery($index_eq:Int,$type_eq:ProposalType) 
     trackNumber
   }
 }`;
+
+const corsHandler = cors({ origin: true });
 
 exports.onPostWritten = functions.region('europe-west1').firestore.document('networks/{network}/post_types/{postType}/posts/{postId}').onWrite(async (change, context) => {
 	const { network, postType, postId } = context.params;
@@ -46,7 +51,7 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 	const parsedContent = htmlOrMarkdownToText(post?.content || '');
 
 	// Create an object to be indexed by Algolia
-	let postRecord: {[index: string]: any} = {
+	let postRecord: { [index: string]: any } = {
 		...post,
 		objectID: `${network}_${postType}_${postId}`, // Unique identifier for the object
 		network,
@@ -217,3 +222,33 @@ exports.onReactionWritten = functions.region('europe-west1').firestore.document(
 			logger.info('Post indexed successfully:', { objectID });
 		});
 });
+
+export const judgementCall = functions.https.onRequest(async (req, res) => {
+	corsHandler(req, res, async () => {
+		try {
+			const { userAddress, identityHash } = req.body;
+
+			const registry = new TypeRegistry();
+			const wsProvider = new WsProvider('wss://westend-rpc.polkadot.io');
+			const api = await ApiPromise.create({ provider: wsProvider });
+
+			const keyring = new Keyring({ type: 'sr25519' });
+
+			const proxyAccount = keyring.addFromJson(JSON.parse(process.env.KEYPAIR_JSON as string));
+			proxyAccount.unlock(process.env.KEYPAIR_PASSWORD as string);
+			const registrarIndex = 3;
+			const judgement = registry.createType('IdentityJudgement', 'Reasonable');
+
+			const judgementCall = api.tx.identity.provideJudgement(registrarIndex, userAddress, judgement, identityHash);
+
+			judgementCall.signAndSend(proxyAccount, ({ status }) => {
+				if (status.isFinalized) {
+					res.status(200).json({ hash: status.hash });
+				}
+			});
+		} catch (err) {
+			console.log(err);
+		}
+	});
+});
+

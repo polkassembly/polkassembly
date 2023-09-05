@@ -942,21 +942,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 										progress,
 										setData
 									}}/>
-									{/* <Modal
-									closeIcon={false}
-									onCancel={() => {
-										setOpen(false);
-									}}
-									open={open}
-									footer={[]}
-									closable={false}
-								>
-									<VotersList
-										className={className}
-										referendumId={onchainId as number}
-										voteType={getVotingTypeFromProposalType(proposalType)}
-									/>
-								</Modal> */}
 								</>
 							}
 

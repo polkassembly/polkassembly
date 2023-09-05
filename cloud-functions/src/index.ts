@@ -228,10 +228,12 @@ export const judgementCall = functions.https.onRequest(async (req, res) => {
 		try {
 			const { userAddress, identityHash } = req.body;
 
+			logger.info('request body: ', { userAddress, identityHash });
+
 			const registry = new TypeRegistry();
 			const wsProvider = new WsProvider('wss://westend-rpc.polkadot.io');
 			const api = await ApiPromise.create({ provider: wsProvider });
-
+			await api.isReady;
 			const keyring = new Keyring({ type: 'sr25519' });
 
 			const proxyAccount = keyring.addFromJson(JSON.parse(process.env.KEYPAIR_JSON as string));
